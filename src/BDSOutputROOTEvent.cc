@@ -177,9 +177,13 @@ void BDSOutputROOTEvent::Initialise()
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+  G4bool writePrimaries = o.writePrimaries;
+  if (writePrimaries)
+    {
+      theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+      samplerTrees.push_back(primary);
+    }
   //  samplerMap["Primary"] = primary;
-  samplerTrees.push_back(primary);
 
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
@@ -222,7 +226,10 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   for(int i=0;i<hc->entries();i++)
     {
       G4int samplerId = (*hc)[i]->GetSamplerID();
-      samplerTrees[samplerId+1]->Fill((*hc)[i]);
+      if (BDSParser::Instance()->GetOptions().writePrimaries)
+        {samplerTrees[samplerId+1]->Fill((*hc)[i]);}
+      else
+        {samplerTrees[samplerId]->Fill((*hc)[i]);}
     }
 }
 
@@ -321,7 +328,8 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);
+  if (BDSParser::Instance()->GetOptions().writePrimaries)
+    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
 /// write a histgoram

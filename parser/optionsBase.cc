@@ -227,6 +227,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryDepth     = 0;
   storeTrajectoryParticle  = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  writePrimaries           = true;
 
   // circular options
   nturns                   = 1;

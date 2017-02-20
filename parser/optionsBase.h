@@ -274,10 +274,14 @@ namespace GMAD
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
+
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
     bool        trajNoTransportation;
+
+    bool        writePrimaries;
+
 
     /// Ring parameters
     int      nturns;

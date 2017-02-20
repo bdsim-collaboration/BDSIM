@@ -343,6 +343,7 @@ void Options::PublishMembers()
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
+  publish("writePrimaries", &Options::writePrimaries);
 
   // scoring map
   publish("nbinsx", &Options::nbinsx);
