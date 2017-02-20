@@ -84,6 +84,9 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
         fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
       }
     }
+    else {
+      fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
+    }
   }
   else
   {
