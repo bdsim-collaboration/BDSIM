@@ -25,14 +25,13 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
 }
 
 void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
-					  G4ThreeVector /*bField*/,
 					  G4double        h,
 					  G4double        ySext[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4double InitMag=v0.mag();
   G4double kappa=  (-eqOfM->FCof()*bDoublePrime) /InitMag;
 
@@ -68,8 +67,6 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
       LocalRpp.setY(-2*zp*x0*y0);
       LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
       
-      //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
-      
       LocalRpp*=kappa/2; // 2 is actually a 2! factor.
 
       AdvanceChord(h,LocalR,LocalRp,LocalRpp);
@@ -103,18 +100,19 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
     {
       backupStepper->Stepper(yIn, dydx, hstep, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
       return;
     }
   
   G4double h = hstep * 0.5;
   
   // Do two half steps
-  AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
-  AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
+  AdvanceHelix(yIn, h, yTemp);
+  AdvanceHelix(yTemp, h, yOut); 
   
   // Do a full Step
   h = hstep ;
-  AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
+  AdvanceHelix(yIn, h, yTemp); 
   
   for(G4int i = 0; i < nVariables; i++)
     {
@@ -126,4 +124,6 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
       if (std::abs(yErr[i]) < 1e-7)
 	{yErr[i] = 0;}
     }
+
+  // TBC - we have not set DistChord here!
 }

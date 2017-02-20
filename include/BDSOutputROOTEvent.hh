@@ -92,59 +92,60 @@ private:
   /// create histograms
   void CreateHistograms();
   
-  // output file
+  /// output file
   TFile *theRootOutputFile = nullptr;
 
-  // options structure
+  /// options structure
   // BDSOutputROOTEventOptions *theOptionsOutput;
 
-  // options tree
+  /// options tree
   TTree *theOptionsOutputTree = nullptr;
 
-  // model tree 
+  /// model tree
   TTree *theModelOutputTree = nullptr;
 
-  // output tree
-  TTree *theRootOutputTree = nullptr;
+  /// event tree
+  TTree *theEventOutputTree = nullptr;
 
-  // output histogram tree
+  /// output histogram tree
   TTree *theRunOutputTree  = nullptr;
 
-  // primary structure 
+  /// primary structure
 #ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double> *primary = nullptr;
 #else 
   BDSOutputROOTEventSampler<float> *primary = nullptr;
 #endif
-  // sampler structures 
+  /// sampler structures
 #ifdef __ROOTDOUBLE__
   //  std::map<G4String, BDSOutputROOTEventSampler<double>*> samplerMap; // will remove
   std::vector<BDSOutputROOTEventSampler<double>*> samplerTrees;
 #else
-  //  std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
 
-  // run information
+  /// run information
   BDSOutputROOTEventRunInfo     *runInfo     = nullptr;
-  // run histograms
+  /// run histograms
   BDSOutputROOTEventHistograms  *runHistos   = nullptr;
 
 
-  // energy loss
+  /// energy loss
   BDSOutputROOTEventLoss        *eLoss       = nullptr;
-  // primary first hit
+  /// primary first hit
   BDSOutputROOTEventLoss        *pFirstHit   = nullptr;
-  // primary final hit
+  /// primary final hit
   BDSOutputROOTEventLoss        *pLastHit    = nullptr;
-  // tunnel hit
+  /// tunnel hit
   BDSOutputROOTEventLoss        *tHit        = nullptr;
-  // trajectory
+  /// trajectory
   BDSOutputROOTEventTrajectory  *traj        = nullptr;
-  // event histograms
+  /// event histograms
   BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
-  // event information
+  /// event information
   BDSOutputROOTEventInfo        *evtInfo     = nullptr;
+
+  G4bool useScoringMap = false;
 };
 
 

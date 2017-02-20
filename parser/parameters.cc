@@ -7,7 +7,6 @@
 #include <string>
 
 #include "array.h"
-#include "element.h"
 
 using namespace GMAD;
 #define BDSDEBUG 1
@@ -17,7 +16,6 @@ Parameters::Parameters()
   // usually same but some exceptions, those are commented
   setMap["l"]     = false;
   setMap["ks"]    = false;
-  setMap["k0"]    = false;
   setMap["k1"]    = false;
   setMap["k2"]    = false;
   setMap["k3"]    = false;
@@ -68,7 +66,7 @@ Parameters::Parameters()
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
-  setMap["waveLength"] = false; 
+  setMap["waveLength"] = false;
   setMap["gradient"] = false;
   setMap["phi"] = false;
   setMap["theta"] = false;
@@ -78,7 +76,7 @@ Parameters::Parameters()
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
-  setMap["r"] = false; // for samplerRadius
+  setMap["samplerRadius"] = false;
   setMap["region"] = false;
   setMap["fieldOuter"]  = false;
   setMap["fieldVacuum"] = false;
@@ -89,7 +87,6 @@ Parameters::Parameters()
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
   setMap["mountmaterial"] = false;
-  setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
 
@@ -116,7 +113,7 @@ void Parameters::inherit_properties(const Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
- // this is used for the inheritance / newinstance mechanism
+  // this is used for the inheritance / newinstance mechanism
 
   for (auto& i : setMap)
     {

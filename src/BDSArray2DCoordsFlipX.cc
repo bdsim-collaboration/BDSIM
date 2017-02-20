@@ -61,7 +61,7 @@ const BDSFieldValue& BDSArray2DCoordsFlipX::GetConst(const G4int x,
     }
   else
     {// A half
-      yi = y + nY;; // just offset index
+      yi = y + nY; // just offset index
     }
   
   returnValue = BDSArray2DCoords::GetConst(x,yi,z,t);

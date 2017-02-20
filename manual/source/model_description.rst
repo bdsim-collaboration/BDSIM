@@ -15,7 +15,7 @@ The overall program structure should follow:
 3) Which sequence to use (see :ref:`the-use-command`).
 4) Where to record output (see :ref:`sampler-output`).
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
-6) A beam distribution (see :ref:`beam-parameters`).
+6) A beam definition (see :ref:`beam-parameters`).
    
 These are described in the following sections. Aside from these standard parameters, more
 detail may be added to the model through:
@@ -30,17 +30,25 @@ detail may be added to the model through:
 GMAD Syntax
 -----------
 
-GMAD is a language specifically for BDSIM but is made to be human readable
-and very similar to MADX.
+GMAD is a language specifically for BDSIM that is made to be human readable.
+The name comes from the design intention of MADX syntax + extensions for Geant4.
+While GMAD is very similar to MADX, not all MADX commands are supported.
 
+* S.I. units are used except where explicitly specified
+* variables can be defined using :code:`name = value;` syntax
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
 * boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
+* !comments start with an exclamation mark "!"
+* a variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
-The following functions are provided
+Mathematical Functions
+^^^^^^^^^^^^^^^^^^^^^^
+  
+The following mathematical functions are provided:
 
 * sqrt
 * cos
@@ -53,6 +61,21 @@ The following functions are provided
 * atan
 * abs
 
+Other Commands
+^^^^^^^^^^^^^^
+
+* :code:`print;` prints all elements
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
+* :code:`print, option;` prints the value of some options.
+* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
+* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
+* :code:`stop;` or :code:`return;` exists parser
+* :code:`if () {};` if construct
+* :code:`if () {} else {};` if-else construct
+
+Examples
+^^^^^^^^
+  
 Examples::
 
    x = 1;
@@ -133,19 +156,6 @@ GHz         :math:`10^{9}`
 
 For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
 and both are equivalent.
-
-
-Useful Commands
----------------
-
-* :code:`print;` prints all elements
-* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of option
-* :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
-* :code:`stop;` or :code:`return;` exists parser
-* :code:`if () {};` if construct
-* :code:`if () {} else {};` if-else construct
 
 .. _lattice-elements:
 
@@ -232,7 +242,7 @@ drift
 	    :width: 30%
 	    :align: right
 
-:code:`drift` defines a straight beam pipe with no field.
+`drift` defines a straight beam pipe with no field.
 
 ================  ===================  ==========  =========
 parameter         description          default     required
@@ -565,7 +575,7 @@ rf
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
 `l`               length [m]                   0           yes
-`gradient`        field gradient [MV/m]        0           yes
+`gradient`        field gradient [V/m]         0           yes
 `material`        outer material               Iron        no
 ================  ===========================  ==========  ===========
 
@@ -1587,34 +1597,45 @@ Examples::
 Samplers - Output
 -----------------
 
-Normally, the only output BDSIM would produce is the various particle loss histograms,
-as well as the coordinates of energy deposition hits. To observe the particles at a
-point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the *exit*
-to that element. They are defined using the following syntax::
+BDSIM provides a `sampler` as a means to observe the particle distribution at a
+point in the lattice. A sampler is 'attached' to an already defined element
+and records all the particles passing through a plane at the **exit** face of
+that element. They are defined using the following syntax::
 
   sample, range=<element_name>;
 
 where `element_name` is the name of the element you wish to sample. Depending on the
-output format chosen, the element name may be recorded in the output (ROOT output only).
+output format chosen, the element name may be recorded in the output ('rootevent' output only).
 
-To place a sampler before an item, attach it to the previous item. If however, you wish
-to record the coordinates with another name, you must define
-a marker, place it in the sequence and then define a sampler that uses that marker::
+.. note:: Samplers **can only** be defined **after** the main sequence has been defined
+	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
+	  so will result in an error and BDSIM will exit.
+
+.. note:: Samplers record **all** particles impinging on them - i.e. both forwards and
+	  backwards. Even secondary particles that may originate from further along the
+	  lattice. They have no material so they do not absorb or affect particles, only
+	  witness them.
+
+To place a sampler before an item, attach it to the previous item. If however,
+you wish to record the coordinates with another name rather than the name of the
+element before, you can define a marker; place it in the sequence; and then define
+a sampler that uses that marker::
 
   d1: drift, l=2.4*m;
-  endoftheline: marker;
-  l1: line=(d1,d1,d1,d1,endoftheline);
+  d2: drift, l=1*m;
+  interestingplane: marker;
+  l1: line=(d1,d1,interestingplane,d2,d1);
   use,period=l1;
 
-  sample, range=endoftheline;
+  sample, range = interestingplane;
 
-When an element is defined multiple times in the line, samplers will be attached to all instances.
-If you wish to sample only one specific instance, the following syntax can be used::
+When an element is defined multiple times in the line (such as "d1" in the above example),
+samplers will be attached to all instances. If you wish to sample only one specific
+instance, the following syntax can be used::
 
   sample, range=<element_name>[index];
 
-To attach samplers to all elements (except the first one)::
+To attach samplers after all elements::
 
   sample, all;
 
@@ -1626,9 +1647,40 @@ e.g.::
 
   sample, quadrupole;
   
-.. note:: Samplers **can only** be defined **after** the main sequence has been defined
-	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
-	  so will result in an error and BDSIM will exit.
+.. note:: If a sampler is placed at the very beginning of the lattice, it may appear
+	  that approximately half of the primary particles seem to pass through it. This
+	  is the correct behaviour as unlike an optics program such as MADX, the sampler
+	  represents a thin plane in 3D space in BDSIM. If the beam distribution has some
+	  finite extent in *z* or *t*, particles may start beyond this first sampler and
+	  never pass through it.
+
+Sampler Dimensions
+^^^^^^^^^^^^^^^^^^
+
+The sampler is represented by a cube solid that is 1 pm thin along z and 5m metres wide
+transversely in x and y. If a smaller or larger capture area for the samplers is required,
+the option *samplerDiameter* may be specified in the input gmad.::
+
+  option, samplerDiameter=3*m;
+
+This affects all samplers.
+
+.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
+	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
+	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
+	  value.
+
+Sampler Visualisation
+^^^^^^^^^^^^^^^^^^^^^
+
+The samplers are normally invisible and are built in a parallel world geometryin Geant4. To
+visualised them, the following command should be used in the visualiser::
+
+  /vis/drawVolume worlds
+
+The samplers will appear in semi-transparent green as well as the curvilinear geometry used
+for coordinate transforms (cylinders).
+
 
 Physics Processes
 -----------------

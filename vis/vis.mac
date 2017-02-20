@@ -23,7 +23,7 @@
 #/vis/scene/add/axes
 
 # Trajectories
-#/vis/scene/endOfEventAction accumulate
+/vis/scene/endOfEventAction accumulate
 
 # Commit to Renderer
 /vis/viewer/flush

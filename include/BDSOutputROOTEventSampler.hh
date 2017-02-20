@@ -11,6 +11,12 @@ class BDSSamplerHit;
 #include "TObject.h"
 #include "TTree.h"
 
+/**
+ * @brief Information stored per sampler per event.
+ * 
+ * @author Stewart Boogert
+ */
+
 template<class T> class BDSOutputROOTEventSampler: public TObject
 {  
 public:

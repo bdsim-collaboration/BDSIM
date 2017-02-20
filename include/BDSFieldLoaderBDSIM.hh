@@ -24,6 +24,8 @@ class BDSArray1DCoords;
  * Loaders are given through specific public methods so the exact
  * type can be returned.
  *
+ * The input stream type is templated.
+ *
  * This can exit the program if an invalid specification is loaded.
  * 
  * @author Laurie Nevay

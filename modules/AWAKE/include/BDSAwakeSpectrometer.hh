@@ -147,6 +147,9 @@ private:
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
+
+	//User limits for the whole element
+	G4UserLimits* itsUserLimits;
                     
   //  G4Mag_UsualEqRhs* itsEqRhs;
   

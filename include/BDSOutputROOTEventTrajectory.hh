@@ -12,6 +12,12 @@ template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 #endif
 
+/**
+ * @brief Structure to record a trajectory.
+ * 
+ * @author Stewart Boogert
+ */
+
 class BDSOutputROOTEventTrajectory : public TObject
 {
 public:

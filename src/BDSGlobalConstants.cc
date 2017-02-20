@@ -131,7 +131,7 @@ void BDSGlobalConstants::InitDefaultUserLimits()
 #endif
       defaultUserLimits->SetUserMaxTime(MaxTime());
     }
-    defaultUserLimits->SetMaxAllowedStep(1*CLHEP::mm);
+  defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
    // defaultUserLimits->SetUserMaxTrackLength(1*CLHEP::mm);
 }
 

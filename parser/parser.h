@@ -26,6 +26,12 @@ int yyerror(const char *);
 /// declaration needed by bison
 extern int yylex();
 
+/** 
+ * @brief Parser namespace for GMAD language. Combination of Geant4 and MAD.
+ *
+ * @author Jochem Snuverink
+ */
+
 namespace GMAD
 {
   class Array;
@@ -117,6 +123,9 @@ namespace GMAD
     /// Set value for parser class
     template <class C, typename T>
       void SetValue(std::string property, T value);
+    /// Get value for parser class (only for doubles)
+    template <class C>
+      double GetValue(std::string property);
 
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
@@ -153,7 +162,6 @@ namespace GMAD
     // *****************
     /// maximum number of nested lines
     const int MAX_EXPAND_ITERATIONS = 50;
-    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
 
     ///@{ temporary list for reading of arrays in parser
     std::list<double> tmparray;
@@ -238,6 +246,12 @@ namespace GMAD
     void Parser::SetValue(std::string property, T value)
     {
       GetGlobal<C>().set_value(property, value);
+    }
+
+  template <class C>
+    double Parser::GetValue(std::string property)
+    {
+      return GetGlobal<C>().get_value(property);
     }
 }
 

@@ -38,7 +38,11 @@ protected:
   virtual void Build();
 
 private:
+  /// @{ Default constructor, assignment and copy constructor not used.
   BDSShield() = delete;
+  BDSShield& operator=(const BDSShield&) = delete;
+  BDSShield(BDSShield&) = delete;
+  /// @}
   
   /// Build the outer shield geoemtry.
   void BuildShield();
@@ -50,7 +54,6 @@ private:
   G4double         xAper;         ///< Inner horizontal full width of shield.
   G4double         yAper;         ///< Inner vertical full width of shield.
   G4Material*      material;      ///< Shield material.
-  BDSBeamPipeInfo* beamPipeInfo;  ///< Model for beam pipe.
 };
 
 #endif

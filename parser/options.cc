@@ -17,6 +17,59 @@ Options::Options(const GMAD::OptionsBase& options):
   PublishMembers();
 }
 
+double Options::get_value(std::string property_name)const{
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    try {
+      // try int and convert
+      value = (double)get<int>(this,property_name);
+    }
+    catch (std::runtime_error) {
+      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+      exit(1);
+    }
+  }
+  return value;
+}
+
+void Options::Amalgamate(const Options& optionsIn, bool override)
+{
+  if (override)
+    {
+      for (auto const key : optionsIn.setKeys)
+	{
+	  try
+	    {set(this, &optionsIn, key);}
+	  catch (std::runtime_error)
+	    {
+	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      exit(1);
+	    }
+	}
+    }
+  else
+    {// don't override - ie give preference to ones set in this instance
+      for (auto const key : optionsIn.setKeys)
+	{
+	  auto const& ok = setKeys; // shortcut
+	  auto result = std::find(ok.begin(), ok.end(), key);
+	  if (result == ok.end())
+	    {//it wasn't found so ok to copy
+	      try
+		{set(this, &optionsIn, key);}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
+	}
+    }
+}
+
 bool Options::HasBeenSet(std::string name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
@@ -252,6 +305,7 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
+  publish("maximumStepLength",  &Options::maximumStepLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
@@ -268,6 +322,8 @@ void Options::PublishMembers()
   publish("lengthSafety",&Options::lengthSafety);
 
   // trajectory storage
+  publish("storeElossLocal",  &Options::storeElossLocal);
+  publish("storeElossGlobal", &Options::storeElossGlobal);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
@@ -284,4 +340,16 @@ void Options::PublishMembers()
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
+
+  // scoring map
+  publish("nbinsx", &Options::nbinsx);
+  publish("nbinsy", &Options::nbinsy);
+  publish("nbinsz", &Options::nbinsz);
+  publish("xmin",   &Options::xmin);
+  publish("xmax",   &Options::xmax);
+  publish("ymin",   &Options::ymin);
+  publish("ymax",   &Options::ymax);
+  publish("zmin",   &Options::zmin);
+  publish("zmax",   &Options::zmax);
+  publish("useScoringMap", &Options::useScoringMap);
 }

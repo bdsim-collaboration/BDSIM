@@ -20,8 +20,8 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4d
 {
   SetParameters(name, lengthZ, magStartZ, vacuumEndZ, screenWidth, screenAngle, sizeX, sizeY, thickness);
   Build();
-    SetUserLimits();
-  
+  SetUserLimits();
+
   /*
   _innerLogVol = new G4LogicalVolume(_innerSolid,
 				     BDSMaterials::Instance()->GetMaterial("vacuum"),
@@ -185,9 +185,8 @@ void BDSSpectrVacChamb::BuildBox1(){
   _logVolBox1 = new G4LogicalVolume(_box1Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
-
     _logVols.push_back(_logVolBox1);
-  
+
   G4VisAttributes* Box1VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
   Box1VisAtt->SetForceSolid(true);
   Box1VisAtt->SetVisibility(true);
@@ -204,7 +203,7 @@ void BDSSpectrVacChamb::BuildBox2(){
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
     _logVols.push_back(_logVolBox2);
-  
+
   G4VisAttributes* Box2VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
   Box2VisAtt->SetForceSolid(true);
   Box2VisAtt->SetVisibility(true);
@@ -220,7 +219,6 @@ void BDSSpectrVacChamb::BuildBox3(){
   _logVolBox3 = new G4LogicalVolume(_box3Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
-
     _logVols.push_back(_logVolBox3);
 
   G4VisAttributes* Box3VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
@@ -304,18 +302,16 @@ void BDSSpectrVacChamb::BuildTrap(){
 				    BDSMaterials::Instance()->GetMaterial("vacuum"),
 				    _name+"_inner_trap_log");
 
-    _logVols.push_back(_innerLogVolTrap);
-
   _upperLogVolTrap = new G4LogicalVolume(_upperTrapSolid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_upper_trap_log");
-
-    _logVols.push_back(_upperLogVolTrap);
 
   _lowerLogVolTrap = new G4LogicalVolume(_lowerTrapSolid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_lower_trap_log");
 
+    _logVols.push_back(_innerLogVolTrap);
+    _logVols.push_back(_upperLogVolTrap);
     _logVols.push_back(_lowerLogVolTrap);
 
   G4VisAttributes* InnerTrapVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.1));

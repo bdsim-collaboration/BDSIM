@@ -3,14 +3,15 @@
 
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
-#include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4Material.hh"
 #include "G4TwoVector.hh"
-#include "G4VSolid.hh"
 
 #include <vector>
+
+class BDSBeamPipe;
+class G4Material;
+class G4VSolid;
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets

@@ -9,6 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSOutputBase.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -45,7 +46,11 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousReferencePositionEnd = initialGlobalPosition;
 
   // initial s coordinate
-  previousSPositionEnd = 0; 
+  previousSPositionEnd = 0;
+
+  // gap between each element added to the beam line
+  paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
+  //paddingLength = 3*CLHEP::mm;
 }
 
 BDSBeamline::~BDSBeamline()
@@ -74,12 +79,9 @@ void BDSBeamline::PrintMemoryConsumption() const
 
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
-  out << "BDSBeamline with " << bl.size() << " elements"<< G4endl
-      << "Elements are: " << G4endl;
-  bl.PrintAllComponents(out);
-  out << G4endl;
-  out << "Total arc length:   " << bl.totalArcLength   << " mm" << G4endl;
-  out << "Total chord length: " << bl.totalChordLength << " mm" << G4endl;
+  out << "BDSBeamline with "    << bl.size()           << " elements" << G4endl;
+  out << "Total arc length:   " << bl.totalArcLength   << " mm"       << G4endl;
+  out << "Total chord length: " << bl.totalChordLength << " mm"       << G4endl;
 
   return out;
 }
@@ -92,6 +94,14 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
+  // check the sampler name is allowed in the output
+  if (BDSOutputBase::InvalidSamplerName(samplerName))
+    {
+      G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
+      BDSOutputBase::PrintProtectedNames(G4cerr);
+      exit(1);
+    }
+  
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       G4int size = (G4int)line->size();
@@ -288,7 +298,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // if not the first item in the beamline, get the reference trajectory global position
   // at the end of the previous element
   if (!empty())
-    {previousReferencePositionEnd = back()->GetReferencePositionEnd();}
+    {
+      previousReferencePositionEnd = back()->GetReferencePositionEnd();
+      // leave a small gap for unambiguous geometry navigation. Transform that length
+      // to a unit z vector along the direction of the beam line before this component
+      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      previousReferencePositionEnd += componentGap;
+    }
   
   G4ThreeVector referencePositionStart, referencePositionMiddle, referencePositionEnd;
   if (hasFiniteLength)

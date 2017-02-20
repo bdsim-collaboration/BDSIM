@@ -1,10 +1,12 @@
 #ifndef BDSOUTPUTLOADER_H
 #define BDSOUTPUTLOADER_H
 
-#include "parser/options.h"
-#include "parser/optionsBase.h"
-
 #include "globals.hh" // geant4 types / globals
+
+namespace GMAD {
+  class Options;
+  class OptionsBase;
+}
 
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventOptions;

@@ -24,6 +24,9 @@ public:
 
   void Place(G4LogicalVolume* motherVolume);
 
+    //container of pointers to all logical volumes
+    inline std::vector<G4LogicalVolume*> logVols(){return _logVols;}
+
 private:
   BDSSpectrVacChamb();
 
@@ -78,6 +81,8 @@ private:
   G4VSolid* _strutSolid;
   G4RotationMatrix* _rotStrut;
   G4ThreeVector _transStrut;
+
+    std::vector<G4LogicalVolume*> _logVols;
 
   void Build();
   void BuildBox(); 

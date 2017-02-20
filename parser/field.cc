@@ -41,6 +41,7 @@ void Field::PublishMembers()
   publish("eScaling",             &Field::eScaling);
   publish("bScaling",             &Field::bScaling);
   publish("integrator",           &Field::integrator);
+  publish("globalTransform",      &Field::globalTransform);
   publish("magneticFile",         &Field::magneticFile);
   publish("magneticInterpolator", &Field::magneticInterpolator);
   publish("electricFile",         &Field::electricFile);

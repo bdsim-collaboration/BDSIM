@@ -4,10 +4,9 @@
 #include "BDSIntegratorBase.hh"
 
 #include "globals.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**
@@ -66,9 +65,6 @@ protected:
 private:
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
-
-  /// Total beam energy
-  G4double nominalEnergy;
 
   /// Minimum tolerable radius of curvature - used to prevent spiraling particles.
   const G4double minimumRadiusOfCurvature;

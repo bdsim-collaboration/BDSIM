@@ -155,11 +155,12 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = BDSParser::Instance()->GetOptions().physicsList;
+  // Note, we purposively don't create a parallel world process for the curvilinear
+  // world as we don't need the track information from it - unreliable that way. We
+  // query the geometry directly using our BDSAuxiliaryNavigator class.
   G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
-  G4ParallelWorldPhysics* sensWorld = new G4ParallelWorldPhysics(curvilinearWorld->GetName());
-  BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
+  BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
   physList->RegisterPhysics(sampWorld);
-  physList->RegisterPhysics(sensWorld);
   // Biasing - TBC should only bias required particles to be biased
   G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
   physBias->Bias("e-");
@@ -242,7 +243,7 @@ int main(int argc,char** argv)
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry)
     { 
-      G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
+      G4cerr << __FUNCTION__ << "> error - geometry not closed." << G4endl;
       return 1;
     }
 

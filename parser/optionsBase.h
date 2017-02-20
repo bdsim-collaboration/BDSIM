@@ -252,7 +252,8 @@ namespace GMAD
     /// Tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
-    double   maximumTrackingTime; ///< maximum tracking time per volume [s]
+    double   maximumTrackingTime; ///< maximum tracking time per track [s]
+    double   maximumStepLength;   ///< maximum permitted step length in any volume
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;
@@ -266,6 +267,8 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        storeElossLocal;
+    bool        storeElossGlobal;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -278,6 +281,18 @@ namespace GMAD
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
+
+    /// Scoring Map
+    int    nbinsx;
+    int    nbinsy;
+    int    nbinsz;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    bool   useScoringMap;
 
     /// print some properties
     void print() const;

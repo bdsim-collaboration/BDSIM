@@ -5,6 +5,7 @@
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"
@@ -107,7 +108,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   eventInfo->SetDuration(stops - starts);
 
   // Record timing in output
-  bdsOutput->WriteEventInfo(eventInfo);
+  bdsOutput->WriteEventInfo(eventInfo->GetInfo());
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -318,7 +319,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       interestingTrajectories.clear();
     }
   
-  bdsOutput->FillEvent();
+  bdsOutput->FillEvent(); // this fills data and clears event level structures
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;

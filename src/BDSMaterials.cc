@@ -761,14 +761,7 @@ void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
 void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
 {
   G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
-  if(elements.insert(make_pair(aSymbol,tmpElement)).second)
-    {
-#ifdef BDSDEBUG
-      G4cout << "New atom : " << aSymbol << G4endl;
-#endif
-    }
-  else
-    {G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" already exists" << G4endl; exit(1);}
+  AddElement(tmpElement,aSymbol);
 }
 
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)

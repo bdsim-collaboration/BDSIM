@@ -2,10 +2,11 @@
 #define BDSMAGNETOUTERFACTORYLHC_H
 
 #include "BDSMagnetOuterFactoryBase.hh"
-#include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4Material.hh"
+
+class BDSBeamPipe;
+class G4Material;
 
 /**
  * @brief The base factory for the LHC magnet geometry factory.

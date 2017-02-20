@@ -300,29 +300,31 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
       return;
     }
 
-  Event* evtLocal1 = new Event();
-  Event* evtLocal2 = new Event();
+  // Need to tell Event to process samplers at construction time.
+  G4bool processSamplers = samplerNames.empty() ? false : true;
+  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
+  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames);
 
   for (auto i = 0; i < t1->GetEntries(); i++)
     {
-      ResultEvent* re = new ResultEvent();
-      re->name    = std::to_string(i);
-      re->passed  = true; // default true
-      re->objtype = "Event of Event Tree";
+      ResultEvent re = ResultEvent();
+      re.name    = std::to_string(i);
+      re.passed  = true; // default true
+      re.objtype = "Event of Event Tree";
       
       t1->GetEntry(i);
       t2->GetEntry(i);
 
-      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), re);
+      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), &re);
       for (auto j = 0; j < (int)evtLocal1->samplers.size(); j++)
 	{
-	  Compare::Sampler(evtLocal1->samplers[j], evtLocal2->samplers[j], re);
+	  Compare::Sampler(evtLocal1->samplers[j], evtLocal2->samplers[j], &re);
 	}
 
-      ret->eventResults.push_back(*re);
-      if (!re->passed)
+      ret->eventResults.push_back(re);
+      if (!re.passed)
 	{
 	  ret->passed = false;
 	  break;

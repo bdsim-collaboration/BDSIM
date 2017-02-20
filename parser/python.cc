@@ -1,5 +1,10 @@
 #include "python.h"
 
+#include "parser.h"
+
+#include <cstdio>
+#include <list>
+
 /** Python interface, need to match pybdsim/Gmad.py **/
 int GMAD::GmadParser_c(char *name)
 {
@@ -44,13 +49,12 @@ double* GMAD::GetKs(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
-  double* result = new double[6];
+  double* result = new double[5];
   result[0] = it->ks;
-  result[1] = it->k0;
-  result[2] = it->k1;
-  result[3] = it->k2;
-  result[4] = it->k3;
-  result[5] = it->k4;
+  result[1] = it->k1;
+  result[2] = it->k2;
+  result[3] = it->k3;
+  result[4] = it->k4;
   return result;
 }
 
