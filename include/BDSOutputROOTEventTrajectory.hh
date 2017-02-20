@@ -93,13 +93,13 @@ public:
   void Flush();
 
   int n;
-  std::vector<int> partID;
-  std::vector<unsigned int> trackID;
-  std::vector<unsigned int> parentID;
-  std::vector<std::vector<int>> preProcessTypes;
-  std::vector<std::vector<int>> preProcessSubTypes;
-  std::vector<std::vector<int>> postProcessTypes;
-  std::vector<std::vector<int>> postProcessSubTypes;
+  std::vector<int>                 partID;
+  std::vector<unsigned int>        trackID;
+  std::vector<int>                 parentID;
+  std::vector<std::vector<int>>    preProcessTypes;
+  std::vector<std::vector<int>>    preProcessSubTypes;
+  std::vector<std::vector<int>>    postProcessTypes;
+  std::vector<std::vector<int>>    postProcessSubTypes;
 
   std::vector<std::vector<double>> preWeights;
   std::vector<std::vector<double>> postWeights;

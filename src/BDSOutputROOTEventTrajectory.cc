@@ -31,7 +31,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     partID.push_back( (int &&) traj->GetPDGEncoding() );
     trackID.push_back( (unsigned int &&) traj->GetTrackID() );
     //parentID.push_back((unsigned int &&) traj->GetParentID());
-    parentID.push_back((unsigned int &&) traj->GetNewParentID());
+    parentID.push_back((int &&) traj->GetNewParentID());
 #ifdef BDSDEBUG
 //    G4cout << __METHOD_NAME__ << traj->GetTrackID() << " " << traj->GetParentID() << G4endl;
 #endif
@@ -138,7 +138,7 @@ void BDSOutputROOTEventTrajectory::print(int i)
 {
   for(size_t j=0;j<trajectories[i].size();++j)
   {
-    std::cout << j << " " << trackID[i] << " " << parentID[i] << " "
+    std::cout << j << " " << trackID[i] << " " << parentID[i] << " " << partID[i] << " "
               << preProcessTypes[i][j]  << " " << preProcessSubTypes[i][j] << " "
               << postProcessTypes[i][j] << " " << postProcessSubTypes[i][j] << " "
               << trajectories[i][j].X() << " " << trajectories[i][j].Y() << " " <<  trajectories[i][j].Z() << " "
