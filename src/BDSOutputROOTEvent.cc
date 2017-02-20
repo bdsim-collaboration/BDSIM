@@ -31,13 +31,14 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #endif
 
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  G4bool storeLinks  = g->StoreELossLinks();
   G4bool storeLocal  = g->StoreELossLocal();
   G4bool storeGlobal = g->StoreELossGlobal();
   
-  eLoss     = new BDSOutputROOTEventLoss(storeLocal, storeGlobal);
-  pFirstHit = new BDSOutputROOTEventLoss(true,false);
-  pLastHit  = new BDSOutputROOTEventLoss(true,false);
-  tHit      = new BDSOutputROOTEventLoss(false,true);
+  eLoss     = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal);
+  pFirstHit = new BDSOutputROOTEventLoss(true      ,       true,       false);
+  pLastHit  = new BDSOutputROOTEventLoss(true      ,       true,       false);
+  tHit      = new BDSOutputROOTEventLoss(false     ,      false,       true);
   traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
