@@ -261,31 +261,30 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
     }
 
-    std::vector<BDSTrajectory*> interestingTrajectories;
-    std::map<BDSTrajectory*, bool> interestingTraj;
     // loop over trajectories and determine if traj should be stored
+    std::map<BDSTrajectory*, bool> interestingTraj;
     for (auto iT1 : *trajVec)
     {
       BDSTrajectory* traj = (BDSTrajectory*) (iT1);
-	    G4int parentID=traj->GetParentID();
+      G4int parentID=traj->GetParentID();
 
-	    // always store primaries
-	    if(parentID==0)
-      {
-        interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
-        continue;
-      }
+      // always store primaries
+      if(parentID==0)
+	{
+	  interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
+	  continue;
+	}
 
-	    // check on energy (if energy threshold is not negative
-	    if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
-	      traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
-	    {
-        interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
-	      continue;
-	    }
+      // check on energy (if energy threshold is not negative)
+      if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
+	  traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
+	{
+	  interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
+	  continue;
+	}
 
-	    // check on particle if not empty string
-	    if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
+      // check on particle if not empty string
+      if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
         G4String particleName = traj->GetParticleName();
         //G4cout << particleName << G4endl;
         std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
@@ -295,7 +294,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         }
       }
 
-	    // check on trajectory tree dept (depth = 0 means only primaries)
+      // check on trajectory tree depth (depth = 0 means only primaries)
       const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
       if (depthMap[traj] <= depth) {
         interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
@@ -315,6 +314,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         continue;
       }
 
+      // if not interesting insert false
       interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,false));
     }
 
