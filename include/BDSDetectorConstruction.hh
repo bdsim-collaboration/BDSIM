@@ -19,7 +19,7 @@ class G4Region;
 class G4VPhysicalVolume;
 
 namespace GMAD {
-  class Element;
+  struct Element;
   template<typename T> class FastList;
 }
 
