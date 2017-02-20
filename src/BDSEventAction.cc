@@ -341,6 +341,22 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         continue;
       }
     }
+
+    // Relabel with new track IDS
+
+    // make map
+    std::map<BDSTrajectory*, G4int> interestingTrajIndexMap;
+    int idx = 0;
+    for(auto i : interestingTrajVec) {
+      interestingTrajIndexMap[i] = idx;
+      idx++;
+    }
+
+    for(auto i : interestingTrajVec) {
+      G4int newParentID = (G4int)interestingTrajIndexMap[trackIDMap[i->GetParentID()]];
+      i->SetNewParentID(newParentID);
+    }
+
     bdsOutput->WriteTrajectory(interestingTrajVec);
   }
   
