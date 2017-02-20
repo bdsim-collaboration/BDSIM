@@ -85,16 +85,23 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
 #endif
   if (info)
-    {
-      prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
-      postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
-      
-      G4double sCentre = info->GetSPos();
-      preS             = sCentre + prePosLocal.z();
-      postS            = sCentre + postPosLocal.z();
-      beamlineIndex    = info->GetBeamlineIndex();
-      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
-    }
+  {
+    prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
+    postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
+
+    G4double sCentre = info->GetSPos();
+    preS             = sCentre + prePosLocal.z();
+    postS            = sCentre + postPosLocal.z();
+    beamlineIndex    = info->GetBeamlineIndex();
+    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+  }
+
+  const std::vector<const G4Track*> *secondaries = step->GetSecondaryInCurrentStep();
+
+  for(auto secondaryTrack : *secondaries )
+  {
+    secondaryID.push_back(secondaryTrack->GetTrackID());
+  }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
