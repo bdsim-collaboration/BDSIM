@@ -275,7 +275,7 @@ namespace GMAD
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
-    double      writePrimaries;
+    bool        writePrimaries;
 
     /// Ring parameters
     int      nturns;
