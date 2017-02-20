@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -34,19 +33,17 @@ extern BDSOutputBase* bdsOutput;       // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
-namespace {
-  // Function to recursively connect t
-  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap, std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
-  {
-    G4int parentID = t->GetParentID();
-    BDSTrajectory *t2 = trackIDMap.at(parentID);
-    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(t2,true));
-    if(t2->GetParentID() != 0) {
-      connectTraj(trackIDMap, interestingTraj, t2);
-    }
-    else {
-      return;
-    }
+// Function to recursively connect t
+void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap, std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
+{
+  G4int parentID = t->GetParentID();
+  BDSTrajectory *t2 = trackIDMap.at(parentID);
+  interestingTraj.insert(std::pair<BDSTrajectory*, bool>(t2,true));
+  if(t2->GetParentID() != 0) {
+    connectTraj(trackIDMap, interestingTraj, t2);
+  }
+  else {
+    return;
   }
 }
 
@@ -232,6 +229,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   if(BDSGlobalConstants::Instance()->StoreTrajectory())
   {
+    std::vector<BDSTrajectory*> interestingTrajectories;
+    std::map<BDSTrajectory*, bool> interestingTraj;
+
     TrajectoryVector* trajVec = trajCont->GetVector();
       
 #ifdef BDSDEBUG
@@ -261,8 +261,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
     }
 
-    std::vector<BDSTrajectory*> interestingTrajectories;
-    std::map<BDSTrajectory*, bool> interestingTraj;
     // loop over trajectories and determine if traj should be stored
     for (auto iT1 : *trajVec)
     {
@@ -314,8 +312,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,true));
         continue;
       }
-
-      interestingTraj.insert(std::pair<BDSTrajectory*,bool>(traj,false));
     }
 
     // Connect trajectory graphs
