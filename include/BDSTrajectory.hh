@@ -54,6 +54,8 @@ public:
 
   virtual int GetPointEntries()    const {return fpBDSPointsContainer.size();}
 
+  void  SetNewParentID(G4int NewParentIDIn)  {fNewParentID = NewParentIDIn;}
+  G4int GetNewParentID()               const {return fNewParentID;}
   G4int GetCreatorProcessType()    const {return creatorProcessType;}
   G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
 
@@ -73,6 +75,7 @@ protected:
   G4int          creatorProcessSubType;
   G4double       weight;
   G4bool         interactive;
+  G4int          fNewParentID;
 
   /// Container of all points. This is really a vector so all memory is dynamically
   /// allocated and there's no need to make this dynamically allocated itself a la
