@@ -265,17 +265,19 @@ namespace GMAD
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
     int         numberOfEventsPerNtuple;
-    double      trajCutGTZ;
-    double      trajCutLTR;
-    bool        trajConnect;
-    bool        trajNoTransportation;
+
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
+
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
+    double      trajCutGTZ;
+    double      trajCutLTR;
+    bool        trajConnect;
+    bool        trajNoTransportation;
 
     /// Ring parameters
     int      nturns;
