@@ -124,6 +124,9 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postWeight         = -1.;
   preEnergy          = -1.;
   postEnergy         = -1.;
+  preMomentum        = G4ThreeVector();
+  preMomentum        = G4ThreeVector();
+  postMomentum       = G4ThreeVector();
   energy             = -1.;
   preS               = -1000;
   postS              = -1000;

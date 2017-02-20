@@ -52,6 +52,8 @@ public:
   inline G4double GetPreEnergy()               const {return preEnergy;}
   inline G4double GetPostEnergy()              const {return postEnergy;}
   inline G4double GetEnergy()                  const {return energy;}
+  inline G4ThreeVector GetPreMomentum()        const {return preMomentum;}
+  inline G4ThreeVector GetPostMomentum()       const {return postMomentum;}
   inline G4double GetPreS()                    const {return preS;}
   inline G4double GetPostS()                   const {return postS;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
