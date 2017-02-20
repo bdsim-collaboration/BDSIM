@@ -64,13 +64,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   const G4double radiusOfCurvature = GetRadHelix();
   if (radiusOfCurvature < minimumRadiusOfCurvature)
     {
-      AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut);
-      // empirically chosen error values that give the fewest warnings
-      // for spiralling particles in showers in strong dipole fields
-      for(G4int i = 0; i < 3; i++)
-	{yErr[i] = 1e-20;}
-      for(G4int i = 3; i < 6; i++)
-	{yErr[i] = 1e-40;}
+      AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut, yErr);
       return;
     }
 
@@ -93,7 +87,8 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 						     G4ThreeVector  field,
 						     G4double       stepLength,
-						     G4double       yOut[])
+						     G4double       yOut[],
+						     G4double       yErr[])
 {
   AdvanceHelix(yIn, field, stepLength, yOut);
 
@@ -101,8 +96,8 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
   G4ThreeVector unitField       = field.unit();
   G4ThreeVector unitSideways    = unitField.cross(unitMomentum.unit());
   G4ThreeVector correctPosition = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
-  G4ThreeVector delta2 = 1*CLHEP::mm * unitField;// + 1*CLHEP::um * unitMomentum;
-  G4ThreeVector delta1 = std::max(stepLength, 1*CLHEP::mm)*unitField;
+  //G4ThreeVector delta2 = 1*CLHEP::mm * unitField;// + 1*CLHEP::um * unitMomentum;
+  //G4ThreeVector delta1 = std::max(stepLength, 1*CLHEP::mm)*unitField;
   G4ThreeVector delta = stepLength*unitSideways;
   G4ThreeVector newPosition     = correctPosition + delta;
   //G4cout << newPosition << delta << G4endl;
@@ -111,4 +106,11 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
   yOut[0] = newPosition[0];
   yOut[1] = newPosition[1];
   yOut[2] = newPosition[2];
+
+  // empirically chosen error values that give the fewest warnings
+  // for spiralling particles in showers in strong dipole fields
+  for(G4int i = 0; i < 3; i++)
+    {yErr[i] = 1e-20;}
+  for(G4int i = 3; i < 6; i++)
+    {yErr[i] = 1e-40;}
 }
