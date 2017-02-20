@@ -22,10 +22,10 @@ class Globals():
 
     def __init__(self):
         # bdsim executable
-        self._bdsimExecutable = "/Users/williamshields/bdsim/bdsim_builds/devel/bdsim"
+        self._bdsimExecutable = "@CMAKE_BINARY_DIR@/bdsim"
 
         # comparator executable
-        self._comparatorExecutable = "/Users/williamshields/bdsim/bdsim_builds/devel/comparator/comparator"
+        self._comparatorExecutable = "@CMAKE_BINARY_DIR@/comparator/comparator"
 
         # components that can be varied
         self.components = ['drift',

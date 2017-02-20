@@ -3,9 +3,6 @@
 
 #include "BDSExtent.hh"
 
-#include "parser/element.h"
-#include "parser/fastlist.h"
-
 #include "globals.hh" // geant4 types / globals
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
@@ -20,6 +17,11 @@ class GFlashParticleBounds;
 class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
+
+namespace GMAD {
+  struct Element;
+  template<typename T> class FastList;
+}
 
 class BDSAcceleratorModel;
 class BDSFieldObjects;
@@ -88,7 +90,7 @@ private:
 
   /// Detect whether the first element has an angled face such that it might overlap
   /// with a previous element.  Only used in case of a circular machine.
-  G4bool UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element);
+  G4bool UnsuitableFirstElement(std::list<GMAD::Element>::const_iterator element);
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
