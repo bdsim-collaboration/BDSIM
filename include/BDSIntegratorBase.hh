@@ -5,7 +5,8 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
+
+class G4Mag_EqRhs;
 
 /**
  * @brief Common functionality to BDSIM integrators.
@@ -32,7 +33,7 @@ public:
   virtual ~BDSIntegratorBase();
 
   /// Estimate maximum distance of curved solution and chord.
-  inline G4double DistChord() const {return distChord;}
+  inline virtual G4double DistChord() const {return distChord;}
 
   /// Geant4 requires that the integrator order must be supplied by the derived class.
   inline virtual G4int IntegratorOrder() const {return 2;}

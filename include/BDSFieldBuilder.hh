@@ -36,7 +36,12 @@ public:
   /// retain ownership of anything.
   void RegisterFieldForConstruction(const BDSFieldInfo* info,
 				    G4LogicalVolume*    logicalVolume,
-				    G4bool              propagateToDaughters = false);
+				    const G4bool        propagateToDaughters = false);
+
+  /// Similar version but 
+  void RegisterFieldForConstruction(const BDSFieldInfo* info,
+				    const std::vector<G4LogicalVolume*>& logicalVolumes,
+				    const G4bool              propagateToDaughters = false);
 
   std::vector<BDSFieldObjects*> CreateAndAttachAll();
 
@@ -49,7 +54,7 @@ private:
   
   /// @{ Register of components to build.
   std::vector<const BDSFieldInfo*> infos;
-  std::vector<G4LogicalVolume*>    lvs;
+  std::vector<std::vector<G4LogicalVolume*> > lvs;
   std::vector<G4bool>              propagators;
   /// @}
 };

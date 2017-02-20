@@ -2,7 +2,6 @@
 #define BDSARRAY3D_H
 
 #include "BDSArray4D.hh"
-#include "BDSFieldValue.hh"
 
 #include "G4Types.hh"
 

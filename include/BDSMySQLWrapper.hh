@@ -1,11 +1,11 @@
 #ifndef BDSMYSQLWRAPPER_H
 #define BDSMYSQLWRAPPER_H
 
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMySQLTable.hh"
 #include <fstream>
 #include <vector>
 #include <string>
+
+class BDSMySQLTable;
 
 #define  _NEXT if(!NextToken()) return;
 #define  _NEXTINPUT if(!NextInputToken()) return;
@@ -20,6 +20,12 @@
 #define CMD_IF       "IF"
 #define CMD_EXISTS   "EXISTS"
 
+/**
+ * @brief Wrapper for mysql file handling.
+ * 
+ * @author John Carter
+ */
+
 class BDSMySQLWrapper 
 {
 public:
@@ -31,10 +37,9 @@ public:
   G4int GetComponentN() {return ComponentN;}
  
   std::vector<BDSMySQLTable*> table;
-
-protected:
   
 private:
+  BDSMySQLWrapper() = delete;
   // Data Members for Class Attributes
 
   std::ifstream ifs;
@@ -73,8 +78,6 @@ private:
 
   std::string _currentLine;
   bool _startOfFile;
-
-
 };
 
 #endif

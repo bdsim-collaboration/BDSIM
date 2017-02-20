@@ -14,7 +14,6 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -129,7 +128,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
 	    
 	  // Copy into array - we can always use 4d coords even for lower d arrays
-	  // as they all inherite 4d.
+	  // as they all inherit 4d.
 	  (*result)(indX,indY,indZ,indT) = fv;
 	  
 	  indX++; // increment counter
@@ -197,7 +196,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-            nColumns++;
+	      nColumns++;
 	      if (columnName.find("Fx") != std::string::npos)
 		{xIndex = nColumns; continue;}
 	      if (columnName.find("Fy") != std::string::npos)

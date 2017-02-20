@@ -69,7 +69,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
-  bdsOutput->Initialise(); // open file
+  bdsOutput->Initialise(); // open file, create structures and histograms
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)

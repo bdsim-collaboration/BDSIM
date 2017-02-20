@@ -4,6 +4,8 @@
 
 #include "parser/options.h"
 
+#include "Randomize.hh"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchGaussian::BDSBunchGaussian(): 

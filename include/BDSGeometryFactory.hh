@@ -1,16 +1,17 @@
 #ifndef BDSGEOMETRYFACTORY_H
 #define BDSGEOMETRYFACTORY_H
 
-#include "BDSGeometryFactoryBase.hh"
 #include "BDSGeometryType.hh"
 
 #include "globals.hh"
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
-class BDSGeometry;
 class BDSGeometryExternal;
+class BDSGeometryFactoryBase;
+class G4Colour;
 
 /**
  * @brief Interface to external geometry construction.

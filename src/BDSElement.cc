@@ -1,7 +1,5 @@
-#include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
-#include "BDSExecOptions.hh"
 #include "BDSElement.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldFactory.hh"
@@ -9,10 +7,6 @@
 #include "BDSGeometryFactory.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
-#include "G4ThreeVector.hh"
-
-#include <vector>
 
 class BDSFieldInfo;
 
@@ -49,6 +43,9 @@ void BDSElement::BuildContainerLogicalVolume()
   // make the beam pipe container, this object's container
   containerLogicalVolume = geom->GetContainerLogicalVolume();
   containerSolid         = geom->GetContainerSolid();
+
+  // set placement offset from geom so it's placed correctly in the beam line
+  SetPlacementOffset(geom->GetPlacementOffset());
   
   // update extents
   InheritExtents(geom);

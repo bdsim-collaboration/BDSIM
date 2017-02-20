@@ -1,15 +1,16 @@
 #ifndef BDSMAGNETOUTERFACTORY_H
 #define BDSMAGNETOUTERFACTORY_H
 
-#include "BDSBeamPipe.hh"
 #include "BDSMagnetOuter.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4Material.hh"
+
+class BDSBeamPipe;
+class BDSMagnetOuterFactoryBase;
+class BDSMagnetOuterInfo;
+class G4Material;
 
 /**
  * @brief The main interface for using the magnet outer factories.

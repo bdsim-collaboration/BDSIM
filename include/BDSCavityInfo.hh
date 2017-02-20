@@ -49,7 +49,7 @@ public:
   /// Vacuum Material
   G4Material* vacuumMaterial;
 
-  /// Peak Electric Field
+  /// Peak Electric Field in V / m
   G4double eField;
 
   /// Frequency in MHz

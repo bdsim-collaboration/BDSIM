@@ -311,7 +311,7 @@ BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
   else
     {
       BDSFieldLoaderBDSIM<std::ifstream> loader;
-      result = loader.Load2D(filePath);
+      result = loader.Load3D(filePath);
 }
   arrays3d[filePath] = result;
   return result;
@@ -484,7 +484,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   G4Transform3D       transform,
 						   G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   BDSInterpolator2D*   ar = CreateInterpolator2D(array, interpolatorType);
   BDSFieldMag*     result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
@@ -496,7 +496,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 						       G4Transform3D       transform,
 						       G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   if (std::abs(array->XStep() - array->YStep()) > 1e-9)
     {
@@ -516,7 +516,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBDipole(G4String            fil
 							 G4Transform3D       transform,
 							 G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   
   BDSArray2DCoordsRDipole* rArray = new BDSArray2DCoordsRDipole(array);

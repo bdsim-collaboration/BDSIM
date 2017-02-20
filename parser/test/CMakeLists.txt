@@ -21,6 +21,22 @@ set_tests_properties(gmad-reservedVar PROPERTIES WILL_FAIL 1)
 add_test(gmad-reservedFunction ${gmadBinary} reservedfunction.gmad)
 set_tests_properties(gmad-reservedFunction PROPERTIES WILL_FAIL 1)
 
+# try to define a reserved name
+add_test(gmad-defineReservedName ${gmadBinary} definereservedname.gmad)
+set_tests_properties(gmad-defineReservedName PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a already defined numeric variable
+add_test(gmad-defineReservedVariable ${gmadBinary} definereservedvariable.gmad)
+set_tests_properties(gmad-defineReservedVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a already defined string variable
+add_test(gmad-defineReservedStringVariable ${gmadBinary} definereservedstringvariable.gmad)
+set_tests_properties(gmad-defineReservedStringVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a reserved function
+add_test(gmad-defineReservedFunction ${gmadBinary} definereservedfunction.gmad)
+set_tests_properties(gmad-defineReservedFunction PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
 # options with no semicolon
 add_test(gmad-nosemicolon ${gmadBinary} nosemicolon.gmad)
 set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)

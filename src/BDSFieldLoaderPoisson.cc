@@ -86,7 +86,7 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
 	      lineData[i] = value;
 	    }
 	  // Construct field value
-	  BDSFieldValue fv = BDSFieldValue(lineData[2]*CLHEP::gauss, lineData[3]*CLHEP::gauss, 0);
+	  BDSFieldValue fv = BDSFieldValue(lineData[2], lineData[3], 0);
 	  // we could use the gradients here, but we don't
 	  
 	  // Copy into array.

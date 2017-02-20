@@ -140,7 +140,7 @@ G4double BDSExtent::MaximumAbs() const
 {
   std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
 				std::abs(extYNeg), extYPos,
-				std::abs(extZNeg), extXPos};
+				std::abs(extZNeg), extZPos};
   return *std::max_element(exts.begin(), exts.end());
 }
 

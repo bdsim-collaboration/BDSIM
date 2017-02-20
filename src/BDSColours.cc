@@ -3,6 +3,7 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Colour.hh"
 
 #include <map>
 #include <sstream>

@@ -17,7 +17,7 @@ public:
 			   G4double width=1*CLHEP::m);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
-  void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+  virtual void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
 
 private:
   typedef BDSMultilayerScreen super;
@@ -42,8 +42,8 @@ private:
   void frontScintillatorLayer1();
   void frontScintillatorLayer2();
   void frontLayer();
-  void reflectiveSurface();
-  void roughSurface();
+  virtual void ReflectiveSurface();
+  virtual void RoughSurface();
   
   G4String _material;
   G4double _thickness;

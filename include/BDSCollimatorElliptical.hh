@@ -25,6 +25,15 @@ public:
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSCollimatorElliptical();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCollimatorElliptical& operator=(const BDSCollimatorElliptical&) = delete;
+  BDSCollimatorElliptical(BDSCollimatorElliptical&) = delete;
+  ///@}
 };
 
 #endif
