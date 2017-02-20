@@ -329,7 +329,7 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   if (BDSParser::Instance()->GetOptions().writePrimaries)
-  {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
+    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
 /// write a histgoram
