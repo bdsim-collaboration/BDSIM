@@ -1,10 +1,10 @@
 import numpy as _np
-from scipy import constants as _con
 import os as _os
 import string as _string
 import glob as _glob
 import subprocess as _sub
 import multiprocessing
+import time
 
 import Globals
 import PhaseSpace
@@ -17,15 +17,23 @@ multiEntryTypes = [tuple,list,_np.ndarray]
 
 GlobalData = Globals.Globals()
 
-returnCode = {'SUCCESS'         : 0,
-              'FAILED'          : 1,
-              'INCORRECT_ARGS'  : 2,
-              'FILE_NOT_FOUND'  : 3}
+returnCode = {'SUCCESS'          : 0,
+              'FAILED'           : 1,
+              'INCORRECT_ARGS'   : 2,
+              'FILE_NOT_FOUND'   : 3, #i.e BDSIM did not generate anything
+              'OVERLAPS'         : 4,
+              'STUCK_PARTICLE'   : 5,
+              'TRACKING_WARNING' : 6,
+              }
+
+class Timing():
+    def __init__(self):
+        self.bdsimTimes = []
+        self.comparatorTimes = []
 
 def Run(inputDict):
     ''' Generate the rootevent output for a given gmad file.
         '''
-
     file = inputDict['file']
     isSelfComparison = inputDict['isSelfComparison']
     originalFile = inputDict['originalFile']
@@ -37,23 +45,29 @@ def Run(inputDict):
         outputfile = file
     outputfile = outputfile.split('/')[-1]
 
-    logfile = outputfile + ".log"
+    bdsimLogFile = outputfile + "_bdsim.log"
+    comparatorLogFile = outputfile + "_comp.log"
+
+    t = time.time()
 
     # run bdsim and dump output to temporary log file.
     # os.system used as subprocess.call has difficulty with the arguments for some reason.
     bdsimCommand = GlobalData._bdsimExecutable + " --file=" + file + " --output=rootevent --outfile=" + outputfile + " --batch"
-    _os.system(bdsimCommand + ' > '+logfile)
+    _os.system(bdsimCommand + ' > '+ bdsimLogFile)
+    bdsimTime = _np.float(time.time() - t)
+    inputDict['bdsimTime'] = bdsimTime
 
     # quick check for output file. If it doesn't exist, update the main failure log and return None.
     # If it does exist, delete the log and return the filename
     files = _glob.glob('*.root')
     testOutputFile = outputfile + '_event.root'
+
+    outputLog = open(comparatorLogFile, 'a')  #temp log file for the comparator output.
     if not files.__contains__(testOutputFile):
-        outputLog = open(logfile, 'a')  # temp log file for the comparator output.
         outputLog.write('\r\n')
         outputLog.write('Output from '+file+' was not written.')
         outputLog.close()
-        return returnCode['FILE_NOT_FOUND']#False
+        inputDict['Code'] = returnCode['FILE_NOT_FOUND']#False
     else:
         #Only compare if the output was generated.
         if isSelfComparison:
@@ -64,10 +78,12 @@ def Run(inputDict):
             pass #This is where the comparison with the original file will occur.
             #TODO: figure out how to process original files that will be compared to.
 
-        outputLog = open(logfile, 'a')  # temp log file for the comparator output.
+        t = time.time()
         outputLog.write('\r\n')
         TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, testOutputFile], stdout=outputLog)
         outputLog.close()
+        ctime = time.time() - t
+        inputDict['compTime'] = ctime
 
         # immediate pass/fail bool for decision on keeping root output
         hasPassed = True
@@ -78,13 +94,13 @@ def Run(inputDict):
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            return returnCode['SUCCESS']#True
+            inputDict['Code'] = returnCode['SUCCESS']#True
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            return returnCode['FAILED']#False
-
+            inputDict['Code'] = returnCode['FAILED']#False
+    return inputDict
 
 class Test(dict):
     def __init__(self, component, energy, particle, phaseSpace=None,
@@ -380,23 +396,33 @@ class TestSuite(TestUtilities):
             '''
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   #Write all gmad files for all test objects.
-        
+
+        #class attributes for storing return & timing data.
+        self.timings = Timing()
+        self.testResults = []
+
         _os.chdir('BDSIMOutput')
         testfilesDir = '../Tests/*/'
         componentDirs = _glob.glob(testfilesDir) #get all component dirs in the Tests dir
 
-        self.testResults = []
+        initialTime = time.time()
 
         for dir in componentDirs:
-            testfileStr = dir+'*.gmad'  #get all gmad files in a components dir
+            t = time.time() #initial time
+
+            #get all gmad files in a components dir
+            testfileStr = dir+'*.gmad'
             tests = _glob.glob(testfileStr)
 
+            #compile iterable list of dicts for multithreading function.
             testlist = []
-
             for test in tests:
+                #pass data in a dict. Easier to pass single expandable variable.
                 testDict = {'file'              : test,
                             'originalFile'      : '',
-                            'isSelfComparison'  : isSelfComparison}
+                            'isSelfComparison'  : isSelfComparison,
+                            'bdsimTime'         : 0,
+                            'compTime'          : 0}
                 testlist.append(testDict)
 
             p = multiprocessing.Pool(4)
@@ -422,11 +448,18 @@ class TestSuite(TestUtilities):
 #                    self._UpdateBDSIMFailLog(test)
 #                    _os.system("rm temp.log")
 #                    print("Output for test "+test+" was not generated.")
+            elapsed = time.time() - t #final time
+            print('Testing time for '+dir+' = '+_np.str(elapsed))
+
+        finalTime = time.time() - initialTime
+        print('Total Testing time  = ' + _np.str(finalTime))
+        print('Average BDSIM time = '+ _np.str(_np.average(self.timings.bdsimTimes)) + " +/- " + _np.str(_np.std(self.timings.bdsimTimes))+ '.')
+        print('Average Comparator time = '+ _np.str(_np.average(self.timings.comparatorTimes)) + " +/- " + _np.str(_np.std(self.timings.comparatorTimes))+ '.')
         _os.chdir('../')
 
 
     def _FullTestSuite(self):
-        writer = Writer()
+        writer = Writer.Writer()
         writer.SetBeamFilename('trackingTestBeam.madx')
         writer.SetOptionsFilename('trackingTestOptions.gmad')
 
