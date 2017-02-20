@@ -98,4 +98,4 @@ else()
   set(G4_PATCH_LEVEL 9)
 endif()
 
-mark_as_advanced(GEANT4_CONFIG)
+mark_as_advanced(Geant4_PREFIX)
