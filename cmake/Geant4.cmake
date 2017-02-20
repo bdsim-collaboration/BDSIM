@@ -97,3 +97,5 @@ else()
   set(G4_MINOR_VERSION 9)
   set(G4_PATCH_LEVEL 9)
 endif()
+
+mark_as_advanced(GEANT4_CONFIG)
