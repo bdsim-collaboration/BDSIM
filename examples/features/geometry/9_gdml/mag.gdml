@@ -131,7 +131,7 @@
 			<materialref ref="G4_Cu"/>
 			<solidref ref="coil_solid_ref"/>
 		</volume>
-		<volume name="world_volume_lv">
+		<volume name="World">
 			<materialref ref="G4_Galactic"/>
 			<solidref ref="world_sub"/>
 			<physvol name="yoke_volume_ref0_pv">
@@ -233,6 +233,6 @@
 		</volume>
 	</structure>
 	<setup name="Default" version="1.0">
-		<world ref="world_volume_lv"/>
+		<world ref="World"/>
 	</setup>
 </gdml>

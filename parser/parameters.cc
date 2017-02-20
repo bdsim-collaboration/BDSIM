@@ -7,7 +7,6 @@
 #include <string>
 
 #include "array.h"
-#include "element.h"
 
 using namespace GMAD;
 #define BDSDEBUG 1
@@ -114,7 +113,7 @@ void Parameters::inherit_properties(const Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
- // this is used for the inheritance / newinstance mechanism
+  // this is used for the inheritance / newinstance mechanism
 
   for (auto& i : setMap)
     {

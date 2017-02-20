@@ -20,8 +20,8 @@ class BDSIntegratorMultipoleThin: public BDSIntegratorBase
 {
 public:
   BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
-			 G4double                 brho,
-			 G4Mag_EqRhs*             eqOfMIn);
+			     G4double                 brho,
+			     G4Mag_EqRhs*             eqOfMIn);
   
   virtual ~BDSIntegratorMultipoleThin(){;}
 

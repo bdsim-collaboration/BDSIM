@@ -111,7 +111,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
       
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
   
   G4double rootK  = sqrt(std::abs(kappa*zp)); // direction independent
   G4double rootKh = rootK*h*zp;
@@ -203,6 +204,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
     {
       backupStepper->Stepper(yInput, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
       return;
     }
 

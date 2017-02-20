@@ -28,7 +28,6 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 }
 
 void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
-					 G4ThreeVector /*bField*/,
 					 G4double        h,
 					 G4double        yDec[])
 {
@@ -88,5 +87,9 @@ void BDSIntegratorDecapole::Stepper(const G4double yInput[],
 {    
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i]=0;} // this is clearly wrong!
-  AdvanceHelix(yInput, (G4ThreeVector)0, hstep, yOut);
+  AdvanceHelix(yInput, hstep, yOut);
+  
+  // TBC - we have not set DistChord here!
+
+  // TBC - no use of backup stepper here
 }

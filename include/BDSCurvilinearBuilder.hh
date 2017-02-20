@@ -32,15 +32,18 @@ private:
   /// coordinates between startElement and finishElement. This creates a BDSSimpleComponent
   /// first then wraps it in a premade BDSBeamlineElement. This must ONLY be used for a range
   /// of elements with the same tilt for the correct coordinate frame to be produced. The tilt
-  /// is taken from the first element and assumed to be the same for all.
+  /// is taken from the first element and assumed to be the same for all. The index is the
+  /// index it'l have in the curvilinear beam line.
   BDSBeamlineElement* CreateCurvilinearElement(G4String                    elementName,
 					       BDSBeamline::const_iterator startElement,
-					       BDSBeamline::const_iterator finishElement);
+					       BDSBeamline::const_iterator finishElement,
+					       G4int                       index);
 
   /// Create the BDSBeamlineElement by wrapping a BDSSimpleComponent.
   BDSBeamlineElement* CreateElementFromComponent(BDSSimpleComponent* component,
 						 BDSBeamline::const_iterator startElement,
-						 BDSBeamline::const_iterator finishElement);
+						 BDSBeamline::const_iterator finishElement,
+						 G4int                       index);
 
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
