@@ -1,0 +1,12 @@
+rb1 : rbend, l=2.5*m, B = 1.200830725, aper1=20*cm;
+d1: drift, l=0.2*m;
+lat : line = (d1,rb1,d1);
+
+use, lat;
+
+option, checkOverlaps=1,
+	dontSplitSBends=1,
+	magnetGeometryType="cylindrical";
+
+beam, particle="e-",
+      energy=3*GeV;

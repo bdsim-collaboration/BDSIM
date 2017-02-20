@@ -2,7 +2,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSColours.hh"
-#include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 
 #include "BDSDebug.hh"
@@ -80,8 +79,6 @@ void BDSDegrader::BuildContainerLogicalVolume()
 			     outerDiameter*0.5,
 			     chordLength*0.5);
     
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-  
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");

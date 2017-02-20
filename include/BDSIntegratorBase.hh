@@ -33,7 +33,7 @@ public:
   virtual ~BDSIntegratorBase();
 
   /// Estimate maximum distance of curved solution and chord.
-  inline virtual G4double DistChord() const {return distChord;}
+  inline virtual G4double DistChord() const {return distChordPrivate;}
 
   /// Geant4 requires that the integrator order must be supplied by the derived class.
   inline virtual G4int IntegratorOrder() const {return 2;}
@@ -52,8 +52,7 @@ protected:
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
 
-  /// Variable used to record the distance from the chord calculated during the step.
-  G4double distChord;
+  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
 
   /// Advance as drift (for when field strength is very low)
   void AdvanceDrift(const G4double yIn[],
@@ -76,6 +75,9 @@ protected:
 private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorBase();
+
+  /// Variable used to record the distance from the chord calculated during the step.
+  G4double distChordPrivate;
 };
 
 #endif
