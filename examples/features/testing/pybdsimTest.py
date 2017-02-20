@@ -227,7 +227,8 @@ class Test(dict):
         else:
             raise TypeError("Unknown data type for "+parameter)
 
-class TestSuite():
+
+class TestUtilities(object):
     def __init__(self,directory=''):
         self._tests = [] #list of test objects
 
@@ -257,14 +258,6 @@ class TestSuite():
         self.bdsimPassLog = 'bdsimOutputPassed.log'
         self._comparatorLog = 'comparatorOutput.log'
 
-    def AddTest(self,test):
-        ''' Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
-            '''
-        if not isinstance(test,Test):
-            raise TypeError("Test is not a bdsimtesting.pybdsimTest.Test instance")
-        else:
-            self._tests.append(test)
-
     def WriteGmadFiles(self):
         ''' Write the gmad files for all tests in the Tests directory.
             '''
@@ -283,16 +276,16 @@ class TestSuite():
         else:
             outputfile = file
         outputfile = outputfile.split('/')[-1]
-        
+
         #run bdsim and dump output to temporary log file.
         #os.system used as subprocess.call has difficulty with the arguments for some reason.
-        bdsimCommand = GlobalData._bdsimExecutable + " --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
+        bdsimCommand = GlobalData._bdsimExecutable + " --file=" + file + " --output=rootevent --outfile=" + outputfile + " --batch"
         _os.system(bdsimCommand + ' > temp.log')
 
         #quick check for output file. If it doesn't exist, update the main failure log and return None.
         #If it does exist, delete the log and return the filename
         files = _glob.glob('*.root')
-        outputevent = outputfile+'_event.root'
+        outputevent = outputfile + '_event.root'
         if not files.__contains__(outputevent):
             return None
         else:
@@ -310,30 +303,75 @@ class TestSuite():
                 The Comparator log is updated.
             '''
 
-        outputLog = open("tempComp.log",'w') #temp log file for the comparator output.
-        TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile,newFile],stdout=outputLog)
+        outputLog = open("tempComp.log", 'w')  # temp log file for the comparator output.
+        TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, newFile], stdout=outputLog)
         outputLog.close()
-        
-        self._testStatus[test] = TestResult #Set dict val to comparator return num.
+
+        #self._testStatus[test] = TestResult #Set dict val to comparator return num.
         #immediate pass/fail bool for decision on keeping root output
         hasPassed = True
         if TestResult != 0:
             hasPassed = False
-        
+
         if hasPassed:
-            _os.system("rm "+newFile)
+            #_os.system("rm "+newFile)
             if isSelfComparison:
-                _os.system("rm "+originalFile)
+                _os.system("rm " + originalFile)
             _os.system("rm tempComp.log")
-            f = open(self.bdsimPassLog,'a') #Update the pass log
-            f.write("File "+newFile+" has passed.\r\n")
+            f = open(self.bdsimPassLog, 'a')  #Update the pass log
+            f.write("File " + newFile + " has passed.\r\n")
             f.close()
         else:
             if isSelfComparison:
-                _os.system("rm "+originalFile)
-            _os.system("mv "+newFile + " FailedTests/"+newFile) #move the failed file
+                _os.system("rm " + originalFile)
+            _os.system("mv " + newFile + " FailedTests/" + newFile)  #move the failed file
             self._UpdateComparatorLog(newFile)
             _os.system("rm tempComp.log")
+
+    def _UpdateBDSIMFailLog(self, testFileName):
+        ''' Update the test failure log.
+            '''
+        f = open('temp.log', 'r')
+        g = open(self.bdsimFailLog, 'a')
+        g.write('\r\n')
+        g.write('FAILED TEST FILE: ' + testFileName)
+        g.write('\r\n')
+        for line in f:
+            g.write(line)
+        g.close()
+
+    def _UpdateComparatorLog(self, testFileName):
+        ''' Update the test pass log.
+            '''
+        f = open('tempComp.log', 'r')
+        g = open(self._comparatorLog, 'a')
+        g.write('\r\n')
+        g.write('FAILED TEST FILE: ' + testFileName)
+        g.write('\r\n')
+        for line in f:
+            g.write(line)
+        g.close()
+
+    def WriteGlobalOptions(self):
+        ''' Write the options file that will be used by all test files.
+            '''
+        options = _options.Options()
+        options.SetSamplerDiameter(3)
+        options.SetWritePrimaries(True)
+        Writer = _pybdsimWriter.Writer()
+        Writer.WriteOptions(options,'Tests/trackingTestOptions.gmad')
+
+class TestSuite(TestUtilities):
+    def __init__(self,directory):
+        super(TestSuite, self).__init__(directory)
+
+    def AddTest(self,test):
+        ''' Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
+            '''
+        if not isinstance(test,Test):
+            raise TypeError("Test is not a bdsimtesting.pybdsimTest.Test instance")
+        else:
+            self._tests.append(test)
 
 
     def RunTestSuite(self,isSelfComparison=True):
@@ -386,37 +424,6 @@ class TestSuite():
 #                    print("Output for test "+test+" was not generated.")
         _os.chdir('../')
 
-    def WriteGlobalOptions(self):
-        ''' Write the options file that will be used by all test files.
-            '''
-        options = _options.Options()
-        options.SetSamplerDiameter(3)
-        Writer = _pybdsimWriter.Writer()
-        Writer.WriteOptions(options,'Tests/trackingTestOptions.gmad')
-    
-    def _UpdateBDSIMFailLog(self,testFileName):
-        ''' Update the test failure log.
-            '''
-        f = open('temp.log','r')
-        g = open(self.bdsimFailLog,'a')
-        g.write('\r\n')
-        g.write('FAILED TEST FILE: '+testFileName)
-        g.write('\r\n')
-        for line in f:
-            g.write(line)
-        g.close()
-        
-    def _UpdateComparatorLog(self,testFileName):
-        ''' Update the test pass log.
-            '''
-        f = open('tempComp.log','r')
-        g = open(self._comparatorLog,'a')
-        g.write('\r\n')
-        g.write('FAILED TEST FILE: '+testFileName)
-        g.write('\r\n')
-        for line in f:
-            g.write(line)
-        g.close()
 
     def _FullTestSuite(self):
         writer = Writer()
