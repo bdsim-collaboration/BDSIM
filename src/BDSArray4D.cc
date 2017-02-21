@@ -19,7 +19,8 @@ BDSFieldValue& BDSArray4D::operator()(const G4int x,
 				      const G4int t)
 {
   OutsideWarn(x,y,z,t); // keep as a warning as can't assign to invalid index
-  return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+  //return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+    return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
 }
 
 const BDSFieldValue& BDSArray4D::GetConst(const G4int x,
@@ -29,7 +30,8 @@ const BDSFieldValue& BDSArray4D::GetConst(const G4int x,
 {
   if (Outside(x,y,z,t))
     {return defaultValue;}
-  return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+//  return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+    return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
 }
   
 const BDSFieldValue& BDSArray4D::operator()(const G4int x,

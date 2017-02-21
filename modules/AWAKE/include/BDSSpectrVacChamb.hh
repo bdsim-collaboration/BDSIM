@@ -82,8 +82,6 @@ private:
   G4RotationMatrix* _rotStrut;
   G4ThreeVector _transStrut;
 
-    std::vector<G4LogicalVolume*> _logVols;
-
   void Build();
   void BuildBox(); 
   void BuildBox1(); 

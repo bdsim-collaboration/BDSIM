@@ -305,7 +305,7 @@ void BDSAwakeSpectrometer::BuildField()
     //The position of the field is relative to the pole position of the magnet. The field is translated accordingly.
     G4ThreeVector poleTranslation = G4ThreeVector(itsBmapXOffset,0,itsBmapZOffset);
     G4cout << __METHOD_NAME__ << itsBmapXOffset << " " << itsBmapZOffset << G4endl;
-    //_fieldInfo->Translate(poleTranslation);
+    _fieldInfo->Translate(poleTranslation);
 
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
 							    containerLogicalVolume,
@@ -734,7 +734,7 @@ void BDSAwakeSpectrometer::BuildScreen()
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
-  _mlScreen->place(_screenRotationMatrix,
+  _mlScreen->Place(_screenRotationMatrix,
 		   G4ThreeVector(_screenCentreX,0,_screenCentreZ),
 		   containerLogicalVolume
 		   );
