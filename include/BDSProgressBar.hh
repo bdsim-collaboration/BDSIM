@@ -1,8 +1,6 @@
 #ifndef BDSPROGRESSBAR_H
 #define BDSPROGRESSBAR_H
 
-#include "BDSGlobalConstants.hh"
-
 #include <iostream>
 #include <iomanip>
 #include <string>

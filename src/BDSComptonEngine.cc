@@ -9,6 +9,7 @@
 #include "BDSComptonEngine.hh"
 #include "G4ios.hh"
 #include "G4LorentzRotation.hh"
+#include "G4ThreeVector.hh"
 #include "Randomize.hh" 
 #include "CLHEP/Units/PhysicalConstants.h"
 

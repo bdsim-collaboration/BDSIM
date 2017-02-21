@@ -3,13 +3,18 @@
 
 #ifndef __ROOTBUILD__
 class BDSEnergyCounterHit;
-class BDSTunnelHit;
 class BDSTrajectoryPoint;
 #endif
 
 #include "TObject.h"
 
 #include <vector>
+
+/**
+ * @brief Data stored for energy deposition hits per event.
+ * 
+ * @author Stewart Boogert
+ */
 
 class BDSOutputROOTEventLoss: public TObject
 {
@@ -39,7 +44,7 @@ public:
   /// @}
   
   BDSOutputROOTEventLoss();
-  BDSOutputROOTEventLoss(bool storeLocal, bool storeGobal);
+  BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(BDSTrajectoryPoint* hit);
@@ -47,8 +52,9 @@ public:
 #endif
   virtual void Flush();
 
-  bool storeLocal  = false;
-  bool storeGlobal = false;
+  bool storeLinks  = false; // Store links between Eloss and model and trajectors
+  bool storeLocal  = false; // Store local coordinates
+  bool storeGlobal = false; // Store global coordinates
   
   ClassDef(BDSOutputROOTEventLoss,1);
 };

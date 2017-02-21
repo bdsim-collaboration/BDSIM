@@ -76,7 +76,7 @@
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr expr
-%type <symp> assignment symdecl symbol
+%type <symp> assignment symdecl symbol symdef
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
@@ -270,6 +270,18 @@ decl : VARIABLE ':' component_with_params
 	    yyerror("ERROR: Element needs parameters");
 	  }
       }
+      | symdef
+      {
+	if(execute)
+	  {
+	    std::string errorstring = "ERROR: " + $1->GetName() + " is already defined or a reserved name or function\n";
+	    yyerror(errorstring.c_str());
+	  }
+      }
+
+symdef : FUNC ':'   { $$ = $1; }
+       | NUMVAR ':' { $$ = $1; }
+       | STRVAR ':' { $$ = $1; }
 
 component_with_params : component ',' parameters
 

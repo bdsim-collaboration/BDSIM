@@ -36,7 +36,6 @@ void Element::PublishMembers()
 {
   publish("l",    &Element::l);
   publish("ks",   &Element::ks);
-  publish("k0",   &Element::k0);
   publish("k1",   &Element::k1);
   publish("k2",   &Element::k2);
   publish("k3",   &Element::k3);
@@ -69,7 +68,6 @@ void Element::PublishMembers()
   publish("aperture4",&Element::aper4);
   alternativeNames["aperture4"] = "aper4";
   publish("outerDiameter",&Element::outerDiameter);
-  //  publish("outR",2*&Element::outerDiameter);
   publish("xsize",&Element::xsize);
   publish("ysize",&Element::ysize);
   publish("xsizeOut",&Element::xsizeOut);
@@ -118,6 +116,7 @@ void Element::PublishMembers()
 
   publish("geometry",&Element::geometryFile);
   publish("bmap",    &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
@@ -128,7 +127,6 @@ void Element::PublishMembers()
   publish("scintmaterial",&Element::scintmaterial);
   publish("windowmaterial",&Element::windowmaterial);
   publish("mountmaterial",&Element::mountmaterial);
-  publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
   publish("cavityModel",&Element::cavityModel);
   publish("bias",&Element::bias);
@@ -138,7 +136,7 @@ void Element::PublishMembers()
   publish("samplerType",&Element::samplerType);
   publish("r",&Element::samplerRadius); // historic
   publish("samplerRadius",&Element::samplerRadius);
-  alternativeNames["samplerRadius"] ="r";
+  alternativeNames["r"] ="samplerRadius";
 
   publish("knl",&Element::knl);
   publish("ksl",&Element::ksl);
@@ -172,7 +170,7 @@ bool Element::isSpecial()const {
 
 void Element::print(int ident)const{
   for(int i=0;i<ident;i++)
-    printf("--");
+    {std::cout << "--";}
 
   std::cout << name << " : " << type << std::endl;
   if (l>0.0)
@@ -207,13 +205,13 @@ void Element::print(int ident)const{
 
   case ElementType::_MULT:
   case ElementType::_THINMULT:
-    printf(" , knl={");
+    std::cout << " , knl={";
     for(auto it=knl.begin();it!=knl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("},  ksl={");
+      {std::cout << (*it);}
+    std::cout << "},  ksl={";
     for(auto it=ksl.begin();it!=ksl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("}");
+      {std::cout << (*it);}
+    std::cout << "}" << std::endl;
     break;
     
   case ElementType::_ECOL:
@@ -287,7 +285,6 @@ void Element::flush()
   name = "";
   l = 0;
   ks = 0;
-  k0 = 0;
   k1 = 0;
   k2 = 0;
   k3 = 0;
@@ -379,16 +376,15 @@ void Element::flush()
   windowmaterial = "vacuum";
   mountmaterial="";
   scintmaterial = "";
-  airmaterial="";
   spec = "";
   cavityModel = "";
 
   colour = "";
+
+  angleSet = false;
 }
 
 double Element::property_lookup(std::string property_name)const{
-  if(property_name == "outR") return 0.5*outerDiameter;
-
   double value;
   try {
     value = get<double>(this,property_name);
@@ -407,6 +403,9 @@ void Element::set(const Parameters& params,std::string nameIn, ElementType typeI
   name = nameIn;
   
   set(params);
+
+  if (params.setMap.at("angle"))
+    {angleSet = true;}
 }
 
 void Element::set(const Parameters& params)

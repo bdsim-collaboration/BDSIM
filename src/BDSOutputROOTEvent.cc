@@ -6,6 +6,7 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -28,10 +29,16 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss(false,false);
-  pFirstHit = new BDSOutputROOTEventLoss(true,false);
-  pLastHit  = new BDSOutputROOTEventLoss(true,false);
-  tHit      = new BDSOutputROOTEventLoss(false,true);
+
+  const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  G4bool storeLinks  = g->StoreELossLinks();
+  G4bool storeLocal  = g->StoreELossLocal();
+  G4bool storeGlobal = g->StoreELossGlobal();
+  
+  eLoss     = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal);
+  pFirstHit = new BDSOutputROOTEventLoss(true      ,       true,       false);
+  pLastHit  = new BDSOutputROOTEventLoss(true      ,       true,       false);
+  tHit      = new BDSOutputROOTEventLoss(false     ,      false,       true);
   traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
@@ -85,6 +92,15 @@ void BDSOutputROOTEvent::CreateHistograms()
 	  runHistos->Create1DHistogram(name,title,binedges);
 	}
     }
+
+  if (useScoringMap)
+    {
+      const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+      evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
+				   g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+				   g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+				   g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
+    }
 }
 
 void BDSOutputROOTEvent::Initialise() 
@@ -93,11 +109,13 @@ void BDSOutputROOTEvent::Initialise()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-
-  CreateHistograms();
   
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
+  useScoringMap = globalConstants->UseScoringMap();
+  
+  CreateHistograms();
+  
   // Base root file name 
   G4String basefilename = globalConstants->OutputFileName();
   basefilename = basefilename+std::string("_event");
@@ -133,7 +151,7 @@ void BDSOutputROOTEvent::Initialise()
   // run histogram tree
   theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
-  theRootOutputTree      = new TTree("Event","BDSIM event");
+  theEventOutputTree     = new TTree("Event","BDSIM event");
   
   // Build options and write structure
   // Get options
@@ -156,25 +174,29 @@ void BDSOutputROOTEvent::Initialise()
   theRunOutputTree->Branch("Info.",            "BDSOutputROOTEventRunInfo",runInfo,32000,1);
 
   // Event info output
-  theRootOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
+  theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theRootOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+  G4bool writePrimaries = o.writePrimaries;
+  if (writePrimaries)
+    {
+      theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+      samplerTrees.push_back(primary);
+    }
   //  samplerMap["Primary"] = primary;
-  samplerTrees.push_back(primary);
 
   // Build loss and hit structures
-  theRootOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
-  theRootOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
+  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
 
   // Build trajectory structures
-  theRootOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
+  theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
 
 
   // Build event histograms
-  theRootOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
+  theEventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
 
   // build sampler structures 
@@ -186,10 +208,9 @@ void BDSOutputROOTEvent::Initialise()
 #else 
       BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
 #endif
-      //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
       // set tree branches
-      theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
+      theEventOutputTree->Branch((samplerName+".").c_str(), 
 				"BDSOutputROOTEventSampler",
 				res,32000,1);
     }
@@ -205,7 +226,10 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   for(int i=0;i<hc->entries();i++)
     {
       G4int samplerId = (*hc)[i]->GetSamplerID();
-      samplerTrees[samplerId+1]->Fill((*hc)[i]);
+      if (BDSParser::Instance()->GetOptions().writePrimaries)
+        {samplerTrees[samplerId+1]->Fill((*hc)[i]);}
+      else
+        {samplerTrees[samplerId]->Fill((*hc)[i]);}
     }
 }
 
@@ -227,7 +251,12 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     evtHistos->Fill1DHistogram(2, sHit, eW);
     runHistos->Fill1DHistogram(5, sHit, eW);
     evtHistos->Fill1DHistogram(5, sHit, eW);
-
+    if (useScoringMap)
+      {
+	G4double x = hit->Getx()/CLHEP::m;
+	G4double y = hit->Gety()/CLHEP::m;
+	evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+      }
   }
 }
 
@@ -299,7 +328,8 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);
+  if (BDSParser::Instance()->GetOptions().writePrimaries)
+    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
 /// write a histgoram
@@ -316,7 +346,7 @@ void BDSOutputROOTEvent::FillEvent()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   theRootOutputFile->cd();
-  theRootOutputTree->Fill();
+  theEventOutputTree->Fill();
   Flush();
 }
 void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,

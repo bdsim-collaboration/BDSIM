@@ -2,10 +2,11 @@
 #define BDSFIELDMAGMUONSPOILER_H
 
 #include "BDSFieldMag.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+
+class BDSMagnetStrength;
 
 /** 
  * @brief Field of a Muon Spoiler.

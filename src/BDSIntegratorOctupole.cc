@@ -27,7 +27,6 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 }
 
 void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
-					 G4ThreeVector /*bField*/,
 					 G4double        h,
 					 G4double        yOct[])
 {
@@ -97,15 +96,17 @@ void BDSIntegratorOctupole::Stepper(const G4double yInput[],
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i] = yInput[i];}
   
-  G4double h = hstep * 0.5; 
+  G4double h = hstep * 0.5;
+
+  // TBC - no use of backup stepper here
   
   // Do two half steps
-  AdvanceHelix(yIn,   (G4ThreeVector)0, h, yTemp);
-  AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
+  AdvanceHelix(yIn, h, yTemp);
+  AdvanceHelix(yTemp, h, yOut); 
   
   // Do a full Step
   h = hstep ;
-  AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
+  AdvanceHelix(yIn, h, yTemp); 
   
   for(G4int i = 0; i < nVariables; i++)
     {
@@ -117,5 +118,7 @@ void BDSIntegratorOctupole::Stepper(const G4double yInput[],
       if (std::abs(yErr[i]) < 1e-7)
 	{yErr[i] = 0;}
     }
+  
+  // TBC - we have not set DistChord here!
 }
 

@@ -13,7 +13,6 @@
 class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
-class G4VPlacement;
 class G4VSensitiveDetector;
 class G4VSolid;
 namespace CLHEP {
@@ -79,7 +78,7 @@ public:
   /// @}
   
   /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
-  inline void SetPlacementOffset(G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
+  inline void SetPlacementOffset(const G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
   /// @{ Set extent
   inline void SetExtent(BDSExtent extIn)      {outerExtent = extIn;}

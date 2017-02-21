@@ -48,8 +48,6 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4GeometryTolerance.hh"
-#include "G4ParticleDefinition.hh"
 #include "G4Transform3D.hh"
 
 #include "parser/elementtype.h"
@@ -63,7 +61,6 @@ using namespace GMAD;
 BDSComponentFactory::BDSComponentFactory()
 {
   lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
-  charge        = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   brho          = BDSGlobalConstants::Instance()->BRho();
   integratorSet = BDS::IntegratorSet(BDSGlobalConstants::Instance()->IntegratorSet());
 
@@ -385,7 +382,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
   
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet, charge);
+  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
   
   return sBendLine;
 }
@@ -401,7 +398,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();  
-  G4double arcLength   = 0, chordLength = 0, field = 0, angle = 0;
+  G4double arcLength = 0, chordLength = 0, field = 0, angle = 0;
   CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
@@ -421,8 +418,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   nextElement,
 					   brho,
 					   st,
-					   integratorSet,
-					   charge);
+					   integratorSet);
   return rbendline;
 }
 
@@ -555,7 +551,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
-			 element->outerDiameter * CLHEP::m,
+			 PrepareOuterDiameter(element),
 			 element->geometryFile,
 			 element->fieldAll));
 }
@@ -587,7 +583,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
-				      element->outerDiameter*CLHEP::m,
+				      PrepareOuterDiameter(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
@@ -604,7 +600,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
-				     element->outerDiameter*CLHEP::m,
+				     PrepareOuterDiameter(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
@@ -646,9 +642,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
   G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
+
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
-				    element->outerDiameter*CLHEP::m,
+				    PrepareOuterDiameter(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
 				    material,
@@ -683,10 +680,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
       
       degraderOffset = overlap * -0.5;
     }
-    
+
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
-			  element->outerDiameter*CLHEP::m,
+			  PrepareOuterDiameter(element),
 			  element->numberWedges,
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
@@ -750,16 +747,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
       itt != element->layerThicknesses.end();
       itt++, itm++)
     {
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " - screen layer: thickness: " 
 	     << *(itt) << ", material "  << (*itm)
 	     <<	", isSampler: "  << (*itIsSampler) << G4endl;
+#endif
       if(element->layerIsSampler.size()>0)
 	{
-	  theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
+	  theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
 	  itIsSampler++;
 	}
       else
-	{theScreen->screenLayer((*itt)*CLHEP::m, *itm);}
+	{theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm);}
     }
   return theScreen;
 }
@@ -927,12 +926,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   info->angleOut = angleOut;
   
   // outer diameter
-  G4double outerDiameter = element->outerDiameter*CLHEP::m;
-  if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
-    }
-  info->outerDiameter = outerDiameter;
+  info->outerDiameter = PrepareOuterDiameter(element);
 
   // outer material
   G4Material* outerMaterial;
@@ -1027,9 +1021,9 @@ void BDSComponentFactory::PrepareCavityModels()
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
-				    nullptr, //construct without material as stored in element
-				    nullptr,
-				    model.eField*CLHEP::volt / CLHEP::m,
+				    nullptr, // construct without material as stored in element
+				    nullptr, // construct without vacuum material as stored in element
+				    0.0,     // construct without gradient as stored in element
 				    model.frequency*CLHEP::hertz,
 				    model.phase,
 				    model.irisRadius*CLHEP::m,
@@ -1058,8 +1052,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
       exit(1);
     }
 
-  // ok to use compiler provided copy constructor as doesn't own materials
-  // which are the only pointers in this class
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
   // update materials in info with valid materials - only element has material info
   if (!element->material.empty())
@@ -1073,6 +1065,9 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
   else
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
+
+  // set electric field
+  info->eField = element->gradient*CLHEP::volt / CLHEP::m;
 
   return info;
 }
@@ -1102,7 +1097,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 	{
 	  G4cerr << "Error: Magnet named \"" << elementName
 		 << "\" is a magnet, but has fieldAll defined." << G4endl
-		 << "Can only have fieldOuter or fieldInner specified." << G4endl;
+		 << "Can only have fieldOuter or fieldVacuum specified." << G4endl;
 	  exit(1);
 	}
       if (!(element->fieldOuter.empty())) // ie variable isn't ""
@@ -1150,9 +1145,8 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+  if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       angle = element->angle * CLHEP::rad;
@@ -1160,12 +1154,12 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      angle = charge * ffact * field * length / brho ;
+      angle = field * length / brho ;
     }
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = brho * angle / length / charge * ffact;
+      field = brho * angle / length;
     }
   
   return std::make_pair(angle,field);
@@ -1180,23 +1174,27 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
   // 'l' in the element represents the chord length for an rbend - must calculate arc length
   // for the field calculation and the accelerator component.
   chordLength = element->l * CLHEP::m;
-  G4double arcLengthLocal = chordLength;
-  G4double ffact = BDSGlobalConstants::Instance()->FFact();
+  G4double arcLengthLocal = chordLength; // default for no angle
   
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+  if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       // note, angle must be finite for this part to be used so we're protected against
       // infinite bending radius and therefore nan arcLength.
       angle = element->angle * CLHEP::rad;
       G4double bendingRadius = brho / field;
-      arcLengthLocal = bendingRadius * angle;
+
+      // protect against bad calculation from 0 angle and finite field
+      if (BDS::IsFinite(angle))
+        {arcLengthLocal = bendingRadius * angle;}
+      else
+        {arcLengthLocal = chordLength;}
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
+      angle = 2.0*asin(chordLength*0.5 / bendingRadius);
       arcLengthLocal = bendingRadius * angle;
     }
   else
@@ -1205,15 +1203,17 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
       if (BDS::IsFinite(angle))
 	{
 	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+	  // this is the inverse equation of that in BDSAcceleratorComponent to calculate
+	  // the chord length from the arclength and angle.
 	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
 	  arcLengthLocal = bendingRadius * angle;
-	  field = brho * angle / std::abs(arcLengthLocal) / charge * ffact;
+	  field = brho * angle / std::abs(arcLengthLocal);
         }
       else
 	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
     }
 
-  // Ensure positive length despite sign of angle or charge.
+  // Ensure positive length despite sign of angle.
   arcLength = std::abs(arcLengthLocal);
 }
 

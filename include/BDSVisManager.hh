@@ -3,8 +3,6 @@
 
 #include "G4Types.hh"
 
-class G4VisManager;
-
 /**
  * @brief The BDS Visualisation Manager
  * 

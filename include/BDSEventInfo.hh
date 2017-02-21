@@ -11,15 +11,14 @@
  * 
  * This class inherits G4VUserEventInformation so it can be used
  * to pass information around as part of a G4Event (required by G4).
- * This is basically a wrapper for BDSOutputROOTEventInfo. Although
- * the inheritance of BDSOutputROOTEventInfo provides public access
- * to its members, setters are provided here for convenience and to
- * make the interface more explicit / cleaner.
+ * This is basically a wrapper for BDSOutputROOTEventInfo. Can't inherit
+ * BDSOutputROOTEventInfo as the Print overload for geant4 clashes with
+ * one from TObject.  Keep an instance and use that.
  * 
  * @author Laurie Nevay
  */
 
-class BDSEventInfo: public G4VUserEventInformation, public BDSOutputROOTEventInfo
+class BDSEventInfo: public G4VUserEventInformation
 {
 public:
   BDSEventInfo();
@@ -28,11 +27,18 @@ public:
   virtual void Print() const;
 
   /// @{ Setters
-  inline void SetStartTime(time_t startTimeIn) {startTime = startTimeIn;}
-  inline void SetStopTime(time_t stopTimeIn)   {stopTime  = stopTimeIn;}
-  inline void SetDuration(G4double durationIn) {duration  = durationIn;}
-  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {seedStateAtStart = seedStateAtStartIn;}
+  inline void SetStartTime(time_t startTimeIn) {info->startTime = startTimeIn;}
+  inline void SetStopTime(time_t stopTimeIn)   {info->stopTime  = stopTimeIn;}
+  inline void SetDuration(G4double durationIn) {info->duration  = durationIn;}
+  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = seedStateAtStartIn;}
   /// @}
+
+  /// Accessor.
+  inline const BDSOutputROOTEventInfo* GetInfo() const {return info;}
+
+private:
+  /// Instance of info.
+  BDSOutputROOTEventInfo* info;
 };
 
 #endif

@@ -114,8 +114,6 @@ public:
 private:
   /// length safety from global constants
   G4double lengthSafety;
-  /// charge from global constants
-  G4double charge;
   /// rigidity in T*m for beam particles
   G4double brho;
   /// length of a thin element

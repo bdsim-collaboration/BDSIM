@@ -1,7 +1,6 @@
 #ifndef BDSFIELDLOADER_H
 #define BDSFIELDLOADER_H
 
-#include "BDSFieldFormat.hh"
 #include "BDSInterpolatorType.hh"
 
 #include "G4String.hh"
@@ -24,8 +23,12 @@ class BDSInterpolator4D;
  * @brief A loader for various field map formats.
  *
  * A factory to use the appropriate file loader for different field map formats
- * and constructo into required field including the correct interpolator and possilbe
+ * and construct into required field including the correct interpolator and possible
  * reflections.
+ * 
+ * This is a singleton as the field loader owns the loaded data arrays and reuses them
+ * wrapping them in interpolators multiple times if needed.  For this reason there should
+ * be only one field loader.
  * 
  * @author Laurie Nevay
  */

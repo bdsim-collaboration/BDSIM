@@ -53,7 +53,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
 {
   // angle is finite!
   // factor of 0.8 here is arbitrary tolerance as g4 cut tubs seems to fail
-  // with cutting entranace / exit planes close to limit.
+  // with cutting entrance / exit planes close to limit.
   // s = r*theta -> r = s/theta
   G4double radiusFromAngleLength =  std::abs(chordLength / angle) * 0.8;
   G4double radiusLocal = std::min(radius, radiusFromAngleLength);

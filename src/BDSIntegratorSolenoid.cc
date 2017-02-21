@@ -21,7 +21,6 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 
 void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 					 const G4double dydx[],
-					 G4ThreeVector  /*bField*/,
 					 G4double       h,
 					 G4double       yOut[],
 					 G4double       yErr[])
@@ -114,7 +113,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
   
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
 
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
@@ -204,6 +204,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 #endif
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }  
 }
 
@@ -215,5 +216,5 @@ void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
 				    G4double yErr[])
 {
   //simply perform one step here
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
 }

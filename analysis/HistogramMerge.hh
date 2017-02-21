@@ -5,6 +5,7 @@
 
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "TFile.h"
 
 #include "BDSOutputROOTEventHistograms.hh"
@@ -42,11 +43,14 @@ public:
 private:
   bool debug;
   std::vector<TH1D*> histograms1D;
-  std::vector<int> histograms1DN;
+  std::vector<int>   histograms1DN;
   std::vector<TH1D*> histograms1DError;
   std::vector<TH2D*> histograms2D;
-  std::vector<int> histograms2DN;
+  std::vector<int>   histograms2DN;
   std::vector<TH2D*> histograms2DError;
+  std::vector<TH3D*> histograms3D;
+  std::vector<int>   histograms3DN;
+  std::vector<TH3D*> histograms3DError;
 
   ClassDef(HistogramMerge,1);
 };

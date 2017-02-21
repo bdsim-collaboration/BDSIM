@@ -20,7 +20,6 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   bField((*strength)["field"]),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
-  nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
   cOverGeV      = BDSGlobalConstants::Instance()->COverGeV();
 
 #ifdef BDSDEBUG
@@ -51,6 +50,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // global to local
+  // false = use the mass world for the transform
   BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
   G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
   G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
@@ -64,11 +64,13 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsFinalDir = RandRp.second;
 
   G4double CosT_ov_2=cos(h/rho/2.0);
-  distChord = fabs(rho)*(1.-CosT_ov_2);
+  G4double dc = std::abs(rho)*(1.-CosT_ov_2);
+  SetDistChord(dc);
 
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
     {
+      // This uses the mass world volume for the transform!
       ConvertToGlobal(itsFinalPoint,itsFinalDir,InitMag,yOut);
 
       // If the radius of curvature is too small, reduce the momentum by 2%. This will
@@ -93,6 +95,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 #endif
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }
 }
 

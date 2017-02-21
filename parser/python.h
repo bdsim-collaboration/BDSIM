@@ -1,11 +1,6 @@
 #ifndef GMAD_H
 #define GMAD_H
 
-#include "parser.h"
-
-#include <cstdio>
-#include <iostream>
-
 namespace GMAD
 {
   /** Python interface **/

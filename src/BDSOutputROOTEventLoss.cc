@@ -1,3 +1,4 @@
+#include <include/BDSExecOptions.hh>
 #include "BDSOutputROOTEventLoss.hh"
 
 #ifndef __ROOTBUILD__
@@ -8,13 +9,13 @@
 
 ClassImp(BDSOutputROOTEventLoss)
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss() : storeLocal(false), storeGlobal(false)
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss() : storeLinks(false), storeLocal(false), storeGlobal(false)
 {
   this->Flush();
 }
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeLocalIn, bool storeGlobalIn) :
-  storeLocal(storeLocalIn), storeGlobal(storeGlobalIn)
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeLinksIn, bool storeLocalIn, bool storeGlobalIn) :
+  storeLinks(storeLinksIn), storeLocal(storeLocalIn), storeGlobal(storeGlobalIn)
 {
   this->Flush();
 }
@@ -32,7 +33,7 @@ void BDSOutputROOTEventLoss::Fill(BDSTrajectoryPoint* hit)
   energy.push_back( (float &&) hit->GetEnergy() / CLHEP::GeV);
   S.push_back     ( (float &&) hit->GetPostS()   / CLHEP::m);
   weight.push_back( (float &&) hit->GetPostWeight());
-  modelID.push_back( (unsigned int) hit->GetBeamLineIndex()); // TBC - the member type is just int though...
+  modelID.push_back( hit->GetBeamLineIndex()); // TBC - the member type is just int though...
   turn.push_back( (int) hit->GetTurnsTaken());
 
   if (storeLocal)
@@ -57,11 +58,15 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
   this->S.push_back     ( (float &&) (hit->GetSHit()   / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
-  //this->partID.push_back( hit->GetPartID());
-  //this->trackID.push_back( hit->GetTrackID());
-  //this->parentID.push_back( hit->GetParentID() );
-  this->modelID.push_back( (unsigned int)hit->GetBeamlineIndex());
-  this->turn.push_back( hit->GetTurnsTaken());
+
+  this->turn.push_back( hit->GetTurnsTaken());       // TODO need to flag on circular machines
+
+  if(this->storeLinks) {
+    this->partID.push_back(hit->GetPartID());
+    this->trackID.push_back(hit->GetTrackID());
+    this->parentID.push_back(hit->GetParentID());
+    this->modelID.push_back(hit->GetBeamlineIndex());
+  }
 
   if(this->storeLocal) {
     this->x.push_back( (float &&) (hit->Getx() / CLHEP::m));

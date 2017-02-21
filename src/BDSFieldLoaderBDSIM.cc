@@ -129,7 +129,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
 	    
 	  // Copy into array - we can always use 4d coords even for lower d arrays
-	  // as they all inherite 4d.
+	  // as they all inherit 4d.
 	  (*result)(indX,indY,indZ,indT) = fv;
 	  
 	  indX++; // increment counter
@@ -168,6 +168,14 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	    {
 	      G4String key = G4String(match[1]);
 	      key.toLower();
+
+	      // check it's a valid key - header preloaded with valid keys
+	      if (header.find(key) == header.end())
+		{
+		  file.close();
+		  G4cerr << "BDSIM Format Loader > Invalid key \"" << key << "\" in header" << G4endl;
+		  exit(1);
+		}
 	      G4double value = 0;
 	      try
 		{value = std::stod(match[2]);}
@@ -197,7 +205,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-            nColumns++;
+	      nColumns++;
 	      if (columnName.find("Fx") != std::string::npos)
 		{xIndex = nColumns; continue;}
 	      if (columnName.find("Fy") != std::string::npos)

@@ -2,8 +2,6 @@
 #define BDSBUNCHHALO_H
 
 #include "BDSBunchInterface.hh"
-#include "Randomize.hh"
-#include "CLHEP/Matrix/Vector.h" 
 
 namespace CLHEP {
   class RandFlat;

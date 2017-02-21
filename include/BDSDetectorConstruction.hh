@@ -18,6 +18,12 @@ class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
 
+namespace GMAD {
+  struct Element;
+  template<typename T> class FastList;
+}
+
+class BDSAcceleratorModel;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -82,6 +88,10 @@ private:
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
+  /// Detect whether the first element has an angled face such that it might overlap
+  /// with a previous element.  Only used in case of a circular machine.
+  G4bool UnsuitableFirstElement(std::list<GMAD::Element>::const_iterator element);
+
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
@@ -98,25 +108,34 @@ private:
   bool debug = false;
 #endif
 
+  ///@{ Variable copied from global constants
   G4bool verbose;
   G4bool checkOverlaps;
+  ///@}
+
+  /// Accelerator model pointer
+  BDSAcceleratorModel* acceleratorModel;
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
 
-  // All fields
+  /// All fields
   std::vector<BDSFieldObjects*> fields;
   
-  // Gflash members
+  ///@{ Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
   //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
+  ///@}
 
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
+
+  /// Whether or not we're building a circular machine.
+  G4bool circular;
 
   /// Record of the world extent.
   BDSExtent worldExtent;

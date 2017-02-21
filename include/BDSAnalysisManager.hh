@@ -1,9 +1,10 @@
 #ifndef BDSANALYSISMANAGER_H
 #define BDSANALYSISMANAGER_H
 
-#include "BDSHistogram.hh"
 #include "globals.hh"         // geant4 globals / types
 #include <vector>
+
+class BDSHistogram1D;
 
 /**
  * @brief Analysis interface class. Create, store and access histograms.

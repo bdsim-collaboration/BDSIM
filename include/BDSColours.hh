@@ -2,9 +2,10 @@
 #define BDSCOLOURS_H
 
 #include "globals.hh"         // geant4 types / globals
-#include "G4Colour.hh"
 
 #include <map>
+
+class G4Colour;
 
 /**
  * @brief Colour class that holds all colours used in BDSIM

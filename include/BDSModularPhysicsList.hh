@@ -1,9 +1,7 @@
 #ifndef BDSMODULARPHYSICSLIST_H
 #define BDSMODULARPHYSICSLIST_H
 
-#include "G4OpticalPhysics.hh"
 #include "G4VModularPhysicsList.hh"
-#include "G4VPhysicsConstructor.hh"
 
 #include <map>
 #include <string>
@@ -11,6 +9,8 @@
 
 class BDSGlobalConstants;
 class BDSModularPhysicsList;
+class G4OpticalPhysics;
+class G4VPhysicsConstructor;
 
 /// Typedef for function pointers to simplify syntax.
 typedef void(BDSModularPhysicsList::*Constructor)(void);

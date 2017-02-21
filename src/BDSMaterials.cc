@@ -761,14 +761,7 @@ void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
 void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
 {
   G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
-  if(elements.insert(make_pair(aSymbol,tmpElement)).second)
-    {
-#ifdef BDSDEBUG
-      G4cout << "New atom : " << aSymbol << G4endl;
-#endif
-    }
-  else
-    {G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" already exists" << G4endl; exit(1);}
+  AddElement(tmpElement,aSymbol);
 }
 
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
@@ -861,16 +854,14 @@ void BDSMaterials::ListMaterials()
 BDSMaterials::~BDSMaterials()
 {
   std::map<G4String,G4Material*>::iterator mIter;
-  for(mIter = materials.begin(); mIter!=materials.end(); mIter++){
-    delete (*mIter).second;
-  }
+  for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
+    {delete (*mIter).second;}
   materials.clear();
 
   std::map<G4String,G4Element*>::iterator eIter;
   for(eIter = elements.begin(); eIter!=elements.end(); eIter++)
-    delete (*eIter).second;
+    {delete (*eIter).second;}
   elements.clear();
-
   delete airMaterialPropertiesTable;
   delete celluloseMaterialPropertiesTable;
   delete fsMaterialPropertiesTable;

@@ -23,7 +23,15 @@ public:
   virtual ~BDSCollimatorRectangular(){;};
 
   virtual void BuildInnerCollimator();
-  
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSCollimatorRectangular();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCollimatorRectangular& operator=(const BDSCollimatorRectangular&) = delete;
+  BDSCollimatorRectangular(BDSCollimatorRectangular&) = delete;
+  ///@}
 };
 
 #endif

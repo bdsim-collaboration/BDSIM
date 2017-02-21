@@ -12,6 +12,12 @@ template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 #endif
 
+/**
+ * @brief Structure to record a trajectory.
+ * 
+ * @author Stewart Boogert
+ */
+
 class BDSOutputROOTEventTrajectory : public TObject
 {
 public:
@@ -37,11 +43,13 @@ public:
   std::vector<std::vector<double>> energys;
 
   std::vector<std::vector<TVector3>> trajectories;
+  std::vector<std::vector<std::vector<int>>> secondaryID;
 
   int primary();
   int primaryElectromagnetic();
   int primaryHadronic();
   void primaryPrint();
+  void print(int i);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
