@@ -26,7 +26,7 @@ Event::Event(bool debugIn,
 
 void Event::CommonCtor()
 {
-  primaries       = 0;
+  primaries       = nullptr;
   eloss           = nullptr;
   primaryFirstHit = nullptr;
   primaryLastHit  = nullptr;
