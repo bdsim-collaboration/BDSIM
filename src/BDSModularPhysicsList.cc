@@ -21,6 +21,7 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
+#include "G4OpticalProcessIndex.hh"
 #include "G4SynchrotronRadiation.hh"
 
 // particles
@@ -239,19 +240,15 @@ void BDSModularPhysicsList::ConfigureOptical()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
-  if (!opticalPhysics)
-    {return;}
-  // Construct optical photon
-  G4OpticalPhoton::OpticalPhoton();
 
-  opticalPhysics->Configure(kCerenkov,      globals->TurnOnCerenkov());           ///< Cerenkov process index
-  opticalPhysics->Configure(kScintillation, true);                                ///< Scintillation process index
-  opticalPhysics->Configure(kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
-  opticalPhysics->Configure(kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
-  opticalPhysics->Configure(kMieHG,         globals->TurnOnMieScattering());      ///< Mie scattering process index
-  opticalPhysics->Configure(kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
-  opticalPhysics->Configure(kWLS,           true);                                ///< Wave Length Shifting process index
-// opticalPhysics->Configure(kNoProcess, globals->GetTurnOn< Number of processes, no selected process
+  opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov,      globals->TurnOnCerenkov());           ///< Cerenkov process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kMieHG,         globals->TurnOnMieScattering());      ///< Mie scattering process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
+  opticalPhysics->Configure(G4OpticalProcessIndex::kWLS,           true);                                ///< Wave Length Shifting process index
+// opticalPhysics->Configure(G4OpticalProcessIndex::kNoProcess, globals->GetTurnOn< Number of processes, no selected process
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
 }
 
