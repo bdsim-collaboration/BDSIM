@@ -854,16 +854,14 @@ void BDSMaterials::ListMaterials()
 BDSMaterials::~BDSMaterials()
 {
   std::map<G4String,G4Material*>::iterator mIter;
-  for(mIter = materials.begin(); mIter!=materials.end(); mIter++){
-    delete (*mIter).second;
-  }
+  for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
+    {delete (*mIter).second;}
   materials.clear();
 
   std::map<G4String,G4Element*>::iterator eIter;
   for(eIter = elements.begin(); eIter!=elements.end(); eIter++)
-    delete (*eIter).second;
+    {delete (*eIter).second;}
   elements.clear();
-
   delete airMaterialPropertiesTable;
   delete celluloseMaterialPropertiesTable;
   delete fsMaterialPropertiesTable;
