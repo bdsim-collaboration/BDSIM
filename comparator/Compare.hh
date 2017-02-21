@@ -75,6 +75,9 @@ namespace Compare
 
   /// Check wether a string is prefixed with another string.
   bool StringStartsWith(std::string aString, std::string prefix);
+
+  /// Bool for checking if primaries were written to file.
+  bool hasPrimaries;
 }
   
 #endif

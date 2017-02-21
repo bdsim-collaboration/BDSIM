@@ -9,6 +9,7 @@
 
 #include "analysis/Event.hh"
 #include "analysis/Model.hh"
+#include "analysis/Options.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -57,6 +58,18 @@ void Compare::Directories(TDirectory* d1,
 
       std::string objectName = std::string(keyObject->GetName());
       std::string className  = std::string(d1o->ClassName());
+
+      // get writePrimaries from options tree.
+      if (objectName == "Options")
+        {
+          std::vector<const char *> names;
+          TTree *options = (TTree *) d1->Get(objectName.c_str());
+          Options *optLocal = new Options();
+          optLocal->SetBranchAddress(options);
+          options->GetEntry(0);
+          hasPrimaries = optLocal->options->writePrimaries;
+          delete optLocal;  // delete - no need to store in memory.
+        }
 
       if (className == "TDirectory" || className == "TDirectoryFile") // recursion!
 	{
@@ -302,8 +315,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 
   // Need to tell Event to process samplers at construction time.
   G4bool processSamplers = samplerNames.empty() ? false : true;
-  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
-  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
+  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers,hasPrimaries);
+  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers,hasPrimaries);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames);
 
@@ -317,7 +330,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
       t1->GetEntry(i);
       t2->GetEntry(i);
 
-      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), &re);
+      if (hasPrimaries)
+        {Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), &re);}
       for (auto j = 0; j < (int)evtLocal1->samplers.size(); j++)
 	{
 	  Compare::Sampler(evtLocal1->samplers[j], evtLocal2->samplers[j], &re);
