@@ -1,3 +1,6 @@
+#field loader test
+simple_fail("bdsimformat_bad_header" "--file=bad_header.gmad")
+
 #interpolator tests
 
 interpolator_test("interpolator-1d-nearest" "1d_nearest.gmad")

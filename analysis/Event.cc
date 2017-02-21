@@ -17,16 +17,18 @@ Event::Event():
 }
 
 Event::Event(bool debugIn,
-	     bool processSamplersIn):
+	     bool processSamplersIn,
+         bool hasPrimariesIn):
   debug(debugIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  hasPrimaries(hasPrimariesIn)
 {
   CommonCtor();
 }
 
 void Event::CommonCtor()
 {
-  primaries       = 0;
+  primaries       = nullptr;
   eloss           = nullptr;
   primaryFirstHit = nullptr;
   primaryLastHit  = nullptr;
@@ -42,7 +44,8 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
   t->GetEntry(0); // this initialises the local variables it would seem.
-  t->SetBranchAddress("Primary.",        &primaries);
+  if (hasPrimaries)
+    {t->SetBranchAddress("Primary.",     &primaries);}
   t->SetBranchAddress("Eloss.",          &eloss);
   t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
   t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
