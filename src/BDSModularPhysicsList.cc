@@ -4,7 +4,6 @@
 #include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
-#include "BDSParameterisationPhysics.hh"
 #include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
@@ -74,7 +73,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
-  physicsConstructors.insert(std::make_pair("parameterisation", &BDSModularPhysicsList::ParameterisationPhysics));
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
@@ -392,15 +390,6 @@ void BDSModularPhysicsList::HadronicElastic()
       physicsActivated["hadronic_elastic"] = true;
     }
 }
-							  
-void BDSModularPhysicsList::ParameterisationPhysics()
-{
-  if (!physicsActivated["parameterisation"])
-    {
-      constructors.push_back(new BDSParameterisationPhysics());
-      physicsActivated["parameterisation"] = true;
-    }
-}							  
 							  
 void BDSModularPhysicsList::SynchRad()
 {
