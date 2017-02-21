@@ -130,29 +130,8 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  // Copy into array - we can always use 4d coords even for lower d arrays
 	  // as they all inherit 4d.
 	  (*result)(indX,indY,indZ,indT) = fv;
-	  
-	  //indX++; // increment counter
-	  //if (indX == nX)
-//	    {// we've completed one set of x
-//	      indX = 0; // reset back to 0
-//	      indY++;   // advance y
-//	    }
-//	  if (indY == nY)
-//	    {// we've completed one set of y
-//	      indY = 0; // reset back to 0
-//	      indZ++;   // advance z
-//	    }
-//	  if (indZ == nZ)
-//	    {// we've copmleted one set of z
-//	      indZ = 0; // reset back to 0
-//	      indT++;   // advance t
-//	    }
-//	  if (indT == nT)
-//	    {// we've completed one set of t
-//	      indT = 0;
-//	      dataFinished = true;
-//	    }
 
+        //Loop order changed: from x, y, z, t to  z, y, x, t.
         indZ++; // increment counter
         if (indZ == nZ)
         {// we've completed one set of z
