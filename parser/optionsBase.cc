@@ -1,4 +1,4 @@
-#include "options.h"
+#include "optionsBase.h"
 
 // include git commit version.
 #include "version.h"
@@ -203,6 +203,7 @@ OptionsBase::OptionsBase()
   integratorSet            = "bdsim";
   lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
+  maximumStepLength        = 10;      // m, quite big
   chordStepMinimum         = 0.000001;// m
   deltaIntersection        = 1e-10;   // m
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
@@ -215,14 +216,17 @@ OptionsBase::OptionsBase()
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  trajCutGTZ               = 0.0;  // minimum z position
-  trajCutLTR               = 1e12; // maximum radius in mm, so large default value
+  trajCutGTZ               = 1e99;  // minimum z position, so large default value
+  trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
+  trajConnect              = false; // connect disconnected trajectory trees
+  storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;
   storeTrajectory          = false;
-  storeTrajectoryDepth     = 1;
+  storeTrajectoryDepth     = 0;
   storeTrajectoryParticle  = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  writePrimaries           = true;
 
   // circular options
   nturns                   = 1;
@@ -234,8 +238,8 @@ OptionsBase::OptionsBase()
 
   // scoring map
   nbinsx = 1;
-  nbinsx = 1;
   nbinsy = 1;
+  nbinsz = 1;
   xmin   = 0;
   xmax   = 0;
   ymin   = 0;

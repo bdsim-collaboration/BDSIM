@@ -11,7 +11,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-void BDS::BuildEndPieceBeamline()
+void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 {
   // the beamline of end pieces to be placed.
   BDSBeamline* endPieces = new BDSBeamline();
@@ -108,6 +108,12 @@ void BDS::BuildEndPieceBeamline()
 	  // a drift or the magnet is first in the line
 	  if ( (element == firstItem) || (driftIsFirstItem && !driftsAreTooBigBefore) )
 	    {placeBefore = true;}
+
+	  // If it's a circular machine the end piece will overlap with the teleporter or
+	  // terminator or previous element which we don't check against, so play it safe
+	  // and don't build it.
+	  if ( (element == firstItem) && circularMachine )
+	    {placeBefore = false;}
 
 	  // Now check if the coil volumes will overlap
 	  // This check is only done on before, as something can always be naturally added

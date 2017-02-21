@@ -253,6 +253,7 @@ namespace GMAD
     std::string integratorSet;
     double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per track [s]
+    double   maximumStepLength;   ///< maximum permitted step length in any volume
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;
@@ -266,12 +267,15 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        trajConnect;
+    bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
+    bool        writePrimaries;
 
     /// Ring parameters
     int      nturns;

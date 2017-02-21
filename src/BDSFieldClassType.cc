@@ -15,27 +15,7 @@ std::map<BDSFieldClassType, std::string>* BDSFieldClassType::dictionary =
       {BDSFieldClassType::electric,        "electric"},
       {BDSFieldClassType::electromagnetic, "electromagnetic"},
       {BDSFieldClassType::irregular,       "irregular"}
-    });	
-
-BDSFieldClassType BDS::DetermineFieldClassType(G4String bType)
-{
-  std::map<G4String, BDSFieldClassType> types;
-  types["magnetic"]        = BDSFieldClassType::magnetic;
-  types["electric"]        = BDSFieldClassType::electric;
-  types["electromagnetic"] = BDSFieldClassType::electromagnetic;
-  types["irregular"]       = BDSFieldClassType::irregular;
-  
-  bType.toLower();
-
-  auto result = types.find(bType);
-  if (result == types.end())
-    {
-      // it's not a valid key
-      G4cerr << __METHOD_NAME__ << bType << " is not a valid field class type" << G4endl;
-      exit(1);
-    }
-  return result->second;
-}
+    });
 
 BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
 {

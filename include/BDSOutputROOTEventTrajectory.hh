@@ -43,11 +43,13 @@ public:
   std::vector<std::vector<double>> energys;
 
   std::vector<std::vector<TVector3>> trajectories;
+  std::vector<std::vector<std::vector<int>>> secondaryID;
 
   int primary();
   int primaryElectromagnetic();
   int primaryHadronic();
   void primaryPrint();
+  void print(int i);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 

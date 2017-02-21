@@ -28,6 +28,8 @@ namespace BDSI
 		const G4double coords[4],
 		const G4double result[6],
 		const BDSFieldClassType type);
+
+  const G4double margin = 1e-6;
 }
 
 #endif

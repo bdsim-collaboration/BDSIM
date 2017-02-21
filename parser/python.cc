@@ -1,5 +1,10 @@
 #include "python.h"
 
+#include "parser.h"
+
+#include <cstdio>
+#include <list>
+
 /** Python interface, need to match pybdsim/Gmad.py **/
 int GMAD::GmadParser_c(char *name)
 {

@@ -6,6 +6,7 @@
 #include "BDSCurvilinearFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSSamplerType.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
@@ -41,10 +42,12 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
+  G4int i = 0;
   for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); element++)
     {
-      G4String name = (*element)->GetName() + "_cl";
-      BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element);
+      G4String name = (*element)->GetName() + "_cl_" + std::to_string(i);
+      i++;
+      BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i);
       if (temp)
 	{result->AddBeamlineElement(temp);}
     }
@@ -109,7 +112,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	      //finishingElement = currentElement - 1;
 	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								   startingElement,
-								   finishingElement);
+								   finishingElement,
+								   counter);
 	      result->AddBeamlineElement(piece);
 	      counter++; // increment name counter
 	      GenerateName();
@@ -126,7 +130,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		      //finishingElement = currentElement - 1;
 		      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 									   startingElement,
-									   finishingElement);
+									   finishingElement,
+									   counter);
 		      result->AddBeamlineElement(piece);
 		      counter++; // increment name counter
 		      Reset();
@@ -149,7 +154,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		{
 		  BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								       startingElement,
-								       currentElement);
+								       currentElement,
+								       counter);
 		  result->AddBeamlineElement(piece);
 		}
 	    }
@@ -157,7 +163,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	    {// we're building 1:1 the current angled element
 	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								   currentElement,
-								   currentElement);
+								   currentElement,
+								   counter);
 	      result->AddBeamlineElement(piece);
 	      counter++; // increment name counter
 	      Reset();
@@ -173,7 +180,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	    {
 	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								   startingElement,
-								   currentElement);
+								   currentElement,
+								   counter);
 	      result->AddBeamlineElement(piece);
 	    }
 	}
@@ -193,7 +201,8 @@ void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String                    elementName,
 								    BDSBeamline::const_iterator startElement,
-								    BDSBeamline::const_iterator finishElement)
+								    BDSBeamline::const_iterator finishElement,
+								    G4int index)
 { 
   BDSSimpleComponent* component = nullptr;
 
@@ -248,12 +257,13 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 						   to);
     }
 
-  return CreateElementFromComponent(component, startElement, finishElement);
+  return CreateElementFromComponent(component, startElement, finishElement, index);
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleComponent* component,
 								      BDSBeamline::const_iterator startElement,
-								      BDSBeamline::const_iterator finishElement)
+								      BDSBeamline::const_iterator finishElement,
+								      G4int index)
 {
   BDSTiltOffset* copyTiltOffset = nullptr;
   BDSTiltOffset* existingTiltOffset = (*startElement)->GetTiltOffset();
@@ -282,7 +292,10 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
 				      element->GetSPositionStart(),
 				      element->GetSPositionMiddle(),
 				      element->GetSPositionEnd(),
-				      copyTiltOffset);
+				      copyTiltOffset,
+				      BDSSamplerType::none,
+				      "",
+				      index);
     }
   else
     {//must cover a few components
@@ -321,7 +334,10 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
 				      sStart,
 				      sMid,
 				      sEnd,
-				      copyTiltOffset);
+				      copyTiltOffset,
+				      BDSSamplerType::none,
+				      "",
+				      index);
       
     }
   

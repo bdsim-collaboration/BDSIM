@@ -32,9 +32,8 @@ public:
 		       G4double       yerr[]);
 
 protected:
-  /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.
+  /// Calculate the new particle coordinates.
   void AdvanceHelix(const G4double yIn[],
-		    G4ThreeVector  Bfld,
 		    G4double       h,
 		    G4double       yOct[]);
 

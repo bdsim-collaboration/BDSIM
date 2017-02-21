@@ -98,6 +98,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 #endif
 
     std::vector<TVector3> trajectory;
+    std::vector<std::vector<int>> tempSecondaryID;
     std::vector<int> preProcessType;
     std::vector<int> preProcessSubType;
     std::vector<int> postProcessType;
@@ -121,6 +122,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       preWeight.push_back(point->GetPreWeight());
       postWeight.push_back(point->GetPostWeight());
       energy.push_back(point->GetEnergy());
+      tempSecondaryID.push_back(point->GetSecondaryID());
     }
     trajectories.push_back(trajectory);
     preProcessTypes.push_back(preProcessType);
@@ -130,6 +132,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     preWeights.push_back(preWeight);
     postWeights.push_back(postWeight);
     energys.push_back(energy);
+    secondaryID.push_back(tempSecondaryID);
   }
 }
 
@@ -155,6 +158,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   postWeights.clear();
   energys.clear();
   trajectories.clear();
+  secondaryID.clear();
 }
 
 int BDSOutputROOTEventTrajectory::primary()
@@ -191,14 +195,21 @@ int BDSOutputROOTEventTrajectory::primaryHadronic()
   return -1;
 }
 
+void BDSOutputROOTEventTrajectory::print(int i)
+{
+  for(size_t j=0;j<trajectories[i].size();++j)
+  {
+    std::cout << j << " " << trackID[i] << " " << parentID[i] << " "
+              << preProcessTypes[i][j]  << " " << preProcessSubTypes[i][j] << " "
+              << postProcessTypes[i][j] << " " << postProcessSubTypes[i][j] << " "
+              << trajectories[i][j].X() << " " << trajectories[i][j].Y() << " " <<  trajectories[i][j].Z() << " "
+              << secondaryID[i][j].size() << std::endl;
+  }
+}
 
 void BDSOutputROOTEventTrajectory::primaryPrint()
 {
-  int i = 0;
-  for(size_t j=0;j<trajectories[i].size();++j) 
-  {
-      std::cout << trackID[i] << " " << parentID[i] << " " << postProcessTypes[i][j] << " " << postProcessSubTypes[i][j] << std::endl;
-  }
+  print(0);
 }
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)

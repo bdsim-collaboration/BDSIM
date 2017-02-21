@@ -43,6 +43,9 @@ void BDSElement::BuildContainerLogicalVolume()
   // make the beam pipe container, this object's container
   containerLogicalVolume = geom->GetContainerLogicalVolume();
   containerSolid         = geom->GetContainerSolid();
+
+  // set placement offset from geom so it's placed correctly in the beam line
+  SetPlacementOffset(geom->GetPlacementOffset());
   
   // update extents
   InheritExtents(geom);

@@ -305,6 +305,7 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
+  publish("maximumStepLength",  &Options::maximumStepLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
@@ -320,15 +321,17 @@ void Options::PublishMembers()
 
   publish("lengthSafety",&Options::lengthSafety);
 
-  // trajectory storage
+  publish("storeElossLinks", &Options::storeElossLinks);
   publish("storeElossLocal",  &Options::storeElossLocal);
   publish("storeElossGlobal", &Options::storeElossGlobal);
+
+  // trajectory storage
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
   publish("storeTrajectoryParticle",&Options::storeTrajectoryParticle);
   publish("storeTrajectoryEnergyThreshold",&Options::storeTrajectoryEnergyThreshold);
-
+  publish("trajConnect",&Options::trajConnect);
   publish("trajCutGTZ",&Options::trajCutGTZ);
   publish("trajCutLTR",&Options::trajCutLTR);
 
@@ -339,6 +342,7 @@ void Options::PublishMembers()
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
+  publish("writePrimaries", &Options::writePrimaries);
 
   // scoring map
   publish("nbinsx", &Options::nbinsx);

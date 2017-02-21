@@ -69,7 +69,10 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-  if(BDSGlobalConstants::Instance()->StopTracks())
+  /// TBC - if the vacuum is sensitive this will stop all tracks including primaries!
+  /// TBC - we can cache this stop tracks bool in the class for speed.
+  G4bool stopTracks = BDSGlobalConstants::Instance()->StopTracks();
+  if(stopTracks)
     {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
@@ -83,7 +86,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   if (!BDS::IsFinite(enrg))
     {return false;}
 
-  G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+  // avoid double getting pv
+  auto hitMassWorldPV = aStep->GetPreStepPoint()->GetPhysicalVolume();
+  volName             = hitMassWorldPV->GetName();
+  G4int nCopy         = hitMassWorldPV->GetCopyNo();
   
   // attribute the energy deposition to a uniformly random position along the step - correct!
   // random distance - store to use twice to ensure global and local represent the same point
@@ -110,15 +116,16 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   y = eDepPosLocal.y();
   z = eDepPosLocal.z();
 
-  // get the s coordinate (central s + local z), and precision info
+  // get the s coordinate (central s + local z)
+  // volume is from curvilinear coordinate parallel geometry
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
   G4int beamlineIndex = -1;
   if (theInfo)
     {
       G4double sCentre = theInfo->GetSPos();
-      sAfter  = sCentre + posafterlocal.z();
-      sBefore = sCentre + posbeforelocal.z();
-      beamlineIndex   = theInfo->GetBeamlineIndex();
+      sAfter           = sCentre + posafterlocal.z();
+      sBefore          = sCentre + posbeforelocal.z();
+      beamlineIndex    = theInfo->GetBeamlineIndex();
     }
   else
     {
@@ -137,7 +144,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
-  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
+  if(verbose)
     {
       G4cout << "BDSEnergyCounterSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
@@ -152,7 +159,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   trackID    = aStep->GetTrack()->GetTrackID();
   parentID   = aStep->GetTrack()->GetParentID();
-  volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
@@ -176,9 +182,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
 
-  // this will kill all particles - both primaries and secondaries, but if it's being
+  // TBC - this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
-  if(BDSGlobalConstants::Instance()->StopTracks())
+  // BUT, we can make the vacuum sensitive too for ionisation energy loss
+  if(stopTracks)
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;

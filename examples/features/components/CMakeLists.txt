@@ -28,10 +28,14 @@ simple_testing(Component-Shield        "--file=shield.gmad"   ${OVERLAP_CHECK})
 simple_testing(Component-Solenoid      "--file=sole.gmad"     ${OVERLAP_CHECK})
 
 set(TESTING_ARGS --circular)
-simple_testing(Component-Teleporter    "--file=teleporter.gmad" ${OVERLAP_CHECK})
+simple_testing(Component-Teleporter "--file=teleporter.gmad" "")
+
+set(TESTING_ARGS --circular)
+simple_fail(Teleport-Protection "--file=teleporter_protection.gmad")
+
 simple_testing(Component-ThinMultipole "--file=thinMult.gmad" ${OVERLAP_CHECK})
 simple_testing(Component-Tunnel        "--file=tunnel.gmad" ${OVERLAP_CHECK})
-simple_testing(Component-VKicker       "--file=vkicker.gmad" ${OVERLAP_CHECK})
+simple_testing(Component-VKick         "--file=vkick.gmad" ${OVERLAP_CHECK})
 
 if(USE_AWAKE)
   simple_testing(Component-AwakeSpectrometer "--file=awakespectrometer.gmad" ${OVERLAP_CHECK})
