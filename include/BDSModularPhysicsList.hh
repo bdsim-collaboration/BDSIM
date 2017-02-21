@@ -112,6 +112,7 @@ private:
   BDSGlobalConstants* globals;
 
   /// @{Physics constructor loader.
+  void ParameterisationPhysics();  
   void CutsAndLimits();
   void Em();
   void EmExtra();
