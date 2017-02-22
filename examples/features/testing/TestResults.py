@@ -38,7 +38,7 @@ class Timing:
         s += 'Average BDSIM time = ' + _np.str(_np.average(self.bdsimTimes)) + " +/- "
         s += _np.str(_np.std(self.bdsimTimes)) + '.\r\n'
         s += 'Average Comparator time = ' + _np.str(_np.average(self.comparatorTimes)) + " +/- "
-        s += _np.str(_np.std(self.comparatorTimes))+ '.\r\n'
+        s += _np.str(_np.std(self.comparatorTimes)) + '.\r\n'
         return s
 
 
@@ -54,7 +54,7 @@ class Results:
             self.results.extend(results)
 
     def AddTimingData(self, timingData):
-        if not isinstance(timingData,Timing):
+        if not isinstance(timingData, Timing):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
             self.timingData = timingData
