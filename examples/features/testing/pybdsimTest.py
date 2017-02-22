@@ -18,12 +18,6 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 GlobalData = Globals.Globals()
 
 
-class Timing:
-    def __init__(self):
-        self.bdsimTimes = []
-        self.comparatorTimes = []
-
-
 def Run(inputDict):
     """ Generate the rootevent output for a given gmad file.
         """
@@ -378,6 +372,8 @@ class TestUtilities(object):
 class TestSuite(TestUtilities):
     def __init__(self, directory):
         super(TestSuite, self).__init__(directory)
+        # timing data.
+        self.timings = TestResults.Timing()
 
     def AddTest(self, test):
         """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
@@ -394,8 +390,6 @@ class TestSuite(TestUtilities):
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   # Write all gmad files for all test objects.
 
-        # class attributes for storing return & timing data.
-        setattr(self, 'timings', Timing())
         setattr(self, 'testResults', [])
 
         _os.chdir('BDSIMOutput')
@@ -428,19 +422,14 @@ class TestSuite(TestUtilities):
             # single threaded option.
             # self._singleThread(testlist)
 
-            elapsed = time.time() - t  # final time
-            print('Testing time for '+direc+' = '+_np.str(elapsed))
+            componentTime = time.time() - t  # final time
+            self.timings.AddComponentTime(component,componentTime)
 
         finalTime = time.time() - initialTime
-        totalTimeStr = 'Total Testing time  = ' + _np.str(finalTime)
-        bdsimTimestr = 'Average BDSIM time = ' + _np.str(_np.average(self.timings.bdsimTimes)) + " +/- "
-        bdsimTimestr += _np.str(_np.std(self.timings.bdsimTimes)) + '.'
-        compaTimestr = 'Average Comparator time = ' + _np.str(_np.average(self.timings.comparatorTimes)) + " +/- "
-        compaTimestr = _np.str(_np.std(self.timings.comparatorTimes))+ '.'
-        print(totalTimeStr)
-        print(bdsimTimestr)
-        print(compaTimestr)
+        self.timings.SetTotalTime(finalTime)
         _os.chdir('../')
+
+        self.Results.AddTimingData(self.timings)
 
     def _multiThread(self, testlist):
         numCores = multiprocessing.cpu_count()
