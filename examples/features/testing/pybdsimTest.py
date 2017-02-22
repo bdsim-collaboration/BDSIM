@@ -56,8 +56,8 @@ def Run(inputDict):
         outputLog.write('\r\n')
         outputLog.write('Output from ' + inputfile + ' was not written.')
         outputLog.close()
-        inputDict['Code'] = GlobalData.returnCode['FILE_NOT_FOUND']  # False
-    else:
+        inputDict['Code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+    elif not generateOriginal:
         # Only compare if the output was generated.
         if isSelfComparison:
             originalFile = testOutputFile.split('_event.root')[0] + '_event2.root'
@@ -83,12 +83,12 @@ def Run(inputDict):
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = GlobalData.returnCode['SUCCESS']  # True
+            inputDict['Code'] = GlobalData.returnCodes['SUCCESS']  # True
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = GlobalData.returnCode['FAILED']  # False
+            inputDict['Code'] = GlobalData.returnCodes['FAILED']  # False
     return inputDict
 
 
@@ -183,7 +183,7 @@ class Test(dict):
         self._numFiles = numcomponentVariations
 
     def __repr__(self):
-        s = 'pybdsimTest.testParameters.Test instance.\r\n'
+        s = 'pybdsimTest.Test instance.\r\n'
         s += 'This is a test for a/an ' + self.Component + ' with ' + self.Particle
         s += ' at an energy of ' + _np.str(self.Energy) + ' GeV.\r\n'
         s += 'The component will be test all combinations of the following parameters:\r\n'
@@ -366,8 +366,8 @@ class TestUtilities(object):
         options = _options.Options()
         options.SetSamplerDiameter(3)
         options.SetWritePrimaries(True)
-        Writer = _pybdsimWriter.Writer()
-        Writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
+        writer = _pybdsimWriter.Writer()
+        writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
 
 class TestSuite(TestUtilities):
@@ -399,11 +399,11 @@ class TestSuite(TestUtilities):
 
         initialTime = time.time()
 
-        for direc in componentDirs:
+        for component in componentDirs:
             t = time.time()  # initial time
 
             # get all gmad files in a components dir
-            testfileStr = direc+'*.gmad'
+            testfileStr = component + '*.gmad'
             tests = _glob.glob(testfileStr)
 
             # compile iterable list of dicts for multithreading function.
