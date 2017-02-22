@@ -136,24 +136,21 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
           // as they all inherit 4d.
           (*result)(indX, indY, indZ, indT) = fv;
 
-
-
-          //Loop order changed: from x, y, z, t to  z, y, x, t.
           (*ind1)++; // increment counter
-          if ((*ind1) == (*n1)) {// we've completed one set of z
-              *ind1 = 0; // reset back to 0
-              (*ind2)++;   // advance y
+          if ((*ind1) == (*n1)) {// we've completed one set of ind1.
+              (*ind1) = 0; // reset back to 0
+              (*ind2)++;   // advance ind2
           }
-          if ((*ind2) == (*n2)) {// we've completed one set of y
-              *ind2 = 0; // reset back to 0
-              (*ind2)++;   // advance x
+          if ((*ind2) == (*n2)) {// we've completed one set of ind2
+              (*ind2) = 0; // reset back to 0
+              (*ind3)++;   // advance ind3
           }
-          if ((*ind3) == (*n3)) {// we've copmleted one set of x
-              *ind3 = 0; // reset back to 0
-              (*ind4)++;   // advance t
+          if ((*ind3) == (*n3)) {// we've copmleted one set of ind3
+              (*ind3) = 0; // reset back to 0
+              (*ind4)++;   // advance ind4
           }
-          if ((*ind4) == (*n4)) {// we've completed one set of t
-              *ind4 = 0;
+          if ((*ind4) == (*n4)) {// we've completed one set of ind4
+              (*ind4) = 0;
               dataFinished = true;
           }
           continue;
