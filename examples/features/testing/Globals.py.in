@@ -196,3 +196,12 @@ class Globals():
         self.Interpolators = ['nearest1d', 'nearest2d', 'nearest3d', 'nearest4d',
                               'linear1d' , 'linear2d' , 'linear3d' , 'linear4d',
                               'cubic1d'  , 'cubic2d'  , 'cubic3d'  , 'cubic4d']
+
+        self.returnCodes  = {'SUCCESS'          : 0,
+                             'FAILED'           : 1,
+                             'INCORRECT_ARGS'   : 2,
+                             'FILE_NOT_FOUND'   : 3,  # i.e BDSIM did not generate anything
+                             'OVERLAPS'         : 4,
+                             'STUCK_PARTICLE'   : 5,
+                             'TRACKING_WARNING' : 6,
+                             }

@@ -17,15 +17,6 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
 
-returnCode = {'SUCCESS'          : 0,
-              'FAILED'           : 1,
-              'INCORRECT_ARGS'   : 2,
-              'FILE_NOT_FOUND'   : 3,  # i.e BDSIM did not generate anything
-              'OVERLAPS'         : 4,
-              'STUCK_PARTICLE'   : 5,
-              'TRACKING_WARNING' : 6,
-              }
-
 
 class Timing:
     def __init__(self):
@@ -70,7 +61,7 @@ def Run(inputDict):
         outputLog.write('\r\n')
         outputLog.write('Output from ' + inputfile + ' was not written.')
         outputLog.close()
-        inputDict['Code'] = returnCode['FILE_NOT_FOUND']  # False
+        inputDict['Code'] = GlobalData.returnCode['FILE_NOT_FOUND']  # False
     else:
         # Only compare if the output was generated.
         if isSelfComparison:
@@ -97,12 +88,12 @@ def Run(inputDict):
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = returnCode['SUCCESS']  # True
+            inputDict['Code'] = GlobalData.returnCode['SUCCESS']  # True
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = returnCode['FAILED']  # False
+            inputDict['Code'] = GlobalData.returnCode['FAILED']  # False
     return inputDict
 
 
