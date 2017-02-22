@@ -169,8 +169,8 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
 	  std::regex_search(line, match, unitsRE);
 	  for (const auto& u : match)
 	    {units.push_back(G4String(u));}
-
-	  result = new BDSArray2DCoords(nX, nY, xMin, xMax, yMin, yMax);
+		G4int loopOrder=12; //Loop in x first, then y
+	  result = new BDSArray2DCoords(nX, nY, xMin, xMax, yMin, yMax, loopOrder);
 	  intoData = true;
 	}
       //nothing heap allocated so safe to let all go out of scope

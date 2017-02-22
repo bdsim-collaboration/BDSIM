@@ -67,6 +67,7 @@ private:
   BDSFieldValue              fv;          ///< Temporary field value.
   std::map<G4String, double> header;      ///< Header keys and values
   BDSArray4DCoords*          result;      ///< Resultant array from loading
+  G4int                      loopOrder;   ///< The order in which the field map file loops, e.g. zyx = 321
 };
 
 #endif

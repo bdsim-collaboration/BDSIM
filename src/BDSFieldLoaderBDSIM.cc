@@ -119,7 +119,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
     G4int* n2;
     G4int* n3;
     G4int* n4; //Pointers to the above, to allow different loop orderings.
-    G4int loopOrder = 1; // The order in which to loop over the axes.
+    G4int loopOrder = 123; // The order in which to loop over the axes.
 
   while (std::getline(file, line)) {// read a line only if it's not a blank one
 
@@ -231,32 +231,32 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
                   break;
               }
               case 2: {
-                  loopOrder = G4int(header["loopOrder"]);
+                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]); //loopOrder is optional
                   nX = G4int(header["nx"]);
                   nY = G4int(header["ny"]);
-                  result = new BDSArray2DCoords(nX, nY,
+                  result = new BDSArray2DCoords(nX, nY, loopOrder,
                                                 header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
                                                 header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm);
                   break;
               }
               case 3: {
-                  loopOrder = G4int(header["loopOrder"]);
+                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]);
                   nX = G4int(header["nx"]);
                   nY = G4int(header["ny"]);
                   nZ = G4int(header["nz"]);
-                  result = new BDSArray3DCoords(nX, nY, nZ,
+                  result = new BDSArray3DCoords(nX, nY, nZ, loopOrder,
                                                 header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
                                                 header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
                                                 header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm);
                   break;
               }
               case 4: {
-                  loopOrder = G4int(header["loopOrder"]);
+                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]);
                   nX = G4int(header["nx"]);
                   nY = G4int(header["ny"]);
                   nZ = G4int(header["nz"]);
                   nT = G4int(header["nt"]);
-                  result = new BDSArray4DCoords(nX, nY, nZ, nT,
+                  result = new BDSArray4DCoords(nX, nY, nZ, nT, loopOrder,
                                                 header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
                                                 header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
                                                 header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm,
@@ -267,7 +267,22 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
                   break;
           }
 
+          switch(loopOrder) {
+              case 1:
+                  loopOrder = 123;
+                  break;
+              case 2:
+                  loopOrder = 213;
+                  break;
+              case 12:
+                  loopOrder = 123;
+                  break;
+              case 21:
+                  loopOrder = 213;
+                  break;
+          }
 
+          }
           switch(loopOrder){
               case 321:
                   ind1 = &indZ;
@@ -279,6 +294,16 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
                   ind4 = &indT;
                   n4 = &nT;
                   break;
+              case 312:
+                  ind1 = &indZ;
+                  n1 = &nZ;
+                  ind2 = &indX;
+                  n2 = &nX;
+                  ind3 = &indY;
+                  n3 = &nY;
+                  ind4 = &indT;
+                  n4 = &nT;
+                  break;
               case 123:
                   ind1 = &indX;
                   n1 = &nX;
@@ -286,6 +311,36 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
                   n2 = &nY;
                   ind3 = &indZ;
                   n3 = &nZ;
+                  ind4 = &indT;
+                  n4 = &nT;
+                  break;
+              case 132:
+                  ind1 = &indX;
+                  n1 = &nX;
+                  ind2 = &indZ;
+                  n2 = &nZ;
+                  ind3 = &indY;
+                  n3 = &nY;
+                  ind4 = &indT;
+                  n4 = &nT;
+                  break;
+              case 213:
+                  ind1 = &indY;
+                  n1 = &nY;
+                  ind2 = &indX;
+                  n2 = &nX;
+                  ind3 = &indZ;
+                  n3 = &nZ;
+                  ind4 = &indT;
+                  n4 = &nT;
+                  break;
+              case 231:
+                  ind1 = &indY;
+                  n1 = &nY;
+                  ind2 = &indZ;
+                  n2 = &nZ;
+                  ind3 = &indX;
+                  n3 = &nX;
                   ind4 = &indT;
                   n4 = &nT;
                   break;
@@ -301,8 +356,6 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
           }
           continue;
       }
-
-  }
 
   file.close();
 }

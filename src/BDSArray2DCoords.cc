@@ -4,10 +4,10 @@
 
 #include "globals.hh"
 
-BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
+BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn, G4int loopOrder,
 				   G4double xMinIn, G4double xMaxIn,
 				   G4double yMinIn, G4double yMaxIn):
-  BDSArray3DCoords(nXIn,nYIn,1,
+  BDSArray3DCoords(nXIn,nYIn,1,loopOrder,
 		   xMinIn,xMaxIn,
 		   yMinIn,yMaxIn,
 		   0,   1)

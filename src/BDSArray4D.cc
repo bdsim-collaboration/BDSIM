@@ -7,10 +7,10 @@
 #include <vector>
 
 
-BDSArray4D::BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn):
-  nX(nXIn), nY(nYIn), nZ(nZIn), nT(nTIn),
-  defaultValue(BDSFieldValue()),
-  data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn))
+BDSArray4D::BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn, G4int loopOrderIn):
+        nX(nXIn), nY(nYIn), nZ(nZIn), nT(nTIn),
+        defaultValue(BDSFieldValue()), loopOrder(loopOrderIn),
+        data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn))
 {;}
 
 BDSFieldValue& BDSArray4D::operator()(const G4int x,
@@ -19,8 +19,12 @@ BDSFieldValue& BDSArray4D::operator()(const G4int x,
 				      const G4int t)
 {
   OutsideWarn(x,y,z,t); // keep as a warning as can't assign to invalid index
-  //return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
-    return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
+    switch(loopOrder){
+        case 321:
+            return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
+        default:
+            return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+    }
 }
 
 const BDSFieldValue& BDSArray4D::GetConst(const G4int x,
@@ -30,8 +34,12 @@ const BDSFieldValue& BDSArray4D::GetConst(const G4int x,
 {
   if (Outside(x,y,z,t))
     {return defaultValue;}
-//  return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
-    return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
+    switch(loopOrder){
+        case 321:
+            return data[t*nZ*nY*nX + x*nY*nZ + y*nZ + z];
+        default:
+            return data[t*nZ*nY*nX + z*nY*nX + y*nX + x];
+    }
 }
   
 const BDSFieldValue& BDSArray4D::operator()(const G4int x,
