@@ -56,13 +56,15 @@ def Run(inputDict):
     testOutputFile = outputfile + '_event.root'
     inputDict['ROOTFile'] = testOutputFile
 
-    outputLog = open(comparatorLogFile, 'a')  # temp log file for the comparator output.
     if not files.__contains__(testOutputFile):
-        outputLog.write('\r\n')
-        outputLog.write('Output from ' + inputfile + ' was not written.')
-        outputLog.close()
-        inputDict['Code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+        # outputLog = open(comparatorLogFile, 'a')  # temp log file for the comparator output.
+        # outputLog.write('\r\n')
+        # outputLog.write('Output from ' + inputfile + ' was not written.')
+        # outputLog.close()
+        inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
     elif not generateOriginal:
+        outputLog = open(comparatorLogFile, 'a')  # temp log file for the comparator output.
+
         # Only compare if the output was generated.
         if isSelfComparison:
             originalFile = testOutputFile.split('_event.root')[0] + '_event2.root'
