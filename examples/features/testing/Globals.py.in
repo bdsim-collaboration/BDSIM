@@ -27,6 +27,9 @@ class Globals():
         # comparator executable
         self._comparatorExecutable = "@CMAKE_BINARY_DIR@/comparator/comparator"
 
+        # bdsim source (for results feedback only)
+        self._bdsimSource = "@CMAKE_SOURCE_DIR@"
+
         # components that can be varied
         self.components = ['drift',
                            'rbend',

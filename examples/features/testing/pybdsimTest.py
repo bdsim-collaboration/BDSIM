@@ -22,9 +22,10 @@ GlobalData = Globals.Globals()
 def Run(inputDict):
     """ Generate the rootevent output for a given gmad file.
         """
-    inputfile = inputDict['file']
+    inputfile = inputDict['testfile']
     isSelfComparison = inputDict['isSelfComparison']
     originalFile = inputDict['originalFile']
+    generateOriginal = inputDict['generateOriginal']
 
     # strip extension to leave test name, will be used as output name
     if inputfile[-5:] != '.gmad':
@@ -35,6 +36,9 @@ def Run(inputDict):
 
     bdsimLogFile = outputfile + "_bdsim.log"
     comparatorLogFile = outputfile + "_comp.log"
+
+    inputDict['bdsimLogFile'] = bdsimLogFile
+    inputDict['compLogFile'] = comparatorLogFile
 
     t = time.time()
 
@@ -50,6 +54,7 @@ def Run(inputDict):
     # If it does exist, delete the log and return the filename
     files = _glob.glob('*.root')
     testOutputFile = outputfile + '_event.root'
+    inputDict['ROOTFile'] = testOutputFile
 
     outputLog = open(comparatorLogFile, 'a')  # temp log file for the comparator output.
     if not files.__contains__(testOutputFile):
@@ -83,12 +88,15 @@ def Run(inputDict):
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = GlobalData.returnCodes['SUCCESS']  # True
+            inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['Code'] = GlobalData.returnCodes['FAILED']  # False
+            inputDict['code'] = GlobalData.returnCodes['FAILED']  # False
+    elif generateOriginal:
+        inputDict['code'] = GlobalData.returnCodes['SUCCESS']
+        _os.remove(bdsimLogFile)
     return inputDict
 
 
@@ -374,6 +382,8 @@ class TestSuite(TestUtilities):
     def __init__(self, directory, _useSingleThread=False):
         super(TestSuite, self).__init__(directory)
         self._useSingleThread = _useSingleThread
+        self._generateOriginals = False  # bool for generating original data set
+
         self.Results = TestResults.Results()
 
         # timing data.
@@ -387,35 +397,74 @@ class TestSuite(TestUtilities):
         else:
             self._tests.append(test)
 
-    def RunTestSuite(self, isSelfComparison=True):
+    def GenerateOriginals(self):
+        """ Function to generate an original data set.
+            """
+        # change class attribute here, generate data, and change back.
+        # It's safer to not pass the bool in as an arg, it could be accidentally
+        # passed and potentially overwrite an existing data set.
+        self._generateOriginals = True
+        if not _os.path.exists('OriginalDataSet'):
+            _os.system("mkdir OriginalDataSet")
+        self.RunTestSuite()
+        self._generateOriginals = False
+        _os.chdir('OriginalDataSet')
+        self.Results.ProcessOriginals()
+        _os.chdir('../')
+
+    def RunTestSuite(self, isSelfComparison=False):
         """ Run all tests in the test suite. This will generate the tests rootevent
             output, compares to an original file, and processes the comparison results.
             """
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   # Write all gmad files for all test objects.
 
-        _os.chdir('BDSIMOutput')
+        if self._generateOriginals:
+            _os.chdir('OriginalDataSet')
+        else:
+            _os.chdir('BDSIMOutput')
+
         testfilesDir = '../Tests/*/'
         componentDirs = _glob.glob(testfilesDir)  # get all component dirs in the Tests dir
 
         initialTime = time.time()
 
         for component in componentDirs:
+            if component[-1] == '/':
+                componentType = component.split('/')[-2]  # second last part of string should be component type.
+            else:
+                componentType = component.split('/')[-1]  # last part of string should be component type.
+
+            if self._generateOriginals:
+                if not _os.path.exists(componentType):
+                    _os.system("mkdir "+componentType)
+                _os.chdir(componentType)
+
             t = time.time()  # initial time
 
+            testfileStr = ''
             # get all gmad files in a components dir
-            testfileStr = component + '*.gmad'
+            if self._generateOriginals:
+                testfileStr = '../'
+            testfileStr += component + '*.gmad'
             tests = _glob.glob(testfileStr)
 
             # compile iterable list of dicts for multithreading function.
             testlist = []
             for test in tests:
+
                 # pass data in a dict. Easier to pass single expandable variable.
-                testDict = {'file'              : test,
+                testDict = {'testfile'          : test,
                             'originalFile'      : '',
+                            'bdsimLogfile'      : '',
+                            'compLogFile'       : '',
+                            'ROOTFile'          : '',
+                            'generateOriginal'  : self._generateOriginals,
                             'isSelfComparison'  : isSelfComparison,
                             'bdsimTime'         : 0,
-                            'compTime'          : 0}
+                            'compTime'          : 0,
+                            'code'              : None
+                            }
                 testlist.append(testDict)
 
             if not self._useSingleThread:
@@ -425,6 +474,9 @@ class TestSuite(TestUtilities):
 
             componentTime = time.time() - t  # final time
             self.timings.AddComponentTime(component,componentTime)
+
+            if self._generateOriginals:
+                _os.chdir('../')
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
@@ -459,7 +511,7 @@ class TestSuite(TestUtilities):
             compTestTime = time.time()
             # Only compare if the output was generated.
 
-            if outputEvent is not None:
+            if (outputEvent is not None) and (not self._generateOriginals):
                 if isSelfComparison:
                     originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
                     copyString = 'cp ' + outputEvent + ' ' + originalEvent

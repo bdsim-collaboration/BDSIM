@@ -2,7 +2,7 @@ import numpy as _np
 import os as _os
 import string as _string
 import glob as _glob
-
+import time as _time
 import Globals
 
 
@@ -59,7 +59,21 @@ class Results:
         else:
             self.timingData = timingData
 
-    def ProcessResults(self):
-        pass
+    def ProcessOriginals(self):
+        numFailed = 0
+        for testdict in self.results:
+            if testdict['code'] != 0:
+                numFailed += 1
+            # TODO: Handle other return types (i.e overlaps, stuck particles, tracking warnings etc)
 
+        numTests = len(self.results)
+        s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
+        print(s)
 
+        f = open('DataSetGeneration.log', 'a')
+        timestring = '! ' + _time.strftime("%a, %d %b %Y %H:%M:%S +0000", _time.gmtime()) + '\n'
+        f.write(timestring)
+        f.write('\r\n')
+        f.write(s)
+
+        f.close()
