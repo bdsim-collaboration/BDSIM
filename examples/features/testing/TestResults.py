@@ -42,5 +42,24 @@ class Timing:
         return s
 
 
+class Results:
+    def __init__(self):
+        self.results = []
+        self.timingData = None
+
+    def AddResults(self, results):
+        if isinstance(results, dict):
+            self.results.append(results)
+        elif isinstance(results, list):
+            self.results.extend(results)
+
+    def AddTimingData(self, timingData):
+        if not isinstance(timingData,Timing):
+            raise TypeError("Timing data muse be a TestResults.Timing instance.")
+        else:
+            self.timingData = timingData
+
+    def ProcessResults(self):
+        pass
 
 

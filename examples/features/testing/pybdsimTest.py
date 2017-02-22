@@ -9,6 +9,7 @@ import time
 import Globals
 import PhaseSpace
 import Writer
+import TestResults
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 
@@ -372,6 +373,8 @@ class TestUtilities(object):
 class TestSuite(TestUtilities):
     def __init__(self, directory):
         super(TestSuite, self).__init__(directory)
+        self.Results = TestResults.Results()
+
         # timing data.
         self.timings = TestResults.Timing()
 
@@ -389,8 +392,6 @@ class TestSuite(TestUtilities):
             """
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   # Write all gmad files for all test objects.
-
-        setattr(self, 'testResults', [])
 
         _os.chdir('BDSIMOutput')
         testfilesDir = '../Tests/*/'
@@ -438,7 +439,7 @@ class TestSuite(TestUtilities):
         results = p.map(Run, testlist)
 
         for testRes in results:
-            self.testResults.append(testRes)
+            self.Results.AddResults(testRes)
             self.timings.bdsimTimes.append(testRes['bdsimTime'])
             self.timings.comparatorTimes.append(testRes['compTime'])
 
