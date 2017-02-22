@@ -371,8 +371,9 @@ class TestUtilities(object):
 
 
 class TestSuite(TestUtilities):
-    def __init__(self, directory):
+    def __init__(self, directory, _useSingleThread=False):
         super(TestSuite, self).__init__(directory)
+        self._useSingleThread = _useSingleThread
         self.Results = TestResults.Results()
 
         # timing data.
@@ -417,11 +418,10 @@ class TestSuite(TestUtilities):
                             'compTime'          : 0}
                 testlist.append(testDict)
 
-            # multithreaded option
-            self._multiThread(testlist)
-
-            # single threaded option.
-            # self._singleThread(testlist)
+            if not self._useSingleThread:
+                self._multiThread(testlist)  # multithreaded option
+            else:
+                self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
             self.timings.AddComponentTime(component,componentTime)
