@@ -47,6 +47,40 @@ class Results:
         self.results = []
         self.timingData = None
 
+    def _getGitCommit(self):
+        """ Function to get the information about which commit BDSIM was built using.
+            """
+        pwd = _os.getcwd()  # keep copy of testing cwd
+        logfile = pwd + '/gitCommit.log'
+        branchfile = pwd + '/gitBranch.log'
+
+        # cd to git repo, output info to log file in testing dir, and cd back
+        _os.chdir(GlobalData._bdsimSource)
+        _os.system("git log -1 > " + logfile)
+        _os.system("git branch | grep  \* > " + branchfile)
+        _os.chdir(pwd)
+
+        # branch info should only be one line of text
+        f = open('gitBranch.log')
+        branchLine = f.next()
+        f.close()
+        # get branch name
+        branchLine = branchLine.strip('\r')
+        branchLine = branchLine.strip('\n')
+        branch = branchLine.split(' ')[1]
+
+        gitLines = "BDSIM was built from the git repository using the branch " + branch + ",\r\n"
+        gitLines += "and was at the following commit: \r\n"
+        gitLines += "\r\n"
+
+        # append lines from commit log
+        f = open('gitCommit.log')
+        for line in f:
+            gitLines += (line + '\r\n')
+        _os.remove('gitCommit.log')
+        _os.remove('gitBranch.log')
+        return gitLines
+
     def AddResults(self, results):
         if isinstance(results, dict):
             self.results.append(results)
@@ -76,4 +110,6 @@ class Results:
         f.write('\r\n')
         f.write(s)
 
+        # TODO: Write out reasons for failure.
+        f.write(self._getGitCommit())
         f.close()
