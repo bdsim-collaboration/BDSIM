@@ -60,10 +60,11 @@ class Results:
         _os.chdir(GlobalData._bdsimSource)
         _os.system("git log -1 > " + logfile)
         _os.system("git branch | grep  \* > " + branchfile)
+        fetchTime = _time.strftime('%Y-%m-%d %H:%M:%S', _time.localtime(_os.stat('.git/FETCH_HEAD').st_mtime))
         _os.chdir(pwd)
 
         # branch info should only be one line of text
-        f = open('gitBranch.log')
+        f = open('gitBranch.log','r')
         branchLine = f.next()
         f.close()
         # get branch name
@@ -71,8 +72,9 @@ class Results:
         branchLine = branchLine.strip('\n')
         branch = branchLine.split(' ')[1]
 
-        gitLines = "BDSIM was built from the git repository using the branch " + branch + ",\r\n"
-        gitLines += "and was at the following commit: \r\n"
+        gitLines = "BDSIM was built from the git repository using the branch " + branch + ".\r\n"
+        gitLines += "Last fetch from remote was at " + fetchTime + ".\r\n"
+        gitLines += "Local repository is at the following commit: \r\n"
         gitLines += "\r\n"
 
         # append lines from commit log
@@ -117,7 +119,14 @@ class Results:
         f.write(timestring)
         f.write('\r\n')
         f.write(s)
+        f.write('\r\n')
 
         # TODO: Write out reasons for failure.
+        if numFailed > 0:
+            f.write("The following tests failed to generate ROOT output:\r\n")
+            for test in failedTests:
+                f.write(test + "\r\n")
+            f.write("\r\n")
+
         f.write(self._getGitCommit())
         f.close()
