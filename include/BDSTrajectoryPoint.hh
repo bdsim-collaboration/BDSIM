@@ -60,9 +60,8 @@ public:
   inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
-  inline std::vector<G4int> GetSecondaryID()   const {return secondaryID;}
   /// @}
-  
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
@@ -89,8 +88,7 @@ private:
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
-  std::vector<G4int> secondaryID; ///< Vector of secondary trackIDs
-  
+
   /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;

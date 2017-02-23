@@ -25,19 +25,16 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 #endif
 
   n = trajVec.size();
-  for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
-  {
-    BDSTrajectory* traj = *iT;
-    partID.push_back( (int &&) traj->GetPDGEncoding() );
-    trackID.push_back( (unsigned int &&) traj->GetTrackID() );
+  for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT) {
+    BDSTrajectory *traj = *iT;
+    partID.push_back((int &&) traj->GetPDGEncoding());
+    trackID.push_back((unsigned int &&) traj->GetTrackID());
+
     //parentID.push_back((unsigned int &&) traj->GetParentID());
     parentID.push_back((int &&) traj->GetNewParentID());
-#ifdef BDSDEBUG
-//    G4cout << __METHOD_NAME__ << traj->GetTrackID() << " " << traj->GetParentID() << G4endl;
-#endif
+
 
     std::vector<TVector3> trajectory;
-    std::vector<std::vector<int>> tempSecondaryID;
     std::vector<int> preProcessType;
     std::vector<int> preProcessSubType;
     std::vector<int> postProcessType;
@@ -46,10 +43,9 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     std::vector<double> postWeight;
     std::vector<double> energy;
 
-    for(auto i = 0; i< traj->GetPointEntries();++i)
-    {
-      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
-      G4ThreeVector      pos = point->GetPosition();
+    for (auto i = 0; i < traj->GetPointEntries(); ++i) {
+      BDSTrajectoryPoint *point = static_cast<BDSTrajectoryPoint *>(traj->GetPoint(i));
+      G4ThreeVector pos = point->GetPosition();
       trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
                                     pos.getY() / CLHEP::m,
                                     pos.getZ() / CLHEP::m));
@@ -61,8 +57,8 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       preWeight.push_back(point->GetPreWeight());
       postWeight.push_back(point->GetPostWeight());
       energy.push_back(point->GetEnergy());
-      tempSecondaryID.push_back(point->GetSecondaryID());
     }
+
     trajectories.push_back(trajectory);
     preProcessTypes.push_back(preProcessType);
     preProcessSubTypes.push_back(preProcessSubType);
@@ -71,7 +67,38 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     preWeights.push_back(preWeight);
     postWeights.push_back(postWeight);
     energys.push_back(energy);
-    secondaryID.push_back(tempSecondaryID);
+
+    // loop over parent trajectory steps and find production location and add
+
+    // primary (special case)
+    if (traj->GetTrackID() == 1) {
+      parentStepID.push_back(-1);
+      continue;
+    };
+
+    // secondary
+    auto newParentID = traj->GetNewParentID();
+    if(newParentID >= 0) {
+      auto trajParent = trajVec.at(newParentID);
+      auto trajDaughterPos = traj->GetPoint(0)->GetPosition();
+      for (auto i = 0; i < trajParent->GetPointEntries(); ++i) {
+        if (trajParent->GetPoint(i)->GetPosition() == trajDaughterPos) {
+          parentStepID.push_back(i);
+          break;
+        }
+      }
+    }
+
+    // could not find the vertex, possible for disconnected trees
+    if(parentStepID.size() == 0) {
+      parentStepID.push_back(-1);
+    }
+  }
+
+  // loop over trajectories to gather secondaries with the mother
+  for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT) {
+    BDSTrajectory *traj = *iT;
+
   }
 }
 
@@ -89,6 +116,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   partID.clear();
   trackID.clear();
   parentID.clear();
+  parentStepID.clear();
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
@@ -138,11 +166,10 @@ void BDSOutputROOTEventTrajectory::print(int i)
 {
   for(size_t j=0;j<trajectories[i].size();++j)
   {
-    std::cout << j << " " << trackID[i] << " " << parentID[i] << " " << partID[i] << " "
+    std::cout << j << " " << trackID[i] << " " << parentID[i] << " " << parentStepID[i] << " " << partID[i] << " "
               << preProcessTypes[i][j]  << " " << preProcessSubTypes[i][j] << " "
               << postProcessTypes[i][j] << " " << postProcessSubTypes[i][j] << " "
-              << trajectories[i][j].X() << " " << trajectories[i][j].Y() << " " <<  trajectories[i][j].Z() << " "
-              << secondaryID[i][j].size() << std::endl;
+              << trajectories[i][j].X() << " " << trajectories[i][j].Y() << " " <<  trajectories[i][j].Z() << " " << std::endl;
   }
 }
 

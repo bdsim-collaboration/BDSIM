@@ -135,7 +135,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction()const
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
   return static_cast<BDSTrajectoryPoint*>(GetPoint(GetPointEntries()-1));
-} 
+}
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {

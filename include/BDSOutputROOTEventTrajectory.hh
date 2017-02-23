@@ -96,6 +96,7 @@ public:
   std::vector<int>                 partID;
   std::vector<unsigned int>        trackID;
   std::vector<int>                 parentID;
+  std::vector<int>                 parentStepID;
   std::vector<std::vector<int>>    preProcessTypes;
   std::vector<std::vector<int>>    preProcessSubTypes;
   std::vector<std::vector<int>>    postProcessTypes;

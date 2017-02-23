@@ -97,13 +97,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     beamlineIndex    = info->GetBeamlineIndex();
     turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
   }
-
-  const std::vector<const G4Track*> *secondaries = step->GetSecondaryInCurrentStep();
-
-  for(auto secondaryTrack : *secondaries )
-  {
-    secondaryID.push_back(secondaryTrack->GetTrackID());
-  }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
