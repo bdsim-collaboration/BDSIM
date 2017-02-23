@@ -233,11 +233,11 @@ class Writer:
                                 machine.AddDrift(name='dr1', length=0.2)
                                 
                                 if angle is not None:
-                                    machine.AddDipole(name=componentName, category=component, angle=angle, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
+                                    machine.AddDipole(name=componentName, category=component, length=length, angle=angle, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
                                 elif field is not None:
-                                    machine.AddDipole(name=componentName, category=component, b=field, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
+                                    machine.AddDipole(name=componentName, category=component, length=length, b=field, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
                                 
-                                machine.AddDrift(name='dr2', length=0.5)
+                                machine.AddDrift(name='dr2', length=0.2)
                                 machine.AddSampler('all')
                                 machine.AddBeam(self._getBeam(test))
                                 self._writeToDisk(component, hgapFileName, machine, test)
