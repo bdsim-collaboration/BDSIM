@@ -24,11 +24,10 @@ def Run(inputDict):
         """
     inputfile = inputDict['testfile']
     isSelfComparison = inputDict['isSelfComparison']
-    originalFile = inputDict['originalFile']
     generateOriginal = inputDict['generateOriginal']
 
     # strip extension to leave test name, will be used as output name
-    if inputfile[-5:] != '.gmad':
+    if inputfile[-5:] == '.gmad':
         outputfile = inputfile[:-5]
     else:
         outputfile = inputfile
@@ -71,9 +70,9 @@ def Run(inputDict):
             copyString = 'cp ' + testOutputFile + ' ' + originalFile
             _os.system(copyString)
         else:
-            pass  # This is where the comparison with the original file will occur.
-            # TODO: figure out how to process original files that will be compared to.
+            originalFile = inputDict['originalFile']
 
+        #run comparator and record comparator time.
         t = time.time()
         outputLog.write('\r\n')
         TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, testOutputFile], stdout=outputLog)
@@ -105,7 +104,7 @@ def Run(inputDict):
 class Test(dict):
     def __init__(self, component, energy, particle, phaseSpace=None,
                  useDefaults=False, testRobustNess=False, eFieldMap='',
-                 bFieldMap='', **kwargs):
+                 bFieldMap='', comparisonFile='', **kwargs):
 
         dict.__init__(self)
         self._numFiles = 0
@@ -132,10 +131,11 @@ class Test(dict):
                         self.__Update(key, value)
         else:
             raise ValueError("Unknown component type.")
+        self.SetComparisonFilename(fileName=comparisonFile)
         self.SetEnergy(energy)
         self.SetBeamPhaseSpace(phaseSpace)
         self.SetParticleType(particle)
-        
+
     def __createSetterFunction(self, name=''):
         """ Function to return function template for updating component parameters.
             """
@@ -201,6 +201,26 @@ class Test(dict):
             s += '  '+param+' : ' + self[param].__repr__()+'\r\n'
         return s
 
+    def SetComparisonFilename(self, fileName=''):
+        """ Function to set the filename to which the generated BDSIM output will be compared.
+            This filename can only be set if the pybdsim.Test object represent a solitary test.
+            """
+        if (self._numFiles > 1) and (fileName != ''):
+            s = "This pybdsim.Test object is set to generate " + _np.str(self._numFiles) + " output files.\r\n"
+            s += "A comparison test file can only be specified if this object represents a solitary test.\r\n"
+            print(s)
+        elif isinstance(fileName, _np.str) and (fileName != ''):
+            # only set filename if the file exists
+            startOfFileName = fileName.rfind('/')
+            if startOfFileName == -1:
+                files = _glob.glob('*')
+                fName = startOfFileName
+            else:
+                files = _glob.glob(fileName[:(startOfFileName + 1)] + '*')
+                fName = fileName[(startOfFileName + 1):]
+            if files.__contains__(fName):
+                self._testFiles = fileName
+
     def SetEnergy(self, energy):
         """ Set test beam energy.
             """
@@ -246,20 +266,22 @@ class Test(dict):
 
 
 class TestUtilities(object):
-    def __init__(self, directory=''):
+    def __init__(self, testingDirectory='', dataSetDirectory=''):
         self._tests = []  # list of test objects
 
-        if not isinstance(directory, _np.str):
+        if not isinstance(testingDirectory, _np.str):
             raise TypeError("Testing directory is not a string")
         else:
-            if directory == '':
+            if testingDirectory == '':
+                pass
+            elif _os.getcwd().split('/')[-1] == testingDirectory:
                 pass
             # check for directory and make it if not:
-            elif _os.path.exists(directory):
-                _os.chdir(directory)
-            elif not _os.path.exists(directory):
-                _os.system("mkdir " + directory)
-                _os.chdir(directory)
+            elif _os.path.exists(testingDirectory):
+                _os.chdir(testingDirectory)
+            elif not _os.path.exists(testingDirectory):
+                _os.system("mkdir " + testingDirectory)
+                _os.chdir(testingDirectory)
 
         # make dirs for gmad files, bdsimoutput, and failed outputs
         if not _os.path.exists('Tests'):
@@ -271,6 +293,11 @@ class TestUtilities(object):
         if not _os.path.exists('FailedTests'):
             _os.system("mkdir FailedTests")
         _os.chdir('../')
+
+        self._dataSetDirectory = ''
+        if isinstance(dataSetDirectory, _np.str):
+            self._dataSetDirectory = dataSetDirectory
+
         self.bdsimFailLog = 'bdsimOutputFailures.log'
         self.bdsimPassLog = 'bdsimOutputPassed.log'
         self._comparatorLog = 'comparatorOutput.log'
@@ -379,17 +406,27 @@ class TestUtilities(object):
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
+    def _CheckForOriginal(self, testname, componentType):
+        if self._dataSetDirectory != '':
+            dataDir = self._dataSetDirectory
+        else:
+            dataDir = 'OriginalDataSet'
+        testname = testname.replace('Tests', dataDir)
+        testname = testname.replace('.gmad', '_event.root')
+        files = _glob.glob('../' + dataDir + '/' + componentType + "/*.root")
+        if files.__contains__(testname):
+            return testname
+        else:
+            return ''
+
 
 class TestSuite(TestUtilities):
-    def __init__(self, directory, _useSingleThread=False):
-        super(TestSuite, self).__init__(directory)
+    def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
+        super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
         self._useSingleThread = _useSingleThread
         self._generateOriginals = False  # bool for generating original data set
-
-        self.Results = TestResults.Results()
-
-        # timing data.
-        self.timings = TestResults.Timing()
+        self.Results = TestResults.Results()  # results instance
+        self.timings = TestResults.Timing()  # timing data.
 
     def AddTest(self, test):
         """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
@@ -454,10 +491,12 @@ class TestSuite(TestUtilities):
             # compile iterable list of dicts for multithreading function.
             testlist = []
             for test in tests:
+                origname = self._CheckForOriginal(test, componentType)
 
                 # pass data in a dict. Easier to pass single expandable variable.
                 testDict = {'testfile'          : test,
-                            'originalFile'      : '',
+                            'componentType'     : componentType,
+                            'originalFile'      : origname,
                             'bdsimLogfile'      : '',
                             'compLogFile'       : '',
                             'ROOTFile'          : '',
