@@ -12,6 +12,7 @@ class Writer:
     def __init__(self):
         self._beamFilename = ''
         self._optionsFilename = ''
+        self._numFilesWritten = 0
 
     def calcBField(self, length, angle, energy, particle):
         # Calculate the magnetic field for a dipole
@@ -63,6 +64,18 @@ class Writer:
         beam.SetDistributionType(distrtype='ptc')
         beam._SetSigmaE(sigmae=0)
         return beam
+
+    def _getMachine(self, particle, robust=False):
+        if particle == 'e-':
+            colLength = 0.01
+        elif particle == 'proton':
+            colLength = 0.5
+        machine = _Builder.Machine()
+        if robust:
+            machine.AddDrift(name='precr1', length=0.1)
+            machine.AddRCol(name='FeCol', length=colLength, xsize=0, ysize=0)
+            machine.AddDrift(name='precr2', length=0.1)
+        return machine
 
     def _mkdirs(self, test):
         """ Function to make the directories that the tests will be written in.
@@ -141,9 +154,7 @@ class Writer:
             """
         if not isinstance(test, pybdsimTest.Test):
             raise TypeError("test is not a bdsimtesting.pybdsim.Test instance.")
-        
-        setattr(self, '_numFilesWritten', 0)
-        
+
         component = test.Component
         
         for keys, values in test.iteritems():
@@ -193,7 +204,7 @@ class Writer:
             lenName = '_length_' + _np.str(length)
             lenFileName = filename + lenName
 
-            machine = _Builder.Machine()
+            machine = self._getMachine(test.Particle, test._testRobustness)
             machine.AddDrift(name='dr', length=length)
             machine.AddSampler('all')
             machine.AddBeam(self._getBeam(test))
@@ -218,8 +229,8 @@ class Writer:
                                 hgapName = '_hgap_'+_np.str(hgap)
                                 hgapFileName = fintxFileName + hgapName
     
-                                machine = _Builder.Machine()
-                                machine.AddDrift(name='dr1', length=0.5)
+                                machine = self._getMachine(test.Particle, test._testRobustness)
+                                machine.AddDrift(name='dr1', length=0.2)
                                 
                                 if angle is not None:
                                     machine.AddDipole(name=componentName, category=component, angle=angle, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
@@ -271,7 +282,7 @@ class Writer:
                 k1Name = '_k1_' + _np.str(k1)
                 k1FileName = lenFileName + k1Name
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddQuadrupole(name='qd', length=length, k1=k1)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -287,7 +298,7 @@ class Writer:
                 k2Name = '_k2_' + _np.str(k2)
                 k2FileName = lenFileName + k2Name
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddSextupole(name='sx', length=length, k2=k2)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -303,7 +314,7 @@ class Writer:
                 k3Name = '_k3_' + _np.str(k3)
                 k3FileName = lenFileName + k3Name
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddOctupole(name='oc', length=length, k3=k3)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -319,7 +330,7 @@ class Writer:
                 k4Name = '_k4_' + _np.str(k4)
                 k4FileName = lenFileName + k4Name
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddOctupole(name='dc', length=length, k4=k4)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -339,7 +350,7 @@ class Writer:
                 kickAngleName = '_kickangle_'+_np.str(kickangle)
                 kickAngleFileName = lenFileName + kickAngleName
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 if component == 'hkick':
                     machine.AddHKicker(name=componentName, length=length, angle=kickangle)
                 elif component == 'vkick':
@@ -384,7 +395,7 @@ class Writer:
                 for ksl in test['ksl']:
                     for ksArray in ksl:
                         
-                        machine = _Builder.Machine()
+                        machine = self._getMachine(test.Particle, test._testRobustness)
                         if component == 'thinmultipole':
                             machine.AddDrift(name='dr1', length=0.5)
                             machine.AddThinMultipole(name='mp1', knl=knArray, ksl=ksArray)
@@ -405,7 +416,7 @@ class Writer:
             ysize = test['y(col)'][0]
             collFileName = lenFileName + '_x_' + _np.str(xsize) + '_y_' + _np.str(ysize)
 
-            machine = _Builder.Machine()
+            machine = self._getMachine(test.Particle, test._testRobustness)
             if component == 'rcol':
                 machine.AddRCol(name='rc1', length=length, xsize=xsize, ysize=ysize)
             if component == 'ecol':
@@ -424,7 +435,7 @@ class Writer:
                 ksName = '_ks_'+_np.str(ks)
                 ksFileName = lenFileName + ksName
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddSolenoid(name='sn1', length=length, ks=ks)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -440,7 +451,7 @@ class Writer:
                 gradientName = '_field_' + _np.str(gradient)
                 gradientFileName = lenFileName + gradientName
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddRFCavity(name='rc1', length=length, gradient=gradient)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -459,7 +470,7 @@ class Writer:
                     thicknessName = '_thickness_' + _np.str(thickness)
                     thicknessFileName = numWedgesFileName + thicknessName
                   
-                    machine = _Builder.Machine()
+                    machine = self._getMachine(test.Particle, test._testRobustness)
                     # thickness is fraction of length
                     machine.AddDegrader(name='deg1', length=length, nWedges=numWedges, materialThickness=thickness*length)
                     machine.AddSampler('all')
@@ -477,7 +488,7 @@ class Writer:
                 fieldName = '_field_' + _np.str(bfield)
                 fieldFileName = lenFileName + fieldName
 
-                machine = _Builder.Machine()
+                machine = self._getMachine(test.Particle, test._testRobustness)
                 machine.AddLaser(name='mu1', length=length, b=bfield)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
@@ -490,7 +501,7 @@ class Writer:
             lenName = '_length_' + _np.str(length)
             lenFileName = filename + lenName
             
-            machine = _Builder.Machine()
+            machine = self._getMachine(test.Particle, test._testRobustness)
             machine.AddLaser(name='las', length=length)
             machine.AddSampler('all')
             machine.AddBeam(self._getBeam(test))
@@ -503,7 +514,7 @@ class Writer:
             lenName = '_length_' + _np.str(length)
             lenFileName = filename + lenName
             
-            machine = _Builder.Machine()
+            machine = self._getMachine(test.Particle, test._testRobustness)
             machine.AddShield(name='sh', length=length)
             machine.AddSampler('all')
             machine.AddBeam(self._getBeam(test))
