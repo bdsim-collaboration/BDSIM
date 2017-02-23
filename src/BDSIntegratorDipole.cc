@@ -117,7 +117,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double
 									G4ThreeVector LocalR,
 									G4ThreeVector LocalRp)
 {
-   G4ThreeVector yhat(0.,1.,0.);
+  G4ThreeVector yhat(0.,1.,0.);
   G4ThreeVector vhat  = LocalRp;
   G4ThreeVector vnorm = vhat.cross(yhat);
     
@@ -136,4 +136,3 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double
   
   return std::make_pair(itsFinalPoint,itsFinalDir);
 }
-
