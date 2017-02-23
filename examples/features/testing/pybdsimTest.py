@@ -90,8 +90,10 @@ def Run(inputDict):
             if isSelfComparison:
                 _os.system("rm " + originalFile)
             inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+            _os.system("rm " + comparatorLogFile)
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
+            _os.system("mv " + comparatorLogFile + "FailedTests/" + comparatorLogFile)  # move failed comp. log file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
             inputDict['code'] = GlobalData.returnCodes['FAILED']  # False
@@ -402,7 +404,8 @@ class TestUtilities(object):
             """
         options = _options.Options()
         options.SetSamplerDiameter(3)
-        options.SetWritePrimaries(True)
+        options.SetWritePrimaries(False)
+        options.SetPhysicsList(physicslist="em hadronic")
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
