@@ -97,10 +97,10 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i]=yInput[i];}
 
-  G4cout << "hstep " << hstep << G4endl;
+  //G4cout << "hstep " << hstep << G4endl;
   G4ThreeVector dxdyv0 = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
   G4ThreeVector dxdyv1 = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
-  G4cout << "dydx " << dxdyv0 << " " << dxdyv1 << G4endl;
+  //G4cout << "dydx " << dxdyv0 << " " << dxdyv1 << G4endl;
 
   const G4double *pIn = yInput+3;
   G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
@@ -127,8 +127,9 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   
   // Do a full Step
   h = hstep ;
-  AdvanceHelix(yIn, h, yTemp, true);
+  AdvanceHelix(yIn, h, yTemp, false);
 
+  /*
   G4ThreeVector v1div = dxdyv1/1.5;
   G4ThreeVector dpos  = GlobalP*h + dxdyv1*(h*h / 2);
   G4ThreeVector dpos2 = v1div*h + v1div*(h*h / 2);
@@ -181,7 +182,7 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   //for (i = 0; i < nVariables; i++)
   //  {G4cout << yOut3[i] << " ";}
   //G4cout << G4endl;
-  
+  */
   for(G4int i = 0; i < nVariables; i++)
     {
       yErr[i] = yOut[i] - yTemp[i];
@@ -193,7 +194,7 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
 	{yErr[i] = 0;}
     }
 
-  G4cout << G4endl;
+  //G4cout << G4endl;
 
   // TBC - we have not set DistChord here!
 }
