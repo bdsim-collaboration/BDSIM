@@ -33,6 +33,9 @@ def main():
     f = pybdsim.Field.Field2D(data)
     f.Write('2dexample.dat')
 
+    fd = pybdsim.Field.Field2D(data,doublePrecision=True)
+    fd.Write('2dexample_dp.dat')
+
     # compress the result
     tar = tarfile.open("2dexample.tar.gz", "w:gz")
     tar.add('2dexample.dat')
@@ -48,10 +51,10 @@ def Plot(array):
 
     _plt.figure()
     _plt.quiver(a[:,:,0], a[:,:,1], a[:,:,2], a[:,:,3], mag, cmap=_plt.cm.magma, pivot='mid', scale=None)
-    _plt.xlabel('X Index')
-    _plt.ylabel('Y Index')
+    _plt.xlabel('X (cm)')
+    _plt.ylabel('Y (cm)')
     _plt.title('2D Example Data')
-    _plt.colorbar()
+    _plt.colorbar(label='Tesla')
     _plt.tight_layout()
     _plt.axes().set_aspect('equal', 'datalim')
     _plt.savefig('2dexample.png',dpi=400)
