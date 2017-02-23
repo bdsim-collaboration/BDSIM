@@ -514,7 +514,7 @@ class TestSuite(TestUtilities):
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.timings.AddComponentTime(component,componentTime)
+            self.timings.AddComponentTime(component, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')
@@ -601,8 +601,5 @@ class TestSuite(TestUtilities):
             self.totalFiles += self.numFiles[component]
 
         self.BeamPhaseSpace = BeamPhaseSpace
-
-
-
 
 

@@ -19,14 +19,14 @@ class Timing:
         self.comparatorTimes = []
         self.totalTime = 0
 
-    def SetTotalTime(self,totalTime):
+    def SetTotalTime(self, totalTime):
         try:
             totalTime = _np.float(totalTime)
             self.totalTime = totalTime
         except ValueError:
             pass
 
-    def AddComponentTime(self,component,componentTime):
+    def AddComponentTime(self, component, componentTime):
         try:
             cTime = _np.float(componentTime)
             self.componentTimes[component] = cTime

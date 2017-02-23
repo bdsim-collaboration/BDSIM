@@ -102,8 +102,8 @@ class Writer:
         # pybdsim adds a -1 to the name which means the written file
         # won't be used in the testing.
         if test._numFiles > 1000:
-            dir = _np.str(_np.int(self._numFilesWritten - _np.mod(self._numFilesWritten,1000)))
-            _os.chdir(dir)
+            direc = _np.str(_np.int(self._numFilesWritten - _np.mod(self._numFilesWritten, 1000)))
+            _os.chdir(direc)
             files = _glob.glob('*')
             if not files.__contains__(filename+'.gmad'):
                 machine.beam._SetDistribFileName('../../' + self._beamFilename)
