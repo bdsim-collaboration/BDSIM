@@ -2,19 +2,17 @@
 #include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
+#include "G4ElectroMagneticField.hh"
+#include "G4Field.hh"
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagneticField.hh"
 #include "G4MagIntegratorDriver.hh" // for G4MagInt_Driver
+#include "G4MagIntegratorStepper.hh"
+#include "G4MagneticField.hh"
 
 #include <vector>
 
-class BDSFieldInfo;
-
-class G4EquationOfMotion;
-class G4MagIntegratorStepper;
-
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4Field*                fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn,
@@ -29,7 +27,7 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   magIntDriver(nullptr)
 {;}
 
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4ElectroMagneticField* fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn):
@@ -51,7 +49,7 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
 
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4MagneticField*        fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn):
@@ -62,11 +60,19 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   magIntDriver(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  
-  chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
-				  globals->ChordStepMinimum(),
-				  magIntegratorStepper);
 
+  // G4ChordFinder seems to create another G4Mag_UsualEqRhs and use that.
+  // Break their recipe to avoid this and it proves to be more reliable too.
+  //chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
+  //				  globals->ChordStepMinimum(),
+  //				  magIntegratorStepper);
+
+  magIntDriver = new G4MagInt_Driver(globals->ChordStepMinimum(),
+				     magIntegratorStepper,
+				     magIntegratorStepper->GetNumberOfVariables());
+
+  chordFinder  = new G4ChordFinder(magIntDriver);
+  
   fieldManager = new G4FieldManager(field, chordFinder);
   fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
   fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
@@ -81,7 +87,7 @@ BDSFieldObjects::~BDSFieldObjects()
   delete chordFinder;
   delete magIntegratorStepper;
   delete equationOfMotion;
-  delete magIntDriver;
+  //delete magIntDriver; // not needed since deleted by chordFinder
 }
 
 void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,

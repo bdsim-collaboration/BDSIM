@@ -24,7 +24,8 @@ public:
   virtual ~BDSFieldMagQuadrupole(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const G4double       t = 0) const;
   
 private:
   /// Private default constructor to force use of supplied constructor.

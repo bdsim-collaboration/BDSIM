@@ -1,0 +1,21 @@
+d1: drift, l=20*m;
+rb1: rbend, l=25*m, angle=2*pi/10;
+sb1 : sbend, l=25*m, angle = 2*pi/10;
+! make drift10 slightly shorter so teleporter can do something
+d10: drift, l=19.9*m;
+
+l1: line = (rb1,d1);
+l2: line = (sb1,d1);
+
+! rbend at begining would overlap with teleporter!
+lat: line = (l1,l2,l2,l2,l2,l2,l2,l2,l2,l2);
+
+include optionsTest.gmad;
+
+! reduce number of events (for coverage mode)
+option, ngenerate=1;
+! at least two turns to test teleporter
+option, nturns=2;
+
+! don't check overlaps (takes too long)
+option, checkOverlaps=0;

@@ -1,19 +1,21 @@
 #include "HistogramMerge.hh"
-#include "Config.hh"
 #include "rebdsim.hh"
 
 ClassImp(HistogramMerge)
 
-HistogramMerge::HistogramMerge()
+HistogramMerge::HistogramMerge():
+debug(false)
 {;}
 
-HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
+HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms* h,
+			       bool debugIn):
+  debug(debugIn)
 {
   auto h1i = h->Get1DHistograms();
-  for(auto h : h1i)
+  for(auto hist : h1i)
   {
-    auto ch  = (TH1D*)h->Clone();
-    auto chE = (TH1D*)h->Clone();
+    auto ch  = (TH1D*)hist->Clone();
+    auto chE = (TH1D*)hist->Clone();
     ch->Reset();
     chE->Reset();
     this->histograms1D.push_back(ch);
@@ -22,16 +24,29 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
   }
 
   auto h2i = h->Get2DHistograms();
-  for(auto h : h2i)
+  for(auto hist : h2i)
   {
-    auto ch  = (TH2D*)h->Clone();
-    auto chE = (TH2D*)h->Clone();
+    auto ch  = (TH2D*)hist->Clone();
+    auto chE = (TH2D*)hist->Clone();
     ch->Reset();
     chE->Reset();
     this->histograms2D.push_back(ch);
     this->histograms2DN.push_back(0);
     this->histograms2DError.push_back(chE);
   }
+
+  auto h3i = h->Get3DHistograms();
+  for (auto hist : h3i)
+    {
+      auto ch  = (TH3D*)hist->Clone();
+      auto chE = (TH3D*)hist->Clone();
+      ch->Reset();
+      chE->Reset();
+      histograms3D.push_back(ch);
+      histograms3DN.push_back(0);
+      histograms3DError.push_back(chE);
+    }
+  
   Add(h);
 }
 
@@ -48,7 +63,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     auto h1e = this->histograms1DError[i];
     h1e->SetName((std::string(h1->GetName())+"Error").c_str());
     auto h2  = hIn->Get1DHistograms()[i];
-    // loop over bins
+    // loop over all bins (0=underflow nbins+1=overflow)
     for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
       h1->SetBinContent(j,h1->GetBinContent(j)+h2->GetBinContent(j));
@@ -66,21 +81,45 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     h1e->SetName((std::string(h1->GetName())+"Error").c_str());
     auto h2  = hIn->Get2DHistograms()[i];
 
-    for(int j=0;j<h1->GetNbinsX()+1;++j)
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      for(int k=0;k<h1->GetNbinsY()+1;++k)
+      for(int k=0;k<=h1->GetNbinsY()+1;++k)
       {
-         h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
+        h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
         h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
       }
     }
     histograms2DN[i] = histograms2DN[i]+1;
   }
+
+  // loop over 3d histograms
+  auto h3i = hIn->Get3DHistograms();
+  for(size_t i=0;i<h3i.size();++i)
+  {
+    auto h1  = histograms3D[i];
+    auto h1e = histograms3DError[i];
+    h1e->SetName((std::string(h1->GetName())+"Error").c_str());
+    auto h2  = hIn->Get3DHistograms()[i];
+
+    for(int j = 0; j <= h1->GetNbinsX() + 1; ++j)
+      {
+	for(int k = 0; k <= h1->GetNbinsY() + 1; ++k)
+	  {
+	    for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
+	      {
+		h1->SetBinContent(j,k,l,h1->GetBinContent(j,k,l)+h2->GetBinContent(j,k,l));
+		h1e->SetBinContent(j,k,l, h1e->GetBinContent(j,k,l)+pow(h2->GetBinContent(j,k,l),2));
+	      }
+	  }
+      }
+    histograms3DN[i] = histograms3DN[i]+1;
+  }
+  
 }
 
 void HistogramMerge::Terminate()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << "HistogramMerge::Terminate" << std::endl;}
   
   // loop over 1d histograms
@@ -88,33 +127,59 @@ void HistogramMerge::Terminate()
   {
     auto h1  = histograms1D[i];
     auto h1e = histograms1DError[i];
+    int entries = histograms1DN[i];
 
+    // loop over all bins (0=underflow nbins+1=overflow)
     for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      double mean = h1->GetBinContent(j)/histograms1DN[i];
-      double std  = sqrt(h1e->GetBinContent(j)/histograms1DN[i]-pow(mean,2))/sqrt(histograms1DN[i]);
+      double mean = h1->GetBinContent(j)/entries;
+      double std  = sqrt((h1e->GetBinContent(j)/entries-pow(mean,2))/entries);
       h1->SetBinContent(j,mean);
       h1->SetBinError(j,std);
     }
-    h1->SetEntries(histograms1DN[i]);
+    h1->SetEntries(entries);
   }
 
+  // loop over 2d histograms
   for(unsigned int i=0;i<histograms2D.size();++i)
   {
     auto h1  = histograms2D[i];
     auto h1e = histograms2DError[i];
-    for(int j=0;j<=h1->GetNbinsX();++j)
+    int entries = histograms2DN[i];
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      for(int k=0;k<=h1->GetNbinsY();++k)
+      for(int k=0;k<=h1->GetNbinsY()+1;++k)
       {
-        double mean = h1->GetBinContent(i,j)/histograms2DN[i];
-        double std  = sqrt(h1e->GetBinContent(j,k)/histograms2DN[i]-pow(mean,2))/sqrt(histograms2DN[i]);
+        double mean = h1->GetBinContent(j,k)/entries;
+        double std  = sqrt((h1e->GetBinContent(j,k)/entries-pow(mean,2))/entries);
         h1->SetBinContent(j,k,mean);
         h1->SetBinError(j,k,std);
       }
     }
-    h1->SetEntries(histograms2DN[i]);
+    h1->SetEntries(entries);
   }
+
+  // loop over 3d histograms
+  for(unsigned int i=0;i<histograms3D.size();++i)
+    {
+      auto h1  = histograms3D[i];
+      auto h1e = histograms3DError[i];
+      int entries = histograms3DN[i];
+      for(int j = 0; j <= h1->GetNbinsX() + 1; ++j)
+	{
+	  for(int k = 0; k <= h1->GetNbinsY() + 1; ++k)
+	    {
+	      for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
+		{
+		  double mean = h1->GetBinContent(j,k,l)/entries;
+		  double std  = sqrt((h1e->GetBinContent(j,k,l)/entries-pow(mean,2))/entries);
+		  h1->SetBinContent(j,k,l,mean);
+		  h1->SetBinError(j,k,l,std);
+		}
+	    }
+	}
+      h1->SetEntries(entries);
+    }
 }
 
 void HistogramMerge::Write(TFile* /*outputFile*/)
@@ -124,5 +189,7 @@ void HistogramMerge::Write(TFile* /*outputFile*/)
   for (auto h : histograms1D)
     { h->Write(); }
   for (auto h : histograms2D)
+    { h->Write(); }
+  for (auto h : histograms3D)
     { h->Write(); }
 }

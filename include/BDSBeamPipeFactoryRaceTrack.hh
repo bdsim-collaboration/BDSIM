@@ -1,11 +1,7 @@
 #ifndef BDSBEAMPIPEFACTORYRACETRACK_H
 #define BDSBEAMPIPEFACTORYRACETRACK_H
 
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryPoints.hh"
-#include "BDSBeamPipe.hh"
-
-class G4Material;
 
 /**
  * @brief Factory for racetrack aperture model beampipes.
@@ -36,7 +32,7 @@ public:
   
 private:
   BDSBeamPipeFactoryRaceTrack(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryRaceTrack* _instance;
+  static BDSBeamPipeFactoryRaceTrack* instance;
 
   /// Generate quarters of a circle to represent the edges joined by straight lines.
   /// Overloaded (required) from BDSBeamPipeFactoryPoints

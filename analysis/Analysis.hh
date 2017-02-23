@@ -3,6 +3,7 @@
 
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TH3D.h"
 
 #include "HistogramMerge.hh"
 
@@ -12,6 +13,12 @@
 
 class TChain;
 class TFile;
+
+/**
+ * @brief Base class for any TTree analysis.
+ *
+ * @author Stuart Walker.
+ */
 
 class Analysis
 {
@@ -42,6 +49,7 @@ protected:
   std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names
   std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histogram
   std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms
+  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms
   HistogramMerge*             histoSum;       ///< Bdsim histograms
   bool                        debug;
   

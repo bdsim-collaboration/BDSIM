@@ -4,30 +4,24 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4Box.hh"
 #include "G4EllipticalTube.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
-#include <utility>                         // for std::pair
 
-
-BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::_instance = nullptr;
+BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::instance = nullptr;
 
 BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryElliptical();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryElliptical();}
+  return instance;
 }
 
 BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
@@ -35,7 +29,7 @@ BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
 
 BDSBeamPipeFactoryElliptical::~BDSBeamPipeFactoryElliptical()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
@@ -67,7 +61,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
   beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
 					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
 					    aper2In + lengthSafety,         // y half width
-					    lengthIn);                      // length - full length fo unambiguous subtraction
+					    lengthIn);                      // length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
@@ -139,8 +133,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
 
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
 
   // record extents
   BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
@@ -206,7 +199,7 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
   beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
 					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
 					    aper2In + lengthSafety,         // y half width
-					    2*lengthIn);                    // 2*length - full length fo unambiguous subtraction
+					    2*lengthIn);                    // 2*length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name

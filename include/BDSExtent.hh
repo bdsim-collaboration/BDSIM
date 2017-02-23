@@ -2,7 +2,6 @@
 #define BDSEXTENT_H
 
 #include <ostream>
-#include <tuple>   // for std::tie
 #include <utility> // for pair and pair relational operators
 
 #include "globals.hh" // geant4 types / globals
@@ -22,15 +21,18 @@ public:
   /// Default constructor gives 0 in all extents - typically unphysical.
   BDSExtent();
   /// Construct with paris of extents
-  BDSExtent(std::pair<G4double, G4double> extXIn,
-	    std::pair<G4double, G4double> extYIn,
-	    std::pair<G4double, G4double> extZIn);
+  BDSExtent(const std::pair<G4double, G4double> extXIn,
+	    const std::pair<G4double, G4double> extYIn,
+	    const std::pair<G4double, G4double> extZIn);
   /// Construct with individual extents
-  BDSExtent(G4double extXNegIn, G4double extXPosIn,
-	    G4double extYNegIn, G4double extYPosIn,
-	    G4double extZNegIn, G4double extZPosIn);
+  BDSExtent(const G4double extXNegIn, const G4double extXPosIn,
+	    const G4double extYNegIn, const G4double extYPosIn,
+	    const G4double extZNegIn, const G4double extZPosIn);
   /// Symmetric variant - assumed to be +/- same amount
-  BDSExtent(G4double extXIn, G4double extYIn, G4double extZIn);
+  BDSExtent(const G4double extXIn, const G4double extYIn, const G4double extZIn);
+
+  /// Symmetric from three vector.
+  BDSExtent(const G4ThreeVector extIn);
 	    
   ~BDSExtent();
 
@@ -38,7 +40,7 @@ public:
   inline std::pair<G4double, G4double> ExtentX() const {return std::make_pair(extXNeg, extXPos);}
   inline std::pair<G4double, G4double> ExtentY() const {return std::make_pair(extYNeg, extYPos);}
   inline std::pair<G4double, G4double> ExtentZ() const {return std::make_pair(extZNeg, extZPos);}
-
+  
   inline G4double XPos() const {return extXNeg;}
   inline G4double XNeg() const {return extXPos;}
   inline G4double YPos() const {return extYNeg;}
@@ -51,6 +53,12 @@ public:
 
   inline G4ThreeVector ExtentNegative() const
   {return G4ThreeVector(extXNeg, extYNeg, extZNeg);}
+  /// @}
+
+  /// @{ The difference in a dimension.
+  inline G4double DX() const {return extXPos - extXNeg;}
+  inline G4double DY() const {return extYPos - extYNeg;}
+  inline G4double DZ() const {return extZPos - extZNeg;}
   /// @}
 
   /// @{ Comparison operator.
@@ -71,6 +79,14 @@ public:
   inline G4bool TransverselyLessEquals(const BDSExtent& r)    const {return !(this->TransverselyGreaterThan(r));}
   inline G4bool TransverselyGreaterEquals(const BDSExtent& r) const {return !(this->TransverselyLessThan(r));}
   /// @}
+
+  /// Return whether the extent encompasses the point. True if point lies inside the extent.
+  G4bool Encompasses(const G4ThreeVector point) const;
+
+  /// Return whether the extent encompasses the point.  Similar, but with separate x,y,z coordinates.
+  G4bool Encompasses(const G4double x,
+		     const G4double y,
+		     const G4double z) const;
 
   /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
   BDSExtent Tilted(G4double angle) const;
@@ -94,6 +110,9 @@ public:
 
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
+
+  /// Return the maximum abosolute value considering only x,y.
+  G4double MaximumAbsTransverse() const;
   
 private:
   /// @{ Extent.

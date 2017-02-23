@@ -1,0 +1,12 @@
+sb1 : sbend, l=2.5*m, B = -120.0830725, aper1=20*cm;
+
+lat : line = (sb1);
+
+use, lat;
+
+option, checkOverlaps=1,
+	dontSplitSBends=1,
+	magnetGeometryType="cylindrical";
+
+beam, particle="proton",
+      energy=300*GeV;

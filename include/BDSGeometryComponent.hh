@@ -5,6 +5,7 @@
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4LogicalVolume.hh"
+#include "G4Transform3D.hh"
 
 #include <utility>              //for std::pair
 #include <vector>
@@ -12,7 +13,6 @@
 class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
-class G4VPlacement;
 class G4VSensitiveDetector;
 class G4VSolid;
 namespace CLHEP {
@@ -54,10 +54,11 @@ public:
   BDSGeometryComponent(const BDSGeometryComponent& component);
   virtual ~BDSGeometryComponent();
 
-  /// @Accessor - see member for more info
+  /// @{ Accessor - see member for more info
   inline G4String          GetName()   const {return containerLogicalVolume->GetName();}
   inline G4VSolid*         GetContainerSolid()         const {return containerSolid;}
   inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}
+  inline G4Transform3D     GetPlacementTransform()     const;
   inline G4ThreeVector     GetPlacementOffset()        const {return placementOffset;}
   inline G4RotationMatrix* GetPlacementRotation()      const {return placementRotation;}
   inline BDSExtent         GetExtent()                 const {return outerExtent;}
@@ -77,7 +78,7 @@ public:
   /// @}
   
   /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
-  inline void SetPlacementOffset(G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
+  inline void SetPlacementOffset(const G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
   /// @{ Set extent
   inline void SetExtent(BDSExtent extIn)      {outerExtent = extIn;}
@@ -155,10 +156,10 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all logical volumes belonging to this component
-  std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);
@@ -206,5 +207,13 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 };
+
+inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const
+{
+  if (!placementRotation)
+  {return G4Transform3D(G4RotationMatrix(), placementOffset);}
+  else
+  {return G4Transform3D(*placementRotation, placementOffset);}
+}
 
 #endif

@@ -2,12 +2,12 @@
 #define BDSINTEGRATORFRINGEFIELD_H
 
 #include "BDSIntegratorDipole.hh"
-#include "BDSIntegratorDipole.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
+
+class G4Mag_EqRhs;
+class BDSMagnetStrength;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution for a dipole kick.
@@ -34,8 +34,8 @@ public:
 		       G4double       yErr[]);
 
 protected:
-  /// Calcaulte the new particle coordinates for a given step length h.
-  void AdvanceHelix(const G4double yIn[],
+  /// Calculate the new particle coordinates for a given step length h.
+  virtual void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
 		    G4double       yOut[],
@@ -44,11 +44,10 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorFringefield();
   
-  /// B Field Gradient
-  G4double angle;
+  /// Poleface rotation angle
   G4double polefaceAngle;
-  G4double bField;
-
+  /// Fringe field correction term
+  G4double fringeCorr;
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
 };

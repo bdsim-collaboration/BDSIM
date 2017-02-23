@@ -17,6 +17,59 @@ Options::Options(const GMAD::OptionsBase& options):
   PublishMembers();
 }
 
+double Options::get_value(std::string property_name)const{
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    try {
+      // try int and convert
+      value = (double)get<int>(this,property_name);
+    }
+    catch (std::runtime_error) {
+      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+      exit(1);
+    }
+  }
+  return value;
+}
+
+void Options::Amalgamate(const Options& optionsIn, bool override)
+{
+  if (override)
+    {
+      for (auto const key : optionsIn.setKeys)
+	{
+	  try
+	    {set(this, &optionsIn, key);}
+	  catch (std::runtime_error)
+	    {
+	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      exit(1);
+	    }
+	}
+    }
+  else
+    {// don't override - ie give preference to ones set in this instance
+      for (auto const key : optionsIn.setKeys)
+	{
+	  auto const& ok = setKeys; // shortcut
+	  auto result = std::find(ok.begin(), ok.end(), key);
+	  if (result == ok.end())
+	    {//it wasn't found so ok to copy
+	      try
+		{set(this, &optionsIn, key);}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
+	}
+    }
+}
+
 bool Options::HasBeenSet(std::string name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
@@ -80,7 +133,6 @@ void Options::PublishMembers()
   publish("recreateSeedState", &Options::recreateSeedState);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
-  publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);
   publish("defaultRangeCut",&Options::defaultRangeCut);
   publish("ffact",&Options::ffact);
   publish("bv",   &Options::ffact); // MadX naming
@@ -179,12 +231,10 @@ void Options::PublishMembers()
 
   publish("sigmaE",&Options::sigmaE);
 
-  publish("doPlanckScattering",&Options::doPlanckScattering);
   publish("checkOverlaps",&Options::checkOverlaps);
   publish("nperfile",&Options::numberOfEventsPerNtuple);
   publish("eventNumberOffset",&Options::eventNumberOffset);
   publish("vacuumPressure",&Options::vacuumPressure);
-  publish("planckScatterFe",&Options::planckScatterFe);
   publish("xsize",&Options::xsize);
   publish("ysize",&Options::ysize);
   // options which influence the geometry
@@ -234,30 +284,19 @@ void Options::PublishMembers()
   publish("blmLength",&Options::blmLength);
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
-  publish("useEMLPB",&Options::useEMLPB);
-  publish("useHadLPB",&Options::useHadLPB);
 
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",&Options::sensitiveBLMs);
-  publish("LPBFraction",&Options::LPBFraction);
 
   publish("thresholdCutCharged",&Options::thresholdCutCharged);
   publish("thresholdCutPhotons",&Options::thresholdCutPhotons);
 
   publish("prodCutPhotons",&Options::prodCutPhotons);
-  publish("prodCutPhotonsP",&Options::prodCutPhotonsP);
-  publish("prodCutPhotonsA",&Options::prodCutPhotonsA);
   publish("prodCutElectrons",&Options::prodCutElectrons);
-  publish("prodCutElectronsP",&Options::prodCutElectronsP);
-  publish("prodCutElectronsA",&Options::prodCutElectronsA);
   publish("prodCutPositrons",&Options::prodCutPositrons);
-  publish("prodCutPositronsP",&Options::prodCutPositronsP);
-  publish("prodCutPositronsA",&Options::prodCutPositronsA);
   publish("prodCutProtons",&Options::prodCutProtons);
   publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
-  publish("prodCutProtonsP",&Options::prodCutProtonsP);
-  publish("prodCutProtonsA",&Options::prodCutProtonsA);
 
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
@@ -266,7 +305,7 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("deltaChord",         &Options::deltaChord);
+  publish("maximumStepLength",  &Options::maximumStepLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
@@ -279,11 +318,12 @@ void Options::PublishMembers()
   publish("turnOnMieScattering",&Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
-  publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
   publish("lengthSafety",&Options::lengthSafety);
 
   // trajectory storage
+  publish("storeElossLocal",  &Options::storeElossLocal);
+  publish("storeElossGlobal", &Options::storeElossGlobal);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
@@ -296,7 +336,20 @@ void Options::PublishMembers()
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",     &Options::stopTracks);
   publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
+
+  // scoring map
+  publish("nbinsx", &Options::nbinsx);
+  publish("nbinsy", &Options::nbinsy);
+  publish("nbinsz", &Options::nbinsz);
+  publish("xmin",   &Options::xmin);
+  publish("xmax",   &Options::xmax);
+  publish("ymin",   &Options::ymin);
+  publish("ymax",   &Options::ymax);
+  publish("zmin",   &Options::zmin);
+  publish("zmax",   &Options::zmax);
+  publish("useScoringMap", &Options::useScoringMap);
 }

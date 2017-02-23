@@ -4,14 +4,12 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
@@ -21,13 +19,13 @@
 #include <utility>                         // for std::pair
 
 
-BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::_instance = nullptr;
+BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::instance = nullptr;
 
 BDSBeamPipeFactoryLHC* BDSBeamPipeFactoryLHC::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryLHC();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryLHC();}
+  return instance;
 }
 
 BDSBeamPipeFactoryLHC::BDSBeamPipeFactoryLHC()
@@ -35,7 +33,7 @@ BDSBeamPipeFactoryLHC::BDSBeamPipeFactoryLHC()
 
 BDSBeamPipeFactoryLHC::~BDSBeamPipeFactoryLHC()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
@@ -186,14 +184,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 							    G4double    containerWidthIn,
 							    G4double    containerHeightIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
   
   // record extents
   BDSExtent ext = BDSExtent(containerWidthIn, containerHeightIn, lengthIn*0.5);

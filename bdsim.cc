@@ -28,6 +28,7 @@
 #include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
+#include "BDSFieldLoader.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
@@ -96,7 +97,7 @@ int main(int argc,char** argv)
 
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
-  BDSRandom::SetSeed(); // set the seed from options or from exec options
+  BDSRandom::SetSeed(); // set the seed from options
   
   /// Instantiate the specific type of bunch distribution (class),
   /// get the corresponding parameters from the gmad parser info
@@ -115,17 +116,11 @@ int main(int argc,char** argv)
       bdsOutput->Initialise();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
-      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
-      G4int printModulo = (G4int)ceil(nToGenerate * fraction);
-      if (printModulo < 0)
-	{printModulo = 1;}
-      
+      const G4int printModulo = BDSGlobalConstants::Instance()->PrintModulo();
       for (G4int i = 0; i < nToGenerate; i++)
       {
 	if (i%printModulo == 0)
-	  {
-	    G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;
-	  }
+	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
         bdsOutput->FillEvent();
@@ -160,11 +155,12 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = BDSParser::Instance()->GetOptions().physicsList;
+  // Note, we purposively don't create a parallel world process for the curvilinear
+  // world as we don't need the track information from it - unreliable that way. We
+  // query the geometry directly using our BDSAuxiliaryNavigator class.
   G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
-  G4ParallelWorldPhysics* sensWorld = new G4ParallelWorldPhysics(curvilinearWorld->GetName());
-  BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
+  BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
   physList->RegisterPhysics(sampWorld);
-  physList->RegisterPhysics(sensWorld);
   // Biasing - TBC should only bias required particles to be biased
   G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
   physBias->Bias("e-");
@@ -178,24 +174,12 @@ int main(int argc,char** argv)
   physList->RegisterPhysics(physBias);
   runManager->SetUserInitialization(physList);
   
-  /// Set the geometry tolerance
+  /// Print the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
-	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
-#endif
-  // This sets the tolerances for the geometry (1e-11 times this value)
-  // Note, this doesn't actually have any affect on the size of the geometry,
-  // and is only used to calculate the tolerance in geant4. This is really misleading
-  // naming on the part of geant4. There is no way to just set a tolerance directly.
-  G4double worldMaximumExtent=1000*CLHEP::m;
-  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
   G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
 
   /// Set user action classes
 #ifdef BDSDEBUG 
@@ -259,7 +243,7 @@ int main(int argc,char** argv)
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry)
     { 
-      G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
+      G4cerr << __FUNCTION__ << "> error - geometry not closed." << G4endl;
       return 1;
     }
 
@@ -317,6 +301,7 @@ int main(int argc,char** argv)
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
+  delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
   

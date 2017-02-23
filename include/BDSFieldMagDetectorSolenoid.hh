@@ -22,7 +22,8 @@ public:
   virtual ~BDSFieldMagDetectorSolenoid(){;}
 
   /// Get the magnetic field vector in local coordinates.
-  virtual G4ThreeVector GetField(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector& position,
+				 const G4double       t = 0) const;
   
 private:
   G4double itsBIn;

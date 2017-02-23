@@ -1,5 +1,4 @@
 #include "BDSGeometryType.hh"
-#include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSDebug.hh"
 #include "globals.hh"
 
@@ -9,21 +8,15 @@
 template<>
 std::map<BDSGeometryType, std::string>* BDSGeometryType::dictionary =
   new std::map<BDSGeometryType, std::string> ({
-   {BDSGeometryType::threed, "threed"},
-   {BDSGeometryType::xy,     "xy"},
    {BDSGeometryType::mokka,  "mokka"},
-   {BDSGeometryType::lcdd,   "lcdd"},
-   {BDSGeometryType::gmad, "gmad"},
-   {BDSGeometryType::gdml, "gdml"}
+   {BDSGeometryType::gmad,   "gmad"},
+   {BDSGeometryType::gdml,   "gdml"}
 });	
 
 BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
 {
   std::map<G4String, BDSGeometryType> types;
-  types["threed"] = BDSGeometryType::threed;
-  types["xy"]     = BDSGeometryType::xy;
   types["mokka"]  = BDSGeometryType::mokka;
-  types["lcdd"]   = BDSGeometryType::lcdd;
   types["gmad"]   = BDSGeometryType::gmad;
   types["gdml"]   = BDSGeometryType::gdml;
 

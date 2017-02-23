@@ -4,7 +4,8 @@
 # ROOT_FOUND          If the ROOT is found
 # ROOT_INCLUDE_DIR    PATH to the include directory
 # ROOT_LIBRARIES      Most common libraries
-# ROOT_LIBRARY_DIR    PATH to the library directory 
+# ROOT_LIBRARY_DIR    PATH to the library directory
+# ROOT_EXECUTABLE     executable for root
 
 MESSAGE(STATUS "Looking for ROOT...")
 
@@ -40,6 +41,8 @@ else()
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --prefix 
     OUTPUT_VARIABLE ROOTSYS 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  set(ROOT_EXECUTABLE ${ROOTSYS}/bin/root)
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --version 

@@ -1,12 +1,13 @@
 #ifndef BDSACCELERATORCOMPONENTREGISTRY_H
 #define BDSACCELERATORCOMPONENTREGISTRY_H
 
-#include "BDSAcceleratorComponent.hh"
-
 #include "globals.hh" // geant4 globals / types
 
 #include <iterator>
 #include <map>
+#include <vector>
+
+class BDSAcceleratorComponent;
 
 /**
  * @brief A registry of constructed BDSAcceleratorComponent instances that
@@ -43,11 +44,14 @@ public:
   /// if necessary.
   ~BDSAcceleratorComponentRegistry();
 
-  /// Register an instance of logical volume info with the address of the logical
-  /// volume, which is used as the key to access it. If isModified flag true
-  /// means volume info will be stored in a separate vector that is only for
+  /// Register a BDSAcceleratorComponent. Once in the registry, can be reused
+  /// through GetComponent function. Optional flag isModified indicates that the
+  /// component was modified beyond its original parser definition (ie likely to
+  /// match the face of another component) and should not be reused even if it
+  /// appears later in the lattice. In this case, it is stored here, purely for
   /// memory management.
-  void RegisterComponent(BDSAcceleratorComponent* component, bool isModified);
+  void RegisterComponent(BDSAcceleratorComponent* component,
+			 bool                     isModified = false);
 
   /// Check whether an accelerator component is already registered.
   G4bool IsRegistered(BDSAcceleratorComponent* component);

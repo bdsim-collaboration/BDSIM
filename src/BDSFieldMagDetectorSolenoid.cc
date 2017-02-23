@@ -19,7 +19,8 @@ BDSFieldMagDetectorSolenoid::BDSFieldMagDetectorSolenoid(G4double BIn,
   itsZMax(zMax)
 {;}
 
-G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &position,
+						    const G4double       /*t*/) const
 {
   G4ThreeVector result(0,0,0);
   G4double zField   = 0;

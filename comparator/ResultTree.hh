@@ -6,6 +6,12 @@
 #include <sstream>
 #include <string>
 
+/** 
+ * @brief Result of comparing 2 TTrees. 
+ * 
+ * @author Stewart Boogert.
+ */
+
 class ResultTree: public Result
 { 
 public:
@@ -19,8 +25,8 @@ public:
     ss << Result::print();
     ss << "File (1/2) entries (" << t1NEntries << "/" << t2NEntries << ")\n";
     ss << "Offending branches: ";
-    for (const auto& name : offendingBranches)
-      {ss << name << " ";}
+    for (const auto& branchName : offendingBranches)
+      {ss << branchName << " ";}
     ss << "\n";
     return ss.str();
   }

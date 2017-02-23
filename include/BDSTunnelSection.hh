@@ -35,10 +35,22 @@ public:
   /// be false even though it effectively 'is' initialised.
   virtual void Initialise();
 
+  G4VSolid* InnerIntersectionSolid() const {return innerIntersectionSolid;}
+
+protected:
   /// Have to provide implementation - does nothing
   virtual void BuildContainerLogicalVolume();
 
   G4VSolid* innerIntersectionSolid;
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSTunnelSection() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTunnelSection& operator=(const BDSTunnelSection&) = delete;
+  BDSTunnelSection(BDSTunnelSection&) = delete;
+  /// @}
 };
 
 #endif

@@ -73,10 +73,40 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSThreeVector const &v)
   {out << "(" << v.values[0] << ", " << v.values[1] << ", " << v.values[2] << ")"; return out;}
 
+  T dot(const BDSThreeVector& b) const
+  {return x()*b.x() + y()*b.y() + z()*b.z();}
+
+  /// @{ Multiplication
+  inline friend BDSThreeVector operator * (const BDSThreeVector& a, const double& b)
+  {return BDSThreeVector(b*a.x(), b*a.y(), b*a.z());}
+  inline friend BDSThreeVector operator * (const double& b, const BDSThreeVector& a)
+  {return BDSThreeVector(b*a.x(), b*a.y(), b*a.z());}
+  inline friend T operator * (const BDSThreeVector& a, const BDSThreeVector& b)
+  {return a.dot(b);}
+  /// @}
+
+  /// @{ Addition, subtraction
+  inline friend BDSThreeVector operator + (const BDSThreeVector& a, const G4double& b)
+  {return BDSThreeVector(a.x() + b, a.y() + b, a.z() + b);}
+  inline friend BDSThreeVector operator + (const BDSThreeVector& a, const BDSThreeVector& b)
+  {return BDSThreeVector(a.x() + b.x(), a.y() + b.y(), a.z() + b.z());}
+  inline friend BDSThreeVector operator - (const BDSThreeVector& a, const G4double& b)
+  {return BDSThreeVector(a.x() - b, a.y() - b, a.z() - b);}
+  inline friend BDSThreeVector operator - (const BDSThreeVector& a, const BDSThreeVector& b)
+  {return BDSThreeVector(a.x() - b.x(), a.y() - b.y(), a.z() - b.z());}
+  /// @}
+
+  inline BDSThreeVector& operator *= (G4double a)
+  {
+    values[0] *= a;
+    values[1] *= a;
+    values[2] *= a;
+    return *this;
+  }
+  
 private:
   /// Member data - x,y,z.
   T values[3];
 };
-
 
 #endif

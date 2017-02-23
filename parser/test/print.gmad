@@ -1,0 +1,15 @@
+! print string (with exclamation mark!)
+print, "Hello World!";
+
+ss: sbend, l=1*m, angle=0.10;
+
+! print element
+print, ss;
+! print element property
+print, ss["l"];
+! print all elements
+print;
+! print some options
+print, option;
+! print beamline
+print, line;

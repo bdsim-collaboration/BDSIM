@@ -7,10 +7,11 @@
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
-  "field",// constant field
-  "polefaceangle",//required for fringe field
-  "angle", "length",
-  "ks",
+  "field",           // constant field in G4units
+  "polefaceangle",   // required for fringe field (rad)
+  "angle", "length", // (rad, mm)
+  "fringecorr",      // fringe field correction term
+  "ks",              // not in G4 units
   "k1", "k1s",
   "k2", "k2s",
   "k3", "k3s",
@@ -119,4 +120,3 @@ const G4double& BDSMagnetStrength::GetValue(const G4String key) const
   else
     {return zero;}
 }
-  

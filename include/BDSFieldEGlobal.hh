@@ -33,7 +33,7 @@ public:
   /// query the wrapped field object and transform this field to global
   /// coordinates before returning.
   G4ThreeVector GetField(const G4ThreeVector& position,
-			 const G4double&      t) const;
+			 const G4double       t) const;
 
   /// Necessary overload for Geant4
   virtual G4bool DoesFieldChangeEnergy() const {return true;}

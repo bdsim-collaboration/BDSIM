@@ -25,12 +25,20 @@ namespace GMAD
 
     double l; ///< length in metres
     double ks; ///< solenoid
-    double k0; ///< dipole
+    // double k0; // for dipole field B or angle is used
     double k1; ///< quadrupole
     double k2; ///< sextupole
     double k3; ///< octupole
     double k4; ///< decapole
     double angle; ///< bending angle
+    double B; ///< magnetic field
+    double e1; ///< input pole face rotation for bends
+    double e2; ///< output pole face rotation for bends
+    double fint; ///< fringe field integral at the dipole entrance
+    double fintx;  ///< fringe field integral at the dipole exit
+    double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+    double hkick;  ///< fractional delta px for hkicker
+    double vkick;  ///< fractional delta py for vkicker
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
@@ -48,41 +56,44 @@ namespace GMAD
     std::string outerMaterial;
     double outerDiameter;
     bool   yokeOnInside;
-
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
-    double B; ///< magnetic field
-    double e1; ///< input pole face rotation for bends
-    double e2; ///< output pole face rotation for bends
+    double magnetOffsetX;
+    double bmapZOffset;
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
     double twindow, tmount; ///<thickness of window
+    double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
-    double screenXSize, screenYSize;
-	double screenPSize; //Phosphor particle size in screen
+    double screenXSize, screenYSize; ///< for screen
+    ///@{ for AWAKE spectrometer
+    double screenPSize; ///<Phosphor particle size in screen
     double screenEndZ;
     double poleStartZ;
     double screenWidth;
+    ///@}
+    ///@{ for screen
     std::list<double> layerThicknesses;
     std::list<std::string> layerMaterials;
     std::list<int> layerIsSampler;
-    double bmapXOffset; ///< offset of the field map magnet field X
-    double bmapYOffset; ///< offset of the field map magnet field Y
-    double bmapZOffset; ///< offset of the field map magnet field Z
+    ///@}
+    ///@{ for 3d transform and laser
     double xdir;
     double ydir;
     double zdir;
+    ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    double gradient; ///< for rf cavities
+    double gradient; ///< for rf cavities in V / m
     double phi, theta, psi; ///< for 3d transforms
-    int numberWedges; ///< for degrader
-    double wedgeLength; ///< for degrader
-    double degraderHeight; ///< for degrader
-    double materialThickness; ///< for degrader
-    double degraderOffset; ///< for degrader
-
+    ///@{ for degrader
+    int numberWedges;
+    double wedgeLength;
+    double degraderHeight;
+    double materialThickness;
+    double degraderOffset;
+    ///@}
     std::list<double> knl; ///< multipole expansion coefficients
     std::list<double> ksl; ///< skew multipole expansion
 
@@ -105,16 +116,16 @@ namespace GMAD
     std::string samplerType; ///< element has a sampler of this type (default "none")
     double samplerRadius; ///< radius for cylindrical sampler
     
-    bool precisionRegion; ///< precision region range cuts or not
-    std::string region; ///< region with range cuts
-      
-    std::string geometryFile;
-    std::string bmapFile;
+    std::string region;      ///< region with range cuts
+    std::string fieldOuter;  ///< Outer field.
+    std::string fieldVacuum; ///< Vacuum field.
+    std::string fieldAll;    ///< Field for everything.
+    
+    std::string geometryFile; ///< for Element, file for external geometry
     std::string material;
-    std::string windowmaterial;
-    std::string scintmaterial;
-    std::string mountmaterial;
-    std::string airmaterial;
+    std::string windowmaterial; ///< for AWAKE
+    std::string scintmaterial;  ///< for AWAKE
+    std::string mountmaterial;  ///< for AWAKE spectrometer
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
   
@@ -122,7 +133,7 @@ namespace GMAD
     std::list <Element> *lst;
 
     /// print method
-    void print(int &ident)const;
+    void print(int ident=0)const;
 
     /// flush method
     void flush();
@@ -143,6 +154,11 @@ namespace GMAD
 
     /// Override colour for certain items
     std::string colour;
+
+    /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
+    /// field. This allows us to distinguish later on.
+    /// NOTE: this is not used in Params.
+    bool   angleSet;
   
     /// constructor
     Element();

@@ -63,7 +63,7 @@ namespace GMAD
     bool writeSeedState;           ///< Write the seed state each event to a text file.
     bool useASCIISeedState;        ///< Whether to use the seed state from an ASCII file.
     std::string seedStateFileName; ///< Seed state file path.
-    
+
     /// Whether to only generate primary coordinates and quit, or not.
     bool generatePrimariesOnly; 
     
@@ -95,7 +95,6 @@ namespace GMAD
     bool recreateSeedState; ///< Load seed state when recreating events.
     
     double elossHistoBinWidth;
-    double elossHistoTransBinWidth;
     
     /// magnetic field flip (+1 default, -1: flip sign)
     double ffact;
@@ -227,36 +226,25 @@ namespace GMAD
     double   blmLength;
     bool     sensitiveBLMs;
 
-    bool     useEMLPB;
-    bool     useHadLPB;
-    bool     doPlanckScattering;    
-    double   planckScatterFe;
+    ///@{ Physics processes
     bool     turnOnCerenkov;
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;
     bool     turnOnRayleighScattering;
     bool     turnOnOpticalSurface;
-    bool     turnOnBirksSaturation;
+    ///@}
 
-    ///Cross section biasing parameters
+    ///@{Cross section biasing parameters
     double   scintYieldFactor;
-    double   LPBFraction;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
     double   defaultRangeCut;
     double   prodCutPhotons;
-    double   prodCutPhotonsP;
-    double   prodCutPhotonsA;
     double   prodCutElectrons;
-    double   prodCutElectronsP;
-    double   prodCutElectronsA;
     double   prodCutPositrons;
-    double   prodCutPositronsP;
-    double   prodCutPositronsA;
     double   prodCutProtons;
-    double   prodCutProtonsP;
-    double   prodCutProtonsA;
-    
+    ///@}
+
     /// Biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
@@ -264,8 +252,8 @@ namespace GMAD
     /// Tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
-    double   maximumTrackingTime; ///< maximum tracking time per volume [s]
-    double   deltaChord;
+    double   maximumTrackingTime; ///< maximum tracking time per track [s]
+    double   maximumStepLength;   ///< maximum permitted step length in any volume
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;
@@ -274,10 +262,13 @@ namespace GMAD
     bool     stopTracks;    
     bool     stopSecondaries;
     bool     killNeutrinos;
+    double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        storeElossLocal;
+    bool        storeElossGlobal;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -290,6 +281,18 @@ namespace GMAD
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
+
+    /// Scoring Map
+    int    nbinsx;
+    int    nbinsy;
+    int    nbinsz;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    bool   useScoringMap;
 
     /// print some properties
     void print() const;

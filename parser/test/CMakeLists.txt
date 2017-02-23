@@ -21,13 +21,41 @@ set_tests_properties(gmad-reservedVar PROPERTIES WILL_FAIL 1)
 add_test(gmad-reservedFunction ${gmadBinary} reservedfunction.gmad)
 set_tests_properties(gmad-reservedFunction PROPERTIES WILL_FAIL 1)
 
+# try to define a reserved name
+add_test(gmad-defineReservedName ${gmadBinary} definereservedname.gmad)
+set_tests_properties(gmad-defineReservedName PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a already defined numeric variable
+add_test(gmad-defineReservedVariable ${gmadBinary} definereservedvariable.gmad)
+set_tests_properties(gmad-defineReservedVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a already defined string variable
+add_test(gmad-defineReservedStringVariable ${gmadBinary} definereservedstringvariable.gmad)
+set_tests_properties(gmad-defineReservedStringVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
+# try to define a reserved function
+add_test(gmad-defineReservedFunction ${gmadBinary} definereservedfunction.gmad)
+set_tests_properties(gmad-defineReservedFunction PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
+
 # options with no semicolon
 add_test(gmad-nosemicolon ${gmadBinary} nosemicolon.gmad)
 set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)
 
+# addition of string and number
+add_test(gmad-stringnumber ${gmadBinary} stringnumber.gmad)
+set_tests_properties(gmad-stringnumber PROPERTIES WILL_FAIL 1)
+
 # undefined element
 add_test(gmad-undefinedElement ${gmadBinary} undefinedelement.gmad)
 set_tests_properties(gmad-undefinedElement PROPERTIES WILL_FAIL 1)
+
+# use undefined option
+add_test(gmad-undefinedOption ${gmadBinary} undefinedOption.gmad)
+set_tests_properties(gmad-undefinedOption PROPERTIES WILL_FAIL 1)
+
+# use undefined element with undefined option (issue #161)
+add_test(gmad-undefinedElementAndOption ${gmadBinary} undefinedElementAndOption.gmad)
+set_tests_properties(gmad-undefinedElementAndOption PROPERTIES PASS_REGULAR_EXPRESSION "not been defined")
 
 # duplicate name
 add_test(gmad-duplicateName ${gmadBinary} duplicateName.gmad)
@@ -55,7 +83,7 @@ set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRES
 
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
-set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
+set_tests_properties(gmad-undeclaredVariable PROPERTIES PASS_REGULAR_EXPRESSION "is not declared")
 
 # recursive inclusion
 add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)
@@ -80,6 +108,9 @@ set_tests_properties(gmad-if PROPERTIES PASS_REGULAR_EXPRESSION 2)
 add_test(gmad-ifelse ${gmadBinary} ifelse.gmad)
 set_tests_properties(gmad-ifelse PROPERTIES PASS_REGULAR_EXPRESSION 2)
 
+# test special printing
+add_test(gmad-print ${gmadBinary} print.gmad)
+
 # test access attribute
 add_test(gmad-testAccessAttribute ${gmadBinary} accessattribute.gmad)
 set_tests_properties(gmad-testAccessAttribute PROPERTIES PASS_REGULAR_EXPRESSION 0.1)
@@ -92,9 +123,13 @@ set_tests_properties(gmad-testMissingAccessAttribute PROPERTIES WILL_FAIL 1)
 add_test(gmad-testAccessElement ${gmadBinary} accesselement.gmad)
 set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
-# test access element
+# test access element outside range
 add_test(gmad-testAccessElementOutsiderange ${gmadBinary} accesselementoutsiderange.gmad)
 set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
+
+# test access option
+add_test(gmad-testAccessOption ${gmadBinary} accessoption.gmad)
+set_tests_properties(gmad-testAccessOption PROPERTIES PASS_REGULAR_EXPRESSION 123)
 
 # test add sampler
 add_test(gmad-testAddSampler ${gmadBinary} addsampler.gmad)
@@ -133,8 +168,17 @@ add_test(gmad-material ${gmadBinary} material.gmad)
 # test cavitymodel
 add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
 
+# test field
+add_test(gmad-field ${gmadBinary} field.gmad)
+
+# test query
+add_test(gmad-query ${gmadBinary} query.gmad)
+
 # test physics biasing
 add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
+
+# test placement
+add_test(gmad-placement ${gmadBinary} placement.gmad)
 
 # test regions
 add_test(gmad-region ${gmadBinary} region.gmad)

@@ -1,0 +1,16 @@
+sb1: sbend, l=1*m, angle=40*mrad;
+
+l1:line = (sb1);
+
+use, l1;
+
+! define a high energy beam ->creates high field magnet above
+! define very low total energy particle that will spiral
+! start particle already in the field so it doesn't reflect backwards
+! this should create an infinite spiral - no loss in B field and no
+! SR radiation.
+
+beam, particle="proton",
+      energy=6*TeV,
+      E0=0.940*GeV,
+      S0=0.5*m;

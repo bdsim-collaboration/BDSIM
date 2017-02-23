@@ -20,7 +20,8 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4d
 {
   SetParameters(name, lengthZ, magStartZ, vacuumEndZ, screenWidth, screenAngle, sizeX, sizeY, thickness);
   Build();
-  
+  SetUserLimits();
+
   /*
   _innerLogVol = new G4LogicalVolume(_innerSolid,
 				     BDSMaterials::Instance()->GetMaterial("vacuum"),
@@ -184,7 +185,8 @@ void BDSSpectrVacChamb::BuildBox1(){
   _logVolBox1 = new G4LogicalVolume(_box1Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
-  
+    _logVols.push_back(_logVolBox1);
+
   G4VisAttributes* Box1VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
   Box1VisAtt->SetForceSolid(true);
   Box1VisAtt->SetVisibility(true);
@@ -200,7 +202,8 @@ void BDSSpectrVacChamb::BuildBox2(){
   _logVolBox2 = new G4LogicalVolume(_box2Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
-  
+    _logVols.push_back(_logVolBox2);
+
   G4VisAttributes* Box2VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
   Box2VisAtt->SetForceSolid(true);
   Box2VisAtt->SetVisibility(true);
@@ -216,7 +219,8 @@ void BDSSpectrVacChamb::BuildBox3(){
   _logVolBox3 = new G4LogicalVolume(_box3Solid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_log");
-  
+    _logVols.push_back(_logVolBox3);
+
   G4VisAttributes* Box3VisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.5));
   Box3VisAtt->SetForceSolid(true);
   Box3VisAtt->SetVisibility(true);
@@ -237,7 +241,9 @@ void BDSSpectrVacChamb::BuildBoxInner(){
   _innerLogVolBox1 = new G4LogicalVolume(_box1SolidInner,
 					BDSMaterials::Instance()->GetMaterial("vacuum"),
 					_name+"_log");
-  
+
+      _logVols.push_back(_innerLogVolBox1);
+
   G4VisAttributes* Box1InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
   Box1InnerVisAtt->SetForceSolid(true);
   Box1InnerVisAtt->SetVisibility(true);
@@ -252,7 +258,9 @@ void BDSSpectrVacChamb::BuildBoxInner(){
   _innerLogVolBox2 = new G4LogicalVolume(_box2SolidInner,
 					BDSMaterials::Instance()->GetMaterial("vacuum"),
 					_name+"_log");
-  
+
+      _logVols.push_back(_innerLogVolBox2);
+
   G4VisAttributes* Box2InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
   Box2InnerVisAtt->SetForceSolid(true);
   Box2InnerVisAtt->SetVisibility(true);
@@ -267,7 +275,9 @@ void BDSSpectrVacChamb::BuildBoxInner(){
   _innerLogVolBox3 = new G4LogicalVolume(_box3SolidInner,
 					BDSMaterials::Instance()->GetMaterial("vacuum"),
 					_name+"_log");
-  
+
+      _logVols.push_back(_innerLogVolBox3);
+
   G4VisAttributes* Box3InnerVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.5));
   Box3InnerVisAtt->SetForceSolid(true);
   Box3InnerVisAtt->SetVisibility(true);
@@ -299,7 +309,11 @@ void BDSSpectrVacChamb::BuildTrap(){
   _lowerLogVolTrap = new G4LogicalVolume(_lowerTrapSolid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_lower_trap_log");
-  
+
+    _logVols.push_back(_innerLogVolTrap);
+    _logVols.push_back(_upperLogVolTrap);
+    _logVols.push_back(_lowerLogVolTrap);
+
   G4VisAttributes* InnerTrapVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.1));
   InnerTrapVisAtt->SetForceSolid(true);
   InnerTrapVisAtt->SetVisibility(true);
@@ -320,7 +334,9 @@ void BDSSpectrVacChamb::BuildSideWall(){
   _logVolSideWall = new G4LogicalVolume(_sideWallSolid,
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_sideWall_log");
-  
+
+    _logVols.push_back(_logVolSideWall);
+
   G4VisAttributes* SideWallVisAtt = new G4VisAttributes(G4Color(0.0,0.0,1.0,0.4));
   SideWallVisAtt->SetForceSolid(true);
   SideWallVisAtt->SetVisibility(true);
@@ -336,7 +352,9 @@ void BDSSpectrVacChamb::BuildStrut(){
   _logVolStrut = new G4LogicalVolume(_strutSolid,
 				     BDSMaterials::Instance()->GetMaterial(_strutMaterial.c_str()),
 				    _name+"_strut_log");
-  
+
+    _logVols.push_back(_logVolStrut);
+
   G4VisAttributes* StrutVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.4));
   StrutVisAtt->SetForceSolid(true);
   StrutVisAtt->SetVisibility(true);
@@ -447,6 +465,12 @@ void BDSSpectrVacChamb::printTrapVertices(std::vector<G4TwoVector> vertices, con
   }
 }
 
-
+void BDSSpectrVacChamb::SetUserLimits()
+{
+    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    for(unsigned long i=0; i<_logVols.size(); i++) {
+    _logVols.at(i)->SetUserLimits(userLimits);
+    }
+}
 
 

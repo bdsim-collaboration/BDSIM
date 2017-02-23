@@ -6,8 +6,9 @@
 #include <string>
 
 #include "globals.hh"
-#include "G4Material.hh"
+#include "G4Material.hh" // for G4State
 
+class G4Element;
 class G4MaterialPropertiesTable;
 
 /**
@@ -25,6 +26,8 @@ public:
   /// converts parser material list
   void PrepareRequiredMaterials(G4bool verbose = false);
 
+  /// Add G4Material
+  void AddMaterial(G4Material* aMaterial,G4String aName);
   /** Add materials
       @param[in] Z        atomic number
       @param[in] A        mole mass in g/mole
@@ -32,8 +35,7 @@ public:
       @param[in] state    solid/gas
       @param[in] temp     in kelvin
       @param[in] pressure in atm
-  */ 
-  void AddMaterial(G4Material* aMaterial, G4String aName);
+  */
   void AddMaterial(G4String aName,
 		   G4double Z,
 		   G4double A,
@@ -61,8 +63,7 @@ public:
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
   
   /// output available materials
-  // static since BDSMaterials construction needs BDSGlobalConstants, which needs full options definitions (not ideal, but alas)
-  static void ListMaterials();
+  void ListMaterials();
 
   G4Material* GetMaterial(G4String aMaterial); 
   G4Element*  GetElement(G4String aSymbol); 

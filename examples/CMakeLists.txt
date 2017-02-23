@@ -21,4 +21,5 @@ endif()
 
 add_subdirectory(simpleMachine)
 add_subdirectory(simpleCollimation)
+add_subdirectory(fodoRing)
 add_subdirectory(features)

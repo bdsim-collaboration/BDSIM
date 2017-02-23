@@ -1,4 +1,4 @@
-#include "options.h"
+#include "optionsBase.h"
 
 // include git commit version.
 #include "version.h"
@@ -65,7 +65,6 @@ OptionsBase::OptionsBase()
   recreateSeedState     = true;
 
   elossHistoBinWidth      = 1.0; // m
-  elossHistoTransBinWidth = 0.1;
   
   ffact                 = 1.0;
   beamEnergy            = 0.0;
@@ -182,33 +181,19 @@ OptionsBase::OptionsBase()
   sensitiveBLMs            = true;
 
   // physics processes
-  useEMLPB                 = false;
-  useHadLPB                = false;
-  doPlanckScattering       = false;
-  planckScatterFe          = 1.0;
   turnOnCerenkov           = true;
   turnOnOpticalAbsorption  = true;
   turnOnMieScattering      = true;
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
-  turnOnBirksSaturation    = true;
   scintYieldFactor         = 1.0;
-  LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
-  prodCutPhotonsP          = 1e-3;
-  prodCutPhotonsA          = 1e-3;
   prodCutElectrons         = 1e-3;
-  prodCutElectronsP        = 1e-3;
-  prodCutElectronsA        = 1e-3;
   prodCutPositrons         = 1e-3;
-  prodCutPositronsP        = 1e-3;
-  prodCutPositronsA        = 1e-3;
   prodCutProtons           = 1e-3;
-  prodCutProtonsP          = 1e-3;
-  prodCutProtonsA          = 1e-3;
 
   // biasing options
   defaultBiasVacuum        = "";
@@ -216,22 +201,25 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsim";
-  lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
-  maximumTrackingTime      = 0.1;
-  deltaChord               = 0.00001; // m
+  lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
+  maximumTrackingTime      = -1;      // s, nonsensical - used for testing
+  maximumStepLength        = 10;      // m, quite big
   chordStepMinimum         = 0.000001;// m
-  deltaIntersection        = 0.00001;
+  deltaIntersection        = 1e-10;   // m
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
   maximumEpsilonStep       = 1e-3;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;
+  minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
   trajCutGTZ               = 0.0;  // minimum z position
   trajCutLTR               = 1e12; // maximum radius in mm, so large default value
+  storeElossLocal          = false;
+  storeElossGlobal         = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";
@@ -244,6 +232,18 @@ OptionsBase::OptionsBase()
 
   // visualisation
   nSegmentsPerCircle       = 50;
+
+  // scoring map
+  nbinsx = 1;
+  nbinsy = 1;
+  nbinsz = 1;
+  xmin   = 0;
+  xmax   = 0;
+  ymin   = 0;
+  ymax   = 0;
+  zmin   = 0;
+  zmax   = 0;
+  useScoringMap = false;
 }
 
 
@@ -260,6 +260,5 @@ void OptionsBase::print() const
   std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
   std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;
   std::cout<<"Optical surface on    : " << turnOnOpticalSurface     << std::endl;
-  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation    << std::endl;
 }
 

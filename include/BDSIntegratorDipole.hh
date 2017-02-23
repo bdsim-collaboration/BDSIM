@@ -4,10 +4,9 @@
 #include "BDSIntegratorBase.hh"
 
 #include "globals.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**
@@ -39,44 +38,36 @@ public:
 		       G4double yerr[]);
   
 protected:
-  /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
+  /// Calculate the new particle coordinates.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
-		    G4ThreeVector  Bfld,
 		    G4double h,
 		    G4double yOut[],
 		    G4double yErr[]);
 
-  /// scaling factor in brho calculation
+  /// Scaling factor in brho calculation.
   G4double cOverGeV;
 
-  std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
-													 G4double h,
-													 G4ThreeVector LocalR,
-													 G4ThreeVector LocalRP);
-
-private:
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
-
-  /// Angle that the dipole induces in the reference trajectory
+  /// Angle that the dipole induces in the reference trajectory.
   const G4double angle;
 
   /// Arc length of the magnetic field.
   const G4double length;
 
-  /// Quadrupolar field gradient - B'
-  G4double bPrime;
-
-  /// Uniform magnetic field in global Y direction
+  /// Uniform magnetic field in global Y direction.
   G4double bField;
 
-  /// Total beam energy
-  G4double nominalMom;
+  std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,
+						     G4double h,
+						     G4ThreeVector LocalR,
+						     G4ThreeVector LocalRP);
+  
+private:
+  /// Data stored in order to find the chord.
+  G4ThreeVector yInitial, yMidPoint, yFinal;
 
-  G4double momSpread;
-
-  G4double brho;
+  /// Minimum tolerable radius of curvature - used to prevent spiraling particles.
+  const G4double minimumRadiusOfCurvature;
 };
 
 #endif 

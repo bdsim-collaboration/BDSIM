@@ -18,9 +18,23 @@
 class Result
 { 
 public:
+  Result(std::string nameIn, std::string objTypeIn):
+    name(nameIn),
+    objtype(objTypeIn),
+    passed(true)
+  {;}
+
+  Result():
+    name(""),
+    objtype(""),
+    passed(true)
+  {;}
+  
+  virtual ~Result() {} ///< Virtual destructor
+
   std::string name;    ///< Name of object being compared in files.
   std::string objtype; ///< Name of class of object being compared in files.
-  int         passed;  ///< Whether it passed or not.
+  bool        passed;  ///< Whether it passed or not.
 
   /// Print the result of the test - ie information store in the class.
   virtual std::string print() const

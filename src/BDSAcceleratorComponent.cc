@@ -2,19 +2,17 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
-#include "G4Box.hh"
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-#include "G4UserLimits.hh"
-#include "G4VSolid.hh"
 
 #include <cmath>
 
@@ -28,16 +26,15 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 G4bool           precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn,
 						 G4ThreeVector    inputFaceNormalIn,
-						 G4ThreeVector    outputFaceNormalIn):
+						 G4ThreeVector    outputFaceNormalIn,
+						 BDSFieldInfo*    fieldInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
   angle(angleIn),
-  precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
   acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
@@ -45,18 +42,27 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn),
-  readOutRadius(0)
+  fieldInfo(fieldInfoIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
   // initialise static members
-  const auto globals = BDSGlobalConstants::Instance(); // shortcut
   if (!emptyMaterial)
-    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());}
-  if (lengthSafety < 0)
-    {lengthSafety = globals->LengthSafety();}
-  checkOverlaps = globals->CheckOverlaps();
+    {
+      const auto globals = BDSGlobalConstants::Instance(); // shortcut
+      emptyMaterial      = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());
+      lengthSafety       = globals->LengthSafety();
+      checkOverlaps      = globals->CheckOverlaps();
+    }
+
+  // Prevent negative length components.
+  if (arcLength < 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Negative length for component named \""
+	     << name << "\" with length " << arcLength << G4endl;
+      exit(1);
+    }
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
@@ -85,6 +91,15 @@ void BDSAcceleratorComponent::Initialise()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   Build();
+
+  // field construction must be done after all the geometry is constructed if the
+  // field is to propagate to the daughter volumes correctly.
+  if (fieldInfo)
+    {
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(fieldInfo,
+								containerLogicalVolume,
+								true);
+    }
   initialised = true; // record that this component has been initialised
 }
 
@@ -95,25 +110,16 @@ void BDSAcceleratorComponent::Build()
 #endif
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
 
-  // set user limits for container
-#ifndef NOUSERLIMITS
+  // set user limits for container & visual attributes
   if(containerLogicalVolume)
     {
-      G4double maxStepFactor=0.5;
-      G4UserLimits* containerUserLimits =  new G4UserLimits();
-      containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-      containerLogicalVolume->SetUserLimits(containerUserLimits);
-      RegisterUserLimits(containerUserLimits);
+      containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
     }
-#endif
-
-  // visual attributes
-  if(containerLogicalVolume)
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
-void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
-{//do nothing by default
-  return;
+void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
+{
+  delete fieldInfo; // clear up existing definition if there is one
+  fieldInfo = fieldInfoIn;
 }
-

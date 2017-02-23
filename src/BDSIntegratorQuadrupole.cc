@@ -2,12 +2,13 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
 
@@ -18,7 +19,7 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  bPrime = - brho * (*strength)["k1"];
+  bPrime = - brho * (*strength)["k1"] / CLHEP::m2;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -63,19 +64,9 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   if(std::abs(kappa)<1.e-12)
     {
 #ifdef BDSDEBUG
-      G4cout << "Zero strenght quadrupole - advancing as a drift" << G4endl;
+      G4cout << "Zero strength quadrupole - advancing as a drift" << G4endl;
 #endif
-      G4ThreeVector positionMove = h * InitMomDir;
-
-      yOut[0] = yIn[0] + positionMove.x();
-      yOut[1] = yIn[1] + positionMove.y();
-      yOut[2] = yIn[2] + positionMove.z();
-				
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
-
-      distChord=0;
+      AdvanceDrift(yIn,GlobalP,h,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i] = 0;}
@@ -120,7 +111,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
       
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
   
   G4double rootK  = sqrt(std::abs(kappa*zp)); // direction independent
   G4double rootKh = rootK*h*zp;
@@ -193,18 +185,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
   
-  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-  GlobalR = globalPosDir.PreStepPoint();
-  GlobalP = globalPosDir.PostStepPoint();	
-  GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-
-  yOut[0] = GlobalR.x();
-  yOut[1] = GlobalR.y();
-  yOut[2] = GlobalR.z();
-
-  yOut[3] = GlobalP.x();
-  yOut[4] = GlobalP.y();
-  yOut[5] = GlobalP.z();
+  ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 }
 
 void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
@@ -223,12 +204,19 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
     {
       backupStepper->Stepper(yInput, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
       return;
     }
 
   // ok it's forwards pointing - proceed with our paraxial treatment
   if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
-    {AdvanceHelix(yInput,dydx,h,yOut,yErr);}
+    {
+      AdvanceHelix(yInput,dydx,h,yOut,yErr);
+      for(G4int i = 0; i < nVariables; i++)
+      {
+        yErr[i] = 0;
+      }
+    }
   else
     {
       // Compute errors by making two half steps

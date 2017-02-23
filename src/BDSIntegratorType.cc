@@ -11,14 +11,16 @@ template<>
 std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
   new std::map<BDSIntegratorType, std::string> ({
       {BDSIntegratorType::none,                 "none"},
+      {BDSIntegratorType::teleporter,           "teleporter"},
       {BDSIntegratorType::solenoid,             "solenoid"},
       {BDSIntegratorType::dipole,               "dipole"},
       {BDSIntegratorType::quadrupole,           "quadrupole"},
       {BDSIntegratorType::sextupole,            "sextupole"},
       {BDSIntegratorType::octupole,             "octupole"},
       {BDSIntegratorType::decapole,             "decapole"},
-      {BDSIntegratorType::multipole,            "multipole"},
-      {BDSIntegratorType::decapole,             "fringe"},
+      {BDSIntegratorType::multipolethin,        "multipolethin"},
+      {BDSIntegratorType::decapole,             "decapole"},
+      {BDSIntegratorType::dipolefringe,         "dipolefringe"},
       {BDSIntegratorType::g4cashkarprkf45,      "g4cashkarprkf45"},
       {BDSIntegratorType::g4classicalrk4,       "g4classicalrk4"},
       {BDSIntegratorType::g4constrk4,           "g4constrk4"},
@@ -40,14 +42,15 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
 {
   std::map<G4String, BDSIntegratorType> types;
   types["none"]                 = BDSIntegratorType::none;
+  types["teleporter"]           = BDSIntegratorType::teleporter;
   types["solenoid"]             = BDSIntegratorType::solenoid;
   types["dipole"]               = BDSIntegratorType::dipole;
   types["quadrupole"]           = BDSIntegratorType::quadrupole;
   types["sextupole"]            = BDSIntegratorType::sextupole;
   types["octupole"]             = BDSIntegratorType::octupole;
   types["decapole"]             = BDSIntegratorType::decapole;
-  types["multipole"]            = BDSIntegratorType::multipole;
-  types["fringe"]               = BDSIntegratorType::fringe;
+  types["multipolethin"]        = BDSIntegratorType::multipole;
+  types["dipolefringe"]         = BDSIntegratorType::dipolefringe;
   types["g4cashkarprkf45"]      = BDSIntegratorType::g4cashkarprkf45;
   types["g4classicalrk4"]       = BDSIntegratorType::g4classicalrk4;
   types["g4constrk4"]           = BDSIntegratorType::g4constrk4;

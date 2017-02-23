@@ -1,12 +1,12 @@
 #ifndef BDSFIELDBUILDER_H
 #define BDSFIELDBUILDER_H
 
-#include "BDSFieldInfo.hh"
-#include "BDSFieldObjects.hh"
-
-#include "G4LogicalVolume.hh"
-
+#include "globals.hh" //G4 global constants & types
 #include <vector>
+
+class BDSFieldInfo;
+class BDSFieldObjects;
+class G4LogicalVolume;
 
 /**
  * @brief Register for all fields to be built and volumes to be attached to.
@@ -34,9 +34,14 @@ public:
   /// which logical volume to attach it to. The same field specification (info)
   /// can be registered for multiple logical volumes as this builder does not
   /// retain ownership of anything.
-  void RegisterFieldForConstruction(BDSFieldInfo* info,
-				    G4LogicalVolume* logicalVolume,
-				    G4bool           propagateToDaughters = false);
+  void RegisterFieldForConstruction(const BDSFieldInfo* info,
+				    G4LogicalVolume*    logicalVolume,
+				    const G4bool        propagateToDaughters = false);
+
+  /// Similar version but 
+  void RegisterFieldForConstruction(const BDSFieldInfo* info,
+				    const std::vector<G4LogicalVolume*>& logicalVolumes,
+				    const G4bool              propagateToDaughters = false);
 
   std::vector<BDSFieldObjects*> CreateAndAttachAll();
 
@@ -48,9 +53,9 @@ private:
   static BDSFieldBuilder* instance;
   
   /// @{ Register of components to build.
-  std::vector<BDSFieldInfo*>    infos;
-  std::vector<G4LogicalVolume*> lvs;
-  std::vector<G4bool>           propagators;
+  std::vector<const BDSFieldInfo*> infos;
+  std::vector<std::vector<G4LogicalVolume*> > lvs;
+  std::vector<G4bool>              propagators;
   /// @}
 };
 

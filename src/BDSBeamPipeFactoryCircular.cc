@@ -1,15 +1,12 @@
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
@@ -18,13 +15,13 @@
 #include <cmath>
 #include <utility>               // for std::pair
 
-BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = nullptr;
+BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::instance = nullptr;
 
 BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryCircular();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryCircular();}
+  return instance;
 }
 
 BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
@@ -32,7 +29,7 @@ BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
@@ -131,8 +128,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
 
 
   

@@ -9,6 +9,8 @@
 
 namespace GMAD
 {
+  extern bool willExit;
+
   class Array;
 
   /**
@@ -31,7 +33,7 @@ namespace GMAD
 
     /// Copy parameters into temporary buffer params from element e
     /// Parameters already set in params have priority and are not overridden
-    void inherit_properties(Element& e);
+    void inherit_properties(const Element& e);
 
     /// Set method by property name and value
     template <typename T>
@@ -48,7 +50,7 @@ namespace GMAD
     void Parameters::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+      std::cout << "element> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
@@ -56,12 +58,14 @@ namespace GMAD
       }
       catch(std::runtime_error) {
 	// not implemented mad parameters will be ignored
-	if (property == "fint" || property == "fintx" ||
-	    property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
+	if (property == "harmon" || property == "lag" || property == "volt")
 	  {return;}
 	
-	std::cerr << "Error: parser> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
+	std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
+	// don't exit here, but flag willExit instead
+	//exit(1);
+	willExit = true;
+	return;
       }
       // record property set
       // property name can be different, so look up in alternate names

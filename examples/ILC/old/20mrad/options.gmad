@@ -2,7 +2,7 @@
 
 
 option, beampipeRadius = 6 * cm,
-        boxSize = 1.0 * m,
+        outerDiameter = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
         thresholdCutCharged = 1 * MeV,
@@ -12,9 +12,6 @@ option, beampipeRadius = 6 * cm,
 !option,physicsList="hadronic";
 option,physicsList="em";
 
-!option, storeNeutronTrajectory=1;
-!option,storeMuonTrajectory=1;
 !option,stopTracks=1;
 !option,storeTrajectory=1;
-option,ngenerate=50,nperfile=5000;
-!option,nlinesIgnore=2*4;
+option,ngenerate=50;

@@ -7,21 +7,29 @@
 #include <string>
 
 #include "array.h"
-#include "element.h"
 
 using namespace GMAD;
-
-Parameters::Parameters() {
+#define BDSDEBUG 1
+Parameters::Parameters()
+{
   // fill setMap, needs to match published member names
   // usually same but some exceptions, those are commented
-  setMap["l"] = false;
-  setMap["ks"] = false;
-  setMap["k0"] = false;
-  setMap["k1"] = false;
-  setMap["k2"] = false;
-  setMap["k3"] = false;
-  setMap["k4"] = false;
+  setMap["l"]     = false;
+  setMap["ks"]    = false;
+  setMap["k1"]    = false;
+  setMap["k2"]    = false;
+  setMap["k3"]    = false;
+  setMap["k4"]    = false;
   setMap["angle"] = false;
+  setMap["B"]     = false;
+  setMap["e1"]    = false;
+  setMap["e2"]    = false;
+  setMap["fint"]  = false;
+  setMap["fintx"] = false;
+  setMap["hgap"]  = false;
+  setMap["hkick"] = false;
+  setMap["vkick"] = false;
+  
   setMap["beampipeThickness"] = false;
   setMap["aper1"] = false;
   setMap["aper2"] = false;
@@ -39,13 +47,12 @@ Parameters::Parameters() {
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
-  setMap["B"]  = false;
-  setMap["e1"] = false;
-  setMap["e2"] = false;
+  setMap["magnetOffsetX"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
   setMap["twindow"] = false;
+  setMap["tmount"] = false;
   setMap["windowScreenGap"] = false;
   setMap["screenXSize"] = false;
   setMap["screenYSize"] = false;
@@ -56,13 +63,10 @@ Parameters::Parameters() {
   setMap["layerThicknesses"] = false;
   setMap["layerMaterials"] = false;
   setMap["layerIsSampler"] = false;
-  setMap["bmapXOffset"] = false;
-  setMap["bmapYOffset"] = false;
-  setMap["bmapZOffset"] = false;
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
-  setMap["waveLength"] = false; 
+  setMap["waveLength"] = false;
   setMap["gradient"] = false;
   setMap["phi"] = false;
   setMap["theta"] = false;
@@ -72,17 +76,17 @@ Parameters::Parameters() {
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
-  setMap["r"] = false; // for samplerRadius
-  setMap["precisionRegion"] = false;
+  setMap["samplerRadius"] = false;
   setMap["region"] = false;
+  setMap["fieldOuter"]  = false;
+  setMap["fieldVacuum"] = false;
+  setMap["fieldAll"]    = false;
 
   setMap["geometry"] = false; // for geometryFile
-  setMap["bmap"] = false; // for bmapFile
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
   setMap["mountmaterial"] = false;
-  setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
 
@@ -105,11 +109,11 @@ void Parameters::flush() {
     }
 }
 
-void Parameters::inherit_properties(Element& e)
+void Parameters::inherit_properties(const Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
- // this is used for the inheritance / newinstance mechanism
+  // this is used for the inheritance / newinstance mechanism
 
   for (auto& i : setMap)
     {
@@ -121,7 +125,7 @@ void Parameters::inherit_properties(Element& e)
 	    Published<Element>::set(this,(Element*)&e,property);
 	  }
 	  catch(std::runtime_error) {
-	    std::cerr << "Error: parser> unknown property \"" << property << "\" from element " << e.name  << std::endl;
+	    std::cerr << "Error: element> unknown property \"" << property << "\" from element " << e.name  << std::endl;
 	    exit(1);
 	  }
 	  
@@ -134,7 +138,7 @@ void Parameters::inherit_properties(Element& e)
 void Parameters::set_value(std::string property, Array* value)
 {
 #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;
+  std::cout << "element> Setting value " << std::setw(25) << std::left << property << std::endl;
 #endif
   if(property=="knl") 
     {
@@ -166,8 +170,11 @@ void Parameters::set_value(std::string property, Array* value)
     }
   else
     {
-      std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
-      exit(1);
+      std::cerr << "Error: element> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
+      // don't exit here, but flag willExit instead
+      //exit(1);
+      willExit = true;
+      return;
     }
 
   setMap.at(property) = true;

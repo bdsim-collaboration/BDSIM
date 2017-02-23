@@ -13,7 +13,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4UserLimits.hh"
 
 #include <map>
 
@@ -46,6 +45,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
       G4cerr << __METHOD_NAME__ << "half aperture bigger than diameter!" << G4endl;
       G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
 	     << name << "\"" << G4endl;
+      G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
       exit(1);
     }
     
@@ -54,6 +54,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
       G4cerr << __METHOD_NAME__ << "half aperture exit bigger than diameter!" << G4endl;
       G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
 	     << name << "\"" << G4endl;
+      G4cerr << "x aperture " << xOutAperture << " mm, y aperture " << yOutAperture << " mm" << G4endl;
       exit(1);
     }
     
@@ -78,6 +79,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   collimatorSolid = nullptr;
   innerSolid      = nullptr;
   vacuumSolid     = nullptr;
+
+  tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
 }
 
 BDSCollimatorBase::~BDSCollimatorBase()
@@ -106,9 +109,22 @@ void BDSCollimatorBase::Build()
 				   chordLength * 0.5   - lengthSafety);
   RegisterSolid(outerSolid);
   
-  G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
-  G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
+  // Swap variables around if exit size is larger than entrance size
+  // Rotation for tapered collimator (needed for tapered elliptical collimator)
   G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
+  G4RotationMatrix* colRotate;
+  if (tapered && isOutLarger)
+    {
+      std::swap(xAperture,xOutAperture);
+      std::swap(yAperture,yOutAperture);
+      colRotate = new G4RotationMatrix;
+      colRotate->rotateX(CLHEP::pi);
+      RegisterRotationMatrix(colRotate);
+    }
+  else
+    {colRotate = nullptr;}
+
+  G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set
   if(buildVacuumAndAperture)
@@ -131,25 +147,9 @@ void BDSCollimatorBase::Build()
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour(colour));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
-
-  //Rotation for tapered collimator
-  G4RotationMatrix* colRotate;
-  if (tapered && isOutLarger)
-    {
-      colRotate = new G4RotationMatrix;
-      colRotate->rotateX(CLHEP::pi);
-      RegisterRotationMatrix(colRotate);
-    }
-  else
-    {colRotate = nullptr;}
-
-
-#ifndef NOUSERLIMITS
-  G4UserLimits* collimatorUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  collimatorUserLimits->SetMaxAllowedStep(chordLength * 0.5);
-  RegisterUserLimits(collimatorUserLimits);
-  collimatorLV->SetUserLimits(collimatorUserLimits);
-#endif
+  
+  // user limits
+  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
@@ -178,19 +178,17 @@ void BDSCollimatorBase::Build()
 						      name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#ifndef NOUSERLIMITS
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-#endif
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
 
-      G4PVPlacement* vacPV = new G4PVPlacement(colRotate,                       // rotation
+      G4PVPlacement* vacPV = new G4PVPlacement(colRotate,               // rotation
 					       (G4ThreeVector)0,        // position
 					       vacuumLV,                // its logical volume
 					       name + "_vacuum_pv",     // its name
 					       containerLogicalVolume,  // its mother  volume
-					       false,		            // no boolean operation
-					       0,		                // copy number
+					       false,		        // no boolean operation
+					       0,		        // copy number
 					       checkOverlaps);
 
       RegisterPhysicalVolume(vacPV);

@@ -2,9 +2,16 @@
 #define ANALYSIS_OPTIONS_H
 
 #include "TROOT.h"
-#include "TChain.h"
 
 #include "BDSOutputROOTEventOptions.hh"
+
+class TTree;
+
+/**
+ * @brief Options loader.
+ *
+ * @author Stuart Walker.
+ */
 
 class Options
 {
@@ -13,7 +20,7 @@ public:
   virtual ~Options();
 
   /// Set the branch addresses to address the contents of the file.
-  void SetBranchAddress(TChain *c);
+  void SetBranchAddress(TTree *c);
 
   /// @{ Member that ROOT can map file data to locally.
   BDSOutputROOTEventOptions* options;

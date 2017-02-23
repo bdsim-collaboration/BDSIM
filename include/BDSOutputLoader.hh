@@ -1,15 +1,23 @@
 #ifndef BDSOUTPUTLOADER_H
 #define BDSOUTPUTLOADER_H
 
-#include "parser/options.h"
-#include "parser/optionsBase.h"
-
 #include "globals.hh" // geant4 types / globals
+
+namespace GMAD {
+  class Options;
+  class OptionsBase;
+}
 
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventOptions;
 class TFile;
 class TTree;
+
+/**
+ * @brief Loader of ROOT Event output for receating events.
+ *
+ * @author Laurie Nevay
+ */
 
 class BDSOutputLoader
 {

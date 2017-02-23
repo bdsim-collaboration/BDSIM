@@ -27,6 +27,11 @@ BDSParser* BDSParser::Instance(std::string name)
   return instance;
 }
 
+bool BDSParser::IsInitialised()
+{
+  return instance ? true : false;
+}
+
 BDSParser::~BDSParser()
 {
   instance = nullptr;
@@ -45,10 +50,10 @@ void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 
 void BDSParser::CheckOptions()
 {
-  if (options.nGenerate < 0) // run at least 1 event!
+  if (options.nGenerate <= 0) // run at least 1 event!
     {options.nGenerate = 1;}
   
-  if (options.beamEnergy == 0)
+  if (options.beamEnergy <= 0)
     {
       std::cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" << std::endl;
       exit(1);
@@ -56,11 +61,6 @@ void BDSParser::CheckOptions()
   
   if (!BDS::IsFinite(options.E0))
     {options.E0 = options.beamEnergy;}
-
-  if(options.LPBFraction > 1.0) // safety checks
-    {options.LPBFraction = 1.0;}
-  if(options.LPBFraction < 0.0)
-    {options.LPBFraction = 0.0;}
 
   if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps

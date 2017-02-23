@@ -3,6 +3,7 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Colour.hh"
 
 #include <map>
 #include <sstream>
@@ -38,14 +39,19 @@ BDSColours::BDSColours()
   colours["default"]          = new G4Colour(1,     1,     1);     // white
   colours["warning"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
 
+  // tunnel
+  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice gray
+  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
+  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
+  
   // elements
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["quadrupole"]       = new G4Colour(1,     0,     0);     // red
+  colours["quadrupole"]       = new G4Colour(0.82,  0,     0);     // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
-  colours["decapole"]         = new G4Colour(0.4,   0,     0.8);   // purple
+  colours["decapole"]         = new G4Colour(0.3,   0.2,   0.7);   // purple
   colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
@@ -55,11 +61,7 @@ BDSColours::BDSColours()
   colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
   colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
-
-  // tunnel
-  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice gray
-  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
-  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
+  colours["shield"]           = colours["tunnel"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
@@ -67,7 +69,7 @@ BDSColours::BDSColours()
   colours["LHCcoil"]          = new G4Colour(0.9,   0.75,  0);     // gold-ish
   colours["LHCcollar"]        = new G4Colour(0.9,   0.9,   0.9);   // gainsboro
   colours["LHCyoke"]          = new G4Colour(0,     0.5,   1.0);   // LHC blue
-  colours["LHCyokered"]       = new G4Colour(1,     0,     0);     // LHC red
+  colours["LHCyokered"]       = new G4Colour(*(colours["quadrupole"])); // quadrupole red
   colours["gdml"]             = new G4Colour(0.4  , 0.2,   0);     // poo brown
 
   // general

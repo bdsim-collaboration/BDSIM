@@ -5,6 +5,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
+#include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
 // physics processes / builders
@@ -38,7 +39,6 @@
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
 
-
 // general geant4
 #include "globals.hh"
 #include "G4ParticleTable.hh"
@@ -53,8 +53,6 @@
 #include <sstream>
 #include <utility>
 #include <vector>
-
-//#include "G4MesonConstructor.hh"
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr)
@@ -120,7 +118,7 @@ void BDSModularPhysicsList::Print()
   for (const auto& physics : physicsActivated)
     {
       G4String result = (physics.second ? "activated" : "inactive");
-      G4cout << "\"" << physics.first << "\" : " << result << G4endl;
+      G4cout << std::setw(25) << ("\"" + physics.first + "\" : ") << result << G4endl;
     }
 }
 
@@ -168,8 +166,8 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       else
 	{
 	  G4cout << "\"" << nameLower << "\" is not a valid physics list. Available ones are: " << G4endl;
-	  for (auto name : physicsLists)
-	    {G4cout << "\"" << name << "\"" << G4endl;}
+	  for (auto listName : physicsLists)
+	    {G4cout << "\"" << listName << "\"" << G4endl;}
 	  exit(1);
 	}
     }
@@ -243,14 +241,17 @@ void BDSModularPhysicsList::ConfigureOptical()
     {G4cout << __METHOD_NAME__ << G4endl;}
   if (!opticalPhysics)
     {return;}
-  opticalPhysics->Configure(kCerenkov, globals->TurnOnCerenkov());           ///< Cerenkov process index
-  opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
-  opticalPhysics->Configure(kAbsorption, globals->TurnOnOpticalAbsorption());  ///< Absorption process index
-  opticalPhysics->Configure(kRayleigh, globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
-  opticalPhysics->Configure(kMieHG, globals->TurnOnMieScattering());      ///< Mie scattering process index
-  opticalPhysics->Configure(kBoundary, globals->TurnOnOpticalSurface());     ///< Boundary process index
-  opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
-// opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
+  // Construct optical photon
+  G4OpticalPhoton::OpticalPhoton();
+
+  opticalPhysics->Configure(kCerenkov,      globals->TurnOnCerenkov());           ///< Cerenkov process index
+  opticalPhysics->Configure(kScintillation, true);                                ///< Scintillation process index
+  opticalPhysics->Configure(kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
+  opticalPhysics->Configure(kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
+  opticalPhysics->Configure(kMieHG,         globals->TurnOnMieScattering());      ///< Mie scattering process index
+  opticalPhysics->Configure(kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
+  opticalPhysics->Configure(kWLS,           true);                                ///< Wave Length Shifting process index
+// opticalPhysics->Configure(kNoProcess, globals->GetTurnOn< Number of processes, no selected process
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
 }
 
@@ -309,20 +310,35 @@ void BDSModularPhysicsList::SetParticleDefinition()
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+
+  // compute signed magnetic rigidity brho
+  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
+  // charge (in e units)
+  // rigidity (in T*m)
+  G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
+  G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
+  if (BDS::IsFinite(charge)) {
+    brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
+    // rigidity (in Geant4 units)
+    brho *= CLHEP::tesla*CLHEP::m;
+  }
+  // set in globals
+  globals->SetBRho(brho);
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
 	 << globals->GetParticleDefinition()->GetParticleName()<<G4endl;
   G4cout << __METHOD_NAME__ << "Mass : " 
 	 << globals->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Charge : " 
-	 << globals->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Charge : " << charge << " e" << G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
 	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
 	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
 	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
+	 << brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 }
 
 void BDSModularPhysicsList::Em()
@@ -333,7 +349,6 @@ void BDSModularPhysicsList::Em()
       constructors.push_back(new G4EmStandardPhysics());
       physicsActivated["em"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::EmExtra()
@@ -350,13 +365,12 @@ void BDSModularPhysicsList::EmExtra()
   if (!physicsActivated["em_extra"])
     {
       auto constructor = new G4EmExtraPhysics();
-#if G4VERSION_NUMBER > 1009
+#if G4VERSION_NUMBER > 1012
       constructor->Synch(true); // introduced geant version 10.1
 #endif
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 							  
 void BDSModularPhysicsList::EmLow()
@@ -367,7 +381,6 @@ void BDSModularPhysicsList::EmLow()
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::HadronicElastic()

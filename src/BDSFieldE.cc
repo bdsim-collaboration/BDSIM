@@ -5,20 +5,24 @@
 #include "G4Transform3D.hh"
 
 BDSFieldE::BDSFieldE():
-  transform(G4Transform3D::Identity)
+  transform(G4Transform3D::Identity),
+  inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldE::BDSFieldE(G4Transform3D transformIn):
-  transform(transformIn.inverse())
+  transform(transformIn),
+  inverseTransform(transformIn.inverse())
 {;}
 
 G4ThreeVector BDSFieldE::GetFieldTransformed(const G4ThreeVector& position,
-					     const G4double&      t) const
+					     const G4double       t) const
 {
   if (transform != G4Transform3D::Identity)
     {
-      G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
-      return GetField(transformedPosition,t);
+      G4ThreeVector transformedPosition = inverseTransform * (HepGeom::Point3D<G4double>)position;
+      G4ThreeVector field = GetField(transformedPosition, t);
+      G4ThreeVector transformedField = transform * (HepGeom::Vector3D<G4double>)field;
+      return transformedField;
     }
   else
     {return GetField(position,t);}
@@ -27,7 +31,8 @@ G4ThreeVector BDSFieldE::GetFieldTransformed(const G4ThreeVector& position,
 void BDSFieldE::GetFieldValue(const G4double point[4],
 			      G4double* field) const
 {
-  G4ThreeVector fieldValue = GetField(G4ThreeVector(point[0], point[1], point[2]), point[3]);
+  G4ThreeVector fieldValue = GetFieldTransformed(G4ThreeVector(point[0], point[1],
+							       point[2]), point[3]);
   field[0] = 0;             // B_x
   field[1] = 0;             // B_y
   field[2] = 0;             // B_z

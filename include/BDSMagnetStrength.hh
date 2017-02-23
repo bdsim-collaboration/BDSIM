@@ -4,17 +4,22 @@
 #include "globals.hh" // geant4 globals / types
 
 #include <map>
+#include <ostream>
 #include <vector>
 
 /**
  * @brief Efficient storage of magnet strengths.
  *
- * Based on std::map, this class stores magnet strengths. As there will be one of 
+ * Based on std::map, this class stores magnet strengths. 
+ *
+ * As there will be one of 
  * these for every magnet and they may in future have to go up to high order 
  * normal plus skew (~40 doubles), it is more efficient to only store the required
  * parameters. A pure quadrupole has no need of k20s, but a multipole may do. A static
  * vector contains the possible magnet strength parameters that can be checked against.
  * If a parameter is not specified in the map, its value is return as 0.
+ *
+ * Angle in rad, Field in Geant4 units. k strengths as original (ie not converted to G4).
  * 
  * @author Laurie Nevay
  */
@@ -51,17 +56,19 @@ public:
   static const std::vector<G4String> AllKeys() {return keys;}
 
   /// Accessor for normal component keys - k1 - k12
-  inline std::vector<G4String> NormalComponentKeys() const;
+  inline std::vector<G4String> NormalComponentKeys() const
+  {return normalComponentKeys;}
 
   /// Accessor for skew component keys - k1 - k12
-  inline std::vector<G4String> SkewComponentKeys() const;
+  inline std::vector<G4String> SkewComponentKeys() const
+  {return skewComponentKeys;}
 
   /// Accessor for all normal components - k1 - k12
   std::vector<G4double> NormalComponents() const;
 
   /// Accessor for all skew components - k1 - k12
   std::vector<G4double> SkewComponents() const;
-
+  
   ///@{ iterator mechanics
   typedef StrengthMap::iterator       iterator;
   typedef StrengthMap::const_iterator const_iterator;
@@ -95,12 +102,6 @@ private:
   /// Dummy variable that can be overwritten
   static G4double variable;
 };
-
-inline std::vector<G4String> BDSMagnetStrength::NormalComponentKeys() const
-{return normalComponentKeys;}
-
-inline std::vector<G4String> BDSMagnetStrength::SkewComponentKeys() const
-{return skewComponentKeys;}
 
 
 #endif

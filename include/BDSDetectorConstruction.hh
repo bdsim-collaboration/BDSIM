@@ -1,29 +1,31 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
-#include "BDSFieldObjects.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSExtent.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Region.hh"
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
 #include <string>
+#include <vector>
 
-//GFlash parameterisation
-#include "GFlashHomoShowerParameterisation.hh"
-#include "BDSShowerModel.hh"
-#include "GFlashHitMaker.hh"
-#include "GFlashParticleBounds.hh"
-
-class G4Box;
+class GFlashHomoShowerParameterisation;
+class GFlashHitMaker;
+class GFlashParticleBounds;
 class G4LogicalVolume;
+class G4Region;
 class G4VPhysicalVolume;
-class G4UniformMagField;
-class G4UserLimits;
-class G4VSensitiveDetector;
+
+namespace GMAD {
+  class Element;
+  template<typename T> class FastList;
+}
+
+class BDSAcceleratorModel;
+class BDSFieldObjects;
+class BDSShowerModel;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
@@ -52,8 +54,11 @@ public:
 
   virtual void ConstructSDandField();
 
-  /// Create biasing operations 
+  /// Create biasing operations.
   void BuildPhysicsBias();
+
+  /// Public access to the world extent.
+  BDSExtent WorldExtent() const {return worldExtent;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -64,7 +69,7 @@ private:
   void InitialiseRegions();
   
   /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
-  /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
+  /// and put in BDSBeamline container that calculates coordinates and extent of beamline
   void BuildBeamline();
 
   /// Build the tunnel around the already constructed flat beam line.
@@ -83,6 +88,10 @@ private:
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
+  /// Detect whether the first element has an angled face such that it might overlap
+  /// with a previous element.  Only used in case of a circular machine.
+  G4bool UnsuitableFirstElement(std::list<GMAD::Element>::const_iterator element);
+
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
@@ -99,30 +108,37 @@ private:
   bool debug = false;
 #endif
 
+  ///@{ Variable copied from global constants
   G4bool verbose;
   G4bool checkOverlaps;
+  ///@}
 
-  G4Region*          precisionRegion;
-  G4Region*          gasRegion;
+  /// Accelerator model pointer
+  BDSAcceleratorModel* acceleratorModel;
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
-  /// World user limits  
-  G4UserLimits* worldUserLimits;
 
-  // All fields
+  /// All fields
   std::vector<BDSFieldObjects*> fields;
   
-  // Gflash members
+  ///@{ Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
   //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
+  ///@}
 
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
+
+  /// Whether or not we're building a circular machine.
+  G4bool circular;
+
+  /// Record of the world extent.
+  BDSExtent worldExtent;
 };
 
 #endif

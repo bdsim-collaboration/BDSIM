@@ -1,8 +1,46 @@
+#include "BDSDebug.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 
 #include "globals.hh" // geant4 types / globals
+
+
+BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
+				   BDSIntegratorType dipoleIn,
+				   BDSIntegratorType quadrupoleIn,
+				   BDSIntegratorType sextupoleIn,
+				   BDSIntegratorType octupoleIn,
+				   BDSIntegratorType decapoleIn,
+				   BDSIntegratorType multipoleIn,
+				   BDSIntegratorType muonspoilerIn,
+				   BDSIntegratorType rfcavityIn,
+				   BDSIntegratorType rfIn,
+				   BDSIntegratorType generalIn,
+				   BDSIntegratorType skewQuadrupoleIn,
+				   BDSIntegratorType skewSextupoleIn,
+				   BDSIntegratorType skewOctupoleIn,
+				   BDSIntegratorType skewDecapoleIn,
+				   BDSIntegratorType dipolefringeIn,
+				   BDSIntegratorType multipolethinIn):
+  solenoid(solenoidIn),
+  dipole(dipoleIn),
+  quadrupole(quadrupoleIn),
+  sextupole(sextupoleIn),
+  octupole(octupoleIn),
+  decapole(decapoleIn),
+  multipole(multipoleIn),
+  muonspoiler(muonspoilerIn),
+  rfcavity(rfcavityIn),
+  rf(rfIn),
+  general(generalIn),
+  skewQuadrupole(skewQuadrupoleIn),
+  skewSextupole(skewSextupoleIn),
+  skewOctupole(skewOctupoleIn),
+  skewDecapole(skewDecapoleIn),
+  dipolefringe(dipolefringeIn),
+  multipolethin(multipolethinIn)
+{;}
 
 namespace BDS
 {  
@@ -13,7 +51,7 @@ namespace BDS
 			 BDSIntegratorType::sextupole,      // sextupole
 			 BDSIntegratorType::octupole,       // octupole
 			 BDSIntegratorType::decapole,       // decapole
-			 BDSIntegratorType::multipole,      // multipole
+			 BDSIntegratorType::g4classicalrk4, // (thick) multipole
 			 BDSIntegratorType::g4classicalrk4, // muonspoiler
 			 BDSIntegratorType::g4classicalrk4, // rfcavity
 			 BDSIntegratorType::g4classicalrk4, // rf
@@ -21,7 +59,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4, // skew sextupole
 			 BDSIntegratorType::g4classicalrk4, // skew octupole
-			 BDSIntegratorType::g4classicalrk4);// skew decapole
+			 BDSIntegratorType::g4classicalrk4, // skew decapole
+			 BDSIntegratorType::dipolefringe,   // dipole fringe field
+			 BDSIntegratorType::multipolethin); // thin multipole
   const BDSIntegratorSet* integratorsGeant4 =
     new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
 			 BDSIntegratorType::g4classicalrk4, // dipole
@@ -37,7 +77,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
 			 BDSIntegratorType::g4classicalrk4, // skew sextupole
 			 BDSIntegratorType::g4classicalrk4, // skew octupole
-			 BDSIntegratorType::g4classicalrk4);// skew decapole
+			 BDSIntegratorType::g4classicalrk4, // skew decapole
+			 BDSIntegratorType::dipolefringe,   // dipole fringe field
+			 BDSIntegratorType::multipolethin); // thin multipole
 }
 
 const BDSIntegratorSet* BDS::IntegratorSet(G4String sets)
@@ -58,50 +100,59 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
     }
 }
 
-BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
-				  const BDSFieldType      field)
+BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
 {
   switch (field.underlying())
     {
     case BDSFieldType::none:
-      {return set->general;     break;}
-    case BDSFieldType::zero:
-      {return set->general;     break;}
-    case BDSFieldType::threed:
-      {return set->general;     break;}
-    case BDSFieldType::xy:
-      {return set->general;     break;}
+      {return general;     break;}// shouldn't really happen, but for completeness.
+    case BDSFieldType::bmap1d:
+    case BDSFieldType::bmap2d:
+    case BDSFieldType::bmap3d:
+    case BDSFieldType::bmap4d:
+    case BDSFieldType::ebmap1d:
+    case BDSFieldType::ebmap2d:
+    case BDSFieldType::ebmap3d:
+    case BDSFieldType::ebmap4d:
+    case BDSFieldType::emap1d:
+    case BDSFieldType::emap2d:
+    case BDSFieldType::emap3d:
+    case BDSFieldType::emap4d:
     case BDSFieldType::mokka:
-      {return set->general;     break;}
+      {
+	G4cout << __METHOD_NAME__ << "Warning - this is overriding the specified field maps integrator" << G4endl;
+	return general;
+	break;
+      }
     case BDSFieldType::solenoid:
-      {return set->solenoid;    break;}
+      {return solenoid;    break;}
     case BDSFieldType::dipole:
-      {return set->dipole;      break;}
+      {return dipole;      break;}
     case BDSFieldType::quadrupole:
-      {return set->quadrupole;  break;}
+      {return quadrupole;  break;}
     case BDSFieldType::sextupole:
-      {return set->sextupole;   break;}
+      {return sextupole;   break;}
     case BDSFieldType::octupole:
-      {return set->octupole;    break;}
+      {return octupole;    break;}
     case BDSFieldType::decapole:
-      {return set->decapole;    break;}
+      {return decapole;    break;}
     case BDSFieldType::multipole:
-      {return set->multipole;   break;}
+      {return multipole;   break;}
     case BDSFieldType::muonspoiler:
-      {return set->muonspoiler; break;}
-    case BDSFieldType::rfcavity:
-      {return set->rfcavity;    break;}
-    case BDSFieldType::rf:
-      {return set->rf;          break;}
+      {return muonspoiler; break;}
     case BDSFieldType::skewquadrupole:
-      {return set->skewQuadrupole; break;}
+      {return skewQuadrupole; break;}
     case BDSFieldType::skewsextupole:
-      {return set->skewSextupole;  break;}
+      {return skewSextupole;  break;}
     case BDSFieldType::skewoctupole:
-      {return set->skewOctupole;   break;}
+      {return skewOctupole;   break;}
     case BDSFieldType::skewdecapole:
-      {return set->skewDecapole;   break;}
+      {return skewDecapole;   break;}
+    case BDSFieldType::rfcavity:
+      {return rfcavity;    break;}
+    case BDSFieldType::rf:
+      {return rf;          break;}
     default:
-      {return set->general;     break;}
+      {return general;     break;}
     }
 }

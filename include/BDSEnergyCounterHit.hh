@@ -4,18 +4,17 @@
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
 #include "G4Allocator.hh"
-#include "G4ThreeVector.hh"
 
 class BDSEnergyCounterHit;
 
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-namespace BDS
-{
-  BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
-  BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
-}
+// namespace BDS
+// {
+//   BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
+//   BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
+// }
 
 /**
  * @brief Information recorded for a single piece of energy deposition.
@@ -44,7 +43,6 @@ public:
 		      G4int    trackID           = -1,   // Track ID
 		      G4int    parentID          = -1,   // Parent ID
 		      G4double weightIn          = 1,    // weight
-		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
 		      G4int    eventNoIn         = 0,    // event number
 		      G4double stepLengthIn      = 0,
@@ -73,7 +71,6 @@ public:
   inline G4int    GetTrackID()         const {return trackID;}
   inline G4int    GetParentID()        const {return parentID;}
   inline G4double GetWeight()          const {return weight;} 
-  inline G4bool   GetPrecisionRegion() const {return precisionRegion;}
   inline G4int    GetTurnsTaken()      const {return turnsTaken;}
   inline G4int    GetEventNo()         const {return eventNo;}
   inline G4double GetStepLength()      const {return stepLength;}
@@ -115,7 +112,6 @@ private:
   G4int    trackID;
   G4int    parentID;
   G4double weight;
-  G4bool   precisionRegion; ///< Whether or not the hit is in the precision region
   G4int    turnsTaken;
   G4int    eventNo;
   G4double stepLength;

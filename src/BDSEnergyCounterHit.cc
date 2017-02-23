@@ -19,9 +19,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4String nameIn, 
 					 G4int    partIDIn,
 					 G4int    trackIDIn,
-                     G4int    parentIDIn,
+					 G4int    parentIDIn,
 					 G4double weightIn, 
-					 G4bool   precisionRegionIn, 
 					 G4int    turnsTakenIn,
 					 G4int    eventNoIn,
 					 G4double stepLengthIn,
@@ -43,7 +42,6 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   trackID(trackIDIn),
   parentID(parentIDIn),
   weight(weightIn),
-  precisionRegion(precisionRegionIn),
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn),
   stepLength(stepLengthIn),
@@ -54,6 +52,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
 
+/*
 BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* hc)
 {
   G4double sposMin = 1e20; //stupidly large number - spos will always be less than
@@ -92,3 +91,4 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
   else
     {return nullptr;}
 }
+*/

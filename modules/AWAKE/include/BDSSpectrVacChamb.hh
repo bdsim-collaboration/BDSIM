@@ -6,23 +6,14 @@
 #define BDSSpectrVacChamb_h 
 
 #include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
-#include "G4ThreeVector.hh"
-#include <vector>
-#include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
-#include <vector>
 #include "G4Box.hh"
 #include "G4GenericTrap.hh"
+#include "G4LogicalVolume.hh"
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
-
+#include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
+#include <vector>
 
 class BDSSpectrVacChamb 
 {
@@ -32,6 +23,9 @@ public:
   ~BDSSpectrVacChamb();
 
   void Place(G4LogicalVolume* motherVolume);
+
+    //container of pointers to all logical volumes
+    inline std::vector<G4LogicalVolume*> logVols(){return _logVols;}
 
 private:
   BDSSpectrVacChamb();
@@ -100,6 +94,7 @@ private:
   void BuildBox2Inner(); 
   void BuildBox3Inner(); 
   void CalculateGeometry();
+    void SetUserLimits();
   void printGeom();
   void printTrapVertices(std::vector<G4TwoVector> vertices, const G4String& name);
 
@@ -142,6 +137,9 @@ private:
   G4ThreeVector _box3Translation;
 
   // G4double _screenAngle2;
+
+    //A container of pointers to all the log vols.
+    std::vector<G4LogicalVolume*> _logVols;
 };
 
 #endif

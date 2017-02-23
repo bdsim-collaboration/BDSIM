@@ -13,7 +13,6 @@
 
 class BDSAcceleratorComponent;
 class BDSBeamlineElement;
-class BDSGeometryComponent;
 class BDSSimpleComponent;
 class BDSTiltOffset;
 class BDSTransform3D;
@@ -123,7 +122,7 @@ public:
 
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.
-  std::vector<G4double> GetSPositionEndOfEach();
+  std::vector<G4double> GetEdgeSPositions() const;
 
   ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
@@ -169,6 +168,9 @@ public:
 
   /// Whether the supplied index will lie within the beam line vector.
   G4bool IndexOK(G4int index) const;
+
+  /// Access the padding length between each element added to the beamline.
+  G4double PaddingLength() const {return paddingLength;}
   
 private:
   /// Add a single component and calculate its position and rotation with respect
@@ -183,7 +185,9 @@ private:
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
 
+  /// Sum of all chord lengths
   G4double totalChordLength;
+  /// Sum of all arc lengths
   G4double totalArcLength;
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
@@ -197,6 +201,9 @@ private:
 
   /// Current s coordinate at the end of the previous element
   G4double previousSPositionEnd;
+
+  /// The gap added for padding between each component.
+  G4double paddingLength;
 
   /// Map of objects by name stored in this beam line. For now,
   /// only the base name (no suffix) will be used for the component

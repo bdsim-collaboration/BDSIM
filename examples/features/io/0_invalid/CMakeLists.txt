@@ -1,0 +1,1 @@
+simple_fail(Invalid-Sampler-Name "--file=samplerName.gmad")

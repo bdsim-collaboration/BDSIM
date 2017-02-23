@@ -6,6 +6,12 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @brief Result of comparing 2 2D histograms.
+ *
+ * @author Stewart Boogert.
+ */
+
 class ResultHistogram2D: public ResultHistogram
 {
 public:
@@ -23,6 +29,8 @@ public:
     ss << h1NYBins << " " << h2NYBins << " " << h1YMean << " " << h2YMean << " ";
     return ss.str();
   }
+
+  virtual ~ResultHistogram2D() {}
 };
 
 #endif

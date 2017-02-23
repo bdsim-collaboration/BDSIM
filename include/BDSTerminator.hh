@@ -3,8 +3,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-class BDSTerminatorUserLimits;
-
 /** 
  * @brief Class for small control volume for circular macines.
  * 
@@ -12,6 +10,8 @@ class BDSTerminatorUserLimits;
  * that change based on the global constants parameter nturns. Used
  * to control the nunmber of tunrs a primary particle completes in 
  * the machine.
+ *
+ * It has the same dimensions as a sampler - taken from BDSSamplerPlane.hh.
  * 
  * @author Laurie Nevay
  */
@@ -19,19 +19,22 @@ class BDSTerminatorUserLimits;
 class BDSTerminator: public BDSAcceleratorComponent
 {
 public:
-  BDSTerminator(G4String aName, G4double aLength);
+  BDSTerminator();
   virtual ~BDSTerminator();
   
 private:
-  /// Override this function in BDSACceleratorComponent purely to avoid
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTerminator& operator=(const BDSTerminator&) = delete;
+  BDSTerminator(BDSTerminator&) = delete;
+  /// @}
+  
+  /// Override this function in BDSAcceleratorComponent purely to avoid
   /// BDSAcceleratorComponent replacing the user limits on the terminator.
   virtual void Build();
 
   /// Construct a simple box and attach an instance of the customised
   /// BDSTerminatorUserLimits() to it.
   virtual void BuildContainerLogicalVolume();
-
-  BDSTerminatorUserLimits* userLimits;
 };
 
 #endif

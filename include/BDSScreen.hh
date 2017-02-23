@@ -20,17 +20,16 @@ class BDSMultilayerScreen;
 class BDSScreen: public BDSDrift
 {
 public:
-  BDSScreen(G4String aName,  
-	    G4double aLength, //length of the drift section containing the screen
-	    BDSBeamPipeInfo* beamPipeInfo,
-	    G4TwoVector size = G4TwoVector(), //X Y dimensions of screen
-	    G4double screenAngle = 0 //Phi angle of screen
-	    );
-  //Use the below method to add the screen layers (to be done in the ComponentFactory).
+  BDSScreen(G4String         name,  
+	    G4double         chordength,  // Length of the drift section containing the screen
+	    BDSBeamPipeInfo* beamPipeInfo,// Beam pipe specifications.
+	    G4TwoVector      size = G4TwoVector(), // X Y dimensions of screen
+	    G4double         screenAngle = 0);     //Phi angle of screen
 
   virtual ~BDSScreen();
-  
-  void screenLayer(G4double thickness, G4String material, G4int isSampler=0);
+
+  /// Add a screen layer.
+  void AddScreenLayer(G4double thickness, G4String material, G4int isSampler=0);
 
 private:
   BDSMultilayerScreen* mlScreen;
@@ -44,8 +43,6 @@ private:
   G4ThreeVector screenPos;
   G4RotationMatrix* screenRot;
   G4int nLayers;
-
-  //TODO  virtual void BuildFieldAndStepper(); 
 };
 
 #endif

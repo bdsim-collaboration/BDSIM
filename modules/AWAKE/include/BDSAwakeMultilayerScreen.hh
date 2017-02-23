@@ -6,10 +6,18 @@
 class BDSAwakeMultilayerScreen : public BDSMultilayerScreen
 {
 public:
-  BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double mountThickness, G4String mountMaterial, G4double width=1*CLHEP::m);
+  BDSAwakeMultilayerScreen(G4String material,
+			   G4double thickness,
+			   G4double windowScreenGap,
+			   G4double dgrain,
+			   G4double windowThickness,
+			   G4String windowMaterial,
+			   G4double mountThickness,
+			   G4String mountMaterial,
+			   G4double width=1*CLHEP::m);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
-  void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+  virtual void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
 
 private:
   typedef BDSMultilayerScreen super;
@@ -34,8 +42,9 @@ private:
   void frontScintillatorLayer1();
   void frontScintillatorLayer2();
   void frontLayer();
-  void reflectiveSurface();
-  void roughSurface();
+  virtual void ReflectiveSurface();
+  virtual void RoughSurface();
+  
   G4String _material;
   G4double _thickness;
   G4double _windowScreenGap;

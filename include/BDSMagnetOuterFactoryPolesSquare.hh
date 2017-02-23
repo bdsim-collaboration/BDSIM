@@ -1,16 +1,16 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 #define BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuterFactoryPolesBase.hh"
-#include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4VSolid.hh"
 #include <vector>
 
+class BDSBeamPipe;
 class G4Colour;
+class G4LogicalVolume;
 class G4Material;
+class G4VSolid;
 
 /**
  * @brief Factory class for outer volume of magnets. 
@@ -54,7 +54,6 @@ private:
   /// vector of unique poles that must all be built individually into logical volumes.
   /// It does however make use of BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil.
   virtual void CreateLogicalVolumes(G4String    name,
-				    G4double    length,
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 
@@ -71,7 +70,8 @@ private:
 					    G4int        order,
 					    G4double     outerDiameter,
 					    G4Material*  outerMaterial,
-					    G4double     magnetContainerLength);
+					    G4double     magnetContainerLength,
+					    G4bool       buildEndPiece);
   
   /// Poles have to be different lengths to fit in a square - have to be unique
   /// therefore keep a vector of them
@@ -82,7 +82,6 @@ private:
   /// Need to pass order to CreateLogicalVolumes but should override for neatness and
   /// therefore can't change the signature of the function, so pass by internal variable.
   G4int order;
-  
 };
 
 #endif

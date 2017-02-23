@@ -1,11 +1,7 @@
 #ifndef BDSBEAMPIPEFACTORYOCTAGONAL_H
 #define BDSBEAMPIPEFACTORYOCTAGONAL_H
 
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryPoints.hh"
-#include "BDSBeamPipe.hh"
-
-class G4Material;
 
 /**
  * @brief Factory for octagonal aperture model beampipes.
@@ -34,7 +30,7 @@ public:
   
 private:
   BDSBeamPipeFactoryOctagonal(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryOctagonal* _instance;
+  static BDSBeamPipeFactoryOctagonal* instance;
 
   /// Generate quarters of a circle to represent the edges joined by straight lines.
   /// Overloaded (required) from BDSBeamPipeFactoryPoints

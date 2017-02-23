@@ -2,11 +2,12 @@
 #define BDSINTEGRATORQUADRUPOLE_H
 
 #include "BDSIntegratorBase.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
+
+class G4Mag_EqRhs;
+class BDSMagnetStrength;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
@@ -39,7 +40,7 @@ public:
 		       G4double       yErr[]);
 
 protected:
-  /// Calcaulte the new particle coordinates for a given step length h.
+  /// Calculate the new particle coordinates for a given step length h.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,

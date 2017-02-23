@@ -39,8 +39,6 @@ namespace GMAD
     double frequency;
     /// phase in radians
     double phase;
-    /// Electric Field in Volts / m
-    double eField;
     /// number of points that will be used to make the cell shape
     /// more will be more accurate but will also increase tracking time
     int numberOfPoints;
@@ -56,26 +54,25 @@ namespace GMAD
     /// print some properties
     void print()const;
 
-    /// set methods by property name
+    /// set methods by property name and value
     template <typename T>
-      void set_value(std::string name, T value);
+      void set_value(std::string property, T value);
   };
   template <typename T>
-    void CavityModel::set_value(std::string name, T value)
+    void CavityModel::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+      std::cout << "cavitymodel> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
-	set(this,name,value);
+	set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value  << std::endl;
+	std::cerr << "Error: cavitymodel> unknown option \"" << property << "\" with value " << value  << std::endl;
 	exit(1);
       }
     }
-  
 }
 
 #endif

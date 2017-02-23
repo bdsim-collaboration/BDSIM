@@ -6,6 +6,11 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+/**
+ * @brief A simple parameterisation of N-Pole outer yoke magnetic field.
+ *
+ */
+
 class BDSFieldMagOuterMultipole: public BDSFieldMag
 {
 public:
@@ -16,7 +21,8 @@ public:
   virtual ~BDSFieldMagOuterMultipole(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const double         t = 0) const;
 
 private:
   const G4int    nPoles;

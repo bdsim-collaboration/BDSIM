@@ -1,1 +1,1 @@
-simple_testing(hadronicTarget_LONG "--file=hadronicTarget.gmad" "")
+simple_testing(hadronicTarget "--file=hadronicTarget.gmad" "")

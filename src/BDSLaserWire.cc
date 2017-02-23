@@ -11,9 +11,11 @@ BDSLaserWire::BDSLaserWire(G4String      name,
 			   G4double      wavelength,
 			   G4ThreeVector direction):
   BDSAcceleratorComponent(name, length, 0, "laserwire"),
-  itsLaserCompton(nullptr),
   itsLaserDirection(direction),
   itsLaserWavelength(wavelength)
+{;}
+
+BDSLaserWire::~BDSLaserWire()
 {;}
 
 void BDSLaserWire::BuildContainerLogicalVolume()
@@ -30,9 +32,4 @@ void BDSLaserWire::BuildContainerLogicalVolume()
   BDSGlobalConstants::Instance()->SetLaserwireDir(containerLogicalVolume->GetName(),itsLaserDirection);
 
   SetAcceleratorVacuumLogicalVolume(containerLogicalVolume);
-}
-
-BDSLaserWire::~BDSLaserWire()
-{
-  delete itsLaserCompton;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "TROOT.h"
+#include "TChain.h"
 
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -12,7 +13,7 @@ class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
 class BDSOutputROOTEventTrajectory;
 
-class TChain;
+//class TChain;
 
 /**
  * @brief Event loader.
@@ -24,6 +25,8 @@ class Event
 {
 public:
   Event();
+  Event(bool debugIn,
+	bool procesSamplersIn = false);
   void CommonCtor();
   virtual ~Event();
 
@@ -39,11 +42,12 @@ public:
   BDSOutputROOTEventLoss*            GetTunnelHit()        {return tunnelHit;}
   BDSOutputROOTEventTrajectory*      GetTrajectory()       {return trajectory;}
   BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
+  BDSOutputROOTEventInfo*            GetInfo()             {return info;}
   /// @}
 
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
-  void SetBranchAddress(TChain* t, std::vector<std::string>& samplerNames);
+  void SetBranchAddress(TTree* t, std::vector<std::string>* samplerNames = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
@@ -67,6 +71,9 @@ public:
 
 private:
   ClassDef(Event,1);
+
+  bool debug           = false;
+  bool processSamplers = false;
 };
 
 #endif

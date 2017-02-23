@@ -7,6 +7,12 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @brief Result of comparing 2 histograms.
+ *
+ * @author Stewart Boogert.
+ */
+
 class ResultHistogram: public Result
 { 
 public:
@@ -43,6 +49,8 @@ public:
     ss << "Chi^2    " << chi2 << " vs tolerance of " << tolerance;
     return ss.str();
   }
+
+  virtual ~ResultHistogram() {}
 };
 
 #endif

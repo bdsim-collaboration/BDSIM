@@ -4,7 +4,9 @@
 
 #include "parser/options.h"
 
+#include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/RandomObjects/RandMultiGauss.h"
 
 BDSBunchTwiss::BDSBunchTwiss():
   betaX(0.0), betaY(0.0),

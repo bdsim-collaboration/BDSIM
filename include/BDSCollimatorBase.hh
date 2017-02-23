@@ -55,12 +55,23 @@ protected:
   G4double xOutAperture;
   /// Aperture at exit in y dimension
   G4double yOutAperture;
+  /// Flag for tapered collimator
+  G4bool tapered;
   /// Material
   G4String collimatorMaterial;
   /// Vacuum material
   G4String vacuumMaterial;
   /// Colour of collimator
   G4String colour;
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSCollimatorBase() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCollimatorBase& operator=(const BDSCollimatorBase&) = delete;
+  BDSCollimatorBase(BDSCollimatorBase&) = delete;
+  /// @}
 };
 
 #endif

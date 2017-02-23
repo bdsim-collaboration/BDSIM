@@ -9,43 +9,71 @@
 template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
-      {BDSFieldType::none,       "none"},
-      {BDSFieldType::zero,       "zero"},
-      {BDSFieldType::threed,     "threed"},
-      {BDSFieldType::xy,         "xy"},
-      {BDSFieldType::mokka,      "mokka"},
-      {BDSFieldType::solenoid,   "solenoid"},
-      {BDSFieldType::dipole,     "dipole"},
-      {BDSFieldType::quadrupole, "quadrupole"},
-      {BDSFieldType::sextupole,  "sextupole"},
-      {BDSFieldType::octupole,   "octupole"},
-      {BDSFieldType::decapole,   "decapole"},
-      {BDSFieldType::multipole,  "multipole"},
-      {BDSFieldType::fringe,     "fringe"},
-      {BDSFieldType::muonspoiler,"muonspoiler"},
-      {BDSFieldType::rfcavity,   "rfcavity"},
-      {BDSFieldType::rf,         "rf"}
+      {BDSFieldType::none,             "none"},
+      {BDSFieldType::teleporter,       "teleporter"},
+      {BDSFieldType::bmap1d,           "bmap1d"},
+      {BDSFieldType::bmap2d,           "bmap2d"},
+      {BDSFieldType::bmap3d,           "bmap3d"},
+      {BDSFieldType::bmap4d,           "bmap4d"},
+      {BDSFieldType::emap1d,           "emap1d"},
+      {BDSFieldType::emap2d,           "emap2d"},
+      {BDSFieldType::emap3d,           "emap3d"},
+      {BDSFieldType::emap4d,           "emap4d"},
+      {BDSFieldType::ebmap1d,          "ebmap1d"},
+      {BDSFieldType::ebmap2d,          "ebmap2d"},
+      {BDSFieldType::ebmap3d,          "ebmap3d"},
+      {BDSFieldType::ebmap4d,          "ebmap4d"},
+      {BDSFieldType::mokka,            "mokka"},
+      {BDSFieldType::solenoid,         "solenoid"},
+      {BDSFieldType::dipole,           "dipole"},
+      {BDSFieldType::quadrupole,       "quadrupole"},
+      {BDSFieldType::dipolequadrupole, "dipolequadrupole"},
+      {BDSFieldType::sextupole,        "sextupole"},
+      {BDSFieldType::octupole,         "octupole"},
+      {BDSFieldType::decapole,         "decapole"},
+      {BDSFieldType::multipole,        "multipole"},
+      {BDSFieldType::muonspoiler,      "muonspoiler"},
+      {BDSFieldType::skewquadrupole,   "skewquadrupole"},
+      {BDSFieldType::skewsextupole,    "skewsextupole"},
+      {BDSFieldType::skewoctupole,     "skewoctupole"},
+      {BDSFieldType::skewdecapole,     "skewdecapole"},
+      {BDSFieldType::rfcavity,         "rfcavity"},
+      {BDSFieldType::rf,               "rf"},
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
 {
   std::map<G4String, BDSFieldType> types;
-  types["none"]       = BDSFieldType::none;
-  types["zero"]       = BDSFieldType::zero;
-  types["threed"]     = BDSFieldType::threed;
-  types["xy"]         = BDSFieldType::xy;
-  types["mokka"]      = BDSFieldType::mokka;
-  types["solenoid"]   = BDSFieldType::solenoid;
-  types["dipole"]     = BDSFieldType::dipole;
-  types["quadrupole"] = BDSFieldType::quadrupole;
-  types["sextupole"]  = BDSFieldType::sextupole;
-  types["octupole"]   = BDSFieldType::octupole;
-  types["decapole"]   = BDSFieldType::decapole;
-  types["multipole"]  = BDSFieldType::multipole;
-  types["fringe"]     = BDSFieldType::fringe;
-  types["muonspoiler"]= BDSFieldType::muonspoiler;
-  types["rfcavity"]   = BDSFieldType::rfcavity;
-  types["rf"]         = BDSFieldType::rf;
+  types["none"]             = BDSFieldType::none;
+  types["teleporter"]       = BDSFieldType::teleporter;
+  types["bmap1d"]           = BDSFieldType::bmap1d;
+  types["bmap2d"]           = BDSFieldType::bmap2d;
+  types["bmap3d"]           = BDSFieldType::bmap3d;
+  types["bmap4d"]           = BDSFieldType::bmap4d;
+  types["emap1d"]           = BDSFieldType::emap1d;
+  types["emap2d"]           = BDSFieldType::emap2d;
+  types["emap3d"]           = BDSFieldType::emap3d;
+  types["emap4d"]           = BDSFieldType::emap4d;
+  types["ebmap1d"]          = BDSFieldType::ebmap1d;
+  types["ebmap2d"]          = BDSFieldType::ebmap2d;
+  types["ebmap3d"]          = BDSFieldType::ebmap3d;
+  types["ebmap4d"]          = BDSFieldType::ebmap4d;
+  types["mokka"]            = BDSFieldType::mokka;
+  types["solenoid"]         = BDSFieldType::solenoid;
+  types["dipole"]           = BDSFieldType::dipole;
+  types["quadrupole"]       = BDSFieldType::quadrupole;
+  types["dipolequadrupole"] = BDSFieldType::dipolequadrupole;
+  types["sextupole"]        = BDSFieldType::sextupole;
+  types["octupole"]         = BDSFieldType::octupole;
+  types["decapole"]         = BDSFieldType::decapole;
+  types["multipole"]        = BDSFieldType::multipole;
+  types["muonspoiler"]      = BDSFieldType::muonspoiler;
+  types["skewquadrupole"]   = BDSFieldType::skewquadrupole;
+  types["skewsextupole"]    = BDSFieldType::skewsextupole;
+  types["skewoctupole"]     = BDSFieldType::skewoctupole;
+  types["skewdecapole"]     = BDSFieldType::skewdecapole;
+  types["rfcavity"]         = BDSFieldType::rfcavity;
+  types["rf"]               = BDSFieldType::rf;
   
   bType.toLower();
 

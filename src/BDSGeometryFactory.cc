@@ -1,81 +1,90 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
-#include "BDSGeometryGMAD.hh"
+#include "BDSGeometryFactoryBase.hh"
+#ifdef USE_GDML
+#include "BDSGeometryFactoryGDML.hh"
+#endif
+#include "BDSGeometryFactoryGMAD.hh"
+#include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 
-#ifdef USE_LCDD
-#include "BDSGeometryLCDD.hh"
-#endif
-#include "BDSGeometrySQL.hh"
-#ifdef USE_GDML
-#include "BDSGeometryGDML.hh"
-#endif
-
+#include <string>
+#include <unordered_map>
 #include <utility>
 
-class BDSGeometry;
+BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
+
+BDSGeometryFactory* BDSGeometryFactory::Instance()
+{
+  if (!instance)
+    {instance = new BDSGeometryFactory();}
+  return instance;
+}
 
 BDSGeometryFactory::BDSGeometryFactory()
 {;}
 
 BDSGeometryFactory::~BDSGeometryFactory()
-{;}
-
-BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "format and path: " << formatAndFilePath << G4endl;
-#endif
-  
-  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
-  G4String fileName = BDS::GetFullPath(ff.second);
-  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  instance = nullptr;
+  for (auto& geom : storage)
+    {delete geom;}
+}
 
-  switch(format.underlying())
+BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryType type)
+{
+  switch(type.underlying())
     {
-    case BDSGeometryType::gmad:
-      {return BuildGMAD(fileName); break;}
-      
-#ifdef USE_LCDD
-    case BDSGeometryType::lcdd:
-      {return BuildLCDD(fileName); break;}
-#endif
-
-    case BDSGeometryType::mokka:
-      {return BuildMokka(fileName); break;}
-
 #ifdef USE_GDML
     case BDSGeometryType::gdml:
-      {return BuildGDML(fileName); break;}
+      {return BDSGeometryFactoryGDML::Instance(); break;}
 #endif
-      
+    case BDSGeometryType::gmad:
+      {return BDSGeometryFactoryGMAD::Instance(); break;}
+    case BDSGeometryType::mokka:
+      {return BDSGeometryFactorySQL::Instance(); break;}
     default:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "no geometry format specified - not building anything" << G4endl;
-#endif
-      return nullptr;
-      break;
+      {
+	G4cout << "Unsupported factory type " << type;
+	return nullptr;
+	break;
+      }
     }
 }
 
-BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
-{return new BDSGeometryGMAD(fileName);}
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName,
+						       std::map<G4String, G4Colour*>* colourMapping,
+						       G4double suggestedLength,
+						       G4double suggestedOuterDiameter)
+{
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
+  G4String fileName = BDS::GetFullPath(ff.second);
 
-#ifdef USE_LCDD
-BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
-{return new BDSGeometryLCDD(fileName);}
-#endif
+  const auto search = registry.find(fileName);
+  if (search != registry.end())
+    {return search->second;}// it was found already in registry
+  // else wasn't found so continue
 
-BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
-{return new BDSGeometrySQL(fileName);}
-
-#ifdef USE_GDML
-BDSGeometry* BDSGeometryFactory::BuildGDML(G4String fileName)
-{return new BDSGeometryGDML(fileName);}
-#endif
-
-
+  // Check the file exists.
+  if (!BDS::FileExists(fileName))
+    {G4cerr << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+  
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);
+  if (!factory)
+    {return nullptr;}
+  
+  BDSGeometryExternal* result = factory->Build(fileName, colourMapping,
+					       suggestedLength, suggestedOuterDiameter);
+  if (result)
+    {
+      registry[(std::string)fileName] = result;
+      storage.push_back(result);
+    }
+  
+  return result;
+}

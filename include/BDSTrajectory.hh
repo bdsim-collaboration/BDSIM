@@ -14,14 +14,6 @@ class G4VTrajectoryPoint;
 
 typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
-/**
- * @brief Trajectory information from track including last scatter etc.
- * 
- * BDSTrajectory stores BDSTrajectoryPoints
- *
- * @author S. Boogert
- */
-
 class BDSTrajectory; // forward declaration so namespaced method can be at top
 
 namespace BDS
@@ -29,6 +21,14 @@ namespace BDS
   /// Search the trajectory container for the primary trajectory.
   BDSTrajectory* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
 }
+
+/**
+ * @brief Trajectory information from track including last scatter etc.
+ * 
+ * BDSTrajectory stores BDSTrajectoryPoints
+ *
+ * @author S. Boogert
+ */
 
 class BDSTrajectory: public G4Trajectory
 {
@@ -65,8 +65,8 @@ public:
   /// Find the first point in a trajectory where the post step process isn't fTransportation
   /// AND the post step process isn't fGeneral in combination with the post step process subtype
   /// isn't step_limiter.
-  static BDSTrajectoryPoint* FirstInteraction(BDSTrajectory* trajectory);
-  static BDSTrajectoryPoint* LastInteraction(BDSTrajectory*  trajectory);
+  BDSTrajectoryPoint* FirstInteraction()const;
+  BDSTrajectoryPoint* LastInteraction() const;
 
 protected:
   G4int          creatorProcessType;

@@ -5,6 +5,12 @@
 
 #include "globals.hh" // geant4 types / globals
 
+/**
+ * @brief Type definition for integrator sets.
+ *
+ * @author Laurie Nevay
+ */
+
 struct integratorsettype_def
 {
   enum type {geant4, bdsim};

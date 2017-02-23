@@ -13,19 +13,38 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double mountThickness, G4String mountMaterial, G4double width):
-  BDSMultilayerScreen(G4TwoVector(width,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _windowScreenGap(windowScreenGap), _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial),_
-  mountThickness(mountThickness),_mountMaterial(mountMaterial)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
+						   G4double thickness,
+						   G4double windowScreenGap,
+						   G4double dgrain,
+						   G4double windowThickness,
+						   G4String windowMaterial,
+						   G4double mountThickness,
+						   G4String mountMaterial,
+						   G4double width):
+  BDSMultilayerScreen(G4TwoVector(width, 8*CLHEP::cm), "AwakeMultilayerScreen"),
+  _material(material),
+  _thickness(thickness),
+  _windowScreenGap(windowScreenGap),
+  _gapWidth(0),
+  _gapSpacing(0),
+  _dgrain(dgrain),
+  _windowThickness(windowThickness),
+  _windowMaterial(windowMaterial),
+  _mountThickness(mountThickness),
+  _mountMaterial(mountMaterial),
+  _layerThickness(0),
+  _binderLayerThickness(0)
 {
   _ss.str("");
-  _binderLayerCount=0;
-  _scintLayerCount=0;
-  _fillFactor=0.5;
-  _layerThickness=_dgrain;
-  _binderLayerThickness=_dgrain*(1-_fillFactor)/_fillFactor;
-  _nScintLayers=_thickness/(_layerThickness+_binderLayerThickness);
-  G4double modulo = (_nScintLayers-floor(_nScintLayers));
-  _firstLayerThickness = _layerThickness*modulo;
+  _binderLayerCount = 0;
+  _scintLayerCount  = 0;
+  _fillFactor       = 0.5;
+  _layerThickness   = _dgrain;
+  _binderLayerThickness = _dgrain*(1-_fillFactor)/_fillFactor;
+  _nScintLayers         = _thickness/(_layerThickness+_binderLayerThickness);
+  G4double modulo       = (_nScintLayers-floor(_nScintLayers));
+  _firstLayerThickness  = _layerThickness*modulo;
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
   layers();
 }
@@ -69,21 +88,20 @@ void BDSAwakeMultilayerScreen::layers()
   thinAirLayer();
   G4cout << __METHOD_NAME__ << " - scint layers: " << _scintLayerCount << G4endl;
   G4cout << __METHOD_NAME__ << " - binder layers: " << _binderLayerCount << G4endl;
-  build();
+  Build();
 }
 
-void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler){
-    G4String samplerName;
-  if(bSampler){
-    G4int nThisSampler = BDSSampler::GetNSamplers()+1;
-    samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + name;
-  } else {
-    samplerName=name;
-  }
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,material,0,0);
-  sl->color(G4Color(1.0,0.0,0.0,0.3));
-  if(bSampler) sl->sampler();
-  screenLayer(sl);
+void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler)
+{
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),1*CLHEP::um),
+					   name,
+					   material,
+					   0,
+					   0);
+  sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
+  if(bSampler)
+    {sl->sampler();}
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::preWindowSampler(){
@@ -118,7 +136,7 @@ void BDSAwakeMultilayerScreen::windowLayer(){
   if(_windowThickness>0){
     BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
     sl->SetColour(G4Colour(0.8,0.8,0.8,0.3));
-    screenLayer(sl);
+    AddScreenLayer(sl);
   }
 }
 
@@ -127,15 +145,15 @@ void BDSAwakeMultilayerScreen::windowScreenGap(){
   if(_windowScreenGap>0){
     BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_windowScreenGap),(G4String)"windowScreenGap","air",0,0);
     sl->SetColour(G4Colour(0,0,0,0.3));
-    screenLayer(sl);
+    AddScreenLayer(sl);
   }
 }
 
 
 void BDSAwakeMultilayerScreen::backLayer(){
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),10*CLHEP::um),(G4String)"backingLayer","cellulose",0,0);
-  sl->color(G4Color(0.5,0.0,0.5,0.3));
-  screenLayer(sl);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),10*CLHEP::um),(G4String)"backingLayer","cellulose",0,0);
+  sl->SetColour(G4Colour(0.5,0.0,0.5,0.3));
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::mountLayer(){
@@ -143,23 +161,23 @@ void BDSAwakeMultilayerScreen::mountLayer(){
   std::cout << __METHOD_NAME__ << " mount thickness: " << _mountThickness << std::endl;
 #endif
   if(_mountThickness>0){
-        BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_mountThickness),(G4String)"mountLayer",_mountMaterial.data(),0,0);
-    sl->color(G4Color(1.0,0.0,0.3,0.0));
-    screenLayer(sl);
+        BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_mountThickness),(G4String)"mountLayer",_mountMaterial.data(),0,0);
+    sl->SetColour(G4Colour(1.0,0.0,0.3,0.0));
+    AddScreenLayer(sl);
   }
 }
 
 void BDSAwakeMultilayerScreen::substrateLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),178*CLHEP::um),(G4String)"substrateLayer","PET",0,0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::binderLayer(){
   incBinderLayer();
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_binderLayerThickness),_binderLayerName,"pet_lanex",0,0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::incBinderLayer(){
@@ -179,56 +197,55 @@ void BDSAwakeMultilayerScreen::backBinderLayer(){
   incBinderLayer();
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_firstBinderLayerThickness),_binderLayerName,"pet_lanex",0,0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::scintillatorLayer(){
   incScintLayer();
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_layerThickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::frontScintillatorLayer1(){
   incScintLayer();
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),0.5*_layerThickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::frontScintillatorLayer2(){
   incScintLayer();
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),0.5*_layerThickness),_scintLayerName,"gos_ri1",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::backScintillatorLayer(){
   incScintLayer();
   BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_firstLayerThickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
-
 
 void BDSAwakeMultilayerScreen::frontLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),5*CLHEP::um),(G4String)"frontLayer","cellulose",0,0);
   sl->SetColour(G4Colour(0.5,0.0,0.5,0.3));
-  screenLayer(sl);
+  AddScreenLayer(sl);
 }
 
 void BDSAwakeMultilayerScreen::surfaces(){
-  reflectiveSurface();
+  ReflectiveSurface();
   //  roughSurface();
 }
 
-void BDSAwakeMultilayerScreen::reflectiveSurface(){
-  BDSMultilayerScreen::reflectiveSurface(3,2);
+void BDSAwakeMultilayerScreen::ReflectiveSurface(){
+  BDSMultilayerScreen::ReflectiveSurface(3,2);
 }
 
-void BDSAwakeMultilayerScreen::roughSurface(){
+void BDSAwakeMultilayerScreen::RoughSurface(){
   //A rough surface between the scintillator layer and the cellulose layer (due to the phosphor grains)
-  BDSMultilayerScreen::roughSurface(23,24);
+  BDSMultilayerScreen::RoughSurface(23,24);
 }
 
 
@@ -265,8 +282,8 @@ void BDSAwakeMultilayerScreen::roughSurface(){
   */
 
 
-void BDSAwakeMultilayerScreen::place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol)
+void BDSAwakeMultilayerScreen::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol)
 {
-  super::place(rot,pos,motherVol);
+  super::Place(rot,pos,motherVol);
   surfaces();
 }

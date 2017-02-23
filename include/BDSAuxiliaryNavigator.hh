@@ -1,13 +1,12 @@
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
-#include "BDSStep.hh"
-
 #include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
 
-class G4AffineTransform;
+class BDSStep;
 class G4Step;
 class G4VPhysicalVolume;
 
@@ -76,7 +75,7 @@ public:
   BDSStep ConvertToLocal(G4Step const* const step,
 			 G4bool useCurvilinear = true) const;
 
-  /// Calcualte the local coordinates for a position and direction along a step
+  /// Calculate the local coordinates for a position and direction along a step
   /// length.  This is similar to the same function but for a G4Step but split
   /// apart. The direction vector can be used as the momentum vector without being
   /// a unit vector.  The 'post step' vector in the BDSStep instance will be the
@@ -158,7 +157,7 @@ protected:
 
   /// Navigator object for safe navigation in the read out world providing curvilinear
   /// coordinates for various applications. Since this is not a 'parallel' world but
-  /// a 'read out geometry' in Geant4 terms, this is inherintly safe and won't affect
+  /// a 'read out geometry' in Geant4 terms, this is inherently safe and won't affect
   /// the tracking of the particle in question.
   static G4Navigator* auxNavigatorCL;
 
@@ -183,8 +182,8 @@ private:
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
 
   /// This is used to foricibly initialise the transforms using a position,
-  /// momentum vector and step length.  The free drift of the particle is
-  /// calculated and the the average of the two points is used to locate
+  /// momentum vector and step length. The free drift of the particle is
+  /// calculated and the average of the two points is used to locate
   /// and initialise the transforms (in global coordinates).
   void InitialiseTransform(const G4ThreeVector& globalPosition,
 			   const G4ThreeVector& globalMomentum,

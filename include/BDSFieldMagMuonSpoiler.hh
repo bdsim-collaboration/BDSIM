@@ -2,10 +2,11 @@
 #define BDSFIELDMAGMUONSPOILER_H
 
 #include "BDSFieldMag.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+
+class BDSMagnetStrength;
 
 /** 
  * @brief Field of a Muon Spoiler.
@@ -21,7 +22,8 @@ public:
   virtual ~BDSFieldMagMuonSpoiler(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const G4double       t = 0) const;
   
 private:
   G4double bField;

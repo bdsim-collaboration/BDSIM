@@ -4,28 +4,25 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
-#include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::_instance = nullptr;
+BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::instance = nullptr;
 
 BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryRectangular();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryRectangular();}
+  return instance;
 }
 
 BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
@@ -33,7 +30,7 @@ BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
@@ -65,7 +62,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
   beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",   // name
 				 aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
 				 aper2In + lengthSafety,         // y half width
-				 lengthIn);                      // length - full length fo unambiguous subtraction
+				 lengthIn);                      // length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
@@ -139,8 +136,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
 
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
   
   // record extents
   BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
@@ -207,7 +203,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",   // name
 				 aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
 				 aper2In + lengthSafety,         // y half width
-				 2*lengthIn);                    // 2*length - full length fo unambiguous subtraction
+				 2*lengthIn);                    // 2*length - full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name

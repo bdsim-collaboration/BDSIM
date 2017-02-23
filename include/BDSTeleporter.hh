@@ -7,7 +7,7 @@
 #include "G4ThreeVector.hh"
 
 class BDSBeamline;
-class BDSFieldObjects;
+class BDSFieldInfo;
 
 /**
  * @brief An element that unnaturally shifts the beam across its length - a fudge volume.
@@ -17,7 +17,7 @@ class BDSFieldObjects;
  * because of the geometry construction, but purely in the input MADX or gmad description.
  * Normal tracking programs don't show this offset as they really track through a sequence
  * of maps or functions and just apply them in a loop - it is defacto periodic. However, 
- * with real 3D geometry in global carteasian coordinates, we must artificially make the
+ * with real 3D geometry in global cartesian coordinates, we must artificially make the
  * lattice periodic. Enter the teleporter. This transports particles across its length
  * while maintaining the exact same transverse coordinates, which is normally unphysical.
  * 
@@ -27,12 +27,19 @@ class BDSFieldObjects;
 class BDSTeleporter: public BDSAcceleratorComponent
 {
 public:
-  BDSTeleporter(const G4String      name,
-		const G4double      length,
-		const G4ThreeVector teleporterDetlaIn);  
+  BDSTeleporter(const G4double length,
+		BDSFieldInfo*  vacuumFieldInfoIn);
   virtual ~BDSTeleporter();
 
 private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSTeleporter() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTeleporter& operator=(const BDSTeleporter&) = delete;
+  BDSTeleporter(BDSTeleporter&) = delete;
+  /// @}
+  
   /// Overridden method from BDSAcceleratorComponent that dictates the construction.
   virtual void Build();
 
@@ -40,16 +47,14 @@ private:
   /// This is the only piece of geometry for the teleporter.
   virtual void BuildContainerLogicalVolume();
 
-  /// Teleporter 'field'
-  BDSFieldObjects* vacuumField;
-
-  /// Teleporter offset - the different between the end and beginning of the beamline
-  G4ThreeVector teleporterDelta;
+  /// Recipe for teleporter 'field'.
+  BDSFieldInfo* vacuumFieldInfo;
 };
 
 namespace BDS
 {
-  G4ThreeVector CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+  /// Calculate the difference between the beginning and end of a beam line.
+  G4ThreeVector CalculateTeleporterDelta(BDSBeamline* thebeamline);
 }
 
 #endif

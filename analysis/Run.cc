@@ -14,7 +14,7 @@ Run::Run()
 Run::~Run()
 {;}
 
-void Run::SetBranchAddress(TChain *t)
+void Run::SetBranchAddress(TTree *t)
 {
   t->GetEntry(0);  // Initialises local copy of class
   t->SetBranchAddress("Info.",&info);

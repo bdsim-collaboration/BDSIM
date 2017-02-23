@@ -1,30 +1,33 @@
 #include "SamplerAnalysis.hh"
-#include "Config.hh"
 #include "rebdsim.hh"
 
 #include <cmath>
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
-  S(0)
+  S(0),
+  debug(false)
 {
   CommonCtor();
 }
 
 #ifndef __ROOTDOUBLE__
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn):
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
+				 bool debugIn):
 #else 
-  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn):
+  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+				   bool debugIn):
 #endif
   s(samplerIn),
-  S(0)
+  S(0),
+  debug(debugIn)
 {
   CommonCtor();
 }
 
 void SamplerAnalysis::CommonCtor()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
   
@@ -79,15 +82,15 @@ SamplerAnalysis::~SamplerAnalysis()
 
 void SamplerAnalysis::Initialise()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 }
 
 void SamplerAnalysis::Process()
 {
-  if(Config::Instance()->Debug())
-    {std::cout << __METHOD_NAME__ << std::endl;}
+  if(debug)
+    {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
   std::vector<double> v;
   v.resize(6);
@@ -126,7 +129,7 @@ void SamplerAnalysis::Process()
 
 void SamplerAnalysis::Terminate()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
 
   // central moments
@@ -158,7 +161,9 @@ void SamplerAnalysis::Terminate()
     optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial   (transv.)/ sigma E (longit.)
     optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence (transv.)/ sigma t (longit.)
 
-    if (i==2) continue;    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    if (i==2)
+      {continue;}
 
     optical[i][4]  = (cenMoms[4][4][1][0]*cenMoms[j][4][1][1])/cenMoms[4][4][2][0];                                                        // eta
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
@@ -544,7 +549,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 2 && k < 2)
       {
-	deriv = 1/centMoms[4][4][2][0];;
+	deriv = 1/centMoms[4][4][2][0];
       }
       else {deriv=0;}
       
@@ -563,7 +568,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 2 && k < 2)
       {
-	deriv = 1/centMoms[4][4][2][0];;
+	deriv = 1/centMoms[4][4][2][0];
       }
       else {deriv=0;}
       

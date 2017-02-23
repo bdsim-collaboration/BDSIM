@@ -3,13 +3,18 @@
 
 #ifndef __ROOTBUILD__
 class BDSEnergyCounterHit;
-class BDSTunnelHit;
 class BDSTrajectoryPoint;
 #endif
 
 #include "TObject.h"
 
 #include <vector>
+
+/**
+ * @brief Data stored for energy deposition hits per event.
+ * 
+ * @author Stewart Boogert
+ */
 
 class BDSOutputROOTEventLoss: public TObject
 {

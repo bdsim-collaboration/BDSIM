@@ -37,6 +37,8 @@ std::string GMAD::typestr(ElementType type) {
     return "ecol";
   case ElementType::_RCOL : 
     return "rcol";
+  case ElementType::_SHIELD:
+    return "shield";
   case ElementType::_VKICK :
     return "vkick";
   case ElementType::_HKICK :
@@ -59,6 +61,8 @@ std::string GMAD::typestr(ElementType type) {
     return "screen";
   case ElementType::_AWAKESCREEN :
     return "awakescreen";
+  case ElementType::_AWAKESPECTROMETER :
+    return "awakespectrometer";
   case ElementType::_DEGRADER :
     return "degrader";
   default:

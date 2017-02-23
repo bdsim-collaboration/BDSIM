@@ -1,17 +1,16 @@
 #ifndef BDSENERGYCOUNTERSD_H
 #define BDSENERGYCOUNTERSD_H
 
-#include "BDSAuxiliaryNavigator.hh"
 #include "BDSEnergyCounterHit.hh"
 
-#include "G4Navigator.hh"
-#include "G4GFlashSpot.hh"
 #include "G4VSensitiveDetector.hh"
 #include "G4VGFlashSensitiveDetector.hh" // G4VSensitiveDetector is required before this due to missing header
 
-class G4VProcess;
-class G4Step;
+class BDSAuxiliaryNavigator;
+
+class G4GFlashSpot;
 class G4HCofThisEvent;
+class G4Step;
 class G4TouchableHistory;
 
 /**
@@ -50,7 +49,6 @@ private:
   G4double X,Y,Z,sBefore,sAfter; // global coordinates
   G4double x,y,z;   // local coordinates
   G4double stepLength;
-  G4bool   precisionRegion;
   G4int    ptype;
   G4int    trackID;
   G4int    parentID;

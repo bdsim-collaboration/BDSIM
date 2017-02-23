@@ -1,11 +1,16 @@
 #include "BDSBunchUserFile.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
-template<class T>
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
+
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
+template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
 {
 #ifdef BDSDEBUG 
@@ -409,7 +414,8 @@ G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
   return !InputBunchFile.eof();
 }
 
+template class BDSBunchUserFile<std::ifstream>;
 
-template BDSBunchUserFile<igzstream>::BDSBunchUserFile();
-
-template BDSBunchUserFile<std::ifstream>::BDSBunchUserFile();
+#ifdef USE_GZSTREAM
+template class BDSBunchUserFile<igzstream>;
+#endif

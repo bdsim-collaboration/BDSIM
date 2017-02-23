@@ -1,12 +1,12 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
@@ -16,11 +16,9 @@
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
-#include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <cstdlib>
@@ -31,14 +29,13 @@
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
 		     G4double            length,
-		     BDSBeamPipeInfo*    beamPipeInfoIn,
+		     BDSBeamPipeInfo*    beamPipeInfo,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
 		     G4double            angle,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, angle, type.ToString()),
+  BDSAcceleratorComponent(name, length, angle, type.ToString(), beamPipeInfo),
   magnetType(type),
-  beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -46,8 +43,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   placeBeamPipe(false),
   magnetOuterOffset(G4ThreeVector(0,0,0)),
   outer(nullptr),
-  vacuumField(nullptr),
-  outerField(nullptr)
+  beamPipePlacementTransform(G4Transform3D())
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
@@ -58,6 +54,10 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   outer    = nullptr;
 
   placeBeamPipe = false;
+
+  // It's not possible to build advanced outer geometry for a very thin magnet.
+  if (length < 1e-4*CLHEP::m) // 100um minimum length for geometry
+    {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
 }
 
 void BDSMagnet::Build()
@@ -68,8 +68,8 @@ void BDSMagnet::Build()
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
-  BuildOuterField();
   BDSAcceleratorComponent::Build(); // build container
+  BuildOuterField(); // must be done when the containerLV exists
   PlaceComponents(); // place things (if needed) in container
 }
 
@@ -82,6 +82,8 @@ void BDSMagnet::BuildBeampipe()
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
 
+  beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();
+  
   RegisterDaughter(beampipe);
   InheritExtents(beampipe);
 
@@ -96,6 +98,8 @@ void BDSMagnet::BuildVacuumField()
 {
   if (vacuumFieldInfo)
     {
+      G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
+      vacuumFieldInfo->SetTransform(newFieldTransform);
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
 								beampipe->GetVacuumLogicalVolume(),
 								true);
@@ -152,6 +156,11 @@ void BDSMagnet::BuildOuterField()
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								vol,
 								true);
+      // Attach to the container but don't propagate to daughter volumes. This ensures
+      // any gap between the beam pipe and the outer also has a field.
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+								containerLogicalVolume,
+								false);
     }
 }
 
@@ -205,7 +214,7 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-                                                    BDSGlobalConstants::Instance()->CheckOverlaps());
+                                                    checkOverlaps);
       
       RegisterPhysicalVolume(beamPipePV);
     }
@@ -223,18 +232,27 @@ void BDSMagnet::PlaceComponents()
 						       containerLogicalVolume, // its mother  volume
 						       false,                  // no boolean operation
 						       0,                      // copy number
-                                                       BDSGlobalConstants::Instance()->CheckOverlaps());
+                                                       checkOverlaps);
 
       RegisterPhysicalVolume(magnetOuterPV);
     }
 }
 
+void BDSMagnet::SetOuterField(BDSFieldInfo* outerFieldInfoIn)
+{
+  delete outerFieldInfo;
+  outerFieldInfo = outerFieldInfoIn;
+}
+
+void BDSMagnet::SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn)
+{
+  delete vacuumFieldInfo;
+  vacuumFieldInfo = vacuumFieldInfoIn;
+}
+
 BDSMagnet::~BDSMagnet()
 {
-  delete beamPipeInfo;
-  delete magnetOuterInfo;  
-  delete vacuumField;
-  delete outerField;
+  delete magnetOuterInfo;
   delete vacuumFieldInfo;
   delete outerFieldInfo;
 }

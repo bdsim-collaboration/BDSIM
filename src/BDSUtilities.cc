@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
@@ -15,8 +15,6 @@
 #include <functional>
 #include <iostream>
 #include <limits>
-#include <utility>
-
 #include <signal.h>
 #include <unistd.h>
 #include <utility>

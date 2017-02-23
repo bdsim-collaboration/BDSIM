@@ -11,7 +11,6 @@
 #include "BDSUtilities.hh"                 // for calculateorientation
 
 #include "globals.hh"                      // geant4 globals / types
-#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -50,7 +49,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     angleIn,
 								   G4double     angleOut,
 								   G4bool       /*yokeOnLeft*/,
-								   G4Material*  outerMaterial)
+								   G4Material*  outerMaterial,
+								   G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -93,7 +93,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     angleIn,
 									G4double     angleOut,
 									G4bool       /*yokeOnLeft*/,
-									G4Material*  outerMaterial)
+									G4Material*  outerMaterial,
+									G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -131,7 +132,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4String     
 								   BDSBeamPipe* beamPipe,
 								   G4double     outerDiameter,
 								   G4double     containerLength,
-								   G4Material*  outerMaterial)
+								   G4Material*  outerMaterial,
+								   G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -147,7 +149,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSextupole(G4String     n
 								  BDSBeamPipe* beamPipe,
 								  G4double     outerDiameter,
 								  G4double     containerLength,
-								  G4Material*  outerMaterial)
+								  G4Material*  outerMaterial,
+								  G4bool       /*buildEndPiece*/)
 {
   CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
@@ -160,7 +163,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String     na
 								 BDSBeamPipe* beamPipe,
 								 G4double     outerDiameter,
 								 G4double     containerLength,
-								 G4Material*  outerMaterial)
+								 G4Material*  outerMaterial,
+								 G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -176,7 +180,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String     na
 								 BDSBeamPipe* beamPipe,
 								 G4double     outerDiameter,
 								 G4double     containerLength,
-								 G4Material*  outerMaterial)
+								 G4Material*  outerMaterial,
+								 G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -192,7 +197,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     na
 								 BDSBeamPipe* beamPipe,
 								 G4double     outerDiameter,
 								 G4double     containerLength,
-								 G4Material*  outerMaterial)
+								 G4Material*  outerMaterial,
+								 G4bool       /*buildEndPiece*/)
 {
   CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
@@ -205,7 +211,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String     n
 								  BDSBeamPipe* beamPipe,
 								  G4double     outerDiameter,
 								  G4double     containerLength,
-								  G4Material*  outerMaterial)
+								  G4Material*  outerMaterial,
+								  G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -221,7 +228,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 								 BDSBeamPipe* beamPipe,
 								 G4double     outerDiameter,
 								 G4double     containerLength,
-								 G4Material*  outerMaterial)
+								 G4Material*  outerMaterial,
+								 G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -237,7 +245,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     n
 								  BDSBeamPipe* beamPipe,
 								  G4double     outerDiameter,
 								  G4double     containerLength,
-								  G4Material*  outerMaterial)
+								  G4Material*  outerMaterial,
+								  G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -254,7 +263,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 							       G4double     outerDiameter,
 							       G4double     containerLength,
 							       G4bool       /*vertical*/,
-							       G4Material*  outerMaterial)
+							       G4Material*  outerMaterial,
+							       G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -431,7 +441,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CreateLogicalVolumes(name, length, colour, outerMaterial);
+  CreateLogicalVolumes(name, colour, outerMaterial);
   CreateMagnetContainerComponent();
 
   // PLACEMENT
@@ -465,9 +475,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   outer->RegisterPhysicalVolume(yokePV);
   outer->RegisterVisAttributes(outerVisAttributes);
   // no rotation matrices used in this factory
-#ifdef NOUSERLIMITS
-  RegisterUserLimit(outerUserLimits);
-#endif
   return outer;
 }
 

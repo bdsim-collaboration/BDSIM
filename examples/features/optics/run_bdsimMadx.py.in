@@ -21,7 +21,7 @@ import optparse
 import pybdsim
 import pybdsim.Testing # requires explicit import
 
-def Run(filepath,nparticles,verbose):
+def Run(filepath,nparticles, integratorset,verbose):
     """
     Converts madx lattice to gmad and ptc lattice (also madx fresh) and 
     runs nparticles in each and then compares them. Previous files are 
@@ -34,10 +34,10 @@ def Run(filepath,nparticles,verbose):
     l.Clean()
 
     # convert madx tfs into gmad and ptc lattice, run the simulation for each
-    l.Run("@CMAKE_BINARY_DIR@/bdsim", "@MADX_EXECUTABLE@")
+    l.Run("@CMAKE_BINARY_DIR@/bdsim", "@MADX_EXECUTABLE@",integratorSet=integratorset)
 
     # load and compare the tracking output from both simualtions
-    l.Compare(addPrimaries=False)                                
+    l.Compare(rebdsim="@CMAKE_BINARY_DIR@/analysis/rebdsim", addPrimaries=False)                                
 
     
 def Clean(filepath):
@@ -54,6 +54,7 @@ def Main():
     parser.add_option('-c','--clean',     action='store_true',default=False,help=Clean.__doc__)
     parser.add_option('-f','--filepath',  action='store',     dest="filepath",  type="string", default="None")
     parser.add_option('-n','--nparticles',action='store',     dest="nparticles",type="int",    default=1000)
+    parser.add_option('-g','--integratorset',  action='store',     dest="integratorset",  type="string", default="bdsim")
     parser.add_option('-v','--verbose',   action='store_true',dest="verbose",                  default=False)
 
     options,args = parser.parse_args()
@@ -65,7 +66,7 @@ def Main():
     if options.clean:    
         Clean(options.filepath)
     else:
-        Run(options.filepath, options.nparticles, options.verbose)
+        Run(options.filepath, options.nparticles, options.integratorset,options.verbose)
 
 if __name__ == "__main__":
     Main()

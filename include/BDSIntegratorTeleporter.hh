@@ -4,7 +4,6 @@
 #include "BDSIntegratorBase.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 /**

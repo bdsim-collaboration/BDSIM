@@ -22,50 +22,33 @@ public:
   BDSPhysicalVolumeInfo(G4String nameIn,
 			G4String placementNameIn,
 			G4double sPosIn,
-			G4bool   precisionRegionIn = false,
-      G4int    beamlineIndexIn = -1);
+			G4int    beamlineIndexIn = -1);
   ~BDSPhysicalVolumeInfo();
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSPhysicalVolumeInfo const &info);
 
   /// Get the name of the logical volume
-  inline G4String GetName()
-  {return name;}
+  inline G4String GetName() const {return name;}
 
   /// Set the name of the logical volume
-  inline void SetName(G4String NameIn)
-  {name = NameIn;}
+  inline void SetName(G4String NameIn) {name = NameIn;}
 
   /// Get the name of the logical volume
-  inline G4String GetPlacementName()
-  {return placementName;}
+  inline G4String GetPlacementName() const {return placementName;}
 
   /// Set the name of the logical volume
   inline void SetPlacementName(G4String placementNameIn)
   {placementName = placementNameIn;}
 
   /// Get the s position coordinate of the logical volume
-  G4double GetSPos()
-  {return spos;}
+  G4double GetSPos() const {return spos;}
 
   /// Set the s position coordinate of the logical volume
-  void SetSPos(G4double SPosIn)
-  {spos = SPosIn;}
-
-  /// Get whether this volume is one to produce precision output as well as normal.
-  G4bool GetPrecisionRegion()
-  {return precisionRegion;}
-
-  /// Set whether this volume is one to produce precision output as well as normal.
-  void   SetProducePrecisionOutput(G4bool precisionRegionIn)
-  {precisionRegion = precisionRegionIn;}
+  void SetSPos(G4double SPosIn) {spos = SPosIn;}
 
   /// Get beamline index
-  G4int  GetBeamlineIndex() const
-  {
-    return beamlineIndex;
-  }
+  G4int  GetBeamlineIndex() const {return beamlineIndex;}
   
 private:
   BDSPhysicalVolumeInfo();
@@ -73,12 +56,6 @@ private:
   G4String name;
   G4String placementName;
   G4double spos;
-
-
-  /// Whether this volume is in the precision region and the
-  /// high precision output should be used for it
-  G4bool   precisionRegion;
-
   G4int    beamlineIndex;
 };
 

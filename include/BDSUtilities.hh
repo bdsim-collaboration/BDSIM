@@ -1,14 +1,14 @@
 #ifndef BDSUTILITIES_H
 #define BDSUTILITIES_H
 
-#include "BDSExtent.hh"
-
 #include "globals.hh"   // geant4 globals / types
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
 #include <string>
 #include <utility>
+
+class BDSExtent;
 
 namespace CLHEP {
   class HepRotation;

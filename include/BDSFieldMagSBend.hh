@@ -35,10 +35,8 @@ public:
   virtual ~BDSFieldMagSBend(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
-
-  /// Access the local radius of curvature for the nominal momentum in this field.
-  G4double GetLocalRadius() const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const G4double       t = 0) const;
 
 private:
   /// Private default constructor to ensure use of supplied constructor
@@ -49,11 +47,6 @@ private:
   /// transform the vector to global coordinates.
   G4ThreeVector localField;
   
-  /// Radius of curvature.
-  G4double localRadius;
 };
-
-inline G4double BDSFieldMagSBend::GetLocalRadius() const
-{return localRadius;}
 
 #endif

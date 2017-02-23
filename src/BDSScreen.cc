@@ -10,31 +10,34 @@
 #include <list>
 #include <sstream>
 
-BDSScreen::BDSScreen(G4String aName,  
-		     G4double aLength,
+BDSScreen::BDSScreen(G4String         name,  
+		     G4double         chordLength,
 		     BDSBeamPipeInfo* beamPipeInfo, 
-		     G4TwoVector sizeIn, //X Y dimensions of screen
-		     G4double screenAngleIn):
-  BDSDrift(aName,aLength,beamPipeInfo),
+		     G4TwoVector      sizeIn, //X Y dimensions of screen
+		     G4double         screenAngleIn):
+  BDSDrift(name,chordLength,beamPipeInfo),
   size(sizeIn), 
-  screenAngle(screenAngleIn)
+  screenAngle(screenAngleIn),
+  screenPos(G4ThreeVector()),
+  nLayers(0)
 {
+  mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
+  
   screenRot = new G4RotationMatrix();
   screenRot->rotateY(screenAngle);
-  screenPos.setX(0);
-  screenPos.setY(0);
-  screenPos.setZ(0);
-  mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
-  nLayers=0;
 }
 
-BDSScreen::~BDSScreen(){
+BDSScreen::~BDSScreen()
+{
   delete screenRot;
   delete mlScreen;
 }
 
-void BDSScreen::Build(){
+void BDSScreen::Build()
+{
   BDSDrift::Build(); //Build the beam pipe geometry.
+  
+  // Make the beam pipe wireframe
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4, 0.3));
   VisAtt1->SetForceWireframe(true);
   VisAtt1->SetVisibility(true);
@@ -43,23 +46,21 @@ void BDSScreen::Build(){
   PlaceScreen(); //Place the screen in the beam pipe
 }
 
-// TODO
-// void BDSScreen::BuildFieldAndStepper(){
-//   G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
-//   BuildBmapFieldAndStepper();
-// }
-
-void BDSScreen::screenLayer(G4double thickness, G4String material, G4int isSampler){
+void BDSScreen::AddScreenLayer(G4double thickness, G4String material, G4int isSampler)
+{
   std::stringstream ss;
   ss << nLayers;
   G4String lNum = ss.str();
   G4String lName = name+"_"+lNum;
-  mlScreen->screenLayer(thickness,material,lName, isSampler);
-  if(!isSampler) RegisterSensitiveVolume(mlScreen->lastLayer()->GetLog());
+  mlScreen->AddScreenLayer(thickness,material,lName, isSampler);
+  if(!isSampler)
+    {RegisterSensitiveVolume(mlScreen->LastLayer()->GetLog());}
   nLayers++;
 }
 
-void BDSScreen::PlaceScreen(){
-  mlScreen->build();//Build the screen.
-  mlScreen->place(screenRot, screenPos, containerLogicalVolume); //Place the screen in the beampipe centre. // TODO check if containerlogical volume is correct here
+void BDSScreen::PlaceScreen()
+{
+  mlScreen->Build();//Build the screen.
+  G4LogicalVolume* vacuumLV = GetAcceleratorVacuumLogicalVolume();
+  mlScreen->Place(screenRot, screenPos, vacuumLV); //Place the screen in the beampipe centre.
 }

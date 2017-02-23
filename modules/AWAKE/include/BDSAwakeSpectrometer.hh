@@ -16,8 +16,10 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-#include "BDS3DMagField.hh"
-#include "BDSSpectrVacChamb.hh"
+
+class BDSFieldInfo;
+class BDSSpectrVacChamb;
+class G4MagIntegratorStepper;
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {
@@ -27,7 +29,8 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName,
+  BDSAwakeSpectrometer(G4String aName, 
+                       G4double magnetOffsetX,
 		       G4double length,
 		       BDSFieldInfo* fieldInfo,
 		       G4double poleStartZ,
@@ -112,6 +115,7 @@ private:
   G4LogicalVolume* itsMiddleCoilLog;
   G4ThreeVector itsAperture1Size;
   G4ThreeVector itsAperture2Size;
+  G4double _magnetOffsetX;
   G4double itsPoleAperture;
   G4double itsCoilAperture;
   G4ThreeVector itsAperture1Pos;
@@ -143,12 +147,13 @@ private:
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
+
+	//User limits for the whole element
+	G4UserLimits* itsUserLimits;
                     
   //  G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
-  G4double itsOuterR;
-
   G4RotationMatrix* _screenRotationMatrix;
   G4RotationMatrix* _vacRotationMatrix;
   G4RotationMatrix* _magRotationMatrix;
@@ -227,6 +232,10 @@ private:
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
+
+    //Containter to hold pointers to all the logical volumes in the class
+    std::vector<G4LogicalVolume*> _logVols;
+    void SetUserLimits();
 };
 
 #endif

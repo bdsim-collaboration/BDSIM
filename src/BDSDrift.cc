@@ -7,9 +7,8 @@
 
 BDSDrift::BDSDrift(G4String         name, 
 		   G4double         length,
-		   BDSBeamPipeInfo* beamPipeInfo,
-		   G4int            precisionRegion):
-  BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo)
+		   BDSBeamPipeInfo* beamPipeInfo):
+  BDSAcceleratorComponent(name, length, 0, "drift", beamPipeInfo)
 {;}
 
 BDSDrift::~BDSDrift()
@@ -20,7 +19,7 @@ void BDSDrift::Build()
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
   BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
 					      chordLength,
-					      beamPipeInfo);;
+					      beamPipeInfo);
 
   RegisterDaughter(pipe);
   

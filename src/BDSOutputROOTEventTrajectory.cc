@@ -13,7 +13,6 @@
   1  fTransportation,
     91 TRANSPORTATION,
     92 COUPLED_TRANSPORTATION
-  // follwoing processes belong to 'General' type
   2  fElectromagnetic,
     1  fCoulombScattering, 
     2  fIonisation, 

@@ -347,15 +347,16 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   G4String name = "Trajectories";
 
   theRootOutputFile->cd();
-  TTree* TrajTree=(TTree*)gDirectory->Get(name);
+  TTree* TrajTree = dynamic_cast<TTree*>(gDirectory->Get(name));
   
-  if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
+  if(!TrajTree)
+    {G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
   for(BDSTrajectory* Traj : TrajVec)
     {
       for(G4int j=0; j<Traj->GetPointEntries(); j++)
 	{
-	  G4TrajectoryPoint* TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
+	  G4TrajectoryPoint* TrajPoint = static_cast<G4TrajectoryPoint*>(Traj->GetPoint(j));
 	  G4ThreeVector TrajPos=TrajPoint->GetPosition();
 	  
 	  x = TrajPos.x() / CLHEP::m;
@@ -421,16 +422,6 @@ void BDSOutputROOT<Type>::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       BDSEnergyCounterHit* hit = (*hc)[i];
       FillHit(hit);
       EnergyLossTree->Fill();
-      
-      if(hit->GetPrecisionRegion())
-	{
-	  //Only the precision region fills this tree, preserving every hit, its position and weight,
-	  //instead of summing weighted energy in each beam line component.
-	  //name - convert to char array for root
-	  G4String temp = hit->GetName();
-	  strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
-	  PrecisionRegionEnergyLossTree->Fill();
-	}
     }
 }
 

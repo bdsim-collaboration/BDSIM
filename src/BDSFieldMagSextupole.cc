@@ -5,20 +5,23 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 
 BDSFieldMagSextupole::BDSFieldMagSextupole(BDSMagnetStrength const* strength,
 					   G4double          const   brho)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
-  bDoublePrime     = brho * (*strength)["k2"];
+  bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;
   halfBDoublePrime = bDoublePrime*0.5;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
 #endif
 }
 
-G4ThreeVector BDSFieldMagSextupole::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagSextupole::GetField(const G4ThreeVector& position,
+					     const G4double       /*t*/) const
 { 
   // B_x = 2*x*y * (B''/2!)
   // B_y = (x^2 - y^2) * (B''/2!)

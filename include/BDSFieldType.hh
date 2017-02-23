@@ -13,12 +13,19 @@
 
 struct fieldtypes_def
 {
-  enum type {none, zero, threed, xy, mokka,
-	     solenoid, dipole, quadrupole, sextupole, octupole, decapole,
-	     fringe, multipole, muonspoiler,
+  enum type {none,
+	     teleporter,
+	     bmap1d,  bmap2d,  bmap3d,  bmap4d,
+	     emap1d,  emap2d,  emap3d,  emap4d,
+	     ebmap1d, ebmap2d, ebmap3d, ebmap4d,
+	     mokka,
+	     solenoid, dipole, quadrupole, dipolequadrupole, sextupole,
+	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf};
 };
+
+// NOTE - when adding a new field type, BDSFieldClassType should also be updated
 
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
 

@@ -1,5 +1,6 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSDebug.hh"
+
 #include "globals.hh"
 
 #include <map>
@@ -16,22 +17,28 @@ std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary 
    {BDSMagnetGeometryType::polesfacetcrop,"polesfacetcrop"},
    {BDSMagnetGeometryType::lhcleft,       "lhcleft"},
    {BDSMagnetGeometryType::lhcright,      "lhcright"},
-});	
+   {BDSMagnetGeometryType::external,      "external"}
+});
 
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
+  // If it contains a colon ":" it must be external geometry format format:filepath
+  if (geometryType.contains(":"))
+    {return BDSMagnetGeometryType::external;}
+  
   std::map<G4String, BDSMagnetGeometryType> types;
-  types["none"]              = BDSMagnetGeometryType::none;
-  types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
-  types["polescircular"]     = BDSMagnetGeometryType::polescircular;
-  types["polessquare"]       = BDSMagnetGeometryType::polessquare;
-  types["polesfacet"]        = BDSMagnetGeometryType::polesfacet;
-  types["polesfacetcrop"]    = BDSMagnetGeometryType::polesfacetcrop;
-  types["lhcleft"]           = BDSMagnetGeometryType::lhcleft;
-  types["lhcright"]          = BDSMagnetGeometryType::lhcright;
+  types["none"]            = BDSMagnetGeometryType::none;
+  types["cylindrical"]     = BDSMagnetGeometryType::cylindrical;
+  types["polescircular"]   = BDSMagnetGeometryType::polescircular;
+  types["polessquare"]     = BDSMagnetGeometryType::polessquare;
+  types["polesfacet"]      = BDSMagnetGeometryType::polesfacet;
+  types["polesfacetcrop"]  = BDSMagnetGeometryType::polesfacetcrop;
+  types["lhcleft"]         = BDSMagnetGeometryType::lhcleft;
+  types["lhcright"]        = BDSMagnetGeometryType::lhcright;
+  types["format:filepath"] = BDSMagnetGeometryType::external;
 
   geometryType.toLower();
-
+  
   auto result = types.find(geometryType);
   if (result == types.end())
     {

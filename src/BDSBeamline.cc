@@ -9,6 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSOutputBase.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -45,7 +46,11 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousReferencePositionEnd = initialGlobalPosition;
 
   // initial s coordinate
-  previousSPositionEnd = 0; 
+  previousSPositionEnd = 0;
+
+  // gap between each element added to the beam line
+  paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
+  //paddingLength = 3*CLHEP::mm;
 }
 
 BDSBeamline::~BDSBeamline()
@@ -74,24 +79,29 @@ void BDSBeamline::PrintMemoryConsumption() const
 
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
-  out << "BDSBeamline with " << bl.size() << " elements"<< G4endl
-      << "Elements are: " << G4endl;
-  bl.PrintAllComponents(out);
-  out << G4endl;
-  out << "Total arc length:   " << bl.totalArcLength   << " mm" << G4endl;
-  out << "Total chord length: " << bl.totalChordLength << " mm" << G4endl;
+  out << "BDSBeamline with "    << bl.size()           << " elements" << G4endl;
+  out << "Total arc length:   " << bl.totalArcLength   << " mm"       << G4endl;
+  out << "Total chord length: " << bl.totalChordLength << " mm"       << G4endl;
 
   return out;
 }
 
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
-							   BDSTiltOffset*           tiltOffset,
-							   BDSSamplerType           samplerType,
-							   G4String                 samplerName)
+			       BDSTiltOffset*           tiltOffset,
+			       BDSSamplerType           samplerType,
+			       G4String                 samplerName)
 {
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
+  // check the sampler name is allowed in the output
+  if (BDSOutputBase::InvalidSamplerName(samplerName))
+    {
+      G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
+      BDSOutputBase::PrintProtectedNames(G4cerr);
+      exit(1);
+    }
+  
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       G4int size = (G4int)line->size();
@@ -110,9 +120,9 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 }
 
 void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
-						    BDSTiltOffset*           tiltOffset,
-						    BDSSamplerType           samplerType,
-						    G4String                 samplerName)
+				     BDSTiltOffset*           tiltOffset,
+				     BDSSamplerType           samplerType,
+				     G4String                 samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -158,7 +168,10 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  if (tiltOffset)
+    {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
+  else
+    {G4cout << "no tilt offset" << G4endl;}
   G4cout << "has finite length           " << hasFiniteLength              << G4endl;
   G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
   G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
@@ -216,7 +229,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	  if (willIntersect)
 	    {
-	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
+	      G4cout << "Error - angled faces of objects will cause overlap in beam line geometry" << G4endl;
 	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
 		     << clasherName << "\"" << G4endl;
 	      exit(1);
@@ -244,7 +257,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // rotation matrices appropriately
   if (hasFiniteAngle)
     {
-      G4double angle = component->GetAngle();
       // remember our definition of angle - +ve angle bends in -ve x direction in right
       // handed coordinate system
       // rotate about cumulative local y axis of beamline
@@ -264,14 +276,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       referenceRotationEnd->rotate(angle, rotationAxisOfBendEnd.transform(*previousReferenceRotationEnd));
     }
   
+  G4RotationMatrix* rotationStart  = new G4RotationMatrix(*referenceRotationStart);
+  G4RotationMatrix* rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
+  G4RotationMatrix* rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
   // add the tilt to the rotation matrices (around z axis)
-  G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
   if (hasFiniteTilt)
     {
       G4double tilt = tiltOffset->GetTilt();
-      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
-      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
-      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
 
       // transform a unit z vector with the rotation matrices to get the local axes
       // of rotation to apply the tilt.
@@ -282,23 +293,24 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       unitZ = G4ThreeVector(0,0,1);
       rotationEnd   ->rotate(tilt, unitZ.transform(*referenceRotationEnd));
     }
-  else
-    {
-      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
-      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
-      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
-    }
   
   // calculate the reference placement position
   // if not the first item in the beamline, get the reference trajectory global position
   // at the end of the previous element
   if (!empty())
-    {previousReferencePositionEnd = back()->GetReferencePositionEnd();}
+    {
+      previousReferencePositionEnd = back()->GetReferencePositionEnd();
+      // leave a small gap for unambiguous geometry navigation. Transform that length
+      // to a unit z vector along the direction of the beam line before this component
+      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      previousReferencePositionEnd += componentGap;
+    }
   
   G4ThreeVector referencePositionStart, referencePositionMiddle, referencePositionEnd;
   if (hasFiniteLength)
     {
-      referencePositionStart  = previousReferencePositionEnd;
+      referencePositionStart = previousReferencePositionEnd;
+      
       // calculate delta to mid point
       G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
       md.transform(*referenceRotationMiddle);
@@ -414,7 +426,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // append it to the beam line
   beamline.push_back(element);
 
-  // register the s position at the end for curvlinear transform
+  // register the s position at the end for curvilinear transform
   sEnd.push_back(sPositionEnd);
 
   // register it by name
@@ -452,7 +464,7 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
   // test validity for overlaps
   if (dz < 0)
     {
-      G4cerr << __METHOD_NAME__ << "Problemm with Transform3d: " << component->GetName() << G4endl;
+      G4cerr << __METHOD_NAME__ << "Problem with Transform3d: " << component->GetName() << G4endl;
       G4cerr << __METHOD_NAME__ << "dz = " << dz << " < 0 -> will overlap previous element" << G4endl;
     } 
 
@@ -745,6 +757,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -761,7 +776,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
 						      elSPosStart,
-						      new BDSTiltOffset(*elTiltOffset));
+                                                      forEndPiece);
   return result;
 }
 
@@ -782,6 +797,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -798,7 +816,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
 						      elSPosEnd + endPieceLength,
-						      new BDSTiltOffset(*elTiltOffset));
+						      forEndPiece);
   return result;
 }
 
@@ -810,11 +828,13 @@ G4bool BDSBeamline::IndexOK(G4int index) const
     {return true;}
 }
 
-std::vector<G4double> BDSBeamline::GetSPositionEndOfEach()
+std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
 {
-  std::vector<G4double> sEnd;
-  sEnd.reserve(beamline.size());
+  std::vector<G4double> sPos;
+  sPos.reserve(beamline.size()+1);
+  // add start position
+  sPos.push_back(0.0);
   for (auto element : beamline)
-    {sEnd.push_back(element->GetSPositionEnd()/CLHEP::m);}
-  return sEnd;
+    {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
+  return sPos;
 }

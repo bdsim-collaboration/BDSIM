@@ -10,34 +10,45 @@
 #include <vector>
 
 class BDSBeamPipeInfo;
+class BDSFieldInfo;
 class BDSSimpleComponent;
 class G4LogicalVolume;
 
 /**
  * @brief Abstract class that represents a component of an accelerator.
  *
- * It must be constructed with a name, length (arc), angle it
- * induces (x,z plane in the local coordinates of the component) in 
- * the reference trajectory and a string
- * representing its type. The class has no concept of its position
- * in the beamline or in global coordinates. This information is contained
- * in an instance of BDSBeamlineElement.
+ * It must be constructed with a name, length (arc), angle it induces 
+ * (x,z plane in the local coordinates of the component) in the 
+ * reference trajectory and a string representing its type. The class 
+ * has no concept of its position in the beamline or in global coordinates. 
+ * This information is contained in an instance of BDSBeamlineElement.
  * 
  * This is an abstract class as the derived class must provide the 
- * implementation of BuildContainerLogicalVolume() that constructs
- * the basic container. This is the minimum required so that an instance
- * of the derived class will operate with the rest of the placement machinery in
- * BDSIM. Typically, a derived class overrides the Build() function as well.
+ * implementation of BuildContainerLogicalVolume() that constructs at 
+ * least a single volume, which would be assumed to be a container if greater
+ * geometry hierarchy is constructed. This is the minimum required so that an 
+ * instance of the derived class will operate with the rest of the placement 
+ * machinery in BDSIM. The derived class should override Build() to add further 
+ * geometry. If Build() is overridden, the base class 
+ * BDSAcceleratorComponent::Build() should be called first. This calls
+ * BuildContainerVolume() and sets the visual attributes of it.
  * 
  * The class provides deferred construction through the Initialise() function
- * to allow two stage construction if it's required.
+ * to allow two stage construction if it's required. So, although a derived
+ * class is instantiated, the geometry isn't constructed until Initialise() is
+ * called.
  * 
  * Note, the geometry of any derived component should be nominally constructed
  * along local z axis (beam direction) and x,y are transverse dimensions in a 
  * right-handed coordinate system.
- * 
- * This was significantly reworked in version 0.7 from the original. The indicator
- * author is the maintainer of the new version.
+ *
+ * The 'length' of the accelerator component is the arc length, which corresponds
+ * to the angle given.  The chord length is internally calculated from the arc
+ * length and the angle.  Therefore, the chord length must never be given.
+ *
+ * The optional input and output face normal (unit) vectors are w.r.t. the 
+ * incoming / outgoing reference trajectory and NOT the local geometry of the 
+ * component. 
  * 
  * @author Laurie Nevay
  */
@@ -47,21 +58,28 @@ class BDSAcceleratorComponent: public BDSGeometryComponent
 public:
   /// Constructor - this is the minimum information needed to create a
   /// BDSAcceleratorComponent instance. Methods in the class will allow
-  /// the derived class to associate the appropraite volumes to the members
-  /// of BDSGeometryComponent - the base class.  The developer of a derived
+  /// the derived class to associate the appropriate volumes to the members
+  /// of BDSGeometryComponent - the base class. The developer of a derived
   /// class should take care to set all members of BDSGeometryComponent in the
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
   /// to be the same, unless angle is != 0 in which case, the chord length is
-  /// calculated from arc length.
+  /// calculated from arc length. An associated beam pipe info instance can be
+  /// attached if the component has a beam pipe. The input and output face normals
+  /// should also be specified if non-zero. Additionally, a field info instance
+  /// that represents a 'global' field for this component may be specified. Face
+  /// normal (unit) vectors are w.r.t. the incoming / outgoing reference trajectory
+  /// and NOT the local geometry of the component.
+  /// The BDSBeamPipeInfo instance is associated with this class so that the survey
+  /// output of BDSIM can query the aperture of any element.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4bool           precisionRegion = false,
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
 			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1),
+			  BDSFieldInfo* fieldInfoIn        = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 
@@ -74,15 +92,17 @@ public:
   // Communal constructions tasks
   
   /// @{ Copy the bias list to this element
-  void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+  virtual void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
   {biasVacuumList = biasVacuumListIn;}
-  void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+  virtual void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
   {biasMaterialList = biasMaterialListIn;}
   /// @}
   
-  /// Set whether precision output should be recorded for this component
-  void   SetPrecisionRegion(G4bool precisionRegionIn)
-  {precisionRegion = precisionRegionIn;}
+  /// Set the region name for this component.
+  virtual void SetRegion(G4String regionIn) {region = regionIn;}
+
+  /// Set the field definition for the whole component.
+  void SetField(BDSFieldInfo* fieldInfoIn);
 
   // Accessors
   
@@ -102,10 +122,12 @@ public:
   /// Get a string describing the type of the component
   inline G4String GetType() const {return type;}
 
-  /// Whether precision output is to be recorded for this component
-  G4bool GetPrecisionRegion() const {return precisionRegion;}
+  /// Get the region name for this component.
+  G4String GetRegion() const {return region;}
 
-  /// Access beam pipe information
+  /// Access beam pipe information, which is stored in this class to provide
+  /// aperture information when making a survey of the beamline consisting of
+  /// accelerator components.
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
   /// @{ Access face normal unit vector. This is w.r.t. the incoming / outgoing reference
@@ -138,26 +160,13 @@ public:
   void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
   void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
 
-  // Update the read out geometry volume given new face normals incase of a tilt.
-  void UpdateReadOutVolumeWithTilt(G4double tilt);
-
-  // to be deprecated public methods
-  
-  // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
-
-  ///@{ This function should be revisited given recent changes (v0.7)
-  void SetGFlashVolumes(G4LogicalVolume* aLogVol)
-  {itsGFlashVolumes.push_back(aLogVol);}
-  std::vector<G4LogicalVolume*> GetGFlashVolumes() const
-  {return itsGFlashVolumes;}
-  ///@}
-  
 protected:
-  /// Build the container only. Should be overridden by derived class to add more geometry
-  /// apart from the container volume. The overridden Build() function can however, call
-  /// make use of this function to call BuildContainerLogicalVolume() by calling
-  /// BDSAcceleratorComponent::Build() at the beginning.
+  /// This calls BuildContainerLogicalVolume() and then sets the visual attributes
+  /// of the container logical volume. This should be overridden by derived class
+  /// to add more geometry apart from the container volume. The overridden Build()
+  /// function can however, call make use of this function to call
+  /// BuildContainerLogicalVolume() by calling BDSAcceleratorComponent::Build()
+  /// at the beginning.
   virtual void Build();
 
   /// Build the container solid and logical volume that all parts of the component will
@@ -181,9 +190,11 @@ protected:
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  G4bool           precisionRegion;
-  BDSBeamPipeInfo* beamPipeInfo;
+  G4String         region;
   ///@}
+
+  /// Optional beam pipe recipe that is written out to the survey if it exists.
+  BDSBeamPipeInfo* beamPipeInfo;
 
   /// Useful variables often used in construction
   static G4double    lengthSafety;
@@ -206,18 +217,13 @@ private:
   /// Private default constructor to force use of provided constructors, which
   /// ensure an object meets the requirements for the rest of the construction
   /// and placement machinery in BDSIM
-  BDSAcceleratorComponent();
+  BDSAcceleratorComponent() = delete;
 
-  /// Assignment and copy constructor not implemented nor used
-  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
-  BDSAcceleratorComponent(BDSAcceleratorComponent&);
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&) = delete;
+  BDSAcceleratorComponent(BDSAcceleratorComponent&) = delete;
+  /// @}
 
-  /// Build readout geometry volume
-  G4LogicalVolume* BuildReadOutVolume(G4String name,
-				      G4double chordLength,
-				      G4double angle);
-
-  std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
 
   /// Boolean record of whether this component has been already initialised.
@@ -227,13 +233,14 @@ private:
   /// Record of how many times this component has been copied.
   G4int copyNumber;
 
-  /// Copy of bias list from parser for this particlar element
+  /// @{ Copy of bias list from parser for this particlar element
   std::list<std::string> biasVacuumList;
   std::list<std::string> biasMaterialList;
-
-  G4ThreeVector inputFaceNormal;
-  G4ThreeVector outputFaceNormal;
-  G4double      readOutRadius;    ///< Radius of read out volume solid.
+  /// @}
+  
+  G4ThreeVector inputFaceNormal;  ///< Input face unit normal vector in incoming reference coordinate frame.
+  G4ThreeVector outputFaceNormal; ///< Output face unit normal vector in outgoing reference coordinate frame.
+  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
 };
 
 #endif

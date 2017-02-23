@@ -3,7 +3,6 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSFieldEM.hh"
@@ -34,7 +33,7 @@ public:
   /// x,y,z respectively. Apply the global to local transform, query the wrapped field object
   /// and transform this field to global coordinates before returning.
   virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector& position,
-                                                          const G4double&      t) const;
+                                                          const G4double       t) const;
 
   /// Necessary overload for Geant4
   virtual G4bool DoesFieldChangeEnergy() const {return true;}

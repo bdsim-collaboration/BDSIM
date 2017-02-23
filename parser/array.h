@@ -26,6 +26,9 @@ namespace GMAD
     /// Representation of double array
     std::vector<double> data;
 
+    /// Helper constructor method, creates data array with size n
+    explicit Array(unsigned int n);
+
   public:
     /// Symtabs and arrays are kind of interchangeable
     friend class Symtab;

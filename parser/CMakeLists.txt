@@ -13,14 +13,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register -Wno-unneeded-internal-declaration")
 endif()
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG --coverage")
-endif()
-
 if($ENV{VERBOSE})
   message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
@@ -38,17 +30,21 @@ add_flex_bison_dependency(SCANNER PARSER)
 
 # glob parser sources
 file(GLOB GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+set_source_files_properties(${GMAD_PARSER_SOURCES} PROPERTIES LABELS "BDSIM")
 # remove parser main
 list(REMOVE_ITEM GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gmad.cc)
 if($ENV{VERBOSE})
   message(STATUS "GMAD parser sources ${GMAD_PARSER_SOURCES}")
 endif()
 
-add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
-  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# Object library, will be used by both static and shared library
+add_library(gmadLib OBJECT ${GMAD_PARSER_SOURCES} ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# Shared libraries need PIC
+set_target_properties(gmadLib PROPERTIES POSITION_INDEPENDENT_CODE 1)
+# Static library for BDSIM
+add_library(gmad STATIC $<TARGET_OBJECTS:gmadLib>)
 # For Python a shared library is needed
-add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
-  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmadShared SHARED $<TARGET_OBJECTS:gmadLib>)
 
 if($ENV{VERBOSE})
   message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 

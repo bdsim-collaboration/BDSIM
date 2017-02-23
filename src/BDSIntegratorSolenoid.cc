@@ -4,7 +4,6 @@
 #include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
-#include "G4ClassicalRK4.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
@@ -22,7 +21,6 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 
 void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 					 const G4double dydx[],
-					 G4ThreeVector  /*bField*/,
 					 G4double       h,
 					 G4double       yOut[],
 					 G4double       yErr[])
@@ -59,15 +57,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   if (fabs(kappa)<1e-12)
     {
       // very low strength - treat as a drift
-      G4ThreeVector positionMove = h * InitMomDir;
-
-      yOut[0] = yIn[0] + positionMove.x(); 
-      yOut[1] = yIn[1] + positionMove.y(); 
-      yOut[2] = yIn[2] + positionMove.z(); 
-				
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      AdvanceDrift(yIn,GlobalP,h,yOut);
       
       yErr[0] = 0; // 0 error as a drift
       yErr[1] = 0; // must set here as we return after this
@@ -76,7 +66,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      distChord=0;
       return;
     }
   
@@ -104,15 +93,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   if (R_1<1e-15)
     {
       // very large radius of curvature - treat as drift
-      G4ThreeVector positionMove = h * InitMomDir;
-      
-      yOut[0] = yIn[0] + positionMove.x(); 
-      yOut[1] = yIn[1] + positionMove.y(); 
-      yOut[2] = yIn[2] + positionMove.z(); 
-      
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      AdvanceDrift(yIn,GlobalP,h,yOut);
 
       yErr[0] = 0; // 0 error as a drift
       yErr[1] = 0; // must set here as we return after this
@@ -121,7 +102,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      distChord=0;
       return;
     }
 
@@ -133,7 +113,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
   
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
 
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
@@ -149,7 +130,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       // ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      ) (y')
       
       G4double w       = kappa;
-      //need the length along curvlinear s -> project h on z
+      //need the length along curvilinear s -> project h on z
       G4ThreeVector positionMove = h * InitMomDir; 
       G4double dz      = positionMove.z();
       G4double wL      = kappa*dz; 
@@ -210,18 +191,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalR = globalPosDir.PreStepPoint();
-      GlobalP = globalPosDir.PostStepPoint();	
-      GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-            
-      yOut[0] = GlobalR.x(); 
-      yOut[1] = GlobalR.y(); 
-      yOut[2] = GlobalR.z(); 
-      
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i]=0;} //set error to be zero - not strictly correct
@@ -234,6 +204,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 #endif
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }  
 }
 
@@ -245,5 +216,5 @@ void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
 				    G4double yErr[])
 {
   //simply perform one step here
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
 }

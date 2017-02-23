@@ -4,13 +4,10 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4VSolid.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
-class G4Material;
+class G4LogicalVolume;
 class G4VSolid;
 
 /**
@@ -22,15 +19,13 @@ class G4VSolid;
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
-  BDSCavity(G4String      name,
-	    G4double      length,
-	    BDSFieldInfo* vacuumField);
+  BDSCavity(G4String            name,
+	    G4double            length,
+	    const BDSFieldInfo* vacuumField);
 
   virtual ~BDSCavity();
 
 protected:
-  BDSCavity();
-
   /// Creates container solid and logical volume
   virtual void BuildContainerLogicalVolume() override;
 
@@ -63,11 +58,19 @@ protected:
 
   /// Field information - also includes cavity info as cavity info contains both
   /// field information and geometrical information.
-  BDSFieldInfo* vacuumField = nullptr;
+  const BDSFieldInfo* vacuumField = nullptr;
 
   /// Convenience shortcut to cavity information inside field information object.
-  BDSCavityInfo* cavityInfo = nullptr;
-  
+  const BDSCavityInfo* cavityInfo = nullptr;
+
+private:
+  /// Private constructor to force the use of the provided one.
+  BDSCavity() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCavity& operator=(const BDSCavity&) = delete;
+  BDSCavity(BDSCavity&) = delete;
+  /// @}
 };
 
 #endif

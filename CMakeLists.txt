@@ -41,6 +41,14 @@ include(cmake/SystemCheck.cmake)
 # Find Packages #
 #################
 
+# GIT - optional - for software version in output & copying only example source files
+find_package(Git QUIET)
+# turn off git support if there's no .git folder - ie it's a copy of the source
+# but not a repository
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
+  set(GIT_FOUND FALSE)
+endif()
+
 # CLHEP
 include(cmake/CLHEP.cmake)
 
@@ -54,18 +62,11 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
-# LCDD (on by default if xml libraries are found)
-include(cmake/XML.cmake)
-
-if(XML_LIBRARIES)
-    option( USE_LCDD "Include LCDD support."  ON )
-else()
-    option( USE_LCDD "Include LCDD support."  OFF )
-endif()
-if(USE_LCDD)
-    add_definitions("-DUSE_LCDD")
-    include_directories(${XML_INCLUDE_DIR})
-    message(STATUS "LCDD support ON")
+# Field double precision (off by default)
+option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
+if(FIELDDOUBLEPRECISION)
+    add_definitions("-DFIELDDOUBLE")
+    message(STATUS "Field double precision ON")
 endif()
 
 # Find GEANT4
@@ -84,7 +85,8 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
   # add 'make doxygen' to ctest
-  add_test(Doxygen_LONG make doc)
+  add_test(Doxygen make doc)
+  set_tests_properties(Doxygen PROPERTIES LABELS LONG)
 endif(DOXYGEN_FOUND)
 
 # enable Testing with ctest
@@ -92,7 +94,9 @@ enable_testing()
 include(CTest)
 include(bdsim_test_macros)
 include(comparator_test_macros)
+include(interpolator_test_macros)
 include(rebdsim_test_macros)
+include(root_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -102,9 +106,6 @@ string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
-if(NOT USE_LCDD)
-  list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
-endif()
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
@@ -135,7 +136,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # external sources
 add_subdirectory(src-external)
-# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
+
+# add label to original BDSIM files
+set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
 
 # BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
@@ -146,14 +150,14 @@ set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_V
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
-target_link_libraries(bdsim gzstream)
+if (USE_GZSTREAM)
+  #preprocessor flag
+  add_definitions("-DUSE_GZSTREAM")
+  target_link_libraries(bdsim gzstream)
+endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
-
-if(USE_LCDD)
-    target_link_libraries(bdsim ${XML_LIBRARIES})
-endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
@@ -207,6 +211,7 @@ if (BUILD_MACOSX_APP AND APPLE)
 endif()
 
 # package source
+# uses git but only for developers
 add_custom_target(dist
     COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
         | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
@@ -227,7 +232,11 @@ add_subdirectory(utils)
 # For testing
 add_subdirectory(examples)
 # copy examples to build directory - macro defined in bdsim_macros.cmake
-copy_examples()
+if (GIT_FOUND)
+  copy_examples()
+else()
+  copy_examples_no_git()
+endif()
   
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -238,6 +247,9 @@ add_subdirectory(analysis)
 
 # Include directory for comparator
 add_subdirectory(comparator)
+
+# Include directory for interpolator
+add_subdirectory(interpolator)
 
 # Manual
 add_subdirectory(manual)

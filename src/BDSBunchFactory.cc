@@ -1,5 +1,3 @@
-#include "gzstream.h"
-
 #include "BDSBunchFactory.hh"
 
 #include "BDSBunchCircle.hh"
@@ -14,8 +12,17 @@
 #include "BDSBunchPtc.hh"
 #include "BDSBunchSixTrack.hh"
 #include "BDSBunchHalo.hh"
+#include "BDSDebug.hh"
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
+#ifdef USE_GZSTREAM
 BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType, G4String distribFile)
+#else
+  BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType, G4String /*distribFile*/)
+#endif
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -41,9 +48,11 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType, G4String d
   else if(distribType == "halo") 
     bdsBunch = new BDSBunchHalo();
   else if(distribType == "userfile")
-    if(distribFile.rfind("gz") != std::string::npos)
-      {bdsBunch = new BDSBunchUserFile<igzstream>();}
-    else
+#ifdef USE_GZSTREAM
+     if(distribFile.rfind("gz") != std::string::npos)
+       {bdsBunch = new BDSBunchUserFile<igzstream>();}
+     else
+#endif
       {bdsBunch = new BDSBunchUserFile<std::ifstream>();}
   else if(distribType == "composite")
     bdsBunch = new BDSBunchComposite();

@@ -21,7 +21,7 @@ namespace GMAD
     double   prodCutPhotons;
     double   prodCutElectrons;
     double   prodCutPositrons;
-    double   prodCutHadrons;
+    double   prodCutProtons;
 
     /// constructor
     Region();
@@ -29,9 +29,9 @@ namespace GMAD
     void clear();
     /// print some properties
     void print()const;
-    /// set methods by property name
+    /// set methods by property name and value
     template <typename T>
-      void set_value(std::string name, T value);
+      void set_value(std::string property, T value);
 
   private:
     /// publish members
@@ -39,17 +39,17 @@ namespace GMAD
   };
   
   template <typename T>
-    void Region::set_value(std::string name, T value)
+    void Region::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+      std::cout << "region> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
-	set(this,name,value);
+	set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value  << std::endl;
+	std::cerr << "Error: region> unknown option \"" << property << "\" with value " << value  << std::endl;
 	exit(1);
       }
     }
