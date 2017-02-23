@@ -49,7 +49,7 @@ private:
 
   /// General loader for any number of dimensions.
   void Load(G4String fileName,
-	    const unsigned long nDim);
+	    const unsigned int nDim);
 
   /// Process on line of data. Index of 0 corresponds to a default value of field of 0.
   /// This allows various dimensional loading to use the same function.
