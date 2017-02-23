@@ -44,7 +44,9 @@ class Timing:
 
 class Results:
     def __init__(self):
-        self.results = []
+        self.Results = {}
+        for component in GlobalData.components:
+            self.Results[component] = []
         self.timingData = None
 
     def _getGitCommit(self):
@@ -83,9 +85,10 @@ class Results:
 
     def AddResults(self, results):
         if isinstance(results, dict):
-            self.results.append(results)
-        elif isinstance(results, list):
-            self.results.extend(results)
+            self.Results[results['componentType']].append(results)
+        elif multiEntryTypes.__contains__(type(results)):
+            for res in results:
+                self.Results[results['componentType']].append(res)
 
     def AddTimingData(self, timingData):
         if not isinstance(timingData, Timing):
@@ -94,13 +97,18 @@ class Results:
             self.timingData = timingData
 
     def ProcessOriginals(self):
+        numTests = 0
         numFailed = 0
-        for testdict in self.results:
-            if testdict['code'] != 0:
-                numFailed += 1
-            # TODO: Handle other return types (i.e overlaps, stuck particles, tracking warnings etc)
+        failedTests = []
+        for component, compResults in self.Results.iteritems():
+            for testdict in compResults:
+                numTests += 1
+                if (testdict['code'] != 0) and (testdict['code'] != None):
+                    numFailed += 1
+                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedTests.append(failedFile)
+                # TODO: Handle other return types (i.e overlaps, stuck particles, tracking warnings etc)
 
-        numTests = len(self.results)
         s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
         print(s)
 
