@@ -20,7 +20,7 @@ BDSFieldValue BDSInterpolator3DLinear::GetInterpolatedValueT(G4double x,
 {
   G4double xarr = array->ArrayCoordsFromX(x);
   G4double yarr = array->ArrayCoordsFromY(y);
-  G4double zarr = array->ArrayCoordsFromY(z);
+  G4double zarr = array->ArrayCoordsFromZ(z);
   
   G4double x0 = floor(xarr);
   G4double y0 = floor(yarr);
