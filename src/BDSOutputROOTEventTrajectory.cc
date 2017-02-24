@@ -94,12 +94,6 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       parentStepID.push_back(-1);
     }
   }
-
-  // loop over trajectories to gather secondaries with the mother
-  for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT) {
-    BDSTrajectory *traj = *iT;
-
-  }
 }
 
 void BDSOutputROOTEventTrajectory::Fill(BDSEnergyCounterHitsCollection *phc)
@@ -125,7 +119,6 @@ void BDSOutputROOTEventTrajectory::Flush()
   postWeights.clear();
   energys.clear();
   trajectories.clear();
-  secondaryID.clear();
 }
 
 int BDSOutputROOTEventTrajectory::primary()
