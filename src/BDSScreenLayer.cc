@@ -219,10 +219,8 @@ void BDSScreenLayer::InternalMirror::compute(){
 void BDSScreenLayer::sampler()
 {
   G4String samplerName = name;
-
-  log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+    log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
-  
   log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 

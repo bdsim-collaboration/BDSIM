@@ -267,12 +267,15 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        trajConnect;
+    bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
+    bool        writePrimaries;
 
     /// Ring parameters
     int      nturns;

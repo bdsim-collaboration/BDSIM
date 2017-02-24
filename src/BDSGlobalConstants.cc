@@ -28,7 +28,7 @@ BDSGlobalConstants* BDSGlobalConstants::Instance()
 }
 
 BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
-  options(GMAD::Options(opt)),
+  options(opt),
   beamParticleDefinition(nullptr),
   beamMomentum(0.0),
   beamKineticEnergy(0.0),
@@ -41,7 +41,9 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
 
   particleName = G4String(options.particleName);
-  
+
+  numberToGenerate = G4int(options.nGenerate);
+
   //beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,

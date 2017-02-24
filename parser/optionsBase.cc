@@ -216,14 +216,17 @@ OptionsBase::OptionsBase()
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  trajCutGTZ               = 0.0;  // minimum z position
-  trajCutLTR               = 1e12; // maximum radius in mm, so large default value
+  trajCutGTZ               = 1e99;  // minimum z position, so large default value
+  trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
+  trajConnect              = false; // connect disconnected trajectory trees
+  storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;
   storeTrajectory          = false;
-  storeTrajectoryDepth     = 1;
+  storeTrajectoryDepth     = 0;
   storeTrajectoryParticle  = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  writePrimaries           = true;
 
   // circular options
   nturns                   = 1;

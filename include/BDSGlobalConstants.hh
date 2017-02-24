@@ -32,9 +32,6 @@ class BDSTunnelInfo;
  * is provided - for example, simple strings are converted to enum types
  * for outputs and geometry, as well as G4Materials.
  *
- * This does modify its instance of GMAD::Options due to some parameter
- * checks.
- *
  * This is almost entirely constant apart from a very few variables 
  * that by necessity can be updated. Generally, this is not used
  * as a way to dynamically pass around information at a global level
@@ -59,7 +56,7 @@ private:
   static BDSGlobalConstants* instance;
 
   /// Options instance that this is largely based on and extends
-  GMAD::Options options;
+  const GMAD::Options& options;
 
 public:
    /// Access method 
@@ -97,7 +94,7 @@ public:
   inline G4bool   UseASCIISeedState()      const {return G4bool  (options.useASCIISeedState);}
   inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
   inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
-  inline G4int    NGenerate()              const {return G4int   (options.nGenerate);}
+  inline G4int    NGenerate()              const {return numberToGenerate;}
   inline G4bool   GeneratePrimariesOnly()  const {return G4bool  (options.generatePrimariesOnly);}
   inline G4bool   ExportGeometry()         const {return G4bool  (options.exportGeometry);}
   inline G4String ExportType()             const {return G4String(options.exportType);}
@@ -141,8 +138,10 @@ public:
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
+  inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
+  inline G4bool   StoreELossLinks()          const {return G4bool(options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
@@ -214,7 +213,7 @@ public:
   inline void SetSMax(G4double sMaxIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
-  inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("ngenerate", (int)numberToGenerate);}
+  inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
   /// @}
 
   // laserwire stuff that probably shouldn't be in global constants
@@ -247,6 +246,9 @@ private:
   /// Particle name
   G4String particleName;
   
+  /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
+  G4int numberToGenerate;
+
   /// Beamline length in mm
   G4double sMax;
   

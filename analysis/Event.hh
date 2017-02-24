@@ -26,7 +26,7 @@ class Event
 public:
   Event();
   Event(bool debugIn,
-	bool procesSamplersIn = false);
+	bool processSamplersIn = false);
   void CommonCtor();
   virtual ~Event();
 

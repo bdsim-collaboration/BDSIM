@@ -78,7 +78,7 @@ BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(G4String fileName)
 
 template <class T>
 void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
-				  const unsigned long nDim)
+				  const unsigned int nDim)
 {
   CleanUp();
   
