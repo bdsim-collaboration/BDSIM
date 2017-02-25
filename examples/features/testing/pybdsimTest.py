@@ -115,6 +115,8 @@ class Test(dict):
         self._testFiles = []
         self._useDefaults = useDefaults
         self._testRobustness = testRobustNess
+        self.PhaseSpace = None
+        self._beamFilename = 'trackingTestBeam.madx' # default file name
         
         # Initialise parameters for the component as empty lists (or defaults) and dynamically
         # create setter functions for those component parameters.
@@ -247,11 +249,11 @@ class Test(dict):
             internally creates a PhaseSpace instance anyway."""
         if phaseSpace is not None:
             if isinstance(phaseSpace, PhaseSpace.PhaseSpace):
-                setattr(self, "PhaseSpace", phaseSpace)
+                self.PhaseSpace = phaseSpace
             else:
                 raise TypeError("phaseSpace can only be a bdsimtesting.PhaseSpace.PhaseSpace instance.")
         else:
-            setattr(self, "PhaseSpace", PhaseSpace.PhaseSpace(x, px, y, py, t, pt))
+            self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
     def AddParameter(self, parameter, values=[]):
         if self.keys().__contains__(parameter):
@@ -267,6 +269,10 @@ class Test(dict):
                 raise ValueError("Unknown parameter type: " + parameter + ".")
         else:
             raise TypeError("Unknown data type for " + parameter)
+
+    def WriteToInrays(self,filename):
+        self._beamFilename = filename
+        self.PhaseSpace.WriteToInrays(filename)
 
 
 class TestUtilities(object):
