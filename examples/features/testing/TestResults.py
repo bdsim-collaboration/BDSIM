@@ -130,3 +130,65 @@ class Results:
 
         f.write(self._getGitCommit())
         f.close()
+
+    def ProcessResults(self, componentType=''):
+        if (componentType != '') and (not GlobalData.components.__contains__(componentType)):
+            raise ValueError("Unknown component type.")
+        elif componentType != '':
+            testResults = self.Results[componentType]
+            self._resultsList = []
+
+            for index,result in enumerate(testResults):
+                comparatorLog = 'FailedTests/' + result['compLogFile']
+                coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
+                self._resultsList.append(coords)
+        else:
+            pass
+        self._resultsList.reverse()
+
+    def _getPhaseSpaceComparatorData(self, result, logFile=''):
+        coords = _np.zeros(7)
+        code = result['code']
+
+        if code == 0:
+            return coords
+
+        f = open(logFile)
+        lines = f.read()
+        f.close()
+
+        numParticlesIndex = lines.find('Event Tree (1/2) entries')
+        if numParticlesIndex != -1:
+            offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
+            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ','')
+            branches = branches.replace('(', '')
+            branches = branches.replace(')', '')
+            numParticles = branches.split('/')
+            if numParticles[0] != numParticles[1]:
+                coords[6] = 1
+                coords[0:5] = 8
+                # if num particles don't match, there'll be no phase space comparison  
+                return coords
+
+        phasespaceIndex = lines.find('type Sampler')
+        if phasespaceIndex != -1:
+            offendingSamplerBranchesLine = lines[phasespaceIndex:].split('\n')[1]
+            branches = offendingSamplerBranchesLine.split(' ')
+            branches.remove('Offending')
+            branches.remove('branches:')
+            branches.remove('')
+            if branches.__contains__('x'):
+                coords[0] = 1
+            if branches.__contains__('xp'):
+                coords[1] = 1
+            if branches.__contains__('y'):
+                coords[2] = 1
+            if branches.__contains__('yp'):
+                coords[3] = 1
+            if branches.__contains__('t'):
+                coords[4] = 1
+            if branches.__contains__('zp'):
+                coords[5] = 1
+
+        return coords
+
