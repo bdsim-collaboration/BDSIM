@@ -20,7 +20,7 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   bField((*strength)["field"]),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
-  cOverGeV      = BDSGlobalConstants::Instance()->COverGeV();
+  cOverGeV = BDSGlobalConstants::Instance()->COverGeV();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
