@@ -32,13 +32,12 @@ public:
 		       const G4double h,
 		       G4double       yout[],
 		       G4double       yerr[]);
-
+  
 protected:
   /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.
   void AdvanceHelix(const G4double yIn[],
 		    G4double       h,
-		    G4double       ySext[],
-		    G4bool         flag = false);
+		    G4double       ySext[]);
 
 private:
   /// 2nd derivative of the field
@@ -46,8 +45,6 @@ private:
 
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
-
-  G4MagIntegratorStepper* newstepper;
 };
 
 #endif
