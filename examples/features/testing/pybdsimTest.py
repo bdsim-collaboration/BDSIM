@@ -278,6 +278,7 @@ class Test(dict):
 class TestUtilities(object):
     def __init__(self, testingDirectory='', dataSetDirectory=''):
         self._tests = []  # list of test objects
+        self._testNames = {}  # dict of test file names (a list of names per component)
 
         if not isinstance(testingDirectory, _np.str):
             raise TypeError("Testing directory is not a string")
@@ -319,6 +320,9 @@ class TestUtilities(object):
         for test in self._tests:
             writer = Writer.Writer()
             writer.WriteTests(test)
+            if not self._testNames.__contains__(test.Component):
+                self._testNames[test.Component] = []
+            self._testNames[test.Component].extend(writer._fileNamesWritten[test.Component])
         _os.chdir('../')
     
     def GenerateRootFile(self, inputfile):
@@ -362,7 +366,6 @@ class TestUtilities(object):
         TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, newFile], stdout=outputLog)
         outputLog.close()
 
-        # self._testStatus[test] = TestResult #Set dict val to comparator return num.
         # immediate pass/fail bool for decision on keeping root output
         hasPassed = True
         if TestResult != 0:
