@@ -208,4 +208,5 @@ class Globals():
                              'STUCK_PARTICLE'   : 5,
                              'TRACKING_WARNING' : 6,
                              'TIMEOUT'          : 7,
+                             'NO_DATA'          : 8
                              }
