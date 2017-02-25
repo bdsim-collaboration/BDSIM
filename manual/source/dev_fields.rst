@@ -6,21 +6,27 @@ Fields
 BDSIM provides the magnetic fields typical to an accelerator as well as the ability
 to import field maps and overlay them on geometry. Practically, this accomplished
 through several objects, but the main two the user or developer must select are the
-field and the integrator.
+field and the integrator. The first describes the field itself, and the later how
+the particle position and momentum is affected by the field.
+
+The integrators are described in :ref:`dev-tracking`.
 
 Coordinate System
 =================
 
 The accelerator is modelled, following convention, in curvilinear coordinates
 that follow the beam line. However, in practice, Geant4 requires that the fields
-and coordinates be calculated in global carteasian coordinates. The simplest solution
+and coordinates be supplied and calculated in global carteasian coordinates.
+The simplest solution
 in Geant4 is to get the transformation from the global coordinates to the local
 coordinates of the volume being queried for the field and tracking.  However, if
 the field is 'attached' to not just a simple single shape or volume, but a nested set
 of volumes, the local coordinates of that volume are not necessarily the same as
 the accelerator curvilinear coordinates. To get around this, a parallel geometry
-with simple shapes is used so that when their local coordinates are queried, they
-represent the curvilinear coordinates of the beam line.
+is built with simple shapes whose local coordinates are degenerate with the
+curvilinear coordinate system.  This geometry is used to find the transforms so
+that when their local coordinates are queried, they represent the curvilinear
+coordinates of the beam line.
 
 Generally, to query a point in the geometry, one should use a G4Navigator instance.
 There is the singleton G4Navigator from Geant4 available to the developer, but this
@@ -29,20 +35,27 @@ in the geometry with this navigator changes the state of the navigator and there
 the perceived location in the geometry hierarchy of the particle in question from that
 point on. To avoid this, an extra navigator is created and used. Whilst these are not
 large objects in memory, a single static extra navigator (member of BDSAuxiliaryNavigator)
-is used. This decreases the look up time of a point signifcantly by performing a relative
-search from the last point queried.
+is used. An instance of a G4Navigator can perform a search relative to the last queried
+point which is usually significantly faster than a fresh query from the top of the
+hierarchy. By using a static auxiliary navigator we take advantage of the relative search
+because although many fields and integrators may have query separate BDSAuxiliaryNavigator
+instances, the underlying static navigator is used. In practice the queries are generated
+by the progress of a particle so they're likely to be close to each other in the geometry.
 
 Utility methods for conversion are provided in BDSAuxiliaryNavigator. The developer should
 design their class to inherit this one if they wish to convert to curvilinear coordinates.
 
 Pure magnetic fields are provided that don't inherit BDSAuxiliaryNavigator to avoid the
-requirement of 'closed' Geant4 geometry and a read out world. This greatly simplifies things
-if the developer wants to simply make use of (or test alone for that matter) a single field.
+requirement of 'closed' Geant4 geometry and a parallel curvilinear world. This greatly
+simplifies things if the developer wants to simply make use of (or test alone for that
+matter) a single field class.
 
 Important Points
 ----------------
 
-* The fields use BDSAuxiliary navigator which use the parallel curvilinear geometry.
+* Field classes don't use BDSAuxiliary navigator and therefore don't require a full Geant4 run.
+* The fields constructed for the BDSIM model are wrapped in an instance of BDSFieldMagGlobal
+  that provides the necessary local to global transforms.
 * Using BDSAuxiliaryNavigator requires an accelerator to be built - ie, it requires a world
   volume, and read out world, contents in both, the geometry to be 'closed' by Geant4 and
   a valid run manager instantiated. One may generally use the field classes, but without the
