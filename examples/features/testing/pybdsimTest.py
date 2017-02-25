@@ -255,6 +255,10 @@ class Test(dict):
         else:
             self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
+    def SetInrays(self, inraysFile=''):
+        if inraysFile != '':
+            self._beamFilename = inraysFile
+
     def AddParameter(self, parameter, values=[]):
         if self.keys().__contains__(parameter):
             raise ValueError("Parameter is already listed as a test parameter.")
@@ -270,9 +274,9 @@ class Test(dict):
         else:
             raise TypeError("Unknown data type for " + parameter)
 
-    def WriteToInrays(self,filename):
-        self._beamFilename = filename
-        self.PhaseSpace.WriteToInrays(filename)
+    def WriteToInrays(self, filename):
+        self.SetInrays(filename)
+        self.PhaseSpace._WriteToInrays(filename)
 
 
 class TestUtilities(object):
