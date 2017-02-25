@@ -38,7 +38,7 @@
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
-#include "BDSIntegratorVelocityVerlet.hh"
+#include "BDSIntegratorSymplecticEuler.hh"
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
@@ -407,8 +407,8 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
       integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
       integrator = new BDSIntegratorDipoleFringe(strength, eqOfM, minimumRadiusOfCurvature); break;
-    case BDSIntegratorType::velocityverlet:
-      integrator = new BDSIntegratorVelocityVerlet(eqOfM); break;
+    case BDSIntegratorType::symplecticeuler:
+      integrator = new BDSIntegratorSymplecticEuler(eqOfM); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:

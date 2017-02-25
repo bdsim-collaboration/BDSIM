@@ -1,5 +1,5 @@
-#ifndef BDSINTEGRATORVELOCITYVERLET_H
-#define BDSINTEGRATORVELOCITYVERLET_H
+#ifndef BDSINTEGRATORSYMPLECTICEULER_H
+#define BDSINTEGRATORSYMPLECTICEULER_H
 
 #include "globals.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -8,17 +8,17 @@ class G4MagIntegratorStepper;
 class G4Mag_EqRhs;
 
 /**
- * @brief Velocity-Verlet integator.
+ * @brief 2nd order symplectic Euler integration.
  * 
  * @author Laurie Nevay
  */
 
-class BDSIntegratorVelocityVerlet: public G4MagIntegratorStepper
+class BDSIntegratorSymplecticEuler: public G4MagIntegratorStepper
 {
 public:
-  BDSIntegratorVelocityVerlet(G4Mag_EqRhs* eqOfMIn);
+  BDSIntegratorSymplecticEuler(G4Mag_EqRhs* eqOfMIn);
 
-  virtual ~BDSIntegratorVelocityVerlet();
+  virtual ~BDSIntegratorSymplecticEuler();
 
   /// Calculate output coordinates.
   virtual void Stepper(const G4double yIn[],     ///< Input coordinates x,y,z,px,py,pz,t
@@ -37,7 +37,7 @@ public:
 
 private:
   /// Private default constructor to force use of provided one.
-  BDSIntegratorVelocityVerlet() = delete;
+  BDSIntegratorSymplecticEuler() = delete;
   
   void SimpleStepper(const G4double yIn[],     ///< Input coordinates x,y,z,px,py,pz,t
 		     const G4double dydx[],    ///< Partial differentials at yInput

@@ -1,4 +1,4 @@
-#include "BDSIntegratorVelocityVerlet.hh"
+#include "BDSIntegratorSymplecticEuler.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -8,23 +8,23 @@
 
 #include <cmath>
 
-BDSIntegratorVelocityVerlet::BDSIntegratorVelocityVerlet(G4Mag_EqRhs* eqOfMIn):
+BDSIntegratorSymplecticEuler::BDSIntegratorSymplecticEuler(G4Mag_EqRhs* eqOfMIn):
   G4MagIntegratorStepper(eqOfMIn, 6),
   distChord(0)
 {
   backupIntegrator = new G4ClassicalRK4(eqOfMIn, 6);
 }
 
-BDSIntegratorVelocityVerlet::~BDSIntegratorVelocityVerlet()
+BDSIntegratorSymplecticEuler::~BDSIntegratorSymplecticEuler()
 {
   delete backupIntegrator;
 }
 
-void BDSIntegratorVelocityVerlet::Stepper(const G4double yIn[],
-					  const G4double dydx[],
-					  G4double       stepLength,
-					  G4double       yOut[],
-					  G4double       yErr[])
+void BDSIntegratorSymplecticEuler::Stepper(const G4double yIn[],
+					   const G4double dydx[],
+					   G4double       stepLength,
+					   G4double       yOut[],
+					   G4double       yErr[])
 {
   G4double yTemp[7], yTwoHalf[7], yErr2[7];
   
@@ -45,11 +45,11 @@ void BDSIntegratorVelocityVerlet::Stepper(const G4double yIn[],
     }
 }
 
-void BDSIntegratorVelocityVerlet::SimpleStepper(const G4double yIn[],
-						const G4double dydx[],
-						G4double       stepLength,
-						G4double       yOut[],
-						G4double       yErr[])
+void BDSIntegratorSymplecticEuler::SimpleStepper(const G4double yIn[],
+						 const G4double dydx[],
+						 G4double       stepLength,
+						 G4double       yOut[],
+						 G4double       yErr[])
 { 
   const G4ThreeVector pos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   const G4ThreeVector mom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
