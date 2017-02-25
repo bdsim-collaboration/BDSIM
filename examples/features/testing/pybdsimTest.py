@@ -93,7 +93,9 @@ def Run(inputDict):
             _os.system("rm " + comparatorLogFile)
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
-            _os.system("mv " + comparatorLogFile + "FailedTests/" + comparatorLogFile)  # move failed comp. log file
+            _os.system("mv " + comparatorLogFile + " FailedTests/" + comparatorLogFile)  # move failed comp. log file
+            _os.system("mv " + bdsimLogFile + " FailedTests/" + bdsimLogFile)  # move failed bdsim log file
+
             if isSelfComparison:
                 _os.system("rm " + originalFile)
             inputDict['code'] = GlobalData.returnCodes['FAILED']  # False
