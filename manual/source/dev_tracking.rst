@@ -15,8 +15,8 @@ of different masses and charges.
 This is achieved by factorising certain functionality into different sets of C++
 classes.  The user must provide a function that will return the electic
 and magnetic field vectors for a given set of :math:`(x,y,z,t)` coordinates.
-Specifically, this is a class that inherits G4Field and provides an implementation
-of the pure virtual method GetFieldValue(position) where position is :math:`x,y,z,t`.
+Specifically, this is a class that inherits :code:`G4Field` and provides an implementation
+of the pure virtual method :code:`GetFieldValue(position)` where position is :math:`x,y,z,t`.
 
 As the user specifies the field, and it is essentially unknown, numerical integration
 techniques must be used to solve the equation of motion to calculate the trajectory
@@ -183,8 +183,53 @@ The integrator set may be one of the following (case-insensitive):
 Integrator Algorithms
 =====================
 
+BDSIM currently only provides integrators for magnetic fields, i.e. not electric
+or electro-magnetic fields.  For these types of fields, Geant4 integrators are used.
+
+Common Interface From Geant4
+----------------------------
+
+The magnetic field integrators provided by BDSIM inherit :code:`G4MagIntegratorStepper`.
+This is constructed with respect to a :code:`G4EquationOfMotion` object, which is
+a :code:`G4Mag_UsalEqRhs` instance for BDSIM integrators.  This *equation of motion*
+provides the partial differential of the motion at a given location.
+
+An integrator derived from :code:`G4MagIntegratorStepper` must implement a method:
+
+.. code-block:: c++
+
+		virtual  void  Stepper( const G4double y[],
+                                        const G4double dydx[],
+                                              G4double h,
+                                              G4double yout[],
+                                              G4double yerr[]  ) = 0;
+
+
+This is reposnsible for calculating the coordinates of a trajectory given the input
+point :code:`y[]` (which is [:math:`x,y,z,p_x,p_y,p_z`]) for a step length of :math:`h`.
+The output coordinates are written to :code:`yout[]` (also [:math:`x,y,z,p_x,p_y,p_z`])
+along with the associated absolute uncertainty for each parameter to :code:`yerr[]`.
+The differentials at the initial location are given by :code:`dydx`.  These are calculated
+in :code:`G4Mag_UsualEqRhs.cc` as follows:
+
+.. math::
+
+   dydx[0] &=& ~ \frac{p_x}{|\mathbf{p}|}\\
+   dydx[1] &=& ~ \frac{p_y}{|\mathbf{p}|}\\
+   dydx[2] &=& ~ \frac{p_z}{|\mathbf{p}|}\\
+   A &=& ~ |\mathbf{p}| * (\mathbf{p} \times \mathbf{B})\\
+   dydx[3] &=& ~ A[0]\\
+   dydx[4] &=& ~ A[1]\\
+   dydx[5] &=& ~ A[2]
+
+
+
 BDSIM Dipole
 ------------
+
+This integrator is constructed with it's own strength parameter and **ignores** the field
+information provided by Geant4.
+
 
 BDSIM Dipole2
 -------------
