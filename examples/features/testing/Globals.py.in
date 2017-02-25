@@ -1,4 +1,5 @@
 #! /usr/bin/env python2.7
+from matplotlib import colors
 
 class Globals():
     ''' Class containing global parameters for testing.
@@ -210,3 +211,5 @@ class Globals():
                              'TIMEOUT'          : 7,
                              'NO_DATA'          : 8
                              }
+
+        self.cmap = colors.ListedColormap(['b', 'y', (1,1,0), 'r', 'g', 'm', 'c', (1,1,1), 'k'])
