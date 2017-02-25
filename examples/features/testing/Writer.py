@@ -198,10 +198,10 @@ class Writer:
 
     def WriteDriftTests(self, test):
         component = 'drift'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
     
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
 
             machine = self._getMachine(test.Particle, test._testRobustness)
@@ -214,19 +214,19 @@ class Writer:
         # function to loop over remaining params (kwargs) to save duplication.
         def loopOverDipoleKwargs(componentName, filename, component, length, angle=None, field=None):
             for e1 in test['e1']:
-                e1Name = '_e1_'+_np.str(e1)
+                e1Name = '__e1_'+_np.str(e1)
                 e1FileName = filename + e1Name
                 for e2 in test['e2']:
-                    e2Name = '_e2_'+_np.str(e2)
+                    e2Name = '__e2_'+_np.str(e2)
                     e2FileName = e1FileName + e2Name
                     for fint in test['fint']:
-                        fintName = '_fint_'+_np.str(fint)
+                        fintName = '__fint_'+_np.str(fint)
                         fintFileName = e2FileName + fintName
                         for fintx in test['fintx']:
-                            fintxName = '_fintx_'+_np.str(fintx)
+                            fintxName = '__fintx_'+_np.str(fintx)
                             fintxFileName = fintFileName + fintxName
                             for hgap in test['hgap']:
-                                hgapName = '_hgap_'+_np.str(hgap)
+                                hgapName = '__hgap_'+_np.str(hgap)
                                 hgapFileName = fintxFileName + hgapName
     
                                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -238,7 +238,7 @@ class Writer:
                                     machine.AddDipole(name=componentName, category=component, length=length, b=field, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
                                 
                                 machine.AddDrift(name='dr2', length=0.2)
-                                machine.AddSampler('all')
+                                machine.AddSampler('dr2')
                                 machine.AddBeam(self._getBeam(test))
                                 self._writeToDisk(component, hgapFileName, machine, test)
     
@@ -248,38 +248,38 @@ class Writer:
         elif component == 'sbend':
             componentName = 'sb1'
 
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         
         for length in test['length']:
-            lenName = '_length_'+_np.str(length)
+            lenName = '__length_'+_np.str(length)
             lenFileName = filename + lenName
             if test['angle'][0] is not None:
                 for angle in test['angle']:
-                    angleName = '_angle_' + _np.str(angle)
+                    angleName = '__angle_' + _np.str(angle)
                     angleFileName = lenFileName + angleName
                     loopOverDipoleKwargs(componentName, angleFileName, component, length, angle)
                     
                     # if full test range wanted, calc field from angle
                     if test._useDefaults:
                         bfield = self.calcBField(length, angle, test.Energy, test.Particle)
-                        fieldName = '_field_' + _np.str(bfield)
+                        fieldName = '__field_' + _np.str(bfield)
                         fieldFileName = lenFileName + fieldName
                         loopOverDipoleKwargs(componentName, fieldFileName, component, length, field=bfield)
             elif test['field'] is not None:
                 for bfield in test['field']:
-                    fieldName = '_field_' + _np.str(bfield)
+                    fieldName = '__field_' + _np.str(bfield)
                     fieldFileName = lenFileName + fieldName
                     loopOverDipoleKwargs(componentName, fieldFileName, component, length, field=bfield)
 
     def WriteQuadrupoleTests(self, test):
         component = 'quadrupole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
 
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for k1 in test['k1']:
-                k1Name = '_k1_' + _np.str(k1)
+                k1Name = '__k1_' + _np.str(k1)
                 k1FileName = lenFileName + k1Name
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -290,12 +290,12 @@ class Writer:
   
     def WriteSextupoleTests(self, test):
         component = 'sextupole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for k2 in test['k2']:
-                k2Name = '_k2_' + _np.str(k2)
+                k2Name = '__k2_' + _np.str(k2)
                 k2FileName = lenFileName + k2Name
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -306,12 +306,12 @@ class Writer:
 
     def WriteOctupoleTests(self, test):
         component = 'octupole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for k3 in test['k3']:
-                k3Name = '_k3_' + _np.str(k3)
+                k3Name = '__k3_' + _np.str(k3)
                 k3FileName = lenFileName + k3Name
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -322,12 +322,12 @@ class Writer:
 
     def WriteDecapoleTests(self, test):
         component = 'decapole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for k4 in test['k4']:
-                k4Name = '_k4_' + _np.str(k4)
+                k4Name = '__k4_' + _np.str(k4)
                 k4FileName = lenFileName + k4Name
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -342,12 +342,12 @@ class Writer:
             componentName = 'hk1'
         elif component == 'vkick':
             componentName = 'vk1'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for kickangle in test['kickangle']:
-                kickAngleName = '_kickangle_'+_np.str(kickangle)
+                kickAngleName = '__kickangle_'+_np.str(kickangle)
                 kickAngleFileName = lenFileName + kickAngleName
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -361,14 +361,14 @@ class Writer:
 
     def WriteThinMultipoleTests(self, test):
         component = 'thinmultipole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         self._multipoleStrengthComponentLoop(0, component, filename, test)
 
     def WriteMultipoleTests(self, test):
         component = 'multipole'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             self._multipoleStrengthComponentLoop(length, component, lenFileName, test)
             
@@ -376,14 +376,14 @@ class Writer:
         """ Function for looping over the multipole components.
             """
         for knl in test['knl']:
-            knlComponentsName = '_KNL_'
+            knlComponentsName = '__KNL_'
             for knlArray in knl:
                 for knOrder, knValue in enumerate(knlArray):
                     if knValue != 0:
                         knlComponentsName += 'K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
                 knlName = filename + knlComponentsName
                 for ksl in test['ksl']:
-                    kslComponentsName = '_KSL_'
+                    kslComponentsName = '__KSL_'
                     for kslArray in ksl:
                         for ksOrder, ksValue in enumerate(kslArray):
                             if ksValue != 0:
@@ -400,17 +400,18 @@ class Writer:
                             machine.AddDrift(name='dr1', length=0.5)
                             machine.AddThinMultipole(name='mp1', knl=knArray, ksl=ksArray)
                             machine.AddDrift(name='dr2', length=0.5)
+                            machine.AddSampler('dr2')
                         elif component == 'multipole':
                             machine.AddMultipole(name='mp1', length=length, knl=knArray, ksl=ksArray)
-                        machine.AddSampler('all')
+                            machine.AddSampler('mp1')
                         machine.AddBeam(self._getBeam(test))
                         self._writeToDisk(component, kslName, machine, test)
 
     def WriteCollimatorTests(self, test):
         component = test.Component
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             xsize = test['x(col)'][0]
             ysize = test['y(col)'][0]
@@ -427,12 +428,12 @@ class Writer:
 
     def WriteSolenoidTests(self, test):
         component = 'solenoid'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for ks in test['ks']:
-                ksName = '_ks_'+_np.str(ks)
+                ksName = '__ks_'+_np.str(ks)
                 ksFileName = lenFileName + ksName
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -443,12 +444,12 @@ class Writer:
 
     def WriteRFCavityTests(self, test):
         component = 'rfcavity'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for gradient in test['gradient']:
-                gradientName = '_field_' + _np.str(gradient)
+                gradientName = '__field_' + _np.str(gradient)
                 gradientFileName = lenFileName + gradientName
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -459,15 +460,15 @@ class Writer:
 
     def WriteDegraderTests(self, test):
         component = 'degrader'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for numWedges in test['numWedges']:
-                numWedgesName = '_numWedges_' + _np.str(numWedges)
+                numWedgesName = '__numWedges_' + _np.str(numWedges)
                 numWedgesFileName = lenFileName + numWedgesName
                 for thickness in test['thickness']:
-                    thicknessName = '_thickness_' + _np.str(thickness)
+                    thicknessName = '__thickness_' + _np.str(thickness)
                     thicknessFileName = numWedgesFileName + thicknessName
                   
                     machine = self._getMachine(test.Particle, test._testRobustness)
@@ -479,13 +480,13 @@ class Writer:
 
     def WriteMuSpoilerTests(self, test):
         component = 'muspoiler'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             for angle in test['angle']:
                 bfield = self.calcBField(length, angle, test.Energy, test.Particle)
-                fieldName = '_field_' + _np.str(bfield)
+                fieldName = '__field_' + _np.str(bfield)
                 fieldFileName = lenFileName + fieldName
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
@@ -496,9 +497,9 @@ class Writer:
 
     def WriteLaserTests(self, test):
         component = 'laser'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             
             machine = self._getMachine(test.Particle, test._testRobustness)
@@ -509,9 +510,9 @@ class Writer:
 
     def WriteShieldTests(self, test):
         component = 'shield'
-        filename = component + '_' + test.Particle + '_energy_' + _np.str(test.Energy)
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
         for length in test['length']:
-            lenName = '_length_' + _np.str(length)
+            lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
             
             machine = self._getMachine(test.Particle, test._testRobustness)
