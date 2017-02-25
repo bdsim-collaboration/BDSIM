@@ -90,13 +90,17 @@ public:
   void Fill(std::vector<BDSTrajectory*> &trajVec);
   void Fill(BDSEnergyCounterHitsCollection *phc);
 #endif
+  std::pair<int, int> GetProcessFromTrackID(int trackID);
+  std::pair<int, int> GetProcessFromTrajectoryID(int trajectoryID);
+  std::vector<int>    GetTrackIDSFromProcess(int trajectoryID, int stepID);
   void Flush();
 
   int n;
   std::vector<int>                 partID;
   std::vector<unsigned int>        trackID;
   std::vector<int>                 parentID;
-  std::vector<int>                 parentStepID;
+  std::vector<int>                 parentIndex;
+  std::vector<int>                 parentStepIndex;
   std::vector<std::vector<int>>    preProcessTypes;
   std::vector<std::vector<int>>    preProcessSubTypes;
   std::vector<std::vector<int>>    postProcessTypes;
@@ -104,9 +108,10 @@ public:
 
   std::vector<std::vector<double>> preWeights;
   std::vector<std::vector<double>> postWeights;
-  std::vector<std::vector<double>> energys;
+  std::vector<std::vector<double>> energies;
 
   std::vector<std::vector<TVector3>> trajectories;
+  std::vector<std::vector<TVector3>> momenta;
 
   int primary();
   int primaryElectromagnetic();

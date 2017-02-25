@@ -341,14 +341,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
     for (auto i : interestingTrajVec) {
-      G4int newParentID = -1;
+      G4int parentIndex = -1;
       try {
-        newParentID = (G4int) interestingTrajIndexMap.at(trackIDMap.at(i->GetParentID()));
+        parentIndex = (G4int) interestingTrajIndexMap.at(trackIDMap.at(i->GetParentID()));
       }
       catch (const std::exception &ex) {
-        newParentID = -1;
+        parentIndex = -1;
       }
-      i->SetNewParentID(newParentID);
+      i->SetParentIndex(parentIndex);
     }
 
     bdsOutput->WriteTrajectory(interestingTrajVec);
