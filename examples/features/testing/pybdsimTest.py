@@ -5,6 +5,7 @@ import glob as _glob
 import subprocess as _sub
 import multiprocessing
 import time
+import collections
 
 import Globals
 import PhaseSpace
@@ -137,6 +138,7 @@ class Test(dict):
                         self.__Update(key, value)
         else:
             raise ValueError("Unknown component type.")
+
         self.SetComparisonFilename(fileName=comparisonFile)
         self.SetEnergy(energy)
         self.SetBeamPhaseSpace(phaseSpace)

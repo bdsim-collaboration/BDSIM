@@ -1,10 +1,9 @@
 import numpy as _np
 import os as _os
-import string as _string
-import glob as _glob
 import time as _time
 import Globals
-
+from matplotlib import colors as _color
+import matplotlib.pyplot as _plt
 
 # data type with multiple entries that can be handled by the functions.
 multiEntryTypes = [tuple, list, _np.ndarray]
