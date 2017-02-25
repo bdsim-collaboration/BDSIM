@@ -13,6 +13,7 @@ class Writer:
         self._beamFilename = ''
         self._optionsFilename = ''
         self._numFilesWritten = 0
+        self._fileNamesWritten = {}
 
     def calcBField(self, length, angle, energy, particle):
         # Calculate the magnetic field for a dipole
@@ -102,11 +103,13 @@ class Writer:
         writer.Samplers.WriteInMain()
         writer.Beam.WriteInMain()
         _os.chdir(component)
-        
-        # default filenames
-        if self._beamFilename == '':
-            self._beamFilename = 'trackingTestBeam.madx'
-        
+
+        if test._beamFilename[:6] == 'Tests/':
+            self.SetBeamFilename(test._beamFilename[6:])
+        else:
+            self.SetBeamFilename(test._beamFilename)
+
+
         if self._optionsFilename == '':
             self._optionsFilename = 'trackingTestOptions.gmad'
         
@@ -119,7 +122,7 @@ class Writer:
             _os.chdir(direc)
             files = _glob.glob('*')
             if not files.__contains__(filename+'.gmad'):
-                machine.beam._SetDistribFileName('../../' + self._beamFilename)
+                machine.beam._SetDistribFileName('../../' + test._beamFilename)
                 writer.Options.CallExternalFile('../../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
             _os.chdir('../')
@@ -129,6 +132,9 @@ class Writer:
                 machine.beam._SetDistribFileName('../' + self._beamFilename)
                 writer.Options.CallExternalFile('../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
+        if not self._fileNamesWritten.keys().__contains__(component):
+            self._fileNamesWritten[component] = []
+        self._fileNamesWritten[component].append(component + "/" + filename + ".gmad")
         _os.chdir('../')
 
     def SetBeamFilename(self, beamFilename=''):
