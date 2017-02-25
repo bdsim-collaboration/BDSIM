@@ -26,12 +26,14 @@ public:
 		       G4double       stepLength,///< Length of trajectory to calculate
 		       G4double       yOut[],    ///< Output array
 		       G4double       yErr[]);   ///< Output error array
-  
+
+  /// Return the most recently calculated distance from the chord. The estimated
+  /// maximum distance between the true arced path and a chord between the start
+  /// and finish point.
   virtual G4double DistChord() const {return distChord;}
 
+  /// Order required by Geant4.  2nd order.  Although with higher order accuracy.
   virtual G4int IntegratorOrder() const {return 2;}
-
-  static G4int counter;
 
 private:
   /// Private default constructor to force use of provided one.
@@ -48,6 +50,8 @@ private:
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupIntegrator;
 
+  /// The distance between a straight line between start and finish and the maximum
+  /// extend of the arced true path through the field.
   G4double distChord;
 };
 

@@ -8,8 +8,6 @@
 
 #include <cmath>
 
-G4int BDSIntegratorVelocityVerlet::counter = 0;
-
 BDSIntegratorVelocityVerlet::BDSIntegratorVelocityVerlet(G4Mag_EqRhs* eqOfMIn):
   G4MagIntegratorStepper(eqOfMIn, 6),
   distChord(0)
@@ -52,10 +50,7 @@ void BDSIntegratorVelocityVerlet::SimpleStepper(const G4double yIn[],
 						G4double       stepLength,
 						G4double       yOut[],
 						G4double       yErr[])
-{
-  //counter++;
-  //G4cout << G4endl;
-  
+{ 
   const G4ThreeVector pos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   const G4ThreeVector mom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   const G4ThreeVector momU = G4ThreeVector(dydx[0], dydx[1], dydx[2]); // already provided for us
