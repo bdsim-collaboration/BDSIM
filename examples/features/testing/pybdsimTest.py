@@ -433,6 +433,51 @@ class TestUtilities(object):
         else:
             return ''
 
+    def _GetOrderedTests(self, testlist, componentType):
+        OrderedTests = []
+        particles = []
+        compKwargs = collections.OrderedDict()  # keep order of kwarg in file name
+
+        for test in testlist:
+            fnameStartIndex = test.rfind('/')
+            filename = test[fnameStartIndex + 1:]
+            path = test[:fnameStartIndex+1]
+            if filename[-5:] == '.gmad':
+                filename = filename[:-5]  # remove .gmad extension
+            splitFilename = filename.split('__')
+            particle = splitFilename[1]
+            if not particles.__contains__(particle):
+                particles.append(particle)
+
+            # dict of compiled lists of different kwarg values.
+            for kwarg in splitFilename[2:]:
+                param = kwarg.split('_')[0]
+                value = kwarg.split('_')[1]
+                if not compKwargs.keys().__contains__(param):
+                    compKwargs[param] = []
+                if not compKwargs[param].__contains__(value):
+                    compKwargs[param].append(value)
+            # sort the kwarg values
+            for key in compKwargs.keys():
+                compKwargs[key].sort()
+
+        kwargKeys = compKwargs.keys()
+
+        # recursively create filenames from all kwarg value permutations.
+        # if filename matches one in supplied test list, add to ordered list.
+        def sublevel(depth, nameIn):
+            for value in compKwargs[kwargKeys[depth]]:
+                name = nameIn + '__' + kwargKeys[depth] + "_" + value
+                if depth < (len(kwargKeys) - 1):
+                    sublevel(depth + 1, name)
+                elif testlist.__contains__(path + name + '.gmad'):
+                    OrderedTests.append(path + name + '.gmad')
+
+        for particle in particles:
+            fname = componentType + "__" + particle
+            sublevel(0, fname)
+        return OrderedTests
+
 
 class TestSuite(TestUtilities):
     def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
