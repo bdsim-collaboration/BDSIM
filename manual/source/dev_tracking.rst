@@ -3,23 +3,26 @@
 Tracking Algorithms
 *******************
 
-Background
-==========
+Background On How Geant4 Tracking Works
+=======================================
 
-Geant4 provides the ability track a variet of particles through space in the 3D
-geometry model. Importantly, it also provides the ability to track the motion of
+Geant4 provides the ability track a variety of particles through space in the 3D
+geometry model. Importantly, it provides the ability to track the motion of
 particles in electro-magnetic fields.  As Geant4 provides a large library of
 particle types, the tracking software must be capable of tracking particles
 of different masses and charges.
 
 This is achieved by factorising certain functionality into different sets of C++
-classes.  The user for example must provide a function that will return the electic
+classes.  The user must provide a function that will return the electic
 and magnetic field vectors for a given set of :math:`(x,y,z,t)` coordinates.
+Specifically, this is a class that inherits G4Field and provides an implementation
+of the pure virtual method GetFieldValue(position) where position is :math:`x,y,z,t`.
+
 As the user specifies the field, and it is essentially unknown, numerical integration
 techniques must be used to solve the equation of motion to calculate the trajectory
 of a given particle.  Geant4 provides a variety of different numerical integrators
 that offer various capabilities and trade-offs in accuracy and computational speed.
-The field in and numerical integrator classes are combined with a few other necessary
+The field and numerical integrator classes are combined with a few other necessary
 Geant4 classes to create a *complete* "field" capable of calculating the trajectory of
 a particle that would represent the physical motion in the given field. After this,
 the complete field may be attached to a *G4LogicalVolume* instance. A logical volume
@@ -30,29 +33,26 @@ only one logical volume object may be created it may *placed* multiple times in 
 As described in :ref:`dev-fields`, BDSIM provides a variety of C++ classes that
 represent typical accelerator (pure) magnetic fields. These can be attached to
 the relevant vacuum volumes in the geometry along with Geant4 numerical integrators
-to achieve particle tracking in an accelerator. However, for both a uniform dipole
-field and quadrupolar field, there exist analytical solutions to the equations of
+to achieve particle tracking in an accelerator.
+
+Linear Fields
+-------------
+
+For both a uniform dipole field and quadrupolar field (linear fields), there exist
+analytical solutions to the equations of
 motion. These solutions provide a more accurate representation of the particle's
 motion in the field and may offer significant computational advantage over numerical
 integration techniques. Primarily for reasons of accuracy, these are provided in
-BDSIM.
+BDSIM for the dipole and quadrupole.
 
-BDSIM provides a set of what appear to Geant4 as integrators that calculate the
-particle's motion in a given field. In the Geant4 scheme a field class must also
-be provided and Geant4 will query this, and supply the field vector to the integrator.
-The BDSIM accelerator integrators are constructed with a strength parameter that is
-used with a magnetic rigidity to calculate an effictive field or graident that can
-be used in the analytical solution. They therefore, ignore the field as provided by
-Geant4.
+Non-Linear Fields
+-----------------
 
-However, these analytical solutions are typically only valid for forward travelling
-paraxial particle motion and therefore would not be able to calculate the particle
-motion for backwards partilces or even particles travelling perpendicular to the
-intended direction. In this case, the BDSIM integrators fall back to a Geant4
-provided integrator that uses the previuosly ignored field value. This combination
-provides the benefit of accurate and fast tracking in vacuum, but the robust treatment
-of likely secondary particles at a variety of energies, masses and charges in any
-direction.
+BDSIM provides an integrator for higher order fields that more accurately conserves
+energy when calculating the particle trajectory ('symplecticity') as well as being
+competitive computationally. The routine provided is a symplectic Euler integration
+algorithm.  More will be added in future.
+
 
 Integrator Sets
 ===============
@@ -62,12 +62,52 @@ with the following syntax::
 
   option, integratorSet="geant4";
 
+This choice affects the computation time and accuracy of the simulation but each set
+may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
+more sets can be added that mix and match routines as required.
+
+The specific detauls are described in _`Integrator Algorithms`.
+
 The integrator set may be one of the following (case-insensitive):
 
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
 | bdsim      | Solenoid                | BDSIM Solenoid                 |
+|            +-------------------------+--------------------------------+
+|            | Dipole                  | BDSIM Dipole                   |
+|            +-------------------------+--------------------------------+
+|            | Quadrupole              | BDSIM Quadrupole               |
+|            +-------------------------+--------------------------------+
+|            | Sextupole               | BDSIM Symplectic Euler         |
+|            +-------------------------+--------------------------------+
+|            | Octupole                | BDSIM Symplectic Euler         |
+|            +-------------------------+--------------------------------+
+|            | Decapole                | BDSIM Symplectic Euler         |
+|            +-------------------------+--------------------------------+
+|            | Thick Multipole         | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Muon Spoiler            | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | RF Cavity (EM)          | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | RF (E only)             | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | General Default         | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Skew Quadrupole         | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Skew Sextupole          | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Skew Octupole           | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Skew Decapole           | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Dipole Fringe           | BDSIM Dipole Fringe            |
+|            +-------------------------+--------------------------------+
+|            | Thin Multipole          | BDSIM Thin Multipole           |
++------------+-------------------------+--------------------------------+
+| bdsimold   | Solenoid                | BDSIM Solenoid                 |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | BDSIM Dipole                   |
 |            +-------------------------+--------------------------------+
@@ -146,8 +186,14 @@ Integrator Algorithms
 BDSIM Dipole
 ------------
 
+BDSIM Dipole2
+-------------
+
 BDSIM Quadrupole
 ----------------
+
+BDSIM Symplectic Euler
+----------------------
 
 BDSIM Sextupole
 ---------------
