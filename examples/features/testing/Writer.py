@@ -143,7 +143,7 @@ class Writer:
         else:
             raise TypeError("beamFilename must be a string")
         # correct extensions
-        if (self._beamFilename[-5:] != '.gmad') or (self._beamFilename[-5:] != '.madx'):
+        if (self._beamFilename[-5:] != '.gmad') and (self._beamFilename[-5:] != '.madx'):
             self._beamFilename += '.madx'
 
     def SetOptionsFilename(self, optionsFilename=''):
