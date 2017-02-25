@@ -522,30 +522,26 @@ class TestSuite(TestUtilities):
         else:
             _os.chdir('BDSIMOutput')
 
-        testfilesDir = '../Tests/*/'
-        componentDirs = _glob.glob(testfilesDir)  # get all component dirs in the Tests dir
-
         initialTime = time.time()
 
-        for component in componentDirs:
-            if component[-1] == '/':
-                componentType = component.split('/')[-2]  # second last part of string should be component type.
-            else:
-                componentType = component.split('/')[-1]  # last part of string should be component type.
+        for componentType in self._testNames.keys():
+
+            testfilesDir = '../Tests/'
 
             if self._generateOriginals:
                 if not _os.path.exists(componentType):
                     _os.system("mkdir "+componentType)
                 _os.chdir(componentType)
+                testfilesDir = '../../Tests/'
 
             t = time.time()  # initial time
 
-            testfileStr = ''
-            # get all gmad files in a components dir
-            if self._generateOriginals:
-                testfileStr = '../'
-            testfileStr += component + '*.gmad'
-            tests = _glob.glob(testfileStr)
+            tests = []
+            for testFile in self._testNames[componentType]:
+                tests.append(testfilesDir + testFile)
+
+            if len(tests) > 1:
+                tests = self._GetOrderedTests(tests, componentType)
 
             # compile iterable list of dicts for multithreading function.
             testlist = []
@@ -573,10 +569,12 @@ class TestSuite(TestUtilities):
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.timings.AddComponentTime(component, componentTime)
+            self.timings.AddComponentTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')
+            else:
+                self.Results.ProcessResults(componentType=componentType)
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
