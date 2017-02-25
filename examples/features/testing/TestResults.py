@@ -147,16 +147,21 @@ class Results:
         self._resultsList.reverse()
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
+        # phasespace coords initialised as passed.
         coords = _np.zeros(7)
+        
+        # return all true if comparator returned passed
         code = result['code']
-
         if code == 0:
             return coords
 
+        # get data in logfile.
         f = open(logFile)
         lines = f.read()
         f.close()
 
+        # get data on number particles comparison. If the numbers are not equal,
+        # set the phase space coords to no data, and number of particle compared to failed.
         numParticlesIndex = lines.find('Event Tree (1/2) entries')
         if numParticlesIndex != -1:
             offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
@@ -165,11 +170,12 @@ class Results:
             branches = branches.replace(')', '')
             numParticles = branches.split('/')
             if numParticles[0] != numParticles[1]:
-                coords[6] = 1
-                coords[0:5] = 8
+                coords[6] = GlobalData.returnCodes['FAILED']
+                coords[0:5] = GlobalData.returnCodes['NO_DATA']
                 # if num particles don't match, there'll be no phase space comparison  
                 return coords
 
+        # get data on phase space branches that failed. Log file only contains failed branches.
         phasespaceIndex = lines.find('type Sampler')
         if phasespaceIndex != -1:
             offendingSamplerBranchesLine = lines[phasespaceIndex:].split('\n')[1]
@@ -178,17 +184,17 @@ class Results:
             branches.remove('branches:')
             branches.remove('')
             if branches.__contains__('x'):
-                coords[0] = 1
+                coords[0] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('xp'):
-                coords[1] = 1
+                coords[1] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('y'):
-                coords[2] = 1
+                coords[2] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('yp'):
-                coords[3] = 1
+                coords[3] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('t'):
-                coords[4] = 1
+                coords[4] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('zp'):
-                coords[5] = 1
+                coords[5] = GlobalData.returnCodes['FAILED']
 
         return coords
 
