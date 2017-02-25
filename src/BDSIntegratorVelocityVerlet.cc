@@ -4,7 +4,11 @@
 #include "G4ClassicalRK4.hh"
 #include "G4ThreeVector.hh"
 
+#include "BDSUtilities.hh"
+
 #include <cmath>
+
+G4int BDSIntegratorVelocityVerlet::counter = 0;
 
 BDSIntegratorVelocityVerlet::BDSIntegratorVelocityVerlet(G4Mag_EqRhs* eqOfMIn):
   G4MagIntegratorStepper(eqOfMIn, 6),
@@ -28,14 +32,18 @@ void BDSIntegratorVelocityVerlet::Stepper(const G4double yIn[],
   
   // Do two half steps
   SimpleStepper(yIn,   dydx, stepLength*0.5, yTemp, yErr2);
-  SimpleStepper(yTemp, dydx, stepLength*0.5, yTwoHalf, yErr2); 
+  G4double dydxMid[7];
+  RightHandSide(yTemp, dydxMid);
+  SimpleStepper(yTemp, dydxMid, stepLength*0.5, yTwoHalf, yErr2); 
   
-  // Do a full Step
-  SimpleStepper(yIn, dydx, stepLength, yOut, yErr2);
-
-  for(G4int i = 0; i < 6; i++)
+  // Do a full Step - do last as sets distChord
+  SimpleStepper(yIn, dydx, stepLength, yOut, yErr);
+  
+  for(G4int i = 0; i < 3; i++)
     {
       yErr[i] = yOut[i] - yTwoHalf[i];
+      //yErr[i]   = 1e-15;
+      //yErr[i+3] = 1e-20;
     }
 }
 
@@ -45,73 +53,49 @@ void BDSIntegratorVelocityVerlet::SimpleStepper(const G4double yIn[],
 						G4double       yOut[],
 						G4double       yErr[])
 {
-  const G4ThreeVector globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  const G4ThreeVector globalMom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  //counter++;
+  //G4cout << G4endl;
+  
+  const G4ThreeVector pos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  const G4ThreeVector mom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  const G4ThreeVector momU = G4ThreeVector(dydx[0], dydx[1], dydx[2]); // already provided for us
   const G4double      stepLengthSqrd = pow(stepLength, 2);
+  const G4double      halfSL         = stepLength*0.5;
 
-  const G4ThreeVector a = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
+  // calcualte the position half step length for drifting with no force
+  // 'phalf' => plus half step
+  G4ThreeVector pos_phalf = pos + momU*halfSL;
 
-  G4ThreeVector term1 = globalMom.unit()*stepLength;
-  G4ThreeVector term2 = 0.5*a*stepLengthSqrd;
-  G4ThreeVector globalPosNew = globalPos + term1 + term2;
-
-  G4double globalPosNewArr[4];
+  // construct mixed coordinate input for field calculation
+  // half drift position but original momentum vector (w.r.t. original position, also unit)
+  G4double mixedPosMom[7];
   for (G4int i = 0; i < 3; i++)
-    {globalPosNewArr[i] = globalPosNew[i];}
-  globalPosNewArr[3] = yIn[7];
+    {
+      mixedPosMom[i]   = pos_phalf[i];
+      mixedPosMom[i+3] = momU[i];
+    }
+  mixedPosMom[6] = yIn[6];
 
-  G4double dydxPosNew[7];
-  ComputeRightHandSide(globalPosNewArr, dydxPosNew);
+  G4double potential[7]; // output array for g4 query
+  RightHandSide(mixedPosMom, potential); // query field and calculate vector potential
+  // get the vector potential bit from the array
+  G4ThreeVector a_phalf = G4ThreeVector(potential[3], potential[4], potential[5]);
 
-  G4ThreeVector aNew = G4ThreeVector(dydxPosNew[3], dydxPosNew[4], dydxPosNew[5]);
-
-  G4ThreeVector globalMomNew = globalMom + 0.5 * (a + aNew) * stepLength;
-
-  //globalMom.unit() + h*anew
+  // pos_new = pos + p.unit()*h + (A*h^2)/2*p.mag()
+  G4ThreeVector pos_new = pos + momU*stepLength + (a_phalf*stepLengthSqrd*0.5)/mom.mag();
+  G4ThreeVector mom_new = mom + a_phalf*stepLength;
 
   for (G4int i = 0; i < 3; i++)
     {
-      yOut[i]   = globalPosNew[i];
-      yOut[i+3] = globalMomNew[i];
-      yErr[i]   = 1e-15;
-      yErr[i+3] = 1e-20;
+      yOut[i]   = pos_new[i];
+      yOut[i+3] = mom_new[i];
+      yErr[i]   = 1e-10*stepLength;
+      yErr[i+3] = 1e-15*stepLength*mom_new[i];
     }
 
-  distChord = stepLengthSqrd * a.mag() / 8;
+  // ((average of new and old) - mid point from drift ) .mag()
+  // both are straight lines, but it's an approximately close
+  distChord = (0.5*(pos_new + pos) - pos_phalf).mag();
   
-  /*
-  
-  // calculate approximate mid point
-  const G4ThreeVector globalPosHalfStep = globalPos + globalMom*0.5*stepLength;
-
-  // use field from there
-  // needs to be in array form for Geant4
-  G4double globalPosHalfStepArr[4];
-  for (G4int i = 0; i < 3; i++)
-    {globalPosHalfStepArr[i] = globalPosHalfStep[i];}
-  globalPosHalfStepArr[3] = yIn[7]; // copy time over
-  G4double dydxHalfStep[7];
-
-  // This evaluates the field at the new position and calculates the new
-  // vector potential.
-  ComputeRightHandSide(globalPosHalfStepArr, dydxHalfStep);
-  // dydx[0-2] are normalised momenta
-  // dydx[3-5] are (1/|p|) * (p cross B)
-  const G4ThreeVector globalF = G4ThreeVector(dydxHalfStep[3], dydxHalfStep[4], dydxHalfStep[5]);
-  
-  G4ThreeVector globalPosDelta = globalMom * stepLength + globalF * stepLengthSqrd * 0.5;
-  G4ThreeVector globalPosNew   = globalPos + globalPosDelta;
-  G4ThreeVector globalMomDelta = stepLength*globalF;
-  G4ThreeVector globalMomNew   = globalMom + globalMomDelta;
-
-  for (G4int i = 0; i < 3; i++)
-    {
-      yOut[i]   = globalPosNew[i];
-      yOut[i+3] = globalMomNew[i];
-      yErr[i]   = 1e-15;
-      yErr[i+3] = 1e-20;
-    }
-
-  distChord = stepLengthSqrd * globalF.mag() / 8;
-  */
+  return;
 }

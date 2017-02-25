@@ -31,6 +31,8 @@ public:
 
   virtual G4int IntegratorOrder() const {return 2;}
 
+  static G4int counter;
+
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorVelocityVerlet() = delete;
