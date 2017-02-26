@@ -143,9 +143,14 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     if(processPair.first != -1) {
       int mi = modelIndicies[processPair.first][processPair.second];
       trackIndex_modelIndex.insert(std::pair<int,int>(trackIndex, mi));
-    }
-    else {
-      trackIndex_modelIndex.insert(std::pair<int,int>(trackIndex, -1));
+      try {
+        modelIndex_trackIndex.at(mi).push_back(trackIndex);
+      }
+      catch(std::exception)
+      {
+        modelIndex_trackIndex.insert(std::pair<int,std::vector<int>>(mi,std::vector<int>()));
+        modelIndex_trackIndex.at(mi).push_back(trackIndex);
+      }
     }
 
     ++trackIndex;
@@ -176,11 +181,12 @@ void BDSOutputROOTEventTrajectory::Flush()
   postWeights.clear();
   energies.clear();
   trajectories.clear();
+  momenta.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
   trackIndex_trackProcess.clear();
   trackIndex_modelIndex.clear();
-  momenta.clear();
+  modelIndex_trackIndex.clear();
 }
 
 std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackIndex) {
@@ -188,6 +194,9 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
   int tid = trackIndex;
   int pid = parentID.at(tid);
   int pin = parentIndex.at(tid);
+  if(pin == -1) {
+    return std::pair<int,int>(-1,-1);
+  }
   int sin = parentStepIndex.at(tid);
 
   while(pid > 0) {

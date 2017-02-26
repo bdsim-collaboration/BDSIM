@@ -123,6 +123,8 @@ public:
   std::map<int, int>                 trackID_trackIndex;
   std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
   std::map<int, int>                 trackIndex_modelIndex;
+  std::map<int, std::vector<int>>    modelIndex_trackIndex;
+
   std::pair<int,int>                 findParentProcess(int trackIndex);
 
   int primary();
