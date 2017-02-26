@@ -214,14 +214,14 @@ in :code:`G4Mag_UsualEqRhs.cc` as follows:
 
 .. math::
 
-   \mathbf{A} = ~ \frac{charge \cdot c}{ |\mathbf{p}| } (\mathbf{p} \times \mathbf{B})
+   \mathbf{A} = ~ \frac{charge \cdot c}{ \|\mathbf{p}\| } (\mathbf{p} \times \mathbf{B})
    
 
 .. math::
 
-   \mathrm{dydx}[0] &=& ~ \frac{p_x}{|\mathbf{p}|}\\
-   \mathrm{dydx}[1] &=& ~ \frac{p_y}{|\mathbf{p}|}\\
-   \mathrm{dydx}[2] &=& ~ \frac{p_z}{|\mathbf{p}|}\\
+   \mathrm{dydx}[0] &=& ~ \frac{p_x}{\|\mathbf{p}\|}\\
+   \mathrm{dydx}[1] &=& ~ \frac{p_y}{\|\mathbf{p}\|}\\
+   \mathrm{dydx}[2] &=& ~ \frac{p_z}{\|\mathbf{p}\|}\\
    \mathrm{dydx}[3] &=& ~ \mathbf{A}[0]\\
    \mathrm{dydx}[4] &=& ~ \mathbf{A}[1]\\
    \mathrm{dydx}[5] &=& ~ \mathbf{A}[2]
@@ -240,19 +240,30 @@ There are other factors in the code for units that aren't shown here.
 	  The time is handled by Geant4 at a higher level as the magnetic integrators are
 	  specified to be only integrating over 6 variables.
 
+
+Coordinate Convetion
+--------------------
+
+* Units are not explicitly mentioned here. In code there are factors to convert to Geant4 units.
+* :math:`\mathbf{q}` is used to represent a 3-vector for spatial coordinates (:math:`x,y,z`).
+* :math:`\mathbf{p}` is used to represent a 3-vector for the momentum (:math:`p_x, p_y, p_z`).
+* The subscript ":math:`_{in}`" is used to denote input coordinates.
+* The subscript ":math:`_{out}`" is used to denote what will be output coordinates after the step.
+* :math:`h` is used to describe the spatial step length requested. This would be along the curved
+  trajectory through a field the particle would take.
+
 BDSIM Drift
-------------------
+-----------
 
 This algorithm tranports a particle through free space with no external force acting on it.
 This is provided here although provided generally by Geant4 as it is required by other
 BDSIM integrators under various circumstances. It exists in the
 :code:`BDSIntegratorBase::AdvanceDrift`
-base class for the majority of BDSIM integrators. The new 3-vector coordinates ('out') are
-*w.r.t.* the input coordinates ('in') for a step length of :math:`h` mm is given by:
+base class for the majority of BDSIM integrators.
 
 .. math::
 
-   \mathbf{x}_{out} ~ &=& ~ \mathbf{x}_{in} + h~\mathbf{|p|}\\
+   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + h~\|\mathbf{p}_{in}\|\\
    \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in}
 
 .. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
@@ -277,7 +288,7 @@ Otherwise continue as follows:
 
 .. math::
 
-   \rho~=~ \frac{\mathbf{|p|}} {\mathbf{B}~charge}
+   \rho~=~ \frac{\|\mathbf{p}_{in}\|} {\mathbf{B} \cdot charge}
 
 * Convert coorindates from global to local (curvilinear) frame of reference.
 * Calculate local change of coordinates.
@@ -291,9 +302,9 @@ Otherwise continue as follows:
 
 .. math::
 
-   \mathbf{x}_{out} ~ &=& ~ \mathbf{x}_{in} + \rho \left[ \, \mathrm{ST}\,\mathbf{\hat{p}} +
+   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + \rho \left[ \, \mathrm{ST}\,\mathbf{\hat{p}_{in}} +
    (1- \mathrm{CT})\, \mathbf{\hat{f}} \,  \right]\\
-   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
+   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}_{in}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
 
 * If :math:`\rho` is less than a minimum radius of curvature (5 cm by default) reduce the
   magnitude of the momentum by 2 % to induce artificial spiralling.
@@ -318,6 +329,22 @@ BDSIM Symplectic Euler
 ----------------------
 
 * Class name: :code:`BDSIntegratorSymplecticEuler`
+
+* Calculate the half way position along step length :math:`h` if the particle were to drift:
+
+.. math::
+
+   \mathbf{q}_{half} ~ = ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ \frac{h}{2}
+
+* Calculate the vector potential :math:`\mathbf{A}` *w.r.t.* :math:`\mathbf{q}_{half}`
+  but with :math:`\mathbf{p}_{in}` (the original momentum). Uses the equation of motion
+  method :code:`RightHandSide`. This invokes 1 query of the field.
+* Calculate new coordinates:
+
+.. math::
+
+   \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|}
+  
 
 BDSIM Sextupole
 ---------------
