@@ -54,8 +54,7 @@ def main():
     tar = tarfile.open("4dexample.tar.gz", "w:gz")
     tar.add('4dexample.dat')
     tar.close()
-
-    #Plot(data)
+    
     return data
     
 if __name__ == "__main__":

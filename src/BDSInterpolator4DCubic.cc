@@ -22,7 +22,7 @@ BDSFieldValue BDSInterpolator4DCubic::GetInterpolatedValueT(G4double x,
   G4double xarr = array->ArrayCoordsFromX(x);
   G4double yarr = array->ArrayCoordsFromY(y);
   G4double zarr = array->ArrayCoordsFromZ(z);
-  G4double tarr = array->ArrayCoordsFromZ(t);
+  G4double tarr = array->ArrayCoordsFromT(t);
   
   G4double x1 = floor(xarr);
   G4double y1 = floor(yarr);
