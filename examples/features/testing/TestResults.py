@@ -3,6 +3,7 @@ import os as _os
 import time as _time
 import Globals
 from matplotlib import colors as _color
+from matplotlib import ticker as _tick
 import matplotlib.pyplot as _plt
 
 # data type with multiple entries that can be handled by the functions.
@@ -209,4 +210,56 @@ class Results:
             coords[7] = GlobalData.returnCodes['FAILED']
 
         return coords
+
+    def PlotResults(self, componentType=''):
+        f = _plt.figure(figsize=(15, 7))
+        ax = f.add_subplot(111)
+
+        # set normalised colormap.
+        bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
+        norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+
+        extent = [0, 8, 0, len(self._resultsList[componentType])]
+
+        data = self._resultsList[componentType]
+
+        files = self._filesList[componentType]
+
+        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm, extent=extent)
+
+        xtickMajors = _np.linspace(1, 8, 8)
+        xtickCentre = xtickMajors - 0.5
+
+        ax.set_xticks(xtickCentre)
+        ax.set_xticklabels(['x', 'px', 'y', 'py', 't', 'pt', 'n', 'Gen'])
+        ax.set_xlim(0, 8)
+
+        ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
+        ytickCentre = ytickMajors - 0.5
+
+        ax.set_yticks(ytickCentre)
+        ax.set_yticklabels(files)
+
+        ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+
+        # ax.xaxis.set_visible(False)
+
+        minorXTicks = _tick.FixedLocator(xtickMajors)
+        minorYTicks = _tick.FixedLocator(ytickMinors)
+
+        ax.xaxis.set_minor_locator(minorXTicks)
+        ax.yaxis.set_minor_locator(minorYTicks)
+
+        ax.tick_params(axis='x', which='both', length=0)
+        ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+
+        ax.grid(which='minor', axis='x', linestyle='-')
+        ax.grid(which='minor', axis='y', linestyle='--')
+
+        cbar = f.colorbar(cax)
+        cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
+        cbar.set_ticks(cbarTicks)
+        cbar.set_ticklabels(GlobalData.returnCodes.keys())
+
+        f.tight_layout()
 

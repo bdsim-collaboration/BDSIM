@@ -581,6 +581,7 @@ class TestSuite(TestUtilities):
                 _os.chdir('../')
             else:
                 self.Results.ProcessResults(componentType=componentType)
+                self.Results.PlotResults(componentType=componentType)
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
