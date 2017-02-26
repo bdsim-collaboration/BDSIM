@@ -4,6 +4,7 @@
 #include "TROOT.h"
 #include "TVector3.h"
 #include <vector>
+#include <map>
 
 #ifndef __ROOTBUILD__
 class BDSEnergyCounterHit;
@@ -11,6 +12,8 @@ class BDSTrajectory;
 template <class T> class G4THitsCollection;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 #endif
+
+class BDSAuxiliaryNavigator;
 
 /**
  * @brief Structure to record a trajectory.
@@ -90,28 +93,37 @@ public:
   void Fill(std::vector<BDSTrajectory*> &trajVec);
   void Fill(BDSEnergyCounterHitsCollection *phc);
 #endif
-  std::pair<int, int> GetProcessFromTrackID(int trackID);
-  std::pair<int, int> GetProcessFromTrajectoryID(int trajectoryID);
-  std::vector<int>    GetTrackIDSFromProcess(int trajectoryID, int stepID);
+
+  BDSAuxiliaryNavigator* auxNavigator; //!
+
+
+public:
   void Flush();
 
   int n;
-  std::vector<int>                 partID;
-  std::vector<unsigned int>        trackID;
-  std::vector<int>                 parentID;
-  std::vector<int>                 parentIndex;
-  std::vector<int>                 parentStepIndex;
-  std::vector<std::vector<int>>    preProcessTypes;
-  std::vector<std::vector<int>>    preProcessSubTypes;
-  std::vector<std::vector<int>>    postProcessTypes;
-  std::vector<std::vector<int>>    postProcessSubTypes;
+  std::vector<int>                   partID;
+  std::vector<unsigned int>          trackID;
+  std::vector<int>                   parentID;
+  std::vector<int>                   parentIndex;
+  std::vector<int>                   parentStepIndex;
+  std::vector<std::vector<int>>      preProcessTypes;
+  std::vector<std::vector<int>>      preProcessSubTypes;
+  std::vector<std::vector<int>>      postProcessTypes;
+  std::vector<std::vector<int>>      postProcessSubTypes;
 
-  std::vector<std::vector<double>> preWeights;
-  std::vector<std::vector<double>> postWeights;
-  std::vector<std::vector<double>> energies;
+  std::vector<std::vector<double>>   preWeights;
+  std::vector<std::vector<double>>   postWeights;
+  std::vector<std::vector<double>>   energies;
 
   std::vector<std::vector<TVector3>> trajectories;
   std::vector<std::vector<TVector3>> momenta;
+
+  std::vector<std::vector<int>>      modelIndicies;
+
+  std::map<int, int>                 trackID_trackIndex;
+  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
+  std::map<int, int>                 trackIndex_modelIndex;
+  std::pair<int,int>                 findParentProcess(int trackIndex);
 
   int primary();
   int primaryElectromagnetic();
