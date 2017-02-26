@@ -186,8 +186,8 @@ Integrator Algorithms
 BDSIM currently only provides integrators for magnetic fields, i.e. not electric
 or electro-magnetic fields.  For these types of fields, Geant4 integrators are used.
 
-Common Interface From Geant4
-----------------------------
+Common Magnetic Field Interface From Geant4
+-------------------------------------------
 
 The magnetic field integrators provided by BDSIM inherit :code:`G4MagIntegratorStepper`.
 This is constructed with respect to a :code:`G4EquationOfMotion` object, which is
@@ -206,54 +206,143 @@ An integrator derived from :code:`G4MagIntegratorStepper` must implement a metho
 
 
 This is reposnsible for calculating the coordinates of a trajectory given the input
-point :code:`y[]` (which is [:math:`x,y,z,p_x,p_y,p_z`]) for a step length of :math:`h`.
-The output coordinates are written to :code:`yout[]` (also [:math:`x,y,z,p_x,p_y,p_z`])
+point :code:`y[]` (which is [:math:`x,y,z,p_x,p_y,p_z,t`]) for a step length of :math:`h`.
+The output coordinates are written to :code:`yout[]` (also [:math:`x,y,z,p_x,p_y,p_z,t`])
 along with the associated absolute uncertainty for each parameter to :code:`yerr[]`.
 The differentials at the initial location are given by :code:`dydx`.  These are calculated
 in :code:`G4Mag_UsualEqRhs.cc` as follows:
 
 .. math::
 
-   dydx[0] &=& ~ \frac{p_x}{|\mathbf{p}|}\\
-   dydx[1] &=& ~ \frac{p_y}{|\mathbf{p}|}\\
-   dydx[2] &=& ~ \frac{p_z}{|\mathbf{p}|}\\
-   A &=& ~ |\mathbf{p}| * (\mathbf{p} \times \mathbf{B})\\
-   dydx[3] &=& ~ A[0]\\
-   dydx[4] &=& ~ A[1]\\
-   dydx[5] &=& ~ A[2]
+   \mathbf{A} = ~ \frac{charge \cdot c}{ |\mathbf{p}| } (\mathbf{p} \times \mathbf{B})
+   
+
+.. math::
+
+   \mathrm{dydx}[0] &=& ~ \frac{p_x}{|\mathbf{p}|}\\
+   \mathrm{dydx}[1] &=& ~ \frac{p_y}{|\mathbf{p}|}\\
+   \mathrm{dydx}[2] &=& ~ \frac{p_z}{|\mathbf{p}|}\\
+   \mathrm{dydx}[3] &=& ~ \mathbf{A}[0]\\
+   \mathrm{dydx}[4] &=& ~ \mathbf{A}[1]\\
+   \mathrm{dydx}[5] &=& ~ \mathbf{A}[2]
 
 
+There are other factors in the code for units that aren't shown here.
 
+.. note:: Geant4 will sample the field to give to the equation of motion to calculate
+	  :math:`\mathbf{A}`. Getting the field value is generally conidered an *expensive*
+	  operation as may often involve geometry lookup for transforms, applying transforms
+	  or indexing a large array along with interpolation.  In the case of BDSIM, the
+	  majority of fields requie a geometry lookup and transform but are simple equations.
+
+.. note:: Geant4 magnetic integrators do not integrate time and therefore copy the initial
+	  value of time to the output coordinates.  BDSIM integrators follow this behaviour.
+	  The time is handled by Geant4 at a higher level as the magnetic integrators are
+	  specified to be only integrating over 6 variables.
+
+BDSIM Drift
+------------------
+
+This algorithm tranports a particle through free space with no external force acting on it.
+This is provided here although provided generally by Geant4 as it is required by other
+BDSIM integrators under various circumstances. It exists in the
+:code:`BDSIntegratorBase::AdvanceDrift`
+base class for the majority of BDSIM integrators. The new 3-vector coordinates ('out') are
+*w.r.t.* the input coordinates ('in') for a step length of :math:`h` mm is given by:
+
+.. math::
+
+   \mathbf{x}_{out} ~ &=& ~ \mathbf{x}_{in} + h~\mathbf{|p|}\\
+   \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in}
+
+.. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
+	  algorithm. The tracking is handled by Geant4.
+
+	  
 BDSIM Dipole
 ------------
 
+* Class name: :code:`BDSIntegratorDipole`
+
 This integrator is constructed with it's own strength parameter and **ignores** the field
-information provided by Geant4.
+information provided by Geant4. The field value (already multiplied by :code:`CLHEP::telsa`) is
+assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
+:math:`\mathbf{B} = (0,B,0)`. The algorithm progresses as follows:
 
+* If the field value is 0 or the particle is neutral, the coordinates are advanced as a drift.
 
+Otherwise continue as follows:
+
+* Calculate bending radius :math:`\rho` as:
+
+.. math::
+
+   \rho~=~ \frac{\mathbf{|p|}} {\mathbf{B}~charge}
+
+* Convert coorindates from global to local (curvilinear) frame of reference.
+* Calculate local change of coordinates.
+
+.. math::
+
+   \theta           ~ &=& ~ \frac{h}{\rho} \\
+   \mathbf{\hat{f}} ~ &=& ~ \mathbf{\hat{p}} \times \hat{\mathbf{y}} \\
+   \mathrm{CT}      ~ &=& ~ \cos^2(\theta/2) - sin^2(\theta/2) \\
+   \mathrm{ST}      ~ &=& ~ 2~\cos(\theta/2)\,\sin(\theta/2)
+
+.. math::
+
+   \mathbf{x}_{out} ~ &=& ~ \mathbf{x}_{in} + \rho \left[ \, \mathrm{ST}\,\mathbf{\hat{p}} +
+   (1- \mathrm{CT})\, \mathbf{\hat{f}} \,  \right]\\
+   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
+
+* If :math:`\rho` is less than a minimum radius of curvature (5 cm by default) reduce the
+  magnitude of the momentum by 2 % to induce artificial spiralling.
+* Convert to global coordinates.
+
+This was the original dipole algorithm included with BDSIM until v0.96, however this
+is limited to dipole fields aligned with :math:`\hat{y}` only and often caused tracking
+warnings with very low momenta particles in strong magnetic fields. A more flexible integrator
+that works in 3D was written to improve upon this and is described in _`BDSIM Dipole2`.
+   
 BDSIM Dipole2
 -------------
+
+* Class name: :code:`BDSIntegratorDipole2`
 
 BDSIM Quadrupole
 ----------------
 
+* Class name: :code:`BDSIntegratorQuadrupole`
+
 BDSIM Symplectic Euler
 ----------------------
+
+* Class name: :code:`BDSIntegratorSymplecticEuler`
 
 BDSIM Sextupole
 ---------------
 
+* Class name: :code:`BDSIntegratorSextupole`
+
 BDSIM Octupole
 --------------
+
+* Class name: :code:`BDSIntegratorOctupole`
 
 BDSIM Decapole
 --------------
 
+* Class name: :code:`BDSIntegratorDecapole`
+
 BDSIM Dipole Fringe
 -------------------
 
+* Class name: :code:`BDSIntegratorDipoleFringe`
+
 BDSIM Thin Multipole
 --------------------
+
+* Class name: :code:`BDSIntegratorMultipoleThin`
 
 
 Combined Dipole-Quadrupole
