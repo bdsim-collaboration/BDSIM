@@ -94,7 +94,7 @@ public:
   void Fill(BDSEnergyCounterHitsCollection *phc);
 #endif
 
-  BDSAuxiliaryNavigator* auxNavigator; //!
+  BDSAuxiliaryNavigator* auxNavigator; //! Required to find beamline index careful including in Streamer
 
 
 public:
