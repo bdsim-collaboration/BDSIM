@@ -48,6 +48,7 @@ class Results:
             self.Results[component] = []
         self.timingData = None
         self._resultsList = {}
+        self._filesList = {}
 
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
@@ -138,14 +139,20 @@ class Results:
             testResults = self.Results[componentType]
             if not self._resultsList.keys().__contains__(componentType):
                 self._resultsList[componentType] = []
+                self._filesList[componentType] = []
 
-            for index,result in enumerate(testResults):
+            for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
                 self._resultsList[componentType].append(coords)
+                filename = result['ROOTFile']
+                filename = filename.replace('_event.root', '')
+                filename = filename.replace((componentType + "__"), '')
+                self._filesList[componentType].append(filename)
         else:
             pass
         self._resultsList[componentType].reverse()
+        self._filesList[componentType].reverse()
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
