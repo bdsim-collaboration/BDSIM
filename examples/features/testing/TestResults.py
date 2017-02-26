@@ -156,7 +156,7 @@ class Results:
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
-        coords = _np.zeros(7)
+        coords = _np.zeros(8)
         
         # return all true if comparator returned passed
         code = result['code']
@@ -173,12 +173,13 @@ class Results:
         numParticlesIndex = lines.find('Event Tree (1/2) entries')
         if numParticlesIndex != -1:
             offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
-            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ','')
+            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ', '')
             branches = branches.replace('(', '')
             branches = branches.replace(')', '')
             numParticles = branches.split('/')
             if numParticles[0] != numParticles[1]:
                 coords[6] = GlobalData.returnCodes['FAILED']
+                coords[7] = GlobalData.returnCodes['FAILED']
                 coords[0:6] = GlobalData.returnCodes['NO_DATA']
                 # if num particles don't match, there'll be no phase space comparison  
                 return coords
@@ -203,6 +204,9 @@ class Results:
                 coords[4] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('zp'):
                 coords[5] = GlobalData.returnCodes['FAILED']
+
+        if result['code'] == 1:
+            coords[7] = GlobalData.returnCodes['FAILED']
 
         return coords
 
