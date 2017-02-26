@@ -145,6 +145,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       trackIndex_modelIndex.insert(std::pair<int,int>(trackIndex, mi));
     }
     else {
+      trackIndex_modelIndex.insert(std::pair<int,int>(trackIndex, -1));
     }
 
     ++trackIndex;
