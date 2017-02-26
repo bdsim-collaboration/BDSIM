@@ -202,8 +202,6 @@ class Globals():
                               'linear1d' , 'linear2d' , 'linear3d' , 'linear4d',
                               'cubic1d'  , 'cubic2d'  , 'cubic3d'  , 'cubic4d']
 
-
-        self.cmap = colors.ListedColormap(['b', 'y', (1,1,0), 'r', 'g', 'm', 'c', (1,1,1), 'k'])
         self.returnCodes = collections.OrderedDict([('SUCCESS', 0),
                                                     ('FAILED', 1),
                                                     ('INCORRECT_ARGS', 2),
@@ -214,3 +212,13 @@ class Globals():
                                                     ('TIMEOUT', 7),
                                                     ('NO_DATA', 8)
                                                     ])
+
+        self.cmap = colors.ListedColormap(['b',
+                                           'y',
+                                           (1,1,0),
+                                           'r',
+                                           'g',
+                                           'm',
+                                           'c',
+                                           0.9,
+                                           0.1])
