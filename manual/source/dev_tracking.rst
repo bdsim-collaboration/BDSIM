@@ -320,6 +320,39 @@ BDSIM Dipole2
 
 * Class name: :code:`BDSIntegratorDipole2`
 
+
+* If :math:`\|\mathbf{p}\| < 40 \mathrm{MeV}`, the Geant4 :code:`G4ClassicalRK4` integrator
+  is used.
+
+Otherwise:
+
+* The field :math:`\mathbf{B}` is queried at :math:`\mathbf{q}_{in}`.
+* A full step along the trajectory is calculated.
+* If the radius of curvature is less than the minimum radius of curvature (5 cm by default),
+  use the explicit spiralling algorithm.
+
+Otherwise:
+
+* Calculate the motion through two half steps (includes sampling the field at the half step
+  point).
+* Calculate the error on the output coordinates as the difference between two half steps and
+  one full step.
+
+The spiralling algorithm artificially advances the helix of the particle along the field
+direction more quickly than it would naturally by step length :math:`h`, even if it had
+no momentum component along the field direction. This ensures that a particle that spirals
+in a strong magnetic field without ever hitting a boundary will terminate in timely manner
+and not dominate tracking time. The minimum radius of curvature is chosen to be approximately
+the radius of the typical aperture throughout the model (specified in the options). As the
+magnetic field does no work, a spiralling particle could spiral for a very long time and cause
+an event to run almost indefinitely. Given most dipoles in accelerators induce only a few
+miliradians of deflection, such a particle must be of a much lower momentum than the
+design momentum of the dipole and would in reality not progress far from the magnet.
+
+This artifical behaviour terminates particles in the approximate location by moving them
+more quickly to a boundary.
+
+
 BDSIM Quadrupole
 ----------------
 
