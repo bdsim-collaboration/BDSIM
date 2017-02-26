@@ -47,6 +47,7 @@ class Results:
         for component in GlobalData.components:
             self.Results[component] = []
         self.timingData = None
+        self._resultsList = {}
 
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
@@ -135,15 +136,16 @@ class Results:
             raise ValueError("Unknown component type.")
         elif componentType != '':
             testResults = self.Results[componentType]
-            self._resultsList = []
+            if not self._resultsList.keys().__contains__(componentType):
+                self._resultsList[componentType] = []
 
             for index,result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
-                self._resultsList.append(coords)
+                self._resultsList[componentType].append(coords)
         else:
             pass
-        self._resultsList.reverse()
+        self._resultsList[componentType].reverse()
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -170,7 +172,7 @@ class Results:
             numParticles = branches.split('/')
             if numParticles[0] != numParticles[1]:
                 coords[6] = GlobalData.returnCodes['FAILED']
-                coords[0:5] = GlobalData.returnCodes['NO_DATA']
+                coords[0:6] = GlobalData.returnCodes['NO_DATA']
                 # if num particles don't match, there'll be no phase space comparison  
                 return coords
 
