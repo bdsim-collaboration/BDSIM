@@ -320,6 +320,12 @@ BDSIM Dipole2
 
 * Class name: :code:`BDSIntegratorDipole2`
 
+This routine makes use of the tracking routine provided in Geant4 for a pure magnetic field.
+This is provided in the :code:`G4MagHelicalStepper` class, which provides the tracking routine
+for a single step through a pure magnetic field, but not the other functionality required
+for a suitable integrator. This BDSIM class that inherits it provides the rest of the require
+functionality as well as special treatment for particles that may spiral indefinitely.
+
 
 * If :math:`\|\mathbf{p}\| < 40 \mathrm{MeV}`, the Geant4 :code:`G4ClassicalRK4` integrator
   is used.
@@ -352,6 +358,42 @@ design momentum of the dipole and would in reality not progress far from the mag
 This artifical behaviour terminates particles in the approximate location by moving them
 more quickly to a boundary.
 
+The routine provided by Geant4 in G4MagHelicalStepper is as follows:
+
+.. math::
+
+   \mathrm{BxP} ~ &=& ~ \mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}\\
+   \mathrm{BdP} ~ &=& ~ \mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}\\
+
+   \mathbf{p}_{\|} ~ &=& ~ BdP ~ \|\mathbf{B}| \\
+   \mathbf{p}_{\perp} ~ &=& ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
+
+.. math::
+   
+   R ~ &=& ~ \frac{-\|B\| ~ charge} {\mathbf{p}_{in}}\\
+   \theta ~ &=& ~ \frac{h}{R}
+
+* If :math:`\|\theta\| < 0.005`:
+
+.. math::
+
+   \mathrm{ST} ~ &=& ~ \sin(\theta)\\
+   \mathrm{CT} ~ &=& ~ \cos(\theta)\\
+   
+* Else:
+
+.. math::
+   
+   \mathrm{ST} ~ &=& ~ \theta - \frac{1}{6}~\theta^{3}\\
+   \mathrm{CT} ~ &=& ~ 1 - \frac{1}{2}~\theta^{2} + \frac{1}{24}~\theta^{4}
+
+The final coordinates are calculated as:
+   
+.. math::
+
+   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + R ~ (\mathrm{ST}~\mathbf{p}_{\perp} + (1-\mathrm{CT})~\mathrm{BxP}) + h~\mathbf{p}_{\|}\\
+   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}}_{in} ~ ( \mathrm{CT}~\mathbf{p}_{\perp} + \mathrm{ST}~\mathrm{BxP} ) + \mathbf{p}_{\|}
+
 
 BDSIM Quadrupole
 ----------------
@@ -370,13 +412,15 @@ BDSIM Euler
    \mathbf{q}_{half} ~ = ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ \frac{h}{2}
 
 * Calculate the vector potential :math:`\mathbf{A}` *w.r.t.* :math:`\mathbf{q}_{half}`
-  but with :math:`\mathbf{p}_{in}` (the original momentum). Uses the equation of motion
-  method :code:`RightHandSide`. This invokes 1 query of the field.
-* Calculate new coordinates:
+  but with :math:`\mathbf{p}_{in}` (the original momentum - so as if the particle truly
+  drifted to that point). Uses the equation of motion method :code:`RightHandSide`.
+  This invokes 1 query of the field.
+* Calculate the new coordinates:
 
 .. math::
 
-   \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|}
+   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|} \\
+   \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in} + \mathbf{A}~h
   
 
 BDSIM Sextupole
