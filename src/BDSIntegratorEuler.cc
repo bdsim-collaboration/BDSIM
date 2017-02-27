@@ -1,4 +1,4 @@
-#include "BDSIntegratorSymplecticEuler.hh"
+#include "BDSIntegratorEuler.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -8,19 +8,19 @@
 
 #include <cmath>
 
-BDSIntegratorSymplecticEuler::BDSIntegratorSymplecticEuler(G4Mag_EqRhs* eqOfMIn):
+BDSIntegratorEuler::BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn):
   G4MagIntegratorStepper(eqOfMIn, 6),
   distChord(0)
 {
   backupIntegrator = new G4ClassicalRK4(eqOfMIn, 6);
 }
 
-BDSIntegratorSymplecticEuler::~BDSIntegratorSymplecticEuler()
+BDSIntegratorEuler::~BDSIntegratorEuler()
 {
   delete backupIntegrator;
 }
 
-void BDSIntegratorSymplecticEuler::Stepper(const G4double yIn[],
+void BDSIntegratorEuler::Stepper(const G4double yIn[],
 					   const G4double dydx[],
 					   G4double       stepLength,
 					   G4double       yOut[],
@@ -45,7 +45,7 @@ void BDSIntegratorSymplecticEuler::Stepper(const G4double yIn[],
     }
 }
 
-void BDSIntegratorSymplecticEuler::SimpleStepper(const G4double yIn[],
+void BDSIntegratorEuler::SimpleStepper(const G4double yIn[],
 						 const G4double dydx[],
 						 G4double       stepLength,
 						 G4double       yOut[],

@@ -50,7 +50,7 @@ Non-Linear Fields
 
 BDSIM provides an integrator for higher order fields that more accurately conserves
 energy when calculating the particle trajectory ('symplecticity') as well as being
-competitive computationally. The routine provided is a symplectic Euler integration
+competitive computationally. The routine provided is a 2nd order Euler integration
 algorithm.  More will be added in future.
 
 
@@ -79,11 +79,11 @@ The integrator set may be one of the following (case-insensitive):
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
-|            | Sextupole               | BDSIM Symplectic Euler         |
+|            | Sextupole               | BDSIM Euler                    |
 |            +-------------------------+--------------------------------+
-|            | Octupole                | BDSIM Symplectic Euler         |
+|            | Octupole                | BDSIM Euler                    |
 |            +-------------------------+--------------------------------+
-|            | Decapole                | BDSIM Symplectic Euler         |
+|            | Decapole                | BDSIM Euler                    |
 |            +-------------------------+--------------------------------+
 |            | Thick Multipole         | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
@@ -358,10 +358,10 @@ BDSIM Quadrupole
 
 * Class name: :code:`BDSIntegratorQuadrupole`
 
-BDSIM Symplectic Euler
-----------------------
+BDSIM Euler
+-----------
 
-* Class name: :code:`BDSIntegratorSymplecticEuler`
+* Class name: :code:`BDSIntegratorEuler`
 
 * Calculate the half way position along step length :math:`h` if the particle were to drift:
 

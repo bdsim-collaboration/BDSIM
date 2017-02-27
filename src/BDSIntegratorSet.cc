@@ -66,9 +66,9 @@ namespace BDS
     new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipole2,        // dipole
 			 BDSIntegratorType::quadrupole,     // quadrupole
-			 BDSIntegratorType::symplecticeuler,// sextupole
-			 BDSIntegratorType::symplecticeuler,// octupole
-			 BDSIntegratorType::symplecticeuler,// decapole
+			 BDSIntegratorType::euler,          // sextupole
+			 BDSIntegratorType::euler,          // octupole
+			 BDSIntegratorType::euler,          // decapole
 			 BDSIntegratorType::g4classicalrk4, // (thick) multipole
 			 BDSIntegratorType::g4classicalrk4, // muonspoiler
 			 BDSIntegratorType::g4classicalrk4, // rfcavity
