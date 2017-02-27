@@ -44,8 +44,32 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
     postProcessSubType = preProcessSubType;
   }
 
-  preWeight  = track->GetWeight();
-  postWeight = preWeight;
+  preWeight    = track->GetWeight();
+  postWeight   = preWeight;
+  energy       = 0.0;                      // Does not loose any energy
+  preEnergy    = track->GetTotalEnergy();  // Should this be kinetic energy
+  postEnergy   = preEnergy;
+  preMomentum  = track->GetMomentum();
+  postMomentum = preMomentum;
+
+  // s position for pre and post step point
+  G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(track->GetPosition());
+  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+#endif
+  if (info)
+  {
+    prePosLocal  = auxNavigator->ConvertToLocal(track->GetPosition());
+    postPosLocal = auxNavigator->ConvertToLocal(track->GetPosition());
+
+    G4double sCentre = info->GetSPos();
+    preS             = sCentre + prePosLocal.z();
+    postS            = sCentre + postPosLocal.z();
+    beamlineIndex    = info->GetBeamlineIndex();
+    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+  }
 
 }
 
@@ -117,7 +141,6 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postWeight         = -1.;
   preEnergy          = -1.;
   postEnergy         = -1.;
-  preMomentum        = G4ThreeVector();
   preMomentum        = G4ThreeVector();
   postMomentum       = G4ThreeVector();
   energy             = -1.;
