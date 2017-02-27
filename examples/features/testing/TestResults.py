@@ -1,10 +1,10 @@
 import numpy as _np
 import os as _os
-import string as _string
-import glob as _glob
 import time as _time
 import Globals
-
+from matplotlib import colors as _color
+from matplotlib import ticker as _tick
+import matplotlib.pyplot as _plt
 
 # data type with multiple entries that can be handled by the functions.
 multiEntryTypes = [tuple, list, _np.ndarray]
@@ -48,6 +48,8 @@ class Results:
         for component in GlobalData.components:
             self.Results[component] = []
         self.timingData = None
+        self._resultsList = {}
+        self._filesList = {}
 
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
@@ -136,19 +138,26 @@ class Results:
             raise ValueError("Unknown component type.")
         elif componentType != '':
             testResults = self.Results[componentType]
-            self._resultsList = []
+            if not self._resultsList.keys().__contains__(componentType):
+                self._resultsList[componentType] = []
+                self._filesList[componentType] = []
 
-            for index,result in enumerate(testResults):
+            for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
-                self._resultsList.append(coords)
+                self._resultsList[componentType].append(coords)
+                filename = result['ROOTFile']
+                filename = filename.replace('_event.root', '')
+                filename = filename.replace((componentType + "__"), '')
+                self._filesList[componentType].append(filename)
         else:
             pass
-        self._resultsList.reverse()
+        self._resultsList[componentType].reverse()
+        self._filesList[componentType].reverse()
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
-        coords = _np.zeros(7)
+        coords = _np.zeros(8)
         
         # return all true if comparator returned passed
         code = result['code']
@@ -165,13 +174,14 @@ class Results:
         numParticlesIndex = lines.find('Event Tree (1/2) entries')
         if numParticlesIndex != -1:
             offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
-            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ','')
+            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ', '')
             branches = branches.replace('(', '')
             branches = branches.replace(')', '')
             numParticles = branches.split('/')
             if numParticles[0] != numParticles[1]:
                 coords[6] = GlobalData.returnCodes['FAILED']
-                coords[0:5] = GlobalData.returnCodes['NO_DATA']
+                coords[7] = GlobalData.returnCodes['FAILED']
+                coords[0:6] = GlobalData.returnCodes['NO_DATA']
                 # if num particles don't match, there'll be no phase space comparison  
                 return coords
 
@@ -196,5 +206,60 @@ class Results:
             if branches.__contains__('zp'):
                 coords[5] = GlobalData.returnCodes['FAILED']
 
+        if result['code'] == 1:
+            coords[7] = GlobalData.returnCodes['FAILED']
+
         return coords
+
+    def PlotResults(self, componentType=''):
+        f = _plt.figure(figsize=(15, 7))
+        ax = f.add_subplot(111)
+
+        # set normalised colormap.
+        bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
+        norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+
+        extent = [0, 8, 0, len(self._resultsList[componentType])]
+
+        data = self._resultsList[componentType]
+
+        files = self._filesList[componentType]
+
+        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm, extent=extent)
+
+        xtickMajors = _np.linspace(1, 8, 8)
+        xtickCentre = xtickMajors - 0.5
+
+        ax.set_xticks(xtickCentre)
+        ax.set_xticklabels(['x', 'px', 'y', 'py', 't', 'pt', 'n', 'Gen'])
+        ax.set_xlim(0, 8)
+
+        ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
+        ytickCentre = ytickMajors - 0.5
+
+        ax.set_yticks(ytickCentre)
+        ax.set_yticklabels(files)
+
+        ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+
+        # ax.xaxis.set_visible(False)
+
+        minorXTicks = _tick.FixedLocator(xtickMajors)
+        minorYTicks = _tick.FixedLocator(ytickMinors)
+
+        ax.xaxis.set_minor_locator(minorXTicks)
+        ax.yaxis.set_minor_locator(minorYTicks)
+
+        ax.tick_params(axis='x', which='both', length=0)
+        ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+
+        ax.grid(which='minor', axis='x', linestyle='-')
+        ax.grid(which='minor', axis='y', linestyle='--')
+
+        cbar = f.colorbar(cax)
+        cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
+        cbar.set_ticks(cbarTicks)
+        cbar.set_ticklabels(GlobalData.returnCodes.keys())
+
+        f.tight_layout()
 
