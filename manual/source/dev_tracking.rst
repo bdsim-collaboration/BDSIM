@@ -407,6 +407,13 @@ BDSIM Quadrupole
 
 * Class name: :code:`BDSIntegratorQuadrupole`
 
+* Convert to local curvilinear coordinates.
+* Calculate strength parameter :math:`\kappa` *w.r.t.* a given particle rigidity:
+
+.. math::
+
+   \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
+
 BDSIM Euler
 -----------
 
