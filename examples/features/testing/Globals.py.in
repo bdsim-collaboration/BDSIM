@@ -208,14 +208,14 @@ class Globals():
                                                     ('FILE_NOT_FOUND', 3),  # i.e BDSIM did not generate anything
                                                     ('OVERLAPS', 4),
                                                     ('STUCK_PARTICLE', 5),
-                                                    ('TRACKING_WARNING', 6),
+                                                    ('TRACKING_WARNING', 6),  # not sure if needed...
                                                     ('TIMEOUT', 7),
                                                     ('NO_DATA', 8)
                                                     ])
 
         self.cmap = colors.ListedColormap(['b',
+                                           (1, 1, 0),  # actual yellow
                                            'y',
-                                           (1,1,0),
                                            'r',
                                            'g',
                                            'm',
