@@ -264,7 +264,7 @@ void EventDisplay::DrawTrajectories()
   for(auto t : event->trajectory->trajectories) {
 
     std::string trajNameAppend = std::string();
-    if(event->trajectory->parentID[iTraj] == 0)
+    if(event->trajectory->trackID[iTraj] == 1)
     {
       trajNameAppend = "_primary";
     }

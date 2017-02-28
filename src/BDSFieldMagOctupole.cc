@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSMagnetStrength.hh"
 

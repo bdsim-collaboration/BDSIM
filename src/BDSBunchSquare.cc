@@ -1,6 +1,5 @@
 #include "BDSBunchSquare.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -61,7 +60,7 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   
   zp = CalculateZp(xp,yp,Zp0);
   t = 0 * CLHEP::s;
-  E = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
+  E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 

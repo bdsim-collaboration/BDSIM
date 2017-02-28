@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh"
 #include "BDSShowerModel.hh"
 #include "G4ThreeVector.hh"
 #include "GVFlashShowerParameterisation.hh"

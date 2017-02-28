@@ -219,6 +219,7 @@ OptionsBase::OptionsBase()
   trajCutGTZ               = 1e99;  // minimum z position, so large default value
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
+  trajNoTransportation     = false;
   storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;
