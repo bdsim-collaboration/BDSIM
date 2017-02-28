@@ -19,7 +19,7 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  bPrime = - brho * (*strength)["k1"] / CLHEP::m2;
+  bPrime = brho * (*strength)["k1"] / CLHEP::m2;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -39,7 +39,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
     
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
-  G4double kappa = - eqOfM->FCof()*bPrime/InitPMag;
+  G4double kappa = eqOfM->FCof()*bPrime/InitPMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
 
   /*
