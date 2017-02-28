@@ -131,7 +131,7 @@ public:
   int primaryElectromagnetic();
   int primaryHadronic();
   void primaryPrint();
-  void print(int i);
+  void print(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
