@@ -66,16 +66,21 @@ This choice affects the computation time and accuracy of the simulation but each
 may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
 more sets can be added that mix and match routines as required.
 
-The specific detauls are described in _`Integrator Algorithms`.
+.. note:: "bdsim" is the default.
+
+.. note:: Prior to v0.96, the set described by "bdsimold" was the default, although
+	  in v0.95 it was labelled "bdsim".
+
+The specific details are described in _`Integrator Algorithms`.
 
 The integrator set may be one of the following (case-insensitive):
 
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
-| bdsim      | Solenoid                | BDSIM Solenoid                 |
+| bdsim      | Solenoid                | BDSIM Dipole2                  |
 |            +-------------------------+--------------------------------+
-|            | Dipole                  | BDSIM Dipole                   |
+|            | Dipole                  | BDSIM Dipole2                  |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
@@ -198,11 +203,11 @@ An integrator derived from :code:`G4MagIntegratorStepper` must implement a metho
 
 .. code-block:: c++
 
-		virtual  void  Stepper( const G4double y[],
-                                        const G4double dydx[],
-                                              G4double h,
-                                              G4double yout[],
-                                              G4double yerr[]  ) = 0;
+		virtual void Stepper( const G4double y[],
+                                      const G4double dydx[],
+                                            G4double h,
+                                            G4double yout[],
+                                            G4double yerr[]  ) = 0;
 
 
 This is reposnsible for calculating the coordinates of a trajectory given the input
@@ -229,13 +234,15 @@ in :code:`G4Mag_UsualEqRhs.cc` as follows:
 
 There are other factors in the code for units that aren't shown here.
 
-.. note:: Geant4 will sample the field to give to the equation of motion to calculate
+.. note:: **Field calls**: Geant4 will sample the field to give to the equation of
+	  motion to calculate
 	  :math:`\mathbf{A}`. Getting the field value is generally conidered an *expensive*
 	  operation as may often involve geometry lookup for transforms, applying transforms
 	  or indexing a large array along with interpolation.  In the case of BDSIM, the
 	  majority of fields requie a geometry lookup and transform but are simple equations.
 
-.. note:: Geant4 magnetic integrators do not integrate time and therefore copy the initial
+.. note:: **Time**: Geant4 magnetic integrators do not integrate time and
+	  therefore copy the initial
 	  value of time to the output coordinates.  BDSIM integrators follow this behaviour.
 	  The time is handled by Geant4 at a higher level as the magnetic integrators are
 	  specified to be only integrating over 6 variables.
@@ -362,7 +369,7 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
 
 .. math::
 
-   \mathbf{p}_{\|} ~ &=& ~ (\mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}) ~ \|\mathbf{B}\| \\
+   \mathbf{p}_{\|} ~ &=& ~ \|\mathbf{B}\| ~ (\mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}) \\
    \mathbf{p}_{\perp} ~ &=& ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
 
 .. math::
