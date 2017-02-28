@@ -179,7 +179,7 @@ class Results(ResultsUtilities):
         _os.chdir(pwd)
 
         # branch info should only be one line of text
-        f = open('gitBranch.log','r')
+        f = open('gitBranch.log', 'r')
         branchLine = f.next()
         f.close()
         # get branch name
@@ -246,10 +246,21 @@ class Results(ResultsUtilities):
         f.write(s)
         f.write('\r\n')
 
-        # TODO: Write out reasons for failure.
         if numFailed > 0:
             f.write("The following tests failed to generate ROOT output:\r\n")
             for test in failedTests:
+                f.write(test + "\r\n")
+            f.write("\r\n")
+
+        if len(overlaps) > 0:
+            f.write("The following " + _np.str(len(overlaps)) + " generated files contain overlaps:\r\n")
+            for test in overlaps:
+                f.write(test + "\r\n")
+            f.write("\r\n")
+
+        if len(stuckParticles) > 0:
+            f.write("The following " + _np.str(len(stuckParticles)) + " generated files had stuck particles:\r\n")
+            for test in stuckParticles:
                 f.write(test + "\r\n")
             f.write("\r\n")
 
