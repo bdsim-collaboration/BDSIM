@@ -15,7 +15,7 @@
 BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6),
+  BDSIntegratorCurvilinear(eqOfMIn, 6),
   bTriplePrime(0.0),
   yInitial(0), yMidPoint(0), yFinal(0)
 {

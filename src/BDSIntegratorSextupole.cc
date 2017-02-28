@@ -14,7 +14,7 @@
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
 					       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6)
+  BDSIntegratorCurvilinear(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;

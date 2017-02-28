@@ -8,7 +8,7 @@
 
 BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
 						 G4ThreeVector teleporterDeltaIn):
-  BDSIntegratorBase(eqRHSIn, 6),
+  BDSIntegratorCurvilinear(eqRHSIn, 6),
   teleporterDelta(teleporterDeltaIn)
 {;}
 

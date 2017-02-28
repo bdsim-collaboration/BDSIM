@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORQUADRUPOLE_H
 #define BDSINTEGRATORQUADRUPOLE_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorCurvilinear.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -21,7 +21,7 @@ class BDSMagnetStrength;
  * 
  */
 
-class BDSIntegratorQuadrupole: public BDSIntegratorBase
+class BDSIntegratorQuadrupole: public BDSIntegratorCurvilinear
 {
 public:
   BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,

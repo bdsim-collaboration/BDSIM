@@ -11,7 +11,7 @@
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6)
+  BDSIntegratorCurvilinear(eqOfMIn, 6)
 {
   bField = brho * (*strength)["ks"];
 #ifdef BDSDEBUG

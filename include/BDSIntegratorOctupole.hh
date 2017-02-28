@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATOROCTUPOLE_H
 #define BDSINTEGRATOROCTUPOLE_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorCurvilinear.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -13,7 +13,7 @@ class BDSMagnetStrength;
  * @brief Integrator for octupole field.
  */
 
-class BDSIntegratorOctupole: public BDSIntegratorBase
+class BDSIntegratorOctupole: public BDSIntegratorCurvilinear
 {
 public:
   BDSIntegratorOctupole(BDSMagnetStrength const* strength,

@@ -1,30 +1,22 @@
 #include "BDSIntegratorEuler.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4ClassicalRK4.hh"
 #include "G4ThreeVector.hh"
-
-#include "BDSUtilities.hh"
 
 #include <cmath>
 
 BDSIntegratorEuler::BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn):
-  G4MagIntegratorStepper(eqOfMIn, 6),
-  distChord(0)
-{
-  backupIntegrator = new G4ClassicalRK4(eqOfMIn, 6);
-}
+  BDSIntegrator(eqOfMIn, 6)
+{;}
 
 BDSIntegratorEuler::~BDSIntegratorEuler()
-{
-  delete backupIntegrator;
-}
+{;}
 
 void BDSIntegratorEuler::Stepper(const G4double yIn[],
-					   const G4double dydx[],
-					   G4double       stepLength,
-					   G4double       yOut[],
-					   G4double       yErr[])
+				 const G4double dydx[],
+				 G4double       stepLength,
+				 G4double       yOut[],
+				 G4double       yErr[])
 {
   G4double yTemp[7], yTwoHalf[7], yErr2[7];
   
@@ -90,7 +82,8 @@ void BDSIntegratorEuler::SimpleStepper(const G4double yIn[],
 
   // ((average of new and old) - mid point from drift ) .mag()
   // both are straight lines, but it's an approximately close
-  distChord = (0.5*(pos_new + pos) - pos_phalf).mag();
+  G4double dc = (0.5*(pos_new + pos) - pos_phalf).mag();
+  SetDistChord(dc);
   
   return;
 }

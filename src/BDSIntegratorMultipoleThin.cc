@@ -15,7 +15,7 @@
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 						       G4double                 brho,
 						       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6),
+  BDSIntegratorCurvilinear(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   b0l = (*strength)["field"] * brho;

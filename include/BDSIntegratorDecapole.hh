@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORDECAPOLE_H
 #define BDSINTEGRATORDECAPOLE_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorCurvilinear.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -15,7 +15,7 @@ class BDSMagnetStrength;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorDecapole: public BDSIntegratorBase
+class BDSIntegratorDecapole: public BDSIntegratorCurvilinear
 {
 public:
   BDSIntegratorDecapole(BDSMagnetStrength const* strength,

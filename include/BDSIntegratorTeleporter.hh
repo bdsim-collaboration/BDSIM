@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORTELEPORTER_H
 #define BDSINTEGRATORTELEPORTER_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorCurvilinear.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -12,7 +12,7 @@
  * @author Laurie Nevay
  */
 
-class BDSIntegratorTeleporter: public BDSIntegratorBase
+class BDSIntegratorTeleporter: public BDSIntegratorCurvilinear
 {
 public:
   BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
