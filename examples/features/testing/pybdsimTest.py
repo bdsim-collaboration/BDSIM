@@ -79,7 +79,7 @@ def Run(inputDict):
         else:
             originalFile = inputDict['originalFile']
 
-        #run comparator and record comparator time.
+        # run comparator and record comparator time.
         t = time.time()
         outputLog.write('\r\n')
         TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, testOutputFile], stdout=outputLog)
