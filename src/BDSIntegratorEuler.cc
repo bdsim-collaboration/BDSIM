@@ -46,7 +46,7 @@ void BDSIntegratorEuler::SimpleStepper(const G4double yIn[],
   const G4ThreeVector pos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   const G4ThreeVector mom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   const G4ThreeVector momU = G4ThreeVector(dydx[0], dydx[1], dydx[2]); // already provided for us
-  const G4double      stepLengthSqrd = pow(stepLength, 2);
+  const G4double      stepLengthSqrd = std::pow(stepLength, 2);
   const G4double      halfSL         = stepLength*0.5;
 
   // calcualte the position half step length for drifting with no force
