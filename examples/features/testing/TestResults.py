@@ -42,7 +42,7 @@ class Timing:
         return s
 
 
-class Results:
+class ResultsUtilities:
     def __init__(self):
         self.Results = {}
         for component in GlobalData.components:
@@ -50,6 +50,116 @@ class Results:
         self.timingData = None
         self._resultsList = {}
         self._filesList = {}
+
+    def _getPhaseSpaceComparatorData(self, result, logFile=''):
+        # phasespace coords initialised as passed.
+        coords = _np.zeros(7)
+
+        # return all true if comparator returned passed
+        code = result['code']
+        if code == 0:
+            return coords
+        elif code == 2:  # incorrect args
+            coords[:] = GlobalData.returnCodes['NO_DATA']
+            return coords
+        elif code == 3:  # file not found
+            coords[:] = GlobalData.returnCodes['NO_DATA']
+            return coords
+
+        # get data in logfile.
+        f = open(logFile)
+        lines = f.read()
+        f.close()
+
+        # get data on number particles comparison. If the numbers are not equal,
+        # set the phase space coords to no data, and number of particle compared to failed.
+        numParticlesIndex = lines.find('Event Tree (1/2) entries')
+        if numParticlesIndex != -1:
+            offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
+            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ', '')
+            branches = branches.replace('(', '')
+            branches = branches.replace(')', '')
+            numParticles = branches.split('/')
+            if numParticles[0] != numParticles[1]:
+                coords[6] = GlobalData.returnCodes['FAILED']
+                coords[0:6] = GlobalData.returnCodes['NO_DATA']
+                # if num particles don't match, there'll be no phase space comparison
+                return coords
+
+        # get data on phase space branches that failed. Log file only contains failed branches.
+        phasespaceIndex = lines.find('type Sampler')
+        if phasespaceIndex != -1:
+            offendingSamplerBranchesLine = lines[phasespaceIndex:].split('\n')[1]
+            branches = offendingSamplerBranchesLine.split(' ')
+            branches.remove('Offending')
+            branches.remove('branches:')
+            branches.remove('')
+            if branches.__contains__('x'):
+                coords[0] = GlobalData.returnCodes['FAILED']
+            if branches.__contains__('xp'):
+                coords[1] = GlobalData.returnCodes['FAILED']
+            if branches.__contains__('y'):
+                coords[2] = GlobalData.returnCodes['FAILED']
+            if branches.__contains__('yp'):
+                coords[3] = GlobalData.returnCodes['FAILED']
+            if branches.__contains__('t'):
+                coords[4] = GlobalData.returnCodes['FAILED']
+            if branches.__contains__('zp'):
+                coords[5] = GlobalData.returnCodes['FAILED']
+
+        return coords
+
+    def _getBDSIMLogData(self, result, logFile=''):
+        generalStatus = []
+
+        # append comparator check
+        if result['code'] == 0:
+            generalStatus.append(0)
+        elif result['code'] == 1:
+            generalStatus.append(1)
+        elif result['code'] == 2:
+            generalStatus.append(2)
+        elif result['code'] == 3:
+            generalStatus.append(3)
+
+        # get data in logfile.
+        f = open(logFile)
+        lines = f.read()
+        f.close()
+
+        splitLines = lines.split('\n')
+        startLines = ['-------- WWWW ------- G4Exception-START -------- WWWW -------',
+                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ']
+        endLines = ['-------- WWWW -------- G4Exception-END --------- WWWW -------',
+                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ']
+
+        startLineIndices = []
+        endLineIndices = []
+
+        startLineIndices.extend([i for i, x in enumerate(splitLines) if startLines.__contains__(x)])
+        endLineIndices.extend([i for i, x in enumerate(splitLines) if endLines.__contains__(x)])
+        endLineIndices.sort()  # sort just in case
+
+        if len(startLineIndices) != len(endLineIndices):
+            # something went wrong
+            generalStatus.append(8)  # append a no data number
+            return generalStatus
+
+        if len(startLineIndices) > 0:
+            for index, startLine in enumerate(startLineIndices):
+                exceptions = splitLines[startLine:endLineIndices[index] + 1]
+                if exceptions.__contains__('      issued by : G4PVPlacement::CheckOverlaps()'):
+                    generalStatus.append(GlobalData.returnCodes['OVERLAPS'])
+                if exceptions.__contains__('     issued by : G4PropagatorInField::ComputeStep()'):
+                    generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
+                    # TODO: check for other types of warnings/errors.
+
+        return generalStatus
+
+
+class Results(ResultsUtilities):
+    def __init__(self):
+        ResultsUtilities.__init__(self)
 
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
@@ -154,62 +264,6 @@ class Results:
             pass
         self._resultsList[componentType].reverse()
         self._filesList[componentType].reverse()
-
-    def _getPhaseSpaceComparatorData(self, result, logFile=''):
-        # phasespace coords initialised as passed.
-        coords = _np.zeros(8)
-        
-        # return all true if comparator returned passed
-        code = result['code']
-        if code == 0:
-            return coords
-
-        # get data in logfile.
-        f = open(logFile)
-        lines = f.read()
-        f.close()
-
-        # get data on number particles comparison. If the numbers are not equal,
-        # set the phase space coords to no data, and number of particle compared to failed.
-        numParticlesIndex = lines.find('Event Tree (1/2) entries')
-        if numParticlesIndex != -1:
-            offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
-            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ', '')
-            branches = branches.replace('(', '')
-            branches = branches.replace(')', '')
-            numParticles = branches.split('/')
-            if numParticles[0] != numParticles[1]:
-                coords[6] = GlobalData.returnCodes['FAILED']
-                coords[7] = GlobalData.returnCodes['FAILED']
-                coords[0:6] = GlobalData.returnCodes['NO_DATA']
-                # if num particles don't match, there'll be no phase space comparison  
-                return coords
-
-        # get data on phase space branches that failed. Log file only contains failed branches.
-        phasespaceIndex = lines.find('type Sampler')
-        if phasespaceIndex != -1:
-            offendingSamplerBranchesLine = lines[phasespaceIndex:].split('\n')[1]
-            branches = offendingSamplerBranchesLine.split(' ')
-            branches.remove('Offending')
-            branches.remove('branches:')
-            branches.remove('')
-            if branches.__contains__('x'):
-                coords[0] = GlobalData.returnCodes['FAILED']
-            if branches.__contains__('xp'):
-                coords[1] = GlobalData.returnCodes['FAILED']
-            if branches.__contains__('y'):
-                coords[2] = GlobalData.returnCodes['FAILED']
-            if branches.__contains__('yp'):
-                coords[3] = GlobalData.returnCodes['FAILED']
-            if branches.__contains__('t'):
-                coords[4] = GlobalData.returnCodes['FAILED']
-            if branches.__contains__('zp'):
-                coords[5] = GlobalData.returnCodes['FAILED']
-
-        if result['code'] == 1:
-            coords[7] = GlobalData.returnCodes['FAILED']
-
-        return coords
 
     def PlotResults(self, componentType=''):
         f = _plt.figure(figsize=(15, 7))
