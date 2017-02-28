@@ -172,9 +172,9 @@ G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)c
     exit(1);
   }
   if (Zp0<0)
-    {zp = -sqrt(1.-xp*xp -yp*yp);}
+    {zp = -std::sqrt(1.-xp*xp -yp*yp);}
   else
-    {zp = sqrt(1.-xp*xp -yp*yp);}
+    {zp = std::sqrt(1.-xp*xp -yp*yp);}
 
   return zp;
 }

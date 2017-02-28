@@ -32,7 +32,7 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
 					     const G4double       /*t*/) const
 {
   // Translate cartesian to polar coordinates
-  G4double r   = sqrt(std::pow(position.x(),2) + std::pow(position.y(),2));
+  G4double r   = std::sqrt(std::pow(position.x(),2) + std::pow(position.y(),2));
   G4double phi = 0;
   if (BDS::IsFinite(std::abs(r)))
     {phi = atan2(position.y(),position.x());}

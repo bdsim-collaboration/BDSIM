@@ -147,7 +147,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
       
       // ensure normalisation for vector
-      zp1 = sqrt(1 - xp1*xp1 -yp1*yp1);
+      zp1 = std::sqrt(1 - xp1*xp1 -yp1*yp1);
       
       // calculate deltas to existing coords
       G4double dx = x1-x0;
@@ -163,7 +163,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << " normalising to conserve step length" << G4endl;
 #endif
-	  ScaleFac = sqrt(ScaleFac);
+	  ScaleFac = std::sqrt(ScaleFac);
 	  dx /= ScaleFac;
 	  dy /= ScaleFac;
 	  dz /= ScaleFac;

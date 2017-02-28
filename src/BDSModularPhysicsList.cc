@@ -303,9 +303,9 @@ void BDSModularPhysicsList::SetParticleDefinition()
     {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
   
   // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum(sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
-  globals->SetParticleMomentum(sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetParticleMomentum(std::sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
 
   // compute signed magnetic rigidity brho

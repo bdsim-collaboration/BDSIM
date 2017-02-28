@@ -99,7 +99,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //apply kick
   xp1 -= kick.real();
   yp1 += kick.imag();
-  zp1 = sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   //Reset n for skewed kicks.
   n=1;
@@ -131,7 +131,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //apply kick
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
-  zp1 = sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   //for non paraxial, advance particle as if in a drift.
   //xp1 or yp1 may be > 1, so isnan check also needed for zp1.
