@@ -137,7 +137,7 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp     = ptcData[iRay][1] * CLHEP::rad+Xp0;
   yp     = ptcData[iRay][3] * CLHEP::rad+Yp0;
   t      = (z0-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
-  E      = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * (ptcData[iRay][5]+1.0);
+  E      = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
   zp     = CalculateZp(xp,yp,Zp0);
   weight = 1.0; 
 

@@ -1,6 +1,5 @@
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -114,8 +113,8 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = v[3] * CLHEP::rad;
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
-  z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * v[5];
+  z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+  E  = E0 * CLHEP::GeV * v[5];
   
   zp = CalculateZp(xp,yp,Zp0);
   

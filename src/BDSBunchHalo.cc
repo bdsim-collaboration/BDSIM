@@ -1,6 +1,5 @@
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/options.h"
@@ -9,6 +8,7 @@
 
 #include "Randomize.hh"
 #include "CLHEP/Random/RandFlat.h"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
 
@@ -202,7 +202,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
       zp = CalculateZp(xp, yp, Zp0);
       t = 0 * CLHEP::s;
-      E = BDSGlobalConstants::Instance()->ParticleTotalEnergy();
+      E = E0 * CLHEP::GeV;
 
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
