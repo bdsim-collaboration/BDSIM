@@ -28,7 +28,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
 
   //Converting from Local Cartesian to Local Cylindrical
   G4double phi = atan2(position.y(),position.x());
-  G4double r = std::sqrt(pow(position.x(),2) +  pow(position.y(),2));
+  G4double r = std::sqrt(std::pow(position.x(),2) +  std::pow(position.y(),2));
 
   G4double rNormalised = normalisedCavityRadius * r;
 

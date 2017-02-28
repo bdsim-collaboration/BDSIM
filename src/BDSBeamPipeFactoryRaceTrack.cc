@@ -75,7 +75,7 @@ G4double BDSBeamPipeFactoryRaceTrack::CalculateIntersectionRadius(G4double aper1
 								  G4double /*aper4*/,
 								  G4double beamPipeThickness)
 {
-  G4double result = sqrt(pow(aper1,2) + pow(aper2,2)) + aper3 + beamPipeThickness;
+  G4double result = std::sqrt(std::pow(aper1,2) + std::pow(aper2,2)) + aper3 + beamPipeThickness;
   result *= 1.5; // 10% margin is just enough
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "intersection radius: " << result << G4endl;

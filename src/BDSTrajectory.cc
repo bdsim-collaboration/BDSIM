@@ -1,6 +1,7 @@
 #include "BDSTrajectory.hh"
 
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -12,7 +13,6 @@
 
 #include <map>
 #include <ostream>
-#include <include/BDSGlobalConstants.hh>
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 

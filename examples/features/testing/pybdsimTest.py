@@ -5,6 +5,7 @@ import glob as _glob
 import subprocess as _sub
 import multiprocessing
 import time
+import collections
 
 import Globals
 import PhaseSpace
@@ -17,6 +18,10 @@ from pybdsim import Options as _options
 multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
+
+# result utility functions for checking output log files.
+# Needed by Run function, so instantiate here.
+ResultUtils = TestResults.ResultsUtilities()
 
 
 def Run(inputDict):
@@ -61,6 +66,8 @@ def Run(inputDict):
         # outputLog.write('Output from ' + inputfile + ' was not written.')
         # outputLog.close()
         inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+        _os.system("mv " + bdsimLogFile + " FailedTests/" + bdsimLogFile)  # move failed bdsim log file
+
     elif not generateOriginal:
         outputLog = open(comparatorLogFile, 'a')  # temp log file for the comparator output.
 
@@ -72,7 +79,7 @@ def Run(inputDict):
         else:
             originalFile = inputDict['originalFile']
 
-        #run comparator and record comparator time.
+        # run comparator and record comparator time.
         t = time.time()
         outputLog.write('\r\n')
         TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, testOutputFile], stdout=outputLog)
@@ -80,28 +87,33 @@ def Run(inputDict):
         ctime = time.time() - t
         inputDict['compTime'] = ctime
 
-        # immediate pass/fail bool for decision on keeping root output
-        hasPassed = True
-        if TestResult != 0:
-            hasPassed = False
-
-        if hasPassed:
+        if TestResult == 0:
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
             inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
             _os.system("rm " + comparatorLogFile)
-        else:
+        elif TestResult != 0:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             _os.system("mv " + comparatorLogFile + " FailedTests/" + comparatorLogFile)  # move failed comp. log file
-            _os.system("mv " + bdsimLogFile + " FailedTests/" + bdsimLogFile)  # move failed bdsim log file
 
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            inputDict['code'] = GlobalData.returnCodes['FAILED']  # False
+            inputDict['code'] = TestResult  # not passed comparator return code
+
     elif generateOriginal:
+        # root output was generated - success
         inputDict['code'] = GlobalData.returnCodes['SUCCESS']
-        _os.remove(bdsimLogFile)
+
+    ResultUtils = TestResults.ResultsUtilities()
+    generalStatus = ResultUtils._getBDSIMLogData(inputDict, bdsimLogFile)
+    inputDict['generalStatus'] = generalStatus
+
+    # move log file into failed if it contains overlaps or stuck particles.
+    if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])):
+        _os.system("mv " + bdsimLogFile + " FailedTests/" + bdsimLogFile)
+
     return inputDict
 
 
@@ -137,6 +149,7 @@ class Test(dict):
                         self.__Update(key, value)
         else:
             raise ValueError("Unknown component type.")
+
         self.SetComparisonFilename(fileName=comparisonFile)
         self.SetEnergy(energy)
         self.SetBeamPhaseSpace(phaseSpace)
@@ -255,6 +268,10 @@ class Test(dict):
         else:
             self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
+    def SetInrays(self, inraysFile=''):
+        if inraysFile != '':
+            self._beamFilename = inraysFile
+
     def AddParameter(self, parameter, values=[]):
         if self.keys().__contains__(parameter):
             raise ValueError("Parameter is already listed as a test parameter.")
@@ -270,9 +287,9 @@ class Test(dict):
         else:
             raise TypeError("Unknown data type for " + parameter)
 
-    def WriteToInrays(self,filename):
-        self._beamFilename = filename
-        self.PhaseSpace.WriteToInrays(filename)
+    def WriteToInrays(self, filename):
+        self.SetInrays(filename)
+        self.PhaseSpace._WriteToInrays(filename)
 
 
 class TestUtilities(object):
@@ -552,14 +569,15 @@ class TestSuite(TestUtilities):
                 testDict = {'testfile'          : test,
                             'componentType'     : componentType,
                             'originalFile'      : origname,
-                            'bdsimLogfile'      : '',
+                            'bdsimLogFile'      : '',
                             'compLogFile'       : '',
                             'ROOTFile'          : '',
                             'generateOriginal'  : self._generateOriginals,
                             'isSelfComparison'  : isSelfComparison,
                             'bdsimTime'         : 0,
                             'compTime'          : 0,
-                            'code'              : None
+                            'code'              : None,  # comparator return code
+                            'generalStatus'     : None  # General status, can contain multiple return codes.
                             }
                 testlist.append(testDict)
 
@@ -575,6 +593,7 @@ class TestSuite(TestUtilities):
                 _os.chdir('../')
             else:
                 self.Results.ProcessResults(componentType=componentType)
+                self.Results.PlotResults(componentType=componentType)
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)

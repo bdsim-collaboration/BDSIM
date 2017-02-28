@@ -8,6 +8,8 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Version.hh"
+
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include "parser/options.h"
@@ -136,13 +138,19 @@ public:
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
+#if G4VERSION_NUMBER != 1030
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
+#else
+  // Overlap checking slow in 10.3.0 therefore disabled,
+  // see https://bitbucket.org/jairhul/bdsim/issues/151/overlap-checking-in-103-gives-warnings-and
+  inline G4bool   CheckOverlaps()            const {return false;}
+#endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
-  inline G4bool   TrajNoTransportation()       const {return G4bool  (options.trajNoTransportation);}
-  inline G4bool   StoreELossLinks()          const {return G4bool(options.storeElossLinks);}
+  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
+  inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}

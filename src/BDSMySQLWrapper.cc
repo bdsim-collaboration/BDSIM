@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
 #include "BDSMySQLWrapper.hh"
@@ -6,6 +5,8 @@
 #include "BDSMySQLVariable.hh"
 
 #include "globals.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cstdlib>
 #include <iostream>
 #include <regex>

@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -33,16 +34,18 @@ extern BDSOutputBase* bdsOutput;       // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
-// Function to recursively connect t
-void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap, std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t) {
-  G4int parentID = t->GetParentID();
-  if (parentID > 0) {
-    BDSTrajectory *t2 = trackIDMap.at(parentID);
-    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
-    connectTraj(trackIDMap, interestingTraj, t2);
-  }
-  else {
-    return;
+namespace {
+  // Function to recursively connect t
+  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap, std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t) {
+    G4int parentID = t->GetParentID();
+    if (parentID > 0) {
+      BDSTrajectory *t2 = trackIDMap.at(parentID);
+      interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
+      connectTraj(trackIDMap, interestingTraj, t2);
+    }
+    else {
+      return;
+    }
   }
 }
 
@@ -304,6 +307,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
         continue;
       }
+      // if not interesting store false
+      interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, false));
     }
 
     // Connect trajectory graphs
@@ -320,13 +325,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     std::vector<BDSTrajectory *> interestingTrajVec;
     // TODO sort accordings to trackID
     for (auto i : trackIDMap) {
-      try {
-        if (interestingTraj.at(i.second)) {
-          interestingTrajVec.push_back(i.second);
-        }
-      }
-      catch (const std::exception &ex) {
-        continue;
+      if (interestingTraj.at(i.second)) {
+	interestingTrajVec.push_back(i.second);
       }
     }
 

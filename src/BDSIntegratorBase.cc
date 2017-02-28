@@ -59,12 +59,12 @@ void BDSIntegratorBase::AdvanceChord(const G4double h,
       // TBC - this can go negative for very long step queries that
       // presumably cause a very large deflection. This results in nan
       // and bad tracking from Geant4 / a crash.
-      G4double dz = sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
+      G4double dz = std::sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
       // check for precision problems
       G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
       if(ScaleFac>1.0000001)
 	{
-	  ScaleFac=sqrt(ScaleFac);
+	  ScaleFac=std::sqrt(ScaleFac);
 	  dx/=ScaleFac;
 	  dy/=ScaleFac;
 	  dz/=ScaleFac;

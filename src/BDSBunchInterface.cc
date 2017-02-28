@@ -2,7 +2,6 @@
 #include "BDSBeamline.hh"
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -33,7 +32,7 @@ namespace {
 
 BDSBunchInterface::BDSBunchInterface(): 
   X0(0.0), Y0(0.0), Z0(0.0), S0(0.0), T0(0.0), 
-  Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(0.0), sigmaE(0.0),
+  Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), sigmaT(0.0), sigmaE(0.0),
   useCurvilinear(false), beamline(nullptr)
 {}
 
@@ -49,6 +48,7 @@ void BDSBunchInterface::SetOptions(const GMAD::Options& opt)
   T0 = opt.T0;
   Xp0 = opt.Xp0;
   Yp0 = opt.Yp0;
+  E0  = opt.E0;
   sigmaE = opt.sigmaE;
   sigmaT = opt.sigmaT;
 
@@ -67,17 +67,17 @@ void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
 					G4double& xp, G4double& yp, G4double& zp,
 					G4double& t , G4double&  E, G4double& weight)
 {
-  x0 = (X0 + 0.0) * CLHEP::m;
-  y0 = (Y0 + 0.0) * CLHEP::m;
-  z0 = (Z0 + 0.0) * CLHEP::m;
-  xp = (Xp0 + 0.0)* CLHEP::rad;
-  yp = (Yp0 + 0.0)* CLHEP::rad;
+  x0 = X0  * CLHEP::m;
+  y0 = Y0  * CLHEP::m;
+  z0 = Z0  * CLHEP::m;
+  xp = Xp0 * CLHEP::rad;
+  yp = Yp0 * CLHEP::rad;
   zp = CalculateZp(xp,yp,Zp0);
   if (useCurvilinear)
     {ApplyCurvilinearTransform(x0,y0,z0,xp,yp,zp);}
   
   t  = 0.0; 
-  E = BDSGlobalConstants::Instance()->ParticleTotalEnergy();
+  E = E0 * CLHEP::GeV;
   weight = 1.0;
   return;
 }
@@ -172,9 +172,9 @@ G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)c
     exit(1);
   }
   if (Zp0<0)
-    {zp = -sqrt(1.-xp*xp -yp*yp);}
+    {zp = -std::sqrt(1.-xp*xp -yp*yp);}
   else
-    {zp = sqrt(1.-xp*xp -yp*yp);}
+    {zp = std::sqrt(1.-xp*xp -yp*yp);}
 
   return zp;
 }

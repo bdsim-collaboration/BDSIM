@@ -211,7 +211,7 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
   }
 
   return std::pair<int,int>(pin,sin);
-};
+}
 
 int BDSOutputROOTEventTrajectory::primary()
 {

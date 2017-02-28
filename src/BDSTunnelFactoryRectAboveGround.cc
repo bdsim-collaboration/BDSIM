@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTunnelFactoryBase.hh"
 #include "BDSTunnelFactoryRectAboveGround.hh"
 #include "BDSTunnelInfo.hh"
