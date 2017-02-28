@@ -582,7 +582,7 @@ G4double BDS::CalculateFringeFieldCorrection(G4double rho,
 					     G4double fint)
 {
   G4double term1 = fint/rho;
-  G4double term2 = (1.0 + pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
+  G4double term2 = (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
   G4double corrValue = term1*term2;
   return corrValue;
 }

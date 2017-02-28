@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh"
 #include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4EllipticalTube.hh"

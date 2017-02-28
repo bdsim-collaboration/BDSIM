@@ -24,7 +24,7 @@ G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &positio
 {
   G4ThreeVector result(0,0,0);
   G4double zField   = 0;
-  G4double localRad = sqrt(pow(position.y(),2)+pow(position.x(),2));
+  G4double localRad = std::sqrt(std::pow(position.y(),2)+std::pow(position.x(),2));
 
   if( (position.z() > itsZMin) && (position.z() < itsZMax) )
     {

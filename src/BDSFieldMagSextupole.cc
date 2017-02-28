@@ -29,7 +29,7 @@ G4ThreeVector BDSFieldMagSextupole::GetField(const G4ThreeVector& position,
 
   G4ThreeVector localField;
   localField[0] = position.x() * position.y() * bDoublePrime;
-  localField[1] = (pow(position.x(),2) - pow(position.y(),2)) * halfBDoublePrime;
+  localField[1] = (std::pow(position.x(),2) - std::pow(position.y(),2)) * halfBDoublePrime;
   localField[2] = 0;
   
   return localField;

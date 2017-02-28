@@ -118,7 +118,7 @@ void SamplerAnalysis::Process()
 	      {
 		for (int k = 0; k <= 4; ++k)
 		  {
-		    powSums[a][b][j][k] += pow(v[a],j)*pow(v[b],k);
+		    powSums[a][b][j][k] += std::pow(v[a],j)*std::pow(v[b],k);
 		  }
 	      }
 	  }
@@ -141,7 +141,7 @@ void SamplerAnalysis::Terminate()
 	  {
 	    for (int k = 0; k <= 4; ++k)
 	      {
-		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, (int)npart, a, b, j, k);
+		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
 	      }
 	  }
       }
@@ -176,20 +176,20 @@ void SamplerAnalysis::Terminate()
 
     double corrCentMom_2_0 = 0.0, corrCentMom_0_2 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
     
-    corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (pow(optical[i][4],2)*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+    corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
     
-    corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (pow(optical[i][5],2)*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+    corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
     
-    corrCentMom_1_1 = cenMoms[j][j+1][1][1] + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+    corrCentMom_1_1 = cenMoms[j][j+1][1][1] + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0] - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
 
     
-    optical[i][0]  = sqrt(corrCentMom_2_0*corrCentMom_0_2-pow(corrCentMom_1_1,2));                                                         // emittance
+    optical[i][0]  = sqrt(corrCentMom_2_0*corrCentMom_0_2-std::pow(corrCentMom_1_1,2));                                                    // emittance
     optical[i][1]  = -corrCentMom_1_1/optical[i][0];                                                                                       // alpha
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                                                                        // beta
-    optical[i][3]  = (1+pow(optical[i][1],2))/optical[i][2];                                                                               // gamma
+    optical[i][3]  = (1+std::pow(optical[i][1],2))/optical[i][2];                                                                          // gamma
 
     optical[i][10] = this->S;
     optical[i][11] = npart;
@@ -204,7 +204,7 @@ void SamplerAnalysis::Terminate()
 	{
 	  for(int k=0;k<3;++k)
 	    {
-	      covMats[i][j][k]=centMomToCovariance(cenMoms, (int)npart, i, j, k);
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
 	    }
 	}
     }
@@ -255,7 +255,7 @@ void SamplerAnalysis::Terminate()
 
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
-					      int         npart,
+					      long long int         npartIn,
 					      int a,
 					      int b,
 					      int m,
@@ -269,12 +269,17 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
   
 {
   double moment = 0.0;
+  
+  double npartPow1 = (double)npartIn;       //explicitly multiply out the number of particles to achieve the appropriate power.          
+  double npartPow2 = npartPow1 * npartPow1;     //Done because of potential problems with the pow() funtion in C++ where some aruments cause NaNs
+  double npartPow3 = npartPow2 * npartPow1;   //Typecast to a double is done to avoid integer overflow for large number of particles.
+  double npartPow4 = npartPow3 * npartPow1;
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
       double s_1_0 = powSums[a][b][m][n];
 
-      moment = s_1_0/npart;
+      moment = s_1_0/npartIn;
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))
@@ -291,7 +296,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 	      s_2_0 = powSums[a][b][m][n];
       }
 
-      moment =  (npart*s_2_0 - pow(s_1_0,2))/(npart*(npart-1));
+      moment =  (npartPow1*s_2_0 - std::pow(std::abs(s_1_0),2))/(npartPow1*(npartPow1-1));
     }
 
   else if(n == 1 && m == 1)
@@ -302,7 +307,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       s_0_1 = powSums[a][b][m-1][n];
       s_1_1 = powSums[a][b][m][n];
 
-      moment =  (npart*s_1_1 - s_0_1*s_1_0)/(npart*(npart-1));
+      moment =  (npartPow1*s_1_1 - s_0_1*s_1_0)/(npartPow1*(npartPow1-1));
     }
   
   else if((n == 4 && m == 0) || (n == 0 && m == 4))
@@ -323,8 +328,8 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 	      s_4_0 = powSums[a][b][m][n];
       }
 
-      moment = - (3*pow(s_1_0,4))/pow(npart,4) + (6*pow(s_1_0,2)*s_2_0)/pow(npart,3)
-	       - (4*s_1_0*s_3_0)/pow(npart,2) + s_4_0/npart;
+      moment = - (3*std::pow(s_1_0,4))/npartPow4 + (6*std::pow(s_1_0,2)*s_2_0)/npartPow3
+	       - (4*s_1_0*s_3_0)/npartPow2 + s_4_0/npartPow1;
     }
 
   else if((m == 3 && n == 1) || (m == 1 && n ==3))
@@ -352,9 +357,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 	      s_3_1 = powSums[a][b][m][n];
       }
 
-      moment = - (3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*s_1_0*s_1_0*s_1_1)/pow(npart,3)
-               + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) - (3*s_1_0*s_2_1)/(npart*npart)
-               - (s_0_1*s_3_0)/(npart*npart) + s_3_1/npart;
+      moment = - (3*s_0_1*std::pow(s_1_0,3))/npartPow4 + (3*s_1_0*s_1_0*s_1_1)/npartPow3
+               + (3*s_0_1*s_1_0*s_2_0)/npartPow3 - (3*s_1_0*s_2_1)/npartPow2
+               - (s_0_1*s_3_0)/npartPow2 + s_3_1/npartPow1;
     }
 
    else if(m == 2 && n == 2)
@@ -370,15 +375,15 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       s_2_1 = powSums[a][b][m][n-1];
       s_2_2 = powSums[a][b][m][n];
 
-      moment = - (3*pow(s_0_1,2)*pow(s_1_0,2))/pow(npart,4) + (s_0_2*pow(s_1_0,2))/pow(npart,3)
-	       + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) - (2*s_1_0*s_1_2)/pow(npart,2)
-	       + (pow(s_0_1,2)*s_2_0)/pow(npart,3) - (2*s_0_1*s_2_1)/pow(npart,2) + s_2_2/npart; 
+      moment = - (3*std::pow(s_0_1,2)*std::pow(s_1_0,2))/npartPow4 + (s_0_2*std::pow(s_1_0,2))/npartPow3
+	       + (4*s_0_1*s_1_0*s_1_1)/npartPow3 - (2*s_1_0*s_1_2)/npartPow2
+	       + (std::pow(s_0_1,2)*s_2_0)/npartPow3 - (2*s_0_1*s_2_1)/npartPow2 + s_2_2/npartPow1;
     }
 
     return moment;
 }
 
-double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  int k, int i, int j)
+double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, long long int npartIn,  int k, int i, int j)
 {
   // Returns a matrix element of the parameter covariance matrix which is a 3x3 symmetric matrix in each plane (coupling is ignored). 
   // Arguments:
@@ -408,7 +413,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 	      m_2_0 = centMoms[a][a+1][0][2];
       }
 
-      cov = -((npart-3)*pow(m_2_0,2))/(npart*(npart-1)) + m_4_0/npart;
+      cov = -((npartIn-3)*std::pow(m_2_0,2))/(npartIn*(npartIn-1)) + m_4_0/npartIn;
     }
   
   else if(i == 2 && j == 2)
@@ -420,7 +425,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       m_0_2 = centMoms[a][a+1][0][2];
       m_2_2 = centMoms[a][a+1][2][2];
 
-      cov = -((npart-2)*pow(m_1_1,2))/(npart*(npart-1)) + (m_0_2*m_2_0)/(npart*(npart-1)) + m_2_2/npart;
+      cov = -((npartIn-2)*std::pow(m_1_1,2))/(npartIn*(npartIn-1)) + (m_0_2*m_2_0)/(npartIn*(npartIn-1)) + m_2_2/npartIn;
     }
 
   else if((i == 0 && j == 2) || (i == 1 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 1))
@@ -440,7 +445,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       m_3_1 = centMoms[a][a+1][1][3];
     }
 
-    cov = -((npart-3)*m_1_1*m_2_0)/(npart*(npart-1)) + m_3_1/npart;
+    cov = -((npartIn-3)*m_1_1*m_2_0)/(npartIn*(npartIn-1)) + m_3_1/npartIn;
   }
   else if((i == 0 && j == 1) || (i == 1 && j == 0) )
   {
@@ -451,7 +456,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
     m_0_2 = centMoms[a][a+1][2][0];
     m_2_2 = centMoms[a][a+1][2][2];
 
-    cov = 2*pow(m_1_1,2)/(npart*(npart-1)) - m_2_0*m_0_2/npart + m_2_2/npart;
+    cov = 2*std::pow(m_1_1,2)/(npartIn*(npartIn-1)) - m_2_0*m_0_2/npartIn + m_2_2/npartIn;
   }
 
   return cov;
@@ -478,15 +483,15 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       //emittance
       if(i == 0 && k < 2)  // k<2 check selects transverse planes, longitudinal parameters are not calculated
       {
-	deriv = centMoms[a][a+1][0][2]/(2*sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2)));
+	deriv = centMoms[a][a+1][0][2]/(2*sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2)));
       }
       else if(i == 1 && k < 2)
       {
-	deriv = centMoms[a][a+1][2][0]/(2*sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2)));
+	deriv = centMoms[a][a+1][2][0]/(2*sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2)));
       }
       else if(i == 2 && k < 2)
       {
-	deriv = -centMoms[a][a+1][1][1]/(sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2)));
+	deriv = -centMoms[a][a+1][1][1]/(sqrt(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2)));
       }
       else {deriv=0;}
       
@@ -497,15 +502,15 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       //alpha
       if(i == 0 && k < 2) 
       {
-	deriv = centMoms[a][a+1][0][2]*centMoms[a][a+1][1][1]/(2*pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.));
+	deriv = centMoms[a][a+1][0][2]*centMoms[a][a+1][1][1]/(2*std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.));
       }
       else if(i == 1 && k < 2)
       {
-	deriv = centMoms[a][a+1][2][0]*centMoms[a][a+1][1][1]/(2*pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.)); 
+	deriv = centMoms[a][a+1][2][0]*centMoms[a][a+1][1][1]/(2*std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.)); 
       }
       else if(i == 2 && k < 2)
       {
-	deriv = - centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]/pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.);
+	deriv = - centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]/std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.);
       }
       else {deriv=0;}
       
@@ -516,15 +521,15 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       //beta
       if(i == 0 && k < 2) 
       {
-	deriv = (centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-2*pow(centMoms[a][a+1][1][1],2))/(2*pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.)); 
+	deriv = (centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-2*std::pow(centMoms[a][a+1][1][1],2))/(2*std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.)); 
       }
       else if(i == 1 && k < 2)
       {
-	deriv = - pow(centMoms[a][a+1][2][0],2)/(2*pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.));
+	deriv = - std::pow(centMoms[a][a+1][2][0],2)/(2*std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.));
       }
       else if(i == 2 && k < 2)
       {
-	deriv = centMoms[a][a+1][2][0]*centMoms[a][a+1][1][1]/pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-pow(centMoms[a][a+1][1][1],2),3./2.);
+	deriv = centMoms[a][a+1][2][0]*centMoms[a][a+1][1][1]/std::pow(centMoms[a][a+1][2][0]*centMoms[a][a+1][0][2]-std::pow(centMoms[a][a+1][1][1],2),3./2.);
       }
       else {deriv=0;}
       
@@ -545,7 +550,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 1 && k < 2)
       {
-	deriv = -centMoms[a][4][1][1]/pow(centMoms[4][4][2][0],2);
+	deriv = -centMoms[a][4][1][1]/std::pow(centMoms[4][4][2][0],2);
       }
       else if(i == 2 && k < 2)
       {
@@ -564,7 +569,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 1 && k < 2)
       {
-	deriv = -centMoms[a+1][4][1][1]/pow(centMoms[4][4][2][0],2);
+	deriv = -centMoms[a+1][4][1][1]/std::pow(centMoms[4][4][2][0],2);
       }
       else if(i == 2 && k < 2)
       {

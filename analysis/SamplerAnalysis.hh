@@ -45,7 +45,7 @@ public:
 #endif
 protected:
   // sums - initialised to zero as that's what they start at
-  double npart;
+  long long int npart;
   double S;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
@@ -59,8 +59,8 @@ protected:
   twoDArray     optical;     ///< emt, alf, bta, gma, eta, etapr, mean, sigma
   twoDArray     varOptical;  ///< variances of optical functions
 
-  static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
-  static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
+  static double powSumToCentralMoment(fourDArray &powSum, long long int npartIn ,int i, int j, int m, int n);
+  static double centMomToCovariance(fourDArray &centMoms, long long int npartIn ,int k, int i, int j);
   static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 
 private:

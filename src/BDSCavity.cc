@@ -252,8 +252,8 @@ void BDSCavity::BuildEllipticalCavityGeometry()
 	}
       else
 	{
-	  zOuterCoord.push_back(- gradientAt_i*thickness * pow( (gradientAt_i * gradientAt_i + 1), -0.5) + zInnerCoord[i]);
-	  rOuterCoord.push_back(+ thickness * pow( (gradientAt_i*gradientAt_i + 1), -0.5) + rInnerCoord[i]);
+	  zOuterCoord.push_back(- gradientAt_i*thickness * std::pow( (gradientAt_i * gradientAt_i + 1), -0.5) + zInnerCoord[i]);
+	  rOuterCoord.push_back(+ thickness * std::pow( (gradientAt_i*gradientAt_i + 1), -0.5) + rInnerCoord[i]);
 	}
     };
 

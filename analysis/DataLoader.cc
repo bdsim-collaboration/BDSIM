@@ -125,29 +125,25 @@ void DataLoader::BuildTreeNameList()
 
 void DataLoader::BuildEventBranchNameList()
 {
-  TFile *f = new TFile(fileNames[0].c_str());
+  TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
   {
     std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
     exit(1);
   }
+  
+  TTree* mt = (TTree*)f->Get("Model");
+  if (!mt)
+    {return;}
 
-  TTree *et = (TTree*)f->Get("Event");
-  if (!et)
-  {return;}
-  TObjArray *bl = et->GetListOfBranches();
-
-  for(int i=0;i< bl->GetEntries();++i)
-  {
-    TString name = bl->At(i)->GetName();
-    if(name.Contains("Sampler"))
-      {this->samplerNames.push_back(name.Data());}
-    else
-      {this->branchNames.push_back(name.Data());}
-  }
-
+  Model* modTemporary = new Model();
+  modTemporary->SetBranchAddress(mt);
+  mt->GetEntry(0);
+  samplerNames = modTemporary->SamplerNames(); // copy sampler names out
+  
   f->Close();
   delete f;
+  delete modTemporary;
 
   if(debug)
   {

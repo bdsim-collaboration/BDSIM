@@ -1,6 +1,5 @@
 #include "BDSBunchGaussian.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
 
@@ -71,12 +70,12 @@ void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
   }
   else if (strcmp(opt.distribType.data(),"gauss") == 0) 
   {    
-    sigmaGM[0][0] = pow(opt.sigmaX,2); 
-    sigmaGM[1][1] = pow(opt.sigmaXp,2); 
-    sigmaGM[2][2] = pow(opt.sigmaY,2); 
-    sigmaGM[3][3] = pow(opt.sigmaYp,2);       
-    sigmaGM[4][4] = pow(opt.sigmaT,2); 
-    sigmaGM[5][5] = pow(opt.sigmaE,2);
+    sigmaGM[0][0] = std::pow(opt.sigmaX,2); 
+    sigmaGM[1][1] = std::pow(opt.sigmaXp,2); 
+    sigmaGM[2][2] = std::pow(opt.sigmaY,2); 
+    sigmaGM[3][3] = std::pow(opt.sigmaYp,2);       
+    sigmaGM[4][4] = std::pow(opt.sigmaT,2); 
+    sigmaGM[5][5] = std::pow(opt.sigmaE,2);
   }
 #ifdef BDSDEBUG
   G4cout << "sigmaGM" << sigmaGM << G4endl;
@@ -104,8 +103,8 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = v[3] * CLHEP::rad;
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
-  z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * v[5];   //Geant4 require KE, not total.
+  z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+  E  = E0 * CLHEP::GeV * v[5];
   zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;
