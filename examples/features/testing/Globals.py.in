@@ -1,4 +1,6 @@
 #! /usr/bin/env python2.7
+from matplotlib import colors
+import collections
 
 class Globals():
     ''' Class containing global parameters for testing.
@@ -200,13 +202,23 @@ class Globals():
                               'linear1d' , 'linear2d' , 'linear3d' , 'linear4d',
                               'cubic1d'  , 'cubic2d'  , 'cubic3d'  , 'cubic4d']
 
-        self.returnCodes  = {'SUCCESS'          : 0,
-                             'FAILED'           : 1,
-                             'INCORRECT_ARGS'   : 2,
-                             'FILE_NOT_FOUND'   : 3,  # i.e BDSIM did not generate anything
-                             'OVERLAPS'         : 4,
-                             'STUCK_PARTICLE'   : 5,
-                             'TRACKING_WARNING' : 6,
-                             'TIMEOUT'          : 7,
-                             'NO_DATA'          : 8
-                             }
+        self.returnCodes = collections.OrderedDict([('SUCCESS', 0),
+                                                    ('FAILED', 1),
+                                                    ('INCORRECT_ARGS', 2),
+                                                    ('FILE_NOT_FOUND', 3),  # i.e BDSIM did not generate anything
+                                                    ('OVERLAPS', 4),
+                                                    ('STUCK_PARTICLE', 5),
+                                                    ('TRACKING_WARNING', 6),
+                                                    ('TIMEOUT', 7),
+                                                    ('NO_DATA', 8)
+                                                    ])
+
+        self.cmap = colors.ListedColormap(['b',
+                                           'y',
+                                           (1,1,0),
+                                           'r',
+                                           'g',
+                                           'm',
+                                           'c',
+                                           'k',
+                                           'w'])
