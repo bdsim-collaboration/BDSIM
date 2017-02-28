@@ -76,7 +76,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4cout << "paraxial approximation being used" << G4endl;
 #endif
   
-  G4double      h2      = pow(h,2);
+  G4double      h2      = std::pow(h,2);
 
   BDSStep       localPosMom = ConvertToLocal(GlobalR, InitMomDir, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();

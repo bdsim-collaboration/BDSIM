@@ -148,8 +148,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     G4double dyp = envelopeYp * (1 - 2 * FlatGen->shoot());
 
     // compute single particle emittance 
-    double emitXSp = gammaX * pow(dx, 2) + 2. * alphaX * dx * dxp + betaX * pow(dxp, 2);
-    double emitYSp = gammaY * pow(dy, 2) + 2. * alphaY * dy * dyp + betaY * pow(dyp, 2);
+    double emitXSp = gammaX * std::pow(dx, 2) + 2. * alphaX * dx * dxp + betaX * std::pow(dxp, 2);
+    double emitYSp = gammaY * std::pow(dy, 2) + 2. * alphaY * dy * dyp + betaY * std::pow(dyp, 2);
 
     // #ifdef BDSDEBUG
     //    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
@@ -178,8 +178,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       }
       else if (weightFunction == "oneoverr")
       {
-        wx = pow(fabs(emitXSp) / emitX, weightParameter);
-        wy = pow(fabs(emitYSp) / emitY, weightParameter);
+        wx = std::pow(fabs(emitXSp) / emitX, weightParameter);
+        wy = std::pow(fabs(emitYSp) / emitY, weightParameter);
       }
       else if (weightFunction == "exp")
       {

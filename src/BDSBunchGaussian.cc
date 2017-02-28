@@ -70,12 +70,12 @@ void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
   }
   else if (strcmp(opt.distribType.data(),"gauss") == 0) 
   {    
-    sigmaGM[0][0] = pow(opt.sigmaX,2); 
-    sigmaGM[1][1] = pow(opt.sigmaXp,2); 
-    sigmaGM[2][2] = pow(opt.sigmaY,2); 
-    sigmaGM[3][3] = pow(opt.sigmaYp,2);       
-    sigmaGM[4][4] = pow(opt.sigmaT,2); 
-    sigmaGM[5][5] = pow(opt.sigmaE,2);
+    sigmaGM[0][0] = std::pow(opt.sigmaX,2); 
+    sigmaGM[1][1] = std::pow(opt.sigmaXp,2); 
+    sigmaGM[2][2] = std::pow(opt.sigmaY,2); 
+    sigmaGM[3][3] = std::pow(opt.sigmaYp,2);       
+    sigmaGM[4][4] = std::pow(opt.sigmaT,2); 
+    sigmaGM[5][5] = std::pow(opt.sigmaE,2);
   }
 #ifdef BDSDEBUG
   G4cout << "sigmaGM" << sigmaGM << G4endl;

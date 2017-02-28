@@ -25,8 +25,8 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
   std::vector<G4String>::iterator skey = skewKeys.begin();
   for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-      bnl.push_back((*strength)[*nkey] / pow(CLHEP::m,i+1));
-      bsl.push_back((*strength)[*skey] / pow(CLHEP::m,i+1));
+      bnl.push_back((*strength)[*nkey] / std::pow(CLHEP::m,i+1));
+      bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
       nfact.push_back(Factorial(i));
     }
 }
@@ -86,8 +86,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
     {
       momx = 0; //reset to zero
       momy = 0;
-      knReal = (*kn) * pow(position,n).real() / nfact[n];
-      knImag = (*kn) * pow(position,n).imag() / nfact[n];
+      knReal = (*kn) * std::pow(position,n).real() / nfact[n];
+      knImag = (*kn) * std::pow(position,n).imag() / nfact[n];
       if (!std::isnan(knReal))
 	{momx = knReal;}
       if (!std::isnan(knImag))
@@ -99,7 +99,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //apply kick
   xp1 -= kick.real();
   yp1 += kick.imag();
-  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
+  zp1 = sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   //Reset n for skewed kicks.
   n=1;
@@ -117,8 +117,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
           //reset to zero
           momx = 0;
           momy = 0;
-          ksReal = (*ks) * pow(position, n).real() / nfact[n];
-          ksImag = (*ks) * pow(position, n).imag() / nfact[n];
+          ksReal = (*ks) * std::pow(position, n).real() / nfact[n];
+          ksImag = (*ks) * std::pow(position, n).imag() / nfact[n];
           if (!std::isnan(ksReal))
             {momx = ksReal;}
           if (!std::isnan(ksImag))
@@ -131,7 +131,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //apply kick
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
-  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
+  zp1 = sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   //for non paraxial, advance particle as if in a drift.
   //xp1 or yp1 may be > 1, so isnan check also needed for zp1.

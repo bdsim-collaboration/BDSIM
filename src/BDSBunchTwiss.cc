@@ -80,16 +80,16 @@ void BDSBunchTwiss::CommonConstruction()
   sigmaGM[2][3] = -emitY*alphaY;
   sigmaGM[3][2] = -emitY*alphaY;
   sigmaGM[3][3] =  emitY*gammaY; 
-  sigmaGM[4][4] =  pow(sigmaT,2); 
-  sigmaGM[5][5] =  pow(sigmaE,2);
-  sigmaGM[0][5] = dispX*pow(sigmaE,2);
-  sigmaGM[5][0] = dispX*pow(sigmaE,2);
-  sigmaGM[1][5] = dispXP*pow(sigmaE,2);
-  sigmaGM[5][1] = dispXP*pow(sigmaE,2);
-  sigmaGM[2][5] = dispY*pow(sigmaE,2);
-  sigmaGM[5][2] = dispY*pow(sigmaE,2);
-  sigmaGM[3][5] = dispYP*pow(sigmaE,2);
-  sigmaGM[5][3] = dispYP*pow(sigmaE,2);
+  sigmaGM[4][4] =  std::pow(sigmaT,2); 
+  sigmaGM[5][5] =  std::pow(sigmaE,2);
+  sigmaGM[0][5] = dispX*std::pow(sigmaE,2);
+  sigmaGM[5][0] = dispX*std::pow(sigmaE,2);
+  sigmaGM[1][5] = dispXP*std::pow(sigmaE,2);
+  sigmaGM[5][1] = dispXP*std::pow(sigmaE,2);
+  sigmaGM[2][5] = dispY*std::pow(sigmaE,2);
+  sigmaGM[5][2] = dispY*std::pow(sigmaE,2);
+  sigmaGM[3][5] = dispYP*std::pow(sigmaE,2);
+  sigmaGM[5][3] = dispYP*std::pow(sigmaE,2);
   
 
   delete GaussMultiGen;
