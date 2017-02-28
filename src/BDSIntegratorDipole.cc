@@ -106,7 +106,7 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
 				  G4double yErr[])
 {
   G4double err = 1e-10 * hstep; // very small linear increase with distance
-  for(G4int i=0; i<nVariables; i++)
+  for(G4int i = 0; i < nVariables; i++)
     {yErr[i] = err;}
 
   AdvanceHelix(yInput,dydx,hstep,yOut,yErr);

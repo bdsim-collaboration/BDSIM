@@ -80,10 +80,10 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 }
 
 void BDSIntegratorDecapole::Stepper(const G4double yInput[],
-			    const G4double[],
-			    const G4double hstep,
-			    G4double yOut[],
-			    G4double yErr[])
+				    const G4double[],
+				    const G4double hstep,
+				    G4double yOut[],
+				    G4double yErr[])
 {    
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i]=0;} // this is clearly wrong!
