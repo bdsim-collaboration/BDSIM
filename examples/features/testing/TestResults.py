@@ -50,6 +50,7 @@ class ResultsUtilities:
         self.timingData = None
         self._resultsList = {}
         self._filesList = {}
+        self._generalStatusList = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -214,14 +215,24 @@ class Results(ResultsUtilities):
         numTests = 0
         numFailed = 0
         failedTests = []
+        stuckParticles = []
+        overlaps = []
         for component, compResults in self.Results.iteritems():
             for testdict in compResults:
                 numTests += 1
-                if (testdict['code'] != 0) and (testdict['code'] != None):
+
+                generalStatus = testdict['generalStatus']
+
+                if (generalStatus is not None) and (not generalStatus.__contains__(0)):
                     numFailed += 1
                     failedFile = testdict['testfile'].split('/')[-1]
                     failedTests.append(failedFile)
-                # TODO: Handle other return types (i.e overlaps, stuck particles, tracking warnings etc)
+                if generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE']):
+                    failedFile = testdict['testfile'].split('/')[-1]
+                    stuckParticles.append(failedFile)
+                if generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS']):
+                    failedFile = testdict['testfile'].split('/')[-1]
+                    overlaps.append(failedFile)
 
         s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
         print(s)
@@ -251,11 +262,16 @@ class Results(ResultsUtilities):
             if not self._resultsList.keys().__contains__(componentType):
                 self._resultsList[componentType] = []
                 self._filesList[componentType] = []
+                self._generalStatusList[componentType] = []
 
             for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
+                generalStatus = result['generalStatus']
+
                 self._resultsList[componentType].append(coords)
+                self._generalStatusList[componentType].append(generalStatus)
+
                 filename = result['ROOTFile']
                 filename = filename.replace('_event.root', '')
                 filename = filename.replace((componentType + "__"), '')
@@ -264,6 +280,7 @@ class Results(ResultsUtilities):
             pass
         self._resultsList[componentType].reverse()
         self._filesList[componentType].reverse()
+        self._generalStatusList[componentType].reverse()
 
     def PlotResults(self, componentType=''):
         f = _plt.figure(figsize=(15, 7))
