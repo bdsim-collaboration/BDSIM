@@ -52,15 +52,16 @@ public:
   inline G4double GetPreEnergy()               const {return preEnergy;}
   inline G4double GetPostEnergy()              const {return postEnergy;}
   inline G4double GetEnergy()                  const {return energy;}
+  inline G4ThreeVector GetPreMomentum()        const {return preMomentum;}
+  inline G4ThreeVector GetPostMomentum()       const {return postMomentum;}
   inline G4double GetPreS()                    const {return preS;}
   inline G4double GetPostS()                   const {return postS;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
   inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
-  inline std::vector<G4int> GetSecondaryID()   const {return secondaryID;}
   /// @}
-  
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
@@ -78,6 +79,8 @@ private:
   G4double postWeight;            ///< Weight associtaed with post step point
   G4double preEnergy;             ///< Kinetic energy of pre-step point
   G4double postEnergy;            ///< Kinetic energy of post step point
+  G4ThreeVector preMomentum;      ///< Momentum of pre-step point
+  G4ThreeVector postMomentum;     ///< Momentum of post-step point
   G4double energy;                ///< Total energy deposited during step
   G4double preS;                  ///< Global curvilinear S coordinate of pre-step point
   G4double postS;                 ///< Global curvilinear S coordinate of post step point
@@ -85,8 +88,7 @@ private:
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;     ///< Local coordinates of post-step point
-  std::vector<G4int> secondaryID; ///< Vector of secondary trackIDs
-  
+
   /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;

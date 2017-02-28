@@ -141,6 +141,7 @@ public:
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
+  inline G4bool   TrajNoTransportation()       const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   StoreELossLinks()          const {return G4bool(options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}

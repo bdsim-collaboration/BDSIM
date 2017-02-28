@@ -31,7 +31,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
   if (interactive || storeTrajectory || track->GetParentID() == 0)
     {
       fpTrackingManager->SetStoreTrajectory(1);
-      BDSTrajectory* bdsTraj = new BDSTrajectory(track);
+      BDSTrajectory* bdsTraj = new BDSTrajectory(track,interactive);
       fpTrackingManager->SetTrajectory(bdsTraj);
     }
   else

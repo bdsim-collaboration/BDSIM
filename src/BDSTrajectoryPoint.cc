@@ -71,11 +71,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
       postProcessSubType = postProcess->GetProcessSubType();
     }
 
-  preWeight  = prePoint->GetWeight();
-  postWeight = postPoint->GetWeight();
-  energy     = step->GetTotalEnergyDeposit();
-  preEnergy  = prePoint->GetKineticEnergy();
-  postEnergy = postPoint->GetKineticEnergy();
+  preWeight    = prePoint->GetWeight();
+  postWeight   = postPoint->GetWeight();
+  energy       = step->GetTotalEnergyDeposit();
+  preEnergy    = prePoint->GetKineticEnergy();
+  postEnergy   = postPoint->GetKineticEnergy();
+  preMomentum  = prePoint->GetMomentum();
+  postMomentum = postPoint->GetMomentum();
 
   // s position for pre and post step point
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
@@ -94,13 +96,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     postS            = sCentre + postPosLocal.z();
     beamlineIndex    = info->GetBeamlineIndex();
     turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
-  }
-
-  const std::vector<const G4Track*> *secondaries = step->GetSecondaryInCurrentStep();
-
-  for(auto secondaryTrack : *secondaries )
-  {
-    secondaryID.push_back(secondaryTrack->GetTrackID());
   }
 }
 
@@ -122,6 +117,8 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postWeight         = -1.;
   preEnergy          = -1.;
   postEnergy         = -1.;
+  preMomentum        = G4ThreeVector();
+  postMomentum       = G4ThreeVector();
   energy             = -1.;
   preS               = -1000;
   postS              = -1000;
