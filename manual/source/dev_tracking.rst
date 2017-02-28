@@ -362,10 +362,7 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
 
 .. math::
 
-   \mathrm{BxP} ~ &=& ~ \mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}\\
-   \mathrm{BdP} ~ &=& ~ \mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}\\
-
-   \mathbf{p}_{\|} ~ &=& ~ BdP ~ \|\mathbf{B}| \\
+   \mathbf{p}_{\|} ~ &=& ~ (\mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}) ~ \|\mathbf{B}\| \\
    \mathbf{p}_{\perp} ~ &=& ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
 
 .. math::
@@ -391,8 +388,11 @@ The final coordinates are calculated as:
    
 .. math::
 
-   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + R ~ (\mathrm{ST}~\mathbf{p}_{\perp} + (1-\mathrm{CT})~\mathrm{BxP}) + h~\mathbf{p}_{\|}\\
-   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}}_{in} ~ ( \mathrm{CT}~\mathbf{p}_{\perp} + \mathrm{ST}~\mathrm{BxP} ) + \mathbf{p}_{\|}
+   \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in} + R ~ \Big[ \mathrm{ST}~\mathbf{p}_{\perp} + (1-\mathrm{CT})~(\mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}) \Big] + h~\mathbf{p}_{\|}
+
+.. math::
+   
+   \mathbf{p}_{out} ~ = ~ \mathbf{\hat{p}}_{in} ~ \Big[ \mathrm{CT}~\mathbf{p}_{\perp} + \mathrm{ST}\,(\mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}) \Big] + \mathbf{p}_{\|}
 
 
 BDSIM Quadrupole
