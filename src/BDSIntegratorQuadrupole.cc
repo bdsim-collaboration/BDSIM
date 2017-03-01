@@ -15,7 +15,7 @@
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
 						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6),
+  BDSIntegratorMag(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -63,18 +63,10 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   // Check this will have a perceptible effect and if not do a linear step.
   if(std::abs(kappa)<1.e-12)
     {
-#ifdef BDSDEBUG
-      G4cout << "Zero strength quadrupole - advancing as a drift" << G4endl;
-#endif
-      AdvanceDrift(yIn,GlobalP,h,yOut);
-
-      for(G4int i = 0; i < nVariables; i++)
-	{yErr[i] = 0;}
+      AdvanceDriftMag(yIn, InitMomDir, h, yOut, yErr);
+      SetDistChord(0);
       return;
     }
-#ifdef BDSDEBUG
-  G4cout << "paraxial approximation being used" << G4endl;
-#endif
   
   G4double      h2      = h*h; // safer than pow
 

@@ -14,7 +14,7 @@
 BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 					 G4double                  /*brho*/,
 					 G4Mag_EqRhs*              eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6),
+  BDSIntegratorMag(eqOfMIn, 6),
   angle((*strength)["angle"]),
   length((*strength)["length"]),
   bField((*strength)["field"]),
@@ -39,7 +39,8 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   // In case of zero field or neutral particles do a linear step:
   if(bField==0 || eqOfM->FCof()==0)
     {
-      AdvanceDrift(yIn,v0,h,yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
       return;
     }
 

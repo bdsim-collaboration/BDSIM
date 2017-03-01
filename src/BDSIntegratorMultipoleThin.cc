@@ -15,7 +15,7 @@
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 						       G4double                 brho,
 						       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6),
+  BDSIntegratorMag(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   b0l = (*strength)["field"] * brho;
@@ -49,7 +49,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   if (LocalRp.z() < 0.9) //for non paraxial, advance particle as if in a drift
   {
-    AdvanceDrift(yIn,GlobalP,h,yOut);
+    AdvanceDriftMag(yIn, h, yOut);
+    SetDistChord(0);
     return;
   }
 
@@ -137,7 +138,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //xp1 or yp1 may be > 1, so isnan check also needed for zp1.
   if (std::isnan(zp1) or (zp1 < 0.9))
   {
-    AdvanceDrift(yIn,GlobalP,h,yOut);
+    AdvanceDriftMag(yIn, h, yOut);
+    SetDistChord(0);
     return;
   }
 

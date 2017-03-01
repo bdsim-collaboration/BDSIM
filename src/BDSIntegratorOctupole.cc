@@ -15,7 +15,7 @@
 BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6),
+  BDSIntegratorMag(eqOfMIn, 6),
   bTriplePrime(0.0),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
@@ -41,7 +41,8 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
   // check that the approximations are valid, else do a linear step:
   if(fabs(kappa)<1.e-20)
     {
-      AdvanceDrift(yIn,v0,h,yOct);
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
     }
   else 
     {

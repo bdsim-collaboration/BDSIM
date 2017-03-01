@@ -6,9 +6,9 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
+BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
 						 G4ThreeVector teleporterDeltaIn):
-  BDSIntegratorCurvilinear(eqRHSIn, 6),
+  BDSIntegratorMag(eqOfMIn,6),
   teleporterDelta(teleporterDeltaIn)
 {;}
 

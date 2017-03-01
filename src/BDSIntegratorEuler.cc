@@ -6,10 +6,7 @@
 #include <cmath>
 
 BDSIntegratorEuler::BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn):
-  BDSIntegrator(eqOfMIn, 6)
-{;}
-
-BDSIntegratorEuler::~BDSIntegratorEuler()
+  BDSIntegratorMag(eqOfMIn, 6)
 {;}
 
 void BDSIntegratorEuler::Stepper(const G4double yIn[],

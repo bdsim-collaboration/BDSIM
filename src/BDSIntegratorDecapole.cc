@@ -17,7 +17,7 @@
 BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6),
+  BDSIntegratorMag(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
@@ -42,7 +42,8 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
   // check that the approximations are valid, else do a linear step:
   if(fabs(kappa)<1.e-20)
     {
-      AdvanceDrift(yIn,v0,h,yDec);
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
     }
   else 
     {

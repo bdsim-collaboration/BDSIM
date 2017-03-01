@@ -1,7 +1,9 @@
-#ifndef BDSINTEGRATOR_H
-#define BDSINTEGRATOR_H
+#ifndef BDSINTEGRATORMAG_H
+#define BDSINTEGRATORMAG_H
 
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorDrift.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
@@ -20,13 +22,13 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegrator: public G4MagIntegratorStepper
+class BDSIntegratorMag: public G4MagIntegratorStepper, public BDSIntegratorDrift, public BDSAuxiliaryNavigator
 {
 public:
-  BDSIntegrator(G4Mag_EqRhs* eqOfMIn,
-		G4int        nVariablesIn);
+  BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
+		   G4int        nVariablesIn);
   
-  virtual ~BDSIntegrator();
+  virtual ~BDSIntegratorMag();
 
   /// Estimate maximum distance of curved solution and chord.
   inline virtual G4double DistChord() const {return distChordPrivate;}
@@ -35,18 +37,18 @@ public:
   inline virtual G4int IntegratorOrder() const {return 2;}
   
 protected:
-  /// Advance as drift (for when field strength is very low)
-  void AdvanceDrift(const G4double yIn[],
-		    const G4ThreeVector& GlobalP,
-		    const G4double h,
-		    G4double yOut[]);
-
   /// Advance chord by quadratic approximation
   void AdvanceChord(const G4double h,
 		    G4ThreeVector& LocalR,
 		    G4ThreeVector& LocalRp,
 		    const G4ThreeVector& LocalRpp);
 
+  /// Convert final local position and direction to global frame
+  void ConvertToGlobal(const G4ThreeVector& LocalR,
+		       const G4ThreeVector& LocalRp,
+		       const G4double InitMag,
+		       G4double yOut[]);
+  
   /// Keep a reference to the underlying equation of motion, but through a higher
   /// level pointer than G4EquationOfMotion* so we can use the correct methods. This
   /// class doesn't own this.
@@ -64,7 +66,7 @@ protected:
 
 private:
   /// Private default constructor to force use of specific constructor
-  BDSIntegrator();
+  BDSIntegratorMag();
 
   /// Variable used to record the distance from the chord calculated during the step.
   G4double distChordPrivate;

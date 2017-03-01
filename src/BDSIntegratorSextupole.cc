@@ -14,7 +14,7 @@
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
 					       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6)
+  BDSIntegratorMag(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;
@@ -36,8 +36,9 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 
   if(fabs(kappa)<1.e-12)
     {
-      // very low strength - treat as a drift
-      AdvanceDrift(yIn,v0,h,ySext);
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
+      return;
     }
   else 
     {

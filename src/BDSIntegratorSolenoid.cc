@@ -11,7 +11,7 @@
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorCurvilinear(eqOfMIn, 6)
+  BDSIntegratorMag(eqOfMIn, 6)
 {
   bField = brho * (*strength)["ks"];
 #ifdef BDSDEBUG
@@ -56,16 +56,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   
   if (fabs(kappa)<1e-12)
     {
-      // very low strength - treat as a drift
-      AdvanceDrift(yIn,GlobalP,h,yOut);
-      
-      yErr[0] = 0; // 0 error as a drift
-      yErr[1] = 0; // must set here as we return after this
-      yErr[2] = 0;
-      yErr[3] = 0;
-      yErr[4] = 0;
-      yErr[5] = 0;
-
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
       return;
     }
   
@@ -92,16 +84,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 
   if (R_1<1e-15)
     {
-      // very large radius of curvature - treat as drift
-      AdvanceDrift(yIn,GlobalP,h,yOut);
-
-      yErr[0] = 0; // 0 error as a drift
-      yErr[1] = 0; // must set here as we return after this
-      yErr[2] = 0;
-      yErr[3] = 0;
-      yErr[4] = 0;
-      yErr[5] = 0;
-
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
       return;
     }
 
