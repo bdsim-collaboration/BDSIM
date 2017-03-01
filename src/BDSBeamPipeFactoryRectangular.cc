@@ -3,7 +3,6 @@
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
@@ -142,7 +141,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
   BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
   
   // calculate radius if a tube were to be place around it
-  G4double containerRadius = sqrt(containerXHalfWidth*containerXHalfWidth + containerYHalfWidth*containerYHalfWidth);
+  G4double containerRadius = std::hypot(containerXHalfWidth,containerYHalfWidth);
 
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext, containerRadius);
 

@@ -38,7 +38,7 @@ G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
 
   G4int nSector = G4int(phi/itsSectorPhi);
 
-  BFactor *= pow(-1.0,nSector);
+  BFactor *= std::pow(-1.0,nSector);
 
   G4ThreeVector localField;
   localField[0] = position.y()*BFactor;

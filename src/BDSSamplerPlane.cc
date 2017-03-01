@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh" 
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"

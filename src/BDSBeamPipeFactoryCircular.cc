@@ -2,7 +2,6 @@
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4CutTubs.hh"

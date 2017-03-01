@@ -1,6 +1,7 @@
 #include "BDSBunchSixTrack.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "parser/options.h"
+#include "CLHEP/Units/SystemOfUnits.h"
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
@@ -100,7 +101,7 @@ void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp = sixtrackData[iPart][4] * CLHEP::mrad;
   y0 = sixtrackData[iPart][5] * CLHEP::mm;
   yp = sixtrackData[iPart][6] * CLHEP::mrad;
-  G4double beamenergy = BDSGlobalConstants::Instance()->ParticleTotalEnergy();
+  G4double beamenergy = E0 * CLHEP::GeV;
   E  = beamenergy + sixtrackData[iPart][7] * beamenergy;
   weight = 1.;
   t      = 0.;

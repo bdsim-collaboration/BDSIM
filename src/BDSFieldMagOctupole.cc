@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSMagnetStrength.hh"
 
@@ -32,8 +31,8 @@ G4ThreeVector BDSFieldMagOctupole::GetField(const G4ThreeVector &position,
   G4double y = position.y();
   
   G4ThreeVector localField;
-  localField[0] = (3 * pow(x,2) * y - pow(y,3)) * bTPNormed;
-  localField[1] = (pow(x,3) - 3* x * pow(y,2)) * bTPNormed;
+  localField[0] = (3 * std::pow(x,2) * y - std::pow(y,3)) * bTPNormed;
+  localField[1] = (std::pow(x,3) - 3* x * std::pow(y,2)) * bTPNormed;
   localField[2] = 0;
 
   return localField;
