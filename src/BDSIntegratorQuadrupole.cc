@@ -180,14 +180,14 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 }
 
-void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
+void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      const G4double dydx[],
 				      const G4double h,
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
-  const G4double *pIn    = yInput+3;
-  G4ThreeVector GlobalR  = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
+  const G4double *pIn    = yIn+3;
+  G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitPMag = GlobalP.mag();
   G4double      kappa    = - eqOfM->FCof()*bPrime/InitPMag;
@@ -195,7 +195,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP.unit());
   if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
     {
-      backupStepper->Stepper(yInput, dydx, h, yOut, yErr);
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());
       return;
     }
@@ -203,7 +203,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   // ok it's forwards pointing - proceed with our paraxial treatment
   if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
     {
-      AdvanceHelix(yInput,dydx,h,yOut,yErr);
+      AdvanceHelix(yIn, dydx, h, yOut, yErr);
       for(G4int i = 0; i < nVariables; i++)
       {
         yErr[i] = 0;
@@ -212,16 +212,11 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   else
     {
       // Compute errors by making two half steps
-      G4double yTemp[6], yIn[6];
-      
-      // Saving yInput because yInput and yOut can be aliases for same array
-      for(G4int i = 0; i < nVariables; i++)
-	{yIn[i] = yInput[i];}
+      G4double yTemp[6];
       
       // Do two half steps
-      G4double hstep = h * 0.5; 
-      AdvanceHelix(yIn,   dydx, hstep, yTemp, yErr);
-      AdvanceHelix(yTemp, dydx, hstep, yOut,  yErr);
+      AdvanceHelix(yIn,   dydx, 0.5*h, yTemp, yErr);
+      AdvanceHelix(yTemp, dydx, 0.5*h, yOut,  yErr);
       
       // Do a full Step
       AdvanceHelix(yIn, dydx, h, yTemp, yErr);

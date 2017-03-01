@@ -27,11 +27,11 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 #endif
 }
 
-void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
+void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
 				       const G4double dydx[],
-				       G4double  h,
-				       G4double yOut[],
-				       G4double yErr[])
+				       G4double       h,
+				       G4double       yOut[],
+				       G4double       yErr[])
 {
   // Momentum
   G4ThreeVector v0 = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
@@ -100,21 +100,21 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
     }
 }
 
-void BDSIntegratorDipole::Stepper(const G4double yInput[],
+void BDSIntegratorDipole::Stepper(const G4double yIn[],
 				  const G4double dydx[],
-				  const G4double hstep,
-				  G4double yOut[],
-				  G4double yErr[])
+				  const G4double h,
+				  G4double       yOut[],
+				  G4double       yErr[])
 {
-  G4double err = 1e-10 * hstep; // very small linear increase with distance
+  G4double err = 1e-10 * h; // very small linear increase with distance
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i] = err;}
 
-  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
+  AdvanceHelix(yIn, dydx, h, yOut, yErr);
 }
 
-std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double rho,
-									G4double h,
+std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double      rho,
+									G4double      h,
 									G4ThreeVector LocalR,
 									G4ThreeVector LocalRp)
 {

@@ -28,7 +28,7 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 
 void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
-					 G4double        yOct[])
+					 G4double        yOut[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
@@ -81,32 +81,25 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 
       AdvanceChord(h,LocalR,LocalRp,LocalRpp);
 
-      ConvertToGlobal(LocalR,LocalRp,InitMag,yOct);
+      ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
     }
 }
 
-void BDSIntegratorOctupole::Stepper(const G4double yInput[],
-				    const G4double[],
-				    const G4double hstep,
-				    G4double yOut[],
-				    G4double yErr[])
+void BDSIntegratorOctupole::Stepper(const G4double yIn[],
+				    const G4double[], /*dydx*/
+				    const G4double h,
+				    G4double       yOut[],
+				    G4double       yErr[])
 {
-  G4double yTemp[7], yIn[7];
-  
-  //  Saving yInput because yInput and yOut can be aliases for same array
-  for(G4int i = 0; i < nVariables; i++)
-    {yIn[i] = yInput[i];}
-  
-  G4double h = hstep * 0.5;
+  G4double yTemp[7];
 
   // TBC - no use of backup stepper here
   
   // Do two half steps
-  AdvanceHelix(yIn, h, yTemp);
-  AdvanceHelix(yTemp, h, yOut); 
+  AdvanceHelix(yIn,   0.5*h, yTemp);
+  AdvanceHelix(yTemp, 0.5*h, yOut); 
   
   // Do a full Step
-  h = hstep ;
   AdvanceHelix(yIn, h, yTemp); 
   
   for(G4int i = 0; i < nVariables; i++)

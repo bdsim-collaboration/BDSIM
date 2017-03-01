@@ -18,12 +18,12 @@ class BDSIntegratorEuler: public BDSIntegratorMag
 public:
   BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn);
 
-  virtual ~BDSIntegratorEuler();
+  virtual ~BDSIntegratorEuler(){;}
 
   /// Calculate output coordinates.
   virtual void Stepper(const G4double yIn[],     ///< Input coordinates x,y,z,px,py,pz,t
 		       const G4double dydx[],    ///< Partial differentials at yInput
-		       G4double       stepLength,///< Length of trajectory to calculate
+		       G4double       h,         ///< Length of trajectory to calculate
 		       G4double       yOut[],    ///< Output array
 		       G4double       yErr[]);   ///< Output error array
 
@@ -33,9 +33,9 @@ private:
   
   void SimpleStepper(const G4double yIn[],     ///< Input coordinates x,y,z,px,py,pz,t
 		     const G4double dydx[],    ///< Partial differentials at yInput
-		     G4double       stepLength,///< Length of trajectory to calculate
+		     G4double       h,         ///< Length of trajectory to calculate
 		     G4double       yOut[],    ///< Output array
-		     G4double       yErr[]);
+		     G4double       yErr[]);   ///< Output error array
 };
 
 #endif

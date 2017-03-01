@@ -8,7 +8,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
-
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
 						     G4Mag_EqRhs*             eqOfMIn,
 						     G4double                 minimumRadiusOfCurvature):
@@ -19,15 +18,15 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 					const G4double dydx[],
-					const G4double stepLength,
+					const G4double h,
 					G4double       yOut[],
 					G4double       yErr[])
 {
   // do the dipole kick using base class
-  BDSIntegratorDipole2::Stepper(yIn, dydx, stepLength, yOut, yErr);
+  BDSIntegratorDipole2::Stepper(yIn, dydx, h, yOut, yErr);
 
   // don't do fringe kick if we're sampling the field  for a long step
-  if (stepLength > 1*CLHEP::cm)
+  if (h > 1*CLHEP::cm)
     {return;}
 
   G4ThreeVector globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);

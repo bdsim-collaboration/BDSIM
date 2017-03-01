@@ -193,12 +193,12 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 }
 
 
-void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
+void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
 				    const G4double dydx[],
-				    const G4double hstep,
+				    const G4double h,
 				    G4double yOut[],
 				    G4double yErr[])
 {
   //simply perform one step here
-  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
+  AdvanceHelix(yIn, dydx, h, yOut, yErr);
 }

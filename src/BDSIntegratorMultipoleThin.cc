@@ -154,13 +154,13 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
 }
 
-void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
-                                     const G4double[] /*dydx[]*/,
-                                     const G4double hstep,
-                                     G4double yOut[],
-                                     G4double yErr[])
+void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
+					 const G4double[] /*dydx[]*/,
+					 const G4double h,
+					 G4double       yOut[],
+					 G4double       yErr[])
 {
-  AdvanceHelix(yInput, 0, hstep, yOut);
+  AdvanceHelix(yIn, 0, h, yOut);
 
   // The two half-step method cannot be used as the
   // multipole kick will be applied twice meaning

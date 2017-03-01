@@ -28,7 +28,7 @@ public:
   /// The stepper for integration. The stepsize is fixed, equal to h. The reason for this
   /// is so that intermediate steps can be calculated and therefore the error ascertained
   /// or distance from the chord.  Error calculation is not currently implemented.
-  virtual void Stepper(const G4double y[],
+  virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
 		       G4double       yOut[],

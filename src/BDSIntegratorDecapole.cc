@@ -29,7 +29,7 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 
 void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
-					 G4double        yDec[])
+					 G4double        yOut[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0 = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
@@ -76,19 +76,19 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 
       AdvanceChord(h,LocalR,LocalRp,LocalRpp);
 
-      ConvertToGlobal(LocalR,LocalRp,InitMag,yDec);
+      ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
     }
 }
 
-void BDSIntegratorDecapole::Stepper(const G4double yInput[],
-				    const G4double[],
-				    const G4double hstep,
-				    G4double yOut[],
-				    G4double yErr[])
+void BDSIntegratorDecapole::Stepper(const G4double yIn[],
+				    const G4double[] /*dydx*/,
+				    const G4double h,
+				    G4double       yOut[],
+				    G4double       yErr[])
 {    
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i]=0;} // this is clearly wrong!
-  AdvanceHelix(yInput, hstep, yOut);
+  AdvanceHelix(yIn, h, yOut);
   
   // TBC - we have not set DistChord here!
 

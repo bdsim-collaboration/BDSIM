@@ -31,19 +31,19 @@ public:
 
   /// Stepper for this integrator.  Calculates the new coordinates of a particle
   /// through a uniform magnetic field.
-  virtual void Stepper(const G4double y[],
+  virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double yout[],
-		       G4double yerr[]);
+		       G4double       yOut[],
+		       G4double       yErr[]);
   
 protected:
   /// Calculate the new particle coordinates.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
-		    G4double h,
-		    G4double yOut[],
-		    G4double yErr[]);
+		    G4double       h,
+		    G4double       yOut[],
+		    G4double       yErr[]);
 
   /// Scaling factor in brho calculation.
   G4double cOverGeV;

@@ -20,6 +20,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 {
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
+  SetDistChord(0);
 
   G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
@@ -42,12 +43,11 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 
       BDSStep globalPosDir = ConvertToGlobalStep(localPositionAfter, localMomentum, false);
       G4ThreeVector globalPosition = globalPosDir.PreStepPoint();
-      yOut[0] = globalPosition[0];
-      yOut[1] = globalPosition[1];
-      yOut[2] = globalPosition[2];
-      yOut[3] = yIn[3];
-      yOut[4] = yIn[4];
-      yOut[5] = yIn[5];
+      for (G4int i = 0; i < 3; i++)
+	{
+	  yOut[i]   = globalPosition[i];
+	  yOut[i+3] = yIn[i+3];
+	}
     }
   else
     {
