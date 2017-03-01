@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORDIPOLE_H
 #define BDSINTEGRATORDIPOLE_H
 
-#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -20,7 +20,7 @@ class BDSMagnetStrength;
  * Originally part of BDSIM by many authors.
  */
 
-class BDSIntegratorDipole: public BDSIntegratorCurvilinear
+class BDSIntegratorDipole: public BDSIntegratorMag
 {
 public:
   BDSIntegratorDipole(BDSMagnetStrength const* strength,

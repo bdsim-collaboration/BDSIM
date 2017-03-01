@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORSEXTUPOLE_H
 #define BDSINTEGRATORSEXTUPOLE_H
 
-#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -15,7 +15,7 @@ class G4MagIntegratorStepper;
  * @brief Integrator for sextupole field.
  */
 
-class BDSIntegratorSextupole: public BDSIntegratorCurvilinear
+class BDSIntegratorSextupole: public BDSIntegratorMag
 {
 public:
   BDSIntegratorSextupole(BDSMagnetStrength const* strength,

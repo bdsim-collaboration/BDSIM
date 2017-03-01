@@ -1,6 +1,8 @@
 #ifndef BDSINTEGRATORDIPOLE2_H
 #define BDSINTEGRATORDIPOLE2_H
 
+#include "BDSIntegratorDrift.hh"
+
 #include "globals.hh"
 #include "G4MagHelicalStepper.hh"
 #include "G4ThreeVector.hh"
@@ -26,7 +28,7 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorDipole2: public G4MagHelicalStepper
+class BDSIntegratorDipole2: public G4MagHelicalStepper, public BDSIntegratorDrift
 {
 public:
   BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,

@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORMULTIPOLETHIN_H
 #define BDSINTEGRATORMULTIPOLETHIN_H
 
-#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -16,7 +16,7 @@ class BDSMagnetStrength;
  * @author Will Shields
  */
 
-class BDSIntegratorMultipoleThin: public BDSIntegratorCurvilinear
+class BDSIntegratorMultipoleThin: public BDSIntegratorMag
 {
 public:
   BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,

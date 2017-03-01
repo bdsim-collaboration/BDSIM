@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORSYMPLECTICEULER_H
 #define BDSINTEGRATORSYMPLECTICEULER_H
 
-#include "BDSIntegrator.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 
@@ -13,7 +13,7 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorEuler: public BDSIntegrator
+class BDSIntegratorEuler: public BDSIntegratorMag
 {
 public:
   BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn);

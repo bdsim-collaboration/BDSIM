@@ -1,10 +1,12 @@
 #ifndef BDSINTEGRATORTELEPORTER_H
 #define BDSINTEGRATORTELEPORTER_H
 
-#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+
+class G4Mag_EqRhs;
 
 /**
  * @brief Custom unphysical integrator to advance particle in teleporter.
@@ -12,7 +14,7 @@
  * @author Laurie Nevay
  */
 
-class BDSIntegratorTeleporter: public BDSIntegratorCurvilinear
+class BDSIntegratorTeleporter: public BDSIntegratorMag
 {
 public:
   BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,

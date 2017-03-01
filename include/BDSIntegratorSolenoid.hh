@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORSOLENOID_H
 #define BDSINTEGRATORSOLENOID_H
 
-#include "BDSIntegratorCurvilinear.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 
@@ -18,7 +18,7 @@ class BDSMagnetStrength;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorSolenoid: public BDSIntegratorCurvilinear
+class BDSIntegratorSolenoid: public BDSIntegratorMag
 {
 public:
   BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
