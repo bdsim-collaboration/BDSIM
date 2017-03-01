@@ -2,7 +2,6 @@
 #define BDSINTEGRATORMAG_H
 
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSIntegratorCurvilinear.hh"
 #include "BDSIntegratorDrift.hh"
 
 #include "globals.hh" // geant4 types / globals
