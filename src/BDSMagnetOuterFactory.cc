@@ -449,8 +449,8 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainer(G4String           
   BDSExtent containerExt;
   if ((inputFace.z() > -1) || (outputFace.z() < 1))
     {// use a cut tubs for angled face
-      G4double posR = std::sqrt(std::pow(outer.XPos(),2) + std::pow(outer.YPos(),2));
-      G4double negR = std::sqrt(std::pow(outer.XNeg(),2) + std::pow(outer.YNeg(),2));
+      G4double posR = std::hypot(outer.XPos(),outer.YPos());
+      G4double negR = std::hypot(outer.XNeg(),outer.YNeg());
       G4double magnetContainerRadius = std::max(posR, negR) + 1*CLHEP::mm; // generous margin
       containerSolid = new G4CutTubs(name + "_container_solid",   // name
 				     0,                           // inner radius

@@ -300,8 +300,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
       G4bool greaterThanZInteresting =
               trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
-      G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) +
-                                  std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
+      G4double radius = std::hypot(trajEndPointThreeVector.x() / CLHEP::m,
+				   trajEndPointThreeVector.y() / CLHEP::m);
       G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
       if (greaterThanZInteresting && withinRInteresting) {
         interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));

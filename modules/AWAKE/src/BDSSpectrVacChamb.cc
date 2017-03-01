@@ -6,6 +6,8 @@
 #include "BDSDebug.hh"
 #include "G4SubtractionSolid.hh"
 
+#include <cmath>
+
 BDSSpectrVacChamb::BDSSpectrVacChamb(){}
 BDSSpectrVacChamb::~BDSSpectrVacChamb(){}
 
@@ -411,7 +413,7 @@ void BDSSpectrVacChamb::CalculateGeometry(){
   _box3Translation.setZ(_vacuumEndZ+_box3LengthZ/2.0);
 
   G4double trapLengthZ1 = _trapLengthZ-trapLengthZ2;
-  _sideWallLength=sqrt(pow(trapLengthZ1,2)+pow(_trapLengthX,2));
+  _sideWallLength=std::hypot(trapLengthZ1,_trapLengthX);
   G4double sideWallAngle=atan(_trapLengthX/trapLengthZ1);
   _rotSideWall = new G4RotationMatrix();
   _rotSideWall->rotateY(-sideWallAngle);
