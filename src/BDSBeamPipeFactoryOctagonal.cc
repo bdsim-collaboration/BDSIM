@@ -79,8 +79,8 @@ G4double BDSBeamPipeFactoryOctagonal::CalculateIntersectionRadius(G4double aper1
 {
   // depending on the user supplied parameters, choose the largest radius from the origin,
   // and add the beam pipe thickness plus some margin
-  G4double r1 = std::sqrt(std::pow(aper1,2) + std::pow(aper2,2));
-  G4double r2 = std::sqrt(std::pow(aper3,2) + std::pow(aper4,2));
+  G4double r1 = std::hypot(aper1,aper2);
+  G4double r2 = std::hypot(aper3,aper4);
   G4double result = std::max(r1,r2) + beamPipeThickness;
   result *= 1.4;
 #ifdef BDSDEBUG
