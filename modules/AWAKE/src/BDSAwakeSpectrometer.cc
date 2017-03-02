@@ -81,7 +81,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     try{
         _strutSizeX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
     } catch(std::invalid_argument&){
-        _windowOffsetX=5*CLHEP::cm;
+        _windowOffsetX=59.564*CLHEP::mm-_vacInnerWidth/2.0-_vacThickness;
     }
 
     try{
@@ -104,7 +104,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 
   //Screen width 1m by default.
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
-    _vacWindowHeight=65*CLHEP::mm;
+    _vacWindowHeight=64*CLHEP::mm;
     _screenHeight=_vacWindowHeight;
 
   //Set the rotation of the screen
@@ -802,7 +802,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
     _frameHeight=_vacHeight;
     _frameThicknessX=_vacThickness;
-    _frameThicknessZ=10*CLHEP::mm;
+    _frameThicknessZ=43*CLHEP::mm;
     _frameWidth=_screenWidth+_windowOffsetX/std::cos(_screenAngle)+_frameThicknessX;
     //Get the rotated frame dimensions
 
