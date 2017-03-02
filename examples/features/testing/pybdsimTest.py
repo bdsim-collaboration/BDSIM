@@ -35,7 +35,7 @@ def Run(inputDict):
     # run bdsim and dump output to temporary log file.
     # os.system used as subprocess.call has difficulty with the arguments for some reason.
     bdsimCommand = GlobalData._bdsimExecutable + " --file=" + inputDict['testFile'] + " --output=rootevent --outfile="
-    bdsimCommand += inputDict['outputFile'] + " --batch"
+    bdsimCommand += inputDict['outputFile'] + " --batch --seed=2017"
     _os.system(bdsimCommand + ' > ' + inputDict['bdsimLogFile'])
     bdsimTime = _np.float(time.time() - t)
     inputDict['bdsimTime'] = bdsimTime
