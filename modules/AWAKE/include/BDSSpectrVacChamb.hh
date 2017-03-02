@@ -19,7 +19,9 @@ class BDSSpectrVacChamb
 {
 
 public:
-  BDSSpectrVacChamb(const G4String& name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness, G4double strutSizeX, G4double strutSizeZ, G4String strutMaterial);
+  BDSSpectrVacChamb(const G4String& name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ,
+                    G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness,
+                    G4double windowOffsetX, G4double strutSizeX, G4double strutSizeZ, G4String strutMaterial);
   ~BDSSpectrVacChamb();
 
   void Place(G4LogicalVolume* motherVolume);
@@ -30,8 +32,6 @@ public:
 private:
   BDSSpectrVacChamb();
 
-
-  void SetParameters(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness);
   G4double _lengthZ;
   G4double _magStartZ; //Z where the vacuum chamber starts to widen
   G4double _vacuumEndZ; //Z where the vacuum chamber screen ends
@@ -40,6 +40,7 @@ private:
   G4double _sizeX; //The size of the incoming beam pipe
   G4double _sizeY;
   G4double _thickness;
+    G4double _windowOffsetX;
   G4double _strutSizeX;
   G4double _strutSizeZ;
   G4bool _bBuildStrut;

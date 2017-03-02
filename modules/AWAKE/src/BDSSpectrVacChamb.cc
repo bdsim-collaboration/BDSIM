@@ -11,16 +11,26 @@
 BDSSpectrVacChamb::BDSSpectrVacChamb(){}
 BDSSpectrVacChamb::~BDSSpectrVacChamb(){}
 
-BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness, G4double strutSizeX=0, G4double strutSizeZ=0, G4String strutMaterial="G4_STAINLESS-STEEL"):
-  _lengthZ(lengthZ),
-  _magStartZ(magStartZ),
-  _vacuumEndZ(vacuumEndZ),
-  _strutSizeX(strutSizeX),
+BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ,
+                                     G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY,
+                                     G4double thickness, G4double windowOffsetX=5*CLHEP::cm, G4double strutSizeX=0,
+                                     G4double strutSizeZ=0,
+                                     G4String strutMaterial="G4_STAINLESS-STEEL"):
+        _name(name),
+        _lengthZ(lengthZ), //Length of the vacuum chamber
+  _magStartZ(magStartZ),   //Start Z position of the magnet
+  _vacuumEndZ(vacuumEndZ), //End Z position of the vacuum chamber
+        _screenWidth(screenWidth),
+        _screenAngle(screenAngle),
+        _sizeX(sizeX),     //Size of the vacuum window/scintillator screen
+        _sizeY(sizeY),
+        _thickness(thickness),  //Thickness of the vacuum chamber walls
+        _windowOffsetX(windowOffsetX), //Offset X between the edge of the window and the edge of the beam pipe
+  _strutSizeX(strutSizeX),             //The size of the support strut
   _strutSizeZ(strutSizeZ),
-  _strutMaterial(strutMaterial),
-  _name(name)
+  _strutMaterial(strutMaterial)        //The material of the support strut
 {
-  SetParameters(name, lengthZ, magStartZ, vacuumEndZ, screenWidth, screenAngle, sizeX, sizeY, thickness);
+    CalculateGeometry();
   Build();
   SetUserLimits();
 
@@ -157,19 +167,6 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		      0,
 		      BDSGlobalConstants::Instance()->CheckOverlaps());
   }
-}
-
-void BDSSpectrVacChamb::SetParameters(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness){
-  _thickness=thickness;
-  _name=name;
-  _lengthZ=lengthZ;
-  _magStartZ = magStartZ;
-  _vacuumEndZ = vacuumEndZ;
-  _screenWidth = screenWidth;
-  _screenAngle = screenAngle;
-  _sizeX = sizeX;
-  _sizeY = sizeY;
-  CalculateGeometry();
 }
 
 void BDSSpectrVacChamb::BuildBox(){
@@ -365,8 +362,8 @@ void BDSSpectrVacChamb::BuildStrut(){
 
 void BDSSpectrVacChamb::CalculateGeometry(){
   _trapLengthZ=_vacuumEndZ-_magStartZ;
-  G4double trapLengthZ2=std::abs(_screenWidth*cos(_screenAngle));
-  _trapLengthX=std::abs(_screenWidth*sin(_screenAngle));
+  G4double trapLengthZ2=std::abs((_screenWidth+_windowOffsetX)*cos(_screenAngle));
+  _trapLengthX=std::abs((_screenWidth+_windowOffsetX)*sin(_screenAngle));
   
   G4double y1=-_sizeY/2.0;
   G4double y2= _sizeY/2.0;
