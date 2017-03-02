@@ -177,11 +177,14 @@ class ResultsUtilities:
         if len(startLineIndices) > 0:
             for index, startLine in enumerate(startLineIndices):
                 exceptions = splitLines[startLine:endLineIndices[index] + 1]
-                if exceptions.__contains__('      issued by : G4PVPlacement::CheckOverlaps()'):
+                issuedLine = exceptions[2]
+                if issuedLine.__contains__('G4PVPlacement::CheckOverlaps()'):
                     generalStatus.append(GlobalData.returnCodes['OVERLAPS'])
-                if exceptions.__contains__('     issued by : G4PropagatorInField::ComputeStep()'):
+                if issuedLine.__contains__('G4PropagatorInField::ComputeStep()'):
                     generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
-                    # TODO: check for other types of warnings/errors.
+                if issuedLine.__contains__('G4MagInt_Driver::AccurateAdvance()'):
+                    generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
+                # TODO: check for other types of warnings/errors.
 
         return generalStatus
 
