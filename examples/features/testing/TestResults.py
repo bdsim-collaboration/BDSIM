@@ -41,6 +41,7 @@ class Results(dict):
 
         return particleResults
 
+
 class Timing:
     def __init__(self):
         self.componentTimes = {}
@@ -258,7 +259,6 @@ class Analysis(ResultsUtilities):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
             self.ResultsDict[componentType]['timingData'].append(timingData)
-        dummy = 1
 
     def ProcessOriginals(self):
         numTests = 0
