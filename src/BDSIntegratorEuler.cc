@@ -14,37 +14,14 @@ void BDSIntegratorEuler::Stepper(const G4double yIn[],
 				 G4double       h,
 				 G4double       yOut[],
 				 G4double       yErr[])
-{
-  G4double yTemp[7], yTwoHalf[7], yErr2[7];
-  
-  // Do two half steps
-  SimpleStepper(yIn,   dydx, h*0.5, yTemp, yErr2);
-  G4double dydxMid[7];
-  RightHandSide(yTemp, dydxMid);
-  SimpleStepper(yTemp, dydxMid, h*0.5, yTwoHalf, yErr2); 
-  
-  // Do a full Step - do last as sets distChord
-  SimpleStepper(yIn, dydx, h, yOut, yErr);
-  
-  for(G4int i = 0; i < 3; i++)
-    {
-      yErr[i] = yOut[i] - yTwoHalf[i];
-      //yErr[i]   = 1e-15;
-      //yErr[i+3] = 1e-20;
-    }
-}
-
-void BDSIntegratorEuler::SimpleStepper(const G4double yIn[],
-				       const G4double dydx[],
-				       G4double       h,
-				       G4double       yOut[],
-				       G4double       yErr[])
 { 
-  const G4ThreeVector pos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  const G4ThreeVector mom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  const G4ThreeVector momU = G4ThreeVector(dydx[0], dydx[1], dydx[2]); // already provided for us
-  const G4double      hSqrd  = std::pow(h, 2);
-  const G4double      halfSL = h*0.5;
+  const G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  const G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  // unit momentum already provided for us
+  const G4ThreeVector momU    = G4ThreeVector(dydx[0], dydx[1], dydx[2]); 
+  const G4ThreeVector a_start = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
+  const G4double      hSqrd   = std::pow(h, 2);
+  const G4double      halfSL  = h*0.5;
 
   // calcualte the position half step length for drifting with no force
   // 'phalf' => plus half step
@@ -65,22 +42,28 @@ void BDSIntegratorEuler::SimpleStepper(const G4double yIn[],
   // get the vector potential bit from the array
   G4ThreeVector a_phalf = G4ThreeVector(potential[3], potential[4], potential[5]);
 
+  // new coordinates
   // pos_new = pos + p.unit()*h + (A*h^2)/2*p.mag()
-  G4ThreeVector pos_new = pos + momU*h + (a_phalf*hSqrd*0.5)/mom.mag();
+  G4double      factor  = hSqrd*0.5/mom.mag();  // calculate common factors first
+  G4ThreeVector pos_new = pos + momU*h + a_phalf*factor;
   G4ThreeVector mom_new = mom + a_phalf*h;
 
+  // error calculation
+  G4ThreeVector a_diff  = a_phalf - a_start;
+  G4ThreeVector pos_err = a_diff*factor;
+  G4ThreeVector mom_err = a_diff*h;
+
+  // write out output values and errors to arrays
   for (G4int i = 0; i < 3; i++)
     {
       yOut[i]   = pos_new[i];
       yOut[i+3] = mom_new[i];
-      yErr[i]   = 1e-10*h;
-      yErr[i+3] = 1e-15*h*mom_new[i];
+      yErr[i]   = std::abs(pos_err[i]);
+      yErr[i+3] = std::abs(mom_err[i]);
     }
-
+  
   // ((average of new and old) - mid point from drift ) .mag()
   // both are straight lines, but it's an approximately close
   G4double dc = (0.5*(pos_new + pos) - pos_phalf).mag();
   SetDistChord(dc);
-  
-  return;
 }

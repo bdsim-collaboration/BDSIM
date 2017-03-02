@@ -30,12 +30,6 @@ public:
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorEuler() = delete;
-  
-  void SimpleStepper(const G4double yIn[],     ///< Input coordinates x,y,z,px,py,pz,t
-		     const G4double dydx[],    ///< Partial differentials at yInput
-		     G4double       h,         ///< Length of trajectory to calculate
-		     G4double       yOut[],    ///< Output array
-		     G4double       yErr[]);   ///< Output error array
 };
 
 #endif
