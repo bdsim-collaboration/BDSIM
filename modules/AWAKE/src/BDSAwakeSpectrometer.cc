@@ -78,6 +78,12 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     _magnetGeometryType=1;
   }
 
+    //Vacuum chamber dimensions.
+    _vacThickness=6*CLHEP::mm;
+    _vacInnerWidth=64*CLHEP::mm;
+    _vacInnerHeight=_vacInnerWidth;
+    _vacHeight=_vacInnerHeight+2*_vacThickness;
+
     try{
         _strutSizeX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
     } catch(std::invalid_argument&){
@@ -725,9 +731,10 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 
 //Frame for the vacuum window.
 void BDSAwakeSpectrometer::BuildFrame(){
-    G4ThreeVector frameSize(_mlScreen->GetSize().x()+_vacThickness+_windowOffsetX/std::cos(_screenAngle),_vacHeight+2*_frameThicknessX, _frameThicknessZ);
+    G4ThreeVector frameSize(_frameWidth,_frameHeight, _frameThicknessZ);
     G4TwoVector windowSize(_mlScreen->GetSize().x(), _mlScreen->GetSize().y());
-    G4TwoVector windowPos(_windowOffsetX/2.0,0);
+    G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetX*std::tan(_screenAngle);
+    G4TwoVector windowPos(relativeWindowOffsetX,0);
     _frame = new BDSRectScreenFrame((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
 }
 
@@ -793,15 +800,11 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   G4double x_wid = _screenWidth * std::sin(_screenAngle);//Length due to the screen width and angle
   G4double x_thi = _screenThickness * std::cos(_screenAngle);//Length due to the screen thickness
   _screen_x_dim = x_wid+x_thi;
-  //Vacuum chamber dimensions.
-  _vacThickness=2*CLHEP::mm;
-  _vacHeight=6.7*CLHEP::cm;
-  _vacInnerWidth=_vacHeight-2*_vacThickness;
-  _vacInnerHeight=_vacHeight-2*_vacThickness;
+
 //Vacuum frame dimensions
 
-    _frameHeight=_vacHeight;
-    _frameThicknessX=_vacThickness;
+    _frameThicknessX=48.5*CLHEP::mm;
+    _frameHeight=174.6*CLHEP::mm;
     _frameThicknessZ=43*CLHEP::mm;
     _frameWidth=_screenWidth+_windowOffsetX/std::cos(_screenAngle)+_frameThicknessX;
     //Get the rotated frame dimensions
