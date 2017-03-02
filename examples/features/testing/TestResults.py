@@ -336,32 +336,63 @@ class Analysis(ResultsUtilities):
         self.ResultsDict[componentType]['params'].reverse()
 
     def PlotResults(self, componentType=''):
-        f = _plt.figure(figsize=(15, 7))
+        f = _plt.figure(figsize=(11, 7))
         ax = f.add_subplot(111)
 
         # set normalised colormap.
         bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
         norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
 
-        extent = [0, 7, 0, len(self._resultsList[componentType])]
+        extent = [0, 7, 0, len(self.ResultsDict[componentType]['resultsList'])]
 
-        data = self._resultsList[componentType]
-        files = self._filesList[componentType]
-        generalStatus = self._generalStatusList[componentType]
+        data = self.ResultsDict[componentType]['resultsList']
+        files = self.ResultsDict[componentType]['fileLabel']
+        generalStatus = self.ResultsDict[componentType]['generalStatusList']
 
-        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm, extent=extent)
+        electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
+        protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
+
+        commonValues = self._getCommonValues(componentType)
+        subplotTitle = ''
+
+        if commonValues is not None:
+            for index, fileName in enumerate(files):
+                fname = fileName
+                for key, value in commonValues.iteritems():
+                    filestring = "__" + key + "_" + _np.str(value)
+                    fname = fname.replace(filestring, '')
+                if len(electronFiles) == len(files):
+                    fname.replace("e-__", "")
+                elif len(protonFiles) == len(files):
+                    fname.replace("proton__", "")
+                files[index] = fname
+
+            for key, value in commonValues.iteritems():
+                subplotTitle += _string.capitalize(key) + " = " + value
+                index = commonValues.keys().index(key)
+                if index != (len(commonValues.keys()) - 1):
+                    subplotTitle += ", "
+
+        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+                        extent=extent, aspect='auto')
         ax.set_xlim(0, 8)
 
         for index, status in enumerate(generalStatus):
+            numStatus = len(status)
             yIndex = index
-            boxColor = GlobalData.cmap.colors[status[0]]
-            ax.add_patch(_patches.Rectangle((7, yIndex), 1, 1, edgecolor='none', facecolor=boxColor))
+            for statIndex, stat in enumerate(status):
+                boxColor = GlobalData.cmap.colors[stat]
+                boxWidth = 1.0 / numStatus
+                ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+
+        if subplotTitle != '':
+            ax.set_title(subplotTitle)
 
         xtickMajors = _np.linspace(1, 8, 8)
         xtickCentre = xtickMajors - 0.5
 
         ax.set_xticks(xtickCentre)
-        ax.set_xticklabels(['x', 'px', 'y', 'py', 't', 'pt', 'n', 'Gen'])
+        ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'General'])
 
         ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
         ytickCentre = ytickMajors - 0.5
@@ -370,8 +401,6 @@ class Analysis(ResultsUtilities):
         ax.set_yticklabels(files)
 
         ytickMinors = _np.linspace(0, len(data), len(data) + 1)
-
-        # ax.xaxis.set_visible(False)
 
         minorXTicks = _tick.FixedLocator(xtickMajors)
         minorYTicks = _tick.FixedLocator(ytickMinors)
