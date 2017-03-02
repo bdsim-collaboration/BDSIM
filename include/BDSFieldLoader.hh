@@ -2,7 +2,6 @@
 #define BDSFIELDLOADER_H
 
 #include "BDSInterpolatorType.hh"
-
 #include "G4String.hh"
 #include "G4Transform3D.hh"
 
@@ -118,7 +117,9 @@ private:
   BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
 				     BDSInterpolatorType interpolatorType,
 				     G4Transform3D       transform,
-				     G4double            bScaling);
+				     G4double            bScaling,
+				     G4bool              calculateScaling = false,
+				     G4int               maximumOrder     = 1);
 
   /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
   /// and the data relfected from one quadrant to all four at the array level.

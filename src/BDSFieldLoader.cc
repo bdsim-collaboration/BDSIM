@@ -44,6 +44,9 @@
 #include "BDSInterpolator4DNearest.hh"
 #include "BDSInterpolatorType.hh"
 
+//new code
+#include "BDSFieldMagGradient.hh"
+
 #include "globals.hh" // geant4 types / globals
 
 #include <algorithm>
@@ -482,10 +485,24 @@ BDSFieldMag* BDSFieldLoader::LoadBDSIM4DB(G4String            filePath,
 BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   BDSInterpolatorType interpolatorType,
 						   G4Transform3D       transform,
-						   G4double            bScaling)
+						   G4double            bScaling,
+						   G4bool              calculateScaling,
+						   G4int               maximumOrder)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
+
+  BDSMagnetStrength* associatedStrength = nullptr;
+  if (calculateScaling)
+    {
+      BDSInterpolator2D* artemp = CreateInterpolator2D(array, BDSInterpolatorType::cubic2d);
+      BDSFieldMagInterpolated2D* tempField = new BDSFieldMagInterpolated2D(artemp, transform, bScalingUnits);
+      BDSFieldMagGradient calculator;
+      associatedStrength = calculator.CalculateMultipoles(tempField, maximumOrder);
+      delete tempField;
+      delete artemp;
+    } 
+  
   BDSInterpolator2D*   ar = CreateInterpolator2D(array, interpolatorType);
   BDSFieldMag*     result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
   return result;
