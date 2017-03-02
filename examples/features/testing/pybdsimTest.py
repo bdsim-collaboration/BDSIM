@@ -635,14 +635,14 @@ class TestSuite(TestUtilities):
             if self._generateOriginals:
                 _os.chdir('../')
             else:
-                self.Results.ProcessResults(componentType=componentType)
-                self.Results.PlotResults(componentType=componentType)
+                self.Analysis.AddTimingData(componentType,self.timings)
+                self.Analysis.ProcessResults(componentType=componentType)
+                self.Analysis.PlotResults(componentType=componentType)
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
         _os.chdir('../')
 
-        self.Results.AddTimingData(self.timings)
 
     def _multiThread(self, testlist):
         numCores = multiprocessing.cpu_count()
@@ -651,7 +651,7 @@ class TestSuite(TestUtilities):
         results = p.map(Run, testlist)
 
         for testRes in results:
-            self.Results.AddResults(testRes)
+            self.Analysis.AddResults(testRes)
             self.timings.bdsimTimes.append(testRes['bdsimTime'])
             self.timings.comparatorTimes.append(testRes['compTime'])
 
