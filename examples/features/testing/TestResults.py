@@ -18,7 +18,7 @@ GlobalData = Globals.Globals()
 resultsKeys = ['timingData',
                'resultsList',
                'fileLabel',
-               'generalStatusList'
+               'generalStatusList',
                'params',
                'testResults']
 
@@ -27,8 +27,9 @@ class Results(dict):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
+        self['testResults'] = []
         for key in resultsKeys:
-            setattr(self, key, [])
+            self[key] = []
 
     def GetResultsByParticle(self, particle=''):
         if not GlobalData.particles.__contains__(particle):
@@ -37,7 +38,8 @@ class Results(dict):
         for testNum, testResult in enumerate(self['testResults']):
             if testResult['particle'] == particle:
                 for key in resultsKeys:
-                    particleResults[key].append(self[key][testNum])
+                    if key != 'timingData':
+                        particleResults[key].append(self[key][testNum])
 
         return particleResults
 
