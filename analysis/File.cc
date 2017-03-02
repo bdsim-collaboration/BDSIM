@@ -69,7 +69,8 @@ void File::GetEntry(int iEntry)
 void File::Analysis()
 {
   for(int i=0;i<eventTree->GetEntries();++i) {
-    std::cout << event->trajectory->n << std::endl;
+    this->GetEntry(i);
+    std::cout << i << " " << event->trajectory->n << std::endl;
 
   }
 }
