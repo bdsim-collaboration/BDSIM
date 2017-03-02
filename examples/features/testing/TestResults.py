@@ -15,18 +15,20 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
 
+resultsKeys = ['timingData',
+               'resultsList',
+               'fileLabel',
+               'generalStatusList'
+               'params',
+               'testResults']
 
 
-        self['timingData'] = []
-        self['resultsList'] = []
-        self['fileLabel'] = []
-        self['generalStatusList'] = []
-        self['params'] = []
-        self['testResults'] = []
 class Results(dict):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
+        for key in resultsKeys:
+            setattr(self, key, [])
 
     def GetElectronResults(self):
         electronResults = Results(self._component)
