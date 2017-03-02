@@ -2,10 +2,15 @@
 // Created by Stewart Boogert on 02/03/2017.
 //
 
+
+#include <iostream>
+
 #include "File.hh"
 
 #include "TFile.h"
 #include "TTree.h"
+
+#include "BDSOutputROOTEventTrajectory.hh"
 
 ClassImp(File)
 
@@ -49,6 +54,24 @@ void File::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTr
   model->SetBranchAddress(modelTree);
   run->SetBranchAddress(runTree);
   event->SetBranchAddress(eventTree);
+
+  optionsTree->GetEntry(0);
+  modelTree->GetEntry(0);
+  runTree->GetEntry(0);
+  eventTree->GetEntry(0);
+}
+
+void File::GetEntry(int iEntry)
+{
+  eventTree->GetEntry(iEntry);
+}
+
+void File::Analysis()
+{
+  for(int i=0;i<eventTree->GetEntries();++i) {
+    std::cout << event->trajectory->n << std::endl;
+
+  }
 }
 
 File::~File()

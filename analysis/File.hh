@@ -22,6 +22,8 @@ public:
   File(std::string filename);
   File(std::vector<std::string> filenames);
   void SetBranchAddresses(TTree *options, TTree *model, TTree *run, TTree *event);
+  void GetEntry(int iEntry);
+  void Analysis();
   virtual ~File();
 
   TFile *f;
