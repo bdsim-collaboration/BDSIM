@@ -1,7 +1,9 @@
 import numpy as _np
 import os as _os
 import time as _time
+import collections
 import Globals
+import string as _string
 from matplotlib import colors as _color
 from matplotlib import ticker as _tick
 import matplotlib.pyplot as _plt
@@ -12,6 +14,23 @@ import matplotlib.patches as _patches
 multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
+
+
+class Results(dict):
+    def __init__(self, component=''):
+        if not GlobalData.components.__contains__(component):
+            raise ValueError("Unknown component type.")
+        self._component = component
+
+        self['timingData'] = []
+        self['resultsList'] = []
+        self['fileLabel'] = []
+        self['generalStatusList'] = []
+        self['params'] = []
+        self['testResults'] = []
+
+    def GetElectronResults(self):
+        electronResults = Results(self._component)
 
 
 class Timing:
@@ -46,13 +65,7 @@ class Timing:
 
 class ResultsUtilities:
     def __init__(self):
-        self.Results = {}
-        for component in GlobalData.components:
-            self.Results[component] = []
-        self.timingData = None
-        self._resultsList = {}
-        self._filesList = {}
-        self._generalStatusList = {}
+        self.ResultsDict = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -109,10 +122,12 @@ class ResultsUtilities:
                 coords[4] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('zp'):
                 coords[5] = GlobalData.returnCodes['FAILED']
-
+            if branches.__contains__('n'):
+                coords[6] = GlobalData.returnCodes['FAILED']
+                coords[0:6] = GlobalData.returnCodes['NO_DATA']
         return coords
 
-    def _getBDSIMLogData(self, result, logFile=''):
+    def _getBDSIMLogData(self, result):
         generalStatus = []
 
         # append comparator check
@@ -126,7 +141,7 @@ class ResultsUtilities:
             generalStatus.append(3)
 
         # get data in logfile.
-        f = open(logFile)
+        f = open(result['bdsimLogFile'])
         lines = f.read()
         f.close()
 
@@ -159,8 +174,29 @@ class ResultsUtilities:
 
         return generalStatus
 
+    def _getCommonValues(self, componentType=''):
+        uniqueValues = collections.OrderedDict()
+        # if self._testParamValues is None:
+        #     return None
+        for test in self.ResultsDict[componentType]['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
 
-class Results(ResultsUtilities):
+        commonValues = collections.OrderedDict()
+        for key, value in uniqueValues.iteritems():
+            if len(value) == 1:
+                commonValues[key] = value[0]
+
+        for values in commonValues.values():
+            if len(values) > 0:
+                return commonValues
+        return None
+
+
+class Analysis(ResultsUtilities):
     def __init__(self):
         ResultsUtilities.__init__(self)
 
@@ -201,17 +237,20 @@ class Results(ResultsUtilities):
         return gitLines
 
     def AddResults(self, results):
+        if not self.ResultsDict.keys().__contains__(results['componentType']):
+            self.ResultsDict[results['componentType']] = Results(results['componentType'])
         if isinstance(results, dict):
-            self.Results[results['componentType']].append(results)
+            self.ResultsDict[results['componentType']]['testResults'].append(results)
         elif multiEntryTypes.__contains__(type(results)):
             for res in results:
-                self.Results[results['componentType']].append(res)
+                self.ResultsDict[results['componentType']]['testResults'].append(res)
 
-    def AddTimingData(self, timingData):
+    def AddTimingData(self, componentType, timingData):
         if not isinstance(timingData, Timing):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
-            self.timingData = timingData
+            self.ResultsDict[componentType]['timingData'].append(timingData)
+        dummy = 1
 
     def ProcessOriginals(self):
         numTests = 0
@@ -219,8 +258,8 @@ class Results(ResultsUtilities):
         failedTests = []
         stuckParticles = []
         overlaps = []
-        for component, compResults in self.Results.iteritems():
-            for testdict in compResults:
+        for component, compResults in self.ResultsDict.iteritems():
+            for testdict in compResults['testResults']:
                 numTests += 1
 
                 generalStatus = testdict['generalStatus']
@@ -271,29 +310,30 @@ class Results(ResultsUtilities):
         if (componentType != '') and (not GlobalData.components.__contains__(componentType)):
             raise ValueError("Unknown component type.")
         elif componentType != '':
-            testResults = self.Results[componentType]
-            if not self._resultsList.keys().__contains__(componentType):
-                self._resultsList[componentType] = []
-                self._filesList[componentType] = []
-                self._generalStatusList[componentType] = []
+            testResults = self.ResultsDict[componentType]['testResults']
+            if not self.ResultsDict.keys().__contains__(componentType):
+                self.ResultsDict[componentType] = Results(componentType)
 
             for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
-                generalStatus = result['generalStatus']
 
-                self._resultsList[componentType].append(coords)
-                self._generalStatusList[componentType].append(generalStatus)
+                self.ResultsDict[componentType]['generalStatusList'].append(result['generalStatus'])
+                self.ResultsDict[componentType]['resultsList'].append(coords)
 
                 filename = result['ROOTFile']
                 filename = filename.replace('_event.root', '')
                 filename = filename.replace((componentType + "__"), '')
-                self._filesList[componentType].append(filename)
+
+                self.ResultsDict[componentType]['fileLabel'].append(filename)
+                self.ResultsDict[componentType]['params'].append(result['testParams'])
         else:
             pass
-        self._resultsList[componentType].reverse()
-        self._filesList[componentType].reverse()
-        self._generalStatusList[componentType].reverse()
+
+        self.ResultsDict[componentType]['resultsList'].reverse()
+        self.ResultsDict[componentType]['fileLabel'].reverse()
+        self.ResultsDict[componentType]['generalStatusList'].reverse()
+        self.ResultsDict[componentType]['params'].reverse()
 
     def PlotResults(self, componentType=''):
         f = _plt.figure(figsize=(15, 7))
