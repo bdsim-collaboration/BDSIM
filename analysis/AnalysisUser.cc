@@ -5,20 +5,20 @@
 
 #include <iostream>
 
-#include "File.hh"
+#include "AnalysisUser.hh"
 
 #include "TFile.h"
 #include "TTree.h"
 
 #include "BDSOutputROOTEventTrajectory.hh"
 
-ClassImp(File)
+ClassImp(AnalysisUser)
 
-File::File()
+AnalysisUser::AnalysisUser()
 {
 }
 
-File::File(std::string filename)
+AnalysisUser::AnalysisUser(std::string filename)
 {
   f           = new TFile(filename.data());
   optionsTree = (TTree*)f->Get("Options");
@@ -34,7 +34,7 @@ File::File(std::string filename)
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
 }
 
-File::File(std::vector<std::string> filenames)
+AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
 {
   delete f;
   delete optionsTree;
@@ -48,7 +48,7 @@ File::File(std::vector<std::string> filenames)
   delete event;
 }
 
-void File::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTree, TTree *eventTree)
+void AnalysisUser::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTree, TTree *eventTree)
 {
   options->SetBranchAddress(optionsTree);
   model->SetBranchAddress(modelTree);
@@ -61,12 +61,12 @@ void File::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTr
   eventTree->GetEntry(0);
 }
 
-void File::GetEntry(int iEntry)
+void AnalysisUser::GetEntry(int iEntry)
 {
   eventTree->GetEntry(iEntry);
 }
 
-void File::Analysis()
+void AnalysisUser::Analysis()
 {
   for(int i=0;i<eventTree->GetEntries();++i) {
     this->GetEntry(i);
@@ -75,6 +75,6 @@ void File::Analysis()
   }
 }
 
-File::~File()
+AnalysisUser::~AnalysisUser()
 {
 }
