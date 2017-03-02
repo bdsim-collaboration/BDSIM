@@ -30,9 +30,16 @@ class Results(dict):
         for key in resultsKeys:
             setattr(self, key, [])
 
-    def GetElectronResults(self):
-        electronResults = Results(self._component)
+    def GetResultsByParticle(self, particle=''):
+        if not GlobalData.particles.__contains__(particle):
+            raise ValueError("Unknown particle type.")
+        particleResults = Results(self._component)
+        for testNum, testResult in enumerate(self['testResults']):
+            if testResult['particle'] == particle:
+                for key in resultsKeys:
+                    particleResults[key].append(self[key][testNum])
 
+        return particleResults
 
 class Timing:
     def __init__(self):
@@ -354,6 +361,9 @@ class Analysis(ResultsUtilities):
 
         electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
         protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
+
+        electronResults = self.ResultsDict[componentType].GetResultsByParticle('e-')
+        protonResults = self.ResultsDict[componentType].GetResultsByParticle('proton')
 
         commonValues = self._getCommonValues(componentType)
         subplotTitle = ''
