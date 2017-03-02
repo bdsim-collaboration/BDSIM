@@ -471,12 +471,14 @@ class TestUtilities(object):
             g.write(line)
         g.close()
 
-    def WriteGlobalOptions(self):
+    def WriteGlobalOptions(self, robust=False):
         """ Write the options file that will be used by all test files.
             """
         options = _options.Options()
         options.SetSamplerDiameter(3)
         options.SetWritePrimaries(False)
+        if not robust:
+            options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
