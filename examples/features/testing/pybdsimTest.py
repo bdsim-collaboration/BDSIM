@@ -127,8 +127,7 @@ class TestData(dict):
                 value = i.split('_')[1]
                 self['testParams'][property] = value
 
-        if not GlobalData.components.__contains__(componentType):
-            raise ValueError("Unknown component type.")
+        GlobalData._CheckComponent(componentType)
         self['componentType'] = componentType
         self['originalFile'] = originalFile
 

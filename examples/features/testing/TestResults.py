@@ -16,11 +16,6 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 GlobalData = Globals.Globals()
 
 
-class Results(dict):
-    def __init__(self, component=''):
-        if not GlobalData.components.__contains__(component):
-            raise ValueError("Unknown component type.")
-        self._component = component
 
         self['timingData'] = []
         self['resultsList'] = []
@@ -28,6 +23,10 @@ class Results(dict):
         self['generalStatusList'] = []
         self['params'] = []
         self['testResults'] = []
+class Results(dict):
+    def __init__(self, componentType=''):
+        GlobalData._CheckComponent(componentType)
+        self._component = componentType
 
     def GetElectronResults(self):
         electronResults = Results(self._component)
@@ -307,9 +306,9 @@ class Analysis(ResultsUtilities):
         f.close()
 
     def ProcessResults(self, componentType=''):
-        if (componentType != '') and (not GlobalData.components.__contains__(componentType)):
-            raise ValueError("Unknown component type.")
-        elif componentType != '':
+        if componentType != '':
+            GlobalData._CheckComponent(componentType)
+
             testResults = self.ResultsDict[componentType]['testResults']
             if not self.ResultsDict.keys().__contains__(componentType):
                 self.ResultsDict[componentType] = Results(componentType)
@@ -336,6 +335,8 @@ class Analysis(ResultsUtilities):
         self.ResultsDict[componentType]['params'].reverse()
 
     def PlotResults(self, componentType=''):
+        GlobalData._CheckComponent(componentType)
+
         f = _plt.figure(figsize=(11, 7))
         ax = f.add_subplot(111)
 
