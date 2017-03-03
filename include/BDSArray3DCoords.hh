@@ -16,7 +16,7 @@
 class BDSArray3DCoords: public BDSArray4DCoords
 {
 public:
-  BDSArray3DCoords(G4int nX, G4int nY, G4int nZ, G4int loopOrder,
+  BDSArray3DCoords(G4int nX, G4int nY, G4int nZ,
 		   G4double xMinIn, G4double xMaxIn,
 		   G4double yMinIn, G4double yMaxIn,
 		   G4double zMinIn, G4double zMaxIn);

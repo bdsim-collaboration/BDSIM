@@ -6,12 +6,12 @@
 
 #include "globals.hh"
 
-BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn, G4int loopOrder,
+BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn,
 				   G4double xMinIn, G4double xMaxIn,
 				   G4double yMinIn, G4double yMaxIn,
 				   G4double zMinIn, G4double zMaxIn,
 				   G4double tMinIn, G4double tMaxIn):
-  BDSArray4D(nXIn,nYIn,nZIn,nTIn,loopOrder),
+  BDSArray4D(nXIn,nYIn,nZIn,nTIn),
   xMin(xMinIn), xMax(xMaxIn),
   yMin(yMinIn), yMax(yMaxIn),
   zMin(zMinIn), zMax(zMaxIn),

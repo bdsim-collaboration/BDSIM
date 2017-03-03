@@ -6,7 +6,7 @@
 
 BDSArray1DCoords::BDSArray1DCoords(G4int nXIn,
 				   G4double xMinIn, G4double xMaxIn):
-  BDSArray2DCoords(nXIn,1, 1,
+  BDSArray2DCoords(nXIn,1,
 		   xMinIn,xMaxIn,
 		   0,   1)
 {;}
