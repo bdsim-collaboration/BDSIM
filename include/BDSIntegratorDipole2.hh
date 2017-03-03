@@ -52,7 +52,7 @@ public:
 		       G4double       yOut[],    ///< Output array
 		       G4double       yErr[]);   ///< Output error array
 
-  virtual G4int IntegratorOrder() const {return 2;}
+  virtual G4int IntegratorOrder() const {return 1;}
 
   /// Variation of AdvanceHelix specifically to deal with particles that are likely to
   /// be spiralling in the magnetic field.
