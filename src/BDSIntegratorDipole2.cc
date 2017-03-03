@@ -83,11 +83,9 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 
   G4ThreeVector unitMomentum    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4ThreeVector unitField       = field.unit();
-  G4ThreeVector unitSideways    = unitField.cross(unitMomentum.unit());
+  //G4ThreeVector unitSideways    = unitField.cross(unitMomentum.unit());
   G4ThreeVector correctPosition = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
-  //G4ThreeVector delta2 = 1*CLHEP::mm * unitField;// + 1*CLHEP::um * unitMomentum;
-  //G4ThreeVector delta1 = std::max(h, 1*CLHEP::mm)*unitField;
-  G4ThreeVector delta = h*unitSideways;
+  G4ThreeVector delta = h*unitField;
   G4ThreeVector newPosition     = correctPosition + delta;
   //G4cout << newPosition << delta << G4endl;
   //SetAngCurve(7);
