@@ -30,7 +30,7 @@ void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
 }
 
 void BDSIntegratorDipole2::Stepper(const G4double yIn[],
-				   const G4double dydx[],
+				   const G4double[] /*dydx*/,
 				   G4double       h,
 				   G4double       yOut[],
 				   G4double       yErr[])
