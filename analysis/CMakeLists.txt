@@ -41,10 +41,9 @@ foreach(header ${rebdsimLibLinkDefs})
                 ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
+                -noIncludePaths
                 ${PREPROCESSOR_DEFS}
-#                -noIncludePaths -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-                -I${CMAKE_CURRENT_SOURCE_DIR}/../
+		-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
@@ -70,9 +69,9 @@ foreach(header ${rebdsimLibLinkDefs})
                 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.h
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                -c -p
                 ${PREPROCESSOR_DEFS}
-                -I${CMAKE_CURRENT_SOURCE_DIR}/../
+		-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
