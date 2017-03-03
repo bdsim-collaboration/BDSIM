@@ -10,9 +10,10 @@
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
-  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
+  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn),
+  backupStepper(nullptr)
 {
-  backupStepper = new G4ClassicalRK4(eqOfMIn, 6);
+  //backupStepper = new G4ClassicalRK4(eqOfMIn, 6);
 }
 
 BDSIntegratorDipole2::~BDSIntegratorDipole2()
