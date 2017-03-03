@@ -3,6 +3,7 @@
 
 #include "globals.hh" // geant4 globals / types
 
+#include <cmath>
 #include <utility>
 #include <ostream>
 
@@ -17,7 +18,7 @@ class BDSBin
 public:
   BDSBin(G4double inXmin, G4double inXmax);
   G4double GetValue()    const {return total;}
-  G4double GetError()    const {return sqrt(sumWeightsSquared);}
+  G4double GetError()    const {return std::sqrt(sumWeightsSquared);}
   G4double GetLowerEdge()const {return xmin;}
   G4double GetUpperEdge()const {return xmax;}
   G4double GetLength()   const {return xmax - xmin;}

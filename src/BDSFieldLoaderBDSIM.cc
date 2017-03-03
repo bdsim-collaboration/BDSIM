@@ -79,7 +79,7 @@ BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(G4String fileName)
 
 template <class T>
 void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
-				  const unsigned long nDim)
+				  const unsigned int nDim)
 {
   CleanUp();
   
@@ -101,8 +101,8 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   unsigned long xIndex = 0;
   unsigned long yIndex = 0;
   unsigned long zIndex = 0;
-  G4bool intoData     = false;
-  G4bool dataFinished = false; // just in case there's empty stuff at the end of the file
+  G4bool intoData      = false;
+  G4bool dataFinished  = false; // just in case there's empty stuff at the end of the file
   std::string line;
   G4int indX = 0; // ind of 0 will be index to default value in line data
   G4int indY = 0;
@@ -121,12 +121,13 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	{continue;}
 
       // Process a line of field data
+      // Do this first for efficiency as most of the file is this if statement
       if (intoData)
 	{
 	  if (dataFinished)
 	    {continue;} // just keep skipping lines after the appropriate amount of data is loaded
 	  
-	  ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
+	  ProcessData(line, xIndex, yIndex, zIndex); // updates member fv
 	    
 	  // Copy into array - we can always use 4d coords even for lower d arrays
 	  // as they all inherit 4d.
@@ -153,7 +154,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	      indT = 0;
 	      dataFinished = true;
 	    }
-	  continue;
+	  continue; // skip rest and go on to next loop for while getline
 	}
 
       // key definition
@@ -299,7 +300,6 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
 		     lineData[yIndex],
 		     lineData[zIndex]);
 }
-
 
 template class BDSFieldLoaderBDSIM<std::ifstream>;
 

@@ -334,6 +334,7 @@ void Options::PublishMembers()
   publish("trajConnect",&Options::trajConnect);
   publish("trajCutGTZ",&Options::trajCutGTZ);
   publish("trajCutLTR",&Options::trajCutLTR);
+  publish("trajNoTransportation", &Options::trajNoTransportation);
 
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",     &Options::stopTracks);

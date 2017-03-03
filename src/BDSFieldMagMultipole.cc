@@ -32,7 +32,7 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
 					     const G4double       /*t*/) const
 {
   // Translate cartesian to polar coordinates
-  G4double r   = sqrt(pow(position.x(),2) + pow(position.y(),2));
+  G4double r   = std::hypot(position.x(),position.y());
   G4double phi = 0;
   if (BDS::IsFinite(std::abs(r)))
     {phi = atan2(position.y(),position.x());}
@@ -56,11 +56,11 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
     {
       // Here we add to so order represents kn properly
       G4double o = (G4double)i+2; // the current order
-      br   += normalComponents[i] * pow(r, o - 1) * sin(o * phi) / ffact; //normal
-      br   -= skewComponents[i]   * pow(r, o - 1) * cos(o * phi) / ffact; //skewed
+      br   += normalComponents[i] * std::pow(r, o - 1) * sin(o * phi) / ffact; //normal
+      br   -= skewComponents[i]   * std::pow(r, o - 1) * cos(o * phi) / ffact; //skewed
 
-      bphi += normalComponents[i] * pow(r, o - 1) * cos(o * phi) / ffact; //normal
-      bphi += skewComponents[i]   * pow(r, o - 1) * sin(o * phi) / ffact; //skewed
+      bphi += normalComponents[i] * std::pow(r, o - 1) * cos(o * phi) / ffact; //normal
+      bphi += skewComponents[i]   * std::pow(r, o - 1) * sin(o * phi) / ffact; //skewed
 
       // Ignore dipole component for now!
       //if(o==1) // for the angle convention

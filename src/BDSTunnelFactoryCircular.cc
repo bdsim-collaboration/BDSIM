@@ -4,7 +4,6 @@
 #include "BDSDebug.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSTunnelSection.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
