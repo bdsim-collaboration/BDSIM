@@ -9,7 +9,7 @@
 #include "array.h"
 
 using namespace GMAD;
-#define BDSDEBUG 1
+
 Parameters::Parameters()
 {
   // fill setMap, needs to match published member names
