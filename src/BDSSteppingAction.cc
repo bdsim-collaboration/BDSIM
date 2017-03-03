@@ -1,67 +1,66 @@
 #include "BDSSteppingAction.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSDebug.hh"
 
-#include "G4AffineTransform.hh"
-#include "G4Track.hh"
-#include "G4VProcess.hh"
-#include "G4EventManager.hh"
+#include "globals.hh"
 #include "G4Event.hh"
+#include "G4EventManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4ThreeVector.hh"
+#include "G4Track.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VProcess.hh"
 
-BDSSteppingAction::BDSSteppingAction():_step(nullptr)
+
+BDSSteppingAction::BDSSteppingAction():
+  verboseStep(false),
+  verboseEventNumber(-1)	     
+{;}
+
+BDSSteppingAction::BDSSteppingAction(G4bool verboseStepIn,
+				     G4int  verboseEventNumberIn):
+  verboseStep(verboseStepIn),
+  verboseEventNumber(verboseEventNumberIn)
 {;}
 
 BDSSteppingAction::~BDSSteppingAction()
 {;}
 
-void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
+void BDSSteppingAction::UserSteppingAction(const G4Step* step)
 {
-  _step = ThisStep;
   G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
-  if(BDSGlobalConstants::Instance()->VerboseStep() || (event_number == BDSGlobalConstants::Instance()->VerboseEventNumber())) {
-    VerboseSteppingAction();
-  }
+  if(verboseStep || event_number == verboseEventNumber)
+    {VerboseSteppingAction(step);}
 }
 
-void BDSSteppingAction::VerboseSteppingAction()
+void BDSSteppingAction::VerboseSteppingAction(const G4Step* step)
 { 
   //output in case of verbose step
-  int ID=_step->GetTrack()->GetTrackID();
+  G4Track* track        = step->GetTrack();
+  int ID                = track->GetTrackID();
+  G4VPhysicalVolume* pv = track->GetVolume();
+  G4LogicalVolume* lv   = pv->GetLogicalVolume();
+  G4ThreeVector pos     = track->GetPosition();
+  G4ThreeVector mom     = track->GetMomentum() / CLHEP::GeV;
+  G4String materialName = track->GetMaterial()->GetName();
+  
   int G4precision = G4cout.precision();
   G4cout.precision(10);
-  G4cout<<"This volume="<< _step->GetTrack()->GetVolume()->GetName()<<G4endl;
-	
-  G4LogicalVolume* LogVol=_step->GetTrack()->GetVolume()->GetLogicalVolume();
-  G4cout<<"This log volume="<<LogVol->GetName() <<G4endl;
-	
-  G4cout<<"ID="<<ID<<" part="<<
-    _step->GetTrack()->GetDefinition()->GetParticleName()<<
-    "Energy="<<_step->GetTrack()->GetTotalEnergy()/CLHEP::GeV<<
-    " mom Px="
-	<<_step->GetTrack()->GetMomentum()[0]/CLHEP::GeV<<
-    " Py="<<_step->GetTrack()->GetMomentum()[1]/CLHEP::GeV<<
-    " Pz="<<_step->GetTrack()->GetMomentum()[2]/CLHEP::GeV<<" vol="<<
-    _step->GetTrack()->GetVolume()->GetName()<<G4endl;
-	
-  G4cout<<" Global Position="<<_step->GetTrack()->GetPosition()<<G4endl;
-  G4AffineTransform tf(_step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  G4cout<<" Local Position="<< tf.TransformPoint(_step->GetTrack()->GetPosition()) <<G4endl;
-
-  if(_step->GetTrack()->GetMaterial()->GetName() !="LCVacuum")
-    G4cout<<"material="<<_step->GetTrack()->GetMaterial()->GetName()<<G4endl;
-
-  const G4VProcess* proc = static_cast<const G4VProcess*>((_step->GetPostStepPoint()->
-					      GetProcessDefinedStep()));
-
-  if (proc)
-    {G4cout<<" post-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
-
-
-  proc = static_cast<const G4VProcess*>((_step->GetPreStepPoint()->
-				   GetProcessDefinedStep()));
-
-  if (proc)
-    {G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
+  G4cout << "Physical volume = " << pv->GetName() << G4endl;
+  G4cout << "Logical volume  = " << lv->GetName() << G4endl;
+  G4cout << "ID="        << ID
+	 << " part="     << track->GetDefinition()->GetParticleName()
+	 << " Energy="   << track->GetTotalEnergy()/CLHEP::GeV
+	 << " position=" << pos << "mm "
+	 << " momentum=" << mom
+	 << " material=" << materialName
+	 << G4endl;
+	    
+  auto preProcess  = step->GetPreStepPoint()->GetProcessDefinedStep();
+  auto postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
+  
+  if (preProcess)
+    {G4cout << "Pre-step process= " << preProcess->GetProcessName() << G4endl;}
+  if (postProcess)
+    {G4cout << "Post-step process= " << postProcess->GetProcessName() << G4endl;}
 
   // set precision back
   G4cout.precision(G4precision);
