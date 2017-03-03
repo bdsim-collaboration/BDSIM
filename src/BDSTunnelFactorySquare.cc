@@ -3,7 +3,6 @@
 #include "BDSTunnelFactoryRectangular.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "globals.hh"                 // geant4 globals / types

@@ -8,7 +8,6 @@
 #include "G4ThreeVector.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"

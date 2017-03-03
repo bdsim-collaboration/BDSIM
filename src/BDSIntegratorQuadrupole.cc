@@ -76,7 +76,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4cout << "paraxial approximation being used" << G4endl;
 #endif
   
-  G4double      h2      = pow(h,2);
+  G4double      h2      = std::pow(h,2);
 
   BDSStep       localPosMom = ConvertToLocal(GlobalR, InitMomDir, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
@@ -114,7 +114,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double dc = h2/(8*R);
   SetDistChord(dc);
   
-  G4double rootK  = sqrt(std::abs(kappa*zp)); // direction independent
+  G4double rootK  = std::sqrt(std::abs(kappa*zp)); // direction independent
   G4double rootKh = rootK*h*zp;
   G4double X11,X12,X21,X22 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
@@ -151,7 +151,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   yp1 = Y21*y0 + Y22*yp;
   
   // relies on normalised momenta otherwise this will be nan.
-  zp1 = sqrt(1 - xp1*xp1 - yp1*yp1);
+  zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
   
   G4double dx = x1 - x0;
   G4double dy = y1 - y0;
@@ -167,7 +167,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
     if(ScaleFac>1.0000001)
     {
     //G4cout << "renormalised" << G4endl;
-    ScaleFac=sqrt(ScaleFac);
+    ScaleFac=std::sqrt(ScaleFac);
     dx/=ScaleFac;
     dy/=ScaleFac;
     dz/=ScaleFac;

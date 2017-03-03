@@ -334,7 +334,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 	G4double P=0;
 	ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
 	G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
-	G4double totalEnergy = sqrt(P*P + particleMass*particleMass);
+	G4double totalEnergy  = std::hypot(P,particleMass);
 	E = totalEnergy - particleMass;
 #ifdef BDSDEBUG 
 	G4cout << "******** Particle Mass = " << particleMass << G4endl;

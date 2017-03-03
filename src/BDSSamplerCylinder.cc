@@ -1,12 +1,10 @@
 #include "BDSExtent.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 
 #include "globals.hh" // geant types / globals
 #include "G4LogicalVolume.hh"
-#include "G4Transform3D.hh"
 #include "G4Tubs.hh"
 
 BDSSamplerCylinder::BDSSamplerCylinder(G4String      name,

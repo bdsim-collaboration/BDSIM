@@ -32,8 +32,8 @@ G4ThreeVector BDSFieldMagDecapole::GetField(const G4ThreeVector &position,
   G4double y = position.y();
 
   G4ThreeVector localField;
-  localField[0] = 4 * x * y * (pow(x,2)-pow(y,2)) * bQPNormed;
-  localField[1] = (pow(x,4) - 6 * pow(x,2) * pow(y,2) + pow(y,4)) * bQPNormed;
+  localField[0] = 4 * x * y * (std::pow(x,2)-std::pow(y,2)) * bQPNormed;
+  localField[1] = (std::pow(x,4) - 6 * std::pow(x,2) * std::pow(y,2) + std::pow(y,4)) * bQPNormed;
   localField[2] = 0;
 
   return localField;

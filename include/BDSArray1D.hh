@@ -20,7 +20,7 @@ public:
   virtual ~BDSArray1D();
 
   /// Output stream.
-  friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a);
+  friend std::ostream& operator<< (std::ostream& out, BDSArray1D const &a);
 
 private:
   /// No default constructor as the array is not adjustable after construction and

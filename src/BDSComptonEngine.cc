@@ -85,7 +85,7 @@ void BDSComptonEngine::PerformCompton()
   
   // Generate final momenta:
   
-  sinth=sqrt(sinth2);
+  sinth=std::sqrt(sinth2);
   itsScatteredGam.setPx(Egam*sinth*cosphi);
   itsScatteredGam.setPy(Egam*sinth*sinphi);
   itsScatteredGam.setPz(Egam*costh);
@@ -94,10 +94,10 @@ void BDSComptonEngine::PerformCompton()
   itsScatteredEl.setPx(-itsScatteredGam.px());
   itsScatteredEl.setPy(-itsScatteredGam.py());
   itsScatteredEl.setPz(GamInLab.e()-itsScatteredGam.pz());
-  itsScatteredEl.setE( sqrt( pow(CLHEP::electron_mass_c2,2) +
-			     pow(itsScatteredEl.px(),2)+
-			     pow(itsScatteredEl.py(),2)+
-			     pow(itsScatteredEl.pz(),2) ) );
+  itsScatteredEl.setE( std::sqrt( std::pow(CLHEP::electron_mass_c2,2) +
+			     std::pow(itsScatteredEl.px(),2)+
+			     std::pow(itsScatteredEl.py(),2)+
+			     std::pow(itsScatteredEl.pz(),2) ) );
   
   // Rotates the reference frame from Uz to newUz (unit vector).
   itsScatteredGam.rotateUz(LabGammaDir);

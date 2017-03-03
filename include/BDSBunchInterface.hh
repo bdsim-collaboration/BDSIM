@@ -34,6 +34,7 @@ protected :
   G4double Xp0; 
   G4double Yp0;
   G4double Zp0;
+  G4double E0;
   G4double sigmaT; 
   G4double sigmaE;
   ///@}

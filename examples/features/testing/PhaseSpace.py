@@ -71,7 +71,7 @@ class PhaseSpace(dict):
     def SetPT(self, value):
         self._checkInput('pt', value)
 
-    def WriteToInrays(self, filename):
+    def _WriteToInrays(self, filename):
         """ Function to write the beam to a madx file to be called by
             a gmad ptc beam distribution. Upon writing, all permutations of particle
             phase space co-ordinates will be written.

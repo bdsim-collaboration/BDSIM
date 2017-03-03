@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh" 
 #include "BDSLens.hh"
 #include "BDSMaterials.hh"
 #include "G4VisAttributes.hh"

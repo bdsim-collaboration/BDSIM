@@ -482,7 +482,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
 
   // At outer X, we find out the maximum y before hitting the inside of the yoke and
   // back off a wee bit
-  G4double upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
+  G4double upperY = 0.95 * std::abs(std::sqrt(std::pow(yokeStartRadius,2) - std::pow(outerX,2)));
   
   coilHeight  = upperY - lowerY;
   G4double dx = outerX - innerX;
@@ -492,7 +492,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
       G4double newXHeight = std::max(dx*0.5, dx - (dx-coilHeight));
       outerX = innerX + newXHeight;
       // recalculate upperY given the new outerX
-      upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
+      upperY = 0.95 * std::abs(std::sqrt(std::pow(yokeStartRadius,2) - std::pow(outerX,2)));
     }
 
   // update coil height as used for end piece construction later

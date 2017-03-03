@@ -1,6 +1,8 @@
 #ifndef BDSMYSQLWRAPPER_H
 #define BDSMYSQLWRAPPER_H
 
+#include "globals.hh"
+
 #include <fstream>
 #include <vector>
 #include <string>

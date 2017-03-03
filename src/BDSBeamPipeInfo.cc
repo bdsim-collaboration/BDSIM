@@ -250,7 +250,7 @@ void BDSBeamPipeInfo::InfoOKForRectEllipse()
   /*
   //treat rectangle as point coordinates.  If this point is inside ellipse,
   //rectangle is too small -> error should just use elliptical aperture
-  G4double test = sqrt((aper1/aper3)*(aper1/aper3) + (aper2/aper4)*(aper2/aper4));
+  G4double test = std::hypot((aper1/aper3),(aper2/aper4));
   if (test < 1)
     {
       //rectangle too small
