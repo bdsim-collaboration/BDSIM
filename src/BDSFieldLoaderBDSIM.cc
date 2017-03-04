@@ -199,19 +199,22 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	    {
               G4String key = G4String(matchHeaderNumber[1]);
               key.toLower();
+
+	      // check it's a valid key - header preloaded with valid keys
+	      if (header.find(key) == header.end())
+		{
+		  file.close();
+		  G4cerr << "BDSIM Format Loader > Invalid key \"" << key << "\" in header" << G4endl;
+		  exit(1);
+		}
+	      
               G4double value = 0;
               try
 		{value = std::stod(matchHeaderNumber[2]);}
               catch (std::invalid_argument)
-		{
-		  G4cerr << "Invalid argument " << matchHeaderNumber[2] << G4endl; file.close();
-		  Terminate();
-		}
+		{G4cerr << "Invalid argument " << matchHeaderNumber[2] << G4endl; Terminate();}
               catch (std::out_of_range)
-		{
-		  G4cerr << "Number out of range " << matchHeaderNumber[2] << G4endl; file.close();
-		  Terminate();
-		}
+		{G4cerr << "Number out of range " << matchHeaderNumber[2] << G4endl; Terminate();}
 	      
               header[key] = value;
               continue;
