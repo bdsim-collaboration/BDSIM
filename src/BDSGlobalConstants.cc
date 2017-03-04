@@ -134,7 +134,6 @@ void BDSGlobalConstants::InitDefaultUserLimits()
       defaultUserLimits->SetUserMaxTime(MaxTime());
     }
   defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
-   // defaultUserLimits->SetUserMaxTrackLength(1*CLHEP::mm);
 }
 
 G4int BDSGlobalConstants::PrintModulo()const

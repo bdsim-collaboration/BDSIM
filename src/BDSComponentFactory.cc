@@ -1146,7 +1146,7 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-    if (BDS::IsFinite(element->B) && element->angleSet)
+  if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       angle = element->angle * CLHEP::rad;

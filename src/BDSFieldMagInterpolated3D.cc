@@ -18,9 +18,4 @@ BDSFieldMagInterpolated3D::~BDSFieldMagInterpolated3D()
 
 G4ThreeVector BDSFieldMagInterpolated3D::GetField(const G4ThreeVector& position,
 						  const G4double       /*t*/) const
-{
-	G4ThreeVector interpolatedValue = interpolator->GetInterpolatedValue(position[0], position[1], position[2]) * scaling;
-
-    return interpolatedValue;
-
-}
+{return interpolator->GetInterpolatedValue(position[0], position[1], position[2]) * scaling;}
