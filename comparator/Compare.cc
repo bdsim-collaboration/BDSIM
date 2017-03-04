@@ -13,9 +13,11 @@
 
 #include "BDSOutputROOTEventSampler.hh"
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -238,52 +240,134 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
   c->t1NEntries = (int)t1->GetEntries();
   c->t2NEntries = (int)t2->GetEntries();
 
-  TObjArray *oa1 = t1->GetListOfBranches(); 
+  // whether the value of a variable should be >= 0
+  std::map<std::string, bool> positiveValues = {
+    {"Emitt_x"    , true},
+    {"Emitt_y"    , true},
+    {"Alpha_x"    , false},
+    {"Alpha_y"    , false},
+    {"Beta_x"     , true},
+    {"Beta_x"     , true},
+    {"Gamma_x"    , true},
+    {"Gamma_y"    , true},
+    {"Disp_x"     , false},
+    {"Disp_y"     , false},
+    {"Disp_xp"    , false},
+    {"Disp_yp"    , false},
+    {"Mean_x"     , false},
+    {"Mean_y"     , false},
+    {"Mean_xp"    , false},
+    {"Mean_yp"    , false},
+    {"S"          , false},
+    {"Npart"      , true},
+    {"Mean_E"     , false},
+    {"Mean_t"     , false}
+  };
+
+  // branches we won't compare as they're error branches
+  std::vector<std::string> errorBranches = {
+    "Sigma_Emitt_x",  "Sigma_Emitt_y",
+    "Sigma_Alpha_x",  "Sigma_Alpha_y",
+    "Sigma_Beta_x",   "Sigma_Beta_y",
+    "Sigma_Gamma_x",  "Sigma_Gamma_y",
+    "Sigma_Disp_x",   "Sigma_Disp_y",
+    "Sigma_Disp_xp",  "Sigma_Disp_yp",
+    "Sigma_Mean_x",   "Sigma_Mean_y",
+    "Sigma_Sigma_x",  "Sigma_Sigma_y",
+    "Sigma_Sigma_xp", "Sigma_Sigma_yp",
+    "Sigma_Mean_E",   "Sigma_Sigma_E",
+    "Sigma_Mean_t",   "Sigma_Sigma_t"
+  };
   
+  TObjArray *oa1 = t1->GetListOfBranches(); 
+
+  // loop over branches
+  // for each branch loop over all entries and compare to reference file
   for(int j = 0; j<oa1->GetSize(); ++j)
-    {// loop over branches
+    {
       TBranch* b1 = (TBranch*)(*oa1)[j];
       std::string branchName = std::string(b1->GetName());
-      if (Compare::StringStartsWith(branchName, "Sig_"))
-	{continue;} // skip this branch
-
-      bool branchFailed = false;
-      std::string errBranchName = "Sig_" + branchName;
       
-      TBranch* b1err = t1->GetBranch(errBranchName.c_str());
-      TBranch* b2err = t2->GetBranch(errBranchName.c_str());     
-      if (!b1err || !b2err)
-	{continue;} // There's no appropriate error branch - don't compare
+      bool branchFailed    = false;
+      bool shouldBeGTEZero = false;
       
-      TBranch* b2 = t2->GetBranch(branchName.c_str());
-      double t1v = 0;
-      double t1e = 0;
-      double t2v = 0;
-      double t2e = 0;
-      b1->SetAddress(&t1v);
-      b1err->SetAddress(&t1e);
-      b2->SetAddress(&t2v);
-      b2err->SetAddress(&t2e);
-      for(int i = 0; i<t1->GetEntries(); ++i)
-	{// loop over entries
-	  t1->GetEntry(i);
-	  t2->GetEntry(i);
-	  
-	  if (!std::isnormal(t1e) || !std::isnormal(t2e))
-	    {break;} // skip test when errors are 0
-	  
-	  // Here only one entry so ndof = 1
-	  double chi2 = std::pow(t1v - t2v, 2) / (std::pow(t1e,2) + std::pow(t2e,2));
-	  
-	  branchFailed = chi2 > OPTICSSIGMATOLERANCE;
-	  
-	  if (branchFailed)
-	    {
-	      std::cout << t1v << " " << t2v << " " << t1e << " "
-			<< t2e << " " << chi2 << std::endl;
-	      break; // skip testing rest of branch entries
+      // Don't compare an error branch to that in the reference file
+      // as it'll be different (likely reference is at higher statistics).
+      // We use a specific set of vector names because we still want to compare
+      // sigma for some values.
+      // However, we should still check they have +ve, not nan values.
+      if (Compare::IsInVector(branchName, errorBranches))
+	{
+	  double t1v = 0;
+	  b1->SetAddress(&t1v);
+	  for(int i = 0; i<t1->GetEntries(); ++i)
+	    {// loop over entries
+	      t1->GetEntry(i);
+	      // errors (sigmas) should be +ve and finite
+	      if (LTZero(t1v) || NanOrInf(t1v))
+		{
+		  branchFailed = true;
+		  break;
+		}
 	    }
 	}
+      else
+	{// not an error branch - compare with reference file
+	  // whether this variable should always be >= 0
+	  shouldBeGTEZero = positiveValues[branchName];
+	    
+	  std::string errBranchName = "Sigma_" + branchName;
+	  
+	  TBranch* b1err = t1->GetBranch(errBranchName.c_str());
+	  TBranch* b2err = t2->GetBranch(errBranchName.c_str());     
+	  if (!b1err || !b2err)
+	    {continue;} // There's no appropriate error branch - don't compare
+	  
+	  TBranch* b2 = t2->GetBranch(branchName.c_str());
+
+	  // setup local variables and link to root file
+	  double t1v = 0;
+	  double t1e = 0;
+	  double t2v = 0;
+	  double t2e = 0;
+	  b1->SetAddress(&t1v);
+	  b1err->SetAddress(&t1e);
+	  b2->SetAddress(&t2v);
+	  b2err->SetAddress(&t2e);
+
+	  // loop over all entries and compare
+	  for(int i = 0; i<t1->GetEntries(); ++i)
+	    {
+	      t1->GetEntry(i);
+	      t2->GetEntry(i);
+	      
+	      if (!std::isnormal(t1e) || !std::isnormal(t2e))
+		{break;} // skip test when errors are 0
+
+	      // check for nans or negative values that shouldn't be there
+	      if (NanOrInf(t1v) || NanOrInf(t2v) || GTEZero(t1v) != shouldBeGTEZero || GTEZero(t2v) != shouldBeGTEZero)
+		{
+		  branchFailed = true;
+		  std::cout << "Invalid value found for branch \"" << branchName << "\"" << G4endl;
+		  std::cout << t1v << " " << t2v << " " << t1e << " " << t2e << " " << std::endl;
+		  break; // skip testing rest of branch entries
+		}
+		  
+	      // Here only one entry so ndof = 1
+	      double chi2 = std::pow(t1v - t2v, 2) / (std::pow(t1e,2) + std::pow(t2e,2));
+	      
+	      branchFailed = chi2 > OPTICSSIGMATOLERANCE;
+	      
+	      if (branchFailed)
+		{
+		  std::cout << t1v << " " << t2v << " " << t1e << " "
+			    << t2e << " " << chi2 << std::endl;
+		  break; // skip testing rest of branch entries
+		}
+	    }
+	}
+
+      // record result
       if (branchFailed)
 	{
 	  std::cout << "Branch was " << branchName << std::endl << std::endl;
@@ -454,4 +538,9 @@ bool Compare::StringStartsWith(std::string aString, std::string prefix)
   catch(const std::out_of_range&)
     {return false;} // if string isn't as long as prefix
   return false; // for static analysis warning
+}
+
+bool Compare::IsInVector(std::string key, const std::vector<std::string>& vec)
+{
+  return std::find(vec.begin(), vec.end(), key) != vec.end();
 }

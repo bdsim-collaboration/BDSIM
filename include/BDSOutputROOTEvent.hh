@@ -145,7 +145,8 @@ private:
   /// event information
   BDSOutputROOTEventInfo        *evtInfo     = nullptr;
 
-  G4bool useScoringMap = false;
+  G4bool useScoringMap  = false;
+  G4bool writePrimaries = true;
 };
 
 

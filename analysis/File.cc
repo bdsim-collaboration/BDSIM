@@ -34,7 +34,7 @@ File::File(std::string filename)
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
 }
 
-File::File(std::vector<std::string> filenames)
+File::File(std::vector<std::string> /*filenames*/)
 {
   delete f;
   delete optionsTree;
