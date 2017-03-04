@@ -396,18 +396,135 @@ The final coordinates are calculated as:
    
    \mathbf{p}_{out} ~ = ~ \mathbf{\hat{p}}_{in} ~ \Big[ \mathrm{CT}~\mathbf{p}_{\perp} + \mathrm{ST}\,(\mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}) \Big] + \mathbf{p}_{\|}
 
+The distance from the chord and arc of the true path are also calculated by Geant4 and
+the algorithm is as follows.
+
+* If the angle of the curve is in the range :math:`0 \leq \theta \leq ~ \pi`:
+
+.. math::
+
+   \Delta_{chord} ~ = ~ R ~\Bigg[1-\cos\Big(\frac{\theta}{2}\Big) \Bigg]
+
+* Else if :math:`\pi < \theta < 2\pi`:
+
+.. math::
+
+   \Delta_{chord} ~ = ~ R ~\Bigg[1+\cos\Big(\frac{2\pi-\theta}{2}\Big) \Bigg]
+   
+* Else:
+
+.. math::
+
+    \Delta_{chord} ~ = 2~R
+
 
 BDSIM Quadrupole
 ----------------
 
 * Class name: :code:`BDSIntegratorQuadrupole`
 
-* Convert to local curvilinear coordinates.
+The field gradient is calculated upon construction of the integrator as:
+
+.. math::
+
+   B' ~ = ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x} ~ = ~ B\rho~ \Big( \frac{1}{B\rho}~\frac{\mathrm{d}B_{y}}{\mathrm{d}x} \Big)~ = ~ B\rho~k_{1}
+
+For each usage:
+
 * Calculate strength parameter :math:`\kappa` *w.r.t.* a given particle rigidity:
 
 .. math::
 
    \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
+
+If :math:`\|\kappa\| < 10^{-2}` use the drift integrator, else continue as:
+
+* Convert to local curvilinear coordinates.
+
+If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and the backup
+integrator from :code:`BDSIntegratorMag` is used.  Else, proceed with thick matrix
+transportation.  In this case, the following factors are calculated:
+
+.. math::
+
+   rk  = ~\sqrt{\|\kappa\|~p_{z}} \\
+   rkh = h~p_{z}~rk
+
+For :math:`\kappa > 0`, the focussing thick matrix is used (in the local curvilinear frame):
+
+.. math::
+   \mathbf{M_{quad, +\kappa}}~=~
+   \begin{pmatrix}
+   \cos(rkh)                         & \frac{1}{rk}\sin(rkh)  & 0 & 0    \\
+   -\|\kappa\|~\frac{1}{rk}\sin(rkh) & \cos(rkh)              & 0 & 0    \\
+   0 & 0 & \cosh(rkh)                          &  \frac{1}{rk}\sinh(rkh) \\
+   0 & 0 & -\|\kappa\|~\frac{1}{rk}\sinh(rkh)  & \cosh(rkh)              \\
+   \end{pmatrix}
+
+and for :math:`\kappa < 0`, the defocussing thick matrix is used (again, in the local
+curvilinear frame):
+
+.. math::
+   \mathbf{M_{quad, -\kappa}}~=~
+   \begin{pmatrix}
+   \cosh(rkh)                          &  \frac{1}{rk}\sinh(rkh) & 0 & 0 \\
+   -\|\kappa\|~\frac{1}{rk}\sinh(rkh)  & \cosh(rkh)              & 0 & 0 \\
+   0 & 0 & \cos(rkh)                         & \frac{1}{rk}\sin(rkh)     \\
+   0 & 0 & -\|\kappa\|~\frac{1}{rk}\sin(rkh) & \cos(rkh)                 \\
+   \end{pmatrix}
+
+These are used as follows (again in the local curvilinear frame):
+
+.. math::
+
+   \begin{pmatrix}
+   q_{x,out} \\
+   p_{x,out} \\
+   q_{y,out} \\
+   p_{y,out} \\
+   \end{pmatrix} ~ = ~
+   \mathbf{M_{quad,\pm}} ~
+   \begin{pmatrix}
+   q_{x,in} \\
+   p_{x,in} \\
+   q_{y,in} \\
+   p_{y,in} \\
+   \end{pmatrix}
+
+:math:`p_{z,out}` is calculated by conserving momentum.
+
+.. math::
+
+   p_{z,out} ~ = ~ \sqrt{1 - p_{x,out}^2 - p_{y,out}^2}
+
+:math:`q_{z,out}` is calculated as:
+
+.. math::
+
+   q_{z,out} ~ = ~ \sqrt{\Big[ h^2\,(1 - \frac{h^2}{12\,R^2}) - (\mathrm{d}q_{x}^2 + \mathrm{d}q_{y}^2) \Big]} 
+
+where :math:`\mathrm{d}q_{x,y}` are the changes in local :math:`x` and :math:`y` respectively.
+:math:`R` is:
+
+.. math::
+
+   R ~ = ~ \frac{1}{\|R''\|}
+
+.. math::
+
+   R'' ~ = ~
+   \begin{pmatrix}
+   -p_{z,in}~q_{x,in} \\
+   p_{z,in}~q_{y,in}  \\
+   q_{x,in}~p_{x,in} - q_{y,in}~p_{y,in}\\
+   \end{pmatrix}
+
+The distance from the chord and arc of the true path are estimated as:
+
+.. math::
+
+   \Delta_{chord} ~ = ~ \frac{h^2}{8\,R}
+
 
 BDSIM Euler
 -----------
