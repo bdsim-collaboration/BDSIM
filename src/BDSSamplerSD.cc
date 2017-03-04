@@ -84,9 +84,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4cout << __METHOD_NAME__ << "Sampler ID: " << samplerID << G4endl;
 #endif
 
-    //Initialize variables for the local position and direction
-    G4ThreeVector localPosition;
-    G4ThreeVector localDirection;
+  //Initialize variables for the local position and direction
+  G4ThreeVector localPosition;
+  G4ThreeVector localDirection;
+  
   // Get coordinate transform and prepare local coordinates
   G4Transform3D localToGlobal = registry->GetTransformInverse(samplerID);
   if (localToGlobal == G4Transform3D::Identity) // no transform was provided - look it up
@@ -94,23 +95,26 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Getting transform dynamically from geometry." << G4endl;
 #endif
-      //Transform not provided so use the original method for determining the local direction and position as converting
-      // to transform3d does not work in this case.
+      // Transform not provided so look up geometry and get the transform. OK in mass world
+      // but error prone in parallel worlds for very thin volumes.
+      // NOTE: we're looking up mass world here!
       G4AffineTransform tf = preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform();
-      localPosition = tf.TransformPoint(pos);
+      localPosition  = tf.TransformPoint(pos);
       localDirection = tf.TransformAxis(mom);
-    } else {
+    }
+  else
+    {
       //If the local to global transform3d is defined...
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
-      G4ThreeVector localPosition  = localToGlobal * (HepGeom::Point3D<G4double>)pos;
+      localPosition  = localToGlobal * (HepGeom::Point3D<G4double>)pos;
       // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
       // Account for this by purposively setting local z to be 0.
       localPosition.setZ(0.0);
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
-      G4ThreeVector localDirection = localToGlobal * (HepGeom::Vector3D<G4double>)mom;
-  }
+      localDirection = localToGlobal * (HepGeom::Vector3D<G4double>)mom;
+    }
 
-  BDSParticle   local(localPosition,localDirection,energy,t);
+  BDSParticle local(localPosition,localDirection,energy,t);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local coordinates: " << local << G4endl;
@@ -120,7 +124,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4String samplerName = info.Name();
   G4double s           = info.SPosition();
   G4int beamlineIndex  = info.BeamlineIndex();
-  // BDSBeamlineElement* element = info.Element();
   
   G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   nEvent += globals->EventNumberOffset();
