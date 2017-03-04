@@ -197,7 +197,8 @@ Common Magnetic Field Interface From Geant4
 The magnetic field integrators provided by BDSIM inherit :code:`G4MagIntegratorStepper`.
 This is constructed with respect to a :code:`G4EquationOfMotion` object, which is
 a :code:`G4Mag_UsalEqRhs` instance for BDSIM integrators.  This *equation of motion*
-provides the partial differential of the motion at a given location.
+provides the partial differential of the motion at a given location - i.e. the field
+is found at that location and the vector potential calculated.
 
 An integrator derived from :code:`G4MagIntegratorStepper` must implement a method:
 
@@ -270,7 +271,7 @@ base class for the majority of BDSIM integrators.
 
 .. math::
 
-   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + h~\|\mathbf{p}_{in}\|\\
+   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + h~\mathbf{\hat{p}_{in}} \\
    \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in}
 
 .. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
@@ -332,12 +333,6 @@ This is provided in the :code:`G4MagHelicalStepper` class, which provides the tr
 for a single step through a pure magnetic field, but not the other functionality required
 for a suitable integrator. This BDSIM class that inherits it provides the rest of the require
 functionality as well as special treatment for particles that may spiral indefinitely.
-
-
-* If :math:`\|\mathbf{p}\| < 40 \mathrm{MeV}`, the Geant4 :code:`G4ClassicalRK4` integrator
-  is used.
-
-Otherwise:
 
 * The field :math:`\mathbf{B}` is queried at :math:`\mathbf{q}_{in}`.
 * A full step along the trajectory is calculated.
