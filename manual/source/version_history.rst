@@ -12,6 +12,7 @@ New Features
  * AWAKE experiment code refactored into module.
  * New *shield* element that is a drift surrounded by rectangle of material.
  * New *placement* element that allows an object with geometry to be placed independent of the beam line.
+ * maximumTrackLength option to limit any track in the geometry.
 
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
