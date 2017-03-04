@@ -6,30 +6,30 @@
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <ostream>
 
 BDSFieldInfo::BDSFieldInfo():
-        fieldType(BDSFieldType::none),
-        brho(0),
-        integratorType(BDSIntegratorType::none),
-        magnetStrength(nullptr),
-        provideGlobalTransform(false),
-        transform(G4Transform3D()),
-        cavityInfo(nullptr),
-        magneticFieldFilePath(""),
-        magneticFieldFormat(BDSFieldFormat::none),
-	magneticInterpolatorType(BDSInterpolatorType::nearest3d),
-        electricFieldFilePath(""),
-        electricFieldFormat(BDSFieldFormat::none),
-	electricInterpolatorType(BDSInterpolatorType::nearest3d),
-	cacheTransforms(true),
-	eScaling(1.0),
-	bScaling(1.0),
-	timeOffset(0)
+  fieldType(BDSFieldType::none),
+  brho(0),
+  integratorType(BDSIntegratorType::none),
+  magnetStrength(nullptr),
+  provideGlobalTransform(false),
+  transform(G4Transform3D()),
+  cavityInfo(nullptr),
+  magneticFieldFilePath(""),
+  magneticFieldFormat(BDSFieldFormat::none),
+  magneticInterpolatorType(BDSInterpolatorType::nearest3d),
+  electricFieldFilePath(""),
+  electricFieldFormat(BDSFieldFormat::none),
+  electricInterpolatorType(BDSInterpolatorType::nearest3d),
+  cacheTransforms(true),
+  eScaling(1.0),
+  bScaling(1.0),
+  timeOffset(0)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
