@@ -498,6 +498,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
       BDSInterpolator2D* artemp = CreateInterpolator2D(array, BDSInterpolatorType::cubic2d);
       BDSFieldMagInterpolated2D* tempField = new BDSFieldMagInterpolated2D(artemp, transform, bScalingUnits);
       BDSFieldMagGradient calculator;
+      G4cout << "creating calculator" << G4endl;
       associatedStrength = calculator.CalculateMultipoles(tempField, maximumOrder);
       delete tempField;
       delete artemp;
@@ -511,7 +512,9 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            filePath,
 						       BDSInterpolatorType interpolatorType,
 						       G4Transform3D       transform,
-						       G4double            bScaling)
+						       G4double            bScaling,
+                               G4bool              calculateScaling,
+                               G4int               maximumOrder)
 {
   G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
@@ -523,6 +526,17 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 	     << G4endl;
     }
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
+  BDSMagnetStrength* associatedStrength = nullptr;
+  if (calculateScaling)
+  {
+    BDSInterpolator2D* artemp = CreateInterpolator2D(rArray, BDSInterpolatorType::cubic2d);
+    BDSFieldMagInterpolated2D* tempField = new BDSFieldMagInterpolated2D(artemp, transform, bScalingUnits);
+    BDSFieldMagGradient calculator;
+    G4cout << "creating calculator" << G4endl;
+    associatedStrength = calculator.CalculateMultipoles(tempField, maximumOrder);
+    delete tempField;
+    //delete artemp;
+  }
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
   BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
   return result;
