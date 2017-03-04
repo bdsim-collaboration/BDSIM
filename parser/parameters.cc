@@ -47,7 +47,6 @@ Parameters::Parameters()
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
-  setMap["magnetOffsetX"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
@@ -60,6 +59,7 @@ Parameters::Parameters()
   setMap["screenEndZ"] = false;
   setMap["poleStartZ"] = false;
   setMap["screenWidth"] = false;
+  setMap["awakeMagnetOffsetX"] = false;
   setMap["layerThicknesses"] = false;
   setMap["layerMaterials"] = false;
   setMap["layerIsSampler"] = false;
