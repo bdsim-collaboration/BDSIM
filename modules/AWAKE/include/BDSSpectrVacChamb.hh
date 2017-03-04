@@ -32,6 +32,7 @@ public:
 private:
   BDSSpectrVacChamb();
 
+  G4String _name;
   G4double _lengthZ;
   G4double _magStartZ; //Z where the vacuum chamber starts to widen
   G4double _vacuumEndZ; //Z where the vacuum chamber screen ends
@@ -47,7 +48,7 @@ private:
   G4String _strutMaterial;
   G4double _trapLengthZ;
   G4double _trapLengthX;
-  G4String _name;
+
   
   G4LogicalVolume* _upperLogVolTrap;
   G4LogicalVolume* _innerLogVolTrap;
