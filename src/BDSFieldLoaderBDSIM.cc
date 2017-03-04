@@ -42,11 +42,19 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
   fv = BDSFieldValue();
   std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
 				   "xmin", "xmax", "ymin", "ymax",
-				   "zmin", "zmax", "tmin", "tmax", "loopOrder"};
+				   "zmin", "zmax", "tmin", "tmax"};
   for (const std::string s : allKeys)
     {header[s] = 0;}
-  result = nullptr;
+  result    = nullptr;
+  loopOrder = "xyzt";
 }
+
+template <class T>
+void BDSFieldLoaderBDSIM<T>::Terminate()
+{
+  file.close();
+  exit(1);
+} 
 
 template <class T>
 BDSArray1DCoords* BDSFieldLoaderBDSIM<T>::Load1D(G4String fileName)
@@ -92,7 +100,10 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   validFile = file.is_open();
 #endif
   if (!validFile)
-    {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
+    {
+      G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl;
+      Terminate();
+    }
   else
     {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
 
@@ -103,86 +114,147 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   G4bool intoData     = false;
   G4bool dataFinished = false; // just in case there's empty stuff at the end of the file
   std::string line;
-  G4int indX = 0; // ind of 0 will be index to default value in line data
-  G4int indY = 0;
-  G4int indZ = 0;
-  G4int indT = 0;
-  G4int nX   = 1;
-  G4int nY   = 1;
-  G4int nZ   = 1;
-  G4int nT   = 1;
-    G4int* ind1;
-    G4int* ind2;
-    G4int* ind3;
-    G4int* ind4;
-    G4int* n1;
-    G4int* n2;
-    G4int* n3;
-    G4int* n4; //Pointers to the above, to allow different loop orderings.
-    G4int loopOrder = 123; // The order in which to loop over the axes.
 
-  while (std::getline(file, line)) {// read a line only if it's not a blank one
+  // ind of 0 will be index to default value in line data
+  G4int indX = 0, indY = 0, indZ = 0, indT = 0;
+  G4int nX   = 1, nY   = 1, nZ   = 1, nT   = 1;
 
+  // references to above indices and counters
+  // must be initialised to put in a vector
+  // set default order to xyzt
+  G4int* ind1 = &indX;
+  G4int* ind2 = &indY;
+  G4int* ind3 = &indZ;
+  G4int* ind4 = &indT;
+  G4int* n1   = &nX;
+  G4int* n2   = &nY;
+  G4int* n3   = &nZ;
+  G4int* n4   = &nT;
+
+  // wrap in vectors for easy assignment
+  G4String nominalOrder = "xyzt";
+  
+  while (std::getline(file, line))
+    {// read a line only if it's not a blank one
+      
       // Skip a line if it's only whitespace
-      if (std::all_of(line.begin(), line.end(), isspace)) { continue; }
-
+      if (std::all_of(line.begin(), line.end(), isspace))
+	{continue;}
+      
       // Process a line of field data
-      if (intoData) {
-          if (dataFinished) { continue; } // just keep skipping lines after the appropriate amount of data is loaded
-
+      // Do this first for efficiency as most of the file is this if statement
+      if (intoData)
+	{
+          if (dataFinished)
+	    {continue;} // just keep skipping lines after the appropriate amount of data is loaded
+	  
           ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
-
+	  
           // Copy into array - we can always use 4d coords even for lower d arrays
           // as they all inherit 4d.
+	  // We always use indX, indY etc as array is independent of looping here.
+	  // References to indicies update them as we loop appropriately. The array
+	  // is constructed with the right dimensions and can therefore be filled in
+	  // any order.
           (*result)(indX, indY, indZ, indT) = fv;
-
+	  
           (*ind1)++; // increment counter
-          if ((*ind1) == (*n1)) {// we've completed one set of ind1.
+          if ((*ind1) == (*n1))
+	    {// we've completed one set of ind1.
               (*ind1) = 0; // reset back to 0
               (*ind2)++;   // advance ind2
-          }
-          if ((*ind2) == (*n2)) {// we've completed one set of ind2
+	    }
+          if ((*ind2) == (*n2))
+	    {// we've completed one set of ind2
               (*ind2) = 0; // reset back to 0
               (*ind3)++;   // advance ind3
-          }
-          if ((*ind3) == (*n3)) {// we've copmleted one set of ind3
+	    }
+          if ((*ind3) == (*n3))
+	    {// we've copmleted one set of ind3
               (*ind3) = 0; // reset back to 0
               (*ind4)++;   // advance ind4
-          }
-          if ((*ind4) == (*n4)) {// we've completed one set of ind4
+	    }
+          if ((*ind4) == (*n4))
+	    {// we've completed one set of ind4
               (*ind4) = 0;
               dataFinished = true;
-          }
-          continue;
+	    }
+	  
+          continue; // was a data line - don't now test for header info etc.
       }
 
       // key definition
-      if (line.find(">") != std::string::npos) {// must be key definition
-          std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
-          std::smatch match;
-          std::regex_search(line, match, keyValue);
-          if (match.size() < 2) {
-              G4cerr << "Invalid key definition in field format:\n" << line << G4endl;
-              exit(1);
-          }
-          else {
-              G4String key = G4String(match[1]);
+      //if (line.find(">") != std::string::npos)
+      std::smatch matchHeaderNumber;
+      std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
+      if (std::regex_search(line, matchHeaderNumber, keyValue))
+	{// must be key definition
+          if (matchHeaderNumber.size() < 2)
+	    {
+	      G4cerr << "Invalid key definition in field format:\n" << line << G4endl;
+	      Terminate();
+	    }
+          else
+	    {
+              G4String key = G4String(matchHeaderNumber[1]);
               key.toLower();
               G4double value = 0;
-              try { value = std::stod(match[2]); }
-              catch (std::invalid_argument) {
-                  G4cerr << "Invalid argument " << match[2] << G4endl;
-                  exit(1);
-              }
-              catch (std::out_of_range) {
-                  G4cerr << "Number out of range " << match[2] << G4endl;
-                  exit(1);
-              }
-
+              try
+		{value = std::stod(matchHeaderNumber[2]);}
+              catch (std::invalid_argument)
+		{
+		  G4cerr << "Invalid argument " << matchHeaderNumber[2] << G4endl; file.close();
+		  Terminate();
+		}
+              catch (std::out_of_range)
+		{
+		  G4cerr << "Number out of range " << matchHeaderNumber[2] << G4endl; file.close();
+		  Terminate();
+		}
+	      
               header[key] = value;
               continue;
-          }
-      }
+	    }
+	}
+
+      std::smatch matchHeaderString;
+      // mathces "key > string" where string is 1-4 characters (not numbers)
+      // can be paddded with whitespace \s*
+      // not more than four characters (via \b for word boundary)
+      std::regex keyWord("(\\w+)\\s*>\\s*([a-zA-Z]{1,4})\\b\\s*");
+      if (std::regex_search(line, matchHeaderString, keyWord))
+	{
+	  loopOrder = G4String(matchHeaderString[2]); // member variable
+	  
+	  // only link up indices if we have to for different ordering
+	  if (loopOrder != nominalOrder)
+	    {
+	      std::vector<G4int*> indReferences = {&indX, &indY, &indZ, &indT};
+	      std::vector<G4int*> numReferences = {&nX,   &nY,   &nZ,   &nT};
+	      std::vector<G4int**> inds         = {&ind1, &ind2, &ind3, &ind4};
+	      std::vector<G4int**> nums         = {&n1,   &n2,   &n3,   &n4};
+	      
+	      // loop over indices and link pointers to counters
+	      for (unsigned int i = 0; i < (unsigned int)loopOrder.size(); i++)
+		{
+		  std::size_t found = nominalOrder.find(loopOrder[i]);
+		  if (found != std::string::npos)
+		    {
+		      G4int foundIndex = G4int(found);
+		      // dereference point in array which gives G4int* variable outside vector
+		      (*inds[i]) = indReferences[foundIndex];
+		      (*nums[i]) = numReferences[foundIndex];
+		    }
+		  else
+		    {
+		      G4cerr << "Invalid dimension specifier in loopOrder key: \""
+			     << loopOrder << "\"" << G4endl;
+		      Terminate();
+		    }
+		}
+	    }
+	  continue; // loopOrder -> it's not a number so don't try matching it
+	}   
 
       // if starts with '!' - columns
       // check all required keys have been built up ok
@@ -197,166 +269,76 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
           std::string restOfLine = match[1];
           std::string columnName;
           std::istringstream restOfLineSS(restOfLine);
-          while (restOfLineSS >> columnName) {
+          while (restOfLineSS >> columnName)
+	    {
               nColumns++;
-              if (columnName.find("Fx") != std::string::npos) {
-                  xIndex = nColumns;
-                  continue;
-              }
-              if (columnName.find("Fy") != std::string::npos) {
-                  yIndex = nColumns;
-                  continue;
-              }
-              if (columnName.find("Fz") != std::string::npos) {
-                  zIndex = nColumns;
-                  continue;
-              }
-
-          }
+              if (columnName.find("Fx") != std::string::npos)
+		{xIndex = nColumns; continue;}
+              if (columnName.find("Fy") != std::string::npos)
+		{yIndex = nColumns; continue;}
+              if (columnName.find("Fz") != std::string::npos)
+		{zIndex = nColumns; continue;}
+	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
-
+	  
           if (nColumns < (nDim + 3)) // 3 for field components
-          {
-              G4cerr << "Too few columns for " << nDim << "D field loading" << G4endl;
-              exit(1);
-          }
-
+	    {
+	      G4cerr << "Too few columns for " << nDim << "D field loading" << G4endl;
+	      Terminate();
+	    }
+	  
           // we have all the information now, so initialise the container
-          switch (nDim) {
-              case 1: {
-                  nX = G4int(header["nx"]);
-                  result = new BDSArray1DCoords(nX,
-                                                header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm);
-                  break;
+          switch (nDim)
+	    {
+	    case 1:
+	      {
+		nX = G4int(header["nx"]);
+		result = new BDSArray1DCoords(nX,
+					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm);
+		break;
               }
-              case 2: {
-                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]); //loopOrder is optional
-                  nX = G4int(header["nx"]);
-                  nY = G4int(header["ny"]);
-                  result = new BDSArray2DCoords(nX, nY, loopOrder,
-                                                header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-                                                header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm);
-                  break;
+	    case 2:
+	      {
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
+		result = new BDSArray2DCoords(nX, nY,
+					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
+					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm);
+		break;
               }
-              case 3: {
-                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]);
-                  nX = G4int(header["nx"]);
-                  nY = G4int(header["ny"]);
-                  nZ = G4int(header["nz"]);
-                  result = new BDSArray3DCoords(nX, nY, nZ, loopOrder,
-                                                header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-                                                header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
-                                                header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm);
-                  break;
+	    case 3:
+	      {
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
+		nZ = G4int(header["nz"]);
+		result = new BDSArray3DCoords(nX, nY, nZ,
+					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
+					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
+					      header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm);
+		break;
               }
-              case 4: {
-                  if(header.count("loopOrder")) loopOrder = G4int(header["loopOrder"]);
-                  nX = G4int(header["nx"]);
-                  nY = G4int(header["ny"]);
-                  nZ = G4int(header["nz"]);
-                  nT = G4int(header["nt"]);
-                  result = new BDSArray4DCoords(nX, nY, nZ, nT, loopOrder,
-                                                header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-                                                header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
-                                                header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm,
-                                                header["tmin"] * CLHEP::s, header["tmax"] * CLHEP::s);
-                  break;
+	    case 4:
+	      {
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
+		nZ = G4int(header["nz"]);
+		nT = G4int(header["nt"]);
+		result = new BDSArray4DCoords(nX, nY, nZ, nT,
+					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
+					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
+					      header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm,
+					      header["tmin"] * CLHEP::s,  header["tmax"] * CLHEP::s);
+		break;
               }
-              default:
-                  break;
-          }
-
-          switch(loopOrder) {
-              case 1:
-                  loopOrder = 123;
-                  break;
-              case 2:
-                  loopOrder = 213;
-                  break;
-              case 12:
-                  loopOrder = 123;
-                  break;
-              case 21:
-                  loopOrder = 213;
-                  break;
-          }
-
-          }
-          switch(loopOrder){
-              case 321:
-                  ind1 = &indZ;
-                  n1 = &nZ;
-                  ind2 = &indY;
-                  n2 = &nY;
-                  ind3 = &indX;
-                  n3 = &nX;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              case 312:
-                  ind1 = &indZ;
-                  n1 = &nZ;
-                  ind2 = &indX;
-                  n2 = &nX;
-                  ind3 = &indY;
-                  n3 = &nY;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              case 123:
-                  ind1 = &indX;
-                  n1 = &nX;
-                  ind2 = &indY;
-                  n2 = &nY;
-                  ind3 = &indZ;
-                  n3 = &nZ;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              case 132:
-                  ind1 = &indX;
-                  n1 = &nX;
-                  ind2 = &indZ;
-                  n2 = &nZ;
-                  ind3 = &indY;
-                  n3 = &nY;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              case 213:
-                  ind1 = &indY;
-                  n1 = &nY;
-                  ind2 = &indX;
-                  n2 = &nX;
-                  ind3 = &indZ;
-                  n3 = &nZ;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              case 231:
-                  ind1 = &indY;
-                  n1 = &nY;
-                  ind2 = &indZ;
-                  n2 = &nZ;
-                  ind3 = &indX;
-                  n3 = &nX;
-                  ind4 = &indT;
-                  n4 = &nT;
-                  break;
-              default:
-                  ind1 = &indZ;
-                  n1 = &nZ;
-                  ind2 = &indY;
-                  n2 = &nY;
-                  ind3 = &indX;
-                  n3 = &nX;
-                  ind4 = &indT;
-                  n4 = &nT;
-          }
+	    default:
+	      break;
+	    }
+	  
           continue;
       }
-
+    }
+  
   file.close();
 }
 
