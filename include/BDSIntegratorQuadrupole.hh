@@ -38,15 +38,7 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-
-protected:
-  /// Calculate the new particle coordinates for a given step length h.
-  void AdvanceHelix(const G4double yIn[],
-		    const G4double dydx[],
-		    const G4double h,
-		    G4double       yOut[],
-		    G4double       yErr[]);
-
+  
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorQuadrupole();

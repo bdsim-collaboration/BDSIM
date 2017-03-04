@@ -25,56 +25,42 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
 #endif
 }
 
-void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
-					   const G4double[] /*dydx*/,
-					   const G4double h,
-					   G4double       yOut[],
-					   G4double       yErr[])
+void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
+				      const G4double dydx[],
+				      const G4double h,
+				      G4double       yOut[],
+				      G4double       yErr[])
 {
-  const G4double *pIn      = yIn+3;
-  G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
+  G4ThreeVector GlobalP    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      InitPMag   = GlobalP.mag();
-  G4ThreeVector InitMomDir = GlobalP.unit();
-    
+
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
   G4double kappa = eqOfM->FCof()*bPrime/InitPMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
-
-  /*
-  // this is excessive for debug - only uncomment if debugging this tracking code
-#ifdef BDSDEBUG
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
-  G4cout << "BDSIntegratorQuadrupole: step = " << h/CLHEP::m << " m" << G4endl
-         << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
-         << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
-         << " z  = " << yIn[2]/CLHEP::m     << " m"     << G4endl
-         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
-         << " dBy/dx = " << bPrime/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
-         << " k = " << k/(1./CLHEP::m2) << " m^-2" << G4endl
-         << G4endl;
-         #endif
-  */
-
+  
   // Check this will have a perceptible effect and if not do a linear step.
-  if(std::abs(kappa)<1.e-12)
+  if(std::abs(kappa) < 1e-20)
     {
-      AdvanceDriftMag(yIn, InitMomDir, h, yOut, yErr);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
-  
-  G4double      h2      = h*h; // safer than pow
 
+  G4ThreeVector GlobalR     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector InitMomDir  = GlobalP.unit();
   BDSStep       localPosMom = ConvertToLocal(GlobalR, InitMomDir, h, false);
-  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
-  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
-  G4ThreeVector LocalRp = Localv0.unit();
+  G4ThreeVector LocalR      = localPosMom.PreStepPoint();
+  G4ThreeVector LocalRp     = localPosMom.PostStepPoint();
 
+  if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
+    {
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
+      return;
+    }
+  
+  G4double h2  = h*h; // safer than pow
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
   G4double z0  = LocalR.z();
@@ -111,8 +97,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double X11,X12,X21,X22 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
   
-  if (kappa>0)
-    {
+  if (kappa > 0)
+    {//focussing
       X11= cos(rootKh);
       X12= sin(rootKh)/rootK;
       X21=-std::abs(kappa)*X12;
@@ -123,8 +109,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
       Y21= std::abs(kappa)*Y12;
       Y22= Y11;
     }
-  else //if (kappa<0)
-    {
+  else
+    {// defocussing
       X11= cosh(rootKh);
       X12= sinh(rootKh)/rootK;
       X21= std::abs(kappa)*X12;
@@ -151,85 +137,17 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   // Linear chord length
   G4double dR2 = dx*dx + dy*dy;
   G4double dz = std::sqrt(h2 * (1. - h2 / (12 * R * R)) - dR2);
-
-  // Not sure about this normalisation here
-  // check for precision problems - enforce conservation
-  /*
-    G4double ScaleFac = (dx*dx+dy*dy+dz*dz)/h2;
-    if(ScaleFac>1.0000001)
-    {
-    //G4cout << "renormalised" << G4endl;
-    ScaleFac=std::sqrt(ScaleFac);
-    dx/=ScaleFac;
-    dy/=ScaleFac;
-    dz/=ScaleFac;
-    x1=x0+dx;
-    y1=y0+dy;
-    }
-  */
+  
   z1 = z0 + dz;
   
   LocalR.setX(x1);
   LocalR.setY(y1);
   LocalR.setZ(z1);
-  
   LocalRp.setX(xp1);
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
   
   ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
-}
-
-void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
-				      const G4double dydx[],
-				      const G4double h,
-				      G4double       yOut[],
-				      G4double       yErr[])
-{
-  const G4double *pIn    = yIn+3;
-  G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitPMag = GlobalP.mag();
-  G4double      kappa    = - eqOfM->FCof()*bPrime/InitPMag;
-
-  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP.unit());
-  if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
-    {
-      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
-      SetDistChord(backupStepper->DistChord());
-      return;
-    }
-
-  // ok it's forwards pointing - proceed with our paraxial treatment
-  if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
-    {
-      AdvanceHelix(yIn, dydx, h, yOut, yErr);
-      for(G4int i = 0; i < nVariables; i++)
-      {
-        yErr[i] = 0;
-      }
-    }
-  else
-    {
-      // Compute errors by making two half steps
-      G4double yTemp[6];
-      
-      // Do two half steps
-      AdvanceHelix(yIn,   dydx, 0.5*h, yTemp, yErr);
-      AdvanceHelix(yTemp, dydx, 0.5*h, yOut,  yErr);
-      
-      // Do a full Step
-      AdvanceHelix(yIn, dydx, h, yTemp, yErr);
-      
-      for(G4int i = 0; i < nVariables; i++)
-	{
-	  yErr[i] = yOut[i] - yTemp[i];
-	  // if error small, set error to 0
-	  // this is done to prevent Geant4 going to smaller and smaller steps
-	  // ideally use some of the global constants instead of hardcoding here
-	  // could look at step size as well instead.
-	  if (std::abs(yErr[i]) < 1e-7)
-	    {yErr[i] = 0;}
-	}
-    }
+  for (G4int i = 0; i < nVariables; i++)
+    {yErr[i] = 0;}
 }
