@@ -112,7 +112,8 @@ void BDSOutputROOTEvent::Initialise()
   
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
-  useScoringMap = globalConstants->UseScoringMap();
+  useScoringMap  = globalConstants->UseScoringMap();
+  writePrimaries = globalConstants->WritePrimaries();
   
   CreateHistograms();
   
@@ -177,13 +178,11 @@ void BDSOutputROOTEvent::Initialise()
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  G4bool writePrimaries = o.writePrimaries;
   if (writePrimaries)
     {
       theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
       samplerTrees.push_back(primary);
     }
-  //  samplerMap["Primary"] = primary;
 
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
@@ -225,11 +224,10 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 #endif
   for(int i=0;i<hc->entries();i++)
     {
-      G4int samplerId = (*hc)[i]->GetSamplerID();
-      if (BDSParser::Instance()->GetOptions().writePrimaries)
-        {samplerTrees[samplerId+1]->Fill((*hc)[i]);}
-      else
-        {samplerTrees[samplerId]->Fill((*hc)[i]);}
+      G4int samplerID = (*hc)[i]->GetSamplerID();
+      if (writePrimaries)
+	{samplerID += 1;} // offset index by one      
+      samplerTrees[samplerID]->Fill((*hc)[i]);
     }
 }
 
@@ -328,7 +326,7 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  if (BDSParser::Instance()->GetOptions().writePrimaries)
+  if (writePrimaries)
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
