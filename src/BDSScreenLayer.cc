@@ -198,7 +198,8 @@ void BDSScreenLayer::InternalMirror::optical()
   OpSurface->SetMaterialPropertiesTable(SMPT);
 }
 
-void BDSScreenLayer::InternalMirror::compute(){
+void BDSScreenLayer::InternalMirror::compute()
+{
   G4double sign=0;
   try{
     if(side==BACK){
@@ -219,7 +220,7 @@ void BDSScreenLayer::InternalMirror::compute(){
 void BDSScreenLayer::sampler()
 {
   G4String samplerName = name;
-    log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
   log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
