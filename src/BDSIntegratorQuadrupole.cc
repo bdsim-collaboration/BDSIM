@@ -15,8 +15,7 @@
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
 						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorMag(eqOfMIn, 6),
-  yInitial(0), yMidPoint(0), yFinal(0)
+  BDSIntegratorMag(eqOfMIn, 6)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   bPrime = brho * (*strength)["k1"] / CLHEP::m2;
