@@ -10,16 +10,8 @@
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
-  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn),
-  backupStepper(nullptr)
-{
-  //backupStepper = new G4ClassicalRK4(eqOfMIn, 6);
-}
-
-BDSIntegratorDipole2::~BDSIntegratorDipole2()
-{
-  delete backupStepper;
-}
+  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
+{;}
 
 void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
 				       G4ThreeVector  field,
@@ -39,7 +31,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   G4double yTemp[7], yTemp2[7];
   
   // Arrays for field querying (g4 interface)
-  G4double bO[4], bM[4]; // original and mid point
+  G4double bO[4]; // original location field value
   GetEquationOfMotion()->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
 
@@ -63,6 +55,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 
   // resample field at midway point (although if pure dipole, this is
   // unnecessary) - could go outside the range of the field though
+  G4double bM[4]; // mid point location field value
   GetEquationOfMotion()->GetFieldValue(yTemp, bM);
   G4ThreeVector bMid = G4ThreeVector(bM[0],bM[1],bM[2]);
 
