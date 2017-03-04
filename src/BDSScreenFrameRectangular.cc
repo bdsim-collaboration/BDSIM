@@ -1,5 +1,5 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSRectScreenFrame.hh"
+#include "BDSScreenFrameRectangular.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -10,20 +10,20 @@
 #include "G4TwoVector.hh"
 
 
-BDSRectScreenFrame::BDSRectScreenFrame(G4String      name,
-				       G4ThreeVector size,
-				       G4TwoVector   windowSize,
-                                       G4TwoVector   windowOffset,
-				       G4Material*   material):
+BDSScreenFrameRectangular::BDSScreenFrameRectangular(G4String      name,
+						     G4ThreeVector size,
+						     G4TwoVector   windowSize,
+						     G4TwoVector   windowOffset,
+						     G4Material*   material):
   BDSScreenFrame(name, size, windowSize, windowOffset, material)
 {
   Build();
 }
 
-BDSRectScreenFrame::~BDSRectScreenFrame()
+BDSScreenFrameRectangular::~BDSScreenFrameRectangular()
 {;}
 
-void BDSRectScreenFrame::Build()
+void BDSScreenFrameRectangular::Build()
 {
   G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
 

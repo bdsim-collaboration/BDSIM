@@ -21,7 +21,7 @@
 #include "G4SubtractionSolid.hh"
 #include "BDSDebug.hh"
 #include "BDSAwakeMultilayerScreen.hh"
-#include "BDSRectScreenFrame.hh"
+#include "BDSScreenFrameRectangular.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
 
@@ -735,7 +735,7 @@ void BDSAwakeSpectrometer::BuildFrame(){
     G4TwoVector windowSize(_mlScreen->GetSize().x(), _mlScreen->GetSize().y());
     G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetX*std::tan(_screenAngle);
     G4TwoVector windowPos(relativeWindowOffsetX,0);
-    _frame = new BDSRectScreenFrame((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
+    _frame = new BDSScreenFrameRectangular((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
 }
 
 void BDSAwakeSpectrometer::PlaceFrame(){

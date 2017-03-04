@@ -16,7 +16,7 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-#include "BDSRectScreenFrame.hh"
+#include "BDSScreenFrameRectangular.hh"
 
 class BDSFieldInfo;
 class BDSSpectrVacChamb;
@@ -168,7 +168,7 @@ private:
   G4double _screenHeight;
   G4double _screenWidth;
   G4double _scoringPlaneThickness;
-    BDSRectScreenFrame* _frame;
+    BDSScreenFrameRectangular* _frame;
     G4double _frameHeight;
     G4double _frameWidth;
     G4double _frameThicknessX;
