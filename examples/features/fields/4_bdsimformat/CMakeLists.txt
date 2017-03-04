@@ -1,5 +1,6 @@
 #field loader test
 simple_fail("bdsimformat_bad_header" "--file=bad_header.gmad")
+simple_fail("bdsimformat_wrong_file" "--file=wrong_file.gmad")
 
 #interpolator tests
 

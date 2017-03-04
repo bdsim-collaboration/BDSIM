@@ -103,7 +103,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   if (!validFile)
     {
       G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl;
-      Terminate();
+      exit(1);
     }
   else
     {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
