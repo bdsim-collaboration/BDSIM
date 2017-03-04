@@ -1,34 +1,50 @@
-//
-// Created by Lawrence Deacon on 01/03/2017.
-//
+#ifndef BDSSCREENFRAME_H
+#define BDSSCREENFRAME_H
 
-// A frame for the vacuum window in e.g. BDSMultilayerScreen. This is a virtual class. Subtypes are "rect" and
-//"rtrack" (rectangular and racetrack frames).
-
-#ifndef BDSIM_BDSSCREENFRAME_H
-#define BDSIM_BDSSCREENFRAME_H
-
+#include "globals.hh"
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
-#include "G4LogicalVolume.hh"
+
+class G4LogicalVolume;
+class G4Material;
 
 
-class BDSScreenFrame {
+/**
+ * @brief A frame for the vacuum window in e.g. BDSMultilayerScreen.
+ * This is a virtual class and the derived class must implement Build()
+ * that ultimately sets the member logVol.
+ * 
+ * @author Lawrence Deacon.
+ */
+
+class BDSScreenFrame
+{
 public:
-    virtual ~BDSScreenFrame();
-    G4LogicalVolume* LogVol(){return _logVol;}
-    virtual void Build() = 0;
+
+  BDSScreenFrame(G4String      name,
+		 G4ThreeVector size,
+		 G4TwoVector   windowSize,
+		 G4TwoVector   windowOffset,
+		 G4Material*   material);
+
+  virtual ~BDSScreenFrame();
+
+  /// Build method to construct geometry.
+  virtual void Build() = 0;
+
+  /// Accessor.
+  G4LogicalVolume* LogVol() const {return logVol;}
+
 protected:
-    BDSScreenFrame(G4String name, G4ThreeVector size, G4TwoVector windowSize, G4TwoVector windowOffset,
-                   G4Material* material);
-    BDSScreenFrame();
-    G4LogicalVolume* _logVol;
-    G4TwoVector _windowOffset, _windowSize;
-    G4ThreeVector _size;
-    G4String _name;
-    G4Material* _material;
+  G4String         name;
+  G4ThreeVector    size;
+  G4TwoVector      windowSize;
+  G4TwoVector      windowOffset;
+  G4Material*      material;
+  G4LogicalVolume* logVol;
+
+private:
+  BDSScreenFrame() = delete;
 };
 
-
-
-#endif //BDSIM_BDSSCREENFRAME_H
+#endif
