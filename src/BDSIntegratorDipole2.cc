@@ -37,6 +37,10 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 
   // Do a full step - the result we use
   AdvanceHelix(yIn, bOriginal, h, yOut);
+  // cache some calculated parameters as there's no way to cache the distchord
+  // directly as the G4MagHelicalStepper class doesn't make DistChord() virtual.
+  G4double ang = GetAngCurve();
+  G4double rad = GetRadHelix();
 
   // Now we have the radius of curvature to check on.
   // If it's smaller than limit, we artificially advance the particle
@@ -64,6 +68,10 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // Error estimation
   for(G4int i = 0; i < 6; i++)
     {yErr[i] = yOut[i] - yTemp2[i];}
+
+  // Update parameters that distchord will be calcualted from from full step info.
+  SetAngCurve(ang);
+  SetRadHelix(rad);
 }
 
 void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
