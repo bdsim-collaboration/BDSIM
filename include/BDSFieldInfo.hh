@@ -77,8 +77,9 @@ public:
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
 
-	/// Translate - adds an additional translation to the transform member variable.
-	void Translate(G4ThreeVector translation);
+  /// Translate - adds an additional translation to the transform member variable. May only
+  /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
+  void Translate(G4ThreeVector translationIn);
 
   /// Turn on or off transform caching.
   inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
