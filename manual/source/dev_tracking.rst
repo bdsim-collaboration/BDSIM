@@ -225,12 +225,12 @@ in :code:`G4Mag_UsualEqRhs.cc` as follows:
 
 .. math::
 
-   \mathrm{dydx}[0] &=& ~ \frac{p_x}{\|\mathbf{p}\|}\\
-   \mathrm{dydx}[1] &=& ~ \frac{p_y}{\|\mathbf{p}\|}\\
-   \mathrm{dydx}[2] &=& ~ \frac{p_z}{\|\mathbf{p}\|}\\
-   \mathrm{dydx}[3] &=& ~ \mathbf{A}[0]\\
-   \mathrm{dydx}[4] &=& ~ \mathbf{A}[1]\\
-   \mathrm{dydx}[5] &=& ~ \mathbf{A}[2]
+   \mathrm{dydx}[0] &= ~ \frac{p_x}{\|\mathbf{p}\|}\\
+   \mathrm{dydx}[1] &= ~ \frac{p_y}{\|\mathbf{p}\|}\\
+   \mathrm{dydx}[2] &= ~ \frac{p_z}{\|\mathbf{p}\|}\\
+   \mathrm{dydx}[3] &= ~ \mathbf{A}[0]\\
+   \mathrm{dydx}[4] &= ~ \mathbf{A}[1]\\
+   \mathrm{dydx}[5] &= ~ \mathbf{A}[2]
 
 
 There are other factors in the code for units that aren't shown here.
@@ -271,8 +271,8 @@ base class for the majority of BDSIM integrators.
 
 .. math::
 
-   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + h~\mathbf{\hat{p}_{in}} \\
-   \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in}
+   \mathbf{q}_{out} ~ &= ~ \mathbf{q}_{in} + h~\mathbf{\hat{p}_{in}} \\
+   \mathbf{p}_{out} ~ &= ~ \mathbf{p}_{in}
 
 .. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
 	  algorithm. The tracking is handled by Geant4.
@@ -303,16 +303,16 @@ Otherwise continue as follows:
 
 .. math::
 
-   \theta           ~ &=& ~ \frac{h}{\rho} \\
-   \mathbf{\hat{f}} ~ &=& ~ \mathbf{\hat{p}} \times \hat{\mathbf{y}} \\
-   \mathrm{CT}      ~ &=& ~ \cos^2(\theta/2) - sin^2(\theta/2) \\
-   \mathrm{ST}      ~ &=& ~ 2~\cos(\theta/2)\,\sin(\theta/2)
+   \theta           ~ &= ~ \frac{h}{\rho} \\
+   \mathbf{\hat{f}} ~ &= ~ \mathbf{\hat{p}} \times \hat{\mathbf{y}} \\
+   \mathrm{CT}      ~ &= ~ \cos^2(\theta/2) - sin^2(\theta/2) \\
+   \mathrm{ST}      ~ &= ~ 2~\cos(\theta/2)\,\sin(\theta/2)
 
 .. math::
 
-   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + \rho \left[ \, \mathrm{ST}\,\mathbf{\hat{p}_{in}} +
+   \mathbf{q}_{out} ~ &= ~ \mathbf{q}_{in} + \rho \left[ \, \mathrm{ST}\,\mathbf{\hat{p}_{in}} +
    (1- \mathrm{CT})\, \mathbf{\hat{f}} \,  \right]\\
-   \mathbf{p}_{out} ~ &=& ~ \mathbf{\hat{p}_{in}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
+   \mathbf{p}_{out} ~ &= ~ \mathbf{\hat{p}_{in}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
 
 * If :math:`\rho` is less than a minimum radius of curvature (5 cm by default) reduce the
   magnitude of the momentum by 2 % to induce artificial spiralling.
@@ -364,27 +364,27 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
 
 .. math::
 
-   \mathbf{p}_{\|} ~ &=& ~ \|\mathbf{B}\| ~ (\mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}) \\
-   \mathbf{p}_{\perp} ~ &=& ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
+   \mathbf{p}_{\|} ~ &= ~ \|\mathbf{B}\| ~ (\mathbf{\hat{B}} \cdot  \mathbf{\hat{p}}_{in}) \\
+   \mathbf{p}_{\perp} ~ &= ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
 
 .. math::
    
-   R ~ &=& ~ \frac{-\|B\| ~ charge} {\mathbf{p}_{in}}\\
-   \theta ~ &=& ~ \frac{h}{R}
+   R ~ &= ~ \frac{-\|B\| ~ charge} {\mathbf{p}_{in}}\\
+   \theta ~ &= ~ \frac{h}{R}
 
 * If :math:`\|\theta\| < 0.005`:
 
 .. math::
 
-   \mathrm{ST} ~ &=& ~ \sin(\theta)\\
-   \mathrm{CT} ~ &=& ~ \cos(\theta)\\
+   \mathrm{ST} ~ &= ~ \sin(\theta)\\
+   \mathrm{CT} ~ &= ~ \cos(\theta)\\
    
 * Else:
 
 .. math::
    
-   \mathrm{ST} ~ &=& ~ \theta - \frac{1}{6}~\theta^{3}\\
-   \mathrm{CT} ~ &=& ~ 1 - \frac{1}{2}~\theta^{2} + \frac{1}{24}~\theta^{4}
+   \mathrm{ST} ~ &= ~ \theta - \frac{1}{6}~\theta^{3}\\
+   \mathrm{CT} ~ &= ~ 1 - \frac{1}{2}~\theta^{2} + \frac{1}{24}~\theta^{4}
 
 The final coordinates are calculated as:
    
@@ -545,8 +545,8 @@ BDSIM Euler
 
 .. math::
 
-   \mathbf{q}_{out} ~ &=& ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|} \\
-   \mathbf{p}_{out} ~ &=& ~ \mathbf{p}_{in} + \mathbf{A}~h
+   \mathbf{q}_{out} ~ &= ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|} \\
+   \mathbf{p}_{out} ~ &= ~ \mathbf{p}_{in} + \mathbf{A}~h
   
 
 BDSIM Sextupole
