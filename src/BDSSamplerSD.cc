@@ -89,8 +89,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4ThreeVector localDirection;
   
   // Get coordinate transform and prepare local coordinates
-  G4Transform3D localToGlobal = registry->GetTransformInverse(samplerID);
-  if (localToGlobal == G4Transform3D::Identity) // no transform was provided - look it up
+  G4Transform3D globalToLocal = registry->GetTransformInverse(samplerID);
+  if (globalToLocal == G4Transform3D::Identity) // no transform was provided - look it up
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Getting transform dynamically from geometry." << G4endl;
@@ -104,14 +104,14 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
     }
   else
     {
-      //If the local to global transform3d is defined...
+      // The global to local transform is defined in the regisitry.
       // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
-      localPosition  = localToGlobal * (HepGeom::Point3D<G4double>)pos;
+      localPosition  = globalToLocal * (HepGeom::Point3D<G4double>)pos;
       // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
       // Account for this by purposively setting local z to be 0.
       localPosition.setZ(0.0);
       // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
-      localDirection = localToGlobal * (HepGeom::Vector3D<G4double>)mom;
+      localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
 
   BDSParticle local(localPosition,localDirection,energy,t);
