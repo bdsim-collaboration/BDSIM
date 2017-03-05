@@ -59,7 +59,6 @@ namespace GMAD
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
-
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
@@ -72,6 +71,7 @@ namespace GMAD
     double screenEndZ;
     double poleStartZ;
     double screenWidth;
+    double awakeMagnetOffsetX;
     ///@}
     ///@{ for screen
     std::list<double> layerThicknesses;
