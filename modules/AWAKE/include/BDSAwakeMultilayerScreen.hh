@@ -14,7 +14,8 @@ public:
 			   G4String windowMaterial,
 			   G4double mountThickness,
 			   G4String mountMaterial,
-			   G4double width=1*CLHEP::m);
+			   G4double width=1*CLHEP::m,
+               G4double height=65*CLHEP::mm);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
   virtual void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);

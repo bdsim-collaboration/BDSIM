@@ -100,13 +100,16 @@ void Element::PublishMembers()
   publish("windowScreenGap",&Element::windowScreenGap);
   publish("screenXSize",&Element::screenXSize);
   publish("screenYSize",&Element::screenYSize);
+  publish("layerThicknesses",&Element::layerThicknesses);
+  publish("layerMaterials",&Element::layerMaterials);
+  publish("layerIsSampler",&Element::layerIsSampler);
+
+  // for AWAKE spectrometer
   publish("screenPSize",&Element::screenPSize);
   publish("screenEndZ",&Element::screenEndZ);
   publish("poleStartZ",&Element::poleStartZ);
   publish("screenWidth",&Element::screenWidth);
-  publish("layerThicknesses",&Element::layerThicknesses);
-  publish("layerMaterials",&Element::layerMaterials);
-  publish("layerIsSampler",&Element::layerIsSampler);
+  publish("awakeMagnetOffsetX", &Element::awakeMagnetOffsetX);
   
   publish("numberWedges",&Element::numberWedges);
   publish("wedgeLength",&Element::wedgeLength);
@@ -332,14 +335,16 @@ void Element::flush()
   tscint = 0.0003;
   twindow = 0;
   tmount = 0;
-  screenPSize = 0;
   windowScreenGap = 0;
   screenXSize = 0;
   screenYSize = 0;
 
-  screenEndZ = 0;
-  poleStartZ = 0;
-  screenWidth = 0;
+  screenPSize        = 0;
+  screenEndZ         = 0;
+  poleStartZ         = 0;
+  screenWidth        = 0;
+  awakeMagnetOffsetX = 0.13;
+
   layerThicknesses.clear();
   layerMaterials.clear();
   layerIsSampler.clear();
