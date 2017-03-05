@@ -1,3 +1,4 @@
+#include "BDSGlobalConstants.hh"
 #include "BDSScreenFrame.hh"
 
 #include "G4LogicalVolume.hh"
@@ -13,7 +14,9 @@ BDSScreenFrame::BDSScreenFrame(G4String      name,
   windowOffset(windowOffset),
   material(material),
   logVol(nullptr)
-{;}
+{
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+}
 
 BDSScreenFrame::~BDSScreenFrame()
 {

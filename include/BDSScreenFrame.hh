@@ -42,6 +42,7 @@ protected:
   G4TwoVector      windowOffset;
   G4Material*      material;
   G4LogicalVolume* logVol;
+  G4bool           checkOverlaps; ///< Cache of checking overlaps from global constants.
 
 private:
   BDSScreenFrame() = delete;
