@@ -42,7 +42,7 @@ public:
   G4LogicalVolume* CavityLogVol() const {return cavityLogVol;}
 
 protected:
-    virtual void SetVisAtts();
+  virtual void SetVisAtts();
   
 private:
   /// Remove default constructor to force use of supplied one.

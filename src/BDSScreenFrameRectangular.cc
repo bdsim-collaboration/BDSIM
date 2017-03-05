@@ -79,7 +79,8 @@ void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot,
 		    checkOverlaps); // check overlaps = true
 }
 
-void BDSScreenFrameRectangular::SetVisAtts() {
-    BDSScreenFrame::SetVisAtts();
-    BDSScreenFrame::SetVisAtts(cavityLogVol);
+void BDSScreenFrameRectangular::SetVisAtts()
+{
+  BDSScreenFrame::SetVisAtts();
+  BDSScreenFrame::SetVisAtts(cavityLogVol);
 }
