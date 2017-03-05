@@ -430,6 +430,8 @@ void BDSSpectrVacChamb::CalculateGeometry(){
   G4double trapLengthZ1 = _trapLengthZ-trapLengthZ2;
   _sideWallLength=std::hypot(trapLengthZ1,_trapLengthX);
   G4double sideWallAngle=atan(_trapLengthX/trapLengthZ1);
+	//Reduce the side wall length to avoid overlaps with the scintillator screen frame
+	_sideWallLength -= 0.5*std::abs(_thickness*std::sin(sideWallAngle));
   _rotSideWall = new G4RotationMatrix();
   _rotSideWall->rotateY(-sideWallAngle);
   //  _rotSideWall->rotateY(-CLHEP::pi/2.0);

@@ -812,17 +812,10 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   //Screen position
   _screenEndZ += _poleStartZ;
 
-  // backing off x and z by 1um here to avoid overlaps
-    G4double lenSaf2 = 1*CLHEP::um;
-  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 - _windowOffsetX*std::tan(_screenAngle)+
-          (_screenThickness)*std::cos(_screenAngle) + lenSaf2*std::sin(_screenAngle);
-  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetX +
-          lenSaf2*std::cos(_screenAngle);
 
     //Frame position
-    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0 + _frameThicknessZ*std::cos(_screenAngle)+
-            lenSaf2*std::sin(_screenAngle);
-    _frameCentreX = _frame_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + lenSaf2*std::cos(_screenAngle);
+    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0 + _frameThicknessZ*std::cos(_screenAngle);
+    _frameCentreX = _frame_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
 
 
   
