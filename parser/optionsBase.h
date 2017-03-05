@@ -254,6 +254,7 @@ namespace GMAD
     double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per track [s]
     double   maximumStepLength;   ///< maximum permitted step length in any volume
+    double   maximumTrackLength;  ///< Maximum permitted track length [m].
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;

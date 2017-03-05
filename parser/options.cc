@@ -306,6 +306,7 @@ void Options::PublishMembers()
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
   publish("maximumStepLength",  &Options::maximumStepLength);
+  publish("maximumTrackLength", &Options::maximumTrackLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);

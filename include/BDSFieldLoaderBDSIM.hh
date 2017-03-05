@@ -47,6 +47,9 @@ private:
   /// Ensure any member variables are reset between usages.
   void CleanUp();
 
+  /// Close file and exit program in case of an error.
+  void Terminate();
+
   /// General loader for any number of dimensions.
   void Load(G4String fileName,
 	    const unsigned int nDim);
@@ -62,11 +65,12 @@ private:
   T file;
   
   /// Number of columns to read.
-  unsigned long              nColumns;    ///< Number of columns to read.
-  std::vector<G4float>       lineData;    ///< Vector to store line data during loading.
-  BDSFieldValue              fv;          ///< Temporary field value.
-  std::map<G4String, double> header;      ///< Header keys and values
-  BDSArray4DCoords*          result;      ///< Resultant array from loading
+  unsigned long                nColumns;  ///< Number of columns to read.
+  std::vector<G4float>         lineData;  ///< Vector to store line data during loading.
+  BDSFieldValue                fv;        ///< Temporary field value.
+  std::map<G4String, double>   header;    ///< Header keys and values.
+  BDSArray4DCoords*            result;    ///< Resultant array from loading.
+  G4String                     loopOrder; ///< String for looping order when loading.
 };
 
 #endif
