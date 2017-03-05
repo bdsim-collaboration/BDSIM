@@ -43,7 +43,7 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
   fv = BDSFieldValue();
   std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
 				   "xmin", "xmax", "ymin", "ymax",
-				   "zmin", "zmax", "tmin", "tmax", "looporder"};
+				   "zmin", "zmax", "tmin", "tmax"};
   for (const std::string s : allKeys)
     {header[s] = 0;}
   result    = nullptr;
