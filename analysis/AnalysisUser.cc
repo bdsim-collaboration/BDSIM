@@ -4,6 +4,7 @@
 
 
 #include <iostream>
+#include <include/BDSOutputROOTEventModel.hh>
 
 #include "AnalysisUser.hh"
 
@@ -29,7 +30,7 @@ AnalysisUser::AnalysisUser(std::string filename)
   options = new Options();
   model   = new Model();
   run     = new Run();
-  event   = new Event();
+  event   = new Event(false,true);
 
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
 }
@@ -53,12 +54,14 @@ void AnalysisUser::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTre
   options->SetBranchAddress(optionsTree);
   model->SetBranchAddress(modelTree);
   run->SetBranchAddress(runTree);
-  event->SetBranchAddress(eventTree);
 
   optionsTree->GetEntry(0);
   modelTree->GetEntry(0);
   runTree->GetEntry(0);
   eventTree->GetEntry(0);
+
+  event->SetBranchAddress(eventTree,&(model->model->samplerNamesUnique));
+
 }
 
 void AnalysisUser::GetEntry(int iEntry)
@@ -70,8 +73,17 @@ void AnalysisUser::Analysis()
 {
   for(int i=0;i<eventTree->GetEntries();++i) {
     this->GetEntry(i);
-    std::cout << i << " " << event->trajectory->n << std::endl;
 
+    for(int j = 0; j<this->event->samplers[0]->n; ++j)
+    {
+      int trackID = this->event->samplers[0]->trackID[j];
+      if(trackID != 1) { // does not work for the primary 
+        BDSOutputROOTEventTrajectoryPoint point = event->trajectory->initialProcessPoint(trackID);
+        std::cout << i << " " << j << " " << trackID << " " << point.processType << " " << point.processSubType << " "
+                  << point.position.Z() << " " << point.model << " " << std::endl;
+      }
+    }
+    //
   }
 }
 
