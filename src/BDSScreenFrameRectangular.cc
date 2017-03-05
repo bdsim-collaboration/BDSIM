@@ -32,7 +32,7 @@ BDSScreenFrameRectangular::~BDSScreenFrameRectangular()
 void BDSScreenFrameRectangular::Build()
 {
   G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
-	G4double tinyLenSaf = 1e-6*CLHEP::nm;
+  G4double tinyLenSaf = 1e-6*CLHEP::nm;
 
   G4Box* frameBox = new G4Box("frameBox",
 			      size.x()/2.0,

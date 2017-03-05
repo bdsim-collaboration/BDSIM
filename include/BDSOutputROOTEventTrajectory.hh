@@ -83,6 +83,35 @@ class BDSAuxiliaryNavigator;
   12 fUCN
 #endif
 
+class BDSOutputROOTEventTrajectoryPoint : public TObject
+{
+public :
+  BDSOutputROOTEventTrajectoryPoint() :
+          partID(-1), trackID(-1), parentID(-1), parentIndex(-1),
+          processType(-1), processSubType(-1), weight(-1.0), energy(-1.0),
+          position(0,0,0), momentum(0,0,0), model(-1) {};
+  BDSOutputROOTEventTrajectoryPoint(int partIDIn, int trackIDIn, int parentIDIn, int parentIndexIn,
+                                    int processTypeIn, int processSubTypeIn, double weightIn, double energyIn,
+                                    TVector3 positionIn, TVector3 momentumIn, int modelIn) :
+          partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
+          processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energy(energyIn),
+          position(positionIn), momentum(momentumIn), model(modelIn) {}
+  ~BDSOutputROOTEventTrajectoryPoint() {};
+
+  int partID;
+  int trackID;
+  int parentID;
+  int parentIndex;
+  int processType;
+  int processSubType;
+  double weight;
+  double energy;
+  TVector3 position;
+  TVector3 momentum;
+  int model;
+
+  ClassDef(BDSOutputROOTEventTrajectoryPoint,1);
+};
 
 class BDSOutputROOTEventTrajectory : public TObject
 {
@@ -127,10 +156,8 @@ public:
 
   std::pair<int,int>                 findParentProcess(int trackIndex);
 
-  int primary();
-  int primaryElectromagnetic();
-  int primaryHadronic();
-  void primaryPrint();
+  BDSOutputROOTEventTrajectoryPoint initialProcessPoint(int trackID);
+  std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
   void print(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
