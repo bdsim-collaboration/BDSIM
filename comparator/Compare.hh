@@ -76,6 +76,13 @@ namespace Compare
   /// Check wether a string is prefixed with another string.
   bool StringStartsWith(std::string aString, std::string prefix);
 
+  bool IsInVector(std::string key, const std::vector<std::string>& vec);
+
+  inline bool NanOrInf(const double& val) {return std::isnan(val) | std::isinf(val);}
+
+  inline bool GTEZero(const double& val) {return val >= 0;}
+  inline bool LTZero(const double& val)  {return val < 0;}
+
   /// Bool for checking if primaries were written to file.
   bool hasPrimaries;
 }
