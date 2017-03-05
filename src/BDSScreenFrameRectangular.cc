@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
@@ -49,12 +50,12 @@ void BDSScreenFrameRectangular::Build()
 				     BDSMaterials::Instance()->GetMaterial("vacuum"),
 				     cavityName);
   
-  cavityPos = G4ThreeVector(windowOffset.x(), windowsOffset.y(), 0);
+  cavityPos = G4ThreeVector(windowOffset.x(), windowOffset.y(), 0);
 }
 
-void BDSRectScreenFrame::Place(G4RotationMatrix* rot,
-			       G4ThreeVector     pos,
-			       G4LogicalVolume*  motherVol)
+void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot,
+				      G4ThreeVector     pos,
+				      G4LogicalVolume*  motherVol)
 {
   new G4PVPlacement(rot,
 		    pos,

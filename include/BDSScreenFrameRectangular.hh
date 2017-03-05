@@ -4,9 +4,11 @@
 #include "BDSScreenFrame.hh"
 
 #include "globals.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
+class G4LogicalVolume;
 class G4Material;
 
 /**
@@ -36,7 +38,7 @@ public:
 	     G4ThreeVector     pos,
 	     G4LogicalVolume*  motherVol);
 
-  /// Accessor
+  /// Accessor.
   G4LogicalVolume* CavityLogVol() const {return cavityLogVol;}
   
 private:
