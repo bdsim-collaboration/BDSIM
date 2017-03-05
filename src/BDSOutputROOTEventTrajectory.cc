@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "BDSOutputROOTEventTrajectory.hh"
 
@@ -213,7 +214,7 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
   return std::pair<int,int>(pin,sin);
 }
 
-BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::initialProcessPoint(int trackid)
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
   int                ti = trackID_trackIndex.at(trackid);  // get track index
   std::pair<int,int> pp = trackIndex_trackProcess.at(ti);  // get track and index of start proccess

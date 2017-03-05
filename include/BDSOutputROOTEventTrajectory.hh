@@ -156,7 +156,7 @@ public:
 
   std::pair<int,int>                 findParentProcess(int trackIndex);
 
-  BDSOutputROOTEventTrajectoryPoint initialProcessPoint(int trackID);
+  BDSOutputROOTEventTrajectoryPoint primaryProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
   void print(int trackID);
 
