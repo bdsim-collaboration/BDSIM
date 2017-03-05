@@ -1,39 +1,23 @@
-#ifndef BDSSCREENFRAMERECTANGULAR_H
-#define BDSSCREENFRAMERECTANGULAR_H
+#ifndef BDSIM_BDSRECTSCREENFRAME_H
+#define BDSIM_BDSRECTSCREENFRAME_H
 
 #include "BDSScreenFrame.hh"
 
-#include "globals.hh"
-#include "G4ThreeVector.hh"
-#include "G4TwoVector.hh"
-
-class G4Material;
-
-/**
- * @brief Rectangular screen frame.
- *
- * Rectangular hollow frame / tube. Length is determined by size.z().
- * 
- * @author Lawrence Deacon
- */
-
-class BDSScreenFrameRectangular: public BDSScreenFrame
-{
+class BDSRectScreenFrame : public BDSScreenFrame{
 public:
-  BDSScreenFrameRectangular(G4String      name,
-			    G4ThreeVector size,///< Full width in each dimension of inner surface.
-			    G4TwoVector   windowSize,   ///< Full width of h,v of outer surface.
-			    G4TwoVector   windowOffset, ///< Offset of intertior to exterior.
-			    G4Material*   material);
-  
-  virtual ~BDSScreenFrameRectangular();
-
-  /// Construct the geometry.
-  virtual void Build();
-  
+    ~BDSRectScreenFrame();
+    BDSRectScreenFrame(G4String name, G4ThreeVector size, G4TwoVector windowSize, G4TwoVector windowOffset,
+            G4Material* material);
+    G4LogicalVolume* CavityLogVol(){return _cavityLogVol;}
+virtual void Build();
+    void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
 private:
-  /// Remove default constructor to force use of supplied one.
-  BDSScreenFrameRectangular() = delete;
+    BDSRectScreenFrame();
+    G4LogicalVolume* _cavityLogVol;
+    G4String _cavityName;
+    G4ThreeVector _cavityPos;
+    G4RotationMatrix* _zeroRot;
 };
 
-#endif
+
+#endif //BDSIM_BDSRECTSCREENFRAME_H
