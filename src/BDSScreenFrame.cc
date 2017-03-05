@@ -30,7 +30,7 @@ BDSScreenFrame::~BDSScreenFrame()
 void BDSScreenFrame::SetDefaultVisAtts()
 {
   visAtt = new G4VisAttributes(BDSColours::Instance()->GetColour("screenframe"));
-  visAtt->SetForceSolid(true);
+	visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
 }
 
@@ -38,9 +38,8 @@ void BDSScreenFrame::SetVisAtts(G4LogicalVolume* logVolIn,
 				G4VisAttributes* visAttIn)
 {
   if (logVolIn)
-    {
-      if (visAttIn)
-	{logVolIn->SetVisAttributes(visAtt);}
+    { if (!visAttIn)
+			{logVolIn->SetVisAttributes(visAtt);}
       else
 	{logVolIn->SetVisAttributes(visAttIn);}
     }

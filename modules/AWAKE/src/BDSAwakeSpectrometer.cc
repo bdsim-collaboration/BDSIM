@@ -110,8 +110,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 
   //Screen width 1m by default.
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
-    _vacWindowHeight=64*CLHEP::mm;
-    _screenHeight=_vacWindowHeight;
+    _screenHeight=64*CLHEP::mm;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -439,7 +438,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 				      _vacInnerWidth+lenSaf,
 				      _vacInnerHeight+lenSaf,
 				      _vacThickness,
-                                      _windowOffsetX/std::cos(_screenAngle),
+                                      _windowOffsetX,
 				      _strutSizeX,
 				      _strutSizeZ,
 				      _strutMaterial);
@@ -689,7 +688,7 @@ void BDSAwakeSpectrometer::Build()
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
   //      BuildCameraScoringPlane();
-    PlaceFrame();
+   PlaceFrame();
     PlaceScreen();
   //      PlaceCamera();
   //      }
@@ -733,7 +732,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 //Frame for the vacuum window.
 void BDSAwakeSpectrometer::BuildFrame(){
     G4ThreeVector frameSize(_frameWidth,_frameHeight, _frameThicknessZ);
-    G4TwoVector windowSize(_mlScreen->GetSize().x(), _mlScreen->GetSize().y());
+    G4TwoVector windowSize(_screenWidth, _screenHeight);
     G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetX*std::tan(_screenAngle);
     G4TwoVector windowPos(relativeWindowOffsetX,0);
     _frame = new BDSScreenFrameRectangular((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
@@ -747,7 +746,6 @@ void BDSAwakeSpectrometer::PlaceFrame(){
 void BDSAwakeSpectrometer::BuildScreen()
 {
 
-G4double lenSaf=BDSGlobalConstants::Instance()->LengthSafety();
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   _mlScreen = new BDSAwakeMultilayerScreen(_material,
 					   _thickness,
@@ -757,8 +755,8 @@ G4double lenSaf=BDSGlobalConstants::Instance()->LengthSafety();
 					   _windowMaterial,
 					   _mountThickness,
 					   _mountMaterial,
-					   _screenWidth-lenSaf,
-                        _vacWindowHeight-lenSaf);
+					   _screenWidth,
+																					 _screenHeight);
 
 #ifdef BDSDEBUG
   G4cout << "finished." << G4endl;

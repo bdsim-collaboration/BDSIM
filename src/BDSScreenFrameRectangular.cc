@@ -32,6 +32,7 @@ BDSScreenFrameRectangular::~BDSScreenFrameRectangular()
 void BDSScreenFrameRectangular::Build()
 {
   G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
+	G4double tinyLenSaf = 1e-6*CLHEP::nm;
 
   G4Box* frameBox = new G4Box("frameBox",
 			      size.x()/2.0,
@@ -43,7 +44,7 @@ void BDSScreenFrameRectangular::Build()
   G4Box* windowBox = new G4Box("windowBox",
 			       windowSize.x()/2.0 + lenSaf,
 			       windowSize.y()/2.0 + lenSaf,
-			       size.z()/2.0 - lenSaf); // must be smaller than cavity / window
+			       size.z()/2.0 - tinyLenSaf); // must be smaller than cavity / window
   
   cavityName   = name + "_cavity";
   cavityLogVol = new G4LogicalVolume(windowBox,
@@ -81,6 +82,6 @@ void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot,
 
 void BDSScreenFrameRectangular::SetVisAtts()
 {
-  BDSScreenFrame::SetVisAtts();
+  BDSScreenFrame::SetVisAtts(logVol);
   BDSScreenFrame::SetVisAtts(cavityLogVol);
 }
