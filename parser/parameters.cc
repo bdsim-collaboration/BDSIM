@@ -59,6 +59,7 @@ Parameters::Parameters()
   setMap["screenEndZ"] = false;
   setMap["poleStartZ"] = false;
   setMap["screenWidth"] = false;
+  setMap["awakeMagnetOffsetX"] = false;
   setMap["layerThicknesses"] = false;
   setMap["layerMaterials"] = false;
   setMap["layerIsSampler"] = false;

@@ -16,6 +16,7 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
+#include "BDSScreenFrameRectangular.hh"
 
 class BDSFieldInfo;
 class BDSSpectrVacChamb;
@@ -29,7 +30,8 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName,
+  BDSAwakeSpectrometer(G4String aName, 
+                       G4double magnetOffsetX,
 		       G4double length,
 		       BDSFieldInfo* fieldInfo,
 		       G4double poleStartZ,
@@ -69,6 +71,8 @@ private:
   void PlaceCamera();
   //To build the screen...
   void BuildScreen();
+    void BuildFrame();
+    void PlaceFrame();
   void PlaceScreen();
   //To build the tunnel...
   void BuildAwakeSpectrometerTunnel();
@@ -114,6 +118,7 @@ private:
   G4LogicalVolume* itsMiddleCoilLog;
   G4ThreeVector itsAperture1Size;
   G4ThreeVector itsAperture2Size;
+  G4double _magnetOffsetX;
   G4double itsPoleAperture;
   G4double itsCoilAperture;
   G4ThreeVector itsAperture1Pos;
@@ -145,6 +150,9 @@ private:
   G4UserLimits* itsTunnelUserLimits;
   G4UserLimits* itsSoilTunnelUserLimits;
   G4UserLimits* itsInnerTunnelUserLimits;
+
+	//User limits for the whole element
+	G4UserLimits* itsUserLimits;
                     
   //  G4Mag_UsualEqRhs* itsEqRhs;
   
@@ -153,12 +161,22 @@ private:
   G4RotationMatrix* _vacRotationMatrix;
   G4RotationMatrix* _magRotationMatrix;
 
+
   //scoring plane
   G4double _totalThickness;
   G4double _screenThickness;
   G4double _screenHeight;
   G4double _screenWidth;
   G4double _scoringPlaneThickness;
+    BDSScreenFrameRectangular* _frame;
+    G4double _frameHeight;
+    G4double _frameWidth;
+    G4double _frameThicknessX;
+    G4double _frameThicknessZ;
+    G4double _frame_x_dim;
+    G4double _frame_z_dim;
+    G4double _frameCentreX;
+    G4double _frameCentreZ;
 
   //Vacuum chamber dimensions
   BDSSpectrVacChamb* _vacChamb;
@@ -225,8 +243,14 @@ private:
   //  BDS3DMagField* _magField;
   //Y component of the B field.
 
+    G4double _windowOffsetX;
+
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
+
+    //Containter to hold pointers to all the logical volumes in the class
+    std::vector<G4LogicalVolume*> _logVols;
+    void SetUserLimits();
 };
 
 #endif

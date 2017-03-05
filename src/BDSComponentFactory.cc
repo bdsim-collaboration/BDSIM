@@ -794,6 +794,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
   return (new BDSAwakeSpectrometer(elementName,
+                                   element->awakeMagnetOffsetX*CLHEP::m,
 				   element->l*CLHEP::m,
 				   awakeField,
 				   element->poleStartZ*CLHEP::m,
@@ -1148,7 +1149,6 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-  
   if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
