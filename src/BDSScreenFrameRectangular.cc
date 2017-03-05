@@ -51,6 +51,7 @@ void BDSScreenFrameRectangular::Build()
 				     cavityName);
   
   cavityPos = G4ThreeVector(windowOffset.x(), windowOffset.y(), 0);
+  SetVisAtts();
 }
 
 void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot,
@@ -76,4 +77,9 @@ void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot,
 		    false,
 		    0,
 		    checkOverlaps); // check overlaps = true
+}
+
+void BDSScreenFrameRectangular::SetVisAtts() {
+    BDSScreenFrame::SetVisAtts();
+    BDSScreenFrame::SetVisAtts(cavityLogVol);
 }

@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
+#include "G4VisAttributes.hh"
 
 class G4LogicalVolume;
 class G4Material;
@@ -43,9 +44,13 @@ protected:
   G4Material*      material;
   G4LogicalVolume* logVol;
   G4bool           checkOverlaps; ///< Cache of checking overlaps from global constants.
+  G4VisAttributes* visAtt;
+  virtual void SetVisAtts();
+  void SetVisAtts(G4LogicalVolume* logVolIn, G4VisAttributes* visAttsIn = nullptr);
 
 private:
   BDSScreenFrame() = delete;
+		void SetDefaultVisAtts();
 };
 
 #endif

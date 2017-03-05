@@ -15,7 +15,7 @@ class G4Material;
  * @brief Rectangular screen frame.
  *
  * Rectangular hollow frame / tube. Length is determined by size.z().
- * 
+ *
  * @author Lawrence Deacon
  */
 
@@ -40,6 +40,9 @@ public:
 
   /// Accessor.
   G4LogicalVolume* CavityLogVol() const {return cavityLogVol;}
+
+protected:
+    virtual void SetVisAtts();
   
 private:
   /// Remove default constructor to force use of supplied one.
