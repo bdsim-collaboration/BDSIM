@@ -736,7 +736,7 @@ void BDSAwakeSpectrometer::BuildFrame(){
     G4TwoVector windowSize(_mlScreen->GetSize().x(), _mlScreen->GetSize().y());
     G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetX*std::tan(_screenAngle);
     G4TwoVector windowPos(relativeWindowOffsetX,0);
-    _frame = new BDSRectScreenFrame((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
+    _frame = new BDSScreenFrameRectangular((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
 }
 
 void BDSAwakeSpectrometer::PlaceFrame(){
@@ -759,28 +759,26 @@ G4double lenSaf=BDSGlobalConstants::Instance()->LengthSafety();
 					   _mountMaterial,
 					   _screenWidth-lenSaf,
                         _vacWindowHeight-lenSaf);
-  
+
+#ifdef BDSDEBUG
   G4cout << "finished." << G4endl;
-  //  if(BDSGlobalConstants::Instance()->SensitiveComponents()){
-  //    for(int i=0; i<_mlScreen->nLayers(); i++){
-  //      AddSensitiveVolume(_mlScreen[i].log());
-  //    }
-  //  } 
   G4cout << "BDSAwakeSpectrometer: finished building screen" << G4endl;
+#endif
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
     G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
     G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
-    //Place inside the frame
-    G4double screenXOffInFrame = -0.5*(_frameWidth-_screenWidth)+_windowOffsetX;
+    //Place inside the frame cavity
     G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+lenSaf;
     G4ThreeVector screenPosition(0, 0, screenZOffInFrame);
     _mlScreen->Place(zeroRot, screenPosition, _frame->CavityLogVol());
 }
 
 void BDSAwakeSpectrometer::CalculateLengths(){
+#ifdef BDSDEBUG
   std::cout << __METHOD_NAME__ << std::endl;
+#endif
   //TODO BDSAcceleratorComponent::CalculateLengths();
   //-------
 
@@ -814,8 +812,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   //Screen position
   _screenEndZ += _poleStartZ;
 
-  // backing off x and z by 10nm here to avoid overlaps
-  G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
+  // backing off x and z by 1um here to avoid overlaps
     G4double lenSaf2 = 1*CLHEP::um;
   _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 - _windowOffsetX*std::tan(_screenAngle)+
           (_screenThickness)*std::cos(_screenAngle) + lenSaf2*std::sin(_screenAngle);

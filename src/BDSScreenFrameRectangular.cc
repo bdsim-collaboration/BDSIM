@@ -1,8 +1,4 @@
-//
-// Created by Lawrence Deacon on 01/03/2017.
-//
-
-#include "BDSRectScreenFrame.hh"
+#include "BDSScreenFrameRectangular.hh"
 #include "BDSGlobalConstants.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4RotationMatrix.hh"
@@ -10,34 +6,42 @@
 #include "BDSMaterials.hh"
 #include "G4PVPlacement.hh"
 
-BDSRectScreenFrame::BDSRectScreenFrame(){;}
-BDSRectScreenFrame::~BDSRectScreenFrame(){
-    delete _cavityLogVol;
-    delete _zeroRot;
+BDSScreenFrameRectangular::~BDSScreenFrameRectangular(){
+    delete cavityLogVol;
+    delete zeroRot;
 }
 
-BDSRectScreenFrame::BDSRectScreenFrame(G4String name, G4ThreeVector size, G4TwoVector windowSize,
+BDSScreenFrameRectangular::BDSScreenFrameRectangular(G4String name, G4ThreeVector size, G4TwoVector windowSize,
                                        G4TwoVector windowOffset, G4Material* material):
         BDSScreenFrame(name, size, windowSize, windowOffset, material) {
     Build();
 }
 
-void BDSRectScreenFrame::Build(){
+void BDSScreenFrameRectangular::Build(){
     G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
-    G4Box* frameBox = new G4Box("frameBox",_size.x()/2.0, _size.y()/2.0, _size.z()/2.0);
-    G4Box* windowBox = new G4Box("windowBox",_windowSize.x()/2.0+lenSaf,_windowSize.y()/2.0+lenSaf,_size.z()/2.0);
-    //G4SubtractionSolid* frameSolid = new G4SubtractionSolid("frameSolid",frameBox, windowBox, zeroRot, pos);
-   // _logVol = new G4LogicalVolume(frameSolid, _material, _name);
-    _logVol = new G4LogicalVolume(frameBox, _material, _name);
-    _cavityName = _name + "_cavity";
-    _cavityLogVol = new G4LogicalVolume(windowBox, BDSMaterials::Instance()->GetMaterial("vacuum"), _cavityName);
-    _cavityPos = G4ThreeVector(_windowOffset.x(), _windowOffset.y(), 0);
+    G4Box* frameBox = new G4Box("frameBox",
+                                size.x()/2.0,
+                                size.y()/2.0,
+                                size.z()/2.0);
+
+    G4Box* windowBox = new G4Box("windowBox",
+                                 windowSize.x()/2.0+lenSaf,
+                                 windowSize.y()/2.0+lenSaf,
+                                 size.z()/2.0);
+
+    logVol = new G4LogicalVolume(frameBox, material, name);
+    cavityName = name + "_cavity";
+    cavityLogVol = new G4LogicalVolume(windowBox,
+                                        BDSMaterials::Instance()->GetMaterial("vacuum"),
+                                        cavityName);
+    cavityPos = G4ThreeVector(windowOffset.x(), windowOffset.y(), 0);
+    SetVisAtts();
 }
 
-void BDSRectScreenFrame::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol){
+void BDSScreenFrameRectangular::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol){
     new G4PVPlacement(rot,
                       pos,
-                      _logVol,
+                      logVol,
                       "screenFrame",
                       motherVol,
                       false,
@@ -45,14 +49,19 @@ void BDSRectScreenFrame::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4Logic
                       true
     );
     //Place a cavity inside the frame box.
-    _zeroRot = new G4RotationMatrix(0,0,0);
-    new G4PVPlacement(_zeroRot,
-                      _cavityPos,
-                      _cavityLogVol,
+    zeroRot = new G4RotationMatrix(0,0,0);
+    new G4PVPlacement(zeroRot,
+                      cavityPos,
+                      cavityLogVol,
                       "screenFrameCavity",
-                      _logVol,
+                      logVol,
                       false,
                       0,
                       true
     );
+}
+
+void BDSScreenFrameRectangular::SetVisAtts() {
+    BDSScreenFrame::SetVisAtts();
+    BDSScreenFrame::SetVisAtts(cavityLogVol);
 }

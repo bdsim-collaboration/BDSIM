@@ -1,23 +1,46 @@
-#ifndef BDSIM_BDSRECTSCREENFRAME_H
-#define BDSIM_BDSRECTSCREENFRAME_H
+#ifndef BDSIM_BDSSCREENFRAMERECTANGULAR_H
+#define BDSIM_BDSSCREENFRAMERECTANGULAR_H
 
 #include "BDSScreenFrame.hh"
+#include "G4RotationMatrix.hh"
+#include "G4LogicalVolume.hh"
 
-class BDSRectScreenFrame : public BDSScreenFrame{
+class G4Material;
+
+/**
+ * @brief Rectangular screen frame.
+ *
+ * Rectangular hollow frame / tube. Length is determined by size.z().
+ *
+ * @author Lawrence Deacon
+ */
+
+
+class BDSScreenFrameRectangular : public BDSScreenFrame{
 public:
-    ~BDSRectScreenFrame();
-    BDSRectScreenFrame(G4String name, G4ThreeVector size, G4TwoVector windowSize, G4TwoVector windowOffset,
-            G4Material* material);
-    G4LogicalVolume* CavityLogVol(){return _cavityLogVol;}
-virtual void Build();
+    BDSScreenFrameRectangular(G4String name,
+                              G4ThreeVector size,
+                              G4TwoVector windowSize,
+                              G4TwoVector windowOffset,
+                              G4Material* material);
+
+    virtual ~BDSScreenFrameRectangular();
+    G4LogicalVolume* CavityLogVol(){return cavityLogVol;}
+
+    /// Construct the geometry
+    virtual void Build();
+    /// Place the geometry
     void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
+protected:
+    virtual void SetVisAtts();
 private:
-    BDSRectScreenFrame();
-    G4LogicalVolume* _cavityLogVol;
-    G4String _cavityName;
-    G4ThreeVector _cavityPos;
-    G4RotationMatrix* _zeroRot;
+    /// Remove default constuctor to force use of supplied one.
+    BDSScreenFrameRectangular() = delete;
+    G4LogicalVolume* cavityLogVol;
+    G4String cavityName;
+    G4ThreeVector cavityPos;
+    G4RotationMatrix* zeroRot;
 };
 
 
-#endif //BDSIM_BDSRECTSCREENFRAME_H
+#endif //BDSIM_BDSSCREENFRAMERECTANGULAR_H

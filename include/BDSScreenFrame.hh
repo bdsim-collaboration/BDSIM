@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
+#include "G4VisAttributes.hh"
 
 class G4LogicalVolume;
 class G4Material;
@@ -27,7 +28,7 @@ public:
 		 G4TwoVector   windowOffset,
 		 G4Material*   material);
 
-  virtual ~BDSScreenFrame();
+ virtual ~BDSScreenFrame();
 
   /// Build method to construct geometry.
   virtual void Build() = 0;
@@ -41,10 +42,14 @@ protected:
   G4TwoVector      windowSize;
   G4TwoVector      windowOffset;
   G4Material*      material;
-  G4LogicalVolume* logVol;
+	G4LogicalVolume* logVol;
+	G4VisAttributes* visAtt;
+	virtual void SetVisAtts();
+		void SetVisAtts(G4LogicalVolume* logVolIn, G4VisAttributes* visAttsIn = nullptr);
 
 private:
   BDSScreenFrame() = delete;
+		void SetDefaultVisAtts();
 };
 
 #endif
