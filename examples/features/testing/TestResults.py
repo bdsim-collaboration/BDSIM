@@ -1,7 +1,9 @@
 import numpy as _np
 import os as _os
 import time as _time
+import collections
 import Globals
+import string as _string
 from matplotlib import colors as _color
 from matplotlib import ticker as _tick
 import matplotlib.pyplot as _plt
@@ -12,6 +14,32 @@ import matplotlib.patches as _patches
 multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
+
+resultsKeys = ['timingData',
+               'resultsList',
+               'fileLabel',
+               'generalStatusList'
+               'params',
+               'testResults']
+
+
+class Results(dict):
+    def __init__(self, componentType=''):
+        GlobalData._CheckComponent(componentType)
+        self._component = componentType
+        for key in resultsKeys:
+            setattr(self, key, [])
+
+    def GetResultsByParticle(self, particle=''):
+        if not GlobalData.particles.__contains__(particle):
+            raise ValueError("Unknown particle type.")
+        particleResults = Results(self._component)
+        for testNum, testResult in enumerate(self['testResults']):
+            if testResult['particle'] == particle:
+                for key in resultsKeys:
+                    particleResults[key].append(self[key][testNum])
+
+        return particleResults
 
 
 class Timing:
@@ -46,13 +74,7 @@ class Timing:
 
 class ResultsUtilities:
     def __init__(self):
-        self.Results = {}
-        for component in GlobalData.components:
-            self.Results[component] = []
-        self.timingData = None
-        self._resultsList = {}
-        self._filesList = {}
-        self._generalStatusList = {}
+        self.ResultsDict = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -109,10 +131,12 @@ class ResultsUtilities:
                 coords[4] = GlobalData.returnCodes['FAILED']
             if branches.__contains__('zp'):
                 coords[5] = GlobalData.returnCodes['FAILED']
-
+            if branches.__contains__('n'):
+                coords[6] = GlobalData.returnCodes['FAILED']
+                coords[0:6] = GlobalData.returnCodes['NO_DATA']
         return coords
 
-    def _getBDSIMLogData(self, result, logFile=''):
+    def _getBDSIMLogData(self, result):
         generalStatus = []
 
         # append comparator check
@@ -126,7 +150,7 @@ class ResultsUtilities:
             generalStatus.append(3)
 
         # get data in logfile.
-        f = open(logFile)
+        f = open(result['bdsimLogFile'])
         lines = f.read()
         f.close()
 
@@ -159,8 +183,29 @@ class ResultsUtilities:
 
         return generalStatus
 
+    def _getCommonValues(self, componentType=''):
+        uniqueValues = collections.OrderedDict()
+        # if self._testParamValues is None:
+        #     return None
+        for test in self.ResultsDict[componentType]['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
 
-class Results(ResultsUtilities):
+        commonValues = collections.OrderedDict()
+        for key, value in uniqueValues.iteritems():
+            if len(value) == 1:
+                commonValues[key] = value[0]
+
+        for values in commonValues.values():
+            if len(values) > 0:
+                return commonValues
+        return None
+
+
+class Analysis(ResultsUtilities):
     def __init__(self):
         ResultsUtilities.__init__(self)
 
@@ -201,17 +246,19 @@ class Results(ResultsUtilities):
         return gitLines
 
     def AddResults(self, results):
+        if not self.ResultsDict.keys().__contains__(results['componentType']):
+            self.ResultsDict[results['componentType']] = Results(results['componentType'])
         if isinstance(results, dict):
-            self.Results[results['componentType']].append(results)
+            self.ResultsDict[results['componentType']]['testResults'].append(results)
         elif multiEntryTypes.__contains__(type(results)):
             for res in results:
-                self.Results[results['componentType']].append(res)
+                self.ResultsDict[results['componentType']]['testResults'].append(res)
 
-    def AddTimingData(self, timingData):
+    def AddTimingData(self, componentType, timingData):
         if not isinstance(timingData, Timing):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
-            self.timingData = timingData
+            self.ResultsDict[componentType]['timingData'].append(timingData)
 
     def ProcessOriginals(self):
         numTests = 0
@@ -219,8 +266,8 @@ class Results(ResultsUtilities):
         failedTests = []
         stuckParticles = []
         overlaps = []
-        for component, compResults in self.Results.iteritems():
-            for testdict in compResults:
+        for component, compResults in self.ResultsDict.iteritems():
+            for testdict in compResults['testResults']:
                 numTests += 1
 
                 generalStatus = testdict['generalStatus']
@@ -268,60 +315,97 @@ class Results(ResultsUtilities):
         f.close()
 
     def ProcessResults(self, componentType=''):
-        if (componentType != '') and (not GlobalData.components.__contains__(componentType)):
-            raise ValueError("Unknown component type.")
-        elif componentType != '':
-            testResults = self.Results[componentType]
-            if not self._resultsList.keys().__contains__(componentType):
-                self._resultsList[componentType] = []
-                self._filesList[componentType] = []
-                self._generalStatusList[componentType] = []
+        if componentType != '':
+            GlobalData._CheckComponent(componentType)
+
+            testResults = self.ResultsDict[componentType]['testResults']
+            if not self.ResultsDict.keys().__contains__(componentType):
+                self.ResultsDict[componentType] = Results(componentType)
 
             for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
-                generalStatus = result['generalStatus']
 
-                self._resultsList[componentType].append(coords)
-                self._generalStatusList[componentType].append(generalStatus)
+                self.ResultsDict[componentType]['generalStatusList'].append(result['generalStatus'])
+                self.ResultsDict[componentType]['resultsList'].append(coords)
 
                 filename = result['ROOTFile']
                 filename = filename.replace('_event.root', '')
                 filename = filename.replace((componentType + "__"), '')
-                self._filesList[componentType].append(filename)
+
+                self.ResultsDict[componentType]['fileLabel'].append(filename)
+                self.ResultsDict[componentType]['params'].append(result['testParams'])
         else:
             pass
-        self._resultsList[componentType].reverse()
-        self._filesList[componentType].reverse()
-        self._generalStatusList[componentType].reverse()
+
+        self.ResultsDict[componentType]['resultsList'].reverse()
+        self.ResultsDict[componentType]['fileLabel'].reverse()
+        self.ResultsDict[componentType]['generalStatusList'].reverse()
+        self.ResultsDict[componentType]['params'].reverse()
 
     def PlotResults(self, componentType=''):
-        f = _plt.figure(figsize=(15, 7))
+        GlobalData._CheckComponent(componentType)
+
+        f = _plt.figure(figsize=(11, 7))
         ax = f.add_subplot(111)
 
         # set normalised colormap.
         bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
         norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
 
-        extent = [0, 7, 0, len(self._resultsList[componentType])]
+        extent = [0, 7, 0, len(self.ResultsDict[componentType]['resultsList'])]
 
-        data = self._resultsList[componentType]
-        files = self._filesList[componentType]
-        generalStatus = self._generalStatusList[componentType]
+        data = self.ResultsDict[componentType]['resultsList']
+        files = self.ResultsDict[componentType]['fileLabel']
+        generalStatus = self.ResultsDict[componentType]['generalStatusList']
 
-        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm, extent=extent)
+        electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
+        protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
+
+        electronResults = self.ResultsDict[componentType].GetResultsByParticle('e-')
+        protonResults = self.ResultsDict[componentType].GetResultsByParticle('proton')
+
+        commonValues = self._getCommonValues(componentType)
+        subplotTitle = ''
+
+        if commonValues is not None:
+            for index, fileName in enumerate(files):
+                fname = fileName
+                for key, value in commonValues.iteritems():
+                    filestring = "__" + key + "_" + _np.str(value)
+                    fname = fname.replace(filestring, '')
+                if len(electronFiles) == len(files):
+                    fname.replace("e-__", "")
+                elif len(protonFiles) == len(files):
+                    fname.replace("proton__", "")
+                files[index] = fname
+
+            for key, value in commonValues.iteritems():
+                subplotTitle += _string.capitalize(key) + " = " + value
+                index = commonValues.keys().index(key)
+                if index != (len(commonValues.keys()) - 1):
+                    subplotTitle += ", "
+
+        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+                        extent=extent, aspect='auto')
         ax.set_xlim(0, 8)
 
         for index, status in enumerate(generalStatus):
+            numStatus = len(status)
             yIndex = index
-            boxColor = GlobalData.cmap.colors[status[0]]
-            ax.add_patch(_patches.Rectangle((7, yIndex), 1, 1, edgecolor='none', facecolor=boxColor))
+            for statIndex, stat in enumerate(status):
+                boxColor = GlobalData.cmap.colors[stat]
+                boxWidth = 1.0 / numStatus
+                ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+
+        if subplotTitle != '':
+            ax.set_title(subplotTitle)
 
         xtickMajors = _np.linspace(1, 8, 8)
         xtickCentre = xtickMajors - 0.5
 
         ax.set_xticks(xtickCentre)
-        ax.set_xticklabels(['x', 'px', 'y', 'py', 't', 'pt', 'n', 'Gen'])
+        ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'General'])
 
         ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
         ytickCentre = ytickMajors - 0.5
@@ -330,8 +414,6 @@ class Results(ResultsUtilities):
         ax.set_yticklabels(files)
 
         ytickMinors = _np.linspace(0, len(data), len(data) + 1)
-
-        # ax.xaxis.set_visible(False)
 
         minorXTicks = _tick.FixedLocator(xtickMajors)
         minorYTicks = _tick.FixedLocator(ytickMinors)
