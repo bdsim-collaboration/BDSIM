@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <algorithm>
 
@@ -17,15 +18,15 @@
 ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
+auxNavigator(nullptr),
   n(0)
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 {
-  if(auxNavigator)
-  {
-    // delete auxNavigator;
-  }
+#ifndef __ROOTBUILD__
+  delete auxNavigator;
+#endif
 }
 
 #ifndef __ROOTBUILD__
