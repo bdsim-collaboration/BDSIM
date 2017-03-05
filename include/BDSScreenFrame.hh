@@ -8,7 +8,7 @@
 
 class G4LogicalVolume;
 class G4Material;
-
+class G4VisAttributes;
 
 /**
  * @brief A frame for the vacuum window in e.g. BDSMultilayerScreen.
@@ -21,7 +21,6 @@ class G4Material;
 class BDSScreenFrame
 {
 public:
-
   BDSScreenFrame(G4String      name,
 		 G4ThreeVector size,
 		 G4TwoVector   windowSize,
@@ -37,6 +36,14 @@ public:
   G4LogicalVolume* LogVol() const {return logVol;}
 
 protected:
+  /// Set the visual attributes to member logVol.
+  virtual void SetVisAtts();
+  
+  /// Attach visualisation attributes to logical volume if they exist and if not
+  /// use the default.
+  void SetVisAtts(G4LogicalVolume* logVolIn,
+		  G4VisAttributes* visAttsIn = nullptr);
+  
   G4String         name;
   G4ThreeVector    size;
   G4TwoVector      windowSize;
@@ -45,12 +52,12 @@ protected:
   G4LogicalVolume* logVol;
   G4bool           checkOverlaps; ///< Cache of checking overlaps from global constants.
   G4VisAttributes* visAtt;
-  virtual void SetVisAtts();
-  void SetVisAtts(G4LogicalVolume* logVolIn, G4VisAttributes* visAttsIn = nullptr);
 
 private:
   BDSScreenFrame() = delete;
-		void SetDefaultVisAtts();
+
+  /// Construct default visualisation attribute for light transparent grey.
+  void SetDefaultVisAtts();
 };
 
 #endif
