@@ -1,11 +1,11 @@
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSScreenFrameRectangular.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4RotationMatrix.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
@@ -15,13 +15,18 @@ BDSScreenFrameRectangular::BDSScreenFrameRectangular(G4String      name,
 						     G4TwoVector   windowSize,
 						     G4TwoVector   windowOffset,
 						     G4Material*   material):
-  BDSScreenFrame(name, size, windowSize, windowOffset, material)
+  BDSScreenFrame(name, size, windowSize, windowOffset, material),
+  cavityLogVol(nullptr),
+  zeroRot(nullptr)
 {
   Build();
 }
 
 BDSScreenFrameRectangular::~BDSScreenFrameRectangular()
-{;}
+{
+  delete cavityLogVol;
+  delete zeroRot;
+}
 
 void BDSScreenFrameRectangular::Build()
 {
@@ -32,19 +37,42 @@ void BDSScreenFrameRectangular::Build()
 			      size.y()/2.0,
 			      size.z()/2.0);
   
-  G4Box* windowBox = new G4Box("windowBox",
-			       windowSize.x()/2.0+lenSaf,
-			       windowSize.y()/2.0+lenSaf,
-			       size.z()); // z long for unambiguous subtraction
-  
-  G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
-  G4ThreeVector pos(windowOffset.x(), windowOffset.y(), 0);
-  
-  G4SubtractionSolid* frameSolid = new G4SubtractionSolid("frame_solid",
-							  frameBox,
-							  windowBox,
-							  zeroRot,
-							  pos);
+  logVol = new G4LogicalVolume(frameBox, material, name+"_lv");
 
-  logVol = new G4LogicalVolume(frameSolid, material, name+"_lv");
+  G4Box* windowBox = new G4Box("windowBox",
+			       windowSize.x()/2.0 + lenSaf,
+			       windowSize.y()/2.0 + lenSaf,
+			       size.z()/2.0 - lenSaf); // must be smaller than cavity / window
+  
+  cavityName   = name + "_cavity";
+  cavityLogVol = new G4LogicalVolume(windowBox,
+				     BDSMaterials::Instance()->GetMaterial("vacuum"),
+				     cavityName);
+  
+  cavityPos = G4ThreeVector(windowOffset.x(), windowsOffset.y(), 0);
+}
+
+void BDSRectScreenFrame::Place(G4RotationMatrix* rot,
+			       G4ThreeVector     pos,
+			       G4LogicalVolume*  motherVol)
+{
+  new G4PVPlacement(rot,
+		    pos,
+		    logVol,
+		    "screenFrame_pv",
+		    motherVol,
+		    false,
+		    0,
+		    checkOverlaps);
+
+  //Place a cavity inside the frame box.
+  zeroRot = new G4RotationMatrix();
+  new G4PVPlacement(zeroRot,
+		    cavityPos,
+		    cavityLogVol,
+		    "screenFrameCavity_pv",
+		    logVol,
+		    false,
+		    0,
+		    checkOverlaps); // check overlaps = true
 }

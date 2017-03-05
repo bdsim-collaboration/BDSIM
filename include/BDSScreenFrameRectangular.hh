@@ -30,10 +30,23 @@ public:
 
   /// Construct the geometry.
   virtual void Build();
+
+  /// Place member logVol (from base class) into argument motherVol.
+  void Place(G4RotationMatrix* rot,
+	     G4ThreeVector     pos,
+	     G4LogicalVolume*  motherVol);
+
+  /// Accessor
+  G4LogicalVolume* CavityLogVol() const {return cavityLogVol;}
   
 private:
   /// Remove default constructor to force use of supplied one.
   BDSScreenFrameRectangular() = delete;
+
+  G4LogicalVolume*  cavityLogVol;
+  G4String          cavityName;
+  G4ThreeVector     cavityPos;
+  G4RotationMatrix* zeroRot;
 };
 
 #endif
