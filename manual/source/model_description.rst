@@ -1971,6 +1971,10 @@ as their value.
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
+| maximumTrackLength               | the maximum length in metres of any track passing     |
+|                                  | through any geometry in the model (not including the  |
+|                                  | world volume).                                        |
++----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
 | minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |

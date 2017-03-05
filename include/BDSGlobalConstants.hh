@@ -132,6 +132,7 @@ public:
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4double MaxStepLength()            const {return G4double(options.maximumStepLength)*CLHEP::m;}
+  inline G4double MaxTrackLength()           const {return G4double(options.maximumTrackLength)*CLHEP::m;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double ParticleTotalEnergy()      const {return G4double(options.E0)*CLHEP::GeV;}
@@ -150,6 +151,7 @@ public:
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
   inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
+  inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}

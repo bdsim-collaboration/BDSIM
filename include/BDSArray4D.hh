@@ -34,7 +34,7 @@ class BDSArray4D
 public:
   /// At construction the size of the array must be known as this implementation
   /// does not allow the size to be changed afterwards.
-  BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIN);
+  BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn);
   virtual ~BDSArray4D(){;}
 
   /// @{ Access the number of elements in a given dimension.
@@ -93,7 +93,7 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSArray4D const &a);
 
 protected:
-
+  
   /// @{ Dimension
   const G4int nX;
   const G4int nY;
