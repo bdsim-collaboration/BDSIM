@@ -564,6 +564,45 @@ BDSIM Decapole
 
 * Class name: :code:`BDSIntegratorDecapole`
 
+BDSIM Old Euler Common
+----------------------
+
+* Class name: :code:`BDSIntegratorMag`
+
+The euler integration part of the original BDSIM integrators for higher order fields
+exists in one place in :code:`BDSIntegratorMag::AdvanceChord()`. This takes the step
+length :math:`h`, the local position, momentum and vector potential.  The algorithm
+is as follows:
+
+* If :math:`\|\mathbf{A}\| = 0`, advance as a drift.
+* Else, proceed as:
+
+.. math::
+
+   q_{x,out} ~ = ~ q_{x,in} + p_{x,in}~h + \frac{A_{x}~h^2}{2}\\
+   q_{y,out} ~ = ~ q_{y,in} + p_{y,in}~h + \frac{A_{y}~h^2}{2}\\
+
+The output z coordinate is calculated as:
+   
+.. math::
+
+   q_{z,out} ~ = ~ q_{z,in} + \sqrt{\Bigg[ h^2 ~ \big(1 - \frac{h^2~\|\mathbf{A}\|^2}{12} \big) - \delta_{x}^2 - \delta_{y}^2 \Bigg]} \\
+
+The momentum is calcualted as:
+
+.. math::
+
+   \mathbf{p}_{out} = \mathbf{p}_{in} + h~\mathbf{A} \\
+
+The delta chord intersection is calculated as:
+
+.. math::
+   
+   \Delta_{chord} ~ = ~ \frac{h^2 \|\mathbf{A}\|}{8}
+
+The error is not calculated here.
+
+
 BDSIM Dipole Fringe
 -------------------
 
