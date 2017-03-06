@@ -37,16 +37,16 @@ public:
   
 protected:
   /// Advance chord by quadratic approximation
-  void AdvanceChord(const G4double h,
-		    G4ThreeVector& LocalR,
-		    G4ThreeVector& LocalRp,
-		    const G4ThreeVector& LocalRpp);
+  void AdvanceChord(const G4double       h,
+		    G4ThreeVector&       localPos,
+		    G4ThreeVector&       localMom,
+		    const G4ThreeVector& localA);
 
   /// Convert final local position and direction to global frame
-  void ConvertToGlobal(const G4ThreeVector& LocalR,
-		       const G4ThreeVector& LocalRp,
-		       const G4double InitMag,
-		       G4double yOut[]);
+  void ConvertToGlobal(const G4ThreeVector& localPos,
+		       const G4ThreeVector& localMomUnit,
+		       const G4double       momMag,
+		       G4double             yOut[]);
   
   /// Keep a reference to the underlying equation of motion, but through a higher
   /// level pointer than G4EquationOfMotion* so we can use the correct methods. This

@@ -30,12 +30,12 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
-  G4ThreeVector GlobalP    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4double      InitPMag   = GlobalP.mag();
+  G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4double      momMag   = mom.mag();
 
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
-  G4double kappa = eqOfM->FCof()*bPrime/InitPMag;
+  G4double kappa = eqOfM->FCof()*bPrime/momMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   
   // Check this will have a perceptible effect and if not do a linear step.
@@ -46,13 +46,13 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  G4ThreeVector GlobalR     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector InitMomDir  = GlobalP.unit();
-  BDSStep       localPosMom = ConvertToLocal(GlobalR, InitMomDir, h, false);
-  G4ThreeVector LocalR      = localPosMom.PreStepPoint();
-  G4ThreeVector LocalRp     = localPosMom.PostStepPoint();
+  G4ThreeVector pos         = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector momUnit     = mom.unit();
+  BDSStep       localPosMom = ConvertToLocal(pos, momUnit, h, false);
+  G4ThreeVector localPos    = localPosMom.PreStepPoint();
+  G4ThreeVector localMom    = localPosMom.PostStepPoint();
 
-  if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
+  if (localMom.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());
@@ -60,12 +60,12 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     }
   
   G4double h2  = h*h; // safer than pow
-  G4double x0  = LocalR.x();
-  G4double y0  = LocalR.y();
-  G4double z0  = LocalR.z();
-  G4double xp  = LocalRp.x();
-  G4double yp  = LocalRp.y();
-  G4double zp  = LocalRp.z();
+  G4double x0  = localPos.x();
+  G4double y0  = localPos.y();
+  G4double z0  = localPos.z();
+  G4double xp  = localMom.x();
+  G4double yp  = localMom.y();
+  G4double zp  = localMom.z();
     
   // initialise output varibles with input position as default
   G4double x1  = x0;
@@ -76,19 +76,19 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double zp1 = zp;
 
   // local r'' (for curvature)
-  G4ThreeVector LocalRpp;
-  LocalRpp.setX(-zp*x0); // can this be replaced by a cross produce?
-  LocalRpp.setY( zp*y0); // G4ThreeVector has a cross method
-  LocalRpp.setZ( x0*xp - y0*yp);
-  LocalRpp *= kappa;
+  G4ThreeVector localA;
+  localA.setX(-zp*x0); // can this be replaced by a cross produce?
+  localA.setY( zp*y0); // G4ThreeVector has a cross method
+  localA.setZ( x0*xp - y0*yp);
+  localA *= kappa;
   // determine effective curvature 
-  G4double R_1 = LocalRpp.mag();
+  G4double localAMag = localA.mag();
   
   // Don't need 'else' (and associated indentation) as returns above
-  G4double R=1./R_1;
+  G4double radiusOfCurvature = 1./localAMag;
       
   // chord distance (simple quadratic approx)
-  G4double dc = h2/(8*R);
+  G4double dc = h2/(8*radiusOfCurvature);
   SetDistChord(dc);
   
   G4double rootK  = std::sqrt(std::abs(kappa*zp)); // direction independent
@@ -135,18 +135,18 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   
   // Linear chord length
   G4double dR2 = dx*dx + dy*dy;
-  G4double dz = std::sqrt(h2 * (1. - h2 / (12 * R * R)) - dR2);
+  G4double dz = std::sqrt(h2 * (1. - h2 / (12 * radiusOfCurvature * radiusOfCurvature)) - dR2);
   
   z1 = z0 + dz;
   
-  LocalR.setX(x1);
-  LocalR.setY(y1);
-  LocalR.setZ(z1);
-  LocalRp.setX(xp1);
-  LocalRp.setY(yp1);
-  LocalRp.setZ(zp1);
+  localPos.setX(x1);
+  localPos.setY(y1);
+  localPos.setZ(z1);
+  localMom.setX(xp1);
+  localMom.setY(yp1);
+  localMom.setZ(zp1);
   
-  ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
+  ConvertToGlobal(localPos,localMom,momMag,yOut);
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
 }

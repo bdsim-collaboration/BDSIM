@@ -1,5 +1,6 @@
 #include "BDSIntegratorMag.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -19,27 +20,27 @@ BDSIntegratorMag::~BDSIntegratorMag()
   delete backupStepper;
 }
 
-void BDSIntegratorMag::AdvanceChord(const G4double h,
-				    G4ThreeVector& LocalR,
-				    G4ThreeVector& LocalRp,
-				    const G4ThreeVector& LocalRpp)
+void BDSIntegratorMag::AdvanceChord(const G4double       h,
+				    G4ThreeVector&       localPos,
+				    G4ThreeVector&       localMom,
+				    const G4ThreeVector& localA)
 {
   // determine effective curvature
-  G4double R_1 = LocalRpp.mag();
-  if(R_1>0.)
+  G4double localAMag = localA.mag();
+  if(BDS::IsFinite(localAMag))
     {
       // chord distance (simple quadratic approx)
       G4double h2 = h*h;
-      G4double dc = h2*R_1/8;
+      G4double dc = h2*localAMag/8;
       SetDistChord(dc);
       
-      G4double dx = LocalRp.x()*h + LocalRpp.x()*h2/2;
-      G4double dy = LocalRp.y()*h + LocalRpp.y()*h2/2;
+      G4double dx = localMom.x()*h + localA.x()*h2/2;
+      G4double dy = localMom.y()*h + localA.y()*h2/2;
 
       // TBC - this can go negative for very long step queries that
       // presumably cause a very large deflection. This results in nan
       // and bad tracking from Geant4 / a crash.
-      G4double dz = std::sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
+      G4double dz = std::sqrt(h2*(1.-h2*localAMag*localAMag/12)-dx*dx-dy*dy);
       // check for precision problems
       G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
       if(ScaleFac>1.0000001)
@@ -50,25 +51,25 @@ void BDSIntegratorMag::AdvanceChord(const G4double h,
 	  dz/=ScaleFac;
 	}
       
-      LocalR.setX(LocalR.x()+dx);
-      LocalR.setY(LocalR.y()+dy);
-      LocalR.setZ(LocalR.z()+dz);
+      localPos.setX(localPos.x()+dx);
+      localPos.setY(localPos.y()+dy);
+      localPos.setZ(localPos.z()+dz);
       
-      LocalRp = LocalRp + h*LocalRpp;
+      localMom = localMom + h*localA;
     }
   else
-    {LocalR += h*LocalRp;}
+    {localPos += h*localMom;}
 }
 
-void BDSIntegratorMag::ConvertToGlobal(const G4ThreeVector& LocalR,
-				       const G4ThreeVector& LocalRp,
-				       const G4double InitMag,
-				       G4double yOut[])
+void BDSIntegratorMag::ConvertToGlobal(const G4ThreeVector& localPos,
+				       const G4ThreeVector& localMomUnit,
+				       const G4double       momMag,
+				       G4double             yOut[])
 {
-  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+  BDSStep globalPosDir = ConvertToGlobalStep(localPos, localMomUnit, false);
   G4ThreeVector GlobalPosition = globalPosDir.PreStepPoint();
   G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
-  GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
+  GlobalTangent*=momMag; // multiply the unit direction by magnitude to get momentum
 
   yOut[0] = GlobalPosition.x();
   yOut[1] = GlobalPosition.y();
