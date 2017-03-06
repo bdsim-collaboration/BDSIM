@@ -21,7 +21,7 @@
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagSBend.hh"
 #include "BDSFieldMagSextupole.hh"
-#include "BDSFieldMagSkew.hh"
+#include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagSolenoid.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
@@ -262,13 +262,13 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo& info)
     case BDSFieldType::muonspoiler:
       {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
     case BDSFieldType::skewquadrupole:
-      {field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::pi/4.); break;}
+      {field = new BDSFieldMagSkewOwn(new BDSFieldMagQuadrupole(strength, brho), CLHEP::pi/4.); break;}
     case BDSFieldType::skewsextupole:
-      {field = new BDSFieldMagSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;}
+      {field = new BDSFieldMagSkewOwn(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;}
     case BDSFieldType::skewoctupole:
-      {field = new BDSFieldMagSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;}
+      {field = new BDSFieldMagSkewOwn(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;}
     case BDSFieldType::skewdecapole:
-      {field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
+      {field = new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
