@@ -95,12 +95,13 @@ def Run(inputDict):
 
     # move log file into failed if it contains overlaps or stuck particles.
     if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])):
+            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
         _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
 
     # elif the test is successful and doesn't contain G4Exceptions, delete the file.
     elif generalStatus.__contains__(GlobalData.returnCodes['SUCCESS']):
-        _os.remove(inputDict['bdsimLogFile'])
+        _os.system("rm " + inputDict['bdsimLogFile'])
 
     return inputDict
 
@@ -357,6 +358,10 @@ class TestUtilities(object):
         if not _os.path.exists('Tests'):
             _os.system("mkdir Tests")
 
+        # make dirs for results & plots.
+        if not _os.path.exists('Results'):
+            _os.system("mkdir Results")
+
         if not _os.path.exists('BDSIMOutput'):
             _os.system("mkdir BDSIMOutput")
         _os.chdir('BDSIMOutput')
@@ -524,6 +529,11 @@ class TestUtilities(object):
 
         if not self._testParamValues.keys().__contains__(componentType):
             self._testParamValues[componentType] = []
+
+        # sort energy when energy is a float, not string.
+        energy = [_np.float(x) for x in compKwargs['energy']]
+        energy.sort()
+        compKwargs['energy'] = [_np.str(x) for x in energy]
         self._testParamValues[componentType].append(compKwargs)
 
         kwargKeys = compKwargs.keys()

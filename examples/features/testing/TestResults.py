@@ -27,6 +27,7 @@ class Results(dict):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
+        self._numEntries = 0
         self['testResults'] = []
         for key in resultsKeys:
             self[key] = []
@@ -40,7 +41,8 @@ class Results(dict):
                 for key in resultsKeys:
                     if key != 'timingData':
                         particleResults[key].append(self[key][testNum])
-
+        particleResults['timingData'].append(self['timingData'])
+        particleResults._numEntries = len(particleResults['testResults'])
         return particleResults
 
     def _getCommonValues(self):
@@ -96,6 +98,7 @@ class Timing:
 
 class ResultsUtilities:
     def __init__(self):
+        # dict of list of Results instances for each component type.
         self.ResultsDict = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
@@ -257,6 +260,7 @@ class Analysis(ResultsUtilities):
         elif multiEntryTypes.__contains__(type(results)):
             for res in results:
                 self.ResultsDict[results['componentType']]['testResults'].append(res)
+        self.ResultsDict[results['componentType']]._numEntries = len(self.ResultsDict[results['componentType']]['testResults'])
 
     def AddTimingData(self, componentType, timingData):
         if not isinstance(timingData, Timing):
@@ -346,6 +350,7 @@ class Analysis(ResultsUtilities):
         self.ResultsDict[componentType]['fileLabel'].reverse()
         self.ResultsDict[componentType]['generalStatusList'].reverse()
         self.ResultsDict[componentType]['params'].reverse()
+        self.ResultsDict[componentType]['testResults'].reverse()
 
     def PlotResults(self, componentType=''):
         GlobalData._CheckComponent(componentType)
