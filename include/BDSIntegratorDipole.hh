@@ -59,8 +59,8 @@ protected:
 
   std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,
 						     G4double h,
-						     G4ThreeVector LocalR,
-						     G4ThreeVector LocalRP);
+						     G4ThreeVector localPos,
+						     G4ThreeVector localMomUnit);
   
 private:
   /// Data stored in order to find the chord.
