@@ -43,6 +43,26 @@ class Results(dict):
 
         return particleResults
 
+    def _getCommonValues(self):
+        uniqueValues = collections.OrderedDict()
+
+        for test in self['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
+
+        commonValues = collections.OrderedDict()
+        for key, value in uniqueValues.iteritems():
+            if len(value) == 1:
+                commonValues[key] = value[0]
+
+        for values in commonValues.values():
+            if len(values) > 0:
+                return commonValues
+        return None
+
 
 class Timing:
     def __init__(self):
@@ -188,32 +208,6 @@ class ResultsUtilities:
 
         return generalStatus
 
-    def _getCommonValues(self, componentType=''):
-        uniqueValues = collections.OrderedDict()
-        # if self._testParamValues is None:
-        #     return None
-        for test in self.ResultsDict[componentType]['params']:
-            for key, value in test.iteritems():
-                if not uniqueValues.keys().__contains__(key):
-                    uniqueValues[key] = []
-                if not uniqueValues[key].__contains__(value):
-                    uniqueValues[key].append(value)
-
-        commonValues = collections.OrderedDict()
-        for key, value in uniqueValues.iteritems():
-            if len(value) == 1:
-                commonValues[key] = value[0]
-
-        for values in commonValues.values():
-            if len(values) > 0:
-                return commonValues
-        return None
-
-
-class Analysis(ResultsUtilities):
-    def __init__(self):
-        ResultsUtilities.__init__(self)
-
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
             """
@@ -249,6 +243,11 @@ class Analysis(ResultsUtilities):
         _os.remove('gitCommit.log')
         _os.remove('gitBranch.log')
         return gitLines
+
+
+class Analysis(ResultsUtilities):
+    def __init__(self):
+        ResultsUtilities.__init__(self)
 
     def AddResults(self, results):
         if not self.ResultsDict.keys().__contains__(results['componentType']):
