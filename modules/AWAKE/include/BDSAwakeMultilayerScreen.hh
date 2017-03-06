@@ -38,6 +38,7 @@ private:
   void mountLayer();
   void binderLayer();
   void backBinderLayer();
+		void thickScintLayer();
   void scintillatorLayer();
   void backScintillatorLayer();
   void frontScintillatorLayer1();
