@@ -17,7 +17,7 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
   BDSIntegratorMag(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
-  bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;
+  bDoublePrime = brho * (*strength)["k2"] / CLHEP::m3;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
 #endif
@@ -27,52 +27,48 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 					  G4double        h,
 					  G4double        yOut[])
 {
-  const G4double *pIn = yIn+3;
-  G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4double momUnit = mom.mag();
+  G4double kappa = (-eqOfM->FCof()*bDoublePrime) / momUnit;
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);
-  G4double InitMag=v0.mag();
-  G4double kappa=  (-eqOfM->FCof()*bDoublePrime) /InitMag;
-
-  if(fabs(kappa)<1.e-12)
+  if (std::abs(kappa) < 1e-12)
     {
       AdvanceDriftMag(yIn, h, yOut);
       SetDistChord(0);
       return;
     }
-  else 
-    {
-      // global to local
-      BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
-      G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
-      G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
-      G4ThreeVector      LocalRp = Localv0.unit();
-      
-      G4double x0=LocalR.x(); 
-      G4double y0=LocalR.y();
-      
-      // Evaluate field at the approximate midpoint of the step.
-      x0=x0+LocalRp.x()*h/2;
-      y0=y0+LocalRp.y()*h/2;
-      
-      G4double x02My02=(x0*x0-y0*y0);
-      
-      G4double xp=LocalRp.x();
-      G4double yp=LocalRp.y();
-      G4double zp=LocalRp.z();
-      
-      // local r'' (for curvature)
-      G4ThreeVector LocalRpp;
-      LocalRpp.setX(zp*x02My02);
-      LocalRpp.setY(-2*zp*x0*y0);
-      LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
-      
-      LocalRpp*=kappa/2; // 2 is actually a 2! factor.
-      
-      AdvanceChord(h,LocalR,LocalRp,LocalRpp);
-
-      ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
-    }
+  
+  G4ThreeVector pos          = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  G4ThreeVector localPos     = localPosMom.PreStepPoint();
+  G4ThreeVector localMom     = localPosMom.PostStepPoint();
+  G4ThreeVector localMomUnit = localMom.unit();
+  
+  G4double x0 = localPos.x();
+  G4double y0 = localPos.y();
+  
+  // Evaluate field at the approximate midpoint of the step.
+  const G4double halfH = 0.5*h;
+  x0 = x0 + localMomUnit.x()*halfH;
+  y0 = y0 + localMomUnit.y()*halfH;
+  
+  G4double x02My02 = x0*x0 - y0*y0;
+  
+  G4double xp = localMomUnit.x();
+  G4double yp = localMomUnit.y();
+  G4double zp = localMomUnit.z();
+  
+  // local r'' (for curvature)
+  G4ThreeVector localA;
+  localA.setX(zp*x02My02);
+  localA.setY(-2*zp*x0*y0);
+  localA.setZ(xp*x02My02-2*yp*x0*y0);
+  
+  localA*=kappa/2; // 2 is actually a 2! factor.
+  
+  AdvanceChord(h,localPos,localMomUnit,localA);
+  
+  ConvertToGlobal(localPos,localMomUnit,momUnit,yOut);
 }
 
 void BDSIntegratorSextupole::Stepper(const G4double yIn[],
@@ -82,18 +78,17 @@ void BDSIntegratorSextupole::Stepper(const G4double yIn[],
 				     G4double       yErr[])
 {
   G4double yTemp[7];
-  
-  const G4double *pIn = yIn + 3;
-  G4ThreeVector GlobalR = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
 
-  G4ThreeVector GlobalPDir = GlobalP.unit();
+  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  G4ThreeVector momUnit = mom.unit();
+
+  auxNavigator->LocateGlobalPointAndSetup(pos);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     localPDir= GlobalAffine.TransformAxis(GlobalPDir);
+  G4ThreeVector     localMomUnit = GlobalAffine.TransformAxis(momUnit);
 
-  if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
+  if (localMomUnit.z() < 0.9 || mom.mag() < 40.0 )
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());

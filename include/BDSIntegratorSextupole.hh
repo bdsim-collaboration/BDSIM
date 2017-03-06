@@ -43,9 +43,6 @@ protected:
 private:
   /// 2nd derivative of the field
   G4double bDoublePrime;
-
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
 };
 
 #endif
