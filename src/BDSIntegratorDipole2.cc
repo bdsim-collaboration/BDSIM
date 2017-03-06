@@ -80,26 +80,24 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 						     G4double       yOut[],
 						     G4double       yErr[])
 {
-  AdvanceHelix(yIn, field, h, yOut);
+  G4ThreeVector fieldUnit = field.unit();
+  G4double momMag = G4ThreeVector(yIn[3], yIn[4], yIn[5]).mag();
+  
+  // Artificially change momentum to be along field direction.
+  G4ThreeVector    momNew = fieldUnit*momMag;
 
-  G4ThreeVector unitMomentum    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4ThreeVector unitField       = field.unit();
-  //G4ThreeVector unitSideways    = unitField.cross(unitMomentum.unit());
-  G4ThreeVector correctPosition = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
-  G4ThreeVector delta = h*unitField;
-  G4ThreeVector newPosition     = correctPosition + delta;
-  //G4cout << newPosition << delta << G4endl;
-  //SetAngCurve(7);
-  //SetRadHelix(0);
-  yOut[0] = newPosition[0];
-  yOut[1] = newPosition[1];
-  yOut[2] = newPosition[2];
+  // Create updated array for tracking.
+  G4double yModified[7];
+  for (G4int i = 0; i < 3; i++)
+    {
+      yModified[i]     = yIn[i];    // position stays the same
+      yModified[i + 3] = momNew[i]; // update momentum
+    }
 
-  //SetAngCurve(7);
-  //SetRadHelix(backupStepper->DistChord()*0.5);
+  // Simply advance as a drift along this vector.
+  AdvanceDriftMag(yModified, h, yOut);
 
-  // empirically chosen error values that give the fewest warnings
-  // for spiralling particles in showers in strong dipole fields
+  // set error to be low.
   for(G4int i = 0; i < 3; i++)
     {yErr[i] = 1e-20;}
   for(G4int i = 3; i < 6; i++)
