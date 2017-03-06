@@ -18,7 +18,7 @@ GlobalData = Globals.Globals()
 resultsKeys = ['timingData',
                'resultsList',
                'fileLabel',
-               'generalStatusList'
+               'generalStatusList',
                'params',
                'testResults']
 
@@ -27,8 +27,9 @@ class Results(dict):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
+        self['testResults'] = []
         for key in resultsKeys:
-            setattr(self, key, [])
+            self[key] = []
 
     def GetResultsByParticle(self, particle=''):
         if not GlobalData.particles.__contains__(particle):
@@ -37,7 +38,8 @@ class Results(dict):
         for testNum, testResult in enumerate(self['testResults']):
             if testResult['particle'] == particle:
                 for key in resultsKeys:
-                    particleResults[key].append(self[key][testNum])
+                    if key != 'timingData':
+                        particleResults[key].append(self[key][testNum])
 
         return particleResults
 
@@ -175,11 +177,14 @@ class ResultsUtilities:
         if len(startLineIndices) > 0:
             for index, startLine in enumerate(startLineIndices):
                 exceptions = splitLines[startLine:endLineIndices[index] + 1]
-                if exceptions.__contains__('      issued by : G4PVPlacement::CheckOverlaps()'):
+                issuedLine = exceptions[2]
+                if issuedLine.__contains__('G4PVPlacement::CheckOverlaps()'):
                     generalStatus.append(GlobalData.returnCodes['OVERLAPS'])
-                if exceptions.__contains__('     issued by : G4PropagatorInField::ComputeStep()'):
+                if issuedLine.__contains__('G4PropagatorInField::ComputeStep()'):
                     generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
-                    # TODO: check for other types of warnings/errors.
+                if issuedLine.__contains__('G4MagInt_Driver::AccurateAdvance()'):
+                    generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
+                # TODO: check for other types of warnings/errors.
 
         return generalStatus
 
