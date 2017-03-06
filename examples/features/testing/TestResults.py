@@ -355,91 +355,178 @@ class Analysis(ResultsUtilities):
     def PlotResults(self, componentType=''):
         GlobalData._CheckComponent(componentType)
 
-        f = _plt.figure(figsize=(11, 7))
-        ax = f.add_subplot(111)
-
-        # set normalised colormap.
-        bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
-        norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
-
-        extent = [0, 7, 0, len(self.ResultsDict[componentType]['resultsList'])]
-
-        data = self.ResultsDict[componentType]['resultsList']
-        files = self.ResultsDict[componentType]['fileLabel']
-        generalStatus = self.ResultsDict[componentType]['generalStatusList']
-
-        electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
-        protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
-
+        # split results into proton and electron
         electronResults = self.ResultsDict[componentType].GetResultsByParticle('e-')
         protonResults = self.ResultsDict[componentType].GetResultsByParticle('proton')
 
-        commonValues = self._getCommonValues(componentType)
-        subplotTitle = ''
+        if (electronResults._numEntries == 0) or (protonResults._numEntries == 0):
+            figsize = (10, 7)
+            f = _plt.figure(figsize=figsize)
+            ax1 = f.add_subplot(121)
+            ax2 = f.add_subplot(122)
+        else:
+            figsize = (15, 9)
+            f = _plt.figure(figsize=figsize)
+            ax1 = f.add_subplot(141)
+            ax2 = f.add_subplot(142)
+            ax3 = f.add_subplot(143)
+            ax4 = f.add_subplot(144)
+            electronBoxSize = _np.float(figsize[1] - 1) / len(electronResults['params'])
+            protonBoxSize = _np.float(figsize[1] - 1) / len(protonResults['params'])
+            if electronBoxSize > protonBoxSize:
+                elecOffset = protonBoxSize / electronBoxSize
+                protonOffset = 1.0
+            elif electronBoxSize < protonBoxSize:
+                elecOffset = 1.0
+                protonOffset = electronBoxSize / protonBoxSize
 
-        if commonValues is not None:
-            for index, fileName in enumerate(files):
-                fname = fileName
+
+        def updateDataAxis(ax, results):
+            # get all necessary data.
+            data = results['resultsList']
+            files = results['fileLabel']
+            generalStatus = results['generalStatusList']
+            particle = results['testResults'][0]['particle']
+
+            # set normalised colormap.
+            bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
+            norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+
+            extent = [0, 7, 0, results._numEntries]
+
+            commonValues = results._getCommonValues()
+            subplotTitle = particle
+
+            # subplot title based on common parameter values.
+            if commonValues is not None:
+                subplotTitle += ", "
                 for key, value in commonValues.iteritems():
-                    filestring = "__" + key + "_" + _np.str(value)
-                    fname = fname.replace(filestring, '')
-                if len(electronFiles) == len(files):
-                    fname.replace("e-__", "")
-                elif len(protonFiles) == len(files):
-                    fname.replace("proton__", "")
-                files[index] = fname
+                    subplotTitle += _string.capitalize(key) + " = " + value
+                    index = commonValues.keys().index(key)
+                    if index != (len(commonValues.keys()) - 1):
+                        subplotTitle += ", "
 
-            for key, value in commonValues.iteritems():
-                subplotTitle += _string.capitalize(key) + " = " + value
-                index = commonValues.keys().index(key)
-                if index != (len(commonValues.keys()) - 1):
-                    subplotTitle += ", "
+            cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+                            extent=extent, aspect='auto')
+            ax.set_xlim(0, 8)
 
-        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
-                        extent=extent, aspect='auto')
-        ax.set_xlim(0, 8)
+            for index, status in enumerate(generalStatus):
+                numStatus = len(status)
+                yIndex = index
+                for statIndex, stat in enumerate(status):
+                    boxColor = GlobalData.cmap.colors[stat]
+                    boxWidth = 1.0 / numStatus
+                    ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
-        for index, status in enumerate(generalStatus):
-            numStatus = len(status)
-            yIndex = index
-            for statIndex, stat in enumerate(status):
-                boxColor = GlobalData.cmap.colors[stat]
-                boxWidth = 1.0 / numStatus
-                ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+            if subplotTitle != '':
+                ax.set_title(subplotTitle)
 
-        if subplotTitle != '':
-            ax.set_title(subplotTitle)
+            xtickMajors = _np.linspace(1, 8, 8)
+            xtickCentre = xtickMajors - 0.5
 
-        xtickMajors = _np.linspace(1, 8, 8)
-        xtickCentre = xtickMajors - 0.5
+            ax.set_xticks(xtickCentre)
+            ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'Gen'])
 
-        ax.set_xticks(xtickCentre)
-        ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'General'])
+            ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
+            ytickCentre = ytickMajors - 0.5
 
-        ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
-        ytickCentre = ytickMajors - 0.5
+            ax.set_yticks(ytickCentre)
+            empty_string_labels = [''] * len(files)
+            ax.set_yticklabels(empty_string_labels)
 
-        ax.set_yticks(ytickCentre)
-        ax.set_yticklabels(files)
+            ytickMinors = _np.linspace(0, len(data), len(data) + 1)
 
-        ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+            minorXTicks = _tick.FixedLocator(xtickMajors)
+            minorYTicks = _tick.FixedLocator(ytickMinors)
 
-        minorXTicks = _tick.FixedLocator(xtickMajors)
-        minorYTicks = _tick.FixedLocator(ytickMinors)
+            ax.xaxis.set_minor_locator(minorXTicks)
+            ax.yaxis.set_minor_locator(minorYTicks)
 
-        ax.xaxis.set_minor_locator(minorXTicks)
-        ax.yaxis.set_minor_locator(minorYTicks)
+            ax.tick_params(axis='x', which='both', length=0)
+            ax.tick_params(axis='y', which='both', length=0, labelsize=9)
 
-        ax.tick_params(axis='x', which='both', length=0)
-        ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+            ax.grid(which='minor', axis='x', linestyle='-')
+            ax.grid(which='minor', axis='y', linestyle='--')
+            return cax
 
-        ax.grid(which='minor', axis='x', linestyle='-')
-        ax.grid(which='minor', axis='y', linestyle='--')
+        def updateDiagramAxis(ax, results, labelOffset):
+            # get all necessary data.
+            params = results['params']
 
-        cbar = f.colorbar(cax)
+            # get dict of all unique parameter values.
+            uniqueValues = collections.OrderedDict()
+            for test in params:
+                for key, value in test.iteritems():
+                    if not uniqueValues.keys().__contains__(key):
+                        uniqueValues[key] = []
+                    if not uniqueValues[key].__contains__(value):
+                        uniqueValues[key].append(value)
+
+            # dict for param value labels
+            boxText = {}
+
+            # calculate number of boxes per order
+            numBoxesPerLevel = []
+            numLevel = 1
+            for i in range(len(uniqueValues.keys())):
+                boxText[_np.str(i)] = []
+                numValues = len(uniqueValues[uniqueValues.keys()[i]])
+                numLevel *= numValues
+                numBoxesPerLevel.append(numLevel)
+
+            # update dict of param values per box
+            def updateBoxTextList(depth):
+                for value in uniqueValues[uniqueValues.keys()[depth]]:
+                    boxText[_np.str(depth)].append(value)
+                    if depth < (len(uniqueValues.keys())-1):
+                        updateBoxTextList(depth+1)
+
+            updateBoxTextList(0)
+
+            fontSizes = ['medium', 'medium', 'small', 'x-small']
+
+            # plot the lines representing the boxes.
+            for level, numBoxes in enumerate(numBoxesPerLevel):
+                ax.plot([level, level], [0, len(params)], linewidth=1, color='k')  # vertical bar
+                for boxNum in range(numBoxes):
+                    boxHeight = len(params) / numBoxesPerLevel[level]
+                    textRot = 'horizontal'
+                    txtHorPos = level + 0.5
+                    txtVerPos = (boxNum * boxHeight) + 0.5 * boxHeight
+
+                    ax.plot([level, 3], [boxNum*boxHeight, boxNum*boxHeight], linewidth=1, color='k')  # bottom horizontal bar
+                    ax.plot([level, 3], [(boxNum+1)*boxHeight, (boxNum+1)*boxHeight], linewidth=1, color='k')  # top hor. bar
+                    ax.text(txtHorPos, txtVerPos, boxText[_np.str(level)][boxNum], rotation=textRot, va='center', ha='center', fontsize=fontSizes[level])
+
+                ax.text(level+0.5, len(params) + labelOffset, _string.capitalize(uniqueValues.keys()[level]), fontsize=12, ha='center')  # rotation=30, va='bottom')
+
+            ax.set_xlim(-0.01, 3)
+            ax.set_ylim(0, results._numEntries)
+
+            ax.axis('off')
+            ax.xaxis.set_visible(False)
+            ax.yaxis.set_visible(False)
+
+            return ax
+
+        if (electronResults._numEntries == 0) or (protonResults._numEntries == 0):
+            dataAx1 = updateDataAxis(ax2, self.ResultsDict[componentType])
+            labAx1 = updateDiagramAxis(ax1, self.ResultsDict[componentType], 0)
+        else:
+            dataAx1 = updateDataAxis(ax2, electronResults)
+            labAx1 = updateDiagramAxis(ax1, electronResults, elecOffset)
+            dataAx2 = updateDataAxis(ax4, protonResults)
+            labAx2 = updateDiagramAxis(ax3, protonResults, protonOffset)
+
+        # colorbar colors and values independant of data, can be set according to either subplot.
+        cbar = f.colorbar(dataAx1)
         cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
         cbar.set_ticks(cbarTicks)
         cbar.set_ticklabels(GlobalData.returnCodes.keys())
-
+        cbar.ax.tick_params(labelsize=8)
         f.tight_layout()
+        f.savefig('../Results/' + componentType + '.png', dpi=600)
 
+    def ProduceReport(self):
+        # TODO: loop over _testParamValues and search for common parameter where failures are seen.
+        pass
