@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <iostream>
-#include <algorithm>
 
 #include "BDSOutputROOTEventTrajectory.hh"
 

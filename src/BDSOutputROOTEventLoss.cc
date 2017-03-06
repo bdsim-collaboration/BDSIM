@@ -1,4 +1,3 @@
-#include <include/BDSExecOptions.hh>
 #include "BDSOutputROOTEventLoss.hh"
 
 #ifndef __ROOTBUILD__
