@@ -157,8 +157,9 @@ public:
   std::pair<int,int>                 findParentProcess(int trackIndex);
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
-  BDSOutputROOTEventTrajectoryPoint primaryProcessPoint(int trackID);
+  BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
+
   void print(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
