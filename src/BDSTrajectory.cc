@@ -45,6 +45,7 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
   }
   weight = aTrack->GetWeight();
 
+  fParentIndex = -1;
   fpBDSPointsContainer = BDSTrajectoryPointsContainer();
   // this is for the first point of the track
   fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aTrack));

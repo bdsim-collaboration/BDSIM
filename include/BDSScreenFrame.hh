@@ -38,8 +38,9 @@ public:
 protected:
   /// Set the visual attributes to member logVol.
   virtual void SetVisAtts();
-		/// Construct default visualisation attribute for light transparent grey.
-		void SetDefaultVisAtts();
+
+  /// Construct default visualisation attribute for light transparent grey.
+  void SetDefaultVisAtts();
 
   /// Attach visualisation attributes to logical volume if they exist and if not
   /// use the default.
@@ -57,8 +58,6 @@ protected:
 
 private:
   BDSScreenFrame() = delete;
-
-
 };
 
 #endif

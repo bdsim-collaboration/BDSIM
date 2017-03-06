@@ -87,7 +87,10 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     try{
         _strutSizeX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
     } catch(std::invalid_argument&){
-        _windowOffsetX=59.564*CLHEP::mm-_vacInnerWidth/2.0-_vacThickness;
+        _windowOffsetX=59.564*CLHEP::mm //Total offset of front of flange from beam axis
+											 -_vacInnerWidth/2.0-_vacThickness //Distance to outer edge of beam pipe
+											 -10*CLHEP::mm/std::abs(std::sin(_screenAngle)); //The back of the screen is recessed by 10mm into
+			// the window frame
     }
 
     try{

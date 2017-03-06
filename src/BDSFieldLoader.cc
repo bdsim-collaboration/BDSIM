@@ -302,10 +302,10 @@ BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
   if (filePath.rfind("gz") != std::string::npos )
     {
 #ifdef USE_GZSTREAM
-  BDSFieldLoaderBDSIM<igzstream> loader;
-  result = loader.Load3D(filePath);
+      BDSFieldLoaderBDSIM<igzstream> loader;
+      result = loader.Load3D(filePath);
 #else
-  G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
 #endif
     }
   else
@@ -327,7 +327,7 @@ BDSArray4DCoords* BDSFieldLoader::LoadBDSIM4D(G4String filePath)
   if (filePath.rfind("gz") != std::string::npos)
     {
 #ifdef USE_GZSTREAM
-  BDSFieldLoaderBDSIM<igzstream> loader;
+      BDSFieldLoaderBDSIM<igzstream> loader;
       result = loader.Load4D(filePath);
 #else
       G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
