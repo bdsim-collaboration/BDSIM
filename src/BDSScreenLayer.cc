@@ -60,10 +60,12 @@ void BDSScreenLayer::buildGroove()
 
 void BDSScreenLayer::buildScreen()
 {
+	//A small safety length to separate the screen layers.
+	G4double tinyLenSaf = 1e-3*CLHEP::nm;
   solid  = new G4Box((name+"_solid").c_str(),
 		     size.x()/2.0,
 		     size.y()/2.0,
-		     size.z()/2.0);
+		     size.z()/2.0-tinyLenSaf);
   log = new G4LogicalVolume(solid,
 			    BDSMaterials::Instance()->GetMaterial(material),
 			    (name+"_log").c_str());
@@ -162,10 +164,11 @@ BDSScreenLayer::InternalMirror::InternalMirror(G4int varsideIn,
 
 void BDSScreenLayer::InternalMirror::geom()
 {
+	G4double tinyLenSaf = 1e-6*CLHEP::nm;
   solid = new G4Box("internalMirrorSolid",
 		    motherSize.x()/2.0,
 		    motherSize.y()/2.0,
-		    thickness);
+		    thickness - tinyLenSaf);
   log = new G4LogicalVolume(solid,
 			    BDSMaterials::Instance()->GetMaterial("titanium"),
 			    "internalMirrorLog");

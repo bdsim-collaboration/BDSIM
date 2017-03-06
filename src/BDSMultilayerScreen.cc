@@ -52,7 +52,7 @@ void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
     }
   else
     {layerName=name;}
-  
+
   G4ThreeVector layerSize(xysize.x(), xysize.y(), thickness);
   BDSScreenLayer* screen = new BDSScreenLayer(layerSize, layerName, material,
 					      grooveWidth,grooveSpatialFrequency);
