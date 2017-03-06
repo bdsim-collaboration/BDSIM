@@ -34,19 +34,20 @@ BDSScreenLayer::BDSScreenLayer(G4ThreeVector sizeIn,
   if (!BDS::IsFinite(size.z()))
     {G4cerr << __METHOD_NAME__ << "Insufficent length for screen layer \"" << name << "\"" << G4endl; exit(1);}
   colour=G4Colour(0.1,0.8,0.1,0.3);
-  build();
+  Build();
 }
 
-void BDSScreenLayer::build()
+void BDSScreenLayer::Build()
 {
-  buildGroove();
-  buildScreen();
-  visAtt();
+  BuildGroove();
+  BuildScreen();
+  SetVisAttributes();
 }
 
-void BDSScreenLayer::buildGroove()
+void BDSScreenLayer::BuildGroove()
 {
-  if (!BDS::IsFinite(grooveWidth)) //There may or may not be grooves in the screen layer.
+  //There may or may not be grooves in the screen layer.
+  if (!BDS::IsFinite(grooveWidth))
     {return;}
     
   grooveSolid = new G4Box((name+"_grooveSolid").c_str(),
@@ -58,10 +59,10 @@ void BDSScreenLayer::buildGroove()
 				  (name+"_grooveLog").c_str());
 }
 
-void BDSScreenLayer::buildScreen()
+void BDSScreenLayer::BuildScreen()
 {
-	//A small safety length to separate the screen layers.
-	G4double tinyLenSaf = 1e-3*CLHEP::nm;
+  //A small safety length to separate the screen layers.
+  G4double tinyLenSaf = 1e-3*CLHEP::nm;
   solid  = new G4Box((name+"_solid").c_str(),
 		     size.x()/2.0,
 		     size.y()/2.0,
@@ -69,23 +70,23 @@ void BDSScreenLayer::buildScreen()
   log = new G4LogicalVolume(solid,
 			    BDSMaterials::Instance()->GetMaterial(material),
 			    (name+"_log").c_str());
-  cutGrooves();
-
+  CutGrooves();
+    
   log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
-void BDSScreenLayer::cutGrooves()
+void BDSScreenLayer::CutGrooves()
 {
   if(grooveWidth>0)
     {
       for(G4double xPosition=-size.x()/2.0+grooveWidth/2.0;
 	  xPosition<((size.x()/2.0)-grooveWidth/2.0);
 	  xPosition+=grooveSpatialFrequency)
-	{cutGroove(xPosition);}
+	{ CutGroove(xPosition);}
     }
 }
 
-void BDSScreenLayer::cutGroove(G4double xPosition)
+void BDSScreenLayer::CutGroove(G4double xPosition)
 {
   if (!grooveLog)
     {return;}
@@ -104,7 +105,7 @@ void BDSScreenLayer::cutGroove(G4double xPosition)
   nGrooves++; //Increment the counter for the number of grooves in the screen.
 }
 
-void BDSScreenLayer::visAtt()
+void BDSScreenLayer::SetVisAttributes()
 {
   G4VisAttributes* visAtt=new G4VisAttributes(colour);
   visAtt->SetForceSolid(true);
@@ -128,7 +129,7 @@ void BDSScreenLayer::SetPhys(G4PVPlacement* physIn)
 void BDSScreenLayer::SetColour(G4Colour col)
 {
   colour=col;
-  visAtt();
+  SetVisAttributes();
 }
 
 void BDSScreenLayer::backInternalMirror()
@@ -220,13 +221,10 @@ void BDSScreenLayer::InternalMirror::compute()
   pos = sign*(motherSize.z()/2.0-thickness/2.0);
 }
 
-void BDSScreenLayer::sampler()
+void BDSScreenLayer::AssignSampler()
 {
   G4String samplerName = name;
   log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
   log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
-
-BDSScreenLayer::~BDSScreenLayer()
-{}

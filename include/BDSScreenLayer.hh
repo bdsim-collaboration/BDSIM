@@ -23,7 +23,7 @@ public:
 		 G4String material,
 		 G4double grooveWidth,
 		 G4double grooveSpatialFrequency);
-  virtual ~BDSScreenLayer();
+  virtual ~BDSScreenLayer(){;}
   /// @{ Accessor
   inline G4LogicalVolume* GetLog()  const {return log;}
   inline G4String         GetName() const {return name;}
@@ -36,13 +36,13 @@ public:
   void frontInternalMirror();
 
   /// Make this plane a sampling plane.
-  void sampler(); 
+  void AssignSampler();
 
-  //Get the sampler ID.
-  G4int GetSamplerID(){return samplerID;}
+  //Get the AssignSampler ID.
+  G4int GetSamplerID() const {return samplerID;}
 
 protected:
-  /// protected constructor, currently used by AWAKE/BDSMultiFacetLayer
+  /// Used in modules/AWAKE/include/BDSMultiFacetLayer.hh
   BDSScreenLayer();
   G4ThreeVector size;
   G4String name;
@@ -51,9 +51,14 @@ protected:
   G4VSolid* solid = nullptr;
 
 private:
-  class InternalMirror{
+  class InternalMirror
+  {
   public:
-    InternalMirror(G4int varside, G4ThreeVector size, G4String material, G4LogicalVolume* motherLog, G4PVPlacement* motherPhys);
+    InternalMirror(G4int            varside,
+		   G4ThreeVector    size,
+		   G4String         material,
+		   G4LogicalVolume* motherLog,
+		   G4PVPlacement*   motherPhys);
     ~InternalMirror();
     void geom();
     void compute();
@@ -74,13 +79,14 @@ private:
     G4double thickness;
     G4double pos;
   };
+  
   InternalMirror* internalMirror = nullptr;
-  virtual void build();
-  void buildGroove();
-  virtual void buildScreen();
-  void visAtt();
-  void cutGroove(G4double xPos);
-  void cutGrooves();
+  virtual void Build();
+  void BuildGroove();
+  virtual void BuildScreen();
+  void SetVisAttributes();
+  void CutGroove(G4double xPos);
+  void CutGrooves();
   G4String material;
   G4String logName;
   G4String solidName;
@@ -90,11 +96,9 @@ private:
   G4double grooveWidth = 0.0;
   G4double grooveSpatialFrequency = 0.0;
   /// Counter for the number of grooves etched into the screen.
-  G4int nGrooves = 0;
+  G4int    nGrooves = 0;
   G4Colour colour;
-
-  G4int samplerID = 0;
-
+  G4int    samplerID = 0;
 };
 
 #endif

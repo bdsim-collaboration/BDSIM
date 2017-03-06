@@ -64,7 +64,7 @@ void BDSMultilayerScreen::AddScreenLayer(BDSScreenLayer* layer, G4int isSampler)
   colourWheel->Spin();
   layer->SetColour(colourWheel->Colour());
   if(isSampler)
-    {layer->sampler();}
+    {layer->AssignSampler();}
   screenLayers.push_back(layer);
   screenLayerNames[layer->GetName()] = layer;
 }
