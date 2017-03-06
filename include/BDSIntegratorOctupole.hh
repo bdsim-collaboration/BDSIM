@@ -39,12 +39,10 @@ protected:
 
 private:
   /// Private default constructor to enforce use of supplied constructor
-  BDSIntegratorOctupole();
+  BDSIntegratorOctupole() = delete;
 
+  /// 3rd differential of field.
   G4double bTriplePrime;
-  
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
 };
 
 #endif
