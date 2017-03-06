@@ -41,13 +41,10 @@ protected:
 
 private:
   /// Private default constructor to enforce use of supplied constructor
-  BDSIntegratorDecapole();
+  BDSIntegratorDecapole() = delete;
 
   /// 4th derivative of magnetic field
   G4double bQuadruplePrime;
-
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
 };
 
 #endif
