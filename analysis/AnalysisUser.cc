@@ -37,6 +37,12 @@ AnalysisUser::AnalysisUser(std::string filename)
 
 AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
 {
+
+}
+
+
+AnalysisUser::~AnalysisUser()
+{
   delete f;
   delete optionsTree;
   delete modelTree;
@@ -90,8 +96,4 @@ void AnalysisUser::Analysis()
     }
     //
   }
-}
-
-AnalysisUser::~AnalysisUser()
-{
 }
