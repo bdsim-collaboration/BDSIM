@@ -90,7 +90,6 @@ def Run(inputDict):
         # root output was generated - success
         inputDict['code'] = GlobalData.returnCodes['SUCCESS']
 
-    ResultUtils = TestResults.ResultsUtilities()
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
     inputDict['generalStatus'] = generalStatus
 
@@ -123,12 +122,11 @@ class TestData(dict):
             self['particle'] = params[0]
             params.remove(params[0])
             for i in params:
-                property = i.split('_')[0]
+                prop = i.split('_')[0]
                 value = i.split('_')[1]
-                self['testParams'][property] = value
+                self['testParams'][prop] = value
 
-        if not GlobalData.components.__contains__(componentType):
-            raise ValueError("Unknown component type.")
+        GlobalData._CheckComponent(componentType)
         self['componentType'] = componentType
         self['originalFile'] = originalFile
 
@@ -171,7 +169,7 @@ class Test(dict):
         self._useDefaults = useDefaults
         self._testRobustness = testRobustNess
         self.PhaseSpace = None
-        self._beamFilename = 'trackingTestBeam.madx' # default file name
+        self._beamFilename = 'trackingTestBeam.madx'  # default file name
         
         # Initialise parameters for the component as empty lists (or defaults) and dynamically
         # create setter functions for those component parameters.
@@ -533,8 +531,8 @@ class TestUtilities(object):
         # recursively create filenames from all kwarg value permutations.
         # if filename matches one in supplied test list, add to ordered list.
         def sublevel(depth, nameIn):
-            for value in compKwargs[kwargKeys[depth]]:
-                name = nameIn + '__' + kwargKeys[depth] + "_" + value
+            for kwargValue in compKwargs[kwargKeys[depth]]:
+                name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
                 if depth < (len(kwargKeys) - 1):
                     sublevel(depth + 1, name)
                 elif testlist.__contains__(path + name + '.gmad'):
@@ -637,14 +635,13 @@ class TestSuite(TestUtilities):
             if self._generateOriginals:
                 _os.chdir('../')
             else:
-                self.Analysis.AddTimingData(componentType,self.timings)
+                self.Analysis.AddTimingData(componentType, self.timings)
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
         _os.chdir('../')
-
 
     def _multiThread(self, testlist):
         numCores = multiprocessing.cpu_count()

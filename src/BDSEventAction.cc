@@ -148,7 +148,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(samplerCollID_plane >= 0)
     {SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));}
   if(SampHC)
-    {bdsOutput->WriteHits(SampHC);}
+    {
+      if (SampHC->entries() > 0)
+	{bdsOutput->WriteHits(SampHC);}
+    }
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing cylinder hits collection" << G4endl;
@@ -157,7 +160,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(samplerCollID_cylin >= 0)
     {SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
   if(SampHC)
-    {bdsOutput->WriteHits(SampHC);}
+    {
+      if (SampHC->entries() > 0)
+	{bdsOutput->WriteHits(SampHC);}
+    }
 
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
@@ -303,7 +309,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       G4double radius = std::hypot(trajEndPointThreeVector.x() / CLHEP::m,
 				   trajEndPointThreeVector.y() / CLHEP::m);
       G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
-      if (greaterThanZInteresting && withinRInteresting) {
+      if (greaterThanZInteresting || withinRInteresting) {
         interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
         continue;
       }

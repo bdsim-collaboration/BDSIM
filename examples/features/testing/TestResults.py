@@ -15,22 +15,31 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
 
+resultsKeys = ['timingData',
+               'resultsList',
+               'fileLabel',
+               'generalStatusList'
+               'params',
+               'testResults']
+
 
 class Results(dict):
-    def __init__(self, component=''):
-        if not GlobalData.components.__contains__(component):
-            raise ValueError("Unknown component type.")
-        self._component = component
+    def __init__(self, componentType=''):
+        GlobalData._CheckComponent(componentType)
+        self._component = componentType
+        for key in resultsKeys:
+            setattr(self, key, [])
 
-        self['timingData'] = []
-        self['resultsList'] = []
-        self['fileLabel'] = []
-        self['generalStatusList'] = []
-        self['params'] = []
-        self['testResults'] = []
+    def GetResultsByParticle(self, particle=''):
+        if not GlobalData.particles.__contains__(particle):
+            raise ValueError("Unknown particle type.")
+        particleResults = Results(self._component)
+        for testNum, testResult in enumerate(self['testResults']):
+            if testResult['particle'] == particle:
+                for key in resultsKeys:
+                    particleResults[key].append(self[key][testNum])
 
-    def GetElectronResults(self):
-        electronResults = Results(self._component)
+        return particleResults
 
 
 class Timing:
@@ -250,7 +259,6 @@ class Analysis(ResultsUtilities):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
             self.ResultsDict[componentType]['timingData'].append(timingData)
-        dummy = 1
 
     def ProcessOriginals(self):
         numTests = 0
@@ -307,9 +315,9 @@ class Analysis(ResultsUtilities):
         f.close()
 
     def ProcessResults(self, componentType=''):
-        if (componentType != '') and (not GlobalData.components.__contains__(componentType)):
-            raise ValueError("Unknown component type.")
-        elif componentType != '':
+        if componentType != '':
+            GlobalData._CheckComponent(componentType)
+
             testResults = self.ResultsDict[componentType]['testResults']
             if not self.ResultsDict.keys().__contains__(componentType):
                 self.ResultsDict[componentType] = Results(componentType)
@@ -336,6 +344,8 @@ class Analysis(ResultsUtilities):
         self.ResultsDict[componentType]['params'].reverse()
 
     def PlotResults(self, componentType=''):
+        GlobalData._CheckComponent(componentType)
+
         f = _plt.figure(figsize=(11, 7))
         ax = f.add_subplot(111)
 
@@ -351,6 +361,9 @@ class Analysis(ResultsUtilities):
 
         electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
         protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
+
+        electronResults = self.ResultsDict[componentType].GetResultsByParticle('e-')
+        protonResults = self.ResultsDict[componentType].GetResultsByParticle('proton')
 
         commonValues = self._getCommonValues(componentType)
         subplotTitle = ''
