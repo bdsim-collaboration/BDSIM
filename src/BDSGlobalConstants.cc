@@ -131,9 +131,10 @@ void BDSGlobalConstants::InitDefaultUserLimits()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Setting maximum tracking time to " << maxTime << " ns" << G4endl;
 #endif
-      defaultUserLimits->SetUserMaxTime(MaxTime());
+      defaultUserLimits->SetUserMaxTime(maxTime);
     }
   defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
+  defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
 }
 
 G4int BDSGlobalConstants::PrintModulo()const

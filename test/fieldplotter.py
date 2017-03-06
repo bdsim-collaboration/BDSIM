@@ -1,112 +1,63 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import glob
+import matplotlib.pyplot as _plt
+import numpy as _np
 
+import pybdsim
 
-def PlotAll():
-    for filename in glob.glob("*radial.dat"):
-        Plot(filename)
+class FourDData(object):
+    def __init__(self, filename, xind=0, yind=1, zind=2, tind=3):
+        d = pybdsim.Field.Load(filename)
+        
+        # '...' fills in unknown number of dimensions with ':' meaning
+        # all of that dimension
+        if (xind >= 0):
+            self.x  = d[..., xind].flatten()
+        if (yind >= 0):
+            self.y  = d[..., yind].flatten()
+        if (zind >= 0):
+            self.z  = d[..., zind].flatten()
+        if (tind >= 0):
+            self.t  = d[..., tind].flatten()
 
-def Plot(filename):
+        # index from end as we don't know the dimensionality
+        self.fx = d[...,-3].flatten()
+        self.fy = d[...,-2].flatten()
+        self.fz = d[...,-1].flatten()
 
-    rdata = Load(filename)
-    rpos = rdata['position']
-    rval = rdata['field']
-    rmag = rdata['magnitude']
-    
-    cfilename = filename.split('radial.dat')[0] + 'carteasian.dat'
-    cdata = Load(cfilename)
-    cpos = cdata['position']
-    cval = cdata['field']
-    cmag = cdata['magnitude']
-    nx = int(cdata['header']['nX'])
-    ny = int(cdata['header']['nY'])
-    
-    cpos = cpos.reshape((nx,ny,3))
-    cval = cval.reshape((nx,ny,3))
-    cmag = cmag.reshape((nx,ny))
-    cx = cpos[0,:,0] # first vertical position (row), all columns, x component of vector
-    cy = cpos[:,0,1]
-    cfx = cval[:,:,0]
-    cfy = cval[:,:,1]
-    cfmag = np.sqrt(cfx**2 + cfy**2)
-    
-    xmax = np.max(cx)
-    xmin = np.min(cx)
-    ymax = np.max(cy)
-    ymin = np.min(cy)
-    xl = (1.5*xmin, 1.5*xmax)
-    yl = (1.5*ymin, 1.5*ymax)
+        self.mag = _np.sqrt(self.fx**2 + self.fy**2 + self.fz**2)
 
-    #FIRST PLOT
-    f = plt.figure(figsize=(8,6.5))
-    ax = f.add_subplot(111, aspect='equal')
+class ThreeDData(FourDData):
+    def __init__(self, filename):
+        FourDData.__init__(self, filename, tind=-1)
 
-    plt.quiver(rpos[:,0],rpos[:,1],rval[:,0],rval[:,1],color="lightgrey",pivot="middle")
-    plt.streamplot(cx,cy,cfx,cfy, color=cfmag)
+class TwoDData(FourDData):
+    def __init__(self, filename):
+        FourDData.__init__(self, filename, tind=-1, zind=-1)
 
-    plt.xlabel('Position (mm)')
-    plt.ylabel('Position (mm)')
+class OneDData(FourDData):
+    def __init__(self, filename):
+        FourDData.__init__(self, filename, tind=-1, zind=-1, yind=-1)
 
-    basefilename = filename.split('.')[0]
-    plt.title(basefilename + ' field map')
-    plt.colorbar(label='Field (T)')
-    plt.tight_layout()
-    plt.savefig(basefilename + '.pdf')
+def _Niceties():
+    _plt.xlabel('X (cm)')
+    _plt.ylabel('Y (cm)')
+    _plt.colorbar()
+    _plt.tight_layout()
+    _plt.axes().set_aspect('equal', 'datalim')
 
-    # SECOND PLOT
-    f = plt.figure(figsize=(8,6.5))
-    ax = f.add_subplot(111, aspect='equal')
-    plt.streamplot(cx,cy,cfx,cfy, color='silver')
-    # this is plotted afterwards so a) it's on top and b) the colourbar works
-    plt.quiver(rpos[:,0],rpos[:,1],rval[:,0],rval[:,1],rmag,pivot="middle")
-    #plt.contour(cpos[:,:,0],cpos[:,:,1],cmag,20) #20 contours
+def Plot2DXY(filename, scale=None):
+    d = TwoDData(filename)
+    _plt.figure()
+    _plt.quiver(d.x,d.y,d.fx,d.fy,d.mag,cmap=_plt.cm.magma,pivot='mid',scale=scale)
+    _Niceties()
 
-    plt.xlabel('Position (mm)')
-    plt.ylabel('Position (mm)')
+def Plot3DXY(filename, scale=None):
+    d = ThreeDData(filename)
+    _plt.figure()
+    _plt.quiver(d.x,d.y,d.fx,d.fy,d.mag,cmap=_plt.cm.magma,pivot='mid',scale=scale)
+    _Niceties()
 
-    basefilename = filename.split('.')[0]    
-    plt.title(basefilename + ' field map')
-    plt.colorbar(label='Field (T)')
-    plt.tight_layout()
-    plt.savefig(basefilename + '2.pdf')
-
-
-    del cdata
-    del rdata
-    del cpos, cval, cmag
-    del rpos, rval, rmag
-    del cx, cy, cfx, cfy
-
-
-def Load(filename):
-    print 'Load> ',filename
-    pos = []
-    val = []
-    header = {}
-    f = open(filename,"r")
-    for line in f.readlines():
-        if line[0] == '#':
-            #comment line
-            pass
-        elif line[0] == '>':
-            #header
-            vs = line.strip().split('=')
-            header[vs[0][1:].strip()] = float(vs[1].strip())
-        else:
-            #data
-            vs = line.strip().split()
-            pos.append(vs[0].strip(')').strip('(').split(','))
-            val.append(vs[1].strip(')').strip('(').split(','))
-
-    pos = np.array(pos,dtype=float)
-    val = np.array(val,dtype=float)
-    mag = np.sqrt(val[:,0]**2 + val[:,1]**2)
-
-    data = {}
-    data['header']    = header
-    data['position']  = pos
-    data['field']     = val
-    data['magnitude'] = mag
-    f.close()
-    return data
+def Plot3DXZ(filename, scale=None):
+    d = ThreeDData(filename)
+    _plt.figure()
+    _plt.quiver(d.x,d.z,d.fx,d.fz,d.mag,cmap=_plt.cm.magma,pivot='mid',scale=scale)
+    _Niceties()

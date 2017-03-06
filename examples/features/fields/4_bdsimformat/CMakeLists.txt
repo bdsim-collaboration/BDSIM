@@ -1,5 +1,6 @@
 #field loader test
 simple_fail("bdsimformat_bad_header" "--file=bad_header.gmad")
+simple_fail("bdsimformat_wrong_file" "--file=wrong_file.gmad")
 
 #interpolator tests
 
@@ -15,6 +16,7 @@ if (USE_GZSTREAM)
   interpolator_test("interpolator-3d-nearest-gz" "3d_nearest.gmad")
   interpolator_test("interpolator-3d-linear-gz"  "3d_linear.gmad")
   interpolator_test("interpolator-3d-cubic-gz"   "3d_cubic.gmad")
+  interpolator_test("bdsim-field-format-loopOrder" "3d_cubic_zyx.gmad")
   
   interpolator_test("interpolator-4d-nearest-gz" "4d_nearest.gmad")
   interpolator_test("interpolator-4d-linear-gz"  "4d_linear.gmad")

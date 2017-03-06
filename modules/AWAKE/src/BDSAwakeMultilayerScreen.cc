@@ -20,8 +20,9 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
 						   G4String windowMaterial,
 						   G4double mountThickness,
 						   G4String mountMaterial,
-						   G4double width):
-  BDSMultilayerScreen(G4TwoVector(width, 8*CLHEP::cm), "AwakeMultilayerScreen"),
+						   G4double width,
+                                                   G4double height):
+  BDSMultilayerScreen(G4TwoVector(width, height), "AwakeMultilayerScreen"),
   _material(material),
   _thickness(thickness),
   _windowScreenGap(windowScreenGap),

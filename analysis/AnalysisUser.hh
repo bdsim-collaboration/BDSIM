@@ -2,8 +2,8 @@
 // Created by Stewart Boogert on 02/03/2017.
 //
 
-#ifndef BDSIM_FILE_H
-#define BDSIM_FILE_H
+#ifndef BDSIM_ANALYSISUSER_H
+#define BDSIM_ANALYSISUSER_H
 
 #include <string>
 
@@ -16,15 +16,21 @@
 #include "Run.hh"
 #include "Event.hh"
 
-class File {
+/**
+ * @brief User analysis class
+ *
+ * @author Stewart Boogert
+ */
+
+class AnalysisUser {
 public:
-  File();
-  File(std::string filename);
-  File(std::vector<std::string> filenames);
+  AnalysisUser();
+  AnalysisUser(std::string filename);
+  AnalysisUser(std::vector<std::string> filenames);
   void SetBranchAddresses(TTree *options, TTree *model, TTree *run, TTree *event);
   void GetEntry(int iEntry);
   void Analysis();
-  virtual ~File();
+  virtual ~AnalysisUser();
 
   TFile *f;
   TTree *optionsTree;
@@ -38,7 +44,7 @@ public:
   Run     *run;
 
 private:
-  ClassDef(File,1);
+  ClassDef(AnalysisUser,1);
 };
 
 
