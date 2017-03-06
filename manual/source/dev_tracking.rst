@@ -78,7 +78,7 @@ The integrator set may be one of the following (case-insensitive):
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
-| bdsim      | Solenoid                | BDSIM Dipole2                  |
+| bdsimtwo   | Solenoid                | BDSIM Dipole2                  |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | BDSIM Dipole2                  |
 |            +-------------------------+--------------------------------+
@@ -112,7 +112,7 @@ The integrator set may be one of the following (case-insensitive):
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 +------------+-------------------------+--------------------------------+
-| bdsimold   | Solenoid                | BDSIM Solenoid                 |
+| bdsim      | Solenoid                | BDSIM Solenoid                 |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | BDSIM Dipole                   |
 |            +-------------------------+--------------------------------+
