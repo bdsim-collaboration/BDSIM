@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <iostream>
+#include <algorithm>
 
 #include "BDSOutputROOTEventTrajectory.hh"
 
@@ -16,15 +18,15 @@
 ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
+auxNavigator(nullptr),
   n(0)
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 {
-  if(auxNavigator)
-  {
-    // delete auxNavigator;
-  }
+#ifndef __ROOTBUILD__
+  delete auxNavigator;
+#endif
 }
 
 #ifndef __ROOTBUILD__
@@ -213,38 +215,65 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
   return std::pair<int,int>(pin,sin);
 }
 
-int BDSOutputROOTEventTrajectory::primary()
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
 {
-  for(size_t j=0;j<parentID.size();++j) {
-    if(parentID[j] == 0) {
-      return j;
+  int                ti = trackID_trackIndex.at(trackid);  // get track index
+
+  std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
+
+  int nstep = trajectories[ti].size();
+  for(int i = 0;i<nstep; ++i)
+  {
+    int ppt = postProcessTypes[ti][i];
+    if(ppt != -1 && ppt != 1 && ppt != 10)
+    {
+      BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                          parentID[ti], parentIndex[ti],
+                                          postProcessTypes[ti][i], postProcessSubTypes[ti][i],
+                                          postWeights[ti][i],energies[ti][i],
+                                          trajectories[ti][i], momenta[ti][i],
+                                          modelIndicies[ti][i]);
+      tpv.push_back(p);
     }
   }
-  return -1;
+  return tpv;
 }
 
-int BDSOutputROOTEventTrajectory::primaryElectromagnetic()
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
-  // loop over primary and find first electromagnetic
-  int i = 0;
-  for(size_t j=0;j<trajectories[i].size();++j) {
-    if(postProcessTypes[i][j] == 2) {
-      return postProcessSubTypes[i][j];
-    }
-  }
-  return -1;
+  int                ti = trackID_trackIndex.at(trackid);  // get track index
+  std::pair<int,int> pp = trackIndex_trackProcess.at(ti);  // get track and index of start proccess
+
+  BDSOutputROOTEventTrajectoryPoint p(partID[pp.first], trackID[pp.first],
+                                      parentID[pp.first], parentIndex[pp.first],
+                                      postProcessTypes[pp.first][pp.second], postProcessSubTypes[pp.first][pp.second],
+                                      postWeights[pp.first][pp.second],energies[pp.first][pp.second],
+                                      trajectories[pp.first][pp.second], momenta[pp.first][pp.second],
+                                      modelIndicies[pp.first][pp.second]);
+  return p;
 }
 
-int BDSOutputROOTEventTrajectory::primaryHadronic()
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::processHistory(int trackid)
 {
-  // loop over primary and find fist hadronic 
-  int i = 0;
-  for(size_t j=0;j<trajectories[i].size();++j) {
-    if(postProcessTypes[i][j] == 4) {
-      return postProcessSubTypes[i][j];
-    }
+  int                ti = trackID_trackIndex.at(trackid);  // get track index
+
+  std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
+  while(ti != 0)
+  {
+    int pi  = parentIndex.at(ti);
+    int psi = parentStepIndex.at(ti);
+
+    BDSOutputROOTEventTrajectoryPoint p(partID[pi], trackID[pi],
+                                        parentID[pi], parentIndex[pi],
+                                        postProcessTypes[pi][psi], postProcessSubTypes[pi][psi],
+                                        postWeights[pi][psi],energies[pi][psi],
+                                        trajectories[pi][psi], momenta[pi][psi],
+                                        modelIndicies[pi][psi]);
+    tpv.push_back(p);
+    ti = pi;
   }
-  return -1;
+  std::reverse(tpv.begin(),tpv.end());
+  return tpv;
 }
 
 void BDSOutputROOTEventTrajectory::print(int i)
@@ -259,10 +288,6 @@ void BDSOutputROOTEventTrajectory::print(int i)
   }
 }
 
-void BDSOutputROOTEventTrajectory::primaryPrint()
-{
-  print(0);
-}
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
 {

@@ -28,22 +28,22 @@ G4bool BDSArray2DCoordsRQuad::OutsideCoords(const G4double x,
 G4double BDSArray2DCoordsRQuad::ArrayCoordsFromX(const G4double x) const
 {
   // xmin becomes -xmax
-  return (x + xMax) / xStep;
+  return (x + xMax + 1) / xStep;
 }
 
 G4double BDSArray2DCoordsRQuad::ArrayCoordsFromY(const G4double y) const
 {
-  return (y + yMax) / yStep;
+  return (y + yMax + 1) / yStep;
 }
 
 G4int BDSArray2DCoordsRQuad::NearestX(const G4double x) const
 {
-  return (G4int)round((x+xMax)/xStep);
+  return (G4int)round((x + xMax + 1)/xStep);
 }
 
 G4int BDSArray2DCoordsRQuad::NearestY(const G4double y) const
 {
-  return (G4int)round((y+yMax)/yStep);
+  return (G4int)round((y + yMax + 1)/yStep);
 }
 
 const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,

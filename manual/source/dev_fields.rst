@@ -346,7 +346,9 @@ Generally:
    so the order should be :math:`x`, then :math:`y`, then :math:`z`, then :math:`t`.
  * Python classes are provided to write numpy arrays to this format.
  * Any lines beyond the amount of data specified by the dimensions will be ignored.
- * One cannot put a comment after the data in the line.
+ * One **cannot** put a comment after the data in the line.
+ * :code:`loopOrder > zyxt` may optionally be defined the header to indicate to the
+   loader the order of looping of variables in the file. The default is xyzt.
 
 .. Note:: The units are :math:`cm` for spatial coodinates and :math:`s` for temporal.
 

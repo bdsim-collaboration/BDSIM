@@ -177,10 +177,10 @@ private:
   /// to the beginning of the beamline
   /// Returns pointer to component added
   void AddSingleComponent(BDSAcceleratorComponent* component,
-					 BDSTiltOffset* tiltOffset  = nullptr,
-					 BDSSamplerType samplerType = BDSSamplerType::none,
-					 G4String       samplerNameIn = "");
-
+			  BDSTiltOffset*           tiltOffset  = nullptr,
+			  BDSSamplerType           samplerType = BDSSamplerType::none,
+			  G4String                 samplerNameIn = "");
+  
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
