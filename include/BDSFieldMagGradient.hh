@@ -4,8 +4,9 @@
 
 #include "globals.hh"
 
-class BDSFieldMagInterpolated2D;
+class BDSFieldMag;
 class BDSMagnetStrength;
+class BDSFieldMagSkew;
 
 /**
  *Finds multipole components of fieldmaps by numerical differentiation. Not optimised right now.
@@ -22,24 +23,24 @@ public:
   BDSFieldMagGradient();
 
   //Find the Magnet strengths of a multipole field to nth order.
-  BDSMagnetStrength* CalculateMultipoles(BDSFieldMagInterpolated2D* BField, G4int order);
+  BDSMagnetStrength* CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho=4);
   //Query a point on x axis for By
-  G4double GetBy(BDSFieldMagInterpolated2D* BField, G4double l, G4double angle=0);
+  G4double GetBy(BDSFieldMag* BField, G4double l);
   
   //Find d(By)/dx
-  G4double FirstDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h);
+  G4double FirstDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
   //Find d^2(By)/dx^2
-  G4double SecondDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h);
+  G4double SecondDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
   //Find d^3(By)/dx^3
-  G4double ThirdDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h);
+  G4double ThirdDerivative(BDSFieldMag* BField, G4double x, G4double h);
   
   //Find d^4(By)/dx^4
-  G4double FourthDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h);
+  G4double FourthDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
   //Find d^5(By)/dx^5
-  G4double FifthDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h);
+  G4double FifthDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
 
 };
