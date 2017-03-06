@@ -74,9 +74,6 @@ public:
   inline BDSOutputFormat OutputFormat()    const {return outputFormat;}
   inline G4bool   Survey()                 const {return G4bool  (options.survey);}
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
-  inline G4bool   GFlash()                 const {return G4bool  (options.gflash);}
-  inline G4double GFlashEMax()             const {return G4double(options.gflashemax);}
-  inline G4double GFlashEMin()             const {return G4double(options.gflashemin);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
   inline G4bool   Verbose()                const {return G4bool  (options.verbose);}
   inline G4bool   VerboseEvent()           const {return G4bool  (options.verboseEvent);}

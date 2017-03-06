@@ -34,12 +34,6 @@ namespace GMAD
     std::string surveyFileName;
     ///@}
   
-    ///@{ Parameter for gflash shower parameterisation
-    bool   gflash;
-    double gflashemax;
-    double gflashemin;
-    ///@}
-  
     bool batch; ///< Flag for batch / interactive mode
     
     ///@{ Geant4 verbose levels
