@@ -21,9 +21,6 @@ OptionsBase::OptionsBase()
   outputFormat          = "rootevent";
   survey                = false;
   surveyFileName        = "survey.dat";
-  gflash                = false;
-  gflashemax            = 10000;
-  gflashemin            = 0.1;
   batch                 = false;
   verbose               = false;
   verboseEvent          = false;

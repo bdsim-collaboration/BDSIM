@@ -689,6 +689,7 @@ void BDSMaterials::Initialise()
 
   // Empty material (space vacuum - real empty material does not exist in Geant4)
   tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial(name="G4_Galactic");
+  tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
   AddMaterial(tmpMaterial,name);
 }
 

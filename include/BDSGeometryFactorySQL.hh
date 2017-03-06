@@ -144,7 +144,6 @@ private:
   std::map<G4LogicalVolume*, G4int> samplerIDs;
 
   std::vector<G4LogicalVolume*> sensitiveComponents;
-  std::vector<G4LogicalVolume*> gFlashComponents;
 
   G4VPhysicalVolume* alignInVolume;
   G4VPhysicalVolume* alignOutVolume;
