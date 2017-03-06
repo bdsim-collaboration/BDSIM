@@ -65,7 +65,7 @@ protected:
 
 private:
   /// Private default constructor to force use of specific constructor
-  BDSIntegratorMag();
+  BDSIntegratorMag() = delete;
 
   /// Variable used to record the distance from the chord calculated during the step.
   G4double distChordPrivate;

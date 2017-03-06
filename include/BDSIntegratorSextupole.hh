@@ -41,6 +41,8 @@ protected:
 		    G4double       yOut[]);
 
 private:
+  BDSIntegratorSextupole() = delete;
+
   /// 2nd derivative of the field
   G4double bDoublePrime;
 };
