@@ -80,6 +80,9 @@ void AnalysisUser::Analysis()
   for(int i=0;i<eventTree->GetEntries();++i) {                      // Loop over file entries
     this->GetEntry(i);                                              // Get entry
 
+    std::cout << "New event " << std::endl;
+    std::cout << "--------- " << std::endl;
+
     for(int j = 0; j<this->event->samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
     {
       int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler info
@@ -91,7 +94,10 @@ void AnalysisUser::Analysis()
                   << point.processType << " "
                   << point.processSubType << " "
                   << point.position.Z() << " "
-                  << point.model << " " << std::endl;
+                  << point.model << " "
+                  << model->model->componentName[point.model]
+                  << std::endl;
+
       }
     }
     //
