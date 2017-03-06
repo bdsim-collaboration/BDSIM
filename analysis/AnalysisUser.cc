@@ -1,16 +1,11 @@
-//
-// Created by Stewart Boogert on 02/03/2017.
-//
-
-
 #include <iostream>
-#include <include/BDSOutputROOTEventModel.hh>
 
 #include "AnalysisUser.hh"
 
 #include "TFile.h"
 #include "TTree.h"
 
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 
 ClassImp(AnalysisUser)
@@ -36,6 +31,12 @@ AnalysisUser::AnalysisUser(std::string filename)
 }
 
 AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
+{
+
+}
+
+
+AnalysisUser::~AnalysisUser()
 {
   delete f;
   delete optionsTree;
@@ -71,22 +72,29 @@ void AnalysisUser::GetEntry(int iEntry)
 
 void AnalysisUser::Analysis()
 {
-  for(int i=0;i<eventTree->GetEntries();++i) {
-    this->GetEntry(i);
+  for(int i=0;i<eventTree->GetEntries();++i) {                      // Loop over file entries
+    this->GetEntry(i);                                              // Get entry
 
-    for(int j = 0; j<this->event->samplers[0]->n; ++j)
+    std::cout << "New event " << std::endl;
+    std::cout << "--------- " << std::endl;
+
+    for(int j = 0; j<this->event->samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
     {
-      int trackID = this->event->samplers[0]->trackID[j];
-      if(trackID != 1) { // does not work for the primary 
-        BDSOutputROOTEventTrajectoryPoint point = event->trajectory->initialProcessPoint(trackID);
-        std::cout << i << " " << j << " " << trackID << " " << point.processType << " " << point.processSubType << " "
-                  << point.position.Z() << " " << point.model << " " << std::endl;
+      int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler info
+      if(trackID != 1) {                                            // does not work for the primary
+        BDSOutputROOTEventTrajectoryPoint point =
+                event->trajectory->primaryProcessPoint(trackID);    // get initial process point
+        std::cout << i << " " << j << " "
+                  << trackID << " "
+                  << point.processType << " "
+                  << point.processSubType << " "
+                  << point.position.Z() << " "
+                  << point.model << " "
+                  << model->model->componentName[point.model]
+                  << std::endl;
+
       }
     }
     //
   }
-}
-
-AnalysisUser::~AnalysisUser()
-{
 }

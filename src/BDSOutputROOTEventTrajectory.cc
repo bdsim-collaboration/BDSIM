@@ -214,7 +214,31 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
   return std::pair<int,int>(pin,sin);
 }
 
-BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::initialProcessPoint(int trackid)
+std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
+{
+  int                ti = trackID_trackIndex.at(trackid);  // get track index
+
+  std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
+
+  int nstep = trajectories[ti].size();
+  for(int i = 0;i<nstep; ++i)
+  {
+    int ppt = postProcessTypes[ti][i];
+    if(ppt != -1 && ppt != 1 && ppt != 10)
+    {
+      BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                          parentID[ti], parentIndex[ti],
+                                          postProcessTypes[ti][i], postProcessSubTypes[ti][i],
+                                          postWeights[ti][i],energies[ti][i],
+                                          trajectories[ti][i], momenta[ti][i],
+                                          modelIndicies[ti][i]);
+      tpv.push_back(p);
+    }
+  }
+  return tpv;
+}
+
+BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
   int                ti = trackID_trackIndex.at(trackid);  // get track index
   std::pair<int,int> pp = trackIndex_trackProcess.at(ti);  // get track and index of start proccess

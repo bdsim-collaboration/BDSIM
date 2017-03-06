@@ -62,8 +62,8 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-  verbose = BDSGlobalConstants::Instance()->Verbose();
   globals = BDSGlobalConstants::Instance();
+  verbose = globals->Verbose();
   
   SetVerboseLevel(1);
 
