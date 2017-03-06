@@ -16,12 +16,25 @@ BDSFieldMagGradient::BDSFieldMagGradient(){
 
 }
 
-G4double BDSFieldMagGradient::GetBy(BDSFieldMagInterpolated2D* BField, G4double x)
+G4double BDSFieldMagGradient::GetBy(BDSFieldMagInterpolated2D* BField, G4double l, G4double angle)
 {
-    G4ThreeVector position(x,0,0);
-    G4ThreeVector FieldAtX = BField->GetField(position);
-    G4cout << "Bfield Strength" << FieldAtX[1] << G4endl;
-    return FieldAtX[1];
+    G4double B;
+//    if (angle==0)
+//    {
+        G4ThreeVector position(l, 0, 0);
+        G4ThreeVector FieldAtX = BField->GetField(position);
+        B =FieldAtX[1];
+        G4cout << "X=" << position << " B=" << FieldAtX << G4endl;
+//    }
+//    else
+//    {
+//        G4double x=l*cos(angle);
+//        G4double y=l*sin(angle);
+//        G4ThreeVector position(x, y, 0);
+//        G4ThreeVector FieldAtX = BField->GetField(position);
+//        B=FieldAtX[0]*sin(angle)+FieldAtX[1]*cos(angle);
+//    }
+    return B;
 }
 
 G4double BDSFieldMagGradient::FirstDerivative(BDSFieldMagInterpolated2D* BField, G4double x, G4double h)
@@ -60,13 +73,15 @@ G4double BDSFieldMagGradient::FifthDerivative(BDSFieldMagInterpolated2D* BField,
 BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMagInterpolated2D* BField, G4int order)
 {
     G4cout << "running field gradient calculations" << G4endl;
-    G4double h =5; //distance apart in CLHEP distnace units (mm) to place points. Below 1 produces increasingly bad results.
-    order = 5; //temporary for testing.
+    G4double h =5; //distance apart in CLHEP distance units (mm) to place query points. Further from 5 produces increasingly bad results.
+    order = 0; //temporary for testing.
     G4cout << "h=" << h << G4endl;//temporary for testing.
+
     if(order>0)
     {
         G4double k1 = FirstDerivative(BField,0,h);
         G4cout << "First Derivative at 0:" << k1 << G4endl;
+
     }
     if(order>1)
     {
@@ -89,7 +104,7 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMagInterpola
         G4cout << "Fifth Derivative at 0:" << k5 << G4endl;
     }
 
-    BDSMagnetStrength* a = new BDSMagnetStrength();
-    return a;
+    BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
+    return outputstrengths;
 
 }
