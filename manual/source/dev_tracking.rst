@@ -554,6 +554,34 @@ BDSIM Sextupole
 
 * Class name: :code:`BDSIntegratorSextupole`
 
+This integrator is constructed with :math:`k_2` (originally calculated *w.r.t.* the nominal
+beam rigidity higher up in BDSIM). It uses this to give a notion of a sextupolar field
+whilst calcualting the magnetic vector potential in the local curvilinear coordinate frame.
+The input coordinates must therefore be converted to local curvilinear ones.
+
+In comparison to the _`BDSIM Euler` integrator, this has one extra transform for the coordinates
+but one fewer for the field and so has roughly the same performance. The algorithm is as follows:
+
+* If :math:`\|k_{2}\| < 10^{-12}`, track as a drift.
+
+* Convert coordinates from global to local curvilinear frame.
+* Calculate the vector potential as:
+
+.. math::
+
+   \mathbf{A} =
+   \begin{pmatrix}
+   \hat{p}_{z,in}~(q_{x,in}^2 - q_{y,in}^2 ) \\
+   -2\hat{p}_{z,in}~q_{x,in}~q_{y,in}        \\
+   \hat{p}_{x,in}~(q_{x,in}^2 - q_{y,in}^2 ) - 2~\hat{p}_{y,in}~q_{x,in}~q_{y,in}
+   \end{pmatrix}
+
+.. note:: This can viewed as the cross product between the unit momentum vector and the
+	  sextupolar field, whilst assuming that the :math:`B_z` component is always zero
+	  and so some terms of the cross product can be ommitted.
+
+* The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
+
 BDSIM Octupole
 --------------
 
@@ -564,6 +592,9 @@ BDSIM Decapole
 
 * Class name: :code:`BDSIntegratorDecapole`
 
+
+.. _communal-euler:
+  
 BDSIM Old Euler Common
 ----------------------
 
