@@ -31,7 +31,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yErr[])
 {
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4double      momMag   = mom.mag();
+  G4double      momMag = mom.mag();
 
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.

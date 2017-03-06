@@ -46,6 +46,10 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
   
   G4double x0 = localPos.x();
   G4double y0 = localPos.y();
+
+  G4double xp = localMomUnit.x();
+  G4double yp = localMomUnit.y();
+  G4double zp = localMomUnit.z();
   
   // Evaluate field at the approximate midpoint of the step.
   const G4double halfH = 0.5*h;
@@ -54,20 +58,15 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
   
   G4double x02My02 = x0*x0 - y0*y0;
   
-  G4double xp = localMomUnit.x();
-  G4double yp = localMomUnit.y();
-  G4double zp = localMomUnit.z();
-  
   // local r'' (for curvature)
   G4ThreeVector localA;
   localA.setX(zp*x02My02);
   localA.setY(-2*zp*x0*y0);
   localA.setZ(xp*x02My02-2*yp*x0*y0);
   
-  localA*=kappa/2; // 2 is actually a 2! factor.
+  localA *= kappa / 2; // 2 is actually a 2! factor.
   
-  AdvanceChord(h,localPos,localMomUnit,localA);
-  
+  AdvanceChord(h,localPos,localMomUnit,localA);  
   ConvertToGlobal(localPos,localMomUnit,momUnit,yOut);
 }
 
@@ -79,9 +78,8 @@ void BDSIntegratorSextupole::Stepper(const G4double yIn[],
 {
   G4double yTemp[7];
 
-  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-
+  G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4ThreeVector momUnit = mom.unit();
 
   auxNavigator->LocateGlobalPointAndSetup(pos);

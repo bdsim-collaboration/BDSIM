@@ -33,19 +33,17 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
 				       G4double       yOut[],
 				       G4double       yErr[])
 {
-  // Momentum
-  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  
   // In case of zero field or neutral particles do a linear step:
-  if(bField==0 || eqOfM->FCof()==0)
+  if(bField == 0 || eqOfM->FCof() == 0)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
-
+  
   // Construct variables
   G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double charge   = (eqOfM->FCof())/CLHEP::c_light;
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
