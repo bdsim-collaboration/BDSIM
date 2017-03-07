@@ -3,7 +3,7 @@
 
 #include <list>
 #include <map>
-#include <string>
+#include <vector>
 
 #include "globals.hh"
 #include "G4Material.hh" // for G4State
@@ -20,6 +20,7 @@ class BDSMaterials
 {
 public:
 
+  /// Singleton pattern access
   static BDSMaterials* Instance();
   ~BDSMaterials(); 
 
@@ -59,44 +60,35 @@ public:
 		   std::list<G4String> components,
 		   std::list<Type> componentsFractions);
 
-  void AddElement(G4Element* aElement,G4String aName);
-  void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
-  
   /// output available materials
   void ListMaterials();
 
-  G4Material* GetMaterial(G4String aMaterial); 
+  /// Get material by name
+  G4Material* GetMaterial(G4String aMaterial);
+  /// Get element by name
   G4Element*  GetElement(G4String aSymbol); 
-
-  G4bool CheckMaterial(G4String aMaterial); 
+  /// Check if material is defined
+  G4bool CheckMaterial(G4String aMaterial);
+  /// Check if element is defined
   G4bool CheckElement(G4String aSymbol); 
 
 protected:
   BDSMaterials();
-  // map of materials, convention name lowercase
+  /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials; 
+  /// map of elements, convention name lowercase
   std::map<G4String,G4Element*>  elements; 
 private:
-  void Initialise(); 
-
+  /// Singleton instance
   static BDSMaterials* _instance;
-  ///@{ Material tables
-  G4MaterialPropertiesTable* airMaterialPropertiesTable       = nullptr;
-  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = nullptr;
-  G4MaterialPropertiesTable* fsMaterialPropertiesTable        = nullptr;
-  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable      = nullptr;
-  G4MaterialPropertiesTable* mptLanex                         = nullptr;
-  G4MaterialPropertiesTable* mptLanex2                        = nullptr;
-  G4MaterialPropertiesTable* mptGOSLanex                      = nullptr;
-  G4MaterialPropertiesTable* mptGOSLanexRi1                   = nullptr;
-  G4MaterialPropertiesTable* mptMedex                         = nullptr;
-  G4MaterialPropertiesTable* mptPETLanex                      = nullptr;
-  G4MaterialPropertiesTable* mpt_YAG                          = nullptr;
-  G4MaterialPropertiesTable* petMaterialPropertiesTable       = nullptr;
-  G4MaterialPropertiesTable* pet_opaqueMaterialPropertiesTable= nullptr;
-  G4MaterialPropertiesTable* ups923a_mt                       = nullptr;
-  G4MaterialPropertiesTable* vacMaterialPropertiesTable       = nullptr;
-  ///@}
+
+  void AddElement(G4Element* aElement,G4String aName);
+  void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
+
+  /// Material tables for storing pointers
+  std::vector<G4MaterialPropertiesTable*> propertiesTables;
+  /// Create new properties table and store in vector
+  G4MaterialPropertiesTable* CreatePropertiesTable();
 };
 
 #endif

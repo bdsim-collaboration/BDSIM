@@ -1,7 +1,6 @@
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorBase.hh"
 
-#include "BDSUtilities.hh"
 #include "globals.hh" // geant4 globals / types
 #include "G4EllipticalTube.hh"
 #include "G4EllipticalCone.hh"

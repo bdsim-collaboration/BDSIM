@@ -1,3 +1,4 @@
 if (USE_GZSTREAM)
-  simple_testing(field_outer_quad "--file=1_quad_field.gmad" "")
+  simple_testing(field_poisson_quad "--file=1_quad_field.gmad" "")
+  simple_testing(field_poisson_dipole "--file=2_dipole_reflected.gmad" "")
 endif()
