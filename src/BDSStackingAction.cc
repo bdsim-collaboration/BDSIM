@@ -11,11 +11,13 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
-BDSStackingAction::BDSStackingAction()
+BDSStackingAction::BDSStackingAction():
+  maxTracksPerEvent(BDSGlobalConstants::Instance()->MaximumTracksPerEvent())
 {
-  killNeutrinos   = BDSGlobalConstants::Instance()->KillNeutrinos();
-  stopSecondaries = BDSGlobalConstants::Instance()->StopSecondaries();
-  stopTracks      = BDSGlobalConstants::Instance()->StopTracks();
+  auto globals = BDSGlobalConstants::Instance();
+  killNeutrinos     = globals->KillNeutrinos();
+  stopSecondaries   = globals->StopSecondaries();
+  stopTracks        = globals->StopTracks();
 }
 
 BDSStackingAction::~BDSStackingAction()
@@ -38,6 +40,10 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   G4cout<<"Number of event : "<<
     BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
 #endif
+
+  // '0' is default -> no action
+  if (maxTracksPerEvent > 0 && (aTrack->GetTrackID() > maxTracksPerEvent))
+    {return fKill;}
 
   // Kill all neutrinos
   if(killNeutrinos)
