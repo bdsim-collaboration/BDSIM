@@ -39,7 +39,7 @@ AnalysisUser::AnalysisUser(std::string filename)
   std::string outputfilename = "AnalysisUserOutput_" + filename ;
   foutput = new TFile(outputfilename.data(),"CREATE","Output ROOT file from BDSIM AnalysisUser"); 
   
-  for(size_t s = 0; s<2; ++s)                       // Loop over samplers
+  for(size_t s = 0; s<GetNumSamplers(); ++s)                       // Loop over samplers
   //for(size_t s = 0; s<samplers.size(); ++s)                       // Loop over samplers
   {
     std::stringstream ss;
@@ -98,6 +98,12 @@ void AnalysisUser::MakeBranches(TTree *outputTree)
   outputTree->Branch("VertexZ",&vertexz,"VertexZ/F");
   outputTree->Branch("VertexProcess",&vertexprocess,"VertexProcess/I");
   outputTree->Branch("VertexSubProcess",&vertexsubprocess,"VertexSubProcess/I");
+}
+
+int AnalysisUser::GetNumSamplers()
+{
+  eventTree->GetEntry(0);
+  return this->event->samplers.size();
 }
 
 void AnalysisUser::GetEntry(int iEntry)

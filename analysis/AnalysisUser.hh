@@ -30,6 +30,7 @@ public:
   AnalysisUser(std::vector<std::string> filenames);
   void MakeBranches(TTree *outputTree);
   void SetBranchAddresses(TTree *options, TTree *model, TTree *run, TTree *event);
+  int GetNumSamplers();
   void GetEntry(int iEntry);
   void Analysis();
   virtual ~AnalysisUser();
