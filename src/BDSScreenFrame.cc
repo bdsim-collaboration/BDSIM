@@ -38,14 +38,14 @@ void BDSScreenFrame::SetVisAtts(G4LogicalVolume* logVolIn,
 				G4VisAttributes* visAttIn)
 {
   if (logVolIn)
-    { if (!visAttIn)
-			{logVolIn->SetVisAttributes(visAtt);}
+    {
+      if (!visAttIn)
+	{logVolIn->SetVisAttributes(visAtt);}
       else
 	{logVolIn->SetVisAttributes(visAttIn);}
     }
 }
 
-/// Set the default logical volume to the default visual attributes
 void BDSScreenFrame::SetVisAtts()
 {
   SetVisAtts(logVol);

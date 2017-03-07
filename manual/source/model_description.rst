@@ -1962,7 +1962,8 @@ as their value.
 |                                  | magnets with finite poleface angles. The length of the|
 |                                  | total element is conserved. (default = false)         |
 +----------------------------------+-------------------------------------------------------+
-| integratorSet                    | set of tracking routines to use (bdsim|geant4)        |
+| integratorSet                    | set of tracking routines to use ("bdsim" or           |
+|                                  | "bdsimtwo" or "geant4")                               |
 +----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
 +----------------------------------+-------------------------------------------------------+

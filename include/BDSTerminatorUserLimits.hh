@@ -6,7 +6,7 @@
 
 /**
  * @brief Dynamic user limits for a volume that changed based
- * on the a parameter turnstaken in BDSGlobalConstants(). 
+ * on the parameter turnstaken in BDSGlobalConstants().
  *
  * Used to control the number of turns a particle completes around
  * a circular accelerator. An instance of these user limits is

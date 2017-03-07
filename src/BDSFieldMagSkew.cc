@@ -7,7 +7,7 @@ BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
 				 G4double     angle):
   field(fieldIn)
 {
-  rotation = new G4RotationMatrix();
+  rotation     = new G4RotationMatrix();
   antiRotation = new G4RotationMatrix();
   rotation->rotateZ(angle);
   antiRotation->rotateZ(-angle);
@@ -15,7 +15,6 @@ BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
 
 BDSFieldMagSkew::~BDSFieldMagSkew()
 {
-  delete field;
   delete rotation;
   delete antiRotation;
 }

@@ -7,19 +7,18 @@
 template<>
 std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
   new std::map<BDSIntegratorSetType, std::string> ({
-      {BDSIntegratorSetType::bdsim,       "bdsim"},
-      {BDSIntegratorSetType::bdsimnew,    "bdsimnew"},
-      {BDSIntegratorSetType::geant4exact, "geant4exact"},
-      {BDSIntegratorSetType::geant4rk4,   "geant4rk4"}
+      {BDSIntegratorSetType::geant4,   "geant4"},
+      {BDSIntegratorSetType::bdsimone, "bdsimone"},
+      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"}
     });
 
 BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
 {
   std::map<G4String, BDSIntegratorSetType> types;
-  types["bdsim"]       = BDSIntegratorSetType::bdsim;
-  types["bdsimnew"] = BDSIntegratorSetType::bdsimnew;
-  types["geant4exact"] = BDSIntegratorSetType::geant4exact;
-  types["geant4rk4"]   = BDSIntegratorSetType::geant4rk4;
+  types["geant4"]   = BDSIntegratorSetType::geant4;
+  types["bdsim"]    = BDSIntegratorSetType::bdsimone; // alias for bdsim one
+  types["bdsimone"] = BDSIntegratorSetType::bdsimone;
+  types["bdsimtwo"] = BDSIntegratorSetType::bdsimtwo;
 
   integratorSet.toLower();
 

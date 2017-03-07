@@ -13,7 +13,7 @@
 
 struct integratorsettype_def
 {
-  enum type {bdsim, bdsimnew, geant4exact, geant4rk4};
+  enum type {geant4, bdsimone, bdsimtwo};
 };
 
 typedef BDSTypeSafeEnum<integratorsettype_def, int> BDSIntegratorSetType;

@@ -52,6 +52,7 @@ public:
   /// Accessors with array / map [] operator
   G4double& operator[](const G4String key);
   const G4double& operator[](G4String key) const;
+  const G4double& at(G4String key) const {return (*this)[key];}
 
   static const std::vector<G4String> AllKeys() {return keys;}
 

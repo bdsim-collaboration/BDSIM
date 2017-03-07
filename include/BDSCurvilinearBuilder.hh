@@ -25,8 +25,6 @@ public:
   /// Build a beam line of curvilinear geometry based on another beam line.
   BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline);
 
-  BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
-
 private:
   /// Create a curvilinear element for a beam line that represents the curvilinear
   /// coordinates between startElement and finishElement. This creates a BDSSimpleComponent
@@ -50,12 +48,6 @@ private:
 
   /// Whether an element is too short for its own curvilinear volume.
   inline G4bool TooShort(BDSBeamlineElement const* const element) const;
-
-  /// Accumulate an element's properties onto a set of variables which are passed by
-  /// reference.
-  void Accumulate(BDSBeamlineElement const* const element,
-		  G4double& accumulatedAngle,
-		  G4bool&   straightSoFar) const;
 
   /// Length that was used for padding on the beam line we're building with respesct to.
   G4double paddingLength;

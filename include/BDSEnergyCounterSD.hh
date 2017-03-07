@@ -4,11 +4,9 @@
 #include "BDSEnergyCounterHit.hh"
 
 #include "G4VSensitiveDetector.hh"
-#include "G4VGFlashSensitiveDetector.hh" // G4VSensitiveDetector is required before this due to missing header
 
 class BDSAuxiliaryNavigator;
 
-class G4GFlashSpot;
 class G4HCofThisEvent;
 class G4Step;
 class G4TouchableHistory;
@@ -22,7 +20,7 @@ class G4TouchableHistory;
  * the curvilinear parallel world for curvilinear coordinates.
  */
 
-class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
+class BDSEnergyCounterSD: public G4VSensitiveDetector
 {
 public:
   BDSEnergyCounterSD(G4String name);
@@ -30,7 +28,6 @@ public:
 
   virtual void Initialize(G4HCofThisEvent*HCE);
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
-  virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
   
 private:
   /// assignment and copy constructor not implemented nor used

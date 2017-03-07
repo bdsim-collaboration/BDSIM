@@ -89,9 +89,6 @@ void Options::PublishMembers()
   publish("outputFormat",          &Options::outputFormat);
   publish("survey",                &Options::survey);
   publish("surveyFileName",        &Options::surveyFileName);
-  publish("gflash",                &Options::gflash);
-  publish("gflashemax",            &Options::gflashemax);
-  publish("gflashemin",            &Options::gflashemin);
   publish("verbose",               &Options::verbose);
   publish("verboseEvent",          &Options::verboseEvent);
   publish("verboseStep",           &Options::verboseStep);

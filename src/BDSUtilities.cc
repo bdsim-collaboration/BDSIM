@@ -444,3 +444,12 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
     }
   return std::make_pair("","");
 }
+
+void BDS::PrintArray(const G4double values[],
+		     G4int    size)
+{
+  G4cout << "(";
+  for (G4int i = 0; i < size; i++)
+    {G4cout << values[i] << ", ";}
+  G4cout << ")";
+}
