@@ -376,8 +376,8 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
 
 .. math::
 
-   \mathrm{ST} ~ &= ~ \sin(\theta)\\
-   \mathrm{CT} ~ &= ~ \cos(\theta)\\
+   \mathrm{ST} ~ &= ~ \sin\theta\\
+   \mathrm{CT} ~ &= ~ \cos\theta
    
 * Else:
 
@@ -705,12 +705,51 @@ for the dipole component of the motion. After that, the small change in momentum
 * If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
   is applied.
   
-The momentum change is calculated as:
+The momentum change in the local curvilinear frame is calculated as:
 
 .. math::
 
    dp_{y} ~ = ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
 
+Where :math:`\theta` is the angle of the pole face and ":math:`corr.`" is the fringe
+field correction term, which is calculated in
+:code:`BDSBendBuilder::CalculateFringeFieldCorrection()`:
+
+.. math::
+
+   corr. ~ = ~ \frac{f_{int}}{\rho}~ \frac{(1 + \sin^2\theta)}{\cos\theta}
+
+Where  :math:`f_{int}` is an input parameter but described by:
+
+.. math::
+
+   f_{int} ~ = ~ \int_{-\infty}^{\infty} \frac{B_y(s)~\big(B_0 - B_y(s)\big)}{2~h_{gap}~B_0^2} \mathrm{d}s
+
+Here, :math:`h_{gap}` is also an input parameter that specifies the half distance between the dipole
+poles.
+
+* The correction term .
+
+The change in momentum:
+
+.. math::
+
+   d\mathbf{p} ~ = ~
+   \begin{pmatrix}
+   0        \\
+   - dp_{y} \\
+   0
+   \end{pmatrix}
+
+* This :math:`\mathrm{d}p` vector is converted to the global frame.
+
+The output momentum (from the dipole integrator) is adjusted as:
+
+.. math::
+
+   \mathbf{p}_{out} ~ = ~ \mathbf{p}_{in} + d\mathbf{p}
+  
+   
 
 BDSIM Thin Multipole
 --------------------
