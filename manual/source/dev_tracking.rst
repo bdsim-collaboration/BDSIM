@@ -565,15 +565,17 @@ but one fewer for the field and so has roughly the same performance. The algorit
 * If :math:`\|k_{2}\| < 10^{-12}`, track as a drift.
 
 * Convert coordinates from global to local curvilinear frame.
-* Calculate the vector potential as:
+* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* This position is used to calculate the vector potential as:
 
+  
 .. math::
 
-   \mathbf{A} =
+   \mathbf{A} = \frac{k_2}{2!} ~
    \begin{pmatrix}
-   \hat{p}_{z,in}~(q_{x,in}^2 - q_{y,in}^2 ) \\
-   -2\hat{p}_{z,in}~q_{x,in}~q_{y,in}        \\
-   \hat{p}_{x,in}~(q_{x,in}^2 - q_{y,in}^2 ) - 2~\hat{p}_{y,in}~q_{x,in}~q_{y,in}
+   \hat{p}_{z,in}~(q_{x,mid}^2 - q_{y,mid}^2 ) \\
+   -2~\hat{p}_{z,in}~q_{x,mid}~q_{y,mid}       \\
+   \hat{p}_{x,in}~(q_{x,mid}^2 - q_{y,mid}^2 ) - 2~\hat{p}_{y,in}~q_{x,mid}~q_{y,mid}
    \end{pmatrix}
 
 .. note:: This can viewed as the cross product between the unit momentum vector and the
@@ -587,12 +589,64 @@ BDSIM Octupole
 
 * Class name: :code:`BDSIntegratorOctupole`
 
+This integrator is constructed with :math:`k_3` (originally calculated *w.r.t.* the nominal
+beam rigidity higher up in BDSIM).
+
+* If :math:`\|k_{3}\| < 10^{-20}`, track as a drift.
+
+* Convert coordinates from global to local curvilinear frame.
+* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* This position is used to calculate the vector potential as:
+
+  
+.. math::
+
+   \mathbf{A} = \frac{k_3}{3!} ~
+   \begin{pmatrix}
+   -\hat{p}_{z,in}~(q_{x,mid}^3 - 3~q_{y,mid}^2~q_{x,mid} ) \\
+   -\hat{p}_{z,in}~(q_{x,mid}^3 - 3~q_{x,mid}^2~q_{y,mid} ) \\
+   \hat{p}_{x,in}~(q_{x,mid}^3 - 3~q_{y,mid}^2~q_{x,mid} ) - \hat{p}_{y,in}~(q_{x,mid}^3 - 3~q_{x,mid}^2~q_{y,mid} )
+   \end{pmatrix}
+
+.. note:: This can viewed as the cross product between the unit momentum vector and the
+	  octupolar field, whilst assuming that the :math:`B_z` component is always zero
+	  and so some terms of the cross product can be ommitted.
+
+* The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
+
+
 BDSIM Decapole
 --------------
 
 * Class name: :code:`BDSIntegratorDecapole`
 
+This integrator is constructed with :math:`k_4` (originally calculated *w.r.t.* the nominal
+beam rigidity higher up in BDSIM).
 
+* If :math:`\|k_{4}\| < 10^{-20}`, track as a drift.
+
+* Convert coordinates from global to local curvilinear frame.
+* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* This position is used to calculate the vector potential as:
+
+  
+.. math::
+
+   \mathbf{A} = \frac{k_4}{4!} ~
+   \begin{pmatrix}
+   \hat{p}_{z,in}~(q_{x,mid}^4 - 6~q_{x,mid}^2~q_{y,mid}^2 + q_{y,mid}^4 )     \\
+   -\hat{p}_{z,in}~\big[4~q_{x,mid}~q_{y,mid}~(q_{x,mid}^2-q_{y,mid}^2) \big] \\
+   \hat{p}_{x,in}~\big[q_{x,mid}^4 - 6~q_{x,mid}^2~q_{y,mid}^2 + q_{y,mid}^4 \big] -
+   \hat{p}_{y,in}~\big[4~q_{x,mid}~q_{y,mid}~(q_{x,mid}^2-q_{y,mid}^2) \big]
+   \end{pmatrix}
+
+.. note:: This can viewed as the cross product between the unit momentum vector and the
+	  decapolar field, whilst assuming that the :math:`B_z` component is always zero
+	  and so some terms of the cross product can be ommitted.
+
+* The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
+
+  
 .. _communal-euler:
   
 BDSIM Old Euler Common
