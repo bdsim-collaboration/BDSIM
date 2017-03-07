@@ -33,6 +33,7 @@ private:
   G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
   G4int  verboseEventNumber; ///< Copy of BDSGlobalConstants::VerboseEventNumber()
   G4bool isBatch;
+  G4bool storeTrajectory;    ///< Cache of whether to store trajectories or not.
   G4int  printModulo;
 
   G4int samplerCollID_plane;
