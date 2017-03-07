@@ -1,7 +1,6 @@
 #include "BDSFieldMagDummy.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4ThreeVector.hh"
 
 BDSFieldMagDummy::BDSFieldMagDummy()
 {;}

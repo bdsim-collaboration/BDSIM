@@ -6,8 +6,12 @@ Obtaining  BDSIM
 ================
 
 BDSIM may be obtained either from the BDSIM website from the git repository
-(https://www.bitbucket.org/jairhul/bdsim). The user must compile it on
-their system and must have Geant4 already present (or access to AFS).
+The user must compile it on their system and must have Geant4, CLHEP & ROOT
+already present (or access to AFS).
+
+Obtaining via the git repository allows easier updates in future as the
+user can 'pull' the latest version and then recompile without having to
+create a separate copy.
 
 ..  _from-git-repository:
 
@@ -21,10 +25,19 @@ To download the source from the git repository, use the command::
 This will create a directory called ``bdsim``, inside which all the code, examples
 and documentation is provided. Also the python utilities that come with BDSIM will be present.
 
-From precompiled sources
+Download
+--------
+
+BDSIM versions can be downloaded from the git repository website:
+
+https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
+
+
+From Precompiled Sources
 ------------------------
 
-BDSIM may also be downloaded from pre-compiled sources. These are available on: http://www.pp.rhul.ac.uk/bdsim/download
+BDSIM may also be downloaded from pre-compiled sources. These are available
+on: http://www.pp.rhul.ac.uk/bdsim/download
 
 .. AFS
    ---
@@ -44,13 +57,15 @@ BDSIM may also be downloaded from pre-compiled sources. These are available on: 
 Requirements
 ============
 
-0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
+0) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
-2) `CMake`_ 2.8.12 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
 6) `ROOT`_ framework for output analysis.
+
+.. warning:: Geant4.10.3 is not currently supported.  Geant4.10.02.p03 is recommended.
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::

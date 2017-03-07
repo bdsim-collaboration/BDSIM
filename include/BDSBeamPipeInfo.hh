@@ -75,6 +75,8 @@ public:
   G4double        aper2;
   G4double        aper3;
   G4double        aper4;
+  G4double        aperOffsetX;
+  G4double        aperOffsetY;
   G4Material*     vacuumMaterial;
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;

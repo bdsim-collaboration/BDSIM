@@ -86,7 +86,6 @@ void BDSGeometryFactorySQL::CleanUp()
   samplerIDs.clear();
 
   sensitiveComponents.clear();
-  gFlashComponents.clear();
 
   alignInVolume  = nullptr;
   alignOutVolume = nullptr;
@@ -916,9 +915,6 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 							    PlacementPoint));
 	    }
 	}
-      
-      if(Parameterisation.compareTo("GFLASH",cmpmode)==0)
-	{gFlashComponents.push_back(VOL_LIST[ID]);}
       
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " k = " << k << ", volume = " << VOL_LIST[ID]->GetName() << G4endl;

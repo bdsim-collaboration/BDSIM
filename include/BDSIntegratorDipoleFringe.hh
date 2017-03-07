@@ -5,7 +5,6 @@
 #include "BDSIntegratorDipole2.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
@@ -29,7 +28,7 @@ public:
   /// a kick in yp in curvilinear coordinates.
   virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
-		       const G4double stepLength,
+		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
   
