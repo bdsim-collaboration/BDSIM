@@ -1,22 +1,20 @@
-#include "BDSDebug.hh"
 #include "BDSIntegratorMultipoleThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
-#include <G4TwoVector.hh>
+#include <list>
+#include <vector>
+
 
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 						       G4double                 brho,
 						       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorMag(eqOfMIn, 6),
-  yInitial(0), yMidPoint(0), yFinal(0)
+  BDSIntegratorMag(eqOfMIn, 6)
 {
   b0l = (*strength)["field"] * brho;
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
@@ -31,10 +29,11 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
     }
 }
 
-void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
-					      const G4double[] /*dxdy*/,
-					      const G4double h,
-					      G4double       yOut[])
+void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
+					 const G4double[] /*dydx[]*/,
+					 const G4double h,
+					 G4double       yOut[],
+					 G4double       yErr[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -152,22 +151,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   LocalRp.setZ(zp1);
 
   ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
-}
-
-void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
-					 const G4double[] /*dydx[]*/,
-					 const G4double h,
-					 G4double       yOut[],
-					 G4double       yErr[])
-{
-  AdvanceHelix(yIn, 0, h, yOut);
-
-  // The two half-step method cannot be used as the
-  // multipole kick will be applied twice meaning
-  // the xp and yp values in the output arrays will be
-  // out by a factor of two. This could potentially
-  // lead to an incorrectly large error, therefore the
-  // error is set to 0 here.
 
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}

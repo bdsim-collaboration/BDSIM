@@ -4,8 +4,8 @@
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 #include <list>
+#include <vector>
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
@@ -34,16 +34,9 @@ public:
 		       G4double       yOut[],
 		       G4double       yErr[]);
 
-protected:
-  /// Calculate the new particle coordinates for a given step length h.
-  void AdvanceHelix(const G4double yIn[],
-		    const G4double dydx[],
-		    const G4double h,
-		    G4double       yOut[]);
-
 private:
   /// Private default constructor to enforce use of supplied constructor
-  BDSIntegratorMultipoleThin();
+  BDSIntegratorMultipoleThin() = delete;
 
   /// Calculate the factorial of n.
   G4int Factorial(G4int n);
@@ -51,13 +44,10 @@ private:
   /// Dipole component
   G4double b0l;
   /// @{ Higher order components
-  std::list<double> bnl;
-  std::list<double> bsl;
+  std::list<double>  bnl;
+  std::list<double>  bsl;
   std::vector<G4int> nfact;
   /// @}
-  
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
 };
 
 #endif
