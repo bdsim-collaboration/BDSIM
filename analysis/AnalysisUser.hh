@@ -6,6 +6,7 @@
 #define BDSIM_ANALYSISUSER_H
 
 #include <string>
+#include <vector>
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -27,6 +28,7 @@ public:
   AnalysisUser();
   AnalysisUser(std::string filename);
   AnalysisUser(std::vector<std::string> filenames);
+  void MakeBranches(TTree *outputTree);
   void SetBranchAddresses(TTree *options, TTree *model, TTree *run, TTree *event);
   void GetEntry(int iEntry);
   void Analysis();
@@ -37,12 +39,20 @@ public:
   TTree *modelTree;
   TTree *runTree;
   TTree *eventTree;
+  TFile *foutput;
+  std::vector< TTree* > outputTree_Samplers;
 
   Options *options;
   Model   *model;
   Event   *event;
   Run     *run;
 
+  char vertexmodel[10];
+  float vertexx;
+  float vertexy;
+  float vertexz;
+  int vertexprocess;
+  int vertexsubprocess;
 private:
   ClassDef(AnalysisUser,1);
 };

@@ -8,6 +8,7 @@
 
 #include "AnalysisUser.hh"
 
+#include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
 
@@ -21,6 +22,7 @@ AnalysisUser::AnalysisUser()
 
 AnalysisUser::AnalysisUser(std::string filename)
 {
+  gROOT->Reset();
   f           = new TFile(filename.data());
   optionsTree = (TTree*)f->Get("Options");
   modelTree   = (TTree*)f->Get("Model");
@@ -33,6 +35,18 @@ AnalysisUser::AnalysisUser(std::string filename)
   event   = new Event(false,true);
 
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
+
+  std::string outputfilename = "AnalysisUserOutput_" + filename ;
+  foutput = new TFile(outputfilename.data(),"CREATE","Output ROOT file from BDSIM AnalysisUser"); 
+  
+  for(size_t s = 0; s<2; ++s)                       // Loop over samplers
+  //for(size_t s = 0; s<samplers.size(); ++s)                       // Loop over samplers
+  {
+    std::stringstream ss;
+    ss<< "Sampler" << s;
+    outputTree_Samplers.emplace_back( new TTree(("AnalysisUser_"+ss.str()).c_str(),("AnalysisUser TTree containing vertex information of the particles recorded in "+ss.str()).c_str()) );
+    MakeBranches(outputTree_Samplers.at(s));
+  }
 }
 
 AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
@@ -43,6 +57,7 @@ AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
 
 AnalysisUser::~AnalysisUser()
 {
+  std::cout << "Destructor is called." << std::endl;
   delete f;
   delete optionsTree;
   delete modelTree;
@@ -53,6 +68,11 @@ AnalysisUser::~AnalysisUser()
   delete model;
   delete run;
   delete event;
+
+  delete foutput;
+  for(size_t s = 0; outputTree_Samplers.size(); ++s){
+    delete outputTree_Samplers.at(s);
+  }
 }
 
 void AnalysisUser::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTree, TTree *eventTree)
@@ -70,6 +90,16 @@ void AnalysisUser::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTre
 
 }
 
+void AnalysisUser::MakeBranches(TTree *outputTree)
+{
+  outputTree->Branch("VertexModel",(void*)&vertexmodel[0],"VertexModel[10]/C");
+  outputTree->Branch("VertexX",&vertexx,"VertexX/F");
+  outputTree->Branch("VertexY",&vertexy,"VertexY/F");
+  outputTree->Branch("VertexZ",&vertexz,"VertexZ/F");
+  outputTree->Branch("VertexProcess",&vertexprocess,"VertexProcess/I");
+  outputTree->Branch("VertexSubProcess",&vertexsubprocess,"VertexSubProcess/I");
+}
+
 void AnalysisUser::GetEntry(int iEntry)
 {
   eventTree->GetEntry(iEntry);
@@ -77,29 +107,34 @@ void AnalysisUser::GetEntry(int iEntry)
 
 void AnalysisUser::Analysis()
 {
+  std::cout << "Saving vertex information to ROOT output file." << std::endl; 
   for(int i=0;i<eventTree->GetEntries();++i) {                      // Loop over file entries
     this->GetEntry(i);                                              // Get entry
 
-    std::cout << "New event " << std::endl;
-    std::cout << "--------- " << std::endl;
-
-    for(int j = 0; j<this->event->samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
+    for(size_t s = 0; s< this->event->samplers.size(); ++s)                       // Loop over samplers
     {
-      int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler info
-      if(trackID != 1) {                                            // does not work for the primary
-        BDSOutputROOTEventTrajectoryPoint point =
-                event->trajectory->primaryProcessPoint(trackID);    // get initial process point
-        std::cout << i << " " << j << " "
-                  << trackID << " "
-                  << point.processType << " "
-                  << point.processSubType << " "
-                  << point.position.Z() << " "
-                  << point.model << " "
-                  << model->model->componentName[point.model]
-                  << std::endl;
+      for(int j = 0; j<this->event->samplers[s]->n; ++j)              // Loop over sampler hits in sampler 0
+      {
+        int trackID = this->event->samplers[s]->trackID[j];           // track ID for sampler info
+        if(trackID != 1) {                                            // does not work for the primary
+          BDSOutputROOTEventTrajectoryPoint point =
+            event->trajectory->primaryProcessPoint(trackID);    // get initial process point
+          std::string temp = model->model->componentName[point.model];
+          std::vector< char > tempvec(temp.begin(),temp.end());
+          tempvec.push_back('\0');
+          strcpy(vertexmodel,&tempvec[0]);
+          vertexx = point.position.X();
+          vertexy = point.position.Y();
+          vertexz = point.position.Z();
+          vertexprocess = point.processType;
+          vertexsubprocess = point.processSubType;
 
+          outputTree_Samplers.at(s)->Fill();
+
+        }
       }
-    }
-    //
+    }//End of samplers loop
   }
+  foutput->Write();
+  foutput->Close();
 }
