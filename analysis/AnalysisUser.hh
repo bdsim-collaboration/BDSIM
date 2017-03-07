@@ -48,8 +48,6 @@ public:
   Event   *event;
   Run     *run;
 
-  int number_samplers;
-
   char vertexmodel[10];
   float vertexx;
   float vertexy;
@@ -58,6 +56,7 @@ public:
   int vertexsubprocess;
 private:
   ClassDef(AnalysisUser,1);
+  int number_samplers;
 };
 
 
