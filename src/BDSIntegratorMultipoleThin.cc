@@ -5,7 +5,6 @@
 #include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 

@@ -35,11 +35,9 @@
 #include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
-#include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4Navigator.hh"
-#include "G4Positron.hh"
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
