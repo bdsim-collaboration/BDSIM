@@ -37,14 +37,14 @@ void BDSScreenFrameRectangular::Build()
   G4Box* frameBox = new G4Box("frameBox",
 			      size.x()/2.0,
 			      size.y()/2.0,
-			      size.z()/2.0-tinyLenSaf);
+			      size.z()/2.0);
   
   logVol = new G4LogicalVolume(frameBox, material, name+"_lv");
 
   G4Box* windowBox = new G4Box("windowBox",
 			       windowSize.x()/2.0 + lenSaf,
 			       windowSize.y()/2.0 + lenSaf,
-			       size.z()/2.0); // must be smaller than cavity / window
+			       size.z()/2.0 - lenSaf); // must be smaller than cavity / window
   
   cavityName   = name + "_cavity";
   cavityLogVol = new G4LogicalVolume(windowBox,

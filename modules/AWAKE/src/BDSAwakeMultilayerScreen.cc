@@ -56,7 +56,7 @@ void BDSAwakeMultilayerScreen::layers()
 {
 	_gapWidth=0*1e-3*CLHEP::mm;
   _gapSpacing=1*CLHEP::mm;
-  /*
+
 	thinVacuumLayer();
   preWindowSampler();
   thinVacuumLayer();
@@ -87,8 +87,8 @@ void BDSAwakeMultilayerScreen::layers()
   thinAirLayer();
   postScreenSampler();
   thinAirLayer();
-   */
-	thickScintLayer();
+
+
   G4cout << __METHOD_NAME__ << " - scint layers: " << _scintLayerCount << G4endl;
   G4cout << __METHOD_NAME__ << " - binder layers: " << _binderLayerCount << G4endl;
   Build();

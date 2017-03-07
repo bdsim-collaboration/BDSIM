@@ -820,8 +820,8 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 //Screen position
 	  G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
 	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + lenSaf;
-	_screenCentreZ += _screenThickness*std::sin(_screenAngle);
-	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + lenSaf;
+	  _screenCentreZ += _screenThickness/std::cos(_screenAngle);
+	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetX + lenSaf;
 	//Offset the screen due to the _windowOffsetX
 
     //Frame position
