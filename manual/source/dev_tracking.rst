@@ -693,11 +693,84 @@ BDSIM Dipole Fringe
 
 * Class name: :code:`BDSIntegratorDipoleFringe`
 
+This integrator provides a change in momentum only that represents the edge effect of a dipole
+with a pole face rotation. This class inherits :code:`BDSIntegratorDipole2` as it uses it
+for the dipole component of the motion. After that, the small change in momentum is applied.
+
+* If the step length is longer than 1 mm, the kick is not applied (i.e. not a thin dipole edge element).
+
+* The input coordinates are converted to the local curvilinear frame. This is required only for
+  this algorithm and not that in :code:`BDSIntegratorDipole2`.
+
+* If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
+  is applied.
+  
+The momentum change is calculated as:
+
+.. math::
+
+   dp_{y} ~ = ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
+
+
 BDSIM Thin Multipole
 --------------------
 
 * Class name: :code:`BDSIntegratorMultipoleThin`
 
+This integrator applies a thin multipole kick to forward going paraxial particles. This is
+normally attached to a box or disc that is very thin (Geant4 requires finite dimensions)
+but sufficiently small that only one step is taken through it. Typically, a length of 1 pm
+is used along :math:`S`. It is not possible to control how many steps a particle takes
+through a given volume in Geant4 tracking as many physics processes can propose different
+step lengths. However, by choosing such a short length of volume and by filling it with
+vacuum, no other process will force a step in the middle of the volume. If more than one
+step were taken, the integrator would be used multiple times resulting in stronger
+kicks than are correct.
+
+* Convert coordinates from global to local curvilinear frame.
+
+If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and the backup
+integrator from :code:`BDSIntegratorMag` is used. Else proceed with thin kick.
+
+The output position remains the same.
+
+.. math::
+
+   \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in}
+
+The momentum is modified as:
+   
+
+.. math::
+   
+   qc = q_{x,in} + i~q_{y,in}
+
+.. math::
+   
+   dp_{n} ~ = ~ \sum_{j=1}^{12} ~ \frac{k_{n,j}}{j!}~qc^j \\
+   dp_{s} ~ = ~ \sum_{j=1}^{12} ~ \frac{k_{s,j}}{j!}~qc^j
+
+Where :math:`qc` is the complex number formed from the horizontal and vertical positions
+in the local curvilinear frame and the subscripts ":math:`_{n}`" and ":math:`_{s}`" represent
+normal and skew multipole components respectively.  The output momentum is therefore:
+
+.. math::
+
+   p_{x,out} ~ = ~ p_{x,in} - \mathrm{Re}(dp_{n}) - \mathrm{Im}(dp_{s}) \\
+   p_{y,out} ~ = ~ p_{y,in} + \mathrm{Im}(dp_{n}) + \mathrm{Im}(dp_{s}) \\
+   p_{z,out} ~ = ~ \sqrt{\big[1 - p_{x,out}^2 - p_{x,out}^2 \big] }
+
+
+.. math::
+
+   \mathbf{p}_{out} ~ = ~
+   \begin{pmatrix}
+   p_{x,out} \\
+   p_{y,out} \\
+   p_{z,out}
+   \end{pmatrix}
+
+   
 
 Combined Dipole-Quadrupole
 --------------------------
