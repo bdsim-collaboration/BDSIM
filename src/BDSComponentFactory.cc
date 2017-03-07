@@ -37,6 +37,7 @@
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
+#include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -62,7 +63,9 @@ BDSComponentFactory::BDSComponentFactory()
 {
   lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
   brho          = BDSGlobalConstants::Instance()->BRho();
-  integratorSet = BDS::IntegratorSet(BDSGlobalConstants::Instance()->IntegratorSet());
+  BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
+  integratorSet = BDS::IntegratorSet(intSetType);
+  G4cout << __METHOD_NAME__ << "Using \"" << intSetType << "\" set of integrators" << G4endl;
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
