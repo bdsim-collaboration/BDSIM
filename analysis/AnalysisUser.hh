@@ -5,6 +5,7 @@
 #ifndef BDSIM_ANALYSISUSER_H
 #define BDSIM_ANALYSISUSER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -28,35 +29,39 @@ public:
   AnalysisUser();
   AnalysisUser(std::string filename);
   AnalysisUser(std::vector<std::string> filenames);
-  void MakeBranches(TTree *outputTree);
-  void SetBranchAddresses(TTree *options, TTree *model, TTree *run, TTree *event);
-  int GetNumSamplers();
+  void MakeBranches(std::shared_ptr< TTree > outputTree);
+  void SetBranchAddresses(std::shared_ptr< TTree > options, std::shared_ptr< TTree > model, std::shared_ptr< TTree > run, std::shared_ptr< TTree > event);
+  unsigned int GetNumSamplers();
   void GetEntry(int iEntry);
   void Analysis();
   virtual ~AnalysisUser();
 
-  TFile *f;
-  TTree *optionsTree;
-  TTree *modelTree;
-  TTree *runTree;
-  TTree *eventTree;
-  TFile *foutput;
-  std::vector< TTree* > outputTree_Samplers;
+  //smart pointers?
+  std::shared_ptr< TFile > f;
+  std::shared_ptr< TTree > optionsTree;
+  std::shared_ptr< TTree > modelTree;
+  std::shared_ptr< TTree > runTree;
+  std::shared_ptr< TTree > eventTree;
+  std::shared_ptr< TFile > foutput;
+  std::vector< std::shared_ptr<TTree> > outputTree_Samplers;
 
-  Options *options;
-  Model   *model;
-  Event   *event;
-  Run     *run;
+  std::shared_ptr< Options > options;
+  std::shared_ptr< Model   > model;
+  std::shared_ptr< Event   > event;
+  std::shared_ptr< Run     > run;
 
-  char vertexmodel[10];
-  float vertexx;
-  float vertexy;
-  float vertexz;
-  int vertexprocess;
-  int vertexsubprocess;
+  char vertexmodel[10]{'0','0','0','0','0','0','0','0','0','\0'};
+  float vertexx{999};
+  float vertexy{999};
+  float vertexz{999};
+  int vertexprocess{999};
+  int vertexsubprocess{999};
+  int trackID{999};
+  int PDG{999};
+  int parentID{999};
 private:
   ClassDef(AnalysisUser,1);
-  int number_samplers;
+  unsigned int number_samplers{999};
 };
 
 
