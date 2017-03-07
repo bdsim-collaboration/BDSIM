@@ -46,17 +46,22 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
   G4double modulo       = (_nScintLayers-floor(_nScintLayers));
   _firstLayerThickness  = _layerThickness*modulo;
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
-  layers();
+	_gapWidth=0*1e-3*CLHEP::mm;
+	_gapSpacing=1*CLHEP::mm;
+  //layers();
+	simpleLayers();
 }
 
 BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen()
 {;}
 
+void BDSAwakeMultilayerScreen::simpleLayers(){
+  scintillatorLayer(_thickness);
+	Build();
+}
+
 void BDSAwakeMultilayerScreen::layers()
 {
-	_gapWidth=0*1e-3*CLHEP::mm;
-  _gapSpacing=1*CLHEP::mm;
-
 	thinVacuumLayer();
   preWindowSampler();
   thinVacuumLayer();
@@ -78,7 +83,7 @@ void BDSAwakeMultilayerScreen::layers()
   }
   for(int i=0; i<(floor(_nScintLayers)-1); i++){
     binderLayer();
-    scintillatorLayer();
+    scintillatorLayer(_layerThickness);
   }
   binderLayer();
   frontScintillatorLayer1();
@@ -210,9 +215,10 @@ void BDSAwakeMultilayerScreen::thickScintLayer(){
 	AddScreenLayer(sl);
 }
 
-void BDSAwakeMultilayerScreen::scintillatorLayer(){
+
+void BDSAwakeMultilayerScreen::scintillatorLayer(G4double thickness){
   incScintLayer();
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_layerThickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
+	BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),thickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
   AddScreenLayer(sl);
 }
@@ -295,5 +301,5 @@ void BDSAwakeMultilayerScreen::RoughSurface(){
 void BDSAwakeMultilayerScreen::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol)
 {
   super::Place(rot,pos,motherVol);
-  surfaces();
+  //surfaces();
 }

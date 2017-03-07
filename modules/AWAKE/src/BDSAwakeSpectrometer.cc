@@ -691,8 +691,8 @@ void BDSAwakeSpectrometer::Build()
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
   //      BuildCameraScoringPlane();
- //  PlaceFrame();
-    PlaceScreen();
+   // PlaceFrame();
+   //PlaceScreen();
   //      PlaceCamera();
   //      }
   RegisterSensitiveVolume(containerLogicalVolume);

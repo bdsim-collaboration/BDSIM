@@ -23,6 +23,7 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
+		void simpleLayers();
   void sampler(G4String name, const char* material="air", G4bool bSampler=true);
   void thinAirLayer();  
   void thinVacuumLayer();  
@@ -39,7 +40,7 @@ private:
   void binderLayer();
   void backBinderLayer();
 		void thickScintLayer();
-  void scintillatorLayer();
+  void scintillatorLayer(G4double thickness);
   void backScintillatorLayer();
   void frontScintillatorLayer1();
   void frontScintillatorLayer2();

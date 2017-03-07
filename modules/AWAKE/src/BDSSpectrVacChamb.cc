@@ -238,7 +238,7 @@ void BDSSpectrVacChamb::BuildBoxInner(){
 			     _box1LengthZ/2.0);
   
   _innerLogVolBox1 = new G4LogicalVolume(_box1SolidInner,
-					BDSMaterials::Instance()->GetMaterial("vacuum"),
+					BDSMaterials::Instance()->GetMaterial("gos_lanex"),
 					_name+"_log");
 
       _logVols.push_back(_innerLogVolBox1);
