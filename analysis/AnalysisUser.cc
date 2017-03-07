@@ -35,12 +35,12 @@ AnalysisUser::AnalysisUser(std::string filename)
   event   = new Event(false,true);
 
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
+  number_samplers = GetNumSamplers();
 
   std::string outputfilename = "AnalysisUserOutput_" + filename ;
   foutput = new TFile(outputfilename.data(),"CREATE","Output ROOT file from BDSIM AnalysisUser"); 
   
-  for(size_t s = 0; s<GetNumSamplers(); ++s)                       // Loop over samplers
-  //for(size_t s = 0; s<samplers.size(); ++s)                       // Loop over samplers
+  for(size_t s = 0; s<number_samplers; ++s)                       // Loop over samplers
   {
     std::stringstream ss;
     ss<< "Sampler" << s;
@@ -117,12 +117,12 @@ void AnalysisUser::Analysis()
   for(int i=0;i<eventTree->GetEntries();++i) {                      // Loop over file entries
     this->GetEntry(i);                                              // Get entry
 
-    for(size_t s = 0; s< this->event->samplers.size(); ++s)                       // Loop over samplers
+    for(size_t s = 0; s< number_samplers; ++s)         // Loop over samplers
     {
-      for(int j = 0; j<this->event->samplers[s]->n; ++j)              // Loop over sampler hits in sampler 0
+      for(int j = 0; j<this->event->samplers[s]->n; ++j)            // Loop over sampler hits in sampler 0
       {
-        int trackID = this->event->samplers[s]->trackID[j];           // track ID for sampler info
-        if(trackID != 1) {                                            // does not work for the primary
+        int trackID = this->event->samplers[s]->trackID[j];         // track ID for sampler info
+        if(trackID != 1) {                                          // does not work for the primary
           BDSOutputROOTEventTrajectoryPoint point =
             event->trajectory->primaryProcessPoint(trackID);    // get initial process point
           std::string temp = model->model->componentName[point.model];

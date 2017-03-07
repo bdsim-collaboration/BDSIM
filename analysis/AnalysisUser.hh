@@ -48,6 +48,8 @@ public:
   Event   *event;
   Run     *run;
 
+  int number_samplers;
+
   char vertexmodel[10];
   float vertexx;
   float vertexy;
