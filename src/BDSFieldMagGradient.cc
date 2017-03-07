@@ -33,47 +33,58 @@ G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l)
 BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho)
 {
     G4cout << "running field gradient calculations" << G4endl;
+    BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
     G4double h =1; //distance apart in CLHEP distance units (mm) to place query points.
-    order = 2; //temporary for testing.
-    G4cout << "h=" << h << G4endl;//temporary for testing.
+    //temporary for testing.
+    order = 2;
+    G4cout << "h=" << h << G4endl;
 
-    G4double rotation[5] = {CLHEP::pi/4, CLHEP::pi/6, CLHEP::pi/8, CLHEP::pi/10, CLHEP::pi/12}; //angles to skew the skew elements
-    BDSFieldMagSkew* BFieldSkew = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[order-1]); //create a skewed
+    G4double rotation[5] = {CLHEP::pi/4, CLHEP::pi/6, CLHEP::pi/8, CLHEP::pi/10, CLHEP::pi/12}; //angles to skew the skew field by, depending on order
+    BDSFieldMagSkew* BFieldSkew = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[order-1]); //create a skewed field
 
     if(order>0)
     {
         G4double k1 = FirstDerivative(BField,0,h);
         G4double k1s = FirstDerivative(BFieldSkew,0,h);
         G4cout << "k1:" << k1 << "k1s:" << k1s << G4endl;
+        (*outputstrengths)["k1"]=k1;
+        (*outputstrengths)["k1s"]=k1s;
     }
     if(order>1)
     {
         G4double k2 = SecondDerivative(BField,0,h);
         G4double k2s = SecondDerivative(BFieldSkew,0,h);
         G4cout << "k2:" << k2 << "k3s:" << k2s << G4endl;
+        (*outputstrengths)["k2"]=k2;
+        (*outputstrengths)["k2s"]=k2s;
     }
     if(order>2)
     {
         G4double k3 = ThirdDerivative(BField,0,h);
         G4double k3s = SecondDerivative(BFieldSkew,0,h);
         G4cout << "k3:" << k3 << "k3s:" << k3s << G4endl;
+        (*outputstrengths)["k3"]=k3;
+        (*outputstrengths)["k3s"]=k3s;
     }
     if(order>3)
     {
         G4double k4 = FourthDerivative(BField,0,h);
         G4double k4s = SecondDerivative(BFieldSkew,0,h);
         G4cout << "k4:" << k4 << "k4s:" << k4s << G4endl;
+        (*outputstrengths)["k4"]=k4;
+        (*outputstrengths)["k4s"]=k4s;
     }
     if(order>4)
     {
         G4double k5 = FifthDerivative(BField,0,h);
         G4double k5s = SecondDerivative(BFieldSkew,0,h);
         G4cout << "k5:" << k5 << "k5s:" << k5s << G4endl;
+        (*outputstrengths)["k5"]=k5;
+        (*outputstrengths)["k5s"]=k5s;
     }
-    ~BFieldSkew();
-    BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
-    return outputstrengths;
 
+    BFieldSkew
+    return outputstrengths;
 }
 
 //Indvidual Functions to find derivatives
