@@ -29,11 +29,11 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   if (h > 1*CLHEP::cm)
     {return;}
 
-  G4ThreeVector globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector globalMom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   
   // global to local (curvilinear) - 'true' = use local volume for transform
-  BDSStep    localPosMom = ConvertToLocal(globalPos, globalMom, 0.5*CLHEP::um, true);
+  BDSStep    localPosMom = ConvertToLocal(pos, mom, 0.5*CLHEP::um, true);
   G4ThreeVector localPos = localPosMom.PreStepPoint();
   G4ThreeVector localMom = localPosMom.PostStepPoint();
 
