@@ -21,6 +21,7 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 				 G4ThreeVector   outputFaceNormalIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
+  aperOffsetX(0), aperOffsetY(0),
   vacuumMaterial(vacuumMaterialIn),
   beamPipeThickness(beamPipeThicknessIn),
   beamPipeMaterial(beamPipeMaterialIn),
@@ -41,6 +42,7 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(G4String      beamPipeTypeIn,
 				 G4ThreeVector inputFaceNormalIn,
 				 G4ThreeVector outputFaceNormalIn):
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
+  aperOffsetX(0), aperOffsetY(0),
   beamPipeThickness(beamPipeThicknessIn),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
@@ -65,6 +67,7 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
 				 G4String         beamPipeMaterialIn,
 				 G4ThreeVector    inputFaceNormalIn,
 				 G4ThreeVector    outputFaceNormalIn):
+  aperOffsetX(0), aperOffsetY(0),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
 {

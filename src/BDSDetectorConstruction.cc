@@ -23,7 +23,6 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
-#include "BDSShowerModel.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
@@ -36,14 +35,9 @@
 #include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
-#include "G4Electron.hh"
-#include "GFlashHomoShowerParameterisation.hh"
-#include "GFlashHitMaker.hh"
-#include "GFlashParticleBounds.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4Navigator.hh"
-#include "G4Positron.hh"
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
@@ -59,16 +53,12 @@
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  worldPV(nullptr),
-  theHitMaker(nullptr),
-  theParticleBounds(nullptr)
+  worldPV(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
-  gflash        = BDSGlobalConstants::Instance()->GFlash();
   circular      = BDSGlobalConstants::Instance()->Circular();
-  if (gflash)
-    {InitialiseGFlash();}
+  
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
 }
@@ -116,11 +106,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   for (auto i : biasObjects)
     {delete i;}
 #endif
-  
-  // gflash stuff
-  gFlashRegion.clear();
-  delete theHitMaker;
-  delete theParticleBounds;
 }
 
 void BDSDetectorConstruction::InitialiseRegions()
@@ -423,18 +408,6 @@ void BDSDetectorConstruction::ComponentPlacement()
       // Make sensitive volumes sensitive
       accComp->SetSensitiveDetector(eCSD);
       
-      //set gflash parameterisation on volume if required
-      //TBC - so glash is only used for 'element' types - perhaps this should be used
-      //for other volumes too.  The logic of the if statement needs checked.
-      //The check of the precision region really compares the region pointer of the
-      //logical volume with that of our 'precision region' region. Unclear what the default
-      //region value is in geant4 but it's not our region - no region by default.
-      for (auto& lv : accComp->GetAllSensitiveVolumes())
-	{
-	  if(gflash && (accComp->GetType()=="element"))
-	    {SetGFlashOnVolume(lv);}
-	}
-      
       // get the placement details from the beamline component
       G4int nCopy       = element->GetCopyNo();
       // reference rotation and position for the read out volume
@@ -632,82 +605,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       }
   }
 #endif
-}
-
-void BDSDetectorConstruction::InitialiseGFlash()
-{
-  G4double gflashemax = BDSGlobalConstants::Instance()->GFlashEMax();
-  G4double gflashemin = BDSGlobalConstants::Instance()->GFlashEMin();
-  theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
-  // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
-      
-  theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
-  theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
-  // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
-      
-  // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
-  // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);
-  // theParticleBoundsVac->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),0*CLHEP::GeV);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - electron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< " GeV" << G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - electron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - electron: " 
-	 << theParticleBounds->GetEneToKill(*G4Electron::ElectronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - min E - positron: " 
-	 << theParticleBounds->GetMinEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - max E - positron: " 
-	 << theParticleBounds->GetMaxEneToParametrise(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-  G4cout << __METHOD_NAME__ << "theParticleBounds - kill E - positron: " 
-	 << theParticleBounds->GetEneToKill(*G4Positron::PositronDefinition())/CLHEP::GeV<< G4endl;
-#endif
-  theHitMaker = new GFlashHitMaker();// Makes the EnergySpots 
-}
-
-void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
-{
-  // this has been taken from component placement and put in a separate function to make clearer
-  // for now.  perhaps should be revisited. LN
-
-  //If not in the precision region....
-  //		    if(volume->GetMaterial()->GetState()!=kStateGas){ //If the region material state is not gas, associate with a parameterisation
-#ifdef BDSDEBUG
-  G4cout << "...adding " << volume->GetName() << " to gFlashRegion" << G4endl;
-#endif
-  // Initialise shower model
-  G4String rname = "gFlashRegion_" + volume->GetName();
-  gFlashRegion.push_back(new G4Region(rname.c_str()));
-  G4String mname = "fastShowerModel" + rname;
-#ifdef BDSDEBUG
-  G4cout << "...making parameterisation..." << G4endl;
-#endif
-  theFastShowerModel.push_back(new BDSShowerModel(mname.c_str(),gFlashRegion.back()));
-  theParameterisation.push_back(new GFlashHomoShowerParameterisation(BDSMaterials::Instance()->GetMaterial(volume->GetMaterial()->GetName().c_str()))); 
-  theFastShowerModel.back()->SetParameterisation(*theParameterisation.back());
-  theFastShowerModel.back()->SetParticleBounds(*theParticleBounds) ;
-  theFastShowerModel.back()->SetHitMaker(*theHitMaker);
-  if(volume->GetMaterial()->GetState()!=kStateGas)
-    { //If the region material state is not gas, associate with a parameterisation
-      //Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-      theFastShowerModel.back()->SetFlagParamType(1);
-      //Turn on containment
-      theFastShowerModel.back()->SetFlagParticleContainment(1);
-    }
-  else
-    {
-      //Turn on the parameterisation for e-m showers starting in sensitive material and fitting in the current stack.
-      theFastShowerModel.back()->SetFlagParamType(0);
-      //Turn on containment
-      theFastShowerModel.back()->SetFlagParticleContainment(0);
-  }
-  volume->SetRegion(gFlashRegion.back());
-  gFlashRegion.back()->AddRootLogicalVolume(volume);
 }
 
 void BDSDetectorConstruction::ConstructSDandField()

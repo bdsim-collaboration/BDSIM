@@ -12,9 +12,6 @@ class BDSModularPhysicsList;
 class G4OpticalPhysics;
 class G4VPhysicsConstructor;
 
-/// Typedef for function pointers to simplify syntax.
-typedef void(BDSModularPhysicsList::*Constructor)(void);
-
 /**
  * @brief Modular physics list based on Geant4 constructors.
  *
@@ -93,6 +90,9 @@ private:
   /// the parser.
   void ConfigureOptical();
   
+  /// Typedef for function pointers to simplify syntax.
+  typedef void(BDSModularPhysicsList::*Constructor)(void);
+
   /// A map of physics list names to their constructors.
   std::map<std::string, Constructor> physicsConstructors;
 
@@ -112,14 +112,11 @@ private:
   BDSGlobalConstants* globals;
 
   /// @{Physics constructor loader.
-  void ParameterisationPhysics();  
   void CutsAndLimits();
   void Em();
   void EmExtra();
   void EmLow();
   void HadronicElastic();
-  void Hadronic();
-  void HadronicHP();
   void SynchRad();
   void Muon();					
   void Optical();
@@ -128,7 +125,6 @@ private:
   void QGSPBERTHP();
   void QGSPBIC();
   void QGSPBICHP();
-  void FTFP();
   void FTFPBERT();
   void FTFPBERTHP();
   void LaserWire();

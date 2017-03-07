@@ -100,7 +100,7 @@ void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bo
 					   0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
   if(bSampler)
-    {sl->sampler();}
+    {sl->AssignSampler();}
   AddScreenLayer(sl);
 }
 

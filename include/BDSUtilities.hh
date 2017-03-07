@@ -129,6 +129,9 @@ namespace BDS
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 
+  /// Utility to print out values of an array to avoid repetitive for loops.
+  void PrintArray(const G4double values[],
+		  G4int    size);
 }
 
 #endif
