@@ -66,35 +66,6 @@ std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
   return std::make_pair(inputface,outputface);
 }
 
-G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
-					  G4double angleOut,
-					  G4double length)
-{
-  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-  G4ThreeVector inputface = faces.first;
-  G4ThreeVector outputface = faces.second;
-
-  std::swap(inputface[0],inputface[2]);
-  std::swap(outputface[0],outputface[2]);
-
-  if (angleIn > 0)
-    {
-      // Rotate input clockwise, output counterclockwise
-      inputface[0]  *= -1.0;
-      outputface[2] *= -1.0;
-    }
-  else if (angleIn < 0)
-    {
-      // Rotate input counterclockwise, output clockwise
-      inputface[2]  *= -1.0;
-      outputface[0] *= -1.0;
-    }
-  // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
-  G4double intersectionRadius = length / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
-
-  return intersectionRadius;
-}
-
 void BDS::EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit)
 {
   if (value < lowerLimit)
