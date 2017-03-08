@@ -570,9 +570,10 @@ class TestUtilities(object):
         def sublevel(depth, nameIn):
             for kwargValue in compKwargs[kwargKeys[depth]]:
                 name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
+                fullname = path + name + '.gmad'
                 if depth < (len(kwargKeys) - 1):
                     sublevel(depth + 1, name)
-                elif testlist.__contains__(path + name + '.gmad'):
+                elif testlist.__contains__(fullname):
                     OrderedTests.append(path + name + '.gmad')
 
         for particle in particles:
@@ -635,6 +636,9 @@ class TestSuite(TestUtilities):
                 if not _os.path.exists(componentType):
                     _os.system("mkdir "+componentType)
                 _os.chdir(componentType)
+                if not _os.path.exists('FailedTests'):
+                    _os.system("mkdir FailedTests")
+
                 testfilesDir = '../../Tests/'
 
             t = time.time()  # initial time
