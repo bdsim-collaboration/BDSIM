@@ -30,34 +30,16 @@ Tesla9Cell: cavitymodel,
        numberOfCells = 1;
 
 l1: line = (d1,q1,d1,sex1,d1,oct1,d1,dec1,d1,sol1,d1,sb1,d1,rb1,d1,hk1,d2,vk1,d2,mul1,d2,musp1,d2,rf1,d2,endoftheline);
-!l1: line = (d1,q1,d1,sex1,d1,sb1);
-!l1: line = (d2,rb1);
-!l1: line = (d1,q1,d2,d2,d1,sex1,d2);
-use,period=l1;
 
-!sample, range=endoftheline;
+use, l1;
 
 option, ngenerate=1,
-!	physicsList="QGSP_BERT",
-	physicsList="em",
 	beampipeRadius=4.0*cm,
 	beampipeThickness=0.5*cm,
 	outerDiameter=1.0*m,
-	defaultRangeCut=100*m,	
-	prodCutPositrons=100*m,
-	prodCutElectrons=100*m,
-	prodCutPhotons=100*m,
-	checkOverlaps=1,
-	thresholdCutCharged=1*GeV,
-	thresholdCutPhotons=1*GeV;
+	checkOverlaps=0;
 
 beam, particle="proton",
-      energy=45.0*GeV,
-      distrType="reference",
-      ngenerate=1,
-      X0=0.0,
-      Y0=0.0;
+      energy=45.0*GeV;
 
-!option, magnetGeometryType="none";
-
-option, integratorSet="bdsim2";
+option, integratorSet="bdsimtwo";
