@@ -41,6 +41,8 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
 
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
+  paddingLength = beamline->PaddingLength();
+  
   BDSBeamline* result = new BDSBeamline();
   G4int i = 0;
   for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); element++)
