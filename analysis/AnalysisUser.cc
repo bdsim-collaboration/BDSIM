@@ -1,10 +1,4 @@
-//
-// Created by Stewart Boogert on 02/03/2017.
-//
-
-
 #include <iostream>
-#include <include/BDSOutputROOTEventModel.hh>
 
 #include "AnalysisUser.hh"
 
@@ -12,6 +6,7 @@
 #include "TFile.h"
 #include "TTree.h"
 
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 
 void StringToCharArray(std::string const component_name, char * vertexmodel){

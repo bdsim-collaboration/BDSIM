@@ -1,7 +1,3 @@
-//
-// Created by Stewart Boogert on 02/03/2017.
-//
-
 #ifndef BDSIM_ANALYSISUSER_H
 #define BDSIM_ANALYSISUSER_H
 
@@ -36,7 +32,6 @@ public:
   void Analysis();
   virtual ~AnalysisUser();
 
-  //smart pointers?
   std::shared_ptr< TFile > f;
   std::shared_ptr< TTree > optionsTree;
   std::shared_ptr< TTree > modelTree;
