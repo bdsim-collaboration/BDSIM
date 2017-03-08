@@ -1,4 +1,4 @@
-V0.96 - 2017 / 02 / ??
+V0.96 - 2017 / 03 / ??
 ======================
 
 New Features
@@ -29,11 +29,11 @@ Fields & Integrators
 Geometry
 ^^^^^^^^
 
- * Rewritten geometry loading.
+ * Rewritten external geometry loading.
  * Ability to overlay externally provided geometry on magnets (except sbend).
  * Automatically generated tight-fitting containers for externally loaded GDML geometry.
  * *circularvacuum* beam pipe geometry that allows no geometry for the beam pipe; only vacuum.
- * Colour hue tweaked slightly.
+ * Colour magnet hues tweaked slightly.
 
    
 Output & Analysis
@@ -91,7 +91,7 @@ Bug Fixes
 * Fix geometry tolernace issue that would cause Geant4 runtime errors for
   regular geometry for some particularly large spatial size models.
 * Fix for linker error with ZLIB and gzstream. Issues #9, #155, #158.
-* Fix nan errors in certain circumstances when caclculating optical functions.
+* Fix nan errors in certain circumstances when calculating optical functions.
 * Fix shadowing compilation warnings.
 * Fix geometry overlaps in rf cavity geometry. Issue #136.
 * Coverity fixes for uninitialised variables / small memory leaks. Issues #152, #156.

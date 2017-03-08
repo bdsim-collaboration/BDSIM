@@ -5,6 +5,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
 
 /**
  * @brief A wrapper class for BDSFieldMag that rotates it.
@@ -14,7 +15,7 @@
  * This is intended to implement skew fields but any arbritary rotation can
  * be applied, although this should be considered carefully.
  * 
- * This class owns the field and rotation matrix.
+ * This class does not own the field it wraps.
  *
  * @author Laurie Nevay
  */
@@ -33,9 +34,10 @@ public:
   
 private:
   /// Private default constructor to force use of supplied ones.
-  BDSFieldMagSkew();
+  BDSFieldMagSkew() = delete;
 
-  /// The nominal non-skewed field.
+  /// The nominal non-skewed field.  Just storage of a pointer to it. This class
+  /// doesn't own it.
   BDSFieldMag* const field;
 
   /// The rotation matrix used to rotate the coordinates.
@@ -43,7 +45,6 @@ private:
 
   /// The opposite rotation matrix used to transform the resultant field vector.
   G4RotationMatrix* antiRotation;
-
 };
 
 #endif

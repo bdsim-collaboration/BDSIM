@@ -1,6 +1,5 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
-#include "BDSBeamPipe.hh"
 #include "BDSExtent.hh"
 #include "BDSDebug.hh"
 #include "BDSMagnetOuter.hh"

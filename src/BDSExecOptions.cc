@@ -51,9 +51,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "distrFile", 1, 0, 0 },
 					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
-					{ "gflash", 0, 0, 0 },
-					{ "gflashemax", 1, 0, 0 },
-					{ "gflashemin", 1, 0, 0 },
 					{ "output", 1, 0, 0 },
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
@@ -162,20 +159,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
 	{options.set_value("visMacroFileName", std::string(optarg));}
-      else if( !strcmp(optionName , "gflash") )
-	{options.set_value("gflash", true);}
-      else if( !strcmp(optionName , "gflashemax") )
-	{
-	  double result = 1e5;
-	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemax", result);
-	}
-      else if( !strcmp(optionName , "gflashemin") )
-	{
-	  double result = 0.1;
-	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemin", result);
-	}
       else if( !strcmp(optionName, "materials") )
 	{
 	  BDSMaterials::Instance()->ListMaterials();
@@ -278,9 +261,6 @@ void BDSExecOptions::Usage() const
 	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
 	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
-	<<"--gflash                  : turn on gFlash fast shower parameterisation. Default false."<<G4endl
-	<<"--gflashemax=N            : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
-	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
 	<<"--help                    : display this message"<<G4endl
 	<<"--materials               : list materials included in bdsim by default"<<G4endl
 	<<"--output=<fmt>            : output format (rootevent|ascii|combined|none), default rootevent"<<G4endl
@@ -314,9 +294,6 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " distrFile: "           << std::setw(15) << options.distribFile         << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << options.exportFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << options.generatePrimariesOnly << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << options.gflash              << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << options.gflashemin          << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << options.gflashemax          << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " ngenerate: "           << std::setw(15) << options.nGenerate           << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;

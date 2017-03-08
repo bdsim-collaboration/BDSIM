@@ -70,6 +70,7 @@ public:
   inline G4double          GetArcLength()                 const {return component->GetArcLength();}
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
   inline G4double          GetAngle()                     const {return component->GetAngle();}
+  inline BDSBeamPipeInfo*  GetBeamPipeInfo()              const {return component->GetBeamPipeInfo();}
   inline G4String          GetPlacementName()             const {return placementName;}
   inline G4int             GetCopyNo()                    const {return copyNumber;}
   inline G4LogicalVolume*  GetContainerLogicalVolume()    const {return component->GetContainerLogicalVolume();}

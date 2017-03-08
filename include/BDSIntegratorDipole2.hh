@@ -1,6 +1,8 @@
 #ifndef BDSINTEGRATORDIPOLE2_H
 #define BDSINTEGRATORDIPOLE2_H
 
+#include "BDSIntegratorDrift.hh"
+
 #include "globals.hh"
 #include "G4MagHelicalStepper.hh"
 #include "G4ThreeVector.hh"
@@ -26,13 +28,13 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorDipole2: public G4MagHelicalStepper
+class BDSIntegratorDipole2: public G4MagHelicalStepper, public BDSIntegratorDrift
 {
 public:
   BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 		       G4double     minimumRadiusOfCurvature);
 
-  virtual ~BDSIntegratorDipole2();
+  virtual ~BDSIntegratorDipole2(){;}
 
   /// Required to be provided by base class, but apparently should never be
   /// called by the driver.  Simply calls AdvanceHelix.
@@ -50,7 +52,7 @@ public:
 		       G4double       yOut[],    ///< Output array
 		       G4double       yErr[]);   ///< Output error array
 
-  virtual G4int IntegratorOrder() const {return 2;}
+  virtual G4int IntegratorOrder() const {return 1;}
 
   /// Variation of AdvanceHelix specifically to deal with particles that are likely to
   /// be spiralling in the magnetic field.
@@ -67,11 +69,6 @@ private:
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.
   G4double minimumRadiusOfCurvature;
-
-  /// General integrator that can be used as a backup if the particle momentum is
-  /// outside the (transverse) momentum range applicable for the integration scheme
-  /// used by the derived integrator.
-  G4MagIntegratorStepper* backupStepper;
 };
 
 #endif

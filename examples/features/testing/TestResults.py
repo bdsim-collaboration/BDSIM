@@ -18,7 +18,7 @@ GlobalData = Globals.Globals()
 resultsKeys = ['timingData',
                'resultsList',
                'fileLabel',
-               'generalStatusList'
+               'generalStatusList',
                'params',
                'testResults']
 
@@ -27,8 +27,10 @@ class Results(dict):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
+        self._numEntries = 0
+        self['testResults'] = []
         for key in resultsKeys:
-            setattr(self, key, [])
+            self[key] = []
 
     def GetResultsByParticle(self, particle=''):
         if not GlobalData.particles.__contains__(particle):
@@ -37,10 +39,56 @@ class Results(dict):
         for testNum, testResult in enumerate(self['testResults']):
             if testResult['particle'] == particle:
                 for key in resultsKeys:
-                    particleResults[key].append(self[key][testNum])
-
+                    if key != 'timingData':
+                        particleResults[key].append(self[key][testNum])
+        particleResults['timingData'].append(self['timingData'])
+        particleResults._numEntries = len(particleResults['testResults'])
+        particleResults['uniqueValues'] = particleResults._getUniqueValues()
         return particleResults
 
+    def GetResultsByEnergy(self, energy=''):
+        energyResults = Results(self._component)
+        for testNum, testResult in enumerate(self['testResults']):
+            if testResult['testParams']['energy'] == energy:
+                for key in resultsKeys:
+                    if key != 'timingData':
+                        energyResults[key].append(self[key][testNum])
+        energyResults['timingData'].append(self['timingData'])
+        energyResults._numEntries = len(energyResults['testResults'])
+        energyResults['uniqueValues'] = self._getUniqueValues()
+        energyResults['uniqueValues']['energy'] = [energy]
+        return energyResults
+
+    def _getCommonValues(self):
+        uniqueValues = collections.OrderedDict()
+
+        for test in self['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
+
+        commonValues = collections.OrderedDict()
+        for key, value in uniqueValues.iteritems():
+            if len(value) == 1:
+                commonValues[key] = value[0]
+
+        for values in commonValues.values():
+            if len(values) > 0:
+                return commonValues
+        return None
+
+    def _getUniqueValues(self):
+        # get dict of all unique parameter values.
+        uniqueValues = collections.OrderedDict()
+        for test in self['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
+        return uniqueValues
 
 class Timing:
     def __init__(self):
@@ -74,6 +122,7 @@ class Timing:
 
 class ResultsUtilities:
     def __init__(self):
+        # dict of list of Results instances for each component type.
         self.ResultsDict = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
@@ -156,9 +205,13 @@ class ResultsUtilities:
 
         splitLines = lines.split('\n')
         startLines = ['-------- WWWW ------- G4Exception-START -------- WWWW -------',
-                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ']
+                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ',
+                      '-------- EEEE ------- G4Exception-START -------- EEEE -------',
+                      '-------- EEEE ------- G4Exception-START -------- EEEE ------- ']
         endLines = ['-------- WWWW -------- G4Exception-END --------- WWWW -------',
-                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ']
+                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ',
+                    '-------- EEEE -------- G4Exception-END --------- EEEE -------',
+                    '-------- EEEE -------- G4Exception-END --------- EEEE ------- ']
 
         startLineIndices = []
         endLineIndices = []
@@ -175,39 +228,18 @@ class ResultsUtilities:
         if len(startLineIndices) > 0:
             for index, startLine in enumerate(startLineIndices):
                 exceptions = splitLines[startLine:endLineIndices[index] + 1]
-                if exceptions.__contains__('      issued by : G4PVPlacement::CheckOverlaps()'):
+                issuedLine = exceptions[2]
+                if issuedLine.__contains__('G4PVPlacement::CheckOverlaps()'):
                     generalStatus.append(GlobalData.returnCodes['OVERLAPS'])
-                if exceptions.__contains__('     issued by : G4PropagatorInField::ComputeStep()'):
+                if issuedLine.__contains__('G4PropagatorInField::ComputeStep()'):
                     generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
-                    # TODO: check for other types of warnings/errors.
+                if issuedLine.__contains__('G4MagInt_Driver::AccurateAdvance()'):
+                    generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
+                if issuedLine.__contains__('G4CutTubs::G4CutTubs()'):
+                    generalStatus.append(GlobalData.returnCodes['FATAL_EXCEPTION'])
+                # TODO: check for other types of warnings/errors.
 
         return generalStatus
-
-    def _getCommonValues(self, componentType=''):
-        uniqueValues = collections.OrderedDict()
-        # if self._testParamValues is None:
-        #     return None
-        for test in self.ResultsDict[componentType]['params']:
-            for key, value in test.iteritems():
-                if not uniqueValues.keys().__contains__(key):
-                    uniqueValues[key] = []
-                if not uniqueValues[key].__contains__(value):
-                    uniqueValues[key].append(value)
-
-        commonValues = collections.OrderedDict()
-        for key, value in uniqueValues.iteritems():
-            if len(value) == 1:
-                commonValues[key] = value[0]
-
-        for values in commonValues.values():
-            if len(values) > 0:
-                return commonValues
-        return None
-
-
-class Analysis(ResultsUtilities):
-    def __init__(self):
-        ResultsUtilities.__init__(self)
 
     def _getGitCommit(self):
         """ Function to get the information about which commit BDSIM was built using.
@@ -245,6 +277,11 @@ class Analysis(ResultsUtilities):
         _os.remove('gitBranch.log')
         return gitLines
 
+
+class Analysis(ResultsUtilities):
+    def __init__(self):
+        ResultsUtilities.__init__(self)
+
     def AddResults(self, results):
         if not self.ResultsDict.keys().__contains__(results['componentType']):
             self.ResultsDict[results['componentType']] = Results(results['componentType'])
@@ -253,6 +290,7 @@ class Analysis(ResultsUtilities):
         elif multiEntryTypes.__contains__(type(results)):
             for res in results:
                 self.ResultsDict[results['componentType']]['testResults'].append(res)
+        self.ResultsDict[results['componentType']]._numEntries = len(self.ResultsDict[results['componentType']]['testResults'])
 
     def AddTimingData(self, componentType, timingData):
         if not isinstance(timingData, Timing):
@@ -274,13 +312,13 @@ class Analysis(ResultsUtilities):
 
                 if (generalStatus is not None) and (not generalStatus.__contains__(0)):
                     numFailed += 1
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     failedTests.append(failedFile)
                 if generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE']):
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     stuckParticles.append(failedFile)
                 if generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS']):
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     overlaps.append(failedFile)
 
         s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
@@ -342,95 +380,345 @@ class Analysis(ResultsUtilities):
         self.ResultsDict[componentType]['fileLabel'].reverse()
         self.ResultsDict[componentType]['generalStatusList'].reverse()
         self.ResultsDict[componentType]['params'].reverse()
+        self.ResultsDict[componentType]['testResults'].reverse()
+
+        self.ResultsDict[componentType]['uniqueValues'] = self.ResultsDict[componentType]._getUniqueValues()
 
     def PlotResults(self, componentType=''):
+        plotter = Plotting()
+        plotter.PlotResults(self.ResultsDict, componentType)
+
+class Plotting:
+    def __init__(self):
+        self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
+
+    def _getNumFigures(self, num):
+        remainder = _np.mod(num, 2)
+        if remainder == 0:
+            numFigures = num / 2.0
+        else:
+            numFigures = ((num - remainder) / 2.0) + 1
+        return _np.int(numFigures)
+
+    def _getFigSize(self, res1, res2=None):
+        if res2 is not None:
+            if (res1.numEntries < 25) or (res2._numEntries < 25):
+                figHeight = 6
+            elif (res1.numEntries < 50) or (res2._numEntries < 50):
+                figHeight = 9
+            else:
+                figHeight = 12
+            if (res1._numEntries == 0) or (res2._numEntries == 0):
+                figWidth = 8
+            else:
+                figWidth = 12
+        else:
+            if (res1.numEntries < 25):
+                figHeight = 6
+            elif (res1.numEntries < 50):
+                figHeight = 9
+            else:
+                figHeight = 12
+            if (res1._numEntries == 0):
+                figWidth = 8
+            else:
+                figWidth = 12
+
+        return (figWidth, figHeight)
+
+    def PlotResults(self, Results, componentType=''):
         GlobalData._CheckComponent(componentType)
 
-        f = _plt.figure(figsize=(11, 7))
-        ax = f.add_subplot(111)
+        # split results into proton and electron
+        electronResults = Results[componentType].GetResultsByParticle('e-')
+        protonResults = Results[componentType].GetResultsByParticle('proton')
 
-        # set normalised colormap.
-        bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
-        norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+        # offset values for test guide column headers.
+        elecOffset = 1.0
+        protonOffset = 1.0
 
-        extent = [0, 7, 0, len(self.ResultsDict[componentType]['resultsList'])]
+        # get dict of all unique parameter values.
+        uniqueElecValues = electronResults['uniqueValues']
+        uniqueProtValues = protonResults['uniqueValues']
 
-        data = self.ResultsDict[componentType]['resultsList']
-        files = self.ResultsDict[componentType]['fileLabel']
-        generalStatus = self.ResultsDict[componentType]['generalStatusList']
+        if electronResults._numEntries == 0:
+            self.SingleParticlePlots(protonResults)
+        elif protonResults._numEntries == 0:
+            self.SingleParticlePlots(electronResults)
+        elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
+            if (protonResults._numEntries <= self.testsPerAxes) and (electronResults._numEntries <= self.testsPerAxes):
+                figsize = self._getFigSize(protonResults, electronResults)
+                f = _plt.figure(figsize=figsize)
+                ax1 = f.add_subplot(141)
+                ax2 = f.add_subplot(142)
+                ax3 = f.add_subplot(143)
+                ax4 = f.add_subplot(144)
+                res1Size = _np.float(figsize[1] - 1) / len(electronResults['params'])
+                res2Size = _np.float(figsize[1] - 1) / len(protonResults['params'])
 
-        electronFiles = [i for i, x in enumerate(files) if x.__contains__('e-')]
-        protonFiles = [i for i, x in enumerate(files) if x.__contains__('proton')]
+                res1Offset = 1.0
+                res2Offset = 1.0
 
-        electronResults = self.ResultsDict[componentType].GetResultsByParticle('e-')
-        protonResults = self.ResultsDict[componentType].GetResultsByParticle('proton')
+                if res1Size > res2Size:
+                    res1Offset = res2Size / res1Size
+                elif res1Size < res2Size:
+                    res2Offset = res1Size / res2Size
 
-        commonValues = self._getCommonValues(componentType)
-        subplotTitle = ''
+                dataAx1 = self._updateAxes(ax2, ax1, electronResults, res1Offset)
+                dataAx2 = self._updateAxes(ax4, ax3, protonResults, res2Offset)
+                self._addColorBar(f, dataAx1)
+                f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
+            else:
+                self.SingleParticlePlots(electronResults)
+                self.SingleParticlePlots(protonResults)
 
-        if commonValues is not None:
-            for index, fileName in enumerate(files):
-                fname = fileName
-                for key, value in commonValues.iteritems():
-                    filestring = "__" + key + "_" + _np.str(value)
-                    fname = fname.replace(filestring, '')
-                if len(electronFiles) == len(files):
-                    fname.replace("e-__", "")
-                elif len(protonFiles) == len(files):
-                    fname.replace("proton__", "")
-                files[index] = fname
+        # if electronResults._numEntries > self.testsPerAxes:
+        #     splitIntoEnergies = True
+        #
+        # if (electronResults._numEntries == 0) or (protonResults._numEntries == 0):
+        #     figsize = (10, 9)
+        #     f = _plt.figure(figsize=figsize)
+        #     ax1 = f.add_subplot(121)
+        #     ax2 = f.add_subplot(122)
+        #
+        #     dataAxes = self._updateAxes(ax2, ax1, electronResults, elecOffset)
+        #     self._addColorBar(f, dataAxes)
+        #     f.savefig('../Results/' + componentType + '.png', dpi=600)
+        #
+        # else:
+        #     figsize = (15, 9)
+        #     f = _plt.figure(figsize=figsize)
+        #     ax1 = f.add_subplot(141)
+        #     ax2 = f.add_subplot(142)
+        #     ax3 = f.add_subplot(143)
+        #     ax4 = f.add_subplot(144)
+        #     electronBoxSize = _np.float(figsize[1] - 1) / len(electronResults['params'])
+        #     protonBoxSize = _np.float(figsize[1] - 1) / len(protonResults['params'])
+        #
+        #     if electronBoxSize > protonBoxSize:
+        #         elecOffset = protonBoxSize / electronBoxSize
+        #     elif electronBoxSize < protonBoxSize:
+        #         protonOffset = electronBoxSize / protonBoxSize
+        #
+        #     dataAx1 = self._updateAxes(ax2, ax1, electronResults, elecOffset)
+        #     dataAx2 = self._updateAxes(ax4, ax3, protonResults, protonOffset)
 
-            for key, value in commonValues.iteritems():
-                subplotTitle += _string.capitalize(key) + " = " + value
-                index = commonValues.keys().index(key)
-                if index != (len(commonValues.keys()) - 1):
-                    subplotTitle += ", "
+    def SingleParticlePlots(self, results):
+        if results._numEntries > self.testsPerAxes:
+            numEnergies = len(results['uniqueValues']['energy'])
+            if numEnergies == 1:
+                self._singleDataAxesByEnergy(results)
+            else:
+                numFigures = self._getNumFigures(numEnergies)
+                if (_np.mod(numFigures, 2) == 0) or (numFigures == 1):
+                    self._doubleDataAxesByEnergy(numFigures, results)
+                else:
+                    self._doubleDataAxesByEnergy(numFigures - 1, results)
+                    self._singleDataAxesByEnergy(results)
+        else:
+            self._singleDataAxes(results)
 
-        cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
-                        extent=extent, aspect='auto')
-        ax.set_xlim(0, 8)
+    def _doubleDataAxesByEnergy(self, numFigures, results):
+        for i in range(numFigures):
+            energy1 = results['uniqueValues']['energy'][2 * i]
+            energy2 = results['uniqueValues']['energy'][2 * i + 1]
 
-        for index, status in enumerate(generalStatus):
-            numStatus = len(status)
-            yIndex = index
-            for statIndex, stat in enumerate(status):
-                boxColor = GlobalData.cmap.colors[stat]
-                boxWidth = 1.0 / numStatus
-                ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+            res1 = results.GetResultsByEnergy(energy1)
+            res2 = results.GetResultsByEnergy(energy2)
+            particle = results['testResults'][0]['particle']
+            energyString = '_' + particle + '_energies__' + energy1 + '_' + energy2
 
-        if subplotTitle != '':
-            ax.set_title(subplotTitle)
+            figsize = (15, 9)
+            f = _plt.figure(figsize=figsize)
+            ax1 = f.add_subplot(141)
+            ax2 = f.add_subplot(142)
+            ax3 = f.add_subplot(143)
+            ax4 = f.add_subplot(144)
+            res1Size = _np.float(figsize[1] - 1) / len(res1['params'])
+            res2Size = _np.float(figsize[1] - 1) / len(res2['params'])
 
-        xtickMajors = _np.linspace(1, 8, 8)
-        xtickCentre = xtickMajors - 0.5
+            res1Offset = 1.0
+            res2Offset = 1.0
 
-        ax.set_xticks(xtickCentre)
-        ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'General'])
+            if res1Size > res2Size:
+                res1Offset = res2Size / res1Size
+            elif res1Size < res2Size:
+                res2Offset = res1Size / res2Size
 
-        ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
-        ytickCentre = ytickMajors - 0.5
+            dataAx1 = self._updateAxes(ax2, ax1, res1, res1Offset)
+            dataAx2 = self._updateAxes(ax4, ax3, res2, res2Offset)
+            self._addColorBar(f, dataAx1)
+            f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
 
-        ax.set_yticks(ytickCentre)
-        ax.set_yticklabels(files)
+    def _singleDataAxesByEnergy(self, results):
+        figsize = self._getFigSize(results)
+        f = _plt.figure(figsize=figsize)
+        ax1 = f.add_subplot(121)
+        ax2 = f.add_subplot(122)
 
-        ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+        res1 = results.GetResultsByEnergy(results['uniqueValues']['energy'][-1])
+        energy1 = results['uniqueValues']['energy'][-1]
+        particle = results['testResults'][0]['particle']
+        energyString = '_' + particle + '_energies__' + energy1
 
-        minorXTicks = _tick.FixedLocator(xtickMajors)
-        minorYTicks = _tick.FixedLocator(ytickMinors)
+        dataAxes = self._updateAxes(ax2, ax1, res1, 1.0)
+        self._addColorBar(f, dataAxes)
+        f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
 
-        ax.xaxis.set_minor_locator(minorXTicks)
-        ax.yaxis.set_minor_locator(minorYTicks)
+    def _singleDataAxes(self, results):
+        figsize = self._getFigSize(results)
+        f = _plt.figure(figsize=figsize)
+        ax1 = f.add_subplot(121)
+        ax2 = f.add_subplot(122)
 
-        ax.tick_params(axis='x', which='both', length=0)
-        ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+        dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
+        self._addColorBar(f, dataAxes)
+        f.savefig('../Results/' + results._component + '.png', dpi=600)
 
-        ax.grid(which='minor', axis='x', linestyle='-')
-        ax.grid(which='minor', axis='y', linestyle='--')
-
-        cbar = f.colorbar(cax)
+    def _addColorBar(self, f, ax):
+        # colorbar colors and values independant of data, can be set according to either subplot.
+        cbar = f.colorbar(ax)
         cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
         cbar.set_ticks(cbarTicks)
         cbar.set_ticklabels(GlobalData.returnCodes.keys())
-
+        cbar.ax.tick_params(labelsize=8)
         f.tight_layout()
 
+    def _updateAxes(self, dataAxis, diagramAxis, dataSetresults, labelOffset):
+        uniqueValues = dataSetresults['uniqueValues']
+
+        def updateDataAxis(ax, results):
+            # get all necessary data.
+            data = results['resultsList']
+            files = results['fileLabel']
+            generalStatus = results['generalStatusList']
+            particle = results['testResults'][0]['particle']
+
+            # set normalised colormap.
+            bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
+            norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+
+            extent = [0, 7, 0, results._numEntries]
+
+            commonValues = results._getCommonValues()
+            subplotTitle = particle
+
+            # subplot title based on common parameter values.
+            if commonValues is not None:
+                subplotTitle += ", "
+                for key, value in commonValues.iteritems():
+                    if key != 'energy':
+                        subplotTitle += _string.capitalize(key) + " = " + value
+                        index = commonValues.keys().index(key)
+                        if index != (len(commonValues.keys()) - 1):
+                            subplotTitle += ", "
+                        if len(subplotTitle.split('\n')[-1]) > 22:
+                            subplotTitle += '\n'
+
+            cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+                            extent=extent, aspect='auto')
+            ax.set_xlim(0, 8)
+
+            for index, status in enumerate(generalStatus):
+                numStatus = len(status)
+                yIndex = index
+                for statIndex, stat in enumerate(status):
+                    boxColor = GlobalData.cmap.colors[stat]
+                    boxWidth = 1.0 / numStatus
+                    ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+
+            if subplotTitle != '':
+                ax.set_title(subplotTitle)
+
+            xtickMajors = _np.linspace(1, 8, 8)
+            xtickCentre = xtickMajors - 0.5
+
+            ax.set_xticks(xtickCentre)
+            ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'Gen'])
+
+            ytickMajors = _np.linspace(len(files) / (len(files) - 1), len(files), len(files))
+            ytickCentre = ytickMajors - 0.5
+
+            ax.set_yticks(ytickCentre)
+            empty_string_labels = [''] * len(files)
+            ax.set_yticklabels(empty_string_labels)
+
+            ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+
+            minorXTicks = _tick.FixedLocator(xtickMajors)
+            minorYTicks = _tick.FixedLocator(ytickMinors)
+
+            ax.xaxis.set_minor_locator(minorXTicks)
+            ax.yaxis.set_minor_locator(minorYTicks)
+
+            ax.tick_params(axis='x', which='both', length=0)
+            ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+
+            ax.grid(which='minor', axis='x', linestyle='-')
+            ax.grid(which='minor', axis='y', linestyle='--')
+            return cax
+
+        def updateDiagramAxis(ax, results, labelOffset):
+            # get all necessary data.
+            params = results['params']
+
+            # dict for param value labels
+            boxText = {}
+
+            # calculate number of boxes per order
+            numBoxesPerLevel = []
+            numLevel = 1
+            for i in range(len(uniqueValues.keys())):
+                boxText[_np.str(i)] = []
+                numValues = len(uniqueValues[uniqueValues.keys()[i]])
+                if i == 0:  # alway include energy (1st key in uniqueValues)
+                    numLevel *= numValues
+                    numBoxesPerLevel.append(numLevel)
+                elif (numValues > 1):
+                    numLevel *= numValues
+                    numBoxesPerLevel.append(numLevel)
+
+            # update dict of param values per box
+            def updateBoxTextList(depth):
+                for value in uniqueValues[uniqueValues.keys()[depth]]:
+                    boxText[_np.str(depth)].append(value)
+                    if depth < (len(uniqueValues.keys())-1):
+                        updateBoxTextList(depth+1)
+
+            updateBoxTextList(0)
+            numLevels = len(numBoxesPerLevel)
+
+            fontSizes = ['medium', 'medium', 'small', 'xx-small']
+
+            # plot the lines representing the boxes.
+            for level, numBoxes in enumerate(numBoxesPerLevel):
+                ax.plot([level - numLevels, level - numLevels], [0, len(params)], linewidth=1, color='k')  # vertical bar
+                for boxNum in range(numBoxes):
+                    boxHeight = len(params) / numBoxesPerLevel[level]
+                    textRot = 'horizontal'
+                    txtHorPos = level + 0.5
+                    txtVerPos = (boxNum * boxHeight) + 0.5 * boxHeight
+
+                    ax.plot([level - numLevels, 0], [boxNum*boxHeight, boxNum*boxHeight], linewidth=1, color='k')  # bottom horizontal bar
+                    ax.plot([level - numLevels, 0], [(boxNum+1)*boxHeight, (boxNum+1)*boxHeight], linewidth=1, color='k')  # top hor. bar
+                    ax.text(txtHorPos - numLevels, txtVerPos, boxText[_np.str(level)][boxNum], rotation=textRot, va='center', ha='center', fontsize=fontSizes[level])
+
+                ax.text(level+0.5 - numLevels, len(params) + labelOffset, _string.capitalize(uniqueValues.keys()[level]), fontsize=12, ha='center')  # rotation=30, va='bottom')
+
+            ax.set_xlim(-numLevels, 0)
+            ax.set_ylim(0, results._numEntries)
+
+            ax.axis('off')
+            ax.xaxis.set_visible(False)
+            ax.yaxis.set_visible(False)
+
+            return ax
+
+        dataAx1 = updateDataAxis(dataAxis, dataSetresults)
+        labAx1 = updateDiagramAxis(diagramAxis, dataSetresults, labelOffset)
+
+        return dataAx1
+
+    def ProduceReport(self):
+        # TODO: loop over _testParamValues and search for common parameter where failures are seen.
+        pass

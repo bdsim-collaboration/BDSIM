@@ -16,7 +16,8 @@ How to run::
   bdsim --file=1_rotation.gmad
 
 .. figure:: 1_rotation.png
-	    :width: 0%
+	    :width: 70%
+  
 
 2_rotation_with_bends.gmad
 --------------------------
