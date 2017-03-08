@@ -1,22 +1,20 @@
-#include "BDSDebug.hh"
 #include "BDSIntegratorMultipoleThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
-#include <G4TwoVector.hh>
+#include <list>
+#include <vector>
+
 
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 						       G4double                 brho,
 						       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6),
-  yInitial(0), yMidPoint(0), yFinal(0)
+  BDSIntegratorMag(eqOfMIn, 6)
 {
   b0l = (*strength)["field"] * brho;
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
@@ -31,34 +29,36 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
     }
 }
 
-void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
-					      const G4double[] /*dxdy*/,
-					      const G4double h,
-					      G4double       yOut[])
+void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
+					 const G4double[] /*dydx[]*/,
+					 const G4double h,
+					 G4double       yOut[],
+					 G4double       yErr[])
 {
-  const G4double *pIn      = yIn+3;
-  G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitMag    = GlobalP.mag();
+  G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4double      momMag = mom.mag();
   
   // global to local
-  BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
-  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
-  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
-  G4ThreeVector LocalRp = Localv0.unit();
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  G4ThreeVector localPos     = localPosMom.PreStepPoint();
+  G4ThreeVector localMom     = localPosMom.PostStepPoint();
+  G4ThreeVector localMomUnit = localMom.unit();
 
-  if (LocalRp.z() < 0.9) //for non paraxial, advance particle as if in a drift
+  // only use for forward paraxial momenta, else advance particle as if in a drift
+  if (localMomUnit.z() < 0.9)
   {
-    AdvanceDrift(yIn,GlobalP,h,yOut);
+    AdvanceDriftMag(yIn, h, yOut);
+    SetDistChord(0);
     return;
   }
 
-  G4double x0  = LocalR.x();
-  G4double y0  = LocalR.y();
-  G4double z0  = LocalR.z();
-  G4double xp  = LocalRp.x();
-  G4double yp  = LocalRp.y();
-  G4double zp  = LocalRp.z();
+  G4double x0  = localPos.x();
+  G4double y0  = localPos.y();
+  G4double z0  = localPos.z();
+  G4double xp  = localMomUnit.x();
+  G4double yp  = localMomUnit.y();
+  G4double zp  = localMomUnit.z();
 
   // initialise output varibles with input position as default
   G4double x1  = x0;
@@ -68,11 +68,11 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4double yp1 = yp;
   G4double zp1 = zp;
 
-  //Kicks come from pg 27 of mad-8 physical methods manual
+  // kicks come from pg 27 of mad-8 physical methods manual
   G4complex kick(0,0);
   G4complex position(x0, y0);
   G4complex result(0,0);
-  //Components of complex vector
+  // components of complex vector
   G4double knReal = 0;
   G4double knImag = 0;
   G4double momx;
@@ -81,7 +81,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
 
-  //Sum higher order components into one kick
+  // sum higher order components into one kick
   for (; kn != bnl.end(); n++, kn++)
     {
       momx = 0; //reset to zero
@@ -96,17 +96,17 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
       kick += result;
     }
 
-  //apply kick
+  // apply kick
   xp1 -= kick.real();
   yp1 += kick.imag();
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
-  //Reset n for skewed kicks.
+  // reset n for skewed kicks.
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
 
-  G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
+  G4ThreeVector momOut = G4ThreeVector(xp1,yp1,zp1);
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
@@ -133,39 +133,18 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yp1 += skewkick.real();
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
-  //for non paraxial, advance particle as if in a drift.
-  //xp1 or yp1 may be > 1, so isnan check also needed for zp1.
+  // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
   if (std::isnan(zp1) or (zp1 < 0.9))
-  {
-    AdvanceDrift(yIn,GlobalP,h,yOut);
-    return;
-  }
-
-  LocalR.setX(x1);
-  LocalR.setY(y1);
-  LocalR.setZ(z1);
+    {
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
+      return;
+    }
   
-  LocalRp.setX(xp1);
-  LocalRp.setY(yp1);
-  LocalRp.setZ(zp1);
+  G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
+  G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
 
-  ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
-}
-
-void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
-                                     const G4double[] /*dydx[]*/,
-                                     const G4double hstep,
-                                     G4double yOut[],
-                                     G4double yErr[])
-{
-  AdvanceHelix(yInput, 0, hstep, yOut);
-
-  // The two half-step method cannot be used as the
-  // multipole kick will be applied twice meaning
-  // the xp and yp values in the output arrays will be
-  // out by a factor of two. This could potentially
-  // lead to an incorrectly large error, therefore the
-  // error is set to 0 here.
+  ConvertToGlobal(localPosOut,localMomUnitOut,momMag,yOut);
 
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}

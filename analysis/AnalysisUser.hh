@@ -1,11 +1,8 @@
-//
-// Created by Stewart Boogert on 02/03/2017.
-//
-
 #ifndef BDSIM_ANALYSISUSER_H
 #define BDSIM_ANALYSISUSER_H
 
 #include <string>
+#include <vector>
 
 #include "TROOT.h"
 #include "TFile.h"
@@ -32,16 +29,16 @@ public:
   void Analysis();
   virtual ~AnalysisUser();
 
-  TFile *f;
-  TTree *optionsTree;
-  TTree *modelTree;
-  TTree *runTree;
-  TTree *eventTree;
+  TFile *f           = nullptr;
+  TTree *optionsTree = nullptr;
+  TTree *modelTree   = nullptr;
+  TTree *runTree     = nullptr;
+  TTree *eventTree   = nullptr;
 
-  Options *options;
-  Model   *model;
-  Event   *event;
-  Run     *run;
+  Options *options   = nullptr;
+  Model   *model     = nullptr;
+  Event   *event     = nullptr;
+  Run     *run       = nullptr;
 
 private:
   ClassDef(AnalysisUser,1);

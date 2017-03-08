@@ -12,7 +12,6 @@
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
-#include "G4GFlashSpot.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
@@ -188,104 +187,5 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   if(stopTracks)
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
-  return true;
-}
-
-G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
-{ 
-  enrg = aSpot->GetEnergySpot()->GetEnergy();
-#ifdef BDSDEBUG
-  G4cout << "BDSEnergyCounterSD> gflash energy = " << enrg << G4endl;
-#endif
-  if (!BDS::IsFinite(enrg))
-    {return false;}
-
-  G4VPhysicalVolume* currentVolume = aSpot->GetTouchableHandle()->GetVolume();
-  G4String           volName       = currentVolume->GetName();
-  G4int              nCopy         = currentVolume->GetCopyNo();
-  
-  // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  G4ThreeVector pos    = aSpot->GetPosition();
-  auxNavigator->LocateGlobalPointAndSetup(pos);
-
-  //calculate local coordinates
-  G4ThreeVector poslocal = auxNavigator->ConvertToLocal(pos);
-  
-  //global
-  X = pos.x();
-  Y = pos.y();
-  Z = pos.z();
-  //local
-  x = poslocal.x();
-  y = poslocal.y();
-  z = poslocal.z();
-
-  stepLength = 0; // no step length available for a 'spot'
-
-  // get the s coordinate (central s + local z)
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
-  if (theInfo)
-    {
-      sAfter  = theInfo->GetSPos() + z; 
-      sBefore = theInfo->GetSPos() + z; // no pre/post step for spot
-    }
-  else
-    {
-      // need to exit as theInfo is dereferenced later
-      G4cerr << "No volume info for " << currentVolume << G4endl;
-      sAfter  = -1000; // unphysical default value to allow easy identification in output
-      sBefore = -1000;
-    }
-
-  G4double sHit = sBefore; // both before and after the same here.
-  
-  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();  
-  weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
-  if (!BDS::IsFinite(weight))
-    {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
-  
-  ptype   = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
-  trackID = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetTrackID();
-  parentID= aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID();
-  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
-
-  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
-    {
-      G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
-	     << " Event: "    << eventnumber 
-	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
-	     << " Position: " << sAfter/CLHEP::m   << " m" 
-	     << G4endl;
-    }
-  
-  // see explanation in other processhits function
-  G4int index = -1;
-  if (theInfo)
-    {index = theInfo->GetBeamlineIndex();}
-  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-						       enrg,
-						       X,
-						       Y,
-						       Z,
-						       sBefore,
-						       sAfter,
-						       sHit,
-						       x,
-						       y,
-						       z,
-						       volName, 
-						       ptype,
-						       trackID,
-						       parentID,
-						       weight, 
-						       0,
-						       turnstaken,
-						       eventnumber,
-						       stepLength,
-						       index);
-  
-  // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  energyCounterCollection->insert(ECHit);
-  
   return true;
 }

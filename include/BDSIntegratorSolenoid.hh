@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORSOLENOID_H
 #define BDSINTEGRATORSOLENOID_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 
@@ -18,7 +18,7 @@ class BDSMagnetStrength;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorSolenoid: public BDSIntegratorBase
+class BDSIntegratorSolenoid: public BDSIntegratorMag
 {
 public:
   BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
@@ -35,8 +35,8 @@ public:
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double       yout[],
-		       G4double       yerr[]);
+		       G4double       yOut[],
+		       G4double       yErr[]);
 
 protected:
   /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.

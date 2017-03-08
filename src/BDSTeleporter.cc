@@ -1,7 +1,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
