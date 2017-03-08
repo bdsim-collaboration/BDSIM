@@ -556,9 +556,11 @@ class TestUtilities(object):
             self._testParamValues[componentType] = []
 
         # sort energy when energy is a float, not string.
-        energy = [_np.float(x) for x in compKwargs['energy']]
-        energy.sort()
-        compKwargs['energy'] = [_np.str(x) for x in energy]
+        for param in compKwargs.keys():
+            if len(compKwargs[param]) > 1:
+                paramValues = [_np.float(x) for x in compKwargs[param]]
+                paramValues.sort()
+                compKwargs[param] = [_np.str(x) for x in paramValues]
         self._testParamValues[componentType].append(compKwargs)
 
         kwargKeys = compKwargs.keys()
