@@ -43,7 +43,21 @@ class Results(dict):
                         particleResults[key].append(self[key][testNum])
         particleResults['timingData'].append(self['timingData'])
         particleResults._numEntries = len(particleResults['testResults'])
+        particleResults['uniqueValues'] = particleResults._getUniqueValues()
         return particleResults
+
+    def GetResultsByEnergy(self, energy=''):
+        energyResults = Results(self._component)
+        for testNum, testResult in enumerate(self['testResults']):
+            if testResult['testParams']['energy'] == energy:
+                for key in resultsKeys:
+                    if key != 'timingData':
+                        energyResults[key].append(self[key][testNum])
+        energyResults['timingData'].append(self['timingData'])
+        energyResults._numEntries = len(energyResults['testResults'])
+        energyResults['uniqueValues'] = self._getUniqueValues()
+        energyResults['uniqueValues']['energy'] = [energy]
+        return energyResults
 
     def _getCommonValues(self):
         uniqueValues = collections.OrderedDict()
@@ -65,6 +79,16 @@ class Results(dict):
                 return commonValues
         return None
 
+    def _getUniqueValues(self):
+        # get dict of all unique parameter values.
+        uniqueValues = collections.OrderedDict()
+        for test in self['params']:
+            for key, value in test.iteritems():
+                if not uniqueValues.keys().__contains__(key):
+                    uniqueValues[key] = []
+                if not uniqueValues[key].__contains__(value):
+                    uniqueValues[key].append(value)
+        return uniqueValues
 
 class Timing:
     def __init__(self):
