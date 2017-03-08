@@ -27,9 +27,10 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder():
       G4double maxTunnelR = tunnelExtent.MaximumAbs();
       curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
     }
-  checkOverlaps = globals->CheckOverlaps();
-  lengthSafety  = globals->LengthSafety();
-  minimumLength = 1*CLHEP::mm;
+  checkOverlaps    = globals->CheckOverlaps();
+  lengthSafety     = globals->LengthSafety();
+  minimumLength    = 1*CLHEP::mm;
+  bonusChordLength = 1*CLHEP::m;
 
   factory = new BDSCurvilinearFactory();
 }
@@ -39,11 +40,19 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
   delete factory;
 }
 
-BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
+BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
+								 const G4bool circular)
 {
   paddingLength = beamline->PaddingLength();
   
   BDSBeamline* result = new BDSBeamline();
+
+  if (!circular)
+    {//prepend small section to machine
+      BDSBeamlineElement* bonusBit = CreateBonusSectionStart(beamline);
+      result->AddBeamlineElement(bonusBit);
+    }
+  
   G4int i = 0;
   for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); element++)
     {
@@ -52,6 +61,14 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
       BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i);
       if (temp)
 	{result->AddBeamlineElement(temp);}
+    }
+
+  if (!circular)
+    {// append small section to machine
+      BDSBeamlineElement* bonusBit = CreateBonusSectionEnd(beamline);
+      if (bonusBit)
+	{
+	  result->AddBeamlineElement(bonusBit);}
     }
   return result;
 }
@@ -72,10 +89,11 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
     {// build 1:1
       chordLength = (*startElement)->GetChordLength() + paddingLength;
       angle       = (*startElement)->GetAngle();
-      if (Angled(*startElement)) {
-        // Not strictly accurate to add on paddingLength to arcLength, but close for now.
-	arcLength = (*startElement)->GetArcLength() + paddingLength;
-      }
+      if (Angled(*startElement))
+	{
+	  // Not strictly accurate to add on paddingLength to arcLength, but close for now.
+	  arcLength = (*startElement)->GetArcLength() + paddingLength;
+	}
     }
   else
     {// cover a few components
@@ -88,10 +106,11 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 	{accumulatedAngle += (*it)->GetAngle();}
       
       angle = accumulatedAngle;
-      if (BDS::IsFinite(angle)) {
-	G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*std::abs(angle));
-	arcLength                  = meanBendingRadius * std::abs(angle);
-      }
+      if (BDS::IsFinite(angle))
+	{
+	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*std::abs(angle));
+	  arcLength                  = meanBendingRadius * std::abs(angle);
+	}
     }
 
   if (!BDS::IsFinite(angle))
@@ -199,4 +218,87 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
     }
   
   return result;
+}
+
+
+BDSBeamlineElement* BDSCurvilinearBuilder::CreateBonusSectionStart(BDSBeamline const* const beamline)
+{  
+  // we're ingnoring any possible angled face of the curvilinear geometry
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("cl_start",
+								   bonusChordLength,
+								   curvilinearRadius);
+
+  const BDSBeamlineElement* firstElement = beamline->GetFirstItem();
+  const G4RotationMatrix*   rotStart     = firstElement->GetReferenceRotationStart();
+
+  G4ThreeVector unitDir = G4ThreeVector(0,0,1).transform(*rotStart);
+  G4ThreeVector endPos  = firstElement->GetReferencePositionStart() - unitDir*0.5*paddingLength;
+  G4ThreeVector midPos  = endPos - unitDir*0.5*bonusChordLength;
+  G4ThreeVector staPos  = endPos - unitDir*bonusChordLength;
+
+  G4double sStart = firstElement->GetSPositionStart();
+
+  BDSBeamlineElement*result = new BDSBeamlineElement(component,
+						     staPos,
+						     midPos,
+						     endPos,
+						     new G4RotationMatrix(*rotStart),
+						     new G4RotationMatrix(*rotStart),
+						     new G4RotationMatrix(*rotStart),
+						     staPos,
+						     midPos,
+						     endPos,
+						     new G4RotationMatrix(*rotStart),
+						     new G4RotationMatrix(*rotStart),
+						     new G4RotationMatrix(*rotStart),
+						     sStart - bonusChordLength,
+						     sStart - 0.5*bonusChordLength,
+						     sStart,
+						     nullptr,
+						     BDSSamplerType::none,
+						     "",
+						     -1); // artificial index of -1 for before beam line
+  return result;
+}
+
+BDSBeamlineElement* BDSCurvilinearBuilder::CreateBonusSectionEnd(BDSBeamline const* const beamline)
+{
+  // we're ingnoring any possible angled face of the curvilinear geometry
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("cl_end",
+								   bonusChordLength,
+								   curvilinearRadius);
+
+  const BDSBeamlineElement* lastElement = beamline->GetLastItem();
+  const G4RotationMatrix*   rotEnd      = lastElement->GetReferenceRotationEnd();
+  const G4int lastIndex = lastElement->GetIndex();
+
+  G4ThreeVector unitDir = G4ThreeVector(0,0,1).transform(*rotEnd);
+  G4ThreeVector staPos  = lastElement->GetReferencePositionEnd() + unitDir*0.5*paddingLength;
+  G4ThreeVector midPos  = staPos + unitDir*0.5*bonusChordLength;
+  G4ThreeVector endPos  = staPos + unitDir*bonusChordLength;
+
+  G4double sStart = lastElement->GetSPositionEnd();
+
+  BDSBeamlineElement*result = new BDSBeamlineElement(component,
+						     staPos,
+						     midPos,
+						     endPos,
+						     new G4RotationMatrix(*rotEnd),
+						     new G4RotationMatrix(*rotEnd),
+						     new G4RotationMatrix(*rotEnd),
+						     staPos,
+						     midPos,
+						     endPos,
+						     new G4RotationMatrix(*rotEnd),
+						     new G4RotationMatrix(*rotEnd),
+						     new G4RotationMatrix(*rotEnd),
+						     sStart,
+						     sStart + 0.5*bonusChordLength,
+						     sStart + bonusChordLength,
+						     nullptr,
+						     BDSSamplerType::none,
+						     "",
+						     lastIndex + 1); // artificial index of -1 for before beam line
+  return result;
+
 }
