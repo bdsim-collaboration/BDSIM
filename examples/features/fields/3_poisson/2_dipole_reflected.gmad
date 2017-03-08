@@ -1,6 +1,6 @@
 psolve: field, type="bmap2d",
 	       integrator = "g4classicalrk4",
-	       magneticFile = "poisson2dquad:quadrupole30x30.tar.gz",
+	       magneticFile = "poisson2ddipole:dipole30x30.tar.gz",
 	       magneticInterpolator = "cubic2D";
 
 q1: quadrupole, l=20*cm, k1=0.3, fieldOuter="psolve";

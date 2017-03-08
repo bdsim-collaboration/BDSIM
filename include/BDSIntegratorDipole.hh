@@ -1,7 +1,7 @@
 #ifndef BDSINTEGRATORDIPOLE_H
 #define BDSINTEGRATORDIPOLE_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -20,7 +20,7 @@ class BDSMagnetStrength;
  * Originally part of BDSIM by many authors.
  */
 
-class BDSIntegratorDipole: public BDSIntegratorBase
+class BDSIntegratorDipole: public BDSIntegratorMag
 {
 public:
   BDSIntegratorDipole(BDSMagnetStrength const* strength,
@@ -31,19 +31,19 @@ public:
 
   /// Stepper for this integrator.  Calculates the new coordinates of a particle
   /// through a uniform magnetic field.
-  virtual void Stepper(const G4double y[],
+  virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double yout[],
-		       G4double yerr[]);
+		       G4double       yOut[],
+		       G4double       yErr[]);
   
 protected:
   /// Calculate the new particle coordinates.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
-		    G4double h,
-		    G4double yOut[],
-		    G4double yErr[]);
+		    G4double       h,
+		    G4double       yOut[],
+		    G4double       yErr[]);
 
   /// Scaling factor in brho calculation.
   G4double cOverGeV;
@@ -59,8 +59,8 @@ protected:
 
   std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,
 						     G4double h,
-						     G4ThreeVector LocalR,
-						     G4ThreeVector LocalRP);
+						     G4ThreeVector localPos,
+						     G4ThreeVector localMomUnit);
   
 private:
   /// Data stored in order to find the chord.

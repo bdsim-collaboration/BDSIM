@@ -200,13 +200,15 @@ OptionsBase::OptionsBase()
   integratorSet            = "bdsim";
   lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
-  maximumStepLength        = 10;      // m, quite big
+  maximumStepLength        = 1;       // m, quite big
   maximumTrackLength       = 1e90;    // m, no limit but smaller than DBL_MAX for safe *CLHEP::m
   chordStepMinimum         = 0.000001;// m
   deltaIntersection        = 1e-10;   // m
-  minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
-  maximumEpsilonStep       = 1e-3;    // default value in Geant4, old value 1e-7
-  deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
+
+  // default value in Geant4, old value 0 - error must be greater than this
+  minimumEpsilonStep       = 5e-25;
+  maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
+  deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
   stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;

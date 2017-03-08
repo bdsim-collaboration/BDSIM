@@ -42,11 +42,6 @@ namespace BDS
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
 							G4double angleOutIn);
 
-  /// Calculate the radial distance that the two planes inputface and outputface intersect one another
-  G4double CalculateFacesOverlapRadius(G4double angleInIn,
-				       G4double angleOutIn,
-				       G4double lengthIn);
-
   /// Ensure a variable passed by reference is capped within lowerLimit and upperLimit.
   /// If it's outside these it is defaulted to those limit values.
   void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
@@ -129,6 +124,9 @@ namespace BDS
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 
+  /// Utility to print out values of an array to avoid repetitive for loops.
+  void PrintArray(const G4double values[],
+		  G4int    size);
 }
 
 #endif
