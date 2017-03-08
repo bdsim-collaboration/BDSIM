@@ -205,9 +205,13 @@ class ResultsUtilities:
 
         splitLines = lines.split('\n')
         startLines = ['-------- WWWW ------- G4Exception-START -------- WWWW -------',
-                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ']
+                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ',
+                      '-------- EEEE ------- G4Exception-START -------- EEEE -------',
+                      '-------- EEEE ------- G4Exception-START -------- EEEE ------- ']
         endLines = ['-------- WWWW -------- G4Exception-END --------- WWWW -------',
-                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ']
+                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ',
+                    '-------- EEEE -------- G4Exception-END --------- EEEE -------',
+                    '-------- EEEE -------- G4Exception-END --------- EEEE ------- ']
 
         startLineIndices = []
         endLineIndices = []
@@ -231,6 +235,8 @@ class ResultsUtilities:
                     generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
                 if issuedLine.__contains__('G4MagInt_Driver::AccurateAdvance()'):
                     generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
+                if issuedLine.__contains__('G4CutTubs::G4CutTubs()'):
+                    generalStatus.append(GlobalData.returnCodes['FATAL_EXCEPTION'])
                 # TODO: check for other types of warnings/errors.
 
         return generalStatus
@@ -306,13 +312,13 @@ class Analysis(ResultsUtilities):
 
                 if (generalStatus is not None) and (not generalStatus.__contains__(0)):
                     numFailed += 1
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     failedTests.append(failedFile)
                 if generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE']):
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     stuckParticles.append(failedFile)
                 if generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS']):
-                    failedFile = testdict['testfile'].split('/')[-1]
+                    failedFile = testdict['testFile'].split('/')[-1]
                     overlaps.append(failedFile)
 
         s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
