@@ -1,3 +1,4 @@
+#include <include/BDSBeamPipeInfo.hh>
 #include "BDSOutputROOTEventModel.hh"
 
 #ifndef __ROOTBUILD__
@@ -121,6 +122,15 @@ void BDSOutputROOTEventModel::Fill()
     this->staS.push_back((float &&) (*i)->GetSPositionStart()  / CLHEP::m);
     this->midS.push_back((float &&) (*i)->GetSPositionMiddle() / CLHEP::m);
     this->endS.push_back((float &&) (*i)->GetSPositionEnd()    / CLHEP::m);
+
+    // beam pipe
+    BDSBeamPipeInfo *beampipeinfo = (*i)->GetBeamPipeInfo();
+    this->beamPipeType.push_back(beampipeinfo ?  beampipeinfo->beamPipeType.underlying() : 0);
+    this->beamPipeAper1.push_back(beampipeinfo ? beampipeinfo->aper1/CLHEP::m : 0);
+    this->beamPipeAper2.push_back(beampipeinfo ? beampipeinfo->aper2/CLHEP::m : 0);
+    this->beamPipeAper3.push_back(beampipeinfo ? beampipeinfo->aper3/CLHEP::m : 0);
+    this->beamPipeAper4.push_back(beampipeinfo ? beampipeinfo->aper4/CLHEP::m : 0);
+
   }
 }
 #endif

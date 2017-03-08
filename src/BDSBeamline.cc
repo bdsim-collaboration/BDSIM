@@ -666,9 +666,9 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
     }
 }
 
-BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
+BDSBeamlineElement* BDSBeamline::GetElement(G4String name) const
 {
-  std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(name);
+  std::map<G4String, BDSBeamlineElement*>::const_iterator search = components.find(name);
   if (search == components.end())
     {//wasn't found
       return nullptr;

@@ -36,7 +36,7 @@ def Run(inputDict):
     # os.system used as subprocess.call has difficulty with the arguments for some reason.
     bdsimCommand = GlobalData._bdsimExecutable + " --file=" + inputDict['testFile'] + " --output=rootevent --outfile="
     bdsimCommand += inputDict['outputFile'] + " --batch --seed=2017"
-    _os.system(bdsimCommand + ' > ' + inputDict['bdsimLogFile'])
+    _os.system(bdsimCommand + ' > ' + inputDict['bdsimLogFile'] + " 2>&1")
     bdsimTime = _np.float(time.time() - t)
     inputDict['bdsimTime'] = bdsimTime
 
@@ -46,7 +46,6 @@ def Run(inputDict):
 
     if not files.__contains__(inputDict['ROOTFile']):
         inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
-        _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])  # move failed bdsim log file
 
     elif not generateOriginal:
         outputLog = open(inputDict['compLogFile'], 'a')  # temp log file for the comparator output.
@@ -67,23 +66,9 @@ def Run(inputDict):
         ctime = time.time() - t
         inputDict['compTime'] = ctime
 
-        # do not move the bdsim log file at this stage, it is used later by the results class to determine bdsim warnings.
-        # if comparator passes, delete the comparator log file - no longer needed.
         if TestResult == 0:
-            if isSelfComparison:
-                _os.system("rm " + originalFile)
             inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
-            _os.system("rm " + inputDict['compLogFile'])
-            _os.remove(inputDict['ROOTFile'])
-        # elif comparator does not pass, move the ROOT file and comparator log file to failed dir.
         elif TestResult != 0:
-            # move the failed file
-            _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
-            # move failed comp. log file
-            _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
-
-            if isSelfComparison:
-                _os.system("rm " + originalFile)
             inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
@@ -93,15 +78,55 @@ def Run(inputDict):
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
     inputDict['generalStatus'] = generalStatus
 
-    # move log file into failed if it contains overlaps or stuck particles.
-    if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
+    # if the comparator passed
+    if inputDict['code'] == 0:
+        # if only one general status entry then it must be 0 (passed), in which case,
+        # delete all log and root files
+        if len(generalStatus) == 1:
+            _os.remove(inputDict['compLogFile'])
+            _os.remove(inputDict['ROOTFile'])
+            _os.remove(inputDict['bdsimLogFile'])
+            if isSelfComparison:
+                _os.remove(inputDict['originalFile'])
+
+        # else if the general status contains one of the 'soft' failures, move the bdsim log
+        # and root output into the failed dir, and delete the passed comparator log.
+        elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
-        _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+            _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+            _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
+            _os.remove(inputDict['compLogFile'])
+            if isSelfComparison:
+                _os.remove(inputDict['originalFile'])
 
-    # elif the test is successful and doesn't contain G4Exceptions, delete the file.
-    elif generalStatus.__contains__(GlobalData.returnCodes['SUCCESS']):
-        _os.system("rm " + inputDict['bdsimLogFile'])
+    # elif the comparator failed
+    elif inputDict['code'] == 1:
+        # move the comparator log and failed root file
+        _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
+        _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
+        if isSelfComparison:
+            _os.remove(inputDict['originalFile'])
+
+        # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
+        if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+            _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+        else:
+            _os.remove(inputDict['bdsimLogFile'])
+
+    # elif incorrect args
+    elif inputDict['code'] == 2:
+        pass
+        # This is a command line entry problem which should not really occur.
+
+    # elif root file wasn't generated.
+    elif inputDict['code'] == 3:
+        # move bdsim log file to fail dir
+        _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+        if isSelfComparison:
+            _os.remove(inputDict['originalFile'])
 
     return inputDict
 
@@ -531,9 +556,11 @@ class TestUtilities(object):
             self._testParamValues[componentType] = []
 
         # sort energy when energy is a float, not string.
-        energy = [_np.float(x) for x in compKwargs['energy']]
-        energy.sort()
-        compKwargs['energy'] = [_np.str(x) for x in energy]
+        for param in compKwargs.keys():
+            if len(compKwargs[param]) > 1:
+                paramValues = [_np.float(x) for x in compKwargs[param]]
+                paramValues.sort()
+                compKwargs[param] = [_np.str(x) for x in paramValues]
         self._testParamValues[componentType].append(compKwargs)
 
         kwargKeys = compKwargs.keys()
@@ -543,9 +570,10 @@ class TestUtilities(object):
         def sublevel(depth, nameIn):
             for kwargValue in compKwargs[kwargKeys[depth]]:
                 name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
+                fullname = path + name + '.gmad'
                 if depth < (len(kwargKeys) - 1):
                     sublevel(depth + 1, name)
-                elif testlist.__contains__(path + name + '.gmad'):
+                elif testlist.__contains__(fullname):
                     OrderedTests.append(path + name + '.gmad')
 
         for particle in particles:
@@ -608,6 +636,9 @@ class TestSuite(TestUtilities):
                 if not _os.path.exists(componentType):
                     _os.system("mkdir "+componentType)
                 _os.chdir(componentType)
+                if not _os.path.exists('FailedTests'):
+                    _os.system("mkdir FailedTests")
+
                 testfilesDir = '../../Tests/'
 
             t = time.time()  # initial time
