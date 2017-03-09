@@ -184,7 +184,7 @@ OptionsBase::OptionsBase()
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
   scintYieldFactor         = 1.0;
-  maximumPhotonsPerStep    = 100;
+  maximumPhotonsPerStep    = 1e9;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;

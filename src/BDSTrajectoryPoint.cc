@@ -163,7 +163,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint()const
   G4bool notTransportation = processType != fTransportation;
   G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
   G4bool notParallel       = processType != fParallel;
-  
+
   if (initialised && notTransportation && notGeneral && notParallel)
     {
 #ifdef BDSDEBUG

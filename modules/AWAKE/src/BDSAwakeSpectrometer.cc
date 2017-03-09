@@ -691,8 +691,8 @@ void BDSAwakeSpectrometer::Build()
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
   //      BuildCameraScoringPlane();
-   // PlaceFrame();
-   //PlaceScreen();
+    PlaceFrame();
+   PlaceScreen();
   //      PlaceCamera();
   //      }
   RegisterSensitiveVolume(containerLogicalVolume);
@@ -771,13 +771,9 @@ void BDSAwakeSpectrometer::PlaceScreen(){
     G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
     G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
     //Place inside the frame cavity
-    G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+lenSaf;
-    //G4ThreeVector screenPosition(0, 0, screenZOffInFrame);
-    //_mlScreen->Place(zeroRot, screenPosition, _frame->CavityLogVol());
-
-	//G4ThreeVector screenPosition(_frameCentreX+screenZOffInFrame+std::sin(_screenAngle), 0, _frameCentreZ+screenZOffInFrame+std::cos(_screenAngle));
-	G4ThreeVector screenPosition(_screenCentreX, 0, _screenCentreZ);
-	_mlScreen->Place(_screenRotationMatrix, screenPosition, containerLogicalVolume);
+    G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+10*lenSaf;
+    G4ThreeVector screenPosition(0, 0, screenZOffInFrame);
+    _mlScreen->Place(zeroRot, screenPosition, _frame->CavityLogVol());
 }
 
 void BDSAwakeSpectrometer::CalculateLengths(){

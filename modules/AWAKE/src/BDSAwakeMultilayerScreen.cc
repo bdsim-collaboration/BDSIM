@@ -48,8 +48,7 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
 	_gapWidth=0*1e-3*CLHEP::mm;
 	_gapSpacing=1*CLHEP::mm;
-  //layers();
-	simpleLayers();
+  layers();
 }
 
 BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen()
@@ -301,5 +300,5 @@ void BDSAwakeMultilayerScreen::RoughSurface(){
 void BDSAwakeMultilayerScreen::Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol)
 {
   super::Place(rot,pos,motherVol);
-  //surfaces();
+  surfaces();
 }
