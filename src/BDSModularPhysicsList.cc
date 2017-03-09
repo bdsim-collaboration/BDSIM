@@ -248,7 +248,11 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalPhysics->Configure(G4OpticalProcessIndex::kWLS,           true);                                ///< Wave Length Shifting process index
 // opticalPhysics->Configure(G4OpticalProcessIndex::kNoProcess, globals->GetTurnOn< Number of processes, no selected process
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
-  opticalPhysics->SetMaxNumPhotonsPerStep(globals->MaximumPhotonsPerStep());
+  G4int maxPhot=globals->MaximumPhotonsPerStep();
+  //If 0, which is the default, do nothing
+  if(maxPhot>0) {
+    opticalPhysics->SetMaxNumPhotonsPerStep(globals->MaximumPhotonsPerStep());
+  }
 }
 
 void BDSModularPhysicsList::SetCuts()
