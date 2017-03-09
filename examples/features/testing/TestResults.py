@@ -23,86 +23,16 @@ resultsKeys = ['timingData',
                'testResults']
 
 
-class Results(dict):
+class Results(list):
     def __init__(self, componentType=''):
         GlobalData._CheckComponent(componentType)
         self._component = componentType
         self._numEntries = 0
-        self['testResults'] = []
-        for key in resultsKeys:
-            self[key] = []
 
     def GetResultsByParticle(self, particle=''):
         if not GlobalData.particles.__contains__(particle):
             raise ValueError("Unknown particle type.")
         particleResults = Results(self._component)
-        for testNum, testResult in enumerate(self['testResults']):
-            if testResult['particle'] == particle:
-                for key in resultsKeys:
-                    if key != 'timingData':
-                        particleResults[key].append(self[key][testNum])
-        particleResults['timingData'].append(self['timingData'])
-        particleResults._numEntries = len(particleResults['testResults'])
-        particleResults['uniqueValues'] = particleResults._getUniqueValues()
-        return particleResults
-
-    def GetResultsByEnergy(self, energy=''):
-        energyResults = Results(self._component)
-        for testNum, testResult in enumerate(self['testResults']):
-            if testResult['testParams']['energy'] == energy:
-                for key in resultsKeys:
-                    if key != 'timingData':
-                        energyResults[key].append(self[key][testNum])
-        energyResults['timingData'].append(self['timingData'])
-        energyResults._numEntries = len(energyResults['testResults'])
-        energyResults['uniqueValues'] = self._getUniqueValues()
-        energyResults['uniqueValues']['energy'] = [energy]
-        return energyResults
-
-    def _getCommonValues(self):
-        uniqueValues = collections.OrderedDict()
-
-        for test in self['params']:
-            for key, value in test.iteritems():
-                if not uniqueValues.keys().__contains__(key):
-                    uniqueValues[key] = []
-                if not uniqueValues[key].__contains__(value):
-                    uniqueValues[key].append(value)
-
-        commonValues = collections.OrderedDict()
-        for key, value in uniqueValues.iteritems():
-            if len(value) == 1:
-                commonValues[key] = value[0]
-
-        for values in commonValues.values():
-            if len(values) > 0:
-                return commonValues
-        return None
-
-    def _getUniqueValues(self):
-        # get dict of all unique parameter values.
-        uniqueValues = collections.OrderedDict()
-        for test in self['params']:
-            for key, value in test.iteritems():
-                if not uniqueValues.keys().__contains__(key):
-                    uniqueValues[key] = []
-                if not uniqueValues[key].__contains__(value):
-                    uniqueValues[key].append(value)
-        return uniqueValues
-
-
-class Results2(list):
-    def __init__(self, componentType=''):
-        GlobalData._CheckComponent(componentType)
-        self._component = componentType
-        self._numEntries = 0
-        #for key in resultsKeys:
-        #    self[key] = []
-
-    def GetResultsByParticle(self, particle=''):
-        if not GlobalData.particles.__contains__(particle):
-            raise ValueError("Unknown particle type.")
-        particleResults = Results2(self._component)
         for testNum, testResult in enumerate(self):
             if testResult['particle'] == particle:
                 particleResults.append(testResult)
@@ -112,7 +42,7 @@ class Results2(list):
         return particleResults
 
     def GetResultsByEnergy(self, energy=''):
-        energyResults = Results2(self._component)
+        energyResults = Results(self._component)
         for testNum, testResult in enumerate(self):
             if testResult['testParams']['energy'] == energy:
                 energyResults.append(testResult)
@@ -125,13 +55,6 @@ class Results2(list):
         uniqueValues = self._getUniqueValues()
         if uniqueValues is None:
             return None
-
-        #for test in self:
-        #    for key, value in test['testParams'].iteritems():
-        #        if not uniqueValues.keys().__contains__(key):
-        #            uniqueValues[key] = []
-        #        if not uniqueValues[key].__contains__(value):
-        #            uniqueValues[key].append(value)
 
         commonValues = collections.OrderedDict()
         for key, value in uniqueValues.iteritems():
@@ -206,8 +129,7 @@ class Timing:
 class ResultsUtilities:
     def __init__(self):
         # dict of list of Results instances for each component type.
-        self.ResultsDict = {}
-        self.results = {}
+        self.Results = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -368,26 +290,20 @@ class Analysis(ResultsUtilities):
 
     def AddResults(self, results):
         componentType = results['componentType']
-        if not self.ResultsDict.keys().__contains__(componentType):
-            self.ResultsDict[componentType] = Results(componentType)
-        if not self.results.keys().__contains__(componentType):
-            self.results[componentType] = Results2(componentType)
+        if not self.Results.keys().__contains__(componentType):
+            self.Results[componentType] = Results(componentType)
         if isinstance(results, dict):
-            self.ResultsDict[componentType]['testResults'].append(results)
-            self.results[componentType].append(results)
+            self.Results[componentType].append(results)
         elif multiEntryTypes.__contains__(type(results)):
             for res in results:
-                self.ResultsDict[componentType]['testResults'].append(res)
-                self.results[componentType].append(res)
-        resultsLen = len(self.ResultsDict[componentType]['testResults'])
-        resLen = len(self.results[componentType])
-        self.ResultsDict[componentType]._numEntries = resultsLen  ##### CHANGE #####
+                self.Results[componentType].append(res)
+        self.Results[componentType]._numEntries = len(self.Results[componentType])
 
     def AddTimingData(self, componentType, timingData):
         if not isinstance(timingData, Timing):
             raise TypeError("Timing data muse be a TestResults.Timing instance.")
         else:
-            self.ResultsDict[componentType]['timingData'].append(timingData)
+            self.Results[componentType].timingData = timingData
 
     def ProcessOriginals(self):
         numTests = 0
@@ -395,8 +311,8 @@ class Analysis(ResultsUtilities):
         failedTests = []
         stuckParticles = []
         overlaps = []
-        for component, compResults in self.ResultsDict.iteritems():
-            for testdict in compResults['testResults']:
+        for component, compResults in self.Results.iteritems():
+            for testdict in compResults:
                 numTests += 1
 
                 generalStatus = testdict['generalStatus']
@@ -447,34 +363,16 @@ class Analysis(ResultsUtilities):
         if componentType != '':
             GlobalData._CheckComponent(componentType)
 
-            testResults = self.ResultsDict[componentType]['testResults']
-            testResults = self.results[componentType]
+            testResults = self.Results[componentType]
 
             for index, result in enumerate(testResults):
                 comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
-
-                self.ResultsDict[componentType]['generalStatusList'].append(result['generalStatus'])
-                #self.results[componentType]['generalStatusList'] = result['generalStatus']
-                self.ResultsDict[componentType]['resultsList'].append(coords)
-                self.results[componentType][index]['resultsList'] = coords
-
-                filename = result['ROOTFile']
-                filename = filename.replace('_event.root', '')
-                filename = filename.replace((componentType + "__"), '')
-
-                #self.ResultsDict[componentType]['fileLabel'].append(filename)
-                self.ResultsDict[componentType]['params'].append(result['testParams'])
+                self.Results[componentType][index]['resultsList'] = coords
         else:
             GlobalData._CheckComponent(componentType)  # raises value error
 
-        self.ResultsDict[componentType]['resultsList'].reverse()
-        #self.ResultsDict[componentType]['fileLabel'].reverse()
-        self.ResultsDict[componentType]['generalStatusList'].reverse()
-        self.ResultsDict[componentType]['params'].reverse()
-        self.ResultsDict[componentType]['testResults'].reverse()
-        self.ResultsDict[componentType]['uniqueValues'] = self.ResultsDict[componentType]._getUniqueValues()
-        self.results[componentType].reverse()
+        self.Results[componentType].reverse()
 
     def _groupDipoleResults(self, componentType=''):
         params = self.ResultsDict[componentType]['params']
@@ -520,7 +418,7 @@ class Analysis(ResultsUtilities):
     def PlotResults(self, componentType=''):
         plotter = Plotting()
         #plotter.PlotResults(self.ResultsDict, componentType)
-        plotter.PlotResults(self.results, componentType)
+        plotter.PlotResults(self.Results, componentType)
 
 
 class Plotting:
@@ -584,9 +482,7 @@ class Plotting:
                 ax2 = f.add_subplot(142)
                 ax3 = f.add_subplot(143)
                 ax4 = f.add_subplot(144)
-                #res1Size = _np.float(figsize[1] - 1) / len(electronResults['params'])
                 res1Size = _np.float(figsize[1] - 1) / len(electronResults)
-                #res2Size = _np.float(figsize[1] - 1) / len(protonResults['params'])
                 res2Size = _np.float(figsize[1] - 1) / len(protonResults)
 
                 res1Offset = 1.0
@@ -607,7 +503,6 @@ class Plotting:
 
     def SingleParticlePlots(self, results):
         if results._numEntries > self.testsPerAxes:
-            #numEnergies = len(results['uniqueValues']['energy'])
             numEnergies = len(results.uniqueValues['energy'])
             if numEnergies == 1:
                 self._singleDataAxesByEnergy(results)
@@ -623,15 +518,11 @@ class Plotting:
 
     def _doubleDataAxesByEnergy(self, numFigures, results):
         for i in range(numFigures):
-            #energy1 = results['uniqueValues']['energy'][2 * i]
-            #energy2 = results['uniqueValues']['energy'][2 * i + 1]
             energy1 = results.uniqueValues['energy'][2 * i]
             energy2 = results.uniqueValues['energy'][2 * i + 1]
 
-
             res1 = results.GetResultsByEnergy(energy1)
             res2 = results.GetResultsByEnergy(energy2)
-            #particle = results['testResults'][0]['particle']
             particle = results[0]['particle']
             energyString = '_' + particle + '_energies__' + energy1 + '_' + energy2
 
@@ -641,9 +532,7 @@ class Plotting:
             ax2 = f.add_subplot(142)
             ax3 = f.add_subplot(143)
             ax4 = f.add_subplot(144)
-            #res1Size = _np.float(figsize[1] - 1) / len(res1['params'])
             res1Size = _np.float(figsize[1] - 1) / len(res1)
-            #res2Size = _np.float(figsize[1] - 1) / len(res2['params'])
             res2Size = _np.float(figsize[1] - 1) / len(res2)
 
             res1Offset = 1.0
@@ -665,11 +554,8 @@ class Plotting:
         ax1 = f.add_subplot(121)
         ax2 = f.add_subplot(122)
 
-        #res1 = results.GetResultsByEnergy(results['uniqueValues']['energy'][-1])
         res1 = results.GetResultsByEnergy(results.uniqueValues['energy'][-1])
-        #energy1 = results['uniqueValues']['energy'][-1]
         energy1 = results.uniqueValues['energy'][-1]
-        #particle = results['testResults'][0]['particle']
         particle = results[0]['particle']
         energyString = '_' + particle + '_energies__' + energy1
 
@@ -701,11 +587,6 @@ class Plotting:
 
         def updateDataAxis(ax, results):
             # get all necessary data.
-            #data = results['resultsList']
-            #generalStatus = results['generalStatusList']
-            #particle = results['testResults'][0]['particle']
-            #numTests = len(generalStatus)
-
             data = results.GetResults()
             generalStatus = results.GetGeneralStatus()
             particle = results[0]['particle']
@@ -777,7 +658,6 @@ class Plotting:
 
         def updateDiagramAxis(ax, results, labelOffset):
             # get all necessary data.
-            #params = results['params']
             params = results.GetParams()
             # dict for param value labels
             boxText = {}
