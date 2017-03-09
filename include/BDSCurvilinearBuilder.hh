@@ -23,7 +23,8 @@ public:
   ~BDSCurvilinearBuilder();
 
   /// Build a beam line of curvilinear geometry based on another beam line.
-  BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline);
+  BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
+					    const G4bool circular);
 
 private:
   /// Create a curvilinear element for a beam line that represents the curvilinear
@@ -43,6 +44,10 @@ private:
 						 BDSBeamline::const_iterator finishElement,
 						 G4int                       index);
 
+  
+  BDSBeamlineElement* CreateBonusSectionStart(BDSBeamline const* const beamline);
+  BDSBeamlineElement* CreateBonusSectionEnd(BDSBeamline const* const beamline);
+
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
 
@@ -56,6 +61,7 @@ private:
   G4bool   checkOverlaps;     ///< Whether to check overlaps.
   G4double lengthSafety;      ///< Length safety.
   G4double minimumLength;     ///< Minimum length of a curvilinear section.
+  G4double bonusChordLength;  ///< Length of any possible bonus section added to beginning and end.
 
   /// Factory to build curvilinear geometry.
   BDSCurvilinearFactory* factory;
