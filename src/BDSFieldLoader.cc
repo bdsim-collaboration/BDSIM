@@ -499,7 +499,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
       BDSFieldMagInterpolated2D* tempField = new BDSFieldMagInterpolated2D(artemp, transform, bScalingUnits);
       BDSFieldMagGradient calculator;
       G4cout << "creating calculator" << G4endl;
-      associatedStrength = calculator.CalculateMultipoles(tempField, maximumOrder);
+      associatedStrength = calculator.CalculateMultipoles(tempField, maximumOrder,-4.27);
       delete tempField;
       delete artemp;
     } 

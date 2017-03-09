@@ -25,11 +25,9 @@ public:
   //Find the Magnet strengths of a multipole field to nth order.
   BDSMagnetStrength* CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho=4);
   //Query a point on x axis for By
-  G4double GetBy(BDSFieldMag* BField, G4double l);
-  
+  G4double GetBy(BDSFieldMag* BField, G4double l, G4double h=0);
   //Find d(By)/dx
   G4double FirstDerivative(BDSFieldMag* BField, G4double x, G4double h);
-
   //Find d^2(By)/dx^2
   G4double SecondDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
