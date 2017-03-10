@@ -33,37 +33,46 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
     BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
     G4double h =2.5; //distance apart in CLHEP distance units (mm) to place query points.
     G4double rotation[5] = {CLHEP::pi/4, CLHEP::pi/6, CLHEP::pi/8, CLHEP::pi/10, CLHEP::pi/12}; //angles to skew the skew field by, depending on order
-    BDSFieldMagSkew* BFieldSkew = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[order-1]); //create a skewed field
 
-        G4double k1 = 1/Brho * FirstDerivative(BField,0,h);
-        G4double k1s =1/Brho * FirstDerivative(BFieldSkew,0,h);
-        G4cout << "k1:" << k1 << "k1s:" << k1s << G4endl;
-        (*outputstrengths)["k1"]=k1;
-        (*outputstrengths)["k1s"]=k1s;
+    BDSFieldMagSkew* BFieldSkew1 = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[0]);
+    G4double k1 = 1/Brho * FirstDerivative(BField,0,h);
+    G4double k1s =1/Brho * FirstDerivative(BFieldSkew1,0,h);
+    G4cout << "k1:" << k1 << "k1s:" << k1s << G4endl;
+    (*outputstrengths)["k1"]=k1;
+    (*outputstrengths)["k1s"]=k1s;
+    delete BFieldSkew1;
 
-        G4double k2 =1/Brho * SecondDerivative(BField,0,h);
-        G4double k2s =1/Brho * SecondDerivative(BFieldSkew,0,h);
-        G4cout << "k2:" << k2 << "k3s:" << k2s << G4endl;
-        (*outputstrengths)["k2"]=k2;
-        (*outputstrengths)["k2s"]=k2s;
+    BDSFieldMagSkew* BFieldSkew2 = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[1]);
+    G4double k2 =1/Brho * SecondDerivative(BField,0,h);
+    G4double k2s =1/Brho * SecondDerivative(BFieldSkew2,0,h);
+    G4cout << "k2:" << k2 << "k3s:" << k2s << G4endl;
+    (*outputstrengths)["k2"]=k2;
+    (*outputstrengths)["k2s"]=k2s;
+    delete BFieldSkew2;
 
-        G4double k3 =1/Brho * ThirdDerivative(BField,0,h);
-        G4double k3s =1/Brho * ThirdDerivative(BFieldSkew,0,h);
-        G4cout << "k3:" << k3 << "k3s:" << k3s << G4endl;
-        (*outputstrengths)["k3"]=k3;
-        (*outputstrengths)["k3s"]=k3s;
+    BDSFieldMagSkew* BFieldSkew3 = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[2]);
+    G4double k3 =1/Brho * ThirdDerivative(BField,0,h);
+    G4double k3s =1/Brho * ThirdDerivative(BFieldSkew3,0,h);
+    G4cout << "k3:" << k3 << "k3s:" << k3s << G4endl;
+    (*outputstrengths)["k3"]=k3;
+    (*outputstrengths)["k3s"]=k3s;
+    delete BFieldSkew3;
 
-        G4double k4 =1/Brho * FourthDerivative(BField,0,h);
-        G4double k4s =1/Brho * FourthDerivative(BFieldSkew,0,h);
-        G4cout << "k4:" << k4 << "k4s:" << k4s << G4endl;
-        (*outputstrengths)["k4"]=k4;
-        (*outputstrengths)["k4s"]=k4s;
+    BDSFieldMagSkew* BFieldSkew4 = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[3]);
+    G4double k4 =1/Brho * FourthDerivative(BField,0,h);
+    G4double k4s =1/Brho * FourthDerivative(BFieldSkew4,0,h);
+    G4cout << "k4:" << k4 << "k4s:" << k4s << G4endl;
+    (*outputstrengths)["k4"]=k4;
+    (*outputstrengths)["k4s"]=k4s;
+    delete BFieldSkew4;
 
-        G4double k5 =1/Brho * FifthDerivative(BField,0,h);
-        G4double k5s =1/Brho * FifthDerivative(BFieldSkew,0,h);
-        G4cout << "k5:" << k5 << "k5s:" << k5s << G4endl;
-        (*outputstrengths)["k5"]=k5;
-        (*outputstrengths)["k5s"]=k5s;
+    BDSFieldMagSkew* BFieldSkew5 = new BDSFieldMagSkew::BDSFieldMagSkew(BField,rotation[4]);
+    G4double k5 =1/Brho * FifthDerivative(BField,0,h);
+    G4double k5s =1/Brho * FifthDerivative(BFieldSkew5,0,h);
+    G4cout << "k5:" << k5 << "k5s:" << k5s << G4endl;
+    (*outputstrengths)["k5"]=k5;
+    (*outputstrengths)["k5s"]=k5s;
+    delete BFieldSkew5;
 
     return outputstrengths;
 }
