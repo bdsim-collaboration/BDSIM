@@ -32,11 +32,10 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
   file.open(fileName);
 
   // test if file is valid
-  bool validFile = false;
 #ifdef USE_GZSTREAM
-  validFile = file.rdbuf()->is_open();
+  bool validFile = file.rdbuf()->is_open();
 #else
-  validFile = file.is_open();
+  bool validFile = file.is_open();
 #endif
   if (!validFile)
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}

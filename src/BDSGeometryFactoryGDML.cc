@@ -38,9 +38,6 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
 {
   CleanUp();
   
-  std::vector<G4VPhysicalVolume*> physicalVolumes;
-  std::vector<G4LogicalVolume*>   logicalVolumes;
-  
   G4GDMLParser* parser = new G4GDMLParser();
   parser->Read(fileName, /*validate=*/true);
 
