@@ -727,7 +727,7 @@ void BDSMaterials::AddMaterial(G4String aName,
   typename std::list<Type>::iterator dIter;
   for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
       sIter != itsComponents.end();
-      sIter++, dIter++)
+      ++sIter, ++dIter)
   {
 #ifdef BDSDEBUG
     G4cout << "BDSMaterials::AddMaterial - Adding element: " << *sIter << G4endl;
@@ -847,12 +847,12 @@ void BDSMaterials::ListMaterials()
 BDSMaterials::~BDSMaterials()
 {
   std::map<G4String,G4Material*>::iterator mIter;
-  for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
+  for(mIter = materials.begin(); mIter!=materials.end(); ++mIter)
     {delete (*mIter).second;}
   materials.clear();
 
   std::map<G4String,G4Element*>::iterator eIter;
-  for(eIter = elements.begin(); eIter!=elements.end(); eIter++)
+  for(eIter = elements.begin(); eIter!=elements.end(); ++eIter)
     {delete (*eIter).second;}
   elements.clear();
   for(G4MaterialPropertiesTable* table : propertiesTables)

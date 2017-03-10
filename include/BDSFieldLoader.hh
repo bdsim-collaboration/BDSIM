@@ -26,7 +26,7 @@ class BDSInterpolator4D;
  * reflections.
  * 
  * This is a singleton as the field loader owns the loaded data arrays and reuses them
- * wrapping them in interpolators multiple times if needed.  For this reason there should
+ * wrapping them in interpolators multiple times if needed. For this reason there should
  * be only one field loader.
  * 
  * @author Laurie Nevay

@@ -180,6 +180,10 @@ class TestData(dict):
         self['code'] = None  # comparator return code
         self['generalStatus'] = None  # General status, can contain multiple return codes.
 
+        self['params'] = None
+        self['generalStatusList'] = None
+        self['resultsList'] = None
+
     def AddTest(self, test):
         pass
 
@@ -558,9 +562,9 @@ class TestUtilities(object):
         # sort energy when energy is a float, not string.
         for param in compKwargs.keys():
             if len(compKwargs[param]) > 1:
-                paramValues = [_np.float(x) for x in compKwargs[param]]
-                paramValues.sort()
-                compKwargs[param] = [_np.str(x) for x in paramValues]
+                energy = [_np.float(x) for x in compKwargs[param]]
+                energy.sort()
+                compKwargs[param] = [_np.str(x) for x in energy]
         self._testParamValues[componentType].append(compKwargs)
 
         kwargKeys = compKwargs.keys()
