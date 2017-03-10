@@ -13,11 +13,14 @@
 #include "BDSFieldMagInterpolated2D.hh"
 #include "BDSFieldMagSkew.hh"
 
+#include <string>
+#include <vector>
+
 BDSFieldMagGradient::BDSFieldMagGradient(){
 //empty constructor
 }
 
-G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h)
+G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h) const
 {
     G4double B;
     G4ThreeVector position(l, h, 0);
@@ -55,8 +58,29 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
 	(*outputstrengths)["k"+std::to_string(i+1)+"s"] = skewResult *= brhoinv;
 	delete skewField;
       }
+
+
+    G4int centreIndex = 0;
+    std::vector<G4double> d = PrepareValues(BField, 5, 0, h, centreIndex);
+    
+    for (G4int o = 0; o < order; ++o)
+      {(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o, centreIndex, h);}
     
     return outputstrengths;
+}
+
+std::vector<G4double> BDSFieldMagGradient::PrepareValues(BDSFieldMag* field,
+							 G4int        order,
+							 G4double     centreX,
+							 G4double     h,
+							 G4int&       centreIndex) const
+{
+  std::vector<G4double> data;
+  G4int maxN = 2*order + 1;
+  centreIndex = maxN;
+  for (G4int i = -maxN; i < maxN; i++)
+    {data[maxN + i] = GetBy(field, centreX+(G4double)i*h);}
+  return data;
 }
 
 //Indvidual Functions to find derivatives
@@ -90,4 +114,27 @@ G4double BDSFieldMagGradient::FifthDerivative(BDSFieldMag* BField, G4double x, G
 {
     G4double fifthorder=(-FourthDerivative(BField,(x+2*h),h) + 8*FourthDerivative(BField,(x+h),h) - 8*FourthDerivative(BField,(x-h),h) + FourthDerivative(BField,(x-2*h),h))/(12*h);
     return fifthorder;
+}
+
+G4double BDSFieldMagGradient::Derivative(const std::vector<G4double>& data,
+					 const G4int                  order,
+					 const G4int                  startIndex,
+					 const G4double               h) const
+{
+  if (order == 0)
+    {return data.at(startIndex);}
+
+#if 0
+  G4cout << "lalalalala" << G4endl;
+#endif
+
+  
+  G4int subOrder = order-1;
+  G4double result = -Derivative(data, subOrder,startIndex+2,h)
+    + 8*Derivative(data, subOrder,startIndex+1, h)
+    - 8*Derivative(data, subOrder,startIndex-1, h)
+    + Derivative(data, subOrder,startIndex-2, h);
+
+  result /= 12*h;
+  return result;
 }

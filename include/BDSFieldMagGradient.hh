@@ -4,6 +4,8 @@
 
 #include "globals.hh"
 
+#include <vector>
+
 class BDSFieldMag;
 class BDSMagnetStrength;
 class BDSFieldMagSkew;
@@ -25,7 +27,7 @@ public:
   //Find the Magnet strengths of a multipole field to nth order.
   BDSMagnetStrength* CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho=4);
   //Query a point on x axis for By
-  G4double GetBy(BDSFieldMag* BField, G4double l, G4double h=0);
+  G4double GetBy(BDSFieldMag* BField, G4double l, G4double h=0) const;
   //Find d(By)/dx
   G4double FirstDerivative(BDSFieldMag* BField, G4double x, G4double h);
   //Find d^2(By)/dx^2
@@ -40,6 +42,16 @@ public:
   //Find d^5(By)/dx^5
   G4double FifthDerivative(BDSFieldMag* BField, G4double x, G4double h);
 
+  std::vector<G4double> PrepareValues(BDSFieldMag* field,
+				      G4int        order,
+				      G4double     centreX,
+				      G4double     h,
+				      G4int&       centreIndex) const;
+  
+  G4double Derivative(const std::vector<G4double>& data,
+		      const G4int                  order,
+		      const G4int                  startIndex,
+		      const G4double               h) const;
 
 };
 
