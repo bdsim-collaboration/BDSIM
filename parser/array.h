@@ -80,7 +80,7 @@ namespace GMAD
 
     /// Copy symbols into STL string containers
     template<template <typename, typename> class Container>
-      void set_vector(Container<std::string, std::allocator<std::string>>& dst)
+      void set_vector(Container<std::string, std::allocator<std::string>>& dst)const
     {
       for(std::string symbol : symbols){
 	dst.push_back(symbol);
@@ -95,7 +95,7 @@ namespace GMAD
 
     /// Copy data into STL numerical containers
     template<typename T, template <typename, typename> class Container>
-      void set_vector(Container<T, std::allocator<T>>& dst) 
+      void set_vector(Container<T, std::allocator<T>>& dst)const
     {
       for(auto value : data){
 	dst.push_back((T)value);

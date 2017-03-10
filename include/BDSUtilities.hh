@@ -78,7 +78,7 @@ namespace BDS
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
-  void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");
+  void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unknown");
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();

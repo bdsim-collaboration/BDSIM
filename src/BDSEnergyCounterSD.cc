@@ -148,7 +148,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	  if (vol)
 	    {G4cerr << vol->GetName() << G4endl;}
 	  else
-	    {G4cerr << "Unkown" << G4endl;}
+	    {G4cerr << "Unknown" << G4endl;}
 	  sAfter  = -1000; // unphysical default value to allow easy identification in output
 	  sBefore = -1000;
 	}
