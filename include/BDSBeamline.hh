@@ -91,13 +91,13 @@ public:
   inline const BDSBeamlineElement* at(int iElement) const { return beamline.at(iElement);}
 
   /// Return a reference to the first element
-  inline BDSBeamlineElement* GetFirstItem() {return front();} 
+  inline const BDSBeamlineElement* GetFirstItem() const {return front();} 
 
   /// Return a reference to the last element
-  inline BDSBeamlineElement* GetLastItem() {return back();}
+  inline const BDSBeamlineElement* GetLastItem() const {return back();}
 
   /// Get an element by name. Returns null pointer if not found.
-  BDSBeamlineElement* GetElement(G4String name);
+  BDSBeamlineElement* GetElement(G4String name) const;
   
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const {return totalChordLength;}
