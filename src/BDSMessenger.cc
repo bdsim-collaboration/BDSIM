@@ -12,6 +12,8 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSSamplerRegistry.hh"
 
+#include "globals.hh"
+
 BDSMessenger::BDSMessenger()
 {
   bdsDirectory = new G4UIdirectory("/bds/");
@@ -82,15 +84,16 @@ void BDSMessenger::ElementNameSearch(std::string name)
 {
   BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   int j=0;
-  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j) {
-    if( (int)(*i)->GetName().find(name) != -1)
+  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
     {
-      G4cout << (*i)->GetName() << G4endl;
+      if((*i)->GetName().contains(name))
+	{
+	  G4cout << (*i)->GetName() << G4endl;
+	}
     }
-  }
 }
 
-void BDSMessenger::ElementTypeSearch(std::string /*type*/)
+void BDSMessenger::ElementTypeSearch(std::string type)
 {
 
 }
@@ -105,7 +108,7 @@ void BDSMessenger::SamplerList()
   }
 }
 
-std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
+std::string BDSMessenger::BDSSamplerToString(std::string samplerName)
 {
   return std::string();
 }
