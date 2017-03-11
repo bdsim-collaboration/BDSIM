@@ -71,7 +71,10 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
 
   G4double CosT_ov_2=cos(h/rho/2.0);
   G4double dc = std::abs(rho)*(1.-CosT_ov_2);
-  SetDistChord(dc);
+  if (std::isnan(dc))
+    {SetDistChord(rho);}
+  else
+    {SetDistChord(dc);}
 
   // check for paraxial approximation:
   if(localMomUnit.z() > 0.9)
