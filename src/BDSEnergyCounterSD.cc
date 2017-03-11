@@ -133,24 +133,33 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {UpdateParams(theInfo);}
   else
     {
-      // Try again but with the pre step point
+      // Try again but with the pre step point only
       G4ThreeVector unitDirection = (posafter - posbefore).unit();
       BDSStep stepLocal2 = auxNavigator->ConvertToLocal(posbefore, unitDirection);
-      BDSPhysicalVolumeInfo* theInfo2 = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
-      if (theInfo2)
-	{UpdateParams(theInfo2);}
+      theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
+      if (theInfo)
+	{UpdateParams(theInfo);}
       else
 	{
-	  G4cout << posbefore << " " << posafter << G4endl;
-	  // need to exit as theInfo is dereferenced later
-	  G4cerr << "No volume info for ";
-	  auto vol = stepLocal.VolumeForTransform();
-	  if (vol)
-	    {G4cerr << vol->GetName() << G4endl;}
+	  // Try yet again with just a slight shift (100um is bigger than any padding space).
+	  G4ThreeVector shiftedPos = posbefore + 0.1*CLHEP::mm*unitDirection;
+	  stepLocal2 = auxNavigator->ConvertToLocal(shiftedPos, unitDirection);
+	  theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
+	  if (theInfo)
+	    {UpdateParams(theInfo);}
 	  else
-	    {G4cerr << "Unknown" << G4endl;}
-	  sAfter  = -1000; // unphysical default value to allow easy identification in output
-	  sBefore = -1000;
+	    {
+	      G4cerr << "No volume info for ";
+	      auto vol = stepLocal.VolumeForTransform();
+	      if (vol)
+		{G4cerr << vol->GetName() << G4endl;}
+	      else
+		{G4cerr << "Unknown" << G4endl;}
+	      // unphysical default value to allow easy identification in output
+	      sAfter        = -1000;
+	      sBefore       = -1000;
+	      beamlineIndex = -2;
+	    }
 	}
     }
   
