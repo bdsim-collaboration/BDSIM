@@ -281,7 +281,8 @@ void Options::PublishMembers()
   publish("blmLength",&Options::blmLength);
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
-
+  publish("maximumPhotonsPerStep", &Options::maximumPhotonsPerStep);
+  publish("maximumTracksPerEvent", &Options::maximumTracksPerEvent);
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",&Options::sensitiveBLMs);

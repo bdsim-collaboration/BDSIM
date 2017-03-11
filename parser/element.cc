@@ -17,7 +17,7 @@ namespace {
   {
     if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
   
-    for(std::list<Element>::iterator it=l.begin();it!=l.end();it++)
+    for(std::list<Element>::iterator it=l.begin();it!=l.end();++it)
       {
 	(*it).print(ident);
       }
