@@ -25,27 +25,27 @@ public:
   AnalysisUser();
   AnalysisUser(std::string filename);
   AnalysisUser(std::vector<std::string> filenames);
-  void MakeBranches(std::shared_ptr< TTree > outputTree);
-  void SetBranchAddresses(std::shared_ptr< TTree > options, std::shared_ptr< TTree > model, std::shared_ptr< TTree > run, std::shared_ptr< TTree > event);
+  void MakeBranches(TTree* outputTree);
+  void SetBranchAddresses(TTree* options, TTree* model, TTree* run, TTree* event);
   unsigned int GetNumSamplers();
   void GetEntry(int iEntry);
   void Analysis();
   virtual ~AnalysisUser();
 
-  std::shared_ptr< TFile > f;
-  std::shared_ptr< TTree > optionsTree;
-  std::shared_ptr< TTree > modelTree;
-  std::shared_ptr< TTree > runTree;
-  std::shared_ptr< TTree > eventTree;
-  std::shared_ptr< TFile > foutput;
-  std::vector< std::shared_ptr<TTree> > outputTree_Samplers;
+  TFile* f;
+  TTree* optionsTree;
+  TTree* modelTree;
+  TTree* runTree;
+  TTree* eventTree;
+  TFile* foutput;
+  std::vector< TTree* > outputTree_Samplers;
 
-  std::shared_ptr< Options > options;
-  std::shared_ptr< Model   > model;
-  std::shared_ptr< Event   > event;
-  std::shared_ptr< Run     > run;
+  Options *options;
+  Model   *model;
+  Event   *event;
+  Run     *run;
 
-  char vertexmodel[10]{'0','0','0','0','0','0','0','0','0','\0'};
+  char vertexmodel[11]{'0','0','0','0','0','0','0','0','0','0','\0'};
   float vertexx{999};
   float vertexy{999};
   float vertexz{999};
