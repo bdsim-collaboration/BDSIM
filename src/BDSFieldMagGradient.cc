@@ -19,13 +19,12 @@
 BDSFieldMagGradient::BDSFieldMagGradient()
 {;}
 
-G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h) const
+G4double BDSFieldMagGradient::GetBy(BDSFieldMag* field, G4double x, G4double y) const
 {
-    G4double B;
-    G4ThreeVector position(l, h, 0);
-    G4ThreeVector FieldAtX = BField->GetField(position);
-    B =FieldAtX[1]/CLHEP::tesla; //put the B back into units of Tesla
-    return B;
+  G4ThreeVector position(x, y, 0);
+  G4ThreeVector fieldAtXY = field->GetField(position);
+  G4double by = fieldAtXY[1]/CLHEP::tesla; //put the B back into units of Tesla
+  return by;
 }
 
 BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
