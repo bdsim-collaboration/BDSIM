@@ -52,17 +52,17 @@ public:
   
   /// write primary hit
   virtual void WritePrimary(G4double E,
-			    G4double x0,
-			    G4double y0,
-			    G4double z0,
-			    G4double xp,
-			    G4double yp,
-			    G4double zp,
-			    G4double t,
-			    G4double weight,
-			    G4int    PDGType, 
-			    G4int    nEvent, 
-			    G4int    TurnsTaken) = 0;
+                            G4double x0,
+                            G4double y0,
+                            G4double z0,
+                            G4double xp,
+                            G4double yp,
+                            G4double zp,
+                            G4double t,
+                            G4double weight,
+                            G4int    PDGType,
+                            G4int    nEvent,
+                            G4int    TurnsTaken) = 0;
 
   /// Write additional information about event such as timing.
   virtual void WriteEventInfo(const time_t&  startTime,
@@ -83,8 +83,8 @@ public:
   
   /// write the data to file
   virtual void Write(const time_t&  startTime,
-		     const time_t&  stopTime,
-		     const G4float& duration,
+                     const time_t&  stopTime,
+                     const G4float& duration,
                      const std::string& seedStateAtStart) = 0;
 
   /// close file
@@ -92,8 +92,8 @@ public:
 
   /// write, close and open new file
   void Commit(const time_t&  startTime,
-	      const time_t&  stopTime,
-	      const G4float& duration,
+              const time_t&  stopTime,
+              const G4float& duration,
               const std::string& seedStateAtStart);
 
   /// Invalid names for samplers - kept here as this is where the output structures are created.

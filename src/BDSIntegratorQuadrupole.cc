@@ -38,7 +38,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double kappa = eqOfM->FCof()*bPrime/momMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   
-  // Check this will have a perceptible effect and if not do a linear step.
+  // Neutral particle or not strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
@@ -129,6 +129,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   
   // relies on normalised momenta otherwise this will be nan.
   zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
+  if (std::isnan(zp1))
+    {zp1 = zp;} // ensure not nan
   
   G4double dx = x1 - x0;
   G4double dy = y1 - y0;
