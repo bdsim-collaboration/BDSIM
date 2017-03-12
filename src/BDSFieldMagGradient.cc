@@ -30,7 +30,9 @@ G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h)
 }
 
 //One Method to call them all, and in the main thread return them.
-BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho)
+BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
+							    G4int        order,
+							    G4double     Brho)
 {
     G4cout << "running field gradient calculations" << G4endl;
     BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
@@ -126,8 +128,8 @@ G4double BDSFieldMagGradient::Derivative(const std::vector<G4double>& data,
   if (order == 0)
     {return data.at(startIndex);}
 
-#if 0
-  G4cout << "lalalalala" << G4endl;
+#if 1
+  G4cout << "derivative, order: " << order << G4endl;
 #endif
 
   
