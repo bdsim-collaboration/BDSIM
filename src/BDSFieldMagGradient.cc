@@ -16,9 +16,8 @@
 #include <string>
 #include <vector>
 
-BDSFieldMagGradient::BDSFieldMagGradient(){
-//empty constructor
-}
+BDSFieldMagGradient::BDSFieldMagGradient()
+{;}
 
 G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h) const
 {
@@ -29,7 +28,6 @@ G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h)
     return B;
 }
 
-//One Method to call them all, and in the main thread return them.
 BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
 							    G4int        order,
 							    G4double     Brho)
@@ -88,8 +86,6 @@ std::vector<G4double> BDSFieldMagGradient::PrepareValues(BDSFieldMag* field,
   return data;
 }
 
-//Indvidual Functions to find derivatives
-
 G4double BDSFieldMagGradient::FirstDerivative(BDSFieldMag* BField, G4double x, G4double h)
 {
     G4double firstorder=(-GetBy(BField,(x+2*h)) + 8*GetBy(BField,(x+h)) - 8*GetBy(BField,(x-h)) + GetBy(BField,(x-2*h)))/(12*(h/CLHEP::meter));
@@ -114,7 +110,6 @@ G4double BDSFieldMagGradient::FourthDerivative(BDSFieldMag* BField, G4double x, 
     return fourthorder;
 }
 
-//last order
 G4double BDSFieldMagGradient::FifthDerivative(BDSFieldMag* BField, G4double x, G4double h)
 {
     G4double fifthorder=(-FourthDerivative(BField,(x+2*h),h) + 8*FourthDerivative(BField,(x+h),h) - 8*FourthDerivative(BField,(x-h),h) + FourthDerivative(BField,(x-2*h),h))/(12*h);
