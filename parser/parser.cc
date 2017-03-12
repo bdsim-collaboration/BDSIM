@@ -281,7 +281,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
       is_expanded = true;
       // start at second element
       std::list<Element>::iterator it = ++beamline_list.begin();
-      for(;it!=beamline_list.end();it++)
+      for(;it!=beamline_list.end();++it)
 	{
 	  Element& element = *it; // alias
 	  const ElementType& type = element.type;
@@ -307,7 +307,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	      std::list<Element> tmpList;
 	      tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
 	      for(std::list<Element>::iterator itLineInverter = tmpList.begin();
-		  itLineInverter != tmpList.end(); itLineInverter++){
+		  itLineInverter != tmpList.end(); ++itLineInverter){
 		if((*itLineInverter).type == ElementType::_LINE)
 		  (*itLineInverter).type = ElementType::_REV_LINE;
 		else if ((*itLineInverter).type == ElementType::_REV_LINE)
@@ -383,7 +383,7 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
   // skip first element and add one at the end
   if (count==-2)
     {
-      for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
+      for (auto it=beamline_list.begin(); it!=beamline_list.end(); ++it) {
 	// skip LINEs
 	if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	  {continue;}

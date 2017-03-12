@@ -26,7 +26,8 @@ class BDSIntegratorQuadrupole: public BDSIntegratorMag
 public:
   BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 			  G4double                 brho,
-			  G4Mag_EqRhs*             eqOfMIn);
+			  G4Mag_EqRhs*             eqOfMIn,
+			  G4double minimumRadiusOfCurvatureIn);
   
   virtual ~BDSIntegratorQuadrupole(){;}
 
@@ -45,6 +46,11 @@ private:
   
   /// B Field Gradient
   G4double bPrime;
+
+  /// Minimum radius of curvature in field. Below this, the backup integrator is used.
+  /// Rarely, a particle may meet paraxial requirements but experience near spiralling
+  /// in which case the thick matrix won't produce accurate or numerically stable results.
+  G4double minimumRadiusOfCurvature;
 };
 
 #endif

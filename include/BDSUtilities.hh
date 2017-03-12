@@ -42,11 +42,6 @@ namespace BDS
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
 							G4double angleOutIn);
 
-  /// Calculate the radial distance that the two planes inputface and outputface intersect one another
-  G4double CalculateFacesOverlapRadius(G4double angleInIn,
-				       G4double angleOutIn,
-				       G4double lengthIn);
-
   /// Ensure a variable passed by reference is capped within lowerLimit and upperLimit.
   /// If it's outside these it is defaulted to those limit values.
   void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
@@ -83,7 +78,7 @@ namespace BDS
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
-  void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");
+  void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unknown");
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();

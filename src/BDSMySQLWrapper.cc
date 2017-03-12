@@ -91,7 +91,6 @@ void BDSMySQLWrapper::TokenizeLine()
 
 bool BDSMySQLWrapper::NextToken()
 {
-  std::string line;
   ++_tokens_iter;
   if(_startOfFile)
     {--_tokens_iter;}
