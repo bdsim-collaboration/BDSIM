@@ -75,9 +75,11 @@ std::vector<G4double> BDSFieldMagGradient::PrepareValues(BDSFieldMag* field,
 							 G4double     h,
 							 G4int&       centreIndex) const
 {
-  std::vector<G4double> data;
+
   G4int maxN = 2*order + 1;
-  centreIndex = maxN;
+  centreIndex = maxN; // write out maxN to centre index
+  std::vector<G4double> data(2*maxN+1); // must initialise vector as not using push_back
+  
   for (G4int i = -maxN; i < maxN; i++)
     {data[maxN + i] = GetBy(field, centreX+(G4double)i*h);}
   return data;
