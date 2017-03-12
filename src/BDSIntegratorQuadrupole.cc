@@ -14,8 +14,10 @@
 
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
-						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorMag(eqOfMIn, 6)
+						 G4Mag_EqRhs*             eqOfMIn,
+						 G4double minimumRadiusOfCurvatureIn):
+  BDSIntegratorMag(eqOfMIn, 6),
+  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   bPrime = brho * (*strength)["k1"] / CLHEP::m2;
@@ -46,34 +48,28 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  G4ThreeVector pos         = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector momUnit     = mom.unit();
-  BDSStep       localPosMom = ConvertToLocal(pos, momUnit, h, false);
-  G4ThreeVector localPos    = localPosMom.PreStepPoint();
-  G4ThreeVector localMom    = localPosMom.PostStepPoint();
+  G4ThreeVector pos          = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector momUnit      = mom.unit();
+  BDSStep       localPosMom  = ConvertToLocal(pos, momUnit, h, false);
+  G4ThreeVector localPos     = localPosMom.PreStepPoint();
+  G4ThreeVector localMomUnit = localPosMom.PostStepPoint();
 
-  if (localMom.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
+  G4double xp  = localMomUnit.x();
+  G4double yp  = localMomUnit.y();
+  G4double zp  = localMomUnit.z();
+
+  // only proceed with thick matrix if particle is paraxial
+  // judged by forward momentum > 0.9 and transverse < 0.01
+  if (zp < 0.9 || xp > 0.01 || yp > 0.01)
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());
       return;
     }
   
-  G4double h2  = h*h; // safer than pow
   G4double x0  = localPos.x();
   G4double y0  = localPos.y();
   G4double z0  = localPos.z();
-  G4double xp  = localMom.x();
-  G4double yp  = localMom.y();
-  G4double zp  = localMom.z();
-    
-  // initialise output varibles with input position as default
-  G4double x1  = x0;
-  G4double y1  = y0;
-  G4double z1  = z0 + h; // new z position will be along z by step length h
-  G4double xp1 = xp;
-  G4double yp1 = yp;
-  G4double zp1 = zp;
 
   // local r'' (for curvature)
   G4ThreeVector localA;
@@ -82,14 +78,31 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localA.setZ( x0*xp - y0*yp);
   localA *= kappa;
   // determine effective curvature 
-  G4double localAMag = localA.mag();
-  
-  // Don't need 'else' (and associated indentation) as returns above
+  G4double localAMag         = localA.mag();
   G4double radiusOfCurvature = 1./localAMag;
+
+  if (radiusOfCurvature < minimumRadiusOfCurvature)
+    {
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
+      return;
+    }
+
+  G4double h2  = h*h; // safer than pow
+  // initialise output varibles with input position as default
+  G4double x1  = x0;
+  G4double y1  = y0;
+  G4double z1  = z0 + h; // new z position will be along z by step length h
+  G4double xp1 = xp;
+  G4double yp1 = yp;
+  G4double zp1 = zp;
       
   // chord distance (simple quadratic approx)
   G4double dc = h2/(8*radiusOfCurvature);
-  SetDistChord(dc);
+  if (std::isnan(dc))
+    {SetDistChord(0);}
+  else
+    {SetDistChord(dc);}
   
   G4double rootK  = std::sqrt(std::abs(kappa*zp)); // direction independent
   G4double rootKh = rootK*h*zp;
@@ -138,17 +151,19 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   // Linear chord length
   G4double dR2 = dx*dx + dy*dy;
   G4double dz = std::sqrt(h2 * (1. - h2 / (12 * radiusOfCurvature * radiusOfCurvature)) - dR2);
+  if (std::isnan(dz))
+    {dz = h;}
   
   z1 = z0 + dz;
   
   localPos.setX(x1);
   localPos.setY(y1);
   localPos.setZ(z1);
-  localMom.setX(xp1);
-  localMom.setY(yp1);
-  localMom.setZ(zp1);
+  localMomUnit.setX(xp1);
+  localMomUnit.setY(yp1);
+  localMomUnit.setZ(zp1);
   
-  ConvertToGlobal(localPos,localMom,momMag,yOut);
+  ConvertToGlobal(localPos,localMomUnit,momMag,yOut);
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
 }
