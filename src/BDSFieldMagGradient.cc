@@ -64,9 +64,10 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
 
     G4int centreIndex = 0;
     std::vector<G4double> d = PrepareValues(BField, 5, 0, h, centreIndex);
-    
+
+    // o+1 as we start from k1 upwards - ie, 0th order isn't calculated
     for (G4int o = 0; o < order; ++o)
-      {(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o, centreIndex, h);}
+      {(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o+1, centreIndex, h);}
     
     return outputstrengths;
 }
