@@ -114,7 +114,7 @@ void Symtab::Print()
 
   case Symtab::symtabtype::ARRAY:
     std::cout << "{";
-    for(it=array.begin();it!=array.end();it++)
+    for(it=array.begin();it!=array.end();++it)
       {std::cout << " " << (*it) << " ";}
     std::cout << "}" << std::endl;
     break;

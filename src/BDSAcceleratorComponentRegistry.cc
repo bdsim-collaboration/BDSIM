@@ -118,7 +118,7 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
     {return registry.at(name);}
   catch (const std::out_of_range& /*oor*/)
     {
-      G4cerr << __METHOD_NAME__ << "unkown component named: \"" << name << "\"" << G4endl;
+      G4cerr << __METHOD_NAME__ << "unknown component named: \"" << name << "\"" << G4endl;
       return nullptr;
     }
 }  

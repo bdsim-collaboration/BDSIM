@@ -114,29 +114,53 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   x = eDepPosLocal.x();
   y = eDepPosLocal.y();
   z = eDepPosLocal.z();
-
+  
   // get the s coordinate (central s + local z)
   // volume is from curvilinear coordinate parallel geometry
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
   G4int beamlineIndex = -1;
-  if (theInfo)
+  
+  // declare lambda for updating parameters if info found (avoid duplication of code)
+  auto UpdateParams = [&](BDSPhysicalVolumeInfo* theInfo)
     {
       G4double sCentre = theInfo->GetSPos();
       sAfter           = sCentre + posafterlocal.z();
       sBefore          = sCentre + posbeforelocal.z();
       beamlineIndex    = theInfo->GetBeamlineIndex();
-    }
+    };
+  
+  if (theInfo)
+    {UpdateParams(theInfo);}
   else
     {
-      // need to exit as theInfo is dereferenced later
-      G4cerr << "No volume info for ";
-      auto vol = stepLocal.VolumeForTransform();
-      if (vol)
-	{G4cerr << vol->GetName() << G4endl;}
+      // Try again but with the pre step point only
+      G4ThreeVector unitDirection = (posafter - posbefore).unit();
+      BDSStep stepLocal2 = auxNavigator->ConvertToLocal(posbefore, unitDirection);
+      theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
+      if (theInfo)
+	{UpdateParams(theInfo);}
       else
-	{G4cerr << "Unkown" << G4endl;}
-      sAfter  = -1000; // unphysical default value to allow easy identification in output
-      sBefore = -1000;
+	{
+	  // Try yet again with just a slight shift (100um is bigger than any padding space).
+	  G4ThreeVector shiftedPos = posbefore + 0.1*CLHEP::mm*unitDirection;
+	  stepLocal2 = auxNavigator->ConvertToLocal(shiftedPos, unitDirection);
+	  theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal2.VolumeForTransform());
+	  if (theInfo)
+	    {UpdateParams(theInfo);}
+	  else
+	    {
+	      G4cerr << "No volume info for ";
+	      auto vol = stepLocal.VolumeForTransform();
+	      if (vol)
+		{G4cerr << vol->GetName() << G4endl;}
+	      else
+		{G4cerr << "Unknown" << G4endl;}
+	      // unphysical default value to allow easy identification in output
+	      sAfter        = -1000;
+	      sBefore       = -1000;
+	      beamlineIndex = -2;
+	    }
+	}
     }
   
   G4double sHit = sBefore + randDist*(sAfter - sBefore);

@@ -210,18 +210,20 @@ class Globals():
                                                     ('STUCK_PARTICLE', 5),
                                                     ('TRACKING_WARNING', 6),  # not sure if needed...
                                                     ('TIMEOUT', 7),
-                                                    ('NO_DATA', 8)
+                                                    ('NO_DATA', 8),
+                                                    ('FATAL_EXCEPTION', 9),
                                                     ])
 
         self.cmap = colors.ListedColormap(['b',
                                            (1, 1, 0),  # actual yellow
                                            'y',
-                                           'r',
+                                           (0.597, 0, 0),  # maroon
                                            'g',
                                            'm',
                                            'c',
                                            'k',
-                                           'w'])
+                                           'w',
+                                           'r'])
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
