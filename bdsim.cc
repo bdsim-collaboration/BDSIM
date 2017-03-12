@@ -162,17 +162,7 @@ int main(int argc,char** argv)
   G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
   BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
   physList->RegisterPhysics(sampWorld);
-  // Biasing - TBC should only bias required particles to be biased
-  G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
-  physBias->Bias("e-");
-  physBias->Bias("e+");
-  physBias->Bias("gamma");
-  physBias->Bias("proton");
-  physBias->Bias("mu-");
-  physBias->Bias("mu+");
-  physBias->Bias("pi-");
-  physBias->Bias("pi+");
-  physList->RegisterPhysics(physBias);
+  physList->BuildAndAttachBiasWrapper(BDSParser::Instance()->GetBiasing());
   runManager->SetUserInitialization(physList);
   
   /// Print the geometry tolerance
