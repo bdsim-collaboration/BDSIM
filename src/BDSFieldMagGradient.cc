@@ -16,21 +16,20 @@
 #include <string>
 #include <vector>
 
-BDSFieldMagGradient::BDSFieldMagGradient(){
-//empty constructor
-}
+BDSFieldMagGradient::BDSFieldMagGradient()
+{;}
 
-G4double BDSFieldMagGradient::GetBy(BDSFieldMag* BField, G4double l, G4double h) const
+G4double BDSFieldMagGradient::GetBy(BDSFieldMag* field, G4double x, G4double y) const
 {
-    G4double B;
-    G4ThreeVector position(l, h, 0);
-    G4ThreeVector FieldAtX = BField->GetField(position);
-    B =FieldAtX[1]/CLHEP::tesla; //put the B back into units of Tesla
-    return B;
+  G4ThreeVector position(x, y, 0);
+  G4ThreeVector fieldAtXY = field->GetField(position);
+  G4double by = fieldAtXY[1]/CLHEP::tesla; //put the B back into units of Tesla
+  return by;
 }
 
-//One Method to call them all, and in the main thread return them.
-BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho)
+BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
+							    G4int        order,
+							    G4double     Brho)
 {
     G4cout << "running field gradient calculations" << G4endl;
     BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
@@ -62,9 +61,10 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
 
     G4int centreIndex = 0;
     std::vector<G4double> d = PrepareValues(BField, 5, 0, h, centreIndex);
-    
+
+    // o+1 as we start from k1 upwards - ie, 0th order isn't calculated
     for (G4int o = 0; o < order; ++o)
-      {(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o, centreIndex, h);}
+      {(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o+1, centreIndex, h);}
     
     return outputstrengths;
 }
@@ -75,15 +75,15 @@ std::vector<G4double> BDSFieldMagGradient::PrepareValues(BDSFieldMag* field,
 							 G4double     h,
 							 G4int&       centreIndex) const
 {
-  std::vector<G4double> data;
+
   G4int maxN = 2*order + 1;
-  centreIndex = maxN;
+  centreIndex = maxN; // write out maxN to centre index
+  std::vector<G4double> data(2*maxN+1); // must initialise vector as not using push_back
+  
   for (G4int i = -maxN; i < maxN; i++)
     {data[maxN + i] = GetBy(field, centreX+(G4double)i*h);}
   return data;
 }
-
-//Indvidual Functions to find derivatives
 
 G4double BDSFieldMagGradient::FirstDerivative(BDSFieldMag* BField, G4double x, G4double h)
 {
@@ -109,7 +109,6 @@ G4double BDSFieldMagGradient::FourthDerivative(BDSFieldMag* BField, G4double x, 
     return fourthorder;
 }
 
-//last order
 G4double BDSFieldMagGradient::FifthDerivative(BDSFieldMag* BField, G4double x, G4double h)
 {
     G4double fifthorder=(-FourthDerivative(BField,(x+2*h),h) + 8*FourthDerivative(BField,(x+h),h) - 8*FourthDerivative(BField,(x-h),h) + FourthDerivative(BField,(x-2*h),h))/(12*h);
@@ -124,8 +123,8 @@ G4double BDSFieldMagGradient::Derivative(const std::vector<G4double>& data,
   if (order == 0)
     {return data.at(startIndex);}
 
-#if 0
-  G4cout << "lalalalala" << G4endl;
+#if 1
+  G4cout << "derivative, order: " << order << G4endl;
 #endif
 
   

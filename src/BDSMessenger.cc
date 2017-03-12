@@ -93,7 +93,7 @@ void BDSMessenger::ElementNameSearch(std::string name)
   }
 }
 
-void BDSMessenger::ElementTypeSearch(std::string type)
+void BDSMessenger::ElementTypeSearch(std::string /*type*/)
 {
 
 }
@@ -108,7 +108,7 @@ void BDSMessenger::SamplerList()
   }
 }
 
-std::string BDSMessenger::BDSSamplerToString(std::string samplerName)
+std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
 {
   return std::string();
 }
