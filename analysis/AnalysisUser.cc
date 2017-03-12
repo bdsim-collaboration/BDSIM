@@ -30,7 +30,7 @@ AnalysisUser::AnalysisUser(std::string filename)
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
 }
 
-AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
+AnalysisUser::AnalysisUser(std::vector<std::string> /*filenames*/)
 {
 
 }
@@ -80,7 +80,7 @@ void AnalysisUser::Analysis()
 
     for(int j = 0; j<this->event->samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
     {
-      int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler info
+      int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler particle
       if(trackID != 1) {                                            // does not work for the primary
         BDSOutputROOTEventTrajectoryPoint point =
                 event->trajectory->primaryProcessPoint(trackID);    // get initial process point

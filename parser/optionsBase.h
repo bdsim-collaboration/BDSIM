@@ -230,6 +230,8 @@ namespace GMAD
 
     ///@{Cross section biasing parameters
     double   scintYieldFactor;
+    int      maximumPhotonsPerStep;
+    long     maximumTracksPerEvent;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
     double   defaultRangeCut;

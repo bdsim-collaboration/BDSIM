@@ -76,6 +76,15 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
   bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
 
+  /// Write initial particle position and momentum
+  if (writeASCIISeedState) {
+    std::ofstream ofstr("output.primary.txt");
+    ofstr << x0 << " " << y0 << " " << z0 << " "
+          << xp << " " << yp << " " << zp << " "
+          << t << " " << E << " " << weight << std::endl;
+    ofstr.close();
+  }
+
   /// Check the coordinates are valid
   if (!worldExtent.Encompasses(x0,y0,z0))
     {

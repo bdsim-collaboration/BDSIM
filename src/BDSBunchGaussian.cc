@@ -9,15 +9,14 @@
 
 BDSBunchGaussian::BDSBunchGaussian(): 
   BDSBunchInterface(),
-  sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0)
+  sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0),
+  meansGM(CLHEP::HepVector(6)),
+  sigmaGM(CLHEP::HepSymMatrix(6)),
+  GaussMultiGen(nullptr)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
-  meansGM = CLHEP::HepVector(6);
-  sigmaGM = CLHEP::HepSymMatrix(6);
-  GaussMultiGen = nullptr;
 }
 
 BDSBunchGaussian::~BDSBunchGaussian()
