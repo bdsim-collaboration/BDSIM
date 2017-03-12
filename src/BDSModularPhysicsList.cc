@@ -7,6 +7,7 @@
 #include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
+#include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
 
 // physics processes / builders
