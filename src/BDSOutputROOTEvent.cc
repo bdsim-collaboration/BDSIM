@@ -29,6 +29,7 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
+  samplerTrees.push_back(primary);
 
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   G4bool storeLinks  = g->StoreELossLinks();
@@ -45,6 +46,19 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 
   runHistos = new BDSOutputROOTEventHistograms();
   runInfo   = new BDSOutputROOTEventRunInfo();
+
+
+  // build sampler structures
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+  {
+    // create sampler structure
+#ifndef __ROOTDOUBLE__
+    BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+    BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+    samplerTrees.push_back(res);
+  }
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -181,7 +195,6 @@ void BDSOutputROOTEvent::Initialise()
   if (writePrimaries)
     {
       theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
-      samplerTrees.push_back(primary);
     }
 
   // Build loss and hit structures
@@ -198,20 +211,16 @@ void BDSOutputROOTEvent::Initialise()
   theEventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
 
-  // build sampler structures 
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+  // build sampler structures
+  auto samplerNames = BDSSamplerRegistry::Instance()->GetUniqueNames();
+  for(size_t i =1; i<samplerTrees.size(); ++i)
     {
-      // create sampler structure
-#ifndef __ROOTDOUBLE__
-      BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
-#else 
-      BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
-#endif
-      samplerTrees.push_back(res);
+      auto res         = samplerTrees.at(i);
+      auto samplerName = samplerNames.at(i-1);
       // set tree branches
-      theEventOutputTree->Branch((samplerName+".").c_str(), 
-				"BDSOutputROOTEventSampler",
-				res,32000,1);
+      theEventOutputTree->Branch((samplerName+".").c_str(),
+                                 "BDSOutputROOTEventSampler",
+                                 res,32000,1);
     }
 }
   
@@ -226,7 +235,7 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
     {
       G4int samplerID = (*hc)[i]->GetSamplerID();
       if (writePrimaries)
-	{samplerID += 1;} // offset index by one      
+        {samplerID += 1;} // offset index by one
       samplerTrees[samplerID]->Fill((*hc)[i]);
     }
 }
@@ -250,11 +259,11 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     runHistos->Fill1DHistogram(5, sHit, eW);
     evtHistos->Fill1DHistogram(5, sHit, eW);
     if (useScoringMap)
-      {
-	G4double x = hit->Getx()/CLHEP::m;
-	G4double y = hit->Gety()/CLHEP::m;
-	evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
-      }
+    {
+      G4double x = hit->Getx()/CLHEP::m;
+      G4double y = hit->Gety()/CLHEP::m;
+      evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+    }
   }
 }
 
@@ -294,10 +303,10 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
 #endif
   G4int n_hit = hc->entries();
   for(G4int i=0;i<n_hit;i++)
-    {
-      BDSEnergyCounterHit *hit = (*hc)[i];
-      tHit->Fill(hit);
-    }
+  {
+    BDSEnergyCounterHit *hit = (*hc)[i];
+    tHit->Fill(hit);
+  }
 }
 
 /// write a trajectory 
@@ -311,17 +320,17 @@ void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 
 /// write primary hit
 void BDSOutputROOTEvent::WritePrimary(G4double E,
-				      G4double x0,
-				      G4double y0,
-				      G4double z0,
-				      G4double xp,
-				      G4double yp,
-				      G4double zp,
-				      G4double t,
-				      G4double weight,
-				      G4int    PDGType,
-				      G4int    nEvent,
-				      G4int    TurnsTaken) 
+                                      G4double x0,
+                                      G4double y0,
+                                      G4double z0,
+                                      G4double xp,
+                                      G4double yp,
+                                      G4double zp,
+                                      G4double t,
+                                      G4double weight,
+                                      G4int    PDGType,
+                                      G4int    nEvent,
+                                      G4int    TurnsTaken)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -364,8 +373,8 @@ void BDSOutputROOTEvent::WriteEventInfo(const BDSOutputROOTEventInfo* info)
 }
 
 void BDSOutputROOTEvent::Write(const time_t&  startTime,
-			       const time_t&  stopTime,
-			       const G4float& duration,
+                               const time_t&  stopTime,
+                               const G4float& duration,
                                const std::string& seedStateAtStart)
 {
 #ifdef BDSDEBUG
@@ -389,13 +398,13 @@ void BDSOutputROOTEvent::Close()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   if(theRootOutputFile && theRootOutputFile->IsOpen())
-    {
-      theRootOutputFile->cd();
-      theRootOutputFile->Write(0,TObject::kOverwrite);
-      theRootOutputFile->Close();
-      delete theRootOutputFile;
-      theRootOutputFile = nullptr;
-    }
+  {
+    theRootOutputFile->cd();
+    theRootOutputFile->Write(0,TObject::kOverwrite);
+    theRootOutputFile->Close();
+    delete theRootOutputFile;
+    theRootOutputFile = nullptr;
+  }
 }
 
 void BDSOutputROOTEvent::Flush()
@@ -403,7 +412,7 @@ void BDSOutputROOTEvent::Flush()
   theRootOutputFile->cd();
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
-    {(*i)->Flush();}  
+    {(*i)->Flush();}
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();

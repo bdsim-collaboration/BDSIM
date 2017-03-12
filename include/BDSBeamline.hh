@@ -87,6 +87,9 @@ public:
   /// use these to update the world extent of this beam line.
   void UpdateExtents(BDSBeamlineElement* element);
 
+  /// Return a reference to the element at i
+  inline const BDSBeamlineElement* at(int iElement) const { return beamline.at(iElement);}
+
   /// Return a reference to the first element
   inline const BDSBeamlineElement* GetFirstItem() const {return front();} 
 
