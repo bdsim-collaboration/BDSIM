@@ -52,7 +52,13 @@ public:
 				      G4double     centreX,
 				      G4double     h,
 				      G4int&       centreIndex) const;
-  
+
+std::vector<std::vector<G4double>> PrepareSkewValues(BDSFieldMag* field,
+                                                     G4int        order,
+                                                     G4double     centreX,
+                                                     G4double     h,
+                                                     G4int&       centreIndex) const;
+
   G4double Derivative(const std::vector<G4double>& data,
 		      const G4int                  order,
 		      const G4int                  startIndex,
