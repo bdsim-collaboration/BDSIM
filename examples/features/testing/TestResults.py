@@ -369,54 +369,77 @@ class Analysis(ResultsUtilities):
             testResults = self.Results[componentType]
 
             for index, result in enumerate(testResults):
-                comparatorLog = 'FailedTests/' + result['compLogFile']
-                coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
+                # comparatorLog = 'FailedTests/' + result['compLogFile']
+                coords = self._getPhaseSpaceComparatorData(result, 'FailedTests/' + result['compLogFile'])
                 self.Results[componentType][index]['resultsList'] = coords
         else:
             GlobalData._CheckComponent(componentType)  # raises value error
 
         self.Results[componentType].reverse()
+        setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
+        setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
+        self._groupDipoleResults(componentType)
 
     def _groupDipoleResults(self, componentType=''):
-        params = self.ResultsDict[componentType]['params']
-        uniqueValues = self.ResultsDict[componentType]['uniqueValues']
-        generalStatus = self.ResultsDict[componentType]['generalStatusList']
-        resultsList = self.ResultsDict[componentType]['resultsList']
-        results = Results(componentType)
+        if (componentType != 'rbend') and (componentType != 'sbend'):
+            raise ValueError("Component must be an rbend or sbend.")
+        params = self.Results[componentType].GetParams()
+        uniqueValues = self.Results[componentType].uniqueValues
+        generalStatus = self.Results[componentType].GetGeneralStatus()
+        resultsList = self.Results[componentType].GetResults()
+        self._dipoleResults = Results(componentType)
 
         for energy in uniqueValues['energy']:
             for length in uniqueValues['length']:
                 for angle in uniqueValues['angle']:
-                    tempGenStatus = []  # temp gen status for all dipoles with these three params
-                    tempCompResults = []  # temp comparator results
-                    for testNum, testParams in params:
+                    dipRes = {}
+                    dipRes['testParams'] = collections.OrderedDict()
+                    dipRes['testParams']['energy'] = energy
+                    dipRes['testParams']['length'] = length
+                    dipRes['testParams']['angle'] = angle
+                    dipRes['polefaceParams'] = []
+
+                    _genStat = []
+                    _resList = []
+                    for testNum in range(self.Results[componentType]._numEntries):
+                        testParams = params[testNum]
                         if (testParams['energy'] == energy) and (testParams['length'] == length) \
                                 and (testParams['angle'] == angle):
+                            dipRes['particle'] = self.Results[componentType][testNum]['particle']
+
                             paramSet = collections.OrderedDict()
-                            paramSet['energy'] = energy
-                            paramSet['length'] = length
-                            paramSet['angle'] = angle
-                            if not results['params'].__contains__(paramSet):
-                                results['params'].append(paramSet)
-                        tempGenStatus.append(generalStatus[testNum])
-                        tempCompResults.append(resultsList[testNum])
-                    genStatus = []
-                    for stat in tempGenStatus:
-                        if stat[0] == 1:
-                            genStatus.append(1)
-                        elif stat[0] == 3:
-                            genStatus.append(3)
-                        otherCodes = [4, 5, 6, 7, 8, 9]
-                        for code in otherCodes:
-                            if (stat.__contains__(code)) and (not genStatus.__contains__(code)):
-                                genStatus.append(code)
-                    results['generalStatus'].append(genStatus)
-                    tempCompArray = _np.array(tempCompResults)
-                    numCol = tempCompArray.shape[1]
-                    for i in range(numCol):
-                        allRes = tempCompArray[:,i]
-                        if i.__contains__(8):
-                            pass
+                            paramSet['e1'] = testParams['e1']
+                            paramSet['e2'] = testParams['e2']
+                            paramSet['fint'] = testParams['fint']
+                            paramSet['fintx'] = testParams['fintx']
+                            paramSet['hgap'] = testParams['hgap']
+
+                            dipRes['polefaceParams'].append(paramSet)
+                            _genStat.append(generalStatus[testNum])
+                            _resList.append(resultsList[testNum])
+                            #dipRes['testData'].append(self.Results[componentType][testNum])
+                    genStat = []
+                    for codes in _genStat:
+                        if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
+                            genStat.append(codes[0])
+                        elif len(codes) > 1:
+                            for code in codes:
+                                if not genStat.__contains__(code):
+                                    genStat.append(code)
+                    resList = [[], [], [], [], [], [], []]
+                    coords = _np.array(_resList)
+                    for index in range(coords.shape[1]):
+                        values = coords[:, index]
+                        templist = []
+                        for i in values:
+                            if not templist.__contains__(i):
+                                templist.append(i)
+                        resList[index] = templist
+
+                    dipRes['generalStatus'] = genStat
+                    dipRes['resultsList'] = resList
+
+                    self._dipoleResults.append(dipRes)
 
     def PlotResults(self, componentType=''):
         plotter = Plotting()
