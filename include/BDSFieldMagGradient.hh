@@ -32,21 +32,6 @@ public:
   /// Query a point on x axis (by default) for By.
   G4double GetBy(BDSFieldMag* BField, G4double x, G4double y=0) const;
 
-  /// Find d(By)/dx
-  G4double FirstDerivative(BDSFieldMag* BField, G4double x, G4double h);
-  
-  /// Find d^2(By)/dx^2
-  G4double SecondDerivative(BDSFieldMag* BField, G4double x, G4double h);
-
-  /// Find d^3(By)/dx^3
-  G4double ThirdDerivative(BDSFieldMag* BField, G4double x, G4double h);
-  
-  /// Find d^4(By)/dx^4
-  G4double FourthDerivative(BDSFieldMag* BField, G4double x, G4double h);
-
-  /// Find d^5(By)/dx^5
-  G4double FifthDerivative(BDSFieldMag* BField, G4double x, G4double h);
-
   std::vector<G4double> PrepareValues(BDSFieldMag* field,
 				      G4int        order,
 				      G4double     centreX,
