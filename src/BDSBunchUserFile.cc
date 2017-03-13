@@ -220,8 +220,13 @@ void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt)
 {
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
-  SetBunchFormat((G4String)opt.distribFileFormat); 
-  SetNLinesIgnore(opt.nlinesIgnore);
+  SetBunchFormat((G4String)opt.distribFileFormat);
+  // if we're recreating from a file, still load external file but
+  // advance to the event number
+  if (opt.recreate)
+    {SetNLinesIgnore(opt.nlinesIgnore + opt.startFromEvent);}
+  else
+    {SetNLinesIgnore(opt.nlinesIgnore);}
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();

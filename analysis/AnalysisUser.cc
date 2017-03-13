@@ -30,7 +30,7 @@ AnalysisUser::AnalysisUser(std::string filename)
   this->SetBranchAddresses(optionsTree,modelTree,runTree,eventTree);
 }
 
-AnalysisUser::AnalysisUser(std::vector<std::string> filenames)
+AnalysisUser::AnalysisUser(std::vector<std::string> /*filenames*/)
 {
 
 }

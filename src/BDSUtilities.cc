@@ -278,9 +278,7 @@ G4int BDS::GetParameterValueInt(G4String spec, G4String name)
 
 G4String BDS::GetParameterValueString(G4String spec, G4String name)
 {
-  G4String value = "";
-
-  std::string delimiters = "&";
+  G4String value;
   std::string param = name + "=";
 
   int pos = spec.find(param);
@@ -294,9 +292,7 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
       
       value = spec.substr(pos + param.length(), llen);
   }
-
   return value;
-
 }
 
 G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)

@@ -396,7 +396,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::dipole2:
       integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:
-      integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::sextupole:
       integrator = new BDSIntegratorSextupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::octupole:

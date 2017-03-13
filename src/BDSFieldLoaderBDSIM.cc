@@ -94,11 +94,10 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   file.open(fileName);
 
   // test if file is valid
-  bool validFile = false;
 #ifdef USE_GZSTREAM
-  validFile = file.rdbuf()->is_open();
+  bool validFile = file.rdbuf()->is_open();
 #else
-  validFile = file.is_open();
+  bool validFile = file.is_open();
 #endif
   if (!validFile)
     {

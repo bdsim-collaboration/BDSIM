@@ -1,10 +1,10 @@
-#include <include/BDSBeamPipeInfo.hh>
 #include "BDSOutputROOTEventModel.hh"
 
 #ifndef __ROOTBUILD__
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSSamplerRegistry.hh"
 #endif
 

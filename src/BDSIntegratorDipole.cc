@@ -48,6 +48,13 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
+  if (rho < minimumRadiusOfCurvature)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+
   // global to local
   // false = use the mass world for the transform
   BDSStep       localPosMom         = ConvertToLocal(pos, mom, h, false);
@@ -64,7 +71,10 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
 
   G4double CosT_ov_2=cos(h/rho/2.0);
   G4double dc = std::abs(rho)*(1.-CosT_ov_2);
-  SetDistChord(dc);
+  if (std::isnan(dc))
+    {SetDistChord(rho);}
+  else
+    {SetDistChord(dc);}
 
   // check for paraxial approximation:
   if(localMomUnit.z() > 0.9)
