@@ -442,12 +442,14 @@ class Analysis(ResultsUtilities):
                     self._dipoleResults.append(dipRes)
 
     def PlotResults(self, componentType=''):
-        plotter = Plotting()
-        #plotter.PlotResults(self.ResultsDict, componentType)
-        plotter.PlotResults(self.Results, componentType)
+        plotter = _Plotting()
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            plotter.PlotResults(self._dipoleResults, componentType)
+        else:
+            plotter.PlotResults(self.Results, componentType)
 
 
-class Plotting:
+class _Plotting:
     def __init__(self):
         self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
 
@@ -492,14 +494,19 @@ class Plotting:
     def PlotResults(self, allResults, componentType=''):
         GlobalData._CheckComponent(componentType)
 
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            res = allResults
+        else:
+            res = allResults[componentType]
+
         # split results into proton and electron
-        electronResults = allResults[componentType].GetResultsByParticle('e-')
-        protonResults = allResults[componentType].GetResultsByParticle('proton')
+        electronResults = res.GetResultsByParticle('e-')
+        protonResults = res.GetResultsByParticle('proton')
 
         if electronResults._numEntries == 0:
-            self.SingleParticlePlots(protonResults)
+            self._singleParticlePlots(protonResults)
         elif protonResults._numEntries == 0:
-            self.SingleParticlePlots(electronResults)
+            self._singleParticlePlots(electronResults)
         elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
             if (protonResults._numEntries <= self.testsPerAxes) and (electronResults._numEntries <= self.testsPerAxes):
                 figsize = self._getFigSize(protonResults, electronResults)
@@ -524,10 +531,10 @@ class Plotting:
                 self._addColorBar(f, dataAx1)
                 f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
             else:
-                self.SingleParticlePlots(electronResults)
-                self.SingleParticlePlots(protonResults)
+                self._singleParticlePlots(electronResults)
+                self._singleParticlePlots(protonResults)
 
-    def SingleParticlePlots(self, results):
+    def _singleParticlePlots(self, results):
         if results._numEntries > self.testsPerAxes:
             numEnergies = len(results.uniqueValues['energy'])
             if numEnergies == 1:
@@ -618,6 +625,16 @@ class Plotting:
             particle = results[0]['particle']
             numTests = len(results)
 
+            zeroData = []
+            for test in data:
+                dataRes = []
+                for val in test:
+                    if multiEntryTypes.__contains__(type(val)):
+                        dataRes.append(val[0])
+                    else:
+                        dataRes.append(val)
+                zeroData.append(dataRes)
+
             # set normalised colormap.
             bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
             norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
@@ -639,9 +656,18 @@ class Plotting:
                         if len(subplotTitle.split('\n')[-1]) > 22:
                             subplotTitle += '\n'
 
-            cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+            cax = ax.imshow(zeroData, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
                             extent=extent, aspect='auto')
             ax.set_xlim(0, 8)
+
+            for index, status in enumerate(data):
+                for coord, vals in enumerate(status):
+                    numStatus = len(vals)
+                    yIndex = index
+                    for statIndex, stat in enumerate(vals):
+                        boxColor = GlobalData.cmap.colors[_np.int(stat)]
+                        boxWidth = 1.0 / numStatus
+                        ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
             for index, status in enumerate(generalStatus):
                 numStatus = len(status)
