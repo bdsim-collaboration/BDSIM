@@ -85,13 +85,11 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     _vacHeight=_vacInnerHeight+2*_vacThickness;
 
     try{
-        _strutSizeX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
+        _windowOffsetX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
     } catch(std::invalid_argument&){
-        _windowOffsetX=59.564*CLHEP::mm //Total offset of front of flange from beam axis
-											 -_vacInnerWidth/2.0-_vacThickness //Distance to outer edge of beam pipe
-											 -10*CLHEP::mm/std::abs(std::sin(_screenAngle)); //The back of the screen is recessed by 10mm into
-			// the window frame
+        _windowOffsetX=59.564*CLHEP::mm; //Total offset of front of flange from beam axis
     }
+	  _windowOffsetXFromVCEdge=_windowOffsetX -_vacInnerWidth/2.0-_vacThickness; //Distance to outer edge of beam pipe
 
     try{
         _strutSizeX=BDS::GetParameterValueDouble(spec,"strutSizeX");
@@ -441,7 +439,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 				      _vacInnerWidth+lenSaf,
 				      _vacInnerHeight+lenSaf,
 				      _vacThickness,
-                                      _windowOffsetX,
+                                      _windowOffsetXFromVCEdge,
 				      _strutSizeX,
 				      _strutSizeZ,
 				      _strutMaterial);
@@ -736,7 +734,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 void BDSAwakeSpectrometer::BuildFrame(){
     G4ThreeVector frameSize(_frameWidth,_frameHeight, _frameThicknessZ);
     G4TwoVector windowSize(_screenWidth, _screenHeight);
-    G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetX*std::tan(_screenAngle);
+    G4double relativeWindowOffsetX = -0.5*(frameSize.x()-windowSize.x())+_windowOffsetXFromVCEdge/std::cos(_screenAngle);
     G4TwoVector windowPos(relativeWindowOffsetX,0);
     _frame = new BDSScreenFrameRectangular((G4String)"asframe",frameSize, windowSize, windowPos, BDSMaterials::Instance()->GetMaterial("G4_STAINLESS-STEEL"));
 }
@@ -798,10 +796,10 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 //Vacuum frame dimensions
 
-    _frameThicknessX=48.5*CLHEP::mm;
+    _frameThicknessX=0*48.5*CLHEP::mm;
     _frameHeight=174.6*CLHEP::mm;
     _frameThicknessZ=43*CLHEP::mm;
-    _frameWidth=_screenWidth+_windowOffsetX/std::cos(_screenAngle)+_frameThicknessX;
+    _frameWidth=_screenWidth+_windowOffsetXFromVCEdge/std::cos(_screenAngle)+_frameThicknessX;
     //Get the rotated frame dimensions
 
     _frame_z_dim=_frameWidth*std::cos(_screenAngle)+_frameThicknessZ*std::sin(_screenAngle);
@@ -817,7 +815,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 	  G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
 	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + lenSaf;
 	  _screenCentreZ += _screenThickness/std::cos(_screenAngle);
-	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetX + lenSaf;
+	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge + lenSaf;
 	//Offset the screen due to the _windowOffsetX
 
     //Frame position
