@@ -1909,6 +1909,10 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | aper4                            | default aper4 parameter                               |
 +----------------------------------+-------------------------------------------------------+
+| ignoreLocalAperture              | If this is true (1), any per-element aperture         |
+|                                  | definitions will be ignored and the ones specified    |
+|                                  | in options will be used.                              |
++----------------------------------+-------------------------------------------------------+
 | checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
 |                                  | during geometry construction (slower)                 |
 +----------------------------------+-------------------------------------------------------+

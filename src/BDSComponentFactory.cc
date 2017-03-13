@@ -960,22 +960,32 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element)
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
-							  const G4ThreeVector inputFaceNormal,
-							  const G4ThreeVector outputFaceNormal)
+							  const G4ThreeVector inputFaceNormalIn,
+							  const G4ThreeVector outputFaceNormalIn)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
-  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
-					      element->apertureType,
-					      element->aper1 * CLHEP::m,
-					      element->aper2 * CLHEP::m,
-					      element->aper3 * CLHEP::m,
-					      element->aper4 * CLHEP::m,
-					      element->vacuumMaterial,
-					      element->beampipeThickness * CLHEP::m,
-					      element->beampipeMaterial,
-					      inputFaceNormal,
-					      outputFaceNormal);
-  return info;
+  BDSBeamPipeInfo* result; 
+  if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
+    {
+      result = new BDSBeamPipeInfo(defaultModel,
+				   element->apertureType,
+				   element->aper1 * CLHEP::m,
+				   element->aper2 * CLHEP::m,
+				   element->aper3 * CLHEP::m,
+				   element->aper4 * CLHEP::m,
+				   element->vacuumMaterial,
+				   element->beampipeThickness * CLHEP::m,
+				   element->beampipeMaterial,
+				   inputFaceNormalIn,
+				   outputFaceNormalIn);
+    }
+  else
+    {// ignore the aperture model from the element and use the global one
+      result = new BDSBeamPipeInfo(*defaultModel); // ok as only pointers to materials
+      result->inputFaceNormal  = inputFaceNormalIn;
+      result->outputFaceNormal = outputFaceNormalIn;
+    }
+  return result;
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
