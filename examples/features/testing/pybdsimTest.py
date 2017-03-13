@@ -94,6 +94,7 @@ def Run(inputDict):
         # and root output into the failed dir, and delete the passed comparator log.
         elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
@@ -115,6 +116,7 @@ def Run(inputDict):
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
         if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:

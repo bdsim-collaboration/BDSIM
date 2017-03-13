@@ -243,6 +243,9 @@ class ResultsUtilities:
                     generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
                 if issuedLine.__contains__('G4CutTubs::G4CutTubs()'):
                     generalStatus.append(GlobalData.returnCodes['FATAL_EXCEPTION'])
+                if issuedLine.__contains__('G4ChordFinder::FindNextChord()'):
+                    generalStatus.append(GlobalData.returnCodes['NAN_CHORD'])
+
                 # TODO: check for other types of warnings/errors.
 
         return generalStatus
