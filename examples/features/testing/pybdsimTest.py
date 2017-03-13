@@ -83,11 +83,12 @@ def Run(inputDict):
         # if only one general status entry then it must be 0 (passed), in which case,
         # delete all log and root files
         if len(generalStatus) == 1:
-            _os.remove(inputDict['compLogFile'])
-            _os.remove(inputDict['ROOTFile'])
-            _os.remove(inputDict['bdsimLogFile'])
             if isSelfComparison:
                 _os.remove(inputDict['originalFile'])
+            if not generateOriginal:
+                _os.remove(inputDict['compLogFile'])
+                _os.remove(inputDict['ROOTFile'])
+                _os.remove(inputDict['bdsimLogFile'])
 
         # else if the general status contains one of the 'soft' failures, move the bdsim log
         # and root output into the failed dir, and delete the passed comparator log.
@@ -96,24 +97,27 @@ def Run(inputDict):
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
-            _os.remove(inputDict['compLogFile'])
             if isSelfComparison:
                 _os.remove(inputDict['originalFile'])
+            if not generateOriginal:
+                _os.remove(inputDict['compLogFile'])
+
 
     # elif the comparator failed
     elif inputDict['code'] == 1:
         # move the comparator log and failed root file
         _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
-        _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
         if isSelfComparison:
             _os.remove(inputDict['originalFile'])
+        if not generateOriginal:
+            _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
 
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
         if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
-        else:
+        elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
     # elif incorrect args
