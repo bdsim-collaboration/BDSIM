@@ -99,7 +99,10 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
   else
     {magnetStrength = other.magnetStrength;} // also nullptr
-  cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
+  if (other.cavityInfo)
+    {cavityInfo = new BDSCavityInfo(*other.cavityInfo);}
+  else
+    {cavityInfo = other.cavityInfo;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
