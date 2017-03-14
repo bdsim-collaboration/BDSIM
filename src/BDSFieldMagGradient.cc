@@ -1,17 +1,14 @@
+#include "BDSDebug.hh"
+#include "BDSFieldMag.hh"
 #include "BDSFieldMagGradient.hh"
+#include "BDSFieldMagSkew.hh"
+#include "BDSInterpolatorType.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
-#include "BDSInterpolatorType.hh"
-#include "BDSFieldMag.hh"
-#include "BDSMagnetStrength.hh"
-#include "G4String.hh"
-#include "G4Transform3D.hh"
-#include "BDSFieldMag.hh"
-#include "BDSFieldMagInterpolated2D.hh"
-#include "BDSFieldMagSkew.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include <string>
 #include <vector>
@@ -34,27 +31,29 @@ BDSMagnetStrength* BDSFieldMagGradient::CalculateMultipoles(BDSFieldMag* BField,
 							    G4int        order,
 							    G4double     Brho)
 {
-    G4cout << "running field gradient calculations" << G4endl;
-    BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
-    G4double h =0.5; //distance apart in CLHEP distance units (mm) to place query points.
-
-    G4double brhoinv = 1./(Brho / CLHEP::tesla / CLHEP::m);
-    G4int centreIndex = 0;
-    std::vector<G4double> d = PrepareValues(BField, 5, 0, h, centreIndex);
-    G4int centreIndexSkew = 0;
-    std::vector<std::vector<G4double>> dskew = PrepareSkewValues(BField,5,0,h,centreIndexSkew);
-    // o+1 as we start from k1 upwards - ie, 0th order isn't calculated
-    for (G4int o = 0; o < order; ++o)
-      {
-	(*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o+1, centreIndex, h) * brhoinv;
-        (*outputstrengths)["k" + std::to_string(o+1) + "s"] = Derivative(dskew[o], o+1, centreIndex, h) * brhoinv;
-
 #ifdef BDSDEBUG
-        G4cout << "k" << o+1 << " = " << (*outputstrengths)["k" + std::to_string(o+1)] << G4endl;
-	G4cout << "k" << o+1 << "s"<< " = " << (*outputstrengths)["k" + std::to_string(o+1) + "s"]<< G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
-      }
-    return outputstrengths;
+  BDSMagnetStrength* outputstrengths = new BDSMagnetStrength();
+  G4double h =0.5; //distance apart in CLHEP distance units (mm) to place query points.
+  
+  G4double brhoinv = 1./(Brho / CLHEP::tesla / CLHEP::m);
+  G4int centreIndex = 0;
+  std::vector<G4double> d = PrepareValues(BField, 5, 0, h, centreIndex);
+  G4int centreIndexSkew = 0;
+  std::vector<std::vector<G4double>> dskew = PrepareSkewValues(BField,5,0,h,centreIndexSkew);
+  // o+1 as we start from k1 upwards - ie, 0th order isn't calculated
+  for (G4int o = 0; o < order; ++o)
+    {
+      (*outputstrengths)["k" + std::to_string(o+1)] = Derivative(d, o+1, centreIndex, h) * brhoinv;
+      (*outputstrengths)["k" + std::to_string(o+1) + "s"] = Derivative(dskew[o], o+1, centreIndex, h) * brhoinv;
+      
+#ifdef BDSDEBUG
+      G4cout << "k" << o+1 << " = " << (*outputstrengths)["k" + std::to_string(o+1)] << G4endl;
+      G4cout << "k" << o+1 << "s"<< " = " << (*outputstrengths)["k" + std::to_string(o+1) + "s"]<< G4endl;
+#endif
+    }
+  return outputstrengths;
 }
 
 std::vector<G4double> BDSFieldMagGradient::PrepareValues(BDSFieldMag* field,
