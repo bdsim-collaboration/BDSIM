@@ -77,7 +77,16 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
   fields.reserve(infos.size());
   for (G4int i = 0; i < (G4int)infos.size(); i++)
     {
-      BDSFieldObjects* field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));
+      BDSFieldObjects* field = nullptr;
+      const BDSFieldInfo* currentInf = infos[i];
+      if (currentInf->AutoScale())
+        {
+	  field = BDSFieldFactory::Instance()->CreateField(*(infos[i]),
+							   scalingStrengths[i],
+							   scalingKeys[i]);
+        }
+      else
+        {field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));}
       if (field)
 	{
 	  fields.push_back(field);
