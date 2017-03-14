@@ -12,8 +12,8 @@ class BDSArray4DCoords;
 class BDSFieldInfo;
 class BDSFieldMag;
 class BDSFieldMagInterpolated;
-class BDSFieldE;
-class BDSFieldEM;
+class BDSFieldEInterpolated;
+class BDSFieldEMInterpolated;
 class BDSInterpolator1D;
 class BDSInterpolator2D;
 class BDSInterpolator3D;
@@ -50,10 +50,10 @@ public:
 					const G4String           scalingKey      = "none");
 
   /// Main interface to load an electric field.
-  BDSFieldE*   LoadEField(const BDSFieldInfo& info);
+  BDSFieldEInterpolated*   LoadEField(const BDSFieldInfo& info);
 
   /// Main interface to load an electro-magnetic field.
-  BDSFieldEM*  LoadEMField(const BDSFieldInfo& info);
+  BDSFieldEMInterpolated*  LoadEMField(const BDSFieldInfo& info);
 
 private:
   /// Private default constructor as singleton
@@ -137,64 +137,64 @@ private:
 						       G4double            bScaling);
   
   /// Load a 1D BDSIM format electric field.
-  BDSFieldE* LoadBDSIM1DE(G4String            filePath,
-			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform,
-			  G4double            eScaling);
-
+  BDSFieldEInterpolated* LoadBDSIM1DE(G4String            filePath,
+				      BDSInterpolatorType interpolatorType,
+				      G4Transform3D       transform,
+				      G4double            eScaling);
+  
   /// Load a 2D BDSIM format electric field.
-  BDSFieldE* LoadBDSIM2DE(G4String            filePath,
-			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform,
-			  G4double            eScaling);
-
+  BDSFieldEInterpolated* LoadBDSIM2DE(G4String            filePath,
+				      BDSInterpolatorType interpolatorType,
+				      G4Transform3D       transform,
+				      G4double            eScaling);
+  
   /// Load a 3D BDSIM format electric field.
-  BDSFieldE* LoadBDSIM3DE(G4String            filePath,
-			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform,
-			  G4double            eScaling);
+  BDSFieldEInterpolated* LoadBDSIM3DE(G4String            filePath,
+				      BDSInterpolatorType interpolatorType,
+				      G4Transform3D       transform,
+				      G4double            eScaling);
 
   /// Load a 4D BDSIM format electric field.
-  BDSFieldE* LoadBDSIM4DE(G4String            filePath,
-			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform,
-			  G4double            eScaling);
+  BDSFieldEInterpolated* LoadBDSIM4DE(G4String            filePath,
+				      BDSInterpolatorType interpolatorType,
+				      G4Transform3D       transform,
+				      G4double            eScaling);
 
   /// Load a 1D BDSIM format electro-magnetic field.
-  BDSFieldEM* LoadBDSIM1DEM(G4String            eFilePath,
-			    G4String            bFilePath,
-			    BDSInterpolatorType eInterpolatorType,
-			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform,
-			    G4double            eScaling,
-			    G4double            bScaling);
+  BDSFieldEMInterpolated* LoadBDSIM1DEM(G4String            eFilePath,
+					G4String            bFilePath,
+					BDSInterpolatorType eInterpolatorType,
+					BDSInterpolatorType bInterpolatorType,
+					G4Transform3D       transform,
+					G4double            eScaling,
+					G4double            bScaling);
 
   /// Load a 2D BDSIM format electro-magnetic field.
-  BDSFieldEM* LoadBDSIM2DEM(G4String            eFilePath,
-			    G4String            bFilePath,
-			    BDSInterpolatorType eInterpolatorType,
-			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform,
-			    G4double            eScaling,
-			    G4double            bScaling);
-
+  BDSFieldEMInterpolated* LoadBDSIM2DEM(G4String            eFilePath,
+					G4String            bFilePath,
+					BDSInterpolatorType eInterpolatorType,
+					BDSInterpolatorType bInterpolatorType,
+					G4Transform3D       transform,
+					G4double            eScaling,
+					G4double            bScaling);
+  
   /// Load a 3D BDSIM format electro-magnetic field.
-  BDSFieldEM* LoadBDSIM3DEM(G4String            eFilePath,
-			    G4String            bFilePath,
-			    BDSInterpolatorType eInterpolatorType,
-			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform,
-			    G4double            eScaling,
-			    G4double            bScaling);
+  BDSFieldEMInterpolated* LoadBDSIM3DEM(G4String            eFilePath,
+					G4String            bFilePath,
+					BDSInterpolatorType eInterpolatorType,
+					BDSInterpolatorType bInterpolatorType,
+					G4Transform3D       transform,
+					G4double            eScaling,
+					G4double            bScaling);
 
   /// Load a 4D BDSIM format electro-magnetic field.
-  BDSFieldEM* LoadBDSIM4DEM(G4String            eFilePath,
-			    G4String            bFilePath,
-			    BDSInterpolatorType eInterpolatorType,
-			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform,
-			    G4double            eScaling,
-			    G4double            bScaling);
+  BDSFieldEMInterpolated* LoadBDSIM4DEM(G4String            eFilePath,
+					G4String            bFilePath,
+					BDSInterpolatorType eInterpolatorType,
+					BDSInterpolatorType bInterpolatorType,
+					G4Transform3D       transform,
+					G4double            eScaling,
+					G4double            bScaling);
 
   /// @{ Map of cached field map array.
   std::map<G4String, BDSArray1DCoords*> arrays1d;
