@@ -60,6 +60,32 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
     {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
 }
 
+G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
+{
+  G4String result = "none";
+  switch (typeIn.underlying())
+    {
+    case BDSMagnetType::hkicker:
+    case BDSMagnetType::vkicker:
+    case BDSMagnetType::muonspoiler:
+    case BDSMagnetType::sectorbend:
+    case BDSMagnetType::rectangularbend:
+      {result = "field"; break;}
+    case BDSMagnetType::quadrupole:
+      {result = "k1"; break;}
+    case BDSMagnetType::sextupole:
+      {result = "k2"; break;}
+    case BDSMagnetType::octupole:
+      {result = "k3"; break;}
+    case BDSMagnetType::decapole:
+      {result = "k5"; break;}
+    default:
+      {break;} // leave as none without complaint
+    };
+
+  return result;
+}
+
 void BDSMagnet::Build()
 {
 #ifdef BDSDEBUG
