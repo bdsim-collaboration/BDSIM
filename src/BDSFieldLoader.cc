@@ -153,6 +153,10 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
 
       G4double ratio    = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
       G4double newScale = result->Scaling() * ratio;
+#ifdef BDSDEBUG
+      G4cout << "Ratio of supplied strength to calculated map strength: " << ratio << G4endl;
+      G4cout << "New scale factor (inc. units): " << newScale << G4endl;
+#endif
       result->SetScaling(newScale);
     }
   
