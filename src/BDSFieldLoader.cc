@@ -116,6 +116,46 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
     default:
       break;
     }
+
+  if (result && info.AutoScale())
+    {
+      // prepare temporary recipe for fiel with cubic interpolation and no scaling
+      // other than units
+      BDSFieldInfo temporaryRecipe = BDSFieldInfo(info);
+      temporaryRecipe.SetAutoScale(false); // prevent recursion
+      temporaryRecipe.SetBScaling(1);      // don't affect result with inadvertent scaling
+
+      // enforce cubic interpolation for continuous higher differentials
+      switch (format.underlying())
+	{
+	case BDSFieldFormat::bdsim1d:
+	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic1d); break;}
+	case BDSFieldFormat::bdsim2d:
+	case BDSFieldFormat::poisson2d:
+	case BDSFieldFormat::poisson2dquad:
+	case BDSFieldFormat::poisson2ddipole:
+	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic2d); break;}
+	case BDSFieldFormat::bdsim3d:
+	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic3d); break;}
+	case BDSFieldFormat::bdsim4d:
+	  {temporaryRecipe.SetMagneticInterpolatorType(BDSInterpolatorType::cubic4d); break;}
+	}
+
+      // build temporary field object
+      BDSFieldMagInterpolated* tempField = LoadMagField(temporaryRecipe);
+
+      // calculate field gradients and therefore associated strengths for a given rigidity
+      BDSFieldMagGradient calculator;
+      BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
+									      10,
+									      info.BRho());
+      delete tempField; // clear up
+
+      G4double ratio    = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
+      G4double newScale = result->Scaling() * ratio;
+      result->SetScaling(newScale);
+    }
+  
   return result;
 }
 
@@ -511,17 +551,6 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String     
 	     << G4endl;
     }
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
-  BDSMagnetStrength* associatedStrength = nullptr;
-  if (calculateScaling)
-  {
-    BDSInterpolator2D* artemp = CreateInterpolator2D(rArray, BDSInterpolatorType::cubic2d);
-    BDSFieldMagInterpolated2D* tempField = new BDSFieldMagInterpolated2D(artemp, transform, bScalingUnits);
-    BDSFieldMagGradient calculator;
-    G4cout << "creating calculator" << G4endl;
-    associatedStrength = calculator.CalculateMultipoles(tempField, 5, -4.27);
-    delete tempField;
-    //delete artemp;
-  }
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
   BDSFieldMagInterpolated* result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
   return result;
