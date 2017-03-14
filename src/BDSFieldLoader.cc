@@ -146,10 +146,11 @@ BDSFieldMagInterpolated* BDSFieldLoader::LoadMagField(const BDSFieldInfo&      i
       // calculate field gradients and therefore associated strengths for a given rigidity
       BDSFieldMagGradient calculator;
       BDSMagnetStrength* calculatedStrengths = calculator.CalculateMultipoles(tempField,
-									      10,
+									      5,/*up to 5th order*/
 									      info.BRho());
-      delete tempField; // clear up
 
+      delete tempField; // clear up
+      
       G4double ratio    = (*scalingStrength)[scalingKey] / (*calculatedStrengths)[scalingKey];
       G4double newScale = result->Scaling() * ratio;
 #ifdef BDSDEBUG
