@@ -2,10 +2,13 @@
 #define BDSFIELDBUILDER_H
 
 #include "globals.hh" //G4 global constants & types
+
+#include <map>
 #include <vector>
 
 class BDSFieldInfo;
 class BDSFieldObjects;
+class BDSMagnetStrength;
 class G4LogicalVolume;
 
 /**
@@ -34,14 +37,18 @@ public:
   /// which logical volume to attach it to. The same field specification (info)
   /// can be registered for multiple logical volumes as this builder does not
   /// retain ownership of anything.
-  void RegisterFieldForConstruction(const BDSFieldInfo* info,
-				    G4LogicalVolume*    logicalVolume,
-				    const G4bool        propagateToDaughters = false);
+  void RegisterFieldForConstruction(const BDSFieldInfo*      info,
+				    G4LogicalVolume*         logicalVolume,
+				    const G4bool             propagateToDaughters     = false,
+				    const BDSMagnetStrength* magnetStrengthForScaling = nullptr,
+				    const G4String           scalingKey = "none");
 
   /// Similar version but 
-  void RegisterFieldForConstruction(const BDSFieldInfo* info,
+  void RegisterFieldForConstruction(const BDSFieldInfo*      info,
 				    const std::vector<G4LogicalVolume*>& logicalVolumes,
-				    const G4bool              propagateToDaughters = false);
+				    const G4bool             propagateToDaughters     = false,
+                                    const BDSMagnetStrength* magnetStrengthForScaling = nullptr,
+				    const G4String           scalingKey               = "none");
 
   std::vector<BDSFieldObjects*> CreateAndAttachAll();
 
@@ -56,6 +63,11 @@ private:
   std::vector<const BDSFieldInfo*> infos;
   std::vector<std::vector<G4LogicalVolume*> > lvs;
   std::vector<G4bool>              propagators;
+  /// @}
+
+  /// @{ Optional register of scaling strengths and keys.
+  std::map<G4int, const BDSMagnetStrength*> scalingStrengths;
+  std::map<G4int, G4String> scalingKeys;
   /// @}
 };
 

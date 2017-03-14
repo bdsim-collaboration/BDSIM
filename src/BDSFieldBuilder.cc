@@ -30,9 +30,11 @@ BDSFieldBuilder::BDSFieldBuilder()
   propagators.reserve(defaultSize);
 }
 
-void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
+void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info,
 						   const std::vector<G4LogicalVolume*>& logicalVolumes,
-						   const G4bool        propagateToDaughters)
+						   const G4bool             propagateToDaughters,
+                                                   const BDSMagnetStrength* magnetStrengthForScaling,
+						   const G4String           scalingKey)
 {
   if (info)
     {
@@ -46,15 +48,27 @@ void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
       infos.push_back(info);
       lvs.push_back(logicalVolumes);
       propagators.push_back(propagateToDaughters);
+      if (info->AutoScale())
+	{// only store if we're going to use for autoscaling
+          G4int index = (G4int)infos.size() - 1;
+          scalingStrengths[index] = magnetStrengthForScaling;
+          scalingKeys[index]      = scalingKey;
+	}
     }
 }
   
-void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
-						   G4LogicalVolume*    logicalVolume,
-						   const G4bool        propagateToDaughters)
+void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo*      info,
+						   G4LogicalVolume*         logicalVolume,
+						   const G4bool             propagateToDaughters,
+                                                   const BDSMagnetStrength* magnetStrengthForScaling,
+						   const G4String           scalingKey)
 {
   std::vector<G4LogicalVolume*> lvsForThisInfo = {logicalVolume};
-  RegisterFieldForConstruction(info, lvsForThisInfo, propagateToDaughters);
+  RegisterFieldForConstruction(info,
+			       lvsForThisInfo,
+			       propagateToDaughters,
+			       magnetStrengthForScaling,
+			       scalingKey);
 }
 
 std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
