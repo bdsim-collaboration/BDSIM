@@ -11,12 +11,14 @@ class BDSArray3DCoords;
 class BDSArray4DCoords;
 class BDSFieldInfo;
 class BDSFieldMag;
+class BDSFieldMagInterpolated;
 class BDSFieldE;
 class BDSFieldEM;
 class BDSInterpolator1D;
 class BDSInterpolator2D;
 class BDSInterpolator3D;
 class BDSInterpolator4D;
+class BDSMagnetStrength;
 
 /**
  * @brief A loader for various field map formats.
@@ -43,7 +45,9 @@ public:
   void DeleteArrays();
 
   /// Main interface to load a magnetic field.
-  BDSFieldMag* LoadMagField(const BDSFieldInfo& info);
+  BDSFieldMagInterpolated* LoadMagField(const BDSFieldInfo& info,
+					const BDSMagnetStrength* scalingStrength = nullptr,
+					const G4String           scalingKey      = "none");
 
   /// Main interface to load an electric field.
   BDSFieldE*   LoadEField(const BDSFieldInfo& info);
@@ -90,52 +94,48 @@ private:
   					  BDSInterpolatorType  interpolatorType) const;
 
   /// Load a 1D BDSIM format magnetic field.
-  BDSFieldMag* LoadBDSIM1DB(G4String            filePath,
-			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform,
-			    G4double            bScaling);
-
+  BDSFieldMagInterpolated* LoadBDSIM1DB(G4String            filePath,
+					BDSInterpolatorType interpolatorType,
+					G4Transform3D       transform,
+					G4double            bScaling);
+  
   /// Load a 2D BDSIM format magnetic field.
-  BDSFieldMag* LoadBDSIM2DB(G4String            filePath,
-			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform,
-			    G4double            bScaling);
-
+  BDSFieldMagInterpolated* LoadBDSIM2DB(G4String            filePath,
+					BDSInterpolatorType interpolatorType,
+					G4Transform3D       transform,
+					G4double            bScaling);
+  
   /// Load a 3D BDSIM format magnetic field.
-  BDSFieldMag* LoadBDSIM3DB(G4String            filePath,
-			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform,
-			    G4double            bScaling);
-
+  BDSFieldMagInterpolated* LoadBDSIM3DB(G4String            filePath,
+					BDSInterpolatorType interpolatorType,
+					G4Transform3D       transform,
+					G4double            bScaling);
+  
   /// Load a 4D BDSIM format magnetic field.
-  BDSFieldMag* LoadBDSIM4DB(G4String            filePath,
-			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform,
-			    G4double            bScaling);
-
+  BDSFieldMagInterpolated* LoadBDSIM4DB(G4String            filePath,
+					BDSInterpolatorType interpolatorType,
+					G4Transform3D       transform,
+					G4double            bScaling);
+  
   /// Load a 2D poisson superfish B field map.
-  BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
-				     BDSInterpolatorType interpolatorType,
-				     G4Transform3D       transform,
-				     G4double            bScaling,
-				     G4bool              calculateScaling = true,
-				     G4int               maximumOrder     = 1);
-
+  BDSFieldMagInterpolated* LoadPoissonSuperFishB(G4String            filePath,
+						 BDSInterpolatorType interpolatorType,
+						 G4Transform3D       transform,
+						 G4double            bScaling);
+  
   /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
   /// and the data relfected from one quadrant to all four at the array level.
-  BDSFieldMag* LoadPoissonSuperFishBQuad(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform,
-					 G4double            bScaling,
-					 G4bool              calculateScaling = true,
-					 G4int               maximumOrder     = 1);
+  BDSFieldMagInterpolated* LoadPoissonSuperFishBQuad(G4String            filePath,
+						     BDSInterpolatorType interpolatorType,
+						     G4Transform3D       transform,
+						     G4double            bScaling);
   /// Similar to LoadPoissonSuperFishB() but with appropriate reflections for
   /// a map for the positive quadrant reflected to all quadrants.
-  BDSFieldMag* LoadPoissonSuperFishBDipole(G4String            filePath,
-					   BDSInterpolatorType interpolatorType,
-					   G4Transform3D       transform,
-					   G4double            bScaling);
-
+  BDSFieldMagInterpolated* LoadPoissonSuperFishBDipole(G4String            filePath,
+						       BDSInterpolatorType interpolatorType,
+						       G4Transform3D       transform,
+						       G4double            bScaling);
+  
   /// Load a 1D BDSIM format electric field.
   BDSFieldE* LoadBDSIM1DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,
