@@ -29,7 +29,8 @@ BDSFieldInfo::BDSFieldInfo():
   cacheTransforms(true),
   eScaling(1.0),
   bScaling(1.0),
-  timeOffset(0)
+  timeOffset(0),
+  autoScale(false)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -48,7 +49,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4bool                   cacheTransformsIn,
 			   G4double                 eScalingIn,
 			   G4double                 bScalingIn,
-			   G4double                 timeOffsetIn):
+			   G4double                 timeOffsetIn,
+			   G4bool                   autoScaleIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -65,7 +67,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   cacheTransforms(cacheTransformsIn),
   eScaling(eScalingIn),
   bScaling(bScalingIn),
-  timeOffset(timeOffsetIn)
+  timeOffset(timeOffsetIn),
+  autoScale(autoScaleIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -89,7 +92,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   cacheTransforms(other.cacheTransforms),
   eScaling(other.eScaling),
   bScaling(other.bScaling),
-  timeOffset(other.timeOffset)
+  timeOffset(other.timeOffset),
+  autoScale(other.autoScale)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -114,6 +118,7 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E Scaling:         " << info.eScaling                 << G4endl;
   out << "B Scaling:         " << info.bScaling                 << G4endl;
   out << "t offset           " << info.timeOffset               << G4endl;
+  out << "auto scale         " << info.autoScale                << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   return out;

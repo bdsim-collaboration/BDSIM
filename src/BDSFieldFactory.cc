@@ -177,7 +177,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    false,   /*don't cache transforms*/
 					    G4double(definition.eScaling),
 					    G4double(definition.bScaling),
-					    G4double(definition.t*CLHEP::s));
+					    G4double(definition.t*CLHEP::s),
+					    G4bool(definition.autoScale));
 
       parserDefinitions[G4String(definition.name)] = info;
     }
