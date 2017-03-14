@@ -25,6 +25,7 @@ class BDSFieldMagGradient
 {
 public:
   BDSFieldMagGradient();
+  ~BDSFieldMagGradient();
 
   /// Find the Magnet strengths of a multipole field to nth order.
   BDSMagnetStrength* CalculateMultipoles(BDSFieldMag* BField, G4int order, G4double Brho=4);

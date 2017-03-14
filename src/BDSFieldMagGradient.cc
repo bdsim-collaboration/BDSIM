@@ -19,6 +19,9 @@
 BDSFieldMagGradient::BDSFieldMagGradient()
 {;}
 
+BDSFieldMagGradient::~BDSFieldMagGradient()
+{;}
+
 G4double BDSFieldMagGradient::GetBy(BDSFieldMag* field, G4double x, G4double y) const
 {
   G4ThreeVector position(x, y, 0);
