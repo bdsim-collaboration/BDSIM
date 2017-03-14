@@ -46,17 +46,22 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
   G4double modulo       = (_nScintLayers-floor(_nScintLayers));
   _firstLayerThickness  = _layerThickness*modulo;
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
+	_gapWidth=0*1e-3*CLHEP::mm;
+	_gapSpacing=1*CLHEP::mm;
   layers();
 }
 
 BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen()
 {;}
 
+void BDSAwakeMultilayerScreen::simpleLayers(){
+  scintillatorLayer(_thickness);
+	Build();
+}
+
 void BDSAwakeMultilayerScreen::layers()
 {
-  _gapWidth=0*1e-3*CLHEP::mm;
-  _gapSpacing=1*CLHEP::mm;
-  thinVacuumLayer();
+	thinVacuumLayer();
   preWindowSampler();
   thinVacuumLayer();
   windowLayer();
@@ -77,7 +82,7 @@ void BDSAwakeMultilayerScreen::layers()
   }
   for(int i=0; i<(floor(_nScintLayers)-1); i++){
     binderLayer();
-    scintillatorLayer();
+    scintillatorLayer(_layerThickness);
   }
   binderLayer();
   frontScintillatorLayer1();
@@ -86,6 +91,8 @@ void BDSAwakeMultilayerScreen::layers()
   thinAirLayer();
   postScreenSampler();
   thinAirLayer();
+
+
   G4cout << __METHOD_NAME__ << " - scint layers: " << _scintLayerCount << G4endl;
   G4cout << __METHOD_NAME__ << " - binder layers: " << _binderLayerCount << G4endl;
   Build();
@@ -200,9 +207,17 @@ void BDSAwakeMultilayerScreen::backBinderLayer(){
   AddScreenLayer(sl);
 }
 
-void BDSAwakeMultilayerScreen::scintillatorLayer(){
+void BDSAwakeMultilayerScreen::thickScintLayer(){
+	incScintLayer();
+	BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_thickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
+	sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
+	AddScreenLayer(sl);
+}
+
+
+void BDSAwakeMultilayerScreen::scintillatorLayer(G4double thickness){
   incScintLayer();
-  BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_layerThickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
+	BDSScreenLayer* sl = new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),thickness),_scintLayerName,"gos_lanex",_gapWidth,_gapSpacing);
   sl->SetColour(G4Colour(0.0,1.0,0.0,0.3));
   AddScreenLayer(sl);
 }
