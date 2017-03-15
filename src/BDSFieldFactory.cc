@@ -3,9 +3,11 @@
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
+#include "BDSFieldEInterpolated.hh"
 #include "BDSFieldESinusoid.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldEMGlobal.hh"
+#include "BDSFieldEMInterpolated.hh"
 #include "BDSFieldEMRFCavity.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
@@ -15,6 +17,7 @@
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagDummy.hh"
 #include "BDSFieldMagGlobal.hh"
+#include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
@@ -177,7 +180,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    false,   /*don't cache transforms*/
 					    G4double(definition.eScaling),
 					    G4double(definition.bScaling),
-					    G4double(definition.t*CLHEP::s));
+					    G4double(definition.t*CLHEP::s),
+					    G4bool(definition.autoScale));
 
       parserDefinitions[G4String(definition.name)] = info;
     }
@@ -202,7 +206,9 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
   return result->second;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo&      info,
+					      const BDSMagnetStrength* scalingStrength,
+					      const G4String           scalingKey)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << info << G4endl;
@@ -218,7 +224,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
   switch (clas.underlying())
     {
     case BDSFieldClassType::magnetic:
-      {field = CreateFieldMag(info); break;}
+      {field = CreateFieldMag(info, scalingStrength, scalingKey); break;}
     case BDSFieldClassType::electromagnetic:
       {field = CreateFieldEM(info); break;}
     case BDSFieldClassType::electric:
@@ -231,7 +237,9 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
   return field;
 }
       
-BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
+						 const BDSMagnetStrength* scalingStrength,
+						 const G4String           scalingKey)
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
@@ -243,7 +251,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo& info)
     case BDSFieldType::bmap3d:
     case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
-      {field = BDSFieldLoader::Instance()->LoadMagField(info); break;}
+      {
+	field = BDSFieldLoader::Instance()->LoadMagField(info,
+							 scalingStrength,
+							 scalingKey);
+	break;
+      }
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:

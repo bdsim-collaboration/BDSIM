@@ -1,7 +1,7 @@
 #ifndef BDSFIELDEMINTERPOLATED3D_H
 #define BDSFIELDEMINTERPOLATED3D_H
 
-#include "BDSFieldEM.hh"
+#include "BDSFieldEMInterpolated.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -21,7 +21,7 @@ class BDSInterpolator3D;
  * @author Laurie Nevay
  */
 
-class BDSFieldEMInterpolated3D: public BDSFieldEM
+class BDSFieldEMInterpolated3D: public BDSFieldEMInterpolated
 {
 public:
   BDSFieldEMInterpolated3D(BDSInterpolator3D* eInterpolatorIn,
@@ -45,8 +45,6 @@ private:
 
   BDSInterpolator3D* eInterpolator; ///< E Interplator the field is based on.
   BDSInterpolator3D* bInterpolator; ///< B Interpolator the field is based on.
-  G4double           eScaling;      ///< E Field value scaling.
-  G4double           bScaling;      ///< B Field value scaling.
 };
 
 #endif

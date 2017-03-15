@@ -184,6 +184,7 @@ namespace GMAD
     double      aper3;
     double      aper4;
     std::string beampipeMaterial;
+    bool        ignoreLocalAperture;
     ///@}
     
     /// vacuum material

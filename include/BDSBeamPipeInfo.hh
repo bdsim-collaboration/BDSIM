@@ -86,7 +86,7 @@ public:
   
 private:
   /// Private default constructor to ensure one of supplied constructors is used.
-  BDSBeamPipeInfo();
+  BDSBeamPipeInfo() = delete;
   
   /// Function to check whether a parameter is set (using BDSUtilities BDS::IsFinite() ). If the
   /// accompanying G4bool setAper1 (for example) is true, the parameter will be checked for
