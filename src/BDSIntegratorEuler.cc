@@ -16,7 +16,7 @@ void BDSIntegratorEuler::Stepper(const G4double yIn[],
 				 G4double       yErr[])
 {
   const G4ThreeVector a_start = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
-  if (a_start.mag2() < 1e-30)
+  if (a_start.mag2() < 1e-60)
     {// no potential as no magnetic field - use drift routine
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);

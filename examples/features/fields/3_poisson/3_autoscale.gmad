@@ -1,0 +1,25 @@
+psolve: field, type="bmap2d",
+	       integrator = "g4classicalrk4",
+	       magneticFile = "poisson2dquad:quadrupole30x30.tar.gz",
+	       magneticInterpolator = "cubic2D",
+	       autoScale=1;
+
+q1: quadrupole, l=20*cm, k1=4.3, fieldOuter="psolve";
+
+l1: line=(q1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=1.3*GeV,
+      distrType="square",
+      envelopeX = 3*cm,
+      envelopeXp = 1e-9,
+      envelopeY = 3*cm,
+      envelopeYp = 1e-9;
+
+option, aper1=12*mm,
+	beampipeThickness=1*mm;
+
+! enough to ensure we cover each quadrant
+option, ngenerate=40;

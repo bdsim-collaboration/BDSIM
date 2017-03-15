@@ -6,9 +6,8 @@
 BDSFieldMagInterpolated2D::BDSFieldMagInterpolated2D(BDSInterpolator2D* interpolatorIn,
 						     G4Transform3D      offset,
 						     G4double           scalingIn):
-  BDSFieldMag(offset),
-  interpolator(interpolatorIn),
-  scaling(scalingIn)
+  BDSFieldMagInterpolated(offset, scalingIn),
+  interpolator(interpolatorIn)
 {;}
 
 BDSFieldMagInterpolated2D::~BDSFieldMagInterpolated2D()
@@ -18,4 +17,4 @@ BDSFieldMagInterpolated2D::~BDSFieldMagInterpolated2D()
 
 G4ThreeVector BDSFieldMagInterpolated2D::GetField(const G4ThreeVector& position,
 						  const G4double       /*t*/) const
-{return interpolator->GetInterpolatedValue(position[0], position[1]) * scaling;}
+{return interpolator->GetInterpolatedValue(position[0], position[1]) * Scaling();}

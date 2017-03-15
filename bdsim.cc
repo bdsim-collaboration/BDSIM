@@ -48,6 +48,7 @@
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
+#include "BDSMessenger.hh"
 
 //=======================================================
 // Global variables 
@@ -161,17 +162,7 @@ int main(int argc,char** argv)
   G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
   BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
   physList->RegisterPhysics(sampWorld);
-  // Biasing - TBC should only bias required particles to be biased
-  G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
-  physBias->Bias("e-");
-  physBias->Bias("e+");
-  physBias->Bias("gamma");
-  physBias->Bias("proton");
-  physBias->Bias("mu-");
-  physBias->Bias("mu+");
-  physBias->Bias("pi-");
-  physBias->Bias("pi+");
-  physList->RegisterPhysics(physBias);
+  physList->BuildAndAttachBiasWrapper(BDSParser::Instance()->GetBiasing());
   runManager->SetUserInitialization(physList);
   
   /// Print the geometry tolerance
@@ -227,6 +218,10 @@ int main(int argc,char** argv)
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
+
+
+  /// Create BDS UI messenger
+  BDSMessenger *bdsMessenger = new BDSMessenger();
 
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();
@@ -315,6 +310,8 @@ int main(int argc,char** argv)
   delete runManager;
   delete samplerWorld;
   delete bdsBunch;
+
+  delete bdsMessenger;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 

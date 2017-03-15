@@ -46,16 +46,18 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
   weight = aTrack->GetWeight();
 
   fParentIndex = -1;
-  fpBDSPointsContainer = BDSTrajectoryPointsContainer();
+  fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track
-  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aTrack));
+  (*fpBDSPointsContainer).push_back(new BDSTrajectoryPoint(aTrack));
 }
 
 BDSTrajectory::~BDSTrajectory()
 {
   // clean points container
-  for (auto i : fpBDSPointsContainer)
+  for (auto i : *fpBDSPointsContainer)
     {delete i;}
+  fpBDSPointsContainer->clear();
+  delete fpBDSPointsContainer;
 }
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
@@ -66,33 +68,36 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
   // TODO filter transportation steps if storing trajectory and batch
 
-  if(BDSGlobalConstants::Instance()->TrajNoTransportation() && !interactive ) {
-    // decode aStep and if on storage.
-    auto preStepPoint  = aStep->GetPreStepPoint();
-    auto postStepPoint = aStep->GetPostStepPoint();
-
-    // add step
-    const G4VProcess *preProcess = preStepPoint->GetProcessDefinedStep();
-    const G4VProcess *postProcess = postStepPoint->GetProcessDefinedStep();
-
-    if (preProcess && postProcess) {
-      G4int preProcessType = preProcess->GetProcessType();
-      G4int postProcessType = postProcess->GetProcessType();
-      if((preProcessType  != 1   /* transportation */ &&
-         preProcessType  != 10 /* parallel world */) ||
-         (postProcessType != 1   /* transportation */ &&
-         postProcessType != 10 /* parallel world */) ) {
-        fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
-      }
+  if(BDSGlobalConstants::Instance()->TrajNoTransportation() && !interactive )
+    {
+      // decode aStep and if on storage.
+      auto preStepPoint  = aStep->GetPreStepPoint();
+      auto postStepPoint = aStep->GetPostStepPoint();
+      
+      // add step
+      const G4VProcess *preProcess = preStepPoint->GetProcessDefinedStep();
+      const G4VProcess *postProcess = postStepPoint->GetProcessDefinedStep();
+      
+      if (preProcess && postProcess)
+	{
+	  G4int preProcessType = preProcess->GetProcessType();
+	  G4int postProcessType = postProcess->GetProcessType();
+	  if((preProcessType  != 1   /* transportation */ &&
+	      preProcessType  != 10 /* parallel world */) ||
+	     (postProcessType != 1   /* transportation */ &&
+	      postProcessType != 10 /* parallel world */) )
+	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));}
+	}
+      /*
+      else
+	{
+	  fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
+	  }*/
     }
-    else {
-      fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
-    }
-  }
   else
-  {
-    fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
-  }
+    {
+      fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
+    }
 }
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
@@ -100,8 +105,17 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  // this checks if nullptr and we don't do anything here
-  G4Trajectory::MergeTrajectory(secondTrajectory);
+
+  if(!secondTrajectory)
+    {return;}
+  
+  BDSTrajectory* second = (BDSTrajectory*)secondTrajectory;
+  G4int ent = second->GetPointEntries();
+  // initial point of the second trajectory should not be merged
+  for(G4int i = 1; i < ent; ++i)
+    {fpBDSPointsContainer->push_back((*(second->fpBDSPointsContainer))[i]);}
+  delete (*second->fpBDSPointsContainer)[0];
+  second->fpBDSPointsContainer->clear();
 }
 
 BDSTrajectoryPoint* BDSTrajectory::FirstInteraction()const

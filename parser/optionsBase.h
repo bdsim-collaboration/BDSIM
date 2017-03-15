@@ -184,6 +184,7 @@ namespace GMAD
     double      aper3;
     double      aper4;
     std::string beampipeMaterial;
+    bool        ignoreLocalAperture;
     ///@}
     
     /// vacuum material
@@ -230,6 +231,8 @@ namespace GMAD
 
     ///@{Cross section biasing parameters
     double   scintYieldFactor;
+    int      maximumPhotonsPerStep;
+    long     maximumTracksPerEvent;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
     double   defaultRangeCut;

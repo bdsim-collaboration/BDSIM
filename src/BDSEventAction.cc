@@ -64,6 +64,7 @@ BDSEventAction::BDSEventAction():
   verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
   isBatch            = BDSGlobalConstants::Instance()->Batch();
+  storeTrajectory    = BDSGlobalConstants::Instance()->StoreTrajectory();
 
   if(isBatch)
     {printModulo = BDSGlobalConstants::Instance()->PrintModulo();}
@@ -197,12 +198,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
-  BDSTrajectory*         primary  = BDS::GetPrimaryTrajectory(trajCont);
-  BDSTrajectoryPoint* primaryFirstInt = primary->FirstInteraction();
-  BDSTrajectoryPoint* primaryLastInt  = primary->LastInteraction();
-  bdsOutput->WritePrimaryHit(primaryFirstInt);
-  bdsOutput->WritePrimaryLoss(primaryLastInt);
-
+  if (trajCont)
+    {
+      BDSTrajectory *primary = BDS::GetPrimaryTrajectory(trajCont);
+      BDSTrajectoryPoint *primaryFirstInt = primary->FirstInteraction();
+      BDSTrajectoryPoint *primaryLastInt = primary->LastInteraction();
+      bdsOutput->WritePrimaryHit(primaryFirstInt);
+      bdsOutput->WritePrimaryLoss(primaryLastInt);
+    }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished writing energy loss" << G4endl;
 #endif
@@ -235,7 +238,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   // Save interesting trajectories
 
-  if(BDSGlobalConstants::Instance()->StoreTrajectory()) {
+  if (storeTrajectory && trajCont)
+    {
     std::map<BDSTrajectory *, bool> interestingTraj;
 
     TrajectoryVector *trajVec = trajCont->GetVector();

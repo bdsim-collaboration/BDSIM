@@ -45,6 +45,8 @@ namespace GMAD
     double angle;
     /// @}
     bool   axisAngle; ///< Flag to use the axis angle construction of rotation.
+
+    bool   autoScale; ///< Scale the field to the magnet it's attached to.
     
     /// Constructor
     Field();

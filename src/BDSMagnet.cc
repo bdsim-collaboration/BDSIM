@@ -60,6 +60,32 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
     {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
 }
 
+G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
+{
+  G4String result = "none";
+  switch (typeIn.underlying())
+    {
+    case BDSMagnetType::hkicker:
+    case BDSMagnetType::vkicker:
+    case BDSMagnetType::muonspoiler:
+    case BDSMagnetType::sectorbend:
+    case BDSMagnetType::rectangularbend:
+      {result = "field"; break;}
+    case BDSMagnetType::quadrupole:
+      {result = "k1"; break;}
+    case BDSMagnetType::sextupole:
+      {result = "k2"; break;}
+    case BDSMagnetType::octupole:
+      {result = "k3"; break;}
+    case BDSMagnetType::decapole:
+      {result = "k5"; break;}
+    default:
+      {break;} // leave as none without complaint
+    };
+
+  return result;
+}
+
 void BDSMagnet::Build()
 {
 #ifdef BDSDEBUG
@@ -152,15 +178,22 @@ void BDSMagnet::BuildOuterField()
 #endif  
   if (outer && outerFieldInfo)
     {
+      // determine key for this specific magnet instance
+      G4String scalingKey = DetermineScalingKey(magnetType);
+      
       G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								vol,
-								true);
+								true,
+								vacuumFieldInfo->MagnetStrength(),
+								scalingKey);
       // Attach to the container but don't propagate to daughter volumes. This ensures
       // any gap between the beam pipe and the outer also has a field.
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								containerLogicalVolume,
-								false);
+								false,
+								vacuumFieldInfo->MagnetStrength(),
+								scalingKey);
     }
 }
 

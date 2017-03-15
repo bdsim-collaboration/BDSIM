@@ -50,9 +50,9 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  G4VTrajectoryPoint* GetPoint(G4int i) const {return fpBDSPointsContainer[i];}
+  G4VTrajectoryPoint* GetPoint(G4int i) const {return (*fpBDSPointsContainer)[i];}
 
-  virtual int GetPointEntries()    const {return fpBDSPointsContainer.size();}
+  virtual int GetPointEntries()    const {return fpBDSPointsContainer->size();}
 
   void  SetParentIndex(G4int parentIndex)  {fParentIndex = parentIndex;}
   G4int GetParentIndex()               const {return fParentIndex;}
@@ -80,7 +80,7 @@ protected:
   /// Container of all points. This is really a vector so all memory is dynamically
   /// allocated and there's no need to make this dynamically allocated itself a la
   /// all Geant4 examples.
-  BDSTrajectoryPointsContainer fpBDSPointsContainer;
+  BDSTrajectoryPointsContainer* fpBDSPointsContainer;
 
 private:
   BDSTrajectory();

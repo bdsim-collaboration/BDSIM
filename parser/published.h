@@ -87,11 +87,17 @@ namespace GMAD
 	    (instance)->*mp = value;
 	  }
 	  catch (std::runtime_error) {
+	    try {
+	      long C::* mp = member<long>(name);
+	      (instance)->*mp = value;
+	    }
+	  catch (std::runtime_error) {
 	    // if not found throw error
 	    throw std::runtime_error("Unknown member " + name);
 	  }
 	}
       }
+    }
     }
 
   template<typename C>
@@ -123,6 +129,11 @@ namespace GMAD
 	  int C::* mp = member<int>(name);
 	  (instance)->*mp = (instance2)->*mp;
 	}
+	catch (std::runtime_error) {
+	    try {
+	      long C::* mp = member<long>(name);
+	      (instance)->*mp = (instance2)->*mp;
+	    }
 	catch (std::runtime_error) {
 	  try {
 	    bool C::* mp = member<bool>(name);
@@ -158,6 +169,7 @@ namespace GMAD
 	  }
 	}
       }
+    }
     }
 
   template <typename C>

@@ -249,6 +249,7 @@ void Options::PublishMembers()
   publish("aper3",&Options::aper3);
   publish("aper4",&Options::aper4);
   publish("beampipeMaterial",&Options::beampipeMaterial);
+  publish("ignoreLocalAperture", &Options::ignoreLocalAperture);
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
@@ -281,7 +282,8 @@ void Options::PublishMembers()
   publish("blmLength",&Options::blmLength);
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
-
+  publish("maximumPhotonsPerStep", &Options::maximumPhotonsPerStep);
+  publish("maximumTracksPerEvent", &Options::maximumTracksPerEvent);
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",&Options::sensitiveBLMs);

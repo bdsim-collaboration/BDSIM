@@ -147,6 +147,8 @@ OptionsBase::OptionsBase()
   aper3                = 0.0;
   aper4                = 0.0;
   beampipeMaterial     = "StainlessSteel";
+  ignoreLocalAperture  = false;
+  
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
   vacuumPressure       = 1e-12;
@@ -184,6 +186,8 @@ OptionsBase::OptionsBase()
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
   scintYieldFactor         = 1.0;
+  maximumPhotonsPerStep    = -1;  ///< -1 -> no action take (could want 0)
+  maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
   defaultRangeCut          = 1e-3;
