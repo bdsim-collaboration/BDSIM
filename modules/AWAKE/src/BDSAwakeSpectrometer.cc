@@ -766,12 +766,13 @@ void BDSAwakeSpectrometer::BuildScreen()
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
-    G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
+    G4double lenSaf = 100*CLHEP::um;
+			//BDSGlobalConstants::Instance()->LengthSafety();
     G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
     //Place inside the frame cavity
-    G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+10*lenSaf;
-    G4ThreeVector screenPosition(0, 0, screenZOffInFrame);
-    _mlScreen->Place(zeroRot, screenPosition, _frame->CavityLogVol());
+   // G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+10*lenSaf;
+	 G4ThreeVector screenPosition(_screenCentreX+lenSaf*std::tan(_screenAngle), 0, _screenCentreZ+lenSaf);
+    _mlScreen->Place(_screenRotationMatrix, screenPosition, containerLogicalVolume);
 }
 
 void BDSAwakeSpectrometer::CalculateLengths(){
@@ -796,7 +797,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 //Vacuum frame dimensions
 
-    _frameThicknessX=0*48.5*CLHEP::mm;
+    _frameThicknessX=48.5*CLHEP::mm;
     _frameHeight=174.6*CLHEP::mm;
     _frameThicknessZ=43*CLHEP::mm;
     _frameWidth=_screenWidth+_windowOffsetXFromVCEdge/std::cos(_screenAngle)+_frameThicknessX;
@@ -813,9 +814,8 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 //Screen position
 	  G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
-	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + lenSaf;
-	  _screenCentreZ += _screenThickness/std::cos(_screenAngle);
-	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge + lenSaf;
+	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + 0.5*_screenThickness/std::cos(_screenAngle) - std::tan(_screenAngle)*_windowOffsetXFromVCEdge;
+	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge;
 	//Offset the screen due to the _windowOffsetX
 
     //Frame position
