@@ -302,10 +302,14 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  globals->SetParticleDefinition(particleTable->FindParticle(globals->ParticleName()));
+  G4String particleName = globals->ParticleName();
+  globals->SetParticleDefinition(particleTable->FindParticle(particleName));
   
   if(!globals->GetParticleDefinition()) 
-    {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
+    {
+      G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
+      exit(1);
+    }
   
   // set kinetic beam parameters other than total energy
   globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
