@@ -219,6 +219,7 @@ void BDSOutputROOTEvent::Initialise()
                                  "BDSOutputROOTEventSampler",
                                  samplerTreeLocal,32000,1);
     }
+  samplerNames.clear();
 }
   
 /// write sampler hit collection
