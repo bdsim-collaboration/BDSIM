@@ -23,15 +23,11 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-
-#ifndef __ROOTDOUBLE__
-  primary = new BDSOutputROOTEventSampler<float>("Primary");
-#else
-  primary = new BDSOutputROOTEventSampler<double>("Primary");
-#endif
-  samplerTrees.push_back(primary);
-
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+
+  useScoringMap  = g->UseScoringMap();
+  writePrimaries = g->WritePrimaries();
+
   G4bool storeLinks  = g->StoreELossLinks();
   G4bool storeLocal  = g->StoreELossLocal();
   G4bool storeGlobal = g->StoreELossGlobal();
@@ -43,22 +39,31 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
   traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
-
   runHistos = new BDSOutputROOTEventHistograms();
   runInfo   = new BDSOutputROOTEventRunInfo();
 
-
   // build sampler structures
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
-  {
-    // create sampler structure
+  if (writePrimaries)
+    {
 #ifndef __ROOTDOUBLE__
-    BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
+      primary = new BDSOutputROOTEventSampler<float>("Primary");
 #else
-    BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
+      primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-    samplerTrees.push_back(res);
-  }
+      samplerTrees.push_back(primary);
+      samplerNames.push_back("Primary");
+    }
+  
+  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {// create sampler structure
+#ifndef __ROOTDOUBLE__
+      BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+      BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+      samplerTrees.push_back(res);
+      samplerNames.push_back(samplerName);
+    }
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -125,9 +130,6 @@ void BDSOutputROOTEvent::Initialise()
 #endif
   
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
-
-  useScoringMap  = globalConstants->UseScoringMap();
-  writePrimaries = globalConstants->WritePrimaries();
   
   CreateHistograms();
   
@@ -193,9 +195,7 @@ void BDSOutputROOTEvent::Initialise()
 
   // Build primary structures
   if (writePrimaries)
-    {
-      theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
-    }
+    {theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);}
 
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
@@ -206,21 +206,18 @@ void BDSOutputROOTEvent::Initialise()
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
 
-
   // Build event histograms
   theEventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
-
   // build sampler structures
-  auto samplerNames = BDSSamplerRegistry::Instance()->GetUniqueNames();
-  for(size_t i =1; i<samplerTrees.size(); ++i)
+  for (G4int i = 0; i < (G4int)samplerTrees.size(); ++i)
     {
-      auto res         = samplerTrees.at(i);
-      auto samplerName = samplerNames.at(i-1);
+      auto samplerTreeLocal = samplerTrees.at(i);
+      auto samplerName      = samplerNames.at(i);
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 res,32000,1);
+                                 samplerTreeLocal,32000,1);
     }
 }
   
@@ -231,7 +228,7 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
-  for(int i=0;i<hc->entries();i++)
+  for (int i=0; i<hc->entries(); i++)
     {
       G4int samplerID = (*hc)[i]->GetSamplerID();
       if (writePrimaries)
