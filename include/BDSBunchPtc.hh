@@ -34,6 +34,8 @@ private:
   G4String fileName;  ///< File name.
   G4int    iRay;      ///< Iterator counter for current ray.
   std::vector<double*> ptcData; ///< Data.
+
+  G4bool loopedOver;  ///< Wether we've reset to loop over the file again.
 };
 
 #endif
