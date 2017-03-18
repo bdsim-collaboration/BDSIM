@@ -43,7 +43,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   // as well as charge of the given particle
   G4double kappa = eqOfM->FCof()*bPrime/momMag;
   
-  // Neutral particle or not strength - advance as a drift.
+  // Neutral particle or no strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
@@ -84,6 +84,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double localAMag         = localA.mag();
   G4double radiusOfCurvature = 1./localAMag;
 
+  // if we have a low enery particle that makes it into the paraxial cuts
+  // it could cause problems later in paraxial algorithm so use backup integrator
   if (radiusOfCurvature < minimumRadiusOfCurvature)
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
