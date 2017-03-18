@@ -362,8 +362,8 @@ void BDSSpectrVacChamb::BuildStrut(){
 
 void BDSSpectrVacChamb::CalculateGeometry(){
   _trapLengthZ=_vacuumEndZ-_magStartZ;
-  G4double trapLengthZ2=std::abs((_screenWidth+_windowOffsetX)*cos(_screenAngle));
-  _trapLengthX=std::abs((_screenWidth+_windowOffsetX)*sin(_screenAngle));
+  G4double trapLengthZ2=std::abs((_screenWidth)*cos(_screenAngle))+std::abs(_windowOffsetX*std::tan(_screenAngle));
+  _trapLengthX=std::abs((_screenWidth)*sin(_screenAngle) + _windowOffsetX);
   
   G4double y1=-_sizeY/2.0;
   G4double y2= _sizeY/2.0;

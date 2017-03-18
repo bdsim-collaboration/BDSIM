@@ -244,6 +244,7 @@ private:
   //Y component of the B field.
 
     G4double _windowOffsetX;
+		G4double _windowOffsetXFromVCEdge;
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;

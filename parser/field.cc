@@ -32,6 +32,7 @@ void Field::clear()
   axisZ     = 0;
   angle     = 0;
   axisAngle = false;
+  autoScale = false;
 }
 
 void Field::PublishMembers()
@@ -58,6 +59,7 @@ void Field::PublishMembers()
   publish("axisZ",                &Field::axisZ);
   publish("angle",                &Field::angle);
   publish("axisAngle",            &Field::axisAngle);
+  publish("autoScale",            &Field::autoScale);
 }
 
 void Field::print()const
@@ -76,5 +78,6 @@ void Field::print()const
 	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
 	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
 	    << "angle "                << angle                << std::endl
-	    << "axisAngle "            << axisAngle            << std::endl;
+	    << "axisAngle "            << axisAngle            << std::endl
+	    << "autoScale "            << autoScale            << std::endl;
 }

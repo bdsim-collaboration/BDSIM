@@ -1,9 +1,11 @@
 #ifndef BDSBUNCHPTC_H
 #define BDSBUNCHPTC_H
 
-#include <vector>
-
 #include "BDSBunchInterface.hh"
+
+#include "globals.hh"
+
+#include <vector>
 
 /**
  * @brief A bunch distribution that reads a PTC inrays file.
@@ -12,17 +14,7 @@
  */
 
 class BDSBunchPtc: public BDSBunchInterface
-{ 
-private: 
-  G4int    nRays;
-  G4String fileName;
-
-  G4int    iRay; ///< current ray
-  std::vector<double*> ptcData; 
-
-  void LoadPtcFile(); 
-  void SetDistribFile(G4String distribFileNameIn);
-  
+{  
 public: 
   BDSBunchPtc();
   virtual ~BDSBunchPtc(); 
@@ -30,6 +22,20 @@ public:
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
                                G4double& t , G4double&  E, G4double& weight);
+  
+private:
+  /// Load the PTC file into memory
+  void LoadPtcFile();
+
+  /// Assign the distribution file by finding the full path of it.
+  void SetDistribFile(G4String distribFileNameIn);
+  
+  G4int    nRays;     ///< Number of rays in file (1 counting).
+  G4String fileName;  ///< File name.
+  G4int    iRay;      ///< Iterator counter for current ray.
+  std::vector<double*> ptcData; ///< Data.
+
+  G4bool loopedOver;  ///< Wether we've reset to loop over the file again.
 };
 
 #endif

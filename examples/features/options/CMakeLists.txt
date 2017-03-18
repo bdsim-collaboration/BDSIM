@@ -9,3 +9,5 @@ set_tests_properties(option_smallOuterDiameter PROPERTIES WILL_FAIL 1)
 
 simple_testing(option_zeroBeamEnergy "--file=zeroBeamEnergy.gmad" "")
 set_tests_properties(option_zeroBeamEnergy PROPERTIES WILL_FAIL 1)
+
+simple_testing(option_ignoreLocalAperture "--file=override_aperture.gmad" "")

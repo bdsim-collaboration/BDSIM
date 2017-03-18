@@ -46,6 +46,10 @@ public:
   void SetOuterField(BDSFieldInfo* outerFieldInfoIn);
   void SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn);
   /// @}
+
+  /// Determine which is the appropriate key to query a BDSMagnetStrength with for
+  /// a given type of magnet.
+  static G4String DetermineScalingKey(BDSMagnetType typeIn);
   
 protected:
   /// Private default constructor to force the use of the supplied one.

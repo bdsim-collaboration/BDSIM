@@ -7,6 +7,9 @@
 #include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
+#include "parser/fastlist.h"
+#include "parser/physicsbiasing.h"
+
 // physics processes / builders
 #include "G4DecayPhysics.hh"
 #include "G4EmExtraPhysics.hh"
@@ -41,6 +44,7 @@
 
 // general geant4
 #include "globals.hh"
+#include "G4GenericBiasingPhysics.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
@@ -298,10 +302,14 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  globals->SetParticleDefinition(particleTable->FindParticle(globals->ParticleName()));
+  G4String particleName = globals->ParticleName();
+  globals->SetParticleDefinition(particleTable->FindParticle(particleName));
   
   if(!globals->GetParticleDefinition()) 
-    {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
+    {
+      G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
+      exit(1);
+    }
   
   // set kinetic beam parameters other than total energy
   globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
@@ -506,5 +514,57 @@ void BDSModularPhysicsList::LaserWire()
     {
       constructors.push_back(new BDSLaserWirePhysics());
       physicsActivated["lw"] = true;
+    }
+}
+
+void BDSModularPhysicsList::BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases)
+{
+  // particles we know we can bias
+  std::map<G4String, G4bool> particlesToBias =
+    {
+      {"e-"     , false},
+      {"e+"     , false},
+      {"gamma"  , false},
+      {"proton" , false},
+      {"mu-"    , false},
+      {"mu+"    , false},
+      {"pi-"    , false},
+      {"pi+"    , false}
+    };
+
+  // iterate through bias structures and turn on biasing for that particle if it's in the
+  // map of acceptable particle definitions.
+  for (auto b : biases)
+    {
+      G4String name = G4String(b.particle);
+      if (particlesToBias.find(name) != particlesToBias.end())
+	{particlesToBias[name] = true;}
+      else
+	{
+	  G4cerr << __METHOD_NAME__ << "Not possible to bias \"" << name << "\"" << G4endl;
+	  exit(1);
+	}
+    }
+
+  // check whether we need to construct or attach biasing at all
+  typedef std::pair<const G4String, G4bool> mapvalue;
+  G4bool anyBiases = std::any_of(particlesToBias.begin(),
+				 particlesToBias.end(),
+				 [](mapvalue i){return i.second;});
+
+  if (!anyBiases)
+    {return;}
+  else
+    {// there are biases
+      G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
+      for (auto part : particlesToBias)
+	{
+	  if (part.second)
+	    {
+	      G4cout << __METHOD_NAME__ << "wrapping \"" << part.first << "\" for biasing" << G4endl;
+	      physBias->Bias(part.first);
+	    }
+	}
+      RegisterPhysics(physBias);
     }
 }

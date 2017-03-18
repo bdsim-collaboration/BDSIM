@@ -243,6 +243,9 @@ class ResultsUtilities:
                     generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
                 if issuedLine.__contains__('G4CutTubs::G4CutTubs()'):
                     generalStatus.append(GlobalData.returnCodes['FATAL_EXCEPTION'])
+                if issuedLine.__contains__('G4ChordFinder::FindNextChord()'):
+                    generalStatus.append(GlobalData.returnCodes['NAN_CHORD'])
+
                 # TODO: check for other types of warnings/errors.
 
         return generalStatus
@@ -366,62 +369,87 @@ class Analysis(ResultsUtilities):
             testResults = self.Results[componentType]
 
             for index, result in enumerate(testResults):
-                comparatorLog = 'FailedTests/' + result['compLogFile']
-                coords = self._getPhaseSpaceComparatorData(result, comparatorLog)
+                # comparatorLog = 'FailedTests/' + result['compLogFile']
+                coords = self._getPhaseSpaceComparatorData(result, 'FailedTests/' + result['compLogFile'])
                 self.Results[componentType][index]['resultsList'] = coords
         else:
             GlobalData._CheckComponent(componentType)  # raises value error
 
         self.Results[componentType].reverse()
+        setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
+        setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
+        self._groupDipoleResults(componentType)
 
     def _groupDipoleResults(self, componentType=''):
-        params = self.ResultsDict[componentType]['params']
-        uniqueValues = self.ResultsDict[componentType]['uniqueValues']
-        generalStatus = self.ResultsDict[componentType]['generalStatusList']
-        resultsList = self.ResultsDict[componentType]['resultsList']
-        results = Results(componentType)
+        if (componentType != 'rbend') and (componentType != 'sbend'):
+            raise ValueError("Component must be an rbend or sbend.")
+        params = self.Results[componentType].GetParams()
+        uniqueValues = self.Results[componentType].uniqueValues
+        generalStatus = self.Results[componentType].GetGeneralStatus()
+        resultsList = self.Results[componentType].GetResults()
+        self._dipoleResults = Results(componentType)
 
         for energy in uniqueValues['energy']:
             for length in uniqueValues['length']:
                 for angle in uniqueValues['angle']:
-                    tempGenStatus = []  # temp gen status for all dipoles with these three params
-                    tempCompResults = []  # temp comparator results
-                    for testNum, testParams in params:
+                    dipRes = {}
+                    dipRes['testParams'] = collections.OrderedDict()
+                    dipRes['testParams']['energy'] = energy
+                    dipRes['testParams']['length'] = length
+                    dipRes['testParams']['angle'] = angle
+                    dipRes['polefaceParams'] = []
+
+                    _genStat = []
+                    _resList = []
+                    for testNum in range(self.Results[componentType]._numEntries):
+                        testParams = params[testNum]
                         if (testParams['energy'] == energy) and (testParams['length'] == length) \
                                 and (testParams['angle'] == angle):
+                            dipRes['particle'] = self.Results[componentType][testNum]['particle']
+
                             paramSet = collections.OrderedDict()
-                            paramSet['energy'] = energy
-                            paramSet['length'] = length
-                            paramSet['angle'] = angle
-                            if not results['params'].__contains__(paramSet):
-                                results['params'].append(paramSet)
-                        tempGenStatus.append(generalStatus[testNum])
-                        tempCompResults.append(resultsList[testNum])
-                    genStatus = []
-                    for stat in tempGenStatus:
-                        if stat[0] == 1:
-                            genStatus.append(1)
-                        elif stat[0] == 3:
-                            genStatus.append(3)
-                        otherCodes = [4, 5, 6, 7, 8, 9]
-                        for code in otherCodes:
-                            if (stat.__contains__(code)) and (not genStatus.__contains__(code)):
-                                genStatus.append(code)
-                    results['generalStatus'].append(genStatus)
-                    tempCompArray = _np.array(tempCompResults)
-                    numCol = tempCompArray.shape[1]
-                    for i in range(numCol):
-                        allRes = tempCompArray[:,i]
-                        if i.__contains__(8):
-                            pass
+                            paramSet['e1'] = testParams['e1']
+                            paramSet['e2'] = testParams['e2']
+                            paramSet['fint'] = testParams['fint']
+                            paramSet['fintx'] = testParams['fintx']
+                            paramSet['hgap'] = testParams['hgap']
+
+                            dipRes['polefaceParams'].append(paramSet)
+                            _genStat.append(generalStatus[testNum])
+                            _resList.append(resultsList[testNum])
+                            #dipRes['testData'].append(self.Results[componentType][testNum])
+                    genStat = []
+                    for codes in _genStat:
+                        if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
+                            genStat.append(codes[0])
+                        elif len(codes) > 1:
+                            for code in codes:
+                                if not genStat.__contains__(code):
+                                    genStat.append(code)
+                    resList = [[], [], [], [], [], [], []]
+                    coords = _np.array(_resList)
+                    for index in range(coords.shape[1]):
+                        values = coords[:, index]
+                        templist = []
+                        for i in values:
+                            if not templist.__contains__(i):
+                                templist.append(i)
+                        resList[index] = templist
+
+                    dipRes['generalStatus'] = genStat
+                    dipRes['resultsList'] = resList
+
+                    self._dipoleResults.append(dipRes)
 
     def PlotResults(self, componentType=''):
-        plotter = Plotting()
-        #plotter.PlotResults(self.ResultsDict, componentType)
-        plotter.PlotResults(self.Results, componentType)
+        plotter = _Plotting()
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            plotter.PlotResults(self._dipoleResults, componentType)
+        else:
+            plotter.PlotResults(self.Results, componentType)
 
 
-class Plotting:
+class _Plotting:
     def __init__(self):
         self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
 
@@ -466,14 +494,19 @@ class Plotting:
     def PlotResults(self, allResults, componentType=''):
         GlobalData._CheckComponent(componentType)
 
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            res = allResults
+        else:
+            res = allResults[componentType]
+
         # split results into proton and electron
-        electronResults = allResults[componentType].GetResultsByParticle('e-')
-        protonResults = allResults[componentType].GetResultsByParticle('proton')
+        electronResults = res.GetResultsByParticle('e-')
+        protonResults = res.GetResultsByParticle('proton')
 
         if electronResults._numEntries == 0:
-            self.SingleParticlePlots(protonResults)
+            self._singleParticlePlots(protonResults)
         elif protonResults._numEntries == 0:
-            self.SingleParticlePlots(electronResults)
+            self._singleParticlePlots(electronResults)
         elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
             if (protonResults._numEntries <= self.testsPerAxes) and (electronResults._numEntries <= self.testsPerAxes):
                 figsize = self._getFigSize(protonResults, electronResults)
@@ -498,10 +531,10 @@ class Plotting:
                 self._addColorBar(f, dataAx1)
                 f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
             else:
-                self.SingleParticlePlots(electronResults)
-                self.SingleParticlePlots(protonResults)
+                self._singleParticlePlots(electronResults)
+                self._singleParticlePlots(protonResults)
 
-    def SingleParticlePlots(self, results):
+    def _singleParticlePlots(self, results):
         if results._numEntries > self.testsPerAxes:
             numEnergies = len(results.uniqueValues['energy'])
             if numEnergies == 1:
@@ -592,6 +625,16 @@ class Plotting:
             particle = results[0]['particle']
             numTests = len(results)
 
+            zeroData = []
+            for test in data:
+                dataRes = []
+                for val in test:
+                    if multiEntryTypes.__contains__(type(val)):
+                        dataRes.append(val[0])
+                    else:
+                        dataRes.append(val)
+                zeroData.append(dataRes)
+
             # set normalised colormap.
             bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
             norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
@@ -613,9 +656,18 @@ class Plotting:
                         if len(subplotTitle.split('\n')[-1]) > 22:
                             subplotTitle += '\n'
 
-            cax = ax.imshow(data, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+            cax = ax.imshow(zeroData, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
                             extent=extent, aspect='auto')
             ax.set_xlim(0, 8)
+
+            for index, status in enumerate(data):
+                for coord, vals in enumerate(status):
+                    numStatus = len(vals)
+                    yIndex = index
+                    for statIndex, stat in enumerate(vals):
+                        boxColor = GlobalData.cmap.colors[_np.int(stat)]
+                        boxWidth = 1.0 / numStatus
+                        ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
             for index, status in enumerate(generalStatus):
                 numStatus = len(status)

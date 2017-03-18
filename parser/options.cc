@@ -125,6 +125,7 @@ void Options::PublishMembers()
   publish("zDistrType",&Options::zDistribType);
   publish("distrFile", &Options::distribFile);
   publish("distrFileFormat",   &Options::distribFileFormat);
+  publish("matchDistribFileLength", &Options::matchDistribFileLength);
   publish("nlinesIgnore",      &Options::nlinesIgnore);
   publish("eventOffset",       &Options::eventOffset);
   publish("recreateSeedState", &Options::recreateSeedState);
@@ -249,6 +250,7 @@ void Options::PublishMembers()
   publish("aper3",&Options::aper3);
   publish("aper4",&Options::aper4);
   publish("beampipeMaterial",&Options::beampipeMaterial);
+  publish("ignoreLocalAperture", &Options::ignoreLocalAperture);
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
