@@ -8,18 +8,12 @@
 #include <fstream>
 #include <regex>
 
-BDSBunchPtc::BDSBunchPtc()
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  // load inrays file in current directory 
-  fileName = "./inrays.madx";
-  // Set ray counter to zero
-  iRay  = 0;
-  nRays = 0;
-}
+BDSBunchPtc::BDSBunchPtc():
+  nRays(0),
+  fileName("./inrays.madx"),
+  iRay(0),
+  loopedOver(false)
+{;}
 
 BDSBunchPtc::~BDSBunchPtc()
 {
@@ -37,7 +31,8 @@ void BDSBunchPtc::LoadPtcFile()
   std::ifstream ifstr(fileName);
 
   if (!ifstr)
-    { G4cout << __METHOD_NAME__ << "\"" << fileName << "\" file doesn't exist - exiting as no input" << G4endl;
+    {
+      G4cout << __METHOD_NAME__ << "\"" << fileName << "\" file doesn't exist - exiting as no input" << G4endl;
       exit(1);
     }
 
@@ -103,7 +98,9 @@ void BDSBunchPtc::LoadPtcFile()
 
   // set number of available rays in options
   nRays = ptcData.size();
-  BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);
+  
+  if (BDSGlobalConstants::Instance()->MatchDistribFileLength())
+    {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
 
   return;
 }
@@ -131,6 +128,13 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // if all particles are read, start at 0 again and note it down in bool flag
+  if (iRay == nRays)
+    {
+      iRay       = 0;
+      loopedOver = true;
+    }
+  
   x0     = (ptcData[iRay][0] + X0) * CLHEP::m;
   y0     = (ptcData[iRay][2] + Y0) * CLHEP::m;
   z0     = (ptcData[iRay][4] + Z0) * CLHEP::m;
@@ -142,12 +146,12 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   weight = 1.0; 
 
   iRay++;
-
-  // if all particles are read, start at 0 again
-  if (iRay == nRays) {
-    iRay=0;
-    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
-  }
+  
+  if (loopedOver)
+    {
+      G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+      loopedOver = false; // reset flag until next time
+    }
 
   return;
 }

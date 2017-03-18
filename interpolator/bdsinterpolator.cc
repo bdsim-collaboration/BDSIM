@@ -5,6 +5,7 @@
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMag.hh"
+#include "BDSFieldMagInterpolated.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 
