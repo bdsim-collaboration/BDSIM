@@ -48,7 +48,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
-  if (rho < minimumRadiusOfCurvature)
+  if (std::abs(rho) < minimumRadiusOfCurvature)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
