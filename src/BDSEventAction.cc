@@ -240,7 +240,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   if (storeTrajectory && trajCont)
     {
-    std::vector<BDSTrajectory *> interestingTrajectories;
     std::map<BDSTrajectory *, bool> interestingTraj;
 
     TrajectoryVector *trajVec = trajCont->GetVector();

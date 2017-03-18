@@ -38,8 +38,6 @@ public:
 	     G4ThreeVector     pos,
 	     G4LogicalVolume*  motherVol);
 
-  /// Accessor.
-  G4LogicalVolume* CavityLogVol() const {return cavityLogVol;}
 
 protected:
   virtual void SetVisAtts();
@@ -47,9 +45,6 @@ protected:
 private:
   /// Remove default constructor to force use of supplied one.
   BDSScreenFrameRectangular() = delete;
-
-  G4LogicalVolume*  cavityLogVol;
-  G4String          cavityName;
   G4ThreeVector     cavityPos;
   G4RotationMatrix* zeroRot;
 };

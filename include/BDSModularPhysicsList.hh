@@ -12,6 +12,11 @@ class BDSModularPhysicsList;
 class G4OpticalPhysics;
 class G4VPhysicsConstructor;
 
+namespace GMAD {
+  class PhysicsBiasing;
+  template<typename T> class FastList;
+}
+
 /**
  * @brief Modular physics list based on Geant4 constructors.
  *
@@ -42,6 +47,8 @@ public:
   void PrintDefinedParticles() const;
   
   virtual void SetCuts();
+
+  void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
 private:
   /// Private default constructor to force use of supplied one.

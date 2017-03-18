@@ -53,7 +53,9 @@ public:
   ~BDSFieldFactory();
 
   /// Main interface to field factory.
-  BDSFieldObjects* CreateField(const BDSFieldInfo& info);
+  BDSFieldObjects* CreateField(const BDSFieldInfo&      info,
+			       const BDSMagnetStrength* scalingStrength = nullptr,
+			       const G4String           scalingKey      = "none");
 
   /// Return a BDSFieldInfo instance from the parser definitions. Will
   /// exit if no matching field definition found.
@@ -61,7 +63,9 @@ public:
 
 private:
   /// Create a purely magnetic field.
-  BDSFieldObjects* CreateFieldMag(const BDSFieldInfo& info);
+  BDSFieldObjects* CreateFieldMag(const BDSFieldInfo&      info,
+				  const BDSMagnetStrength* scalingStrength = nullptr,
+				  const G4String           scalingKey      = "none");
 
   /// Create a general EM field.
   BDSFieldObjects* CreateFieldEM(const BDSFieldInfo& info);

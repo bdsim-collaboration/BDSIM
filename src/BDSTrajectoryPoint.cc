@@ -22,7 +22,6 @@ G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
 // Don't use transform caching in the aux navigator as it's used for all over the geometry here.
 BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator();
-G4int BDSTrajectoryPoint::numberOfPoints = 0;
 
 BDSTrajectoryPoint::BDSTrajectoryPoint():
   G4TrajectoryPoint(G4ThreeVector())
@@ -124,15 +123,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
-{
-  if (numberOfPoints == 0)
-    {delete auxNavigator; auxNavigator = nullptr;}
-  numberOfPoints--;
-}
+{}
 
 void BDSTrajectoryPoint::InitialiseVariables()
 {
-  numberOfPoints++;
   preProcessType     = -1;
   preProcessSubType  = -1;
   postProcessType    = -1;
@@ -163,7 +157,7 @@ G4bool BDSTrajectoryPoint::IsScatteringPoint()const
   G4bool notTransportation = processType != fTransportation;
   G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
   G4bool notParallel       = processType != fParallel;
-  
+
   if (initialised && notTransportation && notGeneral && notParallel)
     {
 #ifdef BDSDEBUG

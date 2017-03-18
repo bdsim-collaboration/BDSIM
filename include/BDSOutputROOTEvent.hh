@@ -5,6 +5,8 @@
 
 #include <ctime>
 #include <map>
+#include <string>
+#include <vector>
 
 #include "BDSOutputBase.hh"
 
@@ -123,6 +125,7 @@ private:
 #else
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
+  std::vector<std::string> samplerNames;
 
   /// run information
   BDSOutputROOTEventRunInfo     *runInfo     = nullptr;

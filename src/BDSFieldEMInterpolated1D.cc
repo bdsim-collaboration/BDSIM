@@ -10,11 +10,9 @@ BDSFieldEMInterpolated1D::BDSFieldEMInterpolated1D(BDSInterpolator1D* eInterpola
 						   G4Transform3D      offset,
 						   G4double           eScalingIn,
 						   G4double           bScalingIn):
-  BDSFieldEM(offset),
+  BDSFieldEMInterpolated(offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
-  bInterpolator(bInterpolatorIn),
-  eScaling(eScalingIn),
-  bScaling(bScalingIn)
+  bInterpolator(bInterpolatorIn)
 {;}
 
 BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()
@@ -26,7 +24,7 @@ BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated1D::GetField(const G4ThreeVector& position,
 									  const G4double       /*t*/) const
 {
-  G4ThreeVector e = eInterpolator->GetInterpolatedValue(position[0]) * eScaling;
-  G4ThreeVector b = bInterpolator->GetInterpolatedValue(position[0]) * bScaling;
+  G4ThreeVector e = eInterpolator->GetInterpolatedValue(position[0]) * EScaling();
+  G4ThreeVector b = bInterpolator->GetInterpolatedValue(position[0]) * BScaling();
   return std::make_pair(b,e);
 }

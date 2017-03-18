@@ -56,6 +56,7 @@ OptionsBase::OptionsBase()
   zDistribType          = "";
   distribFile           = "";
   distribFileFormat     = "";
+  matchDistribFileLength = true;
   
   nlinesIgnore          = 0;
   eventOffset           = 0;
@@ -147,6 +148,8 @@ OptionsBase::OptionsBase()
   aper3                = 0.0;
   aper4                = 0.0;
   beampipeMaterial     = "StainlessSteel";
+  ignoreLocalAperture  = false;
+  
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
   vacuumPressure       = 1e-12;

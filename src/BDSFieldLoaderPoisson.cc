@@ -1,4 +1,5 @@
 #include "BDSArray2DCoords.hh"
+#include "BDSDebug.hh"
 #include "BDSFieldLoaderPoisson.hh"
 #include "BDSFieldValue.hh"
 
@@ -175,6 +176,9 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
     }
 
   file.close();
+
+  if (!result)
+    {G4cerr << __METHOD_NAME__ << "Invalid file contents - no column header found" << G4endl; exit(1);}
   
   return result;
 }
