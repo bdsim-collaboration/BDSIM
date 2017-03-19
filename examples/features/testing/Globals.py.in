@@ -213,6 +213,7 @@ class Globals():
                                                     ('FATAL_EXCEPTION', 8),
                                                     ('NAN_CHORD', 9)
                                                     ])
+        self.softFailures = ['OVERLAPS', 'STUCK_PARTICLE', 'TRACKING_WARNING', 'NAN_CHORD']
 
         self.cmap = colors.ListedColormap(['b',
                                            (1, 1, 0),  # actual yellow
