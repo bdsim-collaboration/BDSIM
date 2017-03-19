@@ -746,10 +746,6 @@ class TestSuite(TestUtilities):
         _os.chdir('../')
 
     def _FullTestSuite(self):
-        writer = Writer.Writer()
-        writer.SetBeamFilename('trackingTestBeam.madx')
-        writer.SetOptionsFilename('trackingTestOptions.gmad')
-
         self.numFiles = {}
         self.componentTests = []
         for component in GlobalData.components:
@@ -758,7 +754,7 @@ class TestSuite(TestUtilities):
         TestPS = GlobalData.BeamPhaseSpace
     
         BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'], TestPS['PX'], TestPS['Y'], TestPS['PY'], TestPS['T'], TestPS['PT'])
-        BeamPhaseSpace.WriteToInrays('Tests/trackingTestBeam.madx')
+        BeamPhaseSpace._WriteToInrays('Tests/trackingTestBeam.madx')
 
         for machineInfo in GlobalData.accelerators.values():
             energy = machineInfo['energy']
@@ -766,13 +762,12 @@ class TestSuite(TestUtilities):
         
             for component in GlobalData.components:
                 componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
-                self.componentTests.append(componentTest)
+                self.AddTest(componentTest)
                 self.numFiles[component] += componentTest._numFiles
 
         self.totalFiles = 0
         for component in self.numFiles:
             self.totalFiles += self.numFiles[component]
 
-        self.BeamPhaseSpace = BeamPhaseSpace
-
+        self.RunTestSuite()
 
