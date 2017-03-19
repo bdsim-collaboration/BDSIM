@@ -122,13 +122,13 @@ def Run(inputDict):
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
-    # elif incorrect args
-    elif inputDict['code'] == 2:
-        pass
-        # This is a command line entry problem which should not really occur.
+    # # elif incorrect args
+    # elif inputDict['code'] == 2:
+    #     pass
+    #     # This is a command line entry problem which should not really occur.
 
     # elif root file wasn't generated.
-    elif inputDict['code'] == 3:
+    elif inputDict['code'] == 2 :
         # move bdsim log file to fail dir
         _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         if isSelfComparison:
