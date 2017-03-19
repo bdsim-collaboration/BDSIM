@@ -647,9 +647,13 @@ class TestSuite(TestUtilities):
     def __init__(self, testingDirectory,
                  dataSetDirectory='',
                  _useSingleThread=False,
+                 usePickledData=False,
                  fullTestSuite=False):
         super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
         self._useSingleThread = _useSingleThread
+        self._usePickledData = usePickledData
+        if fullTestSuite:
+            self._FullTestSuite()
 
     def AddTest(self, test):
         """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
@@ -678,6 +682,10 @@ class TestSuite(TestUtilities):
         """ Run all tests in the test suite. This will generate the tests rootevent
             output, compares to an original file, and processes the comparison results.
             """
+        if self._usePickledData:
+            _os.chdir('BDSIMOutput')
+            self.Analysis.ProduceReport(pickled=True)
+            return None
 
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   # Write all gmad files for all test objects.

@@ -3,6 +3,7 @@ import os as _os
 import time as _time
 import collections
 import Globals
+import pickle
 import string as _string
 from matplotlib import colors as _color
 from matplotlib import ticker as _tick
@@ -380,6 +381,13 @@ class Analysis(ResultsUtilities):
         setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
         setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
 
+        with open('results.pickle', 'wb') as handle:
+            pickle.dump(self.Results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            self._groupDipoleResults(componentType)
+            with open('dipoleResults.pickle', 'wb') as handle:
+                pickle.dump(self.DipoleResults, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def _groupDipoleResults(self, componentType=''):
         def _dictPolefaceCompVals(testparams):
