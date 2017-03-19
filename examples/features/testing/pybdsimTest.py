@@ -374,6 +374,7 @@ class TestUtilities(object):
         self._tests = []  # list of test objects
         self._testNames = {}  # dict of test file names (a list of names per component)
         self._testParamValues = {}
+        self._generateOriginals = False  # bool for generating original data set
 
         if not isinstance(testingDirectory, _np.str):
             raise TypeError("Testing directory is not a string")
@@ -411,6 +412,9 @@ class TestUtilities(object):
         self.bdsimFailLog = 'bdsimOutputFailures.log'
         self.bdsimPassLog = 'bdsimOutputPassed.log'
         self._comparatorLog = 'comparatorOutput.log'
+
+        self.Analysis = TestResults.Analysis()  # results instance
+        self.timings = TestResults.Timing()  # timing data.
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.
@@ -640,12 +644,12 @@ class TestUtilities(object):
 
 
 class TestSuite(TestUtilities):
-    def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
+    def __init__(self, testingDirectory,
+                 dataSetDirectory='',
+                 _useSingleThread=False,
+                 fullTestSuite=False):
         super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
         self._useSingleThread = _useSingleThread
-        self._generateOriginals = False  # bool for generating original data set
-        self.Analysis = TestResults.Analysis()  # results instance
-        self.timings = TestResults.Timing()  # timing data.
 
     def AddTest(self, test):
         """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
