@@ -522,6 +522,7 @@ class TestUtilities(object):
         if not robust:
             options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
+        options.SetBeamPipeRadius(beampiperadius=10)
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
