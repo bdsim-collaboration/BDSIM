@@ -749,6 +749,7 @@ class TestSuite(TestUtilities):
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
+        self.Analysis.ProduceReport()
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
         _os.chdir('../')

@@ -491,6 +491,16 @@ class Analysis(ResultsUtilities):
         else:
             plotter.PlotResults(self.Results, componentType)
 
+    def ProduceReport(self, pickled=False):
+        if pickled:
+            with open('results.pickle', 'rb') as handle:
+                self.Results = pickle.load(handle)
+            with open('dipoleResults.pickle', 'rb') as handle:
+                self.DipoleResults = pickle.load(handle)
+
+        report = _Report(self.Results, self.DipoleResults)
+        report.ProduceReport()
+
 
 class _Plotting:
     def __init__(self):
@@ -812,6 +822,212 @@ class _Plotting:
 
         return dataAx1
 
+
+class _Report:
+    def __init__(self, results, dipoleResults):
+        self.Results = results
+        self.DipoleResults = dipoleResults
+        self.groupedResults = {}
+        self._numResults = {}
+        self._fileName = "../Results/TestResults_" + _time.strftime("%d%m%Y_%H%M%S", _time.gmtime()) + ".txt"
+
+    def _getResults(self, component):
+        compResults = None
+        if ((component == 'rbend') or (component == 'sbend')) and self.DipoleResults.keys().__contains__(component):
+            compResults = self.DipoleResults[component]
+        elif self.Results.keys().__contains__(component):
+            compResults = self.Results[component]
+        return compResults
+
+    def _groupResults(self, resultsList, component):
+        groupedResults = {}
+        numResults = {}
+        for error, codeIndex in GlobalData.returnCodes.iteritems():
+            groupedResults[error] = Results(component)
+            numResults[error] = 0
+            for resultNum, result in enumerate(resultsList):
+                if (result['generalStatus'].__contains__(codeIndex)) or \
+                        (result['generalStatus'].__contains__(_np.str(codeIndex))):
+                    groupedResults[error].append(result)
+            for resultNum, result in enumerate(self.Results[component]):
+                if (result['generalStatus'].__contains__(codeIndex)) or \
+                        (result['generalStatus'].__contains__(_np.str(codeIndex))):
+                    numResults[error] += 1
+
+        self.groupedResults[component] = groupedResults
+        self._numResults[component] = numResults
+
+    def _processFatals(self, component):
+        results = self.groupedResults[component]['FATAL_EXCEPTION']
+        commonFactors = {}
+
+        globalParams = {}
+        for res in results:
+            for param, value in res['testParams'].iteritems():
+                if not globalParams.keys().__contains__(param):
+                    globalParams[param] = []
+                if not globalParams[param].__contains__(value):
+                    globalParams[param].append(value)
+        for param, value in globalParams.iteritems():
+            if len(value) == 1:
+                commonFactors[param] = value[0]
+            elif len(value) == 2:
+                commonFactors[param] = value
+        if commonFactors.keys().__len__() > 0:
+            s = "\tTests where a fatal exception was called had the common parameters:\r\n"
+            for param, value in commonFactors.iteritems():
+                s += "\t" + param + " : " + _np.str(value) + ".\r\n"
+            return s
+        else:
+            return None
+
+    def _processSoftFail(self, component, failure):
+        results = self.groupedResults[component][failure]
+        commonFactors = {}
+        globalParams = {}
+        for res in results:
+            for param, value in res['testParams'].iteritems():
+                if not globalParams.keys().__contains__(param):
+                    globalParams[param] = []
+                if not globalParams[param].__contains__(value):
+                    globalParams[param].append(value)
+        for param, value in globalParams.iteritems():
+            if len(value) == 1:
+                commonFactors[param] = value[0]
+        if commonFactors.keys().__len__() > 0:
+            strName = failure.replace("_", " ")
+            strName = _string.lower(strName)
+            s = "\tTests where a " + strName + "was called had the common parameters:\r\n"
+            for param, value in commonFactors.iteritems():
+                s += "\t" + param + " : " + _np.str(value) + ".\r\n"
+            return s
+        else:
+            return None
+
+    def _processComparatorFailure(self, component):
+        results = self.Results[component]
+        coordLabels = ['x', 'xp', 'y', 'yp', 't', 'zp', 'n']
+        numFailures = [0, 0, 0, 0, 0, 0, 0]
+        for res in results:
+            compResults = res['resultsList']
+            for index, coord in enumerate(compResults):
+                if coord == 1:
+                    numFailures[index] += 1
+        s = "Number of comparator failures: \r\n"
+        s += "  x:  " + _np.str(numFailures[0]) + ",\r\n"
+        s += "  xp: " + _np.str(numFailures[1]) + ",\r\n"
+        s += "  y:  " + _np.str(numFailures[2]) + ",\r\n"
+        s += "  yp: " + _np.str(numFailures[3]) + ",\r\n"
+        s += "  t:  " + _np.str(numFailures[4]) + ",\r\n"
+        s += "  zp: " + _np.str(numFailures[5]) + ",\r\n"
+        s += "  n:  " + _np.str(numFailures[6]) + ".\r\n"
+        s += "\r\n"
+        s += "Comparator failures had the following common parameters:\r\n"
+
+        for i in range(7):
+            s += "  " + coordLabels[i] + ":\r\n"
+            failedTests = Results(component)
+            for res in results:
+                compResults = res['resultsList']
+                if compResults[i] == 1:
+                    failedTests.append(res)
+
+            commonFactors = {}
+            globalParams = {}
+            for res in failedTests:
+                for param, value in res['testParams'].iteritems():
+                    if not globalParams.keys().__contains__(param):
+                        globalParams[param] = []
+                    if not globalParams[param].__contains__(value):
+                        globalParams[param].append(value)
+            for param, value in globalParams.iteritems():
+                if len(value) == 1:
+                    commonFactors[param] = value[0]
+                elif len(value) == 2:
+                    commonFactors[param] = value
+            if commonFactors.keys().__len__() > 0:
+                for param, value in commonFactors.iteritems():
+                    s += "    " + param + " : " + _np.str(value) + ".\r\n"
+        return s
+
+    def _componentSectionTitle(self, component):
+        s1 = ''
+        for i in range(80):
+            s1 += "-"
+        s1 += "\r\n"
+
+        # component type in the centre
+        numSpaces = 80 - len(component)
+        if _np.mod(numSpaces, 2) == 0:
+            spBefore = numSpaces / 2.0
+        else:
+            spBefore = (numSpaces - 1) / 2.0
+        s2 = ''
+        for i in range(_np.int(spBefore)):
+            s2 += ' '
+        s2 += component + "\r\n"
+        title = s1 + s2 + s1
+        return title
+
+    def _overallResults(self, component):
+        overallRes = self._numResults[component]
+        totalTests = self.Results[component].__len__()
+        s = "Overall Results: \r\n"
+        s += "  Passed: " + _np.str(overallRes['SUCCESS']) + "/" + _np.str(totalTests) + ",\r\n"
+        s += "  Soft Failure: " + _np.str(overallRes['FAILED']) + "/" + _np.str(totalTests) + ",\r\n"
+        s += "  Hard Failure: " + _np.str(overallRes['FILE_NOT_FOUND']) + "/" + _np.str(totalTests) + ".\r\n"
+        s += "\r\n"
+        s += "Breakdown of Hard Failures: \r\n"
+        numHardFailures = overallRes['FILE_NOT_FOUND']
+        if overallRes['FATAL_EXCEPTION'] > 0:
+            s += "  Fatal Exceptions: " + _np.str(overallRes['FATAL_EXCEPTION']) + "/" + \
+                 _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
+            numHardFailures -= overallRes['FATAL_EXCEPTION']
+            fatalString = self._processFatals(component)
+            s += fatalString
+        if overallRes['TIMEOUT'] > 0:
+            s += "  Timeouts: " + _np.str(overallRes['TIMEOUT']) + "/" + \
+                 _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
+            numHardFailures -= overallRes['TIMEOUT']
+        s += "  Unknown Reason: " + _np.str(numHardFailures) + "/" + _np.str(overallRes['FILE_NOT_FOUND']) + "\r\n"
+        s += "    (likely to be BDSIM self exit).\r\n"
+        s += "\r\n"
+        softStr = "Breakdown of Soft Failures: \r\n"
+        softFailures = False
+        for index, failure in enumerate(GlobalData.softFailures):
+            if overallRes[failure] > 0:
+                softFailures = True
+                strName = failure.replace("_", " ")
+                strName = _string.capitalize(strName)
+                softStr += "  " + strName + ": " + _np.str(overallRes[failure])
+                if index == len(GlobalData.softFailures)-1:
+                    softStr += ".\r\n"
+                else:
+                    softStr += ",\r\n"
+                failString = self._processSoftFail(component, failure)
+                if failString is not None:
+                    softStr += failString
+        if softFailures:
+            s += softStr
+        return s
+
+    def _componentSection(self, component):
+        section = self._componentSectionTitle(component)
+        section += "\r\n"
+        section += self._overallResults(component)
+        section += "\r\n"
+        section += self._processComparatorFailure(component)
+        section += "\r\n"
+        f = open(self._fileName, 'a')
+        f.write(section)
+        f.close()
+
     def ProduceReport(self):
-        # TODO: loop over _testParamValues and search for common parameter where failures are seen.
-        pass
+        for componentType in GlobalData.components:
+            results = self._getResults(componentType)
+
+            if results is not None:
+                self._groupResults(results, componentType)
+                self._componentSection(componentType)
+            else:
+                pass
