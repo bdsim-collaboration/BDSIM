@@ -53,7 +53,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 
   G4ThreeVector pos          = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector momUnit      = mom.unit();
-  BDSStep       localPosMom  = ConvertToLocal(pos, momUnit, h, false);
+  BDSStep       localPosMom  = GlobalToCurvilinear(pos, momUnit, h, false);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMomUnit = localPosMom.PostStepPoint();
 
@@ -167,8 +167,38 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localMomUnit.setX(xp1);
   localMomUnit.setY(yp1);
   localMomUnit.setZ(zp1);
-  
-  ConvertToGlobal(localPos,localMomUnit,momMag,yOut);
-  for (G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+
+  // normalise from unit momentum to absolute momentum
+  G4ThreeVector localMomOut = localMomUnit * momMag;
+
+  // convert to global coordinates
+  BDSStep globalPosMom = CurvilinearToGlobal(localPos, localMomOut, false);
+  G4ThreeVector globalPosOut = globalPosMom.PreStepPoint();
+  G4ThreeVector globalMomOut = globalPosMom.PostStepPoint();      
+
+  // write out coordinates and errors to arrays
+  for (G4int i = 0; i < 3; i++)
+    {
+      yOut[i]   = globalPosOut[i];
+      yOut[i+3] = globalMomOut[i];
+      yErr[i]   = 0;
+      yErr[i+3] = 0;
+    }
 }
+
+BDSStep BDSIntegratorQuadrupole::GlobalToCurvilinear(G4ThreeVector position,
+						     G4ThreeVector unitMomentum,
+						     G4double      h,
+						     G4bool        useCurvilinearWorld)
+{
+  return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+}
+
+
+BDSStep BDSIntegratorQuadrupole::CurvilinearToGlobal(G4ThreeVector localPosition,
+						     G4ThreeVector localMomentum,
+						     G4bool        useCurvilinearWorld)
+{
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
+}
+  

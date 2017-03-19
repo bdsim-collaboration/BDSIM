@@ -4,10 +4,10 @@
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
+class BDSStep;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
@@ -39,6 +39,17 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
+
+protected:
+
+  virtual BDSStep GlobalToCurvilinear(G4ThreeVector position,
+				      G4ThreeVector unitMomentum,
+				      G4double      h,
+				      G4bool        useCurvilinearWorld);
+
+  virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
+				      G4ThreeVector localMomentum,
+				      G4bool        useCurvilinearWorld);
   
 private:
   /// Private default constructor to enforce use of supplied constructor
