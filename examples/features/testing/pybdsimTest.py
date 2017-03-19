@@ -591,6 +591,53 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
+    def _multiThread(self, testlist):
+        numCores = multiprocessing.cpu_count()
+
+        p = multiprocessing.Pool(numCores)
+        results = p.map(Run, testlist)
+
+        for testRes in results:
+            self.Analysis.AddResults(testRes)
+            self.timings.bdsimTimes.append(testRes['bdsimTime'])
+            self.timings.comparatorTimes.append(testRes['compTime'])
+
+    def _singleThread(self, testlist):
+        eleBdsimTimes = []
+        eleComparatorTimes = []
+
+        for testDict in testlist:
+            test = testDict['file']
+            isSelfComparison = testDict['isSelfComparison']
+            originalEvent = testDict['originalFile']
+
+            bdsimTestTime = time.time()
+            outputEvent = self.GenerateRootFile(test)
+            bdsimTime = time.time() - bdsimTestTime
+            eleBdsimTimes.append(bdsimTime)
+            compTestTime = time.time()
+            # Only compare if the output was generated.
+
+            if (outputEvent is not None) and (not self._generateOriginals):
+                if isSelfComparison:
+                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
+                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
+                    _os.system(copyString)
+                else:
+                    pass  # This is where the comparison with the original file will occur.
+                    # TODO: figure out how to process original files that will be compared to.
+
+                self.CompareOutput(originalEvent, outputEvent)
+            else:
+                self._UpdateBDSIMFailLog(test)
+                _os.system("rm temp.log")
+                print("Output for test " + test + " was not generated.")
+            comparatorTime = time.time() - compTestTime
+            eleComparatorTimes.append(comparatorTime)
+
+        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
+        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
+
 
 class TestSuite(TestUtilities):
     def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
@@ -693,53 +740,6 @@ class TestSuite(TestUtilities):
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
         _os.chdir('../')
-
-    def _multiThread(self, testlist):
-        numCores = multiprocessing.cpu_count()
-
-        p = multiprocessing.Pool(numCores)
-        results = p.map(Run, testlist)
-
-        for testRes in results:
-            self.Analysis.AddResults(testRes)
-            self.timings.bdsimTimes.append(testRes['bdsimTime'])
-            self.timings.comparatorTimes.append(testRes['compTime'])
-
-    def _singleThread(self, testlist):
-        eleBdsimTimes = []
-        eleComparatorTimes = []
-
-        for testDict in testlist:
-            test = testDict['file']
-            isSelfComparison = testDict['isSelfComparison']
-            originalEvent = testDict['originalFile']
-
-            bdsimTestTime = time.time()
-            outputEvent = self.GenerateRootFile(test)
-            bdsimTime = time.time() - bdsimTestTime
-            eleBdsimTimes.append(bdsimTime)
-            compTestTime = time.time()
-            # Only compare if the output was generated.
-
-            if (outputEvent is not None) and (not self._generateOriginals):
-                if isSelfComparison:
-                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
-                    _os.system(copyString)
-                else:
-                    pass  # This is where the comparison with the original file will occur.
-                    # TODO: figure out how to process original files that will be compared to.
-
-                self.CompareOutput(originalEvent, outputEvent)
-            else:
-                self._UpdateBDSIMFailLog(test)
-                _os.system("rm temp.log")
-                print("Output for test " + test + " was not generated.")
-            comparatorTime = time.time() - compTestTime
-            eleComparatorTimes.append(comparatorTime)
-
-        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
 
     def _FullTestSuite(self):
         writer = Writer.Writer()
