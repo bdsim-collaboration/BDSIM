@@ -130,6 +130,7 @@ class ResultsUtilities:
     def __init__(self):
         # dict of list of Results instances for each component type.
         self.Results = {}
+        self.DipoleResults = {}
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -378,73 +379,107 @@ class Analysis(ResultsUtilities):
         self.Results[componentType].reverse()
         setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
         setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
-        self._groupDipoleResults(componentType)
+
 
     def _groupDipoleResults(self, componentType=''):
+        def _dictPolefaceCompVals(testparams):
+            paramSet = collections.OrderedDict()
+            paramSet['e1'] = testparams['e1']
+            paramSet['e2'] = testparams['e2']
+            paramSet['fint'] = testparams['fint']
+            paramSet['fintx'] = testparams['fintx']
+            paramSet['hgap'] = testparams['hgap']
+            return paramSet
+
+        def _updatGeneralStatus(_genStatus):
+            genStat = []
+            for codes in _genStatus:
+                if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
+                    genStat.append(codes[0])
+                elif len(codes) > 1:
+                    for code in codes:
+                        if not genStat.__contains__(code):
+                            genStat.append(code)
+            return genStat
+
+        def _updateCoordsRes(_resultsList):
+            resList = [[], [], [], [], [], [], []]
+            coords = _np.array(_resultsList)
+            for index in range(coords.shape[1]):
+                values = coords[:, index]
+                templist = []
+                for i in values:
+                    if not templist.__contains__(i):
+                        templist.append(i)
+                resList[index] = templist
+            return resList
+
+        def _getResDict(energyVal, lengthVal, angleVal=0, fieldVal=0):
+            dipoleResults = {}
+            dipoleResults['testParams'] = collections.OrderedDict()
+            dipoleResults['testParams']['energy'] = energyVal
+            dipoleResults['testParams']['length'] = lengthVal
+            dipoleResults['polefaceParams'] = []
+            if angleVal != 0:
+                dipoleResults['testParams']['angle'] = angleVal
+            elif fieldVal != 0:
+                dipoleResults['testParams']['field'] = fieldVal
+            return dipoleResults
+
         if (componentType != 'rbend') and (componentType != 'sbend'):
             raise ValueError("Component must be an rbend or sbend.")
         params = self.Results[componentType].GetParams()
         uniqueValues = self.Results[componentType].uniqueValues
         generalStatus = self.Results[componentType].GetGeneralStatus()
         resultsList = self.Results[componentType].GetResults()
-        self._dipoleResults = Results(componentType)
+        dipoleResults = Results(componentType)
 
         for energy in uniqueValues['energy']:
             for length in uniqueValues['length']:
-                for angle in uniqueValues['angle']:
-                    dipRes = {}
-                    dipRes['testParams'] = collections.OrderedDict()
-                    dipRes['testParams']['energy'] = energy
-                    dipRes['testParams']['length'] = length
-                    dipRes['testParams']['angle'] = angle
-                    dipRes['polefaceParams'] = []
+                if uniqueValues.keys().__contains__('angle'):
+                    for angle in uniqueValues['angle']:
+                        dipRes = _getResDict(energy, length, angleVal=angle)
 
-                    _genStat = []
-                    _resList = []
-                    for testNum in range(self.Results[componentType]._numEntries):
-                        testParams = params[testNum]
-                        if (testParams['energy'] == energy) and (testParams['length'] == length) \
-                                and (testParams['angle'] == angle):
-                            dipRes['particle'] = self.Results[componentType][testNum]['particle']
+                        _genStat = []
+                        _resList = []
+                        for testNum in range(self.Results[componentType]._numEntries):
+                            testParams = params[testNum]
+                            if (testParams['energy'] == energy) and (testParams['length'] == length) \
+                                    and (testParams['angle'] == angle):
+                                dipRes['particle'] = self.Results[componentType][testNum]['particle']
+                                dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
+                                _genStat.append(generalStatus[testNum])
+                                _resList.append(resultsList[testNum])
 
-                            paramSet = collections.OrderedDict()
-                            paramSet['e1'] = testParams['e1']
-                            paramSet['e2'] = testParams['e2']
-                            paramSet['fint'] = testParams['fint']
-                            paramSet['fintx'] = testParams['fintx']
-                            paramSet['hgap'] = testParams['hgap']
+                        dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
+                        dipRes['resultsList'] = _updateCoordsRes(_resList)
 
-                            dipRes['polefaceParams'].append(paramSet)
-                            _genStat.append(generalStatus[testNum])
-                            _resList.append(resultsList[testNum])
-                            #dipRes['testData'].append(self.Results[componentType][testNum])
-                    genStat = []
-                    for codes in _genStat:
-                        if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
-                            genStat.append(codes[0])
-                        elif len(codes) > 1:
-                            for code in codes:
-                                if not genStat.__contains__(code):
-                                    genStat.append(code)
-                    resList = [[], [], [], [], [], [], []]
-                    coords = _np.array(_resList)
-                    for index in range(coords.shape[1]):
-                        values = coords[:, index]
-                        templist = []
-                        for i in values:
-                            if not templist.__contains__(i):
-                                templist.append(i)
-                        resList[index] = templist
+                        dipoleResults.append(dipRes)
+                elif uniqueValues.keys().__contains__('field'):
+                    for field in uniqueValues['field']:
+                        dipRes = _getResDict(energy, length, fieldVal=field)
 
-                    dipRes['generalStatus'] = genStat
-                    dipRes['resultsList'] = resList
+                        _genStat = []
+                        _resList = []
+                        for testNum in range(self.Results[componentType]._numEntries):
+                            testParams = params[testNum]
+                            if (testParams['energy'] == energy) and (testParams['length'] == length) \
+                                    and (testParams['field'] == field):
+                                dipRes['particle'] = self.Results[componentType][testNum]['particle']
+                                dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
+                                _genStat.append(generalStatus[testNum])
+                                _resList.append(resultsList[testNum])
 
-                    self._dipoleResults.append(dipRes)
+                        dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
+                        dipRes['resultsList'] = _updateCoordsRes(_resList)
+
+                        dipoleResults.append(dipRes)
+        self.DipoleResults[componentType] = dipoleResults
 
     def PlotResults(self, componentType=''):
         plotter = _Plotting()
         if (componentType == 'rbend') or (componentType == 'sbend'):
-            plotter.PlotResults(self._dipoleResults, componentType)
+            plotter.PlotResults(self.DipoleResults, componentType)
         else:
             plotter.PlotResults(self.Results, componentType)
 
@@ -494,10 +529,7 @@ class _Plotting:
     def PlotResults(self, allResults, componentType=''):
         GlobalData._CheckComponent(componentType)
 
-        if (componentType == 'rbend') or (componentType == 'sbend'):
-            res = allResults
-        else:
-            res = allResults[componentType]
+        res = allResults[componentType]
 
         # split results into proton and electron
         electronResults = res.GetResultsByParticle('e-')
