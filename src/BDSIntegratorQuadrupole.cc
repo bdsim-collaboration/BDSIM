@@ -20,7 +20,9 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  bPrime = brho * (*strength)["k1"] / CLHEP::m2;
+  // we take |Brho| as it depends on charge and so does the eqOfM->FCof()
+  // so they'd both cancel out.
+  bPrime = std::abs(brho) * (*strength)["k1"] / CLHEP::m2;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -37,10 +39,11 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
-  G4double kappa = eqOfM->FCof()*bPrime/momMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
+  // as well as charge of the given particle
+  G4double kappa = eqOfM->FCof()*bPrime/momMag;
   
-  // Neutral particle or not strength - advance as a drift.
+  // Neutral particle or no strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
@@ -59,8 +62,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double zp  = localMomUnit.z();
 
   // only proceed with thick matrix if particle is paraxial
-  // judged by forward momentum > 0.9 and transverse < 0.01
-  if (zp < 0.9 || xp > 0.01 || yp > 0.01)
+  // judged by forward momentum > 0.9 and |transverse| < 0.1
+  if (zp < 0.9 || std::abs(xp) > 0.1 || std::abs(yp) > 0.1)
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());
@@ -81,7 +84,9 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double localAMag         = localA.mag();
   G4double radiusOfCurvature = 1./localAMag;
 
-  if (radiusOfCurvature < minimumRadiusOfCurvature)
+  // if we have a low enery particle that makes it into the paraxial cuts
+  // it could cause problems later in paraxial algorithm so use backup integrator
+  if (std::abs(radiusOfCurvature) < minimumRadiusOfCurvature)
     {
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
       SetDistChord(backupStepper->DistChord());

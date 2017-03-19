@@ -1115,14 +1115,14 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 	  exit(1);
 	}
       if (!(element->fieldOuter.empty())) // ie variable isn't ""
-	{mag->SetOuterField(BDSFieldFactory::Instance()->GetDefinition(element->fieldOuter));}
+	{mag->SetOuterField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(element->fieldOuter))));}
       if (!(element->fieldVacuum.empty()))
-	{mag->SetVacuumField(BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum));}
+	{mag->SetVacuumField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum))));}
     }
   else
     {
       if (!(element->fieldAll.empty()))
-	{component->SetField(BDSFieldFactory::Instance()->GetDefinition(element->fieldAll));}
+	{component->SetField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(element->fieldAll))));}
     }
 }
 

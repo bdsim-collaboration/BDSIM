@@ -56,6 +56,7 @@ OptionsBase::OptionsBase()
   zDistribType          = "";
   distribFile           = "";
   distribFileFormat     = "";
+  matchDistribFileLength = true;
   
   nlinesIgnore          = 0;
   eventOffset           = 0;
