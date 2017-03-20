@@ -28,8 +28,14 @@ double Options::get_value(std::string property_name)const{
       value = (double)get<int>(this,property_name);
     }
     catch (std::runtime_error) {
-      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
-      exit(1);
+      try {
+	// try long and convert
+	value = (double)get<long>(this,property_name);
+      }
+      catch (std::runtime_error) {
+	std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+	exit(1);
+      }
     }
   }
   return value;
