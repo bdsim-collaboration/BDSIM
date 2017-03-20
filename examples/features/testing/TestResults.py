@@ -297,6 +297,21 @@ class ResultsUtilities:
         with open('timing.pickle', 'rb') as handle:
             self.TimingData = pickle.load(handle)
 
+    def _getCommonFactors(self, results):
+        commonFactors = {}
+        globalParams = {}
+        for res in results:
+            for param, value in res['testParams'].iteritems():
+                if not globalParams.keys().__contains__(param):
+                    globalParams[param] = []
+                if not globalParams[param].__contains__(value):
+                    globalParams[param].append(value)
+        for param, value in globalParams.iteritems():
+            if len(value) == 1:
+                commonFactors[param] = value[0]
+            elif len(value) == 2:
+                commonFactors[param] = value
+        return commonFactors
 
 class Analysis(ResultsUtilities):
     def __init__(self):
@@ -871,20 +886,9 @@ class _Report:
 
     def _processFatals(self, component):
         results = self.groupedResults[component]['FATAL_EXCEPTION']
-        commonFactors = {}
+        utils = ResultsUtilities()
+        commonFactors = utils._getCommonFactors(results)
 
-        globalParams = {}
-        for res in results:
-            for param, value in res['testParams'].iteritems():
-                if not globalParams.keys().__contains__(param):
-                    globalParams[param] = []
-                if not globalParams[param].__contains__(value):
-                    globalParams[param].append(value)
-        for param, value in globalParams.iteritems():
-            if len(value) == 1:
-                commonFactors[param] = value[0]
-            elif len(value) == 2:
-                commonFactors[param] = value
         if commonFactors.keys().__len__() > 0:
             s = "\tTests where a fatal exception was called had the common parameters:\r\n"
             for param, value in commonFactors.iteritems():
@@ -895,17 +899,9 @@ class _Report:
 
     def _processSoftFail(self, component, failure):
         results = self.groupedResults[component][failure]
-        commonFactors = {}
-        globalParams = {}
-        for res in results:
-            for param, value in res['testParams'].iteritems():
-                if not globalParams.keys().__contains__(param):
-                    globalParams[param] = []
-                if not globalParams[param].__contains__(value):
-                    globalParams[param].append(value)
-        for param, value in globalParams.iteritems():
-            if len(value) == 1:
-                commonFactors[param] = value[0]
+        utils = ResultsUtilities()
+        commonFactors = utils._getCommonFactors(results)
+
         if commonFactors.keys().__len__() > 0:
             strName = failure.replace("_", " ")
             strName = _string.lower(strName)
