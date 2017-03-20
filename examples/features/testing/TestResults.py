@@ -17,10 +17,8 @@ multiEntryTypes = [tuple, list, _np.ndarray]
 GlobalData = Globals.Globals()
 
 resultsKeys = ['timingData',
-               'resultsList',
+               'comparatorResults',
                'fileLabel',
-               'generalStatusList',
-               'params',
                'testResults']
 
 
@@ -81,7 +79,7 @@ class Results(list):
     def GetResults(self):
         testResults = []
         for test in self:
-            testResults.append(test['resultsList'])
+            testResults.append(test['comparatorResults'])
         return testResults
 
     def GetGeneralStatus(self):
@@ -335,6 +333,7 @@ class ResultsUtilities:
         else:
             return None
 
+
 class Analysis(ResultsUtilities):
     def __init__(self):
         ResultsUtilities.__init__(self)
@@ -419,7 +418,7 @@ class Analysis(ResultsUtilities):
             for index, result in enumerate(testResults):
                 # comparatorLog = 'FailedTests/' + result['compLogFile']
                 coords = self._getPhaseSpaceComparatorData(result, 'FailedTests/' + result['compLogFile'])
-                self.Results[componentType][index]['resultsList'] = coords
+                self.Results[componentType][index]['comparatorResults'] = coords
         else:
             GlobalData._CheckComponent(componentType)  # raises value error
 
@@ -460,9 +459,9 @@ class Analysis(ResultsUtilities):
                             genStat.append(code)
             return genStat
 
-        def _updateCoordsRes(_resultsList):
+        def _updateCoordsRes(_comparatorResults):
             resList = [[], [], [], [], [], [], []]
-            coords = _np.array(_resultsList)
+            coords = _np.array(_comparatorResults)
             for index in range(coords.shape[1]):
                 values = coords[:, index]
                 templist = []
@@ -489,7 +488,7 @@ class Analysis(ResultsUtilities):
         params = self.Results[componentType].GetParams()
         uniqueValues = self.Results[componentType].uniqueValues
         generalStatus = self.Results[componentType].GetGeneralStatus()
-        resultsList = self.Results[componentType].GetResults()
+        comparatorResults = self.Results[componentType].GetResults()
         dipoleResults = Results(componentType)
 
         for energy in uniqueValues['energy']:
@@ -507,10 +506,10 @@ class Analysis(ResultsUtilities):
                                 dipRes['particle'] = self.Results[componentType][testNum]['particle']
                                 dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
                                 _genStat.append(generalStatus[testNum])
-                                _resList.append(resultsList[testNum])
+                                _resList.append(comparatorResults[testNum])
 
                         dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
-                        dipRes['resultsList'] = _updateCoordsRes(_resList)
+                        dipRes['comparatorResults'] = _updateCoordsRes(_resList)
 
                         dipoleResults.append(dipRes)
                 elif uniqueValues.keys().__contains__('field'):
@@ -526,10 +525,10 @@ class Analysis(ResultsUtilities):
                                 dipRes['particle'] = self.Results[componentType][testNum]['particle']
                                 dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
                                 _genStat.append(generalStatus[testNum])
-                                _resList.append(resultsList[testNum])
+                                _resList.append(comparatorResults[testNum])
 
                         dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
-                        dipRes['resultsList'] = _updateCoordsRes(_resList)
+                        dipRes['comparatorResults'] = _updateCoordsRes(_resList)
 
                         dipoleResults.append(dipRes)
         self.DipoleResults[componentType] = dipoleResults
@@ -551,6 +550,8 @@ class Analysis(ResultsUtilities):
 
 
 class _Plotting:
+    """ A class for producing plots of the testing results. Class should be hidden,
+        it is instantiated in the Analysis class and used there."""
     def __init__(self):
         self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
 
@@ -593,47 +594,34 @@ class _Plotting:
         return figWidth, figHeight
 
     def PlotResults(self, allResults, componentType=''):
+        """ Function for plotting the testing results for a specific component.
+            """
         GlobalData._CheckComponent(componentType)
 
+        # get all results of this component type.
         res = allResults[componentType]
 
         # split results into proton and electron
         electronResults = res.GetResultsByParticle('e-')
         protonResults = res.GetResultsByParticle('proton')
 
+        # use appropriate function depending on the number of tests per particle type
         if electronResults._numEntries == 0:
-            self._singleParticlePlots(protonResults)
+            self.PlotSingleParticle(protonResults)
         elif protonResults._numEntries == 0:
-            self._singleParticlePlots(electronResults)
+            self.PlotSingleParticle(electronResults)
         elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
             if (protonResults._numEntries <= self.testsPerAxes) and (electronResults._numEntries <= self.testsPerAxes):
-                figsize = self._getFigSize(protonResults, electronResults)
-                f = _plt.figure(figsize=figsize)
-                ax1 = f.add_subplot(141)
-                ax2 = f.add_subplot(142)
-                ax3 = f.add_subplot(143)
-                ax4 = f.add_subplot(144)
-                res1Size = _np.float(figsize[1] - 1) / len(electronResults)
-                res2Size = _np.float(figsize[1] - 1) / len(protonResults)
-
-                res1Offset = 1.0
-                res2Offset = 1.0
-
-                if res1Size > res2Size:
-                    res1Offset = res2Size / res1Size
-                elif res1Size < res2Size:
-                    res2Offset = res1Size / res2Size
-
-                dataAx1 = self._updateAxes(ax2, ax1, electronResults, res1Offset)
-                dataAx2 = self._updateAxes(ax4, ax3, protonResults, res2Offset)
-                self._addColorBar(f, dataAx1)
-                f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
-                _plt.close()
+                fileName = '../Results/' + componentType + '.png'
+                self._singleFigureDoubleData(electronResults, protonResults, fileName)
             else:
-                self._singleParticlePlots(electronResults)
-                self._singleParticlePlots(protonResults)
+                self.PlotSingleParticle(electronResults)
+                self.PlotSingleParticle(protonResults)
 
-    def _singleParticlePlots(self, results):
+    def PlotSingleParticle(self, results):
+        """ Function for plotting the results for a single particle type."""
+
+        # if number of tests is too high, split tests by particle energy, and call appropriate function.
         if results._numEntries > self.testsPerAxes:
             numEnergies = len(results.uniqueValues['energy'])
             if numEnergies == 1:
@@ -646,58 +634,67 @@ class _Plotting:
                     self._doubleDataAxesByEnergy(numFigures - 1, results)
                     self._singleDataAxesByEnergy(results)
         else:
-            self._singleDataAxes(results)
+            fileName = '../Results/' + results._component + '.png'
+            self._singleFigureSingleData(results, fileName)
+
+    def _singleFigureDoubleData(self, results1, results2, filename):
+        """ Function for plotting two sets of results on a single figure."""
+        figsize = self._getFigSize(results2, results1)
+        f = _plt.figure(figsize=figsize)
+        # 4 axes, two for the data, two for the label boxing structure.
+        ax1 = f.add_subplot(141)
+        ax2 = f.add_subplot(142)
+        ax3 = f.add_subplot(143)
+        ax4 = f.add_subplot(144)
+
+        # calculate the offset for the parameter name that will be added to the label boxing structure.
+        # Normalised so that the offsets should appear at the same vertical position on both axes.
+        res1Size = _np.float(figsize[1] - 1) / len(results1)
+        res2Size = _np.float(figsize[1] - 1) / len(results2)
+        res1Offset = 1.0
+        res2Offset = 1.0
+        if res1Size > res2Size:
+            res1Offset = res2Size / res1Size
+        elif res1Size < res2Size:
+            res2Offset = res1Size / res2Size
+
+        # plot the data / label boxing.
+        dataAx1 = self._updateAxes(ax2, ax1, results1, res1Offset)
+        dataAx2 = self._updateAxes(ax4, ax3, results2, res2Offset)
+
+        self._addColorBar(f, dataAx1)
+        f.savefig(filename, dpi=600)
+        _plt.close()
 
     def _doubleDataAxesByEnergy(self, numFigures, results):
+        """ Function for plotting data sets that are split by energy on multiple figures."""
+        # loop over number of figures
         for i in range(numFigures):
+            # get results by energy
             energy1 = results.uniqueValues['energy'][2 * i]
             energy2 = results.uniqueValues['energy'][2 * i + 1]
-
             res1 = results.GetResultsByEnergy(energy1)
             res2 = results.GetResultsByEnergy(energy2)
+
             particle = results[0]['particle']
             energyString = '_' + particle + '_energies__' + energy1 + '_' + energy2
+            fileName = '../Results/' + results._component + energyString + '.png'
 
-            figsize = (15, 9)
-            f = _plt.figure(figsize=figsize)
-            ax1 = f.add_subplot(141)
-            ax2 = f.add_subplot(142)
-            ax3 = f.add_subplot(143)
-            ax4 = f.add_subplot(144)
-            res1Size = _np.float(figsize[1] - 1) / len(res1)
-            res2Size = _np.float(figsize[1] - 1) / len(res2)
-
-            res1Offset = 1.0
-            res2Offset = 1.0
-
-            if res1Size > res2Size:
-                res1Offset = res2Size / res1Size
-            elif res1Size < res2Size:
-                res2Offset = res1Size / res2Size
-
-            dataAx1 = self._updateAxes(ax2, ax1, res1, res1Offset)
-            dataAx2 = self._updateAxes(ax4, ax3, res2, res2Offset)
-            self._addColorBar(f, dataAx1)
-            f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
-            _plt.close()
+            self._singleFigureDoubleData(res1, res2, fileName)
 
     def _singleDataAxesByEnergy(self, results):
-        figsize = self._getFigSize(results)
-        f = _plt.figure(figsize=figsize)
-        ax1 = f.add_subplot(121)
-        ax2 = f.add_subplot(122)
+        """ Function for plotting a data set with a single energy on a single figure."""
 
+        # get results by energy. Use last energy in unique values (though there should only be one value.
         res1 = results.GetResultsByEnergy(results.uniqueValues['energy'][-1])
         energy1 = results.uniqueValues['energy'][-1]
         particle = results[0]['particle']
         energyString = '_' + particle + '_energies__' + energy1
+        fileName = '../Results/' + results._component + energyString + '.png'
+        self._singleFigureSingleData(res1, fileName)
 
-        dataAxes = self._updateAxes(ax2, ax1, res1, 1.0)
-        self._addColorBar(f, dataAxes)
-        f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
-        _plt.close()
-
-    def _singleDataAxes(self, results):
+    def _singleFigureSingleData(self, results, filename):
+        """ Function to plot a single data set on a single figure."""
         figsize = self._getFigSize(results)
         f = _plt.figure(figsize=figsize)
         ax1 = f.add_subplot(121)
@@ -705,10 +702,11 @@ class _Plotting:
 
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
-        f.savefig('../Results/' + results._component + '.png', dpi=600)
+        f.savefig(filename, dpi=600)
         _plt.close()
 
     def _addColorBar(self, f, ax):
+        """ Add a colorbar to the results plot."""
         # colorbar colors and values independant of data, can be set according to either subplot.
         cbar = f.colorbar(ax)
         cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
@@ -718,6 +716,9 @@ class _Plotting:
         f.tight_layout()
 
     def _updateAxes(self, dataAxis, diagramAxis, dataSetresults, labOffset):
+        """ Function to update the axes of a figure."""
+
+        # get uniques values of this data set.
         uniqueValues = dataSetresults.uniqueValues
 
         def updateDataAxis(ax, results):
@@ -727,6 +728,9 @@ class _Plotting:
             particle = results[0]['particle']
             numTests = len(results)
 
+            # for a given test and phase space axis, the results may contain multiple values
+            # e.g [passed, failed, no_data]. Here, we plot using the first of the multiple values
+            # and add the remaining values on as boxes later.
             zeroData = []
             for test in data:
                 dataRes = []
@@ -755,13 +759,17 @@ class _Plotting:
                         index = commonValues.keys().index(key)
                         if index != (len(commonValues.keys()) - 1):
                             subplotTitle += ", "
+                        # multiple lines if title is longer than 22 chars
                         if len(subplotTitle.split('\n')[-1]) > 22:
                             subplotTitle += '\n'
 
+            # plot the data
             cax = ax.imshow(zeroData, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
                             extent=extent, aspect='auto')
+
             ax.set_xlim(0, 8)
 
+            # overlay the data with boxes for the results values that were not plotted before.
             for index, status in enumerate(data):
                 for coord, vals in enumerate(status):
                     numStatus = len(vals)
@@ -771,6 +779,7 @@ class _Plotting:
                         boxWidth = 1.0 / numStatus
                         ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
+            # plot the general status for each test using boxes.
             for index, status in enumerate(generalStatus):
                 numStatus = len(status)
                 yIndex = index
@@ -816,7 +825,7 @@ class _Plotting:
             # dict for param value labels
             boxText = {}
 
-            # calculate number of boxes per order
+            # calculate number of boxes per level
             numBoxesPerLevel = []
             numLevel = 1
             for i in range(len(uniqueValues.keys())):
@@ -836,6 +845,7 @@ class _Plotting:
                     if depth < (len(uniqueValues.keys())-1):
                         updateBoxTextList(depth+1)
 
+            # get text for each box
             updateBoxTextList(0)
             numLevels = len(numBoxesPerLevel)
 
@@ -855,10 +865,10 @@ class _Plotting:
                     ax.plot([level - numLevels, 0], [(boxNum+1)*boxHeight, (boxNum+1)*boxHeight],
                             linewidth=1, color='k')  # top hor. bar
                     ax.text(txtHorPos - numLevels, txtVerPos, boxText[_np.str(level)][boxNum],
-                            rotation=textRot, va='center', ha='center', fontsize=fontSizes[level])
+                            rotation=textRot, va='center', ha='center', fontsize=fontSizes[level])  # param value
                 dataValue = _string.capitalize(uniqueValues.keys()[level])
                 ax.text(level+0.5 - numLevels, len(params) + labelOffset, dataValue,
-                        fontsize=12, ha='center')
+                        fontsize=12, ha='center')  # parameter title above the boxes
 
             ax.set_xlim(-numLevels, 0)
             ax.set_ylim(0, results._numEntries)
@@ -869,21 +879,21 @@ class _Plotting:
 
             return ax
 
+        # update axes
         dataAx1 = updateDataAxis(dataAxis, dataSetresults)
         labAx1 = updateDiagramAxis(diagramAxis, dataSetresults, labOffset)
 
         return dataAx1
 
     def PlotTimingData(self, timingData, component):
+        """ Function for plotting the timing data as histograms."""
         f = _plt.figure()
         ax = f.add_subplot(121)
         ax2 = f.add_subplot(122)
 
+        # max values to define histogram range
         bdsimMax = _np.max(timingData.bdsimTimes)
         compMax = _np.max(timingData.comparatorTimes)
-
-        maxtimes = [_np.max(bdsimMax), _np.max(compMax)]
-        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
 
         y, x, _ = ax.hist(timingData.bdsimTimes, bins=30, log=True, range=(0,_np.ceil(bdsimMax)))
         ax.set_xlabel('Time (s)')
@@ -895,11 +905,13 @@ class _Plotting:
         ax2.set_title('Comparator Run Time')
         ax2.yaxis.set_visible(False)
 
+        # calculate largest number of entries to get y-axis scale.
         maxtimes = [_np.max(y), _np.max(y2)]
         orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
 
-        ax.set_ylim(ymin=0, ymax=2*10**orderOfMag)
-        ax2.set_ylim(ymin=0, ymax=2*10**orderOfMag)
+        # plot on log scale, set min to 0.9 to show single entry bins.
+        ax.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
+        ax2.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
 
         f.savefig('../Results/' + component + '_bdsimTimes.png', dpi=600)
         _plt.close()
@@ -921,13 +933,13 @@ class _Report:
             compResults = self.Results[component]
         return compResults
 
-    def _groupResults(self, resultsList, component):
+    def _groupResults(self, comparatorResults, component):
         groupedResults = {}
         numResults = {}
         for error, codeIndex in GlobalData.returnCodes.iteritems():
             groupedResults[error] = Results(component)
             numResults[error] = 0
-            for resultNum, result in enumerate(resultsList):
+            for resultNum, result in enumerate(comparatorResults):
                 if (result['generalStatus'].__contains__(codeIndex)) or \
                         (result['generalStatus'].__contains__(_np.str(codeIndex))):
                     groupedResults[error].append(result)
@@ -972,7 +984,7 @@ class _Report:
         coordLabels = ['x', 'xp', 'y', 'yp', 't', 'zp', 'n']
         numFailures = [0, 0, 0, 0, 0, 0, 0]
         for res in results:
-            compResults = res['resultsList']
+            compResults = res['comparatorResults']
             for index, coord in enumerate(compResults):
                 if coord == 1:
                     numFailures[index] += 1
@@ -991,7 +1003,7 @@ class _Report:
             s += "  " + coordLabels[i] + ":\r\n"
             failedTests = Results(component)
             for res in results:
-                compResults = res['resultsList']
+                compResults = res['comparatorResults']
                 if compResults[i] == 1:
                     failedTests.append(res)
 
