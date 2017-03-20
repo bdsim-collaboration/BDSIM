@@ -41,15 +41,20 @@ protected:
 				      G4double      h,
 				      G4bool        useCurvilinearWorld);
 
-  virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
-				      G4ThreeVector localMomentum,
+  virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPositionCL,
+				      G4ThreeVector localMomentumCL,
 				      G4bool        useCurvilinearWorld);
   
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
 
-  BDSIntegratorDipole2*    dipole;
+  BDSIntegratorDipole2* dipole;
+  G4double              angle;
+  G4double              arcLength;
+  G4double              radiusOfCurvature;
+  G4double              chordLength;
+  G4double              radiusAtChord;
 };
 
 #endif
