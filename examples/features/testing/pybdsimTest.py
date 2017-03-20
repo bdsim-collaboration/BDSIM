@@ -103,7 +103,6 @@ def Run(inputDict):
             if not generateOriginal:
                 _os.remove(inputDict['compLogFile'])
 
-
     # elif the comparator failed
     elif inputDict['code'] == 1:
         # move the comparator log and failed root file
@@ -121,11 +120,6 @@ def Run(inputDict):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
-
-    # # elif incorrect args
-    # elif inputDict['code'] == 2:
-    #     pass
-    #     # This is a command line entry problem which should not really occur.
 
     # elif root file wasn't generated.
     elif inputDict['code'] == 2 :
@@ -350,10 +344,13 @@ class Test(dict):
             self._beamFilename = inraysFile
 
     def AddParameter(self, parameter, values=[]):
+        """ Function to add a parameter that is not a default parameter for the test's
+            component type. An example would be defining a K1 value for a dipole."""
         if self.keys().__contains__(parameter):
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter, _np.str):
+            #check that the parameter can be parsed.
             if GlobalData.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set" + _string.capitalize(parameter)
@@ -365,6 +362,8 @@ class Test(dict):
             raise TypeError("Unknown data type for " + parameter)
 
     def WriteToInrays(self, filename):
+        """ Write the inrays file to disk. The filename should include the
+            filepath relative to the TestSuite directory."""
         self.SetInrays(filename)
         self.PhaseSpace._WriteToInrays(filename)
 
@@ -526,6 +525,8 @@ class TestUtilities(object):
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
     def _CheckForOriginal(self, testname, componentType):
+        """ Check for the existence of the directory containing the original data set
+            that these tests will be compared to."""
         if self._dataSetDirectory != '':
             dataDir = self._dataSetDirectory
         else:
@@ -539,6 +540,7 @@ class TestUtilities(object):
             return ''
 
     def _GetOrderedTests(self, testlist, componentType):
+        """ Function to order the tests according to their parameter values."""
         OrderedTests = []
         particles = []
         compKwargs = collections.OrderedDict()  # keep order of kwarg in file name
@@ -549,7 +551,7 @@ class TestUtilities(object):
             path = test[:fnameStartIndex+1]
             if filename[-5:] == '.gmad':
                 filename = filename[:-5]  # remove .gmad extension
-            splitFilename = filename.split('__')
+            splitFilename = filename.split('__')  # split into param_value parts
             particle = splitFilename[1]
             if not particles.__contains__(particle):
                 particles.append(particle)
@@ -581,6 +583,7 @@ class TestUtilities(object):
 
         # recursively create filenames from all kwarg value permutations.
         # if filename matches one in supplied test list, add to ordered list.
+        # please do not change this, it took ages to get it working correctly.
         def sublevel(depth, nameIn):
             for kwargValue in compKwargs[kwargKeys[depth]]:
                 name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
@@ -596,6 +599,7 @@ class TestUtilities(object):
         return OrderedTests
 
     def _multiThread(self, testlist):
+        """ Function to run the tests on multiple cores with multithreading."""
         numCores = multiprocessing.cpu_count()
 
         p = multiprocessing.Pool(numCores)
@@ -607,6 +611,8 @@ class TestUtilities(object):
             self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
 
     def _singleThread(self, testlist):
+        """ Function to run the tests on a single core.
+            This has not been updated in a long time, so use with caution."""
         eleBdsimTimes = []
         eleComparatorTimes = []
 
