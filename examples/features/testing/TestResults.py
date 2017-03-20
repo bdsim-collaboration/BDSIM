@@ -607,6 +607,7 @@ class _Plotting:
                 dataAx2 = self._updateAxes(ax4, ax3, protonResults, res2Offset)
                 self._addColorBar(f, dataAx1)
                 f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
+                _plt.close()
             else:
                 self._singleParticlePlots(electronResults)
                 self._singleParticlePlots(protonResults)
@@ -657,6 +658,7 @@ class _Plotting:
             dataAx2 = self._updateAxes(ax4, ax3, res2, res2Offset)
             self._addColorBar(f, dataAx1)
             f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
+            _plt.close()
 
     def _singleDataAxesByEnergy(self, results):
         figsize = self._getFigSize(results)
@@ -672,6 +674,7 @@ class _Plotting:
         dataAxes = self._updateAxes(ax2, ax1, res1, 1.0)
         self._addColorBar(f, dataAxes)
         f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
+        _plt.close()
 
     def _singleDataAxes(self, results):
         figsize = self._getFigSize(results)
@@ -682,6 +685,7 @@ class _Plotting:
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
         f.savefig('../Results/' + results._component + '.png', dpi=600)
+        _plt.close()
 
     def _addColorBar(self, f, ax):
         # colorbar colors and values independant of data, can be set according to either subplot.
