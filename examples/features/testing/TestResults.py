@@ -288,6 +288,14 @@ class ResultsUtilities:
         _os.remove('gitBranch.log')
         return gitLines
 
+    def _getPickledData(self):
+        with open('results.pickle', 'rb') as handle:
+            self.Results = pickle.load(handle)
+        with open('dipoleResults.pickle', 'rb') as handle:
+            self.DipoleResults = pickle.load(handle)
+        with open('timing.pickle', 'rb') as handle:
+            self.TimingData = pickle.load(handle)
+
 
 class Analysis(ResultsUtilities):
     def __init__(self):
@@ -383,6 +391,9 @@ class Analysis(ResultsUtilities):
 
         with open('results.pickle', 'wb') as handle:
             pickle.dump(self.Results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        with open('timing.pickle', 'wb') as handle:
+            pickle.dump(self.TimingData, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         if (componentType == 'rbend') or (componentType == 'sbend'):
             self._groupDipoleResults(componentType)

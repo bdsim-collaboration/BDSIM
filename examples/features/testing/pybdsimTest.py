@@ -685,7 +685,7 @@ class TestSuite(TestUtilities):
             """
         if self._usePickledData:
             _os.chdir('BDSIMOutput')
-            self.Analysis.ProduceReport(pickled=True)
+            self.Analysis._getPickledData()
             return None
 
         self.WriteGlobalOptions()
