@@ -313,6 +313,28 @@ class ResultsUtilities:
                 commonFactors[param] = value
         return commonFactors
 
+    def _processTimingData(self, component):
+        bdsimMean = _np.mean(self.TimingData.bdsimTimes)
+        compMean = _np.mean(self.TimingData.comparatorTimes)
+        bdsimStd = _np.std(self.TimingData.bdsimTimes)
+        compMean = _np.std(self.TimingData.comparatorTimes)
+
+        bdsimLimit = bdsimMean + 3 * bdsimStd
+        longTests = Results(component)
+        longTests.extend([test for test in self.Results[component] if test['bdsimTime'] > bdsimLimit])
+
+        commonFactors = self._getCommonFactors(longTests)
+
+        if commonFactors.keys().__len__() > 0:
+            s = "There were " + _np.str(len(longTests)) + " tests that took longer than " \
+                + _np.str(_np.round(bdsimLimit, 6)) + " s,\r\n"
+            s += "these tests had the following common parameters:\r\n"
+            for param, value in commonFactors.iteritems():
+                s += "\t" + param + " : " + _np.str(value) + ".\r\n"
+            return s
+        else:
+            return None
+
 class Analysis(ResultsUtilities):
     def __init__(self):
         ResultsUtilities.__init__(self)
@@ -415,6 +437,7 @@ class Analysis(ResultsUtilities):
             self._groupDipoleResults(componentType)
             with open('dipoleResults.pickle', 'wb') as handle:
                 pickle.dump(self.DipoleResults, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        self._processTimingData(componentType)
 
     def _groupDipoleResults(self, componentType=''):
         def _dictPolefaceCompVals(testparams):
