@@ -102,6 +102,14 @@ public:
   G4ThreeVector ConvertToLocal(const G4ThreeVector& globalPosition,
 			       const G4bool&        useCurvilinear = true) const;
 
+  /// Convert an axis to curvilinear coordinates using the existing cached transforms.
+  /// Therefore, this should only be used if you have converted a point or axis alreay
+  /// in the current volume. Provided for the situation where multiple axis conversions
+  /// are required without relocating the volume in the hierarchy, which may introduce
+  /// ambiguities.
+  G4ThreeVector ConvertAxisToLocal(const G4ThreeVector& globalAxis,
+				   const G4bool&        useCurvilinear = true) const;
+
   /// Calculate the local version of a global vector (axis). This is done
   /// w.r.t. a point - ie, the point is used to initialise the transform
   /// if not done already.

@@ -118,6 +118,12 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalP
   return GlobalToLocal(useCurvilinear).TransformPoint(globalPosition);
 }
 
+G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4ThreeVector& globalAxis,
+							const G4bool&        useCurvilinear) const
+{
+  return GlobalToLocal(useCurvilinear).TransformAxis(globalAxis);
+}
+
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4double globalPosition[3],
 							const G4double globalAxis[3],
 							const G4bool&  useCurvilinear) const
