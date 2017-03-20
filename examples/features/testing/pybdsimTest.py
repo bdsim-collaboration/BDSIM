@@ -335,13 +335,20 @@ class Test(dict):
             if isinstance(phaseSpace, PhaseSpace.PhaseSpace):
                 self.PhaseSpace = phaseSpace
             else:
-                raise TypeError("phaseSpace can only be a bdsimtesting.PhaseSpace.PhaseSpace instance.")
+                raise TypeError("phaseSpace can only be a PhaseSpace.PhaseSpace instance.")
         else:
             self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
     def SetInrays(self, inraysFile=''):
-        if inraysFile != '':
-            self._beamFilename = inraysFile
+        """ Set the filename which contains the ptc inrays file.
+            """
+        if isinstance(inraysFile, _np.str):
+            if inraysFile != '':
+                self._beamFilename = inraysFile
+            else:
+                raise ValueError("inraysFile cannot be an empty string ")
+        else:
+            raise TypeError("inraysFile must be a string")
 
     def AddParameter(self, parameter, values=[]):
         """ Function to add a parameter that is not a default parameter for the test's
@@ -691,6 +698,10 @@ class TestSuite(TestUtilities):
         if self._usePickledData:
             _os.chdir('BDSIMOutput')
             self.Analysis._getPickledData()
+            for comp in GlobalData.components:
+
+                self.Analysis.PlotResults(comp)
+            self.Analysis.ProduceReport()
             return None
 
         self.WriteGlobalOptions()
