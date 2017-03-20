@@ -414,7 +414,6 @@ class TestUtilities(object):
         self._comparatorLog = 'comparatorOutput.log'
 
         self.Analysis = TestResults.Analysis()  # results instance
-        self.timings = TestResults.Timing()  # timing data.
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.
@@ -604,8 +603,8 @@ class TestUtilities(object):
 
         for testRes in results:
             self.Analysis.AddResults(testRes)
-            self.timings.bdsimTimes.append(testRes['bdsimTime'])
-            self.timings.comparatorTimes.append(testRes['compTime'])
+            self.Analysis.TimingData.bdsimTimes.append(testRes['bdsimTime'])
+            self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
 
     def _singleThread(self, testlist):
         eleBdsimTimes = []
@@ -640,8 +639,8 @@ class TestUtilities(object):
             comparatorTime = time.time() - compTestTime
             eleComparatorTimes.append(comparatorTime)
 
-        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
+        self.Analysis.TimingData.bdsimTimes.extend(_np.average(eleBdsimTimes))
+        self.Analysis.TimingData.comparatorTimes.extend(_np.average(eleComparatorTimes))
 
 
 class TestSuite(TestUtilities):
@@ -741,18 +740,18 @@ class TestSuite(TestUtilities):
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.timings.AddComponentTime(componentType, componentTime)
+            self.Analysis.TimingData.AddComponentTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')
             else:
-                self.Analysis.AddTimingData(componentType, self.timings)
+                self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
         self.Analysis.ProduceReport()
         finalTime = time.time() - initialTime
-        self.timings.SetTotalTime(finalTime)
+        self.Analysis.TimingData.SetTotalTime(finalTime)
         _os.chdir('../')
 
     def _FullTestSuite(self):

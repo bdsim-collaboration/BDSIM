@@ -132,6 +132,7 @@ class ResultsUtilities:
         # dict of list of Results instances for each component type.
         self.Results = {}
         self.DipoleResults = {}
+        self.TimingData = Timing()  # timing data.
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
