@@ -122,13 +122,13 @@ def Run(inputDict):
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
-    # elif incorrect args
-    elif inputDict['code'] == 2:
-        pass
-        # This is a command line entry problem which should not really occur.
+    # # elif incorrect args
+    # elif inputDict['code'] == 2:
+    #     pass
+    #     # This is a command line entry problem which should not really occur.
 
     # elif root file wasn't generated.
-    elif inputDict['code'] == 3:
+    elif inputDict['code'] == 2 :
         # move bdsim log file to fail dir
         _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         if isSelfComparison:
@@ -374,6 +374,7 @@ class TestUtilities(object):
         self._tests = []  # list of test objects
         self._testNames = {}  # dict of test file names (a list of names per component)
         self._testParamValues = {}
+        self._generateOriginals = False  # bool for generating original data set
 
         if not isinstance(testingDirectory, _np.str):
             raise TypeError("Testing directory is not a string")
@@ -411,6 +412,9 @@ class TestUtilities(object):
         self.bdsimFailLog = 'bdsimOutputFailures.log'
         self.bdsimPassLog = 'bdsimOutputPassed.log'
         self._comparatorLog = 'comparatorOutput.log'
+
+        self.Analysis = TestResults.Analysis()  # results instance
+        self.timings = TestResults.Timing()  # timing data.
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.
@@ -518,6 +522,7 @@ class TestUtilities(object):
         if not robust:
             options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
+        options.SetBeamPipeRadius(beampiperadius=10)
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
@@ -591,14 +596,65 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
+    def _multiThread(self, testlist):
+        numCores = multiprocessing.cpu_count()
+
+        p = multiprocessing.Pool(numCores)
+        results = p.map(Run, testlist)
+
+        for testRes in results:
+            self.Analysis.AddResults(testRes)
+            self.timings.bdsimTimes.append(testRes['bdsimTime'])
+            self.timings.comparatorTimes.append(testRes['compTime'])
+
+    def _singleThread(self, testlist):
+        eleBdsimTimes = []
+        eleComparatorTimes = []
+
+        for testDict in testlist:
+            test = testDict['file']
+            isSelfComparison = testDict['isSelfComparison']
+            originalEvent = testDict['originalFile']
+
+            bdsimTestTime = time.time()
+            outputEvent = self.GenerateRootFile(test)
+            bdsimTime = time.time() - bdsimTestTime
+            eleBdsimTimes.append(bdsimTime)
+            compTestTime = time.time()
+            # Only compare if the output was generated.
+
+            if (outputEvent is not None) and (not self._generateOriginals):
+                if isSelfComparison:
+                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
+                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
+                    _os.system(copyString)
+                else:
+                    pass  # This is where the comparison with the original file will occur.
+                    # TODO: figure out how to process original files that will be compared to.
+
+                self.CompareOutput(originalEvent, outputEvent)
+            else:
+                self._UpdateBDSIMFailLog(test)
+                _os.system("rm temp.log")
+                print("Output for test " + test + " was not generated.")
+            comparatorTime = time.time() - compTestTime
+            eleComparatorTimes.append(comparatorTime)
+
+        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
+        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
+
 
 class TestSuite(TestUtilities):
-    def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
+    def __init__(self, testingDirectory,
+                 dataSetDirectory='',
+                 _useSingleThread=False,
+                 usePickledData=False,
+                 fullTestSuite=False):
         super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
         self._useSingleThread = _useSingleThread
-        self._generateOriginals = False  # bool for generating original data set
-        self.Analysis = TestResults.Analysis()  # results instance
-        self.timings = TestResults.Timing()  # timing data.
+        self._usePickledData = usePickledData
+        if fullTestSuite:
+            self._FullTestSuite()
 
     def AddTest(self, test):
         """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
@@ -627,6 +683,10 @@ class TestSuite(TestUtilities):
         """ Run all tests in the test suite. This will generate the tests rootevent
             output, compares to an original file, and processes the comparison results.
             """
+        if self._usePickledData:
+            _os.chdir('BDSIMOutput')
+            self.Analysis.ProduceReport(pickled=True)
+            return None
 
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   # Write all gmad files for all test objects.
@@ -690,62 +750,12 @@ class TestSuite(TestUtilities):
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
+        self.Analysis.ProduceReport()
         finalTime = time.time() - initialTime
         self.timings.SetTotalTime(finalTime)
         _os.chdir('../')
 
-    def _multiThread(self, testlist):
-        numCores = multiprocessing.cpu_count()
-
-        p = multiprocessing.Pool(numCores)
-        results = p.map(Run, testlist)
-
-        for testRes in results:
-            self.Analysis.AddResults(testRes)
-            self.timings.bdsimTimes.append(testRes['bdsimTime'])
-            self.timings.comparatorTimes.append(testRes['compTime'])
-
-    def _singleThread(self, testlist):
-        eleBdsimTimes = []
-        eleComparatorTimes = []
-
-        for testDict in testlist:
-            test = testDict['file']
-            isSelfComparison = testDict['isSelfComparison']
-            originalEvent = testDict['originalFile']
-
-            bdsimTestTime = time.time()
-            outputEvent = self.GenerateRootFile(test)
-            bdsimTime = time.time() - bdsimTestTime
-            eleBdsimTimes.append(bdsimTime)
-            compTestTime = time.time()
-            # Only compare if the output was generated.
-
-            if (outputEvent is not None) and (not self._generateOriginals):
-                if isSelfComparison:
-                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
-                    _os.system(copyString)
-                else:
-                    pass  # This is where the comparison with the original file will occur.
-                    # TODO: figure out how to process original files that will be compared to.
-
-                self.CompareOutput(originalEvent, outputEvent)
-            else:
-                self._UpdateBDSIMFailLog(test)
-                _os.system("rm temp.log")
-                print("Output for test " + test + " was not generated.")
-            comparatorTime = time.time() - compTestTime
-            eleComparatorTimes.append(comparatorTime)
-
-        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
-
     def _FullTestSuite(self):
-        writer = Writer.Writer()
-        writer.SetBeamFilename('trackingTestBeam.madx')
-        writer.SetOptionsFilename('trackingTestOptions.gmad')
-
         self.numFiles = {}
         self.componentTests = []
         for component in GlobalData.components:
@@ -754,7 +764,7 @@ class TestSuite(TestUtilities):
         TestPS = GlobalData.BeamPhaseSpace
     
         BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'], TestPS['PX'], TestPS['Y'], TestPS['PY'], TestPS['T'], TestPS['PT'])
-        BeamPhaseSpace.WriteToInrays('Tests/trackingTestBeam.madx')
+        BeamPhaseSpace._WriteToInrays('Tests/trackingTestBeam.madx')
 
         for machineInfo in GlobalData.accelerators.values():
             energy = machineInfo['energy']
@@ -762,13 +772,12 @@ class TestSuite(TestUtilities):
         
             for component in GlobalData.components:
                 componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
-                self.componentTests.append(componentTest)
+                self.AddTest(componentTest)
                 self.numFiles[component] += componentTest._numFiles
 
         self.totalFiles = 0
         for component in self.numFiles:
             self.totalFiles += self.numFiles[component]
 
-        self.BeamPhaseSpace = BeamPhaseSpace
-
+        self.RunTestSuite()
 
