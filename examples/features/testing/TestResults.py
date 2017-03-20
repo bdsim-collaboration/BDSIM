@@ -535,19 +535,17 @@ class Analysis(ResultsUtilities):
         self.DipoleResults[componentType] = dipoleResults
 
     def PlotResults(self, componentType=''):
-        plotter = _Plotting()
-        if (componentType == 'rbend') or (componentType == 'sbend'):
-            plotter.PlotResults(self.DipoleResults, componentType)
-        else:
-            plotter.PlotResults(self.Results, componentType)
+        if self.Results.keys().__contains__(componentType):
+            plotter = _Plotting()
+            self._processTimingData(componentType)
+            if (componentType == 'rbend') or (componentType == 'sbend'):
+                plotter.PlotResults(self.DipoleResults, componentType)
+                plotter.PlotTimingData(self.TimingData, componentType)
+            else:
+                plotter.PlotResults(self.Results, componentType)
+                plotter.PlotTimingData(self.TimingData, componentType)
 
-    def ProduceReport(self, pickled=False):
-        if pickled:
-            with open('results.pickle', 'rb') as handle:
-                self.Results = pickle.load(handle)
-            with open('dipoleResults.pickle', 'rb') as handle:
-                self.DipoleResults = pickle.load(handle)
-
+    def ProduceReport(self):
         report = _Report(self.Results, self.DipoleResults)
         report.ProduceReport()
 
@@ -875,6 +873,36 @@ class _Plotting:
         labAx1 = updateDiagramAxis(diagramAxis, dataSetresults, labOffset)
 
         return dataAx1
+
+    def PlotTimingData(self, timingData, component):
+        f = _plt.figure()
+        ax = f.add_subplot(121)
+        ax2 = f.add_subplot(122)
+
+        bdsimMax = _np.max(timingData.bdsimTimes)
+        compMax = _np.max(timingData.comparatorTimes)
+
+        maxtimes = [_np.max(bdsimMax), _np.max(compMax)]
+        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
+
+        y, x, _ = ax.hist(timingData.bdsimTimes, bins=30, log=True, range=(0,_np.ceil(bdsimMax)))
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Number of Tests')
+        ax.set_title('BDSIM Run Time')
+
+        y2, x2, _ = ax2.hist(timingData.comparatorTimes, bins=30, log=True, range=(0,_np.ceil(compMax)))
+        ax2.set_xlabel('Time (s)')
+        ax2.set_title('Comparator Run Time')
+        ax2.yaxis.set_visible(False)
+
+        maxtimes = [_np.max(y), _np.max(y2)]
+        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
+
+        ax.set_ylim(ymin=0, ymax=2*10**orderOfMag)
+        ax2.set_ylim(ymin=0, ymax=2*10**orderOfMag)
+
+        f.savefig('../Results/' + component + '_bdsimTimes.png', dpi=600)
+        _plt.close()
 
 
 class _Report:
