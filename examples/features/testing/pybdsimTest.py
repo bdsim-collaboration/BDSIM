@@ -825,10 +825,11 @@ class TestSuite(TestUtilities):
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
-        finalTime = time.time() - initialTime
-        self.Analysis.TimingData.SetTotalTime(finalTime)
-        self.Analysis._pickleResults()
-        self.Analysis.ProduceReport()
+        if not self._generateOriginals:
+            finalTime = time.time() - initialTime
+            self.Analysis.TimingData.SetTotalTime(finalTime)
+            self.Analysis._pickleResults()
+            self.Analysis.ProduceReport()
         _os.chdir('../')
 
     def _FullTestSuite(self):
