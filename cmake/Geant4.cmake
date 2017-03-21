@@ -67,6 +67,7 @@ if (Geant4_FOUND)
       endif()
       # Mark Geant4_DIR as advanced since can't be set in GUI and this turned out to be confusing
       mark_as_advanced(Geant4_DIR)
+      mark_as_advanced(Geant4_PREFIX)
 else(Geant4_FOUND)
       message(FATAL_ERROR "Geant4 not found. Exiting. You can help cmake by adding -DGeant4_PREFIX=<PATH>")
 endif()
@@ -97,5 +98,3 @@ else()
   set(G4_MINOR_VERSION 9)
   set(G4_PATCH_LEVEL 9)
 endif()
-
-mark_as_advanced(Geant4_PREFIX)
