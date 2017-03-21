@@ -1004,7 +1004,7 @@ class _Plotting:
         ax.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
         ax2.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
 
-        f.savefig('../Results/' + component + '_bdsimTimes.png', dpi=600)
+        f.savefig('../Results/' + component + '_timingData.png', dpi=600)
         _plt.close()
 
 
