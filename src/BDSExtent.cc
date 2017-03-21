@@ -19,9 +19,9 @@ BDSExtent::BDSExtent():
   extZPos(0.0)
 {;}
 
-BDSExtent::BDSExtent(std::pair<G4double, G4double> extXIn,
-		     std::pair<G4double, G4double> extYIn,
-		     std::pair<G4double, G4double> extZIn):
+BDSExtent::BDSExtent(const std::pair<G4double, G4double>& extXIn,
+		     const std::pair<G4double, G4double>& extYIn,
+		     const std::pair<G4double, G4double>& extZIn):
   extXNeg(extXIn.first),
   extXPos(extXIn.second),
   extYNeg(extYIn.first),

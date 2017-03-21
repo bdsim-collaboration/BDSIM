@@ -43,6 +43,7 @@ BDSMessenger::~BDSMessenger()
   delete beamlineListCmd;
   delete elementNameSearchCmd;
   delete bdsSamplersDirectory;
+  delete samplerListCmd;
 }
 
 void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)

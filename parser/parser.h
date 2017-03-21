@@ -60,7 +60,7 @@ namespace GMAD
 
   protected:
     /// Constructor from filename
-    Parser(std::string filename);
+    explicit Parser(std::string filename);
   private:
     /// Instance
     static Parser* instance;

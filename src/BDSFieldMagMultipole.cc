@@ -12,10 +12,10 @@
 BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
 					   G4double          const  brho,
 					   G4int             const  orderIn):
-  order(orderIn)
+  order(orderIn),
+  normalComponents(strength->NormalComponents()),
+  skewComponents(strength->SkewComponents())
 {
-  normalComponents = strength->NormalComponents();
-  skewComponents   = strength->SkewComponents();
   // multiple by brho to get field coefficients
   for (auto kn : normalComponents)
     {kn *= brho;}
