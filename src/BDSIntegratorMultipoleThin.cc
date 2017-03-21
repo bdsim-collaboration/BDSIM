@@ -47,11 +47,11 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 
   // only use for forward paraxial momenta, else advance particle as if in a drift
   if (localMomUnit.z() < 0.9)
-  {
-    AdvanceDriftMag(yIn, h, yOut);
-    SetDistChord(0);
-    return;
-  }
+    {
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
+      return;
+    }
 
   G4double x0  = localPos.x();
   G4double y0  = localPos.y();

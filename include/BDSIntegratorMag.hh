@@ -41,6 +41,9 @@ protected:
 		       const G4ThreeVector& localMomUnit,
 		       const G4double       momMag,
 		       G4double             yOut[]);
+
+  /// Setter for distChord to private member.
+  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
   
   /// Keep a reference to the underlying equation of motion, but through a higher
   /// level pointer than G4EquationOfMotion* so we can use the correct methods. This
@@ -54,8 +57,6 @@ protected:
   /// outside the (transverse) momentum range applicable for the integration scheme
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
-
-  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
 
 private:
   /// Private default constructor to force use of specific constructor
