@@ -827,6 +827,7 @@ class TestSuite(TestUtilities):
 
         finalTime = time.time() - initialTime
         self.Analysis.TimingData.SetTotalTime(finalTime)
+        self.Analysis._pickleResults()
         self.Analysis.ProduceReport()
         _os.chdir('../')
 

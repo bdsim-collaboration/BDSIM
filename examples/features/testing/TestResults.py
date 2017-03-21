@@ -388,6 +388,16 @@ class ResultsUtilities:
         else:
             return None
 
+    def _pickleResults(self):
+        """ Function to pickle the Results instances and save to disk.
+            """
+        with open('results.pickle', 'wb') as handle:
+            pickle.dump(self.Results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open('timing.pickle', 'wb') as handle:
+            pickle.dump(self.TimingData, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open('dipoleResults.pickle', 'wb') as handle:
+            pickle.dump(self.DipoleResults, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 class Analysis(ResultsUtilities):
     """ A class for processing the test results."""
@@ -491,16 +501,6 @@ class Analysis(ResultsUtilities):
         setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
         setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
 
-        with open('results.pickle', 'wb') as handle:
-            pickle.dump(self.Results, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-        with open('timing.pickle', 'wb') as handle:
-            pickle.dump(self.TimingData, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-        if (componentType == 'rbend') or (componentType == 'sbend'):
-            self._groupDipoleResults(componentType)
-            with open('dipoleResults.pickle', 'wb') as handle:
-                pickle.dump(self.DipoleResults, handle, protocol=pickle.HIGHEST_PROTOCOL)
         self._processTimingData(componentType)
 
     def _groupDipoleResults(self, componentType=''):
