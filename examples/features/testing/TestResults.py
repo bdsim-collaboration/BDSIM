@@ -132,6 +132,7 @@ class ResultsUtilities:
         # dict of list of Results instances for each component type.
         self.Results = {}
         self.DipoleResults = {}
+        self.TimingData = Timing()  # timing data.
 
     def _getPhaseSpaceComparatorData(self, result, logFile=''):
         # phasespace coords initialised as passed.
@@ -288,6 +289,51 @@ class ResultsUtilities:
         _os.remove('gitBranch.log')
         return gitLines
 
+    def _getPickledData(self):
+        with open('results.pickle', 'rb') as handle:
+            self.Results = pickle.load(handle)
+        with open('dipoleResults.pickle', 'rb') as handle:
+            self.DipoleResults = pickle.load(handle)
+        with open('timing.pickle', 'rb') as handle:
+            self.TimingData = pickle.load(handle)
+
+    def _getCommonFactors(self, results):
+        commonFactors = {}
+        globalParams = {}
+        for res in results:
+            for param, value in res['testParams'].iteritems():
+                if not globalParams.keys().__contains__(param):
+                    globalParams[param] = []
+                if not globalParams[param].__contains__(value):
+                    globalParams[param].append(value)
+        for param, value in globalParams.iteritems():
+            if len(value) == 1:
+                commonFactors[param] = value[0]
+            elif len(value) == 2:
+                commonFactors[param] = value
+        return commonFactors
+
+    def _processTimingData(self, component):
+        bdsimMean = _np.mean(self.TimingData.bdsimTimes)
+        compMean = _np.mean(self.TimingData.comparatorTimes)
+        bdsimStd = _np.std(self.TimingData.bdsimTimes)
+        compMean = _np.std(self.TimingData.comparatorTimes)
+
+        bdsimLimit = bdsimMean + 3 * bdsimStd
+        longTests = Results(component)
+        longTests.extend([test for test in self.Results[component] if test['bdsimTime'] > bdsimLimit])
+
+        commonFactors = self._getCommonFactors(longTests)
+
+        if commonFactors.keys().__len__() > 0:
+            s = "There were " + _np.str(len(longTests)) + " tests that took longer than " \
+                + _np.str(_np.round(bdsimLimit, 6)) + " s,\r\n"
+            s += "these tests had the following common parameters:\r\n"
+            for param, value in commonFactors.iteritems():
+                s += "\t" + param + " : " + _np.str(value) + ".\r\n"
+            return s
+        else:
+            return None
 
 class Analysis(ResultsUtilities):
     def __init__(self):
@@ -384,10 +430,14 @@ class Analysis(ResultsUtilities):
         with open('results.pickle', 'wb') as handle:
             pickle.dump(self.Results, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+        with open('timing.pickle', 'wb') as handle:
+            pickle.dump(self.TimingData, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
         if (componentType == 'rbend') or (componentType == 'sbend'):
             self._groupDipoleResults(componentType)
             with open('dipoleResults.pickle', 'wb') as handle:
                 pickle.dump(self.DipoleResults, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        self._processTimingData(componentType)
 
     def _groupDipoleResults(self, componentType=''):
         def _dictPolefaceCompVals(testparams):
@@ -485,19 +535,17 @@ class Analysis(ResultsUtilities):
         self.DipoleResults[componentType] = dipoleResults
 
     def PlotResults(self, componentType=''):
-        plotter = _Plotting()
-        if (componentType == 'rbend') or (componentType == 'sbend'):
-            plotter.PlotResults(self.DipoleResults, componentType)
-        else:
-            plotter.PlotResults(self.Results, componentType)
+        if self.Results.keys().__contains__(componentType):
+            plotter = _Plotting()
+            self._processTimingData(componentType)
+            if (componentType == 'rbend') or (componentType == 'sbend'):
+                plotter.PlotResults(self.DipoleResults, componentType)
+                plotter.PlotTimingData(self.TimingData, componentType)
+            else:
+                plotter.PlotResults(self.Results, componentType)
+                plotter.PlotTimingData(self.TimingData, componentType)
 
-    def ProduceReport(self, pickled=False):
-        if pickled:
-            with open('results.pickle', 'rb') as handle:
-                self.Results = pickle.load(handle)
-            with open('dipoleResults.pickle', 'rb') as handle:
-                self.DipoleResults = pickle.load(handle)
-
+    def ProduceReport(self):
         report = _Report(self.Results, self.DipoleResults)
         report.ProduceReport()
 
@@ -580,6 +628,7 @@ class _Plotting:
                 dataAx2 = self._updateAxes(ax4, ax3, protonResults, res2Offset)
                 self._addColorBar(f, dataAx1)
                 f.savefig('../Results/' + electronResults._component + '.png', dpi=600)
+                _plt.close()
             else:
                 self._singleParticlePlots(electronResults)
                 self._singleParticlePlots(protonResults)
@@ -630,6 +679,7 @@ class _Plotting:
             dataAx2 = self._updateAxes(ax4, ax3, res2, res2Offset)
             self._addColorBar(f, dataAx1)
             f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
+            _plt.close()
 
     def _singleDataAxesByEnergy(self, results):
         figsize = self._getFigSize(results)
@@ -645,6 +695,7 @@ class _Plotting:
         dataAxes = self._updateAxes(ax2, ax1, res1, 1.0)
         self._addColorBar(f, dataAxes)
         f.savefig('../Results/' + results._component + energyString + '.png', dpi=600)
+        _plt.close()
 
     def _singleDataAxes(self, results):
         figsize = self._getFigSize(results)
@@ -655,6 +706,7 @@ class _Plotting:
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
         f.savefig('../Results/' + results._component + '.png', dpi=600)
+        _plt.close()
 
     def _addColorBar(self, f, ax):
         # colorbar colors and values independant of data, can be set according to either subplot.
@@ -822,6 +874,36 @@ class _Plotting:
 
         return dataAx1
 
+    def PlotTimingData(self, timingData, component):
+        f = _plt.figure()
+        ax = f.add_subplot(121)
+        ax2 = f.add_subplot(122)
+
+        bdsimMax = _np.max(timingData.bdsimTimes)
+        compMax = _np.max(timingData.comparatorTimes)
+
+        maxtimes = [_np.max(bdsimMax), _np.max(compMax)]
+        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
+
+        y, x, _ = ax.hist(timingData.bdsimTimes, bins=30, log=True, range=(0,_np.ceil(bdsimMax)))
+        ax.set_xlabel('Time (s)')
+        ax.set_ylabel('Number of Tests')
+        ax.set_title('BDSIM Run Time')
+
+        y2, x2, _ = ax2.hist(timingData.comparatorTimes, bins=30, log=True, range=(0,_np.ceil(compMax)))
+        ax2.set_xlabel('Time (s)')
+        ax2.set_title('Comparator Run Time')
+        ax2.yaxis.set_visible(False)
+
+        maxtimes = [_np.max(y), _np.max(y2)]
+        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
+
+        ax.set_ylim(ymin=0, ymax=2*10**orderOfMag)
+        ax2.set_ylim(ymin=0, ymax=2*10**orderOfMag)
+
+        f.savefig('../Results/' + component + '_bdsimTimes.png', dpi=600)
+        _plt.close()
+
 
 class _Report:
     def __init__(self, results, dipoleResults):
@@ -859,20 +941,9 @@ class _Report:
 
     def _processFatals(self, component):
         results = self.groupedResults[component]['FATAL_EXCEPTION']
-        commonFactors = {}
+        utils = ResultsUtilities()
+        commonFactors = utils._getCommonFactors(results)
 
-        globalParams = {}
-        for res in results:
-            for param, value in res['testParams'].iteritems():
-                if not globalParams.keys().__contains__(param):
-                    globalParams[param] = []
-                if not globalParams[param].__contains__(value):
-                    globalParams[param].append(value)
-        for param, value in globalParams.iteritems():
-            if len(value) == 1:
-                commonFactors[param] = value[0]
-            elif len(value) == 2:
-                commonFactors[param] = value
         if commonFactors.keys().__len__() > 0:
             s = "\tTests where a fatal exception was called had the common parameters:\r\n"
             for param, value in commonFactors.iteritems():
@@ -883,17 +954,9 @@ class _Report:
 
     def _processSoftFail(self, component, failure):
         results = self.groupedResults[component][failure]
-        commonFactors = {}
-        globalParams = {}
-        for res in results:
-            for param, value in res['testParams'].iteritems():
-                if not globalParams.keys().__contains__(param):
-                    globalParams[param] = []
-                if not globalParams[param].__contains__(value):
-                    globalParams[param].append(value)
-        for param, value in globalParams.iteritems():
-            if len(value) == 1:
-                commonFactors[param] = value[0]
+        utils = ResultsUtilities()
+        commonFactors = utils._getCommonFactors(results)
+
         if commonFactors.keys().__len__() > 0:
             strName = failure.replace("_", " ")
             strName = _string.lower(strName)

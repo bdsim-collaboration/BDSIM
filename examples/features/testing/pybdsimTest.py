@@ -103,7 +103,6 @@ def Run(inputDict):
             if not generateOriginal:
                 _os.remove(inputDict['compLogFile'])
 
-
     # elif the comparator failed
     elif inputDict['code'] == 1:
         # move the comparator log and failed root file
@@ -121,11 +120,6 @@ def Run(inputDict):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
-
-    # # elif incorrect args
-    # elif inputDict['code'] == 2:
-    #     pass
-    #     # This is a command line entry problem which should not really occur.
 
     # elif root file wasn't generated.
     elif inputDict['code'] == 2 :
@@ -341,19 +335,29 @@ class Test(dict):
             if isinstance(phaseSpace, PhaseSpace.PhaseSpace):
                 self.PhaseSpace = phaseSpace
             else:
-                raise TypeError("phaseSpace can only be a bdsimtesting.PhaseSpace.PhaseSpace instance.")
+                raise TypeError("phaseSpace can only be a PhaseSpace.PhaseSpace instance.")
         else:
             self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
     def SetInrays(self, inraysFile=''):
-        if inraysFile != '':
-            self._beamFilename = inraysFile
+        """ Set the filename which contains the ptc inrays file.
+            """
+        if isinstance(inraysFile, _np.str):
+            if inraysFile != '':
+                self._beamFilename = inraysFile
+            else:
+                raise ValueError("inraysFile cannot be an empty string ")
+        else:
+            raise TypeError("inraysFile must be a string")
 
     def AddParameter(self, parameter, values=[]):
+        """ Function to add a parameter that is not a default parameter for the test's
+            component type. An example would be defining a K1 value for a dipole."""
         if self.keys().__contains__(parameter):
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter, _np.str):
+            #check that the parameter can be parsed.
             if GlobalData.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set" + _string.capitalize(parameter)
@@ -365,6 +369,8 @@ class Test(dict):
             raise TypeError("Unknown data type for " + parameter)
 
     def WriteToInrays(self, filename):
+        """ Write the inrays file to disk. The filename should include the
+            filepath relative to the TestSuite directory."""
         self.SetInrays(filename)
         self.PhaseSpace._WriteToInrays(filename)
 
@@ -414,7 +420,6 @@ class TestUtilities(object):
         self._comparatorLog = 'comparatorOutput.log'
 
         self.Analysis = TestResults.Analysis()  # results instance
-        self.timings = TestResults.Timing()  # timing data.
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.
@@ -527,6 +532,8 @@ class TestUtilities(object):
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
     def _CheckForOriginal(self, testname, componentType):
+        """ Check for the existence of the directory containing the original data set
+            that these tests will be compared to."""
         if self._dataSetDirectory != '':
             dataDir = self._dataSetDirectory
         else:
@@ -540,6 +547,7 @@ class TestUtilities(object):
             return ''
 
     def _GetOrderedTests(self, testlist, componentType):
+        """ Function to order the tests according to their parameter values."""
         OrderedTests = []
         particles = []
         compKwargs = collections.OrderedDict()  # keep order of kwarg in file name
@@ -550,7 +558,7 @@ class TestUtilities(object):
             path = test[:fnameStartIndex+1]
             if filename[-5:] == '.gmad':
                 filename = filename[:-5]  # remove .gmad extension
-            splitFilename = filename.split('__')
+            splitFilename = filename.split('__')  # split into param_value parts
             particle = splitFilename[1]
             if not particles.__contains__(particle):
                 particles.append(particle)
@@ -582,6 +590,7 @@ class TestUtilities(object):
 
         # recursively create filenames from all kwarg value permutations.
         # if filename matches one in supplied test list, add to ordered list.
+        # please do not change this, it took ages to get it working correctly.
         def sublevel(depth, nameIn):
             for kwargValue in compKwargs[kwargKeys[depth]]:
                 name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
@@ -597,6 +606,7 @@ class TestUtilities(object):
         return OrderedTests
 
     def _multiThread(self, testlist):
+        """ Function to run the tests on multiple cores with multithreading."""
         numCores = multiprocessing.cpu_count()
 
         p = multiprocessing.Pool(numCores)
@@ -604,10 +614,12 @@ class TestUtilities(object):
 
         for testRes in results:
             self.Analysis.AddResults(testRes)
-            self.timings.bdsimTimes.append(testRes['bdsimTime'])
-            self.timings.comparatorTimes.append(testRes['compTime'])
+            self.Analysis.TimingData.bdsimTimes.append(testRes['bdsimTime'])
+            self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
 
     def _singleThread(self, testlist):
+        """ Function to run the tests on a single core.
+            This has not been updated in a long time, so use with caution."""
         eleBdsimTimes = []
         eleComparatorTimes = []
 
@@ -640,8 +652,8 @@ class TestUtilities(object):
             comparatorTime = time.time() - compTestTime
             eleComparatorTimes.append(comparatorTime)
 
-        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
+        self.Analysis.TimingData.bdsimTimes.extend(_np.average(eleBdsimTimes))
+        self.Analysis.TimingData.comparatorTimes.extend(_np.average(eleComparatorTimes))
 
 
 class TestSuite(TestUtilities):
@@ -685,7 +697,11 @@ class TestSuite(TestUtilities):
             """
         if self._usePickledData:
             _os.chdir('BDSIMOutput')
-            self.Analysis.ProduceReport(pickled=True)
+            self.Analysis._getPickledData()
+            for comp in GlobalData.components:
+
+                self.Analysis.PlotResults(comp)
+            self.Analysis.ProduceReport()
             return None
 
         self.WriteGlobalOptions()
@@ -741,18 +757,18 @@ class TestSuite(TestUtilities):
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.timings.AddComponentTime(componentType, componentTime)
+            self.Analysis.TimingData.AddComponentTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')
             else:
-                self.Analysis.AddTimingData(componentType, self.timings)
+                self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
         self.Analysis.ProduceReport()
         finalTime = time.time() - initialTime
-        self.timings.SetTotalTime(finalTime)
+        self.Analysis.TimingData.SetTotalTime(finalTime)
         _os.chdir('../')
 
     def _FullTestSuite(self):
