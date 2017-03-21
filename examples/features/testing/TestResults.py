@@ -266,11 +266,9 @@ class ResultsUtilities:
                     '-------- EEEE -------- G4Exception-END --------- EEEE -------',
                     '-------- EEEE -------- G4Exception-END --------- EEEE ------- ']
 
-        startLineIndices = []
-        endLineIndices = []
-
-        startLineIndices.extend([i for i, x in enumerate(splitLines) if startLines.__contains__(x)])
-        endLineIndices.extend([i for i, x in enumerate(splitLines) if endLines.__contains__(x)])
+        # indices of start and end of geant4 exceptions and warnings.
+        startLineIndices = [i for i, x in enumerate(splitLines) if startLines.__contains__(x)]
+        endLineIndices = [i for i, x in enumerate(splitLines) if endLines.__contains__(x)]
         endLineIndices.sort()  # sort just in case
 
         if len(startLineIndices) != len(endLineIndices):
@@ -431,8 +429,8 @@ class Analysis(ResultsUtilities):
         numTests = 0
         numFailed = 0
         failedTests = []
-        stuckParticles = []
-        overlaps = []
+        softFails = {}
+
         for component, compResults in self.Results.iteritems():
             for testdict in compResults:
                 numTests += 1
@@ -443,12 +441,13 @@ class Analysis(ResultsUtilities):
                     numFailed += 1
                     failedFile = testdict['testFile'].split('/')[-1]
                     failedTests.append(failedFile)
-                if generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE']):
-                    failedFile = testdict['testFile'].split('/')[-1]
-                    stuckParticles.append(failedFile)
-                if generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS']):
-                    failedFile = testdict['testFile'].split('/')[-1]
-                    overlaps.append(failedFile)
+                # check for soft failures
+                for failure in GlobalData.softFailures:
+                    if generalStatus.__contains__(GlobalData.returnCodes[failure]):
+                        if not softFails.keys().__contains__(failure):
+                            softFails[failure] = []
+                        failedFile = testdict['testFile'].split('/')[-1]
+                        softFails[failure].append(failedFile)
 
         s = _np.str(numTests - numFailed) + "/" + _np.str(numTests) + " ROOT files were successfully generated.\r\n"
         print(s)
@@ -466,17 +465,16 @@ class Analysis(ResultsUtilities):
                 f.write(test + "\r\n")
             f.write("\r\n")
 
-        if len(overlaps) > 0:
-            f.write("The following " + _np.str(len(overlaps)) + " generated files contain overlaps:\r\n")
-            for test in overlaps:
-                f.write(test + "\r\n")
-            f.write("\r\n")
-
-        if len(stuckParticles) > 0:
-            f.write("The following " + _np.str(len(stuckParticles)) + " generated files had stuck particles:\r\n")
-            for test in stuckParticles:
-                f.write(test + "\r\n")
-            f.write("\r\n")
+        for failure in GlobalData.softFailures:
+            failures = softFails[failure]
+            if len(failures) > 0:
+                failureString = failure.replace("_", " ")
+                failureString = _string.lower(failureString)
+                f.write("The following " + _np.str(len(failures)) + " generated files contain " \
+                        + failureString + ":\r\n")
+                for test in failures:
+                    f.write(test + "\r\n")
+                f.write("\r\n")
 
         f.write(self._getGitCommit())
         f.close()
@@ -519,7 +517,8 @@ class Analysis(ResultsUtilities):
             paramSet['hgap'] = testparams['hgap']
             return paramSet
 
-        def _updatGeneralStatus(_genStatus):
+        # update general status column
+        def _updateGeneralStatus(_genStatus):
             genStat = []
             for codes in _genStatus:
                 if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
@@ -530,7 +529,8 @@ class Analysis(ResultsUtilities):
                             genStat.append(code)
             return genStat
 
-        def _updateCoordsRes(_comparatorResults):
+        # update phasespace coords
+        def _updateCoords(_comparatorResults):
             resList = [[], [], [], [], [], [], []]
             coords = _np.array(_comparatorResults)
             for index in range(coords.shape[1]):
@@ -585,8 +585,9 @@ class Analysis(ResultsUtilities):
                                 _genStat.append(generalStatus[testNum])
                                 _resList.append(comparatorResults[testNum])
 
-                        dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
-                        dipRes['comparatorResults'] = _updateCoordsRes(_resList)
+                        # update the poleface parameter values, general status, and coords results
+                        dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
+                        dipRes['comparatorResults'] = _updateCoords(_resList)
 
                         dipoleResults.append(dipRes)
                 elif uniqueValues.keys().__contains__('field'):
@@ -607,8 +608,9 @@ class Analysis(ResultsUtilities):
                                 _genStat.append(generalStatus[testNum])
                                 _resList.append(comparatorResults[testNum])
 
-                        dipRes['generalStatus'] = _updatGeneralStatus(_genStat)
-                        dipRes['comparatorResults'] = _updateCoordsRes(_resList)
+                        # update the poleface parameter values, general status, and coords results
+                        dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
+                        dipRes['comparatorResults'] = _updateCoords(_resList)
 
                         dipoleResults.append(dipRes)
         self.DipoleResults[componentType] = dipoleResults
@@ -696,18 +698,18 @@ class _Plotting:
 
         # use appropriate function depending on the number of tests per particle type
         if electronResults._numEntries == 0:
-            self.PlotSingleParticle(protonResults)
+            self._plotSingleParticle(protonResults)
         elif protonResults._numEntries == 0:
-            self.PlotSingleParticle(electronResults)
+            self._plotSingleParticle(electronResults)
         elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
             if (protonResults._numEntries <= self.testsPerAxes) and (electronResults._numEntries <= self.testsPerAxes):
                 fileName = '../Results/' + componentType + '.png'
                 self._singleFigureDoubleData(electronResults, protonResults, fileName)
             else:
-                self.PlotSingleParticle(electronResults)
-                self.PlotSingleParticle(protonResults)
+                self._plotSingleParticle(electronResults)
+                self._plotSingleParticle(protonResults)
 
-    def PlotSingleParticle(self, results):
+    def _plotSingleParticle(self, results):
         """ Function for plotting the results for a single particle type."""
 
         # if number of tests is too high, split tests by particle energy, and call appropriate function.
@@ -1119,20 +1121,9 @@ class _Report:
                 compResults = res['comparatorResults']
                 if compResults[i] == 1:
                     failedTests.append(res)
+            utils = ResultsUtilities()
+            commonFactors = utils._getCommonFactors(failedTests)
 
-            commonFactors = {}
-            globalParams = {}
-            for res in failedTests:
-                for param, value in res['testParams'].iteritems():
-                    if not globalParams.keys().__contains__(param):
-                        globalParams[param] = []
-                    if not globalParams[param].__contains__(value):
-                        globalParams[param].append(value)
-            for param, value in globalParams.iteritems():
-                if len(value) == 1:
-                    commonFactors[param] = value[0]
-                elif len(value) == 2:
-                    commonFactors[param] = value
             if commonFactors.keys().__len__() > 0:
                 for param, value in commonFactors.iteritems():
                     s += "    " + param + " : " + _np.str(value) + ".\r\n"
