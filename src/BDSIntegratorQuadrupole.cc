@@ -110,6 +110,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     {SetDistChord(dc);}
   
   G4double rootK  = std::sqrt(std::abs(kappa*zp)); // direction independent
+  if (std::isnan(rootK))
+    {rootK = 0;}
   G4double rootKh = rootK*h*zp;
   G4double X11,X12,X21,X22 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
