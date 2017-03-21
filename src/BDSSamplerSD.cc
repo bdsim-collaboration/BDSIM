@@ -24,9 +24,9 @@
 
 BDSSamplerSD::BDSSamplerSD(G4String name):
   G4VSensitiveDetector("sampler/" + name),
-  itsHCID(-1),
   SamplerCollection(nullptr),
   itsCollectionName(name),
+  itsHCID(-1),
   registry(nullptr),
   globals(nullptr)
 {

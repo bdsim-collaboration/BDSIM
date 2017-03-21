@@ -38,7 +38,9 @@ BDSParser::~BDSParser()
 }
 
 BDSParser::BDSParser(std::string name):GMAD::Parser(name)
-{}
+{
+  std::cout << __METHOD_NAME__ << "Using input file : "<< name << std::endl;
+}
 
 void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 {
