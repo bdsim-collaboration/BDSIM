@@ -48,7 +48,6 @@
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
-#include "BDSMessenger.hh"
 
 //=======================================================
 // Global variables 
@@ -219,10 +218,6 @@ int main(int argc,char** argv)
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
-
-  /// Create BDS UI messenger
-  BDSMessenger *bdsMessenger = new BDSMessenger();
-
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();
   if (const BDSModularPhysicsList* modPhysics = dynamic_cast<const BDSModularPhysicsList*>(physics))
@@ -310,8 +305,6 @@ int main(int argc,char** argv)
   delete runManager;
   delete samplerWorld;
   delete bdsBunch;
-
-  delete bdsMessenger;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
 
