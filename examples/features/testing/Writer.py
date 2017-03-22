@@ -6,6 +6,11 @@ from pybdsim import Beam as _Beam
 from pybdsim import Writer as _Writer
 from pybdsim import Builder as _Builder
 import pybdsimTest
+import Globals
+
+multiEntryTypes = [tuple, list, _np.ndarray]
+
+GlobalData = Globals.Globals()
 
 
 class Writer:
@@ -383,35 +388,67 @@ class Writer:
             """
         for knl in test['knl']:
             knlComponentsName = '__KNL_'
-            for knlArray in knl:
-                for knOrder, knValue in enumerate(knlArray):
-                    if knValue != 0:
-                        knlComponentsName += 'K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
+            if multiEntryTypes.__contains__(type(knl)):
+                for knlArray in knl:
+                    for knOrder, knValue in enumerate(knlArray):
+                        if knValue != 0:
+                            knlComponentsName += 'K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
+                    knlName = filename + knlComponentsName
+                    for ksl in test['ksl']:
+                        kslComponentsName = '__KSL_'
+                        for kslArray in ksl:
+                            for ksOrder, ksValue in enumerate(kslArray):
+                                if ksValue != 0:
+                                    kslComponentsName += 'K' + _np.str(ksOrder + 1) + '_' + _np.str(ksValue)
+                            kslName = knlName + kslComponentsName
+            else:  # must be k1 if only one entry
+                if knl != 0:
+                    knlComponentsName += 'K1' + '_' + _np.str(knl)
                 knlName = filename + knlComponentsName
                 for ksl in test['ksl']:
                     kslComponentsName = '__KSL_'
-                    for kslArray in ksl:
-                        for ksOrder, ksValue in enumerate(kslArray):
-                            if ksValue != 0:
-                                kslComponentsName += 'K' + _np.str(ksOrder + 1) + '_' + _np.str(ksValue)
-                        kslName = knlName + kslComponentsName
+                    if multiEntryTypes.__contains__(type(ksl)):
+                        for kslArray in ksl:
+                            for ksOrder, ksValue in enumerate(kslArray):
+                                if ksValue != 0:
+                                    kslComponentsName += 'K' + _np.str(ksOrder + 1) + '_' + _np.str(ksValue)
+                            kslName = knlName + kslComponentsName
+                    else:
+                        ksValue = test['ksl'][0]
+                        if ksValue != 0:
+                            kslComponentsName += 'K1' + '_' + _np.str(ksValue)
+                            kslName = knlName + kslComponentsName
+                        else:
+                            kslName = ''
+        def writemachine(knArray, ksArray, length):
+            machine = self._getMachine(test.Particle, test._testRobustness)
+            if component == 'thinmultipole':
+                machine.AddDrift(name='dr1', length=0.5)
+                machine.AddThinMultipole(name='mp1', knl=knArray, ksl=ksArray)
+                machine.AddDrift(name='dr2', length=0.5)
+                machine.AddSampler('dr2')
+            elif component == 'multipole':
+                machine.AddMultipole(name='mp1', length=length, knl=knArray, ksl=ksArray)
+                machine.AddSampler('mp1')
+            machine.AddBeam(self._getBeam(test))
+            self._writeToDisk(component, kslName, machine, test)
 
         for knl in test['knl']:
-            for knArray in knl:
+            if multiEntryTypes.__contains__(type(knl)):
+                for knArray in knl:
+                    for ksl in test['ksl']:
+                        if multiEntryTypes.__contains__(type(knl)):
+                            for ksArray in ksl:
+                                writemachine(knArray, ksArray, length)
+            else:
+                knArray = knl
                 for ksl in test['ksl']:
-                    for ksArray in ksl:
-                        
-                        machine = self._getMachine(test.Particle, test._testRobustness)
-                        if component == 'thinmultipole':
-                            machine.AddDrift(name='dr1', length=0.5)
-                            machine.AddThinMultipole(name='mp1', knl=knArray, ksl=ksArray)
-                            machine.AddDrift(name='dr2', length=0.5)
-                            machine.AddSampler('dr2')
-                        elif component == 'multipole':
-                            machine.AddMultipole(name='mp1', length=length, knl=knArray, ksl=ksArray)
-                            machine.AddSampler('mp1')
-                        machine.AddBeam(self._getBeam(test))
-                        self._writeToDisk(component, kslName, machine, test)
+                    if multiEntryTypes.__contains__(type(knl)):
+                        for ksArray in ksl:
+                            writemachine(knArray, ksArray, length)
+                    else:
+                        ksArray = ksl
+                        writemachine(knArray, ksArray, length)
 
     def WriteCollimatorTests(self, test):
         component = test.Component
@@ -419,8 +456,8 @@ class Writer:
         for length in test['length']:
             lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
-            xsize = test['x(col)'][0]
-            ysize = test['y(col)'][0]
+            xsize = GlobalData.paramValues['xcol']
+            ysize = GlobalData.paramValues['ycol']
             collFileName = lenFileName + '_x_' + _np.str(xsize) + '_y_' + _np.str(ysize)
 
             machine = self._getMachine(test.Particle, test._testRobustness)
