@@ -459,8 +459,8 @@ class Writer:
         for length in test['length']:
             lenName = '__length_' + _np.str(length)
             lenFileName = filename + lenName
-            xsize = GlobalData.paramValues['xcol']
-            ysize = GlobalData.paramValues['ycol']
+            xsize = GlobalData.paramValues['xcol'][0]
+            ysize = GlobalData.paramValues['ycol'][0]
             collFileName = lenFileName + '_x_' + _np.str(xsize) + '_y_' + _np.str(ysize)
 
             machine = self._getMachine(test.Particle, test._testRobustness)
