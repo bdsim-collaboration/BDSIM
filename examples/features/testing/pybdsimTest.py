@@ -556,6 +556,7 @@ class TestUtilities(object):
         for line in f:
             g.write(line)
         g.close()
+        f.close()
 
     def _UpdateComparatorLog(self, testFileName):
         """ Update the test pass log.
@@ -569,6 +570,7 @@ class TestUtilities(object):
         for line in f:
             g.write(line)
         g.close()
+        f.close()
 
     def _CheckForOriginal(self, testname, componentType):
         """ Check for the existence of the directory containing the original data set
@@ -655,6 +657,7 @@ class TestUtilities(object):
             self.Analysis.AddResults(testRes)
             self.Analysis.TimingData.bdsimTimes.append(testRes['bdsimTime'])
             self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
+        p.close()
 
     def _singleThread(self, testlist):
         """ Function to run the tests on a single core.
