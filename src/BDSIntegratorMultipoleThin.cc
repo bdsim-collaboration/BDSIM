@@ -47,11 +47,11 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 
   // only use for forward paraxial momenta, else advance particle as if in a drift
   if (localMomUnit.z() < 0.9)
-  {
-    AdvanceDriftMag(yIn, h, yOut);
-    SetDistChord(0);
-    return;
-  }
+    {
+      AdvanceDriftMag(yIn, h, yOut);
+      SetDistChord(0);
+      return;
+    }
 
   G4double x0  = localPos.x();
   G4double y0  = localPos.y();
@@ -100,6 +100,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   xp1 -= kick.real();
   yp1 += kick.imag();
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+  if (std::isnan(zp1))
+    {zp1 = zp;}
 
   // reset n for skewed kicks.
   n=1;
@@ -132,6 +134,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+  if (std::isnan(zp1))
+    {zp1 = zp;}
 
   // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
   if (std::isnan(zp1) or (zp1 < 0.9))
