@@ -564,56 +564,59 @@ class Analysis(ResultsUtilities):
         comparatorResults = self.Results[componentType].GetResults()
         dipoleResults = Results(componentType)
 
-        # loop over all non-poleface parameters
-        for energy in uniqueValues['energy']:
-            for length in uniqueValues['length']:
-                if uniqueValues.keys().__contains__('angle'):
-                    for angle in uniqueValues['angle']:
-                        # containers for dipole results
-                        dipRes = _getResDict(energy, length, angleVal=angle)
-                        _genStat = []
-                        _resList = []
+        if len(self.Results[componentType]) == 1:
+            self.DipoleResults[componentType] = self.Results[componentType]
+        else:
+            # loop over all non-poleface parameters
+            for energy in uniqueValues['energy']:
+                for length in uniqueValues['length']:
+                    if uniqueValues.keys().__contains__('angle'):
+                        for angle in uniqueValues['angle']:
+                            # containers for dipole results
+                            dipRes = _getResDict(energy, length, angleVal=angle)
+                            _genStat = []
+                            _resList = []
 
-                        # create list of tests that have the correct energy, length, and angle.
-                        # Also update poleface parameter values of appropriate tests.
-                        for testNum in range(self.Results[componentType]._numEntries):
-                            testParams = params[testNum]
-                            if (testParams['energy'] == energy) and (testParams['length'] == length) \
-                                    and (testParams['angle'] == angle):
-                                dipRes['particle'] = self.Results[componentType][testNum]['particle']
-                                dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
-                                _genStat.append(generalStatus[testNum])
-                                _resList.append(comparatorResults[testNum])
+                            # create list of tests that have the correct energy, length, and angle.
+                            # Also update poleface parameter values of appropriate tests.
+                            for testNum in range(self.Results[componentType]._numEntries):
+                                testParams = params[testNum]
+                                if (testParams['energy'] == energy) and (testParams['length'] == length) \
+                                        and (testParams['angle'] == angle):
+                                    dipRes['particle'] = self.Results[componentType][testNum]['particle']
+                                    dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
+                                    _genStat.append(generalStatus[testNum])
+                                    _resList.append(comparatorResults[testNum])
 
-                        # update the poleface parameter values, general status, and coords results
-                        dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
-                        dipRes['comparatorResults'] = _updateCoords(_resList)
+                            # update the poleface parameter values, general status, and coords results
+                            dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
+                            dipRes['comparatorResults'] = _updateCoords(_resList)
 
-                        dipoleResults.append(dipRes)
-                elif uniqueValues.keys().__contains__('field'):
-                    for field in uniqueValues['field']:
-                        # containers for dipole results
-                        dipRes = _getResDict(energy, length, fieldVal=field)
-                        _genStat = []
-                        _resList = []
+                            dipoleResults.append(dipRes)
+                    elif uniqueValues.keys().__contains__('field'):
+                        for field in uniqueValues['field']:
+                            # containers for dipole results
+                            dipRes = _getResDict(energy, length, fieldVal=field)
+                            _genStat = []
+                            _resList = []
 
-                        # create list of tests that have the correct energy, length, and field.
-                        # Also update poleface parameter values of appropriate tests.
-                        for testNum in range(self.Results[componentType]._numEntries):
-                            testParams = params[testNum]
-                            if (testParams['energy'] == energy) and (testParams['length'] == length) \
-                                    and (testParams['field'] == field):
-                                dipRes['particle'] = self.Results[componentType][testNum]['particle']
-                                dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
-                                _genStat.append(generalStatus[testNum])
-                                _resList.append(comparatorResults[testNum])
+                            # create list of tests that have the correct energy, length, and field.
+                            # Also update poleface parameter values of appropriate tests.
+                            for testNum in range(self.Results[componentType]._numEntries):
+                                testParams = params[testNum]
+                                if (testParams['energy'] == energy) and (testParams['length'] == length) \
+                                        and (testParams['field'] == field):
+                                    dipRes['particle'] = self.Results[componentType][testNum]['particle']
+                                    dipRes['polefaceParams'].append(_dictPolefaceCompVals(testParams))
+                                    _genStat.append(generalStatus[testNum])
+                                    _resList.append(comparatorResults[testNum])
 
-                        # update the poleface parameter values, general status, and coords results
-                        dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
-                        dipRes['comparatorResults'] = _updateCoords(_resList)
+                            # update the poleface parameter values, general status, and coords results
+                            dipRes['generalStatus'] = _updateGeneralStatus(_genStat)
+                            dipRes['comparatorResults'] = _updateCoords(_resList)
 
-                        dipoleResults.append(dipRes)
-        self.DipoleResults[componentType] = dipoleResults
+                            dipoleResults.append(dipRes)
+            self.DipoleResults[componentType] = dipoleResults
 
     def PlotResults(self, componentType=''):
         """ Plot the results for the specified component type.
@@ -788,8 +791,12 @@ class _Plotting:
         """ Function to plot a single data set on a single figure."""
         figsize = self._getFigSize(results)
         f = _plt.figure(figsize=figsize)
-        ax1 = f.add_subplot(121)
-        ax2 = f.add_subplot(122)
+        if len(results) == 1:
+            ax1 = None
+            ax2 = f.add_subplot(111)
+        else:
+            ax1 = f.add_subplot(121)
+            ax2 = f.add_subplot(122)
 
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
@@ -863,21 +870,27 @@ class _Plotting:
             # overlay the data with boxes for the results values that were not plotted before.
             for index, status in enumerate(data):
                 for coord, vals in enumerate(status):
-                    numStatus = len(vals)
-                    yIndex = index
-                    for statIndex, stat in enumerate(vals):
-                        boxColor = GlobalData.cmap.colors[_np.int(stat)]
-                        boxWidth = 1.0 / numStatus
-                        ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+                    # only plot rectangles if there's more than one coord status value, imshow will
+                    # have already plotted that box correctly.
+                    if multiEntryTypes.__contains__(type(vals)):
+                        numStatus = len(vals)
+                        yIndex = index
+                        for statIndex, stat in enumerate(vals):
+                            boxColor = GlobalData.cmap.colors[_np.int(stat)]
+                            boxWidth = 1.0 / numStatus
+                            ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
             # plot the general status for each test using boxes.
             for index, status in enumerate(generalStatus):
-                numStatus = len(status)
-                yIndex = index
-                for statIndex, stat in enumerate(status):
-                    boxColor = GlobalData.cmap.colors[stat]
-                    boxWidth = 1.0 / numStatus
-                    ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
+                # only plot rectangles if there's more than one general status value, imshow will
+                # have already plotted that box correctly.
+                if multiEntryTypes.__contains__(type(status)):
+                    numStatus = len(status)
+                    yIndex = index
+                    for statIndex, stat in enumerate(status):
+                        boxColor = GlobalData.cmap.colors[stat]
+                        boxWidth = 1.0 / numStatus
+                        ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
             if subplotTitle != '':
                 ax.set_title(subplotTitle)
@@ -888,26 +901,24 @@ class _Plotting:
             ax.set_xticks(xtickCentre)
             ax.set_xticklabels(['x', 'xp', 'y', 'yp', 't', 'zp', 'n', 'Gen'])
 
-            ytickMajors = _np.linspace(numTests / (numTests - 1), numTests, numTests)
-            ytickCentre = ytickMajors - 0.5
+            if numTests > 1:
+                ytickMajors = _np.linspace(numTests / (numTests - 1), numTests, numTests)
+                ytickCentre = ytickMajors - 0.5
 
-            ax.set_yticks(ytickCentre)
-            empty_string_labels = [''] * numTests
-            ax.set_yticklabels(empty_string_labels)
+                ax.set_yticks(ytickCentre)
+                empty_string_labels = [''] * numTests
+                ax.set_yticklabels(empty_string_labels)
 
-            ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+                ytickMinors = _np.linspace(0, len(data), len(data) + 1)
+                minorYTicks = _tick.FixedLocator(ytickMinors)
+                ax.yaxis.set_minor_locator(minorYTicks)
+                ax.tick_params(axis='y', which='both', length=0, labelsize=9)
+                ax.grid(which='minor', axis='y', linestyle='--')
 
             minorXTicks = _tick.FixedLocator(xtickMajors)
-            minorYTicks = _tick.FixedLocator(ytickMinors)
-
             ax.xaxis.set_minor_locator(minorXTicks)
-            ax.yaxis.set_minor_locator(minorYTicks)
-
             ax.tick_params(axis='x', which='both', length=0)
-            ax.tick_params(axis='y', which='both', length=0, labelsize=9)
-
             ax.grid(which='minor', axis='x', linestyle='-')
-            ax.grid(which='minor', axis='y', linestyle='--')
             return cax
 
         def updateDiagramAxis(ax, results, labelOffset):
@@ -971,8 +982,11 @@ class _Plotting:
             return ax
 
         # update axes
-        dataAx1 = updateDataAxis(dataAxis, dataSetresults)
-        labAx1 = updateDiagramAxis(diagramAxis, dataSetresults, labOffset)
+        if diagramAxis is None:
+            dataAx1 = updateDataAxis(dataAxis, dataSetresults)
+        else:
+            dataAx1 = updateDataAxis(dataAxis, dataSetresults)
+            labAx1 = updateDiagramAxis(diagramAxis, dataSetresults, labOffset)
 
         return dataAx1
 
