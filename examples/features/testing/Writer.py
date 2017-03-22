@@ -419,7 +419,7 @@ class Writer:
                             kslComponentsName += 'K1' + '_' + _np.str(ksValue)
                             kslName = knlName + kslComponentsName
                         else:
-                            kslName = ''
+                            kslName = knlName
         def writemachine(knArray, ksArray, length):
             machine = self._getMachine(test.Particle, test._testRobustness)
             if component == 'thinmultipole':
@@ -437,17 +437,20 @@ class Writer:
             if multiEntryTypes.__contains__(type(knl)):
                 for knArray in knl:
                     for ksl in test['ksl']:
-                        if multiEntryTypes.__contains__(type(knl)):
+                        if multiEntryTypes.__contains__(type(ksl)):
                             for ksArray in ksl:
                                 writemachine(knArray, ksArray, length)
+                        else:
+                            ksArray = (ksl)
+                            writemachine(knArray, ksArray, length)
             else:
-                knArray = knl
+                knArray = (knl)
                 for ksl in test['ksl']:
-                    if multiEntryTypes.__contains__(type(knl)):
+                    if multiEntryTypes.__contains__(type(ksl)):
                         for ksArray in ksl:
                             writemachine(knArray, ksArray, length)
                     else:
-                        ksArray = ksl
+                        ksArray = (ksl)
                         writemachine(knArray, ksArray, length)
 
     def WriteCollimatorTests(self, test):
