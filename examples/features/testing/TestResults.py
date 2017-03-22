@@ -466,7 +466,10 @@ class Analysis(ResultsUtilities):
             f.write("\r\n")
 
         for failure in GlobalData.softFailures:
-            failures = softFails[failure]
+            failures = []
+            if softFails.keys().__contains__(failure):
+                failures = softFails[failure]
+
             if len(failures) > 0:
                 failureString = failure.replace("_", " ")
                 failureString = _string.lower(failureString)
@@ -499,6 +502,8 @@ class Analysis(ResultsUtilities):
         setattr(self.Results[componentType], 'uniqueValues', self.Results[componentType]._getUniqueValues())
         setattr(self.Results[componentType], 'commonValues', self.Results[componentType]._getCommonValues())
 
+        if (componentType == 'rbend') or (componentType == 'sbend'):
+            self._groupDipoleResults(componentType)
         self._processTimingData(componentType)
 
     def _groupDipoleResults(self, componentType=''):
