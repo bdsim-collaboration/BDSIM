@@ -1,9 +1,2 @@
-cpp2dia.tclsh    : cpp2dia??? 
-display          : ROOT display 
-ebds_job.gmad    : Template job for submit_jobs.sh
-genbeam.py       : Generate a beam according parameters
-job.sh	         : 
 mad2gmad.py      : Python mad8 to gmad converter
-makeUMLGraphs.sh : script to run cpp2dia.tclsh
 root-scripts     : root scripts 
-submit_jobs.sh   : bash script to submit jobs

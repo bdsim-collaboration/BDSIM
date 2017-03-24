@@ -101,7 +101,9 @@ void SamplerAnalysis::Process()
   for(int i=0;i<this->s->n;++i)
   {
     if (s->parentID[i] != 0)
-      {continue;}              //select only primary particles
+      {continue;} // select only primary particles
+    if (s->turnNumber[i] > 1)
+      {continue;} // only use first turn particles
     v[0] = s->x[i];
     v[1] = s->xp[i];
     v[2] = s->y[i];

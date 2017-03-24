@@ -320,7 +320,7 @@ void BDSGeometryFactoryGMAD::GetParameter(std::ifstream& inputf,
       if(token == "=")
 	{
 	  token = GetWord(inputf);
-	  x = strtod(token.c_str(),NULL);
+	  x = strtod(token.c_str(),nullptr);
 	}
     }
 }
