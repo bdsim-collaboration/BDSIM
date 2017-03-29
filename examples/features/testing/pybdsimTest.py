@@ -646,17 +646,15 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
-    def _multiThread(self, testlist):
+    def _multiThread(self, testlist, componentType):
         """ Function to run the tests on multiple cores with multithreading."""
         numCores = multiprocessing.cpu_count()
-
         p = multiprocessing.Pool(numCores)
         results = p.map(Run, testlist)
 
         for testRes in results:
             self.Analysis.AddResults(testRes)
-            self.Analysis.TimingData.bdsimTimes.append(testRes['bdsimTime'])
-            self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
+            self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
         p.close()
 
     def _singleThread(self, testlist):
@@ -813,13 +811,19 @@ class TestSuite(TestUtilities):
 
                 testlist.append(testDict)
 
+            if not self.Analysis.TimingData.bdsimTimes.keys().__contains__(componentType):
+                self.Analysis.TimingData.bdsimTimes[componentType] = []
+
+            if not self.Analysis.TimingData.comparatorTimes.keys().__contains__(componentType):
+                self.Analysis.TimingData.comparatorTimes[componentType] = []
+
             if not self._useSingleThread:
-                self._multiThread(testlist)  # multithreaded option
+                self._multiThread(testlist, componentType)  # multithreaded option
             else:
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.Analysis.TimingData.AddComponentTime(componentType, componentTime)
+            self.Analysis.TimingData.AddComponentTotalTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')

@@ -124,8 +124,8 @@ class Timing:
         """
     def __init__(self):
         self.componentTimes = {}
-        self.bdsimTimes = []
-        self.comparatorTimes = []
+        self.bdsimTimes = {}
+        self.comparatorTimes = {}
         self.totalTime = 0
 
     def SetTotalTime(self, totalTime):
@@ -137,7 +137,7 @@ class Timing:
         except ValueError:
             pass
 
-    def AddComponentTime(self, component, componentTime):
+    def AddComponentTotalTime(self, component, componentTime):
         """ Set total time for all tests for a given components.
             """
         try:
@@ -145,6 +145,10 @@ class Timing:
             self.componentTimes[component] = cTime
         except ValueError:
             print("Cannot convert componentTime to a numerical value.")
+
+    def AddComponentTestTime(self, component, test):
+        self.bdsimTimes[component].append(test['bdsimTime'])
+        self.comparatorTimes[component].append(test['compTime'])
 
     def __repr__(self):
         s = 'Total Testing time  = ' + _np.str(self.totalTime) + '\r\n'
@@ -365,10 +369,10 @@ class ResultsUtilities:
         return commonFactors
 
     def _processTimingData(self, component):
-        bdsimMean = _np.mean(self.TimingData.bdsimTimes)
-        compMean = _np.mean(self.TimingData.comparatorTimes)
-        bdsimStd = _np.std(self.TimingData.bdsimTimes)
-        compMean = _np.std(self.TimingData.comparatorTimes)
+        bdsimMean = _np.mean(self.TimingData.bdsimTimes[component])
+        compMean = _np.mean(self.TimingData.comparatorTimes[component])
+        bdsimStd = _np.std(self.TimingData.bdsimTimes[component])
+        compMean = _np.std(self.TimingData.comparatorTimes[component])
 
         bdsimLimit = bdsimMean + 3 * bdsimStd
         longTests = Results(component)
