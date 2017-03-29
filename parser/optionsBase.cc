@@ -123,7 +123,7 @@ OptionsBase::OptionsBase()
   eventNumberOffset       = 0;
 
   // general geometrical prameters
-  checkOverlaps           = 0;
+  checkOverlaps           = false;
   xsize=0.0, ysize=0.0;
 
   // magnet geometry

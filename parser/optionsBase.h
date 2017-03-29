@@ -159,7 +159,7 @@ namespace GMAD
     int    eventNumberOffset;
     
     /// bdsim options
-    int       checkOverlaps;
+    bool       checkOverlaps;
     /// for element specification
     double xsize, ysize;
 
