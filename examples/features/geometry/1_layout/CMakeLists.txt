@@ -1,2 +1,5 @@
-simple_testing(1_layout "--file=1_layout.gmad" "")
-simple_testing(2_layout_one_of_each "--file=2_one_of_each.gmad" "")
+simple_testing(1_layout                   "--file=1_layout.gmad" "")
+simple_testing(2_layout_one_of_each       "--file=2_one_of_each.gmad" "")
+simple_testing(3_beamline_transform_aa    "--file=3_beamline_transform_aa.gmad" "")
+simple_testing(4_beamline_transform_euler "--file=4_beamline_transform_euler.gmad" "")
+simple_testing(5_beamline_transform       "--file=5_beamline_transform.gmad" "")
