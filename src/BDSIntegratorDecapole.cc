@@ -56,10 +56,12 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
   G4double xp = localMomUnit.x();
   G4double yp = localMomUnit.y();
   G4double zp = localMomUnit.z();
-  
-  G4double x02My02 = (x0*x0-y0*y0); 
-  G4double Bx = 4.0*x0*y0*(x02My02);
-  G4double By = std::pow(x0,4)-6.0*x0*x0*y0*y0+std::pow(y0,4);
+
+  G4double xsq = std::pow(x0, 2);
+  G4double ysq = std::pow(y0, 2);
+  G4double x02My02 = (xsq - ysq); 
+  G4double Bx = 4.0*x0*y0 * (x02My02);
+  G4double By = std::pow(x0,4) - 6.0 * xsq * ysq + std::pow(y0,4);
   
   // local r'' (for curvature)
   G4ThreeVector localA;

@@ -1,7 +1,7 @@
 #ifndef BDSFIELDEINTERPOLATED4D_H
 #define BDSFIELDEINTERPOLATED4D_H
 
-#include "BDSFieldE.hh"
+#include "BDSFieldEInterpolated.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -20,12 +20,12 @@ class BDSInterpolator4D;
  * @author Laurie Nevay
  */
 
-class BDSFieldEInterpolated4D: public BDSFieldE
+class BDSFieldEInterpolated4D: public BDSFieldEInterpolated
 {
 public:
   BDSFieldEInterpolated4D(BDSInterpolator4D* interpolatorIn,
-			  G4Transform3D      offset    = G4Transform3D::Identity,
-			  G4double           scalingIn = 1.0);
+			  G4Transform3D      offset     = G4Transform3D::Identity,
+			  G4double           eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated4D();
 
@@ -40,7 +40,6 @@ private:
   BDSFieldEInterpolated4D() = delete;
 
   BDSInterpolator4D* interpolator; ///< Interpolator the field is based on.
-  G4double           scaling;      ///< Field value scaling.
 };
 
 #endif

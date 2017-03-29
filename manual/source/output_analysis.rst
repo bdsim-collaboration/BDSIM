@@ -100,18 +100,25 @@ An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analy
   OutputFileName                      ./ana_1.root
   CalculateOpticalFunctions           1
   CalculateOpticalFunctionsFileName   ./ana_1.dat
-  # Object  Tree Name Histogram Name  # of Bins Binning             Variable            Selection
-  Histogra  Event.    Primaryx        {100}     {-0.1:0.1}          Primary.x           1
-  Histogram Event.    Primaryy        {100}     {-0.1:0.1}          Primary.y           1
-  Histogram Options.  seedState       {200}     {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram Model.    componentLength {100}     {0.0:100}           Model.length        1
-  Histogram Run.      runDuration     {1000}    {0,1000}            Info.duration       1
-  Histogram Event.    XvsY            {100:100} {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
+  # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
+  Histogra  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
+  Histogram Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
+  Histogram Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram Model.    componentLength {100}      {0.0:100}           Model.length        1
+  Histogram Run.      runDuration     {1000}     {0,1000}            Info.duration       1
+  Histogram Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
+  Histogram Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
 
 * Arguments in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
 * A line beginning with :code:`#` is ignored as a comment line.
-* 2D histograms (last line in example) have arguments separated by :code:`:`.
+* 2D histograms (2nd last line in example) have arguments separated by :code:`:` except the number of bins.
+* A 3D histogram is shown on the last line.
+
+
+.. note:: Observe the use of colons and commas carefully as there is no error checking and the arguments
+	  are passed directly to the ROOT TTree Draw command.
+
 
 Converting ROOT trees as numpy arrays
 -------------------------------------

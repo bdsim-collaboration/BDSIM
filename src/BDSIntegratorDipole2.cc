@@ -47,7 +47,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // along its helix axis (parallel to the field) so it'll hit something
   // and finish in a timely manner.
   const G4double radiusOfCurvature = GetRadHelix();
-  if (radiusOfCurvature < minimumRadiusOfCurvature)
+  if (std::abs(radiusOfCurvature) < minimumRadiusOfCurvature)
     {
       AdvanceHelixForSpiralling(yIn, bOriginal, h, yOut, yErr);
       return;

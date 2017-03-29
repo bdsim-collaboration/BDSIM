@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGINTERPOLATED1D_H
 #define BDSFIELDMAGINTERPOLATED1D_H
 
-#include "BDSFieldMag.hh"
+#include "BDSFieldMagInterpolated.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -19,7 +19,7 @@ class BDSInterpolator1D;
  * @author Laurie Nevay
  */
 
-class BDSFieldMagInterpolated1D: public BDSFieldMag
+class BDSFieldMagInterpolated1D: public BDSFieldMagInterpolated
 {
 public:
   BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
@@ -39,7 +39,6 @@ private:
   BDSFieldMagInterpolated1D() = delete;
 
   BDSInterpolator1D* interpolator; ///< Interpolator field is based on.
-  G4double           scaling;      ///< Field value scaling.
 };
 
 #endif

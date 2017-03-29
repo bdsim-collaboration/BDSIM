@@ -27,23 +27,22 @@ G4bool BDSArray2DCoordsRQuad::OutsideCoords(const G4double x,
 
 G4double BDSArray2DCoordsRQuad::ArrayCoordsFromX(const G4double x) const
 {
-  // xmin becomes -xmax
-  return (x + xMax + 1) / xStep;
+  return  (x - (xMin - xMax)) / xStep;
 }
 
 G4double BDSArray2DCoordsRQuad::ArrayCoordsFromY(const G4double y) const
 {
-  return (y + yMax + 1) / yStep;
+  return (y - (yMin - yMax)) / yStep;
 }
 
 G4int BDSArray2DCoordsRQuad::NearestX(const G4double x) const
 {
-  return (G4int)round((x + xMax + 1)/xStep);
+  return (G4int)round(ArrayCoordsFromX(x));
 }
 
 G4int BDSArray2DCoordsRQuad::NearestY(const G4double y) const
 {
-  return (G4int)round((y + yMax + 1)/yStep);
+  return (G4int)round(ArrayCoordsFromY(y));
 }
 
 const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
@@ -68,10 +67,12 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
   G4double yr = 1;
   G4int    xi = x; // copy of x index that can be modified.
   G4int    yi = y; 
-  
-  if (x < nX)
+
+  // nX,nY are the number of elements in the original array this class wraps
+  // nX - 1 as for array of size 3, the flip point is index 2
+  if (x < nX - 1)
     {
-      if (y < nY)
+      if (y < nY - 1)
 	{// C quadrant - coordinate flip is a subtraction in array coords
 	  xi = nX - 1 - x; xr = -1; // flip
 	  yi = nY - 1 - y; yr = -1; // flip
@@ -79,20 +80,20 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
       else
 	{// B quadrant
 	  xi = nX - 1 - x; // flip
-	  yi = y - nY; yr = -1; // just offset index, but flip result
+	  yi = y - nY + 1; yr = -1; // just offset index, but flip result
 	}
     }
   else
     {
-      if (y < nY)
+      if (y < nY - 1)
 	{// D quadrant
-	  xi = x - nX; xr = -1;// just offset index, flip x component
+	  xi = x - nX + 1; xr = -1;// just offset index, flip x component
 	  yi = nY - 1 - y;
 	}
       else
 	{// A quadrant
-	  xi = x - nX;
-	  yi = y - nY;
+	  xi = x - nX + 1;
+	  yi = y - nY + 1;
 	}
     }
 

@@ -104,6 +104,7 @@ public:
   inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
+  inline G4bool   IgnoreLocalAperture()      const {return G4bool  (options.ignoreLocalAperture);}
   inline G4String OuterMaterialName()        const {return G4String(options.outerMaterialName);}
   inline G4bool   DontSplitSBends()          const {return G4bool  (options.dontSplitSBends);}
   inline G4bool   BuildTunnel()              const {return G4bool  (options.buildTunnel);}
@@ -186,6 +187,7 @@ public:
   inline G4double YMax()                     const {return G4double(options.ymax) * CLHEP::m;}
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
+  inline G4bool   MatchDistribFileLength()   const {return G4bool  (options.matchDistribFileLength);}
 
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}

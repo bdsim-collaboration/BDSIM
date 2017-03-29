@@ -40,7 +40,7 @@ class Globals():
                            'hkick',
                            'quadrupole',
                            'sextupole',
-                           'octopole',
+                           'octupole',
                            'decapole',
                            'multipole',
                            'thinmultipole',
@@ -67,8 +67,8 @@ class Globals():
                            'knl',
                            'ksl',
                            'gradient',
-                           'x(col)',
-                           'y(col)',
+                           'xcol',
+                           'ycol',
                            'numWedges',
                            'thickness',
                            'ks',
@@ -84,7 +84,7 @@ class Globals():
                           'hkick'         : ['length', 'kickangle'],
                           'quadrupole'    : ['length', 'k1'],
                           'sextupole'     : ['length', 'k2'],
-                          'octopole'      : ['length', 'k3'],
+                          'octupole'      : ['length', 'k3'],
                           'decapole'      : ['length', 'k4'],
                           'multipole'     : ['length', 'knl', 'ksl'],
                           'thinmultipole' : ['knl', 'ksl'],
@@ -127,8 +127,8 @@ class Globals():
                             'knl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
                             'ksl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
                             'gradient'  : [-20.0, -0.002, 0, 0.002, 20.0],
-                            'x(col)'    : [0.05],
-                            'y(col)'    : [0.05],
+                            'xcol'      : [0.05],
+                            'ycol'      : [0.05],
                             'numWedges' : [1, 5, 10],
                             'thickness' : [0.01, 0.1, 1.0], #fraction of element length
                             'ks'        : [-0.3, -0.003, 0, 0.003, 0.3],
@@ -157,7 +157,7 @@ class Globals():
                                'PX' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
                                'Y'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
                                'PY' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'T'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
+                               'T'  : [-1.0e-18, -1.0e-15, -1.0e-12, 0, 1.0e-12, 1.0e-15, 1.0e-18],
                                'PT' : [0      ,  1.0e-6,  1.0e-4, 1.0e-2]}
 
         # Phase space extremeties for robustness testing
@@ -165,8 +165,8 @@ class Globals():
                                           'PX' : [-1.0e-2, 0, 1.0e-2],
                                           'Y'  : [-1.0e-2, 0, 1.0e-2],
                                           'PY' : [-1.0e-2, 0, 1.0e-2],
-                                          'T'  : [-1.0e-2, 0, 1.0e-2],
-                                          'PT' : [0,1.0e-2]}
+                                          'T'  : [-1.0e-12, 0, 1.0e-12],
+                                          'PT' : [0, 1.0e-2]}
 
         # integrator (mainly for use with field maps)
         self.Integrators = {'g4cashkarprkf45'       : {'Field': 'EM', 'Dim': 4},
@@ -204,26 +204,28 @@ class Globals():
 
         self.returnCodes = collections.OrderedDict([('SUCCESS', 0),
                                                     ('FAILED', 1),
-                                                    ('INCORRECT_ARGS', 2),
-                                                    ('FILE_NOT_FOUND', 3),  # i.e BDSIM did not generate anything
-                                                    ('OVERLAPS', 4),
-                                                    ('STUCK_PARTICLE', 5),
-                                                    ('TRACKING_WARNING', 6),  # not sure if needed...
-                                                    ('TIMEOUT', 7),
-                                                    ('NO_DATA', 8),
-                                                    ('FATAL_EXCEPTION', 9),
+                                                    ('FILE_NOT_FOUND', 2),  # i.e BDSIM did not generate anything
+                                                    ('OVERLAPS', 3),
+                                                    ('STUCK_PARTICLE', 4),
+                                                    ('TRACKING_WARNING', 5),  # not sure if needed...
+                                                    ('TIMEOUT', 6),
+                                                    ('NO_DATA', 7),
+                                                    ('FATAL_EXCEPTION', 8),
+                                                    ('NAN_CHORD', 9)
                                                     ])
+        self.softFailures = ['OVERLAPS', 'STUCK_PARTICLE', 'TRACKING_WARNING', 'NAN_CHORD']
 
         self.cmap = colors.ListedColormap(['b',
                                            (1, 1, 0),  # actual yellow
-                                           'y',
                                            (0.597, 0, 0),  # maroon
                                            'g',
                                            'm',
                                            'c',
                                            'k',
                                            'w',
-                                           'r'])
+                                           'r',
+                                           'y'
+                                           ])
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):

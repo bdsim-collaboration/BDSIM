@@ -1,7 +1,12 @@
+analysis        : output analysis
+beam            : beam generation options
 components      : components
+fields          : field examples
 geometry        : geometry
+io              : output options
 optics          : optics validation
 options         : specific options
 processes       : basic processes
 processes_old   : old examples
+testing         : tracking testing
 visualisation   : visualisation 

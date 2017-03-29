@@ -37,11 +37,6 @@ public:
   /// hits collection.
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH);
 
-  /// Hits collection ID - an integer look up for the hits collection
-  /// provided by G4SDManager (a registry) that is given to the
-  /// G4HCofThisEvent (Hits collection of the event).
-  int itsHCID;
-  
 private:
   /// The hits collection for this sensitive detector class that's owned
   BDSSamplerHitsCollection* SamplerCollection;
@@ -49,6 +44,11 @@ private:
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;
 
+  /// Hits collection ID - an integer look up for the hits collection
+  /// provided by G4SDManager (a registry) that is given to the
+  /// G4HCofThisEvent (Hits collection of the event).
+  int itsHCID;
+  
   /// Cached pointer to registry as accessed many times
   BDSSamplerRegistry* registry;
 
