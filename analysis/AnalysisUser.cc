@@ -122,7 +122,7 @@ void AnalysisUser::Analysis()
           try{
             StringToCharArray(model->model->componentName.at(point.model),vertexmodel);
           } catch(...){
-            std::cerr << "Warning, trying to access elements of vectors that don't exist" << std::endl;
+            //std::cerr << "Warning, trying to access elements of vectors that don't exist" << std::endl;
             continue;
           }
           vertexx = point.position.X();
