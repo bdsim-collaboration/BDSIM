@@ -92,10 +92,6 @@ private:
   /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;
-
-  /// Keep track of how many points are instantiated and delete the static navigator
-  /// when the last point is deleted.
-  static G4int numberOfPoints;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;

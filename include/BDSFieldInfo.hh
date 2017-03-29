@@ -48,7 +48,8 @@ public:
 	       G4bool                   cacheTransformsIn          = false,
 	       G4double                 eScalingIn                 = 1.0,
 	       G4double                 bScalingIn                 = 1.0,
-	       G4double                 timeOffsetIn               = 0);
+	       G4double                 timeOffsetIn               = 0,
+	       G4bool                   autoScaleIn                = false);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -72,10 +73,15 @@ public:
   inline G4double            EScaling()                 const {return eScaling;}
   inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
+  inline G4bool              AutoScale()                const {return autoScale;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
+
+  inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
+  inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
+  inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -106,6 +112,7 @@ private:
   G4double                 eScaling;
   G4double                 bScaling;
   G4double                 timeOffset;
+  G4bool                   autoScale;
 };
 
 #endif

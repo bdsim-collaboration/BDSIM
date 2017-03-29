@@ -1,0 +1,14 @@
+d1: drift, l=1*cm, beampipeThickness=0.2*mm, aper1=2*mm, aper2=3*mm, apertureType="rectangular";
+
+l1: line=(d1);
+
+use, l1;
+
+beam, energy=1*GeV,
+      particle="e-";
+
+
+option, ignoreLocalAperture=1,
+	apertureType="circular",
+	aper1 = 3*cm,
+	beampipeThickness=1*cm;

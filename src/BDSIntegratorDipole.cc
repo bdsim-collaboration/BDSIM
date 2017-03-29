@@ -48,7 +48,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
-  if (rho < minimumRadiusOfCurvature)
+  if (std::abs(rho) < minimumRadiusOfCurvature)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
@@ -58,9 +58,18 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   // global to local
   // false = use the mass world for the transform
   BDSStep       localPosMom         = ConvertToLocal(pos, mom, h, false);
-  G4ThreeVector localPos            = localPosMom.PreStepPoint();
   G4ThreeVector localMom            = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit        = localMom.unit();
+
+  // check for paraxial approximation:
+  if(localMomUnit.z() < 0.9)
+    {// use a classical Runge Kutta stepper here
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
+      return;
+    }
+
+  G4ThreeVector localPos            = localPosMom.PreStepPoint();
   G4ThreeVector initialLocalPos     = localPos;
   G4ThreeVector intiialLocalMomUnit = localMomUnit;
   
@@ -68,44 +77,31 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   std::pair<G4ThreeVector,G4ThreeVector> RandRp = UpdatePandR(rho,h,localPos,localMomUnit);
   G4ThreeVector outputLocalPos = RandRp.first;
   G4ThreeVector outputLocalMomUnit = RandRp.second;
-
+  
   G4double CosT_ov_2=cos(h/rho/2.0);
   G4double dc = std::abs(rho)*(1.-CosT_ov_2);
   if (std::isnan(dc))
     {SetDistChord(rho);}
   else
     {SetDistChord(dc);}
-
-  // check for paraxial approximation:
-  if(localMomUnit.z() > 0.9)
+  
+  // This uses the mass world volume for the transform!
+  ConvertToGlobal(outputLocalPos,outputLocalMomUnit,momMag,yOut);
+  
+  // If the radius of curvature is too small, reduce the momentum by 2%. This will
+  // cause artificial spiralling for what must be particles well below the design momenta.
+  // Nominally adding a small z increment along the axis of the helix wasn't reliable,
+  // as there can be inconsistencies in the field vectors resulting in 0 additional offset,
+  // plus Geant4 complained about clearly wrong motion. This way works and produces no
+  // errors.  The particle would be lost approximately in the current location anyway.
+  if (std::abs(rho) < minimumRadiusOfCurvature)
     {
-      // This uses the mass world volume for the transform!
-      ConvertToGlobal(outputLocalPos,outputLocalMomUnit,momMag,yOut);
-
-      // If the radius of curvature is too small, reduce the momentum by 2%. This will
-      // cause artificial spiralling for what must be particles well below the design momenta.
-      // Nominally adding a small z increment along the axis of the helix wasn't reliable,
-      // as there can be inconsistencies in the field vectors resulting in 0 additional offset,
-      // plus Geant4 complained about clearly wrong motion. This way works and produces no
-      // errors.  The particle would be lost approximately in the current location anyway.
-      if (std::abs(rho) < minimumRadiusOfCurvature)
-	{
-	  G4double momentumReduction = 0.98;
-	  yOut[3] *= momentumReduction;
-	  yOut[4] *= momentumReduction;
-	  yOut[5] *= momentumReduction;
-	}
-      return;
+      G4double momentumReduction = 0.98;
+      yOut[3] *= momentumReduction;
+      yOut[4] *= momentumReduction;
+      yOut[5] *= momentumReduction;
     }
-  else
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
-#endif
-      // use a classical Runge Kutta stepper here
-      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
-      SetDistChord(backupStepper->DistChord());
-    }
+  return;
 }
 
 void BDSIntegratorDipole::Stepper(const G4double yIn[],

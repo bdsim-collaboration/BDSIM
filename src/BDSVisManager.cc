@@ -21,6 +21,7 @@
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
 
 BDSVisManager::BDSVisManager()
@@ -28,11 +29,13 @@ BDSVisManager::BDSVisManager()
 
 void BDSVisManager::StartSession(G4int argc, char** argv)
 {
-  G4UIsession* session=nullptr;
+  /// Create BDS UI messenger
+  BDSMessenger *bdsMessenger = new BDSMessenger();
+
 #ifdef G4UI_USE_TCSH
-  session = new G4UIterminal(new G4UItcsh);
+  G4UIsession* session = new G4UIterminal(new G4UItcsh);
 #else
-  session = new G4UIterminal();
+  G4UIsession* session = new G4UIterminal();
 #endif
 
 #ifdef G4VIS_USE
@@ -82,9 +85,8 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   G4String visMacroFilename = BDS::GetFullPath(visMacroName);
   if (!useDefault)
     {
-      FILE* file = nullptr;
       // first relative to main path:
-      file = fopen(visMacroFilename.c_str(), "r");
+      FILE* file = fopen(visMacroFilename.c_str(), "r");
       if (file)
 	{fclose(file);}
       else
@@ -127,4 +129,5 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   delete session2;
 #endif
   delete session;
+  delete bdsMessenger;
 }

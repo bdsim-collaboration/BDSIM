@@ -82,6 +82,7 @@ namespace GMAD
     std::string zDistribType;
     std::string distribFile;
     std::string distribFileFormat;
+    bool matchDistribFileLength;
     ///@}
     
     int nlinesIgnore; ///< ignore first lines in the input bunch file
@@ -184,6 +185,7 @@ namespace GMAD
     double      aper3;
     double      aper4;
     std::string beampipeMaterial;
+    bool        ignoreLocalAperture;
     ///@}
     
     /// vacuum material

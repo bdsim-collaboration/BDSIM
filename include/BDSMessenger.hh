@@ -1,19 +1,19 @@
-//
-// Created by Stewart Boogert on 08/03/2017.
-//
-
 #ifndef BDSIM_BDSMESSENGER_H
 #define BDSIM_BDSMESSENGER_H
 
-class BDSBeamlineElement;
-
 #include <string>
 
-#include "G4UImanager.hh"
 #include "G4UImessenger.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithoutParameter.hh"
-#include "G4UIcmdWithAString.hh"
+
+class G4UIcmdWithAString;
+class G4UIcmdWithoutParameter;
+class G4UIcommand;
+class G4UIdirectory;
+//class G4UImanager;
+
+/**
+ * @author Stewart Boogert
+ */
 
 class BDSMessenger : public G4UImessenger {
 public:
@@ -29,23 +29,23 @@ public:
   std::string BDSSamplerToString(std::string samplerName);
 
 protected:
-  G4UImanager             *UIManager;
+  //G4UImanager             *UIManager;
 
   G4UIdirectory           *bdsDirectory;
 
   G4UIdirectory           *bdsBeamlineDirectory;
   G4UIcmdWithoutParameter *beamlineListCmd;
   G4UIcmdWithAString      *elementNameSearchCmd;
-  G4UIcmdWithAString      *elementTypeSearchCmd;
-  G4UIcmdWithAString      *elementInfoCmd;
+  //G4UIcmdWithAString      *elementTypeSearchCmd;
+  //G4UIcmdWithAString      *elementInfoCmd;
 
   G4UIdirectory           *bdsSamplersDirectory;
   G4UIcmdWithoutParameter *samplerListCmd;
 
-  G4UIdirectory           *bdsVisualDirectory;
-  G4UIcmdWithAString      *axisVisualCmd;
-  G4UIcmdWithAString      *elementTargetVisualCmd;
-  G4UIcmdWithAString      *elementTransparencyVisualCmd;
+  //G4UIdirectory           *bdsVisualDirectory;
+  //G4UIcmdWithAString      *axisVisualCmd;
+  //G4UIcmdWithAString      *elementTargetVisualCmd;
+  //G4UIcmdWithAString      *elementTransparencyVisualCmd;
 };
 
 

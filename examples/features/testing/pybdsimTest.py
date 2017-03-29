@@ -48,28 +48,28 @@ def Run(inputDict):
         inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
 
     elif not generateOriginal:
-        outputLog = open(inputDict['compLogFile'], 'a')  # temp log file for the comparator output.
+        with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
 
-        # Only compare if the output was generated.
-        if isSelfComparison:
-            originalFile = inputDict['ROOTFile'].split('_event.root')[0] + '_event2.root'
-            copyString = 'cp ' + inputDict['ROOTFile'] + ' ' + originalFile
-            _os.system(copyString)
-        else:
-            originalFile = inputDict['originalFile']
+            # Only compare if the output was generated.
+            if isSelfComparison:
+                originalFile = inputDict['ROOTFile'].split('_event.root')[0] + '_event2.root'
+                copyString = 'cp ' + inputDict['ROOTFile'] + ' ' + originalFile
+                _os.system(copyString)
+            else:
+                originalFile = inputDict['originalFile']
 
-        # run comparator and record comparator time.
-        t = time.time()
-        outputLog.write('\r\n')
-        TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, inputDict['ROOTFile']], stdout=outputLog)
-        outputLog.close()
-        ctime = time.time() - t
-        inputDict['compTime'] = ctime
+            # run comparator and record comparator time.
+            t = time.time()
+            outputLog.write('\r\n')
+            TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, inputDict['ROOTFile']], stdout=outputLog)
+            outputLog.close()
+            ctime = time.time() - t
+            inputDict['compTime'] = ctime
 
-        if TestResult == 0:
-            inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
-        elif TestResult != 0:
-            inputDict['code'] = TestResult  # not passed comparator return code
+            if TestResult == 0:
+                inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+            elif TestResult != 0:
+                inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
         # root output was generated - success
@@ -83,46 +83,46 @@ def Run(inputDict):
         # if only one general status entry then it must be 0 (passed), in which case,
         # delete all log and root files
         if len(generalStatus) == 1:
-            _os.remove(inputDict['compLogFile'])
-            _os.remove(inputDict['ROOTFile'])
-            _os.remove(inputDict['bdsimLogFile'])
             if isSelfComparison:
                 _os.remove(inputDict['originalFile'])
+            if not generateOriginal:
+                _os.remove(inputDict['compLogFile'])
+                _os.remove(inputDict['ROOTFile'])
+                _os.remove(inputDict['bdsimLogFile'])
 
         # else if the general status contains one of the 'soft' failures, move the bdsim log
         # and root output into the failed dir, and delete the passed comparator log.
         elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
-            _os.remove(inputDict['compLogFile'])
             if isSelfComparison:
                 _os.remove(inputDict['originalFile'])
+            if not generateOriginal:
+                _os.remove(inputDict['compLogFile'])
 
     # elif the comparator failed
     elif inputDict['code'] == 1:
         # move the comparator log and failed root file
         _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
-        _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
         if isSelfComparison:
             _os.remove(inputDict['originalFile'])
+        if not generateOriginal:
+            _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
 
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
         if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
+            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
             (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
-        else:
+        elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
-    # elif incorrect args
-    elif inputDict['code'] == 2:
-        pass
-        # This is a command line entry problem which should not really occur.
-
     # elif root file wasn't generated.
-    elif inputDict['code'] == 3:
+    elif inputDict['code'] == 2 :
         # move bdsim log file to fail dir
         _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         if isSelfComparison:
@@ -132,6 +132,9 @@ def Run(inputDict):
 
 
 class TestData(dict):
+    """ A class that holds the data for each individual test. This object will be
+        passed into the function used in multithreaded testing.
+        """
     def __init__(self, testFile='',
                  componentType='',
                  originalFile='',
@@ -154,7 +157,7 @@ class TestData(dict):
 
         GlobalData._CheckComponent(componentType)
         self['componentType'] = componentType
-        self['originalFile'] = originalFile
+        self['originalFile'] = originalFile  # file to which this test will be compared.
 
         # strip extension to leave test name, will be used as output name
         if testFile[-5:] == '.gmad':
@@ -162,7 +165,7 @@ class TestData(dict):
         else:
             outputfile = testFile
         outputfile = outputfile.split('/')[-1]
-        self['outputFile'] = outputfile
+        self['outputFile'] = outputfile  # output file base name
 
         bdsimLogFile = outputfile + "_bdsim.log"
         comparatorLogFile = outputfile + "_comp.log"
@@ -174,21 +177,55 @@ class TestData(dict):
         self['generateOriginal'] = generateOriginal
         self['isSelfComparison'] = isSelfComparison
 
-        self['bdsimTime'] = 0
-        self['compTime'] = 0
+        self['bdsimTime'] = 0  # bdsim run time
+        self['compTime'] = 0  # comparator run time
 
         self['code'] = None  # comparator return code
         self['generalStatus'] = None  # General status, can contain multiple return codes.
-
-        self['params'] = None
-        self['generalStatusList'] = None
-        self['resultsList'] = None
-
-    def AddTest(self, test):
-        pass
+        self['comparatorResults'] = None
 
 
 class Test(dict):
+    """ A class that represents series of tests for a single component type,
+        single particle type, and single particle energy.
+
+        Parameters:
+
+        component :  string
+            The component type that these tests will represent.
+
+        energy :  float or string
+            The energy of the particle that will be used in these tests.
+
+        particle :  string
+            The particle type that will be used in these tests
+
+        phaseSpace :  PhaseSpace.PhaseSpace, optional
+            An instance of the PhaseSpace.PhaseSpace initial particle coordinates
+            used in these tests.
+
+        useDefaults :  bool, optional
+            Use the default parameters in Globals.Globals for this element type.
+            if useDefaults=True, specifying parameter values after a Test instance has
+            been initialised will override the values from Globals.Globals. Default = False.
+
+        testRobustness :  bool, optional
+            Test the robustness of these tests. This will place a collimator in front of the
+            element being tested for the purpose of generating a particle shower. Default = False.
+
+        eFieldMap :  string, optional
+            The file name and path to a Efieldmap that will be attached to this element.
+            Currently redundant.
+
+        bFieldMap :  string, optional
+            The file name and path to a Bfieldmap that will be attached to this element.
+            Currently redundant.
+
+        comparisonFile :  string, optional
+            The file name and path to a root file to which the file generated by this test will be
+            compared. This can only be specified if this Test instance represents a single test, that
+            is that there is only one value specified per component parameter.
+     """
     def __init__(self, component, energy, particle, phaseSpace=None,
                  useDefaults=False, testRobustNess=False, eFieldMap='',
                  bFieldMap='', comparisonFile='', **kwargs):
@@ -335,19 +372,29 @@ class Test(dict):
             if isinstance(phaseSpace, PhaseSpace.PhaseSpace):
                 self.PhaseSpace = phaseSpace
             else:
-                raise TypeError("phaseSpace can only be a bdsimtesting.PhaseSpace.PhaseSpace instance.")
+                raise TypeError("phaseSpace can only be a PhaseSpace.PhaseSpace instance.")
         else:
             self.PhaseSpace = PhaseSpace.PhaseSpace(x, px, y, py, t, pt)
 
     def SetInrays(self, inraysFile=''):
-        if inraysFile != '':
-            self._beamFilename = inraysFile
+        """ Set the filename which contains the ptc inrays file.
+            """
+        if isinstance(inraysFile, _np.str):
+            if inraysFile != '':
+                self._beamFilename = inraysFile
+            else:
+                raise ValueError("inraysFile cannot be an empty string ")
+        else:
+            raise TypeError("inraysFile must be a string")
 
     def AddParameter(self, parameter, values=[]):
+        """ Function to add a parameter that is not a default parameter for the test's
+            component type. An example would be defining a K1 value for a dipole."""
         if self.keys().__contains__(parameter):
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter, _np.str):
+            #check that the parameter can be parsed.
             if GlobalData.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set" + _string.capitalize(parameter)
@@ -359,16 +406,22 @@ class Test(dict):
             raise TypeError("Unknown data type for " + parameter)
 
     def WriteToInrays(self, filename):
+        """ Write the inrays file to disk. The filename should include the
+            filepath relative to the TestSuite directory."""
         self.SetInrays(filename)
         self.PhaseSpace._WriteToInrays(filename)
 
 
 class TestUtilities(object):
+    """ A class containing utility functions and data containers for the test suite class."""
     def __init__(self, testingDirectory='', dataSetDirectory=''):
+        # keep data containers in this base class as some are used in the functions of this class.
         self._tests = []  # list of test objects
         self._testNames = {}  # dict of test file names (a list of names per component)
         self._testParamValues = {}
+        self._generateOriginals = False  # bool for generating original data set
 
+        # create testing directory
         if not isinstance(testingDirectory, _np.str):
             raise TypeError("Testing directory is not a string")
         else:
@@ -383,14 +436,11 @@ class TestUtilities(object):
                 _os.system("mkdir " + testingDirectory)
                 _os.chdir(testingDirectory)
 
-        # make dirs for gmad files, bdsimoutput, and failed outputs
+        # make dirs for gmad files, results, bdsim output, and failed outputs
         if not _os.path.exists('Tests'):
             _os.system("mkdir Tests")
-
-        # make dirs for results & plots.
         if not _os.path.exists('Results'):
             _os.system("mkdir Results")
-
         if not _os.path.exists('BDSIMOutput'):
             _os.system("mkdir BDSIMOutput")
         _os.chdir('BDSIMOutput')
@@ -398,13 +448,12 @@ class TestUtilities(object):
             _os.system("mkdir FailedTests")
         _os.chdir('../')
 
+        # set directory of existing data set that the tests will be compared to
         self._dataSetDirectory = ''
         if isinstance(dataSetDirectory, _np.str):
             self._dataSetDirectory = dataSetDirectory
 
-        self.bdsimFailLog = 'bdsimOutputFailures.log'
-        self.bdsimPassLog = 'bdsimOutputPassed.log'
-        self._comparatorLog = 'comparatorOutput.log'
+        self.Analysis = TestResults.Analysis()  # results instance
 
     def WriteGmadFiles(self):
         """ Write the gmad files for all tests in the Tests directory.
@@ -418,8 +467,22 @@ class TestUtilities(object):
             self._testNames[test.Component].extend(writer._fileNamesWritten[test.Component])
         _os.chdir('../')
     
-    def GenerateRootFile(self, inputfile):
+    def WriteGlobalOptions(self, robust=False):
+        """ Write the options file that will be used by all test files.
+            """
+        options = _options.Options()
+        options.SetSamplerDiameter(3)
+        options.SetWritePrimaries(False)
+        if not robust:
+            options.SetStopSecondaries(True)
+        options.SetPhysicsList(physicslist="em hadronic")
+        options.SetBeamPipeRadius(beampiperadius=10)
+        writer = _pybdsimWriter.Writer()
+        writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
+
+    def _GenerateRootFile(self, inputfile):
         """ Generate the rootevent output for a given gmad file.
+            This function can only be used for single thread testing.
             """
         # strip extension to leave test name, will be used as output name
         if inputfile[-5:] != '.gmad':
@@ -444,7 +507,7 @@ class TestUtilities(object):
             _os.system("rm temp.log")
             return outputevent
 
-    def CompareOutput(self, originalFile='', newFile='', isSelfComparison=False):
+    def _CompareOutput(self, originalFile='', newFile='', isSelfComparison=False):
         """ Compare the output file against another file. This function uses BDSIM's comparator.
             The test gmad file name is needed for updating the appropriate log files.
             If the comparison is successful:
@@ -453,6 +516,8 @@ class TestUtilities(object):
             If the comparison is not successful:
                 The generated file is moved to the FailedTests directory.
                 The Comparator log is updated.
+
+            This function can only be used for single thread testing.
             """
 
         outputLog = open("tempComp.log", 'w')  # temp log file for the comparator output.
@@ -469,7 +534,7 @@ class TestUtilities(object):
             if isSelfComparison:
                 _os.system("rm " + originalFile)
             _os.system("rm tempComp.log")
-            f = open(self.bdsimPassLog, 'a')  # Update the pass log
+            f = open('bdsimOutputPassed.log', 'a')  # Update the pass log
             f.write("File " + newFile + " has passed.\r\n")
             f.close()
         else:
@@ -481,41 +546,35 @@ class TestUtilities(object):
 
     def _UpdateBDSIMFailLog(self, testFileName):
         """ Update the test failure log.
+            This function can only be used for single thread testing.
             """
         f = open('temp.log', 'r')
-        g = open(self.bdsimFailLog, 'a')
+        g = open('bdsimOutputFailures.log', 'a')
         g.write('\r\n')
         g.write('FAILED TEST FILE: ' + testFileName)
         g.write('\r\n')
         for line in f:
             g.write(line)
         g.close()
+        f.close()
 
     def _UpdateComparatorLog(self, testFileName):
         """ Update the test pass log.
+            This function can only be used for single thread testing.
             """
         f = open('tempComp.log', 'r')
-        g = open(self._comparatorLog, 'a')
+        g = open('comparatorOutput.log', 'a')
         g.write('\r\n')
         g.write('FAILED TEST FILE: ' + testFileName)
         g.write('\r\n')
         for line in f:
             g.write(line)
         g.close()
-
-    def WriteGlobalOptions(self, robust=False):
-        """ Write the options file that will be used by all test files.
-            """
-        options = _options.Options()
-        options.SetSamplerDiameter(3)
-        options.SetWritePrimaries(False)
-        if not robust:
-            options.SetStopSecondaries(True)
-        options.SetPhysicsList(physicslist="em hadronic")
-        writer = _pybdsimWriter.Writer()
-        writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
+        f.close()
 
     def _CheckForOriginal(self, testname, componentType):
+        """ Check for the existence of the directory containing the original data set
+            that these tests will be compared to."""
         if self._dataSetDirectory != '':
             dataDir = self._dataSetDirectory
         else:
@@ -529,6 +588,7 @@ class TestUtilities(object):
             return ''
 
     def _GetOrderedTests(self, testlist, componentType):
+        """ Function to order the tests according to their parameter values."""
         OrderedTests = []
         particles = []
         compKwargs = collections.OrderedDict()  # keep order of kwarg in file name
@@ -539,7 +599,7 @@ class TestUtilities(object):
             path = test[:fnameStartIndex+1]
             if filename[-5:] == '.gmad':
                 filename = filename[:-5]  # remove .gmad extension
-            splitFilename = filename.split('__')
+            splitFilename = filename.split('__')  # split into param_value parts
             particle = splitFilename[1]
             if not particles.__contains__(particle):
                 particles.append(particle)
@@ -571,6 +631,7 @@ class TestUtilities(object):
 
         # recursively create filenames from all kwarg value permutations.
         # if filename matches one in supplied test list, add to ordered list.
+        # please do not change this, it took ages to get it working correctly.
         def sublevel(depth, nameIn):
             for kwargValue in compKwargs[kwargKeys[depth]]:
                 name = nameIn + '__' + kwargKeys[depth] + "_" + kwargValue
@@ -585,27 +646,100 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
+    def _multiThread(self, testlist, componentType):
+        """ Function to run the tests on multiple cores with multithreading."""
+        numCores = multiprocessing.cpu_count()
+        p = multiprocessing.Pool(numCores)
+        results = p.map(Run, testlist)
+
+        for testRes in results:
+            self.Analysis.AddResults(testRes)
+            self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
+        p.close()
+
+    def _singleThread(self, testlist):
+        """ Function to run the tests on a single core.
+            This has not been updated in a long time, so use with caution."""
+        eleBdsimTimes = []
+        eleComparatorTimes = []
+
+        for testDict in testlist:
+            test = testDict['file']
+            isSelfComparison = testDict['isSelfComparison']
+            originalEvent = testDict['originalFile']
+
+            bdsimTestTime = time.time()
+            outputEvent = self._GenerateRootFile(test)
+            bdsimTime = time.time() - bdsimTestTime
+            eleBdsimTimes.append(bdsimTime)
+            compTestTime = time.time()
+            # Only compare if the output was generated.
+
+            if (outputEvent is not None) and (not self._generateOriginals):
+                if isSelfComparison:
+                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
+                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
+                    _os.system(copyString)
+                else:
+                    pass  # This is where the comparison with the original file will occur.
+                    # TODO: figure out how to process original files that will be compared to.
+
+                self._CompareOutput(originalEvent, outputEvent)
+            else:
+                self._UpdateBDSIMFailLog(test)
+                _os.system("rm temp.log")
+                print("Output for test " + test + " was not generated.")
+            comparatorTime = time.time() - compTestTime
+            eleComparatorTimes.append(comparatorTime)
+
+        self.Analysis.TimingData.bdsimTimes.extend(_np.average(eleBdsimTimes))
+        self.Analysis.TimingData.comparatorTimes.extend(_np.average(eleComparatorTimes))
+
 
 class TestSuite(TestUtilities):
-    def __init__(self, testingDirectory, dataSetDirectory='', _useSingleThread=False):
+    """ A class that is the test suite. Tests are added to this class,
+        after which the BDSIM output will be generated, the comparator run,
+        and result/plots generated.
+
+        Parameters:
+
+        testingDirectory :  string
+            The name of the directory that the test files, output and results will
+            be written in.
+        dataSetDirectory : string, optional
+            The filepath to the directory which contains the data to which the generated
+            ROOT file will be compared. The filepath must be relative to the testingDirectory.
+        usePickledData :  bool, optional
+            Load the results data from pickled files. If True, the data will be loaded in the
+            TestResults.Analysis class. Default = False.
+        fullTestSuite :  bool, optional
+            Automatically run the full test suite, i.e generate Test objects for every
+            particle (& energy), and for every component using the default component
+            parameters. Default = False.
+        """
+    def __init__(self, testingDirectory,
+                 dataSetDirectory='',
+                 _useSingleThread=False,
+                 usePickledData=False,
+                 fullTestSuite=False):
         super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
         self._useSingleThread = _useSingleThread
-        self._generateOriginals = False  # bool for generating original data set
-        self.Analysis = TestResults.Analysis()  # results instance
-        self.timings = TestResults.Timing()  # timing data.
+        self._usePickledData = usePickledData
+        if fullTestSuite:
+            self._FullTestSuite()
 
     def AddTest(self, test):
-        """ Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
+        """ Add a Test instance to the test suite.
             """
         if not isinstance(test, Test):
-            raise TypeError("Test is not a bdsimtesting.pybdsimTest.Test instance")
+            raise TypeError("Test is not a Test instance")
         else:
             self._tests.append(test)
 
     def GenerateOriginals(self):
         """ Function to generate an original data set.
             """
-        # change class attribute here, generate data, and change back.
+        # set _generateOriginals here, generate data, and change back.
         # It's safer to not pass the bool in as an arg, it could be accidentally
         # passed and potentially overwrite an existing data set.
         self._generateOriginals = True
@@ -621,9 +755,18 @@ class TestSuite(TestUtilities):
         """ Run all tests in the test suite. This will generate the tests rootevent
             output, compares to an original file, and processes the comparison results.
             """
+        # if using pickled data, just produce the plots and report.
+        if self._usePickledData:
+            _os.chdir('BDSIMOutput')
+            self.Analysis._getPickledData()
+            for comp in GlobalData.components:
 
-        self.WriteGlobalOptions()
-        self.WriteGmadFiles()   # Write all gmad files for all test objects.
+                self.Analysis.PlotResults(comp)
+            self.Analysis.ProduceReport()
+            return None
+
+        self.WriteGlobalOptions()  # Write the global options file.
+        self.WriteGmadFiles()  # Write all gmad files for all test objects.
 
         if self._generateOriginals:
             _os.chdir('OriginalDataSet')
@@ -632,8 +775,8 @@ class TestSuite(TestUtilities):
 
         initialTime = time.time()
 
+        # loop over all component types.
         for componentType in self._testNames.keys():
-
             testfilesDir = '../Tests/'
 
             if self._generateOriginals:
@@ -642,15 +785,14 @@ class TestSuite(TestUtilities):
                 _os.chdir(componentType)
                 if not _os.path.exists('FailedTests'):
                     _os.system("mkdir FailedTests")
-
                 testfilesDir = '../../Tests/'
 
             t = time.time()  # initial time
 
-            tests = []
-            for testFile in self._testNames[componentType]:
-                tests.append(testfilesDir + testFile)
+            # list of file paths for every test of this component type
+            tests = [(testfilesDir + testFile) for testFile in self._testNames[componentType]]
 
+            # order tests
             if len(tests) > 1:
                 tests = self._GetOrderedTests(tests, componentType)
 
@@ -669,100 +811,61 @@ class TestSuite(TestUtilities):
 
                 testlist.append(testDict)
 
+            if not self.Analysis.TimingData.bdsimTimes.keys().__contains__(componentType):
+                self.Analysis.TimingData.bdsimTimes[componentType] = []
+
+            if not self.Analysis.TimingData.comparatorTimes.keys().__contains__(componentType):
+                self.Analysis.TimingData.comparatorTimes[componentType] = []
+
             if not self._useSingleThread:
-                self._multiThread(testlist)  # multithreaded option
+                self._multiThread(testlist, componentType)  # multithreaded option
             else:
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.timings.AddComponentTime(componentType, componentTime)
+            self.Analysis.TimingData.AddComponentTotalTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')
             else:
-                self.Analysis.AddTimingData(componentType, self.timings)
+                self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
                 self.Analysis.ProcessResults(componentType=componentType)
                 self.Analysis.PlotResults(componentType=componentType)
 
-        finalTime = time.time() - initialTime
-        self.timings.SetTotalTime(finalTime)
+        if not self._generateOriginals:
+            finalTime = time.time() - initialTime
+            self.Analysis.TimingData.SetTotalTime(finalTime)
+            self.Analysis._pickleResults()
+            self.Analysis.ProduceReport()
         _os.chdir('../')
 
-    def _multiThread(self, testlist):
-        numCores = multiprocessing.cpu_count()
-
-        p = multiprocessing.Pool(numCores)
-        results = p.map(Run, testlist)
-
-        for testRes in results:
-            self.Analysis.AddResults(testRes)
-            self.timings.bdsimTimes.append(testRes['bdsimTime'])
-            self.timings.comparatorTimes.append(testRes['compTime'])
-
-    def _singleThread(self, testlist):
-        eleBdsimTimes = []
-        eleComparatorTimes = []
-
-        for testDict in testlist:
-            test = testDict['file']
-            isSelfComparison = testDict['isSelfComparison']
-            originalEvent = testDict['originalFile']
-
-            bdsimTestTime = time.time()
-            outputEvent = self.GenerateRootFile(test)
-            bdsimTime = time.time() - bdsimTestTime
-            eleBdsimTimes.append(bdsimTime)
-            compTestTime = time.time()
-            # Only compare if the output was generated.
-
-            if (outputEvent is not None) and (not self._generateOriginals):
-                if isSelfComparison:
-                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
-                    _os.system(copyString)
-                else:
-                    pass  # This is where the comparison with the original file will occur.
-                    # TODO: figure out how to process original files that will be compared to.
-
-                self.CompareOutput(originalEvent, outputEvent)
-            else:
-                self._UpdateBDSIMFailLog(test)
-                _os.system("rm temp.log")
-                print("Output for test " + test + " was not generated.")
-            comparatorTime = time.time() - compTestTime
-            eleComparatorTimes.append(comparatorTime)
-
-        self.timings.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.timings.comparatorTimes.extend(_np.average(eleComparatorTimes))
-
     def _FullTestSuite(self):
-        writer = Writer.Writer()
-        writer.SetBeamFilename('trackingTestBeam.madx')
-        writer.SetOptionsFilename('trackingTestOptions.gmad')
-
+        # data containers for tests and number of files
         self.numFiles = {}
         self.componentTests = []
         for component in GlobalData.components:
             self.numFiles[component] = 0
-        
-        TestPS = GlobalData.BeamPhaseSpace
-    
-        BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'], TestPS['PX'], TestPS['Y'], TestPS['PY'], TestPS['T'], TestPS['PT'])
-        BeamPhaseSpace.WriteToInrays('Tests/trackingTestBeam.madx')
 
+        # set phase space
+        TestPS = GlobalData.BeamPhaseSpace
+        BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'], TestPS['PX'], TestPS['Y'], TestPS['PY'], TestPS['T'], TestPS['PT'])
+        BeamPhaseSpace._WriteToInrays('Tests/trackingTestBeam.madx')
+
+        # loop over all machines which have an energy and particle
         for machineInfo in GlobalData.accelerators.values():
             energy = machineInfo['energy']
             particle = machineInfo['particle']
-        
+
+            # loop over all components
             for component in GlobalData.components:
                 componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
-                self.componentTests.append(componentTest)
+                self.AddTest(componentTest)
                 self.numFiles[component] += componentTest._numFiles
 
         self.totalFiles = 0
         for component in self.numFiles:
             self.totalFiles += self.numFiles[component]
 
-        self.BeamPhaseSpace = BeamPhaseSpace
-
+        # run the test suite now that all the tests have been added.
+        self.RunTestSuite()
 

@@ -28,8 +28,14 @@ double Options::get_value(std::string property_name)const{
       value = (double)get<int>(this,property_name);
     }
     catch (std::runtime_error) {
-      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
-      exit(1);
+      try {
+	// try long and convert
+	value = (double)get<long>(this,property_name);
+      }
+      catch (std::runtime_error) {
+	std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+	exit(1);
+      }
     }
   }
   return value;
@@ -125,6 +131,7 @@ void Options::PublishMembers()
   publish("zDistrType",&Options::zDistribType);
   publish("distrFile", &Options::distribFile);
   publish("distrFileFormat",   &Options::distribFileFormat);
+  publish("matchDistribFileLength", &Options::matchDistribFileLength);
   publish("nlinesIgnore",      &Options::nlinesIgnore);
   publish("eventOffset",       &Options::eventOffset);
   publish("recreateSeedState", &Options::recreateSeedState);
@@ -249,6 +256,7 @@ void Options::PublishMembers()
   publish("aper3",&Options::aper3);
   publish("aper4",&Options::aper4);
   publish("beampipeMaterial",&Options::beampipeMaterial);
+  publish("ignoreLocalAperture", &Options::ignoreLocalAperture);
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);

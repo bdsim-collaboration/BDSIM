@@ -9,15 +9,16 @@
 
 templateClassImp(BDSOutputROOTEventSampler)
 
-template <class T> BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler()
+template <class T>
+BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler():samplerName("sampler")
 {
-  samplerName = "sampler";
   this->Flush();
 }
 
-template <class T> BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler(std::string samplerNameIn)
+template <class T>
+BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler(std::string samplerNameIn):
+  samplerName(samplerNameIn)
 {
-  samplerName = samplerNameIn;
   this->Flush();
 }
 
