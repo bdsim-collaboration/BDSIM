@@ -124,8 +124,8 @@ class Timing:
         """
     def __init__(self):
         self.componentTimes = {}
-        self.bdsimTimes = []
-        self.comparatorTimes = []
+        self.bdsimTimes = {}
+        self.comparatorTimes = {}
         self.totalTime = 0
 
     def SetTotalTime(self, totalTime):
@@ -137,7 +137,7 @@ class Timing:
         except ValueError:
             pass
 
-    def AddComponentTime(self, component, componentTime):
+    def AddComponentTotalTime(self, component, componentTime):
         """ Set total time for all tests for a given components.
             """
         try:
@@ -145,6 +145,10 @@ class Timing:
             self.componentTimes[component] = cTime
         except ValueError:
             print("Cannot convert componentTime to a numerical value.")
+
+    def AddComponentTestTime(self, component, test):
+        self.bdsimTimes[component].append(test['bdsimTime'])
+        self.comparatorTimes[component].append(test['compTime'])
 
     def __repr__(self):
         s = 'Total Testing time  = ' + _np.str(self.totalTime) + '\r\n'
@@ -365,10 +369,10 @@ class ResultsUtilities:
         return commonFactors
 
     def _processTimingData(self, component):
-        bdsimMean = _np.mean(self.TimingData.bdsimTimes)
-        compMean = _np.mean(self.TimingData.comparatorTimes)
-        bdsimStd = _np.std(self.TimingData.bdsimTimes)
-        compMean = _np.std(self.TimingData.comparatorTimes)
+        bdsimMean = _np.mean(self.TimingData.bdsimTimes[component])
+        compMean = _np.mean(self.TimingData.comparatorTimes[component])
+        bdsimStd = _np.std(self.TimingData.bdsimTimes[component])
+        compMean = _np.std(self.TimingData.comparatorTimes[component])
 
         bdsimLimit = bdsimMean + 3 * bdsimStd
         longTests = Results(component)
@@ -1002,26 +1006,40 @@ class _Plotting:
         ax2 = f.add_subplot(122)
 
         # max values to define histogram range
-        bdsimMax = _np.max(timingData.bdsimTimes)
-        compMax = _np.max(timingData.comparatorTimes)
+        bdsimMax = _np.max(timingData.bdsimTimes[component])
+        compMax = _np.max(timingData.comparatorTimes[component])
 
-        y, x, _ = ax.hist(timingData.bdsimTimes, bins=30, log=True, range=(0,_np.ceil(bdsimMax)))
+        y, x, _ = ax.hist(timingData.bdsimTimes[component], bins=30, log=True, range=(0,_np.ceil(bdsimMax)))
+        y2, x2, _ = ax2.hist(timingData.comparatorTimes[component], bins=30, log=True, range=(0,_np.ceil(compMax)))
+
+        if (_np.max(y) < 100) and (_np.max(y2) < 100):
+
+            ax.set_yscale("linear", nonposx='clip')
+            ax2.set_yscale("linear", nonposx='clip')
+
+            maxtimes = [_np.max(y), _np.max(y2)]
+
+            ax.set_ylim(ymin=0, ymax=2.0*_np.max(maxtimes))
+            ax2.set_ylim(ymin=0, ymax=2.0*_np.max(maxtimes))
+        else:
+            # calculate largest number of entries to get y-axis scale.
+            maxtimes = [_np.max(y), _np.max(y2)]
+            orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
+
+            # plot on log scale, set min to 0.9 to show single entry bins.
+            ax.set_ylim(ymin=0.9, ymax=2 * 10 ** orderOfMag)
+            ax2.set_ylim(ymin=0.9, ymax=2 * 10 ** orderOfMag)
+
+        ax.set_xlim(xmin=0)
+        ax2.set_xlim(xmin=0)
+
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Number of Tests')
         ax.set_title('BDSIM Run Time')
 
-        y2, x2, _ = ax2.hist(timingData.comparatorTimes, bins=30, log=True, range=(0,_np.ceil(compMax)))
         ax2.set_xlabel('Time (s)')
         ax2.set_title('Comparator Run Time')
         ax2.yaxis.set_visible(False)
-
-        # calculate largest number of entries to get y-axis scale.
-        maxtimes = [_np.max(y), _np.max(y2)]
-        orderOfMag = _np.int(_np.log10(_np.max(maxtimes)))
-
-        # plot on log scale, set min to 0.9 to show single entry bins.
-        ax.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
-        ax2.set_ylim(ymin=0.9, ymax=2*10**orderOfMag)
 
         f.savefig('../Results/' + component + '_timingData.png', dpi=600)
         _plt.close()
