@@ -8,6 +8,7 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -16,6 +17,7 @@
 
 #include <map>
 
+class G4ParticleDefinition;
 class G4FieldManager;
 class G4ParticleDefinition;
 class G4UniformMagField;
@@ -188,7 +190,7 @@ public:
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
   inline G4bool   MatchDistribFileLength()   const {return G4bool  (options.matchDistribFileLength);}
-
+  
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
@@ -212,6 +214,7 @@ public:
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4double              COverGeV()                const {return cOverGeV;}
+  inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
@@ -290,6 +293,9 @@ private:
   G4ThreeVector itsLaserwireDir;
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
+
+  /// Prepare the G4Transform3D instance from the options for the initial beam line transform.
+  void InitialiseBeamlineTransform();
   
   void InitVisAttributes();
   G4VisAttributes* invisibleVisAttr;
@@ -307,9 +313,9 @@ private:
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 
-  BDSOutputFormat outputFormat;
-
-  BDSIntegratorSetType integratorSet;
+  BDSOutputFormat outputFormat;       ///< Output type enum for output format to be used.
+  BDSIntegratorSetType integratorSet; ///< Integrator type enum for integrator set to be used.
+  G4Transform3D beamlineTransform;    ///< Transform for start of beam line.
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)

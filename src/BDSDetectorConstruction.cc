@@ -128,7 +128,9 @@ void BDSDetectorConstruction::InitialiseRegions()
 void BDSDetectorConstruction::BuildBeamline()
 { 
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
-  BDSBeamline*         beamline            = new BDSBeamline();
+
+  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  BDSBeamline* beamline = new BDSBeamline(initialTransform);
   
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}

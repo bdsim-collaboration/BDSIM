@@ -11,12 +11,16 @@
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Vector/EulerAngles.h"
 
 BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
@@ -99,6 +103,35 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   InitDefaultUserLimits();
 
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
+
+  InitialiseBeamlineTransform();
+}
+
+void BDSGlobalConstants::InitialiseBeamlineTransform()
+{  
+  G4ThreeVector offset = G4ThreeVector(options.beamlineX * CLHEP::m,
+				       options.beamlineY * CLHEP::m,
+				       options.beamlineZ * CLHEP::m);
+  
+  G4RotationMatrix rm;
+  if (options.beamlineAxisAngle)
+    {
+      G4ThreeVector axis = G4ThreeVector(options.beamlineAxisX,
+					 options.beamlineAxisY,
+					 options.beamlineAxisZ);
+
+      rm = G4RotationMatrix(axis, options.beamlineAngle * CLHEP::rad);
+    }
+  else
+    {
+      G4double phi   = options.beamlinePhi   * CLHEP::rad;
+      G4double theta = options.beamlineTheta * CLHEP::rad;
+      G4double psi   = options.beamlinePsi   * CLHEP::rad;
+      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(phi, theta, psi);
+      rm = G4RotationMatrix(ang);
+    }
+
+  beamlineTransform = G4Transform3D(rm, offset);
 }
 
 void BDSGlobalConstants::CalculateHistogramParameters()
