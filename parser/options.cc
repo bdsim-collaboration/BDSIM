@@ -143,6 +143,18 @@ void Options::PublishMembers()
 
   publish("energy",&Options::beamEnergy);
 
+  publish("beamlineX",         &Options::beamlineX);
+  publish("beamlineY",         &Options::beamlineY);
+  publish("beamlineZ",         &Options::beamlineZ);
+  publish("beamlinePhi",       &Options::beamlinePhi);
+  publish("beamlineTheta",     &Options::beamlineTheta);
+  publish("beamlinePsi",       &Options::beamlinePsi);
+  publish("beamlineAxisX",     &Options::beamlineAxisX);
+  publish("beamlineAxisY",     &Options::beamlineAxisY);
+  publish("beamlineAxisZ",     &Options::beamlineAxisZ);
+  publish("beamlineAngle",     &Options::beamlineAngle);
+  publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
+  
   publish("X0",&Options::X0);
   publish("Y0",&Options::Y0);
   publish("Z0",&Options::Z0);
