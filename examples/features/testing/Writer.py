@@ -386,41 +386,13 @@ class Writer:
     def _multipoleStrengthComponentLoop(self, length, component, filename, test):
         """ Function for looping over the multipole components.
             """
-        for knl in test['knl']:
-            knlComponentsName = '__KNL_'
-            if multiEntryTypes.__contains__(type(knl)):
-                for knlArray in knl:
-                    for knOrder, knValue in enumerate(knlArray):
-                        if knValue != 0:
-                            knlComponentsName += 'K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
-                    knlName = filename + knlComponentsName
-                    for ksl in test['ksl']:
-                        kslComponentsName = '__KSL_'
-                        for kslArray in ksl:
-                            for ksOrder, ksValue in enumerate(kslArray):
-                                if ksValue != 0:
-                                    kslComponentsName += 'K' + _np.str(ksOrder + 1) + '_' + _np.str(ksValue)
-                            kslName = knlName + kslComponentsName
-            else:  # must be k1 if only one entry
-                if knl != 0:
-                    knlComponentsName += 'K1' + '_' + _np.str(knl)
-                knlName = filename + knlComponentsName
-                for ksl in test['ksl']:
-                    kslComponentsName = '__KSL_'
-                    if multiEntryTypes.__contains__(type(ksl)):
-                        for kslArray in ksl:
-                            for ksOrder, ksValue in enumerate(kslArray):
-                                if ksValue != 0:
-                                    kslComponentsName += 'K' + _np.str(ksOrder + 1) + '_' + _np.str(ksValue)
-                            kslName = knlName + kslComponentsName
-                    else:
-                        ksValue = test['ksl'][0]
-                        if ksValue != 0:
-                            kslComponentsName += 'K1' + '_' + _np.str(ksValue)
-                            kslName = knlName + kslComponentsName
-                        else:
-                            kslName = knlName
-        def writemachine(knArray, ksArray, length):
+        def writemachine(knArray, ksArray, length, kslName):
+            # convert multientry data type to tuples as pybdsim can only handle knl and ksl as tuples.
+            if multiEntryTypes.__contains__(type(knArray)) and (type(knArray) is not tuple):
+                knArray = tuple(knArray)
+            if multiEntryTypes.__contains__(type(ksArray)) and (type(ksArray) is not tuple):
+                ksArray = tuple(ksArray)
+
             machine = self._getMachine(test.Particle, test._testRobustness)
             if component == 'thinmultipole':
                 machine.AddDrift(name='dr1', length=0.5)
@@ -433,25 +405,67 @@ class Writer:
             machine.AddBeam(self._getBeam(test))
             self._writeToDisk(component, kslName, machine, test)
 
-        for knl in test['knl']:
-            if multiEntryTypes.__contains__(type(knl)):
-                for knArray in knl:
-                    for ksl in test['ksl']:
-                        if multiEntryTypes.__contains__(type(ksl)):
-                            for ksArray in ksl:
-                                writemachine(knArray, ksArray, length)
-                        else:
-                            ksArray = (ksl)
-                            writemachine(knArray, ksArray, length)
+        def getName(kArray, skewed = False):
+            """ Get the test file name based on the kn and ks component strengths.
+                Do not include kn or ks component if it is zero.
+                """
+            componentsName = '__KNL'
+            if skewed:
+                componentsName = '__KSL'
+
+            if not multiEntryTypes.__contains__(type(kArray)):
+                if _np.float(kArray) != 0:
+                    return componentsName + '_K1_' + _np.str(kArray)
+                else:
+                    return ''
+
+            for index, klArray in enumerate(kArray):
+                if multiEntryTypes.__contains__(type(klArray)):
+                    for knOrder, knValue in enumerate(klArray):
+                        if knValue != 0:
+                            componentsName += '_K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
+                else:
+                    if klArray != 0:
+                        componentsName += '_K' + _np.str(index + 1) + '_' + _np.str(klArray)
+            if (componentsName == '__KNL') or (componentsName == '__KSL'):
+                return ''
             else:
-                knArray = (knl)
-                for ksl in test['ksl']:
-                    if multiEntryTypes.__contains__(type(ksl)):
-                        for ksArray in ksl:
-                            writemachine(knArray, ksArray, length)
-                    else:
-                        ksArray = (ksl)
-                        writemachine(knArray, ksArray, length)
+                return componentsName
+
+        def getKSLandWrite(test, knlName, knlArray, length):
+            """ Get the ksl component values and write. This is a seperate
+                function to remove duplication.
+                """
+            if multiEntryTypes.__contains__(type(test['ksl'])):
+                if multiEntryTypes.__contains__(type(test['ksl'][0])):
+                    for kslArray in test['ksl']:
+                        kslName = knlName + getName(kslArray, True)
+                        writemachine(knlArray, kslArray, length, kslName)
+                else:
+                    kslName = knlName + getName(test['ksl'], True)
+                    writemachine(knlArray, tuple(test['ksl']), length, kslName)
+            else:
+                kslName = knlName + getName(test['ksl'], True)
+                writemachine(knlArray, tuple(test['ksl']), length, kslName)
+
+        # if the container is multiEntryType...
+        if multiEntryTypes.__contains__(type(test['knl'])):
+            # containing multiEntryType containers...
+            if multiEntryTypes.__contains__(type(test['knl'][0])):
+                # then each of those multiEntryTypes should contain component strengths
+                for knlArray in test['knl']:
+                    knlName = filename + getName(knlArray)
+                    getKSLandWrite(test, knlName, knlArray, length)
+            # containing non-multiEntryType data then it should only contain component strengths
+            else:
+                knlName = filename + getName(test['knl'])
+                knlArray = tuple(test['knl'])
+                getKSLandWrite(test, knlName, knlArray, length)
+        # otherwise it's just a single component strength.
+        else:
+            knlName = getName(test['knl'])
+            knlArray = tuple(test['knl'])
+            getKSLandWrite(test, knlName, knlArray, length)
 
     def WriteCollimatorTests(self, test):
         component = test.Component
