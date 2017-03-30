@@ -811,12 +811,6 @@ class TestSuite(TestUtilities):
 
                 testlist.append(testDict)
 
-            if not self.Analysis.TimingData.bdsimTimes.keys().__contains__(componentType):
-                self.Analysis.TimingData.bdsimTimes[componentType] = []
-
-            if not self.Analysis.TimingData.comparatorTimes.keys().__contains__(componentType):
-                self.Analysis.TimingData.comparatorTimes[componentType] = []
-
             if not self._useSingleThread:
                 self._multiThread(testlist, componentType)  # multithreaded option
             else:
