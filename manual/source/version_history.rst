@@ -13,6 +13,7 @@ New Features
  * New *shield* element that is a drift surrounded by rectangle of material.
  * New *placement* element that allows an object with geometry to be placed independent of the beam line.
  * maximumTrackLength option to limit any track in the geometry.
+ * Ability to offset beam line w.r.t. world coordinates at start.
 
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
@@ -59,6 +60,7 @@ Bug Fixes
  * Fixed geometry construction errors that may occur due to dynamic tolerances for physically large models.
  * Fix infinite loop events if the primary vertex starts outside the world volume.
  * Regions and biases set correctly to components in BDSLine class.
+ * Circle distribution did not have central value offsets.
 
 General
 -------
