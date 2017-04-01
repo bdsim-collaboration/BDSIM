@@ -62,6 +62,5 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t = 0.0;
   E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
-  weight = 1.0;
-  return; 
+  weight = 1.0; 
 }
