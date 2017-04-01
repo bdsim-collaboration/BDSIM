@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHRING_H
 #define BDSBUNCHRING_H 
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 
 namespace CLHEP {
   class RandFlat;
@@ -14,7 +14,7 @@ namespace CLHEP {
  * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
  */
 
-class BDSBunchRing: public BDSBunchInterface
+class BDSBunchRing: public BDSBunch
 { 
 protected : 
   G4double rMin;
@@ -24,7 +24,8 @@ protected :
 public: 
   BDSBunchRing(); 
   ~BDSBunchRing(); 
-  void SetOptions(const GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);

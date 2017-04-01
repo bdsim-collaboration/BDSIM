@@ -8,7 +8,7 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchGaussian::BDSBunchGaussian(): 
-  BDSBunchInterface(),
+  BDSBunch(),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0),
   meansGM(CLHEP::HepVector(6)),
   sigmaGM(CLHEP::HepSymMatrix(6)),
@@ -24,13 +24,14 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete GaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
+void BDSBunchGaussian::SetOptions(const GMAD::Options& opt,
+				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   
   SetSigmaX(opt.sigmaX); 
   SetSigmaY(opt.sigmaY);

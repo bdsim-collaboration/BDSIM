@@ -7,7 +7,7 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchEShell::BDSBunchEShell(): 
-  BDSBunchInterface(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0), 
+  BDSBunch(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0),
   shellXWidth(0.0), shellXpWidth(0.0), shellYWidth(0.0), shellYpWidth(0.0) 
 {
 #ifdef BDSDEBUG 
@@ -21,12 +21,13 @@ BDSBunchEShell::~BDSBunchEShell()
   delete FlatGen;
 }
 
-void BDSBunchEShell::SetOptions(const GMAD::Options& opt)
+void BDSBunchEShell::SetOptions(const GMAD::Options& opt,
+				G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetShellX (opt.shellX);
   SetShellY (opt.shellY);
   SetShellXp(opt.shellXp);

@@ -216,9 +216,10 @@ void BDSBunchUserFile<T>::SkipLines()
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt)
+void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt,
+				     G4Transform3D beamlineTransformIn)
 {
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetDistribFile((G4String)opt.distribFile); 
   SetBunchFormat((G4String)opt.distribFileFormat);
   // if we're recreating from a file, still load external file but

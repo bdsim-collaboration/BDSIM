@@ -37,9 +37,10 @@ BDSBunchHalo::~BDSBunchHalo()
   delete FlatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(const GMAD::Options& opt)
+void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
+			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetBetaX(opt.betx);
   SetBetaY(opt.bety);
   SetAlphaX(opt.alfx);

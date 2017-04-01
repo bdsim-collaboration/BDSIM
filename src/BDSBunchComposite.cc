@@ -1,6 +1,6 @@
 #include "BDSBunchComposite.hh"
 #include "BDSBunchFactory.hh"
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "parser/options.h"
 
@@ -21,13 +21,14 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(const GMAD::Options& opt)
+void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
+				   G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;

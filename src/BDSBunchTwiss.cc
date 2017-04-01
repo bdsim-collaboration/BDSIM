@@ -27,13 +27,14 @@ BDSBunchTwiss::~BDSBunchTwiss()
   delete GaussMultiGen;
 }
 
-void BDSBunchTwiss::SetOptions(const GMAD::Options& opt)
+void BDSBunchTwiss::SetOptions(const GMAD::Options& opt,
+			       G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetBetaX(opt.betx);
   SetBetaY(opt.bety);
   SetAlphaX(opt.alfx);
