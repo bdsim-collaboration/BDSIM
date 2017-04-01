@@ -1,0 +1,8 @@
+include 2_one_of_each.gmad;
+
+option, beamlinePhi   = 0.3*pi,
+	beamlineTheta = 0.1*pi,
+	beamlinePsi   = 0,
+	beamlineX = 1*m,
+	beamlineY = 0.2*m,
+	beamlineZ = 10*m;

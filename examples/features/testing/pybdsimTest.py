@@ -48,28 +48,28 @@ def Run(inputDict):
         inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
 
     elif not generateOriginal:
-        outputLog = open(inputDict['compLogFile'], 'a')  # temp log file for the comparator output.
+        with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
 
-        # Only compare if the output was generated.
-        if isSelfComparison:
-            originalFile = inputDict['ROOTFile'].split('_event.root')[0] + '_event2.root'
-            copyString = 'cp ' + inputDict['ROOTFile'] + ' ' + originalFile
-            _os.system(copyString)
-        else:
-            originalFile = inputDict['originalFile']
+            # Only compare if the output was generated.
+            if isSelfComparison:
+                originalFile = inputDict['ROOTFile'].split('_event.root')[0] + '_event2.root'
+                copyString = 'cp ' + inputDict['ROOTFile'] + ' ' + originalFile
+                _os.system(copyString)
+            else:
+                originalFile = inputDict['originalFile']
 
-        # run comparator and record comparator time.
-        t = time.time()
-        outputLog.write('\r\n')
-        TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, inputDict['ROOTFile']], stdout=outputLog)
-        outputLog.close()
-        ctime = time.time() - t
-        inputDict['compTime'] = ctime
+            # run comparator and record comparator time.
+            t = time.time()
+            outputLog.write('\r\n')
+            TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile, inputDict['ROOTFile']], stdout=outputLog)
+            outputLog.close()
+            ctime = time.time() - t
+            inputDict['compTime'] = ctime
 
-        if TestResult == 0:
-            inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
-        elif TestResult != 0:
-            inputDict['code'] = TestResult  # not passed comparator return code
+            if TestResult == 0:
+                inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+            elif TestResult != 0:
+                inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
         # root output was generated - success
@@ -646,17 +646,15 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
-    def _multiThread(self, testlist):
+    def _multiThread(self, testlist, componentType):
         """ Function to run the tests on multiple cores with multithreading."""
         numCores = multiprocessing.cpu_count()
-
         p = multiprocessing.Pool(numCores)
         results = p.map(Run, testlist)
 
         for testRes in results:
             self.Analysis.AddResults(testRes)
-            self.Analysis.TimingData.bdsimTimes.append(testRes['bdsimTime'])
-            self.Analysis.TimingData.comparatorTimes.append(testRes['compTime'])
+            self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
         p.close()
 
     def _singleThread(self, testlist):
@@ -814,12 +812,12 @@ class TestSuite(TestUtilities):
                 testlist.append(testDict)
 
             if not self._useSingleThread:
-                self._multiThread(testlist)  # multithreaded option
+                self._multiThread(testlist, componentType)  # multithreaded option
             else:
                 self._singleThread(testlist)  # single threaded option.
 
             componentTime = time.time() - t  # final time
-            self.Analysis.TimingData.AddComponentTime(componentType, componentTime)
+            self.Analysis.TimingData.AddComponentTotalTime(componentType, componentTime)
 
             if self._generateOriginals:
                 _os.chdir('../')

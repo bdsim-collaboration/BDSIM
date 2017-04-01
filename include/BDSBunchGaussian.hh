@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHGAUSSIAN_H
 #define BDSBUNCHGAUSSIAN_H 
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
 
@@ -15,7 +15,7 @@ namespace CLHEP {
  * @author Stewart Boogert
  */
 
-class BDSBunchGaussian: public BDSBunchInterface
+class BDSBunchGaussian: public BDSBunch
 { 
 protected: 
   G4double sigmaX;
@@ -32,7 +32,8 @@ protected:
 public:
   BDSBunchGaussian();
   virtual ~BDSBunchGaussian();
-  void SetOptions(const GMAD::Options& opt); 
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

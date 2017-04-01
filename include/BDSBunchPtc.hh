@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHPTC_H
 #define BDSBUNCHPTC_H
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 
 #include "globals.hh"
 
@@ -13,12 +13,13 @@
  * @author Stewart Boogert
  */
 
-class BDSBunchPtc: public BDSBunchInterface
+class BDSBunchPtc: public BDSBunch
 {  
 public: 
   BDSBunchPtc();
   virtual ~BDSBunchPtc(); 
-  virtual void SetOptions(const GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
                                G4double& t , G4double&  E, G4double& weight);

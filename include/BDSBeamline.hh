@@ -52,6 +52,9 @@ public:
   /// achieved via defaults
   BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
 	      G4RotationMatrix* initialGlobalRotation = nullptr);
+
+  /// Constructor with transform instance that uses other constructor.
+  BDSBeamline(G4Transform3D intialTransform);
   
   ~BDSBeamline();
 
