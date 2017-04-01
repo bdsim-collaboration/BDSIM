@@ -91,5 +91,5 @@ BDSStep BDSIntegratorDipoleQuadrupole::CurvilinearToGlobal(G4ThreeVector localPo
 							   G4ThreeVector localMomentumCL,
 							   G4bool        useCurvilinearWorld)
 {
-  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
+  return ConvertToGlobalStep(localPositionCL, localMomentumCL, useCurvilinearWorld);
 }
