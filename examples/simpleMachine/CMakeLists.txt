@@ -45,8 +45,10 @@ simple_testing(generatePrimariesOnly "--file=sm.gmad" "")
 set(TESTING_ARGS --survey=survey.dat)
 simple_testing(survey "--file=sm.gmad" "")
 # output export geometry
-set(TESTING_ARGS --exportgeometryto=export.gdml)
-simple_testing(exportgeometry "--file=sm.gmad" "")
+if(USE_GDML)
+  set(TESTING_ARGS --exportgeometryto=export.gdml)
+  simple_testing(exportgeometry "--file=sm.gmad" "")
+endif()
 # seed
 set(TESTING_ARGS --seed=1729)
 simple_testing(simpleMachineSeed "--file=sm.gmad" "")

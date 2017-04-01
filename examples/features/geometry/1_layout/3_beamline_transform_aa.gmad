@@ -1,0 +1,7 @@
+include 2_one_of_each.gmad;
+
+option, beamlineAxisX = 0,
+	beamlineAxisY = 1,
+	beamlineAxisZ = 0,
+	beamlineAxisAngle = 1,
+	beamlineAngle = 0.5*pi;

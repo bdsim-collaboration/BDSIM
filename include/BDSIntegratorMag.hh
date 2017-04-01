@@ -36,17 +36,14 @@ public:
   inline virtual G4int IntegratorOrder() const {return 2;}
   
 protected:
-  /// Advance chord by quadratic approximation
-  void AdvanceChord(const G4double       h,
-		    G4ThreeVector&       localPos,
-		    G4ThreeVector&       localMom,
-		    const G4ThreeVector& localA);
-
   /// Convert final local position and direction to global frame
   void ConvertToGlobal(const G4ThreeVector& localPos,
 		       const G4ThreeVector& localMomUnit,
 		       const G4double       momMag,
 		       G4double             yOut[]);
+
+  /// Setter for distChord to private member.
+  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
   
   /// Keep a reference to the underlying equation of motion, but through a higher
   /// level pointer than G4EquationOfMotion* so we can use the correct methods. This
@@ -60,8 +57,6 @@ protected:
   /// outside the (transverse) momentum range applicable for the integration scheme
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
-
-  inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
 
 private:
   /// Private default constructor to force use of specific constructor

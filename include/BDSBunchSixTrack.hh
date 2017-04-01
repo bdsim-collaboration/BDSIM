@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 
 /**
  * @brief A bunch distribution that reads a SixTrack hits file.
@@ -11,7 +11,7 @@
  * @author Regina Kwee-Hinzmann
  */
 
-class BDSBunchSixTrack: public BDSBunchInterface
+class BDSBunchSixTrack: public BDSBunch
 { 
 private: 
   G4int    nPart;
@@ -25,7 +25,8 @@ public:
   BDSBunchSixTrack(G4String fileNameIn);
   virtual ~BDSBunchSixTrack(); 
   void LoadSixTrackFile(); 
-  virtual void SetOptions(const GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
                                G4double& t , G4double&  E, G4double& weight);

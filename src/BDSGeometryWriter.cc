@@ -23,10 +23,18 @@ BDSGeometryWriter::BDSGeometryWriter()
 void BDSGeometryWriter::ExportGeometry(G4String geometryType,
 				       G4String geometryFileName)
 {
-  if (!strcmp(geometryType, "gdml"))
-    {WriteToGDML(geometryFileName);}
+  if (geometryType == "gdml")
+    {
+#ifdef USE_GDML
+      WriteToGDML(geometryFileName);
+#else
+      G4cerr << "Not possible to write out " << geometryFileName << ", compile USE_GDML true" << G4endl;
+      exit(1);
+#endif
+    }
 }
 
+#ifdef USE_GDML
 void BDSGeometryWriter::WriteToGDML(G4String           outputFileName,
 				    G4VPhysicalVolume* volume)
 {
@@ -37,8 +45,7 @@ void BDSGeometryWriter::WriteToGDML(G4String           outputFileName,
     G4FileUtilities fileUtilities;
     fileUtilities.DeleteFile(outputFileName, "");
   }
-#ifdef USE_GDML
   G4GDMLParser parser;
   parser.Write(outputFileName, volume, true);
-#endif
 }
+#endif

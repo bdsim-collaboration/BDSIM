@@ -27,13 +27,14 @@ BDSBunchTwiss::~BDSBunchTwiss()
   delete GaussMultiGen;
 }
 
-void BDSBunchTwiss::SetOptions(const GMAD::Options& opt)
+void BDSBunchTwiss::SetOptions(const GMAD::Options& opt,
+			       G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetBetaX(opt.betx);
   SetBetaY(opt.bety);
   SetAlphaX(opt.alfx);
@@ -46,11 +47,8 @@ void BDSBunchTwiss::SetOptions(const GMAD::Options& opt)
   SetDispYP(opt.dispyp);
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
-
-
+  
   CommonConstruction();
-
-  return;
 }
 
 void BDSBunchTwiss::CommonConstruction()
@@ -94,8 +92,6 @@ void BDSBunchTwiss::CommonConstruction()
 
   delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
-
-  return;
 }
 
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -117,7 +113,8 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   E  = E0 * CLHEP::GeV * v[5];
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
   
   weight = 1.0;
-  return;
 }

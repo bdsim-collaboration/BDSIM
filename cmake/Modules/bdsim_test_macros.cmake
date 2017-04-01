@@ -10,8 +10,8 @@
 #  The same as simple_testing but with the ctest label "LONG".
 #
 # simple_fail:
-#  BDSIM test that expects bdsim to exit with a return of 1. Success of the
-#  test is bdsim failing with exit(1).
+#  BDSIM test that expects bdsim to exit with a non-zero return value. Success of the
+#  test is bdsim failing.
 #
 # compare_test: 
 #  Run a script and afterwards require that file1 and file2 have equal output.
