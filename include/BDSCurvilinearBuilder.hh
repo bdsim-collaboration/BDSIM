@@ -58,9 +58,6 @@ private:
   G4double paddingLength;
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
-  G4bool   checkOverlaps;     ///< Whether to check overlaps.
-  G4double lengthSafety;      ///< Length safety.
-  G4double minimumLength;     ///< Minimum length of a curvilinear section.
   G4double bonusChordLength;  ///< Length of any possible bonus section added to beginning and end.
 
   /// Factory to build curvilinear geometry.
@@ -69,6 +66,3 @@ private:
 
 inline G4bool BDSCurvilinearBuilder::Angled(BDSBeamlineElement const* const element) const
 {return BDS::IsFinite(element->GetAngle());}
-
-inline G4bool BDSCurvilinearBuilder::TooShort(BDSBeamlineElement const* const element) const
-{return element->GetArcLength() < minimumLength;}
