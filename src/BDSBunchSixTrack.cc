@@ -74,16 +74,16 @@ void BDSBunchSixTrack::LoadSixTrackFile()
 
   nPart = sixtrackData.size();
   infile.close();
-  return;
 }
 
-void BDSBunchSixTrack::SetOptions(const GMAD::Options& opt)
+void BDSBunchSixTrack::SetOptions(const GMAD::Options& opt,
+				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetDistribFile(G4String(opt.distribFile)); 
   LoadSixTrackFile();
 }
@@ -107,7 +107,7 @@ void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t      = 0.;
   zp     = CalculateZp(xp,yp,1.);
 
-  ApplyCurvilinearTransform(x0, y0, z0, xp, yp, zp);
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
 
   iPart++;
 

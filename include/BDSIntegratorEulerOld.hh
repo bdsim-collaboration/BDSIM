@@ -36,6 +36,13 @@ protected:
   virtual void AdvanceHelix(const G4double yIn[],
 			    G4double       h,
 			    G4double       yOut[]) = 0;
+
+  /// Advance chord by quadratic approximation. Can throw a std::out_of_range exception
+  /// for inappropriate use of paraxial approximation.
+  void AdvanceChord(const G4double       h,
+		    G4ThreeVector&       localPos,
+		    G4ThreeVector&       localMom,
+		    const G4ThreeVector& localA);
 };
 
 #endif

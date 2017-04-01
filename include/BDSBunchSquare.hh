@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHSQUARE_H
 #define BDSBUNCHSQUARE_H 
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 
 namespace CLHEP {
   class RandFlat;
@@ -14,7 +14,7 @@ namespace CLHEP {
  * @author Stewart Boogert
  */
 
-class BDSBunchSquare: public BDSBunchInterface
+class BDSBunchSquare: public BDSBunch
 { 
 protected : 
   G4double envelopeX; 
@@ -29,7 +29,8 @@ protected :
 public: 
   BDSBunchSquare(); 
   virtual ~BDSBunchSquare(); 
-  void SetOptions(const GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

@@ -21,6 +21,7 @@
 #include <utility>  // for std::pair
 #include <vector>
 
+
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 			 G4RotationMatrix* initialGlobalRotation)
 {
@@ -52,6 +53,11 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
   //paddingLength = 3*CLHEP::mm;
 }
+
+BDSBeamline::BDSBeamline(G4Transform3D initialTransform):
+  BDSBeamline(initialTransform.getTranslation(),
+	      new G4RotationMatrix(initialTransform.getRotation()))
+{;}
 
 BDSBeamline::~BDSBeamline()
 {

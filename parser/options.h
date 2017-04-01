@@ -26,7 +26,7 @@ namespace GMAD
   {
   public:
     Options();
-    Options(const GMAD::OptionsBase& options);
+    explicit Options(const GMAD::OptionsBase& options);
     
     /// set methods by property name
     template<typename T>

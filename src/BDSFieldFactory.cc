@@ -144,7 +144,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	{
 	  std::pair<G4String, G4String> bf = BDS::SplitOnColon(G4String(definition.magneticFile));
 	  magFormat = BDS::DetermineFieldFormat(bf.first);
-	  magFile   = bf.second;
+	  magFile   = BDS::GetFullPath(bf.second);
 	}
       
       BDSFieldFormat eleFormat = BDSFieldFormat::none;
@@ -154,7 +154,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	{
 	  std::pair<G4String, G4String> ef = BDS::SplitOnColon(G4String(definition.electricFile));
 	  eleFormat = BDS::DetermineFieldFormat(ef.first);
-	  eleFile   = ef.second;
+	  eleFile   = BDS::GetFullPath(ef.second);
 	}
       
       BDSInterpolatorType magIntType = BDSInterpolatorType::nearest3d;

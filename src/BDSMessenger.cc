@@ -1,7 +1,3 @@
-//
-// Created by Stewart Boogert on 08/03/2017.
-//
-
 #include <iostream>
 #include <ostream>
 #include <iomanip>
@@ -11,6 +7,11 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSSamplerRegistry.hh"
+
+#include "G4UImanager.hh"
+#include "G4UIdirectory.hh"
+#include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAString.hh"
 
 #include "globals.hh"
 
@@ -40,6 +41,9 @@ BDSMessenger::~BDSMessenger()
   delete bdsDirectory;
   delete bdsBeamlineDirectory;
   delete beamlineListCmd;
+  delete elementNameSearchCmd;
+  delete bdsSamplersDirectory;
+  delete samplerListCmd;
 }
 
 void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
