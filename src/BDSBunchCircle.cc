@@ -56,6 +56,9 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp += sin(phiRp) * rp * CLHEP::rad;
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t = 0.0;
   E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 

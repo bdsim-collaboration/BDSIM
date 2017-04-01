@@ -59,6 +59,9 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t = 0 * CLHEP::s;
   E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 

@@ -201,6 +201,9 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       yp += dyp * CLHEP::rad;
 
       zp = CalculateZp(xp, yp, Zp0);
+
+      ApplyTransform(x0,y0,z0,xp,yp,zp);
+      
       t = 0 * CLHEP::s;
       E = E0 * CLHEP::GeV;
 

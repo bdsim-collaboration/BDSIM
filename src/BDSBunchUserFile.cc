@@ -403,6 +403,8 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
     }
   //Add the global offset Z
   z0=z0+Z0*CLHEP::m;
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
 }
 
 template <class T>

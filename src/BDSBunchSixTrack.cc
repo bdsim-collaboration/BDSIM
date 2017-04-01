@@ -107,7 +107,7 @@ void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t      = 0.;
   zp     = CalculateZp(xp,yp,1.);
 
-  ApplyCurvilinearTransform(x0, y0, z0, xp, yp, zp);
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
 
   iPart++;
 

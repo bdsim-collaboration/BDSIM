@@ -104,6 +104,9 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
   z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   E  = E0 * CLHEP::GeV * v[5];
   zp = CalculateZp(xp,yp,Zp0);
 

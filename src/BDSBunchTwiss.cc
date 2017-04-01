@@ -118,6 +118,8 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   E  = E0 * CLHEP::GeV * v[5];
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
   
   weight = 1.0;
   return;

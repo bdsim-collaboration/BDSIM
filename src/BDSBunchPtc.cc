@@ -144,6 +144,9 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t      = (z0-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
   E      = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
   zp     = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   weight = 1.0; 
 
   iRay++;

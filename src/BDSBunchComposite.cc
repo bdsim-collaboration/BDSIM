@@ -72,7 +72,10 @@ void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   y0 = yy0;
   yp = yyp;
   z0 = zz0;
-  zp = zzp; 
+  zp = zzp;
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t  = zt;
   E  = zE; 
   weight = xWeight;
