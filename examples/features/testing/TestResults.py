@@ -147,6 +147,11 @@ class Timing:
             print("Cannot convert componentTime to a numerical value.")
 
     def AddComponentTestTime(self, component, test):
+        if not self.bdsimTimes.keys().__contains__(component):
+            self.bdsimTimes[component] = []
+
+        if not self.comparatorTimes.keys().__contains__(component):
+            self.comparatorTimes[component] = []
         self.bdsimTimes[component].append(test['bdsimTime'])
         self.comparatorTimes[component].append(test['compTime'])
 
