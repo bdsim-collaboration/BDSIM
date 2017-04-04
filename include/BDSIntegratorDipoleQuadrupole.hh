@@ -36,11 +36,20 @@ public:
 
 protected:
 
+  /// Calculate a single step in curvilinear coordinates using dipole quadrupole matrix.
+  void OneStep(G4ThreeVector  posIn,
+	       G4ThreeVector  momIn,
+	       G4double       h,
+	       G4ThreeVector& posOut,
+	       G4ThreeVector& momOut) const;
+
+  /// Convert to curvilinear coordinates.
   virtual BDSStep GlobalToCurvilinear(G4ThreeVector position,
 				      G4ThreeVector unitMomentum,
 				      G4double      h,
 				      G4bool        useCurvilinearWorld);
 
+  /// Convert to global coordinates.
   virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPositionCL,
 				      G4ThreeVector localMomentumCL,
 				      G4bool        useCurvilinearWorld);

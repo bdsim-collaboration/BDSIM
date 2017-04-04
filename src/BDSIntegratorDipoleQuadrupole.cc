@@ -79,6 +79,55 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
     }
 }
 
+void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
+					    G4ThreeVector  momIn,
+					    G4double       h,
+					    G4ThreeVector& posOut,
+					    G4ThreeVector& momOut) const
+{
+  G4double delta     = 0;
+  
+  G4double theta     = 0;
+  G4double kappa     = 0;
+  G4double sqrtKappa = std::sqrt(kappa);
+  if (std::isnan(sqrtKappa))
+    {sqrtKappa = 0;}
+
+  G4double x0  = posIn.x();
+  G4double y0  = posIn.y();
+  G4double s0  = posIn.z();
+  G4double xp0 = momIn.x();
+  G4double yp0 = momIn.y();
+
+  G4double cosTheta  = cos(theta);
+  G4double sinTheta  = sin(theta);
+  G4double coshTheta = cosh(theta);
+  G4double sinhTheta = sinh(theta);
+  G4double m00 = cosTheta;
+  G4double m01 = - sqrtKappa * sinTheta;
+  G4double m10 = sinTheta / sqrtKappa;
+  G4double m11 = cosTheta;
+  G4double m05 = (1 - cosTheta) / sqrtKappa;
+  G4double m15 = sinTheta;
+  G4double m22 = coshTheta;
+  G4double m23 = sinhTheta / sqrtKappa;
+  G4double m32 = sqrtKappa * sinhTheta;
+  G4double m33 = coshTheta;
+
+  G4double x1  = m00*x0 + m10*xp0 + m05*delta;
+  G4double xp1 = m01*x0 + m11*xp0 + m15*delta;
+  G4double y1  = m22*y0 + m23*yp0;
+  G4double yp1 = m32*y0 + m33*yp0;
+  G4double s1  = s0 + h;
+
+  posOut[0] = x1;
+  posOut[1] = y1;
+  posOut[2] = s1;
+  momOut[0] = xp1;
+  momOut[1] = yp1;
+  momOut[2] = momIn[2];
+}
+
 BDSStep BDSIntegratorDipoleQuadrupole::GlobalToCurvilinear(G4ThreeVector position,
 							   G4ThreeVector unitMomentum,
 							   G4double      h,
