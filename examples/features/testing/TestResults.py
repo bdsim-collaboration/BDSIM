@@ -156,11 +156,18 @@ class Timing:
         self.comparatorTimes[component].append(test['compTime'])
 
     def __repr__(self):
+        totalBDSIMTime = []
+        totalCompTime = []
+        for component, times in self.bdsimTimes.iteritems():
+            totalBDSIMTime.extend(times)
+        for component, times in self.comparatorTimes.iteritems():
+            totalCompTime.extend(times)
+
         s = 'Total Testing time  = ' + _np.str(self.totalTime) + '\r\n'
-        s += 'Average BDSIM time = ' + _np.str(_np.average(self.bdsimTimes)) + " +/- "
-        s += _np.str(_np.std(self.bdsimTimes)) + '.\r\n'
-        s += 'Average Comparator time = ' + _np.str(_np.average(self.comparatorTimes)) + " +/- "
-        s += _np.str(_np.std(self.comparatorTimes)) + '.\r\n'
+        s += 'Average BDSIM time = ' + _np.str(_np.average(totalBDSIMTime)) + " +/- "
+        s += _np.str(_np.std(totalBDSIMTime)) + '.\r\n'
+        s += 'Average Comparator time = ' + _np.str(_np.average(totalCompTime)) + " +/- "
+        s += _np.str(_np.std(totalCompTime)) + '.\r\n'
         return s
 
 
