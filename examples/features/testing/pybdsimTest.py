@@ -45,7 +45,7 @@ def Run(inputDict):
     files = _glob.glob('*.root')
 
     if not files.__contains__(inputDict['ROOTFile']):
-        inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
 
     elif not generateOriginal:
         with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
@@ -67,16 +67,19 @@ def Run(inputDict):
             inputDict['compTime'] = ctime
 
             if TestResult == 0:
-                inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+                inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')  # True
             elif TestResult != 0:
                 inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
         # root output was generated - success
-        inputDict['code'] = GlobalData.returnCodes['SUCCESS']
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')
 
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
     inputDict['generalStatus'] = generalStatus
+
+    # list of soft failure code in the general status.
+    hasSofts = [code for code in GlobalData.ReturnsAndErrors.GetSoftCodeNumbers() if generalStatus.__contains__(code)]
 
     # if the comparator passed
     if inputDict['code'] == 0:
@@ -92,10 +95,7 @@ def Run(inputDict):
 
         # else if the general status contains one of the 'soft' failures, move the bdsim log
         # and root output into the failed dir, and delete the passed comparator log.
-        elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        elif len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
             if isSelfComparison:
@@ -113,10 +113,7 @@ def Run(inputDict):
             _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
 
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
-        if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        if len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
@@ -476,7 +473,7 @@ class TestUtilities(object):
         if not robust:
             options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
-        options.SetBeamPipeRadius(beampiperadius=10)
+        options.SetBeamPipeRadius(beampiperadius=20)
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
@@ -793,7 +790,7 @@ class TestSuite(TestUtilities):
             tests = [(testfilesDir + testFile) for testFile in self._testNames[componentType]]
 
             # order tests
-            if len(tests) > 1:
+            if (len(tests) > 1) and (componentType != 'multipole') and (componentType != 'thinmultipole'):
                 tests = self._GetOrderedTests(tests, componentType)
 
             # compile iterable list of dicts for multithreading function.

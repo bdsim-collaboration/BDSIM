@@ -176,9 +176,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	     << "GeV\tPosition: " << sAfter/CLHEP::m <<" m"<< G4endl;
     }
   
-  weight = aStep->GetTrack()->GetWeight();
-  if (weight == 0)
-    {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
+  weight     = aStep->GetTrack()->GetWeight();
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   trackID    = aStep->GetTrack()->GetTrackID();
   parentID   = aStep->GetTrack()->GetParentID();
