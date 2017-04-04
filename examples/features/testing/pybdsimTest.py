@@ -45,7 +45,7 @@ def Run(inputDict):
     files = _glob.glob('*.root')
 
     if not files.__contains__(inputDict['ROOTFile']):
-        inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
 
     elif not generateOriginal:
         with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
@@ -67,13 +67,13 @@ def Run(inputDict):
             inputDict['compTime'] = ctime
 
             if TestResult == 0:
-                inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+                inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')  # True
             elif TestResult != 0:
                 inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
         # root output was generated - success
-        inputDict['code'] = GlobalData.returnCodes['SUCCESS']
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')
 
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
     inputDict['generalStatus'] = generalStatus
