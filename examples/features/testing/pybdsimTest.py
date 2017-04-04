@@ -78,6 +78,9 @@ def Run(inputDict):
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
     inputDict['generalStatus'] = generalStatus
 
+    # list of soft failure code in the general status.
+    hasSofts = [code for code in GlobalData.ReturnsAndErrors.GetSoftCodeNumbers() if generalStatus.__contains__(code)]
+
     # if the comparator passed
     if inputDict['code'] == 0:
         # if only one general status entry then it must be 0 (passed), in which case,
@@ -92,10 +95,7 @@ def Run(inputDict):
 
         # else if the general status contains one of the 'soft' failures, move the bdsim log
         # and root output into the failed dir, and delete the passed comparator log.
-        elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        elif len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
             if isSelfComparison:
@@ -113,10 +113,7 @@ def Run(inputDict):
             _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
 
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
-        if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        if len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])

@@ -471,7 +471,7 @@ class Analysis(ResultsUtilities):
                     failedTests.append(failedFile)
                 # check for soft failures
                 for failure in GlobalData.ReturnsAndErrors.GetSoftCodes():
-                    if generalStatus.__contains__(GlobalData.returnCodes[failure]):
+                    if generalStatus.__contains__(GlobalData.ReturnsAndErrors.GetCode(failure)):
                         if not softFails.keys().__contains__(failure):
                             softFails[failure] = []
                         failedFile = testdict['testFile'].split('/')[-1]

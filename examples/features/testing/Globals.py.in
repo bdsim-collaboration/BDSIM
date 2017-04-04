@@ -93,6 +93,10 @@ class ReturnsAndErrors(dict):
         codes = [self['name'][index] for index in softIndices]
         return codes
 
+    def GetSoftCodeNumbers(self):
+        softIndices = [index for index, isSoft in enumerate(self['isSoft']) if isSoft]
+        codenumbers = [self['code'][index] for index in softIndices]
+        return codenumbers
 
 class Globals:
     ''' Class containing global parameters for testing.
