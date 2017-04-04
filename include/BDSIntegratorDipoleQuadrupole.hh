@@ -55,6 +55,7 @@ private:
   G4double              radiusOfCurvature;
   G4double              chordLength;
   G4double              radiusAtChord;
+  G4ThreeVector         unitField;
 };
 
 #endif
