@@ -15,12 +15,6 @@ typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 
 class BDSAuxiliaryNavigator;
 
-/**
- * @brief Structure to record a trajectory.
- * 
- * @author Stewart Boogert
- */
-
 #if 0
 0  fNotDefined,
   1  fTransportation,
@@ -82,8 +76,14 @@ class BDSAuxiliaryNavigator;
   11 fPhonon,
   12 fUCN
 #endif
+  
+/**
+ * @brief Structure to record a trajectory point.
+ * 
+ * @author Stewart Boogert
+ */
 
-class BDSOutputROOTEventTrajectoryPoint : public TObject
+class BDSOutputROOTEventTrajectoryPoint: public TObject
 {
 public :
   BDSOutputROOTEventTrajectoryPoint() :
@@ -96,7 +96,7 @@ public :
           partID(partIDIn), trackID(trackIDIn), parentID(parentIDIn), parentIndex(parentIndexIn),
           processType(processTypeIn), processSubType(processSubTypeIn), weight(weightIn), energy(energyIn),
           position(positionIn), momentum(momentumIn), model(modelIn) {}
-  ~BDSOutputROOTEventTrajectoryPoint() {};
+  virtual ~BDSOutputROOTEventTrajectoryPoint(){;}
 
   int partID;
   int trackID;
@@ -113,7 +113,14 @@ public :
   ClassDef(BDSOutputROOTEventTrajectoryPoint,1);
 };
 
-class BDSOutputROOTEventTrajectory : public TObject
+
+/**
+ * @brief Structure to record a trajectory.
+ * 
+ * @author Stewart Boogert
+ */
+
+class BDSOutputROOTEventTrajectory: public TObject
 {
 public:
   BDSOutputROOTEventTrajectory();
@@ -123,8 +130,8 @@ public:
   void Fill(BDSEnergyCounterHitsCollection *phc);
 #endif
 
-  BDSAuxiliaryNavigator* auxNavigator; //! Required to find beamline index careful including in Streamer
-
+  /// Required to find beamline index careful including in streamer.
+  BDSAuxiliaryNavigator* auxNavigator;
 
 public:
   void Flush();

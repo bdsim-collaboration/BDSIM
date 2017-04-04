@@ -1,5 +1,5 @@
-#ifndef BDSIM_BDSMESSENGER_H
-#define BDSIM_BDSMESSENGER_H
+#ifndef BDSMESSENGER_H
+#define BDSMESSENGER_H
 
 #include <string>
 
@@ -12,10 +12,13 @@ class G4UIdirectory;
 //class G4UImanager;
 
 /**
+ * @brief User interface commands.
+ *
  * @author Stewart Boogert
  */
 
-class BDSMessenger : public G4UImessenger {
+class BDSMessenger: public G4UImessenger
+{
 public:
   BDSMessenger();
   ~BDSMessenger();
