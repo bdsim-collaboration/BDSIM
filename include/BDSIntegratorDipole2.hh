@@ -62,6 +62,9 @@ public:
 				 G4double       yOut[],
 				 G4double       yErr[]);
 
+  /// Public accessor for protected variable in base class.
+  inline G4double RadiusOfHelix() const {return GetRadHelix();}
+
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorDipole2() = delete;
