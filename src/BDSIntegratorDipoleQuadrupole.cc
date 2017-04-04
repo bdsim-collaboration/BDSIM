@@ -36,24 +36,47 @@ BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
 }
 
 void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
-				      const G4double dydx[],
-				      const G4double h,
-				      G4double       yOut[],
-				      G4double       yErr[])
+					    const G4double dydx[],
+					    const G4double h,
+					    G4double       yOut[],
+					    G4double       yErr[])
 {
   G4double quadOut[7];
   G4double quadErr[7];
 
   BDSIntegratorQuadrupole::Stepper(yIn, dydx, h, quadOut, quadErr);
+  
+  dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
-  G4double quadDelta[7];
-  //  for (G4int i = 0; i < 3; i++)
-  //  {
-  //   quadDelta[i] = 
+  // If the particle might spiral, we return and just use the dipole only component
+  // Aimed at particles of much lower momentum than the design energy.
+  G4double dipoleDC          = dipole->DistChord();
+  G4double radiusOfCurvature = dipole->RadiusOfHelix();
+  if (dipoleDC > 0.3*radiusOfCurvature)
+    {return;}
 
-  G4double dipoleOut[7];
-  G4double dipoleErr[7];
-  dipole->Stepper(yIn, dydx, h, dipoleOut, dipoleErr);
+  // convert to true curvilinear
+  G4ThreeVector globalPos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector globalMom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  BDSStep       localCL    = GlobalToCurvilinear(globalPos, globalMom, h, false);
+  G4ThreeVector localCLPos = localCL.PreStepPoint();
+  G4ThreeVector localCLMom = localCL.PostStepPoint();
+  
+  // calculate new position - TBC
+  G4ThreeVector localCLPosOut = localCLPos;
+  G4ThreeVector localCLMomOut = localCLMom;
+
+  // convert to global coordinates for output
+  BDSStep globalOut = CurvilinearToGlobal(localCLPosOut, localCLMomOut, false);
+  G4ThreeVector globalPosOut = globalOut.PreStepPoint();
+  G4ThreeVector globalMomOut = globalOut.PostStepPoint();
+
+  for (G4int i = 0; i < 3; i++)
+    {
+      yOut[i]     = globalPosOut[i];
+      yOut[i + 3] = globalMomOut[i];
+      yErr[i]     = 0;
+    }
 }
 
 BDSStep BDSIntegratorDipoleQuadrupole::GlobalToCurvilinear(G4ThreeVector position,
