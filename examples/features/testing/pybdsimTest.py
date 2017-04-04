@@ -476,7 +476,7 @@ class TestUtilities(object):
         if not robust:
             options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
-        options.SetBeamPipeRadius(beampiperadius=10)
+        options.SetBeamPipeRadius(beampiperadius=20)
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
@@ -793,7 +793,7 @@ class TestSuite(TestUtilities):
             tests = [(testfilesDir + testFile) for testFile in self._testNames[componentType]]
 
             # order tests
-            if len(tests) > 1:
+            if (len(tests) > 1) and (componentType != 'multipole') and (componentType != 'thinmultipole'):
                 tests = self._GetOrderedTests(tests, componentType)
 
             # compile iterable list of dicts for multithreading function.

@@ -196,12 +196,12 @@ class Globals:
                              'k4': 6.0e5,
                              'k5': 3.0e8}
 
-        #tuples for multipole and thinMultipole (all K components for given element)
-        self.k1l = [(-1.0 * self.magStrengths['k1']),             (0), (1.0 * self.magStrengths['k1'])]
-        self.k2l = [(0, -1.0 * self.magStrengths['k1']),          (0), (0, 1.0 * self.magStrengths['k1'])]
-        self.k3l = [(0, 0, -1.0 * self.magStrengths['k1']),       (0), (0, 0, 1.0 * self.magStrengths['k1'])]
-        self.k4l = [(0, 0, 0, -1.0 * self.magStrengths['k1']),    (0), (0, 0, 0, 1.0 * self.magStrengths['k1'])]
-        self.k5l = [(0, 0, 0, 0, -1.0 * self.magStrengths['k1']), (0), (0, 0, 0, 0, 1.0 * self.magStrengths['k1'])]
+        #lists for multipole and thinMultipole (all K components for given element)
+        self.k1l = [[-1.0 * self.magStrengths['k1']],             [0], [1.0 * self.magStrengths['k1']]]
+        self.k2l = [[0, -1.0 * self.magStrengths['k1']],          [0], [0, 1.0 * self.magStrengths['k1']]]
+        self.k3l = [[0, 0, -1.0 * self.magStrengths['k1']],       [0], [0, 0, 1.0 * self.magStrengths['k1']]]
+        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k1']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k1']]]
+        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k1']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k1']]]
 
         #test values for the components parameters
         #field is not set, it will be calculated upon writing based on length, angle, and energy.
