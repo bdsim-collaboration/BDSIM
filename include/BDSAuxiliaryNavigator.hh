@@ -103,7 +103,7 @@ public:
 			       const G4bool&        useCurvilinear = true) const;
 
   /// Convert an axis to curvilinear coordinates using the existing cached transforms.
-  /// Therefore, this should only be used if you have converted a point or axis alreay
+  /// Therefore, this should only be used if you have converted a point or axis already
   /// in the current volume. Provided for the situation where multiple axis conversions
   /// are required without relocating the volume in the hierarchy, which may introduce
   /// ambiguities.
