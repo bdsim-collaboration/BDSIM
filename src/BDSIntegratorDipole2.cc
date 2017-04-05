@@ -74,8 +74,8 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   SetRadHelix(rad);
 
   G4ThreeVector posIn  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector posOut = G4ThreeVector(yOu[0], yOut[1], yOu[2]);
-  G4ThreeVector delta = (posOut - posIn).mag();
+  G4ThreeVector posOut = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
+  G4double delta = (posOut - posIn).mag();
 
   if (delta < 1e-10)
     {G4cout << "small step - delta: " << delta;}
