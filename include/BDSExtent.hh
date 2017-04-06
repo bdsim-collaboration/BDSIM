@@ -111,7 +111,7 @@ public:
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
 
-  /// Return the maximum abosolute value considering only x,y.
+  /// Return the maximum absolute value considering only x,y.
   G4double MaximumAbsTransverse() const;
   
 private:
