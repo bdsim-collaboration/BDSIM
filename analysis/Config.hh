@@ -8,7 +8,7 @@
 #include <map>
 
 /**
- * @brief Configuration and configuartion parser class.
+ * @brief Configuration and configuration parser class.
  * 
  * @author Stewart Boogert
  */
