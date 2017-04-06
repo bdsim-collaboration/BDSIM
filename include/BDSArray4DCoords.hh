@@ -117,7 +117,7 @@ public:
   }
 
   /// Return the index of the nearest field value in space via four-vector.
-  inline BDSFourVector<G4int> NearestXYZT(const BDSFourVector<G4double> pos) const
+  inline BDSFourVector<G4int> NearestXYZT(const BDSFourVector<G4double>& pos) const
   {
     return BDSFourVector<G4int>(NearestX(pos[0]),
 				NearestY(pos[1]),
