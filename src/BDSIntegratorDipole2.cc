@@ -53,13 +53,18 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
       return;
     }
 
-    if (h < 1e-10)
+  // error estimation
+  // if it's a very small step - no error - safer as differences between large positions
+  // for very small steps can have numerical precision issues.
+  // no need to update ang and rad.
+  if (h < 1e-10)
     {
-        for (G4int i = 0; i < 6; i++)
+      for (G4int i = 0; i < 6; i++)
         {yErr[i] = 0;}
-        return;
+      return; // saves long if else
     }
-  // error estimation - do two half steps and compare difference to
+  
+  // normal error estimation - do two half steps and compare difference to
   // the result from one full step
   AdvanceHelix(yIn, bOriginal, h*0.5, yTemp); // first step
 
@@ -78,20 +83,6 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // Update parameters that distchord will be calcualted from from full step info.
   SetAngCurve(ang);
   SetRadHelix(rad);
-
-  G4ThreeVector posIn  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector posOut = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
-  G4double delta = (posOut - posIn).mag();
-
-  if (std::abs(delta) < 0.3*h)
-    {
-        G4cout << "small step - delta: " << delta;
-        G4cout << "error ";
-        for (G4int i = 0; i<6; i++)
-        {G4cout << yErr[i] << " ";}
-        G4cout << G4endl;
-    }
-
 }
 
 void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
