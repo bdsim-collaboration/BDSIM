@@ -57,7 +57,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // if it's a very small step - no error - safer as differences between large positions
   // for very small steps can have numerical precision issues.
   // no need to update ang and rad.
-  if (h < 1e-10)
+  if (h < 1e-9) // 1e-9 is 1pm (in g4 units) - the minimum length scale of bdsim
     {
       for (G4int i = 0; i < 6; i++)
         {yErr[i] = 0;}
