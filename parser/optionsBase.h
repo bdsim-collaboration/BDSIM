@@ -95,6 +95,20 @@ namespace GMAD
     double ffact;
     double beamEnergy;
 
+    ///@{ Intial beam line transform w.r.t. the world coordinate frame.
+    double beamlineX;
+    double beamlineY;
+    double beamlineZ;
+    double beamlinePhi;
+    double beamlineTheta;
+    double beamlinePsi;
+    double beamlineAxisX;
+    double beamlineAxisY;
+    double beamlineAxisZ;
+    double beamlineAngle;
+    bool   beamlineAxisAngle;
+    ///@}
+
     ///@{ initial beam centroid
     double X0, Y0, Z0, S0;
     double Xp0, Yp0, Zp0;
@@ -159,7 +173,7 @@ namespace GMAD
     int    eventNumberOffset;
     
     /// bdsim options
-    int       checkOverlaps;
+    bool       checkOverlaps;
     /// for element specification
     double xsize, ysize;
 

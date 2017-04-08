@@ -19,9 +19,9 @@ BDSExtent::BDSExtent():
   extZPos(0.0)
 {;}
 
-BDSExtent::BDSExtent(std::pair<G4double, G4double> extXIn,
-		     std::pair<G4double, G4double> extYIn,
-		     std::pair<G4double, G4double> extZIn):
+BDSExtent::BDSExtent(const std::pair<G4double, G4double>& extXIn,
+		     const std::pair<G4double, G4double>& extYIn,
+		     const std::pair<G4double, G4double>& extZIn):
   extXNeg(extXIn.first),
   extXPos(extXIn.second),
   extYNeg(extYIn.first),
@@ -151,15 +151,15 @@ G4double BDSExtent::MaximumAbsTransverse() const
   return *std::max_element(exts.begin(), exts.end());
 }
 
-G4bool BDSExtent::Encompasses(const G4ThreeVector point) const
+G4bool BDSExtent::Encompasses(G4ThreeVector point) const
 {
   BDSExtent extentPoint = BDSExtent(point);
   return extentPoint < (*this);
 }
 
-G4bool BDSExtent::Encompasses(const G4double x,
-			      const G4double y,
-			      const G4double z) const
+G4bool BDSExtent::Encompasses(G4double x,
+			      G4double y,
+			      G4double z) const
 {
   return Encompasses(G4ThreeVector(x,y,z));
 }

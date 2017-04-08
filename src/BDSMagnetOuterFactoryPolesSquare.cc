@@ -19,8 +19,6 @@
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-#include <vector>
-
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
@@ -123,10 +121,9 @@ void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
   
   G4int nPoles = 2*orderIn;
   // create different poles to fit inside square yoke
-  G4RotationMatrix* iPoleRM;
   for (G4int i = 0; i < nPoles; ++i)
     {
-      iPoleRM = new G4RotationMatrix();
+      G4RotationMatrix* iPoleRM = new G4RotationMatrix();
       G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
       G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
       iPoleRM->rotateZ(rotationAngle);

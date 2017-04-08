@@ -105,13 +105,14 @@ void BDSBunchPtc::LoadPtcFile()
   return;
 }
 
-void BDSBunchPtc::SetOptions(const GMAD::Options& opt)
+void BDSBunchPtc::SetOptions(const GMAD::Options& opt,
+			     G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetDistribFile((G4String)opt.distribFile); 
   LoadPtcFile();
 }
@@ -143,6 +144,9 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t      = (z0-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
   E      = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
   zp     = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   weight = 1.0; 
 
   iRay++;

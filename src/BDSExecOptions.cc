@@ -73,16 +73,14 @@ void BDSExecOptions::Parse(int argc, char **argv)
   int OptionIndex  = 0;
   int OptionNumber = 0;
   const char* optionName;
-  // return code
-  int c;
   // number conversion check
   bool conversion = true;
   for(;;) {
     OptionIndex = 0;
   
     // see e.g. http://linux.die.net/man/3/getopt
-    c = getopt_long(argc, argv, "Vv",
-		    LongOptions, &OptionIndex );
+    int c = getopt_long(argc, argv, "Vv",
+			LongOptions, &OptionIndex );
     
     if ( c == -1 ) // end of options list
       break;
@@ -289,6 +287,7 @@ void BDSExecOptions::Usage() const
 
 void BDSExecOptions::Print() const
 {
+  G4cout << std::boolalpha; // print textual representation of bool
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFileName: "       << std::setw(15) << options.inputFileName       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << options.batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << options.circular            << G4endl;
@@ -312,8 +311,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFileName: "    << std::setw(15) << options.visMacroFileName    << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << options.visDebug            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " ignoreSIGINT: "        << std::setw(15) << ignoreSIGINT                << G4endl;
-  
-  return;
+  G4cout << std::noboolalpha; // reset to default printing
 }
 
 G4String BDSExecOptions::GetPath(G4String fileName)
