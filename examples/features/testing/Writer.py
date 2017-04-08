@@ -475,7 +475,7 @@ class Writer:
             lenFileName = filename + lenName
             xsize = GlobalData.paramValues['xcol'][0]
             ysize = GlobalData.paramValues['ycol'][0]
-            collFileName = lenFileName + '_x_' + _np.str(xsize) + '_y_' + _np.str(ysize)
+            collFileName = lenFileName + '__x_' + _np.str(xsize) + '__y_' + _np.str(ysize)
 
             machine = self._getMachine(test.Particle, test._testRobustness)
             if component == 'rcol':

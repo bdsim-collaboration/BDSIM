@@ -156,11 +156,18 @@ class Timing:
         self.comparatorTimes[component].append(test['compTime'])
 
     def __repr__(self):
+        totalBDSIMTime = []
+        totalCompTime = []
+        for component, times in self.bdsimTimes.iteritems():
+            totalBDSIMTime.extend(times)
+        for component, times in self.comparatorTimes.iteritems():
+            totalCompTime.extend(times)
+
         s = 'Total Testing time  = ' + _np.str(self.totalTime) + '\r\n'
-        s += 'Average BDSIM time = ' + _np.str(_np.average(self.bdsimTimes)) + " +/- "
-        s += _np.str(_np.std(self.bdsimTimes)) + '.\r\n'
-        s += 'Average Comparator time = ' + _np.str(_np.average(self.comparatorTimes)) + " +/- "
-        s += _np.str(_np.std(self.comparatorTimes)) + '.\r\n'
+        s += 'Average BDSIM time = ' + _np.str(_np.average(totalBDSIMTime)) + " +/- "
+        s += _np.str(_np.std(totalBDSIMTime)) + '.\r\n'
+        s += 'Average Comparator time = ' + _np.str(_np.average(totalCompTime)) + " +/- "
+        s += _np.str(_np.std(totalCompTime)) + '.\r\n'
         return s
 
 
@@ -188,10 +195,10 @@ class ResultsUtilities:
         if code == 0:
             return coords
         elif code == 2:  # incorrect args
-            coords[:] = GlobalData.returnCodes['NO_DATA']
+            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
             return coords
         elif code == 3:  # file not found
-            coords[:] = GlobalData.returnCodes['NO_DATA']
+            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
             return coords
 
         # get data in logfile.
@@ -209,8 +216,8 @@ class ResultsUtilities:
             branches = branches.replace(')', '')
             numParticles = branches.split('/')
             if numParticles[0] != numParticles[1]:
-                coords[6] = GlobalData.returnCodes['FAILED']
-                coords[0:6] = GlobalData.returnCodes['NO_DATA']
+                coords[6] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
+                coords[0:6] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
                 # if num particles don't match, there'll be no phase space comparison
                 return coords
 
@@ -223,20 +230,20 @@ class ResultsUtilities:
             branches.remove('branches:')
             branches.remove('')
             if branches.__contains__('x'):
-                coords[0] = GlobalData.returnCodes['FAILED']
+                coords[0] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('xp'):
-                coords[1] = GlobalData.returnCodes['FAILED']
+                coords[1] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('y'):
-                coords[2] = GlobalData.returnCodes['FAILED']
+                coords[2] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('yp'):
-                coords[3] = GlobalData.returnCodes['FAILED']
+                coords[3] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('t'):
-                coords[4] = GlobalData.returnCodes['FAILED']
+                coords[4] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('zp'):
-                coords[5] = GlobalData.returnCodes['FAILED']
+                coords[5] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
             if branches.__contains__('n'):
-                coords[6] = GlobalData.returnCodes['FAILED']
-                coords[0:6] = GlobalData.returnCodes['NO_DATA']
+                coords[6] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
+                coords[0:6] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
         return coords
 
     def _getBDSIMLogData(self, result):
@@ -284,25 +291,37 @@ class ResultsUtilities:
             # something went wrong
             return generalStatus
 
-        # loop over all startlineindices and update general status with error
-        # code depending on which Geant4 class the error was issued by.
-        if len(startLineIndices) > 0:
-            for index, startLine in enumerate(startLineIndices):
-                exceptions = splitLines[startLine:endLineIndices[index] + 1]
-                issuedLine = exceptions[2]
-                if issuedLine.__contains__('G4PVPlacement::CheckOverlaps()'):
-                    generalStatus.append(GlobalData.returnCodes['OVERLAPS'])
-                if issuedLine.__contains__('G4PropagatorInField::ComputeStep()'):
-                    generalStatus.append(GlobalData.returnCodes['STUCK_PARTICLE'])
-                if issuedLine.__contains__('G4MagInt_Driver::AccurateAdvance()'):
-                    generalStatus.append(GlobalData.returnCodes['TRACKING_WARNING'])
-                if issuedLine.__contains__('G4CutTubs::G4CutTubs()'):
-                    generalStatus.append(GlobalData.returnCodes['FATAL_EXCEPTION'])
-                if issuedLine.__contains__('G4ChordFinder::FindNextChord()'):
-                    generalStatus.append(GlobalData.returnCodes['NAN_CHORD'])
+        # loop over all soft codes and update general status with error code depending
+        # on which Geant4 class(es) the error was issued by. There are two seperate checks,
+        # one for the whole error line in the file, the other for the Geant4 class that issued
+        # the error in the G4Exception section in the file. The whole error line must be checked
+        # as some Geant4 errors are written out with cerr rather than G4Exception class.
+        softCodes = GlobalData.ReturnsAndErrors.GetSoftCodes()
+        for code in softCodes:
+            issuedBy = GlobalData.ReturnsAndErrors.GetIssuedBy(code)
 
-                # TODO: check for other types of warnings/errors.
+            if multiEntryTypes.__contains__(type(issuedBy)):
+                for issue in issuedBy:
+                    issueCR = issue + "\r\n"
+                    if splitLines.__contains__(issue):
+                        generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
+            else:
+                issueCR = issuedBy + "\r\n"
+                if splitLines.__contains__(issueCR):
+                    generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
 
+            if len(startLineIndices) > 0:
+                for index, startLine in enumerate(startLineIndices):
+                    exceptions = splitLines[startLine:endLineIndices[index] + 1]
+                    issuedLine = exceptions[2]
+
+                    if multiEntryTypes.__contains__(type(issuedBy)):
+                        for issue in issuedBy:
+                            if issuedLine.__contains__(issue):
+                                generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
+                    else:
+                        if issuedLine.__contains__(issuedBy):
+                            generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
         return generalStatus
 
     def _getGitCommit(self):
@@ -451,8 +470,8 @@ class Analysis(ResultsUtilities):
                     failedFile = testdict['testFile'].split('/')[-1]
                     failedTests.append(failedFile)
                 # check for soft failures
-                for failure in GlobalData.softFailures:
-                    if generalStatus.__contains__(GlobalData.returnCodes[failure]):
+                for failure in GlobalData.ReturnsAndErrors.GetSoftCodes():
+                    if generalStatus.__contains__(GlobalData.ReturnsAndErrors.GetCode(failure)):
                         if not softFails.keys().__contains__(failure):
                             softFails[failure] = []
                         failedFile = testdict['testFile'].split('/')[-1]
@@ -474,7 +493,7 @@ class Analysis(ResultsUtilities):
                 f.write(test + "\r\n")
             f.write("\r\n")
 
-        for failure in GlobalData.softFailures:
+        for failure in GlobalData.ReturnsAndErrors.GetSoftCodes():
             failures = []
             if softFails.keys().__contains__(failure):
                 failures = softFails[failure]
@@ -820,10 +839,11 @@ class _Plotting:
     def _addColorBar(self, f, ax):
         """ Add a colorbar to the results plot."""
         # colorbar colors and values independant of data, can be set according to either subplot.
+        numReturns = len(GlobalData.ReturnsAndErrors['name'])
         cbar = f.colorbar(ax)
-        cbarTicks = _np.linspace(0.5, len(GlobalData.returnCodes) - 0.5, len(GlobalData.returnCodes))
+        cbarTicks = _np.linspace(0.5, numReturns - 0.5, numReturns)
         cbar.set_ticks(cbarTicks)
-        cbar.set_ticklabels(GlobalData.returnCodes.keys())
+        cbar.set_ticklabels(GlobalData.ReturnsAndErrors['name'])
         cbar.ax.tick_params(labelsize=8)
         f.tight_layout()
 
@@ -840,6 +860,8 @@ class _Plotting:
             particle = results[0]['particle']
             numTests = len(results)
 
+            cmap = _color.ListedColormap(GlobalData.ReturnsAndErrors['colours'])
+
             # for a given test and phase space axis, the results may contain multiple values
             # e.g [passed, failed, no_data]. Here, we plot using the first of the multiple values
             # and add the remaining values on as boxes later.
@@ -854,8 +876,9 @@ class _Plotting:
                 zeroData.append(dataRes)
 
             # set normalised colormap.
-            bounds = _np.linspace(0, len(GlobalData.returnCodes), len(GlobalData.returnCodes) + 1)
-            norm = _color.BoundaryNorm(bounds, GlobalData.cmap.N)
+            numReturns = len(GlobalData.ReturnsAndErrors['name'])
+            bounds = _np.linspace(0, numReturns, numReturns + 1)
+            norm = _color.BoundaryNorm(bounds, cmap.N)
 
             extent = [0, 7, 0, results._numEntries]
 
@@ -876,7 +899,7 @@ class _Plotting:
                             subplotTitle += '\n'
 
             # plot the data
-            cax = ax.imshow(zeroData, interpolation='none', origin='lower', cmap=GlobalData.cmap, norm=norm,
+            cax = ax.imshow(zeroData, interpolation='none', origin='lower', cmap=cmap, norm=norm,
                             extent=extent, aspect='auto')
 
             ax.set_xlim(0, 8)
@@ -890,7 +913,7 @@ class _Plotting:
                         numStatus = len(vals)
                         yIndex = index
                         for statIndex, stat in enumerate(vals):
-                            boxColor = GlobalData.cmap.colors[_np.int(stat)]
+                            boxColor = cmap.colors[_np.int(stat)]
                             boxWidth = 1.0 / numStatus
                             ax.add_patch(_patches.Rectangle((coord + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
@@ -902,7 +925,7 @@ class _Plotting:
                     numStatus = len(status)
                     yIndex = index
                     for statIndex, stat in enumerate(status):
-                        boxColor = GlobalData.cmap.colors[stat]
+                        boxColor = cmap.colors[stat]
                         boxWidth = 1.0 / numStatus
                         ax.add_patch(_patches.Rectangle((7 + statIndex*boxWidth, yIndex), boxWidth, 1, color=boxColor))
 
@@ -1080,7 +1103,7 @@ class _Report:
         # Globals.Globals.returnCodes values.
         groupedResults = {}
         numResults = {}
-        for error, codeIndex in GlobalData.returnCodes.iteritems():
+        for codeIndex, error in enumerate(GlobalData.ReturnsAndErrors['name']):
             groupedResults[error] = Results(component)
             numResults[error] = 0
             for resultNum, result in enumerate(comparatorResults):
@@ -1235,13 +1258,13 @@ class _Report:
         softFailures = False
 
         # loop over all soft failures and update string with numbers per failure.
-        for index, failure in enumerate(GlobalData.softFailures):
+        for index, failure in enumerate(GlobalData.ReturnsAndErrors.GetSoftCodes()):
             if overallRes[failure] > 0:
                 softFailures = True
                 strName = failure.replace("_", " ")
                 strName = _string.capitalize(strName)
                 softStr += "  " + strName + ": " + _np.str(overallRes[failure])
-                if index == len(GlobalData.softFailures)-1:
+                if index == len(GlobalData.ReturnsAndErrors.GetSoftCodes())-1:
                     softStr += ".\r\n"
                 else:
                     softStr += ",\r\n"

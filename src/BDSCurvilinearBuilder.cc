@@ -27,9 +27,6 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder():
       G4double maxTunnelR = tunnelExtent.MaximumAbs();
       curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
     }
-  checkOverlaps    = globals->CheckOverlaps();
-  lengthSafety     = globals->LengthSafety();
-  minimumLength    = 1*CLHEP::mm;
   bonusChordLength = 1*CLHEP::m;
 
   factory = new BDSCurvilinearFactory();

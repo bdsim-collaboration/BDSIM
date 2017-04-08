@@ -15,7 +15,9 @@ typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::const_iterator BDS
 
 /**
  * @brief A registry of physical volume info instances that
- * can be searched. This actually contains two registries - one
+ * can be searched. 
+ * 
+ * This actually contains two registries - one
  * for read out geometry and one for general geometry. The reason 
  * for this is that the physical volumes of the general geometry are
  * much more numerous and would increase the search time of whole registry
