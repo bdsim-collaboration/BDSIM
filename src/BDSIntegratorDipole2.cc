@@ -27,6 +27,12 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
+  if (h < 1e-9)
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      return;
+    }
+  
   // Extra storage arrays.
   G4double yTemp[7], yTemp2[7];
   
