@@ -49,12 +49,6 @@ foreach(header ${rebdsimLibLinkDefs})
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
-        add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                ${CMAKE_CURRENT_BINARY_DIR}
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-        )
         # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
         set_property(
                 SOURCE ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc

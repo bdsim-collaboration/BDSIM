@@ -151,15 +151,15 @@ G4double BDSExtent::MaximumAbsTransverse() const
   return *std::max_element(exts.begin(), exts.end());
 }
 
-G4bool BDSExtent::Encompasses(const G4ThreeVector point) const
+G4bool BDSExtent::Encompasses(G4ThreeVector point) const
 {
   BDSExtent extentPoint = BDSExtent(point);
   return extentPoint < (*this);
 }
 
-G4bool BDSExtent::Encompasses(const G4double x,
-			      const G4double y,
-			      const G4double z) const
+G4bool BDSExtent::Encompasses(G4double x,
+			      G4double y,
+			      G4double z) const
 {
   return Encompasses(G4ThreeVector(x,y,z));
 }

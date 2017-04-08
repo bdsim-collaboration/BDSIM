@@ -52,7 +52,7 @@ namespace GMAD
     /// No default constructor
     Parser() = delete;
     /// Constructor method
-    static Parser* Instance(std::string filename);
+    static Parser* Instance(const std::string& filename);
     /// Access method
     static Parser* Instance();
     /// Destructor
@@ -79,11 +79,11 @@ namespace GMAD
     /// Method that transfers parameters to element properties
     void write_table(std::string* name, ElementType type, bool isLine=false);
     /// Remove sublines from beamline, expand all into one LINE
-    void expand_line(std::string name, std::string start, std::string end);
+    void expand_line(const std::string& name, std::string start, std::string end);
     /// insert a sampler into beamline_list
-    void add_sampler(std::string name, int count, ElementType type);
+    void add_sampler(const std::string& name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
-    void add_csampler(std::string name, int count, ElementType type);
+    void add_csampler(const std::string& name, int count, ElementType type);
     /// Insert global object of parser class C in Container class
     template <class C, class Container=std::vector<C>>
       void Add();
@@ -95,15 +95,15 @@ namespace GMAD
       Container& GetList();
 
     /// find element
-    Element& find_element(std::string element_name);
+    Element& find_element(const std::string& element_name);
     /// find element (const) 
-    const Element& find_element(std::string element_name)const;
+    const Element& find_element(const std::string& element_name)const;
     /// access property of Element with element_name
-    double property_lookup(std::string element_name, std::string property_name)const;
+    double property_lookup(const std::string& element_name, const std::string& property_name)const;
     /// add element to temporary element sequence tmp_list
-    void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
+    void add_element_temp(const std::string& name, int number, bool pushfront, ElementType linetype);
     /// copy properties from Element into params, returns element type as integer, returs _NONE if not found
-    int copy_element_to_params(std::string elementName);
+    int copy_element_to_params(const std::string& elementName);
 
     /// create new parser symbol
     Symtab * symcreate(std::string s);
@@ -128,7 +128,7 @@ namespace GMAD
       double GetValue(std::string property);
 
     /// Overwrite element with current parameters
-    void OverwriteElement(std::string elementName);
+    void OverwriteElement(const std::string& elementName);
     /// Add variable memory to variable list for memory management
     void AddVariable(std::string* name);
     ///@{ Print methods
