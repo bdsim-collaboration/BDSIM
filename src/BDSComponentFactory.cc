@@ -437,21 +437,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   // Hence -ve factor here.
   (*st)["angle"] = -angleAndField.first;
   (*st)["field"] = -angleAndField.second;
-  
-  G4Transform3D fieldRotation = G4Transform3D();  
+    
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
-    {
-      t = BDSMagnetType::vkicker;
-      fieldRotation = G4RotateZ3D(-CLHEP::halfpi);
-    }
+    {t = BDSMagnetType::vkicker;}
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::g4classicalrk4,
 					       st,
-					       true,
-					       fieldRotation);
+					       true);
+  if (isVertical)
+    {vacuumField->SetUnitDirection(new G4ThreeVector(1,0,0));}
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
