@@ -243,6 +243,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
+  G4ThreeVector unitDirection = info.UnitDirection();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
     {
@@ -260,7 +261,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-      {field = new BDSFieldMagSBend(strength, brho); break;}
+      {field = new BDSFieldMagSBend(strength, brho, unitDirection); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::dipolequadrupole:
