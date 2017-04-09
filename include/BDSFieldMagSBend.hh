@@ -21,13 +21,6 @@ class BDSMagnetStrength;
 class BDSFieldMagSBend: public BDSFieldMag
 {
 public:
-  /// A constant uniform field with value equal to 'field'. If angle is
-  /// finite, the local radius of curvature is calculated and used by 
-  BDSFieldMagSBend(G4ThreeVector  fieldIn,
-		   const G4double aLength,
-		   const G4double aAngle  = 0,
-		   G4bool debugIn = false);
-
   BDSFieldMagSBend(BDSMagnetStrength const* strength,
 		   G4double          const  brho,
 		   G4ThreeVector unitDirection = G4ThreeVector(0,1,0));
