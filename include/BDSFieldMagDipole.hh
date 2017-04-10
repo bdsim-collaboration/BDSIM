@@ -1,5 +1,5 @@
-#ifndef BDSFIELDMAGSBEND_H
-#define BDSFIELDMAGSBEND_H
+#ifndef BDSFIELDMAGDIPOLE_H
+#define BDSFIELDMAGDIPOLE_H
 
 #include "BDSFieldMag.hh"
 
@@ -18,14 +18,14 @@ class BDSMagnetStrength;
  * convention.
  */
 
-class BDSFieldMagSBend: public BDSFieldMag
+class BDSFieldMagDipole: public BDSFieldMag
 {
 public:
-  BDSFieldMagSBend(BDSMagnetStrength const* strength,
+  BDSFieldMagDipole(BDSMagnetStrength const* strength,
 		   G4double          const  brho,
 		   G4ThreeVector unitDirection = G4ThreeVector(0,1,0));
 
-  virtual ~BDSFieldMagSBend(){;}
+  virtual ~BDSFieldMagDipole(){;}
 
   /// Access the field value.
   virtual G4ThreeVector GetField(const G4ThreeVector &position,
@@ -33,7 +33,7 @@ public:
 
 private:
   /// Private default constructor to ensure use of supplied constructor
-  BDSFieldMagSBend();
+  BDSFieldMagDipole();
   
   /// The vector of the field. This constructed in local coordinates and the first time
   /// the field is queried, the auxiliary navigator (through inheritance) is used to
