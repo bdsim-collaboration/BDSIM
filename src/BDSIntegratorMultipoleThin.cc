@@ -21,7 +21,7 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
   std::vector<G4String>::iterator skey = skewKeys.begin();
-  for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
+  for (G4double i = 0; i < normKeys.size(); i++, ++nkey, ++skey)
     {
       bnl.push_back((*strength)[*nkey] / std::pow(CLHEP::m,i+1));
       bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
@@ -82,7 +82,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   std::list<double>::iterator kn = bnl.begin();
 
   // sum higher order components into one kick
-  for (; kn != bnl.end(); n++, kn++)
+  for (; kn != bnl.end(); n++, ++kn)
     {
       momx = 0; //reset to zero
       momy = 0;
@@ -112,7 +112,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
-  for (; ks != bsl.end(); n++, ks++)
+  for (; ks != bsl.end(); n++, ++ks)
     {
       if (BDS::IsFinite(*ks))
         {
