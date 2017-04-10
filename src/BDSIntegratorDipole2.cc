@@ -10,7 +10,8 @@
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
-  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
+  minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn),
+  eqOfM(eqOfMIn)
 {;}
 
 void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
@@ -29,10 +30,23 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 {
   // Extra storage arrays.
   G4double yTemp[7], yTemp2[7];
+
+  // Neutral particles drift through.
+  if(eqOfM->FCof() == 0)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      // can't set distchord directly due to G4MagHelicaStepper
+      // function not virtual there.
+      // this combination will give a rational answer given the logic
+      // in G4MagHelicalStepper::DistChord
+      SetAngCurve(10); // > 2pi
+      SetRadHelix(0);
+      return;
+    }
   
   // Arrays for field querying (g4 interface)
   G4double bO[4]; // original location field value
-  GetEquationOfMotion()->GetFieldValue(yIn, bO);
+  eqOfM->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
 
   // Do a full step - the result we use

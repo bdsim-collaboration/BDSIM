@@ -95,8 +95,7 @@ void BDSOutputROOT<Type>::Initialise()
   // set up the root file
   G4String basefilename = globalConstants->OutputFileName();
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
+  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number

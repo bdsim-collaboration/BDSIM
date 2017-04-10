@@ -72,6 +72,9 @@ private:
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.
   G4double minimumRadiusOfCurvature;
+
+  /// Cache of equation of motion. This class does not own it.
+  G4Mag_EqRhs* eqOfM;
 };
 
 #endif
