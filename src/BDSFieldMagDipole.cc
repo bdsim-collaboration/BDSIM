@@ -1,12 +1,12 @@
 #include "BDSDebug.hh"
-#include "BDSFieldMagSBend.hh"
+#include "BDSFieldMagDipole.hh"
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
 
-BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength const* strength,
+BDSFieldMagDipole::BDSFieldMagDipole(BDSMagnetStrength const* strength,
 				   G4double          const  /*brho*/,
 				   G4ThreeVector            unitDirection)
 {
@@ -16,7 +16,7 @@ BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength const* strength,
 #endif
 }
 
-G4ThreeVector BDSFieldMagSBend::GetField(const G4ThreeVector& /*position*/,
+G4ThreeVector BDSFieldMagDipole::GetField(const G4ThreeVector& /*position*/,
 					 const G4double       /*t*/) const
 {
   return localField;

@@ -131,7 +131,7 @@ public:
 #endif
 
   /// Required to find beamline index careful including in streamer.
-  BDSAuxiliaryNavigator* auxNavigator;
+  BDSAuxiliaryNavigator* auxNavigator; //! add comment to avoid warning (no need to make persistent, see issue #191)
 
 public:
   void Flush();

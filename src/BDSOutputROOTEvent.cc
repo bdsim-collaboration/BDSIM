@@ -138,8 +138,7 @@ void BDSOutputROOTEvent::Initialise()
   basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
+  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + std::string(".root");
 
