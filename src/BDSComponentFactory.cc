@@ -448,7 +448,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 					       st,
 					       true);
   if (isVertical)
-    {vacuumField->SetUnitDirection(new G4ThreeVector(1,0,0));}
+    {vacuumField->SetUnitDirection(new G4ThreeVector(-1,0,0));}
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
