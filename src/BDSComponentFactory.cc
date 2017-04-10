@@ -745,7 +745,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 	itm = element->layerMaterials.begin(),
 	itIsSampler = element->layerIsSampler.begin();
       itt != element->layerThicknesses.end();
-      itt++, itm++)
+      ++itt, ++itm)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " - screen layer: thickness: " 
@@ -755,7 +755,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
       if(element->layerIsSampler.size()>0)
 	{
 	  theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
-	  itIsSampler++;
+	  ++itIsSampler;
 	}
       else
 	{theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm);}

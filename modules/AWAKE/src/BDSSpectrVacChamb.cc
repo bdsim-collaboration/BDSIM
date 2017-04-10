@@ -460,7 +460,7 @@ void BDSSpectrVacChamb::printTrapVertices(std::vector<G4TwoVector> vertices, con
   int n=0;
   for(std::vector<G4TwoVector>::const_iterator vertIt = vertices.begin();
       vertIt!=vertices.end();
-      vertIt++){
+      ++vertIt){
     G4cout << "(" << n << ", " << (*vertIt).x() << ", " << (*vertIt).y() << ")" << G4endl;
     n++;
   }
