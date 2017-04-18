@@ -1447,7 +1447,7 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 
 The following is an example syntax is used to place a piece of geometry::
 
-  leadblock, placement, x = 10*m,
+  leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml;
