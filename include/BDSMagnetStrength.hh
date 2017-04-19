@@ -41,9 +41,6 @@ public:
   /// This constructor allows instantiation with a map of keys and values.
   explicit BDSMagnetStrength(std::map<G4String, G4double> keyvalues);
 
-  /// Copy constructor
-  BDSMagnetStrength(const BDSMagnetStrength& other);
-
   ~BDSMagnetStrength(){;}
 
   /// Output stream
