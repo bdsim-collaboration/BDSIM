@@ -30,6 +30,10 @@ public:
   void Write(BDSBeamline* beamline);
   
 private:
+  BDSSurvey() = delete;
+  BDSSurvey(const BDSSurvey&) = delete;
+  BDSSurvey& operator=(const BDSSurvey&) = delete;
+
   /// Write header
   void WriteHeader();
   
