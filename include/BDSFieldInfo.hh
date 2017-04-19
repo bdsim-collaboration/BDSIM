@@ -58,6 +58,8 @@ public:
 
   /// Copy constructor
   BDSFieldInfo(const BDSFieldInfo& other);
+  /// Assignment operator not used
+  BDSFieldInfo& operator=(const BDSFieldInfo&) = delete;
 
   /// @{ Accessor
   inline BDSFieldType        FieldType()                const {return fieldType;}
