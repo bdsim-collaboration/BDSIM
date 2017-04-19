@@ -20,7 +20,7 @@ class BDSMagnetStrength;
 class BDSSurvey
 {
 public:
-  BDSSurvey(G4String filename);  
+  explicit BDSSurvey(G4String filename);  
   ~BDSSurvey();
 
   /// write line

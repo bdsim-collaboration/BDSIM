@@ -27,7 +27,7 @@ class BDSArray4DCoords;
 class BDSInterpolator4DLinear: public BDSInterpolator4D
 {
 public:
-  BDSInterpolator4DLinear(BDSArray4DCoords* arrayIn);
+  explicit BDSInterpolator4DLinear(BDSArray4DCoords* arrayIn);
   virtual ~BDSInterpolator4DLinear();
 
 protected:

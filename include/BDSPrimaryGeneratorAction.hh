@@ -18,7 +18,7 @@ class G4ParticleGun;
 class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
-  BDSPrimaryGeneratorAction(BDSBunch*);    
+  explicit BDSPrimaryGeneratorAction(BDSBunch*);    
   virtual ~BDSPrimaryGeneratorAction();
   
   virtual void GeneratePrimaries(G4Event*);

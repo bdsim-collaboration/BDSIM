@@ -14,7 +14,7 @@
 class BDSSampler: public BDSGeometryComponent
 {
 public:
-  BDSSampler(G4String nameIn);
+  explicit BDSSampler(G4String nameIn);
   virtual ~BDSSampler(){;}
 
   /// Return the name of this sampler.

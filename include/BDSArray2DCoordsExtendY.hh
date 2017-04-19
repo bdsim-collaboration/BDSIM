@@ -41,7 +41,7 @@ class BDSArray2DCoordsExtendY: public BDSArray2DCoords
 {
 public:
   /// Wrap an existing BDSArray2DCoords instance.
-  BDSArray2DCoordsExtendY(BDSArray2DCoords* arrayIn);
+  explicit BDSArray2DCoordsExtendY(BDSArray2DCoords* arrayIn);
   virtual ~BDSArray2DCoordsExtendY(){;}
 
   /// @{ Overridden from BDSArray4DCoords.

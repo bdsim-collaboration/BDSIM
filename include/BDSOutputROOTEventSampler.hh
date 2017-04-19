@@ -42,7 +42,7 @@ public:
   float              S;   // Will not need this when have global transforms
 
   BDSOutputROOTEventSampler();
-  BDSOutputROOTEventSampler(std::string samplerNameIn);
+  explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
   void Fill(G4double E,

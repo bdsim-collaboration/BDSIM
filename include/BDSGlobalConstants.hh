@@ -53,7 +53,7 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  BDSGlobalConstants(const GMAD::Options&);
+  explicit BDSGlobalConstants(const GMAD::Options&);
 
 private:
   /// Singleton instance

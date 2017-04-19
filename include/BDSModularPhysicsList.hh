@@ -32,7 +32,7 @@ namespace GMAD {
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  BDSModularPhysicsList(G4String physicsList);
+  explicit BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
 
   /// Print out which physics lists are activated.

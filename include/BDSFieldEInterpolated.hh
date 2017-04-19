@@ -15,9 +15,8 @@
 class BDSFieldEInterpolated: public BDSFieldE
 {
 public:
-  BDSFieldEInterpolated(G4Transform3D offset);
-  BDSFieldEInterpolated(G4Transform3D offset,
-			G4double      eScalingIn);
+  explicit BDSFieldEInterpolated(G4Transform3D offset,
+				 G4double      eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated(){;}
 

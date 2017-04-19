@@ -23,7 +23,7 @@ public:
   /// translations, reflections and scalings to be applied if requried - ie for
   /// misalignment from the local coordinates.
   BDSFieldE();
-  BDSFieldE(G4Transform3D transformIn);
+  explicit BDSFieldE(G4Transform3D transformIn);
   virtual ~BDSFieldE(){;}
 
   /// Get the field - local coordinates.

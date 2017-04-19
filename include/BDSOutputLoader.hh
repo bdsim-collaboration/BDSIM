@@ -22,7 +22,7 @@ class TTree;
 class BDSOutputLoader
 {
 public:
-  BDSOutputLoader(G4String filePath);
+  explicit BDSOutputLoader(G4String filePath);
   ~BDSOutputLoader();
 
   GMAD::OptionsBase OptionsBaseClass();
