@@ -42,7 +42,8 @@ include(cmake/SystemCheck.cmake)
 #################
 
 # GIT - optional - for software version in output & copying only example source files
-find_package(Git QUIET)
+# minimum version 1.8.2.1 for git ls-files for example copying
+find_package(Git 1.8.2.1 QUIET)
 # turn off git support if there's no .git folder - ie it's a copy of the source
 # but not a repository
 if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
