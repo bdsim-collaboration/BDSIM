@@ -14,5 +14,5 @@ set(CTEST_DROP_LOCATION "/cdash/submit.php?project=BDSIM")
 set(CTEST_DROP_SITE_CDASH TRUE)
 
 #find_program(CTEST_GIT_COMMAND NAMES git)
-#set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
+set(CTEST_UPDATE_COMMAND "git")
 
