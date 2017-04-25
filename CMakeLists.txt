@@ -79,6 +79,12 @@ include(cmake/CompilerFlags.cmake)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
+  include(ProcessorCount)
+  ProcessorCount(N)
+  set(CMAKE_DOT_NUM_THREADS ${N})
+  if ($N GREATER 8)
+    set(CMAKE_DOT_NUM_THREADS 8)
+  endif()
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cnf.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf @ONLY)
   add_custom_target(doc
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf
