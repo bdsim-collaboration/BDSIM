@@ -5,17 +5,18 @@
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldEInterpolated.hh"
 #include "BDSFieldESinusoid.hh"
+#include "BDSFieldEZero.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldEMGlobal.hh"
 #include "BDSFieldEMInterpolated.hh"
 #include "BDSFieldEMRFCavity.hh"
+#include "BDSFieldEMZero.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
-#include "BDSFieldMagDummy.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagMultipole.hh"
@@ -26,6 +27,7 @@
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagSolenoid.hh"
+#include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGeometryType.hh"
@@ -259,6 +261,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 							 scalingKey);
 	break;
       }
+    case BDSFieldType::bzero:
+      {field = new BDSFieldMagZero(); break;}
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
@@ -329,6 +333,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
     case BDSFieldType::ebmap3d:
     case BDSFieldType::ebmap4d:
       {field = BDSFieldLoader::Instance()->LoadEMField(info); break;}
+    case BDSFieldType::ebzero:
+      {field = new BDSFieldEMZero(); break;}
     default:
       return nullptr;
       break;
@@ -364,6 +370,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
     case BDSFieldType::emap3d:
     case BDSFieldType::emap4d:
       {field = BDSFieldLoader::Instance()->LoadEField(info); break;}
+    case BDSFieldType::ezero:
+      {field = new BDSFieldEZero(); break;}
     default:
       return nullptr;
       break;
@@ -527,7 +535,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
   const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
-  G4MagneticField* bGlobalField       = new BDSFieldMagDummy(); //Zero magnetic field.
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
   BDSFieldObjects* completeField      = new BDSFieldObjects(nullptr, bGlobalField,

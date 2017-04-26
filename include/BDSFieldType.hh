@@ -16,6 +16,7 @@
 struct fieldtypes_def
 {
   enum type {none,
+	     bzero, ezero, ebzero,
 	     teleporter,
 	     bmap1d,  bmap2d,  bmap3d,  bmap4d,
 	     emap1d,  emap2d,  emap3d,  emap4d,
