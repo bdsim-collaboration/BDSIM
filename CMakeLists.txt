@@ -42,7 +42,8 @@ include(cmake/SystemCheck.cmake)
 #################
 
 # GIT - optional - for software version in output & copying only example source files
-find_package(Git QUIET)
+# minimum version 1.8.2.1 for git ls-files for example copying
+find_package(Git 1.8.2.1 QUIET)
 # turn off git support if there's no .git folder - ie it's a copy of the source
 # but not a repository
 if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
@@ -78,6 +79,12 @@ include(cmake/CompilerFlags.cmake)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
+  include(ProcessorCount)
+  ProcessorCount(N)
+  set(CMAKE_DOT_NUM_THREADS ${N})
+  if ($N GREATER 8)
+    set(CMAKE_DOT_NUM_THREADS 8)
+  endif()
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cnf.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf @ONLY)
   add_custom_target(doc
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf

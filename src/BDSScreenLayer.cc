@@ -132,6 +132,16 @@ void BDSScreenLayer::SetColour(G4Colour col)
   SetVisAttributes();
 }
 
+
+void BDSScreenLayer::AssignSampler()
+{
+  G4String samplerName = name;
+  log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
+  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+}
+
+/*
 void BDSScreenLayer::backInternalMirror()
 {
   internalMirror = new InternalMirror(InternalMirror::BACK, size,material,log,phys);
@@ -190,7 +200,7 @@ void BDSScreenLayer::InternalMirror::place()
 void BDSScreenLayer::InternalMirror::optical()
 {
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
-  /*G4LogicalBorderSurface* LogSurface = */
+  //G4LogicalBorderSurface* LogSurface = 
   new G4LogicalBorderSurface("LogSurface", motherPhys, phys, OpSurface);
   //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
   OpSurface->SetType(dielectric_metal);
@@ -220,11 +230,4 @@ void BDSScreenLayer::InternalMirror::compute()
   
   pos = sign*(motherSize.z()/2.0-thickness/2.0);
 }
-
-void BDSScreenLayer::AssignSampler()
-{
-  G4String samplerName = name;
-  log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
-  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-}
+*/

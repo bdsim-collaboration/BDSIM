@@ -53,7 +53,7 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  BDSGlobalConstants(const GMAD::Options&);
+  explicit BDSGlobalConstants(const GMAD::Options&);
 
 private:
   /// Singleton instance
@@ -62,6 +62,11 @@ private:
   /// Options instance that this is largely based on and extends
   const GMAD::Options& options;
 
+  ///@{ Unused default constructors
+  BDSGlobalConstants() = delete;
+  BDSGlobalConstants(const BDSGlobalConstants&) = delete;
+  BDSGlobalConstants& operator=(const BDSGlobalConstants&) = delete;
+  ///@}
 public:
    /// Access method 
   static BDSGlobalConstants* Instance();

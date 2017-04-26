@@ -19,7 +19,7 @@ class BDSCavityInfo;
 class BDSFieldEMRFCavity: public BDSFieldEM
 {
 public:
-  BDSFieldEMRFCavity(BDSCavityInfo const* info);
+  explicit BDSFieldEMRFCavity(BDSCavityInfo const* info);
   
   virtual ~BDSFieldEMRFCavity(){;}
 

@@ -54,7 +54,7 @@ public:
 	      G4RotationMatrix* initialGlobalRotation = nullptr);
 
   /// Constructor with transform instance that uses other constructor.
-  BDSBeamline(G4Transform3D intialTransform);
+  explicit BDSBeamline(G4Transform3D intialTransform);
   
   ~BDSBeamline();
 

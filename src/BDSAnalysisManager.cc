@@ -87,7 +87,7 @@ G4int BDSAnalysisManager::NumberOfHistograms()const{return histograms1d.size();}
 
 void BDSAnalysisManager::CheckHistogramIndex(G4int histoIndex)
 {
-  if ( ((size_t)histoIndex > histograms1d.size()) || histoIndex < 0 )
+  if ( ((size_t)histoIndex >= histograms1d.size()) || histoIndex < 0 )
   {
     G4cerr << __METHOD_NAME__ << "invalid histogram index" << G4endl;
     exit(1);

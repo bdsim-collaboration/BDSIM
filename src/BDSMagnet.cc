@@ -1,5 +1,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
@@ -58,6 +60,9 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   // It's not possible to build advanced outer geometry for a very thin magnet.
   if (length < 1e-4*CLHEP::m) // 100um minimum length for geometry
     {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
+  // No beam pipe geometry for really short 'magnets'
+  if (length < 1e-6*CLHEP::m)
+    {GetBeamPipeInfo()->beamPipeType = BDSBeamPipeType::circularvacuum;}
 }
 
 G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)

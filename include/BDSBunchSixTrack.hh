@@ -22,7 +22,7 @@ private:
   
 public: 
   BDSBunchSixTrack();
-  BDSBunchSixTrack(G4String fileNameIn);
+  explicit BDSBunchSixTrack(G4String fileNameIn);
   virtual ~BDSBunchSixTrack(); 
   void LoadSixTrackFile(); 
   virtual void SetOptions(const GMAD::Options& opt,

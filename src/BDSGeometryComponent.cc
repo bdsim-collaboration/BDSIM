@@ -13,16 +13,6 @@
 
 class G4VSensitiveDetector;
 
-BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
-					   G4LogicalVolume* containerLVIn):
-  containerSolid(containerSolidIn),
-  containerLogicalVolume(containerLVIn),
-  outerExtent(BDSExtent()),
-  innerExtent(BDSExtent()),
-  placementOffset(G4ThreeVector(0,0,0)),
-  placementRotation(nullptr)
-{;}
-
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
 					   G4LogicalVolume*  containerLVIn,
 					   BDSExtent         extentIn,

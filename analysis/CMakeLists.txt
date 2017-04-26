@@ -121,6 +121,7 @@ bdsim_install_analysis_headers(${rebdsimHeaders})
 
 get_target_property(rebdsimBinaryName rebdsim OUTPUT_NAME)
 set(rebdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${rebdsimBinaryName} CACHE STRING "rebdsim binary")
+mark_as_advanced(rebdsimBinary)
 
 # load test macros
 include(rebdsim_test_macros)
