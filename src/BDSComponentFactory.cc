@@ -429,24 +429,37 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 {
+  BDSMagnetStrength* st         = new BDSMagnetStrength();
+  G4bool             thinKicker = false;
+  BDSFieldType       fieldType  = BDSFieldType::dipole;
+  BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
+  G4double           chordLength;
+  
   if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
-
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  auto angleAndField = CalculateAngleAndField(element);
-  // MADX definition is that +ve hkicker (here angle) increases p_x, corresponding
-  // to deflection in +ve x, which is opposite to the convention of bends.
-  // Hence -ve factor here.
-  (*st)["angle"] = -angleAndField.first;
-  (*st)["field"] = -angleAndField.second;
-    
+    {
+      thinKicker  = true;
+      fieldType   = BDSFieldType::bzero;
+      intType     = BDSIntegratorType::kickerthin;
+      chordLength = thinElementLength;
+    }
+  else
+    {
+      chordLength = element->l*CLHEP::m;
+      auto angleAndField = CalculateAngleAndField(element);
+      // MADX definition is that +ve hkicker (here angle) increases p_x, corresponding
+      // to deflection in +ve x, which is opposite to the convention of bends.
+      // Hence -ve factor here.
+      (*st)["angle"] = -angleAndField.first;
+      (*st)["field"] = -angleAndField.second;
+    }
+      
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
     {t = BDSMagnetType::vkicker;}
   
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       intType,
 					       st,
 					       true);
   if (isVertical)
@@ -456,7 +469,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   
   return new BDSMagnet(t,
 		       elementName,
-		       element->l*CLHEP::m,
+		       chordLength,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
