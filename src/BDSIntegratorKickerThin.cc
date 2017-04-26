@@ -38,22 +38,15 @@ void BDSIntegratorKickerThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4complex kick(0,0);
+  G4double x1  = localPos.x();
+  G4double y1  = localPos.y();
+  G4double z1  = localPos.z();
   
-  //apply kick
-  xp1 -= kick.imag();
-  yp1 += kick.real();
-  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-  if (std::isnan(zp1))
-    {zp1 = zp;}
+  G4double xp1 = localMomUnit.x();
+  G4double yp1 = localMomUnit.y();
+  G4double zp1 = localMomUnit.z();
 
-  // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
-  if (std::isnan(zp1) || (zp1 < 0.9))
-    {
-      AdvanceDriftMag(yIn, h, yOut);
-      SetDistChord(0);
-      return;
-    }
+  z1 += h;
   
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
