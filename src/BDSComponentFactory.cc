@@ -198,7 +198,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_VKICKER:
     component = CreateKicker(true); break;
   case ElementType::_KICKER:
-    component = CreateGeneralKicker(); break;
+    component = CreateKicker(false); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;
   case ElementType::_SEXTUPOLE:
@@ -427,11 +427,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   return rbendline;
 }
 
+
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 {
   BDSMagnetStrength* st         = new BDSMagnetStrength();
   G4bool             thinKicker = false;
-  BDSFieldType       fieldType  = BDSFieldType::dipole;
+  BDSFieldType       fieldType  = BDSFieldType::dipole3d;
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   
@@ -445,12 +446,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   else
     {
       chordLength = element->l*CLHEP::m;
-      auto angleAndField = CalculateAngleAndField(element);
+      G4double         angleX = asin(element->hkick);
+      G4double         angleY = asin(element->vkick);
+      G4double         fieldX = FieldFromAngle(angleX, chordLength);
+      G4double         fieldY = FieldFromAngle(angleY, chordLength);
+      G4ThreeVector     field = G4ThreeVector(fieldX, fieldY, 0);
+      G4double       fieldMag = field.mag();
+      G4ThreeVector unitField = field.unit();
+      
+      (*st)["field"] = fieldMag;
+      (*st)["bx"]    = unitField.x();
+      (*st)["by"]    = unitField.y();
+      //auto angleAndField = CalculateAngleAndField(element);
       // MADX definition is that +ve hkicker (here angle) increases p_x, corresponding
       // to deflection in +ve x, which is opposite to the convention of bends.
       // Hence -ve factor here.
-      (*st)["angle"] = -angleAndField.first;
-      (*st)["field"] = -angleAndField.second;
+      //(*st)["angle"] = -angleAndField.first;
+      //(*st)["field"] = -angleAndField.second;
     }
       
   BDSMagnetType t = BDSMagnetType::hkicker;
@@ -475,7 +487,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       vacuumField);
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateGeneralKicker()
+/*
+BDSAcceleratorComponent* BDSComponentFactory::CreateKicker()
 {
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -510,6 +523,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGeneralKicker()
 		       PrepareMagnetOuterInfo(element, 0, 0),
 		       vacuumField);
 }
+*/
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 {
