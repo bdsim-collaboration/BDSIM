@@ -12,7 +12,7 @@ class BDSCCDPixelSD: public G4VSensitiveDetector
 {
   
 public:
-  BDSCCDPixelSD(G4String name);
+  explicit BDSCCDPixelSD(G4String name);
   virtual ~BDSCCDPixelSD();
   
   virtual void Initialize(G4HCofThisEvent*HCE);

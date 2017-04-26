@@ -23,7 +23,7 @@ public:
   /// translations, reflections and scalings to be applied if requried - ie for
   /// misalignment from the local coordinates.
   BDSFieldMag();
-  BDSFieldMag(G4Transform3D transformIn);
+  explicit BDSFieldMag(G4Transform3D transformIn);
 
   virtual ~BDSFieldMag(){;}
 

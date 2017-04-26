@@ -23,7 +23,7 @@ class G4TouchableHistory;
 class BDSEnergyCounterSD: public G4VSensitiveDetector
 {
 public:
-  BDSEnergyCounterSD(G4String name);
+  explicit BDSEnergyCounterSD(G4String name);
   virtual ~BDSEnergyCounterSD();
 
   virtual void Initialize(G4HCofThisEvent*HCE);

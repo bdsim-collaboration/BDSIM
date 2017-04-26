@@ -26,11 +26,11 @@ public:
 
   /// This constructor is used to start a trajectory from a track. After
   /// This, points may be constructed from steps.
-  BDSTrajectoryPoint(const G4Step* step);
+  explicit BDSTrajectoryPoint(const G4Step* step);
   
   /// This constructor is required for the beginning of each track
   /// and produces the initial vertex point.
-  BDSTrajectoryPoint(const G4Track* track);
+  explicit BDSTrajectoryPoint(const G4Track* track);
 
   virtual ~BDSTrajectoryPoint();
 
