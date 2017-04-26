@@ -37,6 +37,7 @@
 #include "BDSIntegratorDipole2.hh"
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorEuler.hh"
+#include "BDSIntegratorKickerThin.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorMultipoleThin.hh"
@@ -439,6 +440,8 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
       integrator = new BDSIntegratorDipoleFringe(strength, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::euler:
       integrator = new BDSIntegratorEuler(eqOfM); break;
+    case BDSIntegratorType::kickerthin:
+      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
