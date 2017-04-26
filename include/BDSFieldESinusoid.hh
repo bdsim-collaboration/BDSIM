@@ -17,7 +17,7 @@ class BDSCavityInfo;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
-  BDSFieldESinusoid(BDSCavityInfo const* info);
+  explicit BDSFieldESinusoid(BDSCavityInfo const* info);
 
   virtual ~BDSFieldESinusoid(){;}
 

@@ -18,7 +18,7 @@
 class BDSPhysicalVolumeInfo
 {
 public:
-  BDSPhysicalVolumeInfo(G4double SPosAtMiddleOfElement);
+  explicit BDSPhysicalVolumeInfo(G4double SPosAtMiddleOfElement);
   BDSPhysicalVolumeInfo(G4String nameIn,
 			G4String placementNameIn,
 			G4double sPosIn,

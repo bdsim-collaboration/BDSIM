@@ -46,7 +46,11 @@ public:
 
 private:
   /// Private default constructor for singleton.
-  BDSSDManager(); 
+  BDSSDManager();
+
+  BDSSDManager(const BDSSDManager&) = delete;
+  BDSSDManager& operator=(const BDSSDManager&) = delete;
+ 
   static BDSSDManager* _instance;
 
   /// @{ SD instance.

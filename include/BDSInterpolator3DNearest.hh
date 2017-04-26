@@ -19,7 +19,7 @@ class BDSArray3DCoords;
 class BDSInterpolator3DNearest: public BDSInterpolator3D
 {
 public:
-  BDSInterpolator3DNearest(BDSArray3DCoords* arrayIn);
+  explicit BDSInterpolator3DNearest(BDSArray3DCoords* arrayIn);
   virtual ~BDSInterpolator3DNearest();
 
 protected:
