@@ -20,7 +20,7 @@ class G4Material;
 class BDSMagnetOuterFactoryLHC: public BDSMagnetOuterFactoryBase
 {
 public:
-  BDSMagnetOuterFactoryLHC(G4bool isLeftOffset);
+  explicit BDSMagnetOuterFactoryLHC(G4bool isLeftOffset);
   virtual ~BDSMagnetOuterFactoryLHC(){;};
   
   /// sector bend outer volume

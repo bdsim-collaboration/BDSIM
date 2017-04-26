@@ -15,7 +15,7 @@ class BDSOutputROOTEventOptions: public TObject, public GMAD::OptionsBase
 {
 public:
   BDSOutputROOTEventOptions();
-  BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
+  explicit BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
   virtual ~BDSOutputROOTEventOptions();
   
 #ifndef __ROOTBUILD__   

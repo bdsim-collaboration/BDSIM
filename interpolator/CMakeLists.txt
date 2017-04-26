@@ -28,3 +28,4 @@ bdsim_install_interpolator_headers(${interpolatorHeaders})
 
 get_target_property(interpolatorBinaryName interpolatorexec OUTPUT_NAME)
 set(interpolatorBinary ${CMAKE_CURRENT_BINARY_DIR}/${interpolatorBinaryName} CACHE STRING "interpolator binary")
+mark_as_advanced(interpolatorBinary)

@@ -116,7 +116,9 @@ public:
   
 private:
   /// Private default constructor to force use of provided constructor
-  BDSBeamlineElement();
+  BDSBeamlineElement() = delete;
+  BDSBeamlineElement(const BDSBeamlineElement&) = delete;
+  BDSBeamlineElement& operator=(const BDSBeamlineElement&) = delete;
 
   /// The accelerator component
   BDSAcceleratorComponent* component;

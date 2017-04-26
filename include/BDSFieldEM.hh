@@ -25,7 +25,7 @@ public:
   /// translations, reflections and scalings to be applied if requried - ie for
   /// misalignment from the local coordinates.
   BDSFieldEM();
-  BDSFieldEM(G4Transform3D transformIn);
+  explicit BDSFieldEM(G4Transform3D transformIn);
   virtual ~BDSFieldEM(){;}
 
   /// Get the field - local coordinates. First G4ThreeVector is B field, second is E Field

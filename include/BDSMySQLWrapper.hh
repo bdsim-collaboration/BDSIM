@@ -31,7 +31,7 @@ class BDSMySQLTable;
 class BDSMySQLWrapper 
 {
 public:
-  BDSMySQLWrapper (const G4String& SQLFileName);
+  explicit BDSMySQLWrapper (const G4String& SQLFileName);
   ~BDSMySQLWrapper();
   
   std::vector<BDSMySQLTable*> ConstructTable();

@@ -12,6 +12,8 @@
 
 #include <ostream>
 
+const G4ThreeVector BDSFieldInfo::defaultUnitDirection = G4ThreeVector(0,1,0); // unit Y
+
 BDSFieldInfo::BDSFieldInfo():
   fieldType(BDSFieldType::none),
   brho(0),
@@ -30,7 +32,8 @@ BDSFieldInfo::BDSFieldInfo():
   eScaling(1.0),
   bScaling(1.0),
   timeOffset(0),
-  autoScale(false)
+  autoScale(false),
+  unitDirection(nullptr)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -50,7 +53,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 eScalingIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
-			   G4bool                   autoScaleIn):
+			   G4bool                   autoScaleIn,
+			   G4ThreeVector*           unitDirectionIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -68,13 +72,15 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   eScaling(eScalingIn),
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
-  autoScale(autoScaleIn)
+  autoScale(autoScaleIn),
+  unitDirection(unitDirectionIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
   delete cavityInfo;
+  delete unitDirection;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
@@ -98,11 +104,15 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
   else
-    {magnetStrength = other.magnetStrength;} // also nullptr
+    {magnetStrength = nullptr;} // also nullptr
   if (other.cavityInfo)
     {cavityInfo = new BDSCavityInfo(*other.cavityInfo);}
   else
-    {cavityInfo = other.cavityInfo;}
+    {cavityInfo = nullptr;}
+  if (other.unitDirection)
+    {unitDirection = new G4ThreeVector(*other.unitDirection);}
+  else
+    {unitDirection = nullptr;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
@@ -124,6 +134,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "auto scale         " << info.autoScale                << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
+  if (info.unitDirection)
+    {out << "Field direction:   " << *(info.unitDirection)       << G4endl;}
   return out;
 }
 

@@ -26,7 +26,7 @@ private:
   BDSLineVector line;
   
 public:
-  BDSLine(G4String name);
+  explicit BDSLine(G4String name);
   virtual ~BDSLine(){;}
 
   /// Add a component to the line.

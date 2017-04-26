@@ -12,7 +12,7 @@
 class BDSTerminatorSD: public G4VSensitiveDetector
 {
 public:
-  BDSTerminatorSD(G4String name);
+  explicit BDSTerminatorSD(G4String name);
   virtual ~BDSTerminatorSD();
 
   virtual void   Initialize (G4HCofThisEvent* HCE);

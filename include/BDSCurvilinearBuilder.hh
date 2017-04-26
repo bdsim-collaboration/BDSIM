@@ -27,6 +27,9 @@ public:
 					    const G4bool circular);
 
 private:
+  BDSCurvilinearBuilder(const BDSCurvilinearBuilder&) = delete;
+  BDSCurvilinearBuilder& operator=(const BDSCurvilinearBuilder&) = delete;
+
   /// Create a curvilinear element for a beam line that represents the curvilinear
   /// coordinates between startElement and finishElement. This creates a BDSSimpleComponent
   /// first then wraps it in a premade BDSBeamlineElement. This must ONLY be used for a range

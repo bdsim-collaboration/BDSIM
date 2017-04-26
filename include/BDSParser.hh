@@ -65,7 +65,7 @@ public:
 
 protected:
   /// Constructor from filename
-  BDSParser(std::string filename);
+  explicit BDSParser(std::string filename);
 
 private:
   /// Instance

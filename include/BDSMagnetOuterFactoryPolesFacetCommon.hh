@@ -24,7 +24,7 @@
 class BDSMagnetOuterFactoryPolesFacetCommon: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  BDSMagnetOuterFactoryPolesFacetCommon(G4double factor);
+  explicit BDSMagnetOuterFactoryPolesFacetCommon(G4double factor);
   
   virtual ~BDSMagnetOuterFactoryPolesFacetCommon();
 

@@ -28,7 +28,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #endif
   if (options.recreate)
     {
-      BDSOutputLoader loader = BDSOutputLoader(options.recreateFileName);
+      BDSOutputLoader loader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
       // Give precedence to exec options - only ones that have been set.
       recreateOptions.Amalgamate(options, true);

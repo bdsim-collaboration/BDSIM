@@ -2,8 +2,11 @@
 # http://ericscottbarr.com/blog/2012/03/sphinx-and-cmake-beautiful-documentation-for-c-projects/
 
 find_package(Sphinx)
+# Find our theme
+include(FindPythonModule)
+find_python_module(sphinx_rtd_theme)
 
-if(SPHINX_FOUND)
+if(SPHINX_FOUND AND PY_SPHINX_RTD_THEME)
   # configured documentation tools and intermediate build results
   set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -70,5 +73,4 @@ if(SPHINX_FOUND)
     add_test(Manual make manual)
     add_test(Manual-pdf make manual-pdf)
     set_tests_properties(Manual-pdf PROPERTIES LABELS LONG)
-
 endif()
