@@ -38,15 +38,17 @@ void BDSIntegratorKickerThin::Stepper(const G4double yIn[],
       return;
     }
 
+  // Transverse position stays the same and the particle is advanced by h along local z.
   G4double x1  = localPos.x();
   G4double y1  = localPos.y();
   G4double z1  = localPos.z();
+  z1 += h;
   
   G4double xp1 = localMomUnit.x();
   G4double yp1 = localMomUnit.y();
   G4double zp1 = localMomUnit.z();
 
-  z1 += h;
+
   
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
