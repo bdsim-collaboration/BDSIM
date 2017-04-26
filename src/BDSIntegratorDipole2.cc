@@ -28,7 +28,8 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
-  if (h < 1e-9)
+  // Protect against very small steps.
+  if (h < 1e-12)
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       return;
