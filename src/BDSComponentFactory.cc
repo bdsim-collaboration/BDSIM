@@ -194,11 +194,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_RBEND:
     component = CreateRBend(); break;
   case ElementType::_HKICKER:
-    component = CreateKicker(false); break;
+    component = CreateKicker(KickerType::horizontal); break;
   case ElementType::_VKICKER:
-    component = CreateKicker(true); break;
+    component = CreateKicker(KickerType::vertical); break;
   case ElementType::_KICKER:
-    component = CreateKicker(false); break;
+    component = CreateKicker(KickerType::general); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;
   case ElementType::_SEXTUPOLE:
@@ -426,9 +426,37 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   integratorSet);
   return rbendline;
 }
+void BDSComponentFactory::GetKickValue(G4double& hkick,
+				       G4double& vkick,
+				       const KickerType type) const
+{
+  G4bool kickFinite = BDS::IsFinite(element->kick);
+  switch (type)
+    {
+    case KickerType::horizontal:
+      {
+	hkick = kickFinite ? element->kick : element->hkick;
+	vkick = 0;
+	break;
+      }
+    case KickerType::vertical:
+      {
+	vkick = kickFinite ? element->kick : element->vkick;
+	hkick = 0;
+	break;
+      }
+    case KickerType::general:
+      {
+	hkick = element->hkick;
+	vkick = element->vkick;
+	// element->kick will be ignored
+      }
+    default:
+      {break;}
+    }
+}
 
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
+BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 {
   BDSMagnetStrength* st         = new BDSMagnetStrength();
   G4bool             thinKicker = false;
@@ -437,17 +465,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   G4double           chordLength;
   
   if(!HasSufficientMinimumLength(element))
-    {
+    {// thin kicker
       thinKicker  = true;
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
+      G4double hkick = 0;
+      G4double vkick = 0;
+      GetKickValue(hkick, vkick, type);
+      (*st)["hkick"] = hkick;
+      (*st)["vkick"] = vkick;
     }
   else
-    {
+    {// thick kicker
       chordLength = element->l*CLHEP::m;
-      G4double         angleX = asin(element->hkick);
-      G4double         angleY = asin(element->vkick);
+      // sin(angle) = dP -> angle = sin^-1(dP)
+      G4double          hkick = 0;
+      G4double          vkick = 0;
+      GetKickValue(hkick, vkick, type);
+      G4double         angleX = asin(hkick);
+      G4double         angleY = asin(vkick);
       G4double         fieldX = FieldFromAngle(angleX, chordLength);
       G4double         fieldY = FieldFromAngle(angleY, chordLength);
       G4ThreeVector     field = G4ThreeVector(fieldX, fieldY, 0);
@@ -464,18 +501,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
       //(*st)["angle"] = -angleAndField.first;
       //(*st)["field"] = -angleAndField.second;
     }
-      
-  BDSMagnetType t = BDSMagnetType::hkicker;
-  if (isVertical)
-    {t = BDSMagnetType::vkicker;}
+  
+  BDSMagnetType t;
+  switch (type)
+    {
+    case KickerType::horizontal:
+    case KickerType::general:
+      {t = BDSMagnetType::hkicker; break;}
+    case KickerType::vertical:
+      {t = BDSMagnetType::vkicker; break;}
+    default:
+      {t = BDSMagnetType::hkicker; break;}
+    }
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
 					       st,
 					       true);
-  if (isVertical)
-    {vacuumField->SetUnitDirection(new G4ThreeVector(-1,0,0));}
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
