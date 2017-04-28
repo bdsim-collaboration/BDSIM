@@ -436,12 +436,20 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
     case KickerType::horizontal:
       {
 	hkick = kickFinite ? element->kick : element->hkick;
+	// backwards compatability - if both are zero but angle if finite
+	// for this element - use that.
+	if (!BDS::IsFinite(hkick) && BDS::IsFinite(element->angle))
+          {hkick = element->angle;}
 	vkick = 0;
 	break;
       }
     case KickerType::vertical:
       {
 	vkick = kickFinite ? element->kick : element->vkick;
+	// backwards compatability - if both are zero but angle if finite
+	// for this element - use that.
+	if (!BDS::IsFinite(vkick) && BDS::IsFinite(element->angle))
+          {vkick = element->angle;}
 	hkick = 0;
 	break;
       }
