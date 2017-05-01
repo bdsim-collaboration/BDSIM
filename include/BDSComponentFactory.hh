@@ -165,7 +165,8 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* element,
+				    const G4bool printWarning = true);
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.

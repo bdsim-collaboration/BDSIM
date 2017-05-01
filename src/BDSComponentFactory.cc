@@ -478,7 +478,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   
-  if(!HasSufficientMinimumLength(element))
+  if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
@@ -929,15 +929,19 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       angle);
 }
 
-G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
+G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element,
+						       const G4bool printWarning)
 {
   if(element->l*CLHEP::m < 1e-7)
     {
-      G4cerr << "---->NOT creating element, "
-             << " name = " << elementName
-             << ", LENGTH TOO SHORT:"
-             << " l = " << element->l*CLHEP::um << "um"
-             << G4endl;
+      if (printWarning)
+	{
+	  G4cerr << "---->NOT creating element, "
+		 << " name = " << elementName
+		 << ", LENGTH TOO SHORT:"
+		 << " l = " << element->l*CLHEP::um << "um"
+		 << G4endl;
+	}
       return false;
     }
   else
