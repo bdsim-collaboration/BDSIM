@@ -16,7 +16,9 @@ BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* streng
   hkick((*strength)["hkick"]),
   vkick((*strength)["vkick"]),
   brho(brhoIn)
-{;}
+{
+  zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
+}
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
 				      const G4double[] /*dydx[]*/,
@@ -28,7 +30,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
   const G4double fcof = eqOfM->FCof();
-  if (fcof == 0)
+  if (fcof == 0 || zeroStrength)
     {// neutral particle - drift through
       AdvanceDriftMag(yIn, h, yOut);
       SetDistChord(0);

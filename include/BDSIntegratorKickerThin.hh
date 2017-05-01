@@ -47,6 +47,7 @@ private:
   const G4double vkick;
   const G4double brho;
   /// @}
+  G4bool zeroStrength; ///< Cache of whether input parameters are 0.
 };
 
 #endif
