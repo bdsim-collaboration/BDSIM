@@ -500,7 +500,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       G4double         angleY = asin(vkick);
       // -ve here for convention matching
       G4double         fieldX = FieldFromAngle(-angleX, chordLength);
-      G4double         fieldY = FieldFromAngle(-angleY, chordLength);
+      G4double         fieldY = FieldFromAngle(angleY,  chordLength);
       // note field for kick in x is unit Y, hence B = (y,x,0) here
       G4ThreeVector     field = G4ThreeVector(fieldY, fieldX, 0);
       G4double       fieldMag = field.mag();
