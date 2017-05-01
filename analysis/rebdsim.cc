@@ -60,17 +60,19 @@ int main(int argc, char *argv[])
 
   std::vector<Analysis*> analyses;
 
+  bool debug = Config::Instance()->Debug();
   DataLoader dl = DataLoader(Config::Instance()->InputFilePath(),
-			     Config::Instance()->Debug(),
+			     debug,
 			     Config::Instance()->ProcessSamplers());
   
-  EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
-  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
-  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
-  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
-
-  evtAnalysis->SetPrintModuloFraction(Config::Instance()->PrintModuloFraction());
-  evtAnalysis->SetProcessSamplers(Config::Instance()->ProcessSamplers());
+  EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
+                                                   dl.GetEventTree(),
+                                                   Config::Instance()->ProcessSamplers(),
+                                                   debug,
+                                                   Config::Instance()->PrintModuloFraction());
+  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree(), debug);
+  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree(), debug);
+  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree(), debug);
   
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
