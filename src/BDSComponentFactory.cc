@@ -501,12 +501,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["field"] = fieldMag;
       (*st)["bx"]    = unitField.x();
       (*st)["by"]    = unitField.y();
-      //auto angleAndField = CalculateAngleAndField(element);
-      // MADX definition is that +ve hkicker (here angle) increases p_x, corresponding
-      // to deflection in +ve x, which is opposite to the convention of bends.
-      // Hence -ve factor here.
-      //(*st)["angle"] = -angleAndField.first;
-      //(*st)["field"] = -angleAndField.second;
     }
   
   BDSMagnetType t;
@@ -536,44 +530,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
 }
-
-/*
-BDSAcceleratorComponent* BDSComponentFactory::CreateKicker()
-{
-  if (!HasSufficientMinimumLength(element))
-    {return nullptr;}
-
-  BDSMagnetStrength*   st = new BDSMagnetStrength();
-  G4double         length = element->l * CLHEP::m;
-  G4double         angleX = asin(element->hkick);
-  G4double         angleY = asin(element->vkick);
-  G4double         fieldX = FieldFromAngle(angleX, length);
-  G4double         fieldY = FieldFromAngle(angleY, length);
-  G4ThreeVector     field = G4ThreeVector(fieldX, fieldY, 0);
-  G4double       fieldMag = field.mag();
-  G4ThreeVector unitField = field.unit();
-
-  (*st)["field"] = fieldMag;
-  (*st)["bx"]    = unitField.x();
-  (*st)["by"]    = unitField.y();
-
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole3d);
-  
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole3d,
-					       brho,
-					       intType,
-					       st,
-					       true);
-
-  // For now, only use a hkicker geometry
-  return new BDSMagnet(BDSMagnetType::hkicker,
-		       element->name,
-		       element->l*CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, 0, 0),
-		       vacuumField);
-}
-*/
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 {
