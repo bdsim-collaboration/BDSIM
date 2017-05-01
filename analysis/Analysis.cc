@@ -54,6 +54,8 @@ void Analysis::SimpleHistograms()
 
 void Analysis::Terminate()
 {
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
   if (histoSum)
     {histoSum->Terminate();}
 }

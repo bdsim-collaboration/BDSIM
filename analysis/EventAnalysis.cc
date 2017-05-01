@@ -67,6 +67,8 @@ EventAnalysis::~EventAnalysis()
 
 void EventAnalysis::Process()
 {
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
   Initialise();
 
   if(debug)
