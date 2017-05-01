@@ -440,7 +440,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	// backwards compatability - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(hkick) && BDS::IsFinite(element->angle))
-          {hkick = element->angle;}
+          {hkick = element->angle;} //+ve to match hkick definition
 	vkick = 0;
 	break;
       }
@@ -450,7 +450,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	// backwards compatability - if both are zero but angle if finite
 	// for this element - use that.
 	if (!BDS::IsFinite(vkick) && BDS::IsFinite(element->angle))
-          {vkick = element->angle;}
+          {vkick = element->angle;} //+ve to match vkick definition
 	hkick = 0;
 	break;
       }
@@ -459,6 +459,12 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	hkick = element->hkick;
 	vkick = element->vkick;
 	// element->kick will be ignored
+	if (BDS::IsFinite(element->kick))
+	  {
+	    G4cout << __METHOD_NAME__ << "Warning: 'kick' defined in element"
+		   << "\"" << element->name << "\" but will be ignored as general kicker"
+		   << G4endl;
+	  }
       }
     default:
       {break;}
