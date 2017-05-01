@@ -198,6 +198,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_VKICKER:
     component = CreateKicker(KickerType::vertical); break;
   case ElementType::_KICKER:
+  case ElementType::_TKICKER:
     component = CreateKicker(KickerType::general); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;

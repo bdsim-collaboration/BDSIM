@@ -37,6 +37,7 @@ namespace GMAD
     _VKICKER     = 31,
     _HKICKER     = 32,
     _KICKER      = 33,
+    _TKICKER     = 34,
     _TRANSFORM3D = 61,
     _MUSPOILER   = 62,
     _DEGRADER    = 63,
