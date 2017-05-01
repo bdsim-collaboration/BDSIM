@@ -35,16 +35,18 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   event(eventIn),
   processSamplers(processSamplersIn)
 {
-  // Analyse the primary sampler in the optics too.
-  SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
-  samplerAnalyses.push_back(sa);
-  
-  // create sampler analyses
-  for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
-  {
-    sa = new SamplerAnalysis(*i);
-    this->samplerAnalyses.push_back(sa);
-  }
+  if (processSamplers)
+    {// Create sampler analyses if needed
+      // Analyse the primary sampler in the optics too.
+      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+      samplerAnalyses.push_back(sa);
+      
+      for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
+	{
+	  sa = new SamplerAnalysis(*i);
+	  this->samplerAnalyses.push_back(sa);
+	}
+    }
   
   SetPrintModuloFraction(printModuloFraction);
 }
@@ -113,10 +115,13 @@ void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
 
-  for (auto samplerAnalysis : samplerAnalyses)
+  if (processSamplers)
     {
-      samplerAnalysis->Terminate();
-      opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
+      for (auto samplerAnalysis : samplerAnalyses)
+	{
+	  samplerAnalysis->Terminate();
+	  opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
+	}
     }
 }
 
@@ -125,8 +130,13 @@ void EventAnalysis::Write(TFile *outputFile)
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
 
-  //Write rebdsim histograms:
+  // Write rebdsim histograms:
   Analysis::Write(outputFile);
+
+  // We don't need to write out the optics tree if we didn't process samplers
+  // as there's no possibility of optical data.
+  if (!processSamplers)
+    {return;}
 
   outputFile->cd("/");
 
@@ -205,12 +215,26 @@ void EventAnalysis::Write(TFile *outputFile)
 
 void EventAnalysis::ProcessSamplers()
 {
-  for(auto s : samplerAnalyses)
-    {s->Process();}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
+  if (processSamplers)
+    {
+      if (debug)
+	{std::cout << __METHOD_NAME__ << std::endl;}
+      for(auto s : samplerAnalyses)
+	{s->Process();}
+    }
 }
 
 void EventAnalysis::Initialise()
 {
-  for (auto s : samplerAnalyses)
-    {s->Initialise();}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
+  if (processSamplers)
+    {
+      if (debug)
+	{std::cout << __METHOD_NAME__ << std::endl;}
+      for (auto s : samplerAnalyses)
+	{s->Initialise();}
+    }
 }
