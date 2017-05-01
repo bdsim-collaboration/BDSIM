@@ -36,11 +36,12 @@ public:
   inline virtual G4int IntegratorOrder() const {return 2;}
   
 protected:
-  /// Convert final local position and direction to global frame
-  void ConvertToGlobal(const G4ThreeVector& localPos,
-		       const G4ThreeVector& localMomUnit,
-		       const G4double       momMag,
-		       G4double             yOut[]);
+  /// Convert final local position and direction to global frame. Allow
+    /// scaling of momentum in case localMom is a unit vector
+  void ConvertToGlobal(const G4ThreeVector &localPos,
+                       const G4ThreeVector &localMom,
+                       G4double             yOut[],
+                       const G4double       momScaling = 1.0);
 
   /// Setter for distChord to private member.
   inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}
