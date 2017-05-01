@@ -467,14 +467,12 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 {
   BDSMagnetStrength* st         = new BDSMagnetStrength();
-  G4bool             thinKicker = false;
   BDSFieldType       fieldType  = BDSFieldType::dipole3d;
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   
   if(!HasSufficientMinimumLength(element))
     {// thin kicker
-      thinKicker  = true;
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
