@@ -11,6 +11,11 @@ class BDSMagnetStrength;
 /**
  * @brief Integrator for thin h or v kick.
  * 
+ * This adds a fraction of the total momentum to the horizontal
+ * or vertical (in curvilinear coordinates) as defined by hkick
+ * and vkick respectively. The delta is subtracted from the z
+ * component to conserve momentum.
+ *
  * @author Laurie Nevay
  */
 
@@ -37,9 +42,11 @@ private:
   /// Cache of equation of motion. This class does not own it.
   G4Mag_EqRhs* eqOfM;
 
-  G4double hkick;
-  G4double vkick;
-	G4double brho;
+  /// @{ Cache of variable.
+  const G4double hkick;
+  const G4double vkick;
+  const G4double brho;
+  /// @}
 };
 
 #endif
