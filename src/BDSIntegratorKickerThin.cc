@@ -9,16 +9,21 @@
 #include <cmath>
 
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
-						 G4double                 brho,
+						 G4double                 brhoIn,
 						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorMag(eqOfMIn, 6)
-{;}
+  BDSIntegratorMag(eqOfMIn, 6),
+  eqOfM(eqOfMIn),
+  brho(brhoIn)
+{
+  hkick = (*strength)["hkick"];
+  vkick = (*strength)["vkick"];
+}
 
-void BDSIntegratorKickerThin::Stepper(const G4double yIn[],
-					 const G4double[] /*dydx[]*/,
-					 const G4double h,
-					 G4double       yOut[],
-					 G4double       yErr[])
+void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
+				      const G4double[] /*dydx[]*/,
+				      const G4double   h,
+				      G4double         yOut[],
+				      G4double         yErr[])
 {
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
