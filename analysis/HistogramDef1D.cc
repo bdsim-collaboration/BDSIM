@@ -5,13 +5,10 @@ HistogramDef1D::HistogramDef1D(std::string treeNameIn,
 			       int         xNBinsIn,
 			       double      xLowIn,
 			       double      xHighIn,
-			       std::string plotIn,
+			       std::string variableIn,
 			       std::string selectionIn):
-  treeName(treeNameIn),
-  histName(histNameIn),
+  HistogramDef(treeNameIn, histNameIn, 1, variableIn, selectionIn),
   xNBins(xNBinsIn),
   xLow(xLowIn),
-  xHigh(xHighIn),
-  plot(plotIn),
-  selection(selectionIn)
+  xHigh(xHighIn)
 {;}

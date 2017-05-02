@@ -1,9 +1,11 @@
-#ifndef HISTOGRAMDEF_H
-#define HISTOGRAMDEF_H
+#ifndef HISTOGRAMDEF1D_H
+#define HISTOGRAMDEF1D_H
+
+#include "HistogramDef.hh"
 
 #include <string>
 
-class HistogramDef1D
+class HistogramDef1D: public HistogramDef
 {
 public:
   HistogramDef1D(std::string treeNameIn,
@@ -11,17 +13,13 @@ public:
 		 int         xNBinsIn,
 		 double      xLowIn,
 		 double      xHighIn,
-		 std::string plotIn,
+		 std::string variableIn,
 		 std::string selectionIn = "1");
   virtual ~HistogramDef1D(){;}
   
-  std::string treeName;
-  std::string histName;
   int         xNBins;
   double      xLow;
   double      xHigh;
-  std::string plot;
-  std::string selection;
 
 private:
   /// No default constructor

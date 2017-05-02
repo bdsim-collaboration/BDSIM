@@ -20,4 +20,6 @@ HistogramDef3D::HistogramDef3D(std::string treeNameIn,
   zNBins(zNBinsIn),
   zLow(zLowIn),
   zHigh(zHighIn)
-{;}
+{
+  nDimensions = 3;
+}

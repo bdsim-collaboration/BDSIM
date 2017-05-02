@@ -16,4 +16,6 @@ HistogramDef2D::HistogramDef2D(std::string treeNameIn,
   yNBins(yNBinsIn),
   yLow(yLowIn),
   yHigh(yHighIn)
-{;}
+{
+  nDimensions = 2;
+}
