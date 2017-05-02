@@ -90,7 +90,7 @@ void EventAnalysis::Process()
 	}
       
       if(i==0)
-	{histoSum = new HistogramMerge(event->histos);}
+	{histoSum = new HistogramMerge(event->histos, debug);}
       else
 	{histoSum->Add(event->histos);}
 

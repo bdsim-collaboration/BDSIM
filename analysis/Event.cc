@@ -1,9 +1,12 @@
+#include "Config.hh"
 #include "Event.hh"
 
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+
+#include <vector>
 
 #include "TChain.h"
 
@@ -41,16 +44,34 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
+  // turn off all branches by default.
+  t->SetBranchStatus("*", 0);
+  t->SetBranchStatus("Histos.*", 1); // always want to merge histograms
+
+  if (Config::Instance()->AllEventBranchesToBeActivated())
+    {t->SetBranchStatus("*", 1);}
+  else
+    {
+      auto branchNames = Config::Instance()->BranchesToBeActivated("Event.");
+      for (auto name : branchNames)
+	{
+	  if (debug)
+	    {std::cout << "Turning on branch \"" << name << "\"" << std::endl;}
+	  std::string nameStar = name + ".*";
+	  t->SetBranchStatus(nameStar.c_str(), 1);
+	}
+    }
+
   t->GetEntry(0); // this initialises the local variables it would seem.
   // only set address of primary branch if it exists
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
     {t->SetBranchAddress("Primary.",     &primaries);}
   t->SetBranchAddress("Eloss.",          &eloss);
+  t->SetBranchAddress("Histos.",         &histos);
   t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
   t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
   t->SetBranchAddress("TunnelHit.",      &tunnelHit);
   t->SetBranchAddress("Trajectory.",     &trajectory);
-  t->SetBranchAddress("Histos.",         &histos);
   t->SetBranchAddress("Info.",           &info);
 
   if(debug)
