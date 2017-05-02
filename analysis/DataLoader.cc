@@ -39,10 +39,10 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor(std::string fileName)
 {
-  opt = new Options();
-  mod = new Model();
+  opt = new Options(debug);
+  mod = new Model(debug);
   evt = new Event(debug, processSamplers);
-  run = new Run();
+  run = new Run(debug);
 
   optChain = new TChain("Options","Options");
   modChain = new TChain("Model","Model");

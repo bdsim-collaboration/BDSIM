@@ -1,18 +1,28 @@
+#include "Config.hh"
 #include "Run.hh"
 
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
+#include <vector>
+
 ClassImp(Run)
 
-Run::Run()
-{
-  info   = nullptr;
-  histos = nullptr;
-}
+Run::Run():
+Run(false)
+{;}
+
+Run::Run(bool debugIn):
+  info(nullptr),
+  histos(nullptr),
+  debug(debugIn)
+{;}
 
 Run::~Run()
-{;}
+{
+  delete info;
+  delete histos;
+}
 
 void Run::SetBranchAddress(TTree *t)
 {

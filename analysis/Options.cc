@@ -5,10 +5,14 @@
 
 ClassImp(Options)
 
-Options::Options()
-{
-  options = new BDSOutputROOTEventOptions();
-}
+Options::Options():
+  Options(false)
+{;}
+
+Options::Options(bool debugIn):
+  options(nullptr),
+  debug(debugIn)
+{;}
 
 Options::~Options()
 {
@@ -17,5 +21,6 @@ Options::~Options()
 
 void Options::SetBranchAddress(TTree *t)
 {
+  t->GetEntry(0);
   t->SetBranchAddress("Options.",&options);
 }

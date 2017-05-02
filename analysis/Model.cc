@@ -8,7 +8,12 @@
 ClassImp(Model)
 
 Model::Model():
-model(nullptr)
+  Model(false)
+{;}
+
+Model::Model(bool debugIn):
+  model(nullptr),
+  debug(debugIn)
 {;}
 
 Model::~Model()

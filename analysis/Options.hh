@@ -17,6 +17,7 @@ class Options
 {
 public:
   Options();
+  Options(bool debugIn);
   virtual ~Options();
 
   /// Set the branch addresses to address the contents of the file.
@@ -27,6 +28,8 @@ public:
   /// @}
 
 private:
+  bool debug;
+  
   ClassDef(Options,1);
 };
 

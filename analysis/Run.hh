@@ -14,8 +14,9 @@ class BDSOutputROOTEventRunInfo;
 
 class Run
 {
-public :
+public:
   Run();
+  Run(bool debugIn);
   virtual ~Run();
 
   /// Map the ROOT file to members in this class.
@@ -26,7 +27,9 @@ public :
   BDSOutputROOTEventHistograms* histos;
   /// @}
   
-private:
+private:  
+  bool debug;
+  
   ClassDef(Run,1);
 };
 
