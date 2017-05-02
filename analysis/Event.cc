@@ -49,7 +49,11 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
 
   // turn on what we need
   if (Config::Instance()->GetOptionBool("mergehistograms"))
-    {t->SetBranchStatus("Histos.*", 1);}
+    {
+      if (debug)
+	{std::cout << "Turning on branch \"Histos.\"" << std::endl;}
+      t->SetBranchStatus("Histos.*", 1);
+    }
 
   if (Config::Instance()->AllEventBranchesToBeActivated())
     {t->SetBranchStatus("*", 1);}
@@ -58,9 +62,9 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
       auto branchNames = Config::Instance()->BranchesToBeActivated("Event.");
       for (auto name : branchNames)
 	{
+	  std::string nameStar = name + ".*"; // necessary because of the splitting
 	  if (debug)
-	    {std::cout << "Turning on branch \"" << name << "\"" << std::endl;}
-	  std::string nameStar = name + ".*";
+	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 	}
     }
