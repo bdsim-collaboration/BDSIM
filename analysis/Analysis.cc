@@ -1,5 +1,9 @@
 #include "Analysis.hh"
 #include "Config.hh"
+#include "HistogramDef.hh"
+#include "HistogramDef1D.hh"
+#include "HistogramDef2D.hh"
+#include "HistogramDef3D.hh"
 #include "rebdsim.hh"
 
 #include "TChain.h"
@@ -39,16 +43,9 @@ void Analysis::SimpleHistograms()
   auto c = Config::Instance();
   if (c)
     {
-      auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
-      for(auto i : hd)
-	{
-	  if (i["treeName"] == treeName)
-	    {
-	      std::string histName = i["histName"];
-	      std::cout << "Filling histogram \"" << histName << "\"" << std::endl;
-	      FillHistogram(i["treeName"].data(), histName, i["nbins"], i["binning"], i["plot"], i["select"]);
-	    }
-	}
+      auto definitions = Config::Instance()->HistogramDefinitions(treeName);
+      for (auto definition : definitions)
+	{FillHistogram(definition);}
     }
 }
 
@@ -60,91 +57,57 @@ void Analysis::Terminate()
     {histoSum->Terminate();}
 }
 
-void Analysis::FillHistogram(std::string treeName, std::string histoName,
-			     std::string nbins,    std::string binning,
-			     std::string plot,     std::string selection)
+void Analysis::FillHistogram(HistogramDef* definition)
 {
+  // ensure new histograms are added to file..
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
   TH3::AddDirectory(kTRUE);
   
-  if(debug)
-    {std::cout << __METHOD_NAME__ << std::endl;}
-  double xlow=0.0, xhigh=0.0;
-  double ylow=0.0, yhigh=0.0;
-  double zlow=0.0, zhigh=0.0;
-  int ndim = Config::Dimension(nbins);
-  int nxbin=0, nybin=0, nzbin=0;
-
-  if(ndim == 1)
-  {
-    nxbin = Config::NBins(nbins,1);
-    Config::Binning(binning,1,xlow,xhigh);
-  }
-  else if(ndim == 2)
-  {
-    nxbin = Config::NBins(nbins,1);
-    nybin = Config::NBins(nbins,2);
-    Config::Binning(binning,1,xlow,xhigh);
-    Config::Binning(binning,2,ylow,yhigh);
-  }
-  else if(ndim == 3)
+  // pull out communal information in base class
+  int         nDim      = definition->nDimensions;
+  std::string name      = definition->histName;
+  std::string command   = definition->variable + " >> " + definition->histName;
+  std::string selection = definition->selection;
+  
+  switch (nDim)
     {
-      nxbin = Config::NBins(nbins,1);
-      nybin = Config::NBins(nbins,2);
-      nzbin = Config::NBins(nbins,3);
-      Config::Binning(binning,1,xlow,xhigh);
-      Config::Binning(binning,2,ylow,yhigh);
-      Config::Binning(binning,3,zlow,zhigh);
+    case 1:
+      {
+	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
+	TH1D* h = new TH1D(name.c_str(), name.c_str(),
+			   d->xNBins, d->xLow, d->xHigh);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms1D[name] = h;
+	break;
+      }
+    case 2:
+      {
+	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
+	TH2D* h = new TH2D(name.c_str(), name.c_str(),
+			   d->xNBins, d->xLow, d->xHigh,
+			   d->yNBins, d->yLow, d->yHigh);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms2D[name] = h;
+	break;
+      }
+    case 3:
+      {
+	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
+	TH3D* h = new TH3D(name.c_str(), name.c_str(),
+			   d->xNBins, d->xLow, d->xHigh,
+			   d->yNBins, d->yLow, d->yHigh,
+			   d->zNBins, d->zLow, d->zHigh);
+	chain->Draw(command.c_str(), selection.c_str(),"goff");
+	histogramNames.push_back(name);
+	histograms3D[name] = h;
+	break;
+      }
+    default:
+      {break;}
     }
-  else
-    {std::cerr << "Invalid number of dimensions: \"" << ndim << "\"" << std::endl; exit(1);}
-
-  if (!chain)
-  {std::cout << __METHOD_NAME__ << "Error no tree found by name: " << treeName << std::endl; exit(1);}
-
-  if(debug)
-    {std::cout << __METHOD_NAME__ << treeName << " " << histoName << " " << plot << std::endl;}
-
-  auto pltSav = histoName;
-  auto pltCmd = plot+" >> "+pltSav;
-
-  // create histograms
-  if(ndim == 1)
-    {new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
-  else if(ndim == 2)
-    {new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
-  else if(ndim == 3)
-    {new TH3D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh, nzbin, zlow, zhigh);}
-
-  chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
-
-  if(ndim == 1)
-  {
-    auto h = (TH1*)gDirectory->Get(pltSav.c_str());
-    this->histogramNames.push_back(pltSav);
-    this->histograms1D[pltSav] = h;
-    // std::cout << h << std::endl;
-  }
-  else if(ndim == 2)
-  {
-    auto h = (TH2*)gDirectory->Get(pltSav.c_str());
-    this->histogramNames.push_back(pltSav);
-    this->histograms2D[pltSav] = h;
-    // std::cout << h << std::endl;
-  }
-  else if (ndim == 3)
-    {
-      auto h = (TH3*)gDirectory->Get(pltSav.c_str());
-      histogramNames.push_back(pltSav);
-      histograms3D[pltSav] = h;
-    }
-
-
-  if(debug)
-  {
-    std::cout << __METHOD_NAME__ << "`" << pltSav << "'  `" << pltCmd << "' " << gDirectory->Get(pltSav.c_str()) << std::endl;
-  }
 }
 
 void Analysis::Write(TFile* outputFile)

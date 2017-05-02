@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+class HistogramDef;
 class TChain;
 class TFile;
 
@@ -54,11 +55,10 @@ protected:
   bool                        debug;
   
 private:
-  Analysis();
-  /// Create an individual histogram based on a string selection etc.
-  void FillHistogram(std::string treeName, std::string histoName,
-		     std::string nbins,    std::string binning,
-		     std::string plots,    std::string selection);
+  Analysis() = delete;
+  
+  /// Create an individual histogram based on a definition.
+  void FillHistogram(HistogramDef* definition);
 
 };
 
