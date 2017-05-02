@@ -29,7 +29,7 @@ void Run::SetBranchAddress(TTree *t)
   t->SetBranchStatus("*", 0);
   t->SetBranchStatus("Histos.*", 1); // always want to merge histograms
 
-  auto branchNames = Config::Instance()->BranchesToBeActivated("Event.");
+  auto branchNames = Config::Instance()->BranchesToBeActivated("Run.");
   for (auto name : branchNames)
     {
       if (debug)
