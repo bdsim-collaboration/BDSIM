@@ -47,7 +47,17 @@ public:
   inline double      GetOptionNumber(std::string key) const {return optionsNumber.at(key);}
   /// @}
 
-  inline std::vector<HistogramDef*> HistogramDefinitions(std::string treeName) const {return histoDefs.at(treeName);}
+  /// Access all histogram definitions.
+  inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const {return histoDefs.at(treeName);}
+
+  /// Access all branches that are required for activation. This does not specialise on the
+  /// leaf inside the branch and if one variable is required, the whole branch will be activated
+  /// as there isn't much difference.  This can of course be revised in future.
+  const std::vector<std::string>& BranchesToBeActivated(std::string treeName) const {return branches.at(treeName);}
+  inline bool AllEventBranchesToBeActivated() const {return allEventActivated;}
+
+  /// Set a branch to be activated if not already.
+  void SetBranchToBeActivated(std::string treeName, std::string branchName);
 
   /// @{ Accessor.
   inline std::string InputFilePath() const             {return optionsString.at("inputfilepath");}
@@ -78,6 +88,15 @@ public:
 
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string line, const int nDim);
+
+  /// Update the vector of required branches for a particular tree to be
+  /// activated for analysis.
+  void UpdateRequiredBranches(const HistogramDef* def);
+
+  /// Update the vector of required branches for a particular tree to be
+  /// activated for anlysis based on a single string defintion such as Primary.x.
+  void UpdateRequiredBranches(const std::string treeName,
+			      const std::string var);
 
   /// Check if the supplied tree name is one of the static member vector of
   /// allowed tree names.
@@ -112,6 +131,12 @@ public:
 
   /// Index of which line in the file we're on while parsing - for feedback.
   int lineCounter = 0;
+
+  /// Cache of which branches need to be activated for this analysis.
+  std::map<std::string, std::vector<std::string> > branches;
+
+  /// Whether all branches will be activatd - ie for optics.
+  bool allEventActivated;
 
   ClassDef(Config,1);
 };

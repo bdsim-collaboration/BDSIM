@@ -19,7 +19,8 @@ std::vector<std::string> Config::treeNames = {"Options.", "Model.", "Run.", "Eve
 
 Config::Config(std::string fileNameIn,
 	       std::string inputFilePathIn,
-	       std::string outputFileNameIn)
+	       std::string outputFileNameIn):
+  allEventActivated(false)
 {
   InitialiseOptions(fileNameIn);  
   ParseInputFile();
@@ -58,7 +59,10 @@ void Config::InitialiseOptions(std::string analysisFile)
 
   // ensure keys exist for all trees.
   for (auto name : treeNames)
-    {histoDefs[name] = std::vector<HistogramDef*>();}
+    {
+      histoDefs[name] = std::vector<HistogramDef*>();
+      branches[name]  = std::vector<std::string>();
+    }
 }
 
 Config* Config::Instance(std::string fileName,
@@ -110,6 +114,9 @@ void Config::ParseInputFile()
     }
   
   f.close();
+
+  if (optionsBool.at("calculateoptics"))
+    {allEventActivated = true;}
 }
 
 void Config::ParseHistogramLine(const std::string& line)
@@ -204,7 +211,37 @@ void Config::ParseHistogram(const std::string line, const int nDim)
     }
 
   if (result)
-    {histoDefs[treeName].push_back(result);}
+    {
+      histoDefs[treeName].push_back(result);
+      UpdateRequiredBranches(result);
+    }
+}
+
+void Config::UpdateRequiredBranches(const HistogramDef* def)
+{
+  UpdateRequiredBranches(def->treeName, def->variable);
+  UpdateRequiredBranches(def->treeName, def->selection);
+}
+
+void Config::UpdateRequiredBranches(const std::string treeName,
+				    const std::string var)
+{
+  std::regex branchLeaf("(\\w+).(\\w+)");
+  auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
+  auto words_end   = std::sregex_iterator();
+  for (std::sregex_iterator i = words_begin; i != words_end; ++i)
+    {
+      std::string targetBranch = (*i)[1];
+      SetBranchToBeActivated(treeName, targetBranch);
+    }
+}
+
+void Config::SetBranchToBeActivated(const std::string treeName,
+				    const std::string branchName)
+{
+  auto& v = branches.at(treeName);
+  if (std::find(v.begin(), v.end(), branchName) == v.end())
+    {v.push_back(branchName);}
 }
 
 bool Config::InvalidTreeName(const std::string& treeName) const
