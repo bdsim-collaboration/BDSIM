@@ -46,7 +46,10 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
 
   // turn off all branches by default.
   t->SetBranchStatus("*", 0);
-  t->SetBranchStatus("Histos.*", 1); // always want to merge histograms
+
+  // turn on what we need
+  if (Config::Instance()->GetOptionBool("mergehistograms"))
+    {t->SetBranchStatus("Histos.*", 1);}
 
   if (Config::Instance()->AllEventBranchesToBeActivated())
     {t->SetBranchStatus("*", 1);}

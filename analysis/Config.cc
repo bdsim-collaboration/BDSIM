@@ -49,6 +49,7 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["processlosses"]   = false;
   optionsBool["processalltrees"] = false;
   optionsBool["calculateoptics"] = false;
+  optionsBool["mergehistograms"] = true;
 
   optionsString["inputfilepath"]  = "./output_event.root";
   optionsString["outputfilename"] = "./output_ana.root";
