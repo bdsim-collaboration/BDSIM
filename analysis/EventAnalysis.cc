@@ -72,7 +72,7 @@ void EventAnalysis::Process()
   Initialise();
 
   if(debug)
-    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+    {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
   const int entries = chain->GetEntries();
@@ -97,14 +97,17 @@ void EventAnalysis::Process()
       if(debug)
 	{
 	  std::cout << __METHOD_NAME__ << i << std::endl;
-	  std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-	  std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
-	  //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
+        if (processSamplers)
+        {
+            std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+            std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
+            std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
+            //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
+        }
 	}
       
       if(processSamplers)
