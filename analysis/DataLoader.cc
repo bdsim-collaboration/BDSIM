@@ -179,13 +179,17 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allBranchesOn,
 				  const RBDS::BranchMap* branchesToTurnOn)
 {
-  mod->SetBranchAddress(modChain);
-  opt->SetBranchAddress(optChain);
+  mod->SetBranchAddress(modChain, true); // true = always turn on all branches
+  opt->SetBranchAddress(optChain, true); // true = always turn on all branches
+  // note we can't parse the :: properly in the options tree so we turn on by default
 
   const RBDS::VectorString* evtBranches = nullptr;
   if (branchesToTurnOn)
     {evtBranches = &(*branchesToTurnOn).at("Event.");}
   evt->SetBranchAddress(evtChain, &samplerNames, allBranchesOn, evtBranches);
-  
-  run->SetBranchAddress(runChain);
+
+  const RBDS::VectorString* runBranches = nullptr;
+  if (branchesToTurnOn)
+    {runBranches = &(*branchesToTurnOn).at("Run.");}
+  run->SetBranchAddress(runChain, allBranchesOn, runBranches);
 }
