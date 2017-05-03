@@ -98,7 +98,9 @@ void Config::ParseInputFile()
   std::string line;
 
   // unique patterns to match
+  // match a line starting with #
   std::regex comment("^\\#.*");
+  // match a line starting with 'histogram', ignoring case
   std::regex histogram("^histogram.*", std::regex_constants::icase);
 
   while(std::getline(f, line))
@@ -145,6 +147,8 @@ void Config::ParseHistogramLine(const std::string& line)
 
 void Config::ParseHistogram(const std::string line, const int nDim)
 {
+  // match words containing a-zA-Z0-9, '.', ',', '{', '}', ':', '-', '+'
+  // should split up remainder of line into columns
   std::regex lineWords("([\\w\\.\\,\\{\\}\\:\\-]+)", std::regex_constants::icase);
   auto words_begin = std::sregex_iterator(line.begin(), line.end(), lineWords);
   auto words_end   = std::sregex_iterator();
@@ -233,6 +237,12 @@ void Config::UpdateRequiredBranches(const HistogramDef* def)
 void Config::UpdateRequiredBranches(const std::string treeName,
 				    const std::string var)
 {
+  // This won't work properly for the options Tree that has "::" in the class
+  // as well as double splitting. C++ regex does not support lookahead / behind
+  // which makes it nigh on impossible to correctly identify the single : with
+  // regex. For now, only the Options tree has this and we turn it all on, so it
+  // it shouldn't be a problem (it only ever has one entry).
+  // match word; '.'; word -> here we match the token rather than the bits inbetween
   std::regex branchLeaf("(\\w+).(\\w+)");
   auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
   auto words_end   = std::sregex_iterator();
@@ -263,7 +273,8 @@ void Config::ParseBins(const std::string bins,
 		       int& yBins,
 		       int& zBins) const
 {
-  std::regex number("([0-9]+)+", std::regex_constants::icase);
+  // match a number including +ve exponentials (should be +ve int)
+  std::regex number("([0-9e\\+]+)+", std::regex_constants::icase);
   int* binValues[3] = {&xBins, &yBins, &zBins};
   auto words_begin = std::sregex_iterator(bins.begin(), bins.end(), number);
   auto words_end   = std::sregex_iterator();
@@ -280,6 +291,7 @@ void Config::ParseBinning(const std::string binning,
 			  double& yLow, double& yHigh,
 			  double& zLow, double& zHigh) const
 {
+  // match number (inc. - + . e); ':'; number (inc as before)
   std::regex oneDim("([0-9e\\-\\+\\.]+):([0-9e\\-\\+\\.]+)", std::regex_constants::icase);
   std::smatch dimLevelMatch;
   auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
@@ -288,7 +300,7 @@ void Config::ParseBinning(const std::string binning,
   std::vector<double*> vals = {&xLow, &xHigh, &yLow, &yHigh, &zLow, &zHigh};
   int counter = 0;
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {
+    {// iterate over all matches and pull out first and second number
       std::smatch match = *i;
       (*vals[2*counter])     = std::stod(match[1]);
       (*vals[(2*counter)+1]) = std::stod(match[2]);
@@ -315,6 +327,7 @@ std::string Config::LowerCase(const std::string& st) const
   
 void Config::ParseSetting(const std::string& line)
 {
+  // match a word; at least one space; and a word including '.' and _ and /
   std::regex setting("(\\w+)\\s+([\\.\\/_\\w]+)", std::regex_constants::icase);
   std::smatch match;
   if (std::regex_search(line, match, setting))
@@ -327,6 +340,7 @@ void Config::ParseSetting(const std::string& line)
       
       if (optionsBool.find(key) != optionsBool.end())
 	{
+	  // match optional space; true or false; optional space - ignore case
 	  std::regex tfRegex("\\s*(true|false)\\s*", std::regex_constants::icase);
 	  std::smatch tfMatch;
 	  if (std::regex_search(value, tfMatch, tfRegex))
