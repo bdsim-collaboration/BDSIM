@@ -328,7 +328,7 @@ std::string Config::LowerCase(const std::string& st) const
 void Config::ParseSetting(const std::string& line)
 {
   // match a word; at least one space; and a word including '.' and _ and /
-  std::regex setting("(\\w+)\\s+([\\.\\/_\\w]+)", std::regex_constants::icase);
+  std::regex setting("(\\w+)\\s+([\\.\\/_\\w\\*]+)", std::regex_constants::icase);
   std::smatch match;
   if (std::regex_search(line, match, setting))
     {
