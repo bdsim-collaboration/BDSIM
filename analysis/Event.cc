@@ -27,16 +27,34 @@ Event::Event(bool debugIn,
   CommonCtor();
 }
 
+Event::~Event()
+{
+  delete primaries;
+  delete eloss;
+  delete primaryFirstHit;
+  delete primaryLastHit;
+  delete tunnelHit;
+  delete trajectory;
+  delete histos;
+  delete info;
+  for (auto s : samplers)
+    {delete s;}
+}
+
 void Event::CommonCtor()
 {
-  primaries       = nullptr;
-  eloss           = nullptr;
-  primaryFirstHit = nullptr;
-  primaryLastHit  = nullptr;
-  tunnelHit       = nullptr;
-  trajectory      = nullptr;
-  histos          = nullptr;
-  info            = nullptr;
+#ifdef __ROOTDOUBLE__
+  primaries       = new BDSOutputROOTEventSampler<double>();
+#else
+  primaries       = new BDSOutputROOTEventSampler<float>();
+#endif
+  eloss           = new BDSOutputROOTEventLoss();
+  primaryFirstHit = new BDSOutputROOTEventLoss();
+  primaryLastHit  = new BDSOutputROOTEventLoss();
+  tunnelHit       = new BDSOutputROOTEventLoss();
+  trajectory      = new BDSOutputROOTEventTrajectory();
+  histos          = new BDSOutputROOTEventHistograms();
+  info            = new BDSOutputROOTEventInfo();
 }
 
 void Event::SetBranchAddress(TTree *t,
@@ -63,8 +81,7 @@ void Event::SetBranchAddress(TTree *t,
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 	}
     }
-
-  t->GetEntry(0); // this initialises the local variables it would seem.
+  
   // only set address of primary branch if it exists
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
     {t->SetBranchAddress("Primary.",     &primaries);}
@@ -89,26 +106,15 @@ void Event::SetBranchAddress(TTree *t,
     }
 
   if (processSamplers && samplerNames)
-  {
-    unsigned int nrSamplers = samplerNames->size();
-    samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
-    for(unsigned int i=0;i<nrSamplers;++i)
     {
-      t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
-      if(debug)
-      {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
-	  }
-  }
-}
-
-Event::~Event()
-{
-  delete primaries;
-  delete eloss;
-  delete primaryFirstHit;
-  delete primaryLastHit;
-  delete tunnelHit;
-  delete trajectory;
-  for(auto s = samplers.begin(); s != samplers.end(); ++s)
-    {delete *s;}
+      unsigned int nrSamplers = samplerNames->size();
+      samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
+      for(unsigned int i=0;i<nrSamplers;++i)
+	{
+	  t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
+	  t->SetBranchStatus((*samplerNames)[i].c_str(), 1);
+	  if(debug)
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
+	}
+    }
 }

@@ -15,8 +15,6 @@ class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
 class BDSOutputROOTEventTrajectory;
 
-//class TChain;
-
 /**
  * @brief Event loader.
  * 
