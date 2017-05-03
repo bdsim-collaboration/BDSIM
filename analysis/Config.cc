@@ -282,7 +282,7 @@ void Config::ParseBins(const std::string bins,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {(*binValues[counter]) = std::stod((*i).str());}
   if (counter < nDim-1)
-    {throw std::string("Invalid binning specification on line #" + std::to_string(lineCounter));}
+    {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
 
 void Config::ParseBinning(const std::string binning,
@@ -307,7 +307,7 @@ void Config::ParseBinning(const std::string binning,
     }
   
   if (counter == 0)
-    {throw std::string("Invalid binning specification: \"" + binning + "\"");}
+    {throw std::string("Invalid binning specification: \"" + binning + "\" on line #" + std::to_string(lineCounter));}
   else if (counter < nDim)
     {
       std::string errString = "Insufficient number of binning dimensions on line #"
