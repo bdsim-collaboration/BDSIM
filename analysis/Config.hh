@@ -3,6 +3,8 @@
 
 #include "TROOT.h"
 
+#include "RebdsimTypes.hh"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -48,13 +50,21 @@ public:
   /// @}
 
   /// Access all histogram definitions.
-  inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const {return histoDefs.at(treeName);}
+  inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const
+  {return histoDefs.at(treeName);}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
   /// as there isn't much difference.  This can of course be revised in future.
-  const std::vector<std::string>& BranchesToBeActivated(std::string treeName) const {return branches.at(treeName);}
-  inline bool AllEventBranchesToBeActivated() const {return allEventActivated;}
+  const RBDS::VectorString& BranchesToBeActivated(std::string treeName) const
+  {return branches.at(treeName);}
+
+  /// Access the map of all branches to be activated per tree.
+  inline const RBDS::BranchMap& BranchesToBeActivated() const {return branches;}
+
+  /// Boolean whether all branches should be turned on irrespective of map of
+  /// individual branches to turn on.
+  inline bool AllBranchesToBeActivated() const {return allBranchesActivated;}
 
   /// Set a branch to be activated if not already.
   void SetBranchToBeActivated(std::string treeName, std::string branchName);
@@ -133,10 +143,10 @@ public:
   int lineCounter = 0;
 
   /// Cache of which branches need to be activated for this analysis.
-  std::map<std::string, std::vector<std::string> > branches;
+  RBDS::BranchMap branches;
 
   /// Whether all branches will be activatd - ie for optics.
-  bool allEventActivated;
+  bool allBranchesActivated;
 
   ClassDef(Config,1);
 };

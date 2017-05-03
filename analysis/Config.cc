@@ -20,7 +20,7 @@ std::vector<std::string> Config::treeNames = {"Options.", "Model.", "Run.", "Eve
 Config::Config(std::string fileNameIn,
 	       std::string inputFilePathIn,
 	       std::string outputFileNameIn):
-  allEventActivated(false)
+  allBranchesActivated(false)
 {
   InitialiseOptions(fileNameIn);  
   ParseInputFile();
@@ -116,8 +116,11 @@ void Config::ParseInputFile()
   
   f.close();
 
+  // set flags etc based on what options have been set
   if (optionsBool.at("calculateoptics"))
-    {allEventActivated = true;}
+    {allBranchesActivated = true;}
+  if (optionsBool.at("mergehistograms"))
+    {branches["Event."].push_back("Histos.");}
 }
 
 void Config::ParseHistogramLine(const std::string& line)
