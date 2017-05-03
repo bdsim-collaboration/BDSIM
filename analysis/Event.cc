@@ -1,5 +1,5 @@
-#include "Config.hh"
 #include "Event.hh"
+#include "RebdsimTypes.hh"
 
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -39,7 +39,10 @@ void Event::CommonCtor()
   info            = nullptr;
 }
 
-void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
+void Event::SetBranchAddress(TTree *t,
+			     const RBDS::VectorString* samplerNames,
+			     bool                      allBranchesOn,
+			     const RBDS::VectorString* branchesToTurnOn)
 {
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
@@ -47,20 +50,12 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
   // turn off all branches by default.
   t->SetBranchStatus("*", 0);
 
-  // turn on what we need
-  if (Config::Instance()->GetOptionBool("mergehistograms"))
-    {
-      if (debug)
-	{std::cout << "Turning on branch \"Histos.\"" << std::endl;}
-      t->SetBranchStatus("Histos.*", 1);
-    }
 
-  if (Config::Instance()->AllEventBranchesToBeActivated())
+  if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
-  else
+  else if (branchesToTurnOn)
     {
-      auto branchNames = Config::Instance()->BranchesToBeActivated("Event.");
-      for (auto name : branchNames)
+      for (auto name : *branchesToTurnOn)
 	{
 	  std::string nameStar = name + ".*"; // necessary because of the splitting
 	  if (debug)

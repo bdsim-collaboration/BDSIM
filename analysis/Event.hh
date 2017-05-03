@@ -8,6 +8,8 @@
 
 #include "BDSOutputROOTEventSampler.hh"
 
+#include "RebdsimTypes.hh"
+
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -47,7 +49,10 @@ public:
 
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
-  void SetBranchAddress(TTree* t, std::vector<std::string>* samplerNames = nullptr);
+  void SetBranchAddress(TTree* t,
+			const RBDS::VectorString* samplerNames     = nullptr,
+			bool                      allBranchesOn    = false,
+			const RBDS::VectorString* branchesToTurnOn = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__

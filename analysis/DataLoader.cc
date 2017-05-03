@@ -1,8 +1,8 @@
 #include "DataLoader.hh"
-
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
+#include "RebdsimTypes.hh"
 #include "Run.hh"
 
 #include "BDSDebug.hh"
@@ -17,9 +17,13 @@ ClassImp(DataLoader)
 
 DataLoader::DataLoader(std::string fileName,
 		       bool        debugIn,
-		       bool        processSamplersIn):
+		       bool        processSamplersIn,
+		       bool        allBranchesOnIn,
+		       const RBDS::BranchMap* branchesToTurnOnIn):
   debug(debugIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  allBranchesOn(allBranchesOnIn),
+  branchesToTurnOn(branchesToTurnOnIn)
 {
   CommonCtor(fileName);
 }
@@ -53,7 +57,7 @@ void DataLoader::CommonCtor(std::string fileName)
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
   this->ChainTrees();
-  this->SetBranchAddress();
+  this->SetBranchAddress(allBranchesOn, branchesToTurnOn);
 }
 
 void DataLoader::BuildInputFileList(std::string inputPath)
@@ -172,10 +176,16 @@ void DataLoader::ChainTrees()
     }
 }
 
-void DataLoader::SetBranchAddress()
+void DataLoader::SetBranchAddress(bool allBranchesOn,
+				  const RBDS::BranchMap* branchesToTurnOn)
 {
   mod->SetBranchAddress(modChain);
   opt->SetBranchAddress(optChain);
-  evt->SetBranchAddress(evtChain, &samplerNames);
+
+  const RBDS::VectorString* evtBranches = nullptr;
+  if (branchesToTurnOn)
+    {evtBranches = &(*branchesToTurnOn).at("Event.");}
+  evt->SetBranchAddress(evtChain, &samplerNames, allBranchesOn, evtBranches);
+  
   run->SetBranchAddress(runChain);
 }

@@ -10,14 +10,14 @@
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 
+#include "Analysis.hh"
 #include "Config.hh"
 #include "DataLoader.hh"
-
-#include "Analysis.hh"
 #include "EventAnalysis.hh"
-#include "RunAnalysis.hh"
-#include "OptionsAnalysis.hh"
 #include "ModelAnalysis.hh"
+#include "OptionsAnalysis.hh"
+#include "RebdsimTypes.hh"
+#include "RunAnalysis.hh"
 
 int main(int argc, char *argv[])
 {
@@ -58,12 +58,17 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
+  bool allBranches = Config::Instance()->AllBranchesToBeActivated();
+  const RBDS::BranchMap* branchesToActivate = &(Config::Instance()->BranchesToBeActivated());
+
   std::vector<Analysis*> analyses;
 
   bool debug = Config::Instance()->Debug();
   DataLoader dl = DataLoader(Config::Instance()->InputFilePath(),
 			     debug,
-			     Config::Instance()->ProcessSamplers());
+			     Config::Instance()->ProcessSamplers(),
+			     allBranches,
+			     branchesToActivate);
   
   EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
                                                    dl.GetEventTree(),
