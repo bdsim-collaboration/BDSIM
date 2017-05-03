@@ -1,9 +1,11 @@
-#ifndef ANALYSIS_OPTIONS_H
-#define ANALYSIS_OPTIONS_H
+#ifndef ANALYSISOPTIONS_H
+#define ANALYSISOPTIONS_H
 
 #include "TROOT.h"
 
 #include "BDSOutputROOTEventOptions.hh"
+
+#include "RebdsimTypes.hh"
 
 class TTree;
 
@@ -21,7 +23,9 @@ public:
   virtual ~Options();
 
   /// Set the branch addresses to address the contents of the file.
-  void SetBranchAddress(TTree *c);
+  void SetBranchAddress(TTree* t,
+			bool                      allBranchesOn    = true,
+			const RBDS::VectorString* branchesToTurnOn = nullptr);
 
   /// @{ Member that ROOT can map file data to locally.
   BDSOutputROOTEventOptions* options;

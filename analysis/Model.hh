@@ -3,6 +3,8 @@
 
 #include "TROOT.h"
 
+#include "RebdsimTypes.hh"
+
 class BDSOutputROOTEventModel;
 class TTree;
 
@@ -23,7 +25,9 @@ public:
   std::vector<std::string> SamplerNames() const;
 
   /// Set the branch addresses to address the contents of the file.
-  void SetBranchAddress(TTree *c);
+  void SetBranchAddress(TTree* t,
+			bool                      allBranchesOn    = true,
+			const RBDS::VectorString* branchesToTurnOn = nullptr);
 
   /// @{ Member that ROOT can map file data to locally.
   BDSOutputROOTEventModel* model;

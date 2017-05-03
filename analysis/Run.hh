@@ -3,6 +3,8 @@
 
 #include "TChain.h"
 
+#include "RebdsimTypes.hh"
+
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventRunInfo;
 
@@ -20,7 +22,9 @@ public:
   virtual ~Run();
 
   /// Map the ROOT file to members in this class.
-  void SetBranchAddress(TTree *);
+  void SetBranchAddress(TTree* t,
+			bool                      allBranchesOn    = true,
+			const RBDS::VectorString* branchesToTurnOn = nullptr);
   
   /// @{ Member that ROOT can map file data to locally.
   BDSOutputROOTEventRunInfo*    info;
