@@ -4,8 +4,16 @@
 Output Analysis
 ===============
 
-This describes how to load and view data from the recommend output **rootevent** format. Other legacy formats
-are detailed below (see `ROOTOutputAnalysis`_).
+This describes how to load and view data from the recommend output **rootevent**
+format. Other legacy formats are detailed below (see `ROOTOutputAnalysis`_).
+
+BDSIM is accompanied by an analysis tool called REBDSIM that provides the ability
+to use simple text input files to specify histograms and process data. It also
+provides the ability to calculate optical functions from the sampler data.
+
+REBDSIM is based on a set of analysis classes that are compiled in a library. These
+may be used through REBDSIM, but also through the ROOT interpreter and in users'
+ROOT macros or compiled code.
 
 Setup
 -----
@@ -84,6 +92,9 @@ classes provided by the library::
   root> cout << elosslocal->n << endl;
         345
   root>
+
+The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
+of each class.
   
 
 Preparing an Analysis Configuration File
@@ -95,29 +106,100 @@ that would commonly use the :code:`TTree->Draw()` method.
 
 An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt` ::
 
-  Debug                               1
-  InputFilePath                       ./output_event.root
-  OutputFileName                      ./ana_1.root
-  CalculateOpticalFunctions           1
-  CalculateOpticalFunctionsFileName   ./ana_1.dat
+  Debug                           True
+  InputFilePath                   ./output_event.root
+  OutputFileName                  ./ana_1.root
+  CalculateOpticalFunctions       True
+  OpticalFunctionsFileName       ./ana_1.dat
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
-  Histogra  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
-  Histogram Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
-  Histogram Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
-  Histogram Model.    componentLength {100}      {0.0:100}           Model.length        1
-  Histogram Run.      runDuration     {1000}     {0,1000}            Info.duration       1
-  Histogram Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
-  Histogram Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1D  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
+  Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
+  Histogram1D  Options.  seedState       {200}      {0:200}             Options.GMAD::OptionsBase.seed 1
+  Histogram1D  Model.    componentLength {100}      {0.0:100}           Model.length        1
+  Histogram1D  Run.      runDuration     {1000}     {0:1000}            Info.duration       1
+  Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
+  Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
 
 * Arguments in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
 * A line beginning with :code:`#` is ignored as a comment line.
-* 2D histograms (2nd last line in example) have arguments separated by :code:`:` except the number of bins.
+* Empty lines are also ignored.
+* For bins and binning, the dimensions are separated by :code:`,`.
+* For bins and binning, the range from low to high is specified by :code:`low:high`.
+* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.x:samplername.y`.
+* Variables must contain the full 'address' of a variable inside a Tree.
 * A 3D histogram is shown on the last line.
+* True or False as well as 1 or 0 may be used for Boolean options.
+
+The following (case-insensitive) options may be specified in the top part.
 
 
-.. note:: Observe the use of colons and commas carefully as there is no error checking and the arguments
-	  are passed directly to the ROOT TTree Draw command.
++----------------------------+------------------------------------------------------+
+| **Option**                 | **Description**                                      |
++============================+======================================================+
+| Debug                      | Whether to print out debug information.              |
++----------------------------+------------------------------------------------------+
+| InputFilePath              | The root event file to analyse (or regex for         |
+|                            | multiple).                                           |
++----------------------------+------------------------------------------------------+
+| OutputFileName             | The name of the result file to written to.           |
++----------------------------+------------------------------------------------------+
+| CalculateOpticalFunctions  | Whether to calculate optical functions or not.       |
++----------------------------+------------------------------------------------------+
+| OpticalFunctionsFileName   | The name of a separate text file copy of the opcial  |
+|                            | functions output.                                    |
++----------------------------+------------------------------------------------------+
+| PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
+|                            | If you require print out for every event, set this   |
+|                            | to be very small.                                    |
++----------------------------+------------------------------------------------------+
+| ProcessSamplers            | Whether to load the sampler data or not.             |
++----------------------------+------------------------------------------------------+
+| ProcessLosses              | TBC.                                                 |
++----------------------------+------------------------------------------------------+
+| ProcessAllTrees            | TBC.                                                 |
++----------------------------+------------------------------------------------------+
+| MergeHistograms            | Whether to merge the event level default histograms  |
+|                            | provided by BDSIM. Turning this off will             |
+|                            | significantly improve the speed of analysis if only  |
+|                            | separate user-defined histograms are desired.        |
++----------------------------+------------------------------------------------------+
+| GDMLFileName               | TBC.                                                 |
++----------------------------+------------------------------------------------------+
+
+
+Variables In Data
+-----------------
+
+The variables for histograms are described in :ref:`output-section`. However, the
+user can also quickly determine what they want by using a ROOT TBrowser to inspect
+a file::
+
+  root output_event.root
+  root> TBrowser tb;
+
+At which point, a browser window will appear with the specified file open. The variable
+used in the histogram should be the full 'address' of the variable inside the Tree. Here,
+the tree is :code:`Event.` and the variable is :code:`Info.duration`.
+
+.. figure:: figures/root-tbrowser.png
+	    :width: 90%
+	    :align: center
+
+
+Speed & Efficiency
+------------------
+
+Whilst the ROOT file IO is very efficient, the sheer volume of data to process can
+easily result in slow running analysis. To combat this, only the minimal variables
+should be loaded that need to be. REBDSIM automatically activates only the 'ROOT
+branches' it needs for the analysis. A few possible ways to improve performance are:
+
+* Turn off optical function calculation if it's not needed or doesn't make sense. I.e.
+  if you're analysing the spray from a collimator in a sampler, it makes no sense to
+  calculate the optical functions of that distribution.
+* Turn off the MergeHistograms. If you're only making your own histograms this should
+  speed up the analysis considerably for a large number of events.
 
 
 Converting ROOT trees as numpy arrays
