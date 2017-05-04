@@ -13,13 +13,7 @@ Analysis("Run.", nullptr, "RunHistogramsMerged"),
 RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
   Analysis("Run.", chain, "RunHistogramsMerged", debug),
   run(runIn)
-{
-  if (debug)
-  {
-    std::cout << __METHOD_NAME__ << " " << runIn << " " << chain <<  " "
-	      << chain->GetEntries() << std::endl;
-  }
-}
+{;}
 
 RunAnalysis::~RunAnalysis()
 {;}
@@ -37,5 +31,7 @@ void RunAnalysis::Process()
       {histoSum = new HistogramMerge(run->histos);}
     else
       {histoSum->Add(run->histos);}
+
+    UserProcess();
   }
 }

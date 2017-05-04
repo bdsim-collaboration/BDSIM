@@ -29,7 +29,6 @@ public:
   virtual ~EventAnalysis();
 
   void SetPrintModuloFraction(double fraction);
-  void SetProcessSamplers(bool procesSamplersIn) {processSamplers = procesSamplersIn;} 
 
   virtual void Process();
 
