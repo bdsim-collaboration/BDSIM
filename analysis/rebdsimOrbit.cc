@@ -26,19 +26,27 @@ int main(int argc, char* argv[])
 
   std::string inputFileName  = std::string(argv[1]);
   std::string outputFileName = std::string(argv[2]);
-  int index = 1;
+  int index = 0;
   if (argc == 4)
     {index = std::stoi(argv[3]);}
 
-  DataLoader dl = DataLoader(inputFileName, false, true, true);
-  EventAnalysisOrbit* evtAnalysis = new EventAnalysisOrbit(dl.GetEvent(),
-							   dl.GetEventTree(),
-							   true, true);
-  evtAnalysis->ExtractOrbit(index);
-
-  TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
-  evtAnalysis->WriteOrbit(outputFile);
-  outputFile->Close();
-
+  try
+    {
+      DataLoader dl = DataLoader(inputFileName, false, true, true);
+      EventAnalysisOrbit* evtAnalysis = new EventAnalysisOrbit(dl.GetEvent(),
+							       dl.GetEventTree(),
+							       true, true);
+      evtAnalysis->ExtractOrbit(index);
+      
+      TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
+      evtAnalysis->WriteOrbit(outputFile);
+      outputFile->Close();
+    }
+  catch (std::string error)
+    {
+      std::cout << error << std::endl;
+      exit(1);
+    }
+      
   return 0;
 }
