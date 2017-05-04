@@ -1,9 +1,12 @@
 #include "Event.hh"
+#include "RebdsimTypes.hh"
 
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+
+#include <vector>
 
 #include "TChain.h"
 
@@ -24,33 +27,69 @@ Event::Event(bool debugIn,
   CommonCtor();
 }
 
-void Event::CommonCtor()
+Event::~Event()
 {
-  primaries       = nullptr;
-  eloss           = nullptr;
-  primaryFirstHit = nullptr;
-  primaryLastHit  = nullptr;
-  tunnelHit       = nullptr;
-  trajectory      = nullptr;
-  histos          = nullptr;
-  info            = nullptr;
+  delete primaries;
+  delete eloss;
+  delete primaryFirstHit;
+  delete primaryLastHit;
+  delete tunnelHit;
+  delete trajectory;
+  delete histos;
+  delete info;
+  for (auto s : samplers)
+    {delete s;}
 }
 
-void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
+void Event::CommonCtor()
+{
+#ifdef __ROOTDOUBLE__
+  primaries       = new BDSOutputROOTEventSampler<double>();
+#else
+  primaries       = new BDSOutputROOTEventSampler<float>();
+#endif
+  eloss           = new BDSOutputROOTEventLoss();
+  primaryFirstHit = new BDSOutputROOTEventLoss();
+  primaryLastHit  = new BDSOutputROOTEventLoss();
+  tunnelHit       = new BDSOutputROOTEventLoss();
+  trajectory      = new BDSOutputROOTEventTrajectory();
+  histos          = new BDSOutputROOTEventHistograms();
+  info            = new BDSOutputROOTEventInfo();
+}
+
+void Event::SetBranchAddress(TTree *t,
+			     const RBDS::VectorString* samplerNames,
+			     bool                      allBranchesOn,
+			     const RBDS::VectorString* branchesToTurnOn)
 {
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
-  t->GetEntry(0); // this initialises the local variables it would seem.
+  // turn off all branches by default.
+  t->SetBranchStatus("*", 0);
+
+  if (allBranchesOn)
+    {t->SetBranchStatus("*", 1);}
+  else if (branchesToTurnOn)
+    {
+      for (auto name : *branchesToTurnOn)
+	{
+	  std::string nameStar = name + ".*"; // necessary because of the splitting
+	  if (debug)
+	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
+	  t->SetBranchStatus(nameStar.c_str(), 1);
+	}
+    }
+  
   // only set address of primary branch if it exists
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
     {t->SetBranchAddress("Primary.",     &primaries);}
   t->SetBranchAddress("Eloss.",          &eloss);
+  t->SetBranchAddress("Histos.",         &histos);
   t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
   t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
   t->SetBranchAddress("TunnelHit.",      &tunnelHit);
   t->SetBranchAddress("Trajectory.",     &trajectory);
-  t->SetBranchAddress("Histos.",         &histos);
   t->SetBranchAddress("Info.",           &info);
 
   if(debug)
@@ -66,26 +105,15 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
     }
 
   if (processSamplers && samplerNames)
-  {
-    unsigned int nrSamplers = samplerNames->size();
-    samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
-    for(unsigned int i=0;i<nrSamplers;++i)
     {
-      t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
-      if(debug)
-      {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
-	  }
-  }
-}
-
-Event::~Event()
-{
-  delete primaries;
-  delete eloss;
-  delete primaryFirstHit;
-  delete primaryLastHit;
-  delete tunnelHit;
-  delete trajectory;
-  for(auto s = samplers.begin(); s != samplers.end(); ++s)
-    {delete *s;}
+      unsigned int nrSamplers = samplerNames->size();
+      samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
+      for(unsigned int i=0;i<nrSamplers;++i)
+	{
+	  t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
+	  t->SetBranchStatus((*samplerNames)[i].c_str(), 1);
+	  if(debug)
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
+	}
+    }
 }
