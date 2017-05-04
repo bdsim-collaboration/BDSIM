@@ -68,7 +68,6 @@ void Event::SetBranchAddress(TTree *t,
   // turn off all branches by default.
   t->SetBranchStatus("*", 0);
 
-
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
   else if (branchesToTurnOn)

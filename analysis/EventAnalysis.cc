@@ -94,6 +94,8 @@ void EventAnalysis::Process()
       else
 	{histoSum->Add(event->histos);}
 
+      UserProcess();
+
       if(debug)
 	{
 	  std::cout << __METHOD_NAME__ << i << std::endl;

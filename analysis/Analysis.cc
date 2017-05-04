@@ -34,6 +34,9 @@ void Analysis::Execute()
   std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
 }
 
+void Analysis::UserProcess()
+{;}
+
 void Analysis::SimpleHistograms()
 {
   if(debug)
