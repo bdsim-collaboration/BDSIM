@@ -119,14 +119,6 @@ pybdsim.Plot module
 		:undoc-members:
 		:show-inheritance:
 
-pybdsim.Root module
--------------------
-
-.. automodule:: pybdsim.Root
-		:members:
-		:undoc-members:
-		:show-inheritance:
-
 pybdsim.Visualisation module
 ----------------------------
 
