@@ -31,5 +31,7 @@ void RunAnalysis::Process()
       {histoSum = new HistogramMerge(run->histos);}
     else
       {histoSum->Add(run->histos);}
+
+    UserProcess();
   }
 }
