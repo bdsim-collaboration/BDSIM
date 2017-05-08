@@ -237,15 +237,15 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       //TEMPORARY
       trkelement = NULL;
       break;
-    case GMAD::ElementType::_VKICK:
-    case GMAD::ElementType::_HKICK:
+    case GMAD::ElementType::_VKICKER:
+    case GMAD::ElementType::_HKICKER:
       trkelement = CreateDipole(element);
       break;
     default:
       trkelement = NULL;
       break;
   }
-  
+  // TBC - thin hkicker and vkicker
   // TBC - implement sampler here based on element.samplerType - str - defualt 'none'
 
   if (trkelement)
