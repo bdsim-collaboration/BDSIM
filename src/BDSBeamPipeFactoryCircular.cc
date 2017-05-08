@@ -124,10 +124,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 					 lengthIn*4,                     // full length for unambiguous subtraction
 					 0,                              // rotation start angle
 					 CLHEP::twopi);                  // rotation finish angle
-  
-  BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
-					     vacuumMaterialIn,
-					     beamPipeMaterialIn);
+
+  BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
+					     beamPipeMaterialIn, lengthIn);
 
 
   

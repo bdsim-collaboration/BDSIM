@@ -363,9 +363,8 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 								    G4double    length,
 								    G4double    containerRadius)
 {
-  BDSBeamPipeFactoryBase::CommonConstruction(name,
-					     vacuumMaterial,
-					     beamPipeMaterial);
+  BDSBeamPipeFactoryBase::CommonConstruction(name, vacuumMaterial,
+					     beamPipeMaterial, length);
 		    
   // record extents
   BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
@@ -433,14 +432,16 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
     {coolingPipeLV->SetVisAttributes(pipeVisAttr);}
 }
 
-void BDSBeamPipeFactoryLHCDetailed::SetUserLimits()
+void BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
 {
-  BDSBeamPipeFactoryBase::SetUserLimits();
-  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
-  copperSkinLV->SetUserLimits(beamPipeUserLimits);
-  screenLV->SetUserLimits(beamPipeUserLimits);
+  BDSBeamPipeFactoryBase::SetUserLimits(length);
+    // get the user limits from the vacuum volume
+    auto ul = vacuumLV->GetUserLimits();
+
+  copperSkinLV->SetUserLimits(ul);
+  screenLV->SetUserLimits(ul);
   if (buildCoolingPipe)
-    {coolingPipeLV->SetUserLimits(beamPipeUserLimits);}
+    {coolingPipeLV->SetUserLimits(ul);}
 }
 
 void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)

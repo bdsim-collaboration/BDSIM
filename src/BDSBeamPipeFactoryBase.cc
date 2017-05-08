@@ -10,6 +10,7 @@
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
@@ -46,7 +47,8 @@ void BDSBeamPipeFactoryBase::CleanUp()
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* vacuumMaterialIn,
-						G4Material* beamPipeMaterialIn)
+						G4Material* beamPipeMaterialIn,
+						G4double    length)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -58,7 +60,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   /// set visual attributes
   SetVisAttributes();
   /// set user limits
-  SetUserLimits();
+  SetUserLimits(length);
   /// place volumes
   PlaceComponents(nameIn);
 }
@@ -100,12 +102,15 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
-void BDSBeamPipeFactoryBase::SetUserLimits()
+void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
 {
   auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
-  vacuumLV->SetUserLimits(beamPipeUserLimits);
-  beamPipeLV->SetUserLimits(beamPipeUserLimits);
-  containerLV->SetUserLimits(beamPipeUserLimits);
+  //copy the default and update with the length of the object rather than the default 1m
+  G4UserLimits* ul = new G4UserLimits(*beamPipeUserLimits);
+  ul->SetMaxAllowedStep(length);
+  vacuumLV->SetUserLimits(ul);
+  beamPipeLV->SetUserLimits(ul);
+  containerLV->SetUserLimits(ul);
 }
 
 void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
