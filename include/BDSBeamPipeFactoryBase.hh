@@ -8,6 +8,7 @@
 class G4LogicalVolume;
 class G4Material;
 class G4PVPlacement;
+class G4UserLimits;
 class G4VSolid;
 
 /**
@@ -125,6 +126,7 @@ protected:
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4VSolid*>          allSolids;
+  std::vector<G4UserLimits*>      allUserLimits;
   std::vector<G4VisAttributes*>   allVisAttributes;
   /// @}
   

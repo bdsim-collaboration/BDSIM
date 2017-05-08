@@ -39,6 +39,7 @@ void BDSBeamPipeFactoryBase::CleanUp()
   allPhysicalVolumes.clear();
   allRotationMatrices.clear();
   allSolids.clear();
+  allUserLimits.clear();
   allVisAttributes.clear();
 
   inputFaceNormal  = G4ThreeVector(0,0,-1);
@@ -154,6 +155,7 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   aPipe->RegisterPhysicalVolume(allPhysicalVolumes);
   if (beamPipeLV)// in the case of the circular vacuum, there isn't a beampipeLV
     {aPipe->RegisterSensitiveVolume(beamPipeLV);}
+  aPipe->RegisterUserLimits(allUserLimits);
   aPipe->RegisterVisAttributes(allVisAttributes);
   
   return aPipe;
