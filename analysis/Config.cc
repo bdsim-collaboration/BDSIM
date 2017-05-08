@@ -120,7 +120,10 @@ void Config::ParseInputFile()
 
   // set flags etc based on what options have been set
   if (optionsBool.at("calculateoptics"))
-    {allBranchesActivated = true;}
+    {
+      allBranchesActivated = true;
+      optionsBool["processsamplers"] = true;
+    }
   if (optionsBool.at("mergehistograms"))
     {
       branches["Event."].push_back("Histos.");

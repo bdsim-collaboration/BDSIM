@@ -181,8 +181,9 @@ The following elements may be defined
 * `decapole`_
 * `multipole`_
 * `thinmultipole`_
-* `vkick`_
-* `hkick`_
+* `vkicker`_
+* `hkicker`_
+* `kicker`_
 * `rf`_
 * `rcol`_
 * `ecol`_
@@ -266,7 +267,9 @@ rbend
 	    :width: 30%
 	    :align: right
 
-.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam energy can be specified or the magnetic field, `B` in Tesla. If both are defined the magnet is under- or overpowered.
+.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
+				 energy can be specified or the magnetic field, `B` in Tesla.
+				 If both are defined the magnet is under or over-powered.
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
@@ -525,45 +528,89 @@ Examples::
 
 .. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
-vkick
-^^^^^
+vkicker
+^^^^^^^
 
-.. TODO: add picture
+`vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
+with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
+a length of exaclty 0 is specified, a thin kicker will be built. This it typically a 1um slice
+with only the shape of the aperture and no surrounding geometry. It is also typically not
+visible with the default visualisation settings.
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
-Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
+in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
+case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+will change.
 
-.. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
-	  convention to that of an sector bend.
+In the case of a thick kicker, the resulting bending angle is calculated as:
+
+.. math::
+
+   \theta = \sin^{-1}(\,p_x)
+
+The dipole field strength is then calculated with respect to the chord length:
+
+.. math::
+
+   \mathbf{B} = B\rho\, \frac{\theta}{\mathrm{chord\,length}}
+
 
 * The `aperture parameters`_ may also be specified.
-* The `magnet geometry parameters`_ may also be specified.
+* For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
 Examples::
 
-   KX15v: vkick, angle=0.01*mrad;
+   KX15v: vkicker, vkick=1.3e-5;
+   KX17v: vkicker, vkick=-2.4e-2, l=0.5*m;
 
-hkick
-^^^^^
+hkicker
+^^^^^^^
 
-.. TODO: add picture
+`hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
+specified
+with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
+a length of exaclty 0 is specified, a thin kicker will be built. This it typically a 1um slice
+with only the shape of the aperture and no surrounding geometry. It is also typically not
+visible with the default visualisation settings.
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
-Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+The strength is specified by the parameter :code:`hkick`, which is the fractional momentum kick
+in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
+case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+will change.
 
-.. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
-	  convention to that of an sector bend that has been rotated.
+.. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle
+	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
+	  the opposite of a bend where a positive *angle* causes a deflection in negative
+	  `x`.
 
 * The `aperture parameters`_ may also be specified.
-* The `magnet geometry parameters`_ may also be specified.
+* For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
 Examples::
 
-   KX17h: hkick, angle=0.01;
+   KX17h: hkicker, hkick=0.01;
+   KX19h: hkicker, hkick=-1.3e-5, l=0.2*m;
+
+kicker
+^^^^^^
+
+`kicker` defines a combined horizontal and vertical kicker.  Either both or one of the
+parameters `hkick` and `vkick` may be specified. Like the `hkicker` and `vkicker`, this
+may also be thin or thick. In the case of the thick kicker, the field is the linear
+sum of two independently calculated fields.
+
+Example::
+
+  kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0.3e-4;
+
+
+tkicker
+^^^^^^^
+
+BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
+however MADX differentitates the two on the basis of fitting parameters. BDSIM does
+not make this distinction. See `kicker`_ for more details.
+
 
 rf
 ^^^^
@@ -1465,7 +1512,7 @@ at the same level in the geometry hierarchy (both are placed in one container fo
 The beam pipe is not placed 'inside' the yoke.
 
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkick`, `hkick` element types in BDSIM.
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
 Example::
 

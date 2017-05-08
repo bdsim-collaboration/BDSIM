@@ -52,8 +52,7 @@ public:
 	       G4double                 eScalingIn                 = 1.0,
 	       G4double                 bScalingIn                 = 1.0,
 	       G4double                 timeOffsetIn               = 0,
-	       G4bool                   autoScaleIn                = false,
-	       G4ThreeVector*           unitDirection              = nullptr);
+	       G4bool                   autoScaleIn                = false);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -80,7 +79,6 @@ public:
   inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
   inline G4bool              AutoScale()                const {return autoScale;}
-  inline G4ThreeVector       UnitDirection()            const;
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -89,7 +87,6 @@ public:
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
   inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
-  inline void SetUnitDirection(G4ThreeVector* unitDirectionIn) {unitDirection = unitDirectionIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -121,18 +118,9 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
-  G4ThreeVector*           unitDirection;
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;
 };
-
-inline G4ThreeVector BDSFieldInfo::UnitDirection() const
-{
-  if (unitDirection)
-    {return *unitDirection;}
-  else
-    {return defaultUnitDirection;}
-}
 
 #endif

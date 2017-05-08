@@ -47,6 +47,7 @@ void Element::PublishMembers()
   publish("fint", &Element::fint);
   publish("fintx",&Element::fintx);
   publish("hgap", &Element::hgap);
+  publish("kick", &Element::kick);
   publish("hkick",&Element::hkick);
   publish("vkick",&Element::vkick);
   
@@ -299,6 +300,7 @@ void Element::flush()
   fint = 0;
   fintx = 0;
   hgap  = 0;
+  kick  = 0;
   hkick = 0;
   vkick = 0;
   

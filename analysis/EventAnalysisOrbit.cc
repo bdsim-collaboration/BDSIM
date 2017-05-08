@@ -22,8 +22,12 @@ void EventAnalysisOrbit::Clear()
 void EventAnalysisOrbit::ExtractOrbit(int index)
 {
   const int entries = chain->GetEntries();
-  if (index > entries)
-    {throw std::string("Orbit index greater than number of events in file");}
+  if (index > entries-1)
+    {
+      std::string errString = "Orbit index: " + std::to_string(index) +
+	" greater than number of events: " + std::to_string(entries) + " in file minus one";
+      throw errString;
+    }
 
   int nSamplers = (int)samplerAnalyses.size();
 
@@ -46,6 +50,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
 	}
       counter++;
     }
+  std::cout << std::endl;
 }
 
 void EventAnalysisOrbit::WriteOrbit(TFile* f)

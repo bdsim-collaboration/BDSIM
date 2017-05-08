@@ -193,10 +193,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateSBend(); break;
   case ElementType::_RBEND:
     component = CreateRBend(); break;
-  case ElementType::_HKICK:
-    component = CreateKicker(false); break;
-  case ElementType::_VKICK:
-    component = CreateKicker(true); break;
+  case ElementType::_HKICKER:
+    component = CreateKicker(KickerType::horizontal); break;
+  case ElementType::_VKICKER:
+    component = CreateKicker(KickerType::vertical); break;
+  case ElementType::_KICKER:
+  case ElementType::_TKICKER:
+    component = CreateKicker(KickerType::general); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;
   case ElementType::_SEXTUPOLE:
@@ -424,37 +427,113 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   integratorSet);
   return rbendline;
 }
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
+void BDSComponentFactory::GetKickValue(G4double& hkick,
+				       G4double& vkick,
+				       const KickerType type) const
 {
-  if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
+  G4bool kickFinite = BDS::IsFinite(element->kick);
+  switch (type)
+    {
+    case KickerType::horizontal:
+      {
+	hkick = kickFinite ? element->kick : element->hkick;
+	// backwards compatability - if both are zero but angle if finite
+	// for this element - use that.
+	if (!BDS::IsFinite(hkick) && BDS::IsFinite(element->angle))
+          {hkick = element->angle;} //+ve to match hkick definition
+	vkick = 0;
+	break;
+      }
+    case KickerType::vertical:
+      {
+	vkick = kickFinite ? element->kick : element->vkick;
+	// backwards compatability - if both are zero but angle if finite
+	// for this element - use that.
+	if (!BDS::IsFinite(vkick) && BDS::IsFinite(element->angle))
+          {vkick = element->angle;} //+ve to match vkick definition
+	hkick = 0;
+	break;
+      }
+    case KickerType::general:
+      {
+	hkick = element->hkick;
+	vkick = element->vkick;
+	// element->kick will be ignored
+	if (BDS::IsFinite(element->kick))
+	  {
+	    G4cout << __METHOD_NAME__ << "Warning: 'kick' defined in element"
+		   << "\"" << element->name << "\" but will be ignored as general kicker"
+		   << G4endl;
+	  }
+      }
+    default:
+      {break;}
+    }
+}
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  auto angleAndField = CalculateAngleAndField(element);
-  // MADX definition is that +ve hkick (here angle) increases p_x, corresponding
-  // to deflection in +ve x, which is opposite to the convention of bends.
-  // Hence -ve factor here.
-  (*st)["angle"] = -angleAndField.first;
-  (*st)["field"] = -angleAndField.second;
-    
-  BDSMagnetType t = BDSMagnetType::hkicker;
-  if (isVertical)
-    {t = BDSMagnetType::vkicker;}
+BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
+{
+  BDSMagnetStrength* st         = new BDSMagnetStrength();
+  BDSFieldType       fieldType  = BDSFieldType::dipole3d;
+  BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
+  G4double           chordLength;
   
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
+    {// thin kicker
+      fieldType   = BDSFieldType::bzero;
+      intType     = BDSIntegratorType::kickerthin;
+      chordLength = thinElementLength;
+      G4double hkick = 0;
+      G4double vkick = 0;
+      GetKickValue(hkick, vkick, type);
+      (*st)["hkick"] = hkick;
+      (*st)["vkick"] = vkick;
+    }
+  else
+    {// thick kicker
+      chordLength = element->l*CLHEP::m;
+      // sin(angle) = dP -> angle = sin^-1(dP)
+      G4double          hkick = 0;
+      G4double          vkick = 0;
+      GetKickValue(hkick, vkick, type);
+      G4double         angleX = asin(hkick);
+      G4double         angleY = asin(vkick);
+      // -ve here for convention matching
+      G4double         fieldX = FieldFromAngle(-angleX, chordLength);
+      G4double         fieldY = FieldFromAngle(angleY,  chordLength);
+      // note field for kick in x is unit Y, hence B = (y,x,0) here
+      G4ThreeVector     field = G4ThreeVector(fieldY, fieldX, 0);
+      G4double       fieldMag = field.mag();
+      G4ThreeVector unitField = field.unit();
+      
+      (*st)["field"] = fieldMag;
+      (*st)["bx"]    = unitField.x();
+      (*st)["by"]    = unitField.y();
+    }
+  
+  BDSMagnetType t;
+  switch (type)
+    {
+    case KickerType::horizontal:
+    case KickerType::general:
+      {t = BDSMagnetType::hkicker; break;}
+    case KickerType::vertical:
+      {t = BDSMagnetType::vkicker; break;}
+    default:
+      {t = BDSMagnetType::hkicker; break;}
+    }
+  
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       intType,
 					       st,
 					       true);
-  if (isVertical)
-    {vacuumField->SetUnitDirection(new G4ThreeVector(-1,0,0));}
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
   return new BDSMagnet(t,
 		       elementName,
-		       element->l*CLHEP::m,
+		       chordLength,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
@@ -850,15 +929,19 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       angle);
 }
 
-G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
+G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element,
+						       const G4bool printWarning)
 {
   if(element->l*CLHEP::m < 1e-7)
     {
-      G4cerr << "---->NOT creating element, "
-             << " name = " << elementName
-             << ", LENGTH TOO SHORT:"
-             << " l = " << element->l*CLHEP::um << "um"
-             << G4endl;
+      if (printWarning)
+	{
+	  G4cerr << "---->NOT creating element, "
+		 << " name = " << elementName
+		 << ", LENGTH TOO SHORT:"
+		 << " l = " << element->l*CLHEP::um << "um"
+		 << G4endl;
+	}
       return false;
     }
   else
@@ -1164,15 +1247,28 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      angle = field * length / brho ;
+      //angle = charge * ffact * field * length / brho;
+      angle = AngleFromField(field, length);
     }
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = brho * angle / length;
+      field = FieldFromAngle(angle, length);
     }
   
   return std::make_pair(angle,field);
+}
+
+G4double BDSComponentFactory::FieldFromAngle(const G4double angle,
+					     const G4double length) const
+{
+  return brho * angle / length;
+}
+
+G4double BDSComponentFactory::AngleFromField(const G4double field,
+					     const G4double length) const
+{
+  return field * length / brho;
 }
 
 void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,

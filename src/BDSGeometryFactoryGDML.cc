@@ -46,10 +46,10 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
   G4VSolid*       containerSolid = containerLV->GetSolid();
   G4ThreeVector gdmlWorldOrigin(0,0,0);
   if (containerPV->GetName() == "world_volume_lv_PV")
-  {
-    gdmlWorldOrigin = parser->GetPosition("PygdmlOrigin"); // TODO check if Pygdml geometry
-    gdmlWorldOrigin[2] = 0.0;
-  }
+    {
+      gdmlWorldOrigin = parser->GetPosition("PygdmlOrigin"); // TODO check if Pygdml geometry
+      gdmlWorldOrigin[2] = 0.0;
+    }
 
   // record all pvs and lvs used in this loaded geometry
   std::vector<G4VPhysicalVolume*> pvs;
