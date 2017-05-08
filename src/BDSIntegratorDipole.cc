@@ -86,7 +86,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
     {SetDistChord(dc);}
   
   // This uses the mass world volume for the transform!
-  ConvertToGlobal(outputLocalPos,outputLocalMomUnit,momMag,yOut);
+  ConvertToGlobal(outputLocalPos, outputLocalMomUnit, yOut, momMag);
   
   // If the radius of curvature is too small, reduce the momentum by 2%. This will
   // cause artificial spiralling for what must be particles well below the design momenta.

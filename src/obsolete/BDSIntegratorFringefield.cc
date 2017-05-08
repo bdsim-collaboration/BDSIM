@@ -77,7 +77,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
 
   if(true)
     {
-      ConvertToGlobal(LocalR,LocalP,InitMag,yOut);
+      ConvertToGlobal(LocalR, LocalP, yOut, InitMag);
       return;
     }
   else

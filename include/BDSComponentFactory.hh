@@ -129,11 +129,14 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element const* nextElement = nullptr;
   
+  /// Private enum for kicker types. Has to be decalred before CreateKicker method.
+  enum class KickerType {horizontal, vertical, general};
+  
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
-  BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
+  BDSAcceleratorComponent* CreateKicker(KickerType type);
   BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
@@ -162,7 +165,8 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* element,
+				    const G4bool printWarning = true);
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
@@ -190,6 +194,16 @@ private:
   /// of +ve angle -> deflection in -ve x.
   std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element) const;
 
+  /// Calculate the field from a given angle through a length of field - uses member
+  /// rigidity and charge. Length & angle in g4 m / rad units.
+  G4double FieldFromAngle(const G4double angle,
+			  const G4double length) const;
+
+  /// Calculate the angle through a length of field - uses member
+  /// rigidity and charge. Length & field in g4 m / tesla units
+  G4double AngleFromField(const G4double field,
+			  const G4double length) const;
+
   /// Calculate the field and angle of an rbend from information in the element noting the
   /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
   /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
@@ -216,6 +230,12 @@ private:
   /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
   /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
   G4double IncomingFaceAngle(const GMAD::Element* element) const;
+
+  /// Pull out the right value - either 'kick' or 'h/vkick' for the appropriate
+  /// type of kicker from the current member element.
+  void GetKickValue(G4double& hkick,
+		    G4double& vkick,
+		    const KickerType type) const;
 
   /// Registry of modified elements stored by original name and number of times
   /// modified - 0 counting. This is so when we modify elements beyond their definition

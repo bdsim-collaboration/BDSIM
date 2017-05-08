@@ -169,8 +169,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localMomUnit.setX(xp1);
   localMomUnit.setY(yp1);
   localMomUnit.setZ(zp1);
-  
-  ConvertToGlobal(localPos,localMomUnit,momMag,yOut);
+
+  ConvertToGlobal(localPos, localMomUnit, yOut, momMag);
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
 }

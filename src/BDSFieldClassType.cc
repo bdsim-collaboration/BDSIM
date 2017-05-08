@@ -21,6 +21,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
 {
   switch (fType.underlying())
     {
+    case BDSFieldType::bzero:
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -28,6 +29,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::mokka:
     case BDSFieldType::solenoid:
     case BDSFieldType::dipole:
+    case BDSFieldType::dipole3d:
     case BDSFieldType::quadrupole:
     case BDSFieldType::dipolequadrupole:
     case BDSFieldType::sextupole:
@@ -40,6 +42,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::skewoctupole:
     case BDSFieldType::skewdecapole:
       {return BDSFieldClassType::magnetic;}
+    case BDSFieldType::ezero:
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
@@ -47,6 +50,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::rf:
       {return BDSFieldClassType::electric;}
     case BDSFieldType::none:
+    case BDSFieldType::ebzero:
     case BDSFieldType::ebmap1d:
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:

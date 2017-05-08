@@ -215,7 +215,7 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsim";
-  lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
+  lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   maximumStepLength        = 1;       // m, quite big
   maximumTrackLength       = 1e90;    // m, no limit but smaller than DBL_MAX for safe *CLHEP::m

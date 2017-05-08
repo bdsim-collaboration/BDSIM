@@ -12,8 +12,6 @@
 
 #include <ostream>
 
-const G4ThreeVector BDSFieldInfo::defaultUnitDirection = G4ThreeVector(0,1,0); // unit Y
-
 BDSFieldInfo::BDSFieldInfo():
   fieldType(BDSFieldType::none),
   brho(0),
@@ -32,8 +30,7 @@ BDSFieldInfo::BDSFieldInfo():
   eScaling(1.0),
   bScaling(1.0),
   timeOffset(0),
-  autoScale(false),
-  unitDirection(nullptr)
+  autoScale(false)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -53,8 +50,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 eScalingIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
-			   G4bool                   autoScaleIn,
-			   G4ThreeVector*           unitDirectionIn):
+			   G4bool                   autoScaleIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -72,15 +68,13 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   eScaling(eScalingIn),
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
-  autoScale(autoScaleIn),
-  unitDirection(unitDirectionIn)
+  autoScale(autoScaleIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
   delete cavityInfo;
-  delete unitDirection;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
@@ -109,10 +103,6 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {cavityInfo = new BDSCavityInfo(*other.cavityInfo);}
   else
     {cavityInfo = nullptr;}
-  if (other.unitDirection)
-    {unitDirection = new G4ThreeVector(*other.unitDirection);}
-  else
-    {unitDirection = nullptr;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
@@ -134,8 +124,6 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "auto scale         " << info.autoScale                << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
-  if (info.unitDirection)
-    {out << "Field direction:   " << *(info.unitDirection)       << G4endl;}
   return out;
 }
 
