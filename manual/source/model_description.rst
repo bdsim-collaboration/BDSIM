@@ -1447,8 +1447,6 @@ overlap with any other geometry.
 	  into the world volume. This only ensures the container doesn't overlap with BDSIM
 	  geometry, not that the internal geometry is valid.
 
-.. Note:: Currently sensitivity (ie. read out of hits) is not support and is being implemented.
-
 The following parameters may be specified.
 
 +----------------+--------------------------------------------------------------------+
@@ -1478,7 +1476,7 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
 +----------------+--------------------------------------------------------------------+
-| sensitive      | **unsupported** - in future whether geometry records hits.         |
+| sensitive      | Whether the geometry records energy deposition (default true).     |
 +----------------+--------------------------------------------------------------------+
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
