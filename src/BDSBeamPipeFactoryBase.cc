@@ -4,6 +4,7 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4LogicalVolume.hh"
@@ -105,10 +106,12 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
 
 void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
 {
-  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
-  G4UserLimits* ul = new G4UserLimits(*beamPipeUserLimits);
-  ul->SetMaxAllowedStep(length);
+  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
+
+  if (defaultUL != ul) // if it's not the default register it
+    {allUserLimits.push_back(ul);}
   vacuumLV->SetUserLimits(ul);
   beamPipeLV->SetUserLimits(ul);
   containerLV->SetUserLimits(ul);

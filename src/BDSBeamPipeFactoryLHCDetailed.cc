@@ -435,8 +435,9 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
 void BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
 {
   BDSBeamPipeFactoryBase::SetUserLimits(length);
-    // get the user limits from the vacuum volume
-    auto ul = vacuumLV->GetUserLimits();
+  // get the user limits from the vacuum volume
+  // ownership registration done in base class method so no need to register it
+  auto ul = vacuumLV->GetUserLimits();
 
   copperSkinLV->SetUserLimits(ul);
   screenLV->SetUserLimits(ul);
