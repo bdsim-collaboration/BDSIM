@@ -20,14 +20,14 @@ BDSIntegratorMag::~BDSIntegratorMag()
 }
 
 void BDSIntegratorMag::ConvertToGlobal(const G4ThreeVector& localPos,
-				       const G4ThreeVector& localMomUnit,
-				       const G4double       momMag,
-				       G4double             yOut[])
+				       const G4ThreeVector& localMom,
+				       G4double             yOut[],
+                                       const G4double       momScaling)
 {
-  BDSStep globalPosDir = ConvertToGlobalStep(localPos, localMomUnit, false);
+  BDSStep globalPosDir = ConvertToGlobalStep(localPos, localMom, false);
   G4ThreeVector GlobalPosition = globalPosDir.PreStepPoint();
   G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
-  GlobalTangent*=momMag; // multiply the unit direction by magnitude to get momentum
+  GlobalTangent*=momScaling; // multiply the unit direction by magnitude to get momentum
 
   yOut[0] = GlobalPosition.x();
   yOut[1] = GlobalPosition.y();

@@ -27,6 +27,7 @@ Parameters::Parameters()
   setMap["fint"]  = false;
   setMap["fintx"] = false;
   setMap["hgap"]  = false;
+  setMap["kick"]  = false;
   setMap["hkick"] = false;
   setMap["vkick"] = false;
   

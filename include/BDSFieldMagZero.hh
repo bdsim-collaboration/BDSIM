@@ -1,8 +1,10 @@
-#ifndef BDSFIELDMAGDUMMY_H
-#define BDSFIELDMAGDUMMY_H
+#ifndef BDSFIELDMAGZERO_H
+#define BDSFIELDMAGZERO_H
+
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4MagneticField.hh"
+#include "G4ThreeVector.hh"
 
 /**
  * @brief Null B field - for special cases where we need a valid object.
@@ -15,16 +17,17 @@
  * @author Laurie Nevay.
  */
 
-class BDSFieldMagDummy: public G4MagneticField
+class BDSFieldMagZero: public BDSFieldMag
 {
 public:
-  BDSFieldMagDummy();
+  BDSFieldMagZero(){;}
   
-  virtual ~BDSFieldMagDummy(){;}
+  virtual ~BDSFieldMagZero(){;}
 
   /// Access the field value.
-  virtual void GetFieldValue(const G4double point[4],
-			     G4double fieldArray[6]) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector& /*position*/,
+				 const G4double       /*t*/ = 0) const
+  {return G4ThreeVector(0,0,0);}
 };
 
 #endif

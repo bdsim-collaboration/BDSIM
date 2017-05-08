@@ -23,6 +23,7 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::decapole,             "decapole"},
       {BDSIntegratorType::dipolefringe,         "dipolefringe"},
       {BDSIntegratorType::euler,                "euler"},
+      {BDSIntegratorType::kickerthin,           "kickerthin"},
       {BDSIntegratorType::g4cashkarprkf45,      "g4cashkarprkf45"},
       {BDSIntegratorType::g4classicalrk4,       "g4classicalrk4"},
       {BDSIntegratorType::g4constrk4,           "g4constrk4"},
@@ -55,6 +56,7 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["multipolethin"]        = BDSIntegratorType::multipole;
   types["dipolefringe"]         = BDSIntegratorType::dipolefringe;
   types["euler"]                = BDSIntegratorType::euler;
+  types["kickerthin"]           = BDSIntegratorType::kickerthin;
   types["g4cashkarprkf45"]      = BDSIntegratorType::g4cashkarprkf45;
   types["g4classicalrk4"]       = BDSIntegratorType::g4classicalrk4;
   types["g4constrk4"]           = BDSIntegratorType::g4constrk4;
