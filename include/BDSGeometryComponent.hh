@@ -161,6 +161,9 @@ public:
   /// Access all sensitive volumes belonging to this component
   virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
+  /// Make all logical volumes sensitive (flagged only) - does not attach an SD.
+  inline void MakeAllVolumesSensitive() {RegisterSensitiveVolume(GetAllLogicalVolumes());}
+
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);
 
