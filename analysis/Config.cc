@@ -133,7 +133,7 @@ void Config::ParseInputFile()
 
 void Config::ParseHistogramLine(const std::string& line)
 {
-  // we now the line starts with 'histogram'
+  // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
   std::regex histNDim("^Histogram([1-3])D\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
@@ -294,9 +294,18 @@ void Config::ParseBinning(const std::string binning,
 			  double& yLow, double& yHigh,
 			  double& zLow, double& zHigh) const
 {
-  // match number (inc. - + . e); ':'; number (inc as before)
-  std::regex oneDim("([0-9e\\-\\+\\.]+):([0-9e\\-\\+\\.]+)", std::regex_constants::icase);
-  std::smatch dimLevelMatch;
+  // match scientific number, from http://stackoverflow.com/questions/4479408/regex-for-numbers-on-scientific-notation
+  std::string regexScientificNumber = "-?[\\d\\.]+(?:e-?\\d+)?";
+  /* The regex is
+    -?      # an optional -
+    [\d.]+  # a series of digits or dots (not 100% correct, but alright)
+    (?:     # start non capturing group
+    e       # "e"
+    -?      # an optional -
+    \d+     # digits
+    )?      # end non-capturing group, make optional
+  */
+  std::regex oneDim(regexScientificNumber + ":" + regexScientificNumber, std::regex_constants::icase);
   auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
   auto words_end   = std::sregex_iterator();
 
@@ -304,9 +313,10 @@ void Config::ParseBinning(const std::string binning,
   int counter = 0;
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {// iterate over all matches and pull out first and second number
-      std::smatch match = *i;
-      (*vals[2*counter])     = std::stod(match[1]);
-      (*vals[(2*counter)+1]) = std::stod(match[2]);
+      std::string match = (*i).str();
+      std::string::size_type found = match.find(":"); // should have a colon by construction
+      (*vals[2*counter])     = std::stod(match.substr(0,found));
+      (*vals[(2*counter)+1]) = std::stod(match.substr(found+1));
     }
   
   if (counter == 0)
