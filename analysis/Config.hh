@@ -99,15 +99,6 @@ public:
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string line, const int nDim);
 
-  /// Update the vector of required branches for a particular tree to be
-  /// activated for analysis.
-  void UpdateRequiredBranches(const HistogramDef* def);
-
-  /// Update the vector of required branches for a particular tree to be
-  /// activated for anlysis based on a single string defintion such as Primary.x.
-  void UpdateRequiredBranches(const std::string treeName,
-			      const std::string var);
-
   /// Check if the supplied tree name is one of the static member vector of
   /// allowed tree names.
   bool InvalidTreeName(const std::string& treeName) const;

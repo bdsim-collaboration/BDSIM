@@ -20,7 +20,7 @@ void usage()
 
 int main(int argc, char* argv[])
 {
-  if (argc < 2 || argc > 4)
+  if (argc != 3)
     {usage(); exit(1);}
 
   std::string inputFileName  = std::string(argv[1]);
