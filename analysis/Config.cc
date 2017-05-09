@@ -226,35 +226,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
     }
 
   if (result)
-    {
-      histoDefs[treeName].push_back(result);
-      UpdateRequiredBranches(result);
-    }
-}
-
-void Config::UpdateRequiredBranches(const HistogramDef* def)
-{
-  UpdateRequiredBranches(def->treeName, def->variable);
-  UpdateRequiredBranches(def->treeName, def->selection);
-}
-
-void Config::UpdateRequiredBranches(const std::string treeName,
-				    const std::string var)
-{
-  // This won't work properly for the options Tree that has "::" in the class
-  // as well as double splitting. C++ regex does not support lookahead / behind
-  // which makes it nigh on impossible to correctly identify the single : with
-  // regex. For now, only the Options tree has this and we turn it all on, so it
-  // it shouldn't be a problem (it only ever has one entry).
-  // match word; '.'; word -> here we match the token rather than the bits inbetween
-  std::regex branchLeaf("(\\w+).(\\w+)");
-  auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
-  auto words_end   = std::sregex_iterator();
-  for (std::sregex_iterator i = words_begin; i != words_end; ++i)
-    {
-      std::string targetBranch = (*i)[1];
-      SetBranchToBeActivated(treeName, targetBranch);
-    }
+    {histoDefs[treeName].push_back(result);}
 }
 
 void Config::SetBranchToBeActivated(const std::string treeName,
