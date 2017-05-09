@@ -296,7 +296,7 @@ void Config::ParseBinning(const std::string binning,
 			  double& zLow, double& zHigh) const
 {
   // simple match - let stod throw exception if wrong
-  std::regex oneDim(R"([0-9eE.+-]+):([0-9eE.+-]+)", std::regex_constants::icase);
+  std::regex oneDim("([0-9eE.+-]+):([0-9eE.+-]+)");
   auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
   auto words_end   = std::sregex_iterator();
 
