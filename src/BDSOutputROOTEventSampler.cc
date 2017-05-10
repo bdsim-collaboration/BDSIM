@@ -44,12 +44,12 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(G4double E,
   this->z = (float) (z0 / CLHEP::m);
   this->S = (float) (0 / CLHEP::m);
   this->energy.push_back((float &&) (E / CLHEP::GeV));
-  this->x.push_back((float &&) (x0 / CLHEP::m));
-  this->y.push_back((float &&) (y0 / CLHEP::m));
-  this->xp.push_back((float &&) (xp / CLHEP::radian));
-  this->yp.push_back((float &&) (yp / CLHEP::radian));
-  this->zp.push_back((float &&) (zp / CLHEP::radian));
-  this->t.push_back((float &&) (t / CLHEP::ns));
+  this->x.push_back((double &&) (x0 / CLHEP::m));
+  this->y.push_back((double &&) (y0 / CLHEP::m));
+  this->xp.push_back((double &&) (xp / CLHEP::radian));
+  this->yp.push_back((double &&) (yp / CLHEP::radian));
+  this->zp.push_back((double &&) (zp / CLHEP::radian));
+  this->t.push_back((double &&) (t / CLHEP::ns));
   this->weight.push_back((const float &) weight);
   this->partID.push_back(PDGType);
   this->parentID.push_back(0);
@@ -61,16 +61,16 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
 {
   // get single values
   this->n++;
-  this->z = (float) (hit->GetZ() / CLHEP::m);
+  this->z = (double) (hit->GetZ() / CLHEP::m);
   this->S = (float) (hit->GetS() / CLHEP::m);
 
   this->energy.push_back((float &&) (hit->GetTotalEnergy() / CLHEP::GeV));
-  this->x.push_back((float &&) (hit->GetX() / CLHEP::m));
-  this->y.push_back((float &&) (hit->GetY() / CLHEP::m));
+  this->x.push_back((double &&) (hit->GetX() / CLHEP::m));
+  this->y.push_back((double &&) (hit->GetY() / CLHEP::m));
 
-  this->xp.push_back((float &&) (hit->GetXPrime() / CLHEP::radian));
-  this->yp.push_back((float &&) (hit->GetYPrime() / CLHEP::radian));
-  this->zp.push_back((float &&) (hit->GetZPrime() / CLHEP::radian));
+  this->xp.push_back((double &&) (hit->GetXPrime() / CLHEP::radian));
+  this->yp.push_back((double &&) (hit->GetYPrime() / CLHEP::radian));
+  this->zp.push_back((double &&) (hit->GetZPrime() / CLHEP::radian));
 
   this->t.push_back((float &&) (hit->GetT() / CLHEP::ns));
   this->modelID = hit->GetBeamlineIndex();
