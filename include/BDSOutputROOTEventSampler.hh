@@ -26,7 +26,7 @@ public:
   std::vector<T>     energy;
   std::vector<T>     x;
   std::vector<T>     y;
-  double             z;
+  T                  z;
   std::vector<T>     xp;
   std::vector<T>     yp;
   std::vector<T>     zp;
@@ -39,7 +39,7 @@ public:
   int                modelID;
   std::vector<int>   turnNumber;
   
-  float              S;   // Will not need this when have global transforms
+  T                  S;   // Will not need this when have global transforms
 
   BDSOutputROOTEventSampler();
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);

@@ -22,23 +22,25 @@ BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler(std::string samplerNameI
   this->Flush();
 }
 
-template <class T> BDSOutputROOTEventSampler<T>::~BDSOutputROOTEventSampler()
-{ }
+template
+<class T> BDSOutputROOTEventSampler<T>::~BDSOutputROOTEventSampler()
+{;}
 
 #ifndef __ROOTBUILD__ 
-template <class T> void BDSOutputROOTEventSampler<T>::Fill(G4double E,
-							   G4double x0,
-							   G4double y0,
-							   G4double z0,
-							   G4double xp,
-							   G4double yp,
-							   G4double zp,
-							   G4double t,
-							   G4double weight,
-							   G4int PDGType,
-							   G4int    /*nEvent*/,
-							   G4int TurnsTaken,
-							   G4int beamlineIndex)
+template <class T>
+void BDSOutputROOTEventSampler<T>::Fill(G4double E,
+					G4double x0,
+					G4double y0,
+					G4double z0,
+					G4double xp,
+					G4double yp,
+					G4double zp,
+					G4double t,
+					G4double weight,
+					G4int    PDGType,
+					G4int    /*nEvent*/,
+					G4int    TurnsTaken,
+					G4int    beamlineIndex)
 {
   this->n++;
   this->z = (float) (z0 / CLHEP::m);
@@ -51,18 +53,29 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(G4double E,
   this->zp.push_back((double &&) (zp / CLHEP::radian));
   this->t.push_back((double &&) (t / CLHEP::ns));
   this->weight.push_back((const float &) weight);
+  this->z = (T) (z0 / CLHEP::m);
+  this->S = (T) (0 / CLHEP::m);
+  this->energy.push_back((T &&) (E / CLHEP::GeV));
+  this->x.push_back((T &&) (x0 / CLHEP::m));
+  this->y.push_back((T &&) (y0 / CLHEP::m));
+  this->xp.push_back((T &&) (xp / CLHEP::radian));
+  this->yp.push_back((T &&) (yp / CLHEP::radian));
+  this->zp.push_back((T &&) (zp / CLHEP::radian));
+  this->t.push_back((T &&) (t / CLHEP::ns));
+  this->weight.push_back((const T &) weight);
   this->partID.push_back(PDGType);
   this->parentID.push_back(0);
   this->turnNumber.push_back(TurnsTaken);
   this->modelID = beamlineIndex;
 }
 
-template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
+template <class T>
+void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
 {
   // get single values
   this->n++;
-  this->z = (double) (hit->GetZ() / CLHEP::m);
-  this->S = (float) (hit->GetS() / CLHEP::m);
+  this->z = (T) (hit->GetZ() / CLHEP::m);
+  this->S = (T) (hit->GetS() / CLHEP::m);
 
   this->energy.push_back((float &&) (hit->GetTotalEnergy() / CLHEP::GeV));
   this->x.push_back((double &&) (hit->GetX() / CLHEP::m));
@@ -72,7 +85,16 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
   this->yp.push_back((double &&) (hit->GetYPrime() / CLHEP::radian));
   this->zp.push_back((double &&) (hit->GetZPrime() / CLHEP::radian));
 
-  this->t.push_back((float &&) (hit->GetT() / CLHEP::ns));
+
+  this->energy.push_back((T &&) (hit->GetTotalEnergy() / CLHEP::GeV));
+  this->x.push_back((T &&) (hit->GetX() / CLHEP::m));
+  this->y.push_back((T &&) (hit->GetY() / CLHEP::m));
+
+  this->xp.push_back((T &&) (hit->GetXPrime() / CLHEP::radian));
+  this->yp.push_back((T &&) (hit->GetYPrime() / CLHEP::radian));
+  this->zp.push_back((T &&) (hit->GetZPrime() / CLHEP::radian));
+
+  this->t.push_back((T &&) (hit->GetT() / CLHEP::ns));
   this->modelID = hit->GetBeamlineIndex();
 
 #if 0
@@ -84,7 +106,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
   this->Zp.push_back(hit->GetGlobalZPrime()     / CLHEP::radian);
 #endif
 
-  this->weight.push_back((float &&) hit->GetWeight());
+  this->weight.push_back((T &&) hit->GetWeight());
   this->partID.push_back(hit->GetPDGtype());
   this->parentID.push_back(hit->GetParentID());
   this->trackID.push_back(hit->GetTrackID());
