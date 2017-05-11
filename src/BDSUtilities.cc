@@ -6,7 +6,9 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4Track.hh"
 #include "G4TwoVector.hh"
+#include "G4UserLimits.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -416,4 +418,22 @@ void BDS::PrintArray(const G4double values[],
   for (G4int i = 0; i < size; i++)
     {G4cout << values[i] << ", ";}
   G4cout << ")";
+}
+
+G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
+				    const G4double length)
+{
+  G4UserLimits* result = nullptr;
+  if (!defaultUL)
+    {return result;}
+  // construct a dummy G4Track that typically isn't used for the check
+  G4Track t = G4Track();
+  if (defaultUL->GetMaxAllowedStep(t) > length)
+    {// copy and change length in UL
+      result = new G4UserLimits(*defaultUL);
+      result->SetMaxAllowedStep(length);
+    }
+  else
+    {result = defaultUL;} // stick with length in defaultUL
+  return result;
 }

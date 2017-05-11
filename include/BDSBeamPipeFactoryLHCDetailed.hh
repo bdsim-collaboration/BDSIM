@@ -70,7 +70,7 @@ private:
 					    G4Material* vacuumMaterialIn,
 					    G4Material* beamPipeMaterialIn);
   virtual void  SetVisAttributes();
-  virtual void  SetUserLimits();
+  virtual void  SetUserLimits(G4double length);
   virtual void  PlaceComponents(G4String nameIn);
 
   /// Utility function to initialise the geometry parameters
