@@ -9,6 +9,7 @@
 #include <map>
 #include <regex>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 ClassImp(Config)
@@ -133,7 +134,7 @@ void Config::ParseInputFile()
 
 void Config::ParseHistogramLine(const std::string& line)
 {
-  // we now the line starts with 'histogram'
+  // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
   std::regex histNDim("^Histogram([1-3])D\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
@@ -225,35 +226,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
     }
 
   if (result)
-    {
-      histoDefs[treeName].push_back(result);
-      UpdateRequiredBranches(result);
-    }
-}
-
-void Config::UpdateRequiredBranches(const HistogramDef* def)
-{
-  UpdateRequiredBranches(def->treeName, def->variable);
-  UpdateRequiredBranches(def->treeName, def->selection);
-}
-
-void Config::UpdateRequiredBranches(const std::string treeName,
-				    const std::string var)
-{
-  // This won't work properly for the options Tree that has "::" in the class
-  // as well as double splitting. C++ regex does not support lookahead / behind
-  // which makes it nigh on impossible to correctly identify the single : with
-  // regex. For now, only the Options tree has this and we turn it all on, so it
-  // it shouldn't be a problem (it only ever has one entry).
-  // match word; '.'; word -> here we match the token rather than the bits inbetween
-  std::regex branchLeaf("(\\w+).(\\w+)");
-  auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
-  auto words_end   = std::sregex_iterator();
-  for (std::sregex_iterator i = words_begin; i != words_end; ++i)
-    {
-      std::string targetBranch = (*i)[1];
-      SetBranchToBeActivated(treeName, targetBranch);
-    }
+    {histoDefs[treeName].push_back(result);}
 }
 
 void Config::SetBranchToBeActivated(const std::string treeName,
@@ -294,9 +267,8 @@ void Config::ParseBinning(const std::string binning,
 			  double& yLow, double& yHigh,
 			  double& zLow, double& zHigh) const
 {
-  // match number (inc. - + . e); ':'; number (inc as before)
-  std::regex oneDim("([0-9e\\-\\+\\.]+):([0-9e\\-\\+\\.]+)", std::regex_constants::icase);
-  std::smatch dimLevelMatch;
+  // simple match - let stod throw exception if wrong
+  std::regex oneDim("([0-9eE.+-]+):([0-9eE.+-]+)");
   auto words_begin = std::sregex_iterator(binning.begin(), binning.end(), oneDim);
   auto words_end   = std::sregex_iterator();
 
@@ -305,8 +277,13 @@ void Config::ParseBinning(const std::string binning,
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {// iterate over all matches and pull out first and second number
       std::smatch match = *i;
-      (*vals[2*counter])     = std::stod(match[1]);
-      (*vals[(2*counter)+1]) = std::stod(match[2]);
+      try
+	{
+	  (*vals[2*counter])     = std::stod(match[1]);
+	  (*vals[(2*counter)+1]) = std::stod(match[2]);
+	}
+      catch (std::invalid_argument) // if stod can't convert number to double
+	{throw std::string("Invalid binning number: \"" + match[0].str() + "\" on line #" + std::to_string(lineCounter));}
     }
   
   if (counter == 0)

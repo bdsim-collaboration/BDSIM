@@ -10,6 +10,8 @@
 
 class BDSExtent;
 
+class G4UserLimits;
+
 namespace CLHEP {
   class HepRotation;
 }
@@ -127,6 +129,13 @@ namespace BDS
   /// Utility to print out values of an array to avoid repetitive for loops.
   void PrintArray(const G4double values[],
 		  G4int    size);
+
+  /// Create a user limits instance based on a default with a new step length limit
+  /// of the length parameter. Check the max step length in the defaultUL and use
+  /// the shorter of the two. Note the G4UserLimits instance is not const although
+  /// it could be as the accessors in that class are not const.
+  G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
+				 const G4double length);
 }
 
 #endif

@@ -32,7 +32,10 @@ void BDS::BuildPlacementGeometry()
 
   for (const auto& placement : placements)
     {
-      auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.geometryFile);
+      auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.geometryFile,
+								nullptr,
+								0, 0,
+								placement.sensitive);
 
       G4double length = geom->GetExtent().DZ();
       BDSSimpleComponent* comp = new BDSSimpleComponent(geom->GetName(),

@@ -37,7 +37,8 @@ public:
   BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
 				     G4double suggestedLength        = 0,
-				     G4double suggestedOuterDiameter = 0);
+				     G4double suggestedOuterDiameter = 0,
+				     G4bool   makeSensitive          = true);
  
 private:
   /// Private accessor as singleton
