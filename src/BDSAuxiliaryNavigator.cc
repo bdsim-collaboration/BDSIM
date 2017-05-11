@@ -88,7 +88,7 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPositio
   if (stepLength > 1 * CLHEP::mm) // too long - may go outside typical geometry length
     {point += globalDirection.unit() * CLHEP::mm;}
   else if (stepLength > 0) // must be a shorter length, obey it
-    {point += globalPosition + globalDirection.unit() * (stepLength * 0.5);}
+    {point += globalDirection.unit() * (stepLength * 0.5);}
   // else pass: point = globalPosition
   
   auto selectedVol = LocateGlobalPointAndSetup(point,

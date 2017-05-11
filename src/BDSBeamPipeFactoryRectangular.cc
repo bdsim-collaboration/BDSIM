@@ -133,9 +133,8 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
 					containerYHalfWidth,          // y half width
 					lengthIn);                    // full length for unambiguous subtraction
 
-  BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
-					     vacuumMaterialIn,
-					     beamPipeMaterialIn);
+  BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
+					     beamPipeMaterialIn, lengthIn);
   
   // record extents
   BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
