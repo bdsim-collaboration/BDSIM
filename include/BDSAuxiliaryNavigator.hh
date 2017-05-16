@@ -47,13 +47,13 @@ public:
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
-  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV)
-  {auxNavigator->SetWorldVolume(worldPV);}
+  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn)
+  {auxNavigator->SetWorldVolume(worldPVIn); worldPV = worldPVIn;}
 
   /// Setup the navigator w.r.t. to the read out world / geometry to provide
   /// curvilinear coordinates.
-  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPV)
-  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPV);}
+  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPVIn)
+  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPVIn); curvilinearWorldPV = curvilinearWorldPVIn;}
 
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
@@ -192,6 +192,17 @@ private:
   /// Counter to keep track of when the last instance of the class is deleted and
   /// therefore when the navigators can be safely deleted without affecting
   static G4int numberOfInstances;
+  
+  /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.
+  static G4VPhysicalVolume* worldPV;
+  static G4VPhysicalVolume* curvilinearWorldPV;
+  /// @}
+  
+  /// Margin by which to advance the point along the step direction if the
+  /// world volume is found for transforms. This is in an attempt to find a
+  /// real curvilinear volume. Therefore, this should be greater than
+  /// lengthSafety or the geometrical tolerance.
+  G4double volumeMargin;
 };
 
 

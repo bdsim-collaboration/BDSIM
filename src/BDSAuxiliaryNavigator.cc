@@ -8,15 +8,18 @@
 #include "G4StepStatus.hh"
 #include "G4ThreeVector.hh"
 
-G4Navigator* BDSAuxiliaryNavigator::auxNavigator      = new G4Navigator();
-G4Navigator* BDSAuxiliaryNavigator::auxNavigatorCL    = new G4Navigator();
-G4int        BDSAuxiliaryNavigator::numberOfInstances = 0;
+G4Navigator*       BDSAuxiliaryNavigator::auxNavigator       = new G4Navigator();
+G4Navigator*       BDSAuxiliaryNavigator::auxNavigatorCL     = new G4Navigator();
+G4int              BDSAuxiliaryNavigator::numberOfInstances  = 0;
+G4VPhysicalVolume* BDSAuxiliaryNavigator::worldPV            = nullptr;
+G4VPhysicalVolume* BDSAuxiliaryNavigator::curvilinearWorldPV = nullptr;
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   globalToLocal(G4AffineTransform()),
   localToGlobal(G4AffineTransform()),
   globalToLocalCL(G4AffineTransform()),
-  localToGlobalCL(G4AffineTransform())
+  localToGlobalCL(G4AffineTransform()),
+  volumeMargin(0.1*CLHEP::mm)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
