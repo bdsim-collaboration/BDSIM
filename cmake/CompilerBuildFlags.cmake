@@ -17,6 +17,6 @@ endif()
 # Navigation debugging
 option( DEBUGNAVIGATION "Debug navigation" OFF )
 if (DEBUGNAVIGATION)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUGNAV")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBDSDEBUGNAV")
     message(STATUS "Debug navigation ON")
 endif()
