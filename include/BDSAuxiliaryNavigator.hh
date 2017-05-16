@@ -47,13 +47,13 @@ public:
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
-  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV)
-  {auxNavigator->SetWorldVolume(worldPV);}
+  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn)
+  {auxNavigator->SetWorldVolume(worldPVIn); worldPV = worldPVIn;}
 
   /// Setup the navigator w.r.t. to the read out world / geometry to provide
   /// curvilinear coordinates.
-  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPV)
-  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPV);}
+  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPVIn)
+  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPVIn); curvilinearWorldPV = curvilinearWorldPVIn;}
 
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
@@ -151,14 +151,14 @@ protected:
   mutable G4AffineTransform globalToLocalCL;
   mutable G4AffineTransform localToGlobalCL;
   
-  /// Navgiator object for safe navigation in the real (mass) world without affecting
-  /// tracking of the particle.
+  /// Navgiator object for safe navigation in the real (mass) world without
+  /// affecting tracking of the particle.
   static G4Navigator* auxNavigator;
 
-  /// Navigator object for safe navigation in the read out world providing curvilinear
-  /// coordinates for various applications. Since this is not a 'parallel' world but
-  /// a 'read out geometry' in Geant4 terms, this is inherently safe and won't affect
-  /// the tracking of the particle in question.
+  /// Navigator object for safe navigation in the read out world providing
+  /// curvilinear coordinates for various applications. Since this is not a
+  /// 'parallel' world but a 'read out geometry' in Geant4 terms, this is
+  /// inherently safe and won't affect the tracking of the particle in question.
   static G4Navigator* auxNavigatorCL;
 
 private:
@@ -189,9 +189,20 @@ private:
 			   const G4ThreeVector& globalMomentum,
 			   const G4double       stepLength);
   
-  /// Counter to keep track of when the last instance of the class is deleted and
-  /// therefore when the navigators can be safely deleted without affecting
+  /// Counter to keep track of when the last instance of the class is deleted
+  /// and therefore when the navigators can be safely deleted without affecting
   static G4int numberOfInstances;
+  
+  /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.
+  static G4VPhysicalVolume* worldPV;
+  static G4VPhysicalVolume* curvilinearWorldPV;
+  /// @}
+  
+  /// Margin by which to advance the point along the step direction if the
+  /// world volume is found for transforms. This is in an attempt to find a
+  /// real curvilinear volume. Therefore, this should be greater than
+  /// lengthSafety or the geometrical tolerance.
+  G4double volumeMargin;
 };
 
 
