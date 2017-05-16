@@ -53,6 +53,8 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 #endif
   if (selectedVol == worldPV || selectedVol == curvilinearWorldPV)
     {
+      if (!direction) // no direction, so can't search
+        {return selectedVol;}
       G4ThreeVector globalDirUnit = direction->unit();
       G4ThreeVector newPosition = point + volumeMargin*globalDirUnit;
       selectedVol = LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
