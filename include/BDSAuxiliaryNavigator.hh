@@ -151,14 +151,14 @@ protected:
   mutable G4AffineTransform globalToLocalCL;
   mutable G4AffineTransform localToGlobalCL;
   
-  /// Navgiator object for safe navigation in the real (mass) world without affecting
-  /// tracking of the particle.
+  /// Navgiator object for safe navigation in the real (mass) world without
+  /// affecting tracking of the particle.
   static G4Navigator* auxNavigator;
 
-  /// Navigator object for safe navigation in the read out world providing curvilinear
-  /// coordinates for various applications. Since this is not a 'parallel' world but
-  /// a 'read out geometry' in Geant4 terms, this is inherently safe and won't affect
-  /// the tracking of the particle in question.
+  /// Navigator object for safe navigation in the read out world providing
+  /// curvilinear coordinates for various applications. Since this is not a
+  /// 'parallel' world but a 'read out geometry' in Geant4 terms, this is
+  /// inherently safe and won't affect the tracking of the particle in question.
   static G4Navigator* auxNavigatorCL;
 
 private:
@@ -189,8 +189,8 @@ private:
 			   const G4ThreeVector& globalMomentum,
 			   const G4double       stepLength);
   
-  /// Counter to keep track of when the last instance of the class is deleted and
-  /// therefore when the navigators can be safely deleted without affecting
+  /// Counter to keep track of when the last instance of the class is deleted
+  /// and therefore when the navigators can be safely deleted without affecting
   static G4int numberOfInstances;
   
   /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.

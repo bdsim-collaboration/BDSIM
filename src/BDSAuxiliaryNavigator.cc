@@ -126,8 +126,9 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPositio
   // could take before breaking the tracking accuracy / bending limits even
   // though it clearly may leave the volume. Invoke a bit of knowledge about the
   // scale of the problem and sample only 1mm along.
+  G4ThreeVector globalDirUnit = globalDirection.unit();
   if (stepLength > 1 * CLHEP::mm) // too long - may go outside typical geometry length
-    {point += globalDirection.unit() * CLHEP::mm;}
+    {point += globalDirUnit * CLHEP::mm;}
   else if (stepLength > 0) // must be a shorter length, obey it
     {point += globalDirection.unit() * (stepLength * 0.5);}
   // else pass: point = globalPosition
