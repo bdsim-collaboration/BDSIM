@@ -45,8 +45,23 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 								    G4bool useCurvilinear) const
 {
   G4Navigator* nav = Navigator(useCurvilinear);
-  return nav->LocateGlobalPointAndSetup(point, direction,
+  auto selectedVol = nav->LocateGlobalPointAndSetup(point, direction,
 					pRelativeSearch, ignoreDirection);
+
+#ifdef BDSDEBUGNAV
+  G4cout << "Point lookup " << selectedVol->GetName() << G4endl;
+#endif
+  if (selectedVol == worldPV || selectedVol == curvilinearWorldPV)
+    {
+      G4ThreeVector globalDirUnit = direction->unit();
+      G4ThreeVector newPosition = point + volumeMargin*globalDirUnit;
+      selectedVol = LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
+					      ignoreDirection, useCurvilinear);
+#ifdef BDSDEBUGNAV
+      G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
+#endif
+    }
+    return selectedVol;
 }
 
 G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const* const step,
@@ -56,11 +71,30 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   G4StepPoint* preStepPoint = step->GetPreStepPoint();
   G4StepPoint* posStepPoint = step->GetPostStepPoint();
 
-  // average the points - the mid point should always lie inside the volume given the way G4 does tracking.
-  G4ThreeVector position = (posStepPoint->GetPosition() + preStepPoint->GetPosition())/2.0;
+  // average the points - the mid point should always lie inside the volume given
+  // the way G4 does tracking.
+  G4ThreeVector prePosition  = preStepPoint->GetPosition();
+  G4ThreeVector postPosition = posStepPoint->GetPosition();
+  G4ThreeVector position = (postPosition + prePosition)/2.0;
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
   G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
+
+#ifdef BDSDEBUGNAV
+  G4cout << __METHOD_NAME__ << selectedVol->GetName() << G4endl;
+#endif
+  // only do once - if the point is outside the beam line, then it really will be the
+  // world volume, however, if it's between two volumes in the beamline, this should
+  // advance it ok
+  if (selectedVol == worldPV || selectedVol == curvilinearWorldPV)
+    {
+      G4ThreeVector globalDirUnit = (postPosition - prePosition).unit();
+      G4ThreeVector newPosition = position + volumeMargin*globalDirUnit;
+      selectedVol = nav->LocateGlobalPointAndSetup(position);
+#ifdef BDSDEBUGNAV
+      G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
+#endif
+    }
   return selectedVol;
 }
 
@@ -68,6 +102,10 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
 					      G4bool useCurvilinear) const
 {
   auto selectedVol = LocateGlobalPointAndSetup(step, useCurvilinear);
+
+#ifdef BDSDEBUGNAV
+  G4cout << __METHOD_NAME__ << selectedVol->GetName() << G4endl;
+#endif
 
   useCurvilinear ? InitialiseTransform(false, true) : InitialiseTransform(true, false);
 
@@ -99,7 +137,10 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPositio
 					       true,  // relative search
 					       false, // don't ignore direction, ie use it
 					       useCurvilinear);
-
+#ifdef BDSDEBUGNAV
+  G4cout << __METHOD_NAME__ << selectedVol->GetName() << G4endl;
+#endif
+  
   useCurvilinear ? InitialiseTransform(false, true) : InitialiseTransform(true, false);
   const G4AffineTransform& aff = GlobalToLocal(useCurvilinear);
   G4ThreeVector localPos = aff.TransformPoint(globalPosition);
