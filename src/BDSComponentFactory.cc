@@ -500,9 +500,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       GetKickValue(hkick, vkick, type);
       G4double         angleX = asin(hkick);
       G4double         angleY = asin(vkick);
-      // -ve here for convention matching
-      G4double         fieldX = FieldFromAngle(-angleX, chordLength);
-      G4double         fieldY = FieldFromAngle(angleY,  chordLength);
+
+      // Setup result variables - 'x' and 'y' refer to the components along the direction
+      // the particle will change. These will therefore not be Bx and By.
+      G4double fieldX = 0;
+      G4double fieldY = 0;
+
+      if (BDS::IsFinite(angleX))
+	{// with comments
+	  // calculate the chord length of the arc through the field from the straight
+	  // ahead length for this element which here is 'chordLength'.
+	  G4double fieldChordLengthX = chordLength / cos(0.5*angleX);
+
+	  // now calculate the bending radius
+	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	  
+	  // no calculate the arc length of the trajectory based on each bending radius
+	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+
+	  // -ve here in horizontal only for convention matching
+	  fieldX = FieldFromAngle(-angleX, arcLengthX);
+	} // else fieldX default is 0
+
+      if (BDS::IsFinite(angleY))
+	{// same as x, no need for comments
+	  G4double fieldChordLengthY = chordLength / cos(0.5*angleY);
+	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	}
+      
       // note field for kick in x is unit Y, hence B = (y,x,0) here
       G4ThreeVector     field = G4ThreeVector(fieldY, fieldX, 0);
       G4double       fieldMag = field.mag();
