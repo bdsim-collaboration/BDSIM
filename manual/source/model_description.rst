@@ -2082,9 +2082,17 @@ the momentum of the reference particle and therefore the magnetic field of dipol
 if only the `angle` parameter has been specified.
 
 .. note:: A design energy can be specified and in addition, the central energy, of say
-	  a bunch with a Gaussian distribution, can be specified.
+	  a bunch with a Gaussian distribution, can be specified with `E0`.
 
-The user **must** specify at least `energy` and the `particle` type. Other parameters, such
+The user **must** specify at least `energy` and the `particle` type. In this case the
+`reference`_ distribution will be used as well as default parameters. The minimum
+beam definitions is::
+
+  beam, particle="proton",
+        energy=34.2*GeV;
+
+  
+Other parameters, such
 as the beam distribution type, `distrType`, are optional and can be specified as described
 in the following sections. The beam is defined using the following syntax::
 
@@ -2131,7 +2139,7 @@ This is a single particle with the same position and angle defined by the follow
 coordinates are the same for every particle fired using the reference distribution. It is therefore
 not likely to be useful to generate a large number of repeated events with this distribution.
 
-These parameters also act as central parameters for all other distributions. For example, a Gaussian
+These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may defined with the `gauss`_ parameters but `X0` set to offset the centroid of the
 Gaussian with respect to the reference trajectory.
 
@@ -2150,6 +2158,8 @@ Gaussian with respect to the reference trajectory.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Yp0`                            | Vertical canonical momentum                           | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
+| `E0`                             | Central energy of bunch distribution (GeV)            | 'energy' |
++----------------------------------+-------------------------------------------------------+----------+
 
 Examples::
 
@@ -2165,7 +2175,8 @@ Generates a beam with all coordinates 0 at the nominal energy.::
 	X0 = 100*um,
 	Y0 = 3.5*um;
 
-Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5 :math:`\mu\mathrm{m}` vertically.
+Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5
+:math:`\mu\mathrm{m}` vertically.
 
 gaussmatrix
 ^^^^^^^^^^^
