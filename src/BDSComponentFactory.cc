@@ -618,8 +618,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
     {return nullptr;}
   
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
-
-
+  
   return CreateMagnet(st, BDSFieldType::multipole, BDSMagnetType::multipole,
 		      (*st)["angle"]); // multipole could bend beamline
 }
@@ -1266,13 +1265,19 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
 G4double BDSComponentFactory::FieldFromAngle(const G4double angle,
 					     const G4double arcLength) const
 {
-  return brho * angle / arcLength;
+  if (!BDS::IsFinite(angle))
+    {return 0;}
+  else
+    {return brho * angle / arcLength;}
 }
 
 G4double BDSComponentFactory::AngleFromField(const G4double field,
 					     const G4double arcLength) const
 {
-  return field * arcLength / brho;
+  if (!BDS::IsFinite(field))
+    {return 0;}
+  else
+    {return field * arcLength / brho;}
 }
 
 void BDSComponentFactory::CalculateAngleAndFieldSBend(Element const* element,
@@ -1362,8 +1367,7 @@ G4double BDSComponentFactory::BendAngle(const Element* element) const
       G4double field = 0; // required by next function.
       CalculateAngleAndFieldSBend(element, bendAngle, field);
     }
-  else
-    {G4cerr << __METHOD_NAME__ << "invalid element type" << G4endl; exit(1);}
+  // else the default is 0
   return bendAngle;
 }
 
