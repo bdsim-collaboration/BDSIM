@@ -57,8 +57,8 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
         {return selectedVol;}
       G4ThreeVector globalDirUnit = direction->unit();
       G4ThreeVector newPosition = point + volumeMargin*globalDirUnit;
-      selectedVol = LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
-					      ignoreDirection, useCurvilinear);
+      selectedVol = nav->LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
+					      ignoreDirection);
 #ifdef BDSDEBUGNAV
       G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
 #endif
