@@ -99,7 +99,10 @@ void BDSMagnet::Build()
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
-  BDSAcceleratorComponent::Build(); // build container
+  // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
+  // to control user limits in the case where there is no container and we just inherit
+  // the beam pipe container
+  BuildContainerLogicalVolume();
   BuildOuterField(); // must be done when the containerLV exists
   PlaceComponents(); // place things (if needed) in container
 }
