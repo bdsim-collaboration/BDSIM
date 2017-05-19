@@ -1,8 +1,11 @@
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorMag.hh"
 #include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
+
+G4double BDSIntegratorMag::thinElementLength = -1; // mm
 
 BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
 				   G4int        nVariablesIn):
@@ -12,6 +15,9 @@ BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
   distChordPrivate(0)
 {
   backupStepper = new G4ClassicalRK4(eqOfMIn, nVariablesIn);
+
+  if (thinElementLength < 0)
+    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 }
   
 BDSIntegratorMag::~BDSIntegratorMag()
