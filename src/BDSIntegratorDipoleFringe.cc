@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorDipoleFringe.hh"
+#include "BDSIntegratorMag.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 
@@ -33,7 +34,8 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   
   // global to local (curvilinear) - 'true' = use local volume for transform
-  BDSStep    localPosMom = ConvertToLocal(pos, mom, 0.5*CLHEP::um, true);
+  // this class doesn't and can't inherit BDSIntegratorMag, so just access the static step limit length from there
+  BDSStep    localPosMom = ConvertToLocal(pos, mom, h, true, BDSIntegratorMag::thinElementLength);
   G4ThreeVector localPos = localPosMom.PreStepPoint();
   G4ThreeVector localMom = localPosMom.PostStepPoint();
 

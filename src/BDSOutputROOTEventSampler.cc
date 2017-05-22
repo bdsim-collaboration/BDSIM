@@ -45,9 +45,11 @@ void BDSOutputROOTEventSampler<T>::Fill(G4double E,
   this->n++;
   this->z = (T) (z0 / CLHEP::m);
   this->S = (T) (0 / CLHEP::m);
+
   this->energy.push_back((T &&) (E / CLHEP::GeV));
   this->x.push_back((T &&) (x0 / CLHEP::m));
   this->y.push_back((T &&) (y0 / CLHEP::m));
+
   this->xp.push_back((T &&) (xp / CLHEP::radian));
   this->yp.push_back((T &&) (yp / CLHEP::radian));
   this->zp.push_back((T &&) (zp / CLHEP::radian));

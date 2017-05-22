@@ -99,7 +99,10 @@ void BDSMagnet::Build()
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
-  BDSAcceleratorComponent::Build(); // build container
+  // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
+  // to control user limits in the case where there is no container and we just inherit
+  // the beam pipe container
+  BuildContainerLogicalVolume();
   BuildOuterField(); // must be done when the containerLV exists
   PlaceComponents(); // place things (if needed) in container
 }
@@ -132,7 +135,7 @@ void BDSMagnet::BuildVacuumField()
       G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
       vacuumFieldInfo->SetTransform(newFieldTransform);
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-								beampipe->GetVacuumLogicalVolume(),
+								beampipe->GetContainerLogicalVolume(),
 								true);
     }
 }
@@ -224,16 +227,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
       InheritExtents(beampipe);
       placeBeamPipe = false;
     }
-
-  // now protect the fields inside the container volume by giving the
-  // it a null magnetic field (otherwise G4VPlacement can
-  // over-ride the already-created fields, by calling 
-  // G4LogicalVolume::AddDaughter, which calls 
-  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
-  // latter 'true' over-writes all the other fields
-  // This shouldn't override the field attached to daughters (vacuum for example) which will
-  // retain their field manager if one is already specified.
-  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false); 
 }
 
 void BDSMagnet::PlaceComponents()

@@ -33,7 +33,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
       G4ThreeVector             v0 = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
       // global to local
-      BDSStep   localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+      BDSStep   localPosMom = ConvertToLocal(GlobalPosition, v0, h, false, thinElementLength);
       G4ThreeVector localPosition = localPosMom.PreStepPoint();
       G4ThreeVector localMomentum = localPosMom.PostStepPoint();
       G4ThreeVector localPositionAfter;

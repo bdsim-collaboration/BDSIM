@@ -41,28 +41,28 @@ void BDSSurvey::WriteHeader()
 
   survey << "### BDSIM output - created "<< timestring << G4endl;
   survey << std::left 
-	 << setw(15) << "Type        " << " "
-	 << setw(40) << "Name        " << " "
-	 << setw(12) << "SStart[m]   " << " "
-	 << setw(12) << "SMid[m]     " << " "
-	 << setw(12) << "SEnd[m]     " << " "
-	 << setw(12) << "Chord_len[m]" << " "
-	 << setw(12) << "Arc_len[m]  " << " "
-	 << setw(12) << "X[m]        " << " "
-	 << setw(12) << "Y[m]        " << " "
-	 << setw(12) << "Z[m]        " << " "
-	 << setw(12) << "Phi[rad]    " << " "
-	 << setw(12) << "Theta[rad]  " << " "
-	 << setw(12) << "Psi[rad]    " << " "
-	 << setw(12) << "Aper1[m]    " << " "
-	 << setw(12) << "Aper2[m]    " << " "
-         << setw(12) << "Aper3[m]    " << " "
-         << setw(12) << "Aper4[m]    " << " "
-	 << setw(15) << "Aper_Type   " << " "
-	 << setw(12) << "Angle[rad]  ";
+	 << setw(15) << "Type          " << " "
+	 << setw(40) << "Name          " << " "
+	 << setw(14) << "SStart[m]     " << " "
+	 << setw(14) << "SMid[m]       " << " "
+	 << setw(14) << "SEnd[m]       " << " "
+	 << setw(14) << "ChordLength[m]" << " "
+	 << setw(14) << "ArcLength[m]  " << " "
+	 << setw(14) << "X[m]          " << " "
+	 << setw(14) << "Y[m]          " << " "
+	 << setw(14) << "Z[m]          " << " "
+	 << setw(14) << "Phi[rad]      " << " "
+	 << setw(14) << "Theta[rad]    " << " "
+	 << setw(14) << "Psi[rad]      " << " "
+	 << setw(14) << "Aper1[m]      " << " "
+	 << setw(14) << "Aper2[m]      " << " "
+         << setw(14) << "Aper3[m]      " << " "
+         << setw(14) << "Aper4[m]      " << " "
+	 << setw(15) << "Aper_Type     " << " "
+	 << setw(14) << "Angle[rad]    ";
 
     for (auto const key : magnetKeys)
-      {survey << " " << setw(12) << key;}
+      {survey << " " << setw(14) << key;}
 
     survey << G4endl;
 
@@ -101,23 +101,23 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
   survey << std::left << std::setprecision(6) << std::fixed
 	 << setw(15) << acceleratorComponent->GetType()             << " "
 	 << setw(40) << acceleratorComponent->GetName()             << " "
-	 << setw(12) << sStart                                      << " "
-	 << setw(12) << sMiddle                                     << " "
-	 << setw(12) << sEnd                                        << " "
-	 << setw(12) << acceleratorComponent->GetChordLength()/CLHEP::m   << " "
-	 << setw(12) << acceleratorComponent->GetArcLength()/CLHEP::m     << " "
-	 << setw(12) << pos.x()/CLHEP::m                            << " "
-	 << setw(12) << pos.y()/CLHEP::m                            << " "
-	 << setw(12) << pos.z()/CLHEP::m                            << " "
-	 << setw(12) << phi/CLHEP::radian                           << " "
-	 << setw(12) << theta/CLHEP::radian                         << " "
-	 << setw(12) << psi/CLHEP::radian                           << " "
-	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper1/CLHEP::m : 0) << " "
-	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper2/CLHEP::m : 0) << " "
-    	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper3/CLHEP::m : 0) << " "
-    	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper4/CLHEP::m : 0) << " "
+	 << setw(14) << sStart                                      << " "
+	 << setw(14) << sMiddle                                     << " "
+	 << setw(14) << sEnd                                        << " "
+	 << setw(14) << acceleratorComponent->GetChordLength()/CLHEP::m   << " "
+	 << setw(14) << acceleratorComponent->GetArcLength()/CLHEP::m     << " "
+	 << setw(14) << pos.x()/CLHEP::m                            << " "
+	 << setw(14) << pos.y()/CLHEP::m                            << " "
+	 << setw(14) << pos.z()/CLHEP::m                            << " "
+	 << setw(14) << phi/CLHEP::radian                           << " "
+	 << setw(14) << theta/CLHEP::radian                         << " "
+	 << setw(14) << psi/CLHEP::radian                           << " "
+	 << setw(14) << (beamPipeInfo ? beamPipeInfo->aper1/CLHEP::m : 0) << " "
+	 << setw(14) << (beamPipeInfo ? beamPipeInfo->aper2/CLHEP::m : 0) << " "
+    	 << setw(14) << (beamPipeInfo ? beamPipeInfo->aper3/CLHEP::m : 0) << " "
+    	 << setw(14) << (beamPipeInfo ? beamPipeInfo->aper4/CLHEP::m : 0) << " "
 	 << setw(15) << (beamPipeInfo ? beamPipeInfo->beamPipeType : 0)   << " "
-	 << setw(12) << acceleratorComponent->GetAngle();
+	 << setw(14) << acceleratorComponent->GetAngle();
 
   BDSMagnetStrength const* st;
   if (BDSMagnet* magCast = dynamic_cast<BDSMagnet*>(acceleratorComponent))
@@ -130,6 +130,6 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
     {st = nullStrength;}
   
   for (auto const key : magnetKeys)
-    {survey << " " << setw(12) << (*st)[key];}
+    {survey << " " << setw(14) << (*st)[key];}
   survey << G4endl;
 }

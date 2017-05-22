@@ -32,5 +32,7 @@ if (MADX_FOUND AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND PY_PYMADX)
   tracking_test(7_TrackingTest_SBEND --filepath=7_sbend/SBEND.madx)
   # 9_octupole
   tracking_test(9_TrackingTest_OCTUPOLE --filepath=9_octupole/OCT.madx)
+  # 10_hkicker
+  tracking_test(10_TrackingTest_HKICKER --filepath=10_hkicker/hkicker.madx)
 endif()
 
