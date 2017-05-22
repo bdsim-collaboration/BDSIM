@@ -57,8 +57,8 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
         {return selectedVol;}
       G4ThreeVector globalDirUnit = direction->unit();
       G4ThreeVector newPosition = point + volumeMargin*globalDirUnit;
-      selectedVol = LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
-					      ignoreDirection, useCurvilinear);
+      selectedVol = nav->LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
+					      ignoreDirection);
 #ifdef BDSDEBUGNAV
       G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
 #endif
@@ -119,7 +119,8 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
 BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPosition,
 					      const G4ThreeVector& globalDirection,
 					      const G4double       stepLength,
-					      const G4bool&        useCurvilinear) const
+					      const G4bool&        useCurvilinear,
+					      const G4double       marginLength) const
 {
   G4ThreeVector point = globalPosition;
   // protect against boundary problems - use step length to sample into volume
@@ -129,8 +130,8 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPositio
   // though it clearly may leave the volume. Invoke a bit of knowledge about the
   // scale of the problem and sample only 1mm along.
   G4ThreeVector globalDirUnit = globalDirection.unit();
-  if (stepLength > 1 * CLHEP::mm) // too long - may go outside typical geometry length
-    {point += globalDirUnit * CLHEP::mm;}
+  if (stepLength > 1*CLHEP::mm) // too long - may go outside typical geometry length
+    {point += globalDirUnit * marginLength;}
   else if (stepLength > 0) // must be a shorter length, obey it
     {point += globalDirection.unit() * (stepLength * 0.5);}
   // else pass: point = globalPosition

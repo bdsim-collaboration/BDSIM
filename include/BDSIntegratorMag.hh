@@ -34,6 +34,10 @@ public:
 
   /// Geant4 requires that the integrator order must be supplied by the derived class.
   inline virtual G4int IntegratorOrder() const {return 2;}
+
+  /// Cache of thin element length to know maximum possible length scale step
+  /// for coordinate lookup.
+  static G4double thinElementLength;
   
 protected:
   /// Convert final local position and direction to global frame. Allow

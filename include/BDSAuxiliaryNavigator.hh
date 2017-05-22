@@ -80,11 +80,13 @@ public:
   /// apart. The direction vector can be used as the momentum vector without being
   /// a unit vector.  The 'post step' vector in the BDSStep instance will be the
   /// direction vector (of same magnitude) but rotated to the local frame.
-  /// This uses LocateGlobalPointAndSetup.
+  /// This uses LocateGlobalPointAndSetup. Can control default lookahead distance
+  /// default (1 -> 1mm).
   BDSStep ConvertToLocal(const G4ThreeVector& globalPosition,
 			 const G4ThreeVector& globalDirection,
 			 const G4double       stepLength     = 0,
-			 const G4bool&        useCurvilinear = true) const;
+			 const G4bool&        useCurvilinear = true,
+			 const G4double       marginLength   = 1) const;
 
   /// Convert back to global coordinates.  This DOES NOT update the transforms
   /// and uses the existing transforms inside this class - ie this relies on

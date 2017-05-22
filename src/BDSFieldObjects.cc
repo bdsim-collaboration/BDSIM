@@ -49,37 +49,6 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
   fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
 
-BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
-				 G4MagneticField*        fieldIn,
-				 G4EquationOfMotion*     equationOfMotionIn,
-				 G4MagIntegratorStepper* magIntegratorStepperIn):
-  info(infoIn),
-  field(fieldIn),
-  equationOfMotion(equationOfMotionIn),
-  magIntegratorStepper(magIntegratorStepperIn),
-  magIntDriver(nullptr)
-{
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-
-  // G4ChordFinder seems to create another G4Mag_UsualEqRhs and use that.
-  // Break their recipe to avoid this and it proves to be more reliable too.
-  //chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
-  //				  globals->ChordStepMinimum(),
-  //				  magIntegratorStepper);
-
-  magIntDriver = new G4MagInt_Driver(globals->ChordStepMinimum(),
-				     magIntegratorStepper,
-				     magIntegratorStepper->GetNumberOfVariables());
-
-  chordFinder  = new G4ChordFinder(magIntDriver);
-  
-  fieldManager = new G4FieldManager(field, chordFinder);
-  fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
-  fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
-  fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());
-  fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
-}
-
 BDSFieldObjects::~BDSFieldObjects()
 {
   delete field;

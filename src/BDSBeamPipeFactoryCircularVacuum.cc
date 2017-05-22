@@ -2,12 +2,14 @@
 #include "BDSBeamPipe.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
+#include "G4UserLimits.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
@@ -115,7 +117,13 @@ BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CommonFinalConstruction(G4String 
   vacuumLV = containerLV; // copy pointer for referencing in BuildBeamPipeAndRegisterVolumes.
 
   // user limits
-  containerLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  //copy the default and update with the length of the object rather than the default 1m
+  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, lengthIn);
+  if (ul != defaultUL) // if it's not the default register it
+    {allUserLimits.push_back(ul);}
+  containerLV->SetUserLimits(ul);
+	vacuumLV->SetUserLimits(ul);
 
   // record extents
   BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
