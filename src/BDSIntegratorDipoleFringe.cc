@@ -1,3 +1,4 @@
+#include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSMagnetStrength.hh"
@@ -44,14 +45,28 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // get radius of curvature already calculated in base class step
   G4double rho = GetRadHelix();
 
-  // calculate fringe field kick
-  G4double         y0 = localPos[1];
-  G4double       kick = y0 * tan(polefaceAngle - fringeCorr) / rho;
-  G4ThreeVector yKick = G4ThreeVector(0,1,0); // unit y in curvilinear coords
-  G4ThreeVector yKickGlobal = ConvertAxisToGlobal(yKick, true);
-  yKickGlobal *= -kick;
+  G4double momMag = localMom.mag();
+  G4ThreeVector normMom = localMom.unit();
+
+  // fraction of kick applied in case of multiple steps in element
+  G4double fraction = h / BDSGlobalConstants::Instance()->ThinElementLength();
+  // prevent overkicking
+  if (fraction > 1){
+    fraction = 1;
+  }
+
+  // calculate fractional fringe field kick
+  G4double          y0 = localPos[1] / CLHEP::m;
+  G4double ymatElement = tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  G4double       ykick = fraction * y0 * ymatElement;
+
+  // apply kick to unit momentum and recalculate zp to conserve.
+  normMom[1] += ykick;
+  normMom[2] = sqrt(1.0 - pow(normMom[0],2) - pow(normMom[1],2));
+  normMom *= momMag;
+  G4ThreeVector globalMom = ConvertAxisToGlobal(normMom, true);
 
   // update output momentum coordinates - i+3 for momentum
   for (G4int i = 0; i < 3; i++)
-    {yOut[i+3] = yOut[i+3] + yKickGlobal[i];}
+    {yOut[i+3] = globalMom[i];}
 }
