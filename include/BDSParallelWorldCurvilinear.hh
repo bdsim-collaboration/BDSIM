@@ -1,17 +1,19 @@
 #ifndef BDSPARALLELWORLDCURVILINEAR_H
 #define BDSPARALLELWORLDCURVILINEAR_H
 
+#include "BDSBeamlinePlacement.hh"
+
 #include "G4VUserParallelWorld.hh"
 
 class G4VisAttributes;
 
 /**
- * @brief A parallel world for curvilinear coordinates and sensitivity.
+ * @brief A parallel world for curvilinear coordinates.
  *
  * @author Laurie Nevay
  */
 
-class BDSParallelWorldCurvilinear: public G4VUserParallelWorld
+class BDSParallelWorldCurvilinear: public G4VUserParallelWorld, public BDSBeamlinePlacement
 {
 public:
   BDSParallelWorldCurvilinear();
