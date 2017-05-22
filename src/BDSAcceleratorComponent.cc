@@ -13,7 +13,9 @@
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
 
+#include <algorithm>
 #include <cmath>
 
 G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
@@ -113,7 +115,13 @@ void BDSAcceleratorComponent::Build()
   // set user limits for container & visual attributes
   if(containerLogicalVolume)
     {
-      containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+      // user limits
+      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      //copy the default and update with the length of the object rather than the default 1m
+      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
+      if (ul != defaultUL) // if it's not the default register it
+        {RegisterUserLimits(ul);}
+      containerLogicalVolume->SetUserLimits(ul);
       containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
     }
 }

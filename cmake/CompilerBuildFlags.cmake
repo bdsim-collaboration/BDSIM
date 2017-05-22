@@ -13,3 +13,10 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
   # if specifically None optimise
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math -DNDEBUG")
 endif()
+
+# Navigation debugging
+option( DEBUGNAVIGATION "Debug navigation" OFF )
+if (DEBUGNAVIGATION)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBDSDEBUGNAV")
+    message(STATUS "Debug navigation ON")
+endif()

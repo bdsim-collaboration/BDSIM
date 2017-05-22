@@ -40,7 +40,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double      momMag = mom.mag();
   
   // global to local
-  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false, thinElementLength);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMom     = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();

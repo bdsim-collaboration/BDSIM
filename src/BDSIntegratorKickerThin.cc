@@ -37,8 +37,9 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
       return;
     }
   
-  // global to local
-  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  // global to local (thinElementLength is static base class member)
+  // purposively control step length as we're dealing with a very short element
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false, thinElementLength);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMom     = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();

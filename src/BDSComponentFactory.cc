@@ -374,10 +374,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  (*st)["angle"]  = angleAndField.first;
-  (*st)["field"]  = angleAndField.second;
-  (*st)["length"] = element->l * CLHEP::m;
+  G4double angle = 0;
+  G4double field = 0;
+  CalculateAngleAndFieldSBend(element, angle, field);
+  (*st)["angle"]  = angle;
+  (*st)["field"]  = field;
+  (*st)["length"] = element->l * CLHEP::m; // arc length
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -498,9 +500,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       GetKickValue(hkick, vkick, type);
       G4double         angleX = asin(hkick);
       G4double         angleY = asin(vkick);
-      // -ve here for convention matching
-      G4double         fieldX = FieldFromAngle(-angleX, chordLength);
-      G4double         fieldY = FieldFromAngle(angleY,  chordLength);
+
+      // Setup result variables - 'x' and 'y' refer to the components along the direction
+      // the particle will change. These will therefore not be Bx and By.
+      G4double fieldX = 0;
+      G4double fieldY = 0;
+
+      if (BDS::IsFinite(angleX))
+	{// with comments
+	  // calculate the chord length of the arc through the field from the straight
+	  // ahead length for this element which here is 'chordLength'.
+	  G4double fieldChordLengthX = chordLength / cos(0.5*angleX);
+
+	  // now calculate the bending radius
+	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	  
+	  // no calculate the arc length of the trajectory based on each bending radius
+	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+
+	  // -ve here in horizontal only for convention matching
+	  fieldX = FieldFromAngle(-angleX, arcLengthX);
+	} // else fieldX default is 0
+
+      if (BDS::IsFinite(angleY))
+	{// same as x, no need for comments
+	  G4double fieldChordLengthY = chordLength / cos(0.5*angleY);
+	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	}
+      
       // note field for kick in x is unit Y, hence B = (y,x,0) here
       G4ThreeVector     field = G4ThreeVector(fieldY, fieldX, 0);
       G4double       fieldMag = field.mag();
@@ -589,8 +618,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
     {return nullptr;}
   
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
-
-
+  
   return CreateMagnet(st, BDSFieldType::multipole, BDSMagnetType::multipole,
 		      (*st)["angle"]); // multipole could bend beamline
 }
@@ -1234,11 +1262,29 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   return st;
 }
 
-std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element) const
-{  
-  G4double angle  = 0;
-  G4double field  = 0;  
-  G4double length = element->l * CLHEP::m;
+G4double BDSComponentFactory::FieldFromAngle(const G4double angle,
+					     const G4double arcLength) const
+{
+  if (!BDS::IsFinite(angle))
+    {return 0;}
+  else
+    {return brho * angle / arcLength;}
+}
+
+G4double BDSComponentFactory::AngleFromField(const G4double field,
+					     const G4double arcLength) const
+{
+  if (!BDS::IsFinite(field))
+    {return 0;}
+  else
+    {return field * arcLength / brho;}
+}
+
+void BDSComponentFactory::CalculateAngleAndFieldSBend(Element const* element,
+						      G4double&      angle,
+						      G4double&      field) const
+{
+  G4double arcLength = element->l * CLHEP::m;
   if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
@@ -1247,28 +1293,13 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      //angle = charge * ffact * field * length / brho;
-      angle = AngleFromField(field, length);
+      angle = AngleFromField(field, arcLength); // length is arc length for an sbend
     }
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = FieldFromAngle(angle, length);
+      field = FieldFromAngle(angle, arcLength);
     }
-  
-  return std::make_pair(angle,field);
-}
-
-G4double BDSComponentFactory::FieldFromAngle(const G4double angle,
-					     const G4double length) const
-{
-  return brho * angle / length;
-}
-
-G4double BDSComponentFactory::AngleFromField(const G4double field,
-					     const G4double length) const
-{
-  return field * length / brho;
 }
 
 void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
@@ -1333,9 +1364,10 @@ G4double BDSComponentFactory::BendAngle(const Element* element) const
     }
   else if (element->type == ElementType::_SBEND)
     {
-      auto angleAndField = CalculateAngleAndField(element);
-      bendAngle = angleAndField.first;
+      G4double field = 0; // required by next function.
+      CalculateAngleAndFieldSBend(element, bendAngle, field);
     }
+  // else the default is 0
   return bendAngle;
 }
 
