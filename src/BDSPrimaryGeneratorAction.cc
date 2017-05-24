@@ -120,9 +120,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	 << xp << " " << yp << " " << zp << " " 
 	 << t  << " " << E  << " " << weight << G4endl;
 #endif
-    
-  G4ThreeVector LocalPos;
-  G4ThreeVector LocalMomDir;
   
   G4ThreeVector PartMomDir(xp,yp,zp);
   G4ThreeVector PartPosition(x0,y0,z0);
