@@ -1,3 +1,4 @@
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorKickerThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -7,6 +8,8 @@
 #include "G4ThreeVector.hh"
 
 #include <cmath>
+
+G4double BDSIntegratorKickerThin::thinElementLength = -1; // unphyiscal
 
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 						 G4double                 brhoIn,
@@ -18,6 +21,9 @@ BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* streng
   brho(brhoIn)
 {
   zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
+
+  if (thinElementLength < 0)
+    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 }
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
@@ -70,18 +76,30 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4double py = localMom.y();
   G4double pz = localMom.z();
 
-  // Scale the action for the current particle momentum w.r.t.
-  // the design momentum. Even though a thin kicker, it represents
-  // a thin dipole, which would affect different particles differently.
-  G4double localMomMag = localMom.mag();
-  G4double ratio = (fcof * brho ) / localMomMag;
-
-  G4double dpx = ratio * hkick * localMomMag * factor;
-  G4double dpy = ratio * vkick * localMomMag * factor;
-
-  px += dpx;
-  py += dpy;
-  pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // is taken resulting in a double kick.
+  G4double lengthFraction = h / thinElementLength;
+  
+  if (lengthFraction > 0.5)
+    {
+      
+      // Scale the action for the current particle momentum w.r.t.
+      // the design momentum. Even though a thin kicker, it represents
+      // a thin dipole, which would affect different particles differently.
+      G4double localMomMag = localMom.mag();
+      G4double ratio = (fcof * brho ) / localMomMag;    
+      
+      G4double dpx = ratio * hkick * localMomMag * factor;
+      G4double dpy = ratio * vkick * localMomMag * factor;
+      
+      px += dpx;
+      py += dpy;
+      pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
+    }
   
   G4ThreeVector localPosOut = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomOut = G4ThreeVector(px, py, pz);
