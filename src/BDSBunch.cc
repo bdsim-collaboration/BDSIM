@@ -22,8 +22,8 @@ namespace {
                                   // we have to copy S.
     CLHEP::HepMatrix U = diagonalize ( &temp ); // S = U Sdiag U.T()
     CLHEP::HepSymMatrix D = S.similarityT(U);   // D = U.T() S U = Sdiag
-    for (int i = 1; i <= S.num_row(); i++) {
-      double s2 = D(i,i);
+    for (G4int i = 1; i <= S.num_row(); i++) {
+      G4double s2 = D(i,i);
       if ( s2 <= 0 )
 	{return false;}
     }
@@ -159,9 +159,9 @@ CLHEP::RandMultiGauss* BDSBunch::CreateMultiGauss(CLHEP::HepRandomEngine & anEng
     G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
 
     // very small number especially for time, since the sigma goes with the square
-    double small_error = 1e-50;
+    G4double small_error = 1e-50;
     
-    for (int i=0; i<6; i++) {
+    for (G4int i=0; i<6; i++) {
       if (sigma[i][i]==0)
 	{sigma[i][i] += small_error;}
     }
@@ -170,8 +170,8 @@ CLHEP::RandMultiGauss* BDSBunch::CreateMultiGauss(CLHEP::HepRandomEngine & anEng
       G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is still not positive definite" << G4endl;
       G4cout << sigma << G4endl;
       G4cout << __METHOD_NAME__ << "adding a small error to all elements" << G4endl;
-      for (int i=0; i<6; i++) {
-	for (int j=0; j<6; j++) {
+      for (G4int i=0; i<6; i++) {
+	for (G4int j=0; j<6; j++) {
 	  if (sigma[i][j]==0)
 	    {sigma[i][j] += small_error;}
 	}
@@ -196,15 +196,17 @@ CLHEP::RandMultiGauss* BDSBunch::CreateMultiGauss(CLHEP::HepRandomEngine & anEng
 
 G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0)const
 {
-  double zp;
-  if (xp*xp+yp*yp > 1) {
+  G4double zp;
+  G4double transMom = std::pow(xp, 2) + std::pow(yp, 2);
+
+  if (transMom > 1) {
     G4cout << __METHOD_NAME__ << "ERROR xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
     exit(1);
   }
   if (Zp0<0)
-    {zp = -std::sqrt(1.-xp*xp -yp*yp);}
+    {zp = -std::sqrt(1.0 - transMom);}
   else
-    {zp = std::sqrt(1.-xp*xp -yp*yp);}
+    {zp = std::sqrt(1.0 - transMom);}
 
   return zp;
 }
