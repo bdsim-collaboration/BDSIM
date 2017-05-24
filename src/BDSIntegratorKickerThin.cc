@@ -32,8 +32,8 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
 				      G4double         yOut[],
 				      G4double         yErr[])
 {
-  G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
   const G4double fcof = eqOfM->FCof();
   if (fcof == 0 || zeroStrength)
