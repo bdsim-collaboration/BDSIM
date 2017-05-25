@@ -119,6 +119,7 @@ private:
   BDSGlobalConstants* globals;
 
   /// @{Physics constructor loader.
+  void Cherenkov();
   void CutsAndLimits();
   void Em();
   void EmExtra();

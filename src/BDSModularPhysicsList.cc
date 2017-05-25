@@ -4,6 +4,7 @@
 #include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
+#include "BDSPhysicsCherenkov.hh"
 #include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
@@ -70,6 +71,8 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   
   SetVerboseLevel(1);
 
+  physicsConstructors.insert(std::make_pair("cerenkov",         &BDSModularPhysicsList::Cherenkov));
+  physicsConstructors.insert(std::make_pair("cherenkov",        &BDSModularPhysicsList::Cherenkov));
   physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
   physicsConstructors.insert(std::make_pair("em_extra",         &BDSModularPhysicsList::EmExtra));
@@ -243,7 +246,8 @@ void BDSModularPhysicsList::ConfigureOptical()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
-  opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov,      globals->TurnOnCerenkov());           ///< Cerenkov process index
+  if (physicsActivated["cherenkov"]) // Cherenkov process index
+    {opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);}
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
@@ -345,6 +349,17 @@ void BDSModularPhysicsList::SetParticleDefinition()
 	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
 	 << brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+}
+
+void BDSModularPhysicsList::Cherenkov()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["cherenkov"])
+    {
+      constructors.push_back(new BDSPhysicsCherenkov(BDSGlobalConstants::Instance()->MaximumPhotonsPerStep(),
+						     BDSGlobalConstants::Instance()->MaximumBetaChangePerStep()));
+      physicsActivated["cherenkov"] = true;
+    }
 }
 
 void BDSModularPhysicsList::Em()

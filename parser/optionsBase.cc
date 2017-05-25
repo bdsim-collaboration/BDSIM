@@ -193,13 +193,13 @@ OptionsBase::OptionsBase()
   sensitiveBLMs            = true;
 
   // physics processes
-  turnOnCerenkov           = true;
   turnOnOpticalAbsorption  = true;
   turnOnMieScattering      = true;
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
   scintYieldFactor         = 1.0;
   maximumPhotonsPerStep    = -1;  ///< -1 -> no action take (could want 0)
+  maximumBetaChangePerStep = 10;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -276,7 +276,6 @@ void OptionsBase::print() const
   std::cout<<"n particles           : " << nGenerate                << std::endl;
   std::cout<<"sigmaX                : " << sigmaX                   << std::endl;
   std::cout<<"BV sign               : " << ffact                    << std::endl;
-  std::cout<<"Cerenkov on           : " << turnOnCerenkov           << std::endl;
   std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption  << std::endl;
   std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
   std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;

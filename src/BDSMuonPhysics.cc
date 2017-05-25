@@ -59,24 +59,18 @@ void BDSMuonPhysics::ConstructProcess()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
+  /*
   G4Cerenkov*        cer = nullptr;
   G4Scintillation* scint = nullptr;
   if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
-  {
-    cer = new G4Cerenkov();
-    // reduce memory profile
-    cer->SetTrackSecondariesFirst(true);
-    // common settings (similar to optical physics) 
-    cer->SetMaxNumPhotonsPerStep(100);
-    cer->SetMaxBetaChangePerStep(10.0);
-    
+  { 
     // Cerenkov also needs scintillation it seems
     scint = new G4Scintillation();
     scint->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
     scint->SetTrackSecondariesFirst(true);
     G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
     scint->AddSaturation(emSaturation);
-  }
+    }*/
   
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
@@ -119,6 +113,7 @@ void BDSMuonPhysics::ConstructProcess()
       pmanager->AddProcess(mupar);
     }
 
+    /*
     // turn on Cerenkov for all particles, needed for Geant4 10.1
     if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
     {
@@ -131,7 +126,7 @@ void BDSMuonPhysics::ConstructProcess()
         pmanager->SetProcessOrderingToLast(scint,idxAtRest);
         pmanager->SetProcessOrderingToLast(scint,idxPostStep);
 	    }
-    }
+	    }*/
   }
 }
 

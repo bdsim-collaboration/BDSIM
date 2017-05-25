@@ -302,6 +302,7 @@ void Options::PublishMembers()
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("maximumPhotonsPerStep", &Options::maximumPhotonsPerStep);
+  publish("maximumBetaChangePerStep", &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent", &Options::maximumTracksPerEvent);
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
@@ -332,7 +333,6 @@ void Options::PublishMembers()
   publish("deltaOneStep",       &Options::deltaOneStep);
 
   // physics processes
-  publish("turnOnCerenkov",&Options::turnOnCerenkov);
   publish("turnOnOpticalAbsorption",&Options::turnOnOpticalAbsorption);
   publish("turnOnMieScattering",&Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
