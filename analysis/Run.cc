@@ -41,7 +41,7 @@ void Run::SetBranchAddress(TTree *t,
     {
       for (auto name : *branchesToTurnOn)
 	{
-	  std::string nameStar = name + ".*"; // necessary because of the splitting
+	  std::string nameStar = name + "*";
 	  if (debug)
 	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
