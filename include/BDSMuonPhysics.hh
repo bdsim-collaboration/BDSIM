@@ -5,6 +5,17 @@
 
 /**
  * @brief High energy muon processes.
+ * 
+ * Constructs:
+ * Gamma to Muon pair.
+ * e+ annihilation to Muon pair
+ * e+ annihilation to hadrons.
+ * Muon multiple scattering.
+ * Muon ionisation.
+ * Muon bremsstrahlung.
+ * Muon pair production from Muons.
+ *
+ * Uses the G4PhysicsListHelper to set and order processes.
  *
  */
 
@@ -13,15 +24,10 @@ class BDSMuonPhysics: public G4VPhysicsConstructor
 public:
   BDSMuonPhysics();
   virtual ~BDSMuonPhysics();
-  virtual void ConstructProcess();
+  /// Construct all leptions, photons (inc optical), and pion +- just in case.
   virtual void ConstructParticle();
-  
-private:
-  G4bool verbose;
-#ifdef BDSDEBUG 
-  bool debug = true;
-#else 
-  bool debug = false;
-#endif
+
+  /// Construct and attach the processes to the relevant particles.
+  virtual void ConstructProcess();
 };
 #endif
