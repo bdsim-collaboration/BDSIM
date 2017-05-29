@@ -10,11 +10,11 @@
  * doesn't know about our physics process.
  */
 
-class BDSLaserWirePhysics: public G4VPhysicsConstructor
+class BDSPhysicsLaserWire: public G4VPhysicsConstructor
 {
 public:
-  BDSLaserWirePhysics();
-  virtual ~BDSLaserWirePhysics();
+  BDSPhysicsLaserWire();
+  virtual ~BDSPhysicsLaserWire();
 
   /// Construct electrons and positrons and the photon.
   virtual void ConstructParticle();

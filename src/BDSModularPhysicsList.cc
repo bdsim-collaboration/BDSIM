@@ -1,9 +1,9 @@
 #include "BDSCutsAndLimits.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSPhysicsCherenkov.hh"
+#include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
 #include "BDSUtilities.hh"
@@ -528,7 +528,7 @@ void BDSModularPhysicsList::LaserWire()
 {
   if(!physicsActivated["lw"])
     {
-      constructors.push_back(new BDSLaserWirePhysics());
+      constructors.push_back(new BDSPhysicsLaserWire());
       physicsActivated["lw"] = true;
     }
 }

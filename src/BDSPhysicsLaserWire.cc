@@ -1,5 +1,5 @@
 #include "BDSLaserCompton.hh"
-#include "BDSLaserWirePhysics.hh"
+#include "BDSPhysicsLaserWire.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Electron.hh"
@@ -10,14 +10,14 @@
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"
 
-BDSLaserWirePhysics::BDSLaserWirePhysics():
-  G4VPhysicsConstructor("BDSLaserWirePhysics")
+BDSPhysicsLaserWire::BDSPhysicsLaserWire():
+  G4VPhysicsConstructor("BDSPhysicsLaserWire")
 {;}
 
-BDSLaserWirePhysics::~BDSLaserWirePhysics()
+BDSPhysicsLaserWire::~BDSPhysicsLaserWire()
 {;}
 
-void BDSLaserWirePhysics::ConstructParticle()
+void BDSPhysicsLaserWire::ConstructParticle()
 {
   G4Electron::ElectronDefinition();
   G4Positron::PositronDefinition();
@@ -25,7 +25,7 @@ void BDSLaserWirePhysics::ConstructParticle()
   G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
-void BDSLaserWirePhysics::ConstructProcess()
+void BDSPhysicsLaserWire::ConstructProcess()
 {
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
