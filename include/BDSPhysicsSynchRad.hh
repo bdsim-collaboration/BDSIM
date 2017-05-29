@@ -8,11 +8,11 @@
  * @brief A physics constructor that only constructs Synchrotron Radiation.
  */
 
-class BDSSynchRadPhysics: public G4VPhysicsConstructor
+class BDSPhysicsSynchRad: public G4VPhysicsConstructor
 {
 public:
-  BDSSynchRadPhysics();
-  virtual ~BDSSynchRadPhysics();
+  BDSPhysicsSynchRad();
+  virtual ~BDSPhysicsSynchRad();
 
   /// Construct all leptons and the photon.
   virtual void ConstructParticle();

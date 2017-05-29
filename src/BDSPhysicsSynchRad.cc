@@ -1,4 +1,4 @@
-#include "BDSSynchRadPhysics.hh"
+#include "BDSPhysicsSynchRad.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AutoDelete.hh"
@@ -9,14 +9,14 @@
 #include "G4SynchrotronRadiation.hh"
 #include "G4Version.hh"
 
-BDSSynchRadPhysics::BDSSynchRadPhysics():
-  G4VPhysicsConstructor("BDSSynchRadPhysics")
+BDSPhysicsSynchRad::BDSPhysicsSynchRad():
+  G4VPhysicsConstructor("BDSPhysicsSynchRad")
 {;}
 
-BDSSynchRadPhysics::~BDSSynchRadPhysics()
+BDSPhysicsSynchRad::~BDSPhysicsSynchRad()
 {;}
 
-void BDSSynchRadPhysics::ConstructParticle()
+void BDSPhysicsSynchRad::ConstructParticle()
 {
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
@@ -25,7 +25,7 @@ void BDSSynchRadPhysics::ConstructParticle()
   G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
-void BDSSynchRadPhysics::ConstructProcess()
+void BDSPhysicsSynchRad::ConstructProcess()
 {
   G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
   G4AutoDelete::Register(synchrotron);

@@ -3,10 +3,10 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
-#include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsCherenkov.hh"
+#include "BDSPhysicsMuon.hh"
+#include "BDSPhysicsSynchRad.hh"
 #include "BDSUtilities.hh"
-#include "BDSSynchRadPhysics.hh"
 
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
@@ -420,7 +420,7 @@ void BDSModularPhysicsList::SynchRad()
   ConstructAllLeptons();
   if(!physicsActivated["synchrad"])
     {
-      constructors.push_back(new BDSSynchRadPhysics());
+      constructors.push_back(new BDSPhysicsSynchRad());
       physicsActivated["synchrad"] = true;
     }
 }							  
