@@ -4,6 +4,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Electron.hh"
 #include "G4Gamma.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4ProcessManager.hh"
@@ -21,6 +22,7 @@ void BDSLaserWirePhysics::ConstructParticle()
   G4Electron::ElectronDefinition();
   G4Positron::PositronDefinition();
   G4Gamma::Gamma();
+  G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
 void BDSLaserWirePhysics::ConstructProcess()
