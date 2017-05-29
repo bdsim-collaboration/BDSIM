@@ -13,12 +13,12 @@ class BDSSynchRadPhysics: public G4VPhysicsConstructor
 public:
   BDSSynchRadPhysics();
   virtual ~BDSSynchRadPhysics();
-  
-  virtual void ConstructProcess();
+
+  /// Construct all leptons and the photon.
   virtual void ConstructParticle();
   
-private:
-  G4bool activated;
+  /// Construct and attach G4SynchrotronRadiation to all charged particles.
+  virtual void ConstructProcess();
 };
 
 #endif
