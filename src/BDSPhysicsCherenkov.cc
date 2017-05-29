@@ -3,6 +3,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4AutoDelete.hh"
 #include "G4Cerenkov.hh"
+#include "G4Gamma.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
@@ -24,6 +25,7 @@ void BDSPhysicsCherenkov::ConstructParticle()
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
 
+  G4Gamma::Gamma();
   G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
