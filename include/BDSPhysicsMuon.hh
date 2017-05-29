@@ -19,11 +19,11 @@
  *
  */
 
-class BDSMuonPhysics: public G4VPhysicsConstructor
+class BDSPhysicsMuon: public G4VPhysicsConstructor
 {
 public:
-  BDSMuonPhysics();
-  virtual ~BDSMuonPhysics();
+  BDSPhysicsMuon();
+  virtual ~BDSPhysicsMuon();
   /// Construct all leptions, photons (inc optical), and pion +- just in case.
   virtual void ConstructParticle();
 

@@ -1,6 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMuonPhysics.hh"
+#include "BDSPhysicsMuon.hh"
 
 #include "G4AutoDelete.hh"
 #include "G4AnnihiToMuPair.hh"
@@ -21,14 +21,14 @@
 #include "G4Version.hh"
 
 
-BDSMuonPhysics::BDSMuonPhysics():
-  G4VPhysicsConstructor("BDSMuonPhysics")
+BDSPhysicsMuon::BDSPhysicsMuon():
+  G4VPhysicsConstructor("BDSPhysicsMuon")
 {;}
 
-BDSMuonPhysics::~BDSMuonPhysics()
+BDSPhysicsMuon::~BDSPhysicsMuon()
 {;}
 
-void BDSMuonPhysics::ConstructParticle()
+void BDSPhysicsMuon::ConstructParticle()
 { 
   // leptons
   G4LeptonConstructor leptons;
@@ -43,7 +43,7 @@ void BDSMuonPhysics::ConstructParticle()
   G4PionMinus::PionMinus();
 }
 
-void BDSMuonPhysics::ConstructProcess()
+void BDSPhysicsMuon::ConstructProcess()
 {
   // for gamma
   G4GammaConversionToMuons* gammaToMuPair = new G4GammaConversionToMuons();

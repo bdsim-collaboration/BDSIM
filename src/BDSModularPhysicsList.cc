@@ -3,7 +3,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
-#include "BDSMuonPhysics.hh"
+#include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
@@ -429,7 +429,7 @@ void BDSModularPhysicsList::Muon()
 {
   if(!physicsActivated["muon"])
     {
-      constructors.push_back(new BDSMuonPhysics());
+      constructors.push_back(new BDSPhysicsMuon());
       physicsActivated["muon"] = true;
     }
 }							  

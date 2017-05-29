@@ -1830,7 +1830,7 @@ Physics Lists In BDSIM
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
 |                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
 |                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                           | builder (a la Geant4) `BDSMuonPhysics`.                                |
+|                           | builder (a la Geant4) `BDSPhysicsMuon`.                                |
 +---------------------------+------------------------------------------------------------------------+
 
 Physics Biasing
