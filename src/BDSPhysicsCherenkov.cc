@@ -4,6 +4,7 @@
 #include "G4AutoDelete.hh"
 #include "G4Cerenkov.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PhysicsListHelper.hh"
 #include "G4Version.hh"
@@ -22,6 +23,8 @@ void BDSPhysicsCherenkov::ConstructParticle()
 {
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
+
+  G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
 void BDSPhysicsCherenkov::ConstructProcess()

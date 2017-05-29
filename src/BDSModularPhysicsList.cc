@@ -353,12 +353,14 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
 void BDSModularPhysicsList::Cherenkov()
 {
-  ConstructAllLeptons();
-  if (!physicsActivated["cherenkov"])
+  if (!physicsActivated["cherenkov"] && !physicsActivated["cerenkov"])
     {
       constructors.push_back(new BDSPhysicsCherenkov(BDSGlobalConstants::Instance()->MaximumPhotonsPerStep(),
 						     BDSGlobalConstants::Instance()->MaximumBetaChangePerStep()));
       physicsActivated["cherenkov"] = true;
+      physicsActivated["cerenkov"]  = true;
+      if (!physicsActivated["em"])
+	{Em();} // requires em physics to work (found empirically)
     }
 }
 
