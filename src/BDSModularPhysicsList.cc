@@ -246,8 +246,8 @@ void BDSModularPhysicsList::ConfigureOptical()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
-  if (physicsActivated["cherenkov"]) // Cherenkov process index
-    {opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);}
+  // cherenkov turned on with optical even if it's not on as separate list
+  opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
   opticalPhysics->Configure(G4OpticalProcessIndex::kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
