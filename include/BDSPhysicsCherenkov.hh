@@ -1,6 +1,8 @@
 #ifndef BDSPHYSICSCHERENKOV_H
 #define BDSPHYSICSCHERENKOV_H
 
+#include "BDSSingleUse.hh"
+
 #include "globals.hh"
 #include "G4VPhysicsConstructor.hh"
 
@@ -10,7 +12,7 @@
  * @author Laurie Nevay
  */
 
-class BDSPhysicsCherenkov: public G4VPhysicsConstructor
+class BDSPhysicsCherenkov: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsCherenkov(G4double maxPhotonsPerStepIn,

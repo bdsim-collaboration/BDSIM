@@ -27,6 +27,9 @@ void BDSPhysicsSynchRad::ConstructParticle()
 
 void BDSPhysicsSynchRad::ConstructProcess()
 {
+  if (Activated())
+    {return;}
+  
   G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
   G4AutoDelete::Register(synchrotron);
   
@@ -43,7 +46,8 @@ void BDSPhysicsSynchRad::ConstructProcess()
       if (particle->GetPDGCharge() != 0)
 	{ph->RegisterProcess(synchrotron, particle);}
     }
-  return;
+
+  SetActivated();
 }
 
 

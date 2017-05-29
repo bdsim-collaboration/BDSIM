@@ -45,6 +45,9 @@ void BDSPhysicsMuon::ConstructParticle()
 
 void BDSPhysicsMuon::ConstructProcess()
 {
+  if (Activated())
+    {return;}
+  
   // for gamma
   G4GammaConversionToMuons* gammaToMuPair = new G4GammaConversionToMuons();
   G4AutoDelete::Register(gammaToMuPair);
@@ -97,4 +100,6 @@ void BDSPhysicsMuon::ConstructProcess()
 	  continue;
 	}
     }
+
+  SetActivated();
 }

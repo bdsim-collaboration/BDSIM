@@ -27,6 +27,9 @@ void BDSPhysicsLaserWire::ConstructParticle()
 
 void BDSPhysicsLaserWire::ConstructProcess()
 {
+  if (Activated())
+    {return;}
+  
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
 #endif
@@ -52,4 +55,6 @@ void BDSPhysicsLaserWire::ConstructProcess()
 	  pmanager->SetProcessOrderingToLast(lwProcess,idxPostStep);
 	}
     }
+
+  SetActivated();
 }

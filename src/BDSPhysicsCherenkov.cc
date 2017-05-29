@@ -31,6 +31,9 @@ void BDSPhysicsCherenkov::ConstructParticle()
 
 void BDSPhysicsCherenkov::ConstructProcess()
 {
+  if (Activated())
+    {return;}
+  
   G4Cerenkov* cherenkov = new G4Cerenkov();
   G4AutoDelete::Register(cherenkov);
 
@@ -55,4 +58,6 @@ void BDSPhysicsCherenkov::ConstructProcess()
       if (cherenkov->IsApplicable(*particle))
 	{ph->RegisterProcess(cherenkov, particle);}
     }
+
+  SetActivated();
 }

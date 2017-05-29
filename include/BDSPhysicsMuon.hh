@@ -1,6 +1,8 @@
 #ifndef BDSMUONPHYSICS_H
 #define BDSMUONPHYSICS_H
 
+#include "BDSSingleUse.hh"
+
 #include "G4VPhysicsConstructor.hh"
 
 /**
@@ -19,7 +21,7 @@
  *
  */
 
-class BDSPhysicsMuon: public G4VPhysicsConstructor
+class BDSPhysicsMuon: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsMuon();

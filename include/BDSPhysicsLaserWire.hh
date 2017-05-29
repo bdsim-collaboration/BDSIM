@@ -1,6 +1,8 @@
 #ifndef BDSLASERWIREPHYSICS_H
 #define BDSLASERWIREPHYSICS_H
 
+#include "BDSSingleUse.hh"
+
 #include "G4VPhysicsConstructor.hh"
 
 /**
@@ -10,7 +12,7 @@
  * doesn't know about our physics process.
  */
 
-class BDSPhysicsLaserWire: public G4VPhysicsConstructor
+class BDSPhysicsLaserWire: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsLaserWire();
