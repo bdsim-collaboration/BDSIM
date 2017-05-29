@@ -27,7 +27,6 @@ void BDSCutsAndLimits::ConstructParticle()
   G4Electron::Electron();
   G4Positron::Positron();    
   G4Proton::Proton();
-  return;
 }
 
 void BDSCutsAndLimits::ConstructProcess()
