@@ -535,7 +535,7 @@ void BDSModularPhysicsList::QGSPBICHP()
 void BDSModularPhysicsList::FTFPBERT()
 {
   ConstructAllLeptons();
-  HadronicElastic();
+  HadronicElastic(); // has to be here to prevent G4 segfault
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -546,7 +546,7 @@ void BDSModularPhysicsList::FTFPBERT()
 void BDSModularPhysicsList::FTFPBERTHP()
 {
   ConstructAllLeptons();
-  HadronicElastic();
+  HadronicElastic(); // has to be here to prevent G4 segfault
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
