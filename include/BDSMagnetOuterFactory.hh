@@ -31,140 +31,14 @@ public:
   
   ~BDSMagnetOuterFactory();
 
+  /// Main interface to creating a magnet outer piece of geometry. Specified by magnet type,
+  /// the recipe, the length of the magnet outer section, the length of the appropriately fitting
+  /// containter volume that's also constructed and w.r.t. an already constructed beam pipe.
   BDSMagnetOuter* CreateMagnetOuter(BDSMagnetType       magnetType,
 				    BDSMagnetOuterInfo* outerInfo,
 				    G4double            outerLength,
 				    G4double            chordLength,
 				    BDSBeamPipe*        beampipe);
-  
-  /// sector bend outer volume
-  BDSMagnetOuter* CreateSectorBend(BDSMagnetGeometryType magnetType,   // magnet type
-				   G4String     name,                  // name
-				   G4double     length,                // length [mm]
-				   BDSBeamPipe* beamPipe,              // beampipe
-				   G4double     outerDiameter,         // full width
-				   G4double     containerLength,       // full length to make AccComp container
-				   G4double     angleIn,               // input face angle w.r.t. chord
-				   G4double     angleOut,              // output face angle w.r.t. chord
-				   G4bool       yokeOnLeft,            // build magnet yoke on left of bend
-				   G4Material*  outerMaterial = nullptr,// material for outer volume
-				   G4bool       buildEndPiece = false
-				   );
-  
-  /// rectangular bend outer volume
-  BDSMagnetOuter* CreateRectangularBend(BDSMagnetGeometryType magnetType,   // magnet type
-					G4String     name,                  // name
-					G4double     length,                // length [mm]
-					BDSBeamPipe* beamPipe,              // beampipe
-					G4double     outerDiameter,         // full width
-					G4double     containerLength,       // full length to make AccComp container
-					G4double     angleIn,               // input face angle w.r.t. chord
-					G4double     angleOut,              // output face angle w.r.t. chord
-					G4bool       yokeOnLeft,            // build magnet yoke on left of bend
-					G4Material*  outerMaterial = nullptr,// material for outer volume
-					G4bool       buildEndPiece = false
-					);
-  
-  /// quadrupole outer volume
-  BDSMagnetOuter* CreateQuadrupole(BDSMagnetGeometryType magnetType,   // magnet type
-				   G4String     name,                  // name
-				   G4double     length,                // length [mm]
-				   BDSBeamPipe* beamPipe,              // beampipe
-				   G4double     outerDiameter,         // full width
-				   G4double     containerLength,       // full length to make AccComp container
-				   G4Material*  outerMaterial = nullptr,// material for outer volume
-				   G4bool       buildEndPiece = false
-				   );
-  
-
-  /// sextupole outer volume
-  BDSMagnetOuter* CreateSextupole(BDSMagnetGeometryType magnetType,   // magnet type
-				  G4String     name,                  // name
-				  G4double     length,                // length [mm]
-				  BDSBeamPipe* beamPipe,              // beampipe
-				  G4double     outerDiameter,         // full width
-				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr,// material for outer volume
-				  G4bool       buildEndPiece = false
-				  );
-  
-  /// octupole outer volume
-  BDSMagnetOuter* CreateOctupole(BDSMagnetGeometryType magnetType,   // magnet type
-				 G4String     name,                  // name
-				 G4double     length,                // length [mm]
-				 BDSBeamPipe* beamPipe,              // beampipe
-				 G4double     outerDiameter,         // full width
-				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr,// material for outer volume
-				 G4bool       buildEndPiece = false
-				 );
-  
-  /// decapole outer volume
-  BDSMagnetOuter* CreateDecapole(BDSMagnetGeometryType magnetType,   // magnet type
-				 G4String     name,                  // name
-				 G4double     length,                // length [mm]
-				 BDSBeamPipe* beamPipe,              // beampipe
-				 G4double     outerDiameter,         // full width
-				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr,// material for outer volume
-				 G4bool       buildEndPiece = false
-				 );
-  
-  /// solenoid  outer volume
-  BDSMagnetOuter* CreateSolenoid(BDSMagnetGeometryType magnetType,   // magnet type
-				 G4String     name,                  // name
-				 G4double     length,                // length [mm]
-				 BDSBeamPipe* beamPipe,              // beampipe
-				 G4double     outerDiameter,         // full width
-				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr,// material for outer volume
-				 G4bool       buildEndPiece = false
-				 );
-  
-  /// general multipole outer volume - could be any 2N order multipole
-  BDSMagnetOuter* CreateMultipole(BDSMagnetGeometryType magnetType,   // magnet type
-				  G4String     name,                  // name
-				  G4double     length,                // length [mm]
-				  BDSBeamPipe* beamPipe,              // beampipe
-				  G4double     outerDiameter,         // full width
-				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr,// material for outer volume
-				  G4bool       buildEndPiece = false
-				  );
-  
-  /// RF cavity outer volume
-  BDSMagnetOuter* CreateRfCavity(BDSMagnetGeometryType magnetType,   // magnet type
-				 G4String     name,                  // name
-				 G4double     length,                // length [mm]
-				 BDSBeamPipe* beamPipe,              // beampipe
-				 G4double     outerDiameter,         // full width
-				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr,// material for outer volume
-				 G4bool       buildEndPiece = false
-				 );
-  
-  /// muon spoiler outer volume
-  BDSMagnetOuter* CreateMuSpoiler(BDSMagnetGeometryType magnetType,   // magnet type
-				  G4String     name,                  // name
-				  G4double     length,                // length [mm]
-				  BDSBeamPipe* beamPipe,              // beampipe
-				  G4double     outerDiameter,         // full width
-				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr,// material for outer volume
-				  G4bool       buildEndPiece = false
-				  );
-  
-  /// horizontal and vertical kicker outer volume
-  BDSMagnetOuter* CreateKicker(BDSMagnetGeometryType magnetType,   // magnet type
-			       G4String     name,                  // name
-			       G4double     length,                // length [mm]
-			       BDSBeamPipe* beamPipe,              // beampipe
-			       G4double     outerDiameter,         // full width
-			       G4double     containerLength,       // full length to make AccComp container
-			       G4bool       vertical = true,       // is it a vertical kicker?
-			       G4Material*  outerMaterial = nullptr,// material for outer volume
-			       G4bool       buildEndPiece = false
-			       );
   
 private:
   BDSMagnetOuterFactory();
