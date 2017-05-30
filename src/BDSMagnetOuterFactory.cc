@@ -115,6 +115,9 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       return outer;
     }
 
+  // Check dimensions
+  CheckOuterBiggerThanBeamPipe(name, outerInfo, beamPipe);
+
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(geometryType);
   
   switch(magnetType.underlying())
@@ -292,3 +295,18 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(G4String
   return container;
 }
 						      
+void BDSMagnetOuterFactory::CheckOuterBiggerThanBeamPipe(const G4String            name,
+							 const BDSMagnetOuterInfo* outerInfo,
+							 const BDSBeamPipe*        beamPipe) const
+{
+
+  G4double od = outerInfo->outerDiameter;
+  BDSExtent bpExtent = beamPipe->GetExtent();
+  if (od < bpExtent.DX() || od < bpExtent.DY())
+    {
+      G4cerr << "Magnet outer dimensions too small to encompass beam pipe for element " << name << G4endl;
+      G4cerr << "outerDiameter -> " << od << G4endl;
+      G4cerr << "Beam pipe width : " << bpExtent.DX() << ", height : " << bpExtent.DY() << G4endl;
+      exit(1);
+    }
+}

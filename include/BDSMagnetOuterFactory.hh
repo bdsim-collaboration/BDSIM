@@ -61,6 +61,10 @@ private:
 						   BDSGeometryExternal* external,
 						   BDSBeamPipe*         beampipe);
 
+  void  CheckOuterBiggerThanBeamPipe(const G4String            name,
+				     const BDSMagnetOuterInfo* outerInfo,
+				     const BDSBeamPipe*        beamPipe) const;
+
 };
 
 
