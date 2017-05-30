@@ -8,8 +8,7 @@
 #include "G4Version.hh"
 
 BDSCutsAndLimits::BDSCutsAndLimits():
-  G4VPhysicsConstructor("BDSCutsAndLimits"),
-  activated(false)
+  G4VPhysicsConstructor("BDSCutsAndLimits")
 {
   stepLimiter = new G4StepLimiter;
   specialCuts = new G4UserSpecialCuts;
@@ -31,9 +30,8 @@ void BDSCutsAndLimits::ConstructParticle()
 
 void BDSCutsAndLimits::ConstructProcess()
 {
-  if (activated)
+  if (Activated())
     {return;}
-  activated = true;
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
@@ -53,6 +51,7 @@ void BDSCutsAndLimits::ConstructProcess()
       ph->RegisterProcess(stepLimiter,particle); // this is for MaxAllowedStep
       ph->RegisterProcess(specialCuts,particle); // this is for all other limits
     }
-  return;
+
+  SetActivated();
 }
 
