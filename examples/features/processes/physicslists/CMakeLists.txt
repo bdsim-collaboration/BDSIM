@@ -11,6 +11,6 @@ simple_testing(physics_optical         "--file=optical.gmad"         ${OVERLAP_C
 simple_testing(physics_qgspbert        "--file=qgspbert.gmad"        ${OVERLAP_CHECK})
 simple_testing_long(physics_qgspberthp      "--file=qgspberthp.gmad"      ${OVERLAP_CHECK})
 simple_testing(physics_qgspbic         "--file=qgspbic.gmad"         ${OVERLAP_CHECK})
-simple_testing(physics_qgspbichp       "--file=qgspbichp.gmad"       ${OVERLAP_CHECK})
+simple_testing_long(physics_qgspbichp       "--file=qgspbichp.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics_spindecay       "--file=spindecay.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics_synchrad        "--file=synchrad.gmad"        ${OVERLAP_CHECK})
