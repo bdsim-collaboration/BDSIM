@@ -8,6 +8,7 @@
 #include "G4Gamma.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4MesonConstructor.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuIonisation.hh"
 #include "G4MuMultipleScattering.hh"
@@ -15,9 +16,6 @@
 #include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PhysicsListHelper.hh"
-#include "G4PionDecayMakeSpin.hh"
-#include "G4PionPlus.hh"
-#include "G4PionMinus.hh"
 #include "G4Version.hh"
 
 
@@ -34,13 +32,13 @@ void BDSPhysicsMuon::ConstructParticle()
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
 
+  // mesons, inc. all pions
+  G4MesonConstructor mConstructor;
+  mConstructor.ConstructParticle();
+
   // photons
   G4Gamma::Gamma();
   G4OpticalPhoton::OpticalPhoton();
-  
-  // pions
-  G4PionPlus::PionPlus();
-  G4PionMinus::PionMinus();
 }
 
 void BDSPhysicsMuon::ConstructProcess()
