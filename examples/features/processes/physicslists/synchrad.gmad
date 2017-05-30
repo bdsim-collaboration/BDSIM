@@ -1,4 +1,4 @@
-d1: sbend, l=1*m, angle=200*mrad, aper1=30*cm, aper2=3*cm, apertureType="rectangular";
+d1: sbend, l=1*m, angle=200*mrad, aper1=30*cm, aper2=3*cm, apertureType="rectangular", outerDiameter=70*cm;
 
 l1: line = (d1);
 
