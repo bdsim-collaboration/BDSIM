@@ -851,6 +851,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     {std::swap(bpHalfWidth, bpHalfHeight);}
   G4double poleHalfWidth  = bpHalfWidth  + lengthSafetyLarge;
   poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.15);
+  // in the case of a very wide beam pipe, we can't build a pole that matches
+  if (poleHalfWidth > 0.4*outerDiameter)
+    {poleHalfWidth = outerDiameter*0.15;}
   G4double poleHalfHeight = bpHalfHeight + lengthSafetyLarge;
   G4double outerHalf      = outerDiameter * 0.5;
 
