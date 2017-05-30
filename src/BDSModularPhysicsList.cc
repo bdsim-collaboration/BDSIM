@@ -52,7 +52,6 @@
 #include "G4ProcessVector.hh"
 #include "G4Version.hh"
 
-#include <algorithm>
 #include <iterator>
 #include <map>
 #include <ostream>
@@ -170,14 +169,6 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
   std::istream_iterator<std::string> begin(ss);
   std::istream_iterator<std::string> end;
   std::vector<std::string> vstrings(begin, end);
-
-  // if we have decay or spindecay, put them at the end as they only apply to particles already constructed.
-  auto decayIt = std::find(vstrings.begin(), vstrings.end(), "decay");
-  if (decayIt != vstrings.end())
-    {std::iter_swap(decayIt, std::prev(vstrings.end()));} // safe as vstrings size > 0 for this to happen
-  auto spinDecayIt = std::find(vstrings.begin(), vstrings.end(), "spindecay");
-  if (spinDecayIt != vstrings.end())
-    {std::iter_swap(spinDecayIt, std::prev(vstrings.end()));}
 
   for (auto name : vstrings)
     {

@@ -26,6 +26,9 @@ namespace GMAD {
  * set of physics processes. Note: the transportation process is 
  * constructed by default with classes that derive from G4VModularPhysicsList.
  *
+ * Note, Geant4 will call the ConstructParticle method before ConstructProcess,
+ * so we're guaranteed that decay physics for example will apply to all particles.
+ *
  * @author L. Deacon, S. Boogert & L. Nevay
  */
 
