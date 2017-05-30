@@ -35,6 +35,14 @@ public:
   explicit BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
 
+  /// Call base class method to construct all particles from constructors,
+  /// but also set the particle definition and rigidity in globals.
+  virtual void ConstructParticle();
+
+  /// Call base class method to construct all processes from constructors,
+  /// but also set cuts and print physics table.
+  virtual void ConstructProcess();
+
   /// Print out which physics lists are activated.
   void Print();
 

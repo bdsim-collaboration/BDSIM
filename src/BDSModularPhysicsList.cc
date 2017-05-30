@@ -108,11 +108,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   for(auto physics : constructors)
     {RegisterPhysics(physics);}
   
-  ConstructMinimumParticleSet();
-  SetParticleDefinition();
-  SetCuts();
-  DumpCutValuesTable(100);
-
 #ifdef BDSDEBUG
   Print();
 #endif
@@ -120,6 +115,21 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
+
+void BDSModularPhysicsList::ConstructParticle()
+{
+  ConstructMinimumParticleSet();
+  G4VModularPhysicsList::ConstructParticle();
+  SetParticleDefinition();
+}
+
+void BDSModularPhysicsList::ConstructProcess()
+{
+  G4VModularPhysicsList::ConstructProcess();
+  SetCuts();
+  DumpCutValuesTable(100);
+
+}
 
 void BDSModularPhysicsList::Print()
 {
