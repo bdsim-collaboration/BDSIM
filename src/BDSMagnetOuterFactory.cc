@@ -103,7 +103,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
-      outer = CreateExternal(name, outerInfo, outerLength, beampipe);
+      outer = CreateExternal(name, outerInfo, outerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
       if (loadedLength > outerLength)
 	{
@@ -114,83 +114,85 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 	}
       return outer;
     }
+
+  BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(geometryType);
   
   switch(magnetType.underlying())
     {
     case BDSMagnetType::decapole:
       {
-	outer = CreateDecapole(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateDecapole(name, outerLength, beamPipe, outerDiameter,
+					containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::vkicker:
       {
-	outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,true,outerMaterial,buildEndPiece);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
+				      containerLength, true, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::hkicker:
       {
-	outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,false,outerMaterial,buildEndPiece);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
+				      containerLength, false, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::muonspoiler:
       {
-	outer = CreateMuSpoiler(geometryType,name,outerLength,beampipe,
-				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateMuSpoiler(name, outerLength, beamPipe, outerDiameter,
+					 containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::octupole:
       {
-	outer = CreateOctupole(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateOctupole(name, outerLength, beamPipe, outerDiameter,
+					containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::quadrupole:
       {
-	outer = CreateQuadrupole(geometryType,name,outerLength,beampipe,
-				 outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateQuadrupole(name, outerLength, beamPipe, outerDiameter,
+					  containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::rfcavity:
       {
-	outer = CreateRfCavity(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateRfCavity(name, outerLength, beamPipe, outerDiameter,
+					containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::sectorbend:
       {
-	outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
-				 outerDiameter,chordLength,outerInfo->angleIn,
-				 outerInfo->angleOut,yokeOnLeft,outerMaterial,
-				 buildEndPiece);
+	outer = factory->CreateSectorBend(name, outerLength, beamPipe,
+					  outerDiameter, containerLength,
+					  outerInfo->angleIn, outerInfo->angleOut,
+					  yokeOnLeft, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::rectangularbend:
       {
-	outer = CreateRectangularBend(geometryType,name,outerLength,beampipe,
-				      outerDiameter,chordLength,outerInfo->angleIn,
-				      outerInfo->angleOut,yokeOnLeft,outerMaterial,
-				      buildEndPiece);
+	outer = factory->CreateRectangularBend(name, outerLength, beamPipe,
+					       outerDiameter, containerLength,
+					       outerInfo->angleIn, outerInfo->angleOut,
+					       yokeOnLeft, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::sextupole:
       {
-	outer = CreateSextupole(geometryType,name,outerLength,beampipe,
-				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateSextupole(name, outerLength, beamPipe, outerDiameter,
+					 containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::solenoid:
       {
-	outer = CreateSolenoid(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateSolenoid(name, outerLength, beamPipe, outerDiameter,
+					containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::multipole:
       {
-	outer = CreateMultipole(geometryType,name,outerLength,beampipe,
-				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	outer = factory->CreateMultipole(name, outerLength, beamPipe, outerDiameter,
+					 containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::thinmultipole:
@@ -234,16 +236,16 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
       exit(1);
     }
     
-  BDSGeometryComponent* container = CreateContainer(name, length, geom, beampipe);
+  BDSGeometryComponent* container = CreateContainerForExternal(name, length, geom, beampipe);
   
   BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
   return outer;
 }
 
-BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainer(G4String             name,
-							     G4double             length,
-							     BDSGeometryExternal* external,
-							     BDSBeamPipe*         beampipe)
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(G4String             name,
+									G4double             length,
+									BDSGeometryExternal* external,
+									BDSBeamPipe*         beampipe)
 {
   G4ThreeVector  inputFace = beampipe->InputFaceNormal();
   G4ThreeVector outputFace = beampipe->OutputFaceNormal();

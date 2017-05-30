@@ -56,10 +56,10 @@ private:
   /// using the external factory exists here and doesn't belong in a derived factory.
   /// Uses the beam pipe instance to get the surface normals as the container must match.
   /// Here, length is the full length of the final object desired.
-  BDSGeometryComponent* CreateContainer(G4String             name,
-					G4double             length,
-					BDSGeometryExternal* external,
-					BDSBeamPipe*         beampipe);
+  BDSGeometryComponent* CreateContainerForExternal(G4String             name,
+						   G4double             length,
+						   BDSGeometryExternal* external,
+						   BDSBeamPipe*         beampipe);
 
 };
 
