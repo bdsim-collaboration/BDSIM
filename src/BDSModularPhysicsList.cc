@@ -177,7 +177,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       auto result = physicsConstructors.find(nameLower);
       if (result != physicsConstructors.end())
 	{
-	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\"" << G4endl;
+	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\" physics list" << G4endl;
 	  auto mem = result->second;
 	  (this->*mem)(); // call the function pointer in this instance of the class
 	}
