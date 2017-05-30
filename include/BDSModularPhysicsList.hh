@@ -55,7 +55,7 @@ public:
   void PrintDefinedParticles() const;
 
   /// Set Production cuts for photons, elecrons, positrons, protons and the default.
-  void SetCuts();
+  virtual void SetCuts();
 
   void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
