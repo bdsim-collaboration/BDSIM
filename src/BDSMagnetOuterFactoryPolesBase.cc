@@ -851,6 +851,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     {std::swap(bpHalfWidth, bpHalfHeight);}
   G4double poleHalfWidth  = bpHalfWidth  + lengthSafetyLarge;
   poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.15);
+  // in the case of a very wide beam pipe, we can't build a pole that matches
+  if (poleHalfWidth > 0.4*outerDiameter)
+    {poleHalfWidth = outerDiameter*0.15;}
   G4double poleHalfHeight = bpHalfHeight + lengthSafetyLarge;
   G4double outerHalf      = outerDiameter * 0.5;
 
@@ -962,7 +965,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // points for container for full magnet object including beam pipe
   // first one in y here is -lsl to cancel +lsl to poleHalfHeight originally
   // container can be same height as beam pipe as it's always wider
-  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight - lsl));
+  G4double maxLeft = std::max(poleHalfWidth, bpHalfWidth);
+  mCPoints.push_back(G4TwoVector(maxLeft + lsl, poleHalfHeight - lsl));
   if (buildPole)
     {
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight - lsl));
@@ -979,7 +983,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY));
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight + lsl));
     }
-  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight + lsl));
+  mCPoints.push_back(G4TwoVector(maxLeft + lsl, -poleHalfHeight + lsl));
+  
   // extents
   extXPos = poleHalfWidth + lsl;
   extXNeg = poleHalfWidth - outerDiameter - 2*lsl;
