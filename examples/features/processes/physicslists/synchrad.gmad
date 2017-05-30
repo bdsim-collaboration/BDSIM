@@ -1,0 +1,13 @@
+d1: sbend, l=1*m, angle=200*mrad, aper1=30*cm, aper2=3*cm, apertureType="rectangular";
+
+l1: line = (d1);
+
+use, l1;
+
+option, physicsList="synchrad";
+
+beam, energy=10*GeV,
+      particle="e-";
+
+
+!option, maximumPhotonsPerStep=1000;
