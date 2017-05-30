@@ -1,8 +1,8 @@
-#include "BDSCutsAndLimits.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSPhysicsCherenkov.hh"
+#include "BDSPhysicsCustAndLimits.hh"
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
@@ -478,7 +478,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 {
   if(!physicsActivated["cutsandlimits"])
     {
-      constructors.push_back(new BDSCutsAndLimits());
+      constructors.push_back(new BDSPhysicsCustAndLimits());
       physicsActivated["cutsandlimits"] = true;
     }
 }           

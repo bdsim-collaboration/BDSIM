@@ -12,11 +12,11 @@ class G4UserSpecialCuts;
  * @brief Physics processes required for user tracking limits.
  */
 
-class BDSCutsAndLimits: public G4VPhysicsConstructor, public BDSSingleUse
+class BDSPhysicsCustAndLimits: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
-  BDSCutsAndLimits();
-  virtual ~BDSCutsAndLimits();
+  BDSPhysicsCustAndLimits();
+  virtual ~BDSPhysicsCustAndLimits();
 
   /// Construct gamma, e+- and proton - the minimum this sets limits for.
   virtual void ConstructParticle();
