@@ -285,11 +285,8 @@ void BDSModularPhysicsList::SetCuts()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
-
-  G4VUserPhysicsList::SetCuts();  
-  G4double defaultRangeCut  = globals->DefaultRangeCut();
-  SetDefaultCutValue(defaultRangeCut);
-  SetCutsWithDefault();
+  
+  SetDefaultCutValue(globals->DefaultRangeCut());
 
   G4double prodCutPhotons   = globals->ProdCutPhotons();
   G4double prodCutElectrons = globals->ProdCutElectrons();
