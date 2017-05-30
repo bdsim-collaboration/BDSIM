@@ -6,5 +6,7 @@ use, l1;
 
 option, physicsList="qgsp_bert";
 
+option, checkOverlaps=1;
+
 beam, particle="proton",
       energy=10*GeV;

@@ -6,5 +6,7 @@ use, l1;
 
 option, physicsList="em_extra";
 
+option, checkOverlaps=1;
+
 beam, particle="e-",
       energy=30*GeV;

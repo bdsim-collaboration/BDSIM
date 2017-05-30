@@ -6,6 +6,8 @@ use, l1;
 
 option, physicsList="synchrad";
 
+option, checkOverlaps=1;
+
 beam, energy=10*GeV,
       particle="e-";
 
