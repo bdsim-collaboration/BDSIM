@@ -53,8 +53,9 @@ public:
   /// Print all constructed particle names. Note, this should only be done after the
   /// physics lists are fully constructed.
   void PrintDefinedParticles() const;
-  
-  virtual void SetCuts();
+
+  /// Set Production cuts for photons, elecrons, positrons, protons and the default.
+  void SetCuts();
 
   void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
