@@ -25,6 +25,7 @@
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
+#include "G4SpinDecayPhysics.hh"
 #include "G4SynchrotronRadiation.hh"
 
 // particles
@@ -84,6 +85,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
+  physicsConstructors.insert(std::make_pair("spindecay",        &BDSModularPhysicsList::SpinDecay));
   physicsConstructors.insert(std::make_pair("qgsp_bert",        &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("qgsp_bert_hp",     &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("qgsp_bic",         &BDSModularPhysicsList::QGSPBIC));
@@ -451,7 +453,16 @@ void BDSModularPhysicsList::Decay()
       constructors.push_back(new G4DecayPhysics());
       physicsActivated["decay"] = true;
     }
-}                                                         
+}
+
+void BDSModularPhysicsList::SpinDecay()
+{
+  if(!physicsActivated["spindecay"])
+    {// this will replace regular decay for various processes
+      constructors.push_back(new G4SpinDecayPhysics());
+      physicsActivated["spindecay"] = true;
+    }
+}
 
 void BDSModularPhysicsList::CutsAndLimits()
 {

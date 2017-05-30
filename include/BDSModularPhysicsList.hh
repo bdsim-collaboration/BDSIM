@@ -129,6 +129,7 @@ private:
   void Muon();					
   void Optical();
   void Decay();
+  void SpinDecay();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();
