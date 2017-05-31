@@ -5,9 +5,11 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "globals.hh"
+#include "G4LogicalVolume.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VSolid.hh"
 
 #include <map>
 
@@ -22,6 +24,8 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
 
 BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),
+  worldLV(nullptr),
+  worldSolid(nullptr),
   flatBeamline(nullptr),
   curvilinearBeamline(nullptr),
   supportsBeamline(nullptr),
@@ -39,6 +43,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   G4cout << "BDSAcceleratorModel> Deleting model" << G4endl;
   
   delete worldPV;
+  delete worldLV;
+  delete worldSolid;
   delete flatBeamline;
   delete curvilinearBeamline;
   delete supportsBeamline;

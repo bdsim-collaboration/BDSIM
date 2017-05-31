@@ -8,10 +8,11 @@
 
 class BDSBeamline;
 class BDSFieldObjects;
-//class G4LogicalVolume;
+class G4LogicalVolume;
 class G4ProductionCuts;
 class G4Region;
 class G4VPhysicalVolume;
+class G4VSolid;
 
 /**
  * @brief A holder class for all representations of the
@@ -36,9 +37,12 @@ public:
   static BDSAcceleratorModel* Instance();
   ~BDSAcceleratorModel();
 
-  /// Register the physical volume of the world
-  inline void RegisterWorldPV(G4VPhysicalVolume* worldIn) {worldPV = worldIn;}    
-
+  /// @{ Register consituent of world.
+  inline void RegisterWorldPV(G4VPhysicalVolume* worldIn) {worldPV = worldIn;}
+  inline void RegisterWorldLV(G4LogicalVolume*   worldIn) {worldLV = worldIn;}
+  inline void RegisterWorldSolid(G4VSolid*       worldIn) {worldSolid = worldIn;}
+  /// @}
+  
   /// Access the physical volume of the world
   inline G4VPhysicalVolume* GetWorldPV() const {return worldPV;}
 
@@ -98,20 +102,19 @@ public:
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
-  static BDSAcceleratorModel* _instance;
+  static BDSAcceleratorModel* instance;
 
   G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
-  // G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry.
-  // G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry.
-  // G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry.
-  // G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry.
+  G4LogicalVolume*   worldLV;
+  G4VSolid*          worldSolid;
 
-  BDSBeamline*       flatBeamline;         ///< Flat beam line.
-  BDSBeamline*       curvilinearBeamline;  ///< Curvilinear geometry beamline.
-  BDSBeamline*       supportsBeamline;     ///< Element supports beam line.
-  BDSBeamline*       tunnelBeamline;       ///< Tunnel segments beam line.
-  BDSBeamline*       endPieceBeamline;     ///< End Pieces beam line.
-  BDSBeamline*       placementBeamline;    ///< Placement geometry beam line.
+  BDSBeamline* flatBeamline;              ///< Flat beam line.
+  BDSBeamline* curvilinearBeamline;       ///< Curvilinear geometry beamline.
+  BDSBeamline* curvilinearBridgeBeamline; ///< Curvilinear bridging volumes beamline.
+  BDSBeamline* supportsBeamline;          ///< Element supports beam line.
+  BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
+  BDSBeamline* endPieceBeamline;          ///< End Pieces beam line.
+  BDSBeamline* placementBeamline;         ///< Placement geometry beam line.
 
   std::vector<BDSFieldObjects*> fields;    ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.

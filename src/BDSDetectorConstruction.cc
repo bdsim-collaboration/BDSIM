@@ -353,6 +353,8 @@ void BDSDetectorConstruction::BuildWorld()
 
   // Register the lv & pvs to the our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
+  acceleratorModel->RegisterWorldLV(worldLV);
+  acceleratorModel->RegisterWorldSolid(worldSolid);
 
   // Register world PV with our auxiliary navigator so steppers and magnetic
   // fields know which geometry to navigate to get local / global transforms.
