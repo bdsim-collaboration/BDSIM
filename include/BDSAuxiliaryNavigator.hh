@@ -55,6 +55,9 @@ public:
   static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPVIn)
   {auxNavigatorCL->SetWorldVolume(curvilinearWorldPVIn); curvilinearWorldPV = curvilinearWorldPVIn;}
 
+  static void RegisterCurvilinearBridgeWorld(G4VPhysicalVolume* curvilinearBridgeWorldPVIn)
+  {auxNavigatorCLB->SetWorldVolume(curvilinearBridgeWorldPVIn); curvilinearBridgeWorldPV = curvilinearBridgeWorldPVIn;}
+
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
 					       const G4ThreeVector* direction = nullptr,
@@ -202,6 +205,7 @@ private:
   /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.
   static G4VPhysicalVolume* worldPV;
   static G4VPhysicalVolume* curvilinearWorldPV;
+  static G4VPhysicalVolume* curvilinearBridgeWorldPV;
   /// @}
   
   /// Margin by which to advance the point along the step direction if the

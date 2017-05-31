@@ -8,11 +8,13 @@
 #include "G4StepStatus.hh"
 #include "G4ThreeVector.hh"
 
-G4Navigator*       BDSAuxiliaryNavigator::auxNavigator       = new G4Navigator();
-G4Navigator*       BDSAuxiliaryNavigator::auxNavigatorCL     = new G4Navigator();
-G4int              BDSAuxiliaryNavigator::numberOfInstances  = 0;
-G4VPhysicalVolume* BDSAuxiliaryNavigator::worldPV            = nullptr;
-G4VPhysicalVolume* BDSAuxiliaryNavigator::curvilinearWorldPV = nullptr;
+G4Navigator*       BDSAuxiliaryNavigator::auxNavigator             = new G4Navigator();
+G4Navigator*       BDSAuxiliaryNavigator::auxNavigatorCL           = new G4Navigator();
+G4Navigator*       BDSAuxiliaryNavigator::auxNavigatorCLB          = new G4Navigator();
+G4int              BDSAuxiliaryNavigator::numberOfInstances        = 0;
+G4VPhysicalVolume* BDSAuxiliaryNavigator::worldPV                  = nullptr;
+G4VPhysicalVolume* BDSAuxiliaryNavigator::curvilinearWorldPV       = nullptr;
+G4VPhysicalVolume* BDSAuxiliaryNavigator::curvilinearBridgeWorldPV = nullptr;
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   globalToLocal(G4AffineTransform()),
@@ -32,8 +34,9 @@ BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
   // Only delete static navigator objects when last instance is deleted
   if (numberOfInstances == 1)
     {
-      delete auxNavigator;   auxNavigator   = nullptr;
-      delete auxNavigatorCL; auxNavigatorCL = nullptr;
+      delete auxNavigator;    auxNavigator   = nullptr;
+      delete auxNavigatorCL;  auxNavigatorCL = nullptr;
+      delete auxNavigatorCLB; auxNavigatorCLB = nullptr;
     }
   numberOfInstances--;
 }
