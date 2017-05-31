@@ -13,13 +13,13 @@
 
 #include <map>
 
-BDSAcceleratorModel* BDSAcceleratorModel::_instance = nullptr;
+BDSAcceleratorModel* BDSAcceleratorModel::instance = nullptr;
 
 BDSAcceleratorModel* BDSAcceleratorModel::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSAcceleratorModel();}
-  return _instance;
+  if (!instance)
+    {instance = new BDSAcceleratorModel();}
+  return instance;
 }
 
 BDSAcceleratorModel::BDSAcceleratorModel():
@@ -63,7 +63,7 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
 
   G4cout << "BDSAcceleratorModel> Deletion complete" << G4endl;
   
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut)
