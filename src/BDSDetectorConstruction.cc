@@ -372,7 +372,7 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
   if (verbose || debug)
     {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
-  int G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
+  G4long G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
 
   // 0 - mass world placement
   // 1 - end piece placement
