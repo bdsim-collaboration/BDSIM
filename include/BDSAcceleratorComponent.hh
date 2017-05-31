@@ -138,8 +138,8 @@ public:
   /// @}
 
   /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
-  G4bool AngledInputFaceNormal()  const;
-  G4bool AngledOutputFaceNormal() const;
+  G4bool AngledInputFace()  const;
+  G4bool AngledOutputFace() const;
   /// @}
 
   /// Access the vacuum volume the main beam goes through in this component if any. Default is

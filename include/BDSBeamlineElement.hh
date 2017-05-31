@@ -104,8 +104,8 @@ public:
   /// @}
 
   /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
-  G4bool AngledInputFaceNormal()  const {return component->AngledInputFaceNormal();}
-  G4bool AngledOutputFaceNormal() const {return component->AngledOutputFaceNormal();}
+  G4bool AngledInputFace()  const {return component->AngledInputFace();}
+  G4bool AngledOutputFace() const {return component->AngledOutputFace();}
   /// @}
   
   /// Convenience accessor.
