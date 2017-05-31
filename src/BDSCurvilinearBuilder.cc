@@ -12,13 +12,17 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+#include "G4RotationMatrix.hh"
 
+#include <algorithm>
 #include <cmath>
 
-BDSCurvilinearBuilder::BDSCurvilinearBuilder():
-  paddingLength(0)
+BDSCurvilinearBuilder::BDSCurvilinearBuilder()
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
+
+  paddingLength     = BDSBeamline::PaddingLength();
   curvilinearRadius = globals->SamplerDiameter()*0.5;
   if (globals->BuildTunnel() || globals->BuildTunnelStraight())
     {// query the default tunnel model
@@ -39,9 +43,7 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
 
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
 								 const G4bool circular)
-{
-  paddingLength = beamline->PaddingLength();
-  
+{  
   BDSBeamline* result = new BDSBeamline();
 
   if (!circular)
@@ -70,10 +72,27 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
   return result;
 }
 
-BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline,
-                                            const G4bool circular)
+BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline)
 {
-    return nullptr;
+  BDSBeamline* result = new BDSBeamline();
+
+  BDSAcceleratorComponent* defaultBridge = CreateDefaultBridgeComponent();
+
+  G4int numberOfUniqueComponents = 0;
+  G4int beamlineIndex            = 0;
+  for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); ++element)
+    {
+      BDSBeamline::const_iterator nextElement = std::next(element);
+      BDSBeamlineElement* bridgeSection = CreateBridgeSection(defaultBridge, element, nextElement,
+							      beamline->end(), numberOfUniqueComponents,
+							      beamlineIndex);
+      if (bridgeSection)
+	{
+	  result->AddBeamlineElement(bridgeSection);
+	  beamlineIndex++;
+	}
+    }
+  return result; 
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String                    elementName,
@@ -139,10 +158,120 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
   return CreateElementFromComponent(component, startElement, finishElement, index);
 }
 
-BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleComponent* component,
+BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorComponent*    defaultBridge,
+							       BDSBeamline::const_iterator element,
+							       BDSBeamline::const_iterator nextElement,
+							       BDSBeamline::const_iterator end,
+							       G4int&                      numberOfUniqueComponents,
+							       const G4int                 beamlineIndex)
+{  
+  // we can safely assume faces match between two beam line elmeents so if one's angeld, so is the other
+  BDSAcceleratorComponent* component = defaultBridge;
+  if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
+    {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
+
+  return CreateBridgeElementFromComponent(defaultBridge, element, nextElement, end, beamlineIndex);
+}
+
+
+BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
+{
+  G4double paddingLength = BDSBeamline::PaddingLength();
+  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+
+  // we're ingnoring any possible angled face of the curvilinear geometry
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_flat_face",
+								   chordLength,
+								   curvilinearRadius);
+  
+  return component;
+}
+
+BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
+									    G4int&                      numberOfUniqueComponents)
+{
+  G4double paddingLength = BDSBeamline::PaddingLength();
+  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+
+  G4ThreeVector outputFaceNormal = (*element)->OutputFaceNormal(); // outgoing face normal
+
+  G4ThreeVector iFNormal = outputFaceNormal;
+  iFNormal.setZ(iFNormal.z()*-1); // flip z component so pointing backwards
+  G4ThreeVector oFNormal = outputFaceNormal; // we assume no angle for the bridge component so this is right.
+
+  // we're ingnoring any possible angled face of the curvilinear geometry
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
+								   chordLength,
+								   chordLength,
+								   curvilinearRadius,
+								   0, /*angle*/
+								   iFNormal,
+								   oFNormal);
+
+  numberOfUniqueComponents++;
+  
+  return component;
+}
+
+BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeElementFromComponent(BDSAcceleratorComponent*    component,
+									    BDSBeamline::const_iterator element,
+									    BDSBeamline::const_iterator nextElement,
+									    BDSBeamline::const_iterator end,
+									    const G4int                 beamlineIndex)
+{
+  G4bool last = false;
+  if (nextElement == end)
+    {last = true;}
+  
+  BDSBeamlineElement* pel = (*element);     // convenience
+
+  BDSTiltOffset* copyTiltOffset = nullptr;
+  BDSTiltOffset* existingTiltOffset = pel->GetTiltOffset();
+  if (existingTiltOffset)
+    {copyTiltOffset = new BDSTiltOffset(*existingTiltOffset);}
+
+  const G4RotationMatrix* refRotEnd = pel->GetReferenceRotationEnd();
+
+  G4ThreeVector unitZ = G4ThreeVector(0,0,1);
+  unitZ = unitZ.transform(*refRotEnd);
+  
+  G4ThreeVector startPosition = pel->GetReferencePositionEnd();
+  G4ThreeVector endPosition;
+  if (!last)
+    {endPosition = (*nextElement)->GetReferencePositionStart();}
+  else
+    {endPosition = startPosition + ( (component->GetChordLength()) * unitZ );}
+  G4ThreeVector midPosition   = (startPosition + endPosition) * 0.5;
+
+  G4double startS = pel->GetSPositionEnd();
+  G4double endS;
+  if (!last)
+    {endS = pel->GetSPositionStart();}
+  else
+    {endS = startS + component->GetChordLength();}
+  G4double midS = (startS + endS) * 0.5;
+
+  BDSBeamlineElement* result = new BDSBeamlineElement(component,
+						      startPosition, midPosition, endPosition,
+						      new G4RotationMatrix(*refRotEnd),
+						      new G4RotationMatrix(*refRotEnd),
+						      new G4RotationMatrix(*refRotEnd),
+						      startPosition, midPosition, endPosition,
+						      new G4RotationMatrix(*refRotEnd),
+						      new G4RotationMatrix(*refRotEnd),
+						      new G4RotationMatrix(*refRotEnd),
+						      startS, midS, endS,
+						      copyTiltOffset,
+						      BDSSamplerType::none,
+						      "",
+						      beamlineIndex);
+  return result;
+}
+
+BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleComponent*         component,
 								      BDSBeamline::const_iterator startElement,
 								      BDSBeamline::const_iterator finishElement,
-								      G4int index)
+								      G4int                       index)
 {
   BDSTiltOffset* copyTiltOffset = nullptr;
   BDSTiltOffset* existingTiltOffset = (*startElement)->GetTiltOffset();

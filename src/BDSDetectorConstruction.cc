@@ -268,7 +268,7 @@ void BDSDetectorConstruction::BuildBeamline()
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
   BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(beamline, circular);
-  BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline, circular);
+  BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline);
   delete clBuilder;
   
   // register the beamline in the holder class for the full model
