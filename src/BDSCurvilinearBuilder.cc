@@ -1,4 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
+#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSExtent.hh"
@@ -155,6 +156,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 						   to);
     }
 
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
+
   return CreateElementFromComponent(component, startElement, finishElement, index);
 }
 
@@ -183,6 +186,8 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_flat_face",
 								   chordLength,
 								   curvilinearRadius);
+
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
   
   return component;
 }
@@ -207,6 +212,8 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSB
 								   0, /*angle*/
 								   iFNormal,
 								   oFNormal);
+
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
 
   numberOfUniqueComponents++;
   
@@ -360,6 +367,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBonusSectionStart(BDSBeamline c
 								   bonusChordLength,
 								   curvilinearRadius);
 
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
+
   const BDSBeamlineElement* firstElement = beamline->GetFirstItem();
   const G4RotationMatrix*   rotStart     = firstElement->GetReferenceRotationStart();
 
@@ -399,6 +408,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBonusSectionEnd(BDSBeamline con
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("cl_end",
 								   bonusChordLength,
 								   curvilinearRadius);
+
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
 
   const BDSBeamlineElement* lastElement = beamline->GetLastItem();
   const G4RotationMatrix*   rotEnd      = lastElement->GetReferenceRotationEnd();
