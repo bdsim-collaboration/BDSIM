@@ -1,19 +1,14 @@
-#include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSBeamline.hh"
-#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
-#include "BDSPhysicalVolumeInfo.hh"
-#include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
 
+class BDSBeamline;
 
 BDSParallelWorldCurvilinear::BDSParallelWorldCurvilinear():
   G4VUserParallelWorld("CurvilinearWorld"),
@@ -32,13 +27,12 @@ void BDSParallelWorldCurvilinear::Construct()
 #endif
 
   G4VPhysicalVolume* clWorld   = GetWorld();
-  G4LogicalVolume*   clWorldLV = clWorld->GetLogicalVolume();
 
-  // Register read out world PV with our auxiliary navigator. This gives curvilinear
-  // coordinates for multiple applications - CL = curvilinear.
+  // Register read out world PV with our auxiliary navigator.
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(clWorld);
 
   // Visualisation
+  G4LogicalVolume*   clWorldLV = clWorld->GetLogicalVolume();
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   clWorldVis = new G4VisAttributes(*(globals->GetVisibleDebugVisAttr()));
   clWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
