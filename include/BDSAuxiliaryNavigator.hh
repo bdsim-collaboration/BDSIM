@@ -157,11 +157,15 @@ protected:
   /// affecting tracking of the particle.
   static G4Navigator* auxNavigator;
 
-  /// Navigator object for safe navigation in the read out world providing
-  /// curvilinear coordinates for various applications. Since this is not a
-  /// 'parallel' world but a 'read out geometry' in Geant4 terms, this is
-  /// inherently safe and won't affect the tracking of the particle in question.
+  /// Navigator object for curvilinear world that contains simple cylinders
+  /// for each element whose local coordinates represent the curvilinear coordinate
+  /// system.
   static G4Navigator* auxNavigatorCL;
+
+  /// Navigator object for bridge world. This contains briding volumes for the
+  /// gaps in the curivlinear world. It therefore acts as a fall back if we find
+  /// the world volume when we know we really shouldn't.
+  static G4Navigator* auxNavigatorCLB;
 
 private:
   /// Utility function to select appropriate navigator
