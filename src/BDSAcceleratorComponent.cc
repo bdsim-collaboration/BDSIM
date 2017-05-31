@@ -131,3 +131,20 @@ void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
   delete fieldInfo; // clear up existing definition if there is one
   fieldInfo = fieldInfoIn;
 }
+
+G4bool BDSAcceleratorComponent::AngledInputFaceNormal() const
+{
+  G4ThreeVector zeroAngle = G4ThreeVector(0,0,-1);
+  G4ThreeVector cross = inputFaceNormal.cross(zeroAngle);
+  G4double det = cross.mag2();
+  return BDS::IsFinite(det); // if finite, there is an angle and if not, no angle
+}
+
+G4bool BDSAcceleratorComponent::AngledOutputFaceNormal() const
+{
+  G4ThreeVector zeroAngle = G4ThreeVector(0,0,1);
+  G4ThreeVector cross = outputFaceNormal.cross(zeroAngle);
+  G4double det = cross.mag2();
+  return BDS::IsFinite(det);
+}
+

@@ -137,6 +137,11 @@ public:
   inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
   /// @}
 
+  /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
+  G4bool AngledInputFaceNormal()  const;
+  G4bool AngledOutputFaceNormal() const;
+  /// @}
+
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
   inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}

@@ -103,6 +103,11 @@ public:
   G4ThreeVector OutputFaceNormal() const;
   /// @}
 
+  /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
+  G4bool AngledInputFaceNormal()  const {return component->AngledInputFaceNormal();}
+  G4bool AngledOutputFaceNormal() const {return component->AngledOutputFaceNormal();}
+  /// @}
+  
   /// Convenience accessor.
   inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
   
