@@ -71,12 +71,6 @@ public:
   /// Access the beam line containing all the tunnel segments
   inline BDSBeamline* GetTunnelBeamline() const {return tunnelBeamline;}
 
-  /// Register any physical volumes that should be managed - typically from world placement
-  inline void RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume);
-
-  /// Register any physical volumes that should be managed - typically from world placement
-  inline void RegisterPhysicalVolume(std::vector<G4VPhysicalVolume*> physicalVolumes);
-
   /// Register the beam line of end pieces.
   inline void RegisterEndPieceBeamline(BDSBeamline* beamlineIn) {endPieceBeamline = beamlineIn;}
 
