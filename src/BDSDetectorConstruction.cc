@@ -51,8 +51,7 @@
 #include <map>
 #include <vector>
 
-BDSDetectorConstruction::BDSDetectorConstruction():
-  worldPV(nullptr)
+BDSDetectorConstruction::BDSDetectorConstruction()
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -83,10 +82,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
     {BuildTunnel();}
 
   // build world and calculate coordinates
-  BuildWorld();
+  auto worldPV = BuildWorld();
 
   // placement procedure
-  ComponentPlacement();
+  ComponentPlacement(worldPV);
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -290,7 +289,7 @@ void BDSDetectorConstruction::BuildTunnel()
   acceleratorModel->RegisterTunnelBeamline(tunnelBeamline);
 }
 
-void BDSDetectorConstruction::BuildWorld()
+G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -342,14 +341,14 @@ void BDSDetectorConstruction::BuildWorld()
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // place the world
-  worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-			      (G4ThreeVector)0,     // at (0,0,0)
-			      worldLV,	            // its logical volume
-			      worldName,            // its name
-			      nullptr,		    // its mother  volume
-			      false,		    // no boolean operation
-			      0,                    // copy number
-			      checkOverlaps);       // overlap checking
+  G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+						 (G4ThreeVector)0,     // at (0,0,0)
+						 worldLV,	            // its logical volume
+						 worldName,            // its name
+						 nullptr,		    // its mother  volume
+						 false,		    // no boolean operation
+						 0,                    // copy number
+						 checkOverlaps);       // overlap checking
 
   // Register the lv & pvs to the our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
@@ -363,9 +362,11 @@ void BDSDetectorConstruction::BuildWorld()
 
   /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
   BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
+
+    return worldPV;
 }
 
-void BDSDetectorConstruction::ComponentPlacement()
+void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
   if (verbose || debug)
     {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
