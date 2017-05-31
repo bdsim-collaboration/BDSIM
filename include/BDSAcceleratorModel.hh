@@ -57,8 +57,15 @@ public:
   inline void RegisterCurvilinearBeamline(BDSBeamline* beamlineIn)
   {curvilinearBeamline = beamlineIn;}
 
-  inline BDSBeamline* GetCurvilinearBeamline() const {return curvilinearBeamline;}
+  /// Register the curvilinear bridging geometry beam line.
+  inline void RegisterCurvilinearBridgeBeamline(BDSBeamline* beamlineIn)
+  {curvilinearBridgeBeamline = beamlineIn;}
 
+  /// @{ Accessor.
+  inline BDSBeamline* GetCurvilinearBeamline() const {return curvilinearBeamline;}
+  inline BDSBeamline* GetCurvilinearBridgeBeamline() const {return curvilinearBridgeBeamline;}
+  /// @}
+  
   /// Register the beam line containing all the magnet supports
   inline void RegisterSupportsBeamline(BDSBeamline* beamlineIn) {supportsBeamline = beamlineIn;}
 

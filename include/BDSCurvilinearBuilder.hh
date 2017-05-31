@@ -26,6 +26,10 @@ public:
   BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
 					    const G4bool circular);
 
+  /// Build bridging volumes to join the curvilinear ones
+  BDSBeamline* BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline,
+					      const G4bool circular);
+
 private:
   BDSCurvilinearBuilder(const BDSCurvilinearBuilder&) = delete;
   BDSCurvilinearBuilder& operator=(const BDSCurvilinearBuilder&) = delete;

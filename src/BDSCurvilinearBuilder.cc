@@ -70,6 +70,12 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
   return result;
 }
 
+BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline,
+                                            const G4bool circular)
+{
+    return nullptr;
+}
+
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String                    elementName,
 								    BDSBeamline::const_iterator startElement,
 								    BDSBeamline::const_iterator finishElement,
