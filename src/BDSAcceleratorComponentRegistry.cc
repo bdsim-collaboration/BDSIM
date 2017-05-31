@@ -5,13 +5,13 @@
 #include <ostream>
 #include <iomanip>
 
-BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
+BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::instance = nullptr;
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSAcceleratorComponentRegistry();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSAcceleratorComponentRegistry();}
+  return instance;
 }
 
 BDSAcceleratorComponentRegistry::BDSAcceleratorComponentRegistry()
@@ -28,7 +28,7 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   for (auto ac : allocatedComponents)
     {delete ac;}
   
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component,

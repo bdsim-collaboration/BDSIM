@@ -85,7 +85,7 @@ private:
   BDSAcceleratorComponentRegistry();
   
   /// The singleton instane
-  static BDSAcceleratorComponentRegistry* _instance;
+  static BDSAcceleratorComponentRegistry* instance;
 
   /// assignment and copy constructor not implemented nor used
   BDSAcceleratorComponentRegistry& operator=(const BDSAcceleratorComponentRegistry&);
