@@ -24,8 +24,6 @@
 #include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
 
-#include <unistd.h>
-
 BDSVisManager::BDSVisManager()
 {;}
 
@@ -96,19 +94,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
     }
   else
     {
-      // check for absolute path
-      if ((visMacroName.substr(0,1)) == "/")
-        {
-          visMacroFilename = visMacroName;
-        }
-      else
-        {
-          // if not absolute prepend working directory
-          // this is different from other input files, see issue #196
-          char* currentDir = get_current_dir_name();
-          visMacroFilename = std::string(currentDir) + "/" + visMacroName;
-          free(currentDir);
-        }
+      G4String visMacroFilename = BDS::GetFullPath(visMacroName);
       // check if file exists and if not present don't start session
       // (need to use std::cout otherwise not printed)
       if (BDS::FileExists(visMacroFilename) == false)

@@ -152,11 +152,20 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "file") )
 	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName, "distrFile") )
-	{options.set_value("distrFile", std::string(optarg));}
+	{
+          // build absolute path
+          char* currentDir = get_current_dir_name();
+          options.set_value("distrFile", std::string(currentDir) + "/" + std::string(optarg));
+          free(currentDir);
+        }
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{options.set_value("visMacroFileName", std::string(optarg));}
+	{
+          char* currentDir = get_current_dir_name();
+          options.set_value("visMacroFileName", std::string(currentDir) + "/" + std::string(optarg));
+          free(currentDir);
+        }
       else if( !strcmp(optionName, "materials") )
 	{
 	  BDSMaterials::Instance()->ListMaterials();
@@ -172,8 +181,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "recreate") )
 	{
-	  options.set_value("recreate", true);
-	  options.set_value("recreateFileName", std::string(optarg));
+          options.set_value("recreate", true);
+          char* currentDir = get_current_dir_name();
+          options.set_value("recreateFileName", std::string(currentDir) + "/" + std::string(optarg));
+          free(currentDir);
 	}
       else if( !strcmp(optionName, "startFromEvent") )
 	{
@@ -185,8 +196,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("writeSeedState", true);}
       else if( !strcmp(optionName, "seedstate")  || !strcmp(optionName, "seedStateFileName"))
 	{
-	  options.set_value("useASCIISeedState", true);
-	  options.set_value("seedStateFileName", std::string(optarg));
+          char* currentDir = get_current_dir_name();
+          options.set_value("useASCIISeedState", true);
+          options.set_value("seedStateFileName", std::string(currentDir) + "/" + std::string(optarg));
+          free(currentDir);
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
