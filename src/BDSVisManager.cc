@@ -24,6 +24,8 @@
 #include "BDSMessenger.hh"
 #include "BDSUtilities.hh"
 
+#include <unistd.h>
+
 BDSVisManager::BDSVisManager()
 {;}
 
@@ -60,7 +62,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   std::string bdsimPath = BDS::GetBDSIMExecPath();
   // difference between local build and install build:
   std::string visPath;
-  std::string localPath = bdsimPath + "vis/vis.mac";
+  std::string localPath   = bdsimPath + "vis/vis.mac";
   std::string installPath = bdsimPath + "../share/bdsim/vis/vis.mac";
       
   if (FILE *file = fopen(localPath.c_str(), "r"))
@@ -82,21 +84,8 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   // if not set use default visualisation file
   if (visMacroName.empty())
     {useDefault = true;}
-  G4String visMacroFilename = BDS::GetFullPath(visMacroName);
-  if (!useDefault)
-    {
-      // first relative to main path:
-      FILE* file = fopen(visMacroFilename.c_str(), "r");
-      if (file)
-	{fclose(file);}
-      else
-	{
-	  // if not present use a default one (OGLSQt or DAWNFILE)
-	  G4cout << __METHOD_NAME__ << "WARNING: visualisation file "
-		 << visMacroFilename <<  " file not present, using default!" << G4endl;
-	  useDefault = true;
-	}
-    }
+  // build full filename
+  G4String visMacroFilename;
   if (useDefault)
     {
 #ifdef G4VIS_USE_OPENGLQT
@@ -104,6 +93,30 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #else
       visMacroFilename = visPath + "dawnfile.mac";
 #endif
+    }
+  else
+    {
+      // check for absolute path
+      if ((visMacroName.substr(0,1)) == "/")
+        {
+          visMacroFilename = visMacroName;
+        }
+      else
+        {
+          // if not absolute prepend working directory
+          // this is different from other input files, see issue #196
+          char* currentDir = get_current_dir_name();
+          visMacroFilename = std::string(currentDir) + "/" + visMacroName;
+          free(currentDir);
+        }
+      // check if file exists and if not present don't start session
+      // (need to use std::cout otherwise not printed)
+      if (BDS::FileExists(visMacroFilename) == false)
+	{
+          std::cout << __METHOD_NAME__ << "ERROR: visualisation file "
+                    << visMacroFilename << " not present!" << G4endl;
+          return;
+        }
     }
   // execute visualisation file
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
