@@ -126,10 +126,6 @@ namespace BDS
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 
-  /// Utility to print out values of an array to avoid repetitive for loops.
-  void PrintArray(const G4double values[],
-		  G4int    size);
-
   /// Create a user limits instance based on a default with a new step length limit
   /// of the length parameter. Check the max step length in the defaultUL and use
   /// the shorter of the two. Note the G4UserLimits instance is not const although
