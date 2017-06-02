@@ -50,6 +50,9 @@ namespace BDS
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
+
+  /// Get the current dir the program was executed from.
+  std::string GetCurrentDir();
   
   /// Returns path from which BDSIM is executed
   /// supports linux/unix and mac OS

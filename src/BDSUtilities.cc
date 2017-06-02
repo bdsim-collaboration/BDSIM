@@ -83,6 +83,19 @@ G4bool BDS::FileExists(G4String fileName)
   // note the destructor of ifstream will close the stream
 }
 
+std::string BDS::GetCurrentDir()
+{ 
+  char currentPath[PATH_MAX]; // defined in <limits>
+  std::string currentPathString;
+
+  if (getcwd(currentPath, sizeof(currentPath)) != NULL)
+    {currentPathString = std::string(currentPath);}
+  else
+    {G4cerr << "Cannot determine current working directory" << G4endl; exit(1);}
+
+  return currentPathString;
+}
+
 std::string BDS::GetBDSIMExecPath()
 {
   // get path to executable (platform dependent)

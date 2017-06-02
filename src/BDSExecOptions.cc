@@ -4,7 +4,6 @@
 #include <getopt.h>
 #include <iomanip>
 #include <string>
-#include <unistd.h>
 
 #include "globals.hh" // geant4 types / globals
 
@@ -152,20 +151,13 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "file") )
 	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName, "distrFile") )
-	{
-          // build absolute path
-          char* currentDir = get_current_dir_name();
-          options.set_value("distrFile", std::string(currentDir) + "/" + std::string(optarg));
-          free(currentDir);
+	{// build absolute path
+          options.set_value("distrFile", BDS::GetCurrentDir() + "/" + std::string(optarg));
         }
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{
-          char* currentDir = get_current_dir_name();
-          options.set_value("visMacroFileName", std::string(currentDir) + "/" + std::string(optarg));
-          free(currentDir);
-        }
+	{options.set_value("visMacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
       else if( !strcmp(optionName, "materials") )
 	{
 	  BDSMaterials::Instance()->ListMaterials();
@@ -182,9 +174,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName, "recreate") )
 	{
           options.set_value("recreate", true);
-          char* currentDir = get_current_dir_name();
-          options.set_value("recreateFileName", std::string(currentDir) + "/" + std::string(optarg));
-          free(currentDir);
+          options.set_value("recreateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
 	}
       else if( !strcmp(optionName, "startFromEvent") )
 	{
@@ -196,10 +186,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("writeSeedState", true);}
       else if( !strcmp(optionName, "seedstate")  || !strcmp(optionName, "seedStateFileName"))
 	{
-          char* currentDir = get_current_dir_name();
           options.set_value("useASCIISeedState", true);
-          options.set_value("seedStateFileName", std::string(currentDir) + "/" + std::string(optarg));
-          free(currentDir);
+          options.set_value("seedStateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
