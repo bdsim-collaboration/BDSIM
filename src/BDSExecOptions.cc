@@ -337,13 +337,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
 	  fullPath = inputFilepath;
 	}
       else
-	{
-	  // the main file has a relative path or just the file name
-	  char cwdchars[200]; //filepath up to 200 characters
-	  // get current working directory
-	  G4String cwd = (G4String)getcwd(cwdchars, sizeof(cwdchars)) + "/";
-	  fullPath = cwd + inputFilepath;
-	}
+	{fullPath = BDS::GetCurrentDir() + inputFilepath;}
     }
   // add additional slash just to be safe
   fullPath += "/";
