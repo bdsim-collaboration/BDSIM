@@ -130,6 +130,9 @@ private:
   /// Keep a local reference to global constants to avoid getting it all the time
   BDSGlobalConstants* globals;
 
+  /// Flag as to whether em will be used - avoids duplicate processes being registered.
+  G4bool emWillBeUsed;
+
   /// @{Physics constructor loader.
   void Cherenkov();
   void CutsAndLimits();

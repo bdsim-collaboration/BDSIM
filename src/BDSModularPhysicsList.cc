@@ -61,7 +61,8 @@
 #include <vector>
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
-  opticalPhysics(nullptr)
+  opticalPhysics(nullptr),
+  emWillBeUsed(false)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -165,16 +166,29 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;
 #endif
+  // string stream to vector will take a single string that contains words
+  // delimited by whitespace and split them on the whitespace
   std::stringstream ss(physListName);
   std::istream_iterator<std::string> begin(ss);
   std::istream_iterator<std::string> end;
-  std::vector<std::string> vstrings(begin, end);
+  std::vector<std::string> physicsListNamesS(begin, end);
 
-  for (auto name : vstrings)
+  // convert to G4String for lower case convenience
+  std::vector<G4String> physicsListNames;
+  for (auto s : physicsListNamesS)
     {
-      G4String nameLower(name);
-      nameLower.toLower(); // case insensitive
-      auto result = physicsConstructors.find(nameLower);
+      G4String name = G4String(s); // convert string to G4String.
+      name.toLower(); // change to lower case - physics lists are case insensitive
+      physicsListNames.push_back(name);
+    }
+
+  // seach for em physics (could be any order) - needed for different construction of muon phyiscs
+  if (std::find(physicsListNames.begin(), physicsListNames.end(), "em") != physicsListNames.end())
+    {emWillBeUsed = true;}
+
+  for (const auto name : physicsListNames)
+    {
+      auto result = physicsConstructors.find(name);
       if (result != physicsConstructors.end())
 	{
 	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\" physics list" << G4endl;
@@ -183,7 +197,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 	}
       else
 	{
-	  G4cout << "\"" << nameLower << "\" is not a valid physics list. Available ones are: " << G4endl;
+	  G4cout << "\"" << name << "\" is not a valid physics list. Available ones are: " << G4endl;
 	  for (auto listName : physicsLists)
 	    {G4cout << "\"" << listName << "\"" << G4endl;}
 	  exit(1);
@@ -438,7 +452,7 @@ void BDSModularPhysicsList::Muon()
 {
   if(!physicsActivated["muon"])
     {
-      constructors.push_back(new BDSPhysicsMuon());
+      constructors.push_back(new BDSPhysicsMuon(emWillBeUsed));
       physicsActivated["muon"] = true;
     }
 }							  

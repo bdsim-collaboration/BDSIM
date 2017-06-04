@@ -25,11 +25,18 @@ class BDSPhysicsMuon: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsMuon();
+  BDSPhysicsMuon(G4bool emWillBeUsed);
   virtual ~BDSPhysicsMuon();
   /// Construct all leptions, photons (inc optical), and pion +- just in case.
   virtual void ConstructParticle();
 
   /// Construct and attach the processes to the relevant particles.
   virtual void ConstructProcess();
+
+private:
+
+  /// Whether em physics will be used, which provides processes that would be duplicate
+  /// here.
+  G4bool emWillBeUsed;
 };
 #endif

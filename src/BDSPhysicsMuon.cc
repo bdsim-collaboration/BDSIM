@@ -20,7 +20,12 @@
 
 
 BDSPhysicsMuon::BDSPhysicsMuon():
-  G4VPhysicsConstructor("BDSPhysicsMuon")
+  BDSPhysicsMuon(false)
+{;}
+
+BDSPhysicsMuon::BDSPhysicsMuon(G4bool emWillBeUsedIn):
+  G4VPhysicsConstructor("BDSPhysicsMuon"),
+  emWillBeUsed(emWillBeUsedIn)
 {;}
 
 BDSPhysicsMuon::~BDSPhysicsMuon()
@@ -57,13 +62,19 @@ void BDSPhysicsMuon::ConstructProcess()
   G4AutoDelete::Register(eeToHadrons);
 
   // for muon +-
-  G4MuMultipleScattering* mumsc = new G4MuMultipleScattering();
-  G4AutoDelete::Register(mumsc);
-  G4MuIonisation*         muion = new G4MuIonisation();
-  G4AutoDelete::Register(muion);
-  G4MuBremsstrahlung*     mubrm = new G4MuBremsstrahlung();
-  G4AutoDelete::Register(mubrm);
-  G4MuPairProduction*     mupar = new G4MuPairProduction();
+  G4MuMultipleScattering* mumsc = nullptr;
+  G4MuIonisation*         muion = nullptr;
+  G4MuBremsstrahlung*     mubrm = nullptr;
+  if (!emWillBeUsed)
+    {// these are provided by em physics, so don't double register
+      mumsc = new G4MuMultipleScattering();
+      G4AutoDelete::Register(mumsc);
+      muion = new G4MuIonisation();
+      G4AutoDelete::Register(muion);
+      mubrm = new G4MuBremsstrahlung();
+      G4AutoDelete::Register(mubrm);
+    }
+  G4MuPairProduction* mupar = new G4MuPairProduction();
   G4AutoDelete::Register(mupar);
   
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
@@ -91,10 +102,13 @@ void BDSPhysicsMuon::ConstructProcess()
 	}
       if(particleName == "mu+" || particleName == "mu-")
 	{
-	  ph->RegisterProcess(mumsc, particle);
-	  ph->RegisterProcess(muion, particle);
-	  ph->RegisterProcess(mubrm, particle);
-	  ph->RegisterProcess(mupar, particle);
+	  if (!emWillBeUsed)
+	    {// these are only instantiated if we're not using EM physics
+	      ph->RegisterProcess(mumsc, particle);
+	      ph->RegisterProcess(muion, particle);
+	      ph->RegisterProcess(mubrm, particle);
+	      ph->RegisterProcess(mupar, particle);
+	    }
 	  continue;
 	}
     }
