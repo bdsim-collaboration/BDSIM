@@ -50,6 +50,9 @@ namespace BDS
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
+
+  /// Get the current dir the program was executed from.
+  std::string GetCurrentDir();
   
   /// Returns path from which BDSIM is executed
   /// supports linux/unix and mac OS
@@ -125,10 +128,6 @@ namespace BDS
   /// Split a format and file path string around the ":" character. This format
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
-
-  /// Utility to print out values of an array to avoid repetitive for loops.
-  void PrintArray(const G4double values[],
-		  G4int    size);
 
   /// Create a user limits instance based on a default with a new step length limit
   /// of the length parameter. Check the max step length in the defaultUL and use
