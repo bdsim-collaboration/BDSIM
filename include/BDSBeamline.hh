@@ -176,7 +176,7 @@ public:
   G4bool IndexOK(G4int index) const;
 
   /// Access the padding length between each element added to the beamline.
-  G4double PaddingLength() const {return paddingLength;}
+  static G4double PaddingLength() {return paddingLength;}
   
 private:
   /// Add a single component and calculate its position and rotation with respect
@@ -209,7 +209,7 @@ private:
   G4double previousSPositionEnd;
 
   /// The gap added for padding between each component.
-  G4double paddingLength;
+  static G4double paddingLength;
 
   /// Map of objects by name stored in this beam line. For now,
   /// only the base name (no suffix) will be used for the component

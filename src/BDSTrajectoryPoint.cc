@@ -36,12 +36,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
 
   // Need to store the creator process
   const G4VProcess* creatorProcess = track->GetCreatorProcess();
-  if(creatorProcess) {
-    preProcessType = track->GetCreatorProcess()->GetProcessType();
-    preProcessSubType = track->GetCreatorProcess()->GetProcessSubType();
-    postProcessType = preProcessType;
-    postProcessSubType = preProcessSubType;
-  }
+  if(creatorProcess)
+    {
+      preProcessType     = track->GetCreatorProcess()->GetProcessType();
+      preProcessSubType  = track->GetCreatorProcess()->GetProcessSubType();
+      postProcessType    = preProcessType;
+      postProcessSubType = preProcessSubType;
+    }
 
   preWeight    = track->GetWeight();
   postWeight   = preWeight;
