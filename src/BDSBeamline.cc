@@ -21,6 +21,7 @@
 #include <utility>  // for std::pair
 #include <vector>
 
+G4double BDSBeamline::paddingLength = -1;
 
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
 			 G4RotationMatrix* initialGlobalRotation)
@@ -50,7 +51,8 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousSPositionEnd = 0;
 
   // gap between each element added to the beam line
-  paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
+  if (paddingLength <= 0)
+    {paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();}
   //paddingLength = 3*CLHEP::mm;
 }
 

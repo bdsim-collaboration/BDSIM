@@ -74,10 +74,10 @@ private:
   
   /// Build the world volume using the extent of the BDSBeamline instance created
   /// in BuildBeamline()
-  void BuildWorld();
+  G4VPhysicalVolume* BuildWorld();
   
   /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
-  void ComponentPlacement();
+  void ComponentPlacement(G4VPhysicalVolume* worldPV);
 
   /// Detect whether the first element has an angled face such that it might overlap
   /// with a previous element.  Only used in case of a circular machine.
@@ -106,9 +106,6 @@ private:
 
   /// Accelerator model pointer
   BDSAcceleratorModel* acceleratorModel;
-
-  /// World physical volume
-  G4VPhysicalVolume* worldPV;
 
   /// All fields
   std::vector<BDSFieldObjects*> fields;

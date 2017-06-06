@@ -32,9 +32,6 @@ private:
 
   /// Registry is a map - note 'register' is a protected keyword.
   RegistryMap registry;
-
-  /// Vector of created components not in registry, for memory management
-  std::vector<BDSAcceleratorComponent*> allocatedComponents;
   
 public:
   /// Singleton accessor
@@ -64,6 +61,10 @@ public:
   /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
+  /// Register a curvilinear component - purely to keep track of and delete at the
+  /// end of the program.
+  void RegisterCurvilinearComponent(BDSAcceleratorComponent* component);
+
   /// @{ Iterator mechanics
   typedef RegistryMap::iterator       iterator;
   typedef RegistryMap::const_iterator const_iterator;
@@ -85,11 +86,17 @@ private:
   BDSAcceleratorComponentRegistry();
   
   /// The singleton instane
-  static BDSAcceleratorComponentRegistry* _instance;
+  static BDSAcceleratorComponentRegistry* instance;
 
   /// assignment and copy constructor not implemented nor used
   BDSAcceleratorComponentRegistry& operator=(const BDSAcceleratorComponentRegistry&);
   BDSAcceleratorComponentRegistry(BDSAcceleratorComponentRegistry&);
+
+  /// Vector of created components not in registry, for memory management
+  std::vector<BDSAcceleratorComponent*> allocatedComponents;
+  
+  /// Vector curvilinear components - purely for memory management.
+  std::vector<BDSAcceleratorComponent*> curvilinearComponents;
 };
 
 

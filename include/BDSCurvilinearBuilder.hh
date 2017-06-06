@@ -26,6 +26,9 @@ public:
   BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline,
 					    const G4bool circular);
 
+  /// Build bridging volumes to join the curvilinear ones
+  BDSBeamline* BuildCurvilinearBridgeBeamLine(BDSBeamline const* const beamline);
+
 private:
   BDSCurvilinearBuilder(const BDSCurvilinearBuilder&) = delete;
   BDSCurvilinearBuilder& operator=(const BDSCurvilinearBuilder&) = delete;
@@ -47,9 +50,40 @@ private:
 						 BDSBeamline::const_iterator finishElement,
 						 G4int                       index);
 
-  
+
+  /// @{ Create a small section to extend a linear beam line.
   BDSBeamlineElement* CreateBonusSectionStart(BDSBeamline const* const beamline);
   BDSBeamlineElement* CreateBonusSectionEnd(BDSBeamline const* const beamline);
+  /// @}
+
+  /// Create a pre-made beam line element (because it's a non-continuous beam line) for
+  /// a bridge section between two curvilinear volumes. Can cope if nextElement == end.
+  /// numberOfUniqueComponents will be incremented if a new accelerator component is required.
+  /// This is only done if the two components that are being bridged have angeld faces.
+  /// beamlineIndex is the index the element will have in the non-continuous beam line;
+  /// the indices should be continuous.
+  BDSBeamlineElement* CreateBridgeSection(BDSAcceleratorComponent*    defaultBridge,
+					  BDSBeamline::const_iterator element,
+					  BDSBeamline::const_iterator nextElement,
+					  BDSBeamline::const_iterator end,
+					  G4int&                      numberOfUniqueComponents,
+					  const G4int                 beamlineIndex);
+
+  /// Create a single flat sided accelerator component for a small bridge volume. Intended
+  /// to be reused as the default.
+  BDSAcceleratorComponent* CreateDefaultBridgeComponent();
+
+  /// Create a unique accelerator component for an element with angled faces.
+  BDSAcceleratorComponent* CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
+						       G4int&                      numberOfUniqueComponents);
+
+  /// Package an accelerator component into a beam line element w.r.t. two particular elements.
+  /// Again, can cope with nextElement == end.
+  BDSBeamlineElement* CreateBridgeElementFromComponent(BDSAcceleratorComponent*    component,
+						       BDSBeamline::const_iterator element,
+						       BDSBeamline::const_iterator nextElement,
+						       BDSBeamline::const_iterator end,
+						       const G4int                 beamlineIndex);
 
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;

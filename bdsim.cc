@@ -36,6 +36,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldCurvilinear.hh"
+#include "BDSParallelWorldCurvilinearBridge.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSPrimaryGeneratorAction.hh"
@@ -137,8 +138,10 @@ int main(int argc,char** argv)
   BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
   BDSParallelWorldCurvilinear* curvilinearWorld = new BDSParallelWorldCurvilinear();
+  BDSParallelWorldCurvilinearBridge* curvilinearBridgeWorld = new BDSParallelWorldCurvilinearBridge();
   realWorld->RegisterParallelWorld(samplerWorld);
   realWorld->RegisterParallelWorld(curvilinearWorld);
+  realWorld->RegisterParallelWorld(curvilinearBridgeWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.

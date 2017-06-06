@@ -55,6 +55,9 @@ public:
   static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPVIn)
   {auxNavigatorCL->SetWorldVolume(curvilinearWorldPVIn); curvilinearWorldPV = curvilinearWorldPVIn;}
 
+  static void RegisterCurvilinearBridgeWorld(G4VPhysicalVolume* curvilinearBridgeWorldPVIn)
+  {auxNavigatorCLB->SetWorldVolume(curvilinearBridgeWorldPVIn); curvilinearBridgeWorldPV = curvilinearBridgeWorldPVIn;}
+
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
 					       const G4ThreeVector* direction = nullptr,
@@ -165,11 +168,15 @@ protected:
   /// affecting tracking of the particle.
   static G4Navigator* auxNavigator;
 
-  /// Navigator object for safe navigation in the read out world providing
-  /// curvilinear coordinates for various applications. Since this is not a
-  /// 'parallel' world but a 'read out geometry' in Geant4 terms, this is
-  /// inherently safe and won't affect the tracking of the particle in question.
+  /// Navigator object for curvilinear world that contains simple cylinders
+  /// for each element whose local coordinates represent the curvilinear coordinate
+  /// system.
   static G4Navigator* auxNavigatorCL;
+
+  /// Navigator object for bridge world. This contains briding volumes for the
+  /// gaps in the curivlinear world. It therefore acts as a fall back if we find
+  /// the world volume when we know we really shouldn't.
+  static G4Navigator* auxNavigatorCLB;
 
 private:
   /// Utility function to select appropriate navigator
@@ -206,6 +213,7 @@ private:
   /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.
   static G4VPhysicalVolume* worldPV;
   static G4VPhysicalVolume* curvilinearWorldPV;
+  static G4VPhysicalVolume* curvilinearBridgeWorldPV;
   /// @}
   
   /// Margin by which to advance the point along the step direction if the

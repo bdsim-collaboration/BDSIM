@@ -5,13 +5,13 @@
 #include <ostream>
 #include <iomanip>
 
-BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
+BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::instance = nullptr;
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSAcceleratorComponentRegistry();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSAcceleratorComponentRegistry();}
+  return instance;
 }
 
 BDSAcceleratorComponentRegistry::BDSAcceleratorComponentRegistry()
@@ -22,13 +22,14 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of registry " << registry.size() << G4endl;
 #endif
-  iterator i = registry.begin();
-  for (; i != registry.end(); ++i)
-    {delete i->second;}
+  for (auto i : registry)
+    {delete i.second;}
   for (auto ac : allocatedComponents)
     {delete ac;}
+  for (auto ac : curvilinearComponents)
+  {delete ac;}
   
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component,
@@ -121,7 +122,12 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
       G4cerr << __METHOD_NAME__ << "unknown component named: \"" << name << "\"" << G4endl;
       return nullptr;
     }
-}  
+}
+
+void BDSAcceleratorComponentRegistry::RegisterCurvilinearComponent(BDSAcceleratorComponent* component)
+{
+  curvilinearComponents.push_back(component);
+}
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)
 {
