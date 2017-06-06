@@ -1,4 +1,4 @@
-#include "BDSCutsAndLimits.hh"
+#include "BDSPhysicsCustAndLimits.hh"
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
@@ -7,34 +7,31 @@
 #include "G4UserSpecialCuts.hh"
 #include "G4Version.hh"
 
-BDSCutsAndLimits::BDSCutsAndLimits():
-  G4VPhysicsConstructor("BDSCutsAndLimits"),
-  activated(false)
+BDSPhysicsCustAndLimits::BDSPhysicsCustAndLimits():
+  G4VPhysicsConstructor("BDSPhysicsCustAndLimits")
 {
   stepLimiter = new G4StepLimiter;
   specialCuts = new G4UserSpecialCuts;
 }
 
-BDSCutsAndLimits::~BDSCutsAndLimits()
+BDSPhysicsCustAndLimits::~BDSPhysicsCustAndLimits()
 {
   delete stepLimiter;
   delete specialCuts;
 }
 
-void BDSCutsAndLimits::ConstructParticle()
+void BDSPhysicsCustAndLimits::ConstructParticle()
 {
   G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();    
   G4Proton::Proton();
-  return;
 }
 
-void BDSCutsAndLimits::ConstructProcess()
+void BDSPhysicsCustAndLimits::ConstructProcess()
 {
-  if (activated)
+  if (Activated())
     {return;}
-  activated = true;
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
@@ -54,6 +51,7 @@ void BDSCutsAndLimits::ConstructProcess()
       ph->RegisterProcess(stepLimiter,particle); // this is for MaxAllowedStep
       ph->RegisterProcess(specialCuts,particle); // this is for all other limits
     }
-  return;
+
+  SetActivated();
 }
 

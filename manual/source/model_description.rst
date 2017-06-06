@@ -1732,10 +1732,12 @@ Physics Processes
 
 BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
 and simulation it is very useful to define the physical processes that should be simulated so
-that the simulation is both relevant and efficient. Rather than specify each individual process
-for every individual particle, a series of "physics lists" are provided that are a predetermined
-set of physics process suitable for a certain applications. BDSIM follows the Geant4 ethos in this
-regard.
+that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
+is provided and other processes must be speficied to be used. Rather than specify each individual
+particle physics process on a per-particle basis, a series of "physics lists" are provided that
+are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
+the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
+Geant4 ones.
 
 Note, using extra physics processes that are not required will slow the simulation and produce
 many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
@@ -1743,9 +1745,13 @@ only use the minimal set of physics processes required.
 
 The physics list can be selected with the following syntax (delimited by a space)::
 
-  option, physicsList="physicslistname anotherphysicslistname";
+  option, physicsList = "physicslistname anotherphysicslistname";
 
-  option, physicsList="em optical";
+  option, physicsList = "em optical";
+
+For general high energy physics we recommend::
+
+  option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
 .. note:: The strings for the physics list are case-insensitive.
 
@@ -1774,6 +1780,12 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 |                           | Transportation of primary particles only - no scattering in material.  |
 +---------------------------+------------------------------------------------------------------------+
+| cherenkov                 | Provides Cherenkov radiation for all charged particles. Provided by    |
+|                           | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
+|                           | `G4CherenkovProcess`.                                                  |
++---------------------------+------------------------------------------------------------------------+
+| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
++---------------------------+------------------------------------------------------------------------+
 | em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
 |                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
 +---------------------------+------------------------------------------------------------------------+
@@ -1784,11 +1796,13 @@ Physics Lists In BDSIM
 | em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
 |                           | `G4EmPenelopePhysics`.                                                 |
 +---------------------------+------------------------------------------------------------------------+
-| synchrad                  | BDSIM synchrotron radiation process.                                   |
+| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                           | is based on the FRITIOF description of string excitation and           |
+|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
 +---------------------------+------------------------------------------------------------------------+
-| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
-|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
-|                           | This uses `G4OpticalPhysics` class.                                    |
+| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
 |                           | `G4HadronElasticPhysics.`                                              |
@@ -1796,6 +1810,16 @@ Physics Lists In BDSIM
 | hadronic                  | A shortcut for `QGSP_BERT`.                                            |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
+|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                           | builder (a la Geant4) `BDSPhysicsMuon`.                                |
++---------------------------+------------------------------------------------------------------------+
+| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
+|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                           | This uses `G4OpticalPhysics` class.                                    |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
@@ -1816,22 +1840,14 @@ Physics Lists In BDSIM
 | qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
 |                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
 +---------------------------+------------------------------------------------------------------------+
-| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
-|                           | is based on the FRITIOF description of string excitation and           |
-|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
+| spindecay                 | Decay physics but with spin correctly implemented. Note, only the      |
+|                           | Geant4 tracking integrators track spin correctly.                      |
 +---------------------------+------------------------------------------------------------------------+
-| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
-|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
+| synchrad                  | Provides synchrotron radiation for all charged particles. Provided by  |
+|                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
+|                           | `G4SynchrotronRadiation`.                                              |
 +---------------------------+------------------------------------------------------------------------+
-| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
-+---------------------------+------------------------------------------------------------------------+
-| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
-|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
-|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                           | builder (a la Geant4) `BDSMuonPhysics`.                                |
-+---------------------------+------------------------------------------------------------------------+
+
 
 Physics Biasing
 ---------------
