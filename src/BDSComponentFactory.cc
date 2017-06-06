@@ -829,21 +829,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 					element->angle); 
   if(element->layerThicknesses.size() != element->layerMaterials.size())
     {
-      std::stringstream ss;
-      ss << "Material and thicknesses lists are of unequal size.";
-      ss << element->layerMaterials.size() << " and " << element->layerThicknesses.size();
-      G4Exception(ss.str().c_str(), "-1", FatalException, "");
-    }
-  if( (element->layerThicknesses.size() != element->layerIsSampler.size()) && ( element->layerIsSampler.size() !=0 ))
-    {
-      std::stringstream ss;
-      ss << "Material and isSampler lists are of unequal size.";
-      ss << element->layerMaterials.size() << " and " << element->layerIsSampler.size();
-      G4Exception(ss.str().c_str(), "-1", FatalException, "");
+      G4cerr << __METHOD_NAME__ << "Element \"" << element->name << "\" must have the "
+	     << "same number of materials as layers - check 'layerMaterials'" << G4endl;
+      exit(1);
     }
 
   if(element->layerThicknesses.size() == 0 )
-    {G4Exception("Number of screen layers = 0.", "-1", FatalException, "");}
+    {
+      G4cerr << __METHOD_NAME__ << "Element: \"" << element->name
+	     << "\" has 0 screen layers" << G4endl;
+      exit(1);
+    }
   
   std::list<std::string>::const_iterator itm;
   std::list<double>::const_iterator itt;

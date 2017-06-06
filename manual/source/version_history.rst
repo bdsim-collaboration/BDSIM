@@ -61,6 +61,7 @@ Bug Fixes
  * Fix infinite loop events if the primary vertex starts outside the world volume.
  * Regions and biases set correctly to components in BDSLine class.
  * Circle distribution did not have central value offsets.
+ * Fix double registration of pion decay as well as some others for muons when using muon phyiscs list.
 
 General
 -------

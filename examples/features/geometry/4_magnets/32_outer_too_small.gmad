@@ -1,0 +1,8 @@
+m1: quadrupole, l=1*m, outerDiameter=0.5*m, aper1=30*cm, aper2=10*cm;
+
+l1: line = (m1);
+
+use, l1;
+
+beam, energy=1*GeV,
+      particle="e-";

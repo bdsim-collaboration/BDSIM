@@ -170,12 +170,12 @@ public:
   inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4int    MaximumPhotonsPerStep()    const {return G4int   (options.maximumPhotonsPerStep);}
+  inline G4int    MaximumBetaChangePerStep() const {return G4int   (options.maximumBetaChangePerStep);}
   inline G4long   MaximumTracksPerEvent()    const {return G4long  (options.maximumTracksPerEvent);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
-  inline G4bool   TurnOnCerenkov()           const {return G4bool  (options.turnOnCerenkov);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}

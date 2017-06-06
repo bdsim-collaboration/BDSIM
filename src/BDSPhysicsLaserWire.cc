@@ -1,30 +1,35 @@
 #include "BDSLaserCompton.hh"
-#include "BDSLaserWirePhysics.hh"
+#include "BDSPhysicsLaserWire.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Electron.hh"
 #include "G4Gamma.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4Positron.hh"
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"
 
-BDSLaserWirePhysics::BDSLaserWirePhysics():
-  G4VPhysicsConstructor("BDSLaserWirePhysics")
+BDSPhysicsLaserWire::BDSPhysicsLaserWire():
+  G4VPhysicsConstructor("BDSPhysicsLaserWire")
 {;}
 
-BDSLaserWirePhysics::~BDSLaserWirePhysics()
+BDSPhysicsLaserWire::~BDSPhysicsLaserWire()
 {;}
 
-void BDSLaserWirePhysics::ConstructParticle()
+void BDSPhysicsLaserWire::ConstructParticle()
 {
   G4Electron::ElectronDefinition();
   G4Positron::PositronDefinition();
   G4Gamma::Gamma();
+  G4OpticalPhoton::OpticalPhotonDefinition();
 }
 
-void BDSLaserWirePhysics::ConstructProcess()
+void BDSPhysicsLaserWire::ConstructProcess()
 {
+  if (Activated())
+    {return;}
+  
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
 #endif
@@ -50,4 +55,6 @@ void BDSLaserWirePhysics::ConstructProcess()
 	  pmanager->SetProcessOrderingToLast(lwProcess,idxPostStep);
 	}
     }
+
+  SetActivated();
 }
