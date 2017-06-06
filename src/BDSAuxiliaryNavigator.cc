@@ -54,19 +54,32 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 #ifdef BDSDEBUGNAV
   G4cout << "Point lookup " << selectedVol->GetName() << G4endl;
 #endif
-  if (selectedVol == worldPV || selectedVol == curvilinearWorldPV)
-    {
+
+  // check if we accidentally fell between the gaps and found the world volume
+  if (useCurvilinear && selectedVol == curvilinearWorldPV)
+    {// try the bridge world next
+      selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(point, direction,
+							       pRelativeSearch, ignoreDirection);
+      // if we find a non-world volume, then good. if we find the world volume even
+      // of the bridge world, it must really lie outside the curvilinear volumes
+      // eitherway, we return that volume.
+      return selectedVol;
+    }
+  else if (selectedVol == worldPV)
+    {// try searching a little further along the step
       if (!direction) // no direction, so can't search
         {return selectedVol;}
       G4ThreeVector globalDirUnit = direction->unit();
       G4ThreeVector newPosition = point + volumeMargin*globalDirUnit;
-      selectedVol = nav->LocateGlobalPointAndSetup(newPosition, direction, pRelativeSearch,
-					      ignoreDirection);
+      selectedVol = nav->LocateGlobalPointAndSetup(newPosition, direction,
+						   pRelativeSearch, ignoreDirection);
 #ifdef BDSDEBUGNAV
       G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
 #endif
+      return selectedVol;
     }
-    return selectedVol;
+  else
+    {return selectedVol;}
 }
 
 G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const* const step,
@@ -78,29 +91,37 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
 
   // average the points - the mid point should always lie inside the volume given
   // the way G4 does tracking.
-  G4ThreeVector prePosition  = preStepPoint->GetPosition();
-  G4ThreeVector postPosition = posStepPoint->GetPosition();
-  G4ThreeVector position = (postPosition + prePosition)/2.0;
+  G4ThreeVector prePosition   = preStepPoint->GetPosition();
+  G4ThreeVector postPosition  = posStepPoint->GetPosition();
+  G4ThreeVector position      = (postPosition + prePosition)/2.0;
+  G4ThreeVector globalDirUnit = (postPosition - prePosition).unit();
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
-  G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
+  G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position, &globalDirUnit);
 
 #ifdef BDSDEBUGNAV
   G4cout << __METHOD_NAME__ << selectedVol->GetName() << G4endl;
 #endif
-  // only do once - if the point is outside the beam line, then it really will be the
-  // world volume, however, if it's between two volumes in the beamline, this should
-  // advance it ok
-  if (selectedVol == worldPV || selectedVol == curvilinearWorldPV)
-    {
-      G4ThreeVector globalDirUnit = (postPosition - prePosition).unit();
+  // check if we accidentally fell between the gaps and found the world volume
+  if (useCurvilinear && selectedVol == curvilinearWorldPV)
+    {// try the bridge world next
+      selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(position, &globalDirUnit);
+      // if we find a non-world volume, then good. if we find the world volume even
+      // of the bridge world, it must really lie outside the curvilinear volumes
+      // eitherway, we return that volume.
+      return selectedVol;
+    }
+  else if (selectedVol == worldPV)
+    {// try searching a little further along the step from the pre-step point
       G4ThreeVector newPosition = position + volumeMargin*globalDirUnit;
-      selectedVol = nav->LocateGlobalPointAndSetup(position);
+      selectedVol = nav->LocateGlobalPointAndSetup(position, &globalDirUnit);
 #ifdef BDSDEBUGNAV
       G4cout << __METHOD_NAME__ << "New selected volume is: " << selectedVol->GetName() << G4endl;
 #endif
+      return selectedVol;
     }
-  return selectedVol;
+  else
+    {return selectedVol;}
 }
 
 BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
