@@ -237,7 +237,6 @@ namespace GMAD
     bool     sensitiveBLMs;
 
     ///@{ Physics processes
-    bool     turnOnCerenkov;
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;
     bool     turnOnRayleighScattering;
@@ -247,6 +246,7 @@ namespace GMAD
     ///@{Cross section biasing parameters
     double   scintYieldFactor;
     int      maximumPhotonsPerStep;
+    int      maximumBetaChangePerStep;
     long     maximumTracksPerEvent;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;

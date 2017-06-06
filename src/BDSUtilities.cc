@@ -80,6 +80,20 @@ G4bool BDS::FileExists(G4String fileName)
 {
   std::ifstream infile(fileName.c_str());
   return infile.good();
+  // note the destructor of ifstream will close the stream
+}
+
+std::string BDS::GetCurrentDir()
+{ 
+  char currentPath[PATH_MAX]; // defined in <limits>
+  std::string currentPathString;
+
+  if (getcwd(currentPath, sizeof(currentPath)) != NULL)
+    {currentPathString = std::string(currentPath);}
+  else
+    {G4cerr << "Cannot determine current working directory" << G4endl; exit(1);}
+
+  return currentPathString;
 }
 
 std::string BDS::GetBDSIMExecPath()
@@ -110,7 +124,7 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   G4cout << __METHOD_NAME__ << fileName << " strip name off?: " << excludeNameFromPath << G4endl;
 #endif
   //Return fullPath of a file:
-  //mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  //mirror what is done in parser.l (i.e. if no environment variable set, assume base filename path is that of the gmad file).
   // 1) if absolute path (starting with a slash) return that
   // 2) if relative path, then
   // 2a) return path relative to environment variable BDSIMPATH (if set)
@@ -409,15 +423,6 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 	}
     }
   return std::make_pair("","");
-}
-
-void BDS::PrintArray(const G4double values[],
-		     G4int    size)
-{
-  G4cout << "(";
-  for (G4int i = 0; i < size; i++)
-    {G4cout << values[i] << ", ";}
-  G4cout << ")";
 }
 
 G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
