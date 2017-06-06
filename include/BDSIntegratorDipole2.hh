@@ -2,6 +2,7 @@
 #define BDSINTEGRATORDIPOLE2_H
 
 #include "BDSIntegratorDrift.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
 #include "G4MagHelicalStepper.hh"
@@ -31,7 +32,8 @@ class G4Mag_EqRhs;
 class BDSIntegratorDipole2: public G4MagHelicalStepper, public BDSIntegratorDrift
 {
 public:
-  BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
+  BDSIntegratorDipole2(BDSMagnetStrength const* strength,
+			   G4Mag_EqRhs* eqOfMIn,
 		       G4double     minimumRadiusOfCurvature);
 
   virtual ~BDSIntegratorDipole2(){;}
@@ -65,6 +67,12 @@ public:
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorDipole2() = delete;
+
+  /// Angle that the dipole induces in the reference trajectory.
+  const G4double angle;
+
+  /// Uniform magnetic field in global Y direction.
+  const G4double bField;
 
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.
