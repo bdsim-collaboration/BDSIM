@@ -13,7 +13,7 @@
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
 						     G4Mag_EqRhs*             eqOfMIn,
 						     G4double                 minimumRadiusOfCurvature):
-  BDSIntegratorDipole2(strength, eqOfMIn, minimumRadiusOfCurvature),
+  BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvature),
   polefaceAngle((*strength)["polefaceangle"]),
   fringeCorr((*strength)["fringecorr"])
 {;}
