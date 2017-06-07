@@ -1,14 +1,14 @@
 ! standard options for runing bdsim
 
-option, beampipeRadius = 10 * cm,
-        outerDiameter = 1.9 * m,
-        beampipeThickness = 0.5 * mm,
-	defaultRangeCut=1000*m,
-	prodCutPhotons=1000*m,
-	prodCutElectrons=1000*m,
-	prodCutPositrons=1000*m,
-	elossHistoBinWidth = 0.01;
+! absorb everything transversely.
+option, outerDiameter=3*m;
 
-option,physicsList="em hadronic";
+option, defaultRangeCut=1*m,
+	prodCutPhotons=0.2*m,
+	prodCutElectrons=0.2*m,
+	prodCutPositrons=0.2*m,
+	prodCutProtons=0.2*m;
 
+option, physicsList="em hadronic muon";
 
+option, ngenerate=100;
