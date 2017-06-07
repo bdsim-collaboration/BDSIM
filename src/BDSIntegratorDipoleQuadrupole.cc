@@ -20,7 +20,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn):
   BDSIntegratorQuadrupole(strength, brho, eqOfMIn, minimumRadiusOfCurvatureIn),
-  dipole(new BDSIntegratorDipole2(strength, eqOfMIn, minimumRadiusOfCurvatureIn)),
+  dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   angle((*strength)["angle"]),
   arcLength((*strength)["length"])
 {

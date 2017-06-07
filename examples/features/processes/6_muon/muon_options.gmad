@@ -3,3 +3,10 @@ option, prodCutPhotons   = 10*m,
 	prodCutPositrons = 10*m,
 	ngenerate=1e3,
         physicsList="em em_extra decay hadronic_elastic QGSP_BERT muon";
+
+
+muannibias: xsecBias, particle="e+", process="AnnihiToMuPair", xsecfact={1e8}, flag={2};
+
+mueebias: xsecBias, particle="e+", process="ee2hadr", xsecfact={1e8}, flag={2};
+
+option, defaultBiasMaterial="muannibias mueebias";
