@@ -173,7 +173,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
   if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
     {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
 
-  return CreateBridgeElementFromComponent(defaultBridge, element, nextElement, end, beamlineIndex);
+  return CreateBridgeElementFromComponent(component, element, nextElement, end, beamlineIndex);
 }
 
 
