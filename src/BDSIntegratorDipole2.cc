@@ -9,12 +9,9 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-BDSIntegratorDipole2::BDSIntegratorDipole2(BDSMagnetStrength const*  strength,
-                       G4Mag_EqRhs* eqOfMIn,
+BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
-  angle((*strength)["angle"]),
-  bField((*strength)["field"]),
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn),
   eqOfM(eqOfMIn)
 {;}
@@ -33,14 +30,6 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
-  /*
-  // case of zero angle and field
-  if (!BDS::IsFinite(angle) && !BDS::IsFinite(bField))
-   {
-     AdvanceDriftMag(yIn,h,yOut,yErr);
-     return;
-   }*/
-
   // Protect against very small steps.
   if (h < 1e-12)
     {
