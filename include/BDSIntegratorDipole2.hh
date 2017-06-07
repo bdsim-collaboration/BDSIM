@@ -64,6 +64,11 @@ public:
 				 G4double       yOut[],
 				 G4double       yErr[]);
 
+protected:
+	/// DistChord() is non-virutal function in base class so set Ang and RadHelix appropriately
+	/// such that DistChord() will return 0.
+	void FudgeDistChordToZero();
+
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorDipole2() = delete;

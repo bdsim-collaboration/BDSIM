@@ -33,12 +33,13 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
+  /*
   // case of zero angle and field
   if (!BDS::IsFinite(angle) && !BDS::IsFinite(bField))
    {
      AdvanceDriftMag(yIn,h,yOut,yErr);
      return;
-   }
+   }*/
 
   // Protect against very small steps.
   if (h < 1e-12)
@@ -54,12 +55,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   if(eqOfM->FCof() == 0)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
-      // can't set distchord directly due to G4MagHelicaStepper
-      // function not virtual there.
-      // this combination will give a rational answer given the logic
-      // in G4MagHelicalStepper::DistChord
-      SetAngCurve(10); // > 2pi
-      SetRadHelix(0);
+      FudgeDistChordToZero();
       return;
     }
   
@@ -67,6 +63,14 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   G4double bO[4]; // original location field value
   eqOfM->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
+
+  // protect against zero field as G4's Advance helix gives wrong ang and rad
+  if (!BDS::IsFinite(bOriginal.mag()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      FudgeDistChordToZero();
+      return;
+    }
 
   // Do a full step - the result we use
   AdvanceHelix(yIn, bOriginal, h, yOut);
@@ -125,6 +129,15 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 						     G4double       yErr[])
 {
   G4ThreeVector fieldUnit = field.unit();
+
+  // protect against zero field as this algorithm would be wrong
+  if (!BDS::IsFinite(fieldUnit.mag()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      FudgeDistChordToZero();
+      return;
+    }
+
   G4double momMag = G4ThreeVector(yIn[3], yIn[4], yIn[5]).mag();
   
   // Artificially change momentum to be along field direction.
@@ -146,4 +159,11 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
     {yErr[i] = 1e-20;}
   for(G4int i = 3; i < 6; i++)
     {yErr[i] = 1e-40;}
+}
+
+void BDSIntegratorDipole2::FudgeDistChordToZero()
+{
+  // Large angle condition in G4MagHelicalStepper DistChord() method is faster, so set angle to 10.
+  SetAngCurve(10);
+  SetRadHelix(0);
 }
