@@ -19,11 +19,12 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4double                 brho,
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn):
-  BDSIntegratorQuadrupole(strength, brho, eqOfMIn, minimumRadiusOfCurvatureIn),
+  BDSIntegratorMag(eqOfMIn, 6),
   dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   angle((*strength)["angle"]),
   arcLength((*strength)["length"])
 {
+  bPrime            = std::abs(brho) * (*strength)["k1"] / CLHEP::m2;
   radiusOfCurvature = arcLength / angle;
   chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
   radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
@@ -41,11 +42,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 					    G4double       yOut[],
 					    G4double       yErr[])
 {
-  G4double quadOut[7];
-  G4double quadErr[7];
-
-  BDSIntegratorQuadrupole::Stepper(yIn, dydx, h, quadOut, quadErr);
-  
+  // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
   // If the particle might spiral, we return and just use the dipole only component
@@ -55,6 +52,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   if (dipoleDC > 0.3*radiusOfCurvature)
     {return;}
 
+  // not going to spiral so proceed
   // convert to true curvilinear
   G4ThreeVector globalPos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom  = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
@@ -71,11 +69,13 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 
+  // write out values and errors
   for (G4int i = 0; i < 3; i++)
     {
       yOut[i]     = globalPosOut[i];
       yOut[i + 3] = globalMomOut[i];
       yErr[i]     = 0;
+      yErr[i + 3] = 0;
     }
 }
 

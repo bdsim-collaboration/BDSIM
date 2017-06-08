@@ -1,12 +1,13 @@
 #ifndef BDSINTEGRATORDIPOLEQUADRUPOLE_H
 #define BDSINTEGRATORDIPOLEQUADRUPOLE_H
 
-#include "BDSIntegratorQuadrupole.hh"
+#include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 
 class BDSIntegratorDipole2;
 class BDSMagnetStrength;
+class BDSStep;
 class G4Mag_EqRhs;
 
 /**
@@ -15,7 +16,7 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorDipoleQuadrupole: public BDSIntegratorQuadrupole
+class BDSIntegratorDipoleQuadrupole: public BDSIntegratorMag
 {
 public:
   BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strength,
@@ -61,6 +62,7 @@ private:
   BDSIntegratorDipole2* dipole;
   G4double              angle;
   G4double              arcLength;
+  G4double              bPrime;
   G4double              radiusOfCurvature;
   G4double              chordLength;
   G4double              radiusAtChord;
