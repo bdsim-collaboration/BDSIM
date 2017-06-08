@@ -201,7 +201,7 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSB
   G4ThreeVector outputFaceNormal = (*element)->OutputFaceNormal(); // outgoing face normal
 
   G4ThreeVector iFNormal = outputFaceNormal;
-  iFNormal.setZ(iFNormal.z()*-1); // flip z component so pointing backwards
+  iFNormal *= -1;
   G4ThreeVector oFNormal = outputFaceNormal; // we assume no angle for the bridge component so this is right.
 
   // we're ingnoring any possible angled face of the curvilinear geometry
