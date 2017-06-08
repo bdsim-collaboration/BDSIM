@@ -11,6 +11,14 @@
 #include "parser/fastlist.h"
 #include "parser/physicsbiasing.h"
 
+// general geant4
+#include "globals.hh"
+#include "G4GenericBiasingPhysics.hh"
+#include "G4ParticleTable.hh"
+#include "G4ProcessManager.hh"
+#include "G4ProcessVector.hh"
+#include "G4Version.hh"
+
 // physics processes / builders
 #include "G4DecayPhysics.hh"
 #include "G4EmExtraPhysics.hh"
@@ -25,7 +33,9 @@
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
+#if G4VERSION_NUMBER > 1020
 #include "G4SpinDecayPhysics.hh"
+#endif
 #include "G4SynchrotronRadiation.hh"
 
 // particles
@@ -43,14 +53,6 @@
 #include "G4Positron.hh"
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
-
-// general geant4
-#include "globals.hh"
-#include "G4GenericBiasingPhysics.hh"
-#include "G4ParticleTable.hh"
-#include "G4ProcessManager.hh"
-#include "G4ProcessVector.hh"
-#include "G4Version.hh"
 
 #include <iterator>
 #include <map>
@@ -478,11 +480,15 @@ void BDSModularPhysicsList::Decay()
 
 void BDSModularPhysicsList::SpinDecay()
 {
+#if G4VERSION_NUMBER > 1020
   if(!physicsActivated["spindecay"])
     {// this will replace regular decay for various processes
       constructors.push_back(new G4SpinDecayPhysics());
       physicsActivated["spindecay"] = true;
     }
+#else
+  G4cout << G4endl << "Warning: \"spindecay\" physics is only availabe for Geant4.10.2 upwards" << G4endl;
+#endif
 }
 
 void BDSModularPhysicsList::CutsAndLimits()
