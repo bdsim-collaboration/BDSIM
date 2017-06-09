@@ -488,6 +488,8 @@ void BDSModularPhysicsList::SpinDecay()
     }
 #else
   G4cout << G4endl << "Warning: \"spindecay\" physics is only availabe for Geant4.10.2 upwards" << G4endl;
+  G4cout << "Using regular decay physics instead" << G4endl;
+  Decay();
 #endif
 }
 
