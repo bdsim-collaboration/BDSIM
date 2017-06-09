@@ -4,7 +4,7 @@ l1: line = (c1);
 
 use, l1;
 
-option, physicsList="em";
+option, physicsList="em_low";
 
 option, checkOverlaps=1;
 
