@@ -4,6 +4,7 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4AffineTransform.hh"
@@ -45,6 +46,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
+  // if no quadrupole component, simply return
+  if (!BDS::IsFinite(bPrime))
+    {return;}
+
   // If the particle might spiral, we return and just use the dipole only component
   // Aimed at particles of much lower momentum than the design energy.
   G4double dipoleDC          = dipole->DistChord();
@@ -60,9 +65,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   G4ThreeVector localCLPos = localCL.PreStepPoint();
   G4ThreeVector localCLMom = localCL.PostStepPoint();
   
-  // calculate new position - TBC
-  G4ThreeVector localCLPosOut = localCLPos;
-  G4ThreeVector localCLMomOut = localCLMom;
+  // calculate new position
+  G4ThreeVector localCLPosOut;
+  G4ThreeVector localCLMomOut;
+  OneStep(localCLPos, localCLMom, h, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(localCLPosOut, localCLMomOut, false);
