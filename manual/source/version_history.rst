@@ -16,7 +16,9 @@ New Features
  * Ability to offset beam line w.r.t. world coordinates at start.
  * Check for required Geant4 environment variables.
  * Thin horizontal and vertical (and combined) kickers.
-
+ * Thin multipoles.
+ * Compatability with Geant4.10.3.
+   
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
  * Complete refactorisation of field classes and construction.
@@ -74,6 +76,8 @@ Bug Fixes
  * Particles from physics list are now constructed correctly allowing more particles to be used in the beam definition.
  * Removal of cherenkov radiation from muon phyiscs significantly reducing simulation time.
  * Fix double registration of pion decay with muon phyiscs list.
+ * Issue #134 - samplers cause tracking warning.
+ * Long running events due to spiralling particles. Issues #178, #132, #187.
 
 General
 -------
