@@ -91,6 +91,10 @@ General
 Utilities
 ---------
 
+* pymadx v0.8
+* pybdsim v1.0
+* pymad8 v0.7
+
 V0.95 - 2016 / 11 / 07
 ======================
 
