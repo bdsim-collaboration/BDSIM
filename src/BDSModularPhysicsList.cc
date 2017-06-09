@@ -2,7 +2,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSPhysicsCherenkov.hh"
-#include "BDSPhysicsCustAndLimits.hh"
+#include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
@@ -497,7 +497,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 {
   if(!physicsActivated["cutsandlimits"])
     {
-      constructors.push_back(new BDSPhysicsCustAndLimits());
+      constructors.push_back(new BDSPhysicsCutsAndLimits());
       physicsActivated["cutsandlimits"] = true;
     }
 }           
