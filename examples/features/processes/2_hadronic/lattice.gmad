@@ -7,4 +7,3 @@ use, beamline;
 sample, all;
 
 option,	elossHistoBinWidth = length/3;
-option, nGenerate=20; 

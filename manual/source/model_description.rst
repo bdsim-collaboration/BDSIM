@@ -2019,6 +2019,8 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | maximumEpsilonStep               | maximum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
+| maximumStepLength                | maximum step length (default = 20 m)                  |
++----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+

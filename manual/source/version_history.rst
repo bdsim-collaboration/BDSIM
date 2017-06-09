@@ -1,4 +1,4 @@
-V0.96 - 2017 / 03 / ??
+V0.99 - 2017 / 06 / 09
 ======================
 
 New Features
@@ -14,10 +14,14 @@ New Features
  * New *placement* element that allows an object with geometry to be placed independent of the beam line.
  * maximumTrackLength option to limit any track in the geometry.
  * Ability to offset beam line w.r.t. world coordinates at start.
-
+ * Check for required Geant4 environment variables.
+ * Thin horizontal and vertical (and combined) kickers.
+ * Thin multipoles.
+ * Compatability with Geant4.10.3.
+   
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
- * Complete refactorisation of field classes and construction
+ * Complete refactorisation of field classes and construction.
  * Centralised construction of fields.
  * 1-4D BDSIM format field map loading.
  * 2D Poisson SuperFish SF7 format field map loading.
@@ -26,6 +30,9 @@ Fields & Integrators
  * Ability to choose integrator sets for all elements via parser.
  * Removal of all individual magnet classes - centralised construction in BDSMagnet.
  * New executable - "bdsinterpolator" - allows loaded and interpolated field to be queried and written out.
+ * Rewritten dipole integrator using Geant4's helical stepper.
+ * All integrators tested for low energy spiralling particles.
+ * Introduction of visualisation commands.
 
 Geometry
 ^^^^^^^^
@@ -34,7 +41,8 @@ Geometry
  * Ability to overlay externally provided geometry on magnets (except sbend).
  * Automatically generated tight-fitting containers for externally loaded GDML geometry.
  * *circularvacuum* beam pipe geometry that allows no geometry for the beam pipe; only vacuum.
- * Colour magnet hues tweaked slightly.
+ * Magnet colours tweaked slightly - pybdsim now matches BDSIM colour-wise.
+ * Additional curvilinear bridge world to ensure continuous curvilinear coordinates.
 
    
 Output & Analysis
@@ -44,6 +52,9 @@ Output & Analysis
  * 1x 3D histogram in default output that can be placed along the beam line.
  * Support for 3D histograms in rebdsim.
  * All magnet strength components written out to survey.
+ * Change of syntax in rebdsim analysis file to specify dimensions of histogram.
+ * Stricter parsing of analysisConfig.txt for syntax checking.
+ * New executable rebdsimOrbit to extract single orbit from sampler data.
 
 
 Bug Fixes
@@ -62,6 +73,11 @@ Bug Fixes
  * Regions and biases set correctly to components in BDSLine class.
  * Circle distribution did not have central value offsets.
  * Fix double registration of pion decay as well as some others for muons when using muon phyiscs list.
+ * Particles from physics list are now constructed correctly allowing more particles to be used in the beam definition.
+ * Removal of cherenkov radiation from muon phyiscs significantly reducing simulation time.
+ * Fix double registration of pion decay with muon phyiscs list.
+ * Issue #134 - samplers cause tracking warning.
+ * Long running events due to spiralling particles. Issues #178, #132, #187.
 
 General
 -------
@@ -74,6 +90,10 @@ General
 
 Utilities
 ---------
+
+* pymadx v0.8
+* pybdsim v1.0
+* pymad8 v0.7
 
 V0.95 - 2016 / 11 / 07
 ======================
