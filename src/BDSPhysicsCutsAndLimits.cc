@@ -1,4 +1,4 @@
-#include "BDSPhysicsCustAndLimits.hh"
+#include "BDSPhysicsCutsAndLimits.hh"
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
@@ -7,20 +7,20 @@
 #include "G4UserSpecialCuts.hh"
 #include "G4Version.hh"
 
-BDSPhysicsCustAndLimits::BDSPhysicsCustAndLimits():
-  G4VPhysicsConstructor("BDSPhysicsCustAndLimits")
+BDSPhysicsCutsAndLimits::BDSPhysicsCutsAndLimits():
+  G4VPhysicsConstructor("BDSPhysicsCutsAndLimits")
 {
   stepLimiter = new G4StepLimiter;
   specialCuts = new G4UserSpecialCuts;
 }
 
-BDSPhysicsCustAndLimits::~BDSPhysicsCustAndLimits()
+BDSPhysicsCutsAndLimits::~BDSPhysicsCutsAndLimits()
 {
   delete stepLimiter;
   delete specialCuts;
 }
 
-void BDSPhysicsCustAndLimits::ConstructParticle()
+void BDSPhysicsCutsAndLimits::ConstructParticle()
 {
   G4Gamma::Gamma();
   G4Electron::Electron();
@@ -28,7 +28,7 @@ void BDSPhysicsCustAndLimits::ConstructParticle()
   G4Proton::Proton();
 }
 
-void BDSPhysicsCustAndLimits::ConstructProcess()
+void BDSPhysicsCutsAndLimits::ConstructProcess()
 {
   if (Activated())
     {return;}
