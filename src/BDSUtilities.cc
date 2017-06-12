@@ -133,6 +133,10 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // return value
   G4String fullPath;
 
+  // protect against unneeded ./ at beginning of filename - strip it off
+  if (fileName.substr(0,2) == "./")
+    {fileName = fileName.substr(2);}
+
   // split input into path and filename
   G4String inputFilepath, inputFilename;
   G4String::size_type found = fileName.rfind("/"); // find the last '/'
