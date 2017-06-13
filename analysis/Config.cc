@@ -250,7 +250,7 @@ void Config::UpdateRequiredBranches(const std::string treeName,
   // regex. For now, only the Options tree has this and we turn it all on, so it
   // it shouldn't be a problem (it only ever has one entry).
   // match word; '.'; word -> here we match the token rather than the bits inbetween
-  std::regex branchLeaf("(\\w+).(\\w+)");
+  std::regex branchLeaf("(\\w+)\\.(\\w+)");
   auto words_begin = std::sregex_iterator(var.begin(), var.end(), branchLeaf);
   auto words_end   = std::sregex_iterator();
   for (std::sregex_iterator i = words_begin; i != words_end; ++i)
