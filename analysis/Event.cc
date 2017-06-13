@@ -108,9 +108,14 @@ void Event::SetBranchAddress(TTree *t,
     {
       unsigned int nrSamplers = samplerNames->size();
       samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
-      for(unsigned int i=0;i<nrSamplers;++i)
+      for (unsigned int i=0; i < nrSamplers; ++i)
 	{
-	  t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
+#ifdef __ROOTDOUBLE__
+	  samplers[i] = new BDSOutputROOTEventSampler<double>();
+#else
+	  samplers[i] = new BDSOutputROOTEventSampler<float>();
+#endif
+	  t->SetBranchAddress((*samplerNames)[i].c_str(), &samplers[i]);
 	  t->SetBranchStatus((*samplerNames)[i].c_str(), 1);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
