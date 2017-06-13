@@ -337,7 +337,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
 	  fullPath = inputFilepath;
 	}
       else
-	{fullPath = BDS::GetCurrentDir() + inputFilepath;}
+	{fullPath = BDS::GetCurrentDir() + "/" + inputFilepath;}
     }
   // add additional slash just to be safe
   fullPath += "/";
