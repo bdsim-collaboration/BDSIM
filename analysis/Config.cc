@@ -162,7 +162,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
     {results.push_back((*i).str());}
   
-  if (results.size() < 5)
+  if (results.size() < 6)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
 	+ " - invalid number of columns";
