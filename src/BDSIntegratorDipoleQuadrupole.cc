@@ -43,6 +43,14 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 					    G4double       yOut[],
 					    G4double       yErr[])
 {
+  // Protect against very small steps or neutral particles drift through.
+  if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()))
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
