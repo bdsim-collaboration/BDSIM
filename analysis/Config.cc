@@ -151,16 +151,19 @@ void Config::ParseHistogramLine(const std::string& line)
 
 void Config::ParseHistogram(const std::string line, const int nDim)
 {
-  // match words containing a-zA-Z0-9, '.', ',', '{', '}', ':', '-', '+'
-  // should split up remainder of line into columns
-  std::regex lineWords("([\\w\\.\\,\\{\\}\\:\\-]+)", std::regex_constants::icase);
-  auto words_begin = std::sregex_iterator(line.begin(), line.end(), lineWords);
-  auto words_end   = std::sregex_iterator();
-
+  // split line on white space
+  // doesn't inspect words themselves
+  // checks number of words, ie number of columns is correct
   std::vector<std::string> results;
-  int counter = 0;
-  for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {results.push_back((*i).str());}
+  std::regex wspace("\\s+"); // any whitepsace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
   
   if (results.size() < 6)
     {// ensure enough columns
