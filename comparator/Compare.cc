@@ -453,14 +453,18 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
     }
   else
     {
+      // only one z / S entry, so only check once
+      if (Diff(e1->z, e2->z))
+        {rs.passed = false; rs.offendingLeaves.push_back("z");}
+      if (Diff(e1->S, e2->S))
+        {rs.passed = false; rs.offendingLeaves.push_back("S");}
+      
       for (int i = 0; i < e1->n; i++)
 	{
 	  if (Diff(e1->x, e2->x, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
 	  if (Diff(e1->y, e2->y, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("y");}
-	  if (Diff(e1->z, e2->z))
-	    {rs.passed = false; rs.offendingLeaves.push_back("z");}
 	  if (Diff(e1->xp, e2->xp, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
@@ -469,11 +473,9 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
 	  if (Diff(e1->t, e2->t, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("t");}
-	  if (Diff(e1->S, e2->S))
-	    {rs.passed = false; rs.offendingLeaves.push_back("S");}
 	}
     }
-
+  
   // update parent result status
   if (!rs.passed)
     {re->passed = false;}
