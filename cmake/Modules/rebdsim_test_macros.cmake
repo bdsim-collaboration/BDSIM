@@ -5,6 +5,10 @@ macro(_rebdsimAnalTest testName configFile)
   add_test(NAME ${testName} COMMAND rebdsim ${configFile})
 endmacro()
 
+macro(rebdsim_test testName configFile inputFile outputFile)
+  add_test(NAME ${testName} COMMAND rebdsim ${configFile} ${inputFile} $outputFile})
+endmacro()
+
 # run analysis then a comparison
 macro(rebdsim_test testName)
   _rebdsimAnalTest(${testName}_ANALYSIS ${testName}.txt)
