@@ -408,7 +408,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
     {
       ResultEvent re = ResultEvent();
       re.name    = std::to_string(i);
-      re.passed  = true; // default true
+      re.passed  = false; // default true
       re.objtype = "Event of Event Tree";
       
       t1->GetEntry(i);
