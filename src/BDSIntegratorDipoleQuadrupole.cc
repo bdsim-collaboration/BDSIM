@@ -65,6 +65,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   if (dipoleDC > 0.3*radiusOfCurvature)
     {return;}
 
+  // We assume that the major effect is the dipole component and the quadrupole
+  // component is low. Therefore, we can safely set distchord from the dipole.
+  SetDistChord(dipoleDC);
+  
   // not going to spiral so proceed
   // convert to true curvilinear
   G4ThreeVector globalPos  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -100,12 +104,14 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 					    G4ThreeVector& momOut) const
 {
   G4double delta     = 0;
-  
-  G4double theta     = 0;
-  G4double kappa     = 0;
-  G4double sqrtKappa = std::sqrt(kappa);
-  if (std::isnan(sqrtKappa))
-    {sqrtKappa = 0;}
+
+  // K = k + k_0^2
+  G4double Kappa     = 0;
+  G4bool   focussing = Kappa >= 0;
+  // In -ve K case we would take sqrt(|K|), so valid in either case
+  G4double sqrtKappa = std::sqrt(std::abs(Kappa));
+
+  G4double theta = sqrtKappa * h;
 
   G4double x0  = posIn.x();
   G4double y0  = posIn.y();
