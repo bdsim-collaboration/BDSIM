@@ -14,7 +14,8 @@ set_tests_properties(IO_ROOTEVENT-rebdsim PROPERTIES DEPENDS IO_ROOTEVENT1)
 simple_testing(IO_ROOTEVENT_IO "--file=io.gmad --outfile=io_test" "")
 
 # test histogram making
-rebdsim_test(REBDSIM-selector "analysisConfig2.txt" "io_test_event.root" "io_test_ana.root")
+rebdsim_test_manual(rebdsim-selector "analysisConfig2.txt" "io_test_event.root" "io_test_ana.root")
+set_tests_properties(rebdsim-selector PROPERTIES DEPENDS IO_ROOTEVENT_IO)
 
 # seed state (uses seedstate from previous test)
 simple_testing(IO_ROOTEVENT_IO_Recreate "--file=io_recreate.gmad" "")

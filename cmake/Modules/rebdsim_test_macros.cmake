@@ -5,7 +5,7 @@ macro(_rebdsimAnalTest testName configFile)
   add_test(NAME ${testName} COMMAND rebdsim ${configFile})
 endmacro()
 
-macro(rebdsim_test testName configFile inputFile outputFile)
+macro(rebdsim_test_manual testName configFile inputFile outputFile)
   add_test(NAME ${testName} COMMAND rebdsim ${configFile} ${inputFile} $outputFile})
 endmacro()
 
