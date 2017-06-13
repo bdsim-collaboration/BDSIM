@@ -448,7 +448,7 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
   
   if (e1->n != e2->n)
     {
-      rs.passed = false;
+      rs.passed = true;
       rs.offendingLeaves.push_back("n");
     }
   else
