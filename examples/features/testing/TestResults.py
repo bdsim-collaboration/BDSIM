@@ -308,7 +308,7 @@ class ResultsUtilities:
             if multiEntryTypes.__contains__(type(issuedBy)):
                 for issue in issuedBy:
                     issueCR = issue + "\r\n"
-                    if splitLines.__contains__(issue):
+                    if splitLines.__contains__(issueCR):
                         generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
             else:
                 issueCR = issuedBy + "\r\n"
