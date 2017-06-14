@@ -66,8 +66,17 @@ void Event::SetBranchAddress(TTree *t,
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
-  // turn off all branches by default.
+  // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
+  if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
+    {t->SetBranchStatus("Primary.",       1);}
+    t->SetBranchStatus("Eloss.",          1);
+    t->SetBranchStatus("Histos.",         1);
+    t->SetBranchStatus("PrimaryFirstHit.",1);
+    t->SetBranchStatus("PrimaryLastHit.", 1);
+    t->SetBranchStatus("TunnelHit.",      1);
+    t->SetBranchStatus("Trajectory.",     1);
+    t->SetBranchStatus("Info.",           1);
 
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
