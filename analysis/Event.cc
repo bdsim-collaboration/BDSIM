@@ -5,6 +5,7 @@
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventSampler.hh"
 
 #include <vector>
 
