@@ -89,11 +89,15 @@ class ReturnsAndErrors(dict):
         return self['issuedBy'][index]
 
     def GetSoftCodes(self):
+        """ Get the names of the codes that soft.
+            """
         softIndices = [index for index, isSoft in enumerate(self['isSoft']) if isSoft]
         codes = [self['name'][index] for index in softIndices]
         return codes
 
     def GetSoftCodeNumbers(self):
+        """ Get the code numbers of the codes that are soft.
+            """
         softIndices = [index for index, isSoft in enumerate(self['isSoft']) if isSoft]
         codenumbers = [self['code'][index] for index in softIndices]
         return codenumbers
@@ -304,13 +308,20 @@ class Globals:
         self.ReturnsAndErrors.Add('FILE_NOT_FOUND',     2, (0.597, 0, 0))  # maroon
         self.ReturnsAndErrors.Add('OVERLAPS',           3, 'g', 'G4PVPlacement::CheckOverlaps()', True)
         self.ReturnsAndErrors.Add('STUCK_PARTICLE',     4, 'm', 'G4PropagatorInField::ComputeStep()', True)
-        self.ReturnsAndErrors.Add('TRACKING_WARNING',   5, 'c',
-                                  ('G4MagInt_Driver::AccurateAdvance()', 'G4MagIntegratorDriver::OneGoodStep:'), True)
+        self.ReturnsAndErrors.Add('TRACKING_WARNING',   5, 'c', ('G4MagInt_Driver::AccurateAdvance()',
+                                                                 'G4MagIntegratorDriver::OneGoodStep:',
+                                                                 'G4Navigator::GetLocalExitNormal()',
+                                                                 'G4ParticleChange::CheckIt'
+                                                                 ), True)
         self.ReturnsAndErrors.Add('TIMEOUT',            6, 'k')
         self.ReturnsAndErrors.Add('NO_DATA',            7, 'w')
         self.ReturnsAndErrors.Add('FATAL_EXCEPTION',    8, 'r', 'G4CutTubs::G4CutTubs()')
         self.ReturnsAndErrors.Add('NAN_CHORD',          9, 'y', 'G4ChordFinder::FindNextChord()', True)
 
+        self.timeout = 300  # timeout in seconds
+
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
             raise ValueError("Unknown component type.")
+
+

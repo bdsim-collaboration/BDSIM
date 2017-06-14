@@ -5,6 +5,7 @@
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventSampler.hh"
 
 #include <vector>
 
@@ -65,8 +66,17 @@ void Event::SetBranchAddress(TTree *t,
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
 
-  // turn off all branches by default.
+  // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
+  if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
+    {t->SetBranchStatus("Primary.",       1);}
+    t->SetBranchStatus("Eloss.",          1);
+    t->SetBranchStatus("Histos.",         1);
+    t->SetBranchStatus("PrimaryFirstHit.",1);
+    t->SetBranchStatus("PrimaryLastHit.", 1);
+    t->SetBranchStatus("TunnelHit.",      1);
+    t->SetBranchStatus("Trajectory.",     1);
+    t->SetBranchStatus("Info.",           1);
 
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
@@ -76,7 +86,7 @@ void Event::SetBranchAddress(TTree *t,
 	{
 	  std::string nameStar = name + "*";
 	  if (debug)
-	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
+	    {std::cout << "Event::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 	}
     }
@@ -108,10 +118,16 @@ void Event::SetBranchAddress(TTree *t,
     {
       unsigned int nrSamplers = samplerNames->size();
       samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
-      for(unsigned int i=0;i<nrSamplers;++i)
+      for (unsigned int i=0; i < nrSamplers; ++i)
 	{
-	  t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
-	  t->SetBranchStatus((*samplerNames)[i].c_str(), 1);
+	  const auto sampName = (*samplerNames)[i];
+#ifdef __ROOTDOUBLE__
+	  samplers[i] = new BDSOutputROOTEventSampler<double>(sampName);
+#else
+	  samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
+#endif
+	  t->SetBranchAddress(sampName.c_str(), &samplers[i]);
+	  t->SetBranchStatus(sampName.c_str(), 1);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
 	}

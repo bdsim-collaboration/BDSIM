@@ -398,7 +398,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
     }
 
   // Need to tell Event to process samplers at construction time.
-  G4bool processSamplers = samplerNames.empty() ? false : true;
+  G4bool processSamplers = !samplerNames.empty();
   Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
   Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
@@ -408,7 +408,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
     {
       ResultEvent re = ResultEvent();
       re.name    = std::to_string(i);
-      re.passed  = true; // default true
+      re.passed  = false; // default true
       re.objtype = "Event of Event Tree";
       
       t1->GetEntry(i);
@@ -448,19 +448,23 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
   
   if (e1->n != e2->n)
     {
-      rs.passed = false;
+      rs.passed = true;
       rs.offendingLeaves.push_back("n");
     }
   else
     {
+      // only one z / S entry, so only check once
+      if (Diff(e1->z, e2->z))
+        {rs.passed = false; rs.offendingLeaves.push_back("z");}
+      if (Diff(e1->S, e2->S))
+        {rs.passed = false; rs.offendingLeaves.push_back("S");}
+      
       for (int i = 0; i < e1->n; i++)
 	{
 	  if (Diff(e1->x, e2->x, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
 	  if (Diff(e1->y, e2->y, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("y");}
-	  if (Diff(e1->z, e2->z))
-	    {rs.passed = false; rs.offendingLeaves.push_back("z");}
 	  if (Diff(e1->xp, e2->xp, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
@@ -469,11 +473,9 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
 	  if (Diff(e1->t, e2->t, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("t");}
-	  if (Diff(e1->S, e2->S))
-	    {rs.passed = false; rs.offendingLeaves.push_back("S");}
 	}
     }
-
+  
   // update parent result status
   if (!rs.passed)
     {re->passed = false;}

@@ -200,6 +200,9 @@ class ResultsUtilities:
         elif code == 3:  # file not found
             coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
             return coords
+        elif code == 6:  # Timeout
+            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
+            return coords
 
         # get data in logfile.
         f = open(logFile)
@@ -263,6 +266,8 @@ class ResultsUtilities:
             generalStatus.append(2)
         elif result['code'] == 3:
             generalStatus.append(3)
+        elif result['code'] == 6:
+            generalStatus.append(6)
 
         # get data in logfile.
         f = open(result['bdsimLogFile'])
@@ -303,7 +308,7 @@ class ResultsUtilities:
             if multiEntryTypes.__contains__(type(issuedBy)):
                 for issue in issuedBy:
                     issueCR = issue + "\r\n"
-                    if splitLines.__contains__(issue):
+                    if splitLines.__contains__(issueCR):
                         generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
             else:
                 issueCR = issuedBy + "\r\n"

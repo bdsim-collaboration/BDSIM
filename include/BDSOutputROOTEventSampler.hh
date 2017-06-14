@@ -52,8 +52,6 @@ public:
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
-  //#else
-  //void SetBranchAddress(TTree *);
 #endif
   void SetBranchAddress(TTree *);
   /// Clean Sampler
