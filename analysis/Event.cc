@@ -85,7 +85,7 @@ void Event::SetBranchAddress(TTree *t,
 	{
 	  std::string nameStar = name + "*";
 	  if (debug)
-	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
+	    {std::cout << "Event::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 	}
     }
@@ -119,13 +119,14 @@ void Event::SetBranchAddress(TTree *t,
       samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
       for (unsigned int i=0; i < nrSamplers; ++i)
 	{
+	  const auto sampName = (*samplerNames)[i];
 #ifdef __ROOTDOUBLE__
-	  samplers[i] = new BDSOutputROOTEventSampler<double>();
+	  samplers[i] = new BDSOutputROOTEventSampler<double>(sampName);
 #else
-	  samplers[i] = new BDSOutputROOTEventSampler<float>();
+	  samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
 #endif
-	  t->SetBranchAddress((*samplerNames)[i].c_str(), &samplers[i]);
-	  t->SetBranchStatus((*samplerNames)[i].c_str(), 1);
+	  t->SetBranchAddress(sampName.c_str(), &samplers[i]);
+	  t->SetBranchStatus(sampName.c_str(), 1);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
 	}
