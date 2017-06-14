@@ -6,6 +6,8 @@ import subprocess as _sub
 import multiprocessing
 import time
 import collections
+from subprocess import Popen
+import threading
 
 import Globals
 import PhaseSpace
@@ -24,6 +26,40 @@ GlobalData = Globals.Globals()
 ResultUtils = TestResults.ResultsUtilities()
 
 
+
+def _runBDSIM(inputDict, timeout):
+
+    # Start the BDSIM process
+    process = Popen([GlobalData._bdsimExecutable,
+                    "--file=" + inputDict['testFile'],
+                    "--output=rootevent",
+                    "--outfile="+inputDict['outputFile'],
+                    "--batch",
+                    "--seed=2017"],
+                    stdout=open(inputDict['bdsimLogFile'], 'a'),
+                    stderr=open(inputDict['bdsimLogFile'], 'a'))
+
+    # Method of communicating with BDSIM process. Start and apply the timeout via joining
+    processThread = threading.Thread(target=process.communicate)
+    processThread.start()
+    processThread.join(timeout)
+
+    # After the timeout, if the process is still alive, kill it.
+    if processThread.is_alive():
+        process.kill()
+
+    # get process return code. If negative, the process was killed. If positive, it was successful.
+    # If None, it means the process is still 'ongoing'.
+    returnCode = process.returncode
+
+    # return negative if returnCode is None, its likely that there's a small time delay between
+    # the kill signal and the program ending.
+    if returnCode is None:
+        return -1
+    else:
+        return returnCode
+
+
 def Run(inputDict):
     """ Generate the rootevent output for a given gmad file.
         """
@@ -36,16 +72,25 @@ def Run(inputDict):
     # os.system used as subprocess.call has difficulty with the arguments for some reason.
     bdsimCommand = GlobalData._bdsimExecutable + " --file=" + inputDict['testFile'] + " --output=rootevent --outfile="
     bdsimCommand += inputDict['outputFile'] + " --batch --seed=2017"
-    _os.system(bdsimCommand + ' > ' + inputDict['bdsimLogFile'] + " 2>&1")
-    bdsimTime = _np.float(time.time() - t)
-    inputDict['bdsimTime'] = bdsimTime
 
-    # quick check for output file. If it doesn't exist, update the main failure log and return None.
-    # If it does exist, delete the log and return the filename
+    processReturnCode = _runBDSIM(inputDict, timeout=GlobalData.timeout)
+
     files = _glob.glob('*.root')
 
+    # set code for timeout. Delete root file if it exists, is likely to be zombie.
+    if processReturnCode < 0:
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')
+        inputDict['generalStatus'] = [GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')]
+        if files.__contains__(inputDict['ROOTFile']):
+            _os.remove(inputDict['ROOTFile'])
+
+    bdsimTime = _np.float(time.time() - t)
+    inputDict['bdsimTime'] = bdsimTime
+    originalFile = inputDict['originalFile']
+
     if not files.__contains__(inputDict['ROOTFile']):
-        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
+        if inputDict['code'] != GlobalData.ReturnsAndErrors.GetCode('TIMEOUT'):
+            inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
 
     elif not generateOriginal:
         with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
@@ -76,6 +121,7 @@ def Run(inputDict):
         inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')
 
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
+
     inputDict['generalStatus'] = generalStatus
 
     # list of soft failure code in the general status.
@@ -118,10 +164,17 @@ def Run(inputDict):
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
-    # elif root file wasn't generated.
+    # elif the comparator couldn't find one of the files
     elif inputDict['code'] == 2 :
-        # move bdsim log file to fail dir
-        _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+        # if the original file that is being compared to doesn't exist, delete ROOT and
+        # BDSIM log file, and move the comparator file.
+        if (originalFile == '') and (files.__contains__(inputDict['ROOTFile'])):
+            _os.remove(inputDict['bdsimLogFile'])
+            _os.remove(inputDict['ROOTFile'])
+            _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
+        else:
+            # move bdsim log file to fail dir
+            _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         if isSelfComparison:
             _os.remove(inputDict['originalFile'])
 
@@ -646,13 +699,16 @@ class TestUtilities(object):
     def _multiThread(self, testlist, componentType):
         """ Function to run the tests on multiple cores with multithreading."""
         numCores = multiprocessing.cpu_count()
-        p = multiprocessing.Pool(numCores)
-        results = p.map(Run, testlist)
+        pool = multiprocessing.Pool(numCores)
 
-        for testRes in results:
+        # apply results asynchronously
+        results = [pool.apply_async(Run, args=(i,)) for i in testlist]
+        output = [p.get() for p in results]
+
+        for testRes in output:
             self.Analysis.AddResults(testRes)
             self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
-        p.close()
+        pool.close()
 
     def _singleThread(self, testlist):
         """ Function to run the tests on a single core.

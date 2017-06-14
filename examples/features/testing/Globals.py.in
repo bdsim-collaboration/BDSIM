@@ -311,6 +311,8 @@ class Globals:
         self.ReturnsAndErrors.Add('FATAL_EXCEPTION',    8, 'r', 'G4CutTubs::G4CutTubs()')
         self.ReturnsAndErrors.Add('NAN_CHORD',          9, 'y', 'G4ChordFinder::FindNextChord()', True)
 
+        self.timeout = 300  # timeout in seconds
+
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
             raise ValueError("Unknown component type.")
