@@ -6,7 +6,7 @@ quadrupole, collimator and sector bend dipole magnet.
 
 How to run::
   
-  bdsim --file=simpleMachine.gmad
+  bdsim --file=sm.gmad
 
 .. figure:: simpleMachine.png
 	    :width: 50%
