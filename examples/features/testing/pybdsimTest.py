@@ -697,9 +697,17 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
-    def _multiThread(self, testlist, componentType):
-        """ Function to run the tests on multiple cores with multithreading."""
-        numCores = multiprocessing.cpu_count()
+    def _Run(self, testlist, componentType, useSingleThread=False):
+        """ Function that determines the numbers of cores (and multithreading),
+            creates the pool, and calls the function for running BDSIM, comparator etc.
+            """
+        if useSingleThread:
+            numCores = 1
+            self._debugOutput("\tUsing single thread.")
+        else:
+            numCores = multiprocessing.cpu_count()
+            self._debugOutput("\tUsing multithreading.")
+
         pool = multiprocessing.Pool(numCores)
 
         # apply results asynchronously
@@ -710,44 +718,6 @@ class TestUtilities(object):
             self.Analysis.AddResults(testRes)
             self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
         pool.close()
-
-    def _singleThread(self, testlist):
-        """ Function to run the tests on a single core.
-            This has not been updated in a long time, so use with caution."""
-        eleBdsimTimes = []
-        eleComparatorTimes = []
-
-        for testDict in testlist:
-            test = testDict['file']
-            isSelfComparison = testDict['isSelfComparison']
-            originalEvent = testDict['originalFile']
-
-            bdsimTestTime = time.time()
-            outputEvent = self._GenerateRootFile(test)
-            bdsimTime = time.time() - bdsimTestTime
-            eleBdsimTimes.append(bdsimTime)
-            compTestTime = time.time()
-            # Only compare if the output was generated.
-
-            if (outputEvent is not None) and (not self._generateOriginals):
-                if isSelfComparison:
-                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
-                    _os.system(copyString)
-                else:
-                    pass  # This is where the comparison with the original file will occur.
-                    # TODO: figure out how to process original files that will be compared to.
-
-                self._CompareOutput(originalEvent, outputEvent)
-            else:
-                self._UpdateBDSIMFailLog(test)
-                _os.system("rm temp.log")
-                print("Output for test " + test + " was not generated.")
-            comparatorTime = time.time() - compTestTime
-            eleComparatorTimes.append(comparatorTime)
-
-        self.Analysis.TimingData.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.Analysis.TimingData.comparatorTimes.extend(_np.average(eleComparatorTimes))
 
     def _debugOutput(self, output=''):
         """ Function to print debug output. Function used to prevent littering
@@ -879,12 +849,8 @@ class TestSuite(TestUtilities):
                 testlist.append(testDict)
             self._debugOutput("\tDone.")
 
-            if not self._useSingleThread:
-                self._multiThread(testlist, componentType)  # multithreaded option
-                self._debugOutput("\tUsing multithreading.")
-            else:
-                self._singleThread(testlist)  # single threaded option.
-                self._debugOutput("\tUsing single thread.")
+            # Run BDSIM for these tests.
+            self._Run(testlist, componentType, self._useSingleThread)
 
             self._debugOutput("\tRunning analysis...")
             componentTime = time.time() - t  # final time
