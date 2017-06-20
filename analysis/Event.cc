@@ -69,14 +69,14 @@ void Event::SetBranchAddress(TTree *t,
   // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
-    {t->SetBranchStatus("Primary.",       1);}
-    t->SetBranchStatus("Eloss.",          1);
-    t->SetBranchStatus("Histos.",         1);
-    t->SetBranchStatus("PrimaryFirstHit.",1);
-    t->SetBranchStatus("PrimaryLastHit.", 1);
-    t->SetBranchStatus("TunnelHit.",      1);
-    t->SetBranchStatus("Trajectory.",     1);
-    t->SetBranchStatus("Info.",           1);
+    {t->SetBranchStatus("Primary*",       1);}
+  t->SetBranchStatus("Eloss*",          1);
+  t->SetBranchStatus("Histos*",         1);
+  t->SetBranchStatus("PrimaryFirstHit*",1);
+  t->SetBranchStatus("PrimaryLastHit*", 1);
+  t->SetBranchStatus("TunnelHit*",      1);
+  t->SetBranchStatus("Trajectory*",     1);
+  t->SetBranchStatus("Info*",           1);
 
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
@@ -127,7 +127,7 @@ void Event::SetBranchAddress(TTree *t,
 	  samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
 #endif
 	  t->SetBranchAddress(sampName.c_str(), &samplers[i]);
-	  t->SetBranchStatus(sampName.c_str(), 1);
+      t->SetBranchStatus((sampName+"*").c_str(), 1);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
 	}
