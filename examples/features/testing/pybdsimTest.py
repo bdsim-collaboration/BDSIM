@@ -752,13 +752,15 @@ class TestSuite(TestUtilities):
         """
     def __init__(self, testingDirectory,
                  dataSetDirectory='',
-                 _useSingleThread=False,
+                 useSingleThread=False,
                  usePickledData=False,
                  fullTestSuite=False,
+                 plotResults=True,
                  debug=False):
         super(TestSuite, self).__init__(testingDirectory, dataSetDirectory, debug)
-        self._useSingleThread = _useSingleThread
+        self._useSingleThread = useSingleThread
         self._usePickledData = usePickledData
+        self._plotResults = plotResults
         if fullTestSuite:
             self._FullTestSuite()
 
@@ -863,7 +865,11 @@ class TestSuite(TestUtilities):
 
                 self._debugOutput("\tGenerating output results...")
                 self.Analysis.ProcessResults(componentType=componentType)
-                self.Analysis.PlotResults(componentType=componentType)
+
+                if self._plotResults:
+                    self.Analysis.PlotResults(componentType=componentType)
+                    self._debugOutput("\tGenerating plot(s)...")
+
             self._debugOutput("\tAnalysis and output complete.")
             self._debugOutput("\tElement finished.")
 
