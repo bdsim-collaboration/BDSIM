@@ -20,7 +20,7 @@ class BDSIntegratorDipoleQuadrupole: public BDSIntegratorMag
 {
 public:
   BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strength,
-				G4double                 brho,
+				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
 				G4double minimumRadiusOfCurvatureIn);
   
@@ -38,8 +38,11 @@ public:
 protected:
 
   /// Calculate a single step in curvilinear coordinates using dipole quadrupole matrix.
+  /// Unit momentum is provided as an argument becuase it is already calculated in the
+  /// Stepper method.
   void OneStep(G4ThreeVector  posIn,
 	       G4ThreeVector  momIn,
+	       G4ThreeVector  momUIn, // assumed unit momentum of momIn
 	       G4double       h,
 	       G4ThreeVector& posOut,
 	       G4ThreeVector& momOut) const;
@@ -62,6 +65,7 @@ private:
   BDSIntegratorDipole2* dipole;
   G4double              angle;
   G4double              arcLength;
+  G4double              brho;
   G4double              bPrime;
   G4double              radiusOfCurvature;
   G4double              chordLength;
