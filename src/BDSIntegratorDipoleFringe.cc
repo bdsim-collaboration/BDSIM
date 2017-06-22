@@ -1,7 +1,6 @@
 #include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
 #include "BDSIntegratorDipoleFringe.hh"
-#include "BDSIntegratorMag.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 
@@ -10,13 +9,18 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
+G4double BDSIntegratorDipoleFringe::thinElementLength = -1; // unphyiscal
+
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
 						     G4Mag_EqRhs*             eqOfMIn,
 						     G4double                 minimumRadiusOfCurvature):
   BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvature),
   polefaceAngle((*strength)["polefaceangle"]),
   fringeCorr((*strength)["fringecorr"])
-{;}
+{
+  if (thinElementLength < 0)
+    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+}
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 					const G4double dydx[],
@@ -51,7 +55,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4ThreeVector normMom = localMom.unit();
 
   // fraction of kick applied in case of multiple steps in element
-  G4double fraction = h / BDSGlobalConstants::Instance()->ThinElementLength();
+  G4double fraction = h / thinElementLength;
   // prevent overkicking
   if (fraction > 1){
     fraction = 1;
