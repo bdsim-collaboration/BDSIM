@@ -68,6 +68,9 @@ protected:
 	/// such that DistChord() will return 0.
 	void FudgeDistChordToZero();
 
+	/// Cache of equation of motion. This class does not own it.
+	G4Mag_EqRhs* eqOfM;
+
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorDipole2() = delete;
@@ -76,8 +79,6 @@ private:
   /// spiralling and should be treated differently.
   G4double minimumRadiusOfCurvature;
 
-  /// Cache of equation of motion. This class does not own it.
-  G4Mag_EqRhs* eqOfM;
 };
 
 #endif
