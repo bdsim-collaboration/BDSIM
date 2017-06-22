@@ -19,6 +19,7 @@ class BDSIntegratorDipoleFringe: public BDSIntegratorDipole2, public BDSAuxiliar
 {
 public:
   BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
+                G4double                 brhoIn,
 			    G4Mag_EqRhs*             eqOfMIn,
 			    G4double                 minimumRadiusOfCurvature);
   
@@ -40,6 +41,8 @@ private:
   const G4double polefaceAngle;
   /// Fringe field correction term
   const G4double fringeCorr;
+  /// Brho for momentum normalisation
+  const G4double brho;
 
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
