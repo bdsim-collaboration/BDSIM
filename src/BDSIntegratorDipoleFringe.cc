@@ -39,8 +39,9 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   
   // global to local (curvilinear) - 'true' = use local volume for transform
-  // this class doesn't and can't inherit BDSIntegratorMag, so just access the static step limit length from there
-  BDSStep    localPosMom = ConvertToLocal(pos, mom, h, true, BDSIntegratorMag::thinElementLength);
+  // this class doesn't and can't inherit BDSIntegratorMag, so just access the
+  // static step limit length from there
+  BDSStep    localPosMom = ConvertToLocal(pos, mom, h, true, thinElementLength);
   G4ThreeVector localPos = localPosMom.PreStepPoint();
   G4ThreeVector localMom = localPosMom.PostStepPoint();
 
@@ -57,9 +58,8 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // fraction of kick applied in case of multiple steps in element
   G4double fraction = h / thinElementLength;
   // prevent overkicking
-  if (fraction > 1){
-    fraction = 1;
-  }
+  if (fraction > 1)
+    {fraction = 1;}
 
   // calculate fractional fringe field kick
   G4double          y0 = localPos[1] / CLHEP::m;
