@@ -40,6 +40,10 @@ private:
   const G4double polefaceAngle;
   /// Fringe field correction term
   const G4double fringeCorr;
+
+  /// Cache of thin element length from global constants. Initialised via check
+  /// on unphysical -1 value as global constants doesn't exist at compile time.
+  static G4double thinElementLength;
 };
 
 #endif

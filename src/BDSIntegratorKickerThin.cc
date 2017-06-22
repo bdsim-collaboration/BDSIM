@@ -85,8 +85,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4double lengthFraction = h / thinElementLength;
   
   if (lengthFraction > 0.5)
-    {
-      
+    {      
       // Scale the action for the current particle momentum w.r.t.
       // the design momentum. Even though a thin kicker, it represents
       // a thin dipole, which would affect different particles differently.
