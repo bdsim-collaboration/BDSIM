@@ -8,6 +8,7 @@ import time
 import collections
 from subprocess import Popen
 import threading
+import socket as _soc
 
 import Globals
 import PhaseSpace
@@ -708,6 +709,12 @@ class TestUtilities(object):
             numCores = multiprocessing.cpu_count()
             self._debugOutput("\tUsing multithreading.")
 
+            # reduce number of cores by a third on linappserv in case it is run by accident
+            linappservs = ["linappserv1.pp.rhul.ac.uk", "linappserv2.pp.rhul.ac.uk", "linappserv3.pp.rhul.ac.uk"]
+            if self._GetHostName() in linappservs:
+                numCores = _np.floor(numCores - (numCores / 3.0))
+                self._debugOutput("\tNumber of cores reduced to " + _np.str(numCores) + ".")
+
         pool = multiprocessing.Pool(numCores)
 
         # apply results asynchronously
@@ -728,6 +735,9 @@ class TestUtilities(object):
         else:
             pass
 
+    def _GetHostName(self):
+        hostName = _soc.gethostname()
+        return hostName
 
 class TestSuite(TestUtilities):
     """ A class that is the test suite. Tests are added to this class,
