@@ -5,6 +5,7 @@
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
+  p(nullptr),
   S(0),
   debug(false)
 {
@@ -13,12 +14,15 @@ SamplerAnalysis::SamplerAnalysis():
 
 #ifndef __ROOTDOUBLE__
 SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
+				 BDSOutputROOTEventSampler<float> *samplerFirst,
 				 bool debugIn):
 #else 
   SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+				   BDSOutputROOTEventSampler<double> *samplerFirst,
 				   bool debugIn):
 #endif
   s(samplerIn),
+  p(samplerFirst),
   S(0),
   debug(debugIn)
 {
@@ -58,20 +62,33 @@ void SamplerAnalysis::CommonCtor()
   powSums.resize(6);
   cenMoms.resize(6);
 
+  powSumsFirst.resize(6); //First sampler
+  cenMomsFirst.resize(6);
+
   // (x,xp,y,yp,E,t) (x,xp,y,yp,E,t) v1pow, v2pow
   for(int i=0;i<6;++i)
   {
     powSums[i].resize(6);
     cenMoms[i].resize(6);
 
+    powSumsFirst[i].resize(6);
+    cenMomsFirst[i].resize(6);
+
     for(int j=0;j<6;++j)
     {
       powSums[i][j].resize(5);
       cenMoms[i][j].resize(5);
+
+      powSumsFirst[i][j].resize(5);
+      cenMomsFirst[i][j].resize(5);
+      
       for(int k=0;k<=4;++k)
       {
         powSums[i][j][k].resize(5, 0);
         cenMoms[i][j][k].resize(5, 0);
+
+	powSumsFirst[i][j][k].resize(5, 0);
+        cenMomsFirst[i][j][k].resize(5, 0);
       }
     }
   }
@@ -95,6 +112,9 @@ void SamplerAnalysis::Process()
   std::vector<double> v;
   v.resize(6);
 
+  std::vector<double> w;
+  w.resize(6);
+
   this->S = this->s->S;
   
   // loop over all entries
@@ -111,6 +131,13 @@ void SamplerAnalysis::Process()
     v[4] = s->energy[i];
     v[5] = s->t[i];
 
+    w[0] = p->x[i];
+    w[1] = p->xp[i];
+    w[2] = p->y[i];
+    w[3] = p->yp[i];
+    w[4] = p->energy[i];
+    w[5] = p->t[i];
+
     // power sums
     for(int a=0;a<6;++a)
       {
@@ -121,6 +148,7 @@ void SamplerAnalysis::Process()
 		for (int k = 0; k <= 4; ++k)
 		  {
 		    powSums[a][b][j][k] += std::pow(v[a],j)*std::pow(v[b],k);
+		    powSumsFirst[a][b][j][k] += std::pow(w[a],j)*std::pow(w[b],k);
 		  }
 	      }
 	  }
@@ -144,6 +172,7 @@ void SamplerAnalysis::Terminate()
 	    for (int k = 0; k <= 4; ++k)
 	      {
 		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		cenMomsFirst[a][b][j][k] = powSumToCentralMoment(powSumsFirst, npart, a, b, j, k);
 	      }
 	  }
       }
@@ -188,7 +217,29 @@ void SamplerAnalysis::Terminate()
             - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0] - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
 
     
-    optical[i][0]  = sqrt(corrCentMom_2_0*corrCentMom_0_2-std::pow(corrCentMom_1_1,2));                                                    // emittance
+    //Correct the second order moments of the first sampler for dispersion
+    double disp_first   = (cenMomsFirst[4][4][1][0]*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][2][0];                                                        // eta
+    double dispp_first  = (cenMomsFirst[4][4][1][0]*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][2][0];                                                      // eta prime
+
+    // check for nans (expected if dE=0) and set disp=0 if found
+    if (std::isnan(disp_first))
+      {disp_first = 0;}
+    if (std::isnan(disp_first))
+      {dispp_first = 0;}
+    
+    double corrCentMomFirst_2_0 = 0.0, corrCentMomFirst_0_2 = 0.0, corrCentMomFirst_1_1 = 0.0; //temp variables to store dispersion corrected moments
+    
+    corrCentMomFirst_2_0 = cenMomsFirst[j][j+1][2][0] + (std::pow(disp_first,2)*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
+            - 2*(disp_first*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][1][0];
+    
+    corrCentMomFirst_0_2 = cenMomsFirst[j][j+1][0][2] + (std::pow(dispp_first,2)*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
+            - 2*(dispp_first*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][1][0];
+    
+    corrCentMomFirst_1_1 = cenMomsFirst[j][j+1][1][1] + (disp_first*dispp_first*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
+            - (dispp_first*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][1][0] - (disp_first*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][1][0];
+
+    
+    optical[i][0]  = sqrt(corrCentMomFirst_2_0*corrCentMomFirst_0_2-std::pow(corrCentMomFirst_1_1,2));                                     // emittance
     optical[i][1]  = -corrCentMom_1_1/optical[i][0];                                                                                       // alpha
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                                                                        // beta
     optical[i][3]  = (1+std::pow(optical[i][1],2))/optical[i][2];                                                                          // gamma
