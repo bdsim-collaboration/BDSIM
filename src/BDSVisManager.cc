@@ -44,8 +44,6 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #endif
   // Initialize visualisation
   G4VisManager* visManager = new G4VisExecutive;
-  // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-  // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
       
   G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
@@ -108,20 +106,21 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
   UIManager->ApplyCommand("/control/execute " + visMacroFilename);
   
-  // add default gui
+  // run gui
   if (session2->IsGUI())
     {
 #if G4VERSION_NUMBER < 1030
+      // these were added by default in Geant4.10.3 onwards
       // Add icons
       std::string iconMacroFilename = visPath + "icons.mac";
       UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
+      // add run icon:
+      std::string runButtonFilename = visPath + "run.png";
+      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
 #endif
       // add menus
       std::string guiMacroFilename  = visPath + "gui.mac";
       UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
-      // add run icon:
-      std::string runButtonFilename = visPath + "run.png";
-      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
     }
 #endif
   session2->SessionStart();
