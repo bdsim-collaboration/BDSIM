@@ -64,12 +64,12 @@ public:
 				 G4double       yErr[]);
 
 protected:
-	/// DistChord() is non-virutal function in base class so set Ang and RadHelix appropriately
-	/// such that DistChord() will return 0.
-	void FudgeDistChordToZero();
+  /// DistChord() is non-virtual function in base class so set Ang and RadHelix appropriately
+  /// such that DistChord() will return 0.
+  void FudgeDistChordToZero();
 
-	/// Cache of equation of motion. This class does not own it.
-	G4Mag_EqRhs* eqOfM;
+  /// Cache of equation of motion. This class does not own it.
+  G4Mag_EqRhs* eqOfM;
 
 private:
   /// Private default constructor to force use of provided one.
