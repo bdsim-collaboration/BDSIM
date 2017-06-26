@@ -38,12 +38,13 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   if (processSamplers)
     {// Create sampler analyses if needed
       // Analyse the primary sampler in the optics too.
-      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries(), event->GetPrimaries());
       samplerAnalyses.push_back(sa);
       
       for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
 	{
-	  sa = new SamplerAnalysis(*i);
+	  auto i0 = event->samplers.begin();
+	  sa = new SamplerAnalysis(*i,*i0);
 	  this->samplerAnalyses.push_back(sa);
 	}
     }

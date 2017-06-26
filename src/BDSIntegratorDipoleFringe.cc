@@ -12,11 +12,13 @@
 G4double BDSIntegratorDipoleFringe::thinElementLength = -1; // unphyiscal
 
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
+                             G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
-						     G4double                 minimumRadiusOfCurvature):
+                             G4double                 minimumRadiusOfCurvature):
   BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvature),
   polefaceAngle((*strength)["polefaceangle"]),
-  fringeCorr((*strength)["fringecorr"])
+  fringeCorr((*strength)["fringecorr"]),
+  brho(brhoIn)
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
@@ -55,6 +57,8 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4double momMag = localMom.mag();
   G4ThreeVector normMom = localMom.unit();
 
+  G4double ratio = (eqOfM->FCof() * brho ) / momMag;
+
   // fraction of kick applied in case of multiple steps in element
   G4double fraction = h / thinElementLength;
   // prevent overkicking
@@ -64,7 +68,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // calculate fractional fringe field kick
   G4double          y0 = localPos[1] / CLHEP::m;
   G4double ymatElement = tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
-  G4double       ykick = fraction * y0 * ymatElement;
+  G4double       ykick = ratio * fraction * y0 * ymatElement;
 
   // apply kick to unit momentum and recalculate zp to conserve.
   normMom[1] += ykick;

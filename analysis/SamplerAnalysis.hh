@@ -17,9 +17,11 @@ public:
   // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>* samplerIn,
+		  BDSOutputROOTEventSampler<float>* samplerFirt,
 		  bool debugIn = false);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
+		  BDSOutputROOTEventSampler<float>* samplerFirst,
 		  bool debugIn = false);
 #endif
   /// Initialisation of arrays for optical function calculations
@@ -40,8 +42,10 @@ public:
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
+  BDSOutputROOTEventSampler<float> *p;
 #else 
   BDSOutputROOTEventSampler<double> *s;
+  BDSOutputROOTEventSampler<double> *p;
 #endif
 protected:
   // sums - initialised to zero as that's what they start at
@@ -54,6 +58,10 @@ protected:
 
   fourDArray    powSums;
   fourDArray    cenMoms;
+
+  fourDArray    powSumsFirst;
+  fourDArray    cenMomsFirst;
+  
   threeDArray   covMats;
   threeDArray   derivMats;
   twoDArray     optical;     ///< emt, alf, bta, gma, eta, etapr, mean, sigma
