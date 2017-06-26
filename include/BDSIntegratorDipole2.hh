@@ -67,9 +67,12 @@ public:
   inline G4double RadiusOfHelix() const {return GetRadHelix();}
 
 protected:
-	/// DistChord() is non-virutal function in base class so set Ang and RadHelix appropriately
-	/// such that DistChord() will return 0.
-	void FudgeDistChordToZero();
+  /// DistChord() is non-virtual function in base class so set Ang and RadHelix appropriately
+  /// such that DistChord() will return 0.
+  void FudgeDistChordToZero();
+
+  /// Cache of equation of motion. This class does not own it.
+  G4Mag_EqRhs* eqOfM;
 
 private:
   /// Private default constructor to force use of provided one.
@@ -79,8 +82,6 @@ private:
   /// spiralling and should be treated differently.
   G4double minimumRadiusOfCurvature;
 
-  /// Cache of equation of motion. This class does not own it.
-  G4Mag_EqRhs* eqOfM;
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include <cmath>
 #include <list>
 #include <vector>
+#include <include/BDSGlobalConstants.hh>
 
 
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
@@ -78,6 +79,9 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momx;
   G4double momy;
 
+  // normalise to sign of charge
+  G4double charge = (eqOfM->FCof() > 0) ? 1 : ((eqOfM->FCof() < 0) ? -1 : 0);
+
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
 
@@ -86,8 +90,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
     {
       momx = 0; //reset to zero
       momy = 0;
-      knReal = (*kn) * std::pow(position,n).real() / nfact[n];
-      knImag = (*kn) * std::pow(position,n).imag() / nfact[n];
+      knReal = (*kn) * charge* std::pow(position,n).real() / nfact[n];
+      knImag = (*kn) * charge* std::pow(position,n).imag() / nfact[n];
       if (!std::isnan(knReal))
 	{momx = knReal;}
       if (!std::isnan(knImag))
@@ -119,8 +123,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
           //reset to zero
           momx = 0;
           momy = 0;
-          ksReal = (*ks) * std::pow(position, n).real() / nfact[n];
-          ksImag = (*ks) * std::pow(position, n).imag() / nfact[n];
+          ksReal = (*ks) * charge * std::pow(position, n).real() / nfact[n];
+          ksImag = (*ks) * charge * std::pow(position, n).imag() / nfact[n];
           if (!std::isnan(ksReal))
             {momx = ksReal;}
           if (!std::isnan(ksImag))

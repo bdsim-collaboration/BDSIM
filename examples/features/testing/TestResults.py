@@ -9,7 +9,7 @@ from matplotlib import colors as _color
 from matplotlib import ticker as _tick
 import matplotlib.pyplot as _plt
 import matplotlib.patches as _patches
-
+import matplotlib.backends.backend_pdf as _bkpdf
 
 # data type with multiple entries that can be handled by the functions.
 multiEntryTypes = [tuple, list, _np.ndarray]
@@ -728,6 +728,7 @@ class _Plotting:
     def PlotResults(self, allResults, componentType=''):
         """ Function for plotting the testing results for a specific component.
             """
+
         GlobalData._CheckComponent(componentType)
 
         # get all results of this component type.
@@ -795,8 +796,14 @@ class _Plotting:
         dataAx2 = self._updateAxes(ax4, ax3, results2, res2Offset)
 
         self._addColorBar(f, dataAx1)
-        f.savefig(filename, dpi=600)
-        _plt.close()
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig(filename, dpi=600)
+        #_plt.close()
 
     def _doubleDataAxesByEnergy(self, numFigures, results):
         """ Function for plotting data sets that are split by energy on multiple figures."""
@@ -838,8 +845,14 @@ class _Plotting:
 
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
-        f.savefig(filename, dpi=600)
-        _plt.close()
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig(filename, dpi=600)
+        #_plt.close()
 
     def _addColorBar(self, f, ax):
         """ Add a colorbar to the results plot."""
@@ -1074,8 +1087,15 @@ class _Plotting:
         ax2.set_title('Comparator Run Time')
         ax2.yaxis.set_visible(False)
 
-        f.savefig('../Results/' + component + '_timingData.png', dpi=600)
-        _plt.close()
+        filename = '../Results/' + component + '_timingData'
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig('../Results/' + component + '_timingData.png', dpi=600)
+        #_plt.close()
 
 
 class _Report:
