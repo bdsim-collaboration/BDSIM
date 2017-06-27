@@ -20,8 +20,6 @@ void CavityModel::clear()
   irisVerticalAxis       = 0.0;
   tangentLineAngle       = 0.0;
   thickness              = 0.0;
-  frequency              = 0.0;
-  phase                  = 0.0;
   numberOfPoints         = 24;
   numberOfCells          = 1;
 }
@@ -38,8 +36,6 @@ void CavityModel::PublishMembers()
   publish("irisVerticalAxis",   &CavityModel::irisVerticalAxis);
   publish("tangentLineAngle",   &CavityModel::tangentLineAngle);
   publish("thickness",          &CavityModel::thickness);
-  publish("frequency",          &CavityModel::frequency);
-  publish("phase",              &CavityModel::phase);
   publish("numberOfPoints",     &CavityModel::numberOfPoints);
   publish("numberOfCells",      &CavityModel::numberOfCells);
 }
@@ -57,8 +53,6 @@ void CavityModel::print()const
 	    << "irisVerticalAxis "       << irisVerticalAxis << " " << std::endl
 	    << "tangentLineAngle "       << tangentLineAngle << " " << std::endl
 	    << "thickness "              << thickness << " " << std::endl
-	    << "frequency "              << frequency << " " << std::endl
-	    << "phase "                  << phase << " " << std::endl
 	    << "numberOfPoints "         << numberOfPoints << " " << std::endl
 	    << "numberOfCells "          << numberOfCells << " " << std::endl
 	    << std::endl;

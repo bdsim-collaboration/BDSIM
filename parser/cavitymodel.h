@@ -35,10 +35,6 @@ namespace GMAD
     double tangentLineAngle;
     /// thickness
     double thickness;
-    /// frequency in Hz
-    double frequency;
-    /// phase in radians
-    double phase;
     /// number of points that will be used to make the cell shape
     /// more will be more accurate but will also increase tracking time
     int numberOfPoints;
