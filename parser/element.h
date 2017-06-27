@@ -62,11 +62,19 @@ namespace GMAD
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
+
+    // screen parameters
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
     double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
     double screenXSize, screenYSize; ///< for screen
+    ///@{ for screen
+    std::list<double>      layerThicknesses;
+    std::list<std::string> layerMaterials;
+    std::list<int>         layerIsSampler;
+    ///@}
+    
     ///@{ for AWAKE spectrometer
     double screenPSize; ///<Phosphor particle size in screen
     double screenEndZ;
@@ -74,11 +82,7 @@ namespace GMAD
     double screenWidth;
     double awakeMagnetOffsetX;
     ///@}
-    ///@{ for screen
-    std::list<double> layerThicknesses;
-    std::list<std::string> layerMaterials;
-    std::list<int> layerIsSampler;
-    ///@}
+
     ///@{ for 3d transform and laser
     double xdir;
     double ydir;
