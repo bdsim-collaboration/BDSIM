@@ -1,5 +1,5 @@
-#ifndef BDSCAVITY_H
-#define BDSCAVITY_H
+#ifndef BDSCAVITYELEMENT_H
+#define BDSCAVITYELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
 
@@ -16,14 +16,14 @@ class G4VSolid;
  * @author Stuart Walker
  */
 
-class BDSCavity: public BDSAcceleratorComponent
+class BDSCavityElement: public BDSAcceleratorComponent
 {
 public:
-  BDSCavity(G4String            name,
-	    G4double            length,
-	    const BDSFieldInfo* vacuumField);
+  BDSCavityElement(G4String            name,
+		   G4double            length,
+		   const BDSFieldInfo* vacuumField);
 
-  virtual ~BDSCavity();
+  virtual ~BDSCavityElement();
 
 protected:
   /// Creates container solid and logical volume
@@ -65,11 +65,11 @@ protected:
 
 private:
   /// Private constructor to force the use of the provided one.
-  BDSCavity() = delete;
+  BDSCavityElement() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSCavity& operator=(const BDSCavity&) = delete;
-  BDSCavity(BDSCavity&) = delete;
+  BDSCavityElement& operator=(const BDSCavityElement&) = delete;
+  BDSCavityElement(BDSCavityElement&) = delete;
   /// @}
 };
 

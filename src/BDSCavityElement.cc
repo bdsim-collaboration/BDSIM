@@ -1,5 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
-#include "BDSCavity.hh"
+#include "BDSCavityElement.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
@@ -22,7 +22,7 @@
 #include <cmath>
 #include <vector>
 
-BDSCavity::BDSCavity(G4String            name,
+BDSCavityElement::BDSCavityElement(G4String            name,
 		     G4double            length,
 		     const BDSFieldInfo* vacuumFieldIn):
   BDSAcceleratorComponent(name, length, 0,
@@ -41,12 +41,12 @@ BDSCavity::BDSCavity(G4String            name,
     }
 }
 
-BDSCavity::~BDSCavity()
+BDSCavityElement::~BDSCavityElement()
 {
   delete vacuumField;
 }
 
-void BDSCavity::Build()
+void BDSCavityElement::Build()
 {
   switch(cavityInfo->cavityType.underlying())
     {
@@ -69,10 +69,10 @@ void BDSCavity::Build()
   PlaceComponents();
 }
 
-void BDSCavity::BuildField()
+void BDSCavityElement::BuildField()
 {;}
 
-void BDSCavity::PlaceComponents()
+void BDSCavityElement::PlaceComponents()
 {
   G4PVPlacement* vacuumPV = new G4PVPlacement(nullptr,               //Rotation
 					      G4ThreeVector(0,0,0),  //Position
@@ -97,7 +97,7 @@ void BDSCavity::PlaceComponents()
   RegisterPhysicalVolume(cavityPV); 
 }
 
-void BDSCavity::BuildContainerLogicalVolume() 
+void BDSCavityElement::BuildContainerLogicalVolume() 
 {
   G4double outerRadius = cavityRadius + thickness + lengthSafety;
   containerSolid = new G4Tubs(name + "_container_solid",   //name
@@ -114,7 +114,7 @@ void BDSCavity::BuildContainerLogicalVolume()
 					       name + "_container_lv");
 }
 
-void BDSCavity::BuildEllipticalCavityGeometry()
+void BDSCavityElement::BuildEllipticalCavityGeometry()
 {
   //-----Elliptical Cavity Parameters-----
   //irisRSemiAxis    --> Semi-axis of the iris ellipse perpendicular to the length of the cavity.
@@ -349,7 +349,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 }
 
-void BDSCavity::BuildPillBoxCavityGeometry()
+void BDSCavityElement::BuildPillBoxCavityGeometry()
 {
   //Creates a solid 
   G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid",            // name
