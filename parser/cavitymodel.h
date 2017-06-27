@@ -16,30 +16,22 @@ namespace GMAD
    */
   class CavityModel: public Published<CavityModel> {
   public:
-    std::string name; ///< name
-    /// geometry type
-    std::string type;
-    /// iris radius
-    double irisRadius;
-    /// equator radius
-    double equatorRadius;
-    /// half cell length
-    double halfCellLength;
-    /// equator ellipse semi axis;
-    double equatorEllipseSemiAxis;
-    /// iris horizontal axis
-    double irisHorizontalAxis;
-    /// iris vertical axis
-    double irisVerticalAxis;
-    /// tangent angle
-    double tangentLineAngle;
-    /// thickness
-    double thickness;
+    std::string name;              ///< name
+    std::string type;              ///< geometry type
+    double irisRadius;             ///< iris radius
+    double equatorRadius;          ///< equator radius
+    double halfCellLength;         ///< half cell length
+    double equatorEllipseSemiAxis; ///< equator ellipse semi axis;
+    double irisHorizontalAxis;     ///< iris horizontal axis
+    double irisVerticalAxis;       ///< Iris axis
+    double tangentLineAngle;       ///< tangent angle
+    double thickness;              ///< thickness
+
     /// number of points that will be used to make the cell shape
     /// more will be more accurate but will also increase tracking time
     int numberOfPoints;
-    /// number of cells per cavity
-    int numberOfCells;
+   
+    int numberOfCells;  ///< number of cells per cavity
     
     /// constructor
     CavityModel();
