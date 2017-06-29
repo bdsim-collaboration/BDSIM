@@ -15,6 +15,10 @@ class G4Material;
  *
  * Note, compiler provided copy constructor is sufficient as only pointers
  * to materials owned by BDSMaterials are kept - shallow copy is required then.
+ *
+ * This class does not specify the vacuum material as ideally we can specify the
+ * the 'vacuum' pressure and composition throughout the machine without redefining
+ * a cavity model.
  * 
  * @author Laurie Nevay
  */
@@ -25,10 +29,6 @@ public:
   /// extra constructor to assign all members at once
   BDSCavityInfo(BDSCavityType cavityTypeIn,
 		G4Material*   materialIn,
-		G4Material*   vacuumMaterialIn,
-		G4double      eFieldIn,
-		G4double      frequencyIn,
-		G4double      phaseIn,
 		G4double      irisRadiusIn,
 		G4double      thicknessIn,
 		G4double      equatorRadiusIn,
@@ -45,18 +45,6 @@ public:
 
   /// Material
   G4Material* material;
-
-  /// Vacuum Material
-  G4Material* vacuumMaterial;
-
-  /// Peak Electric Field in V / m
-  G4double eField;
-
-  /// Frequency in MHz
-  G4double frequency;
-
-  /// Phase (rad)
-  G4double phase;
 
   /// Iris radius
   G4double irisRadius;
