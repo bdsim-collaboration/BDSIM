@@ -8,6 +8,7 @@
 class BDSCavityInfo;
 class BDSFieldInfo;
 class G4LogicalVolume;
+class G4Material;
 class G4VSolid;
 
 /**
@@ -19,9 +20,11 @@ class G4VSolid;
 class BDSCavityElement: public BDSAcceleratorComponent
 {
 public:
-  BDSCavityElement(G4String            name,
-		   G4double            length,
-		   const BDSFieldInfo* vacuumField);
+  BDSCavityElement(G4String             name,
+		   G4double             length,
+		   G4Material*          vacuumMaterialIn,
+		   const BDSFieldInfo*  vacuumField,
+		   const BDSCavityInfo* cavityInfoIn);
 
   virtual ~BDSCavityElement();
 
@@ -35,6 +38,14 @@ protected:
   /// Creates field objects - doesn't nothing by default and derived classes can override.
   virtual void BuildField();
 
+  /// Field information - also includes cavity info as cavity info contains both
+  /// field information and geometrical information.
+  const BDSFieldInfo* vacuumField = nullptr;
+
+  /// Convenience shortcut to cavity information inside field information object.
+  const BDSCavityInfo* cavityInfo = nullptr;
+
+  /*
   /// Initialises physical volumes.
   void PlaceComponents();
 
@@ -55,14 +66,7 @@ protected:
   G4double cavityRadius; ///< Largest value of r from z.
   G4double irisRadius;   ///< Radius of the iris (aperture).
   G4double thickness;    ///< Thickness. Constant thickness. Any deviation is an artifact.
-
-  /// Field information - also includes cavity info as cavity info contains both
-  /// field information and geometrical information.
-  const BDSFieldInfo* vacuumField = nullptr;
-
-  /// Convenience shortcut to cavity information inside field information object.
-  const BDSCavityInfo* cavityInfo = nullptr;
-
+  */
 private:
   /// Private constructor to force the use of the provided one.
   BDSCavityElement() = delete;
@@ -71,6 +75,11 @@ private:
   BDSCavityElement& operator=(const BDSCavityElement&) = delete;
   BDSCavityElement(BDSCavityElement&) = delete;
   /// @}
+
+  /// Cache of material to be used for vacuum - does not own it.
+  G4Material* vacuumMaterial;
+
+  G4LogicalVolume* vacuumLV; ///< Cache of which volume is the vacuum one.
 };
 
 #endif
