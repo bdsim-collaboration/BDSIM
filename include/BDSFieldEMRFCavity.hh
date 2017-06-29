@@ -9,6 +9,7 @@
 #include <utility>
 
 class BDSCavityInfo;
+class BDSMagnetStrength;
 
 /**
  * @brief Pill box cavity electro-magnetic field.
@@ -19,7 +20,12 @@ class BDSCavityInfo;
 class BDSFieldEMRFCavity: public BDSFieldEM
 {
 public:
-  explicit BDSFieldEMRFCavity(BDSCavityInfo const* info);
+  BDSFieldEMRFCavity(BDSMagnetStrength const* strength);
+  
+  BDSFieldEMRFCavity(G4double eFieldAmplitude,
+		     G4double frequency,
+		     G4double phaseOffset,
+		     G4double cavityRadius);
   
   virtual ~BDSFieldEMRFCavity(){;}
 
@@ -31,17 +37,11 @@ private:
   /// Private constructor to force use of provided one.
   BDSFieldEMRFCavity();
   
-  /// Maximum field in V/m.
-  G4double eFieldMax;
-
-  /// Radius at maximum extent of cavity.
-  G4double cavityRadius;
   
-  /// Angular frequency.
-  G4double frequency;
-
-  /// Phase of oscillator.
-  G4double phase;
+  G4double eFieldMax;    ///< Maximum field in V/m.
+  G4double frequency;    ///< Angular frequency.
+  G4double phase;        ///< Phase offset of the oscillator.
+  G4double cavityRadius; ///< Radius at maximum extent of cavity.
 
   /// X coordinate of first 0 point for bessel J0.
   static const G4double j0FirstZero;

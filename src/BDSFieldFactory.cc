@@ -333,7 +333,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfcavity:
-      {field = new BDSFieldEMRFCavity(info.CavityInfo()); break;}
+      {field = new BDSFieldEMRFCavity(info.MagnetStrength()); break;}
     case BDSFieldType::ebmap1d:
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:
@@ -370,7 +370,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rf:
-      {field = new BDSFieldESinusoid(info.CavityInfo()); break;}
+      {field = new BDSFieldESinusoid(info.MagnetStrength()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:

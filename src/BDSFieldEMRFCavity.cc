@@ -1,5 +1,6 @@
 #include "BDSCavityInfo.hh"
 #include "BDSFieldEMRFCavity.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
 #include "globals.hh"
@@ -12,15 +13,23 @@
 
 const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
 
+BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength):
+  BDSFieldEMRFCavity((*strength)["eField"],
+		     (*strength)["frequency"],
+		     (*strength)["phaseOffset"],
+		     (*strength)["cavityRadius"])
+{;}
 
-BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSCavityInfo const* info):
-  normalisedCavityRadius(j0FirstZero/info->equatorRadius)
-{
-  eFieldMax    = info->eField;
-  cavityRadius = info->equatorRadius;
-  frequency    = info->frequency;
-  phase        = info->phase;
-}
+BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
+				       G4double frequencyIn,
+				       G4double phaseOffset,
+				       G4double cavityRadiusIn):
+  eFieldMax(eFieldAmplitude),
+  frequency(frequencyIn),
+  phase(phaseOffset),
+  cavityRadius(cavityRadiusIn),
+  normalisedCavityRadius(j0FirstZero/cavityRadius)
+{;}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
                                                                      const G4double       t) const

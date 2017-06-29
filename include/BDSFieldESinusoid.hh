@@ -7,6 +7,7 @@
 #include "G4ThreeVector.hh"
 
 class BDSCavityInfo;
+class BDSMagnetStrength;
 
 /**
  * @brief A sinusoidal electric (only) field that doesn't vary with position.
@@ -17,6 +18,12 @@ class BDSCavityInfo;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
+  BDSFieldESinusoid(BDSMagnetStrength const* strength);
+
+  BDSFieldESinusoid(G4double eFieldAmplitude,
+		    G4double frequencyIn,
+		    G4double phaseOffsetIn);
+  
   explicit BDSFieldESinusoid(BDSCavityInfo const* info);
 
   virtual ~BDSFieldESinusoid(){;}
