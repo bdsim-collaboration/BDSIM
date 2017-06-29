@@ -5,7 +5,6 @@
 
 BDSCavityInfo::BDSCavityInfo(BDSCavityType cavityTypeIn,
 			     G4Material*   materialIn,
-			     G4Material*   vacuumMaterialIn,
 			     G4double      eFieldIn,
 			     G4double      frequencyIn,
 			     G4double      phaseIn,
@@ -21,7 +20,6 @@ BDSCavityInfo::BDSCavityInfo(BDSCavityType cavityTypeIn,
 			     G4double      tangentLineAngleIn):
   cavityType(cavityTypeIn),
   material(materialIn),
-  vacuumMaterial(vacuumMaterialIn),
   eField(eFieldIn),
   frequency(frequencyIn),
   phase(phaseIn),

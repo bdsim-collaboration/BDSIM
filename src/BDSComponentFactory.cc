@@ -1138,10 +1138,10 @@ void BDSComponentFactory::PrepareCavityModels()
 {
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
+      G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
-				    nullptr, // construct without material as stored in element
-				    nullptr, // construct without vacuum material as stored in element
-				    0.0,     // construct without gradient as stored in element
+				    material,
+				    0.0,  // construct without gradient as stored in element
 				    model.frequency*CLHEP::hertz,
 				    model.phase,
 				    model.irisRadius*CLHEP::m,
@@ -1179,10 +1179,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
       G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\" - please define it" << G4endl;
       exit(1);
     }
-  if(!element->vacuumMaterial.empty())
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
-  else
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
 
   // set electric field
   info->eField = element->gradient*CLHEP::volt / CLHEP::m;
