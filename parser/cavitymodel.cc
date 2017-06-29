@@ -12,6 +12,7 @@ void CavityModel::clear()
 {
   name                   = "";
   type                   = "";
+  material               = "";
   irisRadius             = 0.0;
   equatorRadius          = 0.0;
   halfCellLength         = 0.0;
@@ -28,6 +29,7 @@ void CavityModel::PublishMembers()
 {
   publish("name",               &CavityModel::name);
   publish("type",               &CavityModel::type);
+  publish("material",           &CavityModel::material);
   publish("irisRadius",         &CavityModel::irisRadius);
   publish("halfCellLength",     &CavityModel::halfCellLength);
   publish("equatorEllipseSemiAxis",&CavityModel::equatorEllipseSemiAxis);
@@ -45,6 +47,7 @@ void CavityModel::print()const
   std::cout << "cavitymodel: "
 	    << "name "                   << name << " " << std::endl
 	    << "type "                   << type << " " << std::endl
+	    << "material "               << material << " " << std::endl
 	    << "irisRadius "             << irisRadius << " " << std::endl
 	    << "equatorRadius "          << equatorRadius << " " << std::endl
 	    << "halfCellLength "         << halfCellLength << " " << std::endl
