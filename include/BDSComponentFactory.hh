@@ -122,6 +122,9 @@ private:
   /// Utility function to prepare model info
   BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
 
+  /// Utility function to prepare field strength object for rf cavity.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element) const;
+
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
   /// element access to previous element (can be nullptr)

@@ -5,7 +5,7 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSAwakeSpectrometer.hh"
 #endif
-#include "BDSCavityRF.hh"
+#include "BDSCavityElement.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
@@ -353,14 +353,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
 					       brho,
 					       intType,
-					       nullptr,
-					       true,
-					       G4Transform3D(),
-					       PrepareCavityModelInfo(element));
+					       PrepareCavityStrength(element));
+  
+  BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element);
 
-  return new BDSCavityRF(elementName,
-			 element->l*CLHEP::m,
-			 vacuumField);
+  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->material);
+  return new BDSCavityElement(elementName,
+			      element->l*CLHEP::m,
+			      vacuumMaterial,
+			      vacuumField,
+			      cavityInfo);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
@@ -1141,9 +1143,6 @@ void BDSComponentFactory::PrepareCavityModels()
       G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
 				    material,
-				    0.0,  // construct without gradient as stored in element
-				    model.frequency*CLHEP::hertz,
-				    model.phase,
 				    model.irisRadius*CLHEP::m,
 				    model.thickness*CLHEP::m,
 				    model.equatorRadius*CLHEP::m,
@@ -1170,20 +1169,31 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
       exit(1);
     }
 
+  // we make a per element copy of the definition
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
   // update materials in info with valid materials - only element has material info
   if (!element->material.empty())
     {info->material       = BDSMaterials::Instance()->GetMaterial(element->material);}
-  else
+  /*
+  else if (!info->material.empty())
     {
-      G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\" - please define it" << G4endl;
+      G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\""
+	     << "or for cavity model \"" << info-> name << "\" - please define it" << G4endl;
       exit(1);
     }
+  */ // TBC
 
   // set electric field
-  info->eField = element->gradient*CLHEP::volt / CLHEP::m;
+  //info->eField = element->gradient*CLHEP::volt / CLHEP::m;
 
   return info;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  //(*st)[""];
+  return st; // TBC
 }
 
 G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const
