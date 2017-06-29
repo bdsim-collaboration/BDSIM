@@ -18,6 +18,7 @@ namespace GMAD
   public:
     std::string name;              ///< name
     std::string type;              ///< geometry type
+    std::string material;          ///< material name
     double irisRadius;             ///< iris radius
     double equatorRadius;          ///< equator radius
     double halfCellLength;         ///< half cell length
