@@ -9,28 +9,13 @@ template<>
 std::map<BDSOutputFormat,std::string>* BDSOutputFormat::dictionary=
   new std::map<BDSOutputFormat,std::string>
   ({{BDSOutputFormat::none,"none"}
-    ,{BDSOutputFormat::ascii,"ascii"}
-    ,{BDSOutputFormat::root,"root"}
-    ,{BDSOutputFormat::rootdouble,"rootdouble"}
-    ,{BDSOutputFormat::rootdetailed,"rootdetailed"}
-    ,{BDSOutputFormat::rootdetailed,"rootdetaileddouble"}
-    ,{BDSOutputFormat::rootevent,"rootevent"}
-    ,{BDSOutputFormat::combined,"combined"}
-    ,{BDSOutputFormat::rootcombined, "rootcombined"}});
-
+    ,{BDSOutputFormat::rootevent,"rootevent"}});
 
 BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
 {
   std::map<G4String, BDSOutputFormat> formats;
   formats["none"]               = BDSOutputFormat::none;
-  formats["ascii"]              = BDSOutputFormat::ascii;
-  formats["root"]               = BDSOutputFormat::root;
-  formats["rootdouble"]         = BDSOutputFormat::rootdouble;
-  formats["rootdetailed"]       = BDSOutputFormat::rootdetailed;
-  formats["rootdetaileddouble"] = BDSOutputFormat::rootdetaileddouble;
   formats["rootevent"]          = BDSOutputFormat::rootevent;
-  formats["combined"]           = BDSOutputFormat::combined;
-  formats["rootcombined"]       = BDSOutputFormat::rootcombined;
 
   outputFormat.toLower();
 
