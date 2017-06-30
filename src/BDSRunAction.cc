@@ -84,10 +84,6 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  // write histograms to output - do this before potentially closing / opening new files
-  for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
-    {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
-
   bdsOutput->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
   bdsOutput->Close();
 

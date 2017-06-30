@@ -1,4 +1,3 @@
-#include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -177,20 +176,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
-      BDSAnalysisManager* analMan     = BDSAnalysisManager::Instance();
-      BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
-      BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
-
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
-      //bin hits in histograms
-      for (G4int i = 0; i < energyCounterHits->entries(); i++)
-	{
-	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
-	  G4double sHit = hit.GetSHit()/CLHEP::m;
-	  G4double eW   = hit.GetEnergyWeighted()/CLHEP::GeV;
-	  generalELoss->Fill(sHit, eW);
-	  perElementELoss->Fill(sHit, eW);
-	}
     }
 
   if (tunnelEnergyCounterHits)

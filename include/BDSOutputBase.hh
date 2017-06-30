@@ -72,9 +72,6 @@ public:
 
   virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info) = 0;
 
-  /// write a histgoram
-  virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
-  
   /// write a complete event
   virtual void FillEvent() = 0;
 

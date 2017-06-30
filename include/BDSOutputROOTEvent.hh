@@ -70,9 +70,6 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken);
 
-  /// write a histgoram
-  virtual void WriteHistogram(BDSHistogram1D* histogramIn);
-
   /// fill event structure
   virtual void FillEvent();
   

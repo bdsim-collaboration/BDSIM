@@ -9,8 +9,7 @@
  */
 
 struct outputformats_def {
-  enum type {none, ascii, root, rootdouble, rootdetailed,
-	     rootdetaileddouble, rootevent, combined, rootcombined};
+  enum type {none, rootevent};
 };
 
 typedef BDSTypeSafeEnum<outputformats_def, int> BDSOutputFormat;

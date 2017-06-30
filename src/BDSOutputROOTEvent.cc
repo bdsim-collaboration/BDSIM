@@ -335,14 +335,6 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
-/// write a histgoram
-void BDSOutputROOTEvent::WriteHistogram(BDSHistogram1D* /*histogramIn*/) 
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-}
-
 void BDSOutputROOTEvent::FillEvent() 
 {
 #ifdef BDSDEBUG

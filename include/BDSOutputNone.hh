@@ -34,8 +34,6 @@ public:
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &){}
   /// write primary hit
   virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
-  /// write a histogram
-  virtual void WriteHistogram(BDSHistogram1D*){}
   /// write event info
   virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
   {}
