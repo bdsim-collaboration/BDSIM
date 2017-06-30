@@ -205,8 +205,6 @@ public:
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
   inline G4double SMax()                     const {return sMax;}
-  inline G4double SMaxHistograms()           const {return sMaxHistograms;}
-  inline G4int    NBins()                    const {return nBins;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
@@ -272,15 +270,6 @@ private:
   /// Beamline length in mm
   G4double sMax;
   
-  /// The maximum s in mm such that there is an integer number of
-  /// elossHistoBinWidths along the line. Used for histogramming purposes.
-  G4double sMaxHistograms;
-
-  G4int nBins; ///< Number of bins for each histogram required.
-
-  /// Calculate the number of bins and required maximum s.
-  void CalculateHistogramParameters();
-  
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
   ///@}
@@ -324,10 +313,7 @@ private:
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
-{
-  sMax = sMaxIn;
-  CalculateHistogramParameters();
-}
+{sMax = sMaxIn;}
 
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}

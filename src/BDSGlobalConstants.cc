@@ -95,8 +95,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   cOverGeV = CLHEP::c_light /CLHEP::GeV;
 
-  CalculateHistogramParameters();
-  
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
@@ -132,15 +130,6 @@ void BDSGlobalConstants::InitialiseBeamlineTransform()
     }
 
   beamlineTransform = G4Transform3D(rm, offset);
-}
-
-void BDSGlobalConstants::CalculateHistogramParameters()
-{
-  // rounding up so last bin definitely covers smax
-  // (max - min) / bin width -> min = 0 here.
-  const G4double binWidth = ElossHistoBinWidth();
-  nBins = (int) ceil(SMax() / binWidth); 
-  sMaxHistograms = nBins * binWidth; // round up to integer # of bins
 }
 
 void BDSGlobalConstants::InitVisAttributes()

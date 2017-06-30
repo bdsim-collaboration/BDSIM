@@ -88,10 +88,9 @@ void BDSOutputROOTEvent::CreateHistograms()
 {
   // construct output histograms
   // calculate histogram dimensions
+  CalculateHistogramParameters();
   const G4double smin   = 0.0;
-  const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
-  const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
-  const G4String slabel = "s [m]";
+  const G4double smax   = sMaxHistograms / CLHEP::m;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;
@@ -103,8 +102,12 @@ void BDSOutputROOTEvent::CreateHistograms()
   Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
   Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
   // prepare bin edges for a by-element histogram
-  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetEdgeSPositions();
-  
+  std::vector<G4double> binedges;
+  BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  if (flatBeamline) // can be nullptr in case of generate primaries only
+    {binedges = flatBeamline->GetEdgeSPositions();}
+  else
+    {binedges = {0,1};}
   // create per element ("pe") bin width histograms
   Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
   Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
@@ -132,6 +135,17 @@ void BDSOutputROOTEvent::Create1DHistogram(G4String name, G4String title,
 {
   evtHistos->Create1DHistogram(name,title,edges);
   runHistos->Create1DHistogram(name,title,edges);
+}
+
+void BDSOutputROOTEvent::CalculateHistogramParameters()
+{
+  // rounding up so last bin definitely covers smax
+  // (max - min) / bin width -> min = 0 here.
+  const BDSGlobalConstants* gc = BDSGlobalConstants::Instance();
+  const G4double binWidth = gc->ElossHistoBinWidth();
+  nbins = (int) ceil(gc->SMax() / binWidth); // round up to integer # of bins
+  if (nbins == 0) nbins = 1; // can happen for generate primaries only
+  sMaxHistograms = nbins * binWidth;
 }
 
 void BDSOutputROOTEvent::Initialise() 

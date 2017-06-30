@@ -97,6 +97,10 @@ private:
   void Create1DHistogram(G4String name, G4String title,
                          std::vector<double>& edges);
   ///@}
+
+  /// Calculate the number of bins and required maximum s.
+  void CalculateHistogramParameters();
+
   /// output file
   TFile *theRootOutputFile = nullptr;
 
@@ -153,6 +157,12 @@ private:
 
   G4bool useScoringMap  = false;
   G4bool writePrimaries = true;
+
+  /// The maximum s in mm such that there is an integer number of
+  /// elossHistoBinWidths along the line. Used for histogramming purposes.
+  G4double sMaxHistograms;
+
+  G4int nbins; ///< Number of bins for each histogram required.
 };
 
 
