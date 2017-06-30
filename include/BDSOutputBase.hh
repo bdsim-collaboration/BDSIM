@@ -13,7 +13,6 @@
 template <class T> class G4THitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
-class BDSHistogram1D;
 class BDSOutputROOTEventInfo;
 class BDSSamplerHit;
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;

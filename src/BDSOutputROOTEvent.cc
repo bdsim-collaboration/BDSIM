@@ -2,11 +2,11 @@
 
 #include "BDSParser.hh"
 #include "parser/options.h"
-#include "BDSAnalysisManager.hh"
+#include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSHistogram.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -86,32 +86,30 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
 
 void BDSOutputROOTEvent::CreateHistograms()
 {
-  // copy histograms from analysis manager
-  BDSAnalysisManager* analysisManager = BDSAnalysisManager::Instance();
-  for (int i=0; i<analysisManager->NumberOfHistograms(); i++)
-    {
-      BDSHistogram1D* hist = analysisManager->GetHistogram(i);
-      G4String name = hist->GetName();
-      G4String title = hist->GetTitle();
-      G4bool equiDistant = hist->GetEquidistantBins();
-      if (equiDistant)
-	{
-	  G4int nbins = hist->GetNBins();
-	  G4double xmin = hist->GetXMin();
-	  G4double xmax = hist->GetXMax();
-	  evtHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
-	  runHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
-	}
-      else
-	{
-	  // create bin edges
-	  std::vector<double> binedges = hist->GetBinLowerEdges();
-	  binedges.push_back(hist->GetXMax());
-	  evtHistos->Create1DHistogram(name,title,binedges);
-	  runHistos->Create1DHistogram(name,title,binedges);
-	}
-    }
-
+  // construct output histograms
+  // calculate histogram dimensions
+  const G4double smin   = 0.0;
+  const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
+  const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
+  const G4String slabel = "s [m]";
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
+  G4cout << "s minimum: " << smin     << " m" << G4endl;
+  G4cout << "s maximum: " << smax     << " m" << G4endl;
+  G4cout << "# of bins: " << nbins    << G4endl;
+#endif
+  // create the histograms
+  Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
+  Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
+  Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
+  // prepare bin edges for a by-element histogram
+  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetEdgeSPositions();
+  
+  // create per element ("pe") bin width histograms
+  Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
+  Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
+  Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges);
+  
   if (useScoringMap)
     {
       const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
@@ -120,6 +118,20 @@ void BDSOutputROOTEvent::CreateHistograms()
 				   g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 				   g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
     }
+}
+
+void BDSOutputROOTEvent::Create1DHistogram(G4String name, G4String title,
+                                           G4int nbins, G4double xmin, G4double xmax)
+{
+  evtHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
+  runHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
+}
+
+void BDSOutputROOTEvent::Create1DHistogram(G4String name, G4String title,
+                                           std::vector<double>& edges)
+{
+  evtHistos->Create1DHistogram(name,title,edges);
+  runHistos->Create1DHistogram(name,title,edges);
 }
 
 void BDSOutputROOTEvent::Initialise() 
