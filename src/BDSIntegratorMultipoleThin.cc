@@ -62,7 +62,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double yp  = localMomUnit.y();
   G4double zp  = localMomUnit.z();
 
-  // initialise output varibles with input position as default
+  // initialise output variables with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
   G4double z1  = z0 + h; // new z position will be along z by step length h
