@@ -29,10 +29,10 @@
 #include "TObjArray.h"
 #include "TTree.h"
 
-#define CHI2TOLERANCE 40
-#define TREETOLERANCE 0.05
-#define OPTICSSIGMATOLERANCE 10
-#define EVENTTREETOLERANCE 1e-10
+const double        CHI2TOLERANCE = 40;
+const double        TREETOLERANCE = 0.05;
+const double OPTICSSIGMATOLERANCE = 10;
+const double   EVENTTREETOLERANCE = 1e-10;
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
