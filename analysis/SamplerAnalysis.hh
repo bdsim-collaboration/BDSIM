@@ -21,7 +21,7 @@ public:
 		  bool debugIn = false);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
-		  BDSOutputROOTEventSampler<float>* samplerFirst,
+		  BDSOutputROOTEventSampler<double>* samplerFirst,
 		  bool debugIn = false);
 #endif
   /// Initialisation of arrays for optical function calculations
