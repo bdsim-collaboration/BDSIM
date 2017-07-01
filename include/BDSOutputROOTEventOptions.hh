@@ -3,7 +3,7 @@
 
 #include "TObject.h"
 
-#include "parser/optionsBase.h"
+#include "optionsBase.h"
 
 /** 
  * @brief Class to store all options for a BDSIM run.
