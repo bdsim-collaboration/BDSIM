@@ -51,6 +51,9 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
 
@@ -1140,7 +1143,11 @@ void BDSComponentFactory::PrepareCavityModels()
 {
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
-      G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
+      // material can either be specified in 
+      G4Material* material = nullptr;
+      if (!model.material.empty())
+	{material = BDSMaterials::Instance()->GetMaterial(model.material);}
+	  
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
 				    material,
 				    model.irisRadius*CLHEP::m,
@@ -1171,20 +1178,20 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
 
   // we make a per element copy of the definition
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
-  // update materials in info with valid materials - only element has material info
-  if (!element->material.empty())
-    {info->material       = BDSMaterials::Instance()->GetMaterial(element->material);}
-  /*
-  else if (!info->material.empty())
-    {
-      G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\""
-	     << "or for cavity model \"" << info-> name << "\" - please define it" << G4endl;
-      exit(1);
-    }
-  */ // TBC
 
-  // set electric field
-  //info->eField = element->gradient*CLHEP::volt / CLHEP::m;
+  // If no material specified, we take the material from the element. If no material at
+  // all, we exit with warning.
+  if (!info->material)
+    {
+      if (element->material.empty())
+	{
+	  G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\""
+		 << "or for cavity model \"" << element->cavityModel << "\" - please define it" << G4endl;
+	  exit(1);
+	}
+      else
+	{info->material = BDSMaterials::Instance()->GetMaterial(element->material);}
+    }
 
   return info;
 }
@@ -1192,8 +1199,23 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  //(*st)[""];
-  return st; // TBC
+  (*st)["eField"]       = element->E * CLHEP::volt;
+  (*st)["eGradient"]    = element->gradient * CLHEP::MeV / CLHEP::m;
+  (*st)["frequency"]    = element->frequency * CLHEP::hertz;
+  if (BDS::IsFinite(element->phase))
+    {(*st)["phase"]        = element->phase * CLHEP::rad;}
+  else
+    {
+      G4double frequency      = element->frequency * CLHEP::hertz;
+      G4double period         = 1. / frequency;
+      G4double nPeriods       = element->tOffset*CLHEP::ns / period;
+      G4double integerPart    = 0;
+      G4double fractionalPart = std::modf(nPeriods, &integerPart);
+      G4double phase          = fractionalPart / CLHEP::twopi;
+      (*st)["phase"] = phase;
+    }
+  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division
+  return st;
 }
 
 G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const
