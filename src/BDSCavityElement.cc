@@ -1,4 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
+#include "BDSCavity.hh"
 #include "BDSCavityElement.hh"
 #include "BDSCavityFactory.hh"
 #include "BDSCavityInfo.hh"
@@ -36,16 +37,28 @@ BDSCavityElement::BDSCavityElement(G4String             name,
 }
 
 BDSCavityElement::~BDSCavityElement()
-{
-  //delete vacuumField;
-}
+{}
 
 void BDSCavityElement::Build()
 {
-  BDSCavity* cavity = BDSCavityFactory::Instance()->CreateCavity(name, cavityInfo);
-  //vacuumLV = cav
   BDSAcceleratorComponent::Build();
   BuildField();
+}
+
+void BDSCavityElement::BuildContainerLogicalVolume()
+{
+  BDSCavity* cavity = BDSCavityFactory::Instance()->CreateCavity(name, cavityInfo);
+  RegisterDaughter(cavity);
+
+  // make the beam pipe container, this object's container
+  containerLogicalVolume = cavity->GetContainerLogicalVolume();
+  containerSolid         = cavity->GetContainerSolid();
+
+  // register vacuum volume (for biasing)
+  SetAcceleratorVacuumLogicalVolume(cavity->GetVacuumLogicalVolume());
+
+  // update extents
+  InheritExtents(cavity);
 }
 
 void BDSCavityElement::BuildField()
