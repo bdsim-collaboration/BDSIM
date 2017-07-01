@@ -95,6 +95,8 @@ void Element::PublishMembers()
   publish("fieldVacuum", &Element::fieldVacuum);
   publish("fieldAll",    &Element::fieldAll);
   publish("waveLength",&Element::waveLength);
+
+  // screen
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
   publish("tmount",&Element::tmount);

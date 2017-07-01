@@ -32,7 +32,7 @@ public:
   virtual ~BDSIntegratorQuadrupole(){;}
 
   /// Check if the quadrupole has finite strength and use drift if not. If finite strength,
-  /// convert to local curvilinear coordiantes and check for paraxial approximation. If paraxial,
+  /// convert to local curvilinear coordinates and check for paraxial approximation. If paraxial,
   /// use thick quadrupole matrix for transport, else use the G4ClassicalRK4 backup stepper.
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],

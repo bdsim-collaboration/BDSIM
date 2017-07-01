@@ -96,8 +96,8 @@ public:
   /// ConvertToLocal being used beforehand to initialise the transforms.  This is
   /// done as we'd need a look up point behind this point.
   BDSStep ConvertToGlobalStep(const G4ThreeVector& localPosition,
-			  const G4ThreeVector& localDirection,
-			  const G4bool&        useCurvilinear = true) const;
+			      const G4ThreeVector& localDirection,
+			      const G4bool&        useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],
