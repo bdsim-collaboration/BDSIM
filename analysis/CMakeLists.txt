@@ -40,7 +40,7 @@ foreach(header ${rebdsimLibLinkDefs})
         add_custom_command(
                 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
                 COMMAND ${ROOTCINT_EXECUTABLE}
-                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths
+                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include
                 -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
