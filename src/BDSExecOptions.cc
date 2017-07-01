@@ -318,7 +318,7 @@ void BDSExecOptions::Print() const
 G4String BDSExecOptions::GetPath(G4String fileName)
 {
   // Set fullPath to mirror what is done in parser.l (i.e. if no environment
-  // varible set, assume base filename path is that of the gmad file).
+  // variable set, assume base filename path is that of the gmad file).
   G4String fullPath = getEnv("BDSIMPATH");
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filename = " << fileName << G4endl;
