@@ -47,9 +47,8 @@ foreach(header ${linkHeaders})
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
       COMMAND ${ROOTCINT_EXECUTABLE}
-      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      ${PREPROCESSOR_DEFS}
-      -I${CMAKE_CURRENT_SOURCE_DIR}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -noIncludePaths -inlineInputHeader
+      ${PREPROCESSOR_DEFS}  -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/parser/
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
