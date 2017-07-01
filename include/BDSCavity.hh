@@ -29,8 +29,11 @@ public:
 
   virtual ~BDSCavity() {;}
 
+  /// Access the vacuum volume to set fields and limits
+  inline G4LogicalVolume* GetVacuumLogicalVolume() const {return vacuumLogicalVolume;};
+
 private:
-  G4LogicalVolume* vacuumLV; ///< Cache of which volume is the vacuum one.
+  G4LogicalVolume* vacuumLogicalVolume; ///< Cache of which volume is the vacuum one.
 };
 
 #endif

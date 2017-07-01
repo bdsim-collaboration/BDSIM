@@ -15,5 +15,5 @@ BDSCavity::BDSCavity(G4VSolid*         containerSolidIn,
 		       BDSExtent(),
 		       placementOffsetIn,
 		       placementRotationIn),
-  vacuumLV(vacuumLVIn)
+  vacuumLogicalVolume(vacuumLVIn)
 {;}
