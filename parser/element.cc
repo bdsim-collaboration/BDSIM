@@ -53,6 +53,7 @@ void Element::PublishMembers()
   publish("knl",  &Element::knl);
   publish("ksl",  &Element::ksl);
   publish("gradient",  &Element::gradient);
+  publish("E",         &Element::E);
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
@@ -311,6 +312,7 @@ void Element::flush()
   knl.clear();
   ksl.clear();
   gradient  = 0;
+  E         = 0;
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
