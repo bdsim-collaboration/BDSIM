@@ -143,8 +143,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 						   brho,
 						   intType,
 						   semiStrength);
-
-  // minus signs for semi angle to convert from MADX convention to 3d cartesian
+  
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, 0.5*semiAngle, 0.5*semiAngle, yokeOnLeft);
   mgInfo->name = centralName;
@@ -576,7 +575,7 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
 G4double BDS::CalculateFringeFieldCorrection(G4double rho,
 					     G4double polefaceAngle,
 					     G4double fint,
-                         G4double hgap)
+					     G4double hgap)
 {
   G4double gOverRho = 2 * hgap / rho;
   G4double corrValue = fint * gOverRho * (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);

@@ -205,13 +205,14 @@ void SamplerAnalysis::Terminate()
     if (std::isnan(optical[i][5]))
       {optical[i][5] = 0;}
 
-    double corrCentMom_2_0 = 0.0, corrCentMom_0_2 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
-    
+    double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
+    //double corrCentMom_0_2 = 0.0; // TBC - unneeded when using only first emittance value
     corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
-    
-    corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-            - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
+
+    // TBC - put back in when emittance calculation revised for first sampler
+    //corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
+    //       - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
     
     corrCentMom_1_1 = cenMoms[j][j+1][1][1] + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0] - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];

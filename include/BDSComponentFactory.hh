@@ -129,7 +129,7 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element const* nextElement = nullptr;
   
-  /// Private enum for kicker types. Has to be decalred before CreateKicker method.
+  /// Private enum for kicker types.
   enum class KickerType {horizontal, vertical, general};
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
