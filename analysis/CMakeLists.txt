@@ -33,20 +33,14 @@ foreach(header ${rebdsimLibLinkDefs})
     MATH(EXPR beginpos "${dir}+1")
     MATH(EXPR length "${pos}-${beginpos}")
     string(SUBSTRING ${header} ${beginpos} ${length} className)
-    #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
     if (${ROOT_MAJOR_VERSION} STREQUAL "6")
         # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
         # root6 .pcm file needs to be at library level
         # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
         add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                COMMAND ${ROOTCINT_EXECUTABLE}
-                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -noIncludePaths
-                ${PREPROCESSOR_DEFS}
-		-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR}
-                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+                COMMAND ${ROOTCINT_EXECUTABLE} 
+                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header} 
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"

@@ -432,6 +432,7 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
 				    const G4double length)
 {
+  const G4double fraction = 1.1; // fraction of length that max step will be
   G4UserLimits* result = nullptr;
   if (!defaultUL)
     {return result;}
@@ -440,7 +441,7 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
   if (defaultUL->GetMaxAllowedStep(t) > length)
     {// copy and change length in UL
       result = new G4UserLimits(*defaultUL);
-      result->SetMaxAllowedStep(length);
+      result->SetMaxAllowedStep(length * fraction);
     }
   else
     {result = defaultUL;} // stick with length in defaultUL
