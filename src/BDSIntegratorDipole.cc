@@ -135,7 +135,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double
   CosT = (CosT_ov_2*CosT_ov_2) - (SinT_ov_2*SinT_ov_2);
   SinT = 2*CosT_ov_2*SinT_ov_2;
 
-  G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm);
+  G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm); // missing component parallel to B
   G4ThreeVector outputLocalPos     = localPos+dPos;
   G4ThreeVector outputLocalMomUnit = CosT*vhat + SinT*vnorm;
   
