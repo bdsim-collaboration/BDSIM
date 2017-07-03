@@ -5,9 +5,9 @@ Output Analysis
 ===============
 
 This describes how to load and view data from the recommend output **rootevent**
-format. Other legacy formats are detailed below (see `ROOTOutputAnalysis`_).
+format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM that provides the ability
+BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides the ability
 to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
@@ -21,7 +21,7 @@ Setup
 .. note:: BDSIM must be installed after compilation for the analysis tools to function properly.
 
 Once BDSIM has been installed the following environmental variables must be updated to allow the analysis
-tool, 'rebdsim' (root event BDSIM), to function.  These can be set manually or added to your :code:`.profile` or
+tool, 'rebdsim', to function.  These can be set manually or added to your :code:`.profile` or
 :code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
@@ -235,67 +235,6 @@ Extracting data from ROOT file ::
    In [3]: f = ROOT.TFile("analysis.root")
    In [4]: t = f.Get("Sampler1")
    In [5]: a = root_numpy.tree2rec(t)  
-
-.. _ROOTOutputAnalysis:
-
-Old ROOT Output (robdsim)
--------------------------
-To use the ROOT analysis (and the Python interface)::
-
-   export ROBDSIM=<bdsim-build-dir>/utils/robdsim
-   export PATH=$PATH:$ROBDSIM
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (Linux only)
-   export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
-   export PYTHONPATH=$PYTHONPATH:$ROBDSIM
-   
-Note that several ROOT analysis output (output of robdsimAnal) files can be combined into one file with the command::
-
-   robdsimComb combined.root output_0.root output_1.root output_2.root output_3.root
-
-Using the robdsim library from within ROOT::
-
-   > root 
-   root [0] gSystem->Load("<bdsim-build-dir>/utils/robdsim/librobdsim.so")
-   root [1] r = new RobdsimAnalysis("analysisConfig.txt")
-
-Using the robdsim library from within Python::
-
-   > pylab 
-   In [1]: import robdsim
-   In [2]: r = robdsim.RobdsimAnalysis("analysisConfig.txt")
-
-From the command line with the executable (containing the ROOT output files and analysisConfig.txt)::
-
-   > robdsimAnal analysisConfig.txt 
-
-Typically analysis is performed with a simple configuration file (analysisConfig.txt, in the two examples above) that defined the histograms that should be created from trees etc. An example structure follows::  
-
-   Debug                                   0
-   InputFilePath                           ./output.root
-   OutputFileName                          ./analysis.root
-   CalculateOpticalFunctions               1
-   CalculateOpticalFunctionsFileName       ./output.dat
-   Histogram                               Sampler_sampler4        elec_x          x               partID==11
-   Histogram                               Sampler_sampler4        elec_y          y               partID==11
-   Histogram                               Sampler_sampler4        elec_xy         y:x             partID==11
-   Histogram                               Sampler_sampler4        elec_E          E               partID==11
-   Histogram                               Sampler_sampler4        photon_x        x               partID==22
-   Histogram                               Sampler_sampler4        photon_y        y               partID==22
-   Histogram                               Sampler_sampler4        photon_xy       y:x             partID==22
-   Histogram                               Sampler_sampler4        photon_E        E               partID==22
-   Histogram                               Sampler_sampler4        photon_Spec     log10(E)        partID==22 
-
-ROOT classes and structure
-==========================
-
-* RobdsimAnalysis
-* RobdsimOutput 
-* AnalysisConfig
-
-Then for each tree type (Eloss, PrecisionRegionElossPhits, Sampler)
-* Tree
-* TreeAnalysis
-
 
 
 Examples
