@@ -1,4 +1,4 @@
-#include "BDSOutputROOTEvent.hh"
+#include "BDSOutputROOT.hh"
 
 #include "BDSParser.hh"
 #include "parser/options.h"
@@ -18,7 +18,7 @@
 
 #include <ctime>
 
-BDSOutputROOTEvent::BDSOutputROOTEvent()
+BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -66,7 +66,7 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
     }
 }
 
-BDSOutputROOTEvent::~BDSOutputROOTEvent() 
+BDSOutputROOT::~BDSOutputROOT() 
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
@@ -84,7 +84,7 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
   delete runInfo;
 }
 
-void BDSOutputROOTEvent::CreateHistograms()
+void BDSOutputROOT::CreateHistograms()
 {
   // construct output histograms
   // calculate histogram dimensions
@@ -123,21 +123,21 @@ void BDSOutputROOTEvent::CreateHistograms()
     }
 }
 
-void BDSOutputROOTEvent::Create1DHistogram(G4String name, G4String title,
-                                           G4int nbins, G4double xmin, G4double xmax)
+void BDSOutputROOT::Create1DHistogram(G4String name, G4String title,
+                                      G4int nbins, G4double xmin, G4double xmax)
 {
   evtHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
   runHistos->Create1DHistogram(name, title, nbins, xmin, xmax);
 }
 
-void BDSOutputROOTEvent::Create1DHistogram(G4String name, G4String title,
-                                           std::vector<double>& edges)
+void BDSOutputROOT::Create1DHistogram(G4String name, G4String title,
+                                      std::vector<double>& edges)
 {
   evtHistos->Create1DHistogram(name,title,edges);
   runHistos->Create1DHistogram(name,title,edges);
 }
 
-void BDSOutputROOTEvent::CalculateHistogramParameters()
+void BDSOutputROOT::CalculateHistogramParameters()
 {
   // rounding up so last bin definitely covers smax
   // (max - min) / bin width -> min = 0 here.
@@ -148,7 +148,7 @@ void BDSOutputROOTEvent::CalculateHistogramParameters()
   sMaxHistograms = nbins * binWidth;
 }
 
-void BDSOutputROOTEvent::Initialise() 
+void BDSOutputROOT::Initialise() 
 {
   outputFileNumber++;
 #ifdef BDSDEBUG
@@ -247,7 +247,7 @@ void BDSOutputROOTEvent::Initialise()
 }
   
 /// write sampler hit collection
-void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc) 
+void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection* hc) 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -263,7 +263,7 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 }
 
 /// write energy deposition hits
-void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
+void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -290,7 +290,7 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 }
 
 /// write where primaries impact
-void BDSOutputROOTEvent::WritePrimaryHit(BDSTrajectoryPoint* phit)
+void BDSOutputROOT::WritePrimaryHit(BDSTrajectoryPoint* phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -304,7 +304,7 @@ void BDSOutputROOTEvent::WritePrimaryHit(BDSTrajectoryPoint* phit)
 }
 
 /// write where primaries stop being primaries
-void BDSOutputROOTEvent::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
+void BDSOutputROOT::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -318,7 +318,7 @@ void BDSOutputROOTEvent::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 }
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
+void BDSOutputROOT::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -332,7 +332,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
 }
 
 /// write a trajectory 
-void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
+void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
@@ -341,18 +341,18 @@ void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 }
 
 /// write primary hit
-void BDSOutputROOTEvent::WritePrimary(G4double E,
-                                      G4double x0,
-                                      G4double y0,
-                                      G4double z0,
-                                      G4double xp,
-                                      G4double yp,
-                                      G4double zp,
-                                      G4double t,
-                                      G4double weight,
-                                      G4int    PDGType,
-                                      G4int    nEvent,
-                                      G4int    TurnsTaken)
+void BDSOutputROOT::WritePrimary(G4double E,
+                                 G4double x0,
+                                 G4double y0,
+                                 G4double z0,
+                                 G4double xp,
+                                 G4double yp,
+                                 G4double zp,
+                                 G4double t,
+                                 G4double weight,
+                                 G4int    PDGType,
+                                 G4int    nEvent,
+                                 G4int    TurnsTaken)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -361,7 +361,7 @@ void BDSOutputROOTEvent::WritePrimary(G4double E,
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
 }
 
-void BDSOutputROOTEvent::FillEvent() 
+void BDSOutputROOT::FillEvent() 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -370,10 +370,10 @@ void BDSOutputROOTEvent::FillEvent()
   theEventOutputTree->Fill();
   Flush();
 }
-void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
-					const time_t&  stopTime,
-					const G4float& duration,
-                                        const std::string& seedStateAtStart)
+void BDSOutputROOT::WriteEventInfo(const time_t&  startTime,
+                                   const time_t&  stopTime,
+                                   const G4float& duration,
+                                   const std::string& seedStateAtStart)
 {
   evtInfo->startTime        = startTime;
   evtInfo->stopTime         = stopTime;
@@ -381,15 +381,15 @@ void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
   evtInfo->seedStateAtStart = seedStateAtStart;
 }
 
-void BDSOutputROOTEvent::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+void BDSOutputROOT::WriteEventInfo(const BDSOutputROOTEventInfo* info)
 {
   *evtInfo = *info;
 }
 
-void BDSOutputROOTEvent::Write(const time_t&  startTime,
-                               const time_t&  stopTime,
-                               const G4float& duration,
-                               const std::string& seedStateAtStart)
+void BDSOutputROOT::Write(const time_t&  startTime,
+                          const time_t&  stopTime,
+                          const G4float& duration,
+                          const std::string& seedStateAtStart)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -406,7 +406,7 @@ void BDSOutputROOTEvent::Write(const time_t&  startTime,
     {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
 }
 
-void BDSOutputROOTEvent::Close()
+void BDSOutputROOT::Close()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -421,7 +421,7 @@ void BDSOutputROOTEvent::Close()
   }
 }
 
-void BDSOutputROOTEvent::Flush()
+void BDSOutputROOT::Flush()
 {
   theRootOutputFile->cd();
   // loop over sampler map and clear vectors

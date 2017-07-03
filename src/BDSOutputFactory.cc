@@ -3,7 +3,7 @@
 #include "BDSOutputFormat.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputNone.hh"
-#include "BDSOutputROOTEvent.hh"
+#include "BDSOutputROOT.hh"
 
 #include "BDSDebug.hh"
 
@@ -17,7 +17,7 @@ BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
     case BDSOutputFormat::none:
       {return new BDSOutputNone(); break;}
     case BDSOutputFormat::rootevent:
-      {return new BDSOutputROOTEvent(); break;}
+      {return new BDSOutputROOT(); break;}
     default:
       {return new BDSOutputNone(); break;} // absolute default - should not reach this
     }

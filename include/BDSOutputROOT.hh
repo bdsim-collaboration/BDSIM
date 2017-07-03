@@ -1,5 +1,5 @@
-#ifndef BDSOUTPUTROOTEVENT_H
-#define BDSOUTPUTROOTEVENT_H
+#ifndef BDSOUTPUTROOT_H
+#define BDSOUTPUTROOT_H
 
 #include "globals.hh"
 
@@ -32,11 +32,11 @@
  * @author Stewart Boogert
  */
 
-class BDSOutputROOTEvent: public BDSOutput 
+class BDSOutputROOT: public BDSOutput 
 {
 public:
-  BDSOutputROOTEvent();
-  virtual ~BDSOutputROOTEvent();
+  BDSOutputROOT();
+  virtual ~BDSOutputROOT();
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*);
