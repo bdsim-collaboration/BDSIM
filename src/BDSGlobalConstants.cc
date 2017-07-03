@@ -39,7 +39,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   particleMomentum(0.0),
   particleKineticEnergy(0.0),
   brho(0.0),
-  sMax(0.0),
   turnsTaken(0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);

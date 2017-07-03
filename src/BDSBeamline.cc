@@ -376,13 +376,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   totalArcLength   += arcLength;
 
   // advance s coordinate
-  G4double sPositionStart, sPositionMiddle, sPositionEnd;
-  sPositionStart  = previousSPositionEnd;
-  sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
-  sPositionEnd    = previousSPositionEnd + arcLength;
-
-  // update the global constants
-  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
+  G4double sPositionStart  = previousSPositionEnd;
+  G4double sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
+  G4double sPositionEnd    = previousSPositionEnd + arcLength;
 
 #ifdef BDSDEBUG
   // feedback about calculated coordinates

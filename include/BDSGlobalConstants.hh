@@ -204,7 +204,6 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
-  inline G4double SMax()                     const {return sMax;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
@@ -228,7 +227,6 @@ public:
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetBRho(G4double value)                 {brho = value;}
   inline void SetInitialPoint(BDSParticle& particle);
-  inline void SetSMax(G4double sMaxIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -267,9 +265,6 @@ private:
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
 
-  /// Beamline length in mm
-  G4double sMax;
-  
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
   ///@}
@@ -311,9 +306,6 @@ private:
   BDSIntegratorSetType integratorSet; ///< Integrator type enum for integrator set to be used.
   G4Transform3D beamlineTransform;    ///< Transform for start of beam line.
 };
-
-inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
-{sMax = sMaxIn;}
 
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}
