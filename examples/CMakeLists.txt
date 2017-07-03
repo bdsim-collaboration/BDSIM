@@ -9,9 +9,6 @@ set(TESTING_PERM_ARGS --batch)
 # kill a job! Long standing bug in cmake
 set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --ignoresigint)
 
-# ROOT output format by default
-set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=rootevent)
-
 add_subdirectory(ATF2)
 add_subdirectory(LHC)
 

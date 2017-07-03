@@ -83,7 +83,7 @@ to run:
     bdsim [options]
 
 f.e. 
-    bdsim --file=line.gmad --output=root
+    bdsim --file=line.gmad
 
 to see the full list of options:
 
