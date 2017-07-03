@@ -23,7 +23,6 @@ Work in progress.
 //#include "UltraFresnelLensParameterisation.hh"
 
 #include "G4Trap.hh"
-//#include "BDSOutputBase.hh"
 
 //============================================================
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,

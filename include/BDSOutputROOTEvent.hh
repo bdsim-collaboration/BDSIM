@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
@@ -32,7 +32,7 @@
  * @author Stewart Boogert
  */
 
-class BDSOutputROOTEvent: public BDSOutputBase 
+class BDSOutputROOTEvent: public BDSOutput 
 {
 public:
   BDSOutputROOTEvent();

@@ -1,5 +1,5 @@
-#ifndef BDSOutputBase_h
-#define BDSOutputBase_h 
+#ifndef BDSOutput_h
+#define BDSOutput_h 
 
 #include "globals.hh"
 
@@ -24,12 +24,12 @@ typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
  * @brief Output base class that defines interface for all output types.
  */
 
-class BDSOutputBase
+class BDSOutput
 {
 public: 
-  BDSOutputBase(); // default constructor
+  BDSOutput(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
-  virtual ~BDSOutputBase() {};
+  virtual ~BDSOutput() {};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
@@ -112,5 +112,5 @@ protected:
   G4String filename;
 };
 
-extern BDSOutputBase* bdsOutput;
+extern BDSOutput* bdsOutput;
 #endif

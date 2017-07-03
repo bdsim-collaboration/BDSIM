@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSOutputBase.hh" 
+#include "BDSOutput.hh"
 #include "BDSRunAction.hh"
 
 #include "globals.hh"               // geant4 globals / types
@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-extern BDSOutputBase* bdsOutput;         // output interface
+extern BDSOutput* bdsOutput;         // output interface
 
 BDSRunAction::BDSRunAction()
 {;}

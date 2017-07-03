@@ -1,7 +1,7 @@
 #ifndef BDSOutputNone_h
 #define BDSOutputNone_h 
 
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 
 class BDSOutputROOTEventInfo;
 
@@ -13,11 +13,11 @@ class BDSOutputROOTEventInfo;
  * @author Jochem Snuverink
  */
 
-class BDSOutputNone: public BDSOutputBase
+class BDSOutputNone: public BDSOutput
 {
 public: 
 
-  BDSOutputNone():BDSOutputBase(){} ///< default constructor
+  BDSOutputNone():BDSOutput(){} ///< default constructor
   virtual ~BDSOutputNone(){}
 
   /// write sampler hit collection
@@ -45,5 +45,5 @@ public:
   virtual void Close(){};      ///< close the file
 };
 
-extern BDSOutputBase* bdsOutput;
+extern BDSOutput* bdsOutput;
 #endif

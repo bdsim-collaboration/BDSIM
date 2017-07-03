@@ -9,7 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -103,10 +103,10 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
   // check the sampler name is allowed in the output
-  if (BDSOutputBase::InvalidSamplerName(samplerName))
+  if (BDSOutput::InvalidSamplerName(samplerName))
     {
       G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
-      BDSOutputBase::PrintProtectedNames(G4cerr);
+      BDSOutput::PrintProtectedNames(G4cerr);
       exit(1);
     }
   

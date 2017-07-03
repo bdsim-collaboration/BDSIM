@@ -4,7 +4,7 @@
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
@@ -28,7 +28,7 @@
 
 using namespace std::chrono;
 
-extern BDSOutputBase* bdsOutput;       // output interface
+extern BDSOutput* bdsOutput;       // output interface
 
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 

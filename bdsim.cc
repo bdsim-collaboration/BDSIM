@@ -33,7 +33,7 @@
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
-#include "BDSOutputBase.hh" 
+#include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
@@ -53,7 +53,7 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=nullptr;     ///< output interface
+BDSOutput* bdsOutput=nullptr;     ///< output interface
 //=======================================================
 
 int main(int argc,char** argv)

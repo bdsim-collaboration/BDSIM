@@ -3,7 +3,7 @@
 
 #include "BDSOutputFormat.hh"
 
-class BDSOutputBase;
+class BDSOutput;
 
 /**
  * @brief factory class for BDSOutput
@@ -15,7 +15,7 @@ class BDSOutputFactory {
 
 public:
   /// factory method
-  static BDSOutputBase* CreateOutput(BDSOutputFormat format);
+  static BDSOutput* CreateOutput(BDSOutputFormat format);
 };
 
 #endif

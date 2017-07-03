@@ -1,13 +1,13 @@
 #include "BDSOutputFactory.hh"
 
 #include "BDSOutputFormat.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 #include "BDSOutputNone.hh"
 #include "BDSOutputROOTEvent.hh"
 
 #include "BDSDebug.hh"
 
-BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
+BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
