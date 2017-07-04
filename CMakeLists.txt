@@ -187,7 +187,7 @@ endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
-file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
 include(CPack)
