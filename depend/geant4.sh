@@ -4,7 +4,7 @@ source ./setup.sh
 source ./setup_gcc.sh
 
 DLDURL=http://geant4.cern.ch/support/source/
-DLDFILE=geant4.10.02.p01.tar.gz
+DLDFILE=geant4.10.02.p03.tar.gz
 PKGNAME=geant4
 LOG=$BASEDIR/$PKGNAME.log
 echo $LOG
