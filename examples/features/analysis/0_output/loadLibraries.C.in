@@ -9,6 +9,7 @@
 
   gSystem->AddIncludePath("-I@CMAKE_BINARY_DIR@/analysis");
 
+  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@/analysis");
   gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@/include");
   gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@");
   
