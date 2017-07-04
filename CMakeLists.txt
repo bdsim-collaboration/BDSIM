@@ -123,8 +123,6 @@ add_subdirectory(parser)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
 # include current directory for parser includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-# Needed for ROOT as all headers get installed in same directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
 
 # external sources
 add_subdirectory(src-external)
