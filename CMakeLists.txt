@@ -5,7 +5,7 @@ project(bdsim)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 9 )
-set( BDSIM_PATCH_LEVEL develop )
+set( BDSIM_PATCH_LEVEL develop)
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -123,8 +123,6 @@ add_subdirectory(parser)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
 # include current directory for parser includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-# Needed for ROOT as all headers get installed in same directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
 
 # external sources
 add_subdirectory(src-external)
@@ -187,7 +185,7 @@ endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
-file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
 include(CPack)
