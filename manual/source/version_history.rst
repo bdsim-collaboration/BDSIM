@@ -19,6 +19,13 @@ General
 
 * Separate Doxygen cmake into own macro.
 
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.1
+* pymad8 v0.7
+
 
 V0.99 - 2017 / 06 / 09
 ======================
