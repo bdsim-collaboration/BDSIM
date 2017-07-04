@@ -133,6 +133,10 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // return value
   G4String fullPath;
 
+  // protect against unneeded ./ at beginning of filename - strip it off
+  if (fileName.substr(0,2) == "./")
+    {fileName = fileName.substr(2);}
+
   // split input into path and filename
   G4String inputFilepath, inputFilename;
   G4String::size_type found = fileName.rfind("/"); // find the last '/'
@@ -428,6 +432,7 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
 				    const G4double length)
 {
+  const G4double fraction = 1.1; // fraction of length that max step will be
   G4UserLimits* result = nullptr;
   if (!defaultUL)
     {return result;}
@@ -436,7 +441,7 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
   if (defaultUL->GetMaxAllowedStep(t) > length)
     {// copy and change length in UL
       result = new G4UserLimits(*defaultUL);
-      result->SetMaxAllowedStep(length);
+      result->SetMaxAllowedStep(length * fraction);
     }
   else
     {result = defaultUL;} // stick with length in defaultUL

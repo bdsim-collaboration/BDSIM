@@ -214,7 +214,7 @@ OptionsBase::OptionsBase()
   defaultBiasMaterial      = "";
 
   // tracking options
-  integratorSet            = "bdsim";
+  integratorSet            = "bdsimtwo";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   maximumStepLength        = 20;      // m, quite big

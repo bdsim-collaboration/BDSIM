@@ -9,7 +9,7 @@ from matplotlib import colors as _color
 from matplotlib import ticker as _tick
 import matplotlib.pyplot as _plt
 import matplotlib.patches as _patches
-
+import matplotlib.backends.backend_pdf as _bkpdf
 
 # data type with multiple entries that can be handled by the functions.
 multiEntryTypes = [tuple, list, _np.ndarray]
@@ -200,6 +200,9 @@ class ResultsUtilities:
         elif code == 3:  # file not found
             coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
             return coords
+        elif code == 6:  # Timeout
+            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
+            return coords
 
         # get data in logfile.
         f = open(logFile)
@@ -263,6 +266,8 @@ class ResultsUtilities:
             generalStatus.append(2)
         elif result['code'] == 3:
             generalStatus.append(3)
+        elif result['code'] == 6:
+            generalStatus.append(6)
 
         # get data in logfile.
         f = open(result['bdsimLogFile'])
@@ -303,7 +308,7 @@ class ResultsUtilities:
             if multiEntryTypes.__contains__(type(issuedBy)):
                 for issue in issuedBy:
                     issueCR = issue + "\r\n"
-                    if splitLines.__contains__(issue):
+                    if splitLines.__contains__(issueCR):
                         generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
             else:
                 issueCR = issuedBy + "\r\n"
@@ -723,6 +728,7 @@ class _Plotting:
     def PlotResults(self, allResults, componentType=''):
         """ Function for plotting the testing results for a specific component.
             """
+
         GlobalData._CheckComponent(componentType)
 
         # get all results of this component type.
@@ -790,8 +796,14 @@ class _Plotting:
         dataAx2 = self._updateAxes(ax4, ax3, results2, res2Offset)
 
         self._addColorBar(f, dataAx1)
-        f.savefig(filename, dpi=600)
-        _plt.close()
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig(filename, dpi=600)
+        #_plt.close()
 
     def _doubleDataAxesByEnergy(self, numFigures, results):
         """ Function for plotting data sets that are split by energy on multiple figures."""
@@ -833,8 +845,14 @@ class _Plotting:
 
         dataAxes = self._updateAxes(ax2, ax1, results, 1.0)
         self._addColorBar(f, dataAxes)
-        f.savefig(filename, dpi=600)
-        _plt.close()
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig(filename, dpi=600)
+        #_plt.close()
 
     def _addColorBar(self, f, ax):
         """ Add a colorbar to the results plot."""
@@ -1069,8 +1087,15 @@ class _Plotting:
         ax2.set_title('Comparator Run Time')
         ax2.yaxis.set_visible(False)
 
-        f.savefig('../Results/' + component + '_timingData.png', dpi=600)
-        _plt.close()
+        filename = '../Results/' + component + '_timingData'
+
+        pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
+        for i in _plt.get_fignums():
+            pdf.savefig(i)
+        pdf.close()
+
+        #f.savefig('../Results/' + component + '_timingData.png', dpi=600)
+        #_plt.close()
 
 
 class _Report:
@@ -1166,32 +1191,42 @@ class _Report:
             for index, coord in enumerate(compResults):
                 if coord == 1:
                     numFailures[index] += 1
-        s = "Number of comparator failures: \r\n"
-        s += "  x:  " + _np.str(numFailures[0]) + ",\r\n"
-        s += "  xp: " + _np.str(numFailures[1]) + ",\r\n"
-        s += "  y:  " + _np.str(numFailures[2]) + ",\r\n"
-        s += "  yp: " + _np.str(numFailures[3]) + ",\r\n"
-        s += "  t:  " + _np.str(numFailures[4]) + ",\r\n"
-        s += "  zp: " + _np.str(numFailures[5]) + ",\r\n"
-        s += "  n:  " + _np.str(numFailures[6]) + ".\r\n"
-        s += "\r\n"
-        s += "Comparator failures had the following common parameters:\r\n"
 
-        # get list of all failures per dimension and the parameter values common
-        # to those failed tests.
-        for i in range(7):
-            s += "  " + coordLabels[i] + ":\r\n"
-            failedTests = Results(component)
-            for res in results:
-                compResults = res['comparatorResults']
-                if compResults[i] == 1:
-                    failedTests.append(res)
-            utils = ResultsUtilities()
-            commonFactors = utils._getCommonFactors(failedTests)
+        s = ''
+        # only print comparator phase space failures if there are any
+        compPasses = True
+        for i in numFailures:
+            if i > 0:
+                compPasses = False
+                break
 
-            if commonFactors.keys().__len__() > 0:
-                for param, value in commonFactors.iteritems():
-                    s += "    " + param + " : " + _np.str(value) + ".\r\n"
+        if not compPasses:
+            s = "Number of comparator failures: \r\n"
+            s += "  x:  " + _np.str(numFailures[0]) + ",\r\n"
+            s += "  xp: " + _np.str(numFailures[1]) + ",\r\n"
+            s += "  y:  " + _np.str(numFailures[2]) + ",\r\n"
+            s += "  yp: " + _np.str(numFailures[3]) + ",\r\n"
+            s += "  t:  " + _np.str(numFailures[4]) + ",\r\n"
+            s += "  zp: " + _np.str(numFailures[5]) + ",\r\n"
+            s += "  n:  " + _np.str(numFailures[6]) + ".\r\n"
+            s += "\r\n"
+            s += "Comparator failures had the following common parameters:\r\n"
+
+            # get list of all failures per dimension and the parameter values common
+            # to those failed tests.
+            for i in range(7):
+                s += "  " + coordLabels[i] + ":\r\n"
+                failedTests = Results(component)
+                for res in results:
+                    compResults = res['comparatorResults']
+                    if compResults[i] == 1:
+                        failedTests.append(res)
+                utils = ResultsUtilities()
+                commonFactors = utils._getCommonFactors(failedTests)
+
+                if commonFactors.keys().__len__() > 0:
+                    for param, value in commonFactors.iteritems():
+                        s += "    " + param + " : " + _np.str(value) + ".\r\n"
         return s
 
     def _componentSectionTitle(self, component):
@@ -1232,26 +1267,30 @@ class _Report:
         s += "  Hard Failure: " + _np.str(overallRes['FILE_NOT_FOUND']) + "/" + _np.str(totalTests) + ".\r\n"
         s += "\r\n"
 
-        # breakdown of hard failures.
-        s += "Breakdown of Hard Failures: \r\n"
         numHardFailures = overallRes['FILE_NOT_FOUND']
 
-        # update string with number of fatal exceptions
-        if overallRes['FATAL_EXCEPTION'] > 0:
-            s += "  Fatal Exceptions: " + _np.str(overallRes['FATAL_EXCEPTION']) + "/" + \
-                 _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
-            numHardFailures -= overallRes['FATAL_EXCEPTION']
-            fatalString = self._processFatals(component)
-            s += fatalString
+        if numHardFailures > 0:
+            # breakdown of hard failures.
+            s += "Breakdown of Hard Failures: \r\n"
 
-        # update string with number of timeouts
-        if overallRes['TIMEOUT'] > 0:
-            s += "  Timeouts: " + _np.str(overallRes['TIMEOUT']) + "/" + \
-                 _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
-            numHardFailures -= overallRes['TIMEOUT']
-        s += "  Unknown Reason: " + _np.str(numHardFailures) + "/" + _np.str(overallRes['FILE_NOT_FOUND']) + "\r\n"
-        s += "    (likely to be BDSIM self exit).\r\n"
-        s += "\r\n"
+            # update string with number of fatal exceptions
+            if overallRes['FATAL_EXCEPTION'] > 0:
+                s += "  Fatal Exceptions: " + _np.str(overallRes['FATAL_EXCEPTION']) + "/" + \
+                     _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
+                numHardFailures -= overallRes['FATAL_EXCEPTION']
+                fatalString = self._processFatals(component)
+                s += fatalString
+
+            # update string with number of timeouts
+            if overallRes['TIMEOUT'] > 0:
+                s += "  Timeouts: " + _np.str(overallRes['TIMEOUT']) + "/" + \
+                     _np.str(overallRes['FILE_NOT_FOUND']) + ",\r\n"
+                numHardFailures -= overallRes['TIMEOUT']
+
+
+            s += "  Unknown Reason: " + _np.str(numHardFailures) + "/" + _np.str(overallRes['FILE_NOT_FOUND']) + "\r\n"
+            s += "    (likely to be BDSIM self exit).\r\n"
+            s += "\r\n"
 
         # breakdown soft failures
         softStr = "Breakdown of Soft Failures: \r\n"

@@ -1,17 +1,18 @@
 {
   cout << "Loading BDSIM Libraries"   << endl;
 
+  gSystem->AddIncludePath("-I@CMAKE_BINARY_DIR@/analysis");
+
+  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@/analysis");
+  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@/include");
+  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@");
+
   cout << "Loading libbdsimRootEvent" << endl;
   gSystem->Load("@CMAKE_BINARY_DIR@/libbdsimRootEvent");
 
   cout << "Loading librebdsimLib"     << endl;
   gSystem->Load("@CMAKE_BINARY_DIR@/analysis/librebdsimLib");
 
-  gSystem->AddIncludePath("-I@CMAKE_BINARY_DIR@/analysis");
-
-  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@/include");
-  gInterpreter->AddIncludePath("-I@CMAKE_SOURCE_DIR@");
-  
   cout << "BDSIM libraries loading complete" << endl;
   return 0;
 }

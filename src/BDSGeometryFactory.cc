@@ -74,7 +74,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
 
   // Check the file exists.
   if (!BDS::FileExists(fileName))
-    {G4cerr << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+    {G4cerr << __METHOD_NAME__ << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
   
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
   BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);

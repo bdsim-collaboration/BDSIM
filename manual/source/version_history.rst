@@ -1,3 +1,32 @@
+V0.991 - 2017 / 07 / 04
+=======================
+
+Bug Fixes
+---------
+
+* Fix simple histogram weighting with boolean expressions in rebdsim.
+* Fix comparator always failing.
+* Fix loading default event information in analysis.
+* Fix executing BDSIM from outside the directory containing the main gmad file.
+* Fix charge dependence of thin multipole and dipole fringe integrators.
+* Scale dipole fringe and thin multipole by momentum and of particle.
+* Fix for loading geometry files prefixed with superfluous './'.
+* Fix for duplicate run beam on icon in visualiser for Geant4.10.3 onwards.
+
+
+General
+-------
+
+* Separate Doxygen cmake into own macro.
+
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.1
+* pymad8 v0.7
+
+
 V0.99 - 2017 / 06 / 09
 ======================
 

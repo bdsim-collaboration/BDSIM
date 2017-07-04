@@ -5,7 +5,7 @@ project(bdsim)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 9 )
-set( BDSIM_PATCH_LEVEL develop )
+set( BDSIM_PATCH_LEVEL develop)
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -77,24 +77,7 @@ include(cmake/Geant4.cmake)
 include(cmake/CompilerFlags.cmake)
 
 # add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  include(ProcessorCount)
-  ProcessorCount(N)
-  set(CMAKE_DOT_NUM_THREADS ${N})
-  if ($N GREATER 8)
-    set(CMAKE_DOT_NUM_THREADS 8)
-  endif()
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.cnf.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.cnf
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM
-  )
-  # add 'make doxygen' to ctest
-  add_test(Doxygen make doc)
-  set_tests_properties(Doxygen PROPERTIES LABELS LONG)
-endif(DOXYGEN_FOUND)
+include (cmake/Doxygen.cmake)
 
 # enable Testing with ctest
 enable_testing()
@@ -204,7 +187,7 @@ endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
-file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
+file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
 include(CPack)

@@ -57,13 +57,15 @@ on: http://www.pp.rhul.ac.uk/bdsim/download
 Requirements
 ============
 
-0) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
+1) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher.)
-3) Flex 2.5.37 or higher
-4) Bison 2.3 or higher
-5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
-6) `ROOT`_ framework for output analysis (version 6 recommended)
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
+4) `ROOT`_ framework for output analysis (version 6 recommended)
+5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
+6) Flex 2.5.37 or higher
+7) Bison 2.3 or higher
+
+.. note:: These are listed in the correct order of installation / requirement.
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -79,8 +81,6 @@ to add this to your ``.bashrc`` or profile so that it's loaded automatically
 every time::
 
   source path/to/geant4/installation/bin/geant4.sh
-
-Note, if Geant4 is not installed, please see `Geant4 Installation Guide`_.
 
 
 Setting Up
@@ -312,6 +312,31 @@ to make the Doxygen documentation in a folder called ``Doxygen``.
 
 .. note:: This requires the Doxygen documentation system to be installed.
 
+CLHEP Installation Guide
+------------------------
+
+If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
+
+Move and unpack to a suitable place::
+
+   > tar -xzf clhep-2.3.1.1.tgz
+   > cd 2.3.1.1
+
+Make build directory::
+
+   > mkdir build
+   > cd build
+   > cmake ../CLHEP
+
+Adapt parameters if needed with::
+
+   > ccmake .
+
+Make and install::
+   
+   > make
+   > sudo make install
+
 Geant4 Installation Guide
 -------------------------
 
@@ -342,13 +367,13 @@ modifying the CMake configuration as generally described in
 It is useful to change a few options with Geant4 for practical purposes.
 
 .. figure:: figures/geant4options.png
-	    :width: 80%
+	    :width: 90%
 	    :align: center
 
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
-| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder you make.               |
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder to install to.          |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
 +---------------------------------+-------------------------------------------------------------+
@@ -368,6 +393,12 @@ It is useful to change a few options with Geant4 for practical purposes.
 | **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
 |                                 | Needs Qt to be installed                                    |
 +---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
+|                                 | library and therefore, there's only one random number       |
+|                                 | generator and simulations have strong reproducibility.      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the geant4 internal version.         |
++---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
 |                                 | not interactive. Useful for promotional materials.          |
 +---------------------------------+-------------------------------------------------------------+
@@ -375,7 +406,11 @@ It is useful to change a few options with Geant4 for practical purposes.
 |                                 | available. Needs motif to be installed.                     |
 +---------------------------------+-------------------------------------------------------------+
 
-Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
+.. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
+
+.. note:: The CLHEP option is required.  The GDML and QT options are strongly recommended. Others
+	  are as the user prefers.
+	     
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. If ``g`` is not an
 available option, then continue to press ``c`` until it becomes available. This
@@ -407,31 +442,6 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
-
-CLHEP Installation Guide
-------------------------
-
-If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
-
-Move and unpack to a suitable place::
-
-   > tar -xzf clhep-2.3.1.1.tgz
-   > cd 2.3.1.1
-
-Make build directory::
-
-   > mkdir build
-   > cd build
-   > cmake ../CLHEP
-
-Adapt parameters if needed with::
-
-   > ccmake .
-
-Make and install::
-   
-   > make
-   > sudo make install
 
 .. _Troubleshooting:
 

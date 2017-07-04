@@ -20,7 +20,7 @@ class BDSIntegratorMultipoleThin: public BDSIntegratorMag
 {
 public:
   BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
-			     G4double                 brho,
+			     G4double                 brhoIn,
 			     G4Mag_EqRhs*             eqOfMIn);
   
   virtual ~BDSIntegratorMultipoleThin(){;}
@@ -40,6 +40,9 @@ private:
 
   /// Calculate the factorial of n.
   G4int Factorial(G4int n);
+
+  /// Magnetic rigidity for momentum scaling
+  G4double brho;
 
   /// Dipole component
   G4double b0l;

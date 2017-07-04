@@ -143,8 +143,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 						   brho,
 						   intType,
 						   semiStrength);
-
-  // minus signs for semi angle to convert from MADX convention to 3d cartesian
+  
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, 0.5*semiAngle, 0.5*semiAngle, yokeOnLeft);
   mgInfo->name = centralName;
@@ -172,8 +171,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
       (*fringeStIn)["polefaceangle"] = e1;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint);
-      (*fringeStIn)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint, element->hgap*CLHEP::m);
       G4String segmentName           = baseName + "_e1_fringe";
       G4double fringeAngleIn         = 0.5*oneFringeAngle - e1;
       G4double fringeAngleOut        = 0.5*oneFringeAngle + e1;
@@ -268,8 +266,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st);
       (*fringeStOut)["angle"]         = oneFringeAngle;
       (*fringeStOut)["polefaceangle"] = e2;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx);
-      (*fringeStOut)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx, element->hgap*CLHEP::m);
       (*fringeStOut)["length"]        = thinElementArcLength;
       G4double fringeAngleIn          = 0.5*oneFringeAngle + e2;
       G4double fringeAngleOut         = 0.5*oneFringeAngle - e2;
@@ -459,9 +456,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStIn)["polefaceangle"] = e1;
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint);
-      (*fringeStIn)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
-      G4String fringeName = name + "_e1_fringe";
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint, element->hgap*CLHEP::m);
+      G4String fringeName            = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angleIn, fringeInOutputAngle,
@@ -507,9 +503,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStOut)["polefaceangle"] = e2;
       (*fringeStOut)["length"]        = thinElementArcLength;
       (*fringeStOut)["angle"]         = oneFringeAngle;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx);
-      (*fringeStOut)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
-      G4String fringeName = name + "_e2_fringe";
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx, element->hgap*CLHEP::m);
+      G4String fringeName             = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
 						    fringeName,
@@ -579,10 +574,10 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
 
 G4double BDS::CalculateFringeFieldCorrection(G4double rho,
 					     G4double polefaceAngle,
-					     G4double fint)
+					     G4double fint,
+					     G4double hgap)
 {
-  G4double term1 = fint/rho;
-  G4double term2 = (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
-  G4double corrValue = term1*term2;
+  G4double gOverRho = 2 * hgap / rho;
+  G4double corrValue = fint * gOverRho * (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
   return corrValue;
 }
