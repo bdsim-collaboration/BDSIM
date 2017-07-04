@@ -1,7 +1,7 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryPillBox.hh"
+#include "BDSCavityInfo.hh"
 #include "BDSColours.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
@@ -24,72 +24,92 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
 						 const BDSCavityInfo* info,
 						 G4Material*          vacuumMaterial)
 {
-  /*
-  //Creates a solid 
-  G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid",            // name
-				    irisRadius,                       // inner radius
-				    cavityRadius + thickness,         // outer radius
-				    0.5 * chordLength - lengthSafety, // half length
-				    0.0,                              // start angle
-				    2*CLHEP::pi);                     // sweep angle
-  RegisterSolid(outerSolid);
-   
-  //Creates a cylinder  to subtract from larger cylinder. 
-  innerSolid = new G4Tubs(name + "_inner_solid",        // name
-			  0.0,                          // inner radius 
-			  cavityRadius,                 // outer radius
-			  0.5*chordLength - thickness,  // galf length
-			  0.0,                          // star angle
-			  2*CLHEP::pi);                 // sweep angle
-
-  //Do the subtraction
-  cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",    //name
-				       outerSolid,                //solid1
-				       innerSolid);               //minus solid2
-
-  //Logical volume from cavity solid
-  cavityLV = new G4LogicalVolume(cavitySolid,          // solid
-				 cavityInfo->material, // material
-				 name + "_cavity_lv"); // name
+  CleanUp();
   
-  //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
-  //thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
+  G4double chordLength  = totalChordLength;
+  G4double cavityRadius = info->equatorRadius;
+  G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid",          // name
+				    info->irisRadius,               // inner radius
+				    cavityRadius + info->thickness, // outer radius
+				    0.5*chordLength - lengthSafety, // half length
+				    0.0,                            // start angle
+				    CLHEP::twopi);                  // sweep angle
+  allSolids.push_back(outerSolid);
+   
+  // creates a cylinder  to subtract from larger cylinder. 
+  G4VSolid* innerSolid = new G4Tubs(name + "_inner_solid",            // name
+				    0.0,                              // inner radius 
+				    cavityRadius,                     // outer radius
+				    0.5*chordLength - info->thickness,// galf length
+				    0.0,                              // star angle
+				    CLHEP::twopi);                    // sweep angle
+  allSolids.push_back(innerSolid);
+  
+  // subtraction
+  G4VSolid* cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",    //name
+						 outerSolid,                //solid1
+						 innerSolid);               //minus solid2
+  allSolids.push_back(cavitySolid);
+  
+  // logical volume from cavity solid
+  G4LogicalVolume* cavityLV = new G4LogicalVolume(cavitySolid,          // solid
+						  info->material,       // material
+						  name + "_cavity_lv"); // name
+  allLogicalVolumes.push_back(cavityLV);
+  
+  // vacuum: union of two solid - one cylinder (VacuumInnerCavity) to fill the centre,
+  // and a longer, thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
 
-  G4double vacuumInnerRadius = cavityRadius - thickness - lengthSafety;
-  G4double vacuumHalfLength  = 0.5*chordLength - thickness - lengthSafety;
+  G4double vacuumInnerRadius = cavityRadius - info->thickness - lengthSafety;
+  G4double vacuumHalfLength  = 0.5*chordLength - info->thickness - lengthSafety;
   G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",// name
 					   0.0,                                // inner radius
 					   vacuumInnerRadius,                  // outer radius
 					   vacuumHalfLength,                   // half length
 					   0.0,                                // start angle
-					   2*CLHEP::pi);                       // sweep angle
+					   CLHEP::twopi);                      // sweep angle
 
   G4VSolid* vacuumAperture = new G4Tubs(name + "_vacuum_aperture_solid",   // name
 					0.0,                               // inner radius
-					irisRadius - lengthSafety,         // outer radius
-					0.5 * chordLength - lengthSafety,  // half length
+					info->irisRadius - lengthSafety,   // outer radius
+					0.5*chordLength - lengthSafety,    // half length
 					0.0,                               // start angle
-					2*CLHEP::pi);                      // sweep angle
+					CLHEP::twopi);                     // sweep angle
   
-  // Create the vacuum as a union of the two solides defined prior
-  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  // name
-				 vacuumInnerCavity,       // solid one
-				 vacuumAperture);         // added to solid two.
+  // create the vacuum as a union of the two solides defined prior
+  G4VSolid* vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  // name
+					   vacuumInnerCavity,       // solid one
+					   vacuumAperture);         // added to solid two.
+  allSolids.push_back(vacuumInnerCavity);
+  allSolids.push_back(vacuumAperture);
+  allSolids.push_back(vacuumSolid);
 
-  // Logical volume from the solid.
-  vacuumLV = new G4LogicalVolume(vacuumSolid,                // solid
-				 cavityInfo->vacuumMaterial, // material
-				 name + "_vacuum_lv");       // name
+  // logical volume from the solid.
+  G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
+						  vacuumMaterial,        // material
+						  name + "_vacuum_lv");  // name
+  allLogicalVolumes.push_back(vacuumLV);
 
   // visualisation attributes
-  auto col = BDSColours::Instance()->GetColour("srfcavity");
+  auto col = BDSColours::Instance()->GetColour("rfcavity");
   G4VisAttributes* cavityVis = new G4VisAttributes(*col);
   cavityVis->SetVisibility(true);
-  cavityVis->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle());
+  cavityVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   cavityLV->SetVisAttributes(cavityVis);
-  RegisterVisAttributes(cavityVis);
-  
-  //vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-  */
-  return nullptr;
+  allVisAttributes.push_back(cavityVis);
+
+  SetUserLimits(chordLength, allLogicalVolumes);
+
+  G4double outerRadius = cavityRadius + info->thickness + lengthSafety;
+  BuildContainerLogicalVolume(name, chordLength, outerRadius);
+  PlaceComponents(name);
+
+  BDSExtent ext = BDSExtent(outerRadius, outerRadius,  chordLength*0.5);
+
+  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
+
+  return result;
 }
+
+
+
