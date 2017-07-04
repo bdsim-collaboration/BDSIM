@@ -56,6 +56,8 @@ set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VER
 target_link_libraries(gmadexec gmad)
 
 bdsim_install_targets(gmadexec gmad gmadShared)
+file(GLOB parser_headers ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+bdsim_install_parser_headers(${parser_headers})
 
 # set binary name for testing usage
 get_target_property(binaryname gmadexec OUTPUT_NAME)
