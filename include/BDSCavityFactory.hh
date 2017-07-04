@@ -3,6 +3,7 @@
 
 #include "BDSCavityType.hh"
 
+#include "globals.hh"
 #include "G4String.hh"
 
 class BDSCavity;
@@ -11,6 +12,8 @@ class BDSCavityFactoryElliptical;
 class BDSCavityFactoryRectangular;
 class BDSCavityFactoryPillBox;
 class BDSCavityInfo;
+
+class G4Material;
 
 /**
  * @brief Interface to create any RF cavity geometry.
@@ -30,7 +33,9 @@ public:
 
   /// Main function to create a piece of cavity geometry.
   BDSCavity* CreateCavity(G4String             name,
-			  const BDSCavityInfo* info);
+			  G4double             totalChordLength,
+			  const BDSCavityInfo* info,
+			  G4Material*          vacuumMaterial);
 
 private:
   BDSCavityFactory(); ///< Private constructor as singleton pattern.

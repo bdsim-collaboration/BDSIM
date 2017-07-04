@@ -47,7 +47,10 @@ void BDSCavityElement::Build()
 
 void BDSCavityElement::BuildContainerLogicalVolume()
 {
-  BDSCavity* cavity = BDSCavityFactory::Instance()->CreateCavity(name, cavityInfo);
+  BDSCavity* cavity = BDSCavityFactory::Instance()->CreateCavity(name,
+								 chordLength,
+								 cavityInfo,
+								 vacuumMaterial);
   RegisterDaughter(cavity);
 
   // make the beam pipe container, this object's container

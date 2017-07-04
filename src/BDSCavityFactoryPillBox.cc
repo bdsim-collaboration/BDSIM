@@ -20,7 +20,9 @@ BDSCavityFactoryPillBox::~BDSCavityFactoryPillBox()
 {;}
 
 BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
-						 const BDSCavityInfo* info)
+						 G4double             totalChordLength,
+						 const BDSCavityInfo* info,
+						 G4Material*          vacuumMaterial)
 {
   /*
   //Creates a solid 
