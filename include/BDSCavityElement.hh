@@ -21,7 +21,7 @@ class BDSCavityElement: public BDSAcceleratorComponent
 {
 public:
   BDSCavityElement(G4String             name,
-		   G4double             length,
+		   G4double             chordLength,
 		   G4Material*          vacuumMaterialIn,
 		   const BDSFieldInfo*  vacuumField,
 		   const BDSCavityInfo* cavityInfoIn);

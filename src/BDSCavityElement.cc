@@ -11,11 +11,11 @@
 
 
 BDSCavityElement::BDSCavityElement(G4String             name,
-				   G4double             length,
+				   G4double             chordLength,
 				   G4Material*          vacuumMaterialIn,
 				   const BDSFieldInfo*  vacuumFieldIn,
 				   const BDSCavityInfo* cavityInfoIn):
-  BDSAcceleratorComponent(name, length, 0,
+  BDSAcceleratorComponent(name, chordLength, 0,
 			  "cavity_"+cavityInfoIn->cavityType.ToString()),
   vacuumField(vacuumFieldIn),
   cavityInfo(cavityInfoIn),
