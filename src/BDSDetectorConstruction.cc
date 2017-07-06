@@ -179,7 +179,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-
+      G4double currentArcLength = beamline->GetTotalArcLength();
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
 	{

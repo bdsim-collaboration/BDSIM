@@ -89,7 +89,8 @@ BDSComponentFactory::~BDSComponentFactory()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
 							      Element const* prevElementIn,
-							      Element const* nextElementIn)
+							      Element const* nextElementIn,
+							      G4double currentArcLength)
 {
   element = elementIn;
   prevElement = prevElementIn;

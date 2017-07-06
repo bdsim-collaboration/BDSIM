@@ -50,11 +50,15 @@ public:
   BDSComponentFactory();
   ~BDSComponentFactory();
 
-  /// Create component from parser Element
-  /// Pointers to next and previous Element for lookup
+  /// Create component from parser Element pointers to next and previous Element
+  /// are used to ensure the component will fit and may optionally be made to be
+  /// so in the case of a drift.  The optional last argument is the current s
+  /// position at the end of the beam line for components that are distance
+  /// or phase dependent such as an RF cavity.
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element const* prevElementIn,
-					   GMAD::Element const* nextElementIn);
+					   GMAD::Element const* nextElementIn,
+					   G4double currentArcLength = 0);
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
