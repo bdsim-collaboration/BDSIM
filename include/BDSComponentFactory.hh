@@ -180,12 +180,16 @@ private:
 
   /// Utility function to prepare model info. Retrieve from cache of ones translated
   /// parser objects or create a default based on the element's aperture if none specified.
-  /// Will always return a unique object that's not owned by this class.
-  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
+  /// Will always return a unique object that's not owned by this class. We need the
+  /// frequency in case there are no good defaults and we'll make the cavity size
+  /// according to the wavelength of the rf field.
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element,
+					G4double             frequency) const;
 
   /// Create a default cavity model based on an element's aperture and material.
   /// Will always return a unique object that's not owned by this class.
-  BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* element) const;
+  BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* element,
+						  G4double             frequency) const;
   
   /// Utility function to prepare field strength object for rf cavity.
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element,

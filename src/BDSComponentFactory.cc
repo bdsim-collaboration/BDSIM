@@ -1177,7 +1177,8 @@ void BDSComponentFactory::PrepareCavityModels()
     }
 }
 
-BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* element) const
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* element,
+							   G4double frequency) const
 {
   // If the cavity model name (identifier) has been defined, return a *copy* of
   // that model - so that the component will own that info object.
@@ -1186,7 +1187,7 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
 
   // no specific model - prepare a default based on element parameters
   if (modelName == "")
-    {return PrepareCavityModelInfoForElement(element);}
+    {return PrepareCavityModelInfoForElement(element, frequency);}
 
   // cavity model name specified - match up with parser object already translated here
   auto result = cavityInfos.find(modelName);
@@ -1216,7 +1217,8 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
   return info;
 }
 
-BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element const* element) const
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element const* element,
+								     G4double frequency) const
 {
   /// prepare aperture information for this element to base default cavity on.
   BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(element);
