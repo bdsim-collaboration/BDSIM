@@ -27,6 +27,12 @@ public:
 				  G4double             totalChordLength,
 				  const BDSCavityInfo* info,
 				  G4Material*          vacuumMaterial);
+
+protected:
+  /// Override base class method to build a box instead of a tubs.
+  virtual void BuildContainerLogicalVolume(G4String name,
+					   G4double chordLength,
+					   G4double outerRadius);
 };
 
 #endif

@@ -9,6 +9,15 @@ rffield: field, type="rfcavity";
 
 rf4: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, fieldVacuum="rffield";
 
-lat: line = (d1, rf1, d1, rf2, d1, rf3, d1, rf4, d1);
+Boxy: cavitymodel,
+      type="rectangular",
+      irisRadius = 20*mm,
+      equatorRadius = 10*cm,
+      thickness = 3*mm,
+      material = "Copper";
+
+rf5: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, cavityModel="Boxy";
+
+lat: line = (d1, rf1, d1, rf2, d1, rf3, d1, rf4, d1, rf5, d1);
 
 include optionsTest.gmad;
