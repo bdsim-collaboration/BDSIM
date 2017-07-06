@@ -4,6 +4,8 @@
 #include "BDSCavityType.hh"
 #include "globals.hh"         // geant4 types / globals
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 class G4Material;
 
 /**
@@ -33,14 +35,13 @@ public:
 		G4double      thicknessIn,
 		G4double      equatorRadiusIn,
 		G4double      halfCellLengthIn,
-		G4int         numberOfPointsIn,
-		G4int         numberOfCellsIn,
-		G4double      equatorEllipseSemiAxisIn,
-		G4double      irisHorizontalAxisIn,
-		G4double      irisVerticalAxisIn,
-		G4double      tangentLineAngleIn);
+		G4int         numberOfPointsIn         = 24,
+		G4int         numberOfCellsIn          = 1,
+		G4double      equatorEllipseSemiAxisIn = 42*CLHEP::mm,
+		G4double      irisHorizontalAxisIn     = 12*CLHEP::mm,
+		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
+		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
 
-  /// Cavity type
   BDSCavityType cavityType;
 
   /// Material
