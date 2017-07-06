@@ -369,6 +369,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
 					       st);
   
   BDSCavityInfo* cavityInfo  = PrepareCavityModelInfo(element, (*st)["frequency"]);
+
+  // update 0 point of field with geometry
+  (*st)["cavityRadius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -1301,7 +1304,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* ele
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division - TBC
+  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 
