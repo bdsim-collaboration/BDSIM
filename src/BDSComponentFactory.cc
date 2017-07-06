@@ -1151,7 +1151,7 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 }
 
 void BDSComponentFactory::PrepareCavityModels()
-{
+{  
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
       // material can either be specified in 
@@ -1180,7 +1180,15 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
 {
   // If the cavity model name (identifier) has been defined, return a *copy* of
   // that model - so that the component will own that info object.
-  auto result = cavityInfos.find(element->cavityModel);
+
+  G4String modelName = G4String(element->cavityModel);
+
+  // no specific model - prepare a default based on element parameters
+  if (modelName == "")
+    {return PrepareCavityModelInfoForElement(element);}
+
+  // cavity model name specified - match up with parser object already translated here
+  auto result = cavityInfos.find(modelName);
   if (result == cavityInfos.end())
     {
       G4cout << "Unknown cavity model identifier \"" << element->cavityModel << "\" - please define it" << G4endl;
@@ -1205,6 +1213,42 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     }
 
   return info;
+}
+
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element const* element) const
+{
+  /// prepare aperture information for this element to base default cavity on.
+  BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(element);
+
+  G4double outerD    = PrepareOuterDiameter(element);
+  G4double thickness = aperture->beamPipeThickness;
+  G4double equatorRadius = outerD - thickness;
+  if (equatorRadius <= 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Combination of outerDiameter and beampipeThickness for"
+	     << " element \"" << element->name << "\" produce 0 size cavity" << G4endl;
+      exit(1);
+    }
+
+  G4double cellLength = 10*CLHEP::cm; // made up default
+  G4double length     = element->l * CLHEP::m;
+  G4double nCavities  = length / cellLength;
+  G4int nCells = G4int(std::floor(nCavities));
+  if (nCells == 0)
+    {
+      nCells = 1;
+      cellLength = length;
+    }
+  
+  BDSCavityInfo* defaultCI = new BDSCavityInfo(BDSCavityType::pillbox,
+					       BDSMaterials::Instance()->GetMaterial("Copper"),
+					       aperture->aper1,
+					       thickness,
+					       equatorRadius,
+					       cellLength*0.5);
+
+  delete aperture;
+  return defaultCI;
 }
 
 BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element) const

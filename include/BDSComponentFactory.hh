@@ -86,7 +86,7 @@ public:
 
   /// Prepare the element outer diameter in Geant4 units - if not set, use the global
   /// default.
-  static G4double PrepareOuterDiameter  (GMAD::Element const* element);
+  static G4double PrepareOuterDiameter(GMAD::Element const* element);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -120,12 +120,6 @@ private:
   G4double brho;
   /// length of a thin element
   G4double thinElementLength;
-  
-  /// Utility function to prepare model info
-  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
-
-  /// Utility function to prepare field strength object for rf cavity.
-  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element) const;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -179,6 +173,18 @@ private:
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  /// Utility function to prepare model info. Retrieve from cache of ones translated
+  /// parser objects or create a default based on the element's aperture if none specified.
+  /// Will always return a unique object that's not owned by this class.
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
+
+  /// Create a default cavity model based on an element's aperture and material.
+  /// Will always return a unique object that's not owned by this class.
+  BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* element) const;
+  
+  /// Utility function to prepare field strength object for rf cavity.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element) const;
 
   /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
