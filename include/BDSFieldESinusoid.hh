@@ -18,7 +18,8 @@ class BDSMagnetStrength;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
-  BDSFieldESinusoid(BDSMagnetStrength const* strength);
+  BDSFieldESinusoid(BDSMagnetStrength const* strength,
+		    G4double                 brho);
 
   BDSFieldESinusoid(G4double eFieldAmplitude,
 		    G4double frequencyIn,
@@ -32,13 +33,14 @@ public:
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
 				 const G4double       t) const;
 
-private:
-  /// Private default constructor to force use of supplied one.
-  BDSFieldESinusoid();
-
+protected:
   /// Amplitude of electric field in V/m.
   G4double eField;
-
+  
+private:
+  /// Private default constructor to force use of supplied one.
+  BDSFieldESinusoid() = delete;
+  
   /// Frequency of field in Hertz.
   G4double frequency;
 

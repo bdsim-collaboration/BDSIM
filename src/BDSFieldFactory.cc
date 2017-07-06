@@ -370,7 +370,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rf:
-      {field = new BDSFieldESinusoid(info.MagnetStrength()); break;}
+      {field = new BDSFieldESinusoid(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
