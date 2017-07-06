@@ -52,7 +52,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   allSolids.push_back(cavitySolid);
   
   // logical volume from cavity solid
-  G4LogicalVolume* cavityLV = new G4LogicalVolume(cavitySolid,          // solid
+  cavityLV = new G4LogicalVolume(cavitySolid,          // solid
 						  info->material,       // material
 						  name + "_cavity_lv"); // name
   allLogicalVolumes.push_back(cavityLV);
@@ -85,7 +85,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   allSolids.push_back(vacuumSolid);
 
   // logical volume from the solid.
-  G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
+  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
 						  vacuumMaterial,        // material
 						  name + "_vacuum_lv");  // name
   allLogicalVolumes.push_back(vacuumLV);
@@ -104,6 +104,3 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
 
   return result;
 }
-
-
-
