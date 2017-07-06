@@ -360,7 +360,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element);
 
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->material);
+  G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
+    
   return new BDSCavityElement(elementName,
 			      element->l*CLHEP::m,
 			      vacuumMaterial,
@@ -1066,6 +1067,16 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element)
       outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
   return outerDiameter;
+}
+
+G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* element) const
+{
+  G4Material* result;
+  if (element->vacuumMaterial == "")
+    {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
+  else
+    {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
+  return result;
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,

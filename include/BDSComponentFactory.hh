@@ -10,6 +10,8 @@
 
 #include <map>
 
+class G4Material;
+
 namespace GMAD
 {
   struct Element;
@@ -170,6 +172,9 @@ private:
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* element,
 				    const G4bool printWarning = true);
+
+  /// Prepare the vacuum material from the element or resort to default in options.
+  G4Material* PrepareVacuumMaterial(GMAD::Element const* element) const;
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
