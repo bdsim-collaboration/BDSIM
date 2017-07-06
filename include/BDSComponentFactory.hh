@@ -136,7 +136,7 @@ private:
   enum class KickerType {horizontal, vertical, general};
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
-  BDSAcceleratorComponent* CreateRF();
+  BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(KickerType type);
@@ -188,7 +188,8 @@ private:
   BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* element) const;
   
   /// Utility function to prepare field strength object for rf cavity.
-  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element) const;
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element,
+					   G4double currentArcLength) const;
 
   /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;

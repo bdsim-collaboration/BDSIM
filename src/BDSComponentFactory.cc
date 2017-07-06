@@ -192,7 +192,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_DRIFT:
     component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
-    component = CreateRF(); break;
+    component = CreateRF(currentArcLength); break;
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
@@ -348,7 +348,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 			beamPipeInfo));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
+BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -357,7 +357,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
 					       brho,
 					       intType,
-					       PrepareCavityStrength(element));
+					       PrepareCavityStrength(element, currentArcLength));
   
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element);
 
@@ -1252,25 +1252,42 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   return defaultCI;
 }
 
-BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element) const
+BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element,
+							      G4double currentArcLength) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["eField"]       = element->E * CLHEP::volt;
-  (*st)["eGradient"]    = element->gradient * CLHEP::MeV / CLHEP::m;
-  (*st)["frequency"]    = element->frequency * CLHEP::hertz;
-  if (BDS::IsFinite(element->phase))
-    {(*st)["phase"]        = element->phase * CLHEP::rad;}
+
+  G4double chordLength = element->l * CLHEP::m;
+  
+  if (BDS::IsFinite(element->gradient))
+    {(*st)["eField"] = (element->gradient * CLHEP::MeV) / chordLength;}
   else
-    {
-      G4double frequency      = element->frequency * CLHEP::hertz;
-      G4double period         = 1. / frequency;
-      G4double nPeriods       = element->tOffset*CLHEP::ns / period;
-      G4double integerPart    = 0;
-      G4double fractionalPart = std::modf(nPeriods, &integerPart);
-      G4double phase          = fractionalPart / CLHEP::twopi;
-      (*st)["phase"] = phase;
-    }
-  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division
+    {(*st)["eField"] = element->E * CLHEP::volt;}
+
+  (*st)["frequency"] = element->frequency * CLHEP::hertz;
+
+  // phase - construct it so that phase is w.r.t. the centre of the cavity
+  // and that it's 0 by default
+  G4double frequency = (*st)["frequency"];
+  G4double period    = 1. / frequency;
+  G4double tOffset   = 0;
+  if (BDS::IsFinite(element->tOffset)) // use the one specified
+    {tOffset = element->tOffset * CLHEP::ns;}
+  else // this gives 0 phase at the middle of cavity
+    {tOffset = (currentArcLength + chordLength) / CLHEP::c_light;}
+
+  G4double nPeriods       = tOffset / period;
+  // phase is the remainder from total phase / N*2pi, where n is unknown.
+  G4double integerPart    = 0;
+  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+  G4double phaseOffset    = fractionalPart / CLHEP::twopi;
+
+  G4double phase = element->phase * CLHEP::rad;
+  if (BDS::IsFinite(element->phase)) // phase specified - use that
+    {(*st)["phase"] = phaseOffset + phase;}
+  else
+    {(*st)["phase"] = phaseOffset;}
+  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division - TBC
   return st;
 }
 
