@@ -95,7 +95,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   G4double outerRadius = cavityRadius + info->thickness + lengthSafety;
   BuildContainerLogicalVolume(name, chordLength, outerRadius);
 
-    SetVisAttributes();
+  SetVisAttributes();
   PlaceComponents(name);
 
   BDSExtent ext = BDSExtent(outerRadius, outerRadius,  chordLength*0.5);
