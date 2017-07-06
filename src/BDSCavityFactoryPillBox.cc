@@ -1,14 +1,12 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryPillBox.hh"
 #include "BDSCavityInfo.hh"
-#include "BDSColours.hh"
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
-#include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -40,7 +38,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   G4VSolid* innerSolid = new G4Tubs(name + "_inner_solid",            // name
 				    0.0,                              // inner radius 
 				    cavityRadius,                     // outer radius
-				    0.5*chordLength - info->thickness,// galf length
+				    0.5*chordLength - info->thickness,// half length
 				    0.0,                              // star angle
 				    CLHEP::twopi);                    // sweep angle
   allSolids.push_back(innerSolid);
@@ -53,8 +51,8 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   
   // logical volume from cavity solid
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
-						  info->material,       // material
-						  name + "_cavity_lv"); // name
+				 info->material,       // material
+				 name + "_cavity_lv"); // name
   allLogicalVolumes.push_back(cavityLV);
   
   // vacuum: union of two solid - one cylinder (VacuumInnerCavity) to fill the centre,
@@ -86,8 +84,8 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
 
   // logical volume from the solid.
   vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
-						  vacuumMaterial,        // material
-						  name + "_vacuum_lv");  // name
+				 vacuumMaterial,        // material
+				 name + "_vacuum_lv");  // name
   allLogicalVolumes.push_back(vacuumLV);
 
   SetUserLimits(chordLength, allLogicalVolumes);
