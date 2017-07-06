@@ -1,6 +1,7 @@
 #include "BDSCavityInfo.hh"
 #include "BDSFieldEMRFCavity.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
 #include "globals.hh"
@@ -15,12 +16,15 @@ const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
 
 const G4double BDSFieldEMRFCavity::Z0 = CLHEP::mu0 * CLHEP::c_light;
 
-BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength):
+BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength,
+				       G4double                 brho):
   BDSFieldEMRFCavity((*strength)["eField"],
 		     (*strength)["frequency"],
 		     (*strength)["phase"],
 		     (*strength)["cavityRadius"])
-{;}
+{
+  eFieldMax *= BDS::Sign(brho);
+}
 
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
 				       G4double frequencyIn,

@@ -20,7 +20,8 @@ class BDSMagnetStrength;
 class BDSFieldEMRFCavity: public BDSFieldEM
 {
 public:
-  BDSFieldEMRFCavity(BDSMagnetStrength const* strength);
+  BDSFieldEMRFCavity(BDSMagnetStrength const* strength,
+		     G4double                 brho);
   
   BDSFieldEMRFCavity(G4double eFieldAmplitude,
 		     G4double frequency,

@@ -333,7 +333,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfcavity:
-      {field = new BDSFieldEMRFCavity(info.MagnetStrength()); break;}
+      {field = new BDSFieldEMRFCavity(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::ebmap1d:
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:
