@@ -353,14 +353,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rf); // sinusoidal e field only
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
+
+  BDSFieldType fieldType = BDSFieldType::rf; // simple sinusoidal E field only
+  if (!(element->fieldVacuum.empty()))
+    {
+      BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
+      fieldType = field->FieldType();
+    }
+
+  BDSMagnetStrength* st = PrepareCavityStrength(element, currentArcLength);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
-					       PrepareCavityStrength(element, currentArcLength));
+					       st);
   
-  BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element);
-
+  BDSCavityInfo* cavityInfo  = PrepareCavityModelInfo(element, (*st)["frequency"]);
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -1223,7 +1231,11 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   /// prepare aperture information for this element to base default cavity on.
   BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(element);
 
+  G4double aper1     = aperture->aper1;
   G4double outerD    = PrepareOuterDiameter(element);
+  G4double defaultOuterD = 20*CLHEP::cm;
+  if (aper1 < defaultOuterD) // only do if the aperture will fit
+    {outerD = std::min(defaultOuterD, outerD);} // better default
   G4double thickness = aperture->beamPipeThickness;
   G4double equatorRadius = outerD - thickness;
   if (equatorRadius <= 0)
@@ -1233,11 +1245,11 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
       exit(1);
     }
 
-  G4double cellLength = 10*CLHEP::cm; // made up default
+  G4double cellLength = 2*CLHEP::c_light / frequency; // half wavelength
   G4double length     = element->l * CLHEP::m;
   G4double nCavities  = length / cellLength;
   G4int nCells = G4int(std::floor(nCavities));
-  if (nCells == 0)
+  if (nCells == 0) // protect against long wavelengths or cavities
     {
       nCells = 1;
       cellLength = length;
