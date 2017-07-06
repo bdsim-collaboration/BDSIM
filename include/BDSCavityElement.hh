@@ -78,8 +78,6 @@ private:
 
   /// Cache of material to be used for vacuum - does not own it.
   G4Material* vacuumMaterial;
-
-  G4LogicalVolume* vacuumLV; ///< Cache of which volume is the vacuum one.
 };
 
 #endif

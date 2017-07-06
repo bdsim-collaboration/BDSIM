@@ -19,25 +19,11 @@ BDSCavityElement::BDSCavityElement(G4String             name,
 			  "cavity_"+cavityInfoIn->cavityType.ToString()),
   vacuumField(vacuumFieldIn),
   cavityInfo(cavityInfoIn),
-  vacuumMaterial(vacuumMaterialIn),
-  vacuumLV(nullptr)
-{
-  /*
-  cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
-  cavityRadius = cavityInfo->equatorRadius;
-  thickness    = cavityInfo->thickness;
-  irisRadius   = cavityInfo->irisRadius;
-
-  if (cavityRadius < (irisRadius + thickness))
-    {
-      G4cout << "Invalid geometry for \"" << name << "\" - increase equatorRadius" << G4endl;
-      exit(1);
-    }
-  */
-}
+  vacuumMaterial(vacuumMaterialIn)
+{;}
 
 BDSCavityElement::~BDSCavityElement()
-{}
+{;}
 
 void BDSCavityElement::Build()
 {
