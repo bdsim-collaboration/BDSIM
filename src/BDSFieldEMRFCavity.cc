@@ -36,8 +36,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
                                                                      const G4double       t) const
 {
-
-  //Converting from Local Cartesian to Local Cylindrical
+  // Converting from Local Cartesian to Local Cylindrical
   G4double phi = atan2(position.y(),position.x());
   G4double r   = std::hypot(position.x(),position.y());
 
@@ -47,7 +46,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   if (rNormalised > j0FirstZero)
     {rNormalised = j0FirstZero - 1e-6;}
 
-  //Source for calculating the TM010 mode: Gerigk, Frank. "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
+  // Source for calculating the TM010 mode: Gerigk, Frank. "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
 
   G4double J0r = TMath::BesselJ0(rNormalised);
   G4double J1r = TMath::BesselJ1(rNormalised);
@@ -56,24 +55,18 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double hMax = -eFieldMax/Z0;
   G4double Bmax = hMax * CLHEP::mu0;
 
-  //Calculating field components.  Frequency in rad/s or /s?
-  G4double Ez = eFieldMax * J0r * cos(frequency*t);
+  // Calculating field components.  Frequency in rad/s or /s?
+  G4double Ez   = eFieldMax * J0r * cos(frequency*t);
   G4double Bphi = Bmax * J1r * sin(frequency*t);
 
-  //Converting Bphi into cartesian coordinates:
-
+  // Converting Bphi into cartesian coordinates:
   G4double Bx = Bphi*sin(phi);
   G4double By = Bphi*cos(phi);
 
-  //Local B and E fields:
-  G4ThreeVector LocalB = G4ThreeVector(Bx,                          //x
-				       By,                          //y
-				       0);                          //z
-
-  G4ThreeVector LocalE = G4ThreeVector(0,                           //x
-				       0,                           //y
-				       Ez);                         //z
-
+  // Local B and E fields:
+  G4ThreeVector LocalB = G4ThreeVector(Bx, By, 0);
+  G4ThreeVector LocalE = G4ThreeVector(0,  0,  Ez);
+  
   auto result = std::make_pair(LocalB, LocalE);
   return result;
 }
