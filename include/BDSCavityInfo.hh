@@ -28,7 +28,8 @@ class G4Material;
 class BDSCavityInfo
 {
 public:
-  /// extra constructor to assign all members at once
+  /// Constructor to assign all members at once. Default values are based
+  /// on those for SRF cavity.
   BDSCavityInfo(BDSCavityType cavityTypeIn,
 		G4Material*   materialIn,
 		G4double      irisRadiusIn,
@@ -42,40 +43,41 @@ public:
 		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
 		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
 
+  /// Cavity type.
   BDSCavityType cavityType;
 
-  /// Material
+  /// Material.
   G4Material* material;
 
-  /// Iris radius
+  /// Iris radius - half width of narrowest part.
   G4double irisRadius;
 
-  /// Thickness
+  /// Thickness of wall material.
   G4double thickness;
 
-  /// Equator radius
+  /// Equator radius - half width of widest part.
   G4double equatorRadius;
 
-  /// Half cell length
+  /// Half cell length.
   G4double halfCellLength;
 
-  /// number of points that will be used to make the cell shape
-  /// more will be more accurate but will also increase tracking time
+  /// Number of points that will be used to make the cell shape
+  /// more will be more accurate but will also increase tracking time.
   G4int numberOfPoints;
 
-  /// number of cells per cavity
+  /// Number of cells per cavity.
   G4int numberOfCells;
 
-  /// Equator ellipse semi axis;
+  /// Equator ellipse semi axis.
   G4double equatorEllipseSemiAxis;
 
-  /// Iris horizontal axis
+  /// Iris horizontal axis.
   G4double irisHorizontalAxis;
 
-  /// Iris vertical axis
+  /// Iris vertical axis.
   G4double irisVerticalAxis;
 
-  /// Tangent angle
+  /// Tangent angle.
   G4double tangentLineAngle;
 
 private:
