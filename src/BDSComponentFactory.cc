@@ -353,7 +353,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rf); // sinusoidal e field only
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
 					       brho,
 					       intType,
