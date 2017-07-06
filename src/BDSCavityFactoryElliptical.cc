@@ -28,6 +28,8 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
 						    const BDSCavityInfo* info,
 						    G4Material*          vacuumMaterial)
 {
+  CleanUp();
+  
   G4double lengthSafetyLarge = BDSAcceleratorComponent::lengthSafetyLarge;
   G4double chordLength = totalChordLength;
   // Elliptical Cavity Parameters
