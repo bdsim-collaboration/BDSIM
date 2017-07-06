@@ -1,5 +1,6 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryBase.hh"
+#include "BDSColours.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -10,6 +11,7 @@
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
+#include "G4VisAttributes.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -53,6 +55,22 @@ void BDSCavityFactoryBase::SetUserLimits(G4double                       length,
 
   for (auto lv : lvs)
     {lv->SetUserLimits(ul);}
+}
+
+void BDSCavityFactoryBase::SetVisAttributes(G4String colourName)
+{
+  // visualisation attributes
+  auto col = BDSColours::Instance()->GetColour(colourName);
+  G4VisAttributes* cavityVis = new G4VisAttributes(*col);
+  cavityVis->SetVisibility(true);
+  cavityVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
+  cavityLV->SetVisAttributes(cavityVis);
+  allVisAttributes.push_back(cavityVis);
+  
+  // vacuum
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  // container
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
 void BDSCavityFactoryBase::BuildContainerLogicalVolume(G4String name,

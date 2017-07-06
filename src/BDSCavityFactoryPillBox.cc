@@ -90,18 +90,12 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
 						  name + "_vacuum_lv");  // name
   allLogicalVolumes.push_back(vacuumLV);
 
-  // visualisation attributes
-  auto col = BDSColours::Instance()->GetColour("rfcavity");
-  G4VisAttributes* cavityVis = new G4VisAttributes(*col);
-  cavityVis->SetVisibility(true);
-  cavityVis->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
-  cavityLV->SetVisAttributes(cavityVis);
-  allVisAttributes.push_back(cavityVis);
-
   SetUserLimits(chordLength, allLogicalVolumes);
 
   G4double outerRadius = cavityRadius + info->thickness + lengthSafety;
   BuildContainerLogicalVolume(name, chordLength, outerRadius);
+
+    SetVisAttributes();
   PlaceComponents(name);
 
   BDSExtent ext = BDSExtent(outerRadius, outerRadius,  chordLength*0.5);

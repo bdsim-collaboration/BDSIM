@@ -49,6 +49,9 @@ protected:
   virtual void SetUserLimits(G4double                       length,
 			     std::vector<G4LogicalVolume*>& lvs);
 
+  /// Set vis attributes for cavityLV, vacuumLV and containerLV.
+  virtual void SetVisAttributes(G4String colourName = "rfcavity");
+
   /// Place the vacuum and cavity centrally in the container logical volume.
   virtual void PlaceComponents(G4String name);
 
