@@ -12,7 +12,7 @@ BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength,
 				     G4double                 brho):
   BDSFieldESinusoid((*strength)["eField"],
 		    (*strength)["frequency"],
-		    (*strength)["phaseOffset"])
+		    (*strength)["phase"])
 {
   G4int sign = BDS::Sign(brho);
   eField *= sign;
