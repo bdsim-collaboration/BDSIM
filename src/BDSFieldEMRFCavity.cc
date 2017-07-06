@@ -13,6 +13,8 @@
 
 const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
 
+const G4double BDSFieldEMRFCavity::Z0 = CLHEP::mu0 * CLHEP::c_light;
+
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength):
   BDSFieldEMRFCavity((*strength)["eField"],
 		     (*strength)["frequency"],
@@ -50,9 +52,9 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double J0r = TMath::BesselJ0(rNormalised);
   G4double J1r = TMath::BesselJ1(rNormalised);
 
-  //Calculating free-space impedance and scale factor for Bphi:
-  G4double Z0 = std::sqrt(CLHEP::mu0/CLHEP::epsilon0);
-  G4double Bmax = -eFieldMax/Z0;
+  // Calculating free-space impedance and scale factor for Bphi:
+  G4double hMax = -eFieldMax/Z0;
+  G4double Bmax = hMax * CLHEP::mu0;
 
   //Calculating field components.  Frequency in rad/s or /s?
   G4double Ez = eFieldMax * J0r * cos(frequency*t);

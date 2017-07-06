@@ -35,8 +35,7 @@ public:
   
 private:
   /// Private constructor to force use of provided one.
-  BDSFieldEMRFCavity();
-  
+  BDSFieldEMRFCavity();  
   
   G4double eFieldMax;    ///< Maximum field in V/m.
   G4double frequency;    ///< Angular frequency.
@@ -46,6 +45,9 @@ private:
   /// X coordinate of first 0 point for bessel J0.
   static const G4double j0FirstZero;
 
+  /// Impedance of free space.
+  static const G4double Z0;
+  
   /// Precalculated normalised calulated radius w.r.t. bessel first 0.
   const G4double normalisedCavityRadius;
 };
