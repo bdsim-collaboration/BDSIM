@@ -192,7 +192,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_DRIFT:
     component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
-    component = CreateRF(currentArcLength); break;
+    {
+      component = CreateRF(currentArcLength);
+      differentFromDefinition = true; // unique phase for every placement in beam line
+      break;
+    }
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
