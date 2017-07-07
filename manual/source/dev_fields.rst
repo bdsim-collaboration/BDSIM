@@ -327,6 +327,15 @@ according to
 	    is purely due to the plotting vector field algorithm.
 
 
+Electro-Magnetic Fields From Equations
+======================================
+
+.. _field-pill-box:
+
+Pill-Box Cavity
+---------------
+	    
+
 .. _field-map-formats:
 
 Field Map File Formats

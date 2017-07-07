@@ -658,9 +658,25 @@ element is used to find the phase offset.
 If `phase` is specified, this is added to calculated phase offset from either the lattice
 position or `tOffset`.
 
-Examples::
+Simple examples::
 
-   RF4f: rf, l=3*m, gradient=10*MV/m;
+   rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
+   rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
+   rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
+
+Rather than just a simple E field, an electro-magnetic field that is the solution to
+a cylindrical pill-box cavity may be used. A cavity object (described in more detail
+below) is used to specify the field type. All other cavity parameters may be safely ignored
+and only the field type will be used. The field is described in :ref:`field-pill-box`.
+
+Pill-Box field example::
+
+  rffield: field, type="rfcavity";
+  rf4: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, fieldVacuum="rffield";
+   
+Elliptical SRF cavity geometry is also provided and may be specified by use of another
+'cavity' object in the parser.  This cavity object can then be attached to an `rf`
+object by name. 
 
 rcol
 ^^^^
