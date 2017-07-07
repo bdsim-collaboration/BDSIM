@@ -1308,7 +1308,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* ele
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["cavityRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 

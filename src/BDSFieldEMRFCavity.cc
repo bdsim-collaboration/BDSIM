@@ -21,7 +21,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength,
   BDSFieldEMRFCavity((*strength)["eField"],
 		     (*strength)["frequency"],
 		     (*strength)["phase"],
-		     (*strength)["cavityRadius"])
+		     (*strength)["equatorRadius"])
 {
   eFieldMax *= BDS::Sign(brho);
 }
