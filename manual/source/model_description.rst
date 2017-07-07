@@ -615,21 +615,48 @@ not make this distinction. See `kicker`_ for more details.
 rf
 ^^^^
 
+`rf` define an RF cavity with a time varying electric or electro-magnetic field.
+There are several geometry and field options as well as ways to specify the strength.
+The default field is a uniform (in space) electric-only field that is time varying
+according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
+cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
+the motion of particles in both cases.
+
 .. TODO: add picture
 
 `rf` or `rfcavity` defines an rf cavity
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`gradient`        field gradient [V/m]         0           yes
-`material`        outer material               Iron        no
-================  ===========================  ==========  ===========
++----------------+-------------------------------+--------------+---------------------+
+| **Parameter**  | **Description**               | **Default**  | **Required**        |
++================+===============================+==============+=====================+
+| `l`            | length [m]                    | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `E`            | electric field strength       | 0            | yes (or `gradient`) |
++----------------+-------------------------------+--------------+---------------------+
+| `gradient`     | field gradient [MV/m]         | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `frequency`    | frequency of oscillation (Hz) | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `phase`        | phase offset (rad)            | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `tOffset`      | offset in time (ns)           | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `material`     | outer material                | Copper       | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `cavityModel`  | name of cavity model object   | ""           | no                  |
++----------------+-------------------------------+--------------+---------------------+
 
-* The `aperture parameters`_ may also be specified.
+* The field is such that a postiive E field results in acceleration of the primary particle.
+* The phase is calculated automatically such that 0 phase results in the peak E field at
+  the centre of the component for it's position in the lattice.
+* Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 
-.. note:: Be careful with the sign of the gradient with respect to the sign of
-	  the primary particle
+If `tOffset` is specified, a phase offset is calculated from this time for the speed
+of light in vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
+element is used to find the phase offset.
+
+If `phase` is specified, this is added to calculated phase offset from either the lattice
+position or `tOffset`.
 
 Examples::
 
