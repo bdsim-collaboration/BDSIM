@@ -40,6 +40,13 @@ namespace GMAD
     double kick;   ///< fractional delta p for either h or v kicker
     double hkick;  ///< fractional delta px for hkicker
     double vkick;  ///< fractional delta py for vkicker
+    std::list<double> knl; ///< multipole expansion coefficients
+    std::list<double> ksl; ///< skew multipole expansion
+    double gradient;  ///< for rf cavities in V / m
+    double E;         ///< electric field amplitude for rf cavities in V
+    double frequency; ///< frequency for rf cavity in Hz
+    double phase;     ///< phase of rf cavity (rad)
+    double tOffset;   ///< time offset used for phase calculation (ns)
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
@@ -89,8 +96,9 @@ namespace GMAD
     double zdir;
     ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    double gradient; ///< for rf cavities in V / m
+    
     double phi, theta, psi; ///< for 3d transforms
+
     ///@{ for degrader
     int numberWedges;
     double wedgeLength;
@@ -98,8 +106,6 @@ namespace GMAD
     double materialThickness;
     double degraderOffset;
     ///@}
-    std::list<double> knl; ///< multipole expansion coefficients
-    std::list<double> ksl; ///< skew multipole expansion
 
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;

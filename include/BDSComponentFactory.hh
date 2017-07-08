@@ -10,6 +10,8 @@
 
 #include <map>
 
+class G4Material;
+
 namespace GMAD
 {
   struct Element;
@@ -48,11 +50,15 @@ public:
   BDSComponentFactory();
   ~BDSComponentFactory();
 
-  /// Create component from parser Element
-  /// Pointers to next and previous Element for lookup
+  /// Create component from parser Element pointers to next and previous Element
+  /// are used to ensure the component will fit and may optionally be made to be
+  /// so in the case of a drift.  The optional last argument is the current s
+  /// position at the end of the beam line for components that are distance
+  /// or phase dependent such as an RF cavity.
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element const* prevElementIn,
-					   GMAD::Element const* nextElementIn);
+					   GMAD::Element const* nextElementIn,
+					   G4double currentArcLength = 0);
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
@@ -84,7 +90,7 @@ public:
 
   /// Prepare the element outer diameter in Geant4 units - if not set, use the global
   /// default.
-  static G4double PrepareOuterDiameter  (GMAD::Element const* element);
+  static G4double PrepareOuterDiameter(GMAD::Element const* element);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -118,9 +124,6 @@ private:
   G4double brho;
   /// length of a thin element
   G4double thinElementLength;
-  
-  /// Utility function to prepare model info
-  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -133,7 +136,7 @@ private:
   enum class KickerType {horizontal, vertical, general};
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
-  BDSAcceleratorComponent* CreateRF();
+  BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(KickerType type);
@@ -167,10 +170,30 @@ private:
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* element,
 				    const G4bool printWarning = true);
+
+  /// Prepare the vacuum material from the element or resort to default in options.
+  G4Material* PrepareVacuumMaterial(GMAD::Element const* element) const;
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  /// Utility function to prepare model info. Retrieve from cache of ones translated
+  /// parser objects or create a default based on the element's aperture if none specified.
+  /// Will always return a unique object that's not owned by this class. We need the
+  /// frequency in case there are no good defaults and we'll make the cavity size
+  /// according to the wavelength of the rf field.
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element,
+					G4double             frequency) const;
+
+  /// Create a default cavity model based on an element's aperture and material.
+  /// Will always return a unique object that's not owned by this class.
+  BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* element,
+						  G4double             frequency) const;
+  
+  /// Utility function to prepare field strength object for rf cavity.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* element,
+					   G4double currentArcLength) const;
 
   /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
