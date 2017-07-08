@@ -1,3 +1,25 @@
+V0.992 - 2017 / 07 / ??
+=======================
+
+Bug Fixes
+---------
+
+* Fix uncaught exception in analysis DataLoader class construction depending on optional arguments.
+* BDSIM installation no longer dependent on build files - ROOT analysis dictionaries would use
+  build headers. Issues #197 and #199.
+* Fixed magnitude of B field in rfcavity.
+* Fixed rf field ignoring phase.
+
+General
+-------
+
+* Separated field and geometry in rf cavity element.
+* Revised implementation of rf cavity construction for greater flexibility.
+* RF cavity phase now automatically calculated based on location in lattice.
+* Removal of old ROOT analysis scripts for very old data format.
+
+
+
 V0.991 - 2017 / 07 / 04
 =======================
 
