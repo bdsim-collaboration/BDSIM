@@ -489,8 +489,6 @@ Examples::
 multipole
 ^^^^^^^^^
 
-.. TODO: add picture
-
 `multipole` defines a general multipole magnet. The strength parameter
 :math:`knl` is a list defined as
 :math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
@@ -515,8 +513,6 @@ Examples::
 
 thinmultipole
 ^^^^^^^^^^^^^
-
-.. TODO: add picture
 
 `thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
@@ -615,21 +611,17 @@ not make this distinction. See `kicker`_ for more details.
 rf
 ^^^^
 
-`rf` define an RF cavity with a time varying electric or electro-magnetic field.
+.. figure:: figures/rfcavity.png
+	    :width: 50%
+	    :align: right
+
+`rf` or `rfcavity` defines an RF cavity with a time varying electric or electro-magnetic field.
 There are several geometry and field options as well as ways to specify the strength.
 The default field is a uniform (in space) electric-only field that is time varying
 according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
 cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
 the motion of particles in both cases.
 
-.. TODO: add picture
-
-.. warning:: The elliptical cavity geometry may not render or appear in the Geant4
-	     QT visualiser.  The geometry exists and is valid, but this is due to
-	     defficiencies of the Geant4 visualisation system. The geometry exists
-	     and is fully functional.
-   
-`rf` or `rfcavity` defines an rf cavity
 
 +----------------+-------------------------------+--------------+---------------------+
 | **Parameter**  | **Description**               | **Default**  | **Required**        |
@@ -651,10 +643,23 @@ the motion of particles in both cases.
 | `cavityModel`  | name of cavity model object   | ""           | no                  |
 +----------------+-------------------------------+--------------+---------------------+
 
+.. note:: The design energy of the machine is not affected, so the strength and fields
+	  of components after an RF cavity in a lattice are calculate with respect to
+	  the design energy and particle and therefore design rigidity. The user should
+	  scale the strength values appropriately if they wish to match the increased
+	  energy of the particle.
+
+.. warning:: The elliptical cavity geometry may not render or appear in the Geant4
+	     QT visualiser.  The geometry exists and is valid, but this is due to
+	     defficiencies of the Geant4 visualisation system. The geometry exists
+	     and is fully functional.
+
 * The field is such that a postiive E field results in acceleration of the primary particle.
 * The phase is calculated automatically such that 0 phase results in the peak E field at
   the centre of the component for it's position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
+* The material must be specified in the `rf` gmad element or in the attached cavity model
+  by name. The cavity model will override the element material.
 
 If `tOffset` is specified, a phase offset is calculated from this time for the speed
 of light in vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
