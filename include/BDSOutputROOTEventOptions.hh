@@ -3,7 +3,8 @@
 
 #include "TObject.h"
 
-#include "parser/optionsBase.h"
+// relative path to suppress ROOT error message (issue #199)
+#include "../parser/optionsBase.h"
 
 /** 
  * @brief Class to store all options for a BDSIM run.

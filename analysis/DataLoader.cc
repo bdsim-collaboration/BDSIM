@@ -185,11 +185,17 @@ void DataLoader::SetBranchAddress(bool allBranchesOn,
 
   const RBDS::VectorString* evtBranches = nullptr;
   if (branchesToTurnOn)
-    {evtBranches = &(*branchesToTurnOn).at("Event.");}
+    {
+      if (branchesToTurnOn->find("Event.") != branchesToTurnOn->end())
+	{evtBranches = &(*branchesToTurnOn).at("Event.");}
+    }
   evt->SetBranchAddress(evtChain, &samplerNames, allBranchesOn, evtBranches);
 
   const RBDS::VectorString* runBranches = nullptr;
   if (branchesToTurnOn)
-    {runBranches = &(*branchesToTurnOn).at("Run.");}
+    {
+      if (branchesToTurnOn->find("Run.") != branchesToTurnOn->end())
+	{runBranches = &(*branchesToTurnOn).at("Run.");}
+    }
   run->SetBranchAddress(runChain, allBranchesOn, runBranches);
 }
