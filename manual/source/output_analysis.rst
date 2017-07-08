@@ -44,9 +44,12 @@ in root by finding and editing the :code:`rootlogon.C` in your :code:`<root-inst
 directory.  Example text would be::
 
   cout << "Loading rebdsim libraries" << endl;
-  gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
+  gSystem->Load("librebdsimLib");
 
 .. note:: The file extension is omitted on purpose.
+
+The absolute path is not necessary as the above environmental variables are used by ROOT
+to find the library.
 
 Usage
 -----
