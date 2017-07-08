@@ -165,6 +165,10 @@ public:
   void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
   void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
 
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
+
 protected:
   /// This calls BuildContainerLogicalVolume() and then sets the visual attributes
   /// of the container logical volume. This should be overridden by derived class
@@ -210,10 +214,6 @@ protected:
   /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
   /// differently from general component material.
   G4LogicalVolume* acceleratorVacuumLV;
-
-  /// A larger length safety that can be used where tracking accuracy isn't required
-  /// or more tolerant geometry is required (1um).
-  static G4double const lengthSafetyLarge;
 
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;

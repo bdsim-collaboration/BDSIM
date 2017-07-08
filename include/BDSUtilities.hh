@@ -80,6 +80,10 @@ namespace BDS
   
   /// Check if character array is an integer, and returns the double by reference
   G4bool IsNumber(const char* s, double& convertedNumber);
+
+  template <typename T>
+  G4int Sign(T val)
+  {return G4int((T(0) < val) - (val < T(0)));}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream

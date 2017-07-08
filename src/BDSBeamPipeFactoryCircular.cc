@@ -128,8 +128,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
 					     beamPipeMaterialIn, lengthIn);
 
-
-  
   // record extents
   BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
 

@@ -50,6 +50,13 @@ void Element::PublishMembers()
   publish("kick", &Element::kick);
   publish("hkick",&Element::hkick);
   publish("vkick",&Element::vkick);
+  publish("knl",  &Element::knl);
+  publish("ksl",  &Element::ksl);
+  publish("gradient",  &Element::gradient);
+  publish("E",         &Element::E);
+  publish("frequency", &Element::frequency);
+  publish("phase",     &Element::phase);
+  publish("tOffset",   &Element::tOffset);
   
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
@@ -89,7 +96,6 @@ void Element::PublishMembers()
   publish("phi",&Element::phi);
   publish("theta",&Element::theta);
   publish("psi",&Element::psi);
-  publish("gradient",&Element::gradient);
   publish("region",&Element::region);
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
@@ -143,9 +149,7 @@ void Element::PublishMembers()
   publish("r",&Element::samplerRadius); // historic
   publish("samplerRadius",&Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
-
-  publish("knl",&Element::knl);
-  publish("ksl",&Element::ksl);
+  
   publish("blmLocZ",&Element::blmLocZ);
   publish("blmLocTheta",&Element::blmLocTheta);
 
@@ -305,6 +309,13 @@ void Element::flush()
   kick  = 0;
   hkick = 0;
   vkick = 0;
+  knl.clear();
+  ksl.clear();
+  gradient  = 0;
+  E         = 0;
+  frequency = 0;
+  phase     = 0;
+  tOffset   = 0;
   
   // degrader
   numberWedges = 1;
@@ -361,9 +372,7 @@ void Element::flush()
   phi = 0;
   theta = 0;
   psi = 0;
-
-  knl.clear();
-  ksl.clear();
+  
   blmLocZ.clear();
   blmLocTheta.clear();
 

@@ -8,6 +8,7 @@
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",           // constant field in G4units
+  "eField",          // electric field in G4units
   "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
@@ -25,7 +26,10 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k9", "k9s",
   "k10", "k10s",
   "k11", "k11s",
-  "k12", "k12s"
+  "k12", "k12s",
+  "frequency",       // frequency for time varying field (presumably em)
+  "phase",           // phase for time varying field
+  "equatorRadius"    // radius from axis at which field goes to 0
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
