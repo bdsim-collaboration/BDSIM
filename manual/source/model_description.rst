@@ -489,8 +489,6 @@ Examples::
 multipole
 ^^^^^^^^^
 
-.. TODO: add picture
-
 `multipole` defines a general multipole magnet. The strength parameter
 :math:`knl` is a list defined as
 :math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
@@ -515,8 +513,6 @@ Examples::
 
 thinmultipole
 ^^^^^^^^^^^^^
-
-.. TODO: add picture
 
 `thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
@@ -615,25 +611,84 @@ not make this distinction. See `kicker`_ for more details.
 rf
 ^^^^
 
-.. TODO: add picture
+.. figure:: figures/rfcavity.png
+	    :width: 50%
+	    :align: right
 
-`rf` or `rfcavity` defines an rf cavity
+`rf` or `rfcavity` defines an RF cavity with a time varying electric or electro-magnetic field.
+There are several geometry and field options as well as ways to specify the strength.
+The default field is a uniform (in space) electric-only field that is time varying
+according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
+cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
+the motion of particles in both cases.
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`gradient`        field gradient [V/m]         0           yes
-`material`        outer material               Iron        no
-================  ===========================  ==========  ===========
 
-* The `aperture parameters`_ may also be specified.
++----------------+-------------------------------+--------------+---------------------+
+| **Parameter**  | **Description**               | **Default**  | **Required**        |
++================+===============================+==============+=====================+
+| `l`            | length [m]                    | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `E`            | electric field strength       | 0            | yes (or `gradient`) |
++----------------+-------------------------------+--------------+---------------------+
+| `gradient`     | field gradient [MV/m]         | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `frequency`    | frequency of oscillation (Hz) | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `phase`        | phase offset (rad)            | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `tOffset`      | offset in time (ns)           | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `material`     | outer material                | Copper       | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `cavityModel`  | name of cavity model object   | ""           | no                  |
++----------------+-------------------------------+--------------+---------------------+
 
-.. note:: Be careful with the sign of the gradient with respect to the sign of
-	  the primary particle
+.. note:: The design energy of the machine is not affected, so the strength and fields
+	  of components after an RF cavity in a lattice are calculate with respect to
+	  the design energy and particle and therefore design rigidity. The user should
+	  scale the strength values appropriately if they wish to match the increased
+	  energy of the particle.
 
-Examples::
+.. warning:: The elliptical cavity geometry may not render or appear in the Geant4
+	     QT visualiser.  The geometry exists and is valid, but this is due to
+	     defficiencies of the Geant4 visualisation system. The geometry exists
+	     and is fully functional.
 
-   RF4f: rf, l=3*m, gradient=10*MV/m;
+* The field is such that a postiive E field results in acceleration of the primary particle.
+* The phase is calculated automatically such that 0 phase results in the peak E field at
+  the centre of the component for it's position in the lattice.
+* Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
+* The material must be specified in the `rf` gmad element or in the attached cavity model
+  by name. The cavity model will override the element material.
+
+If `tOffset` is specified, a phase offset is calculated from this time for the speed
+of light in vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
+element is used to find the phase offset.
+
+If `phase` is specified, this is added to calculated phase offset from either the lattice
+position or `tOffset`.
+
+Simple examples::
+
+   rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
+   rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
+   rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
+
+Rather than just a simple E field, an electro-magnetic field that is the solution to
+a cylindrical pill-box cavity may be used. A cavity object (described in more detail
+below) is used to specify the field type. All other cavity parameters may be safely ignored
+and only the field type will be used. The field is described in :ref:`field-pill-box`.
+
+Pill-Box field example::
+
+  rffield: field, type="rfcavity";
+  rf4: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, fieldVacuum="rffield";
+   
+Elliptical SRF cavity geometry is also provided and may be specified by use of another
+'cavity' object in the parser.  This cavity object can then be attached to an `rf`
+object by name. Details can be found in :ref:`cavity-geometry-parameters`.
+
+
 
 rcol
 ^^^^
@@ -1174,6 +1229,59 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
+.. _cavity-geometry-parameters:
+
+Cavity Geometry Parameters
+--------------------------
+
+A more detailed rf cavity geometry may be described by constructin a 'cavity' object
+in gmad and attaching it by name to an element.  The following parameters may be added
+to a cavity object:
+
++--------------------------+--------------+----------------------------------------------------+
+| **Parameter**            | **Required** | **Description**                                    |
++==========================+==============+====================================================+
+| `name`                   | yes          | Name of the object                                 |
++--------------------------+--------------+----------------------------------------------------+
+| `type`                   | yes          | (elliptical | rectangular | pillbox)               |
++--------------------------+--------------+----------------------------------------------------+
+| `material`               | yes          | The material for the cavity.                       |
++--------------------------+--------------+----------------------------------------------------+
+| `irisRadius`             | no           | The radius of the narrowest part.                  |
++--------------------------+--------------+----------------------------------------------------+
+| `equatorRadius`          | no           | The radius of the widest part.                     |
++--------------------------+--------------+----------------------------------------------------+
+| `halfCellLength`         | no           | Half length along a cell.                          |
++--------------------------+--------------+----------------------------------------------------+
+| `equatorEllipseSemiAxis` | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `irisHorizontalAxis`     | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `irisVerticalAxis`       | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `tangentLineAngle`       | no           | Angle of line connecting two ellipses.             |
++--------------------------+--------------+----------------------------------------------------+
+| `thickness`              | no           | Thickness of matrial.                              |
++--------------------------+--------------+----------------------------------------------------+
+| `numberOfPoints`         | no           | Number of points to generate around 2 :math:`\pi`. |
++--------------------------+--------------+----------------------------------------------------+
+| `numberOfCells`          | no           | Number of cells to construct.                      |
++--------------------------+--------------+----------------------------------------------------+
+
+Example::
+
+  shinyCavity: cavity, type="elliptical",
+                       irisRadius = 35*mm,
+	               equatorRadius = 103.3*mm,
+	               halfCellLength = 57.7*mm,
+	               equatorEllipseSemiAxis = 42*mm,
+	               irisHorizontalAxis = 12*mm,
+	               irisVerticalAxis = 19*mm,
+	               tangentLineAngle = 13.3*pi/180,
+	               thickness = 1*mm,
+	               numberOfPoints = 24,
+	               numberOfCells = 1;
 
 .. _field-maps:
 

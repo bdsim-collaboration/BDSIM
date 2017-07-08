@@ -30,6 +30,13 @@ Parameters::Parameters()
   setMap["kick"]  = false;
   setMap["hkick"] = false;
   setMap["vkick"] = false;
+  setMap["knl"]   = false;
+  setMap["ksl"]   = false;
+  setMap["gradient"]  = false;
+  setMap["E"]         = false;
+  setMap["frequency"] = false;
+  setMap["phase"]     = false;
+  setMap["tOffset"]   = false;
   
   setMap["beampipeThickness"] = false;
   setMap["aper1"] = false;
@@ -72,7 +79,6 @@ Parameters::Parameters()
   setMap["phi"] = false;
   setMap["theta"] = false;
   setMap["psi"] = false;
-  setMap["knl"] = false, setMap["ksl"]=false;
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["samplerName"] = false;

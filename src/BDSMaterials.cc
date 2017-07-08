@@ -761,9 +761,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
-// #ifdef BDSDEBUG
-//   G4cout << __METHOD_NAME__ << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
-// #endif
+
   if (!cmpStr1.compareTo(cmpStr2))
     {
 #ifdef BDSDEBUG

@@ -216,9 +216,6 @@ add_custom_target(copy-deps
 # Visualisation directory
 add_subdirectory(vis)
 
-# Utils directory
-add_subdirectory(utils)
-
 # For testing
 add_subdirectory(examples)
 # copy examples to build directory - macro defined in bdsim_macros.cmake

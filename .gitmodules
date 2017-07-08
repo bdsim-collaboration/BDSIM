@@ -1,9 +1,6 @@
 [submodule "utils/pybdsim"]
 	path = utils/pybdsim
 	url = https://bitbucket.org/jairhul/pybdsim.git
-[submodule "utils/robdsim"]
-	path = utils/robdsim
-	url = https://bitbucket.org/jairhul/robdsim.git
 [submodule "utils/pymad8"]
 	path = utils/pymad8
 	url = https://bitbucket.org/jairhul/pymad8
