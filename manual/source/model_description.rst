@@ -624,6 +624,11 @@ the motion of particles in both cases.
 
 .. TODO: add picture
 
+.. warning:: The elliptical cavity geometry may not render or appear in the Geant4
+	     QT visualiser.  The geometry exists and is valid, but this is due to
+	     defficiencies of the Geant4 visualisation system. The geometry exists
+	     and is fully functional.
+   
 `rf` or `rfcavity` defines an rf cavity
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -676,7 +681,9 @@ Pill-Box field example::
    
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
 'cavity' object in the parser.  This cavity object can then be attached to an `rf`
-object by name. 
+object by name. Details can be found in :ref:`cavity-geometry-parameters`.
+
+
 
 rcol
 ^^^^
@@ -1217,6 +1224,59 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
+.. _cavity-geometry-parameters:
+
+Cavity Geometry Parameters
+--------------------------
+
+A more detailed rf cavity geometry may be described by constructin a 'cavity' object
+in gmad and attaching it by name to an element.  The following parameters may be added
+to a cavity object:
+
++--------------------------+--------------+----------------------------------------------------+
+| **Parameter**            | **Required** | **Description**                                    |
++==========================+==============+====================================================+
+| `name`                   | yes          | Name of the object                                 |
++--------------------------+--------------+----------------------------------------------------+
+| `type`                   | yes          | (elliptical | rectangular | pillbox)               |
++--------------------------+--------------+----------------------------------------------------+
+| `material`               | yes          | The material for the cavity.                       |
++--------------------------+--------------+----------------------------------------------------+
+| `irisRadius`             | no           | The radius of the narrowest part.                  |
++--------------------------+--------------+----------------------------------------------------+
+| `equatorRadius`          | no           | The radius of the widest part.                     |
++--------------------------+--------------+----------------------------------------------------+
+| `halfCellLength`         | no           | Half length along a cell.                          |
++--------------------------+--------------+----------------------------------------------------+
+| `equatorEllipseSemiAxis` | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `irisHorizontalAxis`     | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `irisVerticalAxis`       | no           | TBC                                                |
++--------------------------+--------------+----------------------------------------------------+
+| `tangentLineAngle`       | no           | Angle of line connecting two ellipses.             |
++--------------------------+--------------+----------------------------------------------------+
+| `thickness`              | no           | Thickness of matrial.                              |
++--------------------------+--------------+----------------------------------------------------+
+| `numberOfPoints`         | no           | Number of points to generate around 2 :math:`\pi`. |
++--------------------------+--------------+----------------------------------------------------+
+| `numberOfCells`          | no           | Number of cells to construct.                      |
++--------------------------+--------------+----------------------------------------------------+
+
+Example::
+
+  shinyCavity: cavity, type="elliptical",
+                       irisRadius = 35*mm,
+	               equatorRadius = 103.3*mm,
+	               halfCellLength = 57.7*mm,
+	               equatorEllipseSemiAxis = 42*mm,
+	               irisHorizontalAxis = 12*mm,
+	               irisVerticalAxis = 19*mm,
+	               tangentLineAngle = 13.3*pi/180,
+	               thickness = 1*mm,
+	               numberOfPoints = 24,
+	               numberOfCells = 1;
 
 .. _field-maps:
 
