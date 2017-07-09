@@ -350,7 +350,7 @@ The electric field is calculated as:
 
 .. math::
    
-   E_z      & = E \, J_{0}(r) \cos(f\,t + \psi) \\
+   E_z      & = E \, J_{0}(r) \cos(2\,\pi\,f\,t + \psi) \\
 
 The B field amplitude is calculated from the E field amplitude.
 
@@ -366,7 +366,7 @@ The radial magnetic field in the pill-box field is:
 
 .. math::
    
-   B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r) \sin(f\,t + \psi)
+   B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r) \sin(2\,\pi\,f\,t + \psi)
 
 
 The 3D Cartesian field vectors are therefore:

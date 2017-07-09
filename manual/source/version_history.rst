@@ -7,8 +7,8 @@ Bug Fixes
 * Fix uncaught exception in analysis DataLoader class construction depending on optional arguments.
 * BDSIM installation no longer dependent on build files - ROOT analysis dictionaries would use
   build headers. Issues #197 and #199.
-* Fixed magnitude of B field in rfcavity.
-* Fixed rf field ignoring phase.
+* Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
+* Fixed rf field ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
 
 General
 -------
