@@ -5,7 +5,7 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSAwakeSpectrometer.hh"
 #endif
-#include "BDSCavityRF.hh"
+#include "BDSCavityElement.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
@@ -51,6 +51,9 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
 
@@ -86,7 +89,8 @@ BDSComponentFactory::~BDSComponentFactory()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
 							      Element const* prevElementIn,
-							      Element const* nextElementIn)
+							      Element const* nextElementIn,
+							      G4double currentArcLength)
 {
   element = elementIn;
   prevElement = prevElementIn;
@@ -188,7 +192,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_DRIFT:
     component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
-    component = CreateRF(); break;
+    {
+      component = CreateRF(currentArcLength);
+      differentFromDefinition = true; // unique phase for every placement in beam line
+      break;
+    }
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
@@ -344,23 +352,37 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 			beamPipeInfo));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
+BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
+
+  BDSFieldType fieldType = BDSFieldType::rf; // simple sinusoidal E field only
+  if (!(element->fieldVacuum.empty()))
+    {
+      BDSFieldInfo* field = BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum);
+      fieldType = field->FieldType();
+    }
+
+  BDSMagnetStrength* st = PrepareCavityStrength(element, currentArcLength);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
-					       nullptr,
-					       true,
-					       G4Transform3D(),
-					       PrepareCavityModelInfo(element));
+					       st);
+  
+  BDSCavityInfo* cavityInfo  = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
-  return new BDSCavityRF(elementName,
-			 element->l*CLHEP::m,
-			 vacuumField);
+  // update 0 point of field with geometry
+  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
+    
+  return new BDSCavityElement(elementName,
+			      element->l*CLHEP::m,
+			      vacuumMaterial,
+			      vacuumField,
+			      cavityInfo);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
@@ -1063,6 +1085,16 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element)
   return outerDiameter;
 }
 
+G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* element) const
+{
+  G4Material* result;
+  if (element->vacuumMaterial == "")
+    {result = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
+  else
+    {result = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
+  return result;
+}
+
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
 							  const G4ThreeVector inputFaceNormalIn,
 							  const G4ThreeVector outputFaceNormalIn)
@@ -1135,15 +1167,16 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 }
 
 void BDSComponentFactory::PrepareCavityModels()
-{
+{  
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
+      // material can either be specified in 
+      G4Material* material = nullptr;
+      if (!model.material.empty())
+	{material = BDSMaterials::Instance()->GetMaterial(model.material);}
+	  
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
-				    nullptr, // construct without material as stored in element
-				    nullptr, // construct without vacuum material as stored in element
-				    0.0,     // construct without gradient as stored in element
-				    model.frequency*CLHEP::hertz,
-				    model.phase,
+				    material,
 				    model.irisRadius*CLHEP::m,
 				    model.thickness*CLHEP::m,
 				    model.equatorRadius*CLHEP::m,
@@ -1159,35 +1192,124 @@ void BDSComponentFactory::PrepareCavityModels()
     }
 }
 
-BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* element) const
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* element,
+							   G4double frequency) const
 {
   // If the cavity model name (identifier) has been defined, return a *copy* of
   // that model - so that the component will own that info object.
-  auto result = cavityInfos.find(element->cavityModel);
+
+  G4String modelName = G4String(element->cavityModel);
+
+  // no specific model - prepare a default based on element parameters
+  if (modelName == "")
+    {return PrepareCavityModelInfoForElement(element, frequency);}
+
+  // cavity model name specified - match up with parser object already translated here
+  auto result = cavityInfos.find(modelName);
   if (result == cavityInfos.end())
     {
       G4cout << "Unknown cavity model identifier \"" << element->cavityModel << "\" - please define it" << G4endl;
       exit(1);
     }
 
+  // we make a per element copy of the definition
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
-  // update materials in info with valid materials - only element has material info
-  if (!element->material.empty())
-    {info->material       = BDSMaterials::Instance()->GetMaterial(element->material);}
-  else
-    {
-      G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\" - please define it" << G4endl;
-      exit(1);
-    }
-  if(!element->vacuumMaterial.empty())
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
-  else
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
 
-  // set electric field
-  info->eField = element->gradient*CLHEP::volt / CLHEP::m;
+  // If no material specified, we take the material from the element. If no material at
+  // all, we exit with warning.
+  if (!info->material)
+    {
+      if (element->material.empty())
+	{
+	  G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\""
+		 << "or for cavity model \"" << element->cavityModel << "\" - please define it" << G4endl;
+	  exit(1);
+	}
+      else
+	{info->material = BDSMaterials::Instance()->GetMaterial(element->material);}
+    }
 
   return info;
+}
+
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element const* element,
+								     G4double frequency) const
+{
+  /// prepare aperture information for this element to base default cavity on.
+  BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(element);
+
+  G4double aper1     = aperture->aper1;
+  G4double outerD    = PrepareOuterDiameter(element);
+  G4double defaultOuterD = 20*CLHEP::cm;
+  if (aper1 < defaultOuterD) // only do if the aperture will fit
+    {outerD = std::min(defaultOuterD, outerD);} // better default
+  G4double thickness = aperture->beamPipeThickness;
+  G4double equatorRadius = outerD - thickness;
+  if (equatorRadius <= 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Combination of outerDiameter and beampipeThickness for"
+	     << " element \"" << element->name << "\" produce 0 size cavity" << G4endl;
+      exit(1);
+    }
+
+  G4double cellLength = 2*CLHEP::c_light / frequency; // half wavelength
+  G4double length     = element->l * CLHEP::m;
+  G4double nCavities  = length / cellLength;
+  G4int nCells = G4int(std::floor(nCavities));
+  if (nCells == 0) // protect against long wavelengths or cavities
+    {
+      nCells = 1;
+      cellLength = length;
+    }
+  
+  BDSCavityInfo* defaultCI = new BDSCavityInfo(BDSCavityType::pillbox,
+					       BDSMaterials::Instance()->GetMaterial("Copper"),
+					       aperture->aper1,
+					       thickness,
+					       equatorRadius,
+					       cellLength*0.5);
+
+  delete aperture;
+  return defaultCI;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* element,
+							      G4double currentArcLength) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+
+  G4double chordLength = element->l * CLHEP::m;
+  
+  if (BDS::IsFinite(element->gradient))
+    {(*st)["eField"] = (element->gradient * CLHEP::MeV) / chordLength;}
+  else
+    {(*st)["eField"] = element->E * CLHEP::volt;}
+
+  (*st)["frequency"] = element->frequency * CLHEP::hertz;
+
+  // phase - construct it so that phase is w.r.t. the centre of the cavity
+  // and that it's 0 by default
+  G4double frequency = (*st)["frequency"];
+  G4double period    = 1. / frequency;
+  G4double tOffset   = 0;
+  if (BDS::IsFinite(element->tOffset)) // use the one specified
+    {tOffset = element->tOffset * CLHEP::ns;}
+  else // this gives 0 phase at the middle of cavity
+    {tOffset = (currentArcLength + chordLength) / CLHEP::c_light;}
+
+  G4double nPeriods       = tOffset / period;
+  // phase is the remainder from total phase / N*2pi, where n is unknown.
+  G4double integerPart    = 0;
+  G4double fractionalPart = std::modf(nPeriods, &integerPart);
+  G4double phaseOffset    = fractionalPart / CLHEP::twopi;
+
+  G4double phase = element->phase * CLHEP::rad;
+  if (BDS::IsFinite(element->phase)) // phase specified - use that
+    {(*st)["phase"] = phaseOffset + phase;}
+  else
+    {(*st)["phase"] = phaseOffset;}
+  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  return st;
 }
 
 G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const

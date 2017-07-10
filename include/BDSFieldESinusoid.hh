@@ -7,6 +7,7 @@
 #include "G4ThreeVector.hh"
 
 class BDSCavityInfo;
+class BDSMagnetStrength;
 
 /**
  * @brief A sinusoidal electric (only) field that doesn't vary with position.
@@ -17,7 +18,14 @@ class BDSCavityInfo;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
-  explicit BDSFieldESinusoid(BDSCavityInfo const* info);
+  /// Construct with a BDSMagnetStrength instance for convenience.
+  BDSFieldESinusoid(BDSMagnetStrength const* strength,
+		    G4double                 brho);
+
+  /// Construct from E amplitude, frequency (G4Units) and phase.
+  BDSFieldESinusoid(G4double eFieldAmplitude,
+		    G4double frequencyIn,
+		    G4double phaseOffsetIn);
 
   virtual ~BDSFieldESinusoid(){;}
 
@@ -25,15 +33,16 @@ public:
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
 				 const G4double       t) const;
 
-private:
-  /// Private default constructor to force use of supplied one.
-  BDSFieldESinusoid();
-
+protected:
   /// Amplitude of electric field in V/m.
   G4double eField;
-
-  /// Frequency of field in Hertz.
-  G4double frequency;
+  
+private:
+  /// Private default constructor to force use of supplied one.
+  BDSFieldESinusoid() = delete;
+  
+  /// Angular frequency of field.
+  G4double angularFrequency;
 
   /// Phase in radians.
   G4double phase;

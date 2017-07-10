@@ -179,8 +179,11 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
+      G4double currentArcLength = beamline->GetTotalArcLength();
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt),
+									   prevElement,
+									   nextElement,
+									   currentArcLength);
       if(temp)
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
