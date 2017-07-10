@@ -26,8 +26,6 @@ public:
   BDSFieldESinusoid(G4double eFieldAmplitude,
 		    G4double frequencyIn,
 		    G4double phaseOffsetIn);
-  
-  explicit BDSFieldESinusoid(BDSCavityInfo const* info);
 
   virtual ~BDSFieldESinusoid(){;}
 

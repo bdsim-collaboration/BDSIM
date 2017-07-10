@@ -1,4 +1,3 @@
-#include "BDSCavityInfo.hh"
 #include "BDSFieldESinusoid.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
