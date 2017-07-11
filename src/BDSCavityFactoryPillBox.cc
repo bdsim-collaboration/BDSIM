@@ -82,7 +82,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   allSolids.push_back(vacuumAperture);
   allSolids.push_back(vacuumSolid);
 
-  // logical volume from the solid.
+  // logical volume from the solid. vacuumLV is base class memeber
   vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
 				 vacuumMaterial,        // material
 				 name + "_vacuum_lv");  // name

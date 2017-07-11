@@ -38,8 +38,9 @@ protected:
   BDSCavityFactoryBase();
 
   /// Ensure all internal members are reset before reuse.
-  void CleanUp();
+  virtual void CleanUp();
 
+  /// Build the container solid and logical volumes based on a length. A G4Tubs is used.
   virtual void BuildContainerLogicalVolume(G4String name,
 					   G4double chordLength,
 					   G4double outerRadius);
