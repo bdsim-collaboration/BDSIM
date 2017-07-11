@@ -1,4 +1,5 @@
 #ifdef USE_GDML
+#include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
@@ -45,6 +46,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 
   G4String tempFileName = ReplaceStringInFile(componentName, fileName,
 					      "PREPEND", componentName);
+  BDSAcceleratorModel::Instance()->RegisterTemporaryFile(tempFileName);
   
   G4GDMLParser* parser = new G4GDMLParser();
   parser->Read(tempFileName, /*validate=*/true);
