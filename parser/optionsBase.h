@@ -227,6 +227,8 @@ namespace GMAD
     double      tunnelOffsetX;
     double      tunnelOffsetY;
     ///@}
+
+    bool removeTemporaryFiles;
     
     /// Sampler
     double   samplerDiameter;

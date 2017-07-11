@@ -294,6 +294,8 @@ void Options::PublishMembers()
   publish("tunnelOffsetX",&Options::tunnelOffsetX);
   publish("tunnelOffsetY",&Options::tunnelOffsetY);
 
+  publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
+
   publish("samplerDiameter",&Options::samplerDiameter);
   
   // options for beam loss monitor geometry
