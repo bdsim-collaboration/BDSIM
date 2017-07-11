@@ -25,6 +25,8 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
+
+  CleanUp(); // initialise variables
 }
 
 void BDSCavityFactoryBase::CleanUp()
