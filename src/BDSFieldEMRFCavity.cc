@@ -34,7 +34,8 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldAmplitude,
   frequency(frequencyIn),
   phase(phaseOffset),
   cavityRadius(cavityRadiusIn),
-  normalisedCavityRadius(j0FirstZero/cavityRadius)
+  normalisedCavityRadius(j0FirstZero/cavityRadius),
+  angularFrequency(CLHEP::twopi * frequencyIn)
 {;}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
@@ -50,7 +51,8 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   if (rNormalised > j0FirstZero)
     {rNormalised = j0FirstZero - 1e-6;}
 
-  // Source for calculating the TM010 mode: Gerigk, Frank. "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
+  // Source for calculating the TM010 mode: Gerigk, Frank.
+  // "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
 
   G4double J0r = TMath::BesselJ0(rNormalised);
   G4double J1r = TMath::BesselJ1(rNormalised);
@@ -60,8 +62,8 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double Bmax = hMax * CLHEP::mu0;
 
   // Calculating field components.  Frequency in rad/s or /s?
-  G4double Ez   = eFieldMax * J0r * cos(frequency*t + phase);
-  G4double Bphi = Bmax * J1r * sin(frequency*t + phase);
+  G4double Ez   = eFieldMax * J0r * cos(angularFrequency*t + phase);
+  G4double Bphi = Bmax * J1r * sin(angularFrequency*t + phase);
 
   // Converting Bphi into cartesian coordinates:
   G4double Bx = Bphi*sin(phi);

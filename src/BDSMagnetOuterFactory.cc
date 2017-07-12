@@ -222,7 +222,9 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
     {"oct",  BDSColours::Instance()->GetColour("octupole")},
     {"dec",  BDSColours::Instance()->GetColour("decapole")}
   };
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(info->geometryTypeAndPath, &defaultMap);
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name,
+									    info->geometryTypeAndPath,
+									    &defaultMap);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();

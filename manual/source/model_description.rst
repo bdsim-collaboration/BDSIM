@@ -529,7 +529,7 @@ vkicker
 
 `vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
 with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
-a length of exaclty 0 is specified, a thin kicker will be built. This it typically a 1um slice
+a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
 with only the shape of the aperture and no surrounding geometry. It is also typically not
 visible with the default visualisation settings.
 
@@ -565,7 +565,7 @@ hkicker
 `hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
 specified
 with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
-a length of exaclty 0 is specified, a thin kicker will be built. This it typically a 1um slice
+a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
 with only the shape of the aperture and no surrounding geometry. It is also typically not
 visible with the default visualisation settings.
 
@@ -604,7 +604,7 @@ tkicker
 ^^^^^^^
 
 BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
-however MADX differentitates the two on the basis of fitting parameters. BDSIM does
+however MADX differentiates the two on the basis of fitting parameters. BDSIM does
 not make this distinction. See `kicker`_ for more details.
 
 
@@ -638,25 +638,25 @@ the motion of particles in both cases.
 +----------------+-------------------------------+--------------+---------------------+
 | `tOffset`      | offset in time (ns)           | 0            | no                  |
 +----------------+-------------------------------+--------------+---------------------+
-| `material`     | outer material                | Copper       | yes                 |
+| `material`     | outer material                | ""           | yes                 |
 +----------------+-------------------------------+--------------+---------------------+
 | `cavityModel`  | name of cavity model object   | ""           | no                  |
 +----------------+-------------------------------+--------------+---------------------+
 
 .. note:: The design energy of the machine is not affected, so the strength and fields
-	  of components after an RF cavity in a lattice are calculate with respect to
+	  of components after an RF cavity in a lattice are calculated with respect to
 	  the design energy and particle and therefore design rigidity. The user should
 	  scale the strength values appropriately if they wish to match the increased
 	  energy of the particle.
 
 .. warning:: The elliptical cavity geometry may not render or appear in the Geant4
 	     QT visualiser.  The geometry exists and is valid, but this is due to
-	     defficiencies of the Geant4 visualisation system. The geometry exists
+	     deficiencies of the Geant4 visualisation system. The geometry exists
 	     and is fully functional.
 
-* The field is such that a postiive E field results in acceleration of the primary particle.
+* The field is such that a positive E field results in acceleration of the primary particle.
 * The phase is calculated automatically such that 0 phase results in the peak E field at
-  the centre of the component for it's position in the lattice.
+  the centre of the component for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
@@ -1235,7 +1235,7 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 Cavity Geometry Parameters
 --------------------------
 
-A more detailed rf cavity geometry may be described by constructin a 'cavity' object
+A more detailed rf cavity geometry may be described by constructing a 'cavity' object
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
 
@@ -1262,7 +1262,7 @@ to a cavity object:
 +--------------------------+--------------+----------------------------------------------------+
 | `tangentLineAngle`       | no           | Angle of line connecting two ellipses.             |
 +--------------------------+--------------+----------------------------------------------------+
-| `thickness`              | no           | Thickness of matrial.                              |
+| `thickness`              | no           | Thickness of material.                              |
 +--------------------------+--------------+----------------------------------------------------+
 | `numberOfPoints`         | no           | Number of points to generate around 2 :math:`\pi`. |
 +--------------------------+--------------+----------------------------------------------------+
@@ -1826,7 +1826,7 @@ This affects all samplers.
 Sampler Visualisation
 ^^^^^^^^^^^^^^^^^^^^^
 
-The samplers are normally invisible and are built in a parallel world geometryin Geant4. To
+The samplers are normally invisible and are built in a parallel world geometry in Geant4. To
 visualised them, the following command should be used in the visualiser::
 
   /vis/drawVolume worlds
@@ -1841,7 +1841,7 @@ Physics Processes
 BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
 and simulation it is very useful to define the physical processes that should be simulated so
 that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
-is provided and other processes must be speficied to be used. Rather than specify each individual
+is provided and other processes must be specified to be used. Rather than specify each individual
 particle physics process on a per-particle basis, a series of "physics lists" are provided that
 are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
 the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the

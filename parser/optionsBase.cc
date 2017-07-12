@@ -184,6 +184,8 @@ OptionsBase::OptionsBase()
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
 
+  removeTemporaryFiles = 0;
+  
   // samplers
   samplerDiameter     = 5; // m
 

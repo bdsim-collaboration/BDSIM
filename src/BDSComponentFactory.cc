@@ -375,7 +375,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo  = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["cavityRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,

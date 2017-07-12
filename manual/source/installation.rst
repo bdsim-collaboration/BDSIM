@@ -5,7 +5,7 @@ Installation
 Obtaining  BDSIM
 ================
 
-BDSIM may be obtained either from the BDSIM website from the git repository
+BDSIM may be obtained either from the BDSIM website or the git repository may be cloned.
 The user must compile it on their system and must have Geant4, CLHEP & ROOT
 already present (or access to AFS).
 
