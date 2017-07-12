@@ -29,7 +29,7 @@ void BDSElement::BuildContainerLogicalVolume()
 
   // The outerDiameter here is a suggested outerDiameter for the factory. Each subfactory may treat this
   // differently.
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(geometryFileName, nullptr,
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
 									    chordLength, outerDiameter);
   
   if (!geom)

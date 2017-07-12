@@ -31,7 +31,8 @@ public:
 
   /// Main interface overrides base class method to construct a file with
   /// optional colour mapping.
-  virtual BDSGeometryExternal* Build(G4String fileName,
+  virtual BDSGeometryExternal* Build(G4String componentName,
+				     G4String fileName,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
 				     G4double suggestedLength        = 0,
 				     G4double suggestedOuterDiameter = 0);
@@ -39,6 +40,15 @@ public:
 private:
   /// Private default constructor as singleton.
   BDSGeometryFactoryGDML();
+
+  /// Create a temporary file in the current working directory (even though the geometry file
+  /// may not exist there) and create a copy of the input geometry file line by line, but replacing
+  /// a 'key' with 'replacement'. Returns the temporary file name created. Naming only allows one
+  /// temporary file per component - so far, not a problem.
+  G4String ReplaceStringInFile(G4String componentName,
+			       G4String filename,
+			       G4String key,
+			       G4String replacement);
   
   /// Singleton instance
   static BDSGeometryFactoryGDML* instance;

@@ -8,10 +8,12 @@
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -25,6 +27,8 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
+
+  CleanUp(); // initialise variables
 }
 
 void BDSCavityFactoryBase::CleanUp()
@@ -32,6 +36,7 @@ void BDSCavityFactoryBase::CleanUp()
   // we don't delete any pointers as this factory doesn't own them.
   allSolids.clear();
   allLogicalVolumes.clear();
+  allSensitiveVolumes.clear();
   allPhysicalVolumes.clear();
   allRotationMatrices.clear();
   allUserLimits.clear();
@@ -83,18 +88,16 @@ void BDSCavityFactoryBase::BuildContainerLogicalVolume(G4String name,
 			      chordLength*0.5,             // half length
 			      0.0,                         // starting angle
 			      CLHEP::twopi);               // sweep angle
-  allSolids.push_back(containerSolid);
   
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-  allLogicalVolumes.push_back(containerLV);
 }
 
 void BDSCavityFactoryBase::PlaceComponents(G4String name)
 {
-  G4PVPlacement* vacuumPV = new G4PVPlacement(nullptr,               // rotation
-					      G4ThreeVector(0,0,0),  // position
+  G4PVPlacement* vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
+					      (G4ThreeVector)0,      // position
 					      vacuumLV,              // logical Volume to be place
 					      name + "_vacuum_pv",   // placement name
 					      containerLV,           // mother volume
@@ -103,8 +106,8 @@ void BDSCavityFactoryBase::PlaceComponents(G4String name)
 					      checkOverlaps);        // check overlaps
   allPhysicalVolumes.push_back(vacuumPV);
   
-  G4PVPlacement* cavityPV = new G4PVPlacement(nullptr,               // rotation
-					      G4ThreeVector(0,0,0),  // position
+  G4PVPlacement* cavityPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
+					      (G4ThreeVector)0,  // position
 					      cavityLV,              // logical Volume to be place
 					      name + "_cavity_pv",   // placement name
 					      containerLV,           // mother volume
@@ -122,10 +125,34 @@ BDSCavity* BDSCavityFactoryBase::BuildCavityAndRegisterObjects(const BDSExtent& 
   // register objects
   cavity->RegisterSolid(allSolids);
   cavity->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
+  cavity->RegisterSensitiveVolume(allSensitiveVolumes);
   cavity->RegisterPhysicalVolume(allPhysicalVolumes);
   cavity->RegisterRotationMatrix(allRotationMatrices);
   cavity->RegisterUserLimits(allUserLimits);
   cavity->RegisterVisAttributes(allVisAttributes);
   
   return cavity;
+}
+
+BDSCavity* BDSCavityFactoryBase::CommonConstruction(G4String    name,
+						    G4VSolid*   vacuumSolid,
+						    G4Material* vacuumMaterial,
+						    G4double    chordLength,
+						    G4double    containerRadius)
+{
+  // logical volume from the solid.
+  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
+				 vacuumMaterial,        // material
+				 name + "_vacuum_lv");  // name
+  allLogicalVolumes.push_back(vacuumLV);
+
+  SetUserLimits(chordLength, allLogicalVolumes);
+  BuildContainerLogicalVolume(name, chordLength, containerRadius);
+  SetVisAttributes();
+  PlaceComponents(name);
+
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius,  chordLength*0.5);
+  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
+
+  return result;
 }

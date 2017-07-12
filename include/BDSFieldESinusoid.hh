@@ -18,14 +18,14 @@ class BDSMagnetStrength;
 class BDSFieldESinusoid: public BDSFieldE
 {
 public:
+  /// Construct with a BDSMagnetStrength instance for convenience.
   BDSFieldESinusoid(BDSMagnetStrength const* strength,
 		    G4double                 brho);
 
+  /// Construct from E amplitude, frequency (G4Units) and phase.
   BDSFieldESinusoid(G4double eFieldAmplitude,
 		    G4double frequencyIn,
 		    G4double phaseOffsetIn);
-  
-  explicit BDSFieldESinusoid(BDSCavityInfo const* info);
 
   virtual ~BDSFieldESinusoid(){;}
 
@@ -41,8 +41,8 @@ private:
   /// Private default constructor to force use of supplied one.
   BDSFieldESinusoid() = delete;
   
-  /// Frequency of field in Hertz.
-  G4double frequency;
+  /// Angular frequency of field.
+  G4double angularFrequency;
 
   /// Phase in radians.
   G4double phase;
