@@ -97,8 +97,8 @@ void BDSCavityFactoryBase::BuildContainerLogicalVolume(G4String name,
 
 void BDSCavityFactoryBase::PlaceComponents(G4String name)
 {
-  G4PVPlacement* vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr,               // rotation
-					      G4ThreeVector(0,0,0),  // position
+  G4PVPlacement* vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
+					      (G4ThreeVector)0,      // position
 					      vacuumLV,              // logical Volume to be place
 					      name + "_vacuum_pv",   // placement name
 					      containerLV,           // mother volume
@@ -107,8 +107,8 @@ void BDSCavityFactoryBase::PlaceComponents(G4String name)
 					      checkOverlaps);        // check overlaps
   allPhysicalVolumes.push_back(vacuumPV);
   
-  G4PVPlacement* cavityPV = new G4PVPlacement((G4RotationMatrix*)nullptr,               // rotation
-					      G4ThreeVector(0,0,0),  // position
+  G4PVPlacement* cavityPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
+					      (G4ThreeVector)0,  // position
 					      cavityLV,              // logical Volume to be place
 					      name + "_cavity_pv",   // placement name
 					      containerLV,           // mother volume
