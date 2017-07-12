@@ -9,6 +9,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4Polycone.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -23,13 +24,10 @@ BDSCavityFactoryElliptical::BDSCavityFactoryElliptical()
 BDSCavityFactoryElliptical::~BDSCavityFactoryElliptical()
 {;}
 
-BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
-						    G4double             totalChordLength,
-						    const BDSCavityInfo* info,
-						    G4Material*          vacuumMaterial)
+G4double BDSCavityFactoryElliptical::CreateSolids(G4String             name,
+						  G4double             totalChordLength,
+						  const BDSCavityInfo* info)
 {
-  CleanUp();
-  
   G4double lengthSafetyLarge = BDSAcceleratorComponent::lengthSafetyLarge;
   G4double chordLength = totalChordLength;
   // Elliptical Cavity Parameters
@@ -218,15 +216,9 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
   allSolids.push_back(outerSolid);
   
   // Do the subtraction
-  G4VSolid* cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",  // name
-						 outerSolid,              // solid1
-						 innerSolid);             // minus solid2
-  
-  cavityLV = new G4LogicalVolume(cavitySolid,
-				 info->material,
-				 name + "_cavity_lv");
-  allLogicalVolumes.push_back(cavityLV);
-  allSensitiveVolumes.push_back(cavityLV);
+  cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",  // name
+				       outerSolid,              // solid1
+				       innerSolid);             // minus solid2
  
   // Delete first and last elements of the InnerCoord Vectors, as these entries.
   // The reason we need to do this is the same vector is also used for making the
@@ -244,16 +236,26 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
   G4int lastInd = (G4int)zInnerCoord.size() - 1;
   zInnerCoord[lastInd] = zInnerCoord[lastInd] - 2*lengthSafety; // last element
   
-  G4VSolid* vacuumSolid = new G4Polycone(name + "_inner_solid", //name
-					 0.0,                   //start angle
-					 CLHEP::twopi,          //sweep angle
-					 zInnerCoord.size(),
-					 zInnerCoord.data(),
-					 solidArrayInner.data(),
-					 rInnerCoord.data());   //r coordinates
+  vacuumSolid = new G4Polycone(name + "_inner_solid", //name
+			       0.0,                   //start angle
+			       CLHEP::twopi,          //sweep angle
+			       zInnerCoord.size(),
+			       zInnerCoord.data(),
+			       solidArrayInner.data(),
+			       rInnerCoord.data());   //r coordinates
   allSolids.push_back(vacuumSolid);
-  
-  G4double outerRadius = equatorRadius + thickness + lengthSafetyLarge;
-  
-  return CommonConstruction(name, vacuumSolid, vacuumMaterial, chordLength, outerRadius);
+
+  G4double containerRadius = equatorRadius + thickness + lengthSafetyLarge;
+  containerSolid = new G4Tubs(name + "_container_solid",   // name
+			      0.0,                         // innerRadius
+			      containerRadius,             // outerRadius
+			      chordLength*0.5,             // half length
+			      0.0,                         // starting angle
+			      CLHEP::twopi);               // sweep angle
+  return containerRadius;
+}
+
+void BDSCavityFactoryElliptical::SetVisAttributes(G4String /*colourName*/)
+{
+  BDSCavityFactoryBase::SetVisAttributes("srfcavity");
 }
