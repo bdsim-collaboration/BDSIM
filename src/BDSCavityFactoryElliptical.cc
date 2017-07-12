@@ -196,7 +196,8 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
   // point either side for unambiguous  boolean subtraction.
   std::vector<G4double> solidArrayInner(noPoints+2, 0.0); 
 
-  // Define the inner solid which is to be subtracted from the outer and also used to define the vacuum.
+  // Define the inner solid which is to be subtracted from the outer and also used to
+  // define the vacuum.
   G4VSolid* innerSolid = new G4Polycone(name + "_inner_solid", //name
 					0.0,                   //start angle
 					CLHEP::twopi,          //sweep angle
@@ -225,6 +226,7 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
 				 info->material,
 				 name + "_cavity_lv");
   allLogicalVolumes.push_back(cavityLV);
+  allSensitiveVolumes.push_back(cavityLV);
  
   // Delete first and last elements of the InnerCoord Vectors, as these entries.
   // The reason we need to do this is the same vector is also used for making the

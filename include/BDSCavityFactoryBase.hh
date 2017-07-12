@@ -68,6 +68,7 @@ protected:
   /// @{ Holder for registration at end of construction.
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4LogicalVolume*>   allSensitiveVolumes;
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4UserLimits*>      allUserLimits;

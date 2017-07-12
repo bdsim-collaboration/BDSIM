@@ -62,6 +62,7 @@ BDSCavity* BDSCavityFactoryRectangular::CreateCavity(G4String             name,
 				 info->material,       // material
 				 name + "_cavity_lv"); // name
   allLogicalVolumes.push_back(cavityLV);
+  allSensitiveVolumes.push_back(cavityLV);
   
   // vacuum: union of two solid - one cylinder (VacuumInnerCavity) to fill the centre,
   // and a longer, thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.

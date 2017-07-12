@@ -36,6 +36,7 @@ void BDSCavityFactoryBase::CleanUp()
   // we don't delete any pointers as this factory doesn't own them.
   allSolids.clear();
   allLogicalVolumes.clear();
+  allSensitiveVolumes.clear();
   allPhysicalVolumes.clear();
   allRotationMatrices.clear();
   allUserLimits.clear();
@@ -124,6 +125,7 @@ BDSCavity* BDSCavityFactoryBase::BuildCavityAndRegisterObjects(const BDSExtent& 
   // register objects
   cavity->RegisterSolid(allSolids);
   cavity->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
+  cavity->RegisterSensitiveVolume(allSensitiveVolumes);
   cavity->RegisterPhysicalVolume(allPhysicalVolumes);
   cavity->RegisterRotationMatrix(allRotationMatrices);
   cavity->RegisterUserLimits(allUserLimits);
