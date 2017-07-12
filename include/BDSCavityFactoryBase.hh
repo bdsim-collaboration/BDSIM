@@ -58,6 +58,12 @@ protected:
 
   /// Construct output object and register all temporary objects from vectors.
   BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
+
+  virtual BDSCavity* CommonConstruction(G4String    name,
+					G4VSolid*   vacuumSolid,
+					G4Material* vacuumMaterial,
+					G4double    chordLength,
+					G4double    containerRadius);
   
   /// @{ Holder for registration at end of construction.
   std::vector<G4VSolid*>          allSolids;

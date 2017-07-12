@@ -82,23 +82,7 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   allSolids.push_back(vacuumAperture);
   allSolids.push_back(vacuumSolid);
 
-  // logical volume from the solid. vacuumLV is base class memeber
-  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
-				 vacuumMaterial,        // material
-				 name + "_vacuum_lv");  // name
-  allLogicalVolumes.push_back(vacuumLV);
-
-  SetUserLimits(chordLength, allLogicalVolumes);
-
   G4double outerRadius = cavityRadius + info->thickness + lengthSafety;
-  BuildContainerLogicalVolume(name, chordLength, outerRadius);
-
-  SetVisAttributes();
-  PlaceComponents(name);
-
-  BDSExtent ext = BDSExtent(outerRadius, outerRadius,  chordLength*0.5);
-
-  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
-
-  return result;
+  
+  return CommonConstruction(name, vacuumSolid, vacuumMaterial, chordLength, outerRadius);
 }

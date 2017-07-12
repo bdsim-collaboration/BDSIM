@@ -251,19 +251,7 @@ BDSCavity* BDSCavityFactoryElliptical::CreateCavity(G4String             name,
 					 rInnerCoord.data());   //r coordinates
   allSolids.push_back(vacuumSolid);
   
-  vacuumLV = new G4LogicalVolume(vacuumSolid,
-				 vacuumMaterial,
-				 name + "_vacuum_lv");
-  allLogicalVolumes.push_back(vacuumLV);
-
   G4double outerRadius = equatorRadius + thickness + lengthSafetyLarge;
-  BuildContainerLogicalVolume(name, chordLength, outerRadius);
   
-  SetUserLimits(chordLength, allLogicalVolumes);
-  SetVisAttributes("srfcavity");
-  PlaceComponents(name);
-
-  BDSExtent ext     = BDSExtent(outerRadius, outerRadius,  chordLength*0.5);
-  BDSCavity* result = BuildCavityAndRegisterObjects(ext);  
-  return result;
+  return CommonConstruction(name, vacuumSolid, vacuumMaterial, chordLength, outerRadius);
 }

@@ -131,3 +131,26 @@ BDSCavity* BDSCavityFactoryBase::BuildCavityAndRegisterObjects(const BDSExtent& 
   
   return cavity;
 }
+
+BDSCavity* BDSCavityFactoryBase::CommonConstruction(G4String    name,
+						    G4VSolid*   vacuumSolid,
+						    G4Material* vacuumMaterial,
+						    G4double    chordLength,
+						    G4double    containerRadius)
+{
+  // logical volume from the solid.
+  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
+				 vacuumMaterial,        // material
+				 name + "_vacuum_lv");  // name
+  allLogicalVolumes.push_back(vacuumLV);
+
+  SetUserLimits(chordLength, allLogicalVolumes);
+  BuildContainerLogicalVolume(name, chordLength, containerRadius);
+  SetVisAttributes();
+  PlaceComponents(name);
+
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius,  chordLength*0.5);
+  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
+
+  return result;
+}
