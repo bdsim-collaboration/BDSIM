@@ -87,12 +87,10 @@ void BDSCavityFactoryBase::BuildContainerLogicalVolume(G4String name,
 			      chordLength*0.5,             // half length
 			      0.0,                         // starting angle
 			      CLHEP::twopi);               // sweep angle
-  allSolids.push_back(containerSolid);
   
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-  allLogicalVolumes.push_back(containerLV);
 }
 
 void BDSCavityFactoryBase::PlaceComponents(G4String name)
