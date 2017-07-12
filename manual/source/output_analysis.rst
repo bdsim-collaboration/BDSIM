@@ -11,25 +11,29 @@ BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that 
 to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
-REBDSIM is based on a set of analysis classes that are compiled in a library. These
+REBDSIM is based on a set of analysis classes that are compiled into a library. These
 may be used through REBDSIM, but also through the ROOT interpreter and in users'
-ROOT macros or compiled code.
+ROOT macros or compiled code. They may also be used through Python if the user has
+ROOT available through Python.
 
 Setup
 -----
 
-.. note:: BDSIM must be installed after compilation for the analysis tools to function properly.
+1) BDSIM must be installed after compilation for the analysis tools to function properly.
+2) Environmental variables should be set.
+3) A ROOT logon macro may be written for convenience.
 
 Once BDSIM has been installed the following environmental variables must be updated to allow the analysis
-tool, 'rebdsim', to function.  These can be set manually or added to your :code:`.profile` or
+tool, 'rebdsim' (root event BDSIM), to function.  These can be set manually or added to your :code:`.profile` or
 :code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
    export PATH=$PATH:$BDSIM/bin
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BDSIM/lib (Linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$BDSIM/lib (mac only)
+   export ROOT_INCLUDE_PATH=$BDSIM/include/bdsim/:$BDSIM/include/bdsim/analysis/
 
-* Re-source your profile (restart terminal).
+* Re-source your profile (or restart the terminal).
 * You should be able to execute 'rebdsim'
 
 .. figure:: figures/rebdsim_execution.png
@@ -41,15 +45,18 @@ in root by finding and editing the :code:`rootlogon.C` in your :code:`<root-inst
 directory.  Example text would be::
 
   cout << "Loading rebdsim libraries" << endl;
-  gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
+  gSystem->Load("librebdsimLib");
 
-.. note:: This fails to specify the file extension on purpose.
+.. note:: The file extension is omitted on purpose.
+
+The absolute path is not necessary as the above environmental variables are used by ROOT
+to find the library.
 
 Usage
 -----
 
-rebdsim can be used either as a `standalone executable`_ or `interactively in ROOT`_, with
-Cling.
+rebdsim can be used either as a `standalone executable`_ or `interactively in ROOT`_
+or `interactively in Python`_.
 
 Standalone Executable
 =====================
@@ -69,16 +76,30 @@ Examples::
 
 See `Preparing an Analysis Configuration File`_ for details on the analysis configuration.
 
+Interactively in Python
+=======================
+
+This is the preferred method. ROOT must have been installed or compiled with Python support.
+You can test this by starting Python and trying to import ROOT - there should be no errors:
+
+   >>> import ROOT
+
+The library containing the analysis classes may be then loaded:
+
+   >>> import ROOT
+   >>> ROOT.gSystem.Load("librebdsimLib")
+
+The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
+
   
 Interactively in ROOT
 =====================
 
 When using ROOT's interpreter, you can use the functionality of the BDSIM classes
-dynamically. First you must load the shared library to provide the classes::
+dynamically. First you must load the shared library (if not done so in your root logon
+macro) to provide the classes::
 
   root> gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
-
-.. note:: Unfortunately, ROOT does not show the loaded classes with tab completion in the interpreter.
 
 Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
 are familiar with ROOT, you may use the ROOT file as you would any other given the
@@ -202,6 +223,12 @@ branches' it needs for the analysis. A few possible ways to improve performance 
   speed up the analysis considerably for a large number of events.
 
 
+Example Analysis
+================
+
+TBC
+
+
 Converting ROOT trees as numpy arrays
 -------------------------------------
 
@@ -234,44 +261,4 @@ Extracting data from ROOT file ::
    In [2]: import root_numpy 
    In [3]: f = ROOT.TFile("analysis.root")
    In [4]: t = f.Get("Sampler1")
-   In [5]: a = root_numpy.tree2rec(t)  
-
-
-Examples
---------
-
-Example: Plot Optical Functions with pybdsim
-============================================
-::
-
-   import pybdsim
-   import pymadx
-   import robdsim
-
-   # load ROOT output file into robdsim
-   r=robdsim.RobdsimOutput("output.root")
-   # calculate optics and write to output file "optics.dat"
-   r.CalculateOpticalFunctions("optics.dat")
-   # load optics file into pybdsim
-   a=pybdsim.Data.Load("optics.dat")
-
-   f = figure()
-   # Plot sqrt Beta_x
-   plot(a.S(),sqrt(a.Beta_x()),'.-',label='BDSIM')
-
-   # compare with MadX file:
-   b = pymadx.Tfs("madx.tfs")
-   s = b.GetColumn("S")
-   betx = b.GetColumn("BETX")
-   plot(s,sqrt(betx),'.-',label='MadX')
-
-   # labels and legend:
-   xlabel('$s$ [m]')
-   ylabel('$\sqrt{\\beta_x}$ [m]')
-   legend(loc=0)
-
-   # add machine lattice to figure (optional):
-   pybdsim.Plot.AddMachineLatticeToFigure(f,b)
-   
-   # save figure
-   f.savefig("sqrtbetax.png")
+   In [5]: a = root_numpy.tree2rec(t)

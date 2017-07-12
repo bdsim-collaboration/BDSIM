@@ -5,6 +5,7 @@
 #include "BDSCavityInfo.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4LogicalVolume.hh"
@@ -13,25 +14,25 @@
 BDSCavityElement::BDSCavityElement(G4String             name,
 				   G4double             chordLength,
 				   G4Material*          vacuumMaterialIn,
-				   const BDSFieldInfo*  vacuumFieldIn,
+				   const BDSFieldInfo*  vacuumFieldInfoIn,
 				   const BDSCavityInfo* cavityInfoIn):
   BDSAcceleratorComponent(name, chordLength, 0,
 			  "cavity_"+cavityInfoIn->cavityType.ToString()),
-  vacuumField(vacuumFieldIn),
+  vacuumFieldInfo(vacuumFieldInfoIn),
   cavityInfo(cavityInfoIn),
   vacuumMaterial(vacuumMaterialIn)
 {;}
 
 BDSCavityElement::~BDSCavityElement()
-{;}
-
-void BDSCavityElement::Build()
 {
-  BDSAcceleratorComponent::Build();
-  BuildField();
+  delete vacuumFieldInfo;
+  delete cavityInfo;
 }
 
 void BDSCavityElement::BuildContainerLogicalVolume()
+{;}
+
+void BDSCavityElement::Build()
 {
   BDSCavity* cavity = BDSCavityFactory::Instance()->CreateCavity(name,
 								 chordLength,
@@ -48,11 +49,14 @@ void BDSCavityElement::BuildContainerLogicalVolume()
 
   // update extents
   InheritExtents(cavity);
+
+  // field
+  BuildField();
 }
 
 void BDSCavityElement::BuildField()
 {
-  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumField,
+  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
 							    GetAcceleratorVacuumLogicalVolume(),
 							    true);
 }

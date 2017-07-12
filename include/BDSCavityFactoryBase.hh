@@ -38,8 +38,9 @@ protected:
   BDSCavityFactoryBase();
 
   /// Ensure all internal members are reset before reuse.
-  void CleanUp();
+  virtual void CleanUp();
 
+  /// Build the container solid and logical volumes based on a length. A G4Tubs is used.
   virtual void BuildContainerLogicalVolume(G4String name,
 					   G4double chordLength,
 					   G4double outerRadius);
@@ -57,10 +58,17 @@ protected:
 
   /// Construct output object and register all temporary objects from vectors.
   BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
+
+  virtual BDSCavity* CommonConstruction(G4String    name,
+					G4VSolid*   vacuumSolid,
+					G4Material* vacuumMaterial,
+					G4double    chordLength,
+					G4double    containerRadius);
   
   /// @{ Holder for registration at end of construction.
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4LogicalVolume*>   allSensitiveVolumes;
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4UserLimits*>      allUserLimits;

@@ -51,6 +51,9 @@ private:
   
   /// Precalculated normalised calulated radius w.r.t. bessel first 0.
   const G4double normalisedCavityRadius;
+
+  /// Angular frequency calculated from frequency - cached to avoid repeated calculation.
+  const G4double angularFrequency;
 };
 
 #endif
