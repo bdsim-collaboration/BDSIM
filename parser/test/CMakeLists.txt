@@ -179,6 +179,7 @@ add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
 
 # test placement
 add_test(gmad-placement ${gmadBinary} placement.gmad)
+add_test(gmad-placement-sequence ${gmadBinary} placement_sequence.gmad)
 
 # test regions
 add_test(gmad-region ${gmadBinary} region.gmad)
