@@ -453,7 +453,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 				   G4ThreeVector(0,0,0),         // position
 				   copperSkinLV,                 // lv to be placed
 				   name + "_copper_skin_pv",     // name
-				   containerLV,                  // mother lv to be place in
+				   containerLV,                  // mother lv to be placed in
 				   false,                        // no boolean operation
 				   0,                            // copy number
 				   checkOverlaps);               // whether to check overlaps
@@ -462,7 +462,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 			       (G4ThreeVector)0,             // position
 			       screenLV,                     // lv to be placed
 			       name + "_screen_pv",          // name
-			       containerLV,                  // mother lv to be place in
+			       containerLV,                  // mother lv to be placed in
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
@@ -489,7 +489,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 					   coolingPipeTopPosition,       // position
 					   coolingPipeLV,                // lv to be placed
 					   name + "_cooling_pipe_top_pv",// name
-					   containerLV,                  // mother lv to be place in
+					   containerLV,                  // mother lv to be placed in
 					   false,                        // no boolean operation
 					   0,                            // copy number
 					   checkOverlaps);               // whether to check overlaps
@@ -498,7 +498,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 					      coolingPipeBottomPosition,    // position
 					      coolingPipeLV,                // lv to be placed
 					      name + "_cooling_pipe_bottom_pv", // name
-					      containerLV,                  // mother lv to be place in
+					      containerLV,                  // mother lv to be placed in
 					      false,                        // no boolean operation
 					      0,                            // copy number
 					      checkOverlaps);               // whether to check overlaps

@@ -58,7 +58,8 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     }
 }
 
-BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName,
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String componentName,
+						       G4String formatAndFileName,
 						       std::map<G4String, G4Colour*>* colourMapping,
 						       G4double suggestedLength,
 						       G4double suggestedOuterDiameter,
@@ -81,7 +82,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
   if (!factory)
     {return nullptr;}
   
-  BDSGeometryExternal* result = factory->Build(fileName, colourMapping,
+  BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping,
 					       suggestedLength, suggestedOuterDiameter);
   
   if (result)

@@ -39,7 +39,8 @@ BDSGeometryFactoryGMAD* BDSGeometryFactoryGMAD::Instance()
   return instance;
 }
 
-BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String fileName,
+BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
+						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
 						   G4double /*suggestedLength*/,
 						   G4double /*suggestedOuterDiameter*/)

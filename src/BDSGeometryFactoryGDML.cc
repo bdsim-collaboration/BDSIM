@@ -1,4 +1,6 @@
 #ifdef USE_GDML
+#include "BDSAcceleratorModel.hh"
+#include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
@@ -9,6 +11,9 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -31,15 +36,20 @@ BDSGeometryFactoryGDML* BDSGeometryFactoryGDML::Instance()
   return instance;
 }
 
-BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
+BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
+						   G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping,
 						   G4double /*suggestedLength*/,
 						   G4double /*suggestedOuterDiameter*/)
 {
   CleanUp();
+
+  G4String tempFileName = ReplaceStringInFile(componentName, fileName,
+					      "PREPEND", componentName);
+  BDSAcceleratorModel::Instance()->RegisterTemporaryFile(tempFileName);
   
   G4GDMLParser* parser = new G4GDMLParser();
-  parser->Read(fileName, /*validate=*/true);
+  parser->Read(tempFileName, /*validate=*/true);
 
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
   G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
@@ -89,4 +99,56 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
       GetAllLogicalAndPhysical(pv, pvs, lvs); // recurse into daughter
     }
 }
+
+
+G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
+						     G4String fileName,
+						     G4String key,
+						     G4String replacement)
+{
+  // open input file in read mode
+  std::ifstream ifs(fileName);
+
+  // verify file open.
+  if (!ifs.is_open())
+    {
+      G4cerr << __METHOD_NAME__ << "Cannot open file \"" << fileName << "\"" << G4endl;
+      exit(1);
+    }
+  
+  // temporary file name
+  std::string tempFileName = "temp_" + componentName + ".gdml";
+  //std::string tempFileName = std::string(std::tmpnam(nullptr)) + "_.gdml";
+  std::ofstream fout(tempFileName);
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Original file:  " << fileName     << G4endl;
+  G4cout << __METHOD_NAME__ << "Temporary file: " << tempFileName << G4endl;
+#endif
+
+  int lenOfKey = key.size();
+  
+  // loop over and replace
+  std::string buffer;
+  while (std::getline(ifs, buffer))
+    {// if we find key, replace it
+      int f = buffer.find(key);    
+      if (f != -1)
+	{
+	  std::string outputString = std::string(buffer);
+	  outputString.replace(f, lenOfKey, replacement);
+	  fout << outputString << "\n"; // getline strips \n
+	}
+      else // copy line to temp file as is
+	{fout << buffer << "\n";}
+    }
+
+  // clean up
+  ifs.close();
+  fout.close();
+  
+  return G4String(tempFileName);
+}
+
+
 #endif

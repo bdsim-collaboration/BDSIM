@@ -2,6 +2,7 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -82,7 +83,9 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localA *= kappa;
   // determine effective curvature 
   G4double localAMag         = localA.mag();
-  G4double radiusOfCurvature = 1./localAMag;
+  G4double radiusOfCurvature = DBL_MAX;
+  if (BDS::IsFinite(localAMag))
+    {radiusOfCurvature = 1./localAMag;} // avoid division by 0
 
   // if we have a low enery particle that makes it into the paraxial cuts
   // it could cause problems later in paraxial algorithm so use backup integrator

@@ -96,7 +96,8 @@ void BDSGeometryFactorySQL::CleanUp()
   octVolBgrad.clear();
 }
 
-BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
+BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
+						  G4String fileName,
 						  std::map<G4String, G4Colour*>* colourMapping,
 						  G4double suggestedLength,
 						  G4double suggestedOuterDiameter)

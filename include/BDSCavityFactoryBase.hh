@@ -29,25 +29,32 @@ class BDSCavityFactoryBase
 public:
   virtual ~BDSCavityFactoryBase(){;}
 
-  virtual BDSCavity* CreateCavity(G4String             name,
-				  G4double             totalChordLength,
-				  const BDSCavityInfo* info,
-				  G4Material*          vacuumMaterial) = 0;
+  /// Method that calls protected virtual methods in order. Sets general
+  /// recipe of construction - in order below.
+  BDSCavity* CreateCavity(G4String             name,
+			  G4double             totalChordLength,
+			  const BDSCavityInfo* info,
+			  G4Material*          vacuumMaterial);
   
 protected:
   BDSCavityFactoryBase();
 
   /// Ensure all internal members are reset before reuse.
-  void CleanUp();
+  virtual void CleanUp();
 
-  virtual void BuildContainerLogicalVolume(G4String name,
-					   G4double chordLength,
-					   G4double outerRadius);
+  /// Create vacuumSolid and cavitySolid. Must return the container radius.
+  virtual G4double CreateSolids(G4String             name,
+				G4double             totalChordLength,
+				const BDSCavityInfo* info) = 0;
+
+  /// Create vacuumLV, cavityLV and containerLV.
+  virtual void CreateLogicalVolumes(G4String             name,
+				    const BDSCavityInfo* info,
+				    G4Material*          vacuumMaterial);
 
   /// If the length is shorter than the default user limits in global constants,
-  /// create a new user limits object and apply to all lvs in the input vector.
-  virtual void SetUserLimits(G4double                       length,
-			     std::vector<G4LogicalVolume*>& lvs);
+  /// create a new user limits object and apply to all lvs in allLogicalVolumes.
+  virtual void SetUserLimits(G4double length);
 
   /// Set vis attributes for cavityLV, vacuumLV and containerLV.
   virtual void SetVisAttributes(G4String colourName = "rfcavity");
@@ -56,11 +63,12 @@ protected:
   virtual void PlaceComponents(G4String name);
 
   /// Construct output object and register all temporary objects from vectors.
-  BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
+  virtual BDSCavity* BuildCavityAndRegisterObjects(const BDSExtent& extent);
   
   /// @{ Holder for registration at end of construction.
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
+  std::vector<G4LogicalVolume*>   allSensitiveVolumes;
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4UserLimits*>      allUserLimits;
@@ -68,6 +76,8 @@ protected:
   /// @}
 
   /// @{ Cache of particular solid or lv for common functionality in this class.
+  G4VSolid*        vacuumSolid;
+  G4VSolid*        cavitySolid; 
   G4VSolid*        containerSolid;
   G4LogicalVolume* vacuumLV;
   G4LogicalVolume* cavityLV;

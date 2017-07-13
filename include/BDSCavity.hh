@@ -32,7 +32,7 @@ public:
   /// Access the vacuum volume to set fields and limits
   inline G4LogicalVolume* GetVacuumLogicalVolume() const {return vacuumLogicalVolume;};
 
-private:
+protected:
   G4LogicalVolume* vacuumLogicalVolume; ///< Cache of which volume is the vacuum one.
 };
 
