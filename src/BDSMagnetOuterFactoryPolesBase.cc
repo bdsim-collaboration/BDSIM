@@ -1242,7 +1242,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 				      displacement,    // position
 				      volToPlace,      // lv to be placed
 				      theName,         // name
-				      containerLV,     // mother lv to be place in
+				      containerLV,     // mother lv to be placed in
 				      false,           // no boolean operation
 				      0,               // copy number
 				      checkOverlaps);

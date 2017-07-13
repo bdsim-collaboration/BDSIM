@@ -122,7 +122,7 @@ void BDSCavityFactoryBase::PlaceComponents(G4String name)
 {
   G4PVPlacement* vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
 					      (G4ThreeVector)0,      // position
-					      vacuumLV,              // logical Volume to be place
+					      vacuumLV,              // logical Volume to be placed
 					      name + "_vacuum_pv",   // placement name
 					      containerLV,           // mother volume
 					      false,                 // pMany unused
@@ -132,7 +132,7 @@ void BDSCavityFactoryBase::PlaceComponents(G4String name)
   
   G4PVPlacement* cavityPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
 					      (G4ThreeVector)0,  // position
-					      cavityLV,              // logical Volume to be place
+					      cavityLV,              // logical Volume to be placed
 					      name + "_cavity_pv",   // placement name
 					      containerLV,           // mother volume
 					      false,                 // pMany unused

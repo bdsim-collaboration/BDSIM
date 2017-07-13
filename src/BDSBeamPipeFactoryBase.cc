@@ -126,7 +126,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 			       (G4ThreeVector)0,             // position
 			       vacuumLV,                     // lv to be placed
 			       nameIn + "_vacuum_pv",        // name
-			       containerLV,                  // mother lv to be place in
+			       containerLV,                  // mother lv to be placed in
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
@@ -135,7 +135,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 				 (G4ThreeVector)0,             // position
 				 beamPipeLV,                   // lv to be placed
 				 nameIn + "_beampipe_pv",      // name
-				 containerLV,                  // mother lv to be place in
+				 containerLV,                  // mother lv to be placed in
 				 false,                        // no boolean operation
 				 0,                            // copy number
 				 checkOverlaps);               // whether to check overlaps
