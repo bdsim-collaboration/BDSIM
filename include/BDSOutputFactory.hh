@@ -1,5 +1,5 @@
-#ifndef BDSBunchFactory_h
-#define BDSBunchFactory_h
+#ifndef BDSOUTPUTFACTORY_H
+#define BDSOUTPUTFACTORY_H
 
 #include "BDSOutputFormat.hh"
 
