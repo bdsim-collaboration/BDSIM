@@ -84,11 +84,16 @@ namespace GMAD
     /// removes sublines from the beamline into one LINE.
     void expand_line(FastList<Element>& target,
 		     const std::string& name,
-		     std::string        start,
-		     std::string        end);
+		     std::string        start = "",
+		     std::string        end   = "");
 
     /// Expand the main beamline as defined by the use command.
     void expand_line(const std::string& name, std::string start, std::string end);
+
+    /// Find the sequence defined in the parser and expand it if not already done
+    /// so. Cache result in map of fastlists.
+    const FastList<Element>& get_sequence(const std::string& name);
+    
     /// insert a sampler into beamline_list
     void add_sampler(const std::string& name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list

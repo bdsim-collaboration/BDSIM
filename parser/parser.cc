@@ -378,6 +378,23 @@ void Parser::expand_line(FastList<Element>& target,
     {target.push_back(*itTunnel);}
 }
 
+const FastList<Element>& Parser::get_sequence(const std::string& name)
+{
+  // search for previously queried flattened sequence
+  const auto search = sequences.find(name);
+  if (search != sequences.end())
+    {return search->second;}
+  
+  FastList<Element> result;
+  expand_line(result, name);
+
+  // store it, now it's flattened
+  sequences[name] = result; // result copied into map
+
+  // return reference to object in map
+  return sequences.at(name); // 'at' ensures const reference return
+}
+
 void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)
 {
   // if count equal to -2 add to all elements regardless of name
