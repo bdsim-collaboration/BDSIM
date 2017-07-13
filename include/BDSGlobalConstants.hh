@@ -3,7 +3,7 @@
 
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 #include "BDSParticle.hh"
 
 #include "globals.hh"
@@ -78,7 +78,7 @@ public:
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
-  inline BDSOutputFormat OutputFormat()    const {return outputFormat;}
+  inline BDSOutputType OutputFormat()      const {return outputType;}
   inline G4bool   Survey()                 const {return G4bool  (options.survey);}
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
@@ -303,9 +303,9 @@ private:
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 
-  BDSOutputFormat outputFormat;       ///< Output type enum for output format to be used.
-  BDSIntegratorSetType integratorSet; ///< Integrator type enum for integrator set to be used.
-  G4Transform3D beamlineTransform;    ///< Transform for start of beam line.
+  BDSOutputType        outputType;         ///< Output type enum for output format to be used.
+  BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
+  G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
 };
 
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)

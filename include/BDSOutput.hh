@@ -28,7 +28,6 @@ class BDSOutput
 {
 public: 
   BDSOutput(); // default constructor
-  //  BDSOutput(BDSOutputFormat format);
   virtual ~BDSOutput() {};
 
   /// write sampler hit collection

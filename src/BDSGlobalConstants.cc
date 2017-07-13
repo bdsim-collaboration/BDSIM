@@ -5,7 +5,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSIntegratorSetType.hh"
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
 
@@ -41,7 +41,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   brho(0.0),
   turnsTaken(0)
 {
-  outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
+  outputType = BDS::DetermineOutputType(options.outputFormat);
 
   particleName = G4String(options.particleName);
 

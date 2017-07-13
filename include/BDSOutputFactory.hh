@@ -1,7 +1,7 @@
 #ifndef BDSOUTPUTFACTORY_H
 #define BDSOUTPUTFACTORY_H
 
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 
 class BDSOutput;
 
@@ -11,11 +11,11 @@ class BDSOutput;
  * @author Jochem Snuverink
  */
 
-class BDSOutputFactory {
-
+class BDSOutputFactory
+{
 public:
   /// factory method
-  static BDSOutput* CreateOutput(BDSOutputFormat format);
+  static BDSOutput* CreateOutput(BDSOutputType format);
 };
 
 #endif
