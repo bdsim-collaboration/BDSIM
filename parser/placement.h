@@ -19,6 +19,9 @@ namespace GMAD
   public:
     std::string name;         ///< Name of this placement.
     std::string geometryFile; ///< Geometry to load in format:path.
+    std::string sequence;     ///< Name of sequence to place.
+    std::string referenceElement; ///< Name of reference element w.r.t. to place to.
+    double s; ///< Curvilinear s position to place w.r.t..
     double x; ///< Offset in x.
     double y; ///< Offset in y.
     double z; ///< Offset in z.
