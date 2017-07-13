@@ -34,16 +34,18 @@ G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once i
 
 namespace {
   // Function to recursively connect t
-  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap, std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t) {
+  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap,
+		   std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
+  {
     G4int parentID = t->GetParentID();
-    if (parentID > 0) {
-      BDSTrajectory *t2 = trackIDMap.at(parentID);
-      interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
-      connectTraj(trackIDMap, interestingTraj, t2);
-    }
-    else {
-      return;
-    }
+    if (parentID > 0)
+      {
+	BDSTrajectory *t2 = trackIDMap.at(parentID);
+	interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
+	connectTraj(trackIDMap, interestingTraj, t2);
+      }
+    else
+      {return;}
   }
 }
 
@@ -261,10 +263,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  }
 	
 	// check on particle if not empty string
-	if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty())
+	G4String particleToStore = BDSGlobalConstants::Instance()->StoreTrajectoryParticle();
+	if (!particleToStore.empty())
 	  {
 	    G4String particleName = traj->GetParticleName();
-	    std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
+	    std::size_t found = particleToStore.find(particleName);
 	    if (found != std::string::npos)
 	      {
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
