@@ -9,7 +9,7 @@ use, l1;
 
 ! define every parameter to check them all.
 line2: placement, sequence = "l2",
-       		  referenceElement = d1,
+       		  referenceElement = "d1",
 		  referenceElementNumber = 2,
 		  s = -2*cm,
 		  x = 20*cm,
