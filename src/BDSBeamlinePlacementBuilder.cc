@@ -32,6 +32,11 @@ void BDS::BuildPlacementGeometry()
 
   for (const auto& placement : placements)
     {
+      // if a sequence is specified, it's a beam line and will be constructed
+      // elsewhere - skip it!
+      if (!placement.sequence.empty())
+	{continue;}
+	
       auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								placement.geometryFile,
 								nullptr,
