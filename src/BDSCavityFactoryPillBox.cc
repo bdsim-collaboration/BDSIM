@@ -17,13 +17,10 @@ BDSCavityFactoryPillBox::BDSCavityFactoryPillBox()
 BDSCavityFactoryPillBox::~BDSCavityFactoryPillBox()
 {;}
 
-BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
-						 G4double             totalChordLength,
-						 const BDSCavityInfo* info,
-						 G4Material*          vacuumMaterial)
+G4double BDSCavityFactoryPillBox::CreateSolids(G4String             name,
+					       G4double             totalChordLength,
+					       const BDSCavityInfo* info)
 {
-  CleanUp();
-  
   G4double chordLength  = totalChordLength;
   G4double cavityRadius = info->equatorRadius;
   G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid",          // name
@@ -44,21 +41,13 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
   allSolids.push_back(innerSolid);
   
   // subtraction
-  G4VSolid* cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",    //name
-						 outerSolid,                //solid1
-						 innerSolid);               //minus solid2
+  cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",    //name
+				       outerSolid,                //solid1
+				       innerSolid);               //minus solid2
   allSolids.push_back(cavitySolid);
-  
-  // logical volume from cavity solid
-  cavityLV = new G4LogicalVolume(cavitySolid,          // solid
-				 info->material,       // material
-				 name + "_cavity_lv"); // name
-  allLogicalVolumes.push_back(cavityLV);
-  allSensitiveVolumes.push_back(cavityLV);
   
   // vacuum: union of two solid - one cylinder (VacuumInnerCavity) to fill the centre,
   // and a longer, thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
-
   G4double vacuumInnerRadius = cavityRadius - info->thickness - lengthSafety;
   G4double vacuumHalfLength  = 0.5*chordLength - info->thickness - lengthSafety;
   G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",// name
@@ -76,14 +65,19 @@ BDSCavity* BDSCavityFactoryPillBox::CreateCavity(G4String             name,
 					CLHEP::twopi);                     // sweep angle
   
   // create the vacuum as a union of the two solides defined prior
-  G4VSolid* vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  // name
-					   vacuumInnerCavity,       // solid one
-					   vacuumAperture);         // added to solid two.
+  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  // name
+				 vacuumInnerCavity,       // solid one
+				 vacuumAperture);         // added to solid two.
   allSolids.push_back(vacuumInnerCavity);
   allSolids.push_back(vacuumAperture);
   allSolids.push_back(vacuumSolid);
 
-  G4double outerRadius = cavityRadius + info->thickness + lengthSafety;
-  
-  return CommonConstruction(name, vacuumSolid, vacuumMaterial, chordLength, outerRadius);
+  G4double containerRadius = cavityRadius + info->thickness + lengthSafety;
+  containerSolid = new G4Tubs(name + "_container_solid",   // name
+			      0.0,                         // innerRadius
+			      containerRadius,             // outerRadius
+			      chordLength*0.5,             // half length
+			      0.0,                         // starting angle
+			      CLHEP::twopi);               // sweep angle
+  return containerRadius;
 }
