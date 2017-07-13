@@ -152,10 +152,6 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
-  inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
-  inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
-  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
@@ -163,7 +159,11 @@ public:
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
-  inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold);}
+  inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
+  inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
+  inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
+  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}

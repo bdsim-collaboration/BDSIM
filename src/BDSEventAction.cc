@@ -210,12 +210,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   if (storeTrajectory && trajCont)
   {
+    G4double trajectoryEnergyThreshold = BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold(); // already in G4 GeV
     std::map<BDSTrajectory *, bool> interestingTraj;
 
     TrajectoryVector *trajVec = trajCont->GetVector();
 
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
+    G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size()
+	   << " storeTrajectoryEnergyThreshold=" << trajectoryEnergyThreshold << G4endl;
 #endif
 
     // build trackID map
@@ -251,9 +253,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  }
 	
 	// check on energy (if energy threshold is not negative
-	if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() * CLHEP::GeV >= 0 &&
-	    traj->GetInitialKineticEnergy() >
-          BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() * CLHEP::GeV)
+	if (trajectoryEnergyThreshold >= 0 &&
+	    traj->GetInitialKineticEnergy() > trajectoryEnergyThreshold)
 	  {
 	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 	    continue;
