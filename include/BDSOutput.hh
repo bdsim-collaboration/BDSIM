@@ -112,5 +112,4 @@ protected:
   G4String filename;
 };
 
-extern BDSOutput* bdsOutput;
 #endif

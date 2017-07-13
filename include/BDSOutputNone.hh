@@ -45,5 +45,4 @@ public:
   virtual void Close(){};      ///< close the file
 };
 
-extern BDSOutput* bdsOutput;
 #endif

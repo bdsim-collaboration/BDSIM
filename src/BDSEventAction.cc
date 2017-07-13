@@ -28,8 +28,6 @@
 
 using namespace std::chrono;
 
-extern BDSOutput* bdsOutput;       // output interface
-
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 namespace {
@@ -49,7 +47,8 @@ namespace {
   }
 }
 
-BDSEventAction::BDSEventAction():
+BDSEventAction::BDSEventAction(BDSOutput* outputIn):
+  output(outputIn),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
@@ -125,7 +124,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   eventInfo->SetDuration(stops - starts);
 
   // Record timing in output
-  bdsOutput->WriteEventInfo(eventInfo->GetInfo());
+  output->WriteEventInfo(eventInfo->GetInfo());
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -149,7 +148,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(samplerCollID_plane >= 0)
     {SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));}
   if(SampHC)
-    {bdsOutput->WriteHits(SampHC);}
+    {output->WriteHits(SampHC);}
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing cylinder hits collection" << G4endl;
@@ -158,7 +157,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(samplerCollID_cylin >= 0)
     {SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
   if(SampHC)
-    {bdsOutput->WriteHits(SampHC);}
+    {output->WriteHits(SampHC);}
 
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
@@ -166,10 +165,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   
   //if we have energy deposition hits, write them
   if(energyCounterHits)
-    {bdsOutput->WriteEnergyLoss(energyCounterHits);}
+    {output->WriteEnergyLoss(energyCounterHits);}
 
   if (tunnelEnergyCounterHits)
-   {bdsOutput->WriteTunnelHits(tunnelEnergyCounterHits);}
+   {output->WriteTunnelHits(tunnelEnergyCounterHits);}
 
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
@@ -178,8 +177,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       BDSTrajectory *primary = BDS::GetPrimaryTrajectory(trajCont);
       BDSTrajectoryPoint *primaryFirstInt = primary->FirstInteraction();
       BDSTrajectoryPoint *primaryLastInt  = primary->LastInteraction();
-      bdsOutput->WritePrimaryHit(primaryFirstInt);
-      bdsOutput->WritePrimaryLoss(primaryLastInt);
+      output->WritePrimaryHit(primaryFirstInt);
+      output->WritePrimaryLoss(primaryLastInt);
     }
 
   // if events per ntuples not set (default 0) - only write out at end
@@ -193,7 +192,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // note the timing information will be wrong here as the run hasn't finished but
     // the file is bridged. There's no good way around this just now as this class
     // can't access the timing information stored in BDSRunAction
-    bdsOutput->Commit(0, 0, 0, seedStateAtStart); // write and open new file
+    output->Commit(0, 0, 0, seedStateAtStart); // write and open new file
 #ifdef BDSDEBUG
       G4cout << "done" << G4endl;
 #endif
@@ -342,10 +341,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	i->SetParentIndex(parentIndex);
       }
 
-    bdsOutput->WriteTrajectory(interestingTrajVec);
+    output->WriteTrajectory(interestingTrajVec);
   }
   
-  bdsOutput->FillEvent(); // this fills data and clears event level structures
+  output->FillEvent(); // this fills data and clears event level structures
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
@@ -374,5 +373,5 @@ void BDSEventAction::WritePrimaryVertex(G4int eventID,
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = eventID;
   G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
-  bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
+  output->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

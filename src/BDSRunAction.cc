@@ -10,9 +10,11 @@
 #include <sstream>
 #include <string>
 
-extern BDSOutput* bdsOutput;         // output interface
-
-BDSRunAction::BDSRunAction()
+BDSRunAction::BDSRunAction(BDSOutput* outputIn):
+  output(outputIn),
+  starttime(time(nullptr)),
+  stoptime(time(nullptr)),
+  seedStateAtStart("")
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -32,7 +34,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID()
 	 << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
-  bdsOutput->Initialise(); // open file, create structures and histograms
+  output->Initialise(); // open file, create structures and histograms
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
@@ -47,8 +49,8 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  bdsOutput->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
-  bdsOutput->Close();
+  output->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
+  output->Close();
 
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;

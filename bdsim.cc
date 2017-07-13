@@ -130,7 +130,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing run manager"<<G4endl;
 #endif
-  BDSRunManager * runManager = new BDSRunManager;
+  BDSRunManager* runManager = new BDSRunManager;
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
 #endif
@@ -166,16 +166,22 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
 
+  /// Construct output
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
+  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
+  
   /// Set user action classes
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction);
+  runManager->SetUserAction(new BDSRunAction(bdsOutput));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSEventAction());
+  runManager->SetUserAction(new BDSEventAction(bdsOutput));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
@@ -244,13 +250,7 @@ int main(int argc,char** argv)
     }
   else
     {
-      /// Construct output
-#ifdef BDSDEBUG
-      G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       G4cout.precision(10);
-
       /// Catch aborts to close output stream/file. perhaps not all are needed.
       struct sigaction act;
       act.sa_handler = &BDS::HandleAborts;

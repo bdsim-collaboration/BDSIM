@@ -155,6 +155,11 @@ private:
   /// event information
   BDSOutputROOTEventInfo        *evtInfo     = nullptr;
 
+  /// Wether we've set up the member vector of samplers. Can only be done once the geometry
+  /// is constructed so it's done in initialisation. This happens with each new file, but we
+  /// should only prepare the local samplers once, hence this cache variable.
+  G4bool localSamplersInitialised;
+  
   G4bool useScoringMap  = false;
   G4bool writePrimaries = true;
 

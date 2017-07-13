@@ -18,7 +18,8 @@
 
 #include <ctime>
 
-BDSOutputROOT::BDSOutputROOT()
+BDSOutputROOT::BDSOutputROOT():
+  localSamplersInitialised(false)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -52,17 +53,6 @@ BDSOutputROOT::BDSOutputROOT()
 #endif
       samplerTrees.push_back(primary);
       samplerNames.push_back("Primary");
-    }
-  
-  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
-    {// create sampler structure
-#ifndef __ROOTDOUBLE__
-      BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
-#else
-      BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
-#endif
-      samplerTrees.push_back(res);
-      samplerNames.push_back(samplerName);
     }
 }
 
@@ -160,6 +150,21 @@ void BDSOutputROOT::Initialise()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  if (!localSamplersInitialised)
+    {
+      localSamplersInitialised = true;
+      for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
+        {// create sampler structure
+#ifndef __ROOTDOUBLE__
+	  BDSOutputROOTEventSampler<float>*  res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else
+	  BDSOutputROOTEventSampler<double>* res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
+	  samplerTrees.push_back(res);
+	  samplerNames.push_back(samplerName);
+        }
+    }
   
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
