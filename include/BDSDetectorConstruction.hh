@@ -21,6 +21,7 @@ namespace GMAD {
 }
 
 class BDSAcceleratorModel;
+class BDSBeamline;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -56,6 +57,18 @@ public:
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
+
+  /// Loop over a beam line and place elements in a container (world). If a sensitive
+  /// detector is specified, this is applied to each component. If regions are desired,
+  /// the element is looked up in the region definitions and that is set up. If
+  /// registerInfo, physical volume info is created and placed in a pv info registry.
+  /// Public and static so it can be used by parallel world constructors.
+  static void PlaceBeamlineInWorld(BDSBeamline*          beamline,
+				   G4VPhysicalVolume*    containerPV,
+				   G4bool                checkOverlaps     = false,
+				   G4VSensitiveDetector* sensitiveDetector = nullptr,
+				   G4bool                setRegions        = false,
+				   G4bool                registerInfo      = false);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -65,8 +78,9 @@ private:
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
   
-  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
-  /// and put in BDSBeamline container that calculates coordinates and extent of beamline
+  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of
+  /// BDSComponentFactory and put in BDSBeamline container that calculates coordinates
+  /// and extent of beamline
   void BuildBeamline();
 
   /// Build the tunnel around the already constructed flat beam line.
@@ -76,7 +90,7 @@ private:
   /// in BuildBeamline()
   G4VPhysicalVolume* BuildWorld();
   
-  /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
+  /// Place beam line, tunnel beam line, end pieces and placements in world.
   void ComponentPlacement(G4VPhysicalVolume* worldPV);
 
   /// Detect whether the first element has an angled face such that it might overlap

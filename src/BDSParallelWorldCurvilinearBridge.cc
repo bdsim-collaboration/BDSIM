@@ -1,6 +1,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
 
@@ -9,7 +10,6 @@
 #include "G4VPhysicalVolume.hh"
 
 class BDSBeamline;
-
 
 BDSParallelWorldCurvilinearBridge::BDSParallelWorldCurvilinearBridge():
   G4VUserParallelWorld("CurvilinearBridgeWorld"),
@@ -41,5 +41,6 @@ void BDSParallelWorldCurvilinearBridge::Construct()
 
   BDSBeamline* clbBeamline = BDSAcceleratorModel::Instance()->GetCurvilinearBridgeBeamline();
 
-  PlaceBeamlineInWorld(clbWorld, clbBeamline, globals);
+  BDSDetectorConstruction::PlaceBeamlineInWorld(clbBeamline, clbWorld, globals->CheckOverlaps(),
+						nullptr, false, true);
 }

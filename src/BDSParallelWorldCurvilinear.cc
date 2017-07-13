@@ -1,6 +1,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 
@@ -39,6 +40,7 @@ void BDSParallelWorldCurvilinear::Construct()
   clWorldLV->SetVisAttributes(clWorldVis);
 
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetCurvilinearBeamline();
-  
-  PlaceBeamlineInWorld(clWorld, beamline, globals);
+
+  BDSDetectorConstruction::PlaceBeamlineInWorld(beamline, clWorld, globals->CheckOverlaps(),
+						nullptr, false, true);
 }

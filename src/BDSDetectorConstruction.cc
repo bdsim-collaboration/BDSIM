@@ -367,153 +367,77 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
   BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
-
-    return worldPV;
+  
+  return worldPV;
 }
 
 void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
-  if (verbose || debug)
-    {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
-  G4long G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
-
-  // 0 - mass world placement
-  // 1 - end piece placement
-  // 2 - tunnel placement 
-
-  BDSBeamline*      beamline = acceleratorModel->GetFlatBeamline();
-  G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
-  G4VSensitiveDetector* tunnelECSD = BDSSDManager::Instance()->GetEnergyCounterTunnelSD();
-  
-  // 0 - mass world placement
-  for(auto element : *beamline)
-    {
-      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
-      
-      // check we can get the container logical volume to be placed
-      G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
-      if (!elementLV)
-	{G4cerr << __METHOD_NAME__ << "this accelerator component " << element->GetName() << " has no volume to be placed!" << G4endl;  exit(1);}
-
-      // get the name -> note this is the plain name without _pv or _lv suffix just now
-      // comes from BDSAcceleratorComponent
-      // this is done after the checks as it really just passes down to acc component
-      G4String name = element->GetName(); 
-      if (verbose || debug)
-	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
-      
-      // add the volume to one of the regions
-      const G4String regionName = accComp->GetRegion();
-      if(!regionName.empty()) // ie string is defined so we should attach region
-	{
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "element is in the precision region" << G4endl;
-#endif
-	  G4Region* region = acceleratorModel->Region(regionName);
-	  elementLV->SetRegion(region);
-	  region->AddRootLogicalVolume(elementLV);
-	}
-
-      // Make sensitive volumes sensitive
-      accComp->SetSensitiveDetector(eCSD);
-      
-      // get the placement details from the beamline component
-      G4int nCopy       = element->GetCopyNo();
-      // reference rotation and position for the read out volume
-      G4ThreeVector  rp = element->GetReferencePositionMiddle();
-      G4Transform3D* pt = element->GetPlacementTransform();
-      
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
-      G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
-      G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
-#endif
-      new G4PVPlacement(*pt,              // placement transform
-			element->GetPlacementName() + "_pv", // name
-			elementLV,        // logical volume
-			worldPV,          // mother volume
-			false,	     // no boolean operation
-			nCopy,            // copy number
-			checkOverlaps);   // overlap checking
-    }
-
-  // 1 - end piece placmeent
-  auto pieces = acceleratorModel->GetEndPieceBeamline();
-  for (auto element : *pieces)
-    {
-      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
-
-      // Make sensitive component sensitive
-      accComp->SetSensitiveDetector(eCSD);
-      
-      G4ThreeVector  rp = element->GetReferencePositionMiddle();
-      G4Transform3D* pt = element->GetPlacementTransform();
-      G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
-      G4int nCopy       = element->GetCopyNo();
-      new G4PVPlacement(*pt,              // placement transform
-			element->GetPlacementName() + "_pv", // name
-			elementLV,        // logical volume
-			worldPV,          // mother volume
-			false,	     // no boolean operation
-			nCopy,            // copy number
-			checkOverlaps);   // overlap checking
-    }
-
-  // 2 - place the tunnel segments & supports if they're built
+  G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+  PlaceBeamlineInWorld(acceleratorModel->GetFlatBeamline(),
+		       worldPV, checkOverlaps,
+		       BDSSDManager::Instance()->GetEnergyCounterSD(),
+		       true);
+  PlaceBeamlineInWorld(acceleratorModel->GetEndPieceBeamline(),
+		       worldPV, checkOverlaps,
+		       BDSSDManager::Instance()->GetEnergyCounterSD());
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
-      // place supports
-      // use iterator from BDSBeamline.hh
-      /*
-      BDSBeamline* supports = acceleratorModel->GetSupportsBeamline();
-      BDSBeamline::iterator supportsIt = supports->begin();
-      G4PVPlacement* supportPV = nullptr;
-      for(; supportsIt != supports->end(); ++supportsIt)
-	{
-	  supportPV = new G4PVPlacement((*supportsIt)->GetRotationMiddle(),         // rotation
-					(*supportsIt)->GetPositionMiddle(),         // position
-					(*supportsIt)->GetPlacementName() + "_pv",  // placement name
-					(*supportsIt)->GetContainerLogicalVolume(), // volume to be placed
-					worldPV,                                    // volume to place it in
-					false,                                      // no boolean operation
-					0,                                          // copy number
-					checkOverlaps);                             // overlap checking
-					}*/
-      
-      BDSBeamline* tunnel = acceleratorModel->GetTunnelBeamline();
-      
-      for (auto element : *tunnel)
-	{
-	  // Make sensitive volumes sensitive
-	  element->GetAcceleratorComponent()->SetSensitiveDetector(tunnelECSD);
-	  new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
-			    element->GetPlacementName() + "_pv",  // placement name
-			    element->GetContainerLogicalVolume(), // volume to be placed
-			    worldPV,                              // volume to place it in
-			    false,                                // no boolean operation
-			    0,                                    // copy number
-			    checkOverlaps);                       // overlap checking
-	}
+      PlaceBeamlineInWorld(acceleratorModel->GetTunnelBeamline(),
+			   worldPV, checkOverlaps,
+			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
+  PlaceBeamlineInWorld(acceleratorModel->GetPlacementBeamline(),
+		       worldPV, checkOverlaps);
+}
 
-  /// Single placement geometry.
-  BDSBeamline* placementBL = acceleratorModel->GetPlacementBeamline();
-  if (placementBL)
-    {
-      for (auto element : *placementBL)
-	{
-	  new G4PVPlacement(*element->GetPlacementTransform(),
-			    element->GetPlacementName() + "_pv",
-			    element->GetContainerLogicalVolume(),
-			    worldPV,
-			    false,
-			    0,
-			    true);
-	}
-    }
+void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamline,
+						   G4VPhysicalVolume*    containerPV,
+						   G4bool                checkOverlaps,
+						   G4VSensitiveDetector* sensitiveDetector,
+						   G4bool                setRegions,
+						   G4bool                registerInfo)
+{
+  if (!beamline)
+    {return;}
   
-  // set precision back
-  G4cout.precision(G4precision);
+  for (auto element : *beamline)
+    { 
+      if (setRegions)
+	{
+	  auto accComp = element->GetAcceleratorComponent();
+	  const G4String regionName = accComp->GetRegion();
+	  if(!regionName.empty()) // ie string is defined so we should attach region
+	    {
+	      G4Region* region = BDSAcceleratorModel::Instance()->Region(regionName);
+	      auto contLV = accComp->GetContainerLogicalVolume();
+	      contLV->SetRegion(region);
+	      region->AddRootLogicalVolume(contLV);
+	    }
+	}
+
+      if (sensitiveDetector)
+	{element->GetAcceleratorComponent()->SetSensitiveDetector(sensitiveDetector);}
+      
+      G4String placementName = element->GetPlacementName() + "_pv";
+      auto pv = new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
+				  placementName,                        // placement name
+				  element->GetContainerLogicalVolume(), // volume to be placed
+				  containerPV,                          // volume to place it in
+				  false,                                // no boolean operation
+				  element->GetCopyNo(),                 // copy number
+				  checkOverlaps);                       // overlap checking
+
+      if (registerInfo)
+        {
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(element->GetName(),
+								     placementName,
+								     element->GetSPositionMiddle(),
+								     element->GetIndex());
+	  
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
+        }
+    }
 }
 
 #if G4VERSION_NUMBER > 1009

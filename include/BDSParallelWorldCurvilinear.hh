@@ -1,8 +1,6 @@
 #ifndef BDSPARALLELWORLDCURVILINEAR_H
 #define BDSPARALLELWORLDCURVILINEAR_H
 
-#include "BDSBeamlinePlacement.hh"
-
 #include "G4VUserParallelWorld.hh"
 
 class G4VisAttributes;
@@ -16,7 +14,7 @@ class G4VisAttributes;
  * @author Laurie Nevay
  */
 
-class BDSParallelWorldCurvilinear: public G4VUserParallelWorld, public BDSBeamlinePlacement
+class BDSParallelWorldCurvilinear: public G4VUserParallelWorld
 {
 public:
   BDSParallelWorldCurvilinear();
