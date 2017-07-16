@@ -113,8 +113,7 @@ int main(int argc,char** argv)
 	if (i%printModulo == 0)
 	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->FillPrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
-	bdsOutput->WriteFileEventLevel();
+        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
       }
       bdsOutput->CloseFile();
       delete bdsBunch;
