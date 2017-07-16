@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSEventInfo.hh"
 #include "BDSOutput.hh"
 #include "BDSRunAction.hh"
 
@@ -13,23 +14,29 @@
 BDSRunAction::BDSRunAction(BDSOutput* outputIn):
   output(outputIn),
   starttime(time(nullptr)),
-  stoptime(time(nullptr)),
-  seedStateAtStart("")
+  seedStateAtStart(""),
+  info(nullptr)
 {;}
 
 BDSRunAction::~BDSRunAction()
-{;}
+{
+  delete info;
+}
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  info = new BDSEventInfo();
+  
   // save the random engine state
   std::stringstream ss;
   CLHEP::HepRandom::saveFullState(ss);
   seedStateAtStart = ss.str();
+  info->SetSeedStateAtStart(seedStateAtStart);
   
   // get the current time
   starttime = time(nullptr);
-
+  info->SetStartTime(starttime);
+  
   // Output feedback
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID()
 	 << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
@@ -40,9 +47,12 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
   // Get the current time
-  stoptime = time(nullptr);
+  time_t stoptime = time(nullptr);
+  info->SetStopTime(stoptime);
   // run duration
-  G4float duration = difftime(stoptime,starttime);
+  G4float duration = difftime(stoptime, starttime);
+  info->SetDuration(G4double(duration));
+
 
   // Output feedback
   G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()

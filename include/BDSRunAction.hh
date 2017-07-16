@@ -7,6 +7,7 @@
 #include <ctime>
 #include <string>
 
+class BDSEventInfo;
 class BDSOutput;
 class G4Run;
 
@@ -24,10 +25,10 @@ public:
   void EndOfRunAction(const G4Run*);
 
 private:
-  BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
-  time_t starttime;
-  time_t stoptime;
-  std::string seedStateAtStart; ///< Seed state at start of the run.
+  BDSOutput*    output;         ///< Cache of output instance. Not owned by this class.
+  time_t        starttime;
+  std::string   seedStateAtStart; ///< Seed state at start of the run.
+  BDSEventInfo* info;
 };
 
 #endif
