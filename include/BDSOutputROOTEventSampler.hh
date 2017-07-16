@@ -51,7 +51,7 @@ public:
             G4double t,
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
-  void Fill(BDSSamplerHit *hit);
+  void Fill(const BDSSamplerHit* hit);
 #endif
   void SetBranchAddress(TTree *);
   /// Clean Sampler

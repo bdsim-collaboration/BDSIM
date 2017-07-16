@@ -47,8 +47,8 @@ public:
   BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
-  void Fill(BDSTrajectoryPoint* hit);
-  void Fill(BDSEnergyCounterHit* hit);
+  void Fill(const BDSTrajectoryPoint* hit);
+  void Fill(const BDSEnergyCounterHit* hit);
 #endif
   virtual void Flush();
 

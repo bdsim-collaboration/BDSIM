@@ -62,7 +62,7 @@ void BDSOutputROOTEventSampler<T>::Fill(G4double E,
 }
 
 template <class T>
-void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
+void BDSOutputROOTEventSampler<T>::Fill(const BDSSamplerHit* hit)
 {
   // get single values
   n++;

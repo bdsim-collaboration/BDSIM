@@ -29,7 +29,7 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
+void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajVec)
 {
   if(!auxNavigator) {
     /// Navigator for checking points in read out geometry
@@ -158,7 +158,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
   }
 }
 
-void BDSOutputROOTEventTrajectory::Fill(BDSEnergyCounterHitsCollection *phc)
+void BDSOutputROOTEventTrajectory::Fill(const BDSEnergyCounterHitsCollection *phc)
 {
   G4cout << phc->GetSize() << G4endl;
 }
