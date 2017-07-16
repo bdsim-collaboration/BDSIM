@@ -3,6 +3,12 @@
 
 #include <string>
 
+/**
+ * @brief Common specification for a histogram.
+ *
+ * @author L. Nevay
+ */
+
 class HistogramDef
 {
 public:
