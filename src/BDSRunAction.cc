@@ -41,7 +41,8 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID()
 	 << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
-  output->Initialise(); // open file, create structures and histograms
+  output->InitialiseGeometryDependent();
+  output->NewFile();
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
@@ -59,8 +60,9 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  output->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
-  output->Close();
+  output->FillRun(info);
+  output->CloseFile();
+  info->Flush();
 
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;

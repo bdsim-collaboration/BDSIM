@@ -79,11 +79,13 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+  
   // update reference to event info
   eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
 
   // number feedback
   G4int event_number = evt->GetEventID();
+  eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}
   if(verboseEvent)
@@ -112,90 +114,45 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "processing end of event action" << G4endl;
-#endif
+  // Get event number information
+  G4int event_number = evt->GetEventID();
+  if(verboseEvent || verboseEventNumber == event_number)
+    {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
+  eventInfo->SetIndex(event_number);
+  
   // Get the current time
   stopTime = time(nullptr);
   eventInfo->SetStopTime(stopTime);
   
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
-  eventInfo->SetDuration(stops - starts);
-
-  // Record timing in output
-  output->WriteEventInfo(eventInfo->GetInfo());
+  eventInfo->SetDuration(G4float(stops - starts));
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 
-  // Get event number information
-  G4int event_number = evt->GetEventID();
-  if(verboseEvent || verboseEventNumber == event_number)
-    {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
-
-  // Record the primary vertex in output
-  WritePrimaryVertex(event_number, evt->GetPrimaryVertex());
-
-  // Now process each of the hits collections in turn, writing them to output.
-  // After this, fill the appropriate histograms with information from this event.
-
   // samplers
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "processing sampler hits collection" << G4endl;
-#endif
   BDSSamplerHitsCollection* SampHC = nullptr;
   if(samplerCollID_plane >= 0)
     {SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(samplerCollID_plane));}
-  if(SampHC)
-    {output->WriteHits(SampHC);}
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "processing cylinder hits collection" << G4endl;
-#endif
-  SampHC = nullptr;
+  
+  BDSSamplerHitsCollection* hitsCylinder = nullptr;
   if(samplerCollID_cylin >= 0)
-    {SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
-  if(SampHC)
-    {output->WriteHits(SampHC);}
+    {hitsCylinder = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
 
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
-  
-  //if we have energy deposition hits, write them
-  if(energyCounterHits)
-    {output->WriteEnergyLoss(energyCounterHits);}
-
-  if (tunnelEnergyCounterHits)
-   {output->WriteTunnelHits(tunnelEnergyCounterHits);}
 
   // primary hits and losses from
+  BDSTrajectoryPoint* primaryHit  = nullptr;
+  BDSTrajectoryPoint* primaryLoss = nullptr;
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   if (trajCont)
     {
-      BDSTrajectory *primary = BDS::GetPrimaryTrajectory(trajCont);
-      BDSTrajectoryPoint *primaryFirstInt = primary->FirstInteraction();
-      BDSTrajectoryPoint *primaryLastInt  = primary->LastInteraction();
-      output->WritePrimaryHit(primaryFirstInt);
-      output->WritePrimaryLoss(primaryLastInt);
-    }
-
-  // if events per ntuples not set (default 0) - only write out at end
-  int evntsPerNtuple = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
-
-  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "writing events" << G4endl;
-#endif
-    // note the timing information will be wrong here as the run hasn't finished but
-    // the file is bridged. There's no good way around this just now as this class
-    // can't access the timing information stored in BDSRunAction
-    output->Commit(0, 0, 0, seedStateAtStart); // write and open new file
-#ifdef BDSDEBUG
-      G4cout << "done" << G4endl;
-#endif
+      BDSTrajectory* primary = BDS::GetPrimaryTrajectory(trajCont);
+      primaryHit  = primary->FirstInteraction();
+      primaryLoss = primary->LastInteraction();
     }
 
   // needed to draw trajectories and hits:
@@ -208,7 +165,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   }
 
   // Save interesting trajectories
-
+  std::vector<BDSTrajectory*> interestingTrajVec;
   if (storeTrajectory && trajCont)
   {
     G4double trajectoryEnergyThreshold = BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold(); // already in G4 GeV
@@ -312,7 +269,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
 #endif
-    std::vector<BDSTrajectory *> interestingTrajVec;
+    
     // TODO sort accordings to trackID
     for (auto i : trackIDMap)
       {
@@ -340,38 +297,29 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  {parentIndex = -1;}
 	i->SetParentIndex(parentIndex);
       }
-
-    output->WriteTrajectory(interestingTrajVec);
   }
   
-  output->FillEvent(); // this fills data and clears event level structures
-
+  output->FillEvent(eventInfo,
+		    evt->GetPrimaryVertex(),
+		    SampHC,
+		    hitsCylinder,
+		    energyCounterHits,
+		    tunnelEnergyCounterHits,
+		    primaryHit,
+		    primaryLoss,
+		    interestingTrajVec,
+		    BDSGlobalConstants::Instance()->TurnsTaken());
+  
+  // if events per ntuples not set (default 0) - only write out at end
+  G4int evntsPerNtuple = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
+  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
+    {
+      // note the timing information will be wrong here as the run hasn't finished but
+      // the file is bridged. There's no good way around this just now as this class
+      // can't access the timing information stored in BDSRunAction
+      output->CloseAndOpenNewFile();
+    }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
 #endif
-}
-
-void BDSEventAction::WritePrimaryVertex(G4int eventID,
-					const G4PrimaryVertex* primaryVertexIn)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  //Save the primary particle as a hit
-  const G4PrimaryVertex*   primaryVertex   = primaryVertexIn;
-  const G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
-  G4ThreeVector      momDir          = primaryParticle->GetMomentumDirection();
-  G4double           E               = primaryParticle->GetTotalEnergy();
-  G4double           xp              = momDir.x();
-  G4double           yp              = momDir.y();
-  G4double           zp              = momDir.z();
-  G4double           x0              = primaryVertex->GetX0();
-  G4double           y0              = primaryVertex->GetY0();
-  G4double           z0              = primaryVertex->GetZ0();
-  G4double           t               = primaryVertex->GetT0();
-  G4double           weight          = primaryParticle->GetWeight();
-  G4int              PDGType         = primaryParticle->GetPDGcode();
-  G4int              nEvent          = eventID;
-  G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
-  output->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

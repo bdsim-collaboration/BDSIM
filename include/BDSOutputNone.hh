@@ -3,8 +3,6 @@
 
 #include "BDSOutput.hh"
 
-class BDSOutputROOTEventInfo;
-
 /**
  * @brief No output class
  * 
@@ -16,33 +14,28 @@ class BDSOutputROOTEventInfo;
 class BDSOutputNone: public BDSOutput
 {
 public: 
+  BDSOutputNone(): BDSOutput("", -1){;} ///< Default constructor.
+  virtual ~BDSOutputNone(){;}
 
-  BDSOutputNone():BDSOutput(){} ///< default constructor
-  virtual ~BDSOutputNone(){}
-
-  /// write sampler hit collection
-  virtual void WriteHits(BDSSamplerHitsCollection*){}
-  /// make energy loss histo
-  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*){}
-  /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSTrajectoryPoint*){}
-  /// write primary hits histo
-  virtual void WritePrimaryHit(BDSTrajectoryPoint*){}
-  /// write tunnel hits
-  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection*){}
-  /// write a trajectory
-  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &){}
-  /// write primary hit
-  virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
-  /// write event info
-  virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
-  {}
-  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/){;}
-  virtual void FillEvent(){}///< fill event structure
-  virtual void Initialise(){}; ///< open the file
-  virtual void Write(const time_t &, const time_t &, const G4float &, const std::string &)
-  {};      ///< write to file
-  virtual void Close(){};      ///< close the file
+  /// @{ No action.
+  virtual void NewFile(){;}
+  virtual void InitialiseGeometryDependent(){;}
+  virtual void CloseFile(){;}
+  virtual G4bool FileIsOpen() {return false;}
+  virtual void FillEventInfo(const BDSEventInfo *){;}
+  virtual void FillSamplerHits(const BDSSamplerHitsCollection *, const HitsType){;}
+  virtual void FillEnergyLoss(const BDSEnergyCounterHitsCollection *, const LossType){;}
+  virtual void FillPrimaryHit(const BDSTrajectoryPoint *){;}
+  virtual void FillPrimaryLoss(const BDSTrajectoryPoint *){;}
+  virtual void FillTrajectories(const std::vector<BDSTrajectory *> &){;}
+  virtual void FillRunInfo(const BDSEventInfo *){;}
+  virtual void WriteFileEventLevel(){}
+  virtual void WriteFileRunLevel(){}
+  virtual void FillPrimary(const G4double, const G4double, const G4double,
+			   const G4double, const G4double, const G4double,
+			   const G4double, const G4double, const G4double,
+			   const G4int,    const G4int,    const G4int){;}
+  /// @}
 };
 
 #endif

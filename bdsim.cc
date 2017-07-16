@@ -102,8 +102,9 @@ int main(int argc,char** argv)
   if (globalConstants->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
-      bdsOutput->Initialise();
+      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+						 globalConstants->OutputFileName());
+      bdsOutput->NewFile();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
       const G4int printModulo = BDSGlobalConstants::Instance()->PrintModulo();
@@ -112,10 +113,10 @@ int main(int argc,char** argv)
 	if (i%printModulo == 0)
 	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
-        bdsOutput->FillEvent();
+        bdsOutput->FillPrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+	bdsOutput->WriteFileEventLevel();
       }
-      bdsOutput->Close();
+      bdsOutput->CloseFile();
       delete bdsBunch;
       delete bdsOutput;
       return 0;
@@ -170,7 +171,8 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
+  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+					     globalConstants->OutputFileName());
   
   /// Set user action classes
 #ifdef BDSDEBUG 

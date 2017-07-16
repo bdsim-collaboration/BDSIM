@@ -25,8 +25,6 @@ public:
 public:
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
-  void         WritePrimaryVertex(G4int                  eventID,
-				  const G4PrimaryVertex* primaryVertexIn);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
     

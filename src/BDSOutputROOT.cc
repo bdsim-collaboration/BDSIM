@@ -6,7 +6,9 @@
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -18,7 +20,9 @@
 
 #include <ctime>
 
-BDSOutputROOT::BDSOutputROOT():
+BDSOutputROOT::BDSOutputROOT(G4String fileName,
+			     G4int    fileNumberOffset):
+  BDSOutput(fileName, fileNumberOffset),
   localSamplersInitialised(false)
 {
 #ifdef BDSDEBUG
@@ -27,7 +31,6 @@ BDSOutputROOT::BDSOutputROOT():
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
 
   useScoringMap  = g->UseScoringMap();
-  writePrimaries = g->WritePrimaries();
 
   G4bool storeLinks  = g->StoreELossLinks();
   G4bool storeLocal  = g->StoreELossLocal();
@@ -44,7 +47,7 @@ BDSOutputROOT::BDSOutputROOT():
   runInfo   = new BDSOutputROOTEventRunInfo();
 
   // build sampler structures
-  if (writePrimaries)
+  if (WritePrimaries())
     {
 #ifndef __ROOTDOUBLE__
       primary = new BDSOutputROOTEventSampler<float>("Primary");
@@ -144,13 +147,8 @@ void BDSOutputROOT::CalculateHistogramParameters()
   sMaxHistograms = nbins * binWidth;
 }
 
-void BDSOutputROOT::Initialise() 
+void BDSOutputROOT::InitialiseGeometryDependent()
 {
-  outputFileNumber++;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-
   if (!localSamplersInitialised)
     {
       localSamplersInitialised = true;
@@ -165,7 +163,14 @@ void BDSOutputROOT::Initialise()
 	  samplerNames.push_back(samplerName);
         }
     }
-  
+}
+
+void BDSOutputROOT::NewFile() 
+{
+  outputFileNumber++;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<G4endl;
+#endif
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   CreateHistograms();
@@ -230,7 +235,7 @@ void BDSOutputROOT::Initialise()
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  if (writePrimaries)
+  if (WritePrimaries())
     {theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);}
 
   // Build loss and hit structures
@@ -256,35 +261,42 @@ void BDSOutputROOT::Initialise()
                                  samplerTreeLocal,32000,0);
     }
 }
-  
-/// write sampler hit collection
-void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection* hc) 
+
+void BDSOutputROOT::FillSamplerHits(const BDSSamplerHitsCollection *hits,
+                                    const HitsType)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
-  for (int i=0; i<hc->entries(); i++)
+  for (int i=0; i<hits->entries(); i++)
     {
-      G4int samplerID = (*hc)[i]->GetSamplerID();
-      if (writePrimaries)
+      G4int samplerID = (*hits)[i]->GetSamplerID();
+      if (WritePrimaries())
         {samplerID += 1;} // offset index by one
-      samplerTrees[samplerID]->Fill((*hc)[i]);
+      samplerTrees[samplerID]->Fill((*hits)[i]);
     }
 }
 
-/// write energy deposition hits
-void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
+void BDSOutputROOT::FillEnergyLoss(const BDSEnergyCounterHitsCollection *hits,
+                                   const LossType lType)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  G4int n_hit = hc->entries();
+  G4int n_hit = hits->entries();
   for(G4int i=0;i<n_hit;i++)
   {
-    BDSEnergyCounterHit* hit = (*hc)[i];
-    eLoss->Fill(hit);
-
+    BDSEnergyCounterHit* hit = (*hits)[i];
+    switch (lType)
+      {
+      case BDSOutput::LossType::energy:
+	{eLoss->Fill(hit); break;}
+      case BDSOutput::LossType::tunnel:
+	{tHit->Fill(hit); break;}
+      default:
+	{eLoss->Fill(hit); break;}
+      }
     G4double sHit = hit->GetSHit()/CLHEP::m;
     G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
     runHistos->Fill1DHistogram(2, sHit, eW);
@@ -300,8 +312,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   }
 }
 
-/// write where primaries impact
-void BDSOutputROOT::WritePrimaryHit(BDSTrajectoryPoint* phit)
+void BDSOutputROOT::FillPrimaryHit(const BDSTrajectoryPoint *phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -314,8 +325,7 @@ void BDSOutputROOT::WritePrimaryHit(BDSTrajectoryPoint* phit)
   evtHistos->Fill1DHistogram(3, preStepSPosition);
 }
 
-/// write where primaries stop being primaries
-void BDSOutputROOT::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
+void BDSOutputROOT::FillPrimaryLoss(const BDSTrajectoryPoint *ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -328,22 +338,7 @@ void BDSOutputROOT::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
   evtHistos->Fill1DHistogram(4, postStepSPosition);
 }
 
-/// write tunnel hits
-void BDSOutputROOT::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-  G4int n_hit = hc->entries();
-  for(G4int i=0;i<n_hit;i++)
-  {
-    BDSEnergyCounterHit *hit = (*hc)[i];
-    tHit->Fill(hit);
-  }
-}
-
-/// write a trajectory 
-void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
+void BDSOutputROOT::FillTrajectories(const std::vector<BDSTrajectory *> &trajVec)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
@@ -351,52 +346,67 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
   traj->Fill(trajVec);
 }
 
-/// write primary hit
-void BDSOutputROOT::WritePrimary(G4double E,
-                                 G4double x0,
-                                 G4double y0,
-                                 G4double z0,
-                                 G4double xp,
-                                 G4double yp,
-                                 G4double zp,
-                                 G4double t,
-                                 G4double weight,
-                                 G4int    PDGType,
-                                 G4int    nEvent,
-                                 G4int    TurnsTaken)
+void BDSOutputROOT::FillPrimary(G4double E,
+				G4double x0,
+				G4double y0,
+				G4double z0,
+				G4double xp,
+				G4double yp,
+				G4double zp,
+				G4double t,
+				G4double weight,
+				G4int    PDGType,
+				G4int    nEvent,
+				G4int    turnsTaken)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  if (writePrimaries)
-    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken,0 /* always first element */);}
+  if (WritePrimaries())
+    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }
 
-void BDSOutputROOT::FillEvent() 
+void BDSOutputROOT::WriteFileEventLevel()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   theRootOutputFile->cd();
   theEventOutputTree->Fill();
+}
+
+void BDSOutputROOT::WriteFileRunLevel()
+{
+  theRootOutputFile->cd();
+  theRunOutputTree->Fill();
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
+}
+
+void BDSOutputROOT::ClearStructuresEventLevel()
+{
   Flush();
 }
-void BDSOutputROOT::WriteEventInfo(const time_t&  startTime,
-                                   const time_t&  stopTime,
-                                   const G4float& duration,
-                                   const std::string& seedStateAtStart)
+
+void BDSOutputROOT::ClearStructuresRunLevel()
 {
-  evtInfo->startTime        = startTime;
-  evtInfo->stopTime         = stopTime;
-  evtInfo->duration         = duration;
-  evtInfo->seedStateAtStart = seedStateAtStart;
+  runInfo->Flush();
 }
 
-void BDSOutputROOT::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+void BDSOutputROOT::FillEventInfo(const BDSEventInfo *info)
 {
-  *evtInfo = *info;
+  if (info)
+    {*evtInfo = *(info->GetInfo());}
 }
 
+void BDSOutputROOT::FillRunInfo(const BDSEventInfo *info)
+{
+  if (info)
+    {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}
+}
+
+/*
 void BDSOutputROOT::Write(const time_t&  startTime,
                           const time_t&  stopTime,
                           const G4float& duration,
@@ -416,8 +426,8 @@ void BDSOutputROOT::Write(const time_t&  startTime,
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
 }
-
-void BDSOutputROOT::Close()
+*/
+void BDSOutputROOT::CloseFile()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;

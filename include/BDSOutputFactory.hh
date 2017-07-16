@@ -15,7 +15,9 @@ class BDSOutputFactory
 {
 public:
   /// factory method
-  static BDSOutput* CreateOutput(BDSOutputType format);
+  static BDSOutput* CreateOutput(BDSOutputType format,
+				 G4String      fileName,
+				 G4int         fileNumberOffset = -1);
 };
 
 #endif

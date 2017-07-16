@@ -35,60 +35,73 @@
 class BDSOutputROOT: public BDSOutput 
 {
 public:
-  BDSOutputROOT();
+  /// Constructor with default file name (without extension or number suffix).
+  /// Also, file number offset to start counting suffix from.
+  BDSOutputROOT(G4String fileName,
+		G4int    fileNumberOffset);
   virtual ~BDSOutputROOT();
 
-  /// write sampler hit collection
-  virtual void WriteHits(BDSSamplerHitsCollection*);
-  
-  /// write energy deposition hits
-  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
-  
-  /// write where primaries stop being primaries
-  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss);
+  virtual void NewFile();                     ///< Open a new file.
+  virtual void InitialiseGeometryDependent(); ///< Build samplers.
+  virtual void CloseFile();                   ///< Write contents and close file.
 
-  /// write where primaries impact
-  virtual void WritePrimaryHit(BDSTrajectoryPoint* phits);
+  /// Fill the local structure with primary vertex information.
+  virtual void FillPrimary(G4double E,
+			   G4double x0,
+			   G4double y0,
+			   G4double z0,
+			   G4double xp,
+			   G4double yp,
+			   G4double zp,
+			   G4double t,
+			   G4double weight,
+			   G4int    PDGType,
+			   G4int    nEvent,
+			   G4int    turnsTaken);
 
-  /// write tunnel hits
-  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection* tunnelHits);
+  /// Fill event summary information.
+  virtual void FillEventInfo(const BDSEventInfo *info);
+
+  /// Fill sampler hits into output structures.
+  virtual void FillSamplerHits(const BDSSamplerHitsCollection *hits, const HitsType);
+
+  /// Fill a collection of energy hits into the appropriate output structure.
+  virtual void FillEnergyLoss(const BDSEnergyCounterHitsCollection *, const LossType);
+
+  /// Fill the hit where the primary particle impact.
+  virtual void FillPrimaryHit(const BDSTrajectoryPoint *phit);
   
-  /// write a trajectory 
-  virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
+  /// Fill the hit where the primary stopped being a primary.
+  virtual void FillPrimaryLoss(const BDSTrajectoryPoint *ploss);
+
+  /// Copy a set of trajectories to the output structure.
+  virtual void FillTrajectories(const std::vector<BDSTrajectory *> &TrajVec);
+
+  /// Fill run level summary information.
+  virtual void FillRunInfo(const BDSEventInfo *info);
+
+  /// Copy from local event structures to the actual file.  Ony event level
+  /// structures are copied.
+  virtual void WriteFileEventLevel();
+
+  /// Clear the local structures in this class in preparation for a new event.
+  virtual void ClearStructuresEventLevel();
+
+  /// Copy from local run structures to the actual file.  Only run level
+  /// structures are copied.
+  virtual void WriteFileRunLevel();
+
+  /// Clear the local structures in this class in preparation for a new run.
+  virtual void ClearStructuresRunLevel();
   
-  /// write primary hit
-  virtual void WritePrimary(G4double E,
-			    G4double x0,
-			    G4double y0,
-			    G4double z0,
-			    G4double xp,
-			    G4double yp,
-			    G4double zp,
-			    G4double t,
-			    G4double weight,
-			    G4int    PDGType, 
-			    G4int    nEvent, 
-			    G4int    TurnsTaken);
-
-  /// fill event structure
-  virtual void FillEvent();
-  
-  /// write event info
-  virtual void WriteEventInfo(const time_t &startTime, const time_t &stopTime, const G4float &duration,
-                              const std::string &seedStateAtStart);
-  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info);
-
-  virtual void Initialise(); ///< open the file
-  virtual void Write(const time_t &startTime, const time_t &stopTime, const G4float &duration,
-                       const std::string &seedStateAtStart);      ///< write to file
-  virtual void Close();      ///< close the file
-
-  /// clear structures
+  /// Clear structures.
   void Flush();
 
 private:
+  /// No default constructor.
+  BDSOutputROOT() = delete;
 
-  /// create histograms
+  /// Create histograms.
   void CreateHistograms();
   
   ///@{ create histograms for evtHistos and runHistos
@@ -161,7 +174,6 @@ private:
   G4bool localSamplersInitialised;
   
   G4bool useScoringMap  = false;
-  G4bool writePrimaries = true;
 
   /// The maximum s in mm such that there is an integer number of
   /// elossHistoBinWidths along the line. Used for histogramming purposes.

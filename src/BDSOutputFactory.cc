@@ -6,7 +6,9 @@
 #include "BDSOutputROOT.hh"
 
 
-BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format)
+BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
+					  G4String      fileName,
+					  G4int         fileNumberOffset)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
@@ -16,7 +18,7 @@ BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format)
     case BDSOutputType::none:
       {return new BDSOutputNone(); break;}
     case BDSOutputType::rootevent:
-      {return new BDSOutputROOT(); break;}
+      {return new BDSOutputROOT(fileName, fileNumberOffset); break;}
     default:
       {return new BDSOutputNone(); break;} // absolute default - should not reach this
     }
