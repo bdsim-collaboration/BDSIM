@@ -5,14 +5,7 @@
 
 #include "globals.hh"
 
-#include <ctime>
-#include <map>
-#include <string>
-#include <vector>
-
 #include "TROOT.h"
-#include "TH1F.h"
-#include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
 
@@ -34,6 +27,7 @@ public:
   virtual void NewFile();                     ///< Open a new file.
   virtual void CloseFile();                   ///< Write contents and close file.
 
+private:
   /// Copy options and write to file.
   virtual void WriteOptions();
 
@@ -48,7 +42,6 @@ public:
   /// structures are copied.
   virtual void WriteFileRunLevel();
 
-private:
   /// No default constructor.
   BDSOutputROOT() = delete;
 

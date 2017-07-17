@@ -19,11 +19,12 @@ public:
 
   /// @{ No action.
   virtual void NewFile(){;}
+  virtual void CloseFile(){;}
+private:
   virtual void WriteOptions(){;}
   virtual void WriteModel(){;}
   virtual void WriteFileEventLevel(){;}
   virtual void WriteFileRunLevel(){;}
-  virtual void CloseFile(){;}
   /// @}
 };
 
