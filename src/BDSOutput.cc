@@ -24,6 +24,7 @@
 
 #include "parser/OptionsBase.h"
 
+#include <cmath>
 #include <ostream>
 #include <set>
 #include <vector>
