@@ -33,6 +33,7 @@
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
+#include "parser/placement.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -150,6 +151,37 @@ void BDSDetectorConstruction::BuildBeamlines()
   acceleratorModel->RegisterFlatBeamline(mainBeamline.massWorld);
   acceleratorModel->RegisterCurvilinearBeamline(mainBeamline.curvilinearWorld);
   acceleratorModel->RegisterCurvilinearBridgeBeamline(mainBeamline.curvilinearBridgeWorld);
+
+  // loop over placements and check if any are beam lines (have sequences specified)
+  auto placements = BDSParser::Instance()->GetPlacements();
+  for (const auto& placement : placements)
+    {
+      if (placement.sequence.empty())
+	{continue;} // no sequence specified -> just a placement
+      auto parserLine = BDSParser::Instance()->GetSequence(placement.sequence);
+
+      // determine offset in world for extra beam line
+      G4Transform3D plTransform = CreatePlacementTransform(placement);
+      G4Transform3D placementInitial;
+      if (placement.referenceElement.empty())
+	{// no reference - ie w.r.t. start of main beam line 
+	  placementInitial = initialTransform; // same as beginning of beam line
+	}
+      else
+	{// use reference to get placement transform - ie w.r.t. to a main beam line element
+	  const BDSBeamline* mbl = mainBeamline.massWorld;
+	  placementInitial = mbl->GetTransformForElement(placement.referenceElement,
+							 placement.referenceElementNumber);
+	}
+      G4Transform3D startTransform = placementInitial * plTransform; // compound
+
+      // aux beam line must be non-circular by definition to branch off of beam line (for now)
+      BDSBeamlineSet extraBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
+						   placement.name,
+						   startTransform);
+      
+      acceleratorModel->RegisterExtraBeamline(extraBeamline);
+    }
 }
 
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
@@ -175,9 +207,6 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
-#ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
-#endif
       // find next and previous element, but ignore special elements or thin multipoles.
       const GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
