@@ -108,7 +108,7 @@ public:
   void FillRun(const BDSEventInfo* info);
   
   /// Test whether a sampler name is invalid or not.
-  static bool InvalidSamplerName(const G4String& samplerName);
+  static G4bool InvalidSamplerName(const G4String& samplerName);
 
   /// Feedback for protected names.
   static void PrintProtectedNames(std::ostream& out);
@@ -127,6 +127,12 @@ protected:
   inline G4bool WritePrimaries() const {return writePrimaries;}
 
 private:
+  /// Calculate the number of bins and required maximum s.
+  void CalculateHistogramParameters();
+
+  /// Create histograms.
+  void CreateHistograms();
+  
   /// Fill the local structure with primary vertex information. Utility function
   /// to translate from G4PrimaryVertex to simple numbers.
   void FillPrimary(const G4PrimaryVertex* vertex,
@@ -180,6 +186,16 @@ private:
 
   /// Invalid names for samplers - kept here as this is where the output structures are created.
   const static std::set<G4String> protectedNames;
+
+  /// Whether the single 3D histogram will be built.
+  G4bool useScoringMap;
+
+  /// The maximum s in mm such that there is an integer number of
+  /// elossHistoBinWidths along the line. Used for histogramming purposes.
+  G4double sMaxHistograms;
+
+  /// Number of bins for each histogram required.
+  G4int nbins;
 };
 
 #endif

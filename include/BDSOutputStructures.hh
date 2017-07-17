@@ -59,9 +59,6 @@ public:
 
   /// Clear the local structures in this class in preparation for a new run.
   void ClearStructuresRunLevel();
-
-  /// Create histograms.
-  void CreateHistograms();
   
   ///@{ Create histograms for evtHistos and runHistos.
   void Create1DHistogram(G4String name,
@@ -73,9 +70,6 @@ public:
 			 G4String title,
                          std::vector<double>& edges);
   ///@}
-
-  /// Calculate the number of bins and required maximum s.
-  void CalculateHistogramParameters();
 
   BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
   BDSOutputROOTEventModel*   modelOutput;   ///< Model output.
@@ -103,16 +97,6 @@ public:
   BDSOutputROOTEventTrajectory* traj;      ///< Trajectories.
   BDSOutputROOTEventHistograms* evtHistos; ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;   ///< Event information.
-
-  /// Whether the single 3D histogram will be built.
-  G4bool useScoringMap;
-
-  /// The maximum s in mm such that there is an integer number of
-  /// elossHistoBinWidths along the line. Used for histogramming purposes.
-  G4double sMaxHistograms;
-
-  /// Number of bins for each histogram required.
-  G4int nbins;
   
   /// Wether we've set up the member vector of samplers. Can only be done once the geometry
   /// is constructed so it's done in initialisation. This happens with each new file, but we
