@@ -18,6 +18,7 @@ class G4VPhysicalVolume;
 namespace GMAD {
   struct Element;
   template<typename T> class FastList;
+  class Placement;
 }
 
 class BDSAcceleratorModel;
@@ -70,6 +71,9 @@ public:
 				   G4VSensitiveDetector* sensitiveDetector = nullptr,
 				   G4bool                setRegions        = false,
 				   G4bool                registerInfo      = false);
+
+  /// Create a transform based on the information in the placement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement);
   
 private:
   /// assignment and copy constructor not implemented nor used

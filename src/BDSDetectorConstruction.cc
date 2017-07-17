@@ -42,10 +42,14 @@
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Vector/EulerAngles.h"
 
 #include <iterator>
 #include <list>
@@ -447,6 +451,38 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
         }
     }
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement)
+{
+  G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
+					    placement.y*CLHEP::m,
+					    placement.z*CLHEP::m);
+  
+  G4RotationMatrix* rm = nullptr;
+  if (placement.axisAngle)
+    {
+      G4ThreeVector axis = G4ThreeVector(placement.axisX,
+					 placement.axisY,
+					 placement.axisZ);
+      rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
+    }
+  else
+    {
+      if (BDS::IsFinite(placement.phi)   ||
+	  BDS::IsFinite(placement.theta) ||
+	  BDS::IsFinite(placement.psi))
+	{// only build if finite
+	  CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
+							    placement.theta*CLHEP::rad,
+							    placement.psi*CLHEP::rad);
+	  rm = new G4RotationMatrix(ang);
+	}
+      else
+	{rm = new G4RotationMatrix();}
+    }
+  G4Transform3D result(*rm, translation);
+  return result;
 }
 
 #if G4VERSION_NUMBER > 1009
