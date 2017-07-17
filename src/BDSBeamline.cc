@@ -668,19 +668,20 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
   // check if base name already registered (can be single component placed multiple times)
   std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(element->GetName());
   if (search == components.end())
-    {
-      // not registered
-      components[element->GetName()] = element;
+    {// not registered
+      components[element->GetPlacementName()] = element;
     }
 }
 
-BDSBeamlineElement* BDSBeamline::GetElement(G4String name) const
+BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
+					    G4int    i) const
 {
-  std::map<G4String, BDSBeamlineElement*>::const_iterator search = components.find(name);
+  // build placement name based on acc component name and ith placement
+  // matches construction in BDSBeamlineElement
+  G4String placementName = acceleratorComponentName + "_" + std::to_string(i);
+  const auto search = components.find(placementName);
   if (search == components.end())
-    {//wasn't found
-      return nullptr;
-    }
+    {return nullptr;} //wasn't found
   else
     {return search->second;}
 }
