@@ -114,7 +114,7 @@ void EventAnalysis::Process()
 	}
       
       if(processSamplers)
-	{ProcessSamplers();}
+	{ProcessSamplers(i==0);}
     }
   std::cout << "\rSampler analysis complete                           " << std::endl;
 }
@@ -221,7 +221,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Write();
 }
 
-void EventAnalysis::ProcessSamplers()
+void EventAnalysis::ProcessSamplers(bool firstTime)
 {
   if (debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
@@ -230,7 +230,7 @@ void EventAnalysis::ProcessSamplers()
       if (debug)
 	{std::cout << __METHOD_NAME__ << std::endl;}
       for(auto s : samplerAnalyses)
-	{s->Process();}
+	{s->Process(firstTime);}
     }
 }
 
