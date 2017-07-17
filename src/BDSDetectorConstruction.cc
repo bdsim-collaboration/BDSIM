@@ -6,6 +6,7 @@
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
+#include "BDSBeamlineSet.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSCurvilinearBuilder.hh"
@@ -69,7 +70,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   InitialiseRegions();
   
   // construct the component list
-  BuildBeamline();
+  BuildBeamlines();
 
   // construct beamline of end pieces
   BDS::BuildEndPieceBeamline(circular);
@@ -124,19 +125,38 @@ void BDSDetectorConstruction::InitialiseRegions()
     }
 }
 
-void BDSDetectorConstruction::BuildBeamline()
-{ 
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
-
-  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
-  BDSBeamline* beamline = new BDSBeamline(initialTransform);
-  
+void BDSDetectorConstruction::BuildBeamlines()
+{
+  // build main beam line
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
+  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
+					      "main beam line",
+					      initialTransform,
+					      BDSGlobalConstants::Instance()->Circular());
 
-  auto beamLine = BDSParser::Instance()->GetBeamline();
+  if (mainBeamline.massWorld->empty())
+    {
+      G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
+      exit(1);
+    }
   
-  if (circular)
+  // register the beamline in the holder class for the full model
+  acceleratorModel->RegisterFlatBeamline(mainBeamline.massWorld);
+  acceleratorModel->RegisterCurvilinearBeamline(mainBeamline.curvilinearWorld);
+  acceleratorModel->RegisterCurvilinearBridgeBeamline(mainBeamline.curvilinearBridgeWorld);
+}
+
+BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
+						      G4String             name,
+						      const G4Transform3D& initialTransform,
+						      G4bool               beamlineIsCircular)
+{
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
+  BDSBeamline* massWorld = new BDSBeamline(initialTransform);
+    
+  if (beamlineIsCircular)
     {
       G4bool unsuitable = UnsuitableFirstElement(beamLine.begin());
       if (unsuitable)
@@ -155,7 +175,7 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
 #endif
       // find next and previous element, but ignore special elements or thin multipoles.
-      GMAD::Element* prevElement = nullptr;
+      const GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
       while (prevIt != beamLine.begin())
 	{
@@ -167,7 +187,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	}
 
-      GMAD::Element* nextElement = nullptr;
+      const GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
       ++nextIt;
       while (nextIt != beamLine.end())
@@ -179,7 +199,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-      G4double currentArcLength = beamline->GetTotalArcLength();
+      G4double currentArcLength = massWorld->GetTotalArcLength();
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt),
 									   prevElement,
 									   nextElement,
@@ -188,14 +208,14 @@ void BDSDetectorConstruction::BuildBeamline()
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-          beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
+          massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
     }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (circular)
+  if (beamlineIsCircular)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -205,9 +225,9 @@ void BDSDetectorConstruction::BuildBeamline()
       // 1x teleporter with (minimum) 1x sampler chord length
       // 3x padding length
       const G4double sL = BDSSamplerPlane::ChordLength();
-      const G4double pL = beamline->PaddingLength();
+      const G4double pL = massWorld->PaddingLength();
       G4double minimumRequiredSpace = 2*sL + 3*pL;
-      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(beamline);
+      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(massWorld);
       
       // note delta is from end to beginning, which will have correct transverse but opposite
       // z component, hence -ve here.
@@ -232,7 +252,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  if (terminator)
 	    {
 	      terminator->Initialise();
-	      beamline->AddComponent(terminator);
+	      massWorld->AddComponent(terminator);
 	    }	  
 	  // update delta
 	  teleporterDelta.setZ(teleporterLength);
@@ -240,7 +260,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  if (teleporter)
 	    {
 	      teleporter->Initialise();
-	      beamline->AddComponent(teleporter);
+	      massWorld->AddComponent(teleporter);
 	    }
 	}
     }
@@ -248,36 +268,25 @@ void BDSDetectorConstruction::BuildBeamline()
   if (BDSGlobalConstants::Instance()->Survey())
     {
       BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
-      survey->Write(beamline);
+      survey->Write(massWorld);
       delete survey;
     }
   delete theComponentFactory;
 
   // print summary
-  G4cout << __METHOD_NAME__ << *beamline;
-
-#ifdef BDSDEBUG
-  // print accelerator component registry
-  G4cout << *BDSAcceleratorComponentRegistry::Instance();
-  beamline->PrintMemoryConsumption();
-#endif
- 
-  if (beamline->empty())
-    {
-      G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
-      exit(1);
-    }
+  G4cout << __METHOD_NAME__ << name << *massWorld;
 
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
-  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(beamline, circular);
+  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(massWorld, beamlineIsCircular);
   BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline);
   delete clBuilder;
-  
-  // register the beamline in the holder class for the full model
-  acceleratorModel->RegisterFlatBeamline(beamline);
-  acceleratorModel->RegisterCurvilinearBeamline(clBeamline);
-  acceleratorModel->RegisterCurvilinearBridgeBeamline(clBridgeBeamline);
+
+  BDSBeamlineSet mainBeamline;
+  mainBeamline.massWorld              = massWorld;
+  mainBeamline.curvilinearWorld       = clBeamline;
+  mainBeamline.curvilinearBridgeWorld = clBridgeBeamline;
+  return mainBeamline;
 }
 
 void BDSDetectorConstruction::BuildTunnel()

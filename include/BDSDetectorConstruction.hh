@@ -22,6 +22,7 @@ namespace GMAD {
 
 class BDSAcceleratorModel;
 class BDSBeamline;
+class BDSBeamlineSet;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -78,10 +79,16 @@ private:
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
   
-  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of
-  /// BDSComponentFactory and put in BDSBeamline container that calculates coordinates
-  /// and extent of beamline
-  void BuildBeamline();
+  /// Build the main beam line and then any other required beam lines.
+  void BuildBeamlines();
+
+  /// Convert a parser beamline_list to BDSAcceleratorComponents with help of
+  /// BDSComponentFactory and put in a BDSBeamline container that calculates coordinates
+  /// and extents of the beamline.
+  BDSBeamlineSet BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
+			       G4String             name,
+			       const G4Transform3D& initialTransform   = G4Transform3D(),
+			       G4bool               beamlineIsCircular = false);
 
   /// Build the tunnel around the already constructed flat beam line.
   void BuildTunnel();
