@@ -127,7 +127,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
   if (samplerHitsCylinder)
-    {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::cylinder);}
+    {FillSamplerHits(samplerHitsCylinder, BDSOutput::HitsType::cylinder);}
   if (energyLoss)
     {FillEnergyLoss(energyLoss, BDSOutput::LossType::energy);}
   if (tunnelLoss)
