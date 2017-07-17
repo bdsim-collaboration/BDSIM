@@ -686,6 +686,21 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
     {return search->second;}
 }
 
+G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentName,
+						  G4int    i) const
+{
+  BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
+  if (!result)
+    {
+      G4cerr << __METHOD_NAME__ << "No element named \""
+	     << acceleratorComponentName << "\" found for placement number "
+	     << i << G4endl;
+      exit(1);
+    }
+  else
+    {return G4Transform3D(*(result->GetRotationMiddle()), result->GetPositionMiddle());}
+}
+
 void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 {
   // calculate extents for world size determination
