@@ -51,10 +51,6 @@
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
-//=======================================================
-// Global variables 
-BDSOutput* bdsOutput=nullptr;     ///< output interface
-//=======================================================
 
 int main(int argc,char** argv)
 {
@@ -99,6 +95,7 @@ int main(int argc,char** argv)
 						    BDSGlobalConstants::Instance()->BeamlineTransform());
 
   /// Optionally generate primaries only and exit
+  BDSOutput* bdsOutput = nullptr;
   if (globalConstants->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
