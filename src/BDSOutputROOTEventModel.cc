@@ -36,6 +36,35 @@ int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
   return iMin;
 }
 
+void BDSOutputROOTEventModel::Flush()
+{
+  samplerNamesUnique.clear();
+  componentName.clear();
+  placementName.clear();
+  componentType.clear();
+  length.clear();
+  staPos.clear();
+  midPos.clear();
+  endPos.clear();
+  staRot.clear();
+  midRot.clear();
+  endRot.clear();
+  staRefPos.clear();
+  midRefPos.clear();
+  endRefPos.clear();
+  staRefRot.clear();
+  midRefRot.clear();
+  endRefRot.clear();
+  staS.clear();
+  midS.clear();
+  endS.clear();
+  beamPipeType.clear();
+  beamPipeAper1.clear();
+  beamPipeAper2.clear();
+  beamPipeAper3.clear();
+  beamPipeAper4.clear();  
+}
+
 #ifndef __ROOTBUILD__
 void BDSOutputROOTEventModel::Fill()
 {
