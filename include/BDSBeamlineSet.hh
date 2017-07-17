@@ -1,6 +1,8 @@
 #ifndef BDSBEAMLINESET_H
 #define BDSBEAMLINESET_H
 
+class BDSBeamline;
+
 /**
  * @brief Simple struct to return a beamline plus associated beam lines.
  *
