@@ -34,6 +34,12 @@ public:
   virtual void NewFile();                     ///< Open a new file.
   virtual void CloseFile();                   ///< Write contents and close file.
 
+  /// Copy options and write to file.
+  virtual void WriteOptions();
+
+  /// Copy model and write to file.
+  virtual void WriteModel();
+  
   /// Copy from local event structures to the actual file.  Ony event level
   /// structures are copied.
   virtual void WriteFileEventLevel();

@@ -1,7 +1,11 @@
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
 #include "BDSOutput.hh"
+#include "BDSParser.hh"
 #include "BDSRunAction.hh"
+
+#include "parser/Options.h"
+#include "parser/OptionsBase.h"
 
 #include "globals.hh"               // geant4 globals / types
 #include "G4Run.hh"
@@ -43,6 +47,14 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 
   output->InitialiseGeometryDependent();
   output->NewFile();
+
+  // Write options now file open.
+  const GMAD::Options o = BDSParser::Instance()->GetOptions();
+  const GMAD::OptionsBase* ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
+  output->FillOptions(ob);
+
+  // Write model now file open.
+  output->FillModel();
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)

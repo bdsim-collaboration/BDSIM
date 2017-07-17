@@ -58,31 +58,21 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree     = new TTree("Event","BDSIM event");
   
   // Build options and write structure
-  // Get options
-  const GMAD::Options o = BDSParser::Instance()->GetOptions();
-  const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
-  // Get exec options
-  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
-  theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
-  theOptionsOutput->Fill();
-  theOptionsOutputTree->Fill();
+  theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",optionsOutput,32000,2);
   
   // Build model and write structure
-  BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",theModelOutput,32000);
-  theModelOutput->Fill();
-  theModelOutputTree->Fill();
+  theModelOutputTree->Branch("Model.",          "BDSOutputROOTEventModel",modelOutput,32000);
 
   // Build run data tree
-  theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,32000,1);
-  theRunOutputTree->Branch("Info.",            "BDSOutputROOTEventRunInfo",runInfo,32000,1);
+  theRunOutputTree->Branch("Histos.",           "BDSOutputROOTEventHistograms",runHistos,32000,1);
+  theRunOutputTree->Branch("Info.",             "BDSOutputROOTEventRunInfo",runInfo,32000,1);
 
   // Event info output
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
   if (WritePrimaries())
-    {theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);}
+    {theEventOutputTree->Branch("Primary.",     "BDSOutputROOTEventSampler",primary,32000,1);}
 
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
@@ -106,6 +96,16 @@ void BDSOutputROOT::NewFile()
                                  "BDSOutputROOTEventSampler",
                                  samplerTreeLocal,32000,0);
     }
+}
+
+void BDSOutputROOT::WriteOptions()
+{
+  theOptionsOutputTree->Fill();
+}
+
+void BDSOutputROOT::WriteModel()
+{
+  theModelOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteFileEventLevel()

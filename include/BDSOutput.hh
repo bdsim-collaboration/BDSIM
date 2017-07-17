@@ -25,6 +25,10 @@ typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
 class G4PrimaryVertex;
 
+namespace GMAD {
+  class OptionsBase;
+}
+
 /**
  * @brief Output base class that defines interface for all output types.
  */
@@ -39,6 +43,12 @@ public:
 
   /// Open a new file.
   virtual void NewFile() = 0;
+
+  /// Write the options.
+  virtual void WriteOptions() = 0;
+
+  /// Write a representation of the samplers and beamline.
+  virtual void WriteModel() = 0;
 
   /// Copy from local event structures to the actual file.  Ony event level
   /// structures are copied.
@@ -55,6 +65,12 @@ public:
   /// Setup any geometry dependent output structures in the output file - such
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   virtual void InitialiseGeometryDependent();
+
+  /// Fill the local structure options with the original ones from the parser.
+  void FillOptions(const GMAD::OptionsBase* options);
+
+  /// Fill the local structure model from the beam line and sampler registry.
+  void FillModel();
 
   /// Fill the local structure with primary vertex information. A unique interface
   /// for the case of generating primaries only. This fills the primary structure,

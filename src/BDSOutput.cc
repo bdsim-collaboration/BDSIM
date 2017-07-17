@@ -6,6 +6,8 @@
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
@@ -16,6 +18,8 @@
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
+
+#include "parser/OptionsBase.h"
 
 #include <ostream>
 #include <set>
@@ -43,6 +47,20 @@ BDSOutput::BDSOutput(G4String fileName,
 void BDSOutput::InitialiseGeometryDependent()
 {
   BDSOutputStructures::InitialiseGeometryDependent();
+}
+
+void BDSOutput::FillOptions(const GMAD::OptionsBase* options)
+{
+  *optionsOutput = BDSOutputROOTEventOptions(options);
+  WriteOptions();
+  ClearStructuresOptions();
+}
+
+void BDSOutput::FillModel()
+{
+  modelOutput->Fill();
+  WriteModel();
+  ClearStructuresModel();
 }
 
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,

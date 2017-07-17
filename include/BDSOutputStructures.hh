@@ -17,6 +17,8 @@ class BDSGlobalConstants;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
+class BDSOutputROOTEventModel;
+class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 class BDSOutputROOTEventTrajectory;
 class BDSSamplerHit;
@@ -45,6 +47,12 @@ public:
 
   /// Construct samplers.
   void InitialiseGeometryDependent();
+
+  /// Clear the local model structure.
+  void ClearStructuresModel();
+
+  /// Clear the local options structure.
+  void ClearStructuresOptions();
   
   /// Clear the local structures in this class in preparation for a new event.
   void ClearStructuresEventLevel();
@@ -68,6 +76,9 @@ public:
 
   /// Calculate the number of bins and required maximum s.
   void CalculateHistogramParameters();
+
+  BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
+  BDSOutputROOTEventModel*   modelOutput;   ///< Model output.
 
   /// Primary sampler structure.
 #ifdef __ROOTDOUBLE__

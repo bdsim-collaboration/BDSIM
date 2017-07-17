@@ -8,6 +8,8 @@
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
@@ -30,9 +32,12 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 {
   useScoringMap  = globals->UseScoringMap();
 
-  G4bool storeLinks      = globals->StoreELossLinks();
-  G4bool storeLocal      = globals->StoreELossLocal();
-  G4bool storeGlobal     = globals->StoreELossGlobal();
+  G4bool storeLinks  = globals->StoreELossLinks();
+  G4bool storeLocal  = globals->StoreELossLocal();
+  G4bool storeGlobal = globals->StoreELossGlobal();
+
+  optionsOutput = new BDSOutputROOTEventOptions();
+  modelOutput   = new BDSOutputROOTEventModel();
   
   eLoss     = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal);
   pFirstHit = new BDSOutputROOTEventLoss(true      ,       true,       false);
@@ -55,6 +60,8 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
+  delete optionsOutput;
+  delete modelOutput;
   delete primary;
   delete eLoss;
   delete pFirstHit;
@@ -154,6 +161,16 @@ void BDSOutputStructures::InitialiseGeometryDependent()
 	  samplerNames.push_back(samplerName);
         }
     }
+}
+
+void BDSOutputStructures::ClearStructuresModel()
+{
+  modelOutput->Flush();
+}
+
+void BDSOutputStructures::ClearStructuresOptions()
+{
+  *optionsOutput = BDSOutputROOTEventOptions(); // default
 }
 
 void BDSOutputStructures::ClearStructuresEventLevel()
