@@ -4,8 +4,8 @@
 #include "BDSParser.hh"
 #include "BDSRunAction.hh"
 
-#include "parser/Options.h"
-#include "parser/OptionsBase.h"
+#include "parser/options.h"
+#include "parser/optionsBase.h"
 
 #include "globals.hh"               // geant4 globals / types
 #include "G4Run.hh"

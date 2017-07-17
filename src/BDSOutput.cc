@@ -22,7 +22,7 @@
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 
-#include "parser/OptionsBase.h"
+#include "parser/optionsBase.h"
 
 #include <cmath>
 #include <ostream>
