@@ -1,6 +1,7 @@
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineSet.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -14,6 +15,7 @@
 
 #include <cstdio>
 #include <map>
+#include <vector>
 
 BDSAcceleratorModel* BDSAcceleratorModel::instance = nullptr;
 
@@ -54,6 +56,14 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete tunnelBeamline;
   delete endPieceBeamline;
   delete placementBeamline;
+
+  for (auto bl : extraBeamlines)
+    {
+      delete bl.massWorld;
+      delete bl.curvilinearWorld;
+      delete bl.curvilinearBridgeWorld;
+    }
+  
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
@@ -105,4 +115,9 @@ G4Region* BDSAcceleratorModel::Region(G4String name) const
       G4cout << G4endl;
       exit(1);
     }
+}
+
+void BDSAcceleratorModel::RegisterExtraBeamline(BDSBeamlineSet set)
+{
+  extraBeamlines.push_back(set);
 }

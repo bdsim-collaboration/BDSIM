@@ -1,6 +1,8 @@
 #ifndef BDSACCELERATORMODEL_H
 #define BDSACCELERATORMODEL_H
 
+#include "BDSBeamlineSet.hh"
+
 #include "globals.hh"         // geant4 globals / types
 
 #include <map>
@@ -99,6 +101,9 @@ public:
   /// based on the option from BDSGlobalConstants.
   void RegisterTemporaryFile(G4String fileName);
 
+  /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
+  void RegisterExtraBeamline(BDSBeamlineSet set);
+
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
   /// Simpler accessor for production cuts vs regions.
@@ -122,6 +127,8 @@ private:
   BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
   BDSBeamline* endPieceBeamline;          ///< End Pieces beam line.
   BDSBeamline* placementBeamline;         ///< Placement geometry beam line.
+
+  std::vector<BDSBeamlineSet> extraBeamlines; ///< Extra beamlines.
 
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
