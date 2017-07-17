@@ -29,7 +29,7 @@ class BDSOutputROOTEventTrajectory;
 
 class BDSOutputStructures
 {
-public:
+protected:
   explicit BDSOutputStructures(const BDSGlobalConstants* globals);
   virtual ~BDSOutputStructures();
 
@@ -59,7 +59,6 @@ public:
                          std::vector<double>& edges);
   ///@}
 
-protected:
   BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
   BDSOutputROOTEventModel*   modelOutput;   ///< Model output.
 
@@ -87,12 +86,12 @@ protected:
   BDSOutputROOTEventHistograms* evtHistos; ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;   ///< Event information.
   
+private:
   /// Whether we've set up the member vector of samplers. Can only be done once the geometry
   /// is constructed so it's done in initialisation. This happens with each new file, but we
   /// should only prepare the local samplers once, hence this cache variable.
   G4bool localSamplersInitialised;
 
-private:
   BDSOutputStructures() = delete;
 };
 
