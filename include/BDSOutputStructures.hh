@@ -34,7 +34,7 @@ protected:
   virtual ~BDSOutputStructures();
 
   /// Construct samplers.
-  void InitialiseGeometryDependent();
+  void InitialiseSamplers();
 
   /// Clear the local model structure.
   void ClearStructuresModel();

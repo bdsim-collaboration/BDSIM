@@ -81,7 +81,7 @@ void BDSOutputStructures::Create1DHistogram(G4String name, G4String title,
   runHistos->Create1DHistogram(name,title,edges);
 }
 
-void BDSOutputStructures::InitialiseGeometryDependent()
+void BDSOutputStructures::InitialiseSamplers()
 {
   if (!localSamplersInitialised)
     {

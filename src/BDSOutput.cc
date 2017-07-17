@@ -54,7 +54,7 @@ BDSOutput::BDSOutput(G4String fileName,
 void BDSOutput::InitialiseGeometryDependent()
 {
   CreateHistograms();
-  BDSOutputStructures::InitialiseGeometryDependent();
+  InitialiseSamplers();
 }
 
 void BDSOutput::FillOptions(const GMAD::OptionsBase* options)
