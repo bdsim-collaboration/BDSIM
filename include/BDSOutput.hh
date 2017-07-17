@@ -8,7 +8,6 @@
 #include <ctime>
 #include <ostream>
 #include <set>
-#include <string>
 #include <vector>
 
 // forward declarations
@@ -16,12 +15,10 @@ template <class T> class G4THitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;
-class BDSOutputROOTEventInfo;
 class BDSSamplerHit;
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
-typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
 class G4PrimaryVertex;
 
@@ -36,27 +33,13 @@ namespace GMAD {
 class BDSOutput: protected BDSOutputStructures
 {
 public:
-  /// Constructor with base file name (without extentsion or number suffix.
+  /// Constructor with base file name (without extension or number suffix).
   BDSOutput(G4String fileName,
 	    G4int    fileNumberOffset);
   virtual ~BDSOutput(){;}
 
   /// Open a new file.
   virtual void NewFile() = 0;
-
-  /// Write the options.
-  virtual void WriteOptions() = 0;
-
-  /// Write a representation of the samplers and beamline.
-  virtual void WriteModel() = 0;
-
-  /// Copy from local event structures to the actual file.  Ony event level
-  /// structures are copied.
-  virtual void WriteFileEventLevel() = 0;
-
-  /// Copy from local run structures to the actual file.  Only run level
-  /// structures are copied.
-  virtual void WriteFileRunLevel() = 0;
 
   /// Write any unwritten contents and close the currently open file. The instance
   /// should be safe to delete after calling this method.
@@ -114,12 +97,6 @@ public:
   /// Feedback for protected names.
   static void PrintProtectedNames(std::ostream& out);
 
-  /// Enum for different types of sampler hits that can be written out.
-  enum class HitsType {plane, cylinder};
-
-  /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, tunnel};
-
 protected:
   /// Get the next file name based on the base file name and the accrued number of files.
   G4String GetNextFileName();
@@ -128,6 +105,26 @@ protected:
   inline G4bool WritePrimaries() const {return writePrimaries;}
 
 private:
+  /// Enum for different types of sampler hits that can be written out.
+  enum class HitsType {plane, cylinder};
+
+  /// Enum for different types of energy loss that can be written out.
+  enum class LossType {energy, tunnel};
+
+  /// Write the options.
+  virtual void WriteOptions() = 0;
+
+  /// Write a representation of the samplers and beamline.
+  virtual void WriteModel() = 0;
+
+  /// Copy from local event structures to the actual file. Only event level
+  /// structures are copied.
+  virtual void WriteFileEventLevel() = 0;
+
+  /// Copy from local run structures to the actual file. Only run level
+  /// structures are copied.
+  virtual void WriteFileRunLevel() = 0;
+
   /// Calculate the number of bins and required maximum s.
   void CalculateHistogramParameters();
 

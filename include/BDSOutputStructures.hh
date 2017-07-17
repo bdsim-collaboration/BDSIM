@@ -1,18 +1,12 @@
 #ifndef BDSOUTPUTSTRUCTURES_H
 #define BDSOUTPUTSTRUCTURES_H
 
-#include "BDSOutputROOTEventSampler.hh"
-
 #include "globals.hh"
 
 #include <string>
 #include <vector>
 
 // forward declarations
-template <class T> class G4THitsCollection;
-class BDSEnergyCounterHit;
-typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
-class BDSEventInfo;
 class BDSGlobalConstants;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
@@ -20,14 +14,8 @@ class BDSOutputROOTEventLoss;
 class BDSOutputROOTEventModel;
 class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
+template<class T> class BDSOutputROOTEventSampler;
 class BDSOutputROOTEventTrajectory;
-class BDSSamplerHit;
-typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
-class BDSTrajectory;
-class BDSTrajectoryPoint;
-typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
-
-class G4PrimaryVertex;
 
 /**
  * @brief Holder for output information.
@@ -41,12 +29,12 @@ class G4PrimaryVertex;
 
 class BDSOutputStructures
 {
-public:
-  BDSOutputStructures(const BDSGlobalConstants* globals);
+protected:
+  explicit BDSOutputStructures(const BDSGlobalConstants* globals);
   virtual ~BDSOutputStructures();
 
   /// Construct samplers.
-  void InitialiseGeometryDependent();
+  void InitialiseSamplers();
 
   /// Clear the local model structure.
   void ClearStructuresModel();
@@ -98,12 +86,12 @@ public:
   BDSOutputROOTEventHistograms* evtHistos; ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;   ///< Event information.
   
-  /// Wether we've set up the member vector of samplers. Can only be done once the geometry
+private:
+  /// Whether we've set up the member vector of samplers. Can only be done once the geometry
   /// is constructed so it's done in initialisation. This happens with each new file, but we
   /// should only prepare the local samplers once, hence this cache variable.
   G4bool localSamplersInitialised;
 
-private:
   BDSOutputStructures() = delete;
 };
 
