@@ -32,7 +32,7 @@ public:
   void Initialise();
 
   /// Loop over all entries in the sampler and accumulate power sums over variuos moments.
-  void Process();
+  void Process(bool firstTime = false);
 
   /// Calculate optical functions based on combinations of moments already accumulated.
   void Terminate();
@@ -52,6 +52,9 @@ protected:
   long long int npart;
   double S;
 
+    // initial values to use for mean subtraction.
+    std::vector<double> o;
+
   typedef std::vector<std::vector<double>>                           twoDArray;
   typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
   typedef std::vector<std::vector<std::vector<std::vector<double>>>> fourDArray;
@@ -67,9 +70,11 @@ protected:
   twoDArray     optical;     ///< emt, alf, bta, gma, eta, etapr, mean, sigma
   twoDArray     varOptical;  ///< variances of optical functions
 
-  static double powSumToCentralMoment(fourDArray &powSum, long long int npartIn ,int i, int j, int m, int n);
-  static double centMomToCovariance(fourDArray &centMoms, long long int npartIn ,int k, int i, int j);
-  static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
+
+
+  double powSumToCentralMoment(fourDArray &powSum, long long int npartIn ,int i, int j, int m, int n);
+  double centMomToCovariance(fourDArray &centMoms, long long int npartIn ,int k, int i, int j);
+  double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 
 private:
   bool debug;

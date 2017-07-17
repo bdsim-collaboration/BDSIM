@@ -34,6 +34,9 @@ void SamplerAnalysis::CommonCtor()
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
+
+    std::vector<double> o; //initialise a vector to store the first values in a sampler for assumed mean subtraction
+    o.resize(6, 0);
   
   optical.resize(3); // resize to 3 entries initialised to 0
   varOptical.resize(3);
@@ -104,7 +107,7 @@ void SamplerAnalysis::Initialise()
   npart = 0;
 }
 
-void SamplerAnalysis::Process()
+void SamplerAnalysis::Process(bool firstTime)
 {
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
@@ -124,12 +127,18 @@ void SamplerAnalysis::Process()
       {continue;} // select only primary particles
     if (s->turnNumber[i] > 1)
       {continue;} // only use first turn particles
+
     v[0] = s->x[i];
     v[1] = s->xp[i];
     v[2] = s->y[i];
     v[3] = s->yp[i];
     v[4] = s->energy[i];
     v[5] = s->t[i];
+
+      if (firstTime)
+      {
+          o = v;
+      }
 
     w[0] = p->x[i];
     w[1] = p->xp[i];
@@ -147,8 +156,8 @@ void SamplerAnalysis::Process()
 	      {
 		for (int k = 0; k <= 4; ++k)
 		  {
-		    powSums[a][b][j][k] += std::pow(v[a],j)*std::pow(v[b],k);
-		    powSumsFirst[a][b][j][k] += std::pow(w[a],j)*std::pow(w[b],k);
+		    powSums[a][b][j][k] += std::pow(v[a]-o[a],j)*std::pow(v[b]-o[b],k);
+		    powSumsFirst[a][b][j][k] += std::pow(w[a]-o[a],j)*std::pow(w[b]-o[b],k);
 		  }
 	      }
 	  }
@@ -200,15 +209,16 @@ void SamplerAnalysis::Terminate()
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
 
     // check for nans (expected if dE=0) and set disp=0 if found
-    if (std::isnan(optical[i][4]))
+    if (!std::isfinite(optical[i][4]))
       {optical[i][4] = 0;}
-    if (std::isnan(optical[i][5]))
+    if (!std::isfinite(optical[i][5]))
       {optical[i][5] = 0;}
 
     double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
     //double corrCentMom_0_2 = 0.0; // TBC - unneeded when using only first emittance value
     corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
+
 
     // TBC - put back in when emittance calculation revised for first sampler
     //corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
@@ -223,9 +233,9 @@ void SamplerAnalysis::Terminate()
     double dispp_first  = (cenMomsFirst[4][4][1][0]*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][2][0];                                                      // eta prime
 
     // check for nans (expected if dE=0) and set disp=0 if found
-    if (std::isnan(disp_first))
+    if (!std::isfinite(disp_first))
       {disp_first = 0;}
-    if (std::isnan(disp_first))
+    if (!std::isfinite(dispp_first))
       {dispp_first = 0;}
     
     double corrCentMomFirst_2_0 = 0.0, corrCentMomFirst_0_2 = 0.0, corrCentMomFirst_1_1 = 0.0; //temp variables to store dispersion corrected moments
@@ -332,8 +342,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
       double s_1_0 = powSums[a][b][m][n];
+        int k = m>n ? a : b;
 
-      moment = s_1_0/npartIn;
+      moment = s_1_0/npartIn+o[k];
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))
