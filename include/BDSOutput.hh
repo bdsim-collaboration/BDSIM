@@ -64,6 +64,7 @@ public:
 
   /// Setup any geometry dependent output structures in the output file - such
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
+  /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
 
   /// Fill the local structure options with the original ones from the parser.
@@ -160,12 +161,12 @@ private:
   void FillSamplerHits(const BDSSamplerHitsCollection* hits,
 		       const HitsType type);
 
+  /// Fill the hit where the primary particle impact.
+  void FillPrimaryHit(const BDSTrajectoryPoint* phits);
+
   /// Fill a collection of energy hits into the appropriate output structure.
   void FillEnergyLoss(const BDSEnergyCounterHitsCollection *loss,
 		      const LossType type);
-  
-  /// Fill the hit where the primary particle impact.
-  void FillPrimaryHit(const BDSTrajectoryPoint* phits);
   
   /// Fill the hit where the primary stopped being a primary.
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
@@ -175,14 +176,14 @@ private:
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
+
+  /// No default constructor.
+  BDSOutput() = delete;
   
   G4String filename;        ///< Base file name.
-  //G4int eventNumber;        ///< Current event number.
   G4int numberEventPerFile; ///< Number of events stored per file.
   G4int outputFileNumber;   ///< Number of output file.
   G4bool writePrimaries;    ///< Whether to write primaries or not.
-  
-  BDSOutput() = delete;
 
   /// Invalid names for samplers - kept here as this is where the output structures are created.
   const static std::set<G4String> protectedNames;
