@@ -276,19 +276,27 @@ void BDSOutput::FillPrimary(G4double E,
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }
 
-void BDSOutput::FillEventInfo(const BDSEventInfo *info)
+void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 {
   if (info)
     {*evtInfo = *(info->GetInfo());}
 }
 
-void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection *hits,
+void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 				const BDSOutput::HitsType)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
+  // Here, we don't switch on the type of the hits as the samplers are all
+  // prepared and stored in one vector in the sampler registry.  The output
+  // structures are based on this and cylinder output is no different from
+  // plane output and indices will match.
+
+  // TBC - cylinder output will have all the same z and S, which is wrong!
+  if (!(hits->entries() > 0))
+    {return;}
   for (int i=0; i<hits->entries(); i++)
     {
       G4int samplerID = (*hits)[i]->GetSamplerID();
@@ -298,7 +306,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection *hits,
     }
 }
 
-void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection *hits,
+void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 			       const LossType lType)
 {
 #ifdef BDSDEBUG
@@ -332,7 +340,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection *hits,
   }
 }
 
-void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint *phit)
+void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -345,7 +353,7 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint *phit)
   evtHistos->Fill1DHistogram(3, preStepSPosition);
 }
 
-void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint *ploss)
+void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -366,7 +374,7 @@ void BDSOutput::FillTrajectories(const std::vector<BDSTrajectory*>& trajectories
   traj->Fill(trajectories);
 }
 
-void BDSOutput::FillRunInfo(const BDSEventInfo *info)
+void BDSOutput::FillRunInfo(const BDSEventInfo* info)
 {
   if (info)
     {*runInfo = BDSOutputROOTEventRunInfo(info->GetInfo());}

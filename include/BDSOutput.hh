@@ -159,7 +159,7 @@ private:
 
   /// Fill sampler hits into output structures.
   void FillSamplerHits(const BDSSamplerHitsCollection* hits,
-		       const HitsType type);
+		       const HitsType hType);
 
   /// Fill the hit where the primary particle impact.
   void FillPrimaryHit(const BDSTrajectoryPoint* phits);
