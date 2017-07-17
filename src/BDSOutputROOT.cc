@@ -1,13 +1,7 @@
 #include "BDSOutputROOT.hh"
 
-#include "BDSParser.hh"
 #include "parser/options.h"
-#include "BDSAcceleratorModel.hh"
-#include "BDSBeamline.hh"
 #include "BDSDebug.hh"
-#include "BDSEnergyCounterHit.hh"
-#include "BDSEventInfo.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -16,16 +10,10 @@
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSSamplerHit.hh"
-#include "BDSSamplerRegistry.hh"
-#include "BDSTrajectoryPoint.hh"
-#include "BDSUtilities.hh"
 
 #include "TFile.h"
 #include "TObject.h"
 #include "TTree.h"
-
-#include <ctime>
 
 BDSOutputROOT::BDSOutputROOT(G4String fileName,
 			     G4int    fileNumberOffset):
