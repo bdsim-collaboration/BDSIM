@@ -835,7 +835,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
-			     containerLV,                  // mother lv to be place in
+			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);
@@ -864,7 +864,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				 dipolePosition,               // position
 				 secondBPLV,                   // lv to be placed
 				 name + "_second_beampipe_pv", // name
-				 containerLV,                  // mother lv to be place in
+				 containerLV,                  // mother lv to be placed in
 				 false,                        // no boolean operation
 				 0,                            // copy number
 				 checkOverlaps);
@@ -1450,7 +1450,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
-			     containerLV,                  // mother lv to be place in
+			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);
@@ -1477,7 +1477,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 						dipolePosition,               // position
 						secondBPLV,                   // lv to be placed
 						name + "_second_beampipe_pv", // name
-						containerLV,                  // mother lv to be place in
+						containerLV,                  // mother lv to be placed in
 						false,                        // no boolean operation
 						0,                            // copy number
 						checkOverlaps);

@@ -1,6 +1,12 @@
 V0.992 - 2017 / 07 / ??
 =======================
 
+New Features
+------------
+
+* Preparsing for GDML for pygeometry generated geometry - overcomes Geant4's GDML parser
+  deficiency of only allowing one GDML file to be loaded in the whole program.
+
 Bug Fixes
 ---------
 
@@ -8,7 +14,8 @@ Bug Fixes
 * BDSIM installation no longer dependent on build files - ROOT analysis dictionaries would use
   build headers. Issues #197 and #199.
 * Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
-* Fixed rf field ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
+* Fixed rf E and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
+* Fix for crash when particle was at exactly 0 in a quadrupole.
 
 General
 -------
@@ -17,7 +24,6 @@ General
 * Revised implementation of rf cavity construction for greater flexibility.
 * RF cavity phase now automatically calculated based on location in lattice.
 * Removal of old ROOT analysis scripts for very old data format.
-
 
 
 V0.991 - 2017 / 07 / 04
