@@ -47,7 +47,7 @@ protected:
 private:
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
-  void ProcessSamplers();
+  void ProcessSamplers(bool firstTime = false);
 
   int  printModulo;     ///< Cache of print modulo fraction
   bool processSamplers; ///< Whether to process samplers.
