@@ -90,11 +90,9 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       globfree(&glob_result);
     }
   
-  if(debug)
-    {
-      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
-	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
-    }
+  for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+    {std::cout << "Loading> " << *fn << std::endl;}
+  
   if (fileNames.size() == 0)
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
