@@ -25,7 +25,8 @@ public:
 		TChain* chain,
 		bool    processSamplersIn   = false,
 		bool    debug               = false,
-		double  printModuloFraction = 0.01);
+		double  printModuloFraction = 0.01,
+		bool    emittanceOnTheFlyIn = false);
   virtual ~EventAnalysis();
 
   void SetPrintModuloFraction(double fraction);
@@ -51,6 +52,7 @@ private:
 
   int  printModulo;     ///< Cache of print modulo fraction
   bool processSamplers; ///< Whether to process samplers.
+  bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
 };
 
 #endif

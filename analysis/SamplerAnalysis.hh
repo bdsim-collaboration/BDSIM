@@ -17,7 +17,6 @@ public:
   // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>* samplerIn,
-		  BDSOutputROOTEventSampler<float>* samplerFirt,
 		  bool debugIn = false);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
@@ -35,14 +34,13 @@ public:
   void Process(bool firstTime = false);
 
   /// Calculate optical functions based on combinations of moments already accumulated.
-  void Terminate();
+  std::vector<double>  Terminate(std::vector<double> emittance, bool useEmittanceFromFirstSampler=true);
 
   /// Accessor for optical functions
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
-  BDSOutputROOTEventSampler<float> *p;
 #else 
   BDSOutputROOTEventSampler<double> *s;
   BDSOutputROOTEventSampler<double> *p;

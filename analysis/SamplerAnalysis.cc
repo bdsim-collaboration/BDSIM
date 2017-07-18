@@ -5,7 +5,6 @@
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
-  p(nullptr),
   S(0),
   debug(false)
 {
@@ -14,15 +13,12 @@ SamplerAnalysis::SamplerAnalysis():
 
 #ifndef __ROOTDOUBLE__
 SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
-				 BDSOutputROOTEventSampler<float> *samplerFirst,
 				 bool debugIn):
 #else 
   SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
-				   BDSOutputROOTEventSampler<double> *samplerFirst,
 				   bool debugIn):
 #endif
   s(samplerIn),
-  p(samplerFirst),
   S(0),
   debug(debugIn)
 {
@@ -140,13 +136,6 @@ void SamplerAnalysis::Process(bool firstTime)
           o = v;
       }
 
-    w[0] = p->x[i];
-    w[1] = p->xp[i];
-    w[2] = p->y[i];
-    w[3] = p->yp[i];
-    w[4] = p->energy[i];
-    w[5] = p->t[i];
-
     // power sums
     for(int a=0;a<6;++a)
       {
@@ -157,7 +146,6 @@ void SamplerAnalysis::Process(bool firstTime)
 		for (int k = 0; k <= 4; ++k)
 		  {
 		    powSums[a][b][j][k] += std::pow(v[a]-o[a],j)*std::pow(v[b]-o[b],k);
-		    powSumsFirst[a][b][j][k] += std::pow(w[a]-o[a],j)*std::pow(w[b]-o[b],k);
 		  }
 	      }
 	  }
@@ -166,10 +154,12 @@ void SamplerAnalysis::Process(bool firstTime)
   }
 }
 
-void SamplerAnalysis::Terminate()
+std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bool useEmittanceFromFirstSampler)
 {
   if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
+
+    bool nonZeroEmittanceIn = !std::all_of(emittance.begin(), emittance.end(), [](double l) { return l==0; }); //determine whether the input emittance is non-zero
 
   // central moments
   for(int a=0;a<6;++a)
@@ -181,7 +171,6 @@ void SamplerAnalysis::Terminate()
 	    for (int k = 0; k <= 4; ++k)
 	      {
 		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
-		cenMomsFirst[a][b][j][k] = powSumToCentralMoment(powSumsFirst, npart, a, b, j, k);
 	      }
 	  }
       }
@@ -215,42 +204,27 @@ void SamplerAnalysis::Terminate()
       {optical[i][5] = 0;}
 
     double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
-    //double corrCentMom_0_2 = 0.0; // TBC - unneeded when using only first emittance value
+    double corrCentMom_0_2 = 0.0;
+
     corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
 
 
-    // TBC - put back in when emittance calculation revised for first sampler
-    //corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-    //       - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
+      corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
+           - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
     
     corrCentMom_1_1 = cenMoms[j][j+1][1][1] + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0] - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
 
-    
-    //Correct the second order moments of the first sampler for dispersion
-    double disp_first   = (cenMomsFirst[4][4][1][0]*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][2][0];                                                        // eta
-    double dispp_first  = (cenMomsFirst[4][4][1][0]*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][2][0];                                                      // eta prime
+      if(useEmittanceFromFirstSampler && nonZeroEmittanceIn)
+      {
+          optical[i][0]  = emittance[i];
+      }
+      else
+      {
+          optical[i][0] = sqrt(corrCentMom_2_0 * corrCentMom_0_2 - std::pow(corrCentMom_1_1, 2));                                          //emittance
+      }
 
-    // check for nans (expected if dE=0) and set disp=0 if found
-    if (!std::isfinite(disp_first))
-      {disp_first = 0;}
-    if (!std::isfinite(dispp_first))
-      {dispp_first = 0;}
-    
-    double corrCentMomFirst_2_0 = 0.0, corrCentMomFirst_0_2 = 0.0, corrCentMomFirst_1_1 = 0.0; //temp variables to store dispersion corrected moments
-    
-    corrCentMomFirst_2_0 = cenMomsFirst[j][j+1][2][0] + (std::pow(disp_first,2)*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
-            - 2*(disp_first*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][1][0];
-    
-    corrCentMomFirst_0_2 = cenMomsFirst[j][j+1][0][2] + (std::pow(dispp_first,2)*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
-            - 2*(dispp_first*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][1][0];
-    
-    corrCentMomFirst_1_1 = cenMomsFirst[j][j+1][1][1] + (disp_first*dispp_first*cenMomsFirst[4][4][2][0])/std::pow(cenMomsFirst[4][4][1][0],2)
-            - (dispp_first*cenMomsFirst[j][4][1][1])/cenMomsFirst[4][4][1][0] - (disp_first*cenMomsFirst[j+1][4][1][1])/cenMomsFirst[4][4][1][0];
-
-    
-    optical[i][0]  = sqrt(corrCentMomFirst_2_0*corrCentMomFirst_0_2-std::pow(corrCentMomFirst_1_1,2));                                     // emittance
     optical[i][1]  = -corrCentMom_1_1/optical[i][0];                                                                                       // alpha
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                                                                        // beta
     optical[i][3]  = (1+std::pow(optical[i][1],2))/optical[i][2];                                                                          // gamma
@@ -309,11 +283,25 @@ void SamplerAnalysis::Terminate()
 	    {optical[i][j+12]=optical[i][j+2]/sqrt(npart);} //errors of the means 
 	  else if(j == 10 || j == 11)
 	    {optical[i][j+12]= 0.0;}                        //no errors on S and Npart
+          else if (j==0)
+            {
+                if(useEmittanceFromFirstSampler && nonZeroEmittanceIn)
+                {
+                    optical[i][j+12]=emittance[j+2];
+                }
+                else
+                {
+                    optical[i][j+12]=sqrt(varOptical[i][j]);
+                }
+            }
 	  else
 	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
-  
+
+    std::vector<double> emittanceOut = {optical[0][0], optical[1][0], optical[0][12], optical[1][12]}; //emitt_x, emitt_y, err_emitt_x, err_emitt_y
+
+    return emittanceOut;
 }
 
 

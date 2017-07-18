@@ -74,7 +74,8 @@ int main(int argc, char *argv[])
                                                    dl.GetEventTree(),
                                                    Config::Instance()->ProcessSamplers(),
                                                    debug,
-                                                   Config::Instance()->PrintModuloFraction());
+                                                   Config::Instance()->PrintModuloFraction(),
+  Config::Instance()->GetOptionBool("emittanceonthefly"));
   RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree(), debug);
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree(), debug);
   ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree(), debug);
