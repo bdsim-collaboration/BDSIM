@@ -94,13 +94,16 @@ int main(int argc,char** argv)
   BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(BDSParser::Instance()->GetOptions(),
 						    BDSGlobalConstants::Instance()->BeamlineTransform());
 
+  /// Construct output
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
   /// Optionally generate primaries only and exit
-  BDSOutput* bdsOutput = nullptr;
+  BDSOutput* bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+                                                        globalConstants->OutputFileName());
   if (globalConstants->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
-						 globalConstants->OutputFileName());
       bdsOutput->NewFile();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
@@ -163,13 +166,6 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance() << " rad"  << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
 
-  /// Construct output
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-  bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
-					     globalConstants->OutputFileName());
-  
   /// Set user action classes
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
