@@ -30,9 +30,9 @@ void SamplerAnalysis::CommonCtor()
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
-
-    std::vector<double> o; //initialise a vector to store the first values in a sampler for assumed mean subtraction
-    o.resize(6, 0);
+  
+  //initialise a vector to store the first values in a sampler for assumed mean subtraction
+  o.resize(6, 0);
   
   optical.resize(3); // resize to 3 entries initialised to 0
   varOptical.resize(3);
