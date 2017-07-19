@@ -154,12 +154,14 @@ void SamplerAnalysis::Process(bool firstTime)
   }
 }
 
-std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bool useEmittanceFromFirstSampler)
+std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
+					       bool useEmittanceFromFirstSampler)
 {
   if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
 
-    bool nonZeroEmittanceIn = !std::all_of(emittance.begin(), emittance.end(), [](double l) { return l==0; }); //determine whether the input emittance is non-zero
+  //determine whether the input emittance is non-zero
+  bool nonZeroEmittanceIn = !std::all_of(emittance.begin(), emittance.end(), [](double l) { return l==0; });
 
   // central moments
   for(int a=0;a<6;++a)
@@ -183,14 +185,16 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bo
     if(i == 1) j = 2;
     if(i == 2) j = 4;
 
-    //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs.
+    //note: optical functions vector not populated in sequential order in order
+    // to apply dispersion correction to lattice funcs.
 
-    optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                                // mean spatial (transv.)/ mean E (longit.)
-    optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                                // mean divergence (transv.)/ mean t (longit.)
-    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial   (transv.)/ sigma E (longit.)
-    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence (transv.)/ sigma t (longit.)
+    optical[i][6]  = cenMoms[j][j+1][1][0]; // mean spatial (transv.)/ mean E (longit.)
+    optical[i][7]  = cenMoms[j][j+1][0][1]; // mean divergence (transv.)/ mean t (longit.)
+    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]); // sigma spatial   (transv.)/ sigma E (longit.)
+    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]); // sigma divergence (transv.)/ sigma t (longit.)
 
-    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    // tranverse optical function calculation skipped for longitudinal plane,
+    // only mean and sigma of longit. coordinates recorded
     if (i==2)
       {continue;}
 
@@ -203,7 +207,8 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bo
     if (!std::isfinite(optical[i][5]))
       {optical[i][5] = 0;}
 
-    double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
+    // temp variables to store dispersion corrected moments
+    double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0;
     double corrCentMom_0_2 = 0.0;
 
     corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
@@ -247,7 +252,8 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bo
 	}
     }
   
-  //derivative matrix of parameters for optical functions. Each entry is a first order derivative w.r.t central moments.  
+  // derivative matrix of parameters for optical functions. Each entry is
+  // a first order derivative w.r.t central moments.  
   for(int i=0;i<3;++i)
     {
       for(int j=0;j<12;++j) //loop over optical functions.
@@ -299,38 +305,38 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance, bo
 	}
     }
 
-    std::vector<double> emittanceOut = {optical[0][0], optical[1][0], optical[0][12], optical[1][12]}; //emitt_x, emitt_y, err_emitt_x, err_emitt_y
+  //emitt_x, emitt_y, err_emitt_x, err_emitt_y
+  std::vector<double> emittanceOut = {optical[0][0],
+				      optical[1][0],
+				      optical[0][12],
+				      optical[1][12]};
 
-    return emittanceOut;
+  return emittanceOut;
 }
 
-
-
-double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
-					      long long int         npartIn,
+double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
+					      long long int npartIn,
 					      int a,
 					      int b,
 					      int m,
 					      int n)
-//Returns a central moment calculated from the corresponding coordinate power sums.
-//Arguments:
-//    powSums: array contatining the coordinate power sums
-//    a, b:  integer identifier for the coordinate (0->x, 1->xp, 2->y, 3->yp, 4->E, 5->t)
-//    m, n:  order of the moment wrt to the coordinate
-//    note:  total order of the mixed moment is given by k = m + n
-  
 {
   double moment = 0.0;
-  
-  double npartPow1 = (double)npartIn;       //explicitly multiply out the number of particles to achieve the appropriate power.          
-  double npartPow2 = npartPow1 * npartPow1;     //Done because of potential problems with the pow() funtion in C++ where some aruments cause NaNs
-  double npartPow3 = npartPow2 * npartPow1;   //Typecast to a double is done to avoid integer overflow for large number of particles.
+
+  // Explicitly multiply out the number of particles to achieve the appropriate power.          
+  // Typecast to a double is done to avoid integer overflow for large number of particles.
+  double npartPow1 = (double)npartIn;
+
+  // Done because of potential problems with the pow() funtion in C++ where some
+  // arguments cause NaNs
+  double npartPow2 = npartPow1 * npartPow1;
+  double npartPow3 = npartPow2 * npartPow1;   
   double npartPow4 = npartPow3 * npartPow1;
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
       double s_1_0 = powSums[a][b][m][n];
-        int k = m>n ? a : b;
+      int k = m > n ? a : b;
 
       moment = s_1_0/npartIn+o[k];
     }
@@ -436,14 +442,12 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
     return moment;
 }
 
-double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, long long int npartIn,  int k, int i, int j)
-{
-  // Returns a matrix element of the parameter covariance matrix which is a 3x3 symmetric matrix in each plane (coupling is ignored). 
-  // Arguments:
-  //     int k:   plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
-  //     int i,j: indices of matrix elements (i,j=0: <uu>, i,j=1: <u'u'>, i,j=2: <uu'>)
-  //     e.g. covMat[0][1][2] = cov[<x'x'>,<xx'>], covMat[1][0][0] = cov[<yy>,<yy>]
-  
+double SamplerAnalysis::centMomToCovariance(fourDArray&   centMoms,
+					    long long int npartIn,
+					    int k,
+					    int i,
+					    int j)
+{  
   double cov = 0.0;
 
   int a = 0;
@@ -515,14 +519,11 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, long long int 
   return cov;
 }
 
-
-double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, int i)
-  // Returns the derivative of an optical function w.r.t. central moments. 
-  // Arguments:
-  //     int t: function specifier, corresponds to index of the function in the optical function vector. 
-  //     int k: plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
-  //     int i: central moment to diffrentiate w.r.t, i=0: <uu>, i=1: <u'u'>, i=2: <uu'>
-  //     e.g. derivMat[t=2][k=0][i=0]: d(beta)/d<xx> , derivMat[t=0][k=1][i=1]: d(emittance)/d<yy'>
+double SamplerAnalysis::centMomToDerivative(fourDArray& centMoms,
+					    int k,
+					    int t,
+					    int i)
+ 
 {
   double deriv = 0.0;
 
