@@ -69,13 +69,5 @@ void BDSElement::BuildContainerLogicalVolume()
 
   // Get the field definition from the parser
   // Note, the field factory manages the deletion of this info instance.
-  auto fieldInfo = BDSFieldFactory::Instance()->GetDefinition(fieldName);
-
-  // In case there was no field, the info might but nullptr - check
-  if (fieldInfo)
-    {// valid field specification - register for construction.
-      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(fieldInfo,
-								containerLogicalVolume,
-								true);
-    }
+  SetField(BDSFieldFactory::Instance()->GetDefinition(fieldName));
 }
