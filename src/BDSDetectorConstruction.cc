@@ -415,7 +415,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
 void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
-  G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   PlaceBeamlineInWorld(acceleratorModel->GetFlatBeamline(),
 		       worldPV, checkOverlaps,
 		       BDSSDManager::Instance()->GetEnergyCounterSD(),
