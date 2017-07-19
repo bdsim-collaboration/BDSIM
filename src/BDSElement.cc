@@ -10,14 +10,14 @@
 
 class BDSFieldInfo;
 
-BDSElement::BDSElement(G4String      name,
-		       G4double      length,
+BDSElement::BDSElement(G4String      nameIn,
+		       G4double      lengthIn,
 		       G4double      outerDiameterIn,
-		       G4String      geometry,
+		       G4String      geometryIn,
 		       G4String      fieldNameIn):
-  BDSAcceleratorComponent(name, length, 0, "element"),
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "element"),
   outerDiameter(outerDiameterIn),
-  geometryFileName(geometry),
+  geometryFileName(geometryIn),
   fieldName(fieldNameIn)
 {;}
 

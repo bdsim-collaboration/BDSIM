@@ -11,12 +11,12 @@
 #include "G4LogicalVolume.hh"
 
 
-BDSCavityElement::BDSCavityElement(G4String             name,
-				   G4double             chordLength,
+BDSCavityElement::BDSCavityElement(G4String             nameIn,
+				   G4double             chordLengthIn,
 				   G4Material*          vacuumMaterialIn,
 				   const BDSFieldInfo*  vacuumFieldInfoIn,
 				   const BDSCavityInfo* cavityInfoIn):
-  BDSAcceleratorComponent(name, chordLength, 0,
+  BDSAcceleratorComponent(nameIn, chordLengthIn, 0,
 			  "cavity_"+cavityInfoIn->cavityType.ToString()),
   vacuumFieldInfo(vacuumFieldInfoIn),
   cavityInfo(cavityInfoIn),
