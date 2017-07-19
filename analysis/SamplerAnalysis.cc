@@ -30,9 +30,12 @@ void SamplerAnalysis::CommonCtor()
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
-  
+
+  //initialise a vector to store the coordinates of every event in a sampler
+  coordinates.resize(6, 0);
+
   //initialise a vector to store the first values in a sampler for assumed mean subtraction
-  o.resize(6, 0);
+  offsets.resize(6, 0);
   
   optical.resize(3); // resize to 3 entries initialised to 0
   varOptical.resize(3);
@@ -108,12 +111,6 @@ void SamplerAnalysis::Process(bool firstTime)
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
-  std::vector<double> v;
-  v.resize(6);
-
-  std::vector<double> w;
-  w.resize(6);
-
   this->S = this->s->S;
   
   // loop over all entries
@@ -124,16 +121,16 @@ void SamplerAnalysis::Process(bool firstTime)
     if (s->turnNumber[i] > 1)
       {continue;} // only use first turn particles
 
-    v[0] = s->x[i];
-    v[1] = s->xp[i];
-    v[2] = s->y[i];
-    v[3] = s->yp[i];
-    v[4] = s->energy[i];
-    v[5] = s->t[i];
+    coordinates[0] = s->x[i];
+      coordinates[1] = s->xp[i];
+      coordinates[2] = s->y[i];
+      coordinates[3] = s->yp[i];
+      coordinates[4] = s->energy[i];
+      coordinates[5] = s->t[i];
 
-      if (firstTime)
+    if (firstTime)
       {
-          o = v;
+          offsets = coordinates;
       }
 
     // power sums
@@ -145,7 +142,7 @@ void SamplerAnalysis::Process(bool firstTime)
 	      {
 		for (int k = 0; k <= 4; ++k)
 		  {
-		    powSums[a][b][j][k] += std::pow(v[a]-o[a],j)*std::pow(v[b]-o[b],k);
+		    powSums[a][b][j][k] += std::pow(coordinates[a]-offsets[a],j)*std::pow(coordinates[b]-offsets[b],k);
 		  }
 	      }
 	  }
@@ -338,7 +335,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSumsIn,
       double s_1_0 = powSumsIn[a][b][m][n];
       int k = m > n ? a : b;
 
-      moment = s_1_0/npartIn+o[k];
+      moment = s_1_0/npartIn+offsets[k];
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))
