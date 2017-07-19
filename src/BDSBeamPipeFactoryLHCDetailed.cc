@@ -350,27 +350,27 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
   
-  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
-						       outputFaceNormal);
+  G4double contRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
+						  outputFaceNormal);
   
   return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial,
-				 length, containerRadius);
+				 length, contRadius);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,
 								    G4Material* vacuumMaterial,
 								    G4Material* beamPipeMaterial,
 								    G4double    length,
-								    G4double    containerRadius)
+								    G4double    contRadius)
 {
   BDSBeamPipeFactoryBase::CommonConstruction(name, vacuumMaterial,
 					     beamPipeMaterial, length);
 		    
   // record extents
-  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
+  BDSExtent ext = BDSExtent(contRadius, contRadius, length*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,contRadius);
   
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);

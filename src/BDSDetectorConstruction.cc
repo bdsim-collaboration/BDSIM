@@ -618,8 +618,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
 void BDSDetectorConstruction::ConstructSDandField()
 {
-  auto fields = BDSFieldBuilder::Instance()->CreateAndAttachAll();
-  acceleratorModel->RegisterFields(fields);
+  auto flds = BDSFieldBuilder::Instance()->CreateAndAttachAll(); // avoid shadowing 'fields'
+  acceleratorModel->RegisterFields(flds);
 }
 
 G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element)
