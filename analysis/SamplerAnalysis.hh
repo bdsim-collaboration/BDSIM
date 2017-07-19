@@ -51,8 +51,11 @@ protected:
   long long int npart;
   double S;
 
+    //6d phase space coordinates for each event
+    std::vector<double> coordinates;
+
   // initial values to use for mean subtraction.
-  std::vector<double> o;
+  std::vector<double> offsets;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
   typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
