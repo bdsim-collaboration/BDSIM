@@ -30,10 +30,10 @@ EventAnalysis::EventAnalysis():
 EventAnalysis::EventAnalysis(Event*  eventIn,
 			     TChain* chain,
 			     bool    processSamplersIn,
-			     bool    debug,
+			     bool    debugIn,
 			     double  printModuloFraction,
 			     bool    emittanceOnTheFlyIn):
-  Analysis("Event.", chain, "EventHistogramsMerged", debug),
+  Analysis("Event.", chain, "EventHistogramsMerged", debugIn),
   event(eventIn),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn)

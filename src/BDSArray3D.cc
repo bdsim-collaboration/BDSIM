@@ -4,8 +4,8 @@
 
 #include <ostream>
 
-BDSArray3D::BDSArray3D(G4int nX, G4int nY, G4int nZ):
-  BDSArray4D(nX,nY,nZ,1)
+BDSArray3D::BDSArray3D(G4int nXIn, G4int nYIn, G4int nZIn):
+  BDSArray4D(nXIn,nYIn,nZIn,1)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray3D const &a)
