@@ -9,10 +9,10 @@
 
 BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int    nPolesIn,
 						     const G4double fieldStrengthIn,
-						     const G4double phiOffset):
+						     const G4double phiOffsetIn):
   nPoles(nPolesIn),
   fieldStrength(fieldStrengthIn),
-  phiOffset(phiOffset)
+  phiOffset(phiOffsetIn)
 {
   itsSectorPhi=CLHEP::twopi/G4double(nPoles);
 }
