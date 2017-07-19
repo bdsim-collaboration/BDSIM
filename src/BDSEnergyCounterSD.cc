@@ -121,12 +121,12 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4int beamlineIndex = -1;
   
   // declare lambda for updating parameters if info found (avoid duplication of code)
-  auto UpdateParams = [&](BDSPhysicalVolumeInfo* theInfo)
+  auto UpdateParams = [&](BDSPhysicalVolumeInfo* info)
     {
-      G4double sCentre = theInfo->GetSPos();
+      G4double sCentre = info->GetSPos();
       sAfter           = sCentre + posafterlocal.z();
       sBefore          = sCentre + posbeforelocal.z();
-      beamlineIndex    = theInfo->GetBeamlineIndex();
+      beamlineIndex    = info->GetBeamlineIndex();
     };
   
   if (theInfo)

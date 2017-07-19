@@ -15,10 +15,10 @@
 #include "G4PVPlacement.hh"               
 #include "G4VSolid.hh"
 
-BDSMultilayerScreen::BDSMultilayerScreen(G4TwoVector xysize,
-					 G4String name):
-  xysize(xysize),
-  name(name),
+BDSMultilayerScreen::BDSMultilayerScreen(G4TwoVector xysizeIn,
+					 G4String    nameIn):
+  xysize(xysizeIn),
+  name(nameIn),
   log(nullptr),
   phys(nullptr),
   solid(nullptr),
@@ -38,12 +38,12 @@ BDSMultilayerScreen::~BDSMultilayerScreen()
 
 void BDSMultilayerScreen::AddScreenLayer(G4double thickness,
 					 G4String material,
-					 G4String name,
+					 G4String nameIn,
 					 G4int    isSampler,
 					 G4double grooveWidth,
 					 G4double grooveSpatialFrequency)
 {
-  G4String layerName = name;
+  G4String layerName = nameIn;
   if(isSampler)
     {
       G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;

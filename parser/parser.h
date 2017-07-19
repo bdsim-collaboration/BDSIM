@@ -248,13 +248,13 @@ namespace GMAD
     {
       // copy from global
       C& global = GetGlobal<C>();
-      C instance(global);
+      C inst(global);
       // reset global
       global.clear();
 #ifdef BDSDEBUG 
-      instance.print();
+      inst.print();
 #endif
-      GetList<C, Container>().push_back(instance);
+      GetList<C, Container>().push_back(inst);
     }
 
   template <class C, typename T>

@@ -179,8 +179,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
 
 BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
 {
-  G4double paddingLength = BDSBeamline::PaddingLength();
-  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
 
   // we're ingnoring any possible angled face of the curvilinear geometry
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_flat_face",
@@ -195,8 +195,8 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
 BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
 									    G4int&                      numberOfUniqueComponents)
 {
-  G4double paddingLength = BDSBeamline::PaddingLength();
-  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
 
   G4ThreeVector outputFaceNormal = (*element)->OutputFaceNormal(); // outgoing face normal
 
