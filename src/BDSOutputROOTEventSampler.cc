@@ -29,33 +29,33 @@ template
 #ifndef __ROOTBUILD__ 
 template <class T>
 void BDSOutputROOTEventSampler<T>::Fill(G4double E,
-					G4double x0,
-					G4double y0,
-					G4double z0,
+					G4double xIn,
+					G4double yIn,
+					G4double zIn,
 					G4double xpIn,
 					G4double ypIn,
 					G4double zpIn,
 					G4double tIn,
 					G4double weightIn,
-					G4int    PDGTypeIn,
+					G4int    partIDIn,
 					G4int    /*nEvent*/,
 					G4int    TurnsTaken,
 					G4int    beamlineIndex)
 {
   n++;
-  z = (T) (z0 / CLHEP::m);
+  z = (T) (zIn / CLHEP::m);
   S = (T) (0 / CLHEP::m);
 
   energy.push_back((T &&) (E / CLHEP::GeV));
-  x.push_back((T &&) (x0 / CLHEP::m));
-  y.push_back((T &&) (y0 / CLHEP::m));
+  x.push_back((T &&) (xIn / CLHEP::m));
+  y.push_back((T &&) (yIn / CLHEP::m));
 
   xp.push_back((T &&) (xpIn / CLHEP::radian));
   yp.push_back((T &&) (ypIn / CLHEP::radian));
   zp.push_back((T &&) (zpIn / CLHEP::radian));
   t.push_back((T &&) (tIn / CLHEP::ns));
   weight.push_back((const T &) weightIn);
-  partID.push_back(PDGTypeIn);
+  partID.push_back(partIDIn);
   parentID.push_back(0);
   turnNumber.push_back(TurnsTaken);
   modelID = beamlineIndex;
