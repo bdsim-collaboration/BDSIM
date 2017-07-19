@@ -183,7 +183,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 }
 
 void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
-						       G4int    order)
+						       G4int    orderIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -203,9 +203,9 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
   // place poles
   if (!buildPole)
     {return;}
-  G4double nPoles = 2*order;
+  G4double nPoles = 2*orderIn;
   G4PVPlacement* aPlacement = nullptr;
-  for (G4int n = 0; n < 2*order; ++n)
+  for (G4int n = 0; n < 2*orderIn; ++n)
     {
       G4RotationMatrix* rm = new G4RotationMatrix();
       G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
@@ -229,7 +229,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,
 								    G4double     length,
 								    BDSBeamPipe* beamPipe,
-								    G4int        order,
+								    G4int        orderIn,
 								    G4double     outerDiameter,
 								    G4Material*  outerMaterial,
 								    G4double     magnetContainerRadius,
@@ -239,7 +239,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuter* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
-									    order, outerDiameter,
+									    orderIn, outerDiameter,
 									    outerMaterial, magnetContainerRadius,buildEndPiece);
   
   outer->RegisterLogicalVolume(poleLVs);

@@ -194,7 +194,7 @@ CLHEP::RandMultiGauss* BDSBunch::CreateMultiGauss(CLHEP::HepRandomEngine & anEng
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
-G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0)const
+G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)const
 {
   G4double zp;
   G4double transMom = std::pow(xp, 2) + std::pow(yp, 2);
@@ -203,7 +203,7 @@ G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0)const
     G4cout << __METHOD_NAME__ << "ERROR xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
     exit(1);
   }
-  if (Zp0<0)
+  if (Zp0In < 0)
     {zp = -std::sqrt(1.0 - transMom);}
   else
     {zp = std::sqrt(1.0 - transMom);}

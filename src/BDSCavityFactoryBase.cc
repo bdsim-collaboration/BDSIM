@@ -1,5 +1,6 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryBase.hh"
+#include "BDSCavityInfo.hh"
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
@@ -31,6 +32,24 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   CleanUp(); // initialise variables
 }
 
+BDSCavity* BDSCavityFactoryBase::CreateCavity(G4String             name,
+					      G4double             totalChordLength,
+					      const BDSCavityInfo* info,
+					      G4Material*          vacuumMaterial)
+{
+  CleanUp();
+  G4double containerRadius = CreateSolids(name, totalChordLength, info);
+  CreateLogicalVolumes(name, info, vacuumMaterial);
+  SetUserLimits(totalChordLength);
+  SetVisAttributes();
+  PlaceComponents(name);
+
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, totalChordLength*0.5);
+  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
+
+  return result;
+}
+
 void BDSCavityFactoryBase::CleanUp()
 {
   // we don't delete any pointers as this factory doesn't own them.
@@ -42,14 +61,35 @@ void BDSCavityFactoryBase::CleanUp()
   allUserLimits.clear();
   allVisAttributes.clear();
 
+  vacuumSolid    = nullptr;
+  cavitySolid    = nullptr;
   containerSolid = nullptr;
   vacuumLV       = nullptr;
   cavityLV       = nullptr;
   containerLV    = nullptr;
 }
 
-void BDSCavityFactoryBase::SetUserLimits(G4double                       length,
-					 std::vector<G4LogicalVolume*>& lvs)
+void BDSCavityFactoryBase::CreateLogicalVolumes(G4String             name,
+						const BDSCavityInfo* info,
+						G4Material*          vacuumMaterial)
+{
+  cavityLV = new G4LogicalVolume(cavitySolid,          // solid
+				 info->material,       // material
+				 name + "_cavity_lv"); // name
+  allLogicalVolumes.push_back(cavityLV);
+  allSensitiveVolumes.push_back(cavityLV);
+  
+  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
+				 vacuumMaterial,        // material
+				 name + "_vacuum_lv");  // name
+  allLogicalVolumes.push_back(vacuumLV);
+
+  containerLV = new G4LogicalVolume(containerSolid,
+				    emptyMaterial,
+				    name + "_container_lv");
+}
+
+void BDSCavityFactoryBase::SetUserLimits(G4double length)
 {
   auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
@@ -58,7 +98,7 @@ void BDSCavityFactoryBase::SetUserLimits(G4double                       length,
   if (ul != defaultUL) // if it's not the default register it
     {allUserLimits.push_back(ul);}
 
-  for (auto lv : lvs)
+  for (auto lv : allLogicalVolumes)
     {lv->SetUserLimits(ul);}
 }
 
@@ -78,27 +118,11 @@ void BDSCavityFactoryBase::SetVisAttributes(G4String colourName)
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
-void BDSCavityFactoryBase::BuildContainerLogicalVolume(G4String name,
-						       G4double chordLength,
-						       G4double outerRadius) 
-{
-  containerSolid = new G4Tubs(name + "_container_solid",   // name
-			      0.0,                         // innerRadius
-			      outerRadius,                 // outerRadius
-			      chordLength*0.5,             // half length
-			      0.0,                         // starting angle
-			      CLHEP::twopi);               // sweep angle
-  
-  containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
-				    name + "_container_lv");
-}
-
 void BDSCavityFactoryBase::PlaceComponents(G4String name)
 {
   G4PVPlacement* vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
 					      (G4ThreeVector)0,      // position
-					      vacuumLV,              // logical Volume to be place
+					      vacuumLV,              // logical Volume to be placed
 					      name + "_vacuum_pv",   // placement name
 					      containerLV,           // mother volume
 					      false,                 // pMany unused
@@ -108,7 +132,7 @@ void BDSCavityFactoryBase::PlaceComponents(G4String name)
   
   G4PVPlacement* cavityPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // rotation
 					      (G4ThreeVector)0,  // position
-					      cavityLV,              // logical Volume to be place
+					      cavityLV,              // logical Volume to be placed
 					      name + "_cavity_pv",   // placement name
 					      containerLV,           // mother volume
 					      false,                 // pMany unused
@@ -132,27 +156,4 @@ BDSCavity* BDSCavityFactoryBase::BuildCavityAndRegisterObjects(const BDSExtent& 
   cavity->RegisterVisAttributes(allVisAttributes);
   
   return cavity;
-}
-
-BDSCavity* BDSCavityFactoryBase::CommonConstruction(G4String    name,
-						    G4VSolid*   vacuumSolid,
-						    G4Material* vacuumMaterial,
-						    G4double    chordLength,
-						    G4double    containerRadius)
-{
-  // logical volume from the solid.
-  vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
-				 vacuumMaterial,        // material
-				 name + "_vacuum_lv");  // name
-  allLogicalVolumes.push_back(vacuumLV);
-
-  SetUserLimits(chordLength, allLogicalVolumes);
-  BuildContainerLogicalVolume(name, chordLength, containerRadius);
-  SetVisAttributes();
-  PlaceComponents(name);
-
-  BDSExtent ext = BDSExtent(containerRadius, containerRadius,  chordLength*0.5);
-  BDSCavity* result = BuildCavityAndRegisterObjects(ext);
-
-  return result;
 }

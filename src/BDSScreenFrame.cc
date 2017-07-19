@@ -5,16 +5,16 @@
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 
-BDSScreenFrame::BDSScreenFrame(G4String      name,
-			       G4ThreeVector size,
-			       G4TwoVector   windowSize,
-			       G4TwoVector   windowOffset,
-			       G4Material*   material):
-  name(name),
-  size(size),
-  windowSize(windowSize),
-  windowOffset(windowOffset),
-  material(material),
+BDSScreenFrame::BDSScreenFrame(G4String      nameIn,
+			       G4ThreeVector sizeIn,
+			       G4TwoVector   windowSizeIn,
+			       G4TwoVector   windowOffsetIn,
+			       G4Material*   materialIn):
+  name(nameIn),
+  size(sizeIn),
+  windowSize(windowSizeIn),
+  windowOffset(windowOffsetIn),
+  material(materialIn),
   logVol(nullptr)
 {
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();

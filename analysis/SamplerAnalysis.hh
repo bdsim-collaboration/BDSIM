@@ -17,7 +17,6 @@ public:
   // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>* samplerIn,
-		  BDSOutputROOTEventSampler<float>* samplerFirt,
 		  bool debugIn = false);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
@@ -32,17 +31,17 @@ public:
   void Initialise();
 
   /// Loop over all entries in the sampler and accumulate power sums over variuos moments.
-  void Process();
+  void Process(bool firstTime = false);
 
   /// Calculate optical functions based on combinations of moments already accumulated.
-  void Terminate();
+  std::vector<double>  Terminate(std::vector<double> emittance,
+				 bool useEmittanceFromFirstSampler = true);
 
   /// Accessor for optical functions
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
-  BDSOutputROOTEventSampler<float> *p;
 #else 
   BDSOutputROOTEventSampler<double> *s;
   BDSOutputROOTEventSampler<double> *p;
@@ -51,6 +50,12 @@ protected:
   // sums - initialised to zero as that's what they start at
   long long int npart;
   double S;
+
+    //6d phase space coordinates for each event
+    std::vector<double> coordinates;
+
+  // initial values to use for mean subtraction.
+  std::vector<double> offsets;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
   typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
@@ -67,9 +72,41 @@ protected:
   twoDArray     optical;     ///< emt, alf, bta, gma, eta, etapr, mean, sigma
   twoDArray     varOptical;  ///< variances of optical functions
 
-  static double powSumToCentralMoment(fourDArray &powSum, long long int npartIn ,int i, int j, int m, int n);
-  static double centMomToCovariance(fourDArray &centMoms, long long int npartIn ,int k, int i, int j);
-  static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
+
+
+  /// Returns a central moment calculated from the corresponding coordinate power sums.
+  /// Arguments:
+  ///    powSums: array contatining the coordinate power sums
+  ///    a, b:  integer identifier for the coordinate (0->x, 1->xp, 2->y, 3->yp, 4->E, 5->t)
+  ///    m, n:  order of the moment wrt to the coordinate
+  ///    note:  total order of the mixed moment is given by k = m + n
+  double powSumToCentralMoment(fourDArray& powSum,
+			       long long int npartIn,
+			       int i,
+			       int j,
+			       int m,
+			       int n);
+
+  /// Returns a matrix element of the parameter covariance matrix which is a 3x3 symmetric
+  /// matrix in each plane (coupling is ignored). 
+  /// Arguments:
+  ///     int k:   plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
+  ///     int i,j: indices of matrix elements (i,j=0: <uu>, i,j=1: <u'u'>, i,j=2: <uu'>)
+  ///     e.g. covMat[0][1][2] = cov[<x'x'>,<xx'>], covMat[1][0][0] = cov[<yy>,<yy>]
+  double centMomToCovariance(fourDArray&   centMoms,
+			     long long int npartIn,
+			     int k,
+			     int i,
+			     int j);
+
+  /// Returns the derivative of an optical function w.r.t. central moments. 
+  /// Arguments:
+  ///     int t: function specifier, corresponds to index of the function in the
+  ///            optical function vector. 
+  ///     int k: plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
+  ///     int i: central moment to diffrentiate w.r.t, i=0: <uu>, i=1: <u'u'>, i=2: <uu'>
+  ///     e.g. derivMat[t=2][k=0][i=0]: d(beta)/d<xx> , derivMat[t=0][k=1][i=1]: d(emittance)/d<yy'>
+  double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 
 private:
   bool debug;
