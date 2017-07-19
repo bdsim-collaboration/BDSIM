@@ -314,7 +314,7 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
   return emittanceOut;
 }
 
-double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
+double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSumsIn,
 					      long long int npartIn,
 					      int a,
 					      int b,
@@ -335,7 +335,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
-      double s_1_0 = powSums[a][b][m][n];
+      double s_1_0 = powSumsIn[a][b][m][n];
       int k = m > n ? a : b;
 
       moment = s_1_0/npartIn+o[k];
@@ -346,13 +346,13 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
       double s_1_0 = 0.0, s_2_0 = 0.0;
       if(m == 2)
       {
-	      s_1_0 = powSums[a][b][m-1][n];
-	      s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-1][n];
+	      s_2_0 = powSumsIn[a][b][m][n];
       }
       else if(n == 2)
       {
-	      s_1_0 = powSums[a][b][m][n-1];
-	      s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m][n-1];
+	      s_2_0 = powSumsIn[a][b][m][n];
       }
 
       moment =  (npartPow1*s_2_0 - std::pow(std::abs(s_1_0),2))/(npartPow1*(npartPow1-1));
@@ -362,9 +362,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
     {
       double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0;
 
-      s_1_0 = powSums[a][b][m][n-1];
-      s_0_1 = powSums[a][b][m-1][n];
-      s_1_1 = powSums[a][b][m][n];
+      s_1_0 = powSumsIn[a][b][m][n-1];
+      s_0_1 = powSumsIn[a][b][m-1][n];
+      s_1_1 = powSumsIn[a][b][m][n];
 
       moment =  (npartPow1*s_1_1 - s_0_1*s_1_0)/(npartPow1*(npartPow1-1));
     }
@@ -374,17 +374,17 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
       double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
       if(m == 4)
       {
-	      s_1_0 = powSums[a][b][m-3][n];
-	      s_2_0 = powSums[a][b][m-2][n];
-	      s_3_0 = powSums[a][b][m-1][n];
-	      s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-3][n];
+	      s_2_0 = powSumsIn[a][b][m-2][n];
+	      s_3_0 = powSumsIn[a][b][m-1][n];
+	      s_4_0 = powSumsIn[a][b][m][n];
       }
       else if( n == 4)
       {
-	      s_1_0 = powSums[a][b][m][n-3];
-	      s_2_0 = powSums[a][b][m][n-2];
-	      s_3_0 = powSums[a][b][m][n-1];
-	      s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m][n-3];
+	      s_2_0 = powSumsIn[a][b][m][n-2];
+	      s_3_0 = powSumsIn[a][b][m][n-1];
+	      s_4_0 = powSumsIn[a][b][m][n];
       }
 
       moment = - (3*std::pow(s_1_0,4))/npartPow4 + (6*std::pow(s_1_0,2)*s_2_0)/npartPow3
@@ -397,23 +397,23 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
       
       if(m == 3)
       {
-	      s_1_0 = powSums[a][b][m-2][n-1];
-	      s_0_1 = powSums[a][b][m-3][n];
-	      s_1_1 = powSums[a][b][m-2][n];
-	      s_2_0 = powSums[a][b][m-1][n-1];
-	      s_2_1 = powSums[a][b][m-1][n];
-	      s_3_0 = powSums[a][b][m][n-1];
-	      s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-2][n-1];
+	      s_0_1 = powSumsIn[a][b][m-3][n];
+	      s_1_1 = powSumsIn[a][b][m-2][n];
+	      s_2_0 = powSumsIn[a][b][m-1][n-1];
+	      s_2_1 = powSumsIn[a][b][m-1][n];
+	      s_3_0 = powSumsIn[a][b][m][n-1];
+	      s_3_1 = powSumsIn[a][b][m][n];
       }
       else if(n == 3)
       {
-	      s_1_0 = powSums[a][b][m-1][n-2];
-	      s_0_1 = powSums[a][b][m][n-3];
-	      s_1_1 = powSums[a][b][m][n-2];
-	      s_2_0 = powSums[a][b][m-1][n-1];
-	      s_2_1 = powSums[a][b][m][n-1];
-	      s_3_0 = powSums[a][b][m-1][n];
-	      s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-1][n-2];
+	      s_0_1 = powSumsIn[a][b][m][n-3];
+	      s_1_1 = powSumsIn[a][b][m][n-2];
+	      s_2_0 = powSumsIn[a][b][m-1][n-1];
+	      s_2_1 = powSumsIn[a][b][m][n-1];
+	      s_3_0 = powSumsIn[a][b][m-1][n];
+	      s_3_1 = powSumsIn[a][b][m][n];
       }
 
       moment = - (3*s_0_1*std::pow(s_1_0,3))/npartPow4 + (3*s_1_0*s_1_0*s_1_1)/npartPow3
@@ -425,14 +425,14 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSums,
     {
       double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_0_2 = 0.0, s_1_2 = 0.0, s_2_1 = 0.0, s_2_2 = 0.0;
 
-      s_1_0 = powSums[a][b][m-1][n-2];
-      s_0_1 = powSums[a][b][m-2][n-1];
-      s_1_1 = powSums[a][b][m-1][n-1];
-      s_2_0 = powSums[a][b][m][n-2];
-      s_0_2 = powSums[a][b][m-2][n];
-      s_1_2 = powSums[a][b][m-1][n];
-      s_2_1 = powSums[a][b][m][n-1];
-      s_2_2 = powSums[a][b][m][n];
+      s_1_0 = powSumsIn[a][b][m-1][n-2];
+      s_0_1 = powSumsIn[a][b][m-2][n-1];
+      s_1_1 = powSumsIn[a][b][m-1][n-1];
+      s_2_0 = powSumsIn[a][b][m][n-2];
+      s_0_2 = powSumsIn[a][b][m-2][n];
+      s_1_2 = powSumsIn[a][b][m-1][n];
+      s_2_1 = powSumsIn[a][b][m][n-1];
+      s_2_2 = powSumsIn[a][b][m][n];
 
       moment = - (3*std::pow(s_0_1,2)*std::pow(s_1_0,2))/npartPow4 + (s_0_2*std::pow(s_1_0,2))/npartPow3
 	       + (4*s_0_1*s_1_0*s_1_1)/npartPow3 - (2*s_1_0*s_1_2)/npartPow2
