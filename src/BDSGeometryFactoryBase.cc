@@ -22,7 +22,7 @@ BDSGeometryFactoryBase::BDSGeometryFactoryBase():
 BDSGeometryFactoryBase::~BDSGeometryFactoryBase()
 {;}
 
-std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::vector<G4LogicalVolume*>& lvs,
+std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::vector<G4LogicalVolume*>& lvsIn,
 									 std::map<G4String, G4Colour*>* mapping)
 {
   std::vector<G4VisAttributes*> visAttributes; // empty vector
@@ -36,7 +36,7 @@ std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::ve
       G4VisAttributes* vis = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
       vis->SetVisibility(true);
       visAttributes.push_back(vis);
-      for (auto lv : lvs)
+      for (auto lv : lvsIn)
 	{lv->SetVisAttributes(*vis);}
       return visAttributes;
     }
@@ -53,7 +53,7 @@ std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::ve
       attMap[it.first] = vis;
     }
 
-  for (auto lv : lvs)
+  for (auto lv : lvsIn)
     {// iterate over all volumes
       const G4String& name = lv->GetName();
       for (const auto& it : attMap)

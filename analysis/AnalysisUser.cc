@@ -50,18 +50,21 @@ AnalysisUser::~AnalysisUser()
   delete event;
 }
 
-void AnalysisUser::SetBranchAddresses(TTree *optionsTree, TTree *modelTree, TTree *runTree, TTree *eventTree)
+void AnalysisUser::SetBranchAddresses(TTree* optionsTreeIn,
+				      TTree* modelTreeIn,
+				      TTree* runTreeIn,
+				      TTree* eventTreeIn)
 {
-  options->SetBranchAddress(optionsTree);
-  model->SetBranchAddress(modelTree);
-  run->SetBranchAddress(runTree);
+  options->SetBranchAddress(optionsTreeIn);
+  model->SetBranchAddress(modelTreeIn);
+  run->SetBranchAddress(runTreeIn);
 
   optionsTree->GetEntry(0);
   modelTree->GetEntry(0);
   runTree->GetEntry(0);
   eventTree->GetEntry(0);
 
-  event->SetBranchAddress(eventTree,&(model->model->samplerNamesUnique));
+  event->SetBranchAddress(eventTreeIn, &(model->model->samplerNamesUnique));
 
 }
 
