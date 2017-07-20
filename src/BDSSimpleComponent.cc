@@ -4,15 +4,15 @@
 #include "globals.hh" // geant4 types / globals
 
 
-BDSSimpleComponent::BDSSimpleComponent(G4String              name,
+BDSSimpleComponent::BDSSimpleComponent(G4String              nameIn,
 				       BDSGeometryComponent* component,
-                                       G4double              arcLength,
-				       G4double              angle,
-				       G4ThreeVector         inputFaceNormal,
-				       G4ThreeVector         outputFaceNormal,
-				       BDSBeamPipeInfo*      beamPipeInfo):
-  BDSAcceleratorComponent(name, arcLength, angle, "simpleComponent", beamPipeInfo,
-			  inputFaceNormal, outputFaceNormal)
+                                       G4double              arcLengthIn,
+				       G4double              angleIn,
+				       G4ThreeVector         inputFaceNormalIn,
+				       G4ThreeVector         outputFaceNormalIn,
+				       BDSBeamPipeInfo*      beamPipeInfoIn):
+  BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, "simpleComponent", beamPipeInfoIn,
+			  inputFaceNormalIn, outputFaceNormalIn)
 {
   RegisterDaughter(component);
   InheritExtents(component);
@@ -20,16 +20,16 @@ BDSSimpleComponent::BDSSimpleComponent(G4String              name,
   containerLogicalVolume = component->GetContainerLogicalVolume();
 }
 
-BDSSimpleComponent::BDSSimpleComponent(G4String              name,
-				       G4double              arcLength,
-				       G4double              angle,
+BDSSimpleComponent::BDSSimpleComponent(G4String              nameIn,
+				       G4double              arcLengthIn,
+				       G4double              angleIn,
 				       G4VSolid*             containerSolidIn,
 				       G4LogicalVolume*      containerLogicalVolumeIn,
-				       G4ThreeVector         inputFaceNormal,
-				       G4ThreeVector         outputFaceNormal,
-				       BDSBeamPipeInfo* beamPipeInfo):
-  BDSAcceleratorComponent(name, arcLength, angle, "simpleComponent", beamPipeInfo,
-			  inputFaceNormal, outputFaceNormal)
+				       G4ThreeVector         inputFaceNormalIn,
+				       G4ThreeVector         outputFaceNormalIn,
+				       BDSBeamPipeInfo*      beamPipeInfoIn):
+  BDSAcceleratorComponent(nameIn, arcLengthIn, angleIn, "simpleComponent", beamPipeInfoIn,
+			  inputFaceNormalIn, outputFaceNormalIn)
 {
   containerSolid         = containerSolidIn;
   containerLogicalVolume = containerLogicalVolumeIn;

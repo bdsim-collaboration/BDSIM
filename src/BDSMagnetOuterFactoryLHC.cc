@@ -283,10 +283,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4PVPlacement*   collar2PoleBottomOuterPV     = nullptr;
   G4LogicalVolume* collarsLV                    = nullptr;
   G4PVPlacement*   collarsPV                    = nullptr;
-  G4LogicalVolume* yokeLV                       = nullptr;
-  G4PVPlacement*   yokePV                       = nullptr;
   G4LogicalVolume* secondBPLV                   = nullptr;
   G4PVPlacement*   secondBPPV                   = nullptr;
+
+  // use base class yokeLV and yokePV members (reset in CleanUp())
+  
   G4VisAttributes* collarVisAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcollar"));
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(collarVisAtt);

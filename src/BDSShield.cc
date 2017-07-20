@@ -13,14 +13,14 @@
 
 class G4Material;
 
-BDSShield::BDSShield(G4String         name,
-		     G4double         length,
+BDSShield::BDSShield(G4String         nameIn,
+		     G4double         lengthIn,
 		     G4double         outerDiameterIn,
 		     G4double         xAperIn,
 		     G4double         yAperIn,
 		     G4Material*      materialIn,
-		     BDSBeamPipeInfo* beamPipeInfo):
-  BDSAcceleratorComponent(name, length, 0, "shield", beamPipeInfo),
+		     BDSBeamPipeInfo* beamPipeInfoIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
   outerDiameter(outerDiameterIn),
   xAper(xAperIn),
   yAper(yAperIn),
