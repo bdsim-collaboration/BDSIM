@@ -10,7 +10,7 @@ int main(int /*argc*/, char *argv[])
   char** rintArgv = nullptr;
   TRint  *a = new TRint("App", &rintArgc, rintArgv);
 
-  Config::Instance(argv[1]);
+  Config::Instance("analysisConfig.txt");
   EventDisplay::Instance(argv[2], argv[1]);
   a->Run(kTRUE);
   

@@ -1,7 +1,6 @@
 #include "BDSOutputROOTEvent.hh"
 
 #include "BDSParser.hh"
-#include "parser/options.h"
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
@@ -12,11 +11,6 @@
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 
-#include "TFile.h"
-#include "TObject.h"
-#include "TTree.h"
-
-#include <ctime>
 
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {

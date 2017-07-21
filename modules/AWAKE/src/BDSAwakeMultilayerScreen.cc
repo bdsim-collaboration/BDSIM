@@ -46,8 +46,8 @@ BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
   G4double modulo       = (_nScintLayers-floor(_nScintLayers));
   _firstLayerThickness  = _layerThickness*modulo;
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
-	_gapWidth=0*1e-3*CLHEP::mm;
-	_gapSpacing=1*CLHEP::mm;
+  _gapWidth=0*1e-3*CLHEP::mm;
+  _gapSpacing=1*CLHEP::mm;
   layers();
 }
 
@@ -56,7 +56,7 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen()
 
 void BDSAwakeMultilayerScreen::simpleLayers(){
   scintillatorLayer(_thickness);
-	Build();
+  Build();
 }
 
 void BDSAwakeMultilayerScreen::layers()
@@ -98,10 +98,10 @@ void BDSAwakeMultilayerScreen::layers()
   Build();
 }
 
-void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler)
+void BDSAwakeMultilayerScreen::sampler(G4String nameIn, const char* material, G4bool bSampler)
 {
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),1*CLHEP::um),
-					   name,
+					   nameIn,
 					   material,
 					   0,
 					   0);

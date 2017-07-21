@@ -15,8 +15,8 @@
 class ResultSampler: public Result
 { 
 public:
-  ResultSampler(std::string name):
-    Result(name, "Sampler")
+  ResultSampler(std::string nameIn):
+    Result(nameIn, "Sampler")
   {;}
   
   virtual ~ResultSampler() {}
