@@ -341,25 +341,38 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  std::vector<G4ThreeVector> extents;
 
   // These beamlines should always exist so are safe to access.
-  G4ThreeVector beamlineExtent = acceleratorModel->GetFlatBeamline()->GetMaximumExtentAbsolute();
-  G4ThreeVector clExtent = acceleratorModel->GetCurvilinearBeamline()->GetMaximumExtentAbsolute();
-  G4ThreeVector plExtent;
+  extents.push_back(acceleratorModel->GetFlatBeamline()->GetMaximumExtentAbsolute());
+  extents.push_back(acceleratorModel->GetCurvilinearBeamline()->GetMaximumExtentAbsolute());
+  
   BDSBeamline* plBeamline = acceleratorModel->GetPlacementBeamline();
   if (plBeamline) // optional placements beam line
-    {plExtent = plBeamline->GetMaximumExtentAbsolute();}
-
-  G4ThreeVector tunnelExtent = G4ThreeVector(0,0,0);
+    {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
+  
   BDSBeamline* tunnelBeamline = acceleratorModel->GetTunnelBeamline();
   if (tunnelBeamline)
-    {tunnelExtent = tunnelBeamline->GetMaximumExtentAbsolute();}
+    {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
-  for (G4int i = 0; i < 3; i++)
-    {worldR[i] = std::max(std::max(beamlineExtent[i],plExtent[i]), std::max(clExtent[i], tunnelExtent[i]));}
 
+  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  for (const auto& bl : extras)
+    {
+      extents.push_back(bl.massWorld->GetMaximumExtentAbsolute());
+      extents.push_back(bl.curvilinearWorld->GetMaximumExtentAbsolute());
+      extents.push_back(bl.curvilinearBridgeWorld->GetMaximumExtentAbsolute());
+    }
+
+  // loop over all extents from all beam lines
+  for (const auto& ext : extents)
+    {
+      for (G4int i = 0; i < 3; i++)
+	{worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
+    }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
 #endif
