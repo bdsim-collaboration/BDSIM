@@ -49,6 +49,14 @@ set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)
 add_test(gmad-stringnumber ${gmadBinary} stringnumber.gmad)
 set_tests_properties(gmad-stringnumber PROPERTIES WILL_FAIL 1)
 
+# string with comma
+add_test(gmad-stringcomma ${gmadBinary} stringcomma.gmad)
+set_tests_properties(gmad-stringcomma PROPERTIES WILL_FAIL 1)
+
+# string with newline
+add_test(gmad-stringnewline ${gmadBinary} stringnewline.gmad)
+set_tests_properties(gmad-stringnewline PROPERTIES WILL_FAIL 1)
+
 # undefined element
 add_test(gmad-undefinedElement ${gmadBinary} undefinedelement.gmad)
 set_tests_properties(gmad-undefinedElement PROPERTIES WILL_FAIL 1)
