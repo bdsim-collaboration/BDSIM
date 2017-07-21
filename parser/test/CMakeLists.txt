@@ -13,6 +13,10 @@ set_tests_properties(gmad-noinputfile PROPERTIES WILL_FAIL 1)
 add_test(gmad-twoinputfiles ${gmadBinary} a;b)
 set_tests_properties(gmad-twoinputfiles PROPERTIES WILL_FAIL 1)
 
+# test binary with non existent input file
+add_test(gmad-nonexistent ${gmadBinary} nonexistent.gmad)
+set_tests_properties(gmad-nonexistent PROPERTIES WILL_FAIL 1)
+
 # try to overwrite a reserved variable
 add_test(gmad-reservedVar ${gmadBinary} reservedvariable.gmad)
 set_tests_properties(gmad-reservedVar PROPERTIES WILL_FAIL 1)
@@ -25,11 +29,11 @@ set_tests_properties(gmad-reservedFunction PROPERTIES WILL_FAIL 1)
 add_test(gmad-defineReservedName ${gmadBinary} definereservedname.gmad)
 set_tests_properties(gmad-defineReservedName PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
 
-# try to define a already defined numeric variable
+# try to define an already defined numeric variable
 add_test(gmad-defineReservedVariable ${gmadBinary} definereservedvariable.gmad)
 set_tests_properties(gmad-defineReservedVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
 
-# try to define a already defined string variable
+# try to define an already defined string variable
 add_test(gmad-defineReservedStringVariable ${gmadBinary} definereservedstringvariable.gmad)
 set_tests_properties(gmad-defineReservedStringVariable PROPERTIES PASS_REGULAR_EXPRESSION "already defined")
 
@@ -77,13 +81,17 @@ set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-overwriteVariable ${gmadBinary} overwriteVariable.gmad)
 set_tests_properties(gmad-overwriteVariable PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
 
-# try to overwrite a variable
+# try to overwrite a string variable
 add_test(gmad-overwriteVariableString ${gmadBinary} overwriteVariableString.gmad)
 set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
 
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES PASS_REGULAR_EXPRESSION "is not declared")
+
+# include non existent file
+add_test(gmad-includenonexistent ${gmadBinary} includenonexistent.gmad)
+set_tests_properties(gmad-includenonexistent PROPERTIES WILL_FAIL 1)
 
 # recursive inclusion
 add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)
