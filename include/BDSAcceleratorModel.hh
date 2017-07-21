@@ -86,8 +86,11 @@ public:
   /// Access the beam line of end pieces.
   inline BDSBeamline* GetEndPieceBeamline() const {return endPieceBeamline;}
 
+  /// Register a 'beam line' of discontinuous elements for placement in the world as
+  /// separate placement objects.
   inline void RegisterPlacementBeamline(BDSBeamline* beamlineIn) {placementBeamline = beamlineIn;}
 
+  /// Access a discontinuous beam line of placements.
   inline BDSBeamline* GetPlacementBeamline() const {return placementBeamline;}
   
   /// Register all field objects
@@ -104,8 +107,12 @@ public:
   /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
   void RegisterExtraBeamline(BDSBeamlineSet set);
 
+  /// Access the vector of extra beam line sets.
+  inline const std::vector<BDSBeamlineSet>& ExtraBeamlines() const {return extraBeamlines;}
+
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
+
   /// Simpler accessor for production cuts vs regions.
   G4ProductionCuts* ProductionCuts(G4String name) {return cuts.at(name);}
 
