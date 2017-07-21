@@ -14,8 +14,8 @@ G4double BDSIntegratorDipoleFringe::thinElementLength = -1; // unphyiscal
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
                              G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
-                             G4double                 minimumRadiusOfCurvature):
-  BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvature),
+                             G4double                 minimumRadiusOfCurvatureIn):
+  BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strength)["polefaceangle"]),
   fringeCorr((*strength)["fringecorr"]),
   brho(brhoIn)

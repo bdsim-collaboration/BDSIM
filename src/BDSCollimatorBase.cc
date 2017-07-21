@@ -16,10 +16,10 @@
 
 #include <map>
 
-BDSCollimatorBase::BDSCollimatorBase(G4String name,
-				     G4double length,
+BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
+				     G4double lengthIn,
 				     G4double outerDiameterIn,
-				     G4String type,
+				     G4String typeIn,
 				     G4double xApertureIn,
 				     G4double yApertureIn,
 				     G4double xOutApertureIn,
@@ -27,7 +27,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
 				     G4String collimatorMaterialIn,
 				     G4String vacuumMaterialIn,
 				     G4String colourIn):
-  BDSAcceleratorComponent(name, length, 0, type),
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   outerDiameter(outerDiameterIn),
   xAperture(xApertureIn),
   yAperture(yApertureIn),
