@@ -119,13 +119,12 @@ void Parser::ParseFile(FILE *f)
     {
       yyparse();
     }
-
+  
+  expand_sequences();
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
-
   // clear temporary stuff
-
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
@@ -223,10 +222,21 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       allocated_lines.push_back(e.lst);
       // clean list
       tmp_list.clear();
+      sequences.push_back(*name); // append to all sequence definitions
     }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
+}
+
+void Parser::expand_sequences()
+{
+  for (const auto& name : sequences)
+    {
+      FastList<Element>* newLine = new FastList<Element>();
+      expand_line(*newLine, name);
+      expandedSequences[name] = newLine;
+    }
 }
 
 void Parser::expand_line(const std::string& name, std::string start, std::string end)
@@ -380,19 +390,12 @@ void Parser::expand_line(FastList<Element>& target,
 
 const FastList<Element>& Parser::get_sequence(const std::string& name)
 {
-  // search for previously queried flattened sequence
-  const auto search = sequences.find(name);
-  if (search != sequences.end())
-    {return search->second;}
-  
-  FastList<Element> result;
-  expand_line(result, name);
-
-  // store it, now it's flattened
-  sequences[name] = result; // result copied into map
-
-  // return reference to object in map
-  return sequences.at(name); // 'at' ensures const reference return
+  // search for previously queried beamlines
+  const auto search = expandedSequences.find(name);
+  if (search != expandedSequences.end())
+    {return *(search->second);}
+  else
+    {std::cerr << "parser> no such sequence \"" << name << "\"" << std::endl; exit(1);} 
 }
 
 void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)

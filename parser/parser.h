@@ -90,8 +90,8 @@ namespace GMAD
     /// Expand the main beamline as defined by the use command.
     void expand_line(const std::string& name, std::string start, std::string end);
 
-    /// Find the sequence defined in the parser and expand it if not already done
-    /// so. Cache result in map of fastlists.
+    /// Find the sequence defined in the parser and expand it if not already
+    /// done so. Cache result in map of fastlists.
     const FastList<Element>& get_sequence(const std::string& name);
     
     /// insert a sampler into beamline_list
@@ -171,6 +171,9 @@ namespace GMAD
     /// Add reserved variable to parser
     void add_var(std::string name, double value, int is_reserved = 0);
 
+    /// Expand all sequences define with 'line' into FastLists.
+    void expand_sequences();
+
     // *****************
     // Private members *
     // *****************
@@ -217,7 +220,13 @@ namespace GMAD
     
     /// Beamline
     FastList<Element>   beamline_list;
-    std::map<std::string, FastList<Element> > sequences;
+
+    /// Names of all defined sequences in the parser with 'line'.
+    std::vector<std::string> sequences;
+
+    /// Cached copy of expaneded sequences.
+    std::map<std::string, FastList<Element>*> expandedSequences;
+
     /// List of parser defined atoms
     std::vector<Atom>   atom_list;
     /// List of parser defined fields
