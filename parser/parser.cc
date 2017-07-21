@@ -210,10 +210,6 @@ void Parser::quit()
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
-#ifdef BDSDEBUG 
-  std::cout << "k1=" << params.k1 << ", k2=" << params.k2 << ", k3=" << params.k3 << ",type=" << typestr(type) << std::endl;
-#endif
-
   Element e;
   e.set(params,*name,type);
   if (isLine)
