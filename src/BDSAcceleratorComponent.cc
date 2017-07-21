@@ -128,7 +128,6 @@ void BDSAcceleratorComponent::Build()
 
 void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
 {
-  delete fieldInfo; // clear up existing definition if there is one
   fieldInfo = fieldInfoIn;
 }
 

@@ -29,7 +29,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,
 							G4String material,
 							G4double thickness = 0.3 * CLHEP::mm,
 							G4double windowScreenGap = 0,
-							G4double angle = -45*CLHEP::pi/180.0,
+							G4double angleIn = -45*CLHEP::pi/180.0,
 							G4double windowThickness=0,
 							G4String windowMaterial=""):
   BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"),
@@ -38,7 +38,7 @@ BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,
   _material(material),
   _thickness(thickness),
   _windowScreenGap(windowScreenGap),
-  _screenAngle(angle),
+  _screenAngle(angleIn),
   _windowThickness(windowThickness),
   _windowMaterial(windowMaterial)
 {

@@ -15,8 +15,8 @@ SamplerAnalysis::SamplerAnalysis():
 SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
 				 bool debugIn):
 #else 
-  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
-				   bool debugIn):
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+                                 bool debugIn):
 #endif
   s(samplerIn),
   S(0),
