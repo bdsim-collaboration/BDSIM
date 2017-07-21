@@ -430,6 +430,10 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
     }
   PlaceBeamlineInWorld(acceleratorModel->GetPlacementBeamline(),
 		       worldPV, checkOverlaps);
+
+  const std::vector<BDSBeamlineSet>& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  for (auto const& bl : extras)
+    {PlaceBeamlineInWorld(bl.massWorld, worldPV, checkOverlaps);}
 }
 
 void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamline,
