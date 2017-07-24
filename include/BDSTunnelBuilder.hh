@@ -36,7 +36,7 @@ private:
 		     G4double cumulativeOffsetY);
 
   /// Test if the current element is a sampler instance
-  G4bool IsASampler(const BDSBeamline::iterator& iterator);
+  G4bool IsASampler(const BDSBeamline::const_iterator& iterator);
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.
