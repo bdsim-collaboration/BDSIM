@@ -136,18 +136,6 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
     } 
 
   BDSBeamline::const_iterator it = flatBeamline->begin();
-
-  // skip the first item if it's a sampler - so algorithm doesn't try to make null section before it
-  if(IsASampler(it))
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "skipping very first item as it's a sampler" << G4endl;
-#endif
-      ++previousEndElement;
-      ++startElement;
-      ++endElement;
-      ++it;
-    }
   
   // iterate over beam line and build tunnel segments
   for (; it != flatBeamline->end(); ++it)
@@ -386,16 +374,4 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 #endif
     } // for loop scope end
   return tunnelLine;
-}
-
-G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::const_iterator& /*iterator*/)
-{
-  //BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
-  /*BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);
-  if (sampler)
-    {return true;}
-  else
-    {return false;}
-  */
-  return false;
 }
