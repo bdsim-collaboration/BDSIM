@@ -82,7 +82,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
   return result;
 }
 
-BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
+BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamline)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -105,13 +105,13 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished
-  BDSBeamline::iterator previousEndElement = flatBeamline->begin();
+  BDSBeamline::const_iterator previousEndElement = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will begin
-  BDSBeamline::iterator startElement       = flatBeamline->begin();
+  BDSBeamline::const_iterator startElement       = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will end
-  BDSBeamline::iterator endElement         = flatBeamline->begin();
+  BDSBeamline::const_iterator endElement         = flatBeamline->begin();
 
   // if a straight tunnel, just build one long segment, add it to beam line and return
   if (BDSGlobalConstants::Instance()->BuildTunnelStraight())
@@ -135,7 +135,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
       return tunnelLine;
     } 
 
-  BDSBeamline::iterator it = flatBeamline->begin();
+  BDSBeamline::const_iterator it = flatBeamline->begin();
 
   // skip the first item if it's a sampler - so algorithm doesn't try to make null section before it
   if(IsASampler(it))
@@ -388,7 +388,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   return tunnelLine;
 }
 
-G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::iterator& /*iterator*/)
+G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::const_iterator& /*iterator*/)
 {
   //BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
   /*BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);

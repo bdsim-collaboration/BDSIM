@@ -198,7 +198,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
       G4double zSeparation = 0;
-      BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
+      const BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
       // find previous non drift output face.
       G4ThreeVector iFNormal;
       G4String clasherName = "Unknown";
@@ -554,7 +554,7 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y)
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y) const
 {
   // check if s is in the range of the beamline
   if (s > totalArcLength)
@@ -568,7 +568,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   // find element that s position belongs to
   auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
   G4int index = lower - sEnd.begin(); // subtract iterators to get index
-  BDSBeamlineElement* element = beamline[index];
+  const BDSBeamlineElement* element = beamline.at(index);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "S position requested: " << s     << G4endl;
@@ -582,7 +582,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   // difference from centre of element to point in local coords)
   // difference in s from centre, normalised to arcLengh and scaled to chordLength
   // as s is really arc length but we must place effectively in chord length coordinates
-  BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
+  const BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
   G4double arcLength   = component->GetArcLength();
   G4double chordLength = component->GetChordLength();
   G4double dS          = s - element->GetSPositionMiddle();
@@ -623,7 +623,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   return result;
 }
 
-BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
+const BDSBeamlineElement* BDSBeamline::GetPrevious(const BDSBeamlineElement* element) const
 {
   // search for element
   auto result = find(beamline.begin(), beamline.end(), element);
@@ -635,7 +635,7 @@ BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
     {return nullptr;}
 }
 
-BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
+const BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index) const
 {
   if (index < 1 || index > (G4int)(beamline.size()-1))
     {return nullptr;} // invalid index - inc beginning or end
@@ -643,7 +643,7 @@ BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
     {return beamline[index-1];}
 }
 
-BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
+const BDSBeamlineElement* BDSBeamline::GetNext(const BDSBeamlineElement* element) const
 {
   // search for element
   auto result = find(beamline.begin(), beamline.end(), element);
@@ -655,7 +655,7 @@ BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
     {return nullptr;}
 }
 
-BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
+const BDSBeamlineElement* BDSBeamline::GetNext(G4int index) const
 {
   if (index < 0 || index > (G4int)(beamline.size()-2))
     {return nullptr;} // invalid index - inc beginning or end

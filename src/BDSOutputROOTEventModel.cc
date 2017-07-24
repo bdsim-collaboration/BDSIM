@@ -43,7 +43,7 @@ void BDSOutputROOTEventModel::Fill()
     {samplerNamesUnique.push_back(std::string(name)+".");}
   
   // get accelerator model
-  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (!beamline)
     {return;} // in case of generatePrimariesOnly there is no model - return
 

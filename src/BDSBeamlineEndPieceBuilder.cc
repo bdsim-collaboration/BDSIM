@@ -58,7 +58,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if there's then
 	  // available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
@@ -149,7 +149,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if
 	  // there's then available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double       nextNonDriftEndPieceL = 0;
 	  G4bool               driftIsLastItem = false;

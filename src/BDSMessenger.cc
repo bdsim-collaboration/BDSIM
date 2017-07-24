@@ -53,8 +53,9 @@ void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
   else if(command == elementNameSearchCmd)  {this->ElementNameSearch(newValue);}
 }
 
-void BDSMessenger::BeamLineList() {
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+void BDSMessenger::BeamLineList()
+{
+  const BDSBeamline *beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
 
   int j = 0;
   G4cout << std::right
@@ -68,11 +69,12 @@ void BDSMessenger::BeamLineList() {
   }
 }
 
-std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement) {
+std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement)
+{
   std::stringstream ss;
 
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  const BDSBeamlineElement *e = beamline->at(iElement);
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  const BDSBeamlineElement* e = beamline->at(iElement);
 
   ss << std::setfill('0') << std::right << std::setw(4)  << iElement << " " << std::setfill(' ')
      << std::setw(20) << e->GetName() << " "
@@ -86,7 +88,7 @@ std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement) {
 
 void BDSMessenger::ElementNameSearch(std::string name)
 {
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   int j=0;
   for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
   {

@@ -128,7 +128,7 @@ public:
   /// to global coordinates. 0,0 transverse position by default.
   G4Transform3D GetGlobalEuclideanTransform(G4double s,
 					    G4double x = 0,
-					    G4double y = 0);
+					    G4double y = 0) const;
 
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.
@@ -148,11 +148,11 @@ public:
   /// searched for the vector. If there is no such element or no previous
   /// element because it's the beginning, then a nullptr is returned. The
   /// caller should test on this.
-  BDSBeamlineElement* GetPrevious(BDSBeamlineElement* element);
-  BDSBeamlineElement* GetNext(BDSBeamlineElement* element);
+  const BDSBeamlineElement* GetPrevious(const BDSBeamlineElement* element) const;
+  const BDSBeamlineElement* GetNext(const BDSBeamlineElement* element) const;
 
-  BDSBeamlineElement* GetPrevious(G4int index);
-  BDSBeamlineElement* GetNext(G4int index);
+  const BDSBeamlineElement* GetPrevious(G4int index) const;
+  const BDSBeamlineElement* GetNext(G4int index) const;
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
