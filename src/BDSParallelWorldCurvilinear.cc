@@ -27,7 +27,7 @@ void BDSParallelWorldCurvilinear::Construct()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  G4VPhysicalVolume* clWorld   = GetWorld();
+  G4VPhysicalVolume* clWorld = GetWorld();
 
   // Register read out world PV with our auxiliary navigator.
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(clWorld);
