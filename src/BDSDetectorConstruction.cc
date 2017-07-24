@@ -57,7 +57,8 @@
 #include <map>
 #include <vector>
 
-BDSDetectorConstruction::BDSDetectorConstruction()
+BDSDetectorConstruction::BDSDetectorConstruction():
+  placementBL(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -77,11 +78,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // construct the component list
   BuildBeamlines();
 
-  // construct beamline of end pieces
-  BDS::BuildEndPieceBeamline(circular);
-
   // construct placement geometry from parser
-  BDS::BuildPlacementGeometry();
+  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements());
+  BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -323,10 +322,10 @@ void BDSDetectorConstruction::BuildTunnel()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBeamline* flatBeamLine = acceleratorModel->GetFlatBeamline();
+  const BDSBeamline* mainBeamLine = acceleratorModel->BeamlineMain();
   BDSBeamline* tunnelBeamline;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
-  tunnelBeamline = tb->BuildTunnelSections(flatBeamLine);
+  tunnelBeamline = tb->BuildTunnelSections(mainBeamLine);
   delete tb;
   
   acceleratorModel->RegisterTunnelBeamline(tunnelBeamline);

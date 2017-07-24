@@ -1,4 +1,3 @@
-#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
@@ -6,7 +5,6 @@
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
-#include "BDSParser.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSUtilities.hh"
 
@@ -21,12 +19,10 @@
 #include <vector>
 
 
-void BDS::BuildPlacementGeometry()
+BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements)
 {
-  auto placements = BDSParser::Instance()->GetPlacements();
-
   if (placements.empty())
-    {return;} // don't do anything - no placements
+    {return nullptr;} // don't do anything - no placements
   
   BDSBeamline* placementBL = new BDSBeamline();
 
@@ -77,5 +73,5 @@ void BDS::BuildPlacementGeometry()
       placementBL->AddBeamlineElement(el);
     }
 
-  BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL);
+  return placementBL;
 }

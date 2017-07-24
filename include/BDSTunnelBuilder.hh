@@ -24,7 +24,7 @@ public:
   /// of tunnel around the flat beamline (of accelerator components).
   /// Tunnel segments are placed in order in a new beamline instance,
   /// which is returned.
-  BDSBeamline* BuildTunnelSections(BDSBeamline* flatBeamLine);
+  BDSBeamline* BuildTunnelSections(const BDSBeamline* flatBeamLine);
 
 private:
   /// Decide whether this is a good point to break the tunnel based on various cumulative

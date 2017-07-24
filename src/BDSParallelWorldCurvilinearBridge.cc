@@ -39,7 +39,7 @@ void BDSParallelWorldCurvilinearBridge::Construct()
   clbWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   clbWorldLV->SetVisAttributes(clbWorldVis);
 
-  BDSBeamline* clbBeamline = BDSAcceleratorModel::Instance()->GetCurvilinearBridgeBeamline();
+  BDSBeamline* clbBeamline = BDSAcceleratorModel::Instance()->BeamlineSetMain().curvilinearBridgeWorld;
 
   BDSDetectorConstruction::PlaceBeamlineInWorld(clbBeamline, clbWorld, globals->CheckOverlaps(),
 						nullptr, false, true);
