@@ -135,11 +135,9 @@ private:
   /// All fields
   std::vector<BDSFieldObjects*> fields;
 
-  /// Whether or not we're building a circular machine.
-  G4bool circular;
-
-  /// Record of the world extent.
-  BDSExtent worldExtent;
+  G4bool       circular;    ///< Whether or not we're building a circular machine.
+  BDSExtent    worldExtent; ///< Record of the world extent.
+  BDSBeamline* placementBL; ///< Placement beam line.
 };
 
 #endif

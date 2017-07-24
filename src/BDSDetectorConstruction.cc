@@ -139,18 +139,10 @@ void BDSDetectorConstruction::BuildBeamlines()
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
 					      "main beam line",
 					      initialTransform,
-					      BDSGlobalConstants::Instance()->Circular());
-
-  if (mainBeamline.massWorld->empty())
-    {
-      G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
-      exit(1);
-    }
+					      circular);
   
   // register the beamline in the holder class for the full model
-  acceleratorModel->RegisterFlatBeamline(mainBeamline.massWorld);
-  acceleratorModel->RegisterCurvilinearBeamline(mainBeamline.curvilinearWorld);
-  acceleratorModel->RegisterCurvilinearBridgeBeamline(mainBeamline.curvilinearBridgeWorld);
+  acceleratorModel->RegisterBeamlineSetMain(mainBeamline);
 
   // loop over placements and check if any are beam lines (have sequences specified)
   auto placements = BDSParser::Instance()->GetPlacements();
@@ -180,7 +172,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 						   placement.name,
 						   startTransform);
       
-      acceleratorModel->RegisterExtraBeamline(extraBeamline);
+      acceleratorModel->RegisterBeamlineSetExtra(placement.name, extraBeamline);
     }
 }
 
@@ -315,11 +307,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline);
   delete clBuilder;
 
-  BDSBeamlineSet mainBeamline;
-  mainBeamline.massWorld              = massWorld;
-  mainBeamline.curvilinearWorld       = clBeamline;
-  mainBeamline.curvilinearBridgeWorld = clBridgeBeamline;
-  return mainBeamline;
+  // construct beamline of end pieces
+  BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
+
+  BDSBeamlineSet beamlineSet;
+  beamlineSet.massWorld              = massWorld;
+  beamlineSet.curvilinearWorld       = clBeamline;
+  beamlineSet.curvilinearBridgeWorld = clBridgeBeamline;
+  beamlineSet.endPieces              = endPieces;
+  return beamlineSet;
 }
 
 void BDSDetectorConstruction::BuildTunnel()
@@ -344,10 +340,13 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   std::vector<G4ThreeVector> extents;
 
   // These beamlines should always exist so are safe to access.
-  extents.push_back(acceleratorModel->GetFlatBeamline()->GetMaximumExtentAbsolute());
-  extents.push_back(acceleratorModel->GetCurvilinearBeamline()->GetMaximumExtentAbsolute());
+  const auto& blMain = acceleratorModel->BeamlineSetMain();
+  extents.push_back(blMain.massWorld->GetMaximumExtentAbsolute());
+  const auto blMainCL = blMain.curvilinearWorld;
+  if (blMainCL)
+    {extents.push_back(blMainCL->GetMaximumExtentAbsolute());}
   
-  BDSBeamline* plBeamline = acceleratorModel->GetPlacementBeamline();
+  BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
     {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
   
@@ -360,10 +359,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (const auto& bl : extras)
-    {
-      extents.push_back(bl.massWorld->GetMaximumExtentAbsolute());
-      extents.push_back(bl.curvilinearWorld->GetMaximumExtentAbsolute());
-      extents.push_back(bl.curvilinearBridgeWorld->GetMaximumExtentAbsolute());
+    {// extras is a map, so iterator has first and second for key and value
+      extents.push_back(bl.second.massWorld->GetMaximumExtentAbsolute());
+      if (bl.second.curvilinearWorld)
+	{extents.push_back(bl.second.curvilinearWorld->GetMaximumExtentAbsolute());}
+      if (bl.second.curvilinearBridgeWorld)
+	{extents.push_back(bl.second.curvilinearBridgeWorld->GetMaximumExtentAbsolute());}
+      if (bl.second.endPieces)
+	{extents.push_back(bl.second.endPieces->GetMaximumExtentAbsolute());}
     }
 
   // loop over all extents from all beam lines
@@ -428,11 +431,14 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
 void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
-  PlaceBeamlineInWorld(acceleratorModel->GetFlatBeamline(),
+  // We musn't place parallel world geometry here - their world is produced by
+  // Geant4 at the right time, so we have a separate placement call for them
+  BDSBeamlineSet mainBL = BDSAcceleratorModel::Instance()->BeamlineSetMain();
+  PlaceBeamlineInWorld(mainBL.massWorld,
 		       worldPV, checkOverlaps,
 		       BDSSDManager::Instance()->GetEnergyCounterSD(),
 		       true);
-  PlaceBeamlineInWorld(acceleratorModel->GetEndPieceBeamline(),
+  PlaceBeamlineInWorld(mainBL.endPieces,
 		       worldPV, checkOverlaps,
 		       BDSSDManager::Instance()->GetEnergyCounterSD());
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -441,12 +447,14 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 			   worldPV, checkOverlaps,
 			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
-  PlaceBeamlineInWorld(acceleratorModel->GetPlacementBeamline(),
-		       worldPV, checkOverlaps);
+  PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
-  const std::vector<BDSBeamlineSet>& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
-    {PlaceBeamlineInWorld(bl.massWorld, worldPV, checkOverlaps);}
+    {// extras is map so iterator has first and second for key and value
+      PlaceBeamlineInWorld(bl.second.massWorld, worldPV, checkOverlaps);
+      PlaceBeamlineInWorld(bl.second.endPieces, worldPV, checkOverlaps);
+    }
 }
 
 void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamline,
