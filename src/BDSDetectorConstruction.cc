@@ -176,7 +176,7 @@ void BDSDetectorConstruction::BuildBeamlines()
       G4Transform3D startTransform = placementInitial * plTransform; // compound
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
-      BDSBeamlineSet extraBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
+      BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
 						   placement.name,
 						   startTransform);
       
