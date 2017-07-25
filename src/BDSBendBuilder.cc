@@ -13,10 +13,13 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
+
+#include "G4Transform3D.hh"
 
 using namespace GMAD;
 
@@ -39,6 +42,10 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   if (BDS::IsFinite(angle))
     {bendingRadius = - brho / (*st)["field"];}
 
+  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
+  delete tiltOffset;
+  
   // face rotations
   // convention: +ve e1 / e2 reduces outside of bend
   G4double   factor = angle < 0 ? -1 : 1; 
@@ -67,7 +74,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   intType,
-						   st);
+						   st,
+						   true,
+						   fieldTiltOffset);
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
       auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn,
@@ -142,7 +151,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   BDSFieldInfo* semiVacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   intType,
-						   semiStrength);
+						   semiStrength,
+						   true,
+						   fieldTiltOffset);
   
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, 0.5*semiAngle, 0.5*semiAngle, yokeOnLeft);
@@ -339,12 +350,18 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
+
+  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
+  delete tiltOffset;
   
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       strengthCopy);
+					       strengthCopy,
+					       true,
+					       fieldTiltOffset);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   BDSMagnet* magnet = new BDSMagnet(BDSMagnetType::sectorbend,
@@ -382,6 +399,10 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
     {bendingRadius = - brho / (*st)["field"];}
+
+  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
+  delete tiltOffset;
 
   // face rotations
   // convention - +ve e1 / e2 reduces outside of bend
@@ -475,7 +496,9 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       st);
+					       st,
+					       true,
+					       fieldTiltOffset);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, centralInputFaceAngle, centralOutputFaceAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, centralInputFaceAngle, centralOutputFaceAngle, yokeOnLeft);
@@ -531,11 +554,17 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   magnetOuterInfo->name           = name;
   magnetOuterInfo->buildEndPieces = false;
 
+  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
+  delete tiltOffset;
+
   BDSIntegratorType intType = integratorSet->dipolefringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       st);
+					       st,
+					       true,
+					       fieldTiltOffset);
 
   return new BDSMagnet(BDSMagnetType::dipolefringe,
 		       name,
