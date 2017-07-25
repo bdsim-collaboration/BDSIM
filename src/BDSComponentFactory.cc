@@ -1133,7 +1133,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
   return info;
 }
 
-BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* el) const
+BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* el)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "offsetX,Y: " << el->offsetX << " " << el->offsetY << " tilt: " << el->tilt << G4endl;

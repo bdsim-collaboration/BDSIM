@@ -69,7 +69,7 @@ public:
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* el) const;
+  static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
 
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
