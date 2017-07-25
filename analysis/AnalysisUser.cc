@@ -78,6 +78,7 @@ void AnalysisUser::SetBranchAddresses(TTree* optionsTree, TTree* modelTree, TTre
 
 void AnalysisUser::MakeBranches(TTree* outputTree)
 {
+  outputTree->Branch("S",&s,"S/F");
   outputTree->Branch("VertexModel",(void*)&vertexmodel[0],"VertexModel[11]/C");
   outputTree->Branch("VertexX",&vertexx,"VertexX/F");
   outputTree->Branch("VertexY",&vertexy,"VertexY/F");
@@ -125,6 +126,7 @@ void AnalysisUser::Analysis()
             //std::cerr << "Warning, trying to access elements of vectors that don't exist" << std::endl;
             continue;
           }
+          s = point.position.S();
           vertexx = point.position.X();
           vertexy = point.position.Y();
           vertexz = point.position.Z();
