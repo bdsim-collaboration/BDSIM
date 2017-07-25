@@ -367,10 +367,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
     }
 
   BDSMagnetStrength* st = PrepareCavityStrength(element, currentArcLength);
+  G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
-					       st);
+					       st,
+					       true,
+					       fieldTrans);
   
   BDSCavityInfo* cavityInfo  = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
@@ -573,12 +576,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
-  
+
+  G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
 					       st,
-					       true);
+					       true,
+					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
@@ -654,10 +659,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
 					       intType,
-					       st);
+					       st,
+					       true,
+					       fieldTrans);
   
   BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::thinmultipole,
 					    elementName,
@@ -747,10 +755,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = element->B * CLHEP::tesla;
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
+  G4Transform3D fieldTrans = CreateFieldTransform(element);
   BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
 					      brho,
 					      intType,
-					      st);
+					      st,
+					      true,
+					      fieldTrans);
   BDSFieldInfo* vacuumField = new BDSFieldInfo();
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
@@ -907,11 +918,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
       (*awakeStrength)["field"] = element->B;
-      
+
+      G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,
 				    brho,
 				    BDSIntegratorType::g4nystromrk4,
-				    awakeStrength);
+				    awakeStrength,
+				    true,
+				    fieldTrans);
     }
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
@@ -961,10 +975,13 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 					     G4double angle) const
 {
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
 					       brho,
 					       intType,
-					       st);
+					       st,
+					       true,
+					       fieldTrans);
 
   return new BDSMagnet(magnetType,
 		       elementName,
@@ -1339,6 +1356,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
   // Test for a line. And if so apply to each sub-component.
   // TBC - for a sbend split into segments, a BDSLine would be used - how would setting
   // an outer magnetic field work for this??
+  G4Transform3D fieldTrans = CreateFieldTransform(element);
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       for (auto comp : *line)
@@ -1354,14 +1372,26 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 	  exit(1);
 	}
       if (!(el->fieldOuter.empty())) // ie variable isn't ""
-	{mag->SetOuterField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter))));}
+	{
+	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
+	  info->SetTransform(fieldTrans);
+	  mag->SetOuterField(info);
+	}
       if (!(el->fieldVacuum.empty()))
-	{mag->SetVacuumField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum))));}
+	{
+	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
+	  info->SetTransform(fieldTrans);
+	  mag->SetVacuumField(info);
+	}
     }
   else
     {
       if (!(el->fieldAll.empty()))
-	{component->SetField(new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll))));}
+	{
+	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
+	  info->SetTransform(fieldTrans);
+	  component->SetField(info);
+	}
     }
 }
 
