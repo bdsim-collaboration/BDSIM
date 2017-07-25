@@ -92,13 +92,15 @@ void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String       name,
 
 const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
 {
+  if (name == "main")
+    {return mainBeamlineSet;}
+  
   const auto search = extraBeamlines.find(name);
   if (search == extraBeamlines.end())
     {G4cerr << __METHOD_NAME__ << "No such beam line set \"" << name << "\"" << G4endl; exit(1);}
   else
     {return search->second;}
 }
-
 
 void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut)
 {
