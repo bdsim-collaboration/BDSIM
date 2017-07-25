@@ -1,0 +1,21 @@
+d1: drift, l=1.3*m;
+sb1: sbend, l=2.1*m, angle=0.8;
+sb2: sbend, l=2.1*m, angle=-0.8;
+
+l1: line=(d1,sb1,d1,sb2,d1,d1);
+l2: line=(d1,d1,d1,sb1,d1,d1,sb1,d1);
+
+use, l1;
+
+! define every parameter to check them all.
+line2: placement, sequence = "l2",
+       		  referenceElement = "d1",
+		  referenceElementNumber = 2,
+		  s = -2*cm,
+		  x = 20*cm,
+		  y = 0*cm,
+		  phi=1,theta=2,psi=3,
+		  axisX=1, axisY=0.5, axisZ=0.01,angle=0.003,
+		  sensitive=1,
+		  axisAngle=1,
+		  geometryFile="gdml:afile.gdml";

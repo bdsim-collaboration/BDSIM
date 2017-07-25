@@ -41,6 +41,8 @@ public:
   
   /// Return beamline
   inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
+
+  inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
   
   /// Return biasing list
   inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}

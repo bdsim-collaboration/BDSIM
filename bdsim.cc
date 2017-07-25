@@ -35,9 +35,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
-#include "BDSParallelWorldCurvilinear.hh"
-#include "BDSParallelWorldCurvilinearBridge.hh"
-#include "BDSParallelWorldSampler.hh"
+#include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -135,13 +133,8 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
 #endif
   /// Register the geometry and parallel world construction methods with run manager.
-  BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
-  BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
-  BDSParallelWorldCurvilinear* curvilinearWorld = new BDSParallelWorldCurvilinear();
-  BDSParallelWorldCurvilinearBridge* curvilinearBridgeWorld = new BDSParallelWorldCurvilinearBridge();
-  realWorld->RegisterParallelWorld(samplerWorld);
-  realWorld->RegisterParallelWorld(curvilinearWorld);
-  realWorld->RegisterParallelWorld(curvilinearBridgeWorld);
+  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
@@ -153,9 +146,9 @@ int main(int argc,char** argv)
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
-  G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
+  auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
   BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
-  physList->RegisterPhysics(sampWorld);
+  BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(BDSParser::Instance()->GetBiasing());
   runManager->SetUserInitialization(physList);
   
@@ -292,7 +285,6 @@ int main(int argc,char** argv)
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager;
-  delete samplerWorld;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;

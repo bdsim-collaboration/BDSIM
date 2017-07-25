@@ -147,11 +147,16 @@ An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analy
 * Empty lines are also ignored.
 * For bins and binning, the dimensions are separated by :code:`,`.
 * For bins and binning, the range from low to high is specified by :code:`low:high`.
-* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.x:samplername.y`.
+* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * A 3D histogram is shown on the last line.
 * True or False as well as 1 or 0 may be used for Boolean options.
 
+.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
+	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
+	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This only applies to the variable and
+	     not to the bin specification.
+  
 The following (case-insensitive) options may be specified in the top part.
 
 

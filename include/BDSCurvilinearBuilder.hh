@@ -73,6 +73,11 @@ private:
   /// to be reused as the default.
   BDSAcceleratorComponent* CreateDefaultBridgeComponent();
 
+  /// Create a unique accelerator component for an element that's straight, but with a
+  /// specific width.
+  BDSAcceleratorComponent* CreateStraightBridgeComponent(G4double                    width,
+							 G4int&                      numberOfUniqueComponents);
+  
   /// Create a unique accelerator component for an element with angled faces.
   BDSAcceleratorComponent* CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
 						       G4int&                      numberOfUniqueComponents);

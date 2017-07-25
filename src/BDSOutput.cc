@@ -205,7 +205,7 @@ void BDSOutput::CalculateHistogramParameters()
   // rounding up so last bin definitely covers smax
   // (max - min) / bin width -> min = 0 here.
   const G4double binWidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
-  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (flatBeamline)
     {
       G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
@@ -236,7 +236,7 @@ void BDSOutput::CreateHistograms()
   Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
-  BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   if (flatBeamline) // can be nullptr in case of generate primaries only
     {binedges = flatBeamline->GetEdgeSPositions();}
   else

@@ -1,6 +1,8 @@
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineSet.hh"
+#include "BDSDebug.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
@@ -14,6 +16,7 @@
 
 #include <cstdio>
 #include <map>
+#include <vector>
 
 BDSAcceleratorModel* BDSAcceleratorModel::instance = nullptr;
 
@@ -28,11 +31,7 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),
   worldLV(nullptr),
   worldSolid(nullptr),
-  flatBeamline(nullptr),
-  curvilinearBeamline(nullptr),
-  supportsBeamline(nullptr),
   tunnelBeamline(nullptr),
-  endPieceBeamline(nullptr),
   placementBeamline(nullptr)
 {
   removeTemporaryFiles = BDSGlobalConstants::Instance()->RemoveTemporaryFiles();
@@ -48,12 +47,15 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete worldPV;
   delete worldLV;
   delete worldSolid;
-  delete flatBeamline;
-  delete curvilinearBeamline;
-  delete supportsBeamline;
+  
   delete tunnelBeamline;
-  delete endPieceBeamline;
   delete placementBeamline;
+
+  mainBeamlineSet.DeleteContents();
+  
+  for (auto& bl : extraBeamlines)
+    {bl.second.DeleteContents();}
+  
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
@@ -77,6 +79,27 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
       G4cout << "BDSAcceleratorModel> Temporary files removed" << G4endl;
     }
   instance = nullptr;
+}
+
+void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String       name,
+						   BDSBeamlineSet setIn)
+{
+  auto search = extraBeamlines.find(name);
+  if (search != extraBeamlines.end()) // already exists!
+    {search->second.DeleteContents();} // delete pre-existing one for replacement
+  extraBeamlines[name] = setIn;
+}
+
+const BDSBeamlineSet& BDSAcceleratorModel::BeamlineSet(G4String name) const
+{
+  if (name == "main")
+    {return mainBeamlineSet;}
+  
+  const auto search = extraBeamlines.find(name);
+  if (search == extraBeamlines.end())
+    {G4cerr << __METHOD_NAME__ << "No such beam line set \"" << name << "\"" << G4endl; exit(1);}
+  else
+    {return search->second;}
 }
 
 void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut)

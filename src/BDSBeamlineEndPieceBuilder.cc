@@ -1,5 +1,4 @@
 #include "BDSAcceleratorComponent.hh"
-#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
@@ -11,13 +10,11 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
+BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
+					const G4bool circularMachine)
 {
   // the beamline of end pieces to be placed.
   BDSBeamline* endPieces = new BDSBeamline();
-
-  // the main beam line
-  auto beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
 
   // references to first and last item for checking
   const BDSBeamlineElement* firstItem = beamline->GetFirstItem();
@@ -58,7 +55,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if there's then
 	  // available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
@@ -149,7 +146,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if
 	  // there's then available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double       nextNonDriftEndPieceL = 0;
 	  G4bool               driftIsLastItem = false;
@@ -214,5 +211,6 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	}
       currentIndex++; // increment iterator index on beamline
     }
-  BDSAcceleratorModel::Instance()->RegisterEndPieceBeamline(endPieces);
+
+  return endPieces;
 }
