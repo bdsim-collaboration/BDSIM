@@ -150,7 +150,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 						   intType,
 						   semiStrength,
 						   true,
-						   fieldTiltOffset);
+                                                   fieldTiltOffset);
   
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, 0.5*semiAngle, 0.5*semiAngle, yokeOnLeft);
