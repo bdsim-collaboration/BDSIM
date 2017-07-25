@@ -20,10 +20,15 @@ namespace BDS
   /// necessarily a sampler world.
   std::vector<BDSParallelWorldInfo> NumberOfExtraWorldsRequired();
 
+  /// Construct the default and any extra parallel worlds required and register them
+  /// to the main mass world argument. Returns the vector of sampler worlds as these
+  /// are required for the parallel world physics processes.
   std::vector<G4VUserParallelWorld*> ConstructAndRegisterParallelWorlds(G4VUserDetectorConstruction* massWorld);
 
+  /// Construct the parallel physics process for each sampler world.
   std::vector<G4ParallelWorldPhysics*> ConstructSamplerParallelPhysics(std::vector<G4VUserParallelWorld*> worlds);
 
+  /// Register each parallel physics process to the main physics list.
   void RegisterSamplerPhysics(std::vector<G4ParallelWorldPhysics*> processes,
 			      G4VModularPhysicsList* physicsList);
 }
