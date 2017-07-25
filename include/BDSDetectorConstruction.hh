@@ -4,6 +4,7 @@
 #include "BDSExtent.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
 
