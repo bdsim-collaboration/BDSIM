@@ -153,7 +153,8 @@ An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analy
 
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
 	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
-	     `y` : `x`. If 3D, it's `x` : `y` : `z`.
+	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This only applies to the variable and
+	     not to the bin specification.
   
 The following (case-insensitive) options may be specified in the top part.
 
