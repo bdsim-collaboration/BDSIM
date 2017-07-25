@@ -76,7 +76,6 @@ int main(int /*argc*/, char** /*argv*/)
 						 nullptr,
 						 false,
 						 G4Transform3D(),
-						 nullptr,
 						 "square120x120_2mm.TXT",
 						 BDSFieldFormat::poisson2dquad,
 						 BDSInterpolatorType::nearest2d);
@@ -90,7 +89,6 @@ int main(int /*argc*/, char** /*argv*/)
 						nullptr,
 						false,
 						G4Transform3D(),
-						nullptr,
 						"square120x120_2mm.TXT",
 						BDSFieldFormat::poisson2dquad,
 						BDSInterpolatorType::linear2d);
@@ -104,7 +102,6 @@ int main(int /*argc*/, char** /*argv*/)
 					       nullptr,
 					       false,
 					       G4Transform3D(),
-					       nullptr,
 					       "square120x120_2mm.TXT",
 					       BDSFieldFormat::poisson2dquad,
 					       BDSInterpolatorType::cubic2d);

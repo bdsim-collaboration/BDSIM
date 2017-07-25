@@ -3,8 +3,8 @@
 
 #include <vector>
 
-BDSLine::BDSLine(G4String name):
-  BDSAcceleratorComponent(name,0,0,"line")
+BDSLine::BDSLine(G4String nameIn):
+  BDSAcceleratorComponent(nameIn,0,0,"line")
 {;}
 
 void BDSLine::AddComponent(BDSAcceleratorComponent* component)
@@ -24,25 +24,25 @@ void BDSLine::Initialise()
     }
 }
 
-void BDSLine::SetBiasVacuumList(std::list<std::string> biasVacuumList)
+void BDSLine::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
 {
-  BDSAcceleratorComponent::SetBiasVacuumList(biasVacuumList); // set if for this object
+  BDSAcceleratorComponent::SetBiasVacuumList(biasVacuumListIn); // set if for this object
   for (auto component : *this)
-    {component->SetBiasVacuumList(biasVacuumList);}
+    {component->SetBiasVacuumList(biasVacuumListIn);}
 }
 
-void BDSLine::SetBiasMaterialList(std::list<std::string> biasMaterialList)
+void BDSLine::SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
 {
-  BDSAcceleratorComponent::SetBiasMaterialList(biasMaterialList);
+  BDSAcceleratorComponent::SetBiasMaterialList(biasMaterialListIn);
   for (auto component : *this)
-    {component->SetBiasMaterialList(biasMaterialList);}
+    {component->SetBiasMaterialList(biasMaterialListIn);}
 }
 
-void BDSLine::SetRegion(G4String region)
+void BDSLine::SetRegion(G4String regionIn)
 {
-  BDSAcceleratorComponent::SetRegion(region); // set it for this object
+  BDSAcceleratorComponent::SetRegion(regionIn); // set it for this object
   for (auto component: *this)
-    {component->SetRegion(region);}
+    {component->SetRegion(regionIn);}
 }
 
   

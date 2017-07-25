@@ -6,10 +6,7 @@
 #include "globals.hh"
 #include "G4String.hh"
 
-class BDSCavity;
 class BDSCavityInfo;
-
-class G4Material;
 
 /**
  * @brief Factory for elliptical SRF cavity geometry.
@@ -23,10 +20,9 @@ public:
   BDSCavityFactoryPillBox();
   virtual ~BDSCavityFactoryPillBox();
 
-  virtual BDSCavity* CreateCavity(G4String             name,
-				  G4double             totalChordLength,
-				  const BDSCavityInfo* info,
-				  G4Material*          vacuumMaterial);
+  virtual G4double CreateSolids(G4String             name,
+				G4double             totalChordLength,
+				const BDSCavityInfo* info);
 };
 
 #endif

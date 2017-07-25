@@ -754,12 +754,12 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
 void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
 {
   // container solid
-  G4VSolid* endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name
-						endPieceInnerR,                // inner radius
-						endPieceOuterR,                // outer radius
-						endPieceLength*0.5,            // z half length
-						0,                             // start angle
-						CLHEP::twopi);                 // sweep angle
+  endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name
+				      endPieceInnerR,                // inner radius
+				      endPieceOuterR,                // outer radius
+				      endPieceLength*0.5,            // z half length
+				      0,                             // start angle
+				      CLHEP::twopi);                 // sweep angle
   
   // container lv
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
@@ -875,7 +875,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 
   // coil calculations
   // these are full height and width maximum so that they'd fit
-  G4double coilHeight = outerHalf - poleHalfHeight - yokeThickness;
+  coilHeight = outerHalf - poleHalfHeight - yokeThickness;
   G4double coilWidth  = outerDiameter - yokeThickness - 2*poleHalfWidth;
 
   G4double coilHeightOriginal = coilHeight;
@@ -1242,7 +1242,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 				      displacement,    // position
 				      volToPlace,      // lv to be placed
 				      theName,         // name
-				      containerLV,     // mother lv to be place in
+				      containerLV,     // mother lv to be placed in
 				      false,           // no boolean operation
 				      0,               // copy number
 				      checkOverlaps);

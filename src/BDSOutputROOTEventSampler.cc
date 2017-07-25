@@ -29,33 +29,33 @@ template
 #ifndef __ROOTBUILD__ 
 template <class T>
 void BDSOutputROOTEventSampler<T>::Fill(G4double E,
-					G4double x0,
-					G4double y0,
-					G4double z0,
-					G4double xp,
-					G4double yp,
-					G4double zp,
-					G4double t,
-					G4double weight,
-					G4int    PDGType,
+					G4double xIn,
+					G4double yIn,
+					G4double zIn,
+					G4double xpIn,
+					G4double ypIn,
+					G4double zpIn,
+					G4double tIn,
+					G4double weightIn,
+					G4int    partIDIn,
 					G4int    /*nEvent*/,
 					G4int    TurnsTaken,
 					G4int    beamlineIndex)
 {
   this->n++;
-  this->z = (T) (z0 / CLHEP::m);
+  this->z = (T) (zIn / CLHEP::m);
   this->S = (T) (0 / CLHEP::m);
 
   this->energy.push_back((T &&) (E / CLHEP::GeV));
-  this->x.push_back((T &&) (x0 / CLHEP::m));
-  this->y.push_back((T &&) (y0 / CLHEP::m));
+  this->x.push_back((T &&) (xIn / CLHEP::m));
+  this->y.push_back((T &&) (yIn / CLHEP::m));
 
-  this->xp.push_back((T &&) (xp / CLHEP::radian));
-  this->yp.push_back((T &&) (yp / CLHEP::radian));
-  this->zp.push_back((T &&) (zp / CLHEP::radian));
-  this->t.push_back((T &&) (t / CLHEP::ns));
-  this->weight.push_back((const T &) weight);
-  this->partID.push_back(PDGType);
+  this->xp.push_back((T &&) (xpIn / CLHEP::radian));
+  this->yp.push_back((T &&) (ypIn / CLHEP::radian));
+  this->zp.push_back((T &&) (zpIn / CLHEP::radian));
+  this->t.push_back((T &&) (tIn / CLHEP::ns));
+  this->weight.push_back((const T &) weightIn);
+  this->partID.push_back(partIDIn);
   this->parentID.push_back(0);
   this->turnNumber.push_back(TurnsTaken);
   this->modelID = beamlineIndex;

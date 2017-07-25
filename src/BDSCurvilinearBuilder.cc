@@ -172,6 +172,12 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
   BDSAcceleratorComponent* component = defaultBridge;
   if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
     {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
+  else if (BDS::IsFinite((*element)->GetAngle()))
+    {// width may be reduced due to bend - check if required
+      G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
+      if (width < curvilinearRadius)
+	{component = CreateStraightBridgeComponent(width, numberOfUniqueComponents);}
+    }
 
   return CreateBridgeElementFromComponent(component, element, nextElement, end, beamlineIndex);
 }
@@ -179,8 +185,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
 
 BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
 {
-  G4double paddingLength = BDSBeamline::PaddingLength();
-  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
 
   // we're ingnoring any possible angled face of the curvilinear geometry
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_flat_face",
@@ -192,11 +198,24 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
   return component;
 }
 
+BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateStraightBridgeComponent(G4double                    width,
+									      G4int&                      numberOfUniqueComponents)
+{
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
+								   chordLength,
+								   width*0.5);
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
+  numberOfUniqueComponents++;
+  return component;
+}
+
 BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSBeamline::const_iterator element,
 									    G4int&                      numberOfUniqueComponents)
 {
-  G4double paddingLength = BDSBeamline::PaddingLength();
-  G4double chordLength = paddingLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
 
   G4ThreeVector outputFaceNormal = (*element)->OutputFaceNormal(); // outgoing face normal
 
@@ -204,19 +223,19 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSB
   iFNormal *= -1;
   G4ThreeVector oFNormal = outputFaceNormal; // we assume no angle for the bridge component so this is right.
 
+  G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
+
   // we're ingnoring any possible angled face of the curvilinear geometry
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
 								   chordLength,
 								   chordLength,
-								   curvilinearRadius,
+								   width*0.5,
 								   0, /*angle*/
 								   iFNormal,
 								   oFNormal);
 
   BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
-
   numberOfUniqueComponents++;
-  
   return component;
 }
 

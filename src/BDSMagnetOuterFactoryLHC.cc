@@ -283,10 +283,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4PVPlacement*   collar2PoleBottomOuterPV     = nullptr;
   G4LogicalVolume* collarsLV                    = nullptr;
   G4PVPlacement*   collarsPV                    = nullptr;
-  G4LogicalVolume* yokeLV                       = nullptr;
-  G4PVPlacement*   yokePV                       = nullptr;
   G4LogicalVolume* secondBPLV                   = nullptr;
   G4PVPlacement*   secondBPPV                   = nullptr;
+
+  // use base class yokeLV and yokePV members (reset in CleanUp())
+  
   G4VisAttributes* collarVisAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcollar"));
   collarVisAtt->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(collarVisAtt);
@@ -835,7 +836,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
-			     containerLV,                  // mother lv to be place in
+			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);
@@ -864,7 +865,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				 dipolePosition,               // position
 				 secondBPLV,                   // lv to be placed
 				 name + "_second_beampipe_pv", // name
-				 containerLV,                  // mother lv to be place in
+				 containerLV,                  // mother lv to be placed in
 				 false,                        // no boolean operation
 				 0,                            // copy number
 				 checkOverlaps);
@@ -1450,7 +1451,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
-			     containerLV,                  // mother lv to be place in
+			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);
@@ -1477,7 +1478,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 						dipolePosition,               // position
 						secondBPLV,                   // lv to be placed
 						name + "_second_beampipe_pv", // name
-						containerLV,                  // mother lv to be place in
+						containerLV,                  // mother lv to be placed in
 						false,                        // no boolean operation
 						0,                            // copy number
 						checkOverlaps);
