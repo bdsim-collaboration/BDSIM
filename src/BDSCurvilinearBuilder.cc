@@ -170,7 +170,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
 {  
   // we can safely assume faces match between two beam line elmeents so if one's angeld, so is the other
   BDSAcceleratorComponent* component = defaultBridge;
-  if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
+  if ((*element)->AngledOutputFace() || BDS::IsFinite((*element)->GetAngle())) // angled faces - make one to match to cover the angled gap
     {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
 
   return CreateBridgeElementFromComponent(component, element, nextElement, end, beamlineIndex);
@@ -204,11 +204,13 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSB
   iFNormal *= -1;
   G4ThreeVector oFNormal = outputFaceNormal; // we assume no angle for the bridge component so this is right.
 
+  G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
+
   // we're ingnoring any possible angled face of the curvilinear geometry
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
 								   chordLength,
 								   chordLength,
-								   curvilinearRadius,
+								   width*0.5,
 								   0, /*angle*/
 								   iFNormal,
 								   oFNormal);
