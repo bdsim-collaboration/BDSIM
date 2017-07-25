@@ -6,6 +6,7 @@
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
+#include "BDSBeamlineSet.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSCurvilinearBuilder.hh"
@@ -32,6 +33,7 @@
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
+#include "parser/placement.h"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -41,17 +43,22 @@
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Vector/EulerAngles.h"
 
 #include <iterator>
 #include <list>
 #include <map>
 #include <vector>
 
-BDSDetectorConstruction::BDSDetectorConstruction()
+BDSDetectorConstruction::BDSDetectorConstruction():
+  placementBL(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -69,13 +76,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   InitialiseRegions();
   
   // construct the component list
-  BuildBeamline();
-
-  // construct beamline of end pieces
-  BDS::BuildEndPieceBeamline(circular);
+  BuildBeamlines();
 
   // construct placement geometry from parser
-  BDS::BuildPlacementGeometry();
+  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements());
+  BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -124,19 +129,61 @@ void BDSDetectorConstruction::InitialiseRegions()
     }
 }
 
-void BDSDetectorConstruction::BuildBeamline()
-{ 
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
-
-  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
-  BDSBeamline* beamline = new BDSBeamline(initialTransform);
-  
+void BDSDetectorConstruction::BuildBeamlines()
+{
+  // build main beam line
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
-
-  auto beamLine = BDSParser::Instance()->GetBeamline();
+  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
+					      "main beam line",
+					      initialTransform,
+					      circular);
   
-  if (circular)
+  // register the beamline in the holder class for the full model
+  acceleratorModel->RegisterBeamlineSetMain(mainBeamline);
+
+  // loop over placements and check if any are beam lines (have sequences specified)
+  auto placements = BDSParser::Instance()->GetPlacements();
+  for (const auto& placement : placements)
+    {
+      if (placement.sequence.empty())
+	{continue;} // no sequence specified -> just a placement
+      auto parserLine = BDSParser::Instance()->GetSequence(placement.sequence);
+
+      // determine offset in world for extra beam line
+      G4Transform3D plTransform = CreatePlacementTransform(placement);
+      G4Transform3D placementInitial;
+      if (placement.referenceElement.empty())
+	{// no reference - ie w.r.t. start of main beam line 
+	  placementInitial = initialTransform; // same as beginning of beam line
+	}
+      else
+	{// use reference to get placement transform - ie w.r.t. to a main beam line element
+	  const BDSBeamline* mbl = mainBeamline.massWorld;
+	  placementInitial = mbl->GetTransformForElement(placement.referenceElement,
+							 placement.referenceElementNumber);
+	}
+      G4Transform3D startTransform = placementInitial * plTransform; // compound
+
+      // aux beam line must be non-circular by definition to branch off of beam line (for now)
+      BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
+						   placement.sequence,
+						   startTransform);
+      
+      acceleratorModel->RegisterBeamlineSetExtra(placement.sequence, extraBeamline);
+    }
+}
+
+BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
+						      G4String             name,
+						      const G4Transform3D& initialTransform,
+						      G4bool               beamlineIsCircular)
+{
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
+  BDSBeamline* massWorld = new BDSBeamline(initialTransform);
+    
+  if (beamlineIsCircular)
     {
       G4bool unsuitable = UnsuitableFirstElement(beamLine.begin());
       if (unsuitable)
@@ -151,11 +198,8 @@ void BDSDetectorConstruction::BuildBeamline()
 
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
-#ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
-#endif
       // find next and previous element, but ignore special elements or thin multipoles.
-      GMAD::Element* prevElement = nullptr;
+      const GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
       while (prevIt != beamLine.begin())
 	{
@@ -167,7 +211,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	}
 
-      GMAD::Element* nextElement = nullptr;
+      const GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
       ++nextIt;
       while (nextIt != beamLine.end())
@@ -179,7 +223,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-      G4double currentArcLength = beamline->GetTotalArcLength();
+      G4double currentArcLength = massWorld->GetTotalArcLength();
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt),
 									   prevElement,
 									   nextElement,
@@ -188,14 +232,14 @@ void BDSDetectorConstruction::BuildBeamline()
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-          beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
+          massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
     }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (circular)
+  if (beamlineIsCircular)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -205,9 +249,9 @@ void BDSDetectorConstruction::BuildBeamline()
       // 1x teleporter with (minimum) 1x sampler chord length
       // 3x padding length
       const G4double sL = BDSSamplerPlane::ChordLength();
-      const G4double pL = beamline->PaddingLength();
+      const G4double pL = massWorld->PaddingLength();
       G4double minimumRequiredSpace = 2*sL + 3*pL;
-      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(beamline);
+      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(massWorld);
       
       // note delta is from end to beginning, which will have correct transverse but opposite
       // z component, hence -ve here.
@@ -232,7 +276,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  if (terminator)
 	    {
 	      terminator->Initialise();
-	      beamline->AddComponent(terminator);
+	      massWorld->AddComponent(terminator);
 	    }	  
 	  // update delta
 	  teleporterDelta.setZ(teleporterLength);
@@ -240,7 +284,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  if (teleporter)
 	    {
 	      teleporter->Initialise();
-	      beamline->AddComponent(teleporter);
+	      massWorld->AddComponent(teleporter);
 	    }
 	}
     }
@@ -248,36 +292,29 @@ void BDSDetectorConstruction::BuildBeamline()
   if (BDSGlobalConstants::Instance()->Survey())
     {
       BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
-      survey->Write(beamline);
+      survey->Write(massWorld);
       delete survey;
     }
   delete theComponentFactory;
 
   // print summary
-  G4cout << __METHOD_NAME__ << *beamline;
-
-#ifdef BDSDEBUG
-  // print accelerator component registry
-  G4cout << *BDSAcceleratorComponentRegistry::Instance();
-  beamline->PrintMemoryConsumption();
-#endif
- 
-  if (beamline->empty())
-    {
-      G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
-      exit(1);
-    }
+  G4cout << __METHOD_NAME__ << name << " " << *massWorld;
 
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
-  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(beamline, circular);
+  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(massWorld, beamlineIsCircular);
   BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline);
   delete clBuilder;
-  
-  // register the beamline in the holder class for the full model
-  acceleratorModel->RegisterFlatBeamline(beamline);
-  acceleratorModel->RegisterCurvilinearBeamline(clBeamline);
-  acceleratorModel->RegisterCurvilinearBridgeBeamline(clBridgeBeamline);
+
+  // construct beamline of end pieces
+  BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
+
+  BDSBeamlineSet beamlineSet;
+  beamlineSet.massWorld              = massWorld;
+  beamlineSet.curvilinearWorld       = clBeamline;
+  beamlineSet.curvilinearBridgeWorld = clBridgeBeamline;
+  beamlineSet.endPieces              = endPieces;
+  return beamlineSet;
 }
 
 void BDSDetectorConstruction::BuildTunnel()
@@ -285,10 +322,10 @@ void BDSDetectorConstruction::BuildTunnel()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBeamline* flatBeamLine = acceleratorModel->GetFlatBeamline();
+  const BDSBeamline* mainBeamLine = acceleratorModel->BeamlineMain();
   BDSBeamline* tunnelBeamline;
   BDSTunnelBuilder* tb = new BDSTunnelBuilder();
-  tunnelBeamline = tb->BuildTunnelSections(flatBeamLine);
+  tunnelBeamline = tb->BuildTunnelSections(mainBeamLine);
   delete tb;
   
   acceleratorModel->RegisterTunnelBeamline(tunnelBeamline);
@@ -299,25 +336,45 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  std::vector<G4ThreeVector> extents;
 
   // These beamlines should always exist so are safe to access.
-  G4ThreeVector beamlineExtent = acceleratorModel->GetFlatBeamline()->GetMaximumExtentAbsolute();
-  G4ThreeVector clExtent = acceleratorModel->GetCurvilinearBeamline()->GetMaximumExtentAbsolute();
-  G4ThreeVector plExtent;
-  BDSBeamline* plBeamline = acceleratorModel->GetPlacementBeamline();
+  const auto& blMain = acceleratorModel->BeamlineSetMain();
+  extents.push_back(blMain.massWorld->GetMaximumExtentAbsolute());
+  const auto blMainCL = blMain.curvilinearWorld;
+  if (blMainCL)
+    {extents.push_back(blMainCL->GetMaximumExtentAbsolute());}
+  
+  BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
-    {plExtent = plBeamline->GetMaximumExtentAbsolute();}
-
-  G4ThreeVector tunnelExtent = G4ThreeVector(0,0,0);
+    {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
+  
   BDSBeamline* tunnelBeamline = acceleratorModel->GetTunnelBeamline();
   if (tunnelBeamline)
-    {tunnelExtent = tunnelBeamline->GetMaximumExtentAbsolute();}
+    {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
-  for (G4int i = 0; i < 3; i++)
-    {worldR[i] = std::max(std::max(beamlineExtent[i],plExtent[i]), std::max(clExtent[i], tunnelExtent[i]));}
 
+  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  for (const auto& bl : extras)
+    {// extras is a map, so iterator has first and second for key and value
+      extents.push_back(bl.second.massWorld->GetMaximumExtentAbsolute());
+      if (bl.second.curvilinearWorld)
+	{extents.push_back(bl.second.curvilinearWorld->GetMaximumExtentAbsolute());}
+      if (bl.second.curvilinearBridgeWorld)
+	{extents.push_back(bl.second.curvilinearBridgeWorld->GetMaximumExtentAbsolute());}
+      if (bl.second.endPieces)
+	{extents.push_back(bl.second.endPieces->GetMaximumExtentAbsolute());}
+    }
+
+  // loop over all extents from all beam lines
+  for (const auto& ext : extents)
+    {
+      for (G4int i = 0; i < 3; i++)
+	{worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
+    }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
 #endif
@@ -367,153 +424,121 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
   BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
-
-    return worldPV;
+  
+  return worldPV;
 }
 
 void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
-  if (verbose || debug)
-    {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
-  G4long G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
-
-  // 0 - mass world placement
-  // 1 - end piece placement
-  // 2 - tunnel placement 
-
-  BDSBeamline*      beamline = acceleratorModel->GetFlatBeamline();
-  G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
-  G4VSensitiveDetector* tunnelECSD = BDSSDManager::Instance()->GetEnergyCounterTunnelSD();
-  
-  // 0 - mass world placement
-  for(auto element : *beamline)
-    {
-      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
-      
-      // check we can get the container logical volume to be placed
-      G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
-      if (!elementLV)
-	{G4cerr << __METHOD_NAME__ << "this accelerator component " << element->GetName() << " has no volume to be placed!" << G4endl;  exit(1);}
-
-      // get the name -> note this is the plain name without _pv or _lv suffix just now
-      // comes from BDSAcceleratorComponent
-      // this is done after the checks as it really just passes down to acc component
-      G4String name = element->GetName(); 
-      if (verbose || debug)
-	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
-      
-      // add the volume to one of the regions
-      const G4String regionName = accComp->GetRegion();
-      if(!regionName.empty()) // ie string is defined so we should attach region
-	{
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "element is in the precision region" << G4endl;
-#endif
-	  G4Region* region = acceleratorModel->Region(regionName);
-	  elementLV->SetRegion(region);
-	  region->AddRootLogicalVolume(elementLV);
-	}
-
-      // Make sensitive volumes sensitive
-      accComp->SetSensitiveDetector(eCSD);
-      
-      // get the placement details from the beamline component
-      G4int nCopy       = element->GetCopyNo();
-      // reference rotation and position for the read out volume
-      G4ThreeVector  rp = element->GetReferencePositionMiddle();
-      G4Transform3D* pt = element->GetPlacementTransform();
-      
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
-      G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
-      G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
-#endif
-      new G4PVPlacement(*pt,              // placement transform
-			element->GetPlacementName() + "_pv", // name
-			elementLV,        // logical volume
-			worldPV,          // mother volume
-			false,	     // no boolean operation
-			nCopy,            // copy number
-			checkOverlaps);   // overlap checking
-    }
-
-  // 1 - end piece placmeent
-  auto pieces = acceleratorModel->GetEndPieceBeamline();
-  for (auto element : *pieces)
-    {
-      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
-
-      // Make sensitive component sensitive
-      accComp->SetSensitiveDetector(eCSD);
-      
-      G4ThreeVector  rp = element->GetReferencePositionMiddle();
-      G4Transform3D* pt = element->GetPlacementTransform();
-      G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
-      G4int nCopy       = element->GetCopyNo();
-      new G4PVPlacement(*pt,              // placement transform
-			element->GetPlacementName() + "_pv", // name
-			elementLV,        // logical volume
-			worldPV,          // mother volume
-			false,	     // no boolean operation
-			nCopy,            // copy number
-			checkOverlaps);   // overlap checking
-    }
-
-  // 2 - place the tunnel segments & supports if they're built
+  // We musn't place parallel world geometry here - their world is produced by
+  // Geant4 at the right time, so we have a separate placement call for them
+  BDSBeamlineSet mainBL = BDSAcceleratorModel::Instance()->BeamlineSetMain();
+  PlaceBeamlineInWorld(mainBL.massWorld,
+		       worldPV, checkOverlaps,
+		       BDSSDManager::Instance()->GetEnergyCounterSD(),
+		       true);
+  PlaceBeamlineInWorld(mainBL.endPieces,
+		       worldPV, checkOverlaps,
+		       BDSSDManager::Instance()->GetEnergyCounterSD());
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
-      // place supports
-      // use iterator from BDSBeamline.hh
-      /*
-      BDSBeamline* supports = acceleratorModel->GetSupportsBeamline();
-      BDSBeamline::iterator supportsIt = supports->begin();
-      G4PVPlacement* supportPV = nullptr;
-      for(; supportsIt != supports->end(); ++supportsIt)
-	{
-	  supportPV = new G4PVPlacement((*supportsIt)->GetRotationMiddle(),         // rotation
-					(*supportsIt)->GetPositionMiddle(),         // position
-					(*supportsIt)->GetPlacementName() + "_pv",  // placement name
-					(*supportsIt)->GetContainerLogicalVolume(), // volume to be placed
-					worldPV,                                    // volume to place it in
-					false,                                      // no boolean operation
-					0,                                          // copy number
-					checkOverlaps);                             // overlap checking
-					}*/
-      
-      BDSBeamline* tunnel = acceleratorModel->GetTunnelBeamline();
-      
-      for (auto element : *tunnel)
-	{
-	  // Make sensitive volumes sensitive
-	  element->GetAcceleratorComponent()->SetSensitiveDetector(tunnelECSD);
-	  new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
-			    element->GetPlacementName() + "_pv",  // placement name
-			    element->GetContainerLogicalVolume(), // volume to be placed
-			    worldPV,                              // volume to place it in
-			    false,                                // no boolean operation
-			    0,                                    // copy number
-			    checkOverlaps);                       // overlap checking
-	}
+      PlaceBeamlineInWorld(acceleratorModel->GetTunnelBeamline(),
+			   worldPV, checkOverlaps,
+			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
+  PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
-  /// Single placement geometry.
-  BDSBeamline* placementBL = acceleratorModel->GetPlacementBeamline();
-  if (placementBL)
-    {
-      for (auto element : *placementBL)
-	{
-	  new G4PVPlacement(*element->GetPlacementTransform(),
-			    element->GetPlacementName() + "_pv",
-			    element->GetContainerLogicalVolume(),
-			    worldPV,
-			    false,
-			    0,
-			    true);
-	}
+  const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  for (auto const& bl : extras)
+    {// extras is map so iterator has first and second for key and value
+      PlaceBeamlineInWorld(bl.second.massWorld, worldPV, checkOverlaps);
+      PlaceBeamlineInWorld(bl.second.endPieces, worldPV, checkOverlaps);
     }
+}
+
+void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamline,
+						   G4VPhysicalVolume*    containerPV,
+						   G4bool                checkOverlaps,
+						   G4VSensitiveDetector* sensitiveDetector,
+						   G4bool                setRegions,
+						   G4bool                registerInfo,
+						   G4bool                useCLPlacementTransform)
+{
+  if (!beamline)
+    {return;}
   
-  // set precision back
-  G4cout.precision(G4precision);
+  for (auto element : *beamline)
+    { 
+      if (setRegions)
+	{
+	  auto accComp = element->GetAcceleratorComponent();
+	  const G4String regionName = accComp->GetRegion();
+	  if(!regionName.empty()) // ie string is defined so we should attach region
+	    {
+	      G4Region* region = BDSAcceleratorModel::Instance()->Region(regionName);
+	      auto contLV = accComp->GetContainerLogicalVolume();
+	      contLV->SetRegion(region);
+	      region->AddRootLogicalVolume(contLV);
+	    }
+	}
+
+      if (sensitiveDetector)
+	{element->GetAcceleratorComponent()->SetSensitiveDetector(sensitiveDetector);}
+      
+      G4String placementName = element->GetPlacementName() + "_pv";
+      G4Transform3D* placementTransform = element->GetPlacementTransform();
+      if (useCLPlacementTransform)
+	{placementTransform = element->GetPlacementTransformCL();}
+      auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
+				  placementName,                        // placement name
+				  element->GetContainerLogicalVolume(), // volume to be placed
+				  containerPV,                          // volume to place it in
+				  false,                                // no boolean operation
+				  element->GetCopyNo(),                 // copy number
+				  checkOverlaps);                       // overlap checking
+
+      if (registerInfo)
+        {
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(element->GetName(),
+								     placementName,
+								     element->GetSPositionMiddle(),
+								     element->GetIndex());
+	  
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(pv, theinfo, true);
+        }
+    }
+}
+
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement)
+{
+  G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
+					    placement.y*CLHEP::m,
+					    placement.z*CLHEP::m);
+  
+  G4RotationMatrix* rm = nullptr;
+  if (placement.axisAngle)
+    {
+      G4ThreeVector axis = G4ThreeVector(placement.axisX,
+					 placement.axisY,
+					 placement.axisZ);
+      rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
+    }
+  else
+    {
+      if (BDS::IsFinite(placement.phi)   ||
+	  BDS::IsFinite(placement.theta) ||
+	  BDS::IsFinite(placement.psi))
+	{// only build if finite
+	  CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
+							    placement.theta*CLHEP::rad,
+							    placement.psi*CLHEP::rad);
+	  rm = new G4RotationMatrix(ang);
+	}
+      else
+	{rm = new G4RotationMatrix();}
+    }
+  G4Transform3D result(*rm, translation);
+  return result;
 }
 
 #if G4VERSION_NUMBER > 1009

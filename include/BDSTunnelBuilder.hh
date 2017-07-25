@@ -24,7 +24,7 @@ public:
   /// of tunnel around the flat beamline (of accelerator components).
   /// Tunnel segments are placed in order in a new beamline instance,
   /// which is returned.
-  BDSBeamline* BuildTunnelSections(BDSBeamline* flatBeamLine);
+  BDSBeamline* BuildTunnelSections(const BDSBeamline* flatBeamLine);
 
 private:
   /// Decide whether this is a good point to break the tunnel based on various cumulative
@@ -34,9 +34,6 @@ private:
 		     G4int    cumulativeNItems,
 		     G4double cumulativeOffsetX,
 		     G4double cumulativeOffsetY);
-
-  /// Test if the current element is a sampler instance
-  G4bool IsASampler(const BDSBeamline::iterator& iterator);
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.

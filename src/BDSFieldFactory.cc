@@ -174,7 +174,6 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    nullptr, /*for now, no parameterised strengths*/
 					    G4bool(definition.globalTransform),
 					    transform,
-					    nullptr, /* no cavity info*/
 					    magFile,
 					    magFormat,
 					    magIntType,
