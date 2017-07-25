@@ -168,10 +168,10 @@ void BDSDetectorConstruction::BuildBeamlines()
 
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
-						   placement.name,
+						   placement.sequence,
 						   startTransform);
       
-      acceleratorModel->RegisterBeamlineSetExtra(placement.name, extraBeamline);
+      acceleratorModel->RegisterBeamlineSetExtra(placement.sequence, extraBeamline);
     }
 }
 
