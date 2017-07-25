@@ -48,5 +48,5 @@ void BDSParallelWorldCurvilinear::Construct()
 
   BDSDetectorConstruction::PlaceBeamlineInWorld(blSet.curvilinearWorld, clWorld,
 						globals->CheckOverlaps(),
-						nullptr, false, true);
+						nullptr, false, true, true);
 }

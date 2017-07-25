@@ -64,13 +64,16 @@ public:
   /// detector is specified, this is applied to each component. If regions are desired,
   /// the element is looked up in the region definitions and that is set up. If
   /// registerInfo, physical volume info is created and placed in a pv info registry.
-  /// Public and static so it can be used by parallel world constructors.
+  /// Public and static so it can be used by parallel world constructors. Last argument
+  /// is whether to use the placement transform for curvilinear coordinate geometry that's
+  /// different in the case of tilted dipoles.
   static void PlaceBeamlineInWorld(BDSBeamline*          beamline,
 				   G4VPhysicalVolume*    containerPV,
 				   G4bool                checkOverlaps     = false,
 				   G4VSensitiveDetector* sensitiveDetector = nullptr,
 				   G4bool                setRegions        = false,
-				   G4bool                registerInfo      = false);
+				   G4bool                registerInfo      = false,
+				   G4bool                useCLPlacementTransform = false);
 
   /// Create a transform based on the information in the placement.
   static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement);

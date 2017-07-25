@@ -461,7 +461,8 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 						   G4bool                checkOverlaps,
 						   G4VSensitiveDetector* sensitiveDetector,
 						   G4bool                setRegions,
-						   G4bool                registerInfo)
+						   G4bool                registerInfo,
+						   G4bool                useCLPlacementTransform)
 {
   if (!beamline)
     {return;}
@@ -485,7 +486,10 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
 	{element->GetAcceleratorComponent()->SetSensitiveDetector(sensitiveDetector);}
       
       G4String placementName = element->GetPlacementName() + "_pv";
-      auto pv = new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
+      G4Transform3D* placementTransform = element->GetPlacementTransform();
+      if (useCLPlacementTransform)
+	{placementTransform = element->GetPlacementTransformCL();}
+      auto pv = new G4PVPlacement(*placementTransform,                  // placement transform
 				  placementName,                        // placement name
 				  element->GetContainerLogicalVolume(), // volume to be placed
 				  containerPV,                          // volume to place it in
