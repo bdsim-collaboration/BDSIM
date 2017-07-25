@@ -6,6 +6,8 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <map>
@@ -70,6 +72,9 @@ public:
 
   /// Create the tilt and offset information object by inspecting the parser element
   static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
+
+  /// Create a transform from a tilt offset.  If nullptr, returns identity transform.
+  static G4Transform3D CreateFieldTransform(const BDSTiltOffset* tiltOffset);
 
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.

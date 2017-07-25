@@ -1148,6 +1148,11 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* el)
   return result;
 }
 
+G4Transform3D BDSComponentFactory::CreateFieldTransform(const BDSTiltOffset* tiltOffset)
+{
+  return tiltOffset ? tiltOffset->Transform3D() : G4Transform3D();
+}
+
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
 							 G4double outerDiameter,
