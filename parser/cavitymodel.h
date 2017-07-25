@@ -22,7 +22,8 @@ namespace GMAD
     double irisRadius;             ///< iris radius
     double equatorRadius;          ///< equator radius
     double halfCellLength;         ///< half cell length
-    double equatorEllipseSemiAxis; ///< equator ellipse semi axis;
+    double equatorHorizontalAxis;  ///< equator ellipse vertical semi axis;
+    double equatorVerticalAxis;    ///< equator ellipse horizontal semi axis;
     double irisHorizontalAxis;     ///< iris horizontal axis
     double irisVerticalAxis;       ///< Iris axis
     double tangentLineAngle;       ///< tangent angle
