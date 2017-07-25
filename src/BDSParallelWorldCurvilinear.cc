@@ -5,14 +5,16 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinear.hh"
 
+#include "G4String.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 class BDSBeamline;
 
-BDSParallelWorldCurvilinear::BDSParallelWorldCurvilinear():
-  G4VUserParallelWorld("CurvilinearWorld"),
+BDSParallelWorldCurvilinear::BDSParallelWorldCurvilinear(G4String name):
+  G4VUserParallelWorld("CurvilinearWorld_" + name),
+  suffix(name),
   clWorldVis(nullptr)
 {;}
 
@@ -29,19 +31,22 @@ void BDSParallelWorldCurvilinear::Construct()
 
   G4VPhysicalVolume* clWorld = GetWorld();
 
-  // Register read out world PV with our auxiliary navigator.
-  BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(clWorld);
+  // TBC - only register main one for now
+  // register read out world PV with our auxiliary navigator.
+  if (suffix == "main")
+    {BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(clWorld);}
 
-  // Visualisation
-  G4LogicalVolume*   clWorldLV = clWorld->GetLogicalVolume();
+  G4LogicalVolume* clWorldLV = clWorld->GetLogicalVolume();
+
+  // visualisation
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   clWorldVis = new G4VisAttributes(*(globals->GetVisibleDebugVisAttr()));
   clWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   clWorldLV->SetVisAttributes(clWorldVis);
 
-  BDSBeamlineSet blSetMain = BDSAcceleratorModel::Instance()->BeamlineSetMain();
+  BDSBeamlineSet blSet = BDSAcceleratorModel::Instance()->BeamlineSet(suffix);
 
-  BDSDetectorConstruction::PlaceBeamlineInWorld(blSetMain.curvilinearWorld, clWorld,
+  BDSDetectorConstruction::PlaceBeamlineInWorld(blSet.curvilinearWorld, clWorld,
 						globals->CheckOverlaps(),
 						nullptr, false, true);
 }

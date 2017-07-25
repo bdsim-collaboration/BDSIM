@@ -5,14 +5,16 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSParallelWorldCurvilinearBridge.hh"
 
+#include "G4String.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 class BDSBeamline;
 
-BDSParallelWorldCurvilinearBridge::BDSParallelWorldCurvilinearBridge():
-  G4VUserParallelWorld("CurvilinearBridgeWorld"),
+BDSParallelWorldCurvilinearBridge::BDSParallelWorldCurvilinearBridge(G4String name):
+  G4VUserParallelWorld("CurvilinearBridgeWorld_" + name),
+  suffix(name),
   clbWorldVis(nullptr)
 {;}
 
@@ -29,8 +31,10 @@ void BDSParallelWorldCurvilinearBridge::Construct()
 
   G4VPhysicalVolume* clbWorld = GetWorld();
 
+  // TBC - only register main one for now
   // Register read out world PV with our auxiliary navigator.
-  BDSAuxiliaryNavigator::RegisterCurvilinearBridgeWorld(clbWorld);
+  if (suffix == "main")
+    {BDSAuxiliaryNavigator::RegisterCurvilinearBridgeWorld(clbWorld);}
 
   // Visualisation
   G4LogicalVolume* clbWorldLV = clbWorld->GetLogicalVolume();
@@ -39,8 +43,9 @@ void BDSParallelWorldCurvilinearBridge::Construct()
   clbWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   clbWorldLV->SetVisAttributes(clbWorldVis);
 
-  BDSBeamline* clbBeamline = BDSAcceleratorModel::Instance()->BeamlineSetMain().curvilinearBridgeWorld;
+  BDSBeamlineSet blSet = BDSAcceleratorModel::Instance()->BeamlineSet(suffix);
 
-  BDSDetectorConstruction::PlaceBeamlineInWorld(clbBeamline, clbWorld, globals->CheckOverlaps(),
+  BDSDetectorConstruction::PlaceBeamlineInWorld(blSet.curvilinearBridgeWorld, clbWorld,
+						globals->CheckOverlaps(),
 						nullptr, false, true);
 }

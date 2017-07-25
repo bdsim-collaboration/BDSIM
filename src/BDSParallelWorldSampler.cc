@@ -22,8 +22,9 @@
 #include <vector>
 
 
-BDSParallelWorldSampler::BDSParallelWorldSampler():
-  G4VUserParallelWorld("SamplerWorld"),
+BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
+  G4VUserParallelWorld("SamplerWorld_" + name),
+  suffix(name),
   samplerWorldVis(nullptr)
 {;}
 
