@@ -170,8 +170,14 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
 {  
   // we can safely assume faces match between two beam line elmeents so if one's angeld, so is the other
   BDSAcceleratorComponent* component = defaultBridge;
-  if ((*element)->AngledOutputFace() || BDS::IsFinite((*element)->GetAngle())) // angled faces - make one to match to cover the angled gap
+  if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
     {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
+  if (BDS::IsFinite((*element)->GetAngle()))
+    {// width may be reduced due to bend - check if required
+      G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
+      if (width < curvilinearRadius)
+	{component = CreateStraightBridgeComponent(width, numberOfUniqueComponents);}
+    }
 
   return CreateBridgeElementFromComponent(component, element, nextElement, end, beamlineIndex);
 }
@@ -189,6 +195,19 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateDefaultBridgeComponent()
 
   BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
   
+  return component;
+}
+
+BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateStraightBridgeComponent(G4double                    width,
+									      G4int&                      numberOfUniqueComponents)
+{
+  G4double padLength = BDSBeamline::PaddingLength();
+  G4double chordLength = padLength + 4*BDSGlobalConstants::Instance()->LengthSafety();
+  BDSSimpleComponent* component = factory->CreateCurvilinearVolume("clb_" + std::to_string(numberOfUniqueComponents),
+								   chordLength,
+								   width*0.5);
+  BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
+  numberOfUniqueComponents++;
   return component;
 }
 
@@ -216,9 +235,7 @@ BDSAcceleratorComponent* BDSCurvilinearBuilder::CreateAngledBridgeComponent(BDSB
 								   oFNormal);
 
   BDSAcceleratorComponentRegistry::Instance()->RegisterCurvilinearComponent(component);
-
   numberOfUniqueComponents++;
-  
   return component;
 }
 
