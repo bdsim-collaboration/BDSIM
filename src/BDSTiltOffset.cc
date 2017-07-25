@@ -1,6 +1,11 @@
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
 #include <ostream>
 
 BDSTiltOffset::BDSTiltOffset():
@@ -17,6 +22,14 @@ std::ostream& operator<< (std::ostream& out, BDSTiltOffset const &to)
 {
   out << to.tilt << " " << to.dx << " " << to.dy;
   return out;
+}
+
+G4Transform3D BDSTiltOffset::Transform3D() const
+{
+  G4ThreeVector off = GetOffset();
+  G4RotationMatrix rm = G4RotationMatrix();
+  rm.rotateZ(-tilt);
+  return G4Transform3D(rm, off);
 }
 
 G4bool BDSTiltOffset::HasFiniteOffset() const
