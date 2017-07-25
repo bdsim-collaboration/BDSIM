@@ -91,7 +91,7 @@ public:
   inline G4double          GetSPositionEnd()              const {return sPositionEnd;}
   inline BDSTiltOffset*    GetTiltOffset()                const {return tiltOffset;}
   inline G4Transform3D*    GetPlacementTransform()        const {return placementTransform;}
-  inline G4Transform3D*    GetReadOutPlacementTransform() const {return readOutPlacementTransform;}
+  inline G4Transform3D*    GetPlacementTransformCL()      const {return placementTransformCL;}
   inline BDSSamplerType    GetSamplerType()               const {return samplerType;}
   inline G4String          GetSamplerName()               const {return samplerName;}
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
@@ -177,10 +177,10 @@ private:
   G4Transform3D*    placementTransform;
 
   /// Transform made from the referencePositionMiddle and referenceRottationMiddle.
-  /// The read out geometry should always align with the reference trajectory and
-  /// not the possibly offset position of the mass geometry, hence have a separate
-  /// transform for it.
-  G4Transform3D*    readOutPlacementTransform;
+  /// The read out (curvilinear) geometry should always align with the reference
+  /// trajectory and not the possibly offset position of the mass geometry, hence
+  /// have a separate transform for it.
+  G4Transform3D*    placementTransformCL;
 
   /// The type of sampler to attach to this element - could be none as well.
   const BDSSamplerType samplerType;

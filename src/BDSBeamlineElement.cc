@@ -67,8 +67,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 #endif
 
   // create the placement transform from supplied rotation matrices and vector
-  placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
-  readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
+  placementTransform   = new G4Transform3D(*rotationMiddle, positionMiddle);
+  placementTransformCL = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
 
   // calculate sampler central position slightly away from end position of element.
   if (samplerType == BDSSamplerType::plane)
@@ -99,7 +99,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationMiddle;
   delete referenceRotationEnd;
   delete placementTransform;
-  delete readOutPlacementTransform;
+  delete placementTransformCL;
   delete samplerPlacementTransform;
 }
 
