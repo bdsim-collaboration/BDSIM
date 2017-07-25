@@ -172,7 +172,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateBridgeSection(BDSAcceleratorCom
   BDSAcceleratorComponent* component = defaultBridge;
   if ((*element)->AngledOutputFace()) // angled faces - make one to match to cover the angled gap
     {component = CreateAngledBridgeComponent(element, numberOfUniqueComponents);}
-  if (BDS::IsFinite((*element)->GetAngle()))
+  else if (BDS::IsFinite((*element)->GetAngle()))
     {// width may be reduced due to bend - check if required
       G4double width = (*element)->GetAcceleratorComponent()->GetExtent().DX();
       if (width < curvilinearRadius)
