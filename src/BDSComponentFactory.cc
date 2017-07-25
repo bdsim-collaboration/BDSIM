@@ -1374,13 +1374,15 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
       if (!(el->fieldOuter.empty())) // ie variable isn't ""
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldOuter)));
-	  info->SetTransform(fieldTrans);
+	  if (info->ProvideGlobal())
+	    {info->SetTransform(info->Transform() * fieldTrans);}
 	  mag->SetOuterField(info);
 	}
       if (!(el->fieldVacuum.empty()))
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldVacuum)));
-	  info->SetTransform(fieldTrans);
+	  if (info->ProvideGlobal())
+	    {info->SetTransform(info->Transform() * fieldTrans);}
 	  mag->SetVacuumField(info);
 	}
     }
@@ -1389,7 +1391,8 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
       if (!(el->fieldAll.empty()))
 	{
 	  BDSFieldInfo* info = new BDSFieldInfo(*(BDSFieldFactory::Instance()->GetDefinition(el->fieldAll)));
-	  info->SetTransform(fieldTrans);
+	  if (info->ProvideGlobal())
+	    {info->SetTransform(info->Transform() * fieldTrans);}
 	  component->SetField(info);
 	}
     }
