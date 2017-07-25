@@ -1239,35 +1239,37 @@ A more detailed rf cavity geometry may be described by constructing a 'cavity' o
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
 
-+--------------------------+-----------------+------------------------------------------------------+
-| **Parameter**            | **Required**    | **Description**                                      |
-+==========================+=================+======================================================+
-| `name`                   | yes             | Name of the object                                   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `type`                   | yes             | (elliptical | rectangular | pillbox)                 |
-+--------------------------+-----------------+------------------------------------------------------+
-| `material`               | yes             | The material for the cavity.                         |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisRadius`             | no              | The radius of the narrowest part.                    |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorRadius`          | no              | The radius of the widest part.                       |
-+--------------------------+-----------------+------------------------------------------------------+
-| `halfCellLength`         | no              | Half length along a cell.                            |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorEllipseSemiAxis` | Elliptical only | Semi-axis of the ellipse at the cavity equator.      |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.     |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris        |
-+--------------------------+-----------------+------------------------------------------------------+
-| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.  |
-+--------------------------+-----------------+------------------------------------------------------+
-| `thickness`              | no              | Thickness of material.                               |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfCells`          | no              | Number of cells to construct.                        |
-+--------------------------+-----------------+------------------------------------------------------+
++--------------------------+-----------------+-----------------------------------------------------------------+
+| **Parameter**            | **Required**    | **Description**                                                 |
++==========================+=================+=================================================================+
+| `name`                   | yes             | Name of the object                                              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `type`                   | yes             | (elliptical | rectangular | pillbox)                            |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `material`               | yes             | The material for the cavity.                                    |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisRadius`             | no              | The radius of the narrowest part.                               |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorRadius`          | no              | The radius of the widest part.                                  |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `halfCellLength`         | no              | Half length along a cell.                                       |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorHorizontalAxis`  | Elliptical only | Horizontal semi-axis of the ellipse at the cavity equator.      |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorVerticalAxis`    | Elliptical only | Vertical semi-axis of the ellipse at the cavity equator.        |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.                |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.             |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `thickness`              | no              | Thickness of material.                                          |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfCells`          | no              | Number of cells to construct.                                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
 
 Example::
 
@@ -1275,13 +1277,43 @@ Example::
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
-	               equatorEllipseSemiAxis = 42*mm,
+		       equatorHorizontalAxis = 40*mm,
+		       equatorVerticalAxis = 42*mm,
 	               irisHorizontalAxis = 12*mm,
 	               irisVerticalAxis = 19*mm,
 	               tangentLineAngle = 13.3*pi/180,
 	               thickness = 1*mm,
 	               numberOfPoints = 24,
 	               numberOfCells = 1;
+
+.. figure:: figures/elliptical-cavity.pdf
+	   :width: 40%
+	   :align: center
+
+	   The parametrisation used to define elliptical cavities in BDSIM.
+	   The symbols used map to the cavity options according to to
+	   table below.
+
+           +-----------------------+-----------------------------+
+           | **Symbol**            | **BDSIM Cavity Parameter**  |
+           +=======================+=============================+
+	   | :math:`R`             | equatorRadius               |
+           +-----------------------+-----------------------------+
+	   | :math:`r`             | irisRadius                  |
+           +-----------------------+-----------------------------+
+	   | :math:`A`             | equatorHorizontalAxis       |
+           +-----------------------+-----------------------------+
+	   | :math:`B`             | equatorVerticalAxis         |
+           +-----------------------+-----------------------------+
+	   | :math:`a`             | irisHorizontalAxis          |
+           +-----------------------+-----------------------------+
+	   | :math:`b`             | irisVerticalAxis            |
+           +-----------------------+-----------------------------+
+	   | :math:`\alpha`        | tangentLineAngle            |
+           +-----------------------+-----------------------------+
+           | :math:`L`             | halfCellLength              |
+           +-----------------------+-----------------------------+
+
 
 .. _field-maps:
 
