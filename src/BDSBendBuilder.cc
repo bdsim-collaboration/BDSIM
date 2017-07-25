@@ -13,7 +13,6 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"
@@ -41,10 +40,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
     {bendingRadius = - brho / (*st)["field"];}
-
-  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
-  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
-  delete tiltOffset;
+  
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
   
   // face rotations
   // convention: +ve e1 / e2 reduces outside of bend
@@ -350,10 +347,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
-
-  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
-  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
-  delete tiltOffset;
+  
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
   
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -399,10 +394,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
     {bendingRadius = - brho / (*st)["field"];}
-
-  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
-  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
-  delete tiltOffset;
+  
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   // face rotations
   // convention - +ve e1 / e2 reduces outside of bend
@@ -553,10 +546,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   magnetOuterInfo->geometryType   = BDSMagnetGeometryType::none;
   magnetOuterInfo->name           = name;
   magnetOuterInfo->buildEndPieces = false;
-
-  BDSTiltOffset* tiltOffset = BDSComponentFactory::CreateTiltOffset(element);
-  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(tiltOffset);
-  delete tiltOffset;
+  
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   BDSIntegratorType intType = integratorSet->dipolefringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,

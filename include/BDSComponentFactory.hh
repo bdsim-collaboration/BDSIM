@@ -76,6 +76,10 @@ public:
   /// Create a transform from a tilt offset.  If nullptr, returns identity transform.
   static G4Transform3D CreateFieldTransform(const BDSTiltOffset* tiltOffset);
 
+  /// Create a transform for the field for a given element to account for the difference
+  /// from the curvilinear coordinates for the tilt and offset of the magnet.
+  static G4Transform3D CreateFieldTransform(GMAD::Element const* el);
+
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
   static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
