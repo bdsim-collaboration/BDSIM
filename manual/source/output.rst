@@ -4,15 +4,15 @@
 Output
 ======
 
-This section describes the output from BDSIM, which can be in various formats. This
+This section describes the output from BDSIM. This
 section only describes the structure. Loading and analysis instructions can be found
 in :ref:`output-analysis-section`.
 
-The default and recommended format 'rootevent' is written to a ROOT file. This format
+The output format 'rootevent' is written to a ROOT file. This format
 is preferred as it lends itself nicely to particle physics information; is stored as compressed
 binary internally; and can store and load complex custom structures.
 
-Units, unless specified, are SI (ie m, rad), plus energy in GeV and time in nanoseconds.
+Units, unless specified, are SI (i.e. m, rad), plus energy in GeV and time in nanoseconds.
 Small letters denote local (to that object) coordinates whereas capitals represent
 global coordinates.
 
@@ -26,16 +26,10 @@ global coordinates.
 | ROOT Event (Default) | --output=rootevent          | A ROOT file with details of the model built, options used, seed states,    |
 |                      |                             | and event by event information (default and recommended).                  |
 +----------------------+-----------------------------+----------------------------------------------------------------------------+
-| ASCII                | --output=ascii              | A series of text files in a folder are written                             |
-+----------------------+-----------------------------+----------------------------------------------------------------------------+
-| Multiple             | --output=combined           | All formats written at once                                                |
-+----------------------+-----------------------------+----------------------------------------------------------------------------+
 
-.. note:: Since v0.93 rootevent is the default and recommended format.  The other formats still exist but do not contain as much
-	  information and are not actively developed.  They are described in `older formats`_.  The output name will be suffixed
+.. note:: The output name will be suffixed
 	  with :code:`_event` before adding the :code:`.root` extension.
 
-Details about each one are listed below in `output format differences`_.
 As a general guideline, the following naming conventions are used:
 
 ========== ================
@@ -55,8 +49,6 @@ PE         per element
 
 Structure Of Output
 -------------------
-
-This describes the default and recommended ROOT event format.
 
 BDSIM uses a series of classes to accumulate information about a Geant4 Run and Event.
 These are stored directly in the file so that the same classes can be used by the output
@@ -222,7 +214,7 @@ these variables are only stored once as a single number per event.
 	     distribution with a finite z width is used, approximately half of the particles will
 	     start in front of the sampler, never pass through it and never be registered. For this
 	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
-	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
+	     confusion. The primary output records
 	     all primary coordinates before they enter the tracking in the geometry, so it always
 	     contains all primary particles.
 
@@ -236,69 +228,3 @@ primary hits per element; primary losses per element; and Energy loss per elemen
 The per element histograms are integrated across the length of each element so they
 will have a different bin width. The other histograms are evenly binned according
 to the option :code:`elossHistoBinWidth` (in metres).
-
-
-Output Format Differences
--------------------------
-
-ROOT Event
-^^^^^^^^^^
-
-With the ROOT format, everything is recorded in one single file. This is
-the most developed format and the one from which a simulation can be strongly
-reproduced.
-
-
-ASCII Output
-^^^^^^^^^^^^
-
-With ASCII output, a folder is created with the given output name. Inside this
-histograms and sampler output are produced in different text files.
-
-* Histograms are suffixed with :code:`.hist.txt.`
-* The file with only :code:`.txt` is the main output from all samplers
-* The sampler output is recorded in simulation order, not spatial order
-
-The ASCII output is relatively limited compared to the root output.
-
-* The main :code:`filename.txt` file contains hits on samplers in the order they
-  happened and are not grouped by sampler.
-* In the energy loss, primary hits and primary loss files, `x'` and `y'` are always
-  0 as they are undefined in these cases.
-* In all files, local `x` and `y` are used whereas global `Z` is used.
-
-
-ROOT
-^^^^
-
-Older version of ROOT output that is no longer maintained. If the
-number of events simulated exceeds :code:`nperfile` a new file will be
-started. The chosen filename will be suffixed with :code:`_N.root` where
-:code:`N` is an integer.
-      
-* Histograms are stored as TH1F objects within the file
-* Each sampler has its own Tree
-* Histograms are accumulated across a run not per event.
-	     
-
-Older Formats
--------------
-
-.. tabularcolumns:: |p{0.15\textwidth}|p{0.3\textwidth}|p{0.5\textwidth}|
-		    
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| Format            | Syntax                      | Description                                                                |
-+===================+=============================+============================================================================+
-| ROOT              | --output=root               | A root file with a tree for each sampler is written with float precision   |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT              | --output=rootdouble         | A root file with a tree for each sampler is written with double precision  |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT (detailed)   | --output=rootdetailed       | Similar to the above ROOT format but with extra variables for more detail  |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT (detailed)   | --output=rootdetaileddouble | Similar to the above ROOT format but with extra variables for more detail  |
-|                   |                             | with double precision                                                      |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-
-.. note:: Where double precision is used, the data is typically 2x as big. This is only recommended
-	  where variable precision is extremely important - ie comparing different particle coordinates
-	  for tracking accuracy. Histograms are stored to double precision irrespective.

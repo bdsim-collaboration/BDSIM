@@ -5,6 +5,12 @@
 
 #include <string>
 
+/**
+ * @brief Specification for 2D histogram.
+ *
+ * @author L. Nevay
+ */
+
 class HistogramDef2D: public HistogramDef1D
 {
 public:

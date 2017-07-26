@@ -6,6 +6,8 @@
 
 #include <ctime>
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief Information pertaining to a run.
  *
@@ -16,7 +18,9 @@ class BDSOutputROOTEventRunInfo: public TObject
 {
 public:
   BDSOutputROOTEventRunInfo();
+  BDSOutputROOTEventRunInfo(const BDSOutputROOTEventInfo* info);
   virtual ~BDSOutputROOTEventRunInfo();
+  void Flush();
 
   time_t startTime;
   time_t stopTime;

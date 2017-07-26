@@ -10,3 +10,11 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
 {;}
+
+void BDSOutputROOTEventInfo::Flush()
+{
+  startTime        = time_t();
+  stopTime         = time_t();
+  duration         = 0;
+  seedStateAtStart = "";
+}

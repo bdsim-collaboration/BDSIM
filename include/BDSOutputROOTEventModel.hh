@@ -53,6 +53,8 @@ public:
   /// Find element index closest to vPoint
   int findNearestElement(TVector3 vPoint);
 
+  void Flush();
+  
 #ifndef __ROOTBUILD__
   /// Fill root output
   virtual void Fill();
