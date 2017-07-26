@@ -134,33 +134,35 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     // Generate x,y spatial in optionally two lobes for increased efficiency.
     G4double dx = 0;
     if (twoLobeX)
-    {
-	    // choose with random uniform distribution each side proportioned by area of each lobe
-	    G4bool positiveSide = FlatGen->shoot() > xMinMaxRatio;
-	    if (positiveSide)
-	    {dx = envelopeCollMaxX + xMaxDist*FlatGen->shoot();}
-	    else
-	    {dx = -(envelopeCollMaxX + xMinDist*FlatGen->shoot());}
-    }
+      {
+	// choose with random uniform distribution each side proportioned by area of each lobe
+	G4bool positiveSide = FlatGen->shoot() > xMinMaxRatio;
+	if (positiveSide)
+	  {dx = xMax + xMaxDist*FlatGen->shoot();}
+	else
+	  {dx = -(xMax + xMinDist*FlatGen->shoot());}
+      }
     else
-    {dx = envelopeX  * (1 - 2 * FlatGen->shoot());}
-
+      {dx = xMax  * (1 - 2 * FlatGen->shoot());}
+    
     G4double dy = 0;
     if (twoLobeY)
-    {
-
-	    // choose with random uniform distribution each side proportioned by area of each lobe
-	    G4bool positiveSide = FlatGen->shoot() > yMinMaxRatio;
-	    if (positiveSide)
-	    {dy = envelopeCollMaxY + yMaxDist*FlatGen->shoot();}
-	    else
-	    {dy = -(envelopeCollMaxY + yMinDist*FlatGen->shoot());}
-    }
+      {
+	
+	// choose with random uniform distribution each side proportioned by area of each lobe
+	G4bool positiveSide = FlatGen->shoot() > yMinMaxRatio;
+	if (positiveSide)
+	  {dy = yMax + yMaxDist*FlatGen->shoot();}
+	else
+	  {dy = -(yMax + yMinDist*FlatGen->shoot());}
+      }
     else
-    {dy = envelopeY  * (1 - 2 * FlatGen->shoot());}
+      {dy = yMax  * (1 - 2 * FlatGen->shoot());}
+
     
-    G4double dxp = envelopeXp * (1 - 2 * FlatGen->shoot());
-    G4double dyp = envelopeYp * (1 - 2 * FlatGen->shoot());
+    G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
+    G4double dyp = ypMax * (1 - 2 * FlatGen->shoot());
+    
 
     // compute single particle emittance 
     double emitXSp = gammaX * std::pow(dx, 2) + 2. * alphaX * dx * dxp + betaX * std::pow(dxp, 2);
