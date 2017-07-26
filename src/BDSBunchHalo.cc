@@ -186,18 +186,19 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     else
     {
       // determine weight, initialise 1 so always passes
-      double wx = 1.0;
-      double wy = 1.0;
+      double wx = 0.0;
+      double wy = 0.0;
       if (weightFunction == "flat" || weightFunction == "")
       {
         wx = 1.0;
         wy = 1.0;
       }
       else if (weightFunction == "oneoverr")
-      {
-        wx = std::pow(fabs(emitXSp) / emitX, weightParameter);
-        wy = std::pow(fabs(emitYSp) / emitY, weightParameter);
-      }
+	{
+	  //abs because power of double - must be positive
+	  wx = std::pow(std::abs(emitInnerX / emitXSp), weightParameter);
+	  wy = std::pow(std::abs(emitInnerY / emitYSp), weightParameter);
+	}
       else if (weightFunction == "exp")
       {
         wx = exp(-(emitXSp - emitX) / (emitX * weightParameter));
