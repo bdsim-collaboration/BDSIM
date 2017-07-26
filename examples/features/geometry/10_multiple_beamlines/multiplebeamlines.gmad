@@ -11,26 +11,33 @@ mainLine: line=(d2,sb1,d2,sb2,d2,fodo,fodo);
 
 auxLine1: line=(d3,sb1,d1,sb2,d1,fodo,d1);
 auxLine2: line=(d1,sb1,d1,sb2,d1,fodo,d1);
+auxLine3: line=(fodo);
 
 use, mainLine;
 
 beam, particle="e-",
       energy=3*GeV;
 
-auxLine1Place: placement, sequence="auxLine1",
-	       		  referenceElement="d2",
-			  referenceElementNumber=2,
-			  x=-5*cm,
-			  z=-1*m,
-			  axisAngle=1,
-			  axisY=1,
-			  angle=-0.2;
+auxLine1Place: placement, sequence = "auxLine1",
+	       		  referenceElement = "d2",
+			  referenceElementNumber = 2,
+			  x = -5*cm,
+			  z = -1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = -0.2;
 
-auxLine2Place: placement, sequence="auxLine2",
-	       		  referenceElement="d2",
-			  referenceElementNumber=2,
-			  x=-10*cm,
-			  z=-1*m,
-			  axisAngle=1,
-			  axisY=1,
-			  angle=-0.5;
+auxLine2Place: placement, sequence = "auxLine2",
+	       		  referenceElement = "d2",
+			  referenceElementNumber = 2,
+			  x = -10*cm,
+			  z = -1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = -0.5;
+
+auxLine3Place: placement, sequence="auxLine3",
+	       		  x = 1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = 0.2;
