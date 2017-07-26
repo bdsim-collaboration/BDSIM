@@ -109,6 +109,8 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
 	    yMinMaxRatio = yMinDist / (yMinDist + yMaxDist);
 	  }
   }
+  CheckParameters();
+  
 }
 
 void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
