@@ -15,8 +15,8 @@ Current Authors
   
 * Andrey Abramov (*RHUL*)
 * Lawrence Deacon (*RHUL, CERN, UCL*)
+* Hector Garcia Morales (*RHUL, CERN*)
 * Stephen Gibson (*RHUL*)
-* Hector Morales (*RHUL, CERN*)
 * William Shields (*RHUL*)
 * Stuart Walker (*RHUL*)
 
