@@ -1213,7 +1213,8 @@ void BDSComponentFactory::PrepareCavityModels()
 				    model.halfCellLength*CLHEP::m,
 				    model.numberOfPoints,
 				    model.numberOfCells,
-				    model.equatorEllipseSemiAxis*CLHEP::m,
+				    model.equatorHorizontalAxis*CLHEP::m,
+				    model.equatorVerticalAxis*CLHEP::m,
 				    model.irisHorizontalAxis*CLHEP::m,
 				    model.irisVerticalAxis*CLHEP::m,
 				    model.tangentLineAngle);

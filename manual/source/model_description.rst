@@ -1239,35 +1239,37 @@ A more detailed rf cavity geometry may be described by constructing a 'cavity' o
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
 
-+--------------------------+-----------------+------------------------------------------------------+
-| **Parameter**            | **Required**    | **Description**                                      |
-+==========================+=================+======================================================+
-| `name`                   | yes             | Name of the object                                   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `type`                   | yes             | (elliptical | rectangular | pillbox)                 |
-+--------------------------+-----------------+------------------------------------------------------+
-| `material`               | yes             | The material for the cavity.                         |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisRadius`             | no              | The radius of the narrowest part.                    |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorRadius`          | no              | The radius of the widest part.                       |
-+--------------------------+-----------------+------------------------------------------------------+
-| `halfCellLength`         | no              | Half length along a cell.                            |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorEllipseSemiAxis` | Elliptical only | Semi-axis of the ellipse at the cavity equator.      |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.     |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris        |
-+--------------------------+-----------------+------------------------------------------------------+
-| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.  |
-+--------------------------+-----------------+------------------------------------------------------+
-| `thickness`              | no              | Thickness of material.                               |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfCells`          | no              | Number of cells to construct.                        |
-+--------------------------+-----------------+------------------------------------------------------+
++--------------------------+-----------------+-----------------------------------------------------------------+
+| **Parameter**            | **Required**    | **Description**                                                 |
++==========================+=================+=================================================================+
+| `name`                   | yes             | Name of the object                                              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `type`                   | yes             | (elliptical | rectangular | pillbox)                            |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `material`               | yes             | The material for the cavity.                                    |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisRadius`             | no              | The radius of the narrowest part.                               |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorRadius`          | no              | The radius of the widest part.                                  |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `halfCellLength`         | no              | Half length along a cell.                                       |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorHorizontalAxis`  | Elliptical only | Horizontal semi-axis of the ellipse at the cavity equator.      |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorVerticalAxis`    | Elliptical only | Vertical semi-axis of the ellipse at the cavity equator.        |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.                |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.             |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `thickness`              | no              | Thickness of material.                                          |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfCells`          | no              | Number of cells to construct.                                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
 
 Example::
 
@@ -1275,13 +1277,42 @@ Example::
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
-	               equatorEllipseSemiAxis = 42*mm,
+		       equatorHorizontalAxis = 40*mm,
+		       equatorVerticalAxis = 42*mm,
 	               irisHorizontalAxis = 12*mm,
 	               irisVerticalAxis = 19*mm,
 	               tangentLineAngle = 13.3*pi/180,
 	               thickness = 1*mm,
 	               numberOfPoints = 24,
 	               numberOfCells = 1;
+
+.. figure:: figures/elliptical-cavity.pdf
+	   :width: 40%
+	   :align: center
+
+The parametrisation used to define elliptical cavities in BDSIM.
+The symbols used in the figure map to the cavity options according to the table below.
+
++-----------------------+-----------------------------+
+| **Symbol**            | **BDSIM Cavity Parameter**  |
++=======================+=============================+
+| :math:`R`             | equatorRadius               |
++-----------------------+-----------------------------+
+| :math:`r`             | irisRadius                  |
++-----------------------+-----------------------------+
+| :math:`A`             | equatorHorizontalAxis       |
++-----------------------+-----------------------------+
+| :math:`B`             | equatorVerticalAxis         |
++-----------------------+-----------------------------+
+| :math:`a`             | irisHorizontalAxis          |
++-----------------------+-----------------------------+
+| :math:`b`             | irisVerticalAxis            |
++-----------------------+-----------------------------+
+| :math:`\alpha`        | tangentLineAngle            |
++-----------------------+-----------------------------+
+| :math:`L`             | halfCellLength              |
++-----------------------+-----------------------------+
+
 
 .. _field-maps:
 
@@ -1541,6 +1572,8 @@ geometry can be used in three ways:
 3) As a general element in the beam line where the geometry constitutes the whole object.
 
 These are discussed in order.
+
+.. _placements:
 
 Placements
 ^^^^^^^^^^
@@ -2726,8 +2759,8 @@ the larger of the horizontal and vertical tunnel dimensions.
 	  certain elements in the beamline, but for now such situations must be avoided.
 
 
-Material and Atoms
-------------------
+Materials and Atoms
+-------------------
 
 Materials and atoms can be added via the parser, just like lattice elements.
 
@@ -2821,3 +2854,139 @@ the user may define additional regions and attach them to the objects desired.  
 
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.
+
+
+Multiple Beam Lines
+-------------------
+
+BDSIM has the ability to use multiple beam lines.  This feature is still in development and
+is currently only for visualisation purposes. Secondary beam lines are placed either with
+respect to the world coordinate system or with respect to a particular element in the main
+beam line. A few caveats:
+
+* Only for visualisation purposes.
+* Beam lines cannot be placed with respect to an element in another secondary beam line.
+* Secondary beam lines are not suitable for tracking.
+* Secondary beam lines are not sensitive to energy deposition nor produce output.
+* The user is entirely responsible for overlapping geometry. The visualiser will render
+  the geometry but of course it will not be suitable for simulations as overlaps lead
+  to volume navigation problems and incorrect tracking.
+
+The user may use any sequence defined in the parser before the `use` command. The secondary
+beam line is produced by declaring a placement. The placement definition (see
+:ref:`placements`) is augmented with the following parameters:
+
+     
+
++------------------------+---------------------------------------------------------------+
+| **Parameter**          |  **Description**                                              |
++------------------------+---------------------------------------------------------------+
+| sequence               | Name of the sequence (with `line`) to use for the secondary   |
+|                        | beam line.                                                    |
++------------------------+---------------------------------------------------------------+
+| referemeceElement      | The element in the sequence with respect to which the beam    |
+|                        | line will be placed.                                          |
++------------------------+---------------------------------------------------------------+
+| referenceElementNumber | The *i* th instance of the element in the sequence (zero      |
+|                        | counting).  i.e. 2 -> the 3rd instance of `referenceElement`  |
+|                        | in the `sequence`.                                            |
++------------------------+---------------------------------------------------------------+
+
+Examples
+^^^^^^^^
+
+This example is shown in bdsim/examples/features/geometry/10_multiple_beamlines.  It defines
+a simple beam line and two other sequences that are placed along side it. Further explanation
+is given below the example.
+
+::
+
+   d1: drift, l=1*m;
+   d2: drift, l=3*m;
+   d3: drift, l=5*m;
+   sb1: sbend, l=1*m, angle=0.5;
+   sb2: sbend, l=1*m, angle=-0.5;
+   q1: quadrupole, l=0.2*m, k1=4.166666;
+   q2: quadrupole, l=0.2*m, k1=-4.166666;
+
+   fodo: line=(d1,q1,d1,q2);
+   mainLine: line=(d2,sb1,d2,sb2,d2,fodo,fodo);
+
+   auxLine1: line=(d3,sb1,d1,sb2,d1,fodo,d1);
+   auxLine2: line=(d1,sb1,d1,sb2,d1,fodo,d1);
+   auxLine3: line=(fodo);
+
+   use, mainLine;
+
+   beam, particle="e-",
+         energy=3*GeV;
+
+   auxLine1Place: placement, sequence = "auxLine1",
+                             referenceElement = "d2" ,
+			     referenceElementNumber = 2,
+			     x = -5*cm,
+			     z = -1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = -0.2;
+   
+   auxLine2Place: placement, sequence = "auxLine2",
+                             referenceElement = "d2",
+			     referenceElementNumber = 2,
+			     x = -10*cm,
+			     z = -1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = -0.5;
+
+   auxLine3Place: placement, sequence = "auxLine3",
+                             x = 1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = 0.2;
+
+Firstly a series of simple elements are defined (drifts, quadrupoles and bends). A simple
+sequence called `fodo` is defined and also the main beam line called `mainLine`. After this
+extra sequences are defined that we will use for secondary beam lines.  The `use` command
+selects which beam line the simulation will be based on.::
+
+  use, mainLine;
+
+After this, the beam is defined (required for any simualtion for rigidity calculations) and
+then the placement of secondary beam lines.
+
+The first placement `auxLine1Place` is a placement that will place the sequence named
+`auxLine1` with respect to the 3rd instance of the element `d2` in the primary sequence
+(`mainLine`).::
+
+  auxLine1Place: placement, sequence="auxLine1",
+                            referenceElement="d2" ,
+			    referenceElementNumber=2,
+
+The placement is generally with respect to the centre of the element described in the primary
+beam line and along the direction it's pointing. Without any displacement, the geometry
+would therefore overlap.  Here, an offset and rotation are specified for this placement.
+An offset in `x` of -5 cm and -1 m in `z` is specified. The coordinate sytem is right-handed
+with positive z pointing along the direction of travel in the beam line. A negative x
+displacement is therefore to the right looking along the direction or travel and 1 m in
+`z` is towards the beginning of the element from the centre.  Rotations are described
+in :ref:`placements`. Here, an axis angle rotation is used. The beam line is rotated about
+unit Y axis (local to that element) by -0.2 rad.
+
+The second placement uses a different sequence, but in a similar fashion.
+
+The third placement doesn't specify a `referenceElement`, so the placement is with respect
+to the beginning of the beam line.
+
+The model is shown below.
+
+.. figure:: figures/multiple_beamlines.png
+	    :width: 90%
+	    :align: center
+
+The drift segments do not of course connect but are merely placed close to each other.
+In future, continuous vacuum points will be provided.
+
+.. figure:: figures/multiple_beamlines_junction.png
+	    :width: 90%
+	    :align: center

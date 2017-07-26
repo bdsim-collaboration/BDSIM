@@ -25,6 +25,11 @@ if(SPHINX_FOUND AND PY_SPHINX_RTD_THEME)
       "${BINARY_BUILD_DIR}/conf.py"
       @ONLY)
 
+  configure_file(
+      "${CMAKE_CURRENT_SOURCE_DIR}/source/licence.rst.in"
+      "${BINARY_BUILD_DIR}/source/licence.rst"
+      @ONLY)
+
   # Helper target, not meant to be executed standalone
   add_custom_target(manual-copy-files
     # Copy sources to build directory

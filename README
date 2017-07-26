@@ -1,7 +1,7 @@
 General Information
 ===================
 
-BDSIM version 0.991, Geant4 toolkit for radiation transport in accelerators
+BDSIM version 0.992, Geant4 toolkit for radiation transport in accelerators
 
 The official web site is:
 	http://www.pp.rhul.ac.uk/bdsim
@@ -21,7 +21,7 @@ Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
 Stuart Walker         <stuart.walker.2011@live.rhul.ac.uk>
 
-Originall written by G.A. Blair
+Originally written by G.A. Blair
 
 History
 =======
