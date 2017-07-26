@@ -88,6 +88,8 @@ protected:
       weightFunction = ""; 
     }
   }
+
+  void CheckParameters();
 };
 
 #endif

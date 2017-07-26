@@ -216,3 +216,15 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     }
   }
 }
+
+void BDSBunchHalo::CheckParameters()
+{
+
+  if (haloNSigmaXInner == 0)
+    {G4cout << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
+
+  if (haloNSigmaYInner == 0)
+    {G4cout << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+  
+
+}
