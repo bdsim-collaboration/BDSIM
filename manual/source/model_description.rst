@@ -1291,7 +1291,7 @@ Example::
 	   :align: center
 
 The parametrisation used to define elliptical cavities in BDSIM.
-The symbols used map to the cavity options according to to table below.
+The symbols used in the figure map to the cavity options according to the table below.
 
 +-----------------------+-----------------------------+
 | **Symbol**            | **BDSIM Cavity Parameter**  |
