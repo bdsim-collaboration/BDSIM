@@ -40,7 +40,7 @@ Example Applications
 General Simulation Procedure
 ============================
 
-1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file.
+1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file or writing your own.
 2) Run BDSIM with core beam distribution for validation of optics and therefore model preparation.
 3) Run BDSIM with desired input distribution and physics processes with low statistics to verify desired application.
 4) Repeat 3) with greater statistics either as a single instance or on a farm.
@@ -54,7 +54,7 @@ BDSIM uses **ASCII** text input with a syntax designed to be very similar to
 **MAD8** / **MADX**. The user prepares a representation of the
 accelerator lattice they wish
 to simulate by defining magnets or various accelerator components and the sequence
-they should appear in. This can usually be achieved by using provided converters from
+they should appear in. This can usually be achieved automatically using provided converters from
 MADX or MAD8 optics output files.  Additionally, the user may set options describing, for
 example, energy tracking cuts, which physics processes are of importance and at which
 locations to record output.
