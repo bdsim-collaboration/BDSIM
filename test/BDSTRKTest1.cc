@@ -8,7 +8,7 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 #include "BDSOutputFactory.hh"
 #include "BDSParser.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -35,7 +35,8 @@ int main (int argc, char** argv)
   const GMAD::Options& options = BDSParser::Instance()->GetOptions();
   
   /// Initialise output
-  BDSOutputBase* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
+  BDSOutput* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+						     globalConstants->OutputFileName());
 
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();

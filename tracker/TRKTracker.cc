@@ -4,7 +4,7 @@
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 
 #include "parser/options.h"
 
@@ -21,7 +21,7 @@ typedef std::chrono::milliseconds milliseconds;
 TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       TRKStrategy*   strategyIn,
 		       const GMAD::Options& options,
-		       BDSOutputBase* outputIn):
+		       BDSOutput*           outputIn):
   line(lineIn), strategy(strategyIn), output(outputIn)
 {
   dontuseaperture = options.dontUseAperture;

@@ -20,6 +20,8 @@ typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 
+class TRKBunch;
+
 class G4PrimaryVertex;
 
 namespace GMAD {
@@ -90,6 +92,10 @@ public:
 
   /// Copy run information to output structure.
   void FillRun(const BDSEventInfo* info);
+
+  /// Tracker output. TBC
+  void WriteTrackerPrimaryLoss(TRKBunch*, G4int) {;}
+  void WriteTrackerBunch(G4String, TRKBunch*, G4bool=false) {;}
   
   /// Test whether a sampler name is invalid or not.
   static G4bool InvalidSamplerName(const G4String& samplerName);

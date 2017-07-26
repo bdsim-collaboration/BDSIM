@@ -3,7 +3,7 @@
 
 #include "TRKBunch.hh"
 
-class BDSOutputBase;
+class BDSOutput;
 
 class TRKLine;
 class TRKStrategy;
@@ -25,7 +25,7 @@ public:
   TRKTracker(TRKLine*             line,
 	     TRKStrategy*         strategy,
 	     const GMAD::Options& options,
-	     BDSOutputBase*       outputIn);
+	     BDSOutput*           outputIn);
   ~TRKTracker();
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
@@ -42,7 +42,7 @@ private:
   unsigned int maxTurns;
   bool dontuseaperture;
 
-  BDSOutputBase* output;
+  BDSOutput* output;
 };
 
 #endif
