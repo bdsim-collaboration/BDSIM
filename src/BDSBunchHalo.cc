@@ -175,9 +175,11 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     // #endif
 
     // check if particle is within normal beam core, if so continue generation
-    if ((emitXSp < emitX || emitYSp < emitY) || (emitXSp > envelopeEmitX || emitYSp > envelopeEmitY)  ||
-        ((dx  > envelopeCollMinX)  && (dx < envelopeCollMaxX)) ||
-        ((dy  > envelopeCollMinY)  && (dy < envelopeCollMaxY)))
+      // also check if particle is within the desired cut.
+    if ((std::abs(emitXSp) < emitInnerX || std::abs(emitYSp) < emitInnerY) ||
+	(std::abs(emitXSp) > emitOuterX || std::abs(emitYSp) > emitOuterY)  ||
+        (std::abs(dx)  < (haloXCutInner * sigmaX)) ||
+	(std::abs(dy)  < (haloYCutInner * sigmaY)) )
     {
       continue;
     }
