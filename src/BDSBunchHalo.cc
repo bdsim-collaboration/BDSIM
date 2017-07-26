@@ -13,20 +13,26 @@
 #include <cmath>
 
 BDSBunchHalo::BDSBunchHalo():
-  betaX(0.0), betaY(0.0),
   alphaX(0.0), alphaY(0.0),
+  betaX(0.0), betaY(0.0),
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
-  envelopeX(0.0), envelopeY(0.0),
-  envelopeXp(0.0), envelopeYp(0.0),
-  envelopeEmitX(0.0), envelopeEmitY(0.0),
-  envelopeCollMinX(0.0), envelopeCollMaxX(0.0),
-  envelopeCollMinXp(0.0), envelopeCollMaxXp(0.0),
-  envelopeCollMinY(0.0), envelopeCollMaxY(0.0),
-  envelopeCollMinYp(0.0), envelopeCollMaxYp(0.0),
+  sigmaX(0.0), sigmaY(0.0),
+  haloNSigmaXInner(0.0), haloNSigmaXOuter(0.0),
+  haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0),
+  haloXCutInner(0.0), 
+  haloYCutInner(0.0),
+  haloNSigmaXpOuter(0.0),
+  haloNSigmaYpOuter(0.0),
+  emitInnerX(0.0), emitInnerY(0.0),
+  emitOuterX(0.0), emitOuterY(0.0),
+  xMax(0.0), yMax(0.0),
+  xpMax(0.0), ypMax(0.0),
   twoLobeX(false), twoLobeY(false),
-  xMinDist(0.0), xMaxDist(0.0), xMinMaxRatio(0.0),
-  yMinDist(0.0), yMaxDist(0.0), yMinMaxRatio(0.0)
+  xMinDist(0.0), xMinMaxRatio(0.0),
+  yMinDist(0.0), yMinMaxRatio(0.0)
+
+
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
   weightParameter=1.0;
@@ -41,33 +47,40 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
 			       G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetBetaX(opt.betx);
-  SetBetaY(opt.bety);
-  SetAlphaX(opt.alfx);
-  SetAlphaY(opt.alfy);
-  SetEmitX(opt.haloEmitX);
-  SetEmitY(opt.haloEmitY);  
-  gammaX = (1.0+alphaX*alphaX)/betaX;
-  gammaY = (1.0+alphaY*alphaY)/betaY;  
-  SetEnvelopeX(opt.envelopeX); 
-  SetEnvelopeY(opt.envelopeY);
-  SetEnvelopeXp(opt.envelopeXp);
-  SetEnvelopeYp(opt.envelopeYp);
-  SetEnvelopeEmitX(opt.haloEnvelopeEmitX);
-  SetEnvelopeEmitY(opt.haloEnvelopeEmitY);
-  SetEnvelopeCollMinX(opt.haloEnvelopeCollMinX);
-  SetEnvelopeCollMaxX(opt.haloEnvelopeCollMaxX);
-  SetEnvelopeCollMinXp(opt.haloEnvelopeCollMinXp);
-  SetEnvelopeCollMaxXp(opt.haloEnvelopeCollMaxXp);
-  SetEnvelopeCollMinY(opt.haloEnvelopeCollMinY);
-  SetEnvelopeCollMaxY(opt.haloEnvelopeCollMaxY);
-  SetEnvelopeCollMinYp(opt.haloEnvelopeCollMinYp);
-  SetEnvelopeCollMaxYp(opt.haloEnvelopeCollMaxYp);
+  alphaX                = G4double(opt.alfx);
+  alphaY                = G4double(opt.alfy);
+  betaX                 = G4double(opt.betx);
+  betaY                 = G4double(opt.bety);
+  emitX                 = G4double(opt.emitx);
+  emitY                 = G4double(opt.emity);
+  gammaX                = (1.0+alphaX*alphaX)/betaX;
+  gammaY                = (1.0+alphaY*alphaY)/betaY;
+  sigmaX                = sqrt(emitX * betaX);
+  sigmaY                = sqrt(emitY * betaY);    
+  haloNSigmaXInner      = G4double(opt.haloNSigmaXInner);
+  haloNSigmaXOuter      = G4double(opt.haloNSigmaXOuter);
+  haloNSigmaYInner      = G4double(opt.haloNSigmaYInner);
+  haloNSigmaYOuter      = G4double(opt.haloNSigmaYOuter);
+  haloXCutInner         = G4double(opt.haloXCutInner);
+  haloYCutInner         = G4double(opt.haloYCutInner);  
+  haloPSWeightParameter = G4double(opt.haloPSWeightParameter);
 
-  SetWeightParameter(opt.haloPSWeightParameter);
+  haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
+  haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   
+ 
   SetWeightFunction(opt.haloPSWeightFunction);
-  
-  if (BDS::IsFinite(envelopeCollMinX) ||  BDS::IsFinite(envelopeCollMaxX))
+
+  emitInnerX = std::pow(haloNSigmaXInner, 2) * emitX;
+  emitInnerY = std::pow(haloNSigmaYInner, 2) * emitY;
+  emitOuterX = std::pow(haloNSigmaXOuter, 2) * emitX;
+  emitOuterY = std::pow(haloNSigmaYOuter, 2) * emitY;  
+
+  xMax  = haloNSigmaXOuter * sigmaX;
+  xMin  = haloNSigmaXInner * sigmaX;
+  yMax  = haloNSigmaYOuter * sigmaY;
+  yMin  = haloNSigmaYInner * sigmaY;
+  xpMax = std::sqrt(std::pow(haloNSigmaXOuter, 2) * emitX * gammaX);
+  ypMax = std::sqrt(std::pow(haloNSigmaYOuter, 2) * emitY * gammaY);    
   {
     G4double distCutOutX = std::abs(envelopeCollMinX) + std::abs(envelopeCollMaxX);
     if (distCutOutX > 0.5*envelopeX)
