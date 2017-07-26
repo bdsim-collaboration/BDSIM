@@ -1290,29 +1290,28 @@ Example::
 	   :width: 40%
 	   :align: center
 
-	   The parametrisation used to define elliptical cavities in BDSIM.
-	   The symbols used map to the cavity options according to to
-	   table below.
+The parametrisation used to define elliptical cavities in BDSIM.
+The symbols used map to the cavity options according to to table below.
 
-           +-----------------------+-----------------------------+
-           | **Symbol**            | **BDSIM Cavity Parameter**  |
-           +=======================+=============================+
-	   | :math:`R`             | equatorRadius               |
-           +-----------------------+-----------------------------+
-	   | :math:`r`             | irisRadius                  |
-           +-----------------------+-----------------------------+
-	   | :math:`A`             | equatorHorizontalAxis       |
-           +-----------------------+-----------------------------+
-	   | :math:`B`             | equatorVerticalAxis         |
-           +-----------------------+-----------------------------+
-	   | :math:`a`             | irisHorizontalAxis          |
-           +-----------------------+-----------------------------+
-	   | :math:`b`             | irisVerticalAxis            |
-           +-----------------------+-----------------------------+
-	   | :math:`\alpha`        | tangentLineAngle            |
-           +-----------------------+-----------------------------+
-           | :math:`L`             | halfCellLength              |
-           +-----------------------+-----------------------------+
++-----------------------+-----------------------------+
+| **Symbol**            | **BDSIM Cavity Parameter**  |
++=======================+=============================+
+| :math:`R`             | equatorRadius               |
++-----------------------+-----------------------------+
+| :math:`r`             | irisRadius                  |
++-----------------------+-----------------------------+
+| :math:`A`             | equatorHorizontalAxis       |
++-----------------------+-----------------------------+
+| :math:`B`             | equatorVerticalAxis         |
++-----------------------+-----------------------------+
+| :math:`a`             | irisHorizontalAxis          |
++-----------------------+-----------------------------+
+| :math:`b`             | irisVerticalAxis            |
++-----------------------+-----------------------------+
+| :math:`\alpha`        | tangentLineAngle            |
++-----------------------+-----------------------------+
+| :math:`L`             | halfCellLength              |
++-----------------------+-----------------------------+
 
 
 .. _field-maps:
