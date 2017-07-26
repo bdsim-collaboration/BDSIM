@@ -14,11 +14,21 @@ GDML
 
 GDML (Geometry Description Markup Language) is an XML schema for detector description.
 To use Geant4 and BDSIM needs to be built with GDML usage on (default true). For more
-information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
+information please refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
 `manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
 
 This format is widely supported and other geometry software may be able to export
 geometry in GDML format.
+
+.. warning:: The Geant4 GDML parser used in BDSIM dynamically downloads the small
+	     schema file at run time, so internet access is therefore required to
+	     load GDML in BDSIM at run time.
+
+.. warning:: The Geant4 GDML parser will not reload a volume if one by the same name
+	     is already loaded and will instead use that volume.  In the case of
+	     multiple GDML files being used in BDSIM, the user should avoid having
+	     any volumes in either file with the name. A preprocessing tool is under
+	     development to account for this deficiency.
 
 * A BDSIM provided python tool is also under development to allow simple programmatic
   construction of GDML geometry as well as visualisation and overlap checking.

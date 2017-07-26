@@ -3,7 +3,8 @@ Running BDSIM
 =============
 
 BDSIM can be executed in a terminal with extra arguments to specify various inputs.
-The angular brackets should not be used.
+The angular brackets here are to indicate a user specified value and should not
+be used literally.
 
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
