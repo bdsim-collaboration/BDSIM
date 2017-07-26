@@ -65,9 +65,8 @@ public:
   }
 };
 
-/// general declaration, can be overwritten or appended
-// this seemed to cause a problem, so commented out and every class needs to define its map
-// template<typename def, typename inner>
-// std::map<BDSTypeSafeEnum<def,inner>,std::string>* BDSTypeSafeEnum<def,inner>::dictionary=nullptr;
+/// Initialisation for clang 8.1 warning suppression.
+template<typename def, typename inner>
+std::map<BDSTypeSafeEnum<def,inner>, std::string>* BDSTypeSafeEnum<def, inner>::dictionary = nullptr;
 
 #endif
