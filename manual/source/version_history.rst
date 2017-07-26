@@ -1,4 +1,24 @@
-V0.992 - 2017 / 07 / ??
+V0.993 - 2017 / 08 / ??
+=======================
+
+New Features
+------------
+
+Bug Fixes
+---------
+
+General
+-------
+
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.2
+* pymad8 v0.7
+
+
+V0.992 - 2017 / 07 / 26
 =======================
 
 New Features
@@ -6,7 +26,11 @@ New Features
 
 * Preparsing for GDML for pygeometry generated geometry - overcomes Geant4's GDML parser
   deficiency of only allowing one GDML file to be loaded in the whole program.
-
+* Visualisation of multiple beam lines.
+* Option to use first sampler emittance as assumed emittance throughout lattice in optical
+  function calculation.
+* Additional materials for LHC tunnel and geometry.
+  
 Bug Fixes
 ---------
 
@@ -16,6 +40,10 @@ Bug Fixes
 * Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
 * Fixed rf E and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
 * Fix for crash when particle was at exactly 0 in a quadrupole.
+* Fix compiler warnings for Clang 8.1.
+* Fixed all variable shadowing throughout codebase and reintroduced compiler warning if present.
+* Fix field transform for tilted and offset magnets. This fixes incorrect tracking for tilted
+  magnets when using the "bdsimtwo" integrator set for dipoles.
 
 General
 -------
@@ -24,6 +52,14 @@ General
 * Revised implementation of rf cavity construction for greater flexibility.
 * RF cavity phase now automatically calculated based on location in lattice.
 * Removal of old ROOT analysis scripts for very old data format.
+* Revised construction to allow construction of multiple beam lines dynamically.
+
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.2
+* pymad8 v0.7
 
 
 V0.991 - 2017 / 07 / 04

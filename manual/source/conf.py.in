@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BDSIM'
-copyright = u'@CURRENT_YEAR@, L. Nevay, A. Abramov, S. Boogert, L. Deacon, H. Garcia-Morales, W. Shields, J. Snuverink'
+copyright = u'@CURRENT_YEAR@, L. Nevay, A. Abramov, S. Boogert, L. Deacon, H. Garcia Morales, S.Gibson, W. Shields, J. Snuverink, S. Walker'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -238,7 +238,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'bdsim', u'BDSIM Documentation',
-     [u'L. Nevay, S. Boogert, L. Deacon, H. Garcia-Morales, J. Snuverink'], 1)
+     [u'L. Nevay, A. Abramov, S. Boogert, L. Deacon, H. Garcia Morales, S.Gibson, W. Shields, J. Snuverink, S. Walker'], 1)
 ]
 
 # If true, show URL addresses after external links.

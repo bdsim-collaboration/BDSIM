@@ -1,0 +1,31 @@
+====================
+Licence & Disclaimer
+====================
+
+Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London, 2001 - @CURRENT_YEAR@.
+
+
+Licence
+-------
+
+Beam Delivery Simulation (BDSIM) - this software - is copyright to and provided by
+Royal Holloway, University of London. All rights reserved.
+
+This software is provided "AS IS" and any express or limit warranties, including, but not limited to,
+implied warranties of merchantability, of satisfactory quality, and fitness for a particular purpose
+or use are disclaimed. In no event shall Royal Holloway, University of London be liable for any direct,
+indirect, incidental, special, exemplary, or consequential damages arising in any way out of the use
+of this software, even if advised of the possibility of such damage.
+
+Geant4 Acknowledgement
+----------------------
+
+This software includes software developed by Members of the Geant4 Collaboration ( http://cern.ch/geant4 ).
+
+Funding Acknowledgements
+------------------------
+
+BDSIM development has received funding from the following sources:
+
+* John Adams Institute
+
