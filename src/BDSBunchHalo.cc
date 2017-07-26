@@ -81,33 +81,32 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
   yMin  = haloNSigmaYInner * sigmaY;
   xpMax = std::sqrt(std::pow(haloNSigmaXOuter, 2) * emitX * gammaX);
   ypMax = std::sqrt(std::pow(haloNSigmaYOuter, 2) * emitY * gammaY);    
+
+  if (BDS::IsFinite(haloXCutInner))
   {
-    G4double distCutOutX = std::abs(envelopeCollMinX) + std::abs(envelopeCollMaxX);
-    if (distCutOutX > 0.5*envelopeX)
-	  {
+    //G4double distCutOutX = std::abs(haloXCutInner * sigmaX);
+    
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "using two lobe method of generation in X." << G4endl;
+    G4cout << __METHOD_NAME__ << "using two lobe method of generation in X." << G4endl;
 #endif
-	    twoLobeX = true;
-	    xMinDist = envelopeX - std::abs(envelopeCollMinX);
-	    xMaxDist = envelopeX - std::abs(envelopeCollMaxX);
-	    xMinMaxRatio = xMinDist / (xMinDist + xMaxDist);
-    }
+    twoLobeX = true;
+    xMinDist = xMax - std::abs(haloXCutInner * sigmaX);
+    xMinMaxRatio = xMinDist / std::abs(xMax);
+    
   }
   
-  if (BDS::IsFinite(envelopeCollMinY) ||  BDS::IsFinite(envelopeCollMaxY))
+  if (BDS::IsFinite(haloYCutInner))
   {
-    G4double distCutOutY = std::abs(envelopeCollMinY) + std::abs(envelopeCollMaxY);
-    if (distCutOutY > 0.5*envelopeY)
-	  {
+    //G4double distCutOutY = std::abs(haloYCutInner * sigmaY);
+    
+    
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "using two lobe method of generation in Y." << G4endl;
+    G4cout << __METHOD_NAME__ << "using two lobe method of generation in Y." << G4endl;
 #endif
-	    twoLobeY = true;
-	    yMinDist = envelopeY - std::abs(envelopeCollMinY);
-	    yMaxDist = envelopeY - std::abs(envelopeCollMaxY);
-	    yMinMaxRatio = yMinDist / (yMinDist + yMaxDist);
-	  }
+    twoLobeY = true;
+    yMinDist = yMax - std::abs(haloYCutInner * sigmaY);
+    yMinMaxRatio = yMinDist / std::abs(yMax);
+    
   }
   CheckParameters();
   
