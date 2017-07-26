@@ -155,7 +155,7 @@ void BDSDetectorConstruction::BuildBeamlines()
       G4Transform3D plTransform = CreatePlacementTransform(placement);
       G4Transform3D placementInitial;
       if (placement.referenceElement.empty())
-	{// no reference - ie w.r.t. start of main beam line 
+	{// no reference - ie w.r.t. start of main beam line in the world volume
 	  placementInitial = initialTransform; // same as beginning of beam line
 	}
       else
