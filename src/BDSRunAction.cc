@@ -1,11 +1,11 @@
-#include "BDSAcceleratorModel.hh"
-#include "BDSAnalysisManager.hh"
-#include "BDSBeamline.hh"
-#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh" 
-#include "BDSOutputBase.hh" 
+#include "BDSEventInfo.hh"
+#include "BDSOutput.hh"
+#include "BDSParser.hh"
 #include "BDSRunAction.hh"
+
+#include "parser/options.h"
+#include "parser/optionsBase.h"
 
 #include "globals.hh"               // geant4 globals / types
 #include "G4Run.hh"
@@ -15,85 +15,67 @@
 #include <sstream>
 #include <string>
 
-extern BDSOutputBase* bdsOutput;         // output interface
-
-BDSRunAction::BDSRunAction()
+BDSRunAction::BDSRunAction(BDSOutput* outputIn):
+  output(outputIn),
+  starttime(time(nullptr)),
+  seedStateAtStart(""),
+  info(nullptr)
 {;}
 
 BDSRunAction::~BDSRunAction()
-{;}
+{
+  delete info;
+}
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  info = new BDSEventInfo();
+  
   // save the random engine state
   std::stringstream ss;
   CLHEP::HepRandom::saveFullState(ss);
   seedStateAtStart = ss.str();
+  info->SetSeedStateAtStart(seedStateAtStart);
   
   // get the current time
   starttime = time(nullptr);
-
-  // construct output histograms
-  // calculate histogram dimensions
-  const G4double smin   = 0.0;
-  const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
-  const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
-  const G4String slabel = "s [m]";
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
-  G4cout << "s minimum: " << smin     << " m" << G4endl;
-  G4cout << "s maximum: " << smax     << " m" << G4endl;
-  G4cout << "# of bins: " << nbins    << G4endl;
-#endif
-  // create the histograms
-  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
-  analMan->Create1DHistogram("PhitsHisto","Primary Hits",
-			     nbins,smin,smax,slabel,
-			     "Number of Primaries"); //0
-  analMan->Create1DHistogram("PlossHisto","Primary Loss",
-			     nbins,smin,smax,slabel,
-			     "Number of Primaries"); //1
-  analMan->Create1DHistogram("ElossHisto","Energy Loss",
-			     nbins,smin,smax,slabel,"GeV"); //2
-  // prepare bin edges for a by-element histogram
-  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->BeamlineMain()->GetEdgeSPositions();
-  
-  // create per element ("pe") bin width histograms
-  analMan->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
-			     binedges,slabel, "Number of Primaries / Element"); //3
-  analMan->Create1DHistogram("PlossPEHisto","Primary Loss per Element",
-			     binedges,slabel, "Number of Primaries / Element"); //4
-  analMan->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,
-			     binedges,slabel,"GeV"); //5
+  info->SetStartTime(starttime);
   
   // Output feedback
-  G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
+  G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID()
+	 << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
-  bdsOutput->Initialise(); // open file, create structures and histograms
+  output->InitialiseGeometryDependent();
+  output->NewFile();
+
+  // Write options now file open.
+  const GMAD::Options o = BDSParser::Instance()->GetOptions();
+  const GMAD::OptionsBase* ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
+  output->FillOptions(ob);
+
+  // Write model now file open.
+  output->FillModel();
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
   // Get the current time
-  stoptime = time(nullptr);
+  time_t stoptime = time(nullptr);
+  info->SetStopTime(stoptime);
   // run duration
-  G4float duration = difftime(stoptime,starttime);
+  G4float duration = difftime(stoptime, starttime);
+  info->SetDuration(G4double(duration));
+
 
   // Output feedback
   G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()
 	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
-  // write histograms to output - do this before potentially closing / opening new files
-  for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
-    {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
+  output->FillRun(info);
+  output->CloseFile();
+  info->Flush();
 
-  bdsOutput->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
-  bdsOutput->Close();
-
-  // delete analysis manager
-  delete BDSAnalysisManager::Instance();
-  
   // note difftime only calculates to the integer second
   G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;
 }

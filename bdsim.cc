@@ -32,7 +32,7 @@
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
-#include "BDSOutputBase.hh" 
+#include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
@@ -48,10 +48,6 @@
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
-//=======================================================
-// Global variables 
-BDSOutputBase* bdsOutput=nullptr;     ///< output interface
-//=======================================================
 
 int main(int argc,char** argv)
 {
@@ -95,12 +91,17 @@ int main(int argc,char** argv)
   BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(parser->GetOptions(),
 						    globalConstants->BeamlineTransform());
 
+  /// Construct output
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
   /// Optionally generate primaries only and exit
+  BDSOutput* bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
+                                                        globalConstants->OutputFileName());
   if (globalConstants->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
-      bdsOutput->Initialise();
+      bdsOutput->NewFile();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
       const G4int printModulo = globalConstants->PrintModulo();
@@ -109,10 +110,9 @@ int main(int argc,char** argv)
 	if (i%printModulo == 0)
 	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
-        bdsOutput->FillEvent();
+        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
       }
-      bdsOutput->Close();
+      bdsOutput->CloseFile();
       delete bdsBunch;
       delete bdsOutput;
       return 0;
@@ -162,12 +162,12 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction);
+  runManager->SetUserAction(new BDSRunAction(bdsOutput));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSEventAction());
+  runManager->SetUserAction(new BDSEventAction(bdsOutput));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
@@ -236,13 +236,7 @@ int main(int argc,char** argv)
     }
   else
     {
-      /// Construct output
-#ifdef BDSDEBUG
-      G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       G4cout.precision(10);
-
       /// Catch aborts to close output stream/file. perhaps not all are needed.
       struct sigaction act;
       act.sa_handler = &BDS::HandleAborts;

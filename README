@@ -82,8 +82,9 @@ Getting Started
 
 To run:
     bdsim [options]
- 
-    bdsim --file=line.gmad --output=root
+
+for example: 
+    bdsim --file=line.gmad
 
 to see the full list of options:
 

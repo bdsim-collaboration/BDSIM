@@ -33,8 +33,7 @@ be used literally.
 +----------------------------+----------------------------------------------+
 | --materials                | list materials included in BDSIM by default  |
 +----------------------------+----------------------------------------------+
-| --output=<fmt>             | output format "root", "ascii" (default),     |
-|                            | "combined" or "none"                         |
+| --output=<fmt>             | output format "rootevent" (default) or "none"|
 +----------------------------+----------------------------------------------+
 | --outfile=<file>           | output file name. Will be appended with _N   |
 |                            | where N = 0, 1, 2, 3...                      |
@@ -142,7 +141,7 @@ mode with a seed value of 123. The simulation runs the number of events specifie
 
       bdsim --file=sm.gmad --outfile=run2
 
-This executes BDSIM for the simpleMachine example with ASCII output (default) to a file named
+This executes BDSIM for the simpleMachine example with ROOT output to a file named
 "run2". The program is run interactively and the window in Figure appears. From here, the
 user types::
   

@@ -9,7 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -103,10 +103,10 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
   // check the sampler name is allowed in the output
-  if (BDSOutputBase::InvalidSamplerName(samplerName))
+  if (BDSOutput::InvalidSamplerName(samplerName))
     {
       G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
-      BDSOutputBase::PrintProtectedNames(G4cerr);
+      BDSOutput::PrintProtectedNames(G4cerr);
       exit(1);
     }
   
@@ -376,13 +376,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   totalArcLength   += arcLength;
 
   // advance s coordinate
-  G4double sPositionStart, sPositionMiddle, sPositionEnd;
-  sPositionStart  = previousSPositionEnd;
-  sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
-  sPositionEnd    = previousSPositionEnd + arcLength;
-
-  // update the global constants
-  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
+  G4double sPositionStart  = previousSPositionEnd;
+  G4double sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
+  G4double sPositionEnd    = previousSPositionEnd + arcLength;
 
 #ifdef BDSDEBUG
   // feedback about calculated coordinates

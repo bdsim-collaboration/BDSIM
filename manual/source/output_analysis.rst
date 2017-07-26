@@ -4,9 +4,10 @@
 Output Analysis
 ===============
 
-This describes how to load and view data from the main output form `rootevent`.
+This describes how to load and view data from the recommend output **rootevent**
+format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM that provides the ability
+BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides the ability
 to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
