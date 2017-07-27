@@ -31,9 +31,9 @@ void BDSOutputROOT::NewFile()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  G4String filename = GetNextFileName();
+  G4String newFileName = GetNextFileName();
   
-  theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
+  theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
   // options data tree
