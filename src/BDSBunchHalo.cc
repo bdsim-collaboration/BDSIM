@@ -215,8 +215,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	}
       else if (weightFunction == "exp")
       {
-        wx = exp(-(emitXSp - emitX) / (emitX * weightParameter));
-        wy = exp(-(emitYSp - emitY) / (emitY * weightParameter));
+        wx = std::exp(-(emitXSp * haloPSWeightParameter) / (emitInnerX));
+        wy = std::exp(-(emitYSp * haloPSWeightParameter) / (emitInnerY));
       }
 
  #ifdef BDSDEBUG
