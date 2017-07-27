@@ -251,12 +251,22 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
 void BDSBunchHalo::CheckParameters()
 {
-
+  std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
+  auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
+  if (search == weightFunctions.end())
+    {
+      G4cerr << __METHOD_END__ << "invalid haloPSWeightFunction \"" << weightFunction << "\"" << G4endl;
+      G4cout << "Available weight functions are:" << G4endl;
+      for (const auto& w : weightFunctions)
+        {G4cout << w << G4endl;}
+      exit(1);
+    }
+  
   if (haloNSigmaXInner == 0)
-    {G4cout << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
 
   if (haloNSigmaYInner == 0)
-    {G4cout << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
   
 
 }
