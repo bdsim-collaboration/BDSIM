@@ -1609,9 +1609,9 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisX          | Axis angle rotation x component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
-| axisY          | Axis angle rotation x component of unit vector.                    |
+| axisY          | Axis angle rotation y component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
-| axisZ          | Axis angle rotation x component of unit vector.                    |
+| axisZ          | Axis angle rotation z component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
 | angle          | Axis angle angle to rotate about unit vector.                      |
 +----------------+--------------------------------------------------------------------+
@@ -1622,7 +1622,11 @@ The following parameters may be specified.
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
   is executed from or an absolute path.
+* The transform is relative to the world coordinate system and not the beginning of the
+  beam line. The main beam line begins at (0,0,0) by default but may be offset.  See
+  :ref:`beamline-offset` for more details.
 
+  
 Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
 rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
 rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
