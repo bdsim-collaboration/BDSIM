@@ -22,8 +22,10 @@ BDSBunchHalo::BDSBunchHalo():
   haloNSigmaYInner(0.0), haloNSigmaYOuter(0.0),
   haloXCutInner(0.0), 
   haloYCutInner(0.0),
+  haloPSWeightParameter(0.0),
   haloNSigmaXpOuter(0.0),
   haloNSigmaYpOuter(0.0),
+  weightFunction(""),
   emitInnerX(0.0), emitInnerY(0.0),
   emitOuterX(0.0), emitOuterY(0.0),
   xMax(0.0), yMax(0.0),
@@ -35,7 +37,7 @@ BDSBunchHalo::BDSBunchHalo():
 
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
-  weightParameter=1.0;
+  //weightParameter=1.0;
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
@@ -64,11 +66,12 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
   haloXCutInner         = G4double(opt.haloXCutInner);
   haloYCutInner         = G4double(opt.haloYCutInner);  
   haloPSWeightParameter = G4double(opt.haloPSWeightParameter);
+  weightFunction = G4String(opt.haloPSWeightFunction);  
 
   haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
   haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   
- 
-  SetWeightFunction(opt.haloPSWeightFunction);
+
+
 
   emitInnerX = std::pow(haloNSigmaXInner, 2) * emitX;
   emitInnerY = std::pow(haloNSigmaYInner, 2) * emitY;
