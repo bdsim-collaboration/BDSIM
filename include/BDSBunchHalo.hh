@@ -53,9 +53,6 @@ private:
 
   CLHEP::RandFlat* FlatGen;
 
-  G4double weightParameter;
-  std::string weightFunction;
-
   /// @{ Whether to generate the initial area of randomly uniform coordinates
   /// in two halves for efficiency or not.
   G4bool twoLobeX;
@@ -69,7 +66,8 @@ private:
   G4double yMinDist; ///< Distance from -ve y collimator lower limit to outer envelope.
   G4double yMaxDist; ///< Distance from +ve y collimator upper limit to outer envelope.
   G4double yMinMaxRatio; ///< Normalised ratio of y lobe areas for proportioning.
-  
+
+
 public: 
   BDSBunchHalo();
   virtual ~BDSBunchHalo();
@@ -80,16 +78,6 @@ public:
 		       G4double& t , G4double&  E, G4double& weight);  
 
 protected:
-  
-  void     SetWeightFunction(std::string haloPSWeightFunction) {
-    if(haloPSWeightFunction == "flat" || haloPSWeightFunction == "oneoverr" || haloPSWeightFunction == "exp") {
-      weightFunction = haloPSWeightFunction;
-    }
-    else {
-      weightFunction = ""; 
-    }
-  }
-
   void CheckParameters();
 };
 
