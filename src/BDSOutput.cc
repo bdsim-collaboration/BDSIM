@@ -287,7 +287,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
+  G4cout << __METHOD_NAME__ << hits->entries() << std::endl;
 #endif
   // Here, we don't switch on the type of the hits as the samplers are all
   // prepared and stored in one vector in the sampler registry.  The output
@@ -369,7 +369,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 void BDSOutput::FillTrajectories(const std::vector<BDSTrajectory*>& trajectories)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
+  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
 #endif
   traj->Fill(trajectories);
 }
