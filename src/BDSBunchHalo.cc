@@ -200,8 +200,9 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       else if (weightFunction == "oneoverr")
 	{
 	  //abs because power of double - must be positive
-	  wx = std::pow(std::abs(emitInnerX / emitXSp), weightParameter);
-	  wy = std::pow(std::abs(emitInnerY / emitYSp), weightParameter);
+	  wx = std::pow(std::abs(emitInnerX / emitXSp), haloPSWeightParameter);
+	  wy = std::pow(std::abs(emitInnerY / emitYSp), haloPSWeightParameter);
+	}
 	}
       else if (weightFunction == "exp")
       {
