@@ -101,27 +101,24 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     
     G4double dy = 0;
     dy = yMax  * (1 - 2 * FlatGen->shoot());
-	
-
     
     G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
     G4double dyp = ypMax * (1 - 2 * FlatGen->shoot());
     
-
     // compute single particle emittance 
     double emitXSp = gammaX * std::pow(std::abs(dx), 2) + (2. * alphaX * dx * dxp) + betaX * std::pow(std::abs(dxp), 2);
     double emitYSp = gammaY * std::pow(std::abs(dy), 2) + (2. * alphaY * dy * dyp) + betaY * std::pow(std::abs(dyp), 2);
 
-    // #ifdef BDSDEBUG
-    //    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
-    //    G4cout << __METHOD_NAME__ << "Xcollimators> "  << envelopeCollMinX << " " << envelopeCollMaxX << " " << envelopeCollMinXp << " " << envelopeCollMaxXp << G4endl;
-    //    G4cout << __METHOD_NAME__ << "Ycollimators> "  << envelopeCollMinY << " " << envelopeCollMaxY << " " << envelopeCollMinYp << " " << envelopeCollMaxYp << G4endl;
-    //    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << envelopeEmitX << " "
-    //                                               << emitY << " " << emitYSp << " " << envelopeEmitY << G4endl;
-    // #endif
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+    G4cout << __METHOD_NAME__ << "Xcollimators> "  << haloXCutInner << G4endl;
+    G4cout << __METHOD_NAME__ << "Ycollimators> "  << haloYCutInner << G4endl;
+    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << emitInnerX << " " << emitOuterX << " "
+	   << emitY << " " << emitYSp << " " << emitInnerY << " " << emitOuterY << G4endl;
+#endif
 
     // check if particle is within normal beam core, if so continue generation
-      // also check if particle is within the desired cut.
+    // also check if particle is within the desired cut.
     if ((std::abs(emitXSp) < emitInnerX || std::abs(emitYSp) < emitInnerY) ||
 	(std::abs(emitXSp) > emitOuterX || std::abs(emitYSp) > emitOuterY)  ||
         (std::abs(dx)  < (haloXCutInner * sigmaX)) ||
