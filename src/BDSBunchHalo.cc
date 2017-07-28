@@ -23,21 +23,16 @@ BDSBunchHalo::BDSBunchHalo():
   haloXCutInner(0.0), 
   haloYCutInner(0.0),
   haloPSWeightParameter(0.0),
+  weightFunction(""),  
   haloNSigmaXpOuter(0.0),
   haloNSigmaYpOuter(0.0),
-  weightFunction(""),
   emitInnerX(0.0), emitInnerY(0.0),
   emitOuterX(0.0), emitOuterY(0.0),
   xMax(0.0), yMax(0.0),
-  xpMax(0.0), ypMax(0.0),
-  twoLobeX(false), twoLobeY(false),
-  xMinDist(0.0), xMinMaxRatio(0.0),
-  yMinDist(0.0), yMinMaxRatio(0.0)
-
+  xpMax(0.0), ypMax(0.0)
 
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
-  //weightParameter=1.0;
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
@@ -71,48 +66,16 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
   haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
   haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   
 
-
-
   emitInnerX = std::pow(haloNSigmaXInner, 2) * emitX;
   emitInnerY = std::pow(haloNSigmaYInner, 2) * emitY;
   emitOuterX = std::pow(haloNSigmaXOuter, 2) * emitX;
   emitOuterY = std::pow(haloNSigmaYOuter, 2) * emitY;  
 
   xMax  = haloNSigmaXOuter * sigmaX;
-  xMin  = haloNSigmaXInner * sigmaX;
   yMax  = haloNSigmaYOuter * sigmaY;
-  yMin  = haloNSigmaYInner * sigmaY;
   xpMax = std::sqrt(std::pow(haloNSigmaXOuter, 2) * emitX * gammaX);
-  ypMax = std::sqrt(std::pow(haloNSigmaYOuter, 2) * emitY * gammaY);    
-
-  if (BDS::IsFinite(haloXCutInner))
-  {
-    //G4double distCutOutX = std::abs(haloXCutInner * sigmaX);
-    
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "using two lobe method of generation in X." << G4endl;
-#endif
-    twoLobeX = true;
-    //xMinDist = xMax - std::abs(haloXCutInner * sigmaX);
-    xMinDist = std::abs(haloXCutInner * sigmaX);    
-    //xMinMaxRatio = xMinDist / std::abs(xMax);
-    xMinMaxRatio = xMinDist / (xMinDist + std::abs(xMax));    
-    
-  }
+  ypMax = std::sqrt(std::pow(haloNSigmaYOuter, 2) * emitY * gammaY);
   
-  if (BDS::IsFinite(haloYCutInner))
-  {
-    //G4double distCutOutY = std::abs(haloYCutInner * sigmaY);
-    
-    
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "using two lobe method of generation in Y." << G4endl;
-#endif
-    twoLobeY = true;
-    yMinDist = yMax - std::abs(haloYCutInner * sigmaY);
-    yMinMaxRatio = yMinDist / std::abs(yMax);
-    
-  }
   CheckParameters();
   
 }

@@ -47,28 +47,12 @@ private:
   G4double emitOuterX;
   G4double emitOuterY;
 
-  G4double xMin;
   G4double xMax;
-  G4double yMin;
   G4double yMax;
   G4double xpMax;
   G4double ypMax;
 
   CLHEP::RandFlat* FlatGen;
-
-  /// @{ Whether to generate the initial area of randomly uniform coordinates
-  /// in two halves for efficiency or not.
-  G4bool twoLobeX;
-  G4bool twoLobeY;
-  /// @}
-
-  G4double xMinDist; ///< Distance from -ve x collimator lower limit to outer envelope.
-  G4double xMaxDist; ///< Distance from +ve x collimator upper limit to outer envelope.
-  G4double xMinMaxRatio; ///< Normalised ratio of x lobe areas for proportioning.
-
-  G4double yMinDist; ///< Distance from -ve y collimator lower limit to outer envelope.
-  G4double yMaxDist; ///< Distance from +ve y collimator upper limit to outer envelope.
-  G4double yMinMaxRatio; ///< Normalised ratio of y lobe areas for proportioning.
 
 
 public: 
