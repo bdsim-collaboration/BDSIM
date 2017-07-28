@@ -133,35 +133,12 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   while(true)
   {
-    // Flat 2x2d phase space
-
-    // Generate x,y spatial in optionally two lobes for increased efficiency.
     G4double dx = 0;
-    if (twoLobeX)
-      {
-	// choose with random uniform distribution each side proportioned by area of each lobe
-	G4bool positiveSide = FlatGen->shoot() > xMinMaxRatio;
-	if (positiveSide)
-	  {dx = xMax + xMaxDist*FlatGen->shoot();}
-	else
-	  {dx = -(xMax + xMinDist*FlatGen->shoot());}
-      }
-    else
-      {dx = xMax  * (1 - 2 * FlatGen->shoot());}
+    dx = xMax  * (1 - 2 * FlatGen->shoot());
     
     G4double dy = 0;
-    if (twoLobeY)
-      {
+    dy = yMax  * (1 - 2 * FlatGen->shoot());
 	
-	// choose with random uniform distribution each side proportioned by area of each lobe
-	G4bool positiveSide = FlatGen->shoot() > yMinMaxRatio;
-	if (positiveSide)
-	  {dy = yMax + yMaxDist*FlatGen->shoot();}
-	else
-	  {dy = -(yMax + yMinDist*FlatGen->shoot());}
-      }
-    else
-      {dy = yMax  * (1 - 2 * FlatGen->shoot());}
 
     
     G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
