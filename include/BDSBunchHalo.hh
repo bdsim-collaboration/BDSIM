@@ -34,10 +34,13 @@ private:
   G4double haloNSigmaYOuter;
   G4double haloXCutInner;
   G4double haloYCutInner;
-  G4double haloPSWeightParameter;  
+  G4double haloPSWeightParameter;
+  G4String weightFunction;
+
+  
   G4double haloNSigmaXpOuter;
   G4double haloNSigmaYpOuter;
-  G4String weightFunction;
+
 
   G4double emitInnerX;
   G4double emitInnerY;
