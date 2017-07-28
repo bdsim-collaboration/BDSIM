@@ -267,6 +267,12 @@ void BDSBunchHalo::CheckParameters()
 
   if (haloNSigmaYInner == 0)
     {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+
+  if (haloNSigmaXInner > haloNSigmaXOuter)
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
+
+  if (haloNSigmaYInner > haloNSigmaYOuter)
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);}
   
 
 }
