@@ -123,68 +123,68 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	(std::abs(emitXSp) > emitOuterX || std::abs(emitYSp) > emitOuterY)  ||
         (std::abs(dx)  < (haloXCutInner * sigmaX)) ||
 	(std::abs(dy)  < (haloYCutInner * sigmaY)) )
-    {
-      continue;
-    }
+      {
+	continue;
+      }
     else
-    {
-      // determine weight, initialise 1 so always passes
-      double wx = 0.0;
-      double wy = 0.0;
-      if (weightFunction == "flat" || weightFunction == "")
       {
-        wx = 1.0;
-        wy = 1.0;
-      }
-      else if (weightFunction == "oneoverr")
-	{
-	  //abs because power of double - must be positive
-	  wx = std::pow(std::abs(emitInnerX / emitXSp), haloPSWeightParameter);
-	  wy = std::pow(std::abs(emitInnerY / emitYSp), haloPSWeightParameter);
-	}
-      else if (weightFunction == "oneoverrsqrd")
-	{
-	  //abs because power of double - must be positive
-	  double eXsqrd = std::pow(std::abs(emitXSp), 2);
-	  double eYsqrd = std::pow(std::abs(emitYSp), 2);
-	  double eXInsq = std::pow(std::abs(emitInnerX), 2);
-	  double eYInsq = std::pow(std::abs(emitInnerY), 2);
-	  wx = std::pow(std::abs(eXInsq / eXsqrd), haloPSWeightParameter);
-	  wy = std::pow(std::abs(eYInsq / eYsqrd), haloPSWeightParameter);
-	}
-      else if (weightFunction == "exp")
-      {
-        wx = std::exp(-(emitXSp * haloPSWeightParameter) / (emitInnerX));
-        wy = std::exp(-(emitYSp * haloPSWeightParameter) / (emitInnerY));
-      }
-
- #ifdef BDSDEBUG
-       G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
- #endif
-      // reject
-      if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
-	    {continue;}
-
-      // add to reference orbit 
-      x0 += dx * CLHEP::m;
-      y0 += dy * CLHEP::m;
-      xp += dxp * CLHEP::rad;
-      yp += dyp * CLHEP::rad;
-
-      zp = CalculateZp(xp, yp, Zp0);
-
-      ApplyTransform(x0,y0,z0,xp,yp,zp);
-      
-      t = 0 * CLHEP::s;
-      E = E0 * CLHEP::GeV;
-
+	// determine weight, initialise 1 so always passes
+	double wx = 1.0;
+	double wy = 1.0;
+	if (weightFunction == "flat" || weightFunction == "")
+	  {
+	    wx = 1.0;
+	    wy = 1.0;
+	  }
+	else if (weightFunction == "oneoverr")
+	  {
+	    //abs because power of double - must be positive
+	    wx = std::pow(std::abs(emitInnerX / emitXSp), haloPSWeightParameter);
+	    wy = std::pow(std::abs(emitInnerY / emitYSp), haloPSWeightParameter);
+	  }
+	else if (weightFunction == "oneoverrsqrd")
+	  {
+	    //abs because power of double - must be positive
+	    double eXsqrd = std::pow(std::abs(emitXSp), 2);
+	    double eYsqrd = std::pow(std::abs(emitYSp), 2);
+	    double eXInsq = std::pow(std::abs(emitInnerX), 2);
+	    double eYInsq = std::pow(std::abs(emitInnerY), 2);
+	    wx = std::pow(std::abs(eXInsq / eXsqrd), haloPSWeightParameter);
+	    wy = std::pow(std::abs(eYInsq / eYsqrd), haloPSWeightParameter);
+	  }
+	else if (weightFunction == "exp")
+	  {
+	    wx = std::exp(-(emitXSp * haloPSWeightParameter) / (emitInnerX));
+	    wy = std::exp(-(emitYSp * haloPSWeightParameter) / (emitInnerY));
+	  }
+	
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+	G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
 #endif
-
-      weight = 1.0;
-      return;
-    }
+	// reject
+	if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
+	  {continue;}
+	
+	// add to reference orbit 
+	x0 += dx * CLHEP::m;
+	y0 += dy * CLHEP::m;
+	xp += dxp * CLHEP::rad;
+	yp += dyp * CLHEP::rad;
+	
+	zp = CalculateZp(xp, yp, Zp0);
+	
+	ApplyTransform(x0,y0,z0,xp,yp,zp);
+	
+	t = 0 * CLHEP::s;
+	E = E0 * CLHEP::GeV;
+	
+#ifdef BDSDEBUG
+	G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+#endif
+	
+	weight = 1.0;
+	return;
+      }
   }
 }
 
@@ -203,15 +203,15 @@ void BDSBunchHalo::CheckParameters()
   
   if (haloNSigmaXInner == 0)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
-
+  
   if (haloNSigmaYInner == 0)
     {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
-
+  
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
-
+  
   if (haloNSigmaYInner > haloNSigmaYOuter)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);}
   
-
+  
 }
