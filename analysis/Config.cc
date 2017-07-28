@@ -53,7 +53,7 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["mergehistograms"] = true;
   optionsBool["emittanceonthefly"] = false;
 
-  optionsString["inputfilepath"]  = "./output_event.root";
+  optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";
   optionsString["opticsfilename"] = "./output_optics.dat";
   optionsString["gdmlfilename"]   = "./model.gdml";
