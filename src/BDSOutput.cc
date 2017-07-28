@@ -175,31 +175,32 @@ G4String BDSOutput::GetNextFileName()
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   // Base root file name 
-  G4String basefilename = filename;
-  basefilename = basefilename+std::string("_event");
+  G4String newFileName = baseFileName;
 
   // if more than one file add number (starting at 0)
-  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
-    {basefilename += "_" + std::to_string(outputFileNumber);}
-  filename = basefilename + std::string(".root");
-
+  // of numberEventPerFile is specified and the number already generated exceeds that
+  if (numberEventPerFile > 0 && globalConstants->NGenerate() > numberEventPerFile)
+    {newFileName += "_" + std::to_string(outputFileNumber);} // note underscore
+  
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
   if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch())
-    {
-      // check if file exists
-      int nTimeAppended = 1;
-      while (BDS::FileExists(filename))
-	{
-	  // if exists remove trailing .root
-	  filename = basefilename + std::string("-") + std::to_string(nTimeAppended);
-	  filename += ".root";
+    {// check if file exists
+      G4String original = newFileName; // could have nper file number suffix too
+      G4int nTimeAppended = 1;
+      while (BDS::FileExists(newFileName + fileExtension)) // always test with extension
+	{// if exists increment suffix integer
+	  newFileName = original + "-" + std::to_string(nTimeAppended);
 	  nTimeAppended +=1;
 	}
     }
-  G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
 
-  return filename;
+  // add extension now we've got the base part fixed
+  newFileName += fileExtension;
+  
+  G4cout << __METHOD_NAME__ << "Setting up new file: " << newFileName << G4endl;
+
+  return newFileName;
 }
 
 void BDSOutput::CalculateHistogramParameters()
