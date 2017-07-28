@@ -93,8 +93,10 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
     G4cout << __METHOD_NAME__ << "using two lobe method of generation in X." << G4endl;
 #endif
     twoLobeX = true;
-    xMinDist = xMax - std::abs(haloXCutInner * sigmaX);
-    xMinMaxRatio = xMinDist / std::abs(xMax);
+    //xMinDist = xMax - std::abs(haloXCutInner * sigmaX);
+    xMinDist = std::abs(haloXCutInner * sigmaX);    
+    //xMinMaxRatio = xMinDist / std::abs(xMax);
+    xMinMaxRatio = xMinDist / (xMinDist + std::abs(xMax));    
     
   }
   
