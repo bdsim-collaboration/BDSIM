@@ -17,7 +17,7 @@
 
 BDSOutputROOT::BDSOutputROOT(G4String fileName,
 			     G4int    fileNumberOffset):
-  BDSOutput(fileName, fileNumberOffset)
+  BDSOutput(fileName, ".root", fileNumberOffset)
 {;}
 
 BDSOutputROOT::~BDSOutputROOT()

@@ -37,10 +37,12 @@ const std::set<G4String> BDSOutput::protectedNames = {
   "Trajectory"
 };
 
-BDSOutput::BDSOutput(G4String fileName,
+BDSOutput::BDSOutput(G4String baseFileNameIn,
+		     G4String fileExtensionIn,
 		     G4int    fileNumberOffset):
   BDSOutputStructures(BDSGlobalConstants::Instance()),
-  filename(fileName),
+  baseFileName(baseFileNameIn),
+  fileExtension(fileExtensionIn),
   outputFileNumber(fileNumberOffset),
   sMaxHistograms(0),
   nbins(0)
