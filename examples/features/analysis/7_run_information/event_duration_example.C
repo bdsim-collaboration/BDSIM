@@ -5,6 +5,6 @@
 
   double rms;
   double mean;
-  mean = AverageEventTime("t1_event.root", &rms);
+  mean = AverageEventTime("output.root", &rms);
   std::cout << "Event duration: " << mean << " ± " << rms << std::endl;
 }

@@ -22,7 +22,7 @@ simple_testing(IO_ROOTEVENT_IO_Recreate "--file=io_recreate.gmad" "")
 set_tests_properties(IO_ROOTEVENT_IO_Recreate PROPERTIES DEPENDS IO_ROOTEVENT_IO)
 
 # write the seed out per event
-simple_testing(IO_SeedState "--file=io.gmad --writeseedstate" "")
+simple_testing(IO_SeedState "--file=io.gmad --writeSeedState" "")
 
 # use ascii seed state
 simple_testing(IO_Load_ASCII_SeedState "--file=io.gmad --seedStateFileName=output.seedstate.txt --ngenerate=1" "")

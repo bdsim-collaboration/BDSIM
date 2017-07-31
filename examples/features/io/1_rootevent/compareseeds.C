@@ -2,7 +2,7 @@
 
 void compareseeds(int eventNumber)
 {
-  TFile* f  = new TFile("./output_event.root");
+  TFile* f  = new TFile("./output.root");
   TTree* et = (TTree*)f->Get("Event");
   BDSOutputROOTEventInfo* origInfo = new BDSOutputROOTEventInfo();
   BDSOutputROOTEventSampler<float>* prims = new BDSOutputROOTEventSampler<float>;
@@ -22,7 +22,7 @@ void compareseeds(int eventNumber)
   delete f;
   delete origInfo;
 
-  TFile* f2 = new TFile("recreation1_event.root");
+  TFile* f2 = new TFile("recreation1.root");
   TTree* et2 = (TTree*)f2->Get("Event");
   BDSOutputROOTEventInfo* newInfo = new BDSOutputROOTEventInfo();
   BDSOutputROOTEventSampler<float>* prims2 = new BDSOutputROOTEventSampler<float>;

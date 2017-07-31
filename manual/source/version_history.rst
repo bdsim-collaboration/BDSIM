@@ -4,6 +4,10 @@ V0.993 - 2017 / 08 / ??
 New Features
 ------------
 
+* Executable option --writeseedstate is now --writeSeedState.
+* Executable option --exportgeometryto is now --exportGeometryTo
+* Executable option --distrfile is now --distrFile.
+  
 Bug Fixes
 ---------
 

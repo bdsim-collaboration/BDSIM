@@ -1,7 +1,7 @@
 #include <vector>
 
 BDSOutputROOTEventSampler* test() {
-  TFile *f = new TFile("./output_event.root");
+  TFile *f = new TFile("./output.root");
   TTree *mt =  (TTree*)f->Get("Model");
   TTree *et =  (TTree*)f->Get("Event");
   BDSOutputROOTEventModel   *me = new BDSOutputROOTEventModel();

@@ -1,6 +1,6 @@
 include io.gmad;
 
 option, recreate=1, ! 1 = true here
-	recreateFileName="output_event.root",
+	recreateFileName="output.root",
 	startFromEvent=3,
 	ngenerate=2;
