@@ -2,9 +2,34 @@
 Running BDSIM
 =============
 
+Run Time Requirements
+=====================
+
+If BDSIM is compiled with GDML support on and GDML is required, the user is required
+to be connected to the internet to access the GDML schema. This is a requriement
+of the Geant4 GDML parser. In future, this need will be eliminated.
+
+Basic Operation
+===============
+
+The minimum required information to run BDSIM is an input GMAD file.::
+
+  bdsim --file=lattice.gmad
+
+The following section describes other 'executable' options that may specify
+various options such as whether to run in 'batch' mode or interactively with a
+visualiser; and where to write output.
+
+Executable Options
+==================
+
 BDSIM can be executed in a terminal with extra arguments to specify various inputs.
 The angular brackets here are to indicate a user specified value and should not
-be used literally.
+be used literally.  The following command may be used to dipslay all options::
+
+  bdsim --help
+
+
 
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
@@ -13,41 +38,34 @@ be used literally.
 +----------------------------+----------------------------------------------+
 | --circular                 | assume circular machine - turn control       |
 +----------------------------+----------------------------------------------+
-| --exportgeometryto=<file>  | export the geometry to a file                |
+| --distrFile=<file>         | which file to use for the bunch distribution |
++----------------------------+----------------------------------------------+
+| --exportGeometryTo=<file>  | export the geometry to a file                |
 |                            | extension determines format                  |
 |                            | where possible extensions are ("gdml")       |
 +----------------------------+----------------------------------------------+
 | --generatePrimariesOnly    | generate primary particle coordinates only   |
 |                            | then exit without simulating anything        |
 +----------------------------+----------------------------------------------+
-| --gflash=<N>               | whether or not to turn on gFlash fast shower |
-|                            | parameterisation.                            |
-+----------------------------+----------------------------------------------+
-| --gflashemax=<N>           | maximum energy for gflash shower             |
-|                            | parameterisation in GeV.                     |
-+----------------------------+----------------------------------------------+
-| --gflashemin=<N>           | minimum energy for gflash shower             |
-|                            | parameterisation in GeV.                     |
-+----------------------------+----------------------------------------------+
 | --help                     | display this message.                        |
 +----------------------------+----------------------------------------------+
 | --materials                | list materials included in BDSIM by default  |
++----------------------------+----------------------------------------------+
+| --ngenerate=N              | the number of primary events to simulate     |
+|                            | overrides the ngenerate option in input file |
 +----------------------------+----------------------------------------------+
 | --output=<fmt>             | output format "rootevent" (default) or "none"|
 +----------------------------+----------------------------------------------+
 | --outfile=<file>           | output file name. Will be appended with _N   |
 |                            | where N = 0, 1, 2, 3...                      |
 +----------------------------+----------------------------------------------+
-| --ngenerate=N              | the number of primary events to simulate     |
-|                            | overrides the ngenerate option in input file |
+| --recreate=<file>          | the rootevent output file to recreate events |
+|                            | from                                         |
 +----------------------------+----------------------------------------------+
 | --seed=<N>                 | seed for the random number generator         |
 +----------------------------+----------------------------------------------+
 | --seedStateFileName=<file> | file containing CLHEP::Random seed state     |
 |                            | NB \- this overrides other seed value        |
-+----------------------------+----------------------------------------------+
-| --recreate=<file>          | the rootevent output file to recreate events |
-|                            | from                                         |
 +----------------------------+----------------------------------------------+
 | --startFromEvent=N         | event offset to start from when recreating   |
 |                            | events when using --recreate                 |
@@ -66,6 +84,9 @@ be used literally.
 +----------------------------+----------------------------------------------+
 | --vis_mac=<file>           | file with the visualisation macro script,    |
 |                            | default provided by BDSIM: openGL (OGLSQt))  |
++----------------------------+----------------------------------------------+
+| --writeSeedState           | write an ASCII file seed state for each      |
+|                            | event                                        |
 +----------------------------+----------------------------------------------+
 
 BDSIM can be run in one of two ways, `interactively`_, or `in batch mode`_, which

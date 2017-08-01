@@ -48,7 +48,10 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
       for (auto const key : optionsIn.setKeys)
 	{
 	  try
-	    {set(this, &optionsIn, key);}
+	    {
+          set(this, &optionsIn, key);
+          setKeys.push_back(key);
+        }
 	  catch (std::runtime_error)
 	    {
 	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
@@ -65,7 +68,10 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
 	  if (result == ok.end())
 	    {//it wasn't found so ok to copy
 	      try
-		{set(this, &optionsIn, key);}
+		{
+          set(this, &optionsIn, key);
+          setKeys.push_back(key);
+        }
 	      catch (std::runtime_error)
 		{
 		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;

@@ -28,7 +28,7 @@ set(TESTING_ARGS --survey=survey.dat)
 simple_testing(survey "--file=sm.gmad" "")
 # output export geometry
 if(USE_GDML)
-  set(TESTING_ARGS --exportgeometryto=export.gdml)
+  set(TESTING_ARGS --exportGeometryTo=export.gdml)
   simple_testing(exportgeometry "--file=sm.gmad" "")
 endif()
 # seed

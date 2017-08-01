@@ -27,9 +27,6 @@ global coordinates.
 |                      |                             | and event by event information (default and recommended).                  |
 +----------------------+-----------------------------+----------------------------------------------------------------------------+
 
-.. note:: The output name will be suffixed
-	  with :code:`_event` before adding the :code:`.root` extension.
-
 As a general guideline, the following naming conventions are used:
 
 ========== ================

@@ -13,7 +13,7 @@ the mean time [stdev/sqrt(nparticles)].
                                        
 options: dirpath, ofilename, verbose 
 
-Example: ./TimeProfileEvent.py --filepath=afile_event.root            to process a file in the current working dir              
+Example: ./TimeProfileEvent.py --filepath=afile.root            to process a file in the current working dir              
 
 Notes: 
 1. No quotation marks needed for option strings (eg. --filepath="/path/file" -> --filepath=/path/file)
@@ -61,7 +61,7 @@ class TimeProfileEvent:
             self.dirpath     = dirpath
             
         else:
-            raise IOError('Invalid file format, rootevent file (something_event_something.root) required')
+            raise IOError('Invalid file format, rootevent file (something.root) required')
 
                 
         self.dirname    = self.dirpath.split("/",-1)[-1] 

@@ -1609,9 +1609,9 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisX          | Axis angle rotation x component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
-| axisY          | Axis angle rotation x component of unit vector.                    |
+| axisY          | Axis angle rotation y component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
-| axisZ          | Axis angle rotation x component of unit vector.                    |
+| axisZ          | Axis angle rotation z component of unit vector.                    |
 +----------------+--------------------------------------------------------------------+
 | angle          | Axis angle angle to rotate about unit vector.                      |
 +----------------+--------------------------------------------------------------------+
@@ -1622,7 +1622,11 @@ The following parameters may be specified.
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
   is executed from or an absolute path.
+* The transform is relative to the world coordinate system and not the beginning of the
+  beam line. The main beam line begins at (0,0,0) by default but may be offset.  See
+  :ref:`beamline-offset` for more details.
 
+  
 Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
 rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
 rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
@@ -1776,6 +1780,14 @@ Examples::
    q2: quadrupole, l=20*cm, k1=-4.5;
    fodo: line=(d1,q1,d1,q2,d1);
    use, period=fodo;
+
+The beam line is placed in the world volume (the outermost coordinate system) starting
+at position (0,0,0) with direction (0,0,1) - i.e. pointing in positive `z`. The user
+may specify an initial offset and rotation for the baem line with respect to the world
+volume using the options described in :ref:`beamline-offset`.
+
+Multiple beam lines may also be visualised - but only visualised (not suitable for
+simulations currently).  Details are provided in :ref:`multiple-beamlines`.
 
 
 .. _sampler-output:
@@ -2228,6 +2240,61 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
+
+.. _beamline-offset:
+
+Offset for Main Beam Line
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following options may be used to offset the main beam line with respect to the world
+volume, which is the outermost coordinate system.
+
++----------------------+--------------------------------------------------------------------+
+| Option               | Description                                                        |
++======================+====================================================================+
+| beamlineX            | Offset in x.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlineY            | Offset in y.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlineZ            | Offset in z.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlinePhi          | Euler angle phi for rotation.                                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineTheta        | Euler angle theta for rotation.                                    |
++----------------------+--------------------------------------------------------------------+
+| beamlinePsi          | Euler angle psi for rotation.                                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisX        | Axis angle rotation x component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisY        | Axis angle rotation y component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisZ        | Axis angle rotation z component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAngle        | Axis angle angle to rotate about unit vector.                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisAngle    | Boolean whether to use axis angle rotation scheme (default false). |
++----------------------+--------------------------------------------------------------------+
+
+Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
+rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
+directly, which is also the same as a :code:`CLHEP::HepRotation`.
+
+.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
+	  the default units for offsets and angles in BDSIM.
+
+Example::
+
+  option, beamlineX = 3*m,
+          beamlineY = 20*cm,
+	  beamlineZ = -30*m,
+	  beamlineAxisAngle = 1,
+	  beamlineAxisY = 1,
+	  beamlineAngle = 0.2;
+
+This offsets the beam line by (3,0.2,-30) m and rotated about the unit vector (0,1,0) (ie in the
+horizontal plane - x,z) by 0.2 rad.
+
 
 .. _beam-parameters:
   
@@ -2855,6 +2922,7 @@ the user may define additional regions and attach them to the objects desired.  
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.
 
+.. _multiple-beamlines:
 
 Multiple Beam Lines
 -------------------
