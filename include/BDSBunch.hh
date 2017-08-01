@@ -86,7 +86,7 @@ private:
   G4bool        nonZeroTransform;
   
   /// A reference to the fully constructed beamline that's lazyily instantiated.
-  mutable BDSBeamline* beamline;
+  mutable const BDSBeamline* beamline;
 };
 
 #endif

@@ -187,7 +187,7 @@ BDSMaterials::BDSMaterials()
 		  0.0004, 0.0003, 0.0002});
 
   // Stainless Steel AISI code 304L (low-carbon) @ 300K
-  AddMaterial(name="stainless_steel304L",
+  AddMaterial(name="stainless_steel_304L",
 	      density=8.02 * CLHEP::g/CLHEP::cm3,
 	      kStateSolid, 300, 1,
       {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},
@@ -196,7 +196,7 @@ BDSMaterials::BDSMaterials()
 
   // Stainless Steel AISI code 316LN
   // (Type 316, low carbon, nitrogen-enhanced) @ 87K
-  AddMaterial(name="stainless_steel304L_87K",
+  AddMaterial(name="stainless_steel_304L_87K",
 	      density=8.02 * CLHEP::g/CLHEP::cm3,
 	      kStateSolid, 87, 1,
       {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},

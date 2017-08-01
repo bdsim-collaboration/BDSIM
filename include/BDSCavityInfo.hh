@@ -38,7 +38,8 @@ public:
 		G4double      halfCellLengthIn,
 		G4int         numberOfPointsIn         = 24,
 		G4int         numberOfCellsIn          = 1,
-		G4double      equatorEllipseSemiAxisIn = 42*CLHEP::mm,
+		G4double      equatorHorizontalAxisIn  = 42*CLHEP::mm,
+		G4double      equatorVerticalAxisIn    = 42*CLHEP::mm,
 		G4double      irisHorizontalAxisIn     = 12*CLHEP::mm,
 		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
 		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
@@ -68,13 +69,16 @@ public:
   /// Number of cells per cavity.
   G4int numberOfCells;
 
-  /// Equator ellipse semi axis.
-  G4double equatorEllipseSemiAxis;
+  /// Equator ellipse horizontal semi-axis.
+  G4double equatorHorizontalAxis;
 
-  /// Iris horizontal axis.
+  /// Equator ellipse vertical semi-axis.
+  G4double equatorVerticalAxis;
+
+  /// Iris ellipse horizontal semi-axis.
   G4double irisHorizontalAxis;
 
-  /// Iris vertical axis.
+  /// Iris ellipse vertical semi-axis.
   G4double irisVerticalAxis;
 
   /// Tangent angle.

@@ -3,6 +3,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <ostream>
 
@@ -35,6 +36,9 @@ public:
 
   /// More advance accessor for offset - only in x,y.
   G4ThreeVector GetOffset() const {return G4ThreeVector(dx, dy, 0);}
+
+  /// Get a transform to represent this tilt offset.
+  G4Transform3D Transform3D() const;
   
   ///@{ Inspector.
   G4bool HasFiniteOffset() const;

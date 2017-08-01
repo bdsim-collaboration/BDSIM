@@ -6,6 +6,8 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <map>
@@ -69,7 +71,14 @@ public:
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* el) const;
+  static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
+
+  /// Create a transform from a tilt offset.  If nullptr, returns identity transform.
+  static G4Transform3D CreateFieldTransform(const BDSTiltOffset* tiltOffset);
+
+  /// Create a transform for the field for a given element to account for the difference
+  /// from the curvilinear coordinates for the tilt and offset of the magnet.
+  static G4Transform3D CreateFieldTransform(GMAD::Element const* el);
 
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.

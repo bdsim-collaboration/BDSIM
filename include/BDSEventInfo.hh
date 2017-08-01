@@ -29,12 +29,15 @@ public:
   /// @{ Setters
   inline void SetStartTime(time_t startTimeIn) {info->startTime = startTimeIn;}
   inline void SetStopTime(time_t stopTimeIn)   {info->stopTime  = stopTimeIn;}
-  inline void SetDuration(G4double durationIn) {info->duration  = durationIn;}
-  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = seedStateAtStartIn;}
+  inline void SetDuration(G4float durationIn)  {info->duration  = (float)durationIn;}
+  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
+  inline void SetIndex(G4int indexIn)          {info->index     = (int)indexIn;}
   /// @}
 
   /// Accessor.
   inline const BDSOutputROOTEventInfo* GetInfo() const {return info;}
+
+  inline void Flush() {info->Flush();}
 
 private:
   /// Instance of info.

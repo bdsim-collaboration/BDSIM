@@ -6,6 +6,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
     set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
   endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 8.0)
+    set(WFLAGS "${WFLAGS} -Wno-undefined-var-template")
+  endif()
 endif()
 
 # cmake flags

@@ -5,6 +5,12 @@
 
 class TFile;
 
+/**
+ * @brief Simple analysis to pull out first hit in each sampler.
+ *
+ * @author L. Nevay
+ */
+
 class EventAnalysisOrbit: public EventAnalysis
 {
 public:

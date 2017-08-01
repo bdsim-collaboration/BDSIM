@@ -134,7 +134,7 @@ class Test:
             _os.chdir(self.foldername)
         
         _os.system("madx < "+self.filename+".madx > madx.log")
-        _os.system("bdsim --file="+self.filename+".gmad --batch --output=combined --outfile='test' > bdsim.log")
+        _os.system("bdsim --file="+self.filename+".gmad --batch --outfile='test' > bdsim.log")
         
         if self.usingfolder:
             _os.chdir("../")

@@ -1,5 +1,5 @@
 Debug					0
-InputFilePath				./electron_250GeV_stainless_event.root
+InputFilePath				./electron_250GeV_stainless.root
 OutputFileName				./electron_250GeV_stainless_anal.root
 CalculateOpticalFunctions		0
 CalculateOpticalFunctionsFileName	./output.dat
