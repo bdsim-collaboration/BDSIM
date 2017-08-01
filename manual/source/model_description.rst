@@ -2078,6 +2078,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | aper4                            | default aper4 parameter                               |
 +----------------------------------+-------------------------------------------------------+
+| dontSplitSBends                  | If true, do not split sbends into multiple segments   |
+|                                  | (default = false)                                     |
++----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in options will be used.                              |
