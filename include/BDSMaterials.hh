@@ -27,6 +27,20 @@ public:
   /// converts parser material list
   void PrepareRequiredMaterials(G4bool verbose = false);
 
+  /// output available materials
+  void ListMaterials()const;
+
+  /// Get material by name
+  G4Material* GetMaterial(G4String aMaterial)const;
+  /// Get element by name
+  G4Element*  GetElement(G4String aSymbol)const;
+  /// Check if material is defined
+  G4bool CheckMaterial(G4String aMaterial)const;
+  /// Check if element is defined
+  G4bool CheckElement(G4String aSymbol)const;
+
+protected:
+  BDSMaterials();
   /// Add G4Material
   void AddMaterial(G4Material* aMaterial,G4String aName);
   /** Add materials
@@ -60,20 +74,6 @@ public:
 		   std::list<G4String> components,
 		   std::list<Type> componentsFractions);
 
-  /// output available materials
-  void ListMaterials();
-
-  /// Get material by name
-  G4Material* GetMaterial(G4String aMaterial);
-  /// Get element by name
-  G4Element*  GetElement(G4String aSymbol); 
-  /// Check if material is defined
-  G4bool CheckMaterial(G4String aMaterial);
-  /// Check if element is defined
-  G4bool CheckElement(G4String aSymbol); 
-
-protected:
-  BDSMaterials();
   /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials; 
   /// map of elements, convention name lowercase

@@ -84,7 +84,7 @@ BDSMaterials::BDSMaterials()
   G4double NTP_Temperature = 293.15;
 #endif
 
-  // convention: material name in small letters (to be able to find materials regardless of capitalisation
+  // convention: material name in small letters (to be able to find materials regardless of capitalisation)
   
   // solid materials
   // metals
@@ -828,7 +828,7 @@ void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G
   AddElement(tmpElement,aSymbol);
 }
 
-G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
+G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
@@ -844,7 +844,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     {
       // find material regardless of capitalisation
       aMaterial.toLower();
-      std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+      auto iter = materials.find(aMaterial);
       if(iter != materials.end()) return (*iter).second;
       else
 	{
@@ -855,7 +855,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
     }
 }
 
-G4Element* BDSMaterials::GetElement(G4String aSymbol)
+G4Element* BDSMaterials::GetElement(G4String aSymbol)const
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aSymbol, 3);
@@ -871,7 +871,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
     }
   else
     {
-      std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+      auto iter = elements.find(aSymbol);
       if(iter != elements.end())
 	{return (*iter).second;}
       else
@@ -882,22 +882,22 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
     }
 }
 
-G4bool BDSMaterials::CheckMaterial(G4String aMaterial)
+G4bool BDSMaterials::CheckMaterial(G4String aMaterial)const
 {
   aMaterial.toLower();
-  std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+  auto iter = materials.find(aMaterial);
   if(iter != materials.end()) return true;
   else return false;
 }
 
-G4bool BDSMaterials::CheckElement(G4String aSymbol)
+G4bool BDSMaterials::CheckElement(G4String aSymbol)const
 {
-  std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+  auto iter = elements.find(aSymbol);
   if(iter != elements.end()) return true;
   else return false;
 }
 
-void BDSMaterials::ListMaterials()
+void BDSMaterials::ListMaterials()const
 {
   G4cout << "Available elements are:" << G4endl;
   for (auto element : elements) {
@@ -915,14 +915,12 @@ void BDSMaterials::ListMaterials()
 
 BDSMaterials::~BDSMaterials()
 {
-  std::map<G4String,G4Material*>::iterator mIter;
-  for(mIter = materials.begin(); mIter!=materials.end(); ++mIter)
-    {delete (*mIter).second;}
+  for(auto material : materials)
+    {delete material.second;}
   materials.clear();
 
-  std::map<G4String,G4Element*>::iterator eIter;
-  for(eIter = elements.begin(); eIter!=elements.end(); ++eIter)
-    {delete (*eIter).second;}
+  for(auto element : elements)
+    {delete element.second;}
   elements.clear();
   for(G4MaterialPropertiesTable* table : propertiesTables)
     {delete table;}
