@@ -19,15 +19,6 @@ BDSMaterials* BDSMaterials::Instance()
 
 BDSMaterials::BDSMaterials()
 {
-  G4String name, symbol;             //a=mass of a mole;
-  G4double a, z, density;            //z=mean number of protons;
-
-  G4double fractionmass;
-  G4double temperature, pressure;
-
-  //
-  // Define elements
-  //
 #ifdef BDSDEBUG
   G4cout << "BDSMaterials: G4 predefined units: " << G4endl;
   G4cout << "g= "      << CLHEP::g << G4endl;
@@ -35,7 +26,26 @@ BDSMaterials::BDSMaterials()
   G4cout << "mole= "   << CLHEP::mole << G4endl;
   G4cout << "kelvin= " << CLHEP::kelvin << G4endl;
 #endif
-  
+
+  DefineElements();
+  // define materials
+  // convention: material name in small letters (to be able to find materials regardless of capitalisation)
+  DefineMetals();
+  DefineSuperconductors();
+  DefineNonMetalSolids();
+  DefineScintillators();
+  DefineLHCComponents();
+  DefineLiquids();
+  DefineGases();
+  DefinePlasmas();
+  DefineVacuums();
+}
+
+void BDSMaterials::DefineElements()
+{
+  G4String name, symbol; //a=mass of a mole;
+  G4double a, z;         //z=mean number of protons;
+
   AddElement(name="Hydrogen"   , symbol="H" , z=  1, a=   1.00  );
   AddElement(name="Helium"     , symbol="He", z=  2, a=   4.0026);
   AddElement(name="Beryllium"  , symbol="Be", z=  4, a=   9.0122);
@@ -72,10 +82,12 @@ BDSMaterials::BDSMaterials()
   AddElement(name="Tungsten"   , symbol="W" , z= 74, a= 183.84  );
   AddElement(name="Lead"       , symbol="Pb", z= 82, a= 207.2   );
   AddElement(name="Uranium"    , symbol="U",  z= 92, a= 238.0289);
+}
 
-  //
-  // Define materials
-  //
+void BDSMaterials::DefineMetals()
+{
+  G4String name;
+  G4double density;
 
   //default Geant4 temperature = 293.15 K (NTP_Temperature)
   //default Geant4 pressure = 1atm
@@ -84,8 +96,6 @@ BDSMaterials::BDSMaterials()
   G4double NTP_Temperature = 293.15;
 #endif
 
-  // convention: material name in small letters (to be able to find materials regardless of capitalisation)
-  
   // solid materials
   // metals
   std::list<int> singleElement = {1};
@@ -188,15 +198,23 @@ BDSMaterials::BDSMaterials()
 	      kStateSolid, 87, 1,
       {"G4_W", "G4_Ni", "G4_Fe"},
 	      std::list<double>{0.97, 0.02, 0.01});
+}
 
-  // superconducting materials
+void BDSMaterials::DefineSuperconductors()
+{
+  G4String name;
+  G4double density;
   // niobium at 2K
-  AddMaterial(name="niobium"       , density=  8.57 , kStateSolid, 2, 1, {"Nb"}, singleElement);
+  AddMaterial(name="niobium"       , density=  8.57 , kStateSolid, 2, 1, {"Nb"}, std::list<int>{1});
   // niobium titanium at 4K
   AddMaterial(name="nbti"          , density=  5.6  , kStateSolid, 4, 1, {"Nb","Ti"}, std::list<int>{1,1});
+}
 
-  // non-metal solids
-  
+void BDSMaterials::DefineNonMetalSolids()
+{
+  G4String name;
+  G4double density;
+
   AddMaterial(name="bn5000"        , density=  1.925, kStateSolid, 300, 1, {"B","Ni","O","Ca","Si"}, 
 	      std::list<double>{0.383249242, 0.472071387, 0.0366276887, 0.0228923054, 0.0851593762});
 
@@ -209,38 +227,6 @@ BDSMaterials::BDSMaterials()
   AddMaterial(name="concrete"      , density=  2.3  , kStateSolid, 300, 1, {"Si","O","H","Ca","Al","Fe"},
 	      std::list<double>{0.227915, 0.60541, 0.09972, 0.04986, 0.014245, 0.00285});
   
-  AddMaterial(name="lhcconcrete"   , density=  2.42 , kStateSolid, 300, 1, 
-      {"H","C","O","Na","Mg","Al","Si","K","Ca","Fe","P","S","Ti","Mn","Zn","Zr","Ba","Pb","Sr","Eu"},
-	      std::list<double>{0.59785345499811 *CLHEP::perCent,
-		  5.59989402848226 *CLHEP::perCent,
-		  49.1111702720319 *CLHEP::perCent,
-		  0.45137935852357 *CLHEP::perCent,
-		  0.66062806777291 *CLHEP::perCent,
-		  2.05561946276849 *CLHEP::perCent,
-		  18.7995018924154 *CLHEP::perCent,
-		  0.65365311079793 *CLHEP::perCent,
-		  20.0191229406116 *CLHEP::perCent,
-		  1.11400027114647 *CLHEP::perCent,
-		  0.04782827639985 *CLHEP::perCent,
-		  0.01195706909996 *CLHEP::perCent,
-		  0.3457585814739  *CLHEP::perCent,
-		  0.03856154784738 *CLHEP::perCent,
-		  0.02401378044242 *CLHEP::perCent,
-		  0.00737352594498 *CLHEP::perCent,
-		  0.01783596140744 *CLHEP::perCent,
-		  0.04623400051985 *CLHEP::perCent,
-		  0.39757254757374 *CLHEP::perCent,
-		  4.184974185E-05  *CLHEP::perCent});
-
-  // LHC Rock
-  AddMaterial(name="lhc_rock",
-	      density=2*CLHEP::g/CLHEP::cm3,
-	      kStateSolid, 300, 1,
-      {"G4_H", "G4_Na", "G4_Si", "G4_Fe", "G4_C",
-	  "G4_Mg", "G4_K", "G4_O", "G4_Al", "G4_Ca"},
-	      std::list<double>{
-		0.006, 0.01, 0.2, 0.014, 0.03, 0.005, 0.01, 0.5, 0.03, 0.195});
-
   G4Material* tmpMaterial = new G4Material
     (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(elements["O"],2);
@@ -313,10 +299,28 @@ BDSMaterials::BDSMaterials()
   //Material type 3 from CERN 81-05, "The Selection and Properties of Epoxide Resins Used for the Insulation of Magnet Systems in Radiation Environments".
   AddMaterial(name="epoxyresin3", density = 1.20, kStateSolid, 300, 1, {"aralditef","hy906","dy061"},
 	      std::list<double>{0.497512,0.497512,0.004976});
-  
-  //scintillator materials
+
+  //Cellulose
+  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
+  name="cellulose";
+  const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
+  G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = CreatePropertiesTable();
+  celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
+  AddMaterial(tmpMaterial,name);
+
+  //Polyurethane
+  AddMaterial(name="polyurethane", density=1.05, kStateSolid, NTP_Temperature, 1, {"C","H","N","O"}, std::list<int>{6,10,2,4});
+}
+
+void BDSMaterials::DefineScintillators()
+{
+  G4String name;
+  G4double density;
   //YAG
-  tmpMaterial = new G4Material(name="yag", density=4.56*CLHEP::g/CLHEP::cm3, 3);
+  G4Material* tmpMaterial = new G4Material(name="yag", density=4.56*CLHEP::g/CLHEP::cm3, 3);
   tmpMaterial->AddElement(elements["Y"],3);
   tmpMaterial->AddElement(elements["Al"],5);
   tmpMaterial->AddElement(elements["O"],12);
@@ -371,25 +375,25 @@ BDSMaterials::BDSMaterials()
   G4double ups923a_PhotonEnergy[ups923a_numentries]   = {
     3.35,    3.31,    3.28,    3.26,    3.25,    3.23,    3.23,
     3.22,    3.21,    3.19,    3.18,    3.17,    3.16,    3.15,
-    3.14,    3.14,    3.13,    3.11,    3.1,    3.09,    3.09,
+    3.14,    3.14,    3.13,    3.11,    3.1,     3.09,    3.09,
     3.08,    3.07,    3.04,    3.02,    3.02,    3.01,    2.99,
     2.98,    2.97,    2.97,    2.95,    2.95,    2.93,    2.93,
     2.92,    2.92,    2.91,    2.89,    2.88,    2.87,    2.86,
-    2.85,    2.83,    2.81,    2.8,    2.79,    2.78,    2.76,
+    2.85,    2.83,    2.81,    2.8,     2.79,    2.78,    2.76,
     2.74,    2.72,    2.71,    2.68,    2.66,    2.64,    2.62,
-    2.61,    2.58,    2.55,    2.53,    2.5,    2.48,    2.46,
+    2.61,    2.58,    2.55,    2.53,    2.5,     2.48,    2.46,
     2.44,    2.41,    2.38,    2.35  };      
   
   G4double ups923a_emission[ups923a_numentries]   = {
-    0,    0.04,    0.11,    0.2,    0.3,    0.4,    0.52,
+    0,       0.04,    0.11,    0.2,     0.3,     0.4,     0.52,
     0.62,    0.67,    0.68,    0.67,    0.62,    0.53,    0.48,
-    0.44,    0.42,    0.4,    0.41,    0.42,    0.51,    0.46,
+    0.44,    0.42,    0.4,     0.41,    0.42,    0.51,    0.46,
     0.57,    0.67,    0.78,    0.91,    0.93,    0.95,    0.96,
     0.94,    0.91,    0.85,    0.76,    0.67,    0.61,    0.57,
     0.55,    0.52,    0.51,    0.52,    0.54,    0.57,    0.58,
-    0.6,    0.6,    0.59,    0.58,    0.55,    0.48,    0.42,
+    0.6,     0.6,     0.59,    0.58,    0.55,    0.48,    0.42,
     0.37,    0.33,    0.31,    0.29,    0.28,    0.26,    0.24,
-    0.2,    0.17,    0.12,    0.09,    0.08,    0.07,
+    0.2,     0.17,    0.12,    0.09,    0.08,    0.07,
     0.06,    0.04,    0.02,    0.01,    0.01  };
   
   G4MaterialPropertiesTable* ups923a_mt = CreatePropertiesTable();
@@ -448,44 +452,6 @@ BDSMaterials::BDSMaterials()
   pet_opaqueMaterialPropertiesTable->AddProperty("ABSLENGTH",Pet_Opaque_Energy, Pet_Opaque_abslen, Pet_Opaque_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(pet_opaqueMaterialPropertiesTable);
   materials[name]=tmpMaterial;
-
-  //Cellulose
-  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_CELLULOSE_CELLOPHANE",true,true);
-  name="cellulose";
-  const G4int Cellulose_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double Cellulose_RIND[Cellulose_NUMENTRIES] = {1.532,1.532,1.532};//Assume constant refractive index.
-  G4double Cellulose_Energy[Cellulose_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
-  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = CreatePropertiesTable();
-  celluloseMaterialPropertiesTable->AddProperty("RINDEX",Cellulose_Energy, Cellulose_RIND, Cellulose_NUMENTRIES);
-  tmpMaterial->SetMaterialPropertiesTable(celluloseMaterialPropertiesTable);
-  AddMaterial(tmpMaterial,name);
-
-
-  //Polyurethane
-  AddMaterial(name="polyurethane", density=1.05, kStateSolid, NTP_Temperature, 1, {"C","H","N","O"}, std::list<int>{6,10,2,4});
-
-  // Superconducting components of LHC magnet elements
-  // Definitions taken from FLUKA
-  
-  // Liquid helium at 1.9K  
-  AddMaterial(name="lhe_1.9k", density=0.1472, kStateLiquid, 1.9, 1, {"He"}, singleElement);
-
-  // Niobium @ 87K
-  AddMaterial(name="nb_87k"  , density=8.902 , kStateSolid , 87 , 1, {"Nb"}, singleElement);
-  
-  // Titanium @ 87K
-  AddMaterial(name="ti_87k"  , density=4.54  , kStateSolid , 87 , 1, {"Ti"}, singleElement);
-
-  // superconductor NbTi with Ti = 47% by weight
-  AddMaterial(name="nbti_87k", density=6.0471, kStateSolid , 87 , 1, {"nb_87k","ti_87k"},
-	      std::list<double>{0.53,0.47});
-
-  // copper at 4 Kelvin
-  AddMaterial(name="cu_4k", density=8.96, kStateSolid, 4, 1, {"Cu"}, singleElement);
-  
-  // naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
-  AddMaterial(name="nbti.1", density=8.4206, kStateSolid, 4, 1, {"nbti_87k","cu_4k"},
-	      std::list<double>{1.0/5.4, 4.4/5.4});
 
   //Gadolinium oxysulphate Gd_2 O_2 S
   G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
@@ -652,12 +618,81 @@ BDSMaterials::BDSMaterials()
   mptCarbonfiber->AddProperty("ABSLENGTH", energytab_cf, carbonfiberAbslen, nentCarbonfiber);
   tmpMaterial->SetMaterialPropertiesTable(mptCarbonfiber);
   materials[name]=tmpMaterial;
+}
 
-  // liquid materials
+void BDSMaterials::DefineLHCComponents()
+{
+  G4String name;
+  G4double density;
+  AddMaterial(name="lhcconcrete"   , density=  2.42 , kStateSolid, 300, 1, 
+      {"H","C","O","Na","Mg","Al","Si","K","Ca","Fe","P","S","Ti","Mn","Zn","Zr","Ba","Pb","Sr","Eu"},
+	      std::list<double>{0.59785345499811 *CLHEP::perCent,
+		  5.59989402848226 *CLHEP::perCent,
+		  49.1111702720319 *CLHEP::perCent,
+		  0.45137935852357 *CLHEP::perCent,
+		  0.66062806777291 *CLHEP::perCent,
+		  2.05561946276849 *CLHEP::perCent,
+		  18.7995018924154 *CLHEP::perCent,
+		  0.65365311079793 *CLHEP::perCent,
+		  20.0191229406116 *CLHEP::perCent,
+		  1.11400027114647 *CLHEP::perCent,
+		  0.04782827639985 *CLHEP::perCent,
+		  0.01195706909996 *CLHEP::perCent,
+		  0.3457585814739  *CLHEP::perCent,
+		  0.03856154784738 *CLHEP::perCent,
+		  0.02401378044242 *CLHEP::perCent,
+		  0.00737352594498 *CLHEP::perCent,
+		  0.01783596140744 *CLHEP::perCent,
+		  0.04623400051985 *CLHEP::perCent,
+		  0.39757254757374 *CLHEP::perCent,
+		  4.184974185E-05  *CLHEP::perCent});
 
-  AddMaterial(name="liquidhelium"  , density=  0.12498, kStateLiquid, 4.15, 1, {"He"}, singleElement);
+  // LHC Rock
+  AddMaterial(name="lhc_rock",
+	      density=2*CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 300, 1,
+      {"G4_H", "G4_Na", "G4_Si", "G4_Fe", "G4_C",
+	  "G4_Mg", "G4_K", "G4_O", "G4_Al", "G4_Ca"},
+	      std::list<double>{
+		0.006, 0.01, 0.2, 0.014, 0.03, 0.005, 0.01, 0.5, 0.03, 0.195});
+
+  // Superconducting components of LHC magnet elements
+  // Definitions taken from FLUKA
+  
+  std::list<int> singleElement = {1};
+  // Liquid helium at 1.9K  
+  AddMaterial(name="lhe_1.9k", density=0.1472, kStateLiquid, 1.9, 1, {"He"}, singleElement);
+
+  // Niobium @ 87K
+  AddMaterial(name="nb_87k"  , density=8.902 , kStateSolid , 87 , 1, {"Nb"}, singleElement);
+  
+  // Titanium @ 87K
+  AddMaterial(name="ti_87k"  , density=4.54  , kStateSolid , 87 , 1, {"Ti"}, singleElement);
+
+  // superconductor NbTi with Ti = 47% by weight
+  AddMaterial(name="nbti_87k", density=6.0471, kStateSolid , 87 , 1, {"nb_87k","ti_87k"},
+	      std::list<double>{0.53,0.47});
+
+  // copper at 4 Kelvin
+  AddMaterial(name="cu_4k", density=8.96, kStateSolid, 4, 1, {"Cu"}, singleElement);
+  
+  // naked superconductor NbTi wire with Cu/SC volume ratio (>= 4.0 and <4.8)
+  AddMaterial(name="nbti.1", density=8.4206, kStateSolid, 4, 1, {"nbti_87k","cu_4k"},
+	      std::list<double>{1.0/5.4, 4.4/5.4});
+}
+
+void BDSMaterials::DefineLiquids()
+{
+  G4String name;
+  G4double density;
+  AddMaterial(name="liquidhelium"  , density=  0.12498, kStateLiquid, 4.15, 1, {"He"}, std::list<int>{1});
   AddMaterial(name="water"         , density=  1.00   , kStateLiquid, 300 , 1, {"O","H"}, std::list<int>{1,2});
+}
 
+void BDSMaterials::DefineGases()
+{
+  G4String name;
+  G4double fractionmass;
   // gaseous materials
   // For air: do we want it at p=1atm or at p inside beampipe?
   // 1st case:
@@ -670,12 +705,12 @@ BDSMaterials::BDSMaterials()
   //      V=22.4l=22.4e-3*m3 and therefore has density=molar weight/(22.4e-3*m3)
   
   //Room temperature temperature and standard pressure
-  temperature = 300*CLHEP::kelvin;
-  pressure = 1.0*CLHEP::atmosphere;
+  G4double temperature = 300*CLHEP::kelvin;
+  G4double pressure = 1.0*CLHEP::atmosphere;
   //Air
-  density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))* 30*CLHEP::g/(22.4e-3*CLHEP::m3) ;
+  G4double density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))* 30*CLHEP::g/(22.4e-3*CLHEP::m3) ;
   //  G4cout << "Air: temperature = " << temperature/CLHEP::kelvin << " kelvin, pressure = " << pressure/CLHEP::atmosphere << " atm, density = " << density/(CLHEP::g/CLHEP::m3) << " g/m3" << G4endl;
-  tmpMaterial = new G4Material
+  G4Material* tmpMaterial = new G4Material
     (name="air", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(elements["O"], fractionmass=0.2);
   tmpMaterial->AddElement(elements["N"], fractionmass=0.8);
@@ -693,15 +728,6 @@ BDSMaterials::BDSMaterials()
   AddMaterial(name="carbonmonoxide", density, kStateGas, temperature, pressure, {"C","O"},
 	      std::list<int>{1,1});
 
-  //Awake plasma - rubidium at density of 7e14 atoms/cm3 
-  //  G4double numberDensity = 7.0e14/CLHEP::cm3;
-  a = 85.4678*CLHEP::g/CLHEP::mole;
-  density = 1e-7*CLHEP::g/CLHEP::cm3;
-  //density = a*numberDensity;
-  tmpMaterial =  new G4Material
-    (name="awakeplasma", z=37., a, density);
-  AddMaterial(tmpMaterial,name);
-
   //Carbon monoxide beam pipe gas
   double bp_pressure=0.0133e-9*CLHEP::bar; //10 nTorr pressure
   density = (CLHEP::STP_Temperature/temperature) * (bp_pressure/(1.*CLHEP::atmosphere))
@@ -712,8 +738,26 @@ BDSMaterials::BDSMaterials()
   //Nitrogen
   density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))
     * (14.)*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
-  AddMaterial(name="nitrogen", density, kStateGas, temperature, pressure, {"N"}, singleElement);
+  AddMaterial(name="nitrogen", density, kStateGas, temperature, pressure, {"N"}, std::list<int>{1});
+}
 
+void BDSMaterials::DefinePlasmas()
+{
+  G4String name;
+  G4double z;
+  //Awake plasma - rubidium at density of 7e14 atoms/cm3 
+  //  G4double numberDensity = 7.0e14/CLHEP::cm3;
+  G4double a = 85.4678*CLHEP::g/CLHEP::mole;
+  G4double density = 1e-7*CLHEP::g/CLHEP::cm3;
+  //density = a*numberDensity;
+  G4Material* tmpMaterial = new G4Material(name="awakeplasma", z=37., a, density);
+  AddMaterial(tmpMaterial,name);
+}
+
+void BDSMaterials::DefineVacuums()
+{
+  G4String name;
+  G4double fractionmass;
   //Default vacuum (same composition as residual vacuum in warm sections of LHC).
   // can be overridden by vacMaterial option
   G4double vacpressure;
@@ -722,14 +766,15 @@ BDSMaterials::BDSMaterials()
     {vacpressure=BDSParser::Instance()->GetOptions().vacuumPressure*CLHEP::bar;}
   else
     {vacpressure=1e-12*CLHEP::bar;}
-  density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere)) * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3);
+  G4double temperature = 300*CLHEP::kelvin;
+  G4double density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere)) * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3);
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
   G4cout<< "pressure="<<vacpressure/CLHEP::bar<<" bar"<<G4endl;
   G4cout<< "temp="<<temperature/CLHEP::kelvin<<" K"<<G4endl;
   G4cout<< "density="<<density/(CLHEP::g/CLHEP::m3)<<"g/m^3"<<G4endl;
 #endif
-  tmpMaterial = new G4Material
+  G4Material* tmpMaterial = new G4Material
     (name="vacuum", density, 3, kStateGas, temperature, vacpressure);
   tmpMaterial->AddElement(elements["H"], fractionmass=0.482);
   tmpMaterial->AddElement(elements["C"], fractionmass=0.221);
@@ -743,10 +788,11 @@ BDSMaterials::BDSMaterials()
   vacMaterialPropertiesTable->AddProperty("RINDEX",Vac_Energy, Vac_RIND, Vac_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(vacMaterialPropertiesTable);
 
-  AddMaterial(name="laservac" , density, kStateGas, temperature, vacpressure, {"vacuum"}, singleElement);
+  AddMaterial(name="laservac" , density, kStateGas, temperature, vacpressure, {"vacuum"}, std::list<int>{1});
 
   //High density carbon monoxide, density chosen such that 1mm length gives ~ one interaction
-  density=37.403/10.*CLHEP::g/CLHEP::cm3;  
+  density=37.403/10.*CLHEP::g/CLHEP::cm3;
+  G4double pressure = 1.0*CLHEP::atmosphere;
   AddMaterial(name="beamgasplugmat", density, kStateGas, temperature, pressure, {"C","O"}, 
 	      std::list<int>{1,1});
 

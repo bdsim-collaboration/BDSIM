@@ -82,9 +82,23 @@ private:
   /// Singleton instance
   static BDSMaterials* _instance;
 
+  ///@{ Methods called by constructor
+  void DefineElements();
+  void DefineMetals();
+  void DefineSuperconductors();
+  void DefineNonMetalSolids();
+  void DefineScintillators();
+  void DefineLHCComponents();
+  void DefineLiquids();
+  void DefineGases();
+  void DefinePlasmas();
+  void DefineVacuums();
+  ///@}
+
+  ///@{ Add a G4Element
   void AddElement(G4Element* aElement,G4String aName);
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
-
+  ///@}
   /// Material tables for storing pointers
   std::vector<G4MaterialPropertiesTable*> propertiesTables;
   /// Create new properties table and store in vector
