@@ -21,8 +21,8 @@ public:
   BDSRunAction(BDSOutput* outputIn);
   virtual ~BDSRunAction();
   
-  void BeginOfRunAction(const G4Run*);
-  void EndOfRunAction(const G4Run*);
+  virtual void BeginOfRunAction(const G4Run*);
+  virtual void EndOfRunAction(const G4Run*);
 
 private:
   BDSOutput*    output;         ///< Cache of output instance. Not owned by this class.
