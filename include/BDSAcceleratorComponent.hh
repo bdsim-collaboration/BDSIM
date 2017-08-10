@@ -137,6 +137,11 @@ public:
   inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
   /// @}
 
+  /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
+  G4bool AngledInputFace()  const;
+  G4bool AngledOutputFace() const;
+  /// @}
+
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
   inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}
@@ -159,6 +164,10 @@ public:
 
   void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
   void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
+
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
 
 protected:
   /// This calls BuildContainerLogicalVolume() and then sets the visual attributes
@@ -205,10 +214,6 @@ protected:
   /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
   /// differently from general component material.
   G4LogicalVolume* acceleratorVacuumLV;
-
-  /// A larger length safety that can be used where tracking accuracy isn't required
-  /// or more tolerant geometry is required (1um).
-  static G4double const lengthSafetyLarge;
 
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;

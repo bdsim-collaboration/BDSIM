@@ -10,6 +10,9 @@ template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
       {BDSFieldType::none,             "none"},
+      {BDSFieldType::bzero,            "bzero"},
+      {BDSFieldType::ezero,            "ezero"},
+      {BDSFieldType::ebzero,           "ebzero"},
       {BDSFieldType::teleporter,       "teleporter"},
       {BDSFieldType::bmap1d,           "bmap1d"},
       {BDSFieldType::bmap2d,           "bmap2d"},
@@ -39,12 +42,16 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewdecapole,     "skewdecapole"},
       {BDSFieldType::rfcavity,         "rfcavity"},
       {BDSFieldType::rf,               "rf"},
+      {BDSFieldType::dipole3d,         "dipole3d"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
 {
   std::map<G4String, BDSFieldType> types;
   types["none"]             = BDSFieldType::none;
+  types["bzero"]            = BDSFieldType::bzero;
+  types["ezero"]            = BDSFieldType::ezero;
+  types["ebzero"]           = BDSFieldType::ebzero;
   types["teleporter"]       = BDSFieldType::teleporter;
   types["bmap1d"]           = BDSFieldType::bmap1d;
   types["bmap2d"]           = BDSFieldType::bmap2d;
@@ -74,6 +81,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewdecapole"]     = BDSFieldType::skewdecapole;
   types["rfcavity"]         = BDSFieldType::rfcavity;
   types["rf"]               = BDSFieldType::rf;
+  types["dipole3d"]         = BDSFieldType::dipole3d;
   
   bType.toLower();
 

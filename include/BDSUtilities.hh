@@ -10,6 +10,8 @@
 
 class BDSExtent;
 
+class G4UserLimits;
+
 namespace CLHEP {
   class HepRotation;
 }
@@ -48,6 +50,9 @@ namespace BDS
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
+
+  /// Get the current dir the program was executed from.
+  std::string GetCurrentDir();
   
   /// Returns path from which BDSIM is executed
   /// supports linux/unix and mac OS
@@ -75,6 +80,10 @@ namespace BDS
   
   /// Check if character array is an integer, and returns the double by reference
   G4bool IsNumber(const char* s, double& convertedNumber);
+
+  template <typename T>
+  G4int Sign(T val)
+  {return G4int((T(0) < val) - (val < T(0)));}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
@@ -124,9 +133,12 @@ namespace BDS
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 
-  /// Utility to print out values of an array to avoid repetitive for loops.
-  void PrintArray(const G4double values[],
-		  G4int    size);
+  /// Create a user limits instance based on a default with a new step length limit
+  /// of the length parameter. Check the max step length in the defaultUL and use
+  /// the shorter of the two. Note the G4UserLimits instance is not const although
+  /// it could be as the accessors in that class are not const.
+  G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
+				 const G4double length);
 }
 
 #endif

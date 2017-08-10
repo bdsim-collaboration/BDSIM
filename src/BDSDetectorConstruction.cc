@@ -1,5 +1,3 @@
-#include "BDSDetectorConstruction.hh"
-
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
@@ -8,32 +6,34 @@
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
+#include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSMaterials.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
-#include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
 #include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 
+#include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -45,15 +45,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSensitiveDetector.hh"
-#include "globals.hh"
 
 #include <iterator>
 #include <list>
 #include <map>
 #include <vector>
 
-BDSDetectorConstruction::BDSDetectorConstruction():
-  worldPV(nullptr)
+BDSDetectorConstruction::BDSDetectorConstruction()
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -84,10 +82,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
     {BuildTunnel();}
 
   // build world and calculate coordinates
-  BuildWorld();
+  auto worldPV = BuildWorld();
 
   // placement procedure
-  ComponentPlacement();
+  ComponentPlacement(worldPV);
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -129,7 +127,9 @@ void BDSDetectorConstruction::InitialiseRegions()
 void BDSDetectorConstruction::BuildBeamline()
 { 
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
-  BDSBeamline*         beamline            = new BDSBeamline();
+
+  G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  BDSBeamline* beamline = new BDSBeamline(initialTransform);
   
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
@@ -179,8 +179,11 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
+      G4double currentArcLength = beamline->GetTotalArcLength();
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt),
+									   prevElement,
+									   nextElement,
+									   currentArcLength);
       if(temp)
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
@@ -268,11 +271,13 @@ void BDSDetectorConstruction::BuildBeamline()
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
   BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine1To1(beamline, circular);
+  BDSBeamline* clBridgeBeamline = clBuilder->BuildCurvilinearBridgeBeamLine(clBeamline);
   delete clBuilder;
   
   // register the beamline in the holder class for the full model
   acceleratorModel->RegisterFlatBeamline(beamline);
   acceleratorModel->RegisterCurvilinearBeamline(clBeamline);
+  acceleratorModel->RegisterCurvilinearBridgeBeamline(clBridgeBeamline);
 }
 
 void BDSDetectorConstruction::BuildTunnel()
@@ -289,7 +294,7 @@ void BDSDetectorConstruction::BuildTunnel()
   acceleratorModel->RegisterTunnelBeamline(tunnelBeamline);
 }
 
-void BDSDetectorConstruction::BuildWorld()
+G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -341,17 +346,19 @@ void BDSDetectorConstruction::BuildWorld()
   worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // place the world
-  worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-			      (G4ThreeVector)0,     // at (0,0,0)
-			      worldLV,	            // its logical volume
-			      worldName,            // its name
-			      nullptr,		    // its mother  volume
-			      false,		    // no boolean operation
-			      0,                    // copy number
-			      checkOverlaps);       // overlap checking
+  G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+						 (G4ThreeVector)0,     // at (0,0,0)
+						 worldLV,	            // its logical volume
+						 worldName,            // its name
+						 nullptr,		    // its mother  volume
+						 false,		    // no boolean operation
+						 0,                    // copy number
+						 checkOverlaps);       // overlap checking
 
   // Register the lv & pvs to the our holder class for the model
   acceleratorModel->RegisterWorldPV(worldPV);
+  acceleratorModel->RegisterWorldLV(worldLV);
+  acceleratorModel->RegisterWorldSolid(worldSolid);
 
   // Register world PV with our auxiliary navigator so steppers and magnetic
   // fields know which geometry to navigate to get local / global transforms.
@@ -360,13 +367,15 @@ void BDSDetectorConstruction::BuildWorld()
 
   /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
   BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
+
+    return worldPV;
 }
 
-void BDSDetectorConstruction::ComponentPlacement()
+void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 {
   if (verbose || debug)
     {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
-  int G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
+  G4long G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
 
   // 0 - mass world placement
   // 1 - end piece placement
@@ -609,8 +618,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
 void BDSDetectorConstruction::ConstructSDandField()
 {
-  auto fields = BDSFieldBuilder::Instance()->CreateAndAttachAll();
-  acceleratorModel->RegisterFields(fields);
+  auto flds = BDSFieldBuilder::Instance()->CreateAndAttachAll(); // avoid shadowing 'fields'
+  acceleratorModel->RegisterFields(flds);
 }
 
 G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element)

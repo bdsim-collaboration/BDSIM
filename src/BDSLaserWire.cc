@@ -6,13 +6,13 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
-BDSLaserWire::BDSLaserWire(G4String      name,
-			   G4double      length,
-			   G4double      wavelength,
-			   G4ThreeVector direction):
-  BDSAcceleratorComponent(name, length, 0, "laserwire"),
-  itsLaserDirection(direction),
-  itsLaserWavelength(wavelength)
+BDSLaserWire::BDSLaserWire(G4String      nameIn,
+			   G4double      lengthIn,
+			   G4double      wavelengthIn,
+			   G4ThreeVector directionIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "laserwire"),
+  itsLaserDirection(directionIn),
+  itsLaserWavelength(wavelengthIn)
 {;}
 
 BDSLaserWire::~BDSLaserWire()

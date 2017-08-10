@@ -26,7 +26,7 @@ class BDSSamplerSD: public G4VSensitiveDetector
 { 
 public:
   /// Construct a sampler with name and type (plane/cylinder).
-  BDSSamplerSD(G4String name);
+  explicit BDSSamplerSD(G4String name);
   ~BDSSamplerSD();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with

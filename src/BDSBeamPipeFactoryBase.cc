@@ -4,12 +4,14 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
@@ -38,6 +40,7 @@ void BDSBeamPipeFactoryBase::CleanUp()
   allPhysicalVolumes.clear();
   allRotationMatrices.clear();
   allSolids.clear();
+  allUserLimits.clear();
   allVisAttributes.clear();
 
   inputFaceNormal  = G4ThreeVector(0,0,-1);
@@ -46,7 +49,8 @@ void BDSBeamPipeFactoryBase::CleanUp()
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* vacuumMaterialIn,
-						G4Material* beamPipeMaterialIn)
+						G4Material* beamPipeMaterialIn,
+						G4double    length)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -58,7 +62,7 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   /// set visual attributes
   SetVisAttributes();
   /// set user limits
-  SetUserLimits();
+  SetUserLimits(length);
   /// place volumes
   PlaceComponents(nameIn);
 }
@@ -100,12 +104,17 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
-void BDSBeamPipeFactoryBase::SetUserLimits()
+void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
 {
-  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
-  vacuumLV->SetUserLimits(beamPipeUserLimits);
-  beamPipeLV->SetUserLimits(beamPipeUserLimits);
-  containerLV->SetUserLimits(beamPipeUserLimits);
+  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  //copy the default and update with the length of the object rather than the default 1m
+  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
+
+  if (ul != defaultUL) // if it's not the default register it
+    {allUserLimits.push_back(ul);}
+  vacuumLV->SetUserLimits(ul);
+  beamPipeLV->SetUserLimits(ul);
+  containerLV->SetUserLimits(ul);
 }
 
 void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
@@ -117,7 +126,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 			       (G4ThreeVector)0,             // position
 			       vacuumLV,                     // lv to be placed
 			       nameIn + "_vacuum_pv",        // name
-			       containerLV,                  // mother lv to be place in
+			       containerLV,                  // mother lv to be placed in
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
@@ -126,7 +135,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 				 (G4ThreeVector)0,             // position
 				 beamPipeLV,                   // lv to be placed
 				 nameIn + "_beampipe_pv",      // name
-				 containerLV,                  // mother lv to be place in
+				 containerLV,                  // mother lv to be placed in
 				 false,                        // no boolean operation
 				 0,                            // copy number
 				 checkOverlaps);               // whether to check overlaps
@@ -149,6 +158,7 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   aPipe->RegisterPhysicalVolume(allPhysicalVolumes);
   if (beamPipeLV)// in the case of the circular vacuum, there isn't a beampipeLV
     {aPipe->RegisterSensitiveVolume(beamPipeLV);}
+  aPipe->RegisterUserLimits(allUserLimits);
   aPipe->RegisterVisAttributes(allVisAttributes);
   
   return aPipe;

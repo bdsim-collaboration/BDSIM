@@ -7,7 +7,7 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchSquare::BDSBunchSquare() :
-  BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 
+  BDSBunch(), envelopeX(0.0), envelopeY(0.0),
   envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
 #ifdef BDSDEBUG 
@@ -22,20 +22,20 @@ BDSBunchSquare::~BDSBunchSquare()
   delete FlatGen;
 }
 
-void BDSBunchSquare::SetOptions(const GMAD::Options& opt)
+void BDSBunchSquare::SetOptions(const GMAD::Options& opt,
+				G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetEnvelopeX(opt.envelopeX); 
   SetEnvelopeY(opt.envelopeY);
   SetEnvelopeXp(opt.envelopeXp);
   SetEnvelopeYp(opt.envelopeYp);
   SetEnvelopeT(opt.envelopeT);
-  SetEnvelopeE(opt.envelopeE);
-  return; 
+  SetEnvelopeE(opt.envelopeE); 
 }
 
 void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -59,6 +59,9 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   if(envelopeYp !=0) yp += envelopeYp * (1-2*FlatGen->shoot()) * CLHEP::rad;
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t = 0 * CLHEP::s;
   E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 

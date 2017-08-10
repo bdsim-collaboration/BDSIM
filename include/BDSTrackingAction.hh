@@ -14,7 +14,7 @@ class BDSTrackingAction: public G4UserTrackingAction
 {
 public:
   BDSTrackingAction();
-  BDSTrackingAction(G4bool batchMode);
+  explicit BDSTrackingAction(G4bool batchMode);
   
   virtual ~BDSTrackingAction(){;}
 

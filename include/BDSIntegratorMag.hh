@@ -34,13 +34,18 @@ public:
 
   /// Geant4 requires that the integrator order must be supplied by the derived class.
   inline virtual G4int IntegratorOrder() const {return 2;}
+
+  /// Cache of thin element length to know maximum possible length scale step
+  /// for coordinate lookup.
+  static G4double thinElementLength;
   
 protected:
-  /// Convert final local position and direction to global frame
-  void ConvertToGlobal(const G4ThreeVector& localPos,
-		       const G4ThreeVector& localMomUnit,
-		       const G4double       momMag,
-		       G4double             yOut[]);
+  /// Convert final local position and direction to global frame. Allow
+    /// scaling of momentum in case localMom is a unit vector
+  void ConvertToGlobal(const G4ThreeVector &localPos,
+                       const G4ThreeVector &localMom,
+                       G4double             yOut[],
+                       const G4double       momScaling = 1.0);
 
   /// Setter for distChord to private member.
   inline void SetDistChord(G4double distChordIn) {distChordPrivate = distChordIn;}

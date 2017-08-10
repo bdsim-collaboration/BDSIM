@@ -12,6 +12,7 @@ class G4VisAttributes;
 
 /**
  * @brief A frame for the vacuum window in e.g. BDSMultilayerScreen.
+ *
  * This is a virtual class and the derived class must implement Build()
  * that ultimately sets the member logVol.
  * 

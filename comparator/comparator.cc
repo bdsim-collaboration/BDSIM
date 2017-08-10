@@ -16,10 +16,12 @@ class Result;
 
 void usage();
 
-#define _EXIT_SUCCESS        0;
-#define _EXIT_FAILED         1;  
-#define _EXIT_INCORRECT_ARGS 2;
-#define _EXIT_FILE_NOT_FOUND 3;
+enum EXIT_CODE {
+  _EXIT_SUCCESS        = 0,
+  _EXIT_FAILED         = 1,
+  _EXIT_INCORRECT_ARGS = 2,
+  _EXIT_FILE_NOT_FOUND = 3
+};
 
 int main(int argc, char* argv[])
 {

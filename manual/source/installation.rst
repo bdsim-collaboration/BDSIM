@@ -5,7 +5,7 @@ Installation
 Obtaining  BDSIM
 ================
 
-BDSIM may be obtained either from the BDSIM website from the git repository
+BDSIM may be obtained either from the BDSIM website or the git repository may be cloned.
 The user must compile it on their system and must have Geant4, CLHEP & ROOT
 already present (or access to AFS).
 
@@ -57,15 +57,15 @@ on: http://www.pp.rhul.ac.uk/bdsim/download
 Requirements
 ============
 
-0) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
+1) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher.)
-3) Flex 2.5.37 or higher
-4) Bison 2.3 or higher
-5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
-6) `ROOT`_ framework for output analysis.
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
+4) `ROOT`_ framework for output analysis (version 6 recommended)
+5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
+6) Flex 2.5.37 or higher
+7) Bison 2.3 or higher
 
-.. warning:: Geant4.10.3 is not currently supported.  Geant4.10.02.p03 is recommended.
+.. note:: These are listed in the correct order of installation / requirement.
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -81,8 +81,6 @@ to add this to your ``.bashrc`` or profile so that it's loaded automatically
 every time::
 
   source path/to/geant4/installation/bin/geant4.sh
-
-Note, if Geant4 is not installed, please see `Geant4 Installation Guide`_.
 
 
 Setting Up
@@ -180,45 +178,49 @@ installation::
 
 This typically produces the following output, which is slightly different on each computer::
 
-  -- The C compiler identification is AppleClang 6.0.0.6000056
-  -- The CXX compiler identification is AppleClang 6.0.0.6000056
-  -- Check for working C compiler: /usr/bin/cc
-  -- Check for working C compiler: /usr/bin/cc -- works
+  -- The C compiler identification is AppleClang 8.0.0.8000042
+  -- The CXX compiler identification is AppleClang 8.0.0.8000042
+  -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
+  -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -- works
   -- Detecting C compiler ABI info
   -- Detecting C compiler ABI info - done
-  -- Check for working CXX compiler: /usr/bin/c++
-  -- Check for working CXX compiler: /usr/bin/c++ -- works
+  -- Detecting C compile features
+  -- Detecting C compile features - done
+  -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
+  -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -- works
   -- Detecting CXX compiler ABI info
   -- Detecting CXX compiler ABI info - done
-  -- Configuring BDSIM 0.8
+  -- Detecting CXX compile features
+  -- Detecting CXX compile features - done
+  -- Configuring BDSIM 0.9.develop
   -- Build Type RelWithDebInfo
-  -- Compiler supports C++11
+  -- Compiler supports C++14
   -- Looking for CLHEP... - found
-  -- Found CLHEP 2.2.0.5 in /opt/local/lib/CLHEP-2.2.0.5/../../include
+  -- Found CLHEP 2.3.4.4 in /opt/local/lib/CLHEP-2.3.4.4/../../include
+  -- Use ROOTSYS from environment: /Users/nevay/physics/packages/root-6.06.06-install
   -- Looking for ROOT...
-  -- Found ROOT 5.34/32 in /opt/local/libexec/root5
+  -- Found ROOT 6.06/06 in /Users/nevay/physics/packages/root-6.06.06-install 
   -- GDML support ON
-  -- Looking for XML2... - found
-  -- LCDD support ON
-  -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.00.p02-install
-     /lib/Geant4-10.0.2/UseGeant4.cmake
-  -- Geant4 Definitions: -DG4_STORE_TRAJECTORY;-DG4VERBOSE;-DG4UI_USE;
-     -DG4VIS_USE;-DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;
-     -DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4UI_USE_XM;
-     -DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
-  -- G4_VERSION: 10.1.1
-  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.9.1") 
-  -- Found BISON: /opt/local/bin/bison (found version "3.0.4") 
-  -- Found FLEX: /opt/local/bin/flex (found version "2.5.37") 
-  -- Configuring ROBDSIM 0.3.develop
-  -- Build Type RelWithDebInfo
-  -- Compiler supports C++11
-  -- Looking for ROOT...
-  -- Found ROOT 5.34/32 in /opt/local/libexec/root5
-  -- Found Sphinx: /opt/local/bin/sphinx-build-2.7
+  -- Found CLHEP Version 2.3.4.4
+  -- Found CLHEP: /opt/local/lib/libCLHEP.dylib (Required is at least version "2.3.4.4") 
+  -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.02.p03-install/lib/Geant4-10.2.3/UseGeant4.cmake
+  -- Geant4 Definitions: -DG4_STORE_TRAJECTORY;-DG4VERBOSE;-DG4UI_USE;-DG4VIS_USE;-DG4UI_USE_TCSH;
+     -DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;
+     -DG4UI_USE_XM;-DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
+  -- G4_VERSION: 10.2.3
+  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.13") 
+  -- Found BISON: /opt/local/bin/bison (found suitable version "3.0.4", minimum required is "2.4") 
+  -- Found FLEX: /opt/local/bin/flex (found version "2.6.1") 
+  -- Looking for zlib
+  -- Using Geant4 built in zlib
+  -- Robdsim disabled by default - please move to rebdsim
+  -- Copying example directory
+  -- Found Sphinx: /opt/local/bin/sphinx-build  
+  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx_rtd_theme  
   -- Configuring done
   -- Generating done
-  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-build
+  -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test-build
+
 
 CMake will search your system for the required dependencies. In the above example, this
 proceeded without any errors. In the case where a required dependency cannot be found,
@@ -310,6 +312,31 @@ to make the Doxygen documentation in a folder called ``Doxygen``.
 
 .. note:: This requires the Doxygen documentation system to be installed.
 
+CLHEP Installation Guide
+------------------------
+
+If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
+
+Move and unpack to a suitable place::
+
+   > tar -xzf clhep-2.3.1.1.tgz
+   > cd 2.3.1.1
+
+Make build directory::
+
+   > mkdir build
+   > cd build
+   > cmake ../CLHEP
+
+Adapt parameters if needed with::
+
+   > ccmake .
+
+Make and install::
+   
+   > make
+   > sudo make install
+
 Geant4 Installation Guide
 -------------------------
 
@@ -340,13 +367,13 @@ modifying the CMake configuration as generally described in
 It is useful to change a few options with Geant4 for practical purposes.
 
 .. figure:: figures/geant4options.png
-	    :width: 80%
+	    :width: 90%
 	    :align: center
 
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
-| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder you make.               |
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder to install to.          |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
 +---------------------------------+-------------------------------------------------------------+
@@ -366,6 +393,12 @@ It is useful to change a few options with Geant4 for practical purposes.
 | **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
 |                                 | Needs Qt to be installed                                    |
 +---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
+|                                 | library and therefore, there's only one random number       |
+|                                 | generator and simulations have strong reproducibility.      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the geant4 internal version.         |
++---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
 |                                 | not interactive. Useful for promotional materials.          |
 +---------------------------------+-------------------------------------------------------------+
@@ -373,7 +406,11 @@ It is useful to change a few options with Geant4 for practical purposes.
 |                                 | available. Needs motif to be installed.                     |
 +---------------------------------+-------------------------------------------------------------+
 
-Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
+.. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
+
+.. note:: The CLHEP option is required.  The GDML and QT options are strongly recommended. Others
+	  are as the user prefers.
+	     
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. If ``g`` is not an
 available option, then continue to press ``c`` until it becomes available. This
@@ -405,31 +442,6 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
-
-CLHEP Installation Guide
-------------------------
-
-If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
-
-Move and unpack to a suitable place::
-
-   > tar -xzf clhep-2.3.1.1.tgz
-   > cd 2.3.1.1
-
-Make build directory::
-
-   > mkdir build
-   > cd build
-   > cmake ../CLHEP
-
-Adapt parameters if needed with::
-
-   > ccmake .
-
-Make and install::
-   
-   > make
-   > sudo make install
 
 .. _Troubleshooting:
 

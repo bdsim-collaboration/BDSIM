@@ -22,11 +22,11 @@ template<class T> class BDSOutputROOTEventSampler: public TObject
 public:
   std::string samplerName; //|| Don't split the header
   
-  int                n;    
+  int                n;
   std::vector<T>     energy;
   std::vector<T>     x;
   std::vector<T>     y;
-  float              z;
+  T                  z;
   std::vector<T>     xp;
   std::vector<T>     yp;
   std::vector<T>     zp;
@@ -39,10 +39,10 @@ public:
   int                modelID;
   std::vector<int>   turnNumber;
   
-  float              S;   // Will not need this when have global transforms
+  T                  S;   // Will not need this when have global transforms
 
   BDSOutputROOTEventSampler();
-  BDSOutputROOTEventSampler(std::string samplerNameIn);
+  explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
   void Fill(G4double E,
@@ -52,8 +52,6 @@ public:
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
-  //#else
-  //void SetBranchAddress(TTree *);
 #endif
   void SetBranchAddress(TTree *);
   /// Clean Sampler

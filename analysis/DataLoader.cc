@@ -1,8 +1,8 @@
 #include "DataLoader.hh"
-
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
+#include "RebdsimTypes.hh"
 #include "Run.hh"
 
 #include "BDSDebug.hh"
@@ -17,9 +17,13 @@ ClassImp(DataLoader)
 
 DataLoader::DataLoader(std::string fileName,
 		       bool        debugIn,
-		       bool        processSamplersIn):
+		       bool        processSamplersIn,
+		       bool        allBranchesOnIn,
+		       const RBDS::BranchMap* branchesToTurnOnIn):
   debug(debugIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  allBranchesOn(allBranchesOnIn),
+  branchesToTurnOn(branchesToTurnOnIn)
 {
   CommonCtor(fileName);
 }
@@ -39,10 +43,10 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor(std::string fileName)
 {
-  opt = new Options();
-  mod = new Model();
+  opt = new Options(debug);
+  mod = new Model(debug);
   evt = new Event(debug, processSamplers);
-  run = new Run();
+  run = new Run(debug);
 
   optChain = new TChain("Options","Options");
   modChain = new TChain("Model","Model");
@@ -53,7 +57,7 @@ void DataLoader::CommonCtor(std::string fileName)
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
   this->ChainTrees();
-  this->SetBranchAddress();
+  this->SetBranchAddress(allBranchesOn, branchesToTurnOn);
 }
 
 void DataLoader::BuildInputFileList(std::string inputPath)
@@ -86,11 +90,9 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       globfree(&glob_result);
     }
   
-  if(debug)
-    {
-      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
-	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
-    }
+  for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+    {std::cout << "Loading> " << *fn << std::endl;}
+  
   if (fileNames.size() == 0)
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
@@ -131,6 +133,11 @@ void DataLoader::BuildEventBranchNameList()
     std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
     exit(1);
   }
+
+  // We don't need to prepare a vector of samplers that will be set branch on
+  // if we're not going to process the samplers.
+  if (!processSamplers)
+    {return;}
   
   TTree* mt = (TTree*)f->Get("Model");
   if (!mt)
@@ -167,10 +174,26 @@ void DataLoader::ChainTrees()
     }
 }
 
-void DataLoader::SetBranchAddress()
+void DataLoader::SetBranchAddress(bool allOn,
+				  const RBDS::BranchMap* bToTurnOn)
 {
-  mod->SetBranchAddress(modChain);
-  opt->SetBranchAddress(optChain);
-  evt->SetBranchAddress(evtChain, &samplerNames);
-  run->SetBranchAddress(runChain);
+  mod->SetBranchAddress(modChain, true); // true = always turn on all branches
+  opt->SetBranchAddress(optChain, true); // true = always turn on all branches
+  // note we can't parse the :: properly in the options tree so we turn on by default
+
+  const RBDS::VectorString* evtBranches = nullptr;
+  if (bToTurnOn)
+    {
+      if (bToTurnOn->find("Event.") != bToTurnOn->end())
+	{evtBranches = &(*bToTurnOn).at("Event.");}
+    }
+  evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches);
+
+  const RBDS::VectorString* runBranches = nullptr;
+  if (bToTurnOn)
+    {
+      if (bToTurnOn->find("Run.") != bToTurnOn->end())
+	{runBranches = &(*bToTurnOn).at("Run.");}
+    }
+  run->SetBranchAddress(runChain, allOn, runBranches);
 }

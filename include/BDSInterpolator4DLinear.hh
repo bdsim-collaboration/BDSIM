@@ -27,7 +27,7 @@ class BDSArray4DCoords;
 class BDSInterpolator4DLinear: public BDSInterpolator4D
 {
 public:
-  BDSInterpolator4DLinear(BDSArray4DCoords* arrayIn);
+  explicit BDSInterpolator4DLinear(BDSArray4DCoords* arrayIn);
   virtual ~BDSInterpolator4DLinear();
 
 protected:
@@ -39,12 +39,6 @@ protected:
 private:
   /// Private default constructor to force use of provided one.
   BDSInterpolator4DLinear() = delete;
-
-  /// Interpolate between to field values for a given normalised distance between
-  /// 0,1.
-  BDSFieldValue Interpolate1D(const BDSFieldValue& v1,
-			      const BDSFieldValue& v2,
-			      const G4double       dist) const;
 };
 
 #endif

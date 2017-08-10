@@ -8,6 +8,7 @@
 class G4LogicalVolume;
 class G4Material;
 class G4PVPlacement;
+class G4UserLimits;
 class G4VSolid;
 
 /**
@@ -78,7 +79,8 @@ protected:
   /// finalise beampipe construction
   void CommonConstruction(G4String    nameIn,
 			  G4Material* vacuumMaterialIn,
-			  G4Material* beamPipeMaterialIn);
+			  G4Material* beamPipeMaterialIn,
+			  G4double    length);
 
   /// build beampipe and register logical volumes
   BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
@@ -94,7 +96,7 @@ protected:
   virtual void          SetVisAttributes();
 
   /// Set user limits.
-  virtual void SetUserLimits();
+  virtual void SetUserLimits(G4double length);
 
   /// Place volumes.
   virtual void          PlaceComponents(G4String nameIn);
@@ -124,6 +126,7 @@ protected:
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4VSolid*>          allSolids;
+  std::vector<G4UserLimits*>      allUserLimits;
   std::vector<G4VisAttributes*>   allVisAttributes;
   /// @}
   

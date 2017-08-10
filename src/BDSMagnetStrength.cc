@@ -8,9 +8,12 @@
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",           // constant field in G4units
+  "eField",          // electric field in G4units
+  "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
   "fringecorr",      // fringe field correction term
+  "hkick", "vkick",  // fractional horizontal and vertical dPx (w.r.t. rigidity)
   "ks",              // not in G4 units
   "k1", "k1s",
   "k2", "k2s",
@@ -23,7 +26,10 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k9", "k9s",
   "k10", "k10s",
   "k11", "k11s",
-  "k12", "k12s"
+  "k12", "k12s",
+  "frequency",       // frequency for time varying field (presumably em)
+  "phase",           // phase for time varying field
+  "equatorRadius"    // radius from axis at which field goes to 0
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
@@ -35,18 +41,14 @@ const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
 const G4double BDSMagnetStrength::zero     = 0.0;
 G4double       BDSMagnetStrength::variable = 0.0;
 
-BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> strengths)
+BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> sts)
 {
-  for (auto keyValue : strengths)
+  for (auto keyValue : sts)
     {
       if (ValidKey(keyValue.first))
 	{(*this)[keyValue.first] = keyValue.second;}
     }
 }
-
-BDSMagnetStrength::BDSMagnetStrength(const BDSMagnetStrength& other):
-  strengths(other.strengths)
-{;}
 
 std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
 {

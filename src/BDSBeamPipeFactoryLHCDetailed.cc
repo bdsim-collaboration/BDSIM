@@ -350,28 +350,27 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String      name,
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
   
-  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
-						       outputFaceNormal);
+  G4double contRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
+						  outputFaceNormal);
   
   return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial,
-				 length, containerRadius);
+				 length, contRadius);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,
 								    G4Material* vacuumMaterial,
 								    G4Material* beamPipeMaterial,
 								    G4double    length,
-								    G4double    containerRadius)
+								    G4double    contRadius)
 {
-  BDSBeamPipeFactoryBase::CommonConstruction(name,
-					     vacuumMaterial,
-					     beamPipeMaterial);
+  BDSBeamPipeFactoryBase::CommonConstruction(name, vacuumMaterial,
+					     beamPipeMaterial, length);
 		    
   // record extents
-  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
+  BDSExtent ext = BDSExtent(contRadius, contRadius, length*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,contRadius);
   
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);
@@ -433,14 +432,17 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
     {coolingPipeLV->SetVisAttributes(pipeVisAttr);}
 }
 
-void BDSBeamPipeFactoryLHCDetailed::SetUserLimits()
+void BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
 {
-  BDSBeamPipeFactoryBase::SetUserLimits();
-  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
-  copperSkinLV->SetUserLimits(beamPipeUserLimits);
-  screenLV->SetUserLimits(beamPipeUserLimits);
+  BDSBeamPipeFactoryBase::SetUserLimits(length);
+  // get the user limits from the vacuum volume
+  // ownership registration done in base class method so no need to register it
+  auto ul = vacuumLV->GetUserLimits();
+
+  copperSkinLV->SetUserLimits(ul);
+  screenLV->SetUserLimits(ul);
   if (buildCoolingPipe)
-    {coolingPipeLV->SetUserLimits(beamPipeUserLimits);}
+    {coolingPipeLV->SetUserLimits(ul);}
 }
 
 void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
@@ -451,7 +453,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 				   G4ThreeVector(0,0,0),         // position
 				   copperSkinLV,                 // lv to be placed
 				   name + "_copper_skin_pv",     // name
-				   containerLV,                  // mother lv to be place in
+				   containerLV,                  // mother lv to be placed in
 				   false,                        // no boolean operation
 				   0,                            // copy number
 				   checkOverlaps);               // whether to check overlaps
@@ -460,7 +462,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 			       (G4ThreeVector)0,             // position
 			       screenLV,                     // lv to be placed
 			       name + "_screen_pv",          // name
-			       containerLV,                  // mother lv to be place in
+			       containerLV,                  // mother lv to be placed in
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
@@ -487,7 +489,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 					   coolingPipeTopPosition,       // position
 					   coolingPipeLV,                // lv to be placed
 					   name + "_cooling_pipe_top_pv",// name
-					   containerLV,                  // mother lv to be place in
+					   containerLV,                  // mother lv to be placed in
 					   false,                        // no boolean operation
 					   0,                            // copy number
 					   checkOverlaps);               // whether to check overlaps
@@ -496,7 +498,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 					      coolingPipeBottomPosition,    // position
 					      coolingPipeLV,                // lv to be placed
 					      name + "_cooling_pipe_bottom_pv", // name
-					      containerLV,                  // mother lv to be place in
+					      containerLV,                  // mother lv to be placed in
 					      false,                        // no boolean operation
 					      0,                            // copy number
 					      checkOverlaps);               // whether to check overlaps

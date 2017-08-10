@@ -13,19 +13,7 @@ use,period=l1;
 
 sample, range=endoftheline;
 
-option, ngenerate=1,
-	physicsList="QGSP_BERT",
-	physicsList="em",
-	beampipeRadius=5.0*cm,
-	beampipeThickness=5*cm,
-	outerDiameter=2.0*m,
-	defaultRangeCut=1*cm,	
-	prodCutPositrons=1*cm,
-	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm;
+option, ngenerate=1;
 
 beam, particle="proton",
-      energy=10.0*GeV,
-      distrType="reference",
-      X0=0.0,
-      Y0=0.0;
+      energy=10.0*GeV;

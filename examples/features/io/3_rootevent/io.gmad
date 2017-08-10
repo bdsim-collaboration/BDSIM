@@ -13,7 +13,7 @@ sample, all;
 
 ! this has to be 10 events for other test that uses the output of this for
 ! testing recreation of an event.
-option, ngenerate=10,
+option, ngenerate=30,
         physicsList="em",
         beampipeRadius=5.0*cm,
         beampipeThickness=0.1*cm,

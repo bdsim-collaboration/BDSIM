@@ -48,6 +48,7 @@ macro(simple_testing_long test_name args expression)
         set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
     endif()
     set_tests_properties(${test_name} PROPERTIES LABELS LONG)
+    set_tests_properties(${test_name} PROPERTIES TIMEOUT 1800)
 endmacro()
 
 macro(simple_fail test_name args)

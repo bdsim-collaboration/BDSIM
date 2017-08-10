@@ -20,7 +20,8 @@
  * @author Stewart Boogert
  */
 
-class AnalysisUser {
+class AnalysisUser
+{
 public:
   AnalysisUser();
   AnalysisUser(std::string filename);
@@ -60,4 +61,4 @@ private:
 };
 
 
-#endif //BDSIM_FILE_H
+#endif

@@ -15,7 +15,7 @@ BDSColourWheel::~BDSColourWheel()
 
 void BDSColourWheel::Spin()
 {
-  colour_it++;
+  ++colour_it;
   if(colour_it == palette.end())
     {Reset();}
 }

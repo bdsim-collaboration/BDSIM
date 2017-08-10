@@ -14,7 +14,7 @@
 class BDSProgressBar
 {
 public:
-  BDSProgressBar(double maxCountIn);
+  explicit BDSProgressBar(double maxCountIn);
 
   void Reset();
   inline double Count()    const {return count;}

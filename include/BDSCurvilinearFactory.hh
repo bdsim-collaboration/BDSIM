@@ -63,8 +63,6 @@ private:
 					 const G4double      chordLength,
 					 const G4double      radius,
 					 G4VSolid*           solid,
-					 const G4ThreeVector inputFaceNormal,
-					 const G4ThreeVector outputFaceNormal,
 					 const G4double      angle);
   
   /// Cache of length safety from BDSGlobalConstants.

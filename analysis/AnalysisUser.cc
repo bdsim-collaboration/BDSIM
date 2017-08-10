@@ -60,13 +60,32 @@ AnalysisUser::AnalysisUser(std::string const filename)
 
 AnalysisUser::AnalysisUser(std::vector<std::string> filenames){}
 
-AnalysisUser::~AnalysisUser(){}
+//AnalysisUser::~AnalysisUser(){}
 
-void AnalysisUser::SetBranchAddresses(TTree* optionsTree, TTree* modelTree, TTree* runTree, TTree* eventTree)
+//void AnalysisUser::SetBranchAddresses(TTree* optionsTree, TTree* modelTree, TTree* runTree, TTree* eventTree)
+
+AnalysisUser::~AnalysisUser()
 {
-  options->SetBranchAddress(optionsTree);
-  model->SetBranchAddress(modelTree);
-  run->SetBranchAddress(runTree);
+  delete f;
+  delete optionsTree;
+  delete modelTree;
+  delete runTree;
+  delete eventTree;
+
+  delete options;
+  delete model;
+  delete run;
+  delete event;
+}
+
+void AnalysisUser::SetBranchAddresses(TTree* optionsTreeIn,
+				      TTree* modelTreeIn,
+				      TTree* runTreeIn,
+				      TTree* eventTreeIn)
+{
+  options->SetBranchAddress(optionsTreeIn);
+  model->SetBranchAddress(modelTreeIn);
+  run->SetBranchAddress(runTreeIn);
 
   optionsTree->GetEntry(0);
   modelTree->GetEntry(0);
@@ -78,7 +97,7 @@ void AnalysisUser::SetBranchAddresses(TTree* optionsTree, TTree* modelTree, TTre
 
 void AnalysisUser::MakeBranches(TTree* outputTree)
 {
-  outputTree->Branch("S",&s,"S/F");
+  //outputTree->Branch("S",&s,"S/F");
   outputTree->Branch("VertexModel",(void*)&vertexmodel[0],"VertexModel[11]/C");
   outputTree->Branch("VertexX",&vertexx,"VertexX/F");
   outputTree->Branch("VertexY",&vertexy,"VertexY/F");
@@ -126,7 +145,7 @@ void AnalysisUser::Analysis()
             //std::cerr << "Warning, trying to access elements of vectors that don't exist" << std::endl;
             continue;
           }
-          s = point.position.S();
+          //s = point.position.S();
           vertexx = point.position.X();
           vertexy = point.position.Y();
           vertexz = point.position.Z();

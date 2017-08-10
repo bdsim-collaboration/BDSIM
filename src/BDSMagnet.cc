@@ -1,5 +1,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
@@ -25,17 +27,19 @@
 #include <cmath>
 #include <string>
 
+class G4Userlimits;
 
-BDSMagnet::BDSMagnet(BDSMagnetType       type,
-		     G4String            name,
-		     G4double            length,
-		     BDSBeamPipeInfo*    beamPipeInfo,
+
+BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
+		     G4String            nameIn,
+		     G4double            lengthIn,
+		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
-		     G4double            angle,
+		     G4double            angleIn,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, angle, type.ToString(), beamPipeInfo),
-  magnetType(type),
+  BDSAcceleratorComponent(nameIn, lengthIn, angleIn, typeIn.ToString(), beamPipeInfoIn),
+  magnetType(typeIn),
   magnetOuterInfo(magnetOuterInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -45,7 +49,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   outer(nullptr),
   beamPipePlacementTransform(G4Transform3D())
 {
-  outerDiameter   = magnetOuterInfo->outerDiameter;
+  outerDiameter   = magnetOuterInfoIn->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,-1);
   outputface      = G4ThreeVector(0,0, 1);
@@ -56,8 +60,11 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   placeBeamPipe = false;
 
   // It's not possible to build advanced outer geometry for a very thin magnet.
-  if (length < 1e-4*CLHEP::m) // 100um minimum length for geometry
+  if (lengthIn < 1e-4*CLHEP::m) // 100um minimum length for geometry
     {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
+  // No beam pipe geometry for really short 'magnets'
+  if (lengthIn < 1e-6*CLHEP::m)
+    {GetBeamPipeInfo()->beamPipeType = BDSBeamPipeType::circularvacuum;}
 }
 
 G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
@@ -94,7 +101,10 @@ void BDSMagnet::Build()
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
-  BDSAcceleratorComponent::Build(); // build container
+  // Instead of BDSAcceleratorComponent::Build just call BuildContainerLogicalVolume
+  // to control user limits in the case where there is no container and we just inherit
+  // the beam pipe container
+  BuildContainerLogicalVolume();
   BuildOuterField(); // must be done when the containerLV exists
   PlaceComponents(); // place things (if needed) in container
 }
@@ -127,7 +137,7 @@ void BDSMagnet::BuildVacuumField()
       G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
       vacuumFieldInfo->SetTransform(newFieldTransform);
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-								beampipe->GetVacuumLogicalVolume(),
+								beampipe->GetContainerLogicalVolume(),
 								true);
     }
 }
@@ -209,6 +219,16 @@ void BDSMagnet::BuildContainerLogicalVolume()
       containerLogicalVolume = new G4LogicalVolume(containerSolid,
 						   emptyMaterial,
 						   name + "_container_lv");
+
+      // user limits
+      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      //copy the default and update with the length of the object rather than the default 1m
+      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
+      if (ul != defaultUL) // if it's not the default register it
+        {RegisterUserLimits(ul);}
+      containerLogicalVolume->SetUserLimits(ul);
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      
       placeBeamPipe = true;
     }
   else
@@ -219,16 +239,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
       InheritExtents(beampipe);
       placeBeamPipe = false;
     }
-
-  // now protect the fields inside the container volume by giving the
-  // it a null magnetic field (otherwise G4VPlacement can
-  // over-ride the already-created fields, by calling 
-  // G4LogicalVolume::AddDaughter, which calls 
-  // pDaughterLogical->SetFieldManager(fFieldManager, true) - the
-  // latter 'true' over-writes all the other fields
-  // This shouldn't override the field attached to daughters (vacuum for example) which will
-  // retain their field manager if one is already specified.
-  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false); 
 }
 
 void BDSMagnet::PlaceComponents()

@@ -25,6 +25,7 @@
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
+#include "BDSBunchFactory.hh"
 #include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
@@ -35,6 +36,7 @@
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldCurvilinear.hh"
+#include "BDSParallelWorldCurvilinearBridge.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSPrimaryGeneratorAction.hh"
@@ -84,22 +86,17 @@ int main(int argc,char** argv)
   /// No longer needed. Everything can safely use BDSGlobalConstants from now on.
   delete execOptions; 
 
-  /// Force construction of global constants after parser has been initialised (requires materials first).
-  /// This uses the options from BDSParser.
+  /// Force construction of global constants after parser has been initialised (requires
+  /// materials first). This uses the options from BDSParser.
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options
   
-  /// Instantiate the specific type of bunch distribution (class),
-  /// get the corresponding parameters from the gmad parser info
-  /// and attach to the initialised random number generator.
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
-#endif
-  BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
+  /// Instantiate the specific type of bunch distribution.
+  BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(BDSParser::Instance()->GetOptions(),
+						    BDSGlobalConstants::Instance()->BeamlineTransform());
 
   /// Optionally generate primaries only and exit
   if (globalConstants->GeneratePrimariesOnly())
@@ -141,8 +138,10 @@ int main(int argc,char** argv)
   BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
   BDSParallelWorldCurvilinear* curvilinearWorld = new BDSParallelWorldCurvilinear();
+  BDSParallelWorldCurvilinearBridge* curvilinearBridgeWorld = new BDSParallelWorldCurvilinearBridge();
   realWorld->RegisterParallelWorld(samplerWorld);
   realWorld->RegisterParallelWorld(curvilinearWorld);
+  realWorld->RegisterParallelWorld(curvilinearBridgeWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.

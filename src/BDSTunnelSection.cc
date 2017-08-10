@@ -2,12 +2,12 @@
 
 #include "G4VSolid.hh"
 
-BDSTunnelSection::BDSTunnelSection(G4String              name,
+BDSTunnelSection::BDSTunnelSection(G4String              nameIn,
 				   G4double              chordLengthIn,
-				   G4double              angle,
+				   G4double              angleIn,
 				   BDSGeometryComponent* tunnelGeometry,
 				   G4VSolid*             innerIntersectionSolidIn):
-  BDSAcceleratorComponent(name, chordLengthIn, angle, "tunnel"),
+  BDSAcceleratorComponent(nameIn, chordLengthIn, angleIn, "tunnel"),
   innerIntersectionSolid(innerIntersectionSolidIn)
 {
   // chordLength is calculated from the angle and the arcLength by BDSAcceleratorComponent

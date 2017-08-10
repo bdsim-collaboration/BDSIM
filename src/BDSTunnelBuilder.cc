@@ -143,10 +143,10 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "skipping very first item as it's a sampler" << G4endl;
 #endif
-      previousEndElement++;
-      startElement++;
-      endElement++;
-      it++;
+      ++previousEndElement;
+      ++startElement;
+      ++endElement;
+      ++it;
     }
   
   // iterate over beam line and build tunnel segments
@@ -352,7 +352,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #endif
 	      previousEndElement = endElement;   // (copy endElement) mark the end of this element as the prevous end
 	      startElement       = endElement;   // copy end element iterator
-	      startElement++;                    // next segment will begin where this one finishes
+	      ++startElement;                    // next segment will begin where this one finishes
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
 	      G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
@@ -366,7 +366,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "moving to next item in beamline" << G4endl;
 #endif
-	  endElement++; // advance the potential end element iterator
+	  ++endElement; // advance the potential end element iterator
 	}
       
       // accumulate angle and position

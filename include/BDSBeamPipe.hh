@@ -9,8 +9,7 @@ class G4LogicalVolume;
 class G4VSolid;
 
 /**
- * @brief A holder class for all information required for a
- * piece of beampipe.  
+ * @brief A holder class for a piece of beam pipe geometry.
  * 
  * This does not implement the construction of the beampipe but merely
  * holds all relevant objects and information. 

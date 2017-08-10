@@ -7,7 +7,7 @@
 #include "G4ThreeVector.hh"
 
 class BDSMagnetStrength;
-class BDSFieldMagSBend;
+class BDSFieldMagDipole;
 class BDSFieldMagDipoleQuadrupole;
 class BDSFieldMagQuadrupole;
 
@@ -38,7 +38,7 @@ private:
   BDSFieldMagDipoleQuadrupole();
   
   BDSFieldMagQuadrupole* quad;
-  BDSFieldMagSBend*      dipole;
+  BDSFieldMagDipole*      dipole;
 };
 
 #endif

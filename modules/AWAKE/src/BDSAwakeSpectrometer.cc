@@ -29,13 +29,13 @@
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
                                             G4double magnetOffsetX,
 					    G4double length=2.7*CLHEP::m,
-					    BDSFieldInfo* fieldInfo = nullptr,
+					    BDSFieldInfo* fieldInfoIn = nullptr,
 					    G4double poleStartZ=62.733*CLHEP::cm,
 					    G4String material="lanex",
 					    G4double thickness = 0.3 * CLHEP::mm,
 					    G4double screenPSize=25*CLHEP::um,
 					    G4double windowScreenGap=0,
-					    G4double angle = -45*CLHEP::pi/180.0,
+					    G4double angleIn = -45*CLHEP::pi/180.0,
 					    G4double windowThickness=0,
 					    G4String windowMaterial="G4_Al",
 					    G4double mountThickness=0, 
@@ -44,7 +44,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 					    G4String spec="",
 					    G4double screenWidth=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
-  _fieldInfo(fieldInfo),
+  _fieldInfo(fieldInfoIn),
   _magnetOffsetX(magnetOffsetX),
   _screenWidth(screenWidth),
   _mlScreen(nullptr),
@@ -53,7 +53,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
   _thickness(thickness),
   _screenPSize(screenPSize),
   _windowScreenGap(windowScreenGap),
-  _screenAngle(angle),
+  _screenAngle(angleIn),
   _windowThickness(windowThickness),
   _windowMaterial(windowMaterial),
   _mountThickness(mountThickness), 
@@ -768,7 +768,7 @@ void BDSAwakeSpectrometer::BuildScreen()
 void BDSAwakeSpectrometer::PlaceScreen(){
     G4double lenSaf = 100*CLHEP::um;
 			//BDSGlobalConstants::Instance()->LengthSafety();
-    G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
+    //G4RotationMatrix* zeroRot = new G4RotationMatrix(0,0,0);
     //Place inside the frame cavity
    // G4double screenZOffInFrame = -0.5*_frameThicknessZ+0.5*_mlScreen->GetSize().z()+10*lenSaf;
 	 G4ThreeVector screenPosition(_screenCentreX+lenSaf*std::tan(_screenAngle), 0, _screenCentreZ+lenSaf);
@@ -813,7 +813,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   _screenEndZ += _poleStartZ;
 
 //Screen position
-	  G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
+  //G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
 	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + 0.5*_screenThickness/std::cos(_screenAngle) - std::tan(_screenAngle)*_windowOffsetXFromVCEdge;
 	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge;
 	//Offset the screen due to the _windowOffsetX

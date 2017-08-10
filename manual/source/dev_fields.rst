@@ -327,6 +327,56 @@ according to
 	    is purely due to the plotting vector field algorithm.
 
 
+Electro-Magnetic Fields From Equations
+======================================
+
+.. _field-pill-box:
+
+Pill-Box Cavity
+---------------
+
+The pill-box cavity field is constructed with an electric field amplitude :math:`E`, a
+frequency :math:`f`, phase :math:`\psi` and cavity radius. The cavity radius is used to
+normalise the Bessel function so that the field drops to zero at this point. The field
+is time dependent and the :math:`E_z` and :math:`B_{\phi}` components are calculated
+and then returned in 3D Cartesian coordinates. The cavity radius is used to calculate
+a normalised radius :math:`r_n` with respect to the first 0 of the 0th Bessel:
+
+.. math::
+
+   r_n = r \, \frac{2.404825557695772768622} { \mathrm{cavity\,radius}}
+
+The electric field is calculated as:
+
+.. math::
+   
+   E_z      & = E \, J_{0}(r) \cos(2\,\pi\,f\,t + \psi) \\
+
+The B field amplitude is calculated from the E field amplitude.
+
+.. math::
+
+   H & = \frac{E_z}{Z_{0}} \\
+   B & = \mu_{0} H
+
+where :math:`Z_{0}` is the impedance of free space. To calculate B, a vacuum is assumed
+and therefore only the vacuum permeability is used to calculate B from H.
+
+The radial magnetic field in the pill-box field is:
+
+.. math::
+   
+   B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r) \sin(2\,\pi\,f\,t + \psi)
+
+
+The 3D Cartesian field vectors are therefore:
+
+.. math::
+
+   \mathbf{B} & = (B_{\phi}\,\cos(\phi),\, &B_{\phi}\,\sin(\phi), \,&0) \\
+   \mathbf{E} & = (0, \,&0, \,&E_z)
+   
+
 .. _field-map-formats:
 
 Field Map File Formats

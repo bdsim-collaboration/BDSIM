@@ -13,7 +13,9 @@
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4UserLimits.hh"
 
+#include <algorithm>
 #include <cmath>
 
 G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
@@ -113,13 +115,35 @@ void BDSAcceleratorComponent::Build()
   // set user limits for container & visual attributes
   if(containerLogicalVolume)
     {
-      containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+      // user limits
+      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      //copy the default and update with the length of the object rather than the default 1m
+      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
+      if (ul != defaultUL) // if it's not the default register it
+        {RegisterUserLimits(ul);}
+      containerLogicalVolume->SetUserLimits(ul);
       containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
     }
 }
 
 void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
 {
-  delete fieldInfo; // clear up existing definition if there is one
   fieldInfo = fieldInfoIn;
 }
+
+G4bool BDSAcceleratorComponent::AngledInputFace() const
+{
+  G4ThreeVector zeroAngle = G4ThreeVector(0,0,-1);
+  G4ThreeVector cross = inputFaceNormal.cross(zeroAngle);
+  G4double det = cross.mag2();
+  return BDS::IsFinite(det); // if finite, there is an angle and if not, no angle
+}
+
+G4bool BDSAcceleratorComponent::AngledOutputFace() const
+{
+  G4ThreeVector zeroAngle = G4ThreeVector(0,0,1);
+  G4ThreeVector cross = outputFaceNormal.cross(zeroAngle);
+  G4double det = cross.mag2();
+  return BDS::IsFinite(det);
+}
+

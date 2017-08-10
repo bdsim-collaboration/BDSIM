@@ -1,0 +1,13 @@
+s1: screen, l=10*cm, screenXSize=1*cm, screenYSize=1*cm, angle=-20*mrad, layerThicknesses={10*mm, 10*mm, 10*mm}, layerMaterials={"n-bk7", "fusedsilica", "lanex"};
+
+l1: line = (s1);
+
+use, l1;
+
+option, physicsList="optical";
+
+option, checkOverlaps=1;
+
+beam, particle="gamma",
+      energy=0.2*eV,
+      Xp0=-20*mrad;

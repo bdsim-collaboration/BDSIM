@@ -3,7 +3,8 @@
 
 #include "TObject.h"
 
-#include "parser/optionsBase.h"
+// relative path to suppress ROOT error message (issue #199)
+#include "../parser/optionsBase.h"
 
 /** 
  * @brief Class to store all options for a BDSIM run.
@@ -15,7 +16,7 @@ class BDSOutputROOTEventOptions: public TObject, public GMAD::OptionsBase
 {
 public:
   BDSOutputROOTEventOptions();
-  BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
+  explicit BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
   virtual ~BDSOutputROOTEventOptions();
   
 #ifndef __ROOTBUILD__   

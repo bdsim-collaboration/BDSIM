@@ -24,7 +24,7 @@ class BDSArray3DCoords;
 class BDSInterpolator3DCubic: public BDSInterpolator3D
 {
 public:
-  BDSInterpolator3DCubic(BDSArray3DCoords* arrayIn);
+  explicit BDSInterpolator3DCubic(BDSArray3DCoords* arrayIn);
   virtual ~BDSInterpolator3DCubic();
 
 protected:

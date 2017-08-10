@@ -57,7 +57,7 @@ Parser* Parser::Instance()
   return instance;
 }
 
-Parser* Parser::Instance(std::string name)
+Parser* Parser::Instance(const std::string& name)
 {
   if(instance) {
     std::cerr << "Warning parser was already initialized!" << std::endl;
@@ -229,7 +229,7 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
   element_list.push_back(e,true);
 }
 
-void Parser::expand_line(std::string name, std::string start, std::string end)
+void Parser::expand_line(const std::string& name, std::string start, std::string end)
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
@@ -448,7 +448,7 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
     }
 }
 
-void Parser::add_sampler(std::string name, int count, ElementType type)
+void Parser::add_sampler(const std::string& name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler "<<name;
@@ -459,7 +459,7 @@ void Parser::add_sampler(std::string name, int count, ElementType type)
   set_sampler(name,count,type,"plane");
 }
 
-void Parser::add_csampler(std::string name, int count, ElementType type)
+void Parser::add_csampler(const std::string& name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler "<<name;
@@ -470,7 +470,7 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
   set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
-Element& Parser::find_element(std::string element_name)
+Element& Parser::find_element(const std::string& element_name)
 {
   std::list<Element>::iterator it = element_list.find(element_name);
   std::list<Element>::const_iterator iterEnd = element_list.end();
@@ -482,7 +482,7 @@ Element& Parser::find_element(std::string element_name)
   return (*it);
 }
 
-const Element& Parser::find_element(std::string element_name)const
+const Element& Parser::find_element(const std::string& element_name)const
 {
   std::list<Element>::const_iterator it = element_list.find(element_name);
   std::list<Element>::const_iterator iterEnd = element_list.end();
@@ -494,13 +494,13 @@ const Element& Parser::find_element(std::string element_name)const
   return (*it);
 }
 
-double Parser::property_lookup(std::string element_name, std::string property_name)const
+double Parser::property_lookup(const std::string& element_name, const std::string& property_name)const
 {
   const Element& element = find_element(element_name);
   return element.property_lookup(property_name);
 }
 
-void Parser::add_element_temp(std::string name, int number, bool pushfront, ElementType linetype)
+void Parser::add_element_temp(const std::string& name, int number, bool pushfront, ElementType linetype)
 {
 #ifdef BDSDEBUG
   std::cout << "matched sequence element, " << name;
@@ -524,7 +524,7 @@ void Parser::add_element_temp(std::string name, int number, bool pushfront, Elem
   }
 }
 
-int Parser::copy_element_to_params(std::string elementName)
+int Parser::copy_element_to_params(const std::string& elementName)
 {
   int type;
 #ifdef BDSDEBUG
@@ -587,7 +587,7 @@ void Parser::ClearParams()
   params.flush();
 }
 
-void Parser::OverwriteElement(std::string elementName)
+void Parser::OverwriteElement(const std::string& elementName)
 {
   Element& element = find_element(elementName);
   // add and overwrite properties if set

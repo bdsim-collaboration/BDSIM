@@ -32,9 +32,10 @@ public:
   /// @}
   void SetPhys(G4PVPlacement* phys);
   void SetColour(G4Colour col);
+  /*
   void backInternalMirror();
   void frontInternalMirror();
-
+  */
   /// Make this plane a sampling plane.
   void AssignSampler();
 
@@ -51,6 +52,7 @@ protected:
   G4VSolid* solid = nullptr;
 
 private:
+  /*
   class InternalMirror
   {
   public:
@@ -81,6 +83,7 @@ private:
   };
   
   InternalMirror* internalMirror = nullptr;
+  */
   virtual void Build();
   void BuildGroove();
   virtual void BuildScreen();

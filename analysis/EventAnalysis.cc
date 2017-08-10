@@ -23,28 +23,33 @@ EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
   printModulo(1),
-  processSamplers(false)
+  processSamplers(false),
+  emittanceOnTheFly(false)
 {;}
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
-			     TChain* chain,
+			     TChain* chainIn,
 			     bool    processSamplersIn,
-			     bool    debug,
-			     double  printModuloFraction):
-  Analysis("Event.", chain, "EventHistogramsMerged", debug),
+			     bool    debugIn,
+			     double  printModuloFraction,
+			     bool    emittanceOnTheFlyIn):
+  Analysis("Event.", chainIn, "EventHistogramsMerged", debugIn),
   event(eventIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  emittanceOnTheFly(emittanceOnTheFlyIn)
 {
-  // Analyse the primary sampler in the optics too.
-  SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
-  samplerAnalyses.push_back(sa);
-  
-  // create sampler analyses
-  for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
-  {
-    sa = new SamplerAnalysis(*i);
-    this->samplerAnalyses.push_back(sa);
-  }
+  if (processSamplers)
+    {// Create sampler analyses if needed
+      // Analyse the primary sampler in the optics too.
+      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+      samplerAnalyses.push_back(sa);
+      
+      for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
+	{
+	  sa = new SamplerAnalysis(*i);
+	  this->samplerAnalyses.push_back(sa);
+	}
+    }
   
   SetPrintModuloFraction(printModuloFraction);
 }
@@ -65,10 +70,12 @@ EventAnalysis::~EventAnalysis()
 
 void EventAnalysis::Process()
 {
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
   Initialise();
 
   if(debug)
-    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+    {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
   const int entries = chain->GetEntries();
@@ -86,25 +93,30 @@ void EventAnalysis::Process()
 	}
       
       if(i==0)
-	{histoSum = new HistogramMerge(event->histos);}
+	{histoSum = new HistogramMerge(event->histos, debug);}
       else
 	{histoSum->Add(event->histos);}
+
+      UserProcess();
 
       if(debug)
 	{
 	  std::cout << __METHOD_NAME__ << i << std::endl;
-	  std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-	  std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
-	  std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
-	  //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
+        if (processSamplers)
+        {
+            std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+            std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
+            std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
+            //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
+        }
 	}
       
       if(processSamplers)
-	{ProcessSamplers();}
+	{ProcessSamplers(i==0);}
     }
   std::cout << "\rSampler analysis complete                           " << std::endl;
 }
@@ -113,10 +125,15 @@ void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
 
-  for (auto samplerAnalysis : samplerAnalyses)
+  if (processSamplers)
     {
-      samplerAnalysis->Terminate();
-      opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
+      //vector of emittance values and errors: emitt_x, emitt_y, err_emitt_x, err_emitt_y
+      std::vector<double> emittance = {0,0,0,0};
+      for (auto samplerAnalysis : samplerAnalyses)
+	{
+	  emittance = samplerAnalysis->Terminate(emittance, !emittanceOnTheFly);
+	  opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
+	}
     }
 }
 
@@ -125,8 +142,13 @@ void EventAnalysis::Write(TFile *outputFile)
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
 
-  //Write rebdsim histograms:
+  // Write rebdsim histograms:
   Analysis::Write(outputFile);
+
+  // We don't need to write out the optics tree if we didn't process samplers
+  // as there's no possibility of optical data.
+  if (!processSamplers)
+    {return;}
 
   outputFile->cd("/");
 
@@ -203,14 +225,28 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Write();
 }
 
-void EventAnalysis::ProcessSamplers()
+void EventAnalysis::ProcessSamplers(bool firstTime)
 {
-  for(auto s : samplerAnalyses)
-    {s->Process();}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
+  if (processSamplers)
+    {
+      if (debug)
+	{std::cout << __METHOD_NAME__ << std::endl;}
+      for(auto s : samplerAnalyses)
+	{s->Process(firstTime);}
+    }
 }
 
 void EventAnalysis::Initialise()
 {
-  for (auto s : samplerAnalyses)
-    {s->Initialise();}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << std::endl;}
+  if (processSamplers)
+    {
+      if (debug)
+	{std::cout << __METHOD_NAME__ << std::endl;}
+      for (auto s : samplerAnalyses)
+	{s->Initialise();}
+    }
 }

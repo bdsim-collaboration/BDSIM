@@ -15,8 +15,8 @@ SamplerAnalysis::SamplerAnalysis():
 SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
 				 bool debugIn):
 #else 
-  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
-				   bool debugIn):
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+                                 bool debugIn):
 #endif
   s(samplerIn),
   S(0),
@@ -30,6 +30,12 @@ void SamplerAnalysis::CommonCtor()
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
+
+  //initialise a vector to store the coordinates of every event in a sampler
+  coordinates.resize(6, 0);
+
+  //initialise a vector to store the first values in a sampler for assumed mean subtraction
+  offsets.resize(6, 0);
   
   optical.resize(3); // resize to 3 entries initialised to 0
   varOptical.resize(3);
@@ -58,20 +64,33 @@ void SamplerAnalysis::CommonCtor()
   powSums.resize(6);
   cenMoms.resize(6);
 
+  powSumsFirst.resize(6); //First sampler
+  cenMomsFirst.resize(6);
+
   // (x,xp,y,yp,E,t) (x,xp,y,yp,E,t) v1pow, v2pow
   for(int i=0;i<6;++i)
   {
     powSums[i].resize(6);
     cenMoms[i].resize(6);
 
+    powSumsFirst[i].resize(6);
+    cenMomsFirst[i].resize(6);
+
     for(int j=0;j<6;++j)
     {
       powSums[i][j].resize(5);
       cenMoms[i][j].resize(5);
+
+      powSumsFirst[i][j].resize(5);
+      cenMomsFirst[i][j].resize(5);
+      
       for(int k=0;k<=4;++k)
       {
         powSums[i][j][k].resize(5, 0);
         cenMoms[i][j][k].resize(5, 0);
+
+	powSumsFirst[i][j][k].resize(5, 0);
+        cenMomsFirst[i][j][k].resize(5, 0);
       }
     }
   }
@@ -87,13 +106,10 @@ void SamplerAnalysis::Initialise()
   npart = 0;
 }
 
-void SamplerAnalysis::Process()
+void SamplerAnalysis::Process(bool firstTime)
 {
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
-
-  std::vector<double> v;
-  v.resize(6);
 
   this->S = this->s->S;
   
@@ -104,12 +120,18 @@ void SamplerAnalysis::Process()
       {continue;} // select only primary particles
     if (s->turnNumber[i] > 1)
       {continue;} // only use first turn particles
-    v[0] = s->x[i];
-    v[1] = s->xp[i];
-    v[2] = s->y[i];
-    v[3] = s->yp[i];
-    v[4] = s->energy[i];
-    v[5] = s->t[i];
+
+    coordinates[0] = s->x[i];
+      coordinates[1] = s->xp[i];
+      coordinates[2] = s->y[i];
+      coordinates[3] = s->yp[i];
+      coordinates[4] = s->energy[i];
+      coordinates[5] = s->t[i];
+
+    if (firstTime)
+      {
+          offsets = coordinates;
+      }
 
     // power sums
     for(int a=0;a<6;++a)
@@ -120,7 +142,7 @@ void SamplerAnalysis::Process()
 	      {
 		for (int k = 0; k <= 4; ++k)
 		  {
-		    powSums[a][b][j][k] += std::pow(v[a],j)*std::pow(v[b],k);
+		    powSums[a][b][j][k] += std::pow(coordinates[a]-offsets[a],j)*std::pow(coordinates[b]-offsets[b],k);
 		  }
 	      }
 	  }
@@ -129,10 +151,14 @@ void SamplerAnalysis::Process()
   }
 }
 
-void SamplerAnalysis::Terminate()
+std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
+					       bool useEmittanceFromFirstSampler)
 {
   if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
+
+  //determine whether the input emittance is non-zero
+  bool nonZeroEmittanceIn = !std::all_of(emittance.begin(), emittance.end(), [](double l) { return l==0; });
 
   // central moments
   for(int a=0;a<6;++a)
@@ -156,14 +182,16 @@ void SamplerAnalysis::Terminate()
     if(i == 1) j = 2;
     if(i == 2) j = 4;
 
-    //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs.
+    //note: optical functions vector not populated in sequential order in order
+    // to apply dispersion correction to lattice funcs.
 
-    optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                                // mean spatial (transv.)/ mean E (longit.)
-    optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                                // mean divergence (transv.)/ mean t (longit.)
-    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial   (transv.)/ sigma E (longit.)
-    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence (transv.)/ sigma t (longit.)
+    optical[i][6]  = cenMoms[j][j+1][1][0]; // mean spatial (transv.)/ mean E (longit.)
+    optical[i][7]  = cenMoms[j][j+1][0][1]; // mean divergence (transv.)/ mean t (longit.)
+    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]); // sigma spatial   (transv.)/ sigma E (longit.)
+    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]); // sigma divergence (transv.)/ sigma t (longit.)
 
-    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    // tranverse optical function calculation skipped for longitudinal plane,
+    // only mean and sigma of longit. coordinates recorded
     if (i==2)
       {continue;}
 
@@ -171,24 +199,34 @@ void SamplerAnalysis::Terminate()
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
 
     // check for nans (expected if dE=0) and set disp=0 if found
-    if (std::isnan(optical[i][4]))
+    if (!std::isfinite(optical[i][4]))
       {optical[i][4] = 0;}
-    if (std::isnan(optical[i][5]))
+    if (!std::isfinite(optical[i][5]))
       {optical[i][5] = 0;}
 
-    double corrCentMom_2_0 = 0.0, corrCentMom_0_2 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
-    
+    // temp variables to store dispersion corrected moments
+    double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0;
+    double corrCentMom_0_2 = 0.0;
+
     corrCentMom_2_0 = cenMoms[j][j+1][2][0] + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
-    
-    corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-            - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
+
+
+      corrCentMom_0_2 = cenMoms[j][j+1][0][2] + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
+           - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
     
     corrCentMom_1_1 = cenMoms[j][j+1][1][1] + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
             - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0] - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
 
-    
-    optical[i][0]  = sqrt(corrCentMom_2_0*corrCentMom_0_2-std::pow(corrCentMom_1_1,2));                                                    // emittance
+      if(useEmittanceFromFirstSampler && nonZeroEmittanceIn)
+      {
+          optical[i][0]  = emittance[i];
+      }
+      else
+      {
+          optical[i][0] = sqrt(corrCentMom_2_0 * corrCentMom_0_2 - std::pow(corrCentMom_1_1, 2));                                          //emittance
+      }
+
     optical[i][1]  = -corrCentMom_1_1/optical[i][0];                                                                                       // alpha
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                                                                        // beta
     optical[i][3]  = (1+std::pow(optical[i][1],2))/optical[i][2];                                                                          // gamma
@@ -211,7 +249,8 @@ void SamplerAnalysis::Terminate()
 	}
     }
   
-  //derivative matrix of parameters for optical functions. Each entry is a first order derivative w.r.t central moments.  
+  // derivative matrix of parameters for optical functions. Each entry is
+  // a first order derivative w.r.t central moments.  
   for(int i=0;i<3;++i)
     {
       for(int j=0;j<12;++j) //loop over optical functions.
@@ -247,41 +286,56 @@ void SamplerAnalysis::Terminate()
 	    {optical[i][j+12]=optical[i][j+2]/sqrt(npart);} //errors of the means 
 	  else if(j == 10 || j == 11)
 	    {optical[i][j+12]= 0.0;}                        //no errors on S and Npart
+          else if (j==0)
+            {
+                if(useEmittanceFromFirstSampler && nonZeroEmittanceIn)
+                {
+                    optical[i][j+12]=emittance[j+2];
+                }
+                else
+                {
+                    optical[i][j+12]=sqrt(varOptical[i][j]);
+                }
+            }
 	  else
 	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
-  
+
+  //emitt_x, emitt_y, err_emitt_x, err_emitt_y
+  std::vector<double> emittanceOut = {optical[0][0],
+				      optical[1][0],
+				      optical[0][12],
+				      optical[1][12]};
+
+  return emittanceOut;
 }
 
-
-
-double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
-					      long long int         npartIn,
+double SamplerAnalysis::powSumToCentralMoment(fourDArray&   powSumsIn,
+					      long long int npartIn,
 					      int a,
 					      int b,
 					      int m,
 					      int n)
-//Returns a central moment calculated from the corresponding coordinate power sums.
-//Arguments:
-//    powSums: array contatining the coordinate power sums
-//    a, b:  integer identifier for the coordinate (0->x, 1->xp, 2->y, 3->yp, 4->E, 5->t)
-//    m, n:  order of the moment wrt to the coordinate
-//    note:  total order of the mixed moment is given by k = m + n
-  
 {
   double moment = 0.0;
-  
-  double npartPow1 = (double)npartIn;       //explicitly multiply out the number of particles to achieve the appropriate power.          
-  double npartPow2 = npartPow1 * npartPow1;     //Done because of potential problems with the pow() funtion in C++ where some aruments cause NaNs
-  double npartPow3 = npartPow2 * npartPow1;   //Typecast to a double is done to avoid integer overflow for large number of particles.
+
+  // Explicitly multiply out the number of particles to achieve the appropriate power.          
+  // Typecast to a double is done to avoid integer overflow for large number of particles.
+  double npartPow1 = (double)npartIn;
+
+  // Done because of potential problems with the pow() funtion in C++ where some
+  // arguments cause NaNs
+  double npartPow2 = npartPow1 * npartPow1;
+  double npartPow3 = npartPow2 * npartPow1;   
   double npartPow4 = npartPow3 * npartPow1;
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
-      double s_1_0 = powSums[a][b][m][n];
+      double s_1_0 = powSumsIn[a][b][m][n];
+      int k = m > n ? a : b;
 
-      moment = s_1_0/npartIn;
+      moment = s_1_0/npartIn+offsets[k];
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))
@@ -289,13 +343,13 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       double s_1_0 = 0.0, s_2_0 = 0.0;
       if(m == 2)
       {
-	      s_1_0 = powSums[a][b][m-1][n];
-	      s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-1][n];
+	      s_2_0 = powSumsIn[a][b][m][n];
       }
       else if(n == 2)
       {
-	      s_1_0 = powSums[a][b][m][n-1];
-	      s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m][n-1];
+	      s_2_0 = powSumsIn[a][b][m][n];
       }
 
       moment =  (npartPow1*s_2_0 - std::pow(std::abs(s_1_0),2))/(npartPow1*(npartPow1-1));
@@ -305,9 +359,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
     {
       double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0;
 
-      s_1_0 = powSums[a][b][m][n-1];
-      s_0_1 = powSums[a][b][m-1][n];
-      s_1_1 = powSums[a][b][m][n];
+      s_1_0 = powSumsIn[a][b][m][n-1];
+      s_0_1 = powSumsIn[a][b][m-1][n];
+      s_1_1 = powSumsIn[a][b][m][n];
 
       moment =  (npartPow1*s_1_1 - s_0_1*s_1_0)/(npartPow1*(npartPow1-1));
     }
@@ -317,17 +371,17 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
       if(m == 4)
       {
-	      s_1_0 = powSums[a][b][m-3][n];
-	      s_2_0 = powSums[a][b][m-2][n];
-	      s_3_0 = powSums[a][b][m-1][n];
-	      s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-3][n];
+	      s_2_0 = powSumsIn[a][b][m-2][n];
+	      s_3_0 = powSumsIn[a][b][m-1][n];
+	      s_4_0 = powSumsIn[a][b][m][n];
       }
       else if( n == 4)
       {
-	      s_1_0 = powSums[a][b][m][n-3];
-	      s_2_0 = powSums[a][b][m][n-2];
-	      s_3_0 = powSums[a][b][m][n-1];
-	      s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m][n-3];
+	      s_2_0 = powSumsIn[a][b][m][n-2];
+	      s_3_0 = powSumsIn[a][b][m][n-1];
+	      s_4_0 = powSumsIn[a][b][m][n];
       }
 
       moment = - (3*std::pow(s_1_0,4))/npartPow4 + (6*std::pow(s_1_0,2)*s_2_0)/npartPow3
@@ -340,23 +394,23 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       
       if(m == 3)
       {
-	      s_1_0 = powSums[a][b][m-2][n-1];
-	      s_0_1 = powSums[a][b][m-3][n];
-	      s_1_1 = powSums[a][b][m-2][n];
-	      s_2_0 = powSums[a][b][m-1][n-1];
-	      s_2_1 = powSums[a][b][m-1][n];
-	      s_3_0 = powSums[a][b][m][n-1];
-	      s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-2][n-1];
+	      s_0_1 = powSumsIn[a][b][m-3][n];
+	      s_1_1 = powSumsIn[a][b][m-2][n];
+	      s_2_0 = powSumsIn[a][b][m-1][n-1];
+	      s_2_1 = powSumsIn[a][b][m-1][n];
+	      s_3_0 = powSumsIn[a][b][m][n-1];
+	      s_3_1 = powSumsIn[a][b][m][n];
       }
       else if(n == 3)
       {
-	      s_1_0 = powSums[a][b][m-1][n-2];
-	      s_0_1 = powSums[a][b][m][n-3];
-	      s_1_1 = powSums[a][b][m][n-2];
-	      s_2_0 = powSums[a][b][m-1][n-1];
-	      s_2_1 = powSums[a][b][m][n-1];
-	      s_3_0 = powSums[a][b][m-1][n];
-	      s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSumsIn[a][b][m-1][n-2];
+	      s_0_1 = powSumsIn[a][b][m][n-3];
+	      s_1_1 = powSumsIn[a][b][m][n-2];
+	      s_2_0 = powSumsIn[a][b][m-1][n-1];
+	      s_2_1 = powSumsIn[a][b][m][n-1];
+	      s_3_0 = powSumsIn[a][b][m-1][n];
+	      s_3_1 = powSumsIn[a][b][m][n];
       }
 
       moment = - (3*s_0_1*std::pow(s_1_0,3))/npartPow4 + (3*s_1_0*s_1_0*s_1_1)/npartPow3
@@ -368,14 +422,14 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
     {
       double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_0_2 = 0.0, s_1_2 = 0.0, s_2_1 = 0.0, s_2_2 = 0.0;
 
-      s_1_0 = powSums[a][b][m-1][n-2];
-      s_0_1 = powSums[a][b][m-2][n-1];
-      s_1_1 = powSums[a][b][m-1][n-1];
-      s_2_0 = powSums[a][b][m][n-2];
-      s_0_2 = powSums[a][b][m-2][n];
-      s_1_2 = powSums[a][b][m-1][n];
-      s_2_1 = powSums[a][b][m][n-1];
-      s_2_2 = powSums[a][b][m][n];
+      s_1_0 = powSumsIn[a][b][m-1][n-2];
+      s_0_1 = powSumsIn[a][b][m-2][n-1];
+      s_1_1 = powSumsIn[a][b][m-1][n-1];
+      s_2_0 = powSumsIn[a][b][m][n-2];
+      s_0_2 = powSumsIn[a][b][m-2][n];
+      s_1_2 = powSumsIn[a][b][m-1][n];
+      s_2_1 = powSumsIn[a][b][m][n-1];
+      s_2_2 = powSumsIn[a][b][m][n];
 
       moment = - (3*std::pow(s_0_1,2)*std::pow(s_1_0,2))/npartPow4 + (s_0_2*std::pow(s_1_0,2))/npartPow3
 	       + (4*s_0_1*s_1_0*s_1_1)/npartPow3 - (2*s_1_0*s_1_2)/npartPow2
@@ -385,14 +439,12 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
     return moment;
 }
 
-double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, long long int npartIn,  int k, int i, int j)
-{
-  // Returns a matrix element of the parameter covariance matrix which is a 3x3 symmetric matrix in each plane (coupling is ignored). 
-  // Arguments:
-  //     int k:   plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
-  //     int i,j: indices of matrix elements (i,j=0: <uu>, i,j=1: <u'u'>, i,j=2: <uu'>)
-  //     e.g. covMat[0][1][2] = cov[<x'x'>,<xx'>], covMat[1][0][0] = cov[<yy>,<yy>]
-  
+double SamplerAnalysis::centMomToCovariance(fourDArray&   centMoms,
+					    long long int npartIn,
+					    int k,
+					    int i,
+					    int j)
+{  
   double cov = 0.0;
 
   int a = 0;
@@ -464,14 +516,11 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, long long int 
   return cov;
 }
 
-
-double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, int i)
-  // Returns the derivative of an optical function w.r.t. central moments. 
-  // Arguments:
-  //     int t: function specifier, corresponds to index of the function in the optical function vector. 
-  //     int k: plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
-  //     int i: central moment to diffrentiate w.r.t, i=0: <uu>, i=1: <u'u'>, i=2: <uu'>
-  //     e.g. derivMat[t=2][k=0][i=0]: d(beta)/d<xx> , derivMat[t=0][k=1][i=1]: d(emittance)/d<yy'>
+double SamplerAnalysis::centMomToDerivative(fourDArray& centMoms,
+					    int k,
+					    int t,
+					    int i)
+ 
 {
   double deriv = 0.0;
 

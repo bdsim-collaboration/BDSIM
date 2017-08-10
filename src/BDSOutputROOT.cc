@@ -95,8 +95,7 @@ void BDSOutputROOT<Type>::Initialise()
   // set up the root file
   G4String basefilename = globalConstants->OutputFileName();
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
+  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
@@ -297,11 +296,11 @@ void BDSOutputROOT<Type>::WritePrimary(G4double totalEnergy,
 				       G4double x0,
 				       G4double y0,
 				       G4double z0,
-				       G4double xp,
-				       G4double yp,
-				       G4double zp,
-				       G4double t,
-				       G4double weight,
+				       G4double xpIn,
+				       G4double ypIn,
+				       G4double zpIn,
+				       G4double tIn,
+				       G4double weightIn,
 				       G4int    PDGType, 
 				       G4int    nEvent, 
 				       G4int    turnsTaken)
@@ -312,9 +311,9 @@ void BDSOutputROOT<Type>::WritePrimary(G4double totalEnergy,
   WriteRootHit(samplerTrees[0], // Primaries is the first Sampler
 	       totalEnergy, 
 	       x0, y0, z0, 
-	       xp, yp, zp, 
-	       t,/*s=*/0.0,
-	       weight, 
+	       xpIn, ypIn, zpIn, 
+	       tIn,/*s=*/0.0,
+	       weightIn, 
 	       PDGType, 
 	       nEvent, 
 	       0, 

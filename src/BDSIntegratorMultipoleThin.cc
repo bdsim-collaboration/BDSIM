@@ -9,19 +9,21 @@
 #include <cmath>
 #include <list>
 #include <vector>
+#include <include/BDSGlobalConstants.hh>
 
 
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
-						       G4double                 brho,
+						       G4double                 brhoIn,
 						       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorMag(eqOfMIn, 6)
+  BDSIntegratorMag(eqOfMIn, 6),
+  brho(brhoIn)
 {
   b0l = (*strength)["field"] * brho;
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
   std::vector<G4String>::iterator skey = skewKeys.begin();
-  for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
+  for (G4double i = 0; i < normKeys.size(); i++, ++nkey, ++skey)
     {
       bnl.push_back((*strength)[*nkey] / std::pow(CLHEP::m,i+1));
       bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
@@ -40,7 +42,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double      momMag = mom.mag();
   
   // global to local
-  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false, thinElementLength);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMom     = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();
@@ -60,7 +62,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double yp  = localMomUnit.y();
   G4double zp  = localMomUnit.z();
 
-  // initialise output varibles with input position as default
+  // initialise output variables with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
   G4double z1  = z0 + h; // new z position will be along z by step length h
@@ -78,16 +80,19 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momx;
   G4double momy;
 
+  // normalise to momentum and charge
+  G4double ratio = eqOfM->FCof() * brho / momMag;
+
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
 
   // sum higher order components into one kick
-  for (; kn != bnl.end(); n++, kn++)
+  for (; kn != bnl.end(); n++, ++kn)
     {
       momx = 0; //reset to zero
       momy = 0;
-      knReal = (*kn) * std::pow(position,n).real() / nfact[n];
-      knImag = (*kn) * std::pow(position,n).imag() / nfact[n];
+      knReal = (*kn) * ratio * std::pow(position,n).real() / nfact[n];
+      knImag = (*kn) * ratio * std::pow(position,n).imag() / nfact[n];
       if (!std::isnan(knReal))
 	{momx = knReal;}
       if (!std::isnan(knImag))
@@ -112,15 +117,15 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
-  for (; ks != bsl.end(); n++, ks++)
+  for (; ks != bsl.end(); n++, ++ks)
     {
       if (BDS::IsFinite(*ks))
         {
           //reset to zero
           momx = 0;
           momy = 0;
-          ksReal = (*ks) * std::pow(position, n).real() / nfact[n];
-          ksImag = (*ks) * std::pow(position, n).imag() / nfact[n];
+          ksReal = (*ks) * ratio * std::pow(position, n).real() / nfact[n];
+          ksImag = (*ks) * ratio * std::pow(position, n).imag() / nfact[n];
           if (!std::isnan(ksReal))
             {momx = ksReal;}
           if (!std::isnan(ksImag))
@@ -138,7 +143,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
     {zp1 = zp;}
 
   // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
-  if (std::isnan(zp1) or (zp1 < 0.9))
+  if (std::isnan(zp1) || (zp1 < 0.9))
     {
       AdvanceDriftMag(yIn, h, yOut);
       SetDistChord(0);
@@ -147,8 +152,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-
-  ConvertToGlobal(localPosOut,localMomUnitOut,momMag,yOut);
+  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, momMag);
 
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}

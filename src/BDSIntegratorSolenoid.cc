@@ -185,8 +185,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	 << " z' = " << LocalRp[2]         << G4endl
 	 << G4endl; 
 #endif
-  
-  ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
+
+  ConvertToGlobal(LocalR, LocalRp, yOut, InitPMag);
   
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i]=0;} //set error to be zero

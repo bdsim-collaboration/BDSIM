@@ -1,7 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
-#include "BDSFieldMagSBend.hh"
+#include "BDSFieldMagDipole.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -10,7 +10,7 @@
 BDSFieldMagDipoleQuadrupole::BDSFieldMagDipoleQuadrupole(BDSMagnetStrength const* strength,
 							 G4double          const  brho):
   quad(new BDSFieldMagQuadrupole(strength, brho)),
-  dipole(new BDSFieldMagSBend(strength, brho))
+  dipole(new BDSFieldMagDipole(strength, brho))
 {;}
 
 BDSFieldMagDipoleQuadrupole::~BDSFieldMagDipoleQuadrupole()

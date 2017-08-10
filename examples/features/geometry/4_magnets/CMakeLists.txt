@@ -30,3 +30,4 @@ simple_testing(28_size_variation_hkicker_c      "--file=28_size_variation_hkicke
 simple_testing(29_size_variation_vkicker_c      "--file=29_size_variation_vkicker_c.gmad"      ${OVERLAP_CHECK})
 simple_testing_long(30_dipole_pole_face         "--file=30_dipole_pole_face.gmad"              ${OVERLAP_CHECK})
 simple_testing(31_yoke_placement                "--file=31_yoke_placement.gmad"                ${OVERLAP_CHECK})
+simple_fail(32_outer_too_small,                 "--file=32_outer_too_small.gmad"               ${OVERLAP_CHECK})

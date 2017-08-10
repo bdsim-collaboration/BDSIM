@@ -51,7 +51,7 @@ public:
 				    const G4int t = 0);
 
   /// Convenience accessor to operator().
-  BDSFieldValue& operator()(const BDSFourVector<G4int> pos)
+  BDSFieldValue& operator()(const BDSFourVector<G4int>& pos)
   {return operator()(pos.x(), pos.y(), pos.z(), pos.t());}
 
   /// Accessor only as returns const reference to data. By being named
@@ -69,7 +69,7 @@ public:
 					  const G4int t = 0) const;
 
   /// Convenience accessor to operator().
-  const BDSFieldValue& operator()(const BDSFourVector<G4int> pos) const
+  const BDSFieldValue& operator()(const BDSFourVector<G4int>& pos) const
   {return operator()(pos.x(), pos.y(), pos.z(), pos.t());}
 
   /// Return whether the indices are valid and lie within the array boundaries or not.

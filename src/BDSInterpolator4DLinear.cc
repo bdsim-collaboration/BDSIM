@@ -14,13 +14,6 @@ BDSInterpolator4DLinear::BDSInterpolator4DLinear(BDSArray4DCoords* arrayIn):
 BDSInterpolator4DLinear::~BDSInterpolator4DLinear()
 {;}
 
-BDSFieldValue BDSInterpolator4DLinear::Interpolate1D(const BDSFieldValue& v1,
-						     const BDSFieldValue& v2,
-						     const G4double       dist) const
-{
-  return v1*(1.-dist) + v2*dist;
-}
-
 BDSFieldValue BDSInterpolator4DLinear::GetInterpolatedValueT(G4double x,
 							     G4double y,
 							     G4double z,

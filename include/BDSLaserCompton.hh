@@ -34,7 +34,7 @@ class BDSLaserCompton: public G4VDiscreteProcess
 { 
 public:
    
-  BDSLaserCompton(const G4String& processName = "eLaser");
+  explicit BDSLaserCompton(const G4String& processName = "eLaser");
   
   virtual  ~BDSLaserCompton();
 

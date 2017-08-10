@@ -16,7 +16,7 @@
 class BDSArray1D: public BDSArray2D
 {
 public:
-  BDSArray1D(G4int nX);
+  explicit BDSArray1D(G4int nX);
   virtual ~BDSArray1D();
 
   /// Output stream.

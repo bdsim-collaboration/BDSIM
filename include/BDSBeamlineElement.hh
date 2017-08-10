@@ -103,6 +103,11 @@ public:
   G4ThreeVector OutputFaceNormal() const;
   /// @}
 
+  /// @{ Whether the face normal is angled at all w.r.t. the incoming / outgoing reference trajectory.
+  G4bool AngledInputFace()  const {return component->AngledInputFace();}
+  G4bool AngledOutputFace() const {return component->AngledOutputFace();}
+  /// @}
+  
   /// Convenience accessor.
   inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
   
@@ -116,7 +121,9 @@ public:
   
 private:
   /// Private default constructor to force use of provided constructor
-  BDSBeamlineElement();
+  BDSBeamlineElement() = delete;
+  BDSBeamlineElement(const BDSBeamlineElement&) = delete;
+  BDSBeamlineElement& operator=(const BDSBeamlineElement&) = delete;
 
   /// The accelerator component
   BDSAcceleratorComponent* component;

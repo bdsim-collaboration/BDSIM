@@ -19,7 +19,7 @@ class BDSArray2DCoords;
 class BDSInterpolator2D
 {
 public:
-  BDSInterpolator2D(BDSArray2DCoords* arrayIn);
+  explicit BDSInterpolator2D(BDSArray2DCoords* arrayIn);
   virtual ~BDSInterpolator2D(){;}
 
   /// Public interface to a 2D interpolator. Returns Geant4 type as that's what will be needed.

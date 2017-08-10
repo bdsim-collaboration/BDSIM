@@ -2,6 +2,7 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -76,13 +77,15 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 
   // local r'' (for curvature)
   G4ThreeVector localA;
-  localA.setX(-zp*x0); // can this be replaced by a cross produce?
+  localA.setX(-zp*x0); // can this be replaced by a cross product?
   localA.setY( zp*y0); // G4ThreeVector has a cross method
   localA.setZ( x0*xp - y0*yp);
   localA *= kappa;
   // determine effective curvature 
   G4double localAMag         = localA.mag();
-  G4double radiusOfCurvature = 1./localAMag;
+  G4double radiusOfCurvature = DBL_MAX;
+  if (BDS::IsFinite(localAMag))
+    {radiusOfCurvature = 1./localAMag;} // avoid division by 0
 
   // if we have a low enery particle that makes it into the paraxial cuts
   // it could cause problems later in paraxial algorithm so use backup integrator
@@ -94,7 +97,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     }
 
   G4double h2  = h*h; // safer than pow
-  // initialise output varibles with input position as default
+  // initialise output variables with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
   G4double z1  = z0 + h; // new z position will be along z by step length h
@@ -169,8 +172,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localMomUnit.setX(xp1);
   localMomUnit.setY(yp1);
   localMomUnit.setZ(zp1);
-  
-  ConvertToGlobal(localPos,localMomUnit,momMag,yOut);
+
+  ConvertToGlobal(localPos, localMomUnit, yOut, momMag);
   for (G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
 }

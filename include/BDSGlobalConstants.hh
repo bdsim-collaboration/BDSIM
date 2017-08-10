@@ -8,6 +8,7 @@
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -16,6 +17,7 @@
 
 #include <map>
 
+class G4ParticleDefinition;
 class G4FieldManager;
 class G4ParticleDefinition;
 class G4UniformMagField;
@@ -51,7 +53,7 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  BDSGlobalConstants(const GMAD::Options&);
+  explicit BDSGlobalConstants(const GMAD::Options&);
 
 private:
   /// Singleton instance
@@ -60,6 +62,11 @@ private:
   /// Options instance that this is largely based on and extends
   const GMAD::Options& options;
 
+  ///@{ Unused default constructors
+  BDSGlobalConstants() = delete;
+  BDSGlobalConstants(const BDSGlobalConstants&) = delete;
+  BDSGlobalConstants& operator=(const BDSGlobalConstants&) = delete;
+  ///@}
 public:
    /// Access method 
   static BDSGlobalConstants* Instance();
@@ -163,12 +170,12 @@ public:
   inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4int    MaximumPhotonsPerStep()    const {return G4int   (options.maximumPhotonsPerStep);}
+  inline G4int    MaximumBetaChangePerStep() const {return G4int   (options.maximumBetaChangePerStep);}
   inline G4long   MaximumTracksPerEvent()    const {return G4long  (options.maximumTracksPerEvent);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
-  inline G4bool   TurnOnCerenkov()           const {return G4bool  (options.turnOnCerenkov);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}
@@ -188,7 +195,8 @@ public:
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
   inline G4bool   MatchDistribFileLength()   const {return G4bool  (options.matchDistribFileLength);}
-
+  inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
+  
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
@@ -212,6 +220,7 @@ public:
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4double              COverGeV()                const {return cOverGeV;}
+  inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
@@ -290,6 +299,9 @@ private:
   G4ThreeVector itsLaserwireDir;
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
+
+  /// Prepare the G4Transform3D instance from the options for the initial beam line transform.
+  void InitialiseBeamlineTransform();
   
   void InitVisAttributes();
   G4VisAttributes* invisibleVisAttr;
@@ -307,9 +319,9 @@ private:
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 
-  BDSOutputFormat outputFormat;
-
-  BDSIntegratorSetType integratorSet;
+  BDSOutputFormat outputFormat;       ///< Output type enum for output format to be used.
+  BDSIntegratorSetType integratorSet; ///< Integrator type enum for integrator set to be used.
+  G4Transform3D beamlineTransform;    ///< Transform for start of beam line.
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)

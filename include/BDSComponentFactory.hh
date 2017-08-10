@@ -10,6 +10,8 @@
 
 #include <map>
 
+class G4Material;
+
 namespace GMAD
 {
   struct Element;
@@ -48,11 +50,15 @@ public:
   BDSComponentFactory();
   ~BDSComponentFactory();
 
-  /// Create component from parser Element
-  /// Pointers to next and previous Element for lookup
+  /// Create component from parser Element pointers to next and previous Element
+  /// are used to ensure the component will fit and may optionally be made to be
+  /// so in the case of a drift.  The optional last argument is the current s
+  /// position at the end of the beam line for components that are distance
+  /// or phase dependent such as an RF cavity.
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element const* prevElementIn,
-					   GMAD::Element const* nextElementIn);
+					   GMAD::Element const* nextElementIn,
+					   G4double currentArcLength = 0);
   
   /// Public creation for object that dynamically stops all particles once the primary
   /// has completed a certain number of turns.
@@ -63,39 +69,39 @@ public:
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
+  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* el) const;
 
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
-  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* element,
+  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
 					      const G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
 					      const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1));
 
   /// Interface to other PrepareBeamPipeInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
-  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* element,
+  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* el,
 					      G4double angleIn,
 					      G4double angleOut);
 
   /// Determine which side the yoke of an asymmetric bend should go on based on the angle
   /// of the bend and the overriding setting in the element.
-  static G4bool YokeOnLeft(const GMAD::Element*     element,
+  static G4bool YokeOnLeft(const GMAD::Element*     el,
 			   const BDSMagnetStrength* st);
 
   /// Prepare the element outer diameter in Geant4 units - if not set, use the global
   /// default.
-  static G4double PrepareOuterDiameter  (GMAD::Element const* element);
+  static G4double PrepareOuterDiameter(GMAD::Element const* el);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
   /// between input and output faces.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
 						    const BDSMagnetStrength* st);
 
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
   /// to a chord for a straight section of outer magnet geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
 						    const G4double angleIn,
 						    const G4double angleOut,
 						    const G4bool   yokeOnLeft = false);
@@ -108,7 +114,7 @@ public:
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
-  static void PoleFaceRotationsNotTooLarge(const GMAD::Element* element,
+  static void PoleFaceRotationsNotTooLarge(const GMAD::Element* el,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
@@ -118,9 +124,6 @@ private:
   G4double brho;
   /// length of a thin element
   G4double thinElementLength;
-  
-  /// Utility function to prepare model info
-  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -129,11 +132,14 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element const* nextElement = nullptr;
   
+  /// Private enum for kicker types.
+  enum class KickerType {horizontal, vertical, general};
+  
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
-  BDSAcceleratorComponent* CreateRF();
+  BDSAcceleratorComponent* CreateRF(G4double currentArcLength);
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
-  BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
+  BDSAcceleratorComponent* CreateKicker(KickerType type);
   BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
@@ -162,11 +168,32 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* el,
+				    const G4bool printWarning = true);
+
+  /// Prepare the vacuum material from the element or resort to default in options.
+  G4Material* PrepareVacuumMaterial(GMAD::Element const* el) const;
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  /// Utility function to prepare model info. Retrieve from cache of ones translated
+  /// parser objects or create a default based on the element's aperture if none specified.
+  /// Will always return a unique object that's not owned by this class. We need the
+  /// frequency in case there are no good defaults and we'll make the cavity size
+  /// according to the wavelength of the rf field.
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* el,
+					G4double             frequency) const;
+
+  /// Create a default cavity model based on an element's aperture and material.
+  /// Will always return a unique object that's not owned by this class.
+  BDSCavityInfo* PrepareCavityModelInfoForElement(GMAD::Element const* el,
+						  G4double             frequency) const;
+  
+  /// Utility function to prepare field strength object for rf cavity.
+  BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
+					   G4double currentArcLength) const;
 
   /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
@@ -174,11 +201,11 @@ private:
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.
-  void SetFieldDefinitions(GMAD::Element const* element,
+  void SetFieldDefinitions(GMAD::Element const* el,
 			   BDSAcceleratorComponent* component) const;
   
   /// Prepare magnet strength for multipoles
-  BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* element) const;
+  BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;
 
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
@@ -186,36 +213,54 @@ private:
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
 
-  /// Calculate field and angle of a bend. Note, this uses the MADX convention
+  /// Calculate the field from a given angle through a length of field - uses member
+  /// rigidity and charge. Length & angle in g4 m / rad units.
+  G4double FieldFromAngle(const G4double angle,
+			  const G4double arcLength) const;
+
+  /// Calculate the angle through a length of field - uses member
+  /// rigidity and charge. Length & field in g4 m / tesla units
+  G4double AngleFromField(const G4double field,
+			  const G4double arcLength) const;
+
+  /// Calculate field and angle of a sector bend. Note, this uses the MADX convention
   /// of +ve angle -> deflection in -ve x.
-  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element) const;
+  void CalculateAngleAndFieldSBend(GMAD::Element const* el,
+				   G4double&            angle,
+				   G4double&            field) const;
 
   /// Calculate the field and angle of an rbend from information in the element noting the
   /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
   /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
   /// in -ve x.
-  void CalculateAngleAndFieldRBend(const GMAD::Element* element,
+  void CalculateAngleAndFieldRBend(const GMAD::Element* el,
 				   G4double& arcLength,
 				   G4double& chordLength,
 				   G4double& field,
 				   G4double& angle) const;
 
   /// Calculate the angle of a bend whether it's an rbend or an sbend.
-  G4double BendAngle(const GMAD::Element* element) const;
+  G4double BendAngle(const GMAD::Element* el) const;
 
   /// Calculate the outgoing angle of the face (in the horizontal plane) for
   /// a given element. Calculates the bend angle and applies e1 / e2 pole face
   /// rotations the correct way depending on sign of angle. The angle is w.r.t.
   /// outgoing curvilinear coordinates, so for an rbend with e2=0, the returned
   /// angle will be half the bend angle. For an sbend, with e2=0, it'll be 0.
-  G4double OutgoingFaceAngle(const GMAD::Element* element) const;
+  G4double OutgoingFaceAngle(const GMAD::Element* el) const;
 
   /// Calculate the incoming angel of the face (in the horizontal plane) for
   /// a given element. Calculates the bend angle and applies e1 / e2 pole face
   /// rotations the correct way depending on sign of angle. The angle is w.r.t.
   /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
   /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
-  G4double IncomingFaceAngle(const GMAD::Element* element) const;
+  G4double IncomingFaceAngle(const GMAD::Element* el) const;
+
+  /// Pull out the right value - either 'kick' or 'h/vkick' for the appropriate
+  /// type of kicker from the current member element.
+  void GetKickValue(G4double& hkick,
+		    G4double& vkick,
+		    const KickerType type) const;
 
   /// Registry of modified elements stored by original name and number of times
   /// modified - 0 counting. This is so when we modify elements beyond their definition

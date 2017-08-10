@@ -20,13 +20,14 @@ BDSBunchRing::~BDSBunchRing()
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(const GMAD::Options& opt)
+void BDSBunchRing::SetOptions(const GMAD::Options& opt,
+			      G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetRMin(opt.Rmin);  
   SetRMax(opt.Rmax);  
 }
@@ -47,6 +48,9 @@ void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp = Xp0 * CLHEP::rad;
   yp = Yp0 * CLHEP::rad;
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t  = T0 * CLHEP::s;
   E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));
   weight = 1.0;

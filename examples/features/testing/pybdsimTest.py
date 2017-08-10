@@ -6,6 +6,9 @@ import subprocess as _sub
 import multiprocessing
 import time
 import collections
+from subprocess import Popen
+import threading
+import socket as _soc
 
 import Globals
 import PhaseSpace
@@ -24,6 +27,40 @@ GlobalData = Globals.Globals()
 ResultUtils = TestResults.ResultsUtilities()
 
 
+
+def _runBDSIM(inputDict, timeout):
+
+    # Start the BDSIM process
+    process = Popen([GlobalData._bdsimExecutable,
+                    "--file=" + inputDict['testFile'],
+                    "--output=rootevent",
+                    "--outfile="+inputDict['outputFile'],
+                    "--batch",
+                    "--seed=2017"],
+                    stdout=open(inputDict['bdsimLogFile'], 'a'),
+                    stderr=open(inputDict['bdsimLogFile'], 'a'))
+
+    # Method of communicating with BDSIM process. Start and apply the timeout via joining
+    processThread = threading.Thread(target=process.communicate)
+    processThread.start()
+    processThread.join(timeout)
+
+    # After the timeout, if the process is still alive, kill it.
+    if processThread.is_alive():
+        process.kill()
+
+    # get process return code. If negative, the process was killed. If positive, it was successful.
+    # If None, it means the process is still 'ongoing'.
+    returnCode = process.returncode
+
+    # return negative if returnCode is None, its likely that there's a small time delay between
+    # the kill signal and the program ending.
+    if returnCode is None:
+        return -1
+    else:
+        return returnCode
+
+
 def Run(inputDict):
     """ Generate the rootevent output for a given gmad file.
         """
@@ -36,16 +73,25 @@ def Run(inputDict):
     # os.system used as subprocess.call has difficulty with the arguments for some reason.
     bdsimCommand = GlobalData._bdsimExecutable + " --file=" + inputDict['testFile'] + " --output=rootevent --outfile="
     bdsimCommand += inputDict['outputFile'] + " --batch --seed=2017"
-    _os.system(bdsimCommand + ' > ' + inputDict['bdsimLogFile'] + " 2>&1")
-    bdsimTime = _np.float(time.time() - t)
-    inputDict['bdsimTime'] = bdsimTime
 
-    # quick check for output file. If it doesn't exist, update the main failure log and return None.
-    # If it does exist, delete the log and return the filename
+    processReturnCode = _runBDSIM(inputDict, timeout=GlobalData.timeout)
+
     files = _glob.glob('*.root')
 
+    # set code for timeout. Delete root file if it exists, is likely to be zombie.
+    if processReturnCode < 0:
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')
+        inputDict['generalStatus'] = [GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')]
+        if files.__contains__(inputDict['ROOTFile']):
+            _os.remove(inputDict['ROOTFile'])
+
+    bdsimTime = _np.float(time.time() - t)
+    inputDict['bdsimTime'] = bdsimTime
+    originalFile = inputDict['originalFile']
+
     if not files.__contains__(inputDict['ROOTFile']):
-        inputDict['code'] = GlobalData.returnCodes['FILE_NOT_FOUND']  # False
+        if inputDict['code'] != GlobalData.ReturnsAndErrors.GetCode('TIMEOUT'):
+            inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
 
     elif not generateOriginal:
         with open(inputDict['compLogFile'], 'w') as outputLog:  # temp log file for the comparator output.
@@ -67,16 +113,20 @@ def Run(inputDict):
             inputDict['compTime'] = ctime
 
             if TestResult == 0:
-                inputDict['code'] = GlobalData.returnCodes['SUCCESS']  # True
+                inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')  # True
             elif TestResult != 0:
                 inputDict['code'] = TestResult  # not passed comparator return code
 
     elif generateOriginal:
         # root output was generated - success
-        inputDict['code'] = GlobalData.returnCodes['SUCCESS']
+        inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('SUCCESS')
 
     generalStatus = ResultUtils._getBDSIMLogData(inputDict)
+
     inputDict['generalStatus'] = generalStatus
+
+    # list of soft failure code in the general status.
+    hasSofts = [code for code in GlobalData.ReturnsAndErrors.GetSoftCodeNumbers() if generalStatus.__contains__(code)]
 
     # if the comparator passed
     if inputDict['code'] == 0:
@@ -92,10 +142,7 @@ def Run(inputDict):
 
         # else if the general status contains one of the 'soft' failures, move the bdsim log
         # and root output into the failed dir, and delete the passed comparator log.
-        elif (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        elif len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
             _os.system("mv " + inputDict['ROOTFile'] + " FailedTests/" + inputDict['ROOTFile'])
             if isSelfComparison:
@@ -113,18 +160,22 @@ def Run(inputDict):
             _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
 
         # if the general status contains one of the 'soft' failures, move the bdsim log, otherwise delete.
-        if (generalStatus.__contains__(GlobalData.returnCodes['OVERLAPS'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['STUCK_PARTICLE'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['NAN_CHORD'])) or \
-            (generalStatus.__contains__(GlobalData.returnCodes['TRACKING_WARNING'])):
+        if len(hasSofts) > 0:
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         elif len(generalStatus) == 1:
             _os.remove(inputDict['bdsimLogFile'])
 
-    # elif root file wasn't generated.
+    # elif the comparator couldn't find one of the files
     elif inputDict['code'] == 2 :
-        # move bdsim log file to fail dir
-        _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
+        # if the original file that is being compared to doesn't exist, delete ROOT and
+        # BDSIM log file, and move the comparator file.
+        if (originalFile == '') and (files.__contains__(inputDict['ROOTFile'])):
+            _os.remove(inputDict['bdsimLogFile'])
+            _os.remove(inputDict['ROOTFile'])
+            _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
+        else:
+            # move bdsim log file to fail dir
+            _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
         if isSelfComparison:
             _os.remove(inputDict['originalFile'])
 
@@ -414,12 +465,13 @@ class Test(dict):
 
 class TestUtilities(object):
     """ A class containing utility functions and data containers for the test suite class."""
-    def __init__(self, testingDirectory='', dataSetDirectory=''):
+    def __init__(self, testingDirectory='', dataSetDirectory='', debug=False):
         # keep data containers in this base class as some are used in the functions of this class.
         self._tests = []  # list of test objects
         self._testNames = {}  # dict of test file names (a list of names per component)
         self._testParamValues = {}
         self._generateOriginals = False  # bool for generating original data set
+        self._debug = debug
 
         # create testing directory
         if not isinstance(testingDirectory, _np.str):
@@ -476,7 +528,7 @@ class TestUtilities(object):
         if not robust:
             options.SetStopSecondaries(True)
         options.SetPhysicsList(physicslist="em hadronic")
-        options.SetBeamPipeRadius(beampiperadius=10)
+        options.SetBeamPipeRadius(beampiperadius=20)
         writer = _pybdsimWriter.Writer()
         writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
 
@@ -646,55 +698,46 @@ class TestUtilities(object):
             sublevel(0, fname)
         return OrderedTests
 
-    def _multiThread(self, testlist, componentType):
-        """ Function to run the tests on multiple cores with multithreading."""
-        numCores = multiprocessing.cpu_count()
-        p = multiprocessing.Pool(numCores)
-        results = p.map(Run, testlist)
+    def _Run(self, testlist, componentType, useSingleThread=False):
+        """ Function that determines the numbers of cores (and multithreading),
+            creates the pool, and calls the function for running BDSIM, comparator etc.
+            """
+        if useSingleThread:
+            numCores = 1
+            self._debugOutput("\tUsing single thread.")
+        else:
+            numCores = multiprocessing.cpu_count()
+            self._debugOutput("\tUsing multithreading.")
 
-        for testRes in results:
+            # reduce number of cores by a third on linappserv in case it is run by accident
+            linappservs = ["linappserv1.pp.rhul.ac.uk", "linappserv2.pp.rhul.ac.uk", "linappserv3.pp.rhul.ac.uk"]
+            if self._GetHostName() in linappservs:
+                numCores = _np.floor(numCores - (numCores / 3.0))
+                self._debugOutput("\tNumber of cores reduced to " + _np.str(numCores) + ".")
+
+        pool = multiprocessing.Pool(numCores)
+
+        # apply results asynchronously
+        results = [pool.apply_async(Run, args=(i,)) for i in testlist]
+        output = [p.get() for p in results]
+
+        for testRes in output:
             self.Analysis.AddResults(testRes)
             self.Analysis.TimingData.AddComponentTestTime(componentType, testRes)
-        p.close()
+        pool.close()
 
-    def _singleThread(self, testlist):
-        """ Function to run the tests on a single core.
-            This has not been updated in a long time, so use with caution."""
-        eleBdsimTimes = []
-        eleComparatorTimes = []
+    def _debugOutput(self, output=''):
+        """ Function to print debug output. Function used to prevent littering
+            these classes with if statements.
+            """
+        if self._debug and (output is not ''):
+            print output
+        else:
+            pass
 
-        for testDict in testlist:
-            test = testDict['file']
-            isSelfComparison = testDict['isSelfComparison']
-            originalEvent = testDict['originalFile']
-
-            bdsimTestTime = time.time()
-            outputEvent = self._GenerateRootFile(test)
-            bdsimTime = time.time() - bdsimTestTime
-            eleBdsimTimes.append(bdsimTime)
-            compTestTime = time.time()
-            # Only compare if the output was generated.
-
-            if (outputEvent is not None) and (not self._generateOriginals):
-                if isSelfComparison:
-                    originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp ' + outputEvent + ' ' + originalEvent
-                    _os.system(copyString)
-                else:
-                    pass  # This is where the comparison with the original file will occur.
-                    # TODO: figure out how to process original files that will be compared to.
-
-                self._CompareOutput(originalEvent, outputEvent)
-            else:
-                self._UpdateBDSIMFailLog(test)
-                _os.system("rm temp.log")
-                print("Output for test " + test + " was not generated.")
-            comparatorTime = time.time() - compTestTime
-            eleComparatorTimes.append(comparatorTime)
-
-        self.Analysis.TimingData.bdsimTimes.extend(_np.average(eleBdsimTimes))
-        self.Analysis.TimingData.comparatorTimes.extend(_np.average(eleComparatorTimes))
-
+    def _GetHostName(self):
+        hostName = _soc.gethostname()
+        return hostName
 
 class TestSuite(TestUtilities):
     """ A class that is the test suite. Tests are added to this class,
@@ -719,12 +762,15 @@ class TestSuite(TestUtilities):
         """
     def __init__(self, testingDirectory,
                  dataSetDirectory='',
-                 _useSingleThread=False,
+                 useSingleThread=False,
                  usePickledData=False,
-                 fullTestSuite=False):
-        super(TestSuite, self).__init__(testingDirectory, dataSetDirectory)
-        self._useSingleThread = _useSingleThread
+                 fullTestSuite=False,
+                 plotResults=True,
+                 debug=False):
+        super(TestSuite, self).__init__(testingDirectory, dataSetDirectory, debug)
+        self._useSingleThread = useSingleThread
         self._usePickledData = usePickledData
+        self._plotResults = plotResults
         if fullTestSuite:
             self._FullTestSuite()
 
@@ -757,10 +803,10 @@ class TestSuite(TestUtilities):
             """
         # if using pickled data, just produce the plots and report.
         if self._usePickledData:
+            self._debugOutput("Using pickled data.")
             _os.chdir('BDSIMOutput')
             self.Analysis._getPickledData()
             for comp in GlobalData.components:
-
                 self.Analysis.PlotResults(comp)
             self.Analysis.ProduceReport()
             return None
@@ -775,8 +821,10 @@ class TestSuite(TestUtilities):
 
         initialTime = time.time()
 
+        self._debugOutput("Running component tests...")
         # loop over all component types.
         for componentType in self._testNames.keys():
+            self._debugOutput("  Component: "+componentType)
             testfilesDir = '../Tests/'
 
             if self._generateOriginals:
@@ -793,9 +841,10 @@ class TestSuite(TestUtilities):
             tests = [(testfilesDir + testFile) for testFile in self._testNames[componentType]]
 
             # order tests
-            if len(tests) > 1:
+            if (len(tests) > 1) and (componentType != 'multipole') and (componentType != 'thinmultipole'):
                 tests = self._GetOrderedTests(tests, componentType)
 
+            self._debugOutput("\tCompiling test list:")
             # compile iterable list of dicts for multithreading function.
             testlist = []
             for test in tests:
@@ -810,18 +859,12 @@ class TestSuite(TestUtilities):
                                     )
 
                 testlist.append(testDict)
+            self._debugOutput("\tDone.")
 
-            if not self.Analysis.TimingData.bdsimTimes.keys().__contains__(componentType):
-                self.Analysis.TimingData.bdsimTimes[componentType] = []
+            # Run BDSIM for these tests.
+            self._Run(testlist, componentType, self._useSingleThread)
 
-            if not self.Analysis.TimingData.comparatorTimes.keys().__contains__(componentType):
-                self.Analysis.TimingData.comparatorTimes[componentType] = []
-
-            if not self._useSingleThread:
-                self._multiThread(testlist, componentType)  # multithreaded option
-            else:
-                self._singleThread(testlist)  # single threaded option.
-
+            self._debugOutput("\tRunning analysis...")
             componentTime = time.time() - t  # final time
             self.Analysis.TimingData.AddComponentTotalTime(componentType, componentTime)
 
@@ -829,8 +872,16 @@ class TestSuite(TestUtilities):
                 _os.chdir('../')
             else:
                 self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
+
+                self._debugOutput("\tGenerating output results...")
                 self.Analysis.ProcessResults(componentType=componentType)
-                self.Analysis.PlotResults(componentType=componentType)
+
+                if self._plotResults:
+                    self.Analysis.PlotResults(componentType=componentType)
+                    self._debugOutput("\tGenerating plot(s)...")
+
+            self._debugOutput("\tAnalysis and output complete.")
+            self._debugOutput("\tElement finished.")
 
         if not self._generateOriginals:
             finalTime = time.time() - initialTime
@@ -838,6 +889,8 @@ class TestSuite(TestUtilities):
             self.Analysis._pickleResults()
             self.Analysis.ProduceReport()
         _os.chdir('../')
+
+        self._debugOutput("Testing complete.")
 
     def _FullTestSuite(self):
         # data containers for tests and number of files

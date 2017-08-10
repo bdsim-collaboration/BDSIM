@@ -47,13 +47,16 @@ public:
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
-  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV)
-  {auxNavigator->SetWorldVolume(worldPV);}
+  static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPVIn)
+  {auxNavigator->SetWorldVolume(worldPVIn); worldPV = worldPVIn;}
 
   /// Setup the navigator w.r.t. to the read out world / geometry to provide
   /// curvilinear coordinates.
-  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPV)
-  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPV);}
+  static void AttachWorldVolumeToNavigatorCL(G4VPhysicalVolume* curvilinearWorldPVIn)
+  {auxNavigatorCL->SetWorldVolume(curvilinearWorldPVIn); curvilinearWorldPV = curvilinearWorldPVIn;}
+
+  static void RegisterCurvilinearBridgeWorld(G4VPhysicalVolume* curvilinearBridgeWorldPVIn)
+  {auxNavigatorCLB->SetWorldVolume(curvilinearBridgeWorldPVIn); curvilinearBridgeWorldPV = curvilinearBridgeWorldPVIn;}
 
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
@@ -80,19 +83,21 @@ public:
   /// apart. The direction vector can be used as the momentum vector without being
   /// a unit vector.  The 'post step' vector in the BDSStep instance will be the
   /// direction vector (of same magnitude) but rotated to the local frame.
-  /// This uses LocateGlobalPointAndSetup.
+  /// This uses LocateGlobalPointAndSetup. Can control default lookahead distance
+  /// default (1 -> 1mm).
   BDSStep ConvertToLocal(const G4ThreeVector& globalPosition,
 			 const G4ThreeVector& globalDirection,
 			 const G4double       stepLength     = 0,
-			 const G4bool&        useCurvilinear = true) const;
+			 const G4bool&        useCurvilinear = true,
+			 const G4double       marginLength   = 1) const;
 
   /// Convert back to global coordinates.  This DOES NOT update the transforms
   /// and uses the existing transforms inside this class - ie this relies on
   /// ConvertToLocal being used beforehand to initialise the transforms.  This is
   /// done as we'd need a look up point behind this point.
   BDSStep ConvertToGlobalStep(const G4ThreeVector& localPosition,
-			  const G4ThreeVector& localDirection,
-			  const G4bool&        useCurvilinear = true) const;
+			      const G4ThreeVector& localDirection,
+			      const G4bool&        useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],
@@ -151,15 +156,19 @@ protected:
   mutable G4AffineTransform globalToLocalCL;
   mutable G4AffineTransform localToGlobalCL;
   
-  /// Navgiator object for safe navigation in the real (mass) world without affecting
-  /// tracking of the particle.
+  /// Navgiator object for safe navigation in the real (mass) world without
+  /// affecting tracking of the particle.
   static G4Navigator* auxNavigator;
 
-  /// Navigator object for safe navigation in the read out world providing curvilinear
-  /// coordinates for various applications. Since this is not a 'parallel' world but
-  /// a 'read out geometry' in Geant4 terms, this is inherently safe and won't affect
-  /// the tracking of the particle in question.
+  /// Navigator object for curvilinear world that contains simple cylinders
+  /// for each element whose local coordinates represent the curvilinear coordinate
+  /// system.
   static G4Navigator* auxNavigatorCL;
+
+  /// Navigator object for bridge world. This contains briding volumes for the
+  /// gaps in the curivlinear world. It therefore acts as a fall back if we find
+  /// the world volume when we know we really shouldn't.
+  static G4Navigator* auxNavigatorCLB;
 
 private:
   /// Utility function to select appropriate navigator
@@ -189,9 +198,21 @@ private:
 			   const G4ThreeVector& globalMomentum,
 			   const G4double       stepLength);
   
-  /// Counter to keep track of when the last instance of the class is deleted and
-  /// therefore when the navigators can be safely deleted without affecting
+  /// Counter to keep track of when the last instance of the class is deleted
+  /// and therefore when the navigators can be safely deleted without affecting
   static G4int numberOfInstances;
+  
+  /// @{ Cache of world PV to test if we're getting the wrong volume for the transform.
+  static G4VPhysicalVolume* worldPV;
+  static G4VPhysicalVolume* curvilinearWorldPV;
+  static G4VPhysicalVolume* curvilinearBridgeWorldPV;
+  /// @}
+  
+  /// Margin by which to advance the point along the step direction if the
+  /// world volume is found for transforms. This is in an attempt to find a
+  /// real curvilinear volume. Therefore, this should be greater than
+  /// lengthSafety or the geometrical tolerance.
+  G4double volumeMargin;
 };
 
 

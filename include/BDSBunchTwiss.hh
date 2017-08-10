@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHTWISS_H
 #define BDSBUNCHTWISS_H 
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
 
@@ -15,7 +15,7 @@ namespace CLHEP {
  * @author Stewart Boogert
  */
 
-class BDSBunchTwiss: public BDSBunchInterface
+class BDSBunchTwiss: public BDSBunch
 {
 private: 
   /// @{ Twiss parameters
@@ -44,7 +44,8 @@ public:
   BDSBunchTwiss();
   virtual ~BDSBunchTwiss();
   
-  void SetOptions(const GMAD::Options& opt); 
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

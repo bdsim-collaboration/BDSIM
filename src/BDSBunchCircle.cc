@@ -7,7 +7,7 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchCircle::BDSBunchCircle():
-  BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
+  BDSBunch(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -21,21 +21,19 @@ BDSBunchCircle::~BDSBunchCircle()
   delete FlatGen;
 }
 
-void BDSBunchCircle::SetOptions(const GMAD::Options& opt)
+void BDSBunchCircle::SetOptions(const GMAD::Options& opt,
+				G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   SetEnvelopeR(opt.envelopeR); 
   SetEnvelopeRp(opt.envelopeRp);
   SetEnvelopeT(opt.envelopeT);
-  SetEnvelopeE(opt.envelopeE);
-  return; 
+  SetEnvelopeE(opt.envelopeE); 
 }
 
 void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight)
+				     G4double& xp, G4double& yp, G4double& zp,
+				     G4double& t , G4double&  E, G4double& weight)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -58,9 +56,11 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp += sin(phiRp) * rp * CLHEP::rad;
   
   zp = CalculateZp(xp,yp,Zp0);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t = 0.0;
   E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
-  weight = 1.0;
-  return; 
+  weight = 1.0; 
 }

@@ -6,12 +6,17 @@
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
+/**
+ * @brief Class to provide scaling and a base class pointer for interpolator fields.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSFieldMagInterpolated: public BDSFieldMag
 {
 public:
-  BDSFieldMagInterpolated(G4Transform3D offset);
-  BDSFieldMagInterpolated(G4Transform3D offset,
-			  G4double      scalingIn);
+  explicit BDSFieldMagInterpolated(G4Transform3D offset,
+				   G4double      scalingIn = 1.0);
 
   virtual ~BDSFieldMagInterpolated(){;}
 

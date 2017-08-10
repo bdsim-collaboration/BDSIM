@@ -24,6 +24,9 @@ class BDSMagnetStrength;
  * 
  * Owns the magnetic strength instance & cavity info instance.
  *
+ * Owns G4ThreeVector for unitDirection. It's a pointer to save memory
+ * on average.
+ *
  * @author Laurie Nevay
  */
 
@@ -54,6 +57,8 @@ public:
 
   /// Copy constructor
   BDSFieldInfo(const BDSFieldInfo& other);
+  /// Assignment operator not used
+  BDSFieldInfo& operator=(const BDSFieldInfo&) = delete;
 
   /// @{ Accessor
   inline BDSFieldType        FieldType()                const {return fieldType;}
@@ -113,6 +118,9 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
+
+  // We need a default to pass back if none is specified.
+  const static G4ThreeVector defaultUnitDirection;
 };
 
 #endif

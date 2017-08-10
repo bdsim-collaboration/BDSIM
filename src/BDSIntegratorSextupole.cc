@@ -66,6 +66,6 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
   
   localA *= kappa / 2; // 2 is actually a 2! factor.
   
-  AdvanceChord(h,localPos,localMomUnit,localA);  
-  ConvertToGlobal(localPos,localMomUnit,momUnit,yOut);
+  AdvanceChord(h,localPos,localMomUnit,localA);
+  ConvertToGlobal(localPos, localMomUnit, yOut, momUnit);
 }

@@ -3,6 +3,8 @@
 
 #include "TROOT.h"
 
+#include "RebdsimTypes.hh"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -24,7 +26,9 @@ class DataLoader
 public:
   DataLoader(std::string fileName,
 	     bool        debugIn           = false,
-	     bool        processSamplersIn = false);
+	     bool        processSamplersIn = false,
+	     bool        allBranchesOn     = true,
+	     const RBDS::BranchMap* branchesToTurnOn = nullptr);
   virtual ~DataLoader();
 
   /// Create an instance of each class in the file to be overlaid by loading
@@ -45,7 +49,8 @@ public:
   void ChainTrees();
 
   /// Map each chain to the member instance of each storage class in this class.
-  void SetBranchAddress();
+  void SetBranchAddress(bool allOn = true,
+                        const RBDS::BranchMap* bToTurnOn = nullptr);
 
   /// @{ Accessor
   std::vector<std::string>   GetTreeNames()    {return treeNames;};
@@ -66,6 +71,9 @@ private:
   
   bool debug;
   bool processSamplers;
+  bool allBranchesOn;
+  const RBDS::BranchMap* branchesToTurnOn;
+  
   Options                      *opt;
   Model                        *mod;
   Event                        *evt;

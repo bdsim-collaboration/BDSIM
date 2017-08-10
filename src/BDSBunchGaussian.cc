@@ -4,11 +4,13 @@
 #include "parser/options.h"
 
 #include "Randomize.hh"
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchGaussian::BDSBunchGaussian(): 
-  BDSBunchInterface(),
+  BDSBunch(),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0),
   meansGM(CLHEP::HepVector(6)),
   sigmaGM(CLHEP::HepSymMatrix(6)),
@@ -24,13 +26,14 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete GaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
+void BDSBunchGaussian::SetOptions(const GMAD::Options& opt,
+				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   
   SetSigmaX(opt.sigmaX); 
   SetSigmaY(opt.sigmaY);
@@ -103,6 +106,9 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
   z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   E  = E0 * CLHEP::GeV * v[5];
   zp = CalculateZp(xp,yp,Zp0);
 

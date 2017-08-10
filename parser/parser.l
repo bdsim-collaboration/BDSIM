@@ -76,10 +76,10 @@ rf { return RF; }
 rfcavity { return RF; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
-hkick { return HKICK; }
-hkicker { return HKICK; }
-vkick { return VKICK; }
-vkicker { return VKICK; }
+hkicker { return HKICKER; }
+vkicker { return VKICKER; }
+kicker  { return KICKER;  }
+tkicker { return TKICKER; }
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
@@ -136,8 +136,9 @@ use { return USE; }
 sample { return SAMPLE; }
 csample { return CSAMPLE; }
 
-\"[^"]*\" {
+\"[^",\n]*\" {
   //strip quotes and return string
+  // no commas or newline in string allowed
 
   // copy string without quotes, 
   // memory needs to be allocated
@@ -145,6 +146,12 @@ csample { return CSAMPLE; }
   // add string to variable vector for deletion afterwards
   Parser::Instance()->AddVariable(yylval.str);
   return STR;
+}
+
+\" {
+   // give warning for other strings
+   std::string errorstring = "malformed string or unmatched quote";
+   yyerror(errorstring.c_str());
 }
 
 ":="    { return '=';}  // alternative assignment 
@@ -212,8 +219,8 @@ csample { return CSAMPLE; }
   std::cout << "parser> reading file " << includefilename << std::endl; //yytext
   if(include_stack_ptr >= max_include_depth - 1)
     {
-      std::cerr << "Error : Include depth exceeds " << max_include_depth << std::endl;
-      exit(1);
+      std::string errorstring = "Error : Include depth exceeds " + std::to_string(max_include_depth);
+      yyerror(errorstring.c_str());
     }
   else
     {
@@ -233,8 +240,8 @@ csample { return CSAMPLE; }
     	}
       else
         {
-          std::cerr << "Error : can't open " << includefilename << std::endl; //yytext
-          exit(1);
+          std::string errorstring = "Error : can't open " + includefilename;
+          yyerror(errorstring.c_str());
         }
     }
   BEGIN(INITIAL);

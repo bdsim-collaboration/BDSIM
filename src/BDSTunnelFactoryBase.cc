@@ -269,7 +269,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 		    G4ThreeVector(),          // position
 		    tunnelLV,                 // lv to be placed
 		    name + "_tunnel_pv",      // name
-		    containerLV,              // mother lv to be place in
+		    containerLV,              // mother lv to be placed in
 		    false,                    // no boolean operation
 		    0,                        // copy number
 		    checkOverlaps);           // whether to check overlaps
@@ -279,7 +279,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 			G4ThreeVector(),      // position
 			soilLV,               // lv to be placed
 			name + "_soil_pv",    // name
-			containerLV,          // mother lv to be place in
+			containerLV,          // mother lv to be placed in
 			false,                // no boolean operation
 			0,                    // copy number
 		        checkOverlaps);       // whether to check overlaps
@@ -290,7 +290,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 			floorDisplacement,    // position
 			floorLV,              // lv to be placed
 			name + "_floor_pv",   // name
-			containerLV,          // mother lv to be place in
+			containerLV,          // mother lv to be placed in
 			false,                // no boolean operation
 			0,                    // copy number
 		        checkOverlaps);       // whether to check overlaps

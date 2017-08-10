@@ -6,7 +6,9 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4Track.hh"
 #include "G4TwoVector.hh"
+#include "G4UserLimits.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -78,6 +80,20 @@ G4bool BDS::FileExists(G4String fileName)
 {
   std::ifstream infile(fileName.c_str());
   return infile.good();
+  // note the destructor of ifstream will close the stream
+}
+
+std::string BDS::GetCurrentDir()
+{ 
+  char currentPath[PATH_MAX]; // defined in <limits>
+  std::string currentPathString;
+
+  if (getcwd(currentPath, sizeof(currentPath)) != NULL)
+    {currentPathString = std::string(currentPath);}
+  else
+    {G4cerr << "Cannot determine current working directory" << G4endl; exit(1);}
+
+  return currentPathString;
 }
 
 std::string BDS::GetBDSIMExecPath()
@@ -108,7 +124,7 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   G4cout << __METHOD_NAME__ << fileName << " strip name off?: " << excludeNameFromPath << G4endl;
 #endif
   //Return fullPath of a file:
-  //mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
+  //mirror what is done in parser.l (i.e. if no environment variable set, assume base filename path is that of the gmad file).
   // 1) if absolute path (starting with a slash) return that
   // 2) if relative path, then
   // 2a) return path relative to environment variable BDSIMPATH (if set)
@@ -116,6 +132,10 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
 
   // return value
   G4String fullPath;
+
+  // protect against unneeded ./ at beginning of filename - strip it off
+  if (fileName.substr(0,2) == "./")
+    {fileName = fileName.substr(2);}
 
   // split input into path and filename
   G4String inputFilepath, inputFilename;
@@ -263,7 +283,7 @@ G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
   try{
     return (G4double)std::stol(GetParameterValueString(spec,name).c_str());
   }catch(std::invalid_argument& e){
-    throw e;
+    throw;
   }
 }
 
@@ -272,7 +292,7 @@ G4int BDS::GetParameterValueInt(G4String spec, G4String name)
   try{
     return (G4int)std::stoi(GetParameterValueString(spec,name).c_str());
   }catch(std::invalid_argument& e){
-    throw e;
+    throw;
   }
 }
 
@@ -409,11 +429,21 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
   return std::make_pair("","");
 }
 
-void BDS::PrintArray(const G4double values[],
-		     G4int    size)
+G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
+				    const G4double length)
 {
-  G4cout << "(";
-  for (G4int i = 0; i < size; i++)
-    {G4cout << values[i] << ", ";}
-  G4cout << ")";
+  const G4double fraction = 1.1; // fraction of length that max step will be
+  G4UserLimits* result = nullptr;
+  if (!defaultUL)
+    {return result;}
+  // construct a dummy G4Track that typically isn't used for the check
+  G4Track t = G4Track();
+  if (defaultUL->GetMaxAllowedStep(t) > length)
+    {// copy and change length in UL
+      result = new G4UserLimits(*defaultUL);
+      result->SetMaxAllowedStep(length * fraction);
+    }
+  else
+    {result = defaultUL;} // stick with length in defaultUL
+  return result;
 }

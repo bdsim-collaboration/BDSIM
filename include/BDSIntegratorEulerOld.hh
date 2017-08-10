@@ -16,7 +16,7 @@ class G4Mag_EqRhs;
 class BDSIntegratorEulerOld: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorEulerOld(G4Mag_EqRhs* eqOfMIn);
+  explicit BDSIntegratorEulerOld(G4Mag_EqRhs* eqOfMIn);
   virtual ~BDSIntegratorEulerOld(){;}
 
   /// Call AdvanceHelix pure virtual function. If the local unit momentum

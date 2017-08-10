@@ -143,6 +143,18 @@ void Options::PublishMembers()
 
   publish("energy",&Options::beamEnergy);
 
+  publish("beamlineX",         &Options::beamlineX);
+  publish("beamlineY",         &Options::beamlineY);
+  publish("beamlineZ",         &Options::beamlineZ);
+  publish("beamlinePhi",       &Options::beamlinePhi);
+  publish("beamlineTheta",     &Options::beamlineTheta);
+  publish("beamlinePsi",       &Options::beamlinePsi);
+  publish("beamlineAxisX",     &Options::beamlineAxisX);
+  publish("beamlineAxisY",     &Options::beamlineAxisY);
+  publish("beamlineAxisZ",     &Options::beamlineAxisZ);
+  publish("beamlineAngle",     &Options::beamlineAngle);
+  publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
+  
   publish("X0",&Options::X0);
   publish("Y0",&Options::Y0);
   publish("Z0",&Options::Z0);
@@ -282,6 +294,8 @@ void Options::PublishMembers()
   publish("tunnelOffsetX",&Options::tunnelOffsetX);
   publish("tunnelOffsetY",&Options::tunnelOffsetY);
 
+  publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
+
   publish("samplerDiameter",&Options::samplerDiameter);
   
   // options for beam loss monitor geometry
@@ -290,6 +304,7 @@ void Options::PublishMembers()
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("maximumPhotonsPerStep", &Options::maximumPhotonsPerStep);
+  publish("maximumBetaChangePerStep", &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent", &Options::maximumTracksPerEvent);
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
@@ -320,7 +335,6 @@ void Options::PublishMembers()
   publish("deltaOneStep",       &Options::deltaOneStep);
 
   // physics processes
-  publish("turnOnCerenkov",&Options::turnOnCerenkov);
   publish("turnOnOpticalAbsorption",&Options::turnOnOpticalAbsorption);
   publish("turnOnMieScattering",&Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);

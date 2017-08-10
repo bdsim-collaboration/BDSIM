@@ -15,7 +15,7 @@ class BDSMySQLVariable;
 class BDSMySQLTable 
 {
 public:
-  BDSMySQLTable (G4String aTableName);
+  explicit BDSMySQLTable (G4String aTableName);
   ~BDSMySQLTable();
 
   void AddVariable(G4String aVarName, G4String aType);

@@ -22,7 +22,7 @@ void Placement::clear()
   axisY = 0;
   axisZ = 0;
   angle = 0;
-  sensitive     = false;
+  sensitive     = true;
   axisAngle     = false;
 }
 

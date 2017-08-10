@@ -4,8 +4,8 @@
 
 #include <ostream>
 
-BDSArray1D::BDSArray1D(G4int nX):
-  BDSArray2D(nX, 1)
+BDSArray1D::BDSArray1D(G4int nXIn):
+  BDSArray2D(nXIn, 1)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray1D const &a)

@@ -42,7 +42,7 @@ class BDSArray2DCoordsFlipX: public BDSArray2DCoords
 {
 public:
   /// Wrap an existing BDSArray2DCoords instance.
-  BDSArray2DCoordsFlipX(BDSArray2DCoords* arrayIn);
+  explicit BDSArray2DCoordsFlipX(BDSArray2DCoords* arrayIn);
   virtual ~BDSArray2DCoordsFlipX(){;}
 
   /// @{ Overridden from BDSArray4DCoords.

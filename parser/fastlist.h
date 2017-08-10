@@ -25,7 +25,6 @@ namespace GMAD
 
   public:
     /// for ease of reading
-    //    template<typename T>
     using FastListIterator         = typename std::list<T>::iterator;
     using FastListConstIterator    = typename std::list<T>::const_iterator;
     using FastMapIterator          = typename std::multimap<std::string, FastListIterator>::iterator;
@@ -42,7 +41,7 @@ namespace GMAD
     ///@}
     /// insert element before all elements with given name
     /// exits if no element with name
-    void insert_before(std::string name, const T& val);
+    void insert_before(const std::string& name, const T& val);
     
     /// insert element at end of list
     /// option to check for unique element name (exits in case name is not unique), false by default
@@ -108,7 +107,7 @@ namespace GMAD
   }
 
   template <typename T>
-    void FastList<T>::insert_before(std::string name, const T& val) {
+    void FastList<T>::insert_before(const std::string& name, const T& val) {
     FastMapIteratorPair itPair = equal_range(name);
     if (itPair.first==itPair.second) {
       std::cerr<<"current list doesn't contain element "<< name << std::endl;

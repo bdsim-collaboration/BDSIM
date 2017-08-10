@@ -65,9 +65,11 @@ public:
   void RoughSurface(G4int layer1, G4int layer2);
 
 private:
-  /// Private default constructor to force use of provided one.
-  BDSMultilayerScreen();
-
+  ///@{ Private default constructor to force use of provided one.
+  BDSMultilayerScreen() = delete;
+  BDSMultilayerScreen(const BDSMultilayerScreen&) = delete;
+  BDSMultilayerScreen& operator=(const BDSMultilayerScreen&) = delete;
+  ///@}
   /// Calculate the extent of the multilayer screen given all the layers.
   void ComputeDimensions();
 

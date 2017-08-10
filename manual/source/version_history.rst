@@ -1,4 +1,61 @@
-V0.96 - 2017 / 03 / ??
+V0.992 - 2017 / 07 / ??
+=======================
+
+New Features
+------------
+
+* Preparsing for GDML for pygeometry generated geometry - overcomes Geant4's GDML parser
+  deficiency of only allowing one GDML file to be loaded in the whole program.
+
+Bug Fixes
+---------
+
+* Fix uncaught exception in analysis DataLoader class construction depending on optional arguments.
+* BDSIM installation no longer dependent on build files - ROOT analysis dictionaries would use
+  build headers. Issues #197 and #199.
+* Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
+* Fixed rf E and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
+* Fix for crash when particle was at exactly 0 in a quadrupole.
+
+General
+-------
+
+* Separated field and geometry in rf cavity element.
+* Revised implementation of rf cavity construction for greater flexibility.
+* RF cavity phase now automatically calculated based on location in lattice.
+* Removal of old ROOT analysis scripts for very old data format.
+
+
+V0.991 - 2017 / 07 / 04
+=======================
+
+Bug Fixes
+---------
+
+* Fix simple histogram weighting with boolean expressions in rebdsim.
+* Fix comparator always failing.
+* Fix loading default event information in analysis.
+* Fix executing BDSIM from outside the directory containing the main gmad file.
+* Fix charge dependence of thin multipole and dipole fringe integrators.
+* Scale dipole fringe and thin multipole by momentum and of particle.
+* Fix for loading geometry files prefixed with superfluous './'.
+* Fix for duplicate run beam on icon in visualiser for Geant4.10.3 onwards.
+
+
+General
+-------
+
+* Separate Doxygen cmake into own macro.
+
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.1
+* pymad8 v0.7
+
+
+V0.99 - 2017 / 06 / 09
 ======================
 
 New Features
@@ -13,10 +70,15 @@ New Features
  * New *shield* element that is a drift surrounded by rectangle of material.
  * New *placement* element that allows an object with geometry to be placed independent of the beam line.
  * maximumTrackLength option to limit any track in the geometry.
-
+ * Ability to offset beam line w.r.t. world coordinates at start.
+ * Check for required Geant4 environment variables.
+ * Thin horizontal and vertical (and combined) kickers.
+ * Thin multipoles.
+ * Compatability with Geant4.10.3.
+   
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
- * Complete refactorisation of field classes and construction
+ * Complete refactorisation of field classes and construction.
  * Centralised construction of fields.
  * 1-4D BDSIM format field map loading.
  * 2D Poisson SuperFish SF7 format field map loading.
@@ -25,6 +87,9 @@ Fields & Integrators
  * Ability to choose integrator sets for all elements via parser.
  * Removal of all individual magnet classes - centralised construction in BDSMagnet.
  * New executable - "bdsinterpolator" - allows loaded and interpolated field to be queried and written out.
+ * Rewritten dipole integrator using Geant4's helical stepper.
+ * All integrators tested for low energy spiralling particles.
+ * Introduction of visualisation commands.
 
 Geometry
 ^^^^^^^^
@@ -33,7 +98,8 @@ Geometry
  * Ability to overlay externally provided geometry on magnets (except sbend).
  * Automatically generated tight-fitting containers for externally loaded GDML geometry.
  * *circularvacuum* beam pipe geometry that allows no geometry for the beam pipe; only vacuum.
- * Colour magnet hues tweaked slightly.
+ * Magnet colours tweaked slightly - pybdsim now matches BDSIM colour-wise.
+ * Additional curvilinear bridge world to ensure continuous curvilinear coordinates.
 
    
 Output & Analysis
@@ -43,6 +109,9 @@ Output & Analysis
  * 1x 3D histogram in default output that can be placed along the beam line.
  * Support for 3D histograms in rebdsim.
  * All magnet strength components written out to survey.
+ * Change of syntax in rebdsim analysis file to specify dimensions of histogram.
+ * Stricter parsing of analysisConfig.txt for syntax checking.
+ * New executable rebdsimOrbit to extract single orbit from sampler data.
 
 
 Bug Fixes
@@ -59,6 +128,13 @@ Bug Fixes
  * Fixed geometry construction errors that may occur due to dynamic tolerances for physically large models.
  * Fix infinite loop events if the primary vertex starts outside the world volume.
  * Regions and biases set correctly to components in BDSLine class.
+ * Circle distribution did not have central value offsets.
+ * Fix double registration of pion decay as well as some others for muons when using muon phyiscs list.
+ * Particles from physics list are now constructed correctly allowing more particles to be used in the beam definition.
+ * Removal of cherenkov radiation from muon phyiscs significantly reducing simulation time.
+ * Fix double registration of pion decay with muon phyiscs list.
+ * Issue #134 - samplers cause tracking warning.
+ * Long running events due to spiralling particles. Issues #178, #132, #187.
 
 General
 -------
@@ -71,6 +147,10 @@ General
 
 Utilities
 ---------
+
+* pymadx v0.8
+* pybdsim v1.0
+* pymad8 v0.7
 
 V0.95 - 2016 / 11 / 07
 ======================

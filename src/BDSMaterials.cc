@@ -170,7 +170,79 @@ BDSMaterials::BDSMaterials()
 		  0.39757254757374 *CLHEP::perCent,
 		  4.184974185E-05  *CLHEP::perCent});
 
-  G4Material* tmpMaterial = new G4Material 
+  // LHC Rock
+  AddMaterial(name="lhc_rock",
+	      density=2*CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 300, 1,
+      {"G4_H", "G4_Na", "G4_Si", "G4_Fe", "G4_C",
+	  "G4_Mg", "G4_K", "G4_O", "G4_Al", "G4_Ca"},
+	      std::list<double>{
+		0.006, 0.01, 0.2, 0.014, 0.03, 0.005, 0.01, 0.5, 0.03, 0.195});
+
+  // Copper Alloy 17410 (C17410) "Beryllium Copper"
+  AddMaterial(name="berylliumcopper", density=8.8 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 300, 1,
+      {"G4_Cu", "G4_Be", "G4_Co", "G4_Al", "G4_Fe", "G4_Ni"},
+	      std::list<double>{0.991, 0.0031, 0.00500,
+		  0.0004, 0.0003, 0.0002});
+
+  // Stainless Steel AISI code 304L (low-carbon) @ 300K
+  AddMaterial(name="stainless_steel304L",
+	      density=8.02 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 300, 1,
+      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},
+	      std::list<double>{0.67145, 0.185, 0.1125, 0.02,
+		  0.01, 0.00045, 0.0003, 0.0003});
+
+  // Stainless Steel AISI code 316LN
+  // (Type 316, low carbon, nitrogen-enhanced) @ 87K
+  AddMaterial(name="stainless_steel304L_87K",
+	      density=8.02 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 87, 1,
+      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mn", "G4_Si", "G4_P", "G4_S", "G4_C"},
+	      std::list<double>{0.67145, 0.185, 0.1125, 0.02,
+		  0.01, 0.00045, 0.0003, 0.0003});
+
+ // Stainless Steel AISI code 316LN
+ // (Type 316, low carbon, nitrogen-enhanced) @ 300K
+  AddMaterial(name="stainless_steel_316LN",
+	      density=8.03 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 300, 1,
+      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mo", "G4_Mn", "G4_Si", "G4_Ti", "G4_N",
+	  "G4_Nb", "G4_Cu", "G4_Co", "G4_P", "G4_C", "G4_S", "G4_Ta", "G4_B"},
+	      std::list<double>{
+		0.65093, 0.1700, 0.12000, 0.02500, 0.0200, 0.00750,
+		  0.00150, 0.0014, 0.00100, 0.00100, 0.0005, 0.00045,
+		  0.00030, 0.0003, 0.00010, 0.00002});
+
+ // Stainless Steel AISI code 316LN
+ // (Type 316, low-carbon nitrogen-enhanced) @ 87K
+  AddMaterial(name="stainless_steel_316LN_87K",
+	      density=8.03 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 87, 1,
+      {"G4_Fe", "G4_Cr", "G4_Ni", "G4_Mo", "G4_Mn", "G4_Si", "G4_Ti", "G4_N",
+	  "G4_Nb", "G4_Cu", "G4_Co", "G4_P", "G4_C", "G4_S", "G4_Ta", "G4_B"},
+	      std::list<double>{
+		0.65093, 0.1700, 0.12000, 0.02500, 0.0200,
+		  0.00750, 0.00150, 0.0014, 0.00100, 0.00100,
+		  0.0005, 0.00045, 0.00030, 0.0003, 0.00010,
+		  0.00002});
+
+  // Mild Steel
+  AddMaterial(name="mild_steel", density=  8.000, kStateSolid, 295, 1,
+      {"G4_C", "G4_Mn", "G4_Si", "G4_Fe"},
+	      std::list<double>{0.002, 0.005, 0.0015, 0.99150});
+
+   // Pure tungsten is not typically used, but instead instead as part of "heavy
+   // alloy."  I think "heavy" in the sense that the tungsten makes up almost
+   // all of the composition, and tungsten is a very dense metal.
+  AddMaterial(name="tungsten_heavy_alloy",
+	      density=18.5 * CLHEP::g/CLHEP::cm3,
+	      kStateSolid, 87, 1,
+      {"G4_W", "G4_Ni", "G4_Fe"},
+	      std::list<double>{0.97, 0.02, 0.01});
+
+  G4Material* tmpMaterial = new G4Material
     (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
   tmpMaterial->AddElement(elements["O"],2);
   tmpMaterial->AddElement(elements["Si"],1);
@@ -761,9 +833,7 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
-// #ifdef BDSDEBUG
-//   G4cout << __METHOD_NAME__ << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
-// #endif
+
   if (!cmpStr1.compareTo(cmpStr2))
     {
 #ifdef BDSDEBUG

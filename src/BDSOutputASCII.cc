@@ -264,14 +264,14 @@ void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
   //prepare file name
   G4String title = histogramIn->GetName();
   title = BDS::PrepareSafeName(title);
-  G4String filename = basefilename + "." + title + ".hist.txt";
+  G4String histfilename = basefilename + "." + title + ".hist.txt";
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "filename determined to be: " << filename << G4endl;
+  G4cout << __METHOD_NAME__ << "filename determined to be: " << histfilename << G4endl;
 #endif
   
   //open file and write header info
   std::ofstream histOS;
-  histOS.open(filename.c_str());
+  histOS.open(histfilename.c_str());
   histOS << *histogramIn << " - created " << timestring << G4endl;
   histOS << std::left << std::setprecision(10) << std::fixed
 	 << std::setw(20) << "SLower[m]" << " "

@@ -19,7 +19,7 @@ class BDSArray1DCoords;
 class BDSInterpolator1DNearest: public BDSInterpolator1D
 {
 public:
-  BDSInterpolator1DNearest(BDSArray1DCoords* arrayIn);
+  explicit BDSInterpolator1DNearest(BDSArray1DCoords* arrayIn);
   virtual ~BDSInterpolator1DNearest();
 
 protected:

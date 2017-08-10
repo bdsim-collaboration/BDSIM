@@ -1,7 +1,7 @@
 #ifndef BDSBUNCHUSERFILE_H
 #define BDSBUNCHUSERFILE_H 
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 #include <fstream>
 #include <list>
 
@@ -16,12 +16,13 @@
  */
 
 template <class T>
-class BDSBunchUserFile: public BDSBunchInterface
+class BDSBunchUserFile: public BDSBunch
 {
 public: 
   BDSBunchUserFile();
   virtual ~BDSBunchUserFile();
-  virtual void SetOptions(const GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);

@@ -26,14 +26,25 @@ namespace GMAD {
  * set of physics processes. Note: the transportation process is 
  * constructed by default with classes that derive from G4VModularPhysicsList.
  *
+ * Note, Geant4 will call the ConstructParticle method before ConstructProcess,
+ * so we're guaranteed that decay physics for example will apply to all particles.
+ *
  * @author L. Deacon, S. Boogert & L. Nevay
  */
 
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  BDSModularPhysicsList(G4String physicsList);
+  explicit BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
+
+  /// Call base class method to construct all particles from constructors,
+  /// but also set the particle definition and rigidity in globals.
+  virtual void ConstructParticle();
+
+  /// Call base class method to construct all processes from constructors,
+  /// but also set cuts and print physics table.
+  virtual void ConstructProcess();
 
   /// Print out which physics lists are activated.
   void Print();
@@ -45,7 +56,8 @@ public:
   /// Print all constructed particle names. Note, this should only be done after the
   /// physics lists are fully constructed.
   void PrintDefinedParticles() const;
-  
+
+  /// Set Production cuts for photons, elecrons, positrons, protons and the default.
   virtual void SetCuts();
 
   void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
@@ -118,7 +130,11 @@ private:
   /// Keep a local reference to global constants to avoid getting it all the time
   BDSGlobalConstants* globals;
 
+  /// Flag as to whether em will be used - avoids duplicate processes being registered.
+  G4bool emWillBeUsed;
+
   /// @{Physics constructor loader.
+  void Cherenkov();
   void CutsAndLimits();
   void Em();
   void EmExtra();
@@ -128,6 +144,7 @@ private:
   void Muon();					
   void Optical();
   void Decay();
+  void SpinDecay();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();

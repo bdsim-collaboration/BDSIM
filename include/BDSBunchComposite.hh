@@ -3,7 +3,7 @@
 
 #include "globals.hh"
 
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 
 namespace GMAD {
   class Options;
@@ -16,17 +16,18 @@ namespace GMAD {
  * @author Stewart Boogert
  */
 
-class BDSBunchComposite: public BDSBunchInterface
+class BDSBunchComposite: public BDSBunch
 { 
 protected:
-  BDSBunchInterface* xBunch; 
-  BDSBunchInterface* yBunch;
-  BDSBunchInterface* zBunch;
+  BDSBunch* xBunch;
+  BDSBunch* yBunch;
+  BDSBunch* zBunch;
 
 public:
   BDSBunchComposite(); 
   virtual ~BDSBunchComposite();
-  void SetOptions(const GMAD::Options& opt); 
+  virtual void SetOptions(const GMAD::Options& opt,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);

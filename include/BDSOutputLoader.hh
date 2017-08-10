@@ -22,7 +22,7 @@ class TTree;
 class BDSOutputLoader
 {
 public:
-  BDSOutputLoader(G4String filePath);
+  explicit BDSOutputLoader(G4String filePath);
   ~BDSOutputLoader();
 
   GMAD::OptionsBase OptionsBaseClass();
@@ -31,7 +31,9 @@ public:
   G4String SeedState(G4int eventNumber = 0);
   
 private:
-  BDSOutputLoader();
+  BDSOutputLoader() = delete;
+  BDSOutputLoader(const BDSOutputLoader&) = delete;
+  BDSOutputLoader& operator=(const BDSOutputLoader&) = delete;
 
   TFile* file;
 

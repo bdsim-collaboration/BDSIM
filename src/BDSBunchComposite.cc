@@ -1,6 +1,6 @@
 #include "BDSBunchComposite.hh"
 #include "BDSBunchFactory.hh"
-#include "BDSBunchInterface.hh"
+#include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "parser/options.h"
 
@@ -21,25 +21,34 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(const GMAD::Options& opt)
+void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
+				   G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunchInterface::SetOptions(opt);
+  BDSBunch::SetOptions(opt, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;
   delete zBunch;
 
-  xBunch = BDSBunchFactory::createBunch(opt.xDistribType);
-  yBunch = BDSBunchFactory::createBunch(opt.yDistribType);
-  zBunch = BDSBunchFactory::createBunch(opt.zDistribType);
+  BDSBunchType xType = BDS::DetermineBunchType(opt.xDistribType);
+  BDSBunchType yType = BDS::DetermineBunchType(opt.yDistribType);
+  BDSBunchType zType = BDS::DetermineBunchType(opt.zDistribType);
 
-  xBunch->SetOptions(opt);
-  yBunch->SetOptions(opt);
-  zBunch->SetOptions(opt);
+  if (xType == BDSBunchType::composite ||
+      yType == BDSBunchType::composite ||
+      zType == BDSBunchType::composite)
+    {
+      G4cerr << __METHOD_NAME__ << "x,y,z distributions cannot be 'composite'" << G4endl;
+      exit(1);
+    }
+  
+  xBunch = BDSBunchFactory::CreateBunch(xType, opt, beamlineTransformIn);
+  yBunch = BDSBunchFactory::CreateBunch(yType, opt, beamlineTransformIn);
+  zBunch = BDSBunchFactory::CreateBunch(zType, opt, beamlineTransformIn);
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -63,7 +72,10 @@ void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   y0 = yy0;
   yp = yyp;
   z0 = zz0;
-  zp = zzp; 
+  zp = zzp;
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
   t  = zt;
   E  = zE; 
   weight = xWeight;

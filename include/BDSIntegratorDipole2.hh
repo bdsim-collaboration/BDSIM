@@ -2,6 +2,7 @@
 #define BDSINTEGRATORDIPOLE2_H
 
 #include "BDSIntegratorDrift.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
 #include "G4MagHelicalStepper.hh"
@@ -62,6 +63,14 @@ public:
 				 G4double       yOut[],
 				 G4double       yErr[]);
 
+protected:
+  /// DistChord() is non-virtual function in base class so set Ang and RadHelix appropriately
+  /// such that DistChord() will return 0.
+  void FudgeDistChordToZero();
+
+  /// Cache of equation of motion. This class does not own it.
+  G4Mag_EqRhs* eqOfM;
+
 private:
   /// Private default constructor to force use of provided one.
   BDSIntegratorDipole2() = delete;
@@ -69,6 +78,7 @@ private:
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.
   G4double minimumRadiusOfCurvature;
+
 };
 
 #endif

@@ -220,7 +220,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
     // note the timing information will be wrong here as the run hasn't finished but
     // the file is bridged. There's no good way around this just now as this class
-    // can access the timing information stored in BDSRunAction
+    // can't access the timing information stored in BDSRunAction
     bdsOutput->Commit(0, 0, 0, seedStateAtStart); // write and open new file
 #ifdef BDSDEBUG
       G4cout << "done" << G4endl;
@@ -239,7 +239,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Save interesting trajectories
 
   if (storeTrajectory && trajCont)
-    {
+  {
     std::map<BDSTrajectory *, bool> interestingTraj;
 
     TrajectoryVector *trajVec = trajCont->GetVector();

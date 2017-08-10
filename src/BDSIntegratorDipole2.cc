@@ -1,4 +1,6 @@
 #include "BDSIntegratorDipole2.hh"
+#include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4ClassicalRK4.hh"
@@ -10,6 +12,7 @@
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
+  eqOfM(eqOfMIn),
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
 {;}
 
@@ -27,13 +30,36 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
+  // Protect against very small steps.
+  if (h < 1e-12)
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      return;
+    }
+  
   // Extra storage arrays.
   G4double yTemp[7], yTemp2[7];
+
+  // Neutral particles drift through.
+  if(eqOfM->FCof() == 0)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      FudgeDistChordToZero();
+      return;
+    }
   
   // Arrays for field querying (g4 interface)
   G4double bO[4]; // original location field value
-  GetEquationOfMotion()->GetFieldValue(yIn, bO);
+  eqOfM->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
+
+  // protect against zero field as G4's Advance helix gives wrong ang and rad
+  if (!BDS::IsFinite(bOriginal.mag()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      FudgeDistChordToZero();
+      return;
+    }
 
   // Do a full step - the result we use
   AdvanceHelix(yIn, bOriginal, h, yOut);
@@ -53,7 +79,18 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
       return;
     }
 
-  // error estimation - do two half steps and compare difference to
+  // error estimation
+  // if it's a very small step - no error - safer as differences between large positions
+  // for very small steps can have numerical precision issues.
+  // no need to update ang and rad.
+  if (h < 1e-9) // 1e-9 is 1pm (in g4 units) - the minimum length scale of bdsim
+    {
+      for (G4int i = 0; i < 6; i++)
+        {yErr[i] = 0;}
+      return; // saves long if else
+    }
+  
+  // normal error estimation - do two half steps and compare difference to
   // the result from one full step
   AdvanceHelix(yIn, bOriginal, h*0.5, yTemp); // first step
 
@@ -67,7 +104,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   
   // Error estimation
   for(G4int i = 0; i < 6; i++)
-    {yErr[i] = yOut[i] - yTemp2[i];}
+    {yErr[i] = std::abs(yOut[i] - yTemp2[i]);}
 
   // Update parameters that distchord will be calcualted from from full step info.
   SetAngCurve(ang);
@@ -81,6 +118,15 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 						     G4double       yErr[])
 {
   G4ThreeVector fieldUnit = field.unit();
+
+  // protect against zero field as this algorithm would be wrong
+  if (!BDS::IsFinite(fieldUnit.mag()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      FudgeDistChordToZero();
+      return;
+    }
+
   G4double momMag = G4ThreeVector(yIn[3], yIn[4], yIn[5]).mag();
   
   // Artificially change momentum to be along field direction.
@@ -102,4 +148,11 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
     {yErr[i] = 1e-20;}
   for(G4int i = 3; i < 6; i++)
     {yErr[i] = 1e-40;}
+}
+
+void BDSIntegratorDipole2::FudgeDistChordToZero()
+{
+  // Large angle condition in G4MagHelicalStepper DistChord() method is faster, so set angle to 10.
+  SetAngCurve(10);
+  SetRadHelix(0);
 }

@@ -72,5 +72,5 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
   localA *= kappa / 24; // 24 is actually a 4! factor.;
   
   AdvanceChord(h,localPos,localMomUnit,localA);
-  ConvertToGlobal(localPos,localMomUnit,momMag,yOut);
+  ConvertToGlobal(localPos, localMomUnit, yOut, momMag);
 }

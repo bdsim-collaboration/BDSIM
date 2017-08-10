@@ -1,7 +1,6 @@
 #include "BDSOutputROOTEvent.hh"
 
 #include "BDSParser.hh"
-#include "parser/options.h"
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
@@ -12,11 +11,6 @@
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 
-#include "TFile.h"
-#include "TObject.h"
-#include "TTree.h"
-
-#include <ctime>
 
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
@@ -138,8 +132,7 @@ void BDSOutputROOTEvent::Initialise()
   basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
+  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + std::string(".root");
 
@@ -217,7 +210,7 @@ void BDSOutputROOTEvent::Initialise()
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(),
                                  "BDSOutputROOTEventSampler",
-                                 samplerTreeLocal,32000,1);
+                                 samplerTreeLocal,32000,0);
     }
 }
   

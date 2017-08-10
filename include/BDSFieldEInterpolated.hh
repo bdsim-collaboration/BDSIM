@@ -6,12 +6,17 @@
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
+/**
+ * @brief Class to provide scaling and a base class pointer for interpolator fields.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSFieldEInterpolated: public BDSFieldE
 {
 public:
-  BDSFieldEInterpolated(G4Transform3D offset);
-  BDSFieldEInterpolated(G4Transform3D offset,
-			G4double      eScalingIn);
+  explicit BDSFieldEInterpolated(G4Transform3D offset,
+				 G4double      eScalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated(){;}
 

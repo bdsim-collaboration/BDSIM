@@ -19,7 +19,7 @@ class BDSArray1DCoords;
 class BDSInterpolator1DCubic: public BDSInterpolator1D
 {
 public:
-  BDSInterpolator1DCubic(BDSArray1DCoords* arrayIn);
+  explicit BDSInterpolator1DCubic(BDSArray1DCoords* arrayIn);
   virtual ~BDSInterpolator1DCubic();
 
 protected:

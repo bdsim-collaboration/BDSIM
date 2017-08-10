@@ -125,7 +125,7 @@ Event Tree
 ^^^^^^^^^^
 
 .. figure:: figures/rootevent_event_tree.png
-	    :width: 40%
+	    :width: 35%
 	    :align: center
 
 This tree contains information on a per event basis.  Everything shown in the above tree has a
@@ -159,13 +159,63 @@ different value per event run in BDSIM.
 +-----------------+----------------------------------+--------------------------------------------------+
 | Histos          | BDSOutputROOTEventHistograms     | Per event histograms in vectors.                 |
 +-----------------+----------------------------------+--------------------------------------------------+
-| Sampler_xxxxx   | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
+| xxxxx           | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
 |                 |                                  | sampler (here named 'xxxxx') that contains a     |
 |                 |                                  | record of all particles that passed through the  |
 |                 |                                  | sampler during the event. Note this includes     |
 |                 |                                  | both primary and secondary particles. More       |
 |                 |                                  | in `Histograms`_.                                |
 +-----------------+----------------------------------+--------------------------------------------------+
+
+The types and names of the contents of each class can be found in the header files in
+:code:`bdsim/include/BDSOutputROOTEvent*.hh`. The sampler data is the most commonly used
+and so a more detailed description is provided here.
+
+Note, the sampler structure, like everything else in the :code:`Event.` Tree is stored
+per event.  However, for a given event, there may be multiple hits on a sampler, i.e.
+many secondary particles may have passed through a sampler. For this purpose most variables
+are vectors of numbers, where the vector is all the hits in that event.
+
+As the sampler is considered infinitely thin and always in the same place, there is no
+point in storing the z location or the S location for every particle hit. Therefore,
+these variables are only stored once as a single number per event.  
+
++-----------------+--------------------------------------------------------------------------+
+|  **Variable**   |  **Description**                                                         |
++=================+==========================================================================+
+| n               | The number of this in this event in this sampler.                        |
++-----------------+--------------------------------------------------------------------------+
+| energy          | Vector of the total energy (GeV) of each hit in this sampler.            |
++-----------------+--------------------------------------------------------------------------+
+| x               | Vector of the x coordinate of each hit (m).                              |
++-----------------+--------------------------------------------------------------------------+
+| y               | Vector of the y coordinate of each hit (m).                              |
++-----------------+--------------------------------------------------------------------------+
+| z               | Single entry of z for this sampler (m).                                  |
++-----------------+--------------------------------------------------------------------------+
+| xp              | Vector of the fractional x transverse momentum.                          |
++-----------------+--------------------------------------------------------------------------+
+| yp              | Vector of the fractional y transverse momentum.                          |
++-----------------+--------------------------------------------------------------------------+
+| zp              | Vector of the fractional forward momentum.                               |
++-----------------+--------------------------------------------------------------------------+
+| t               | Vector of the time of flight of the particle (ns).                       |
++-----------------+--------------------------------------------------------------------------+
+| weight          | Vector of the associated weights of the hits.                            |
++-----------------+--------------------------------------------------------------------------+
+| partID          | Vector of the PDG ID for the particle of each hit.                       |
++-----------------+--------------------------------------------------------------------------+
+| parentID        | Vector of the trackID of the progenitor of the particle that hit.        |
++-----------------+--------------------------------------------------------------------------+
+| trackID         | Vector of the trackID of the particle that hit.                          |
++-----------------+--------------------------------------------------------------------------+
+| modelID         | The index to the BDSIM model of which element the sampler belonged to.   |
++-----------------+--------------------------------------------------------------------------+
+| turnNumber      | Vector of the turn number of the particle that hit.                      |
++-----------------+--------------------------------------------------------------------------+
+| S               | S position of the sampler (m).                                           |
++-----------------+--------------------------------------------------------------------------+
+
 
 .. warning:: A common issue is apparently half of the particles missing in the first sampler in
 	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch

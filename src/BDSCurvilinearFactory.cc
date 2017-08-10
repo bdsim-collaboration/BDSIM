@@ -39,7 +39,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
   G4ThreeVector outputFaceNormal = G4ThreeVector(0, 0, 1);
 
   return CommonConstruction(name, chordLength, chordLength, radius,
-			    solid, inputFaceNormal, outputFaceNormal, 0);
+			    solid, 0);
 }
 
 BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String       name,
@@ -82,7 +82,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
 				   inputface,          // input face normal vector
 				   outputface);        // output face normal vector
 
-  return CommonConstruction(name, arcLength, chordLength, radiusLocal, solid, inputface, outputface, angle);
+  return CommonConstruction(name, arcLength, chordLength, radiusLocal, solid, angle);
 }
 
 BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String       name,
@@ -104,8 +104,6 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String    
 							      const G4double      chordLength,
 							      const G4double      radius,
 							      G4VSolid*           solid,
-							      const G4ThreeVector inputFaceNormal,
-							      const G4ThreeVector outputFaceNormal,
 							      const G4double      angle)
 {
   // nullptr for material ONLY ok in parallel world!
@@ -116,13 +114,13 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String    
   // always debug visualisation for read out geometry - only viewed via explicit commands
   lv->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 
+  // we don't specify the face normals as they are w.r.t the incoming or outoing
+  // reference trajectory - to which the curvilinear faces will be perpendicular
   BDSSimpleComponent* result = new BDSSimpleComponent(name,
 						      arcLength,
 						      angle,
 						      solid,
-						      lv,
-						      inputFaceNormal,
-						      outputFaceNormal);
+						      lv);
 
   BDSExtent extent = BDSExtent(radius, radius, chordLength*0.5);
   result->SetExtent(extent);

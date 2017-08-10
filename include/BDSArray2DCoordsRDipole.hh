@@ -51,7 +51,7 @@ class BDSArray2DCoordsRDipole: public BDSArray2DCoords
 {
 public:
   /// Wrap an existing BDSArray2DCoords instance.
-  BDSArray2DCoordsRDipole(BDSArray2DCoords* arrayIn);
+  explicit BDSArray2DCoordsRDipole(BDSArray2DCoords* arrayIn);
   virtual ~BDSArray2DCoordsRDipole(){;}
 
   /// @{ Overridden from BDSArray4DCoords.

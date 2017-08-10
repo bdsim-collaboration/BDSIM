@@ -4,6 +4,8 @@
 #include "BDSCavityType.hh"
 #include "globals.hh"         // geant4 types / globals
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 class G4Material;
 
 /**
@@ -15,6 +17,10 @@ class G4Material;
  *
  * Note, compiler provided copy constructor is sufficient as only pointers
  * to materials owned by BDSMaterials are kept - shallow copy is required then.
+ *
+ * This class does not specify the vacuum material as ideally we can specify the
+ * the 'vacuum' pressure and composition throughout the machine without redefining
+ * a cavity model.
  * 
  * @author Laurie Nevay
  */
@@ -22,71 +28,56 @@ class G4Material;
 class BDSCavityInfo
 {
 public:
-  /// extra constructor to assign all members at once
+  /// Constructor to assign all members at once. Default values are based
+  /// on those for SRF cavity.
   BDSCavityInfo(BDSCavityType cavityTypeIn,
 		G4Material*   materialIn,
-		G4Material*   vacuumMaterialIn,
-		G4double      eFieldIn,
-		G4double      frequencyIn,
-		G4double      phaseIn,
 		G4double      irisRadiusIn,
 		G4double      thicknessIn,
 		G4double      equatorRadiusIn,
 		G4double      halfCellLengthIn,
-		G4int         numberOfPointsIn,
-		G4int         numberOfCellsIn,
-		G4double      equatorEllipseSemiAxisIn,
-		G4double      irisHorizontalAxisIn,
-		G4double      irisVerticalAxisIn,
-		G4double      tangentLineAngleIn);
+		G4int         numberOfPointsIn         = 24,
+		G4int         numberOfCellsIn          = 1,
+		G4double      equatorEllipseSemiAxisIn = 42*CLHEP::mm,
+		G4double      irisHorizontalAxisIn     = 12*CLHEP::mm,
+		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
+		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
 
-  /// Cavity type
+  /// Cavity type.
   BDSCavityType cavityType;
 
-  /// Material
+  /// Material.
   G4Material* material;
 
-  /// Vacuum Material
-  G4Material* vacuumMaterial;
-
-  /// Peak Electric Field in V / m
-  G4double eField;
-
-  /// Frequency in MHz
-  G4double frequency;
-
-  /// Phase (rad)
-  G4double phase;
-
-  /// Iris radius
+  /// Iris radius - half width of narrowest part.
   G4double irisRadius;
 
-  /// Thickness
+  /// Thickness of wall material.
   G4double thickness;
 
-  /// Equator radius
+  /// Equator radius - half width of widest part.
   G4double equatorRadius;
 
-  /// Half cell length
+  /// Half cell length.
   G4double halfCellLength;
 
-  /// number of points that will be used to make the cell shape
-  /// more will be more accurate but will also increase tracking time
+  /// Number of points that will be used to make the cell shape
+  /// more will be more accurate but will also increase tracking time.
   G4int numberOfPoints;
 
-  /// number of cells per cavity
+  /// Number of cells per cavity.
   G4int numberOfCells;
 
-  /// Equator ellipse semi axis;
+  /// Equator ellipse semi axis.
   G4double equatorEllipseSemiAxis;
 
-  /// Iris horizontal axis
+  /// Iris horizontal axis.
   G4double irisHorizontalAxis;
 
-  /// Iris vertical axis
+  /// Iris vertical axis.
   G4double irisVerticalAxis;
 
-  /// Tangent angle
+  /// Tangent angle.
   G4double tangentLineAngle;
 
 private:

@@ -34,10 +34,12 @@ public:
   /// Determine the geometry format, load it and build the geometry. Optional suggested
   /// length and outerDiameter are in for some cases where it is not possible to query
   /// the geometry file for the extent information.
-  BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath,
+  BDSGeometryExternal* BuildGeometry(G4String componentName,
+				     G4String formatAndFilePath,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
 				     G4double suggestedLength        = 0,
-				     G4double suggestedOuterDiameter = 0);
+				     G4double suggestedOuterDiameter = 0,
+				     G4bool   makeSensitive          = true);
  
 private:
   /// Private accessor as singleton

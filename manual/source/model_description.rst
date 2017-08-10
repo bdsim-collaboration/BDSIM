@@ -181,8 +181,9 @@ The following elements may be defined
 * `decapole`_
 * `multipole`_
 * `thinmultipole`_
-* `vkick`_
-* `hkick`_
+* `vkicker`_
+* `hkicker`_
+* `kicker`_
 * `rf`_
 * `rcol`_
 * `ecol`_
@@ -266,7 +267,9 @@ rbend
 	    :width: 30%
 	    :align: right
 
-.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam energy can be specified or the magnetic field, `B` in Tesla. If both are defined the magnet is under- or overpowered.
+.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
+				 energy can be specified or the magnetic field, `B` in Tesla.
+				 If both are defined the magnet is under or over-powered.
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
@@ -486,8 +489,6 @@ Examples::
 multipole
 ^^^^^^^^^
 
-.. TODO: add picture
-
 `multipole` defines a general multipole magnet. The strength parameter
 :math:`knl` is a list defined as
 :math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
@@ -513,8 +514,6 @@ Examples::
 thinmultipole
 ^^^^^^^^^^^^^
 
-.. TODO: add picture
-
 `thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
 tube. A thinmultipole can be placed next to a bending magnet with finite poleface rotation angles.
@@ -525,68 +524,171 @@ Examples::
 
 .. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
-vkick
-^^^^^
+vkicker
+^^^^^^^
 
-.. TODO: add picture
+`vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
+with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
+a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
+with only the shape of the aperture and no surrounding geometry. It is also typically not
+visible with the default visualisation settings.
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
-Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
+in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
+case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+will change.
 
-.. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
-	  convention to that of an sector bend.
+In the case of a thick kicker, the resulting bending angle is calculated as:
+
+.. math::
+
+   \theta = \sin^{-1}(\,p_x)
+
+The dipole field strength is then calculated with respect to the chord length:
+
+.. math::
+
+   \mathbf{B} = B\rho\, \frac{\theta}{\mathrm{chord\,length}}
+
 
 * The `aperture parameters`_ may also be specified.
-* The `magnet geometry parameters`_ may also be specified.
+* For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
 Examples::
 
-   KX15v: vkick, angle=0.01*mrad;
+   KX15v: vkicker, vkick=1.3e-5;
+   KX17v: vkicker, vkick=-2.4e-2, l=0.5*m;
 
-hkick
-^^^^^
+hkicker
+^^^^^^^
 
-.. TODO: add picture
+`hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
+specified
+with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
+a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
+with only the shape of the aperture and no surrounding geometry. It is also typically not
+visible with the default visualisation settings.
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
-Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+The strength is specified by the parameter :code:`hkick`, which is the fractional momentum kick
+in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
+case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+will change.
 
-.. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
-	  convention to that of an sector bend that has been rotated.
+.. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle
+	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
+	  the opposite of a bend where a positive *angle* causes a deflection in negative
+	  `x`.
 
 * The `aperture parameters`_ may also be specified.
-* The `magnet geometry parameters`_ may also be specified.
+* For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
 Examples::
 
-   KX17h: hkick, angle=0.01;
+   KX17h: hkicker, hkick=0.01;
+   KX19h: hkicker, hkick=-1.3e-5, l=0.2*m;
+
+kicker
+^^^^^^
+
+`kicker` defines a combined horizontal and vertical kicker.  Either both or one of the
+parameters `hkick` and `vkick` may be specified. Like the `hkicker` and `vkicker`, this
+may also be thin or thick. In the case of the thick kicker, the field is the linear
+sum of two independently calculated fields.
+
+Example::
+
+  kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0.3e-4;
+
+
+tkicker
+^^^^^^^
+
+BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
+however MADX differentiates the two on the basis of fitting parameters. BDSIM does
+not make this distinction. See `kicker`_ for more details.
+
 
 rf
 ^^^^
 
-.. TODO: add picture
+.. figure:: figures/rfcavity.png
+	    :width: 50%
+	    :align: right
 
-`rf` or `rfcavity` defines an rf cavity
+`rf` or `rfcavity` defines an RF cavity with a time varying electric or electro-magnetic field.
+There are several geometry and field options as well as ways to specify the strength.
+The default field is a uniform (in space) electric-only field that is time varying
+according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
+cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
+the motion of particles in both cases.
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`gradient`        field gradient [V/m]         0           yes
-`material`        outer material               Iron        no
-================  ===========================  ==========  ===========
 
-* The `aperture parameters`_ may also be specified.
++----------------+-------------------------------+--------------+---------------------+
+| **Parameter**  | **Description**               | **Default**  | **Required**        |
++================+===============================+==============+=====================+
+| `l`            | length [m]                    | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `E`            | electric field strength       | 0            | yes (or `gradient`) |
++----------------+-------------------------------+--------------+---------------------+
+| `gradient`     | field gradient [MV/m]         | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `frequency`    | frequency of oscillation (Hz) | 0            | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `phase`        | phase offset (rad)            | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `tOffset`      | offset in time (ns)           | 0            | no                  |
++----------------+-------------------------------+--------------+---------------------+
+| `material`     | outer material                | ""           | yes                 |
++----------------+-------------------------------+--------------+---------------------+
+| `cavityModel`  | name of cavity model object   | ""           | no                  |
++----------------+-------------------------------+--------------+---------------------+
 
-.. note:: Be careful with the sign of the gradient with respect to the sign of
-	  the primary particle
+.. note:: The design energy of the machine is not affected, so the strength and fields
+	  of components after an RF cavity in a lattice are calculated with respect to
+	  the design energy and particle and therefore design rigidity. The user should
+	  scale the strength values appropriately if they wish to match the increased
+	  energy of the particle.
 
-Examples::
+.. warning:: The elliptical cavity geometry may not render or appear in the Geant4
+	     QT visualiser.  The geometry exists and is valid, but this is due to
+	     deficiencies of the Geant4 visualisation system. The geometry exists
+	     and is fully functional.
 
-   RF4f: rf, l=3*m, gradient=10*MV/m;
+* The field is such that a positive E field results in acceleration of the primary particle.
+* The phase is calculated automatically such that 0 phase results in the peak E field at
+  the centre of the component for its position in the lattice.
+* Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
+* The material must be specified in the `rf` gmad element or in the attached cavity model
+  by name. The cavity model will override the element material.
+
+If `tOffset` is specified, a phase offset is calculated from this time for the speed
+of light in vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
+element is used to find the phase offset.
+
+If `phase` is specified, this is added to calculated phase offset from either the lattice
+position or `tOffset`.
+
+Simple examples::
+
+   rf1: rf, l=10*cm, E=10*MV, frequency=90*MHz, phase=0.02;
+   rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
+   rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
+
+Rather than just a simple E field, an electro-magnetic field that is the solution to
+a cylindrical pill-box cavity may be used. A cavity object (described in more detail
+below) is used to specify the field type. All other cavity parameters may be safely ignored
+and only the field type will be used. The field is described in :ref:`field-pill-box`.
+
+Pill-Box field example::
+
+  rffield: field, type="rfcavity";
+  rf4: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, fieldVacuum="rffield";
+   
+Elliptical SRF cavity geometry is also provided and may be specified by use of another
+'cavity' object in the parser.  This cavity object can then be attached to an `rf`
+object by name. Details can be found in :ref:`cavity-geometry-parameters`.
+
+
 
 rcol
 ^^^^
@@ -814,7 +916,7 @@ gmad file. The syntax for this is described in :ref:`field-maps`.
 
 Simple example::
 
-  detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
+  detector: element, geometry="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
 
 Example with field::
 
@@ -1128,6 +1230,59 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
 
+.. _cavity-geometry-parameters:
+
+Cavity Geometry Parameters
+--------------------------
+
+A more detailed rf cavity geometry may be described by constructing a 'cavity' object
+in gmad and attaching it by name to an element.  The following parameters may be added
+to a cavity object:
+
++--------------------------+-----------------+------------------------------------------------------+
+| **Parameter**            | **Required**    | **Description**                                      |
++==========================+=================+======================================================+
+| `name`                   | yes             | Name of the object                                   |
++--------------------------+-----------------+------------------------------------------------------+
+| `type`                   | yes             | (elliptical | rectangular | pillbox)                 |
++--------------------------+-----------------+------------------------------------------------------+
+| `material`               | yes             | The material for the cavity.                         |
++--------------------------+-----------------+------------------------------------------------------+
+| `irisRadius`             | no              | The radius of the narrowest part.                    |
++--------------------------+-----------------+------------------------------------------------------+
+| `equatorRadius`          | no              | The radius of the widest part.                       |
++--------------------------+-----------------+------------------------------------------------------+
+| `halfCellLength`         | no              | Half length along a cell.                            |
++--------------------------+-----------------+------------------------------------------------------+
+| `equatorEllipseSemiAxis` | Elliptical only | Semi-axis of the ellipse at the cavity equator.      |
++--------------------------+-----------------+------------------------------------------------------+
+| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.     |
++--------------------------+-----------------+------------------------------------------------------+
+| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris        |
++--------------------------+-----------------+------------------------------------------------------+
+| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.  |
++--------------------------+-----------------+------------------------------------------------------+
+| `thickness`              | no              | Thickness of material.                               |
++--------------------------+-----------------+------------------------------------------------------+
+| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.   |
++--------------------------+-----------------+------------------------------------------------------+
+| `numberOfCells`          | no              | Number of cells to construct.                        |
++--------------------------+-----------------+------------------------------------------------------+
+
+Example::
+
+  shinyCavity: cavity, type="elliptical",
+                       irisRadius = 35*mm,
+	               equatorRadius = 103.3*mm,
+	               halfCellLength = 57.7*mm,
+	               equatorEllipseSemiAxis = 42*mm,
+	               irisHorizontalAxis = 12*mm,
+	               irisVerticalAxis = 19*mm,
+	               tangentLineAngle = 13.3*pi/180,
+	               thickness = 1*mm,
+	               numberOfPoints = 24,
+	               numberOfCells = 1;
+
 .. _field-maps:
 
 Fields
@@ -1400,8 +1555,6 @@ overlap with any other geometry.
 	  into the world volume. This only ensures the container doesn't overlap with BDSIM
 	  geometry, not that the internal geometry is valid.
 
-.. Note:: Currently sensitivity (ie. read out of hits) is not support and is being implemented.
-
 The following parameters may be specified.
 
 +----------------+--------------------------------------------------------------------+
@@ -1431,7 +1584,7 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
 +----------------+--------------------------------------------------------------------+
-| sensitive      | **unsupported** - in future whether geometry records hits.         |
+| sensitive      | Whether the geometry records energy deposition (default true).     |
 +----------------+--------------------------------------------------------------------+
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
@@ -1447,7 +1600,7 @@ directly, which is also the same as a :code:`CLHEP::HepRotation`.
 
 The following is an example syntax is used to place a piece of geometry::
 
-  leadblock, placement, x = 10*m,
+  leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml;
@@ -1465,7 +1618,7 @@ at the same level in the geometry hierarchy (both are placed in one container fo
 The beam pipe is not placed 'inside' the yoke.
 
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkick`, `hkick` element types in BDSIM.
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
 Example::
 
@@ -1673,7 +1826,7 @@ This affects all samplers.
 Sampler Visualisation
 ^^^^^^^^^^^^^^^^^^^^^
 
-The samplers are normally invisible and are built in a parallel world geometryin Geant4. To
+The samplers are normally invisible and are built in a parallel world geometry in Geant4. To
 visualised them, the following command should be used in the visualiser::
 
   /vis/drawVolume worlds
@@ -1687,10 +1840,12 @@ Physics Processes
 
 BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
 and simulation it is very useful to define the physical processes that should be simulated so
-that the simulation is both relevant and efficient. Rather than specify each individual process
-for every individual particle, a series of "physics lists" are provided that are a predetermined
-set of physics process suitable for a certain applications. BDSIM follows the Geant4 ethos in this
-regard.
+that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
+is provided and other processes must be specified to be used. Rather than specify each individual
+particle physics process on a per-particle basis, a series of "physics lists" are provided that
+are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
+the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
+Geant4 ones.
 
 Note, using extra physics processes that are not required will slow the simulation and produce
 many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
@@ -1698,9 +1853,13 @@ only use the minimal set of physics processes required.
 
 The physics list can be selected with the following syntax (delimited by a space)::
 
-  option, physicsList="physicslistname anotherphysicslistname";
+  option, physicsList = "physicslistname anotherphysicslistname";
 
-  option, physicsList="em optical";
+  option, physicsList = "em optical";
+
+For general high energy physics we recommend::
+
+  option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
 .. note:: The strings for the physics list are case-insensitive.
 
@@ -1729,6 +1888,12 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 |                           | Transportation of primary particles only - no scattering in material.  |
 +---------------------------+------------------------------------------------------------------------+
+| cherenkov                 | Provides Cherenkov radiation for all charged particles. Provided by    |
+|                           | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
+|                           | `G4CherenkovProcess`.                                                  |
++---------------------------+------------------------------------------------------------------------+
+| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
++---------------------------+------------------------------------------------------------------------+
 | em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
 |                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
 +---------------------------+------------------------------------------------------------------------+
@@ -1739,11 +1904,13 @@ Physics Lists In BDSIM
 | em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
 |                           | `G4EmPenelopePhysics`.                                                 |
 +---------------------------+------------------------------------------------------------------------+
-| synchrad                  | BDSIM synchrotron radiation process.                                   |
+| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                           | is based on the FRITIOF description of string excitation and           |
+|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
 +---------------------------+------------------------------------------------------------------------+
-| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
-|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
-|                           | This uses `G4OpticalPhysics` class.                                    |
+| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
 |                           | `G4HadronElasticPhysics.`                                              |
@@ -1751,6 +1918,16 @@ Physics Lists In BDSIM
 | hadronic                  | A shortcut for `QGSP_BERT`.                                            |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
+|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                           | builder (a la Geant4) `BDSPhysicsMuon`.                                |
++---------------------------+------------------------------------------------------------------------+
+| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
+|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                           | This uses `G4OpticalPhysics` class.                                    |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
@@ -1771,22 +1948,14 @@ Physics Lists In BDSIM
 | qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
 |                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
 +---------------------------+------------------------------------------------------------------------+
-| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
-|                           | is based on the FRITIOF description of string excitation and           |
-|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
+| spindecay                 | Decay physics but with spin correctly implemented. Note, only the      |
+|                           | Geant4 tracking integrators track spin correctly.                      |
 +---------------------------+------------------------------------------------------------------------+
-| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
-|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
+| synchrad                  | Provides synchrotron radiation for all charged particles. Provided by  |
+|                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
+|                           | `G4SynchrotronRadiation`.                                              |
 +---------------------------+------------------------------------------------------------------------+
-| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
-+---------------------------+------------------------------------------------------------------------+
-| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
-|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
-|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                           | builder (a la Geant4) `BDSMuonPhysics`.                                |
-+---------------------------+------------------------------------------------------------------------+
+
 
 Physics Biasing
 ---------------
@@ -1958,6 +2127,8 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | maximumEpsilonStep               | maximum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
+| maximumStepLength                | maximum step length (default = 20 m)                  |
++----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
@@ -2037,9 +2208,17 @@ the momentum of the reference particle and therefore the magnetic field of dipol
 if only the `angle` parameter has been specified.
 
 .. note:: A design energy can be specified and in addition, the central energy, of say
-	  a bunch with a Gaussian distribution, can be specified.
+	  a bunch with a Gaussian distribution, can be specified with `E0`.
 
-The user **must** specify at least `energy` and the `particle` type. Other parameters, such
+The user **must** specify at least `energy` and the `particle` type. In this case the
+`reference`_ distribution will be used as well as default parameters. The minimum
+beam definitions is::
+
+  beam, particle="proton",
+        energy=34.2*GeV;
+
+  
+Other parameters, such
 as the beam distribution type, `distrType`, are optional and can be specified as described
 in the following sections. The beam is defined using the following syntax::
 
@@ -2086,7 +2265,7 @@ This is a single particle with the same position and angle defined by the follow
 coordinates are the same for every particle fired using the reference distribution. It is therefore
 not likely to be useful to generate a large number of repeated events with this distribution.
 
-These parameters also act as central parameters for all other distributions. For example, a Gaussian
+These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may defined with the `gauss`_ parameters but `X0` set to offset the centroid of the
 Gaussian with respect to the reference trajectory.
 
@@ -2105,6 +2284,8 @@ Gaussian with respect to the reference trajectory.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Yp0`                            | Vertical canonical momentum                           | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
+| `E0`                             | Central energy of bunch distribution (GeV)            | 'energy' |
++----------------------------------+-------------------------------------------------------+----------+
 
 Examples::
 
@@ -2120,7 +2301,8 @@ Generates a beam with all coordinates 0 at the nominal energy.::
 	X0 = 100*um,
 	Y0 = 3.5*um;
 
-Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5 :math:`\mu\mathrm{m}` vertically.
+Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5
+:math:`\mu\mathrm{m}` vertically.
 
 gaussmatrix
 ^^^^^^^^^^^

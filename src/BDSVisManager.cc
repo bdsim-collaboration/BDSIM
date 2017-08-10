@@ -44,8 +44,6 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
 #endif
   // Initialize visualisation
   G4VisManager* visManager = new G4VisExecutive;
-  // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-  // G4VisManager* visManager = new G4VisExecutive("Quiet");
   visManager->Initialize();
       
   G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
@@ -60,7 +58,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   std::string bdsimPath = BDS::GetBDSIMExecPath();
   // difference between local build and install build:
   std::string visPath;
-  std::string localPath = bdsimPath + "vis/vis.mac";
+  std::string localPath   = bdsimPath + "vis/vis.mac";
   std::string installPath = bdsimPath + "../share/bdsim/vis/vis.mac";
       
   if (FILE *file = fopen(localPath.c_str(), "r"))
@@ -82,21 +80,8 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   // if not set use default visualisation file
   if (visMacroName.empty())
     {useDefault = true;}
-  G4String visMacroFilename = BDS::GetFullPath(visMacroName);
-  if (!useDefault)
-    {
-      // first relative to main path:
-      FILE* file = fopen(visMacroFilename.c_str(), "r");
-      if (file)
-	{fclose(file);}
-      else
-	{
-	  // if not present use a default one (OGLSQt or DAWNFILE)
-	  G4cout << __METHOD_NAME__ << "WARNING: visualisation file "
-		 << visMacroFilename <<  " file not present, using default!" << G4endl;
-	  useDefault = true;
-	}
-    }
+  // build full filename
+  G4String visMacroFilename = visMacroName;
   if (useDefault)
     {
 #ifdef G4VIS_USE_OPENGLQT
@@ -105,24 +90,36 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
       visMacroFilename = visPath + "dawnfile.mac";
 #endif
     }
+  else
+    {
+      // check if file exists and if not present don't start session
+      // (need to use std::cout otherwise not printed)
+      if (BDS::FileExists(visMacroFilename) == false)
+	{
+          std::cout << __METHOD_NAME__ << "ERROR: visualisation file "
+                    << visMacroFilename << " not present!" << G4endl;
+          return;
+        }
+    }
   // execute visualisation file
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
   UIManager->ApplyCommand("/control/execute " + visMacroFilename);
   
-  // add default gui
+  // run gui
   if (session2->IsGUI())
     {
 #if G4VERSION_NUMBER < 1030
+      // these were added by default in Geant4.10.3 onwards
       // Add icons
       std::string iconMacroFilename = visPath + "icons.mac";
       UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
+      // add run icon:
+      std::string runButtonFilename = visPath + "run.png";
+      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
 #endif
       // add menus
       std::string guiMacroFilename  = visPath + "gui.mac";
       UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
-      // add run icon:
-      std::string runButtonFilename = visPath + "run.png";
-      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
     }
 #endif
   session2->SessionStart();

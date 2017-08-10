@@ -16,7 +16,7 @@ class G4Mag_EqRhs;
 class BDSIntegratorEuler: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn);
+  explicit BDSIntegratorEuler(G4Mag_EqRhs* eqOfMIn);
 
   virtual ~BDSIntegratorEuler(){;}
 

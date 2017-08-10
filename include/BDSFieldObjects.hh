@@ -15,7 +15,6 @@ class G4FieldManager;
 class G4LogicalVolume;
 class G4MagInt_Driver;
 class G4MagIntegratorStepper;
-class G4MagneticField;
 
 /**
  * @brief A holder for all the Geant4 field related objects.
@@ -40,17 +39,10 @@ public:
 		  G4ChordFinder*          chordFinderIn,
 		  G4FieldManager*         fieldManagerIn);
 
-  /// Alternative constructor that constructs G4ChordFinder and G4FieldManager
-  /// for convenience. The field manager uses delta intersection, epsilon min / max,
-  /// and delta one step from BDSGlobalConstants as defaults for field propagation
-  /// accuracy.
-  BDSFieldObjects(const BDSFieldInfo*     infoIn,
-		  G4MagneticField*        fieldIn,
-		  G4EquationOfMotion*     equationOfMotionIn,
-		  G4MagIntegratorStepper* magIntegratorStepperIn);
-
   /// Alternative constructor for the special case of an electro-magnetic field
   /// which doesn't follow the same hierarchy of classes as magnetic fields.
+  /// This can also be used for a second argument of G4MagneticField as this inherits
+  /// G4ElectroMagneticField.
   BDSFieldObjects(const BDSFieldInfo*     infoIn,
 		  G4ElectroMagneticField* fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,

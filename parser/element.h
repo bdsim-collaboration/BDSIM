@@ -37,8 +37,16 @@ namespace GMAD
     double fint; ///< fringe field integral at the dipole entrance
     double fintx;  ///< fringe field integral at the dipole exit
     double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+    double kick;   ///< fractional delta p for either h or v kicker
     double hkick;  ///< fractional delta px for hkicker
     double vkick;  ///< fractional delta py for vkicker
+    std::list<double> knl; ///< multipole expansion coefficients
+    std::list<double> ksl; ///< skew multipole expansion
+    double gradient;  ///< for rf cavities in V / m
+    double E;         ///< electric field amplitude for rf cavities in V
+    double frequency; ///< frequency for rf cavity in Hz
+    double phase;     ///< phase of rf cavity (rad)
+    double tOffset;   ///< time offset used for phase calculation (ns)
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
@@ -61,11 +69,19 @@ namespace GMAD
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
+
+    // screen parameters
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
     double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
     double screenXSize, screenYSize; ///< for screen
+    ///@{ for screen
+    std::list<double>      layerThicknesses;
+    std::list<std::string> layerMaterials;
+    std::list<int>         layerIsSampler;
+    ///@}
+    
     ///@{ for AWAKE spectrometer
     double screenPSize; ///<Phosphor particle size in screen
     double screenEndZ;
@@ -73,19 +89,16 @@ namespace GMAD
     double screenWidth;
     double awakeMagnetOffsetX;
     ///@}
-    ///@{ for screen
-    std::list<double> layerThicknesses;
-    std::list<std::string> layerMaterials;
-    std::list<int> layerIsSampler;
-    ///@}
+
     ///@{ for 3d transform and laser
     double xdir;
     double ydir;
     double zdir;
     ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    double gradient; ///< for rf cavities in V / m
+    
     double phi, theta, psi; ///< for 3d transforms
+
     ///@{ for degrader
     int numberWedges;
     double wedgeLength;
@@ -93,8 +106,6 @@ namespace GMAD
     double materialThickness;
     double degraderOffset;
     ///@}
-    std::list<double> knl; ///< multipole expansion coefficients
-    std::list<double> ksl; ///< skew multipole expansion
 
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;

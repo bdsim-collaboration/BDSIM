@@ -29,16 +29,12 @@ Useful ctest commands (can all be combined):
 
 For example to find the test command for the sextupole component test::
 
-  ctest -R Component-Sextupole -VV
+  ctest -R Component-Sextupole -VV -N
 
 Test Server
 ===========
 
-The test server is based on CDash. Submissions to the `BDSIM test server <http://abp-cdash.web.cern.ch/abp-cdash/index.php?project=BDSIM>`_ can be done with the example configuration file cmake/cdash_bdsim.cmake. Adjust it to your settings and run::
-
-  ctest --timeout 900 -S cdash_bdsim.cmake
-
-Comparison of output is being added currently.
+The test server is based on CDash. Submissions to the `BDSIM test server <http://jaiserv1.pp.rhul.ac.uk/cdash/index.php?project=BDSIM>`_ (only from inside the RHUL domain) can be done with instructions from the `BDSIM-cdash repository <https://bitbucket.org/jairhul/bdsim-cdash>`_.
 
 Package System
 ==============

@@ -12,6 +12,7 @@ void CavityModel::clear()
 {
   name                   = "";
   type                   = "";
+  material               = "";
   irisRadius             = 0.0;
   equatorRadius          = 0.0;
   halfCellLength         = 0.0;
@@ -20,8 +21,6 @@ void CavityModel::clear()
   irisVerticalAxis       = 0.0;
   tangentLineAngle       = 0.0;
   thickness              = 0.0;
-  frequency              = 0.0;
-  phase                  = 0.0;
   numberOfPoints         = 24;
   numberOfCells          = 1;
 }
@@ -30,6 +29,7 @@ void CavityModel::PublishMembers()
 {
   publish("name",               &CavityModel::name);
   publish("type",               &CavityModel::type);
+  publish("material",           &CavityModel::material);
   publish("irisRadius",         &CavityModel::irisRadius);
   publish("halfCellLength",     &CavityModel::halfCellLength);
   publish("equatorEllipseSemiAxis",&CavityModel::equatorEllipseSemiAxis);
@@ -38,8 +38,6 @@ void CavityModel::PublishMembers()
   publish("irisVerticalAxis",   &CavityModel::irisVerticalAxis);
   publish("tangentLineAngle",   &CavityModel::tangentLineAngle);
   publish("thickness",          &CavityModel::thickness);
-  publish("frequency",          &CavityModel::frequency);
-  publish("phase",              &CavityModel::phase);
   publish("numberOfPoints",     &CavityModel::numberOfPoints);
   publish("numberOfCells",      &CavityModel::numberOfCells);
 }
@@ -49,6 +47,7 @@ void CavityModel::print()const
   std::cout << "cavitymodel: "
 	    << "name "                   << name << " " << std::endl
 	    << "type "                   << type << " " << std::endl
+	    << "material "               << material << " " << std::endl
 	    << "irisRadius "             << irisRadius << " " << std::endl
 	    << "equatorRadius "          << equatorRadius << " " << std::endl
 	    << "halfCellLength "         << halfCellLength << " " << std::endl
@@ -57,8 +56,6 @@ void CavityModel::print()const
 	    << "irisVerticalAxis "       << irisVerticalAxis << " " << std::endl
 	    << "tangentLineAngle "       << tangentLineAngle << " " << std::endl
 	    << "thickness "              << thickness << " " << std::endl
-	    << "frequency "              << frequency << " " << std::endl
-	    << "phase "                  << phase << " " << std::endl
 	    << "numberOfPoints "         << numberOfPoints << " " << std::endl
 	    << "numberOfCells "          << numberOfCells << " " << std::endl
 	    << std::endl;

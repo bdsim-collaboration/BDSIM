@@ -25,11 +25,11 @@ public:
 		TChain* chain,
 		bool    processSamplersIn   = false,
 		bool    debug               = false,
-		double  printModuloFraction = 0.01);
+		double  printModuloFraction = 0.01,
+		bool    emittanceOnTheFlyIn = false);
   virtual ~EventAnalysis();
 
   void SetPrintModuloFraction(double fraction);
-  void SetProcessSamplers(bool procesSamplersIn) {processSamplers = procesSamplersIn;} 
 
   virtual void Process();
 
@@ -48,10 +48,11 @@ protected:
 private:
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
-  void ProcessSamplers();
+  void ProcessSamplers(bool firstTime = false);
 
   int  printModulo;     ///< Cache of print modulo fraction
   bool processSamplers; ///< Whether to process samplers.
+  bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
 };
 
 #endif

@@ -6,20 +6,14 @@
 ClassImp(RunAnalysis)
 
 RunAnalysis::RunAnalysis():
-Analysis("Run.", nullptr, "RunHistogramsMerged"),
+  Analysis("Run.", nullptr, "RunHistogramsMerged"),
   run(nullptr)
 {;}
 
-RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
-  Analysis("Run.", chain, "RunHistogramsMerged", debug),
+RunAnalysis::RunAnalysis(Run* runIn, TChain* chainIn, bool debugIn):
+  Analysis("Run.", chainIn, "RunHistogramsMerged", debugIn),
   run(runIn)
-{
-  if (debug)
-  {
-    std::cout << __METHOD_NAME__ << " " << runIn << " " << chain <<  " "
-	      << chain->GetEntries() << std::endl;
-  }
-}
+{;}
 
 RunAnalysis::~RunAnalysis()
 {;}
@@ -37,5 +31,7 @@ void RunAnalysis::Process()
       {histoSum = new HistogramMerge(run->histos);}
     else
       {histoSum->Add(run->histos);}
+
+    UserProcess();
   }
 }

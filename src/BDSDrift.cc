@@ -5,10 +5,10 @@
 
 #include "globals.hh" // geant4 globals / types
 
-BDSDrift::BDSDrift(G4String         name, 
-		   G4double         length,
-		   BDSBeamPipeInfo* beamPipeInfo):
-  BDSAcceleratorComponent(name, length, 0, "drift", beamPipeInfo)
+BDSDrift::BDSDrift(G4String         nameIn, 
+		   G4double         lengthIn,
+		   BDSBeamPipeInfo* beamPipeInfoIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "drift", beamPipeInfoIn)
 {;}
 
 BDSDrift::~BDSDrift()

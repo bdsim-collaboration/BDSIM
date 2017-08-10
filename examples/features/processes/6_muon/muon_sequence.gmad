@@ -1,2 +1,2 @@
-muon_line: line=(SOTL,DRI1,COL1,DRI2,EOTL);
+muon_line: line=(DRI1,COL1,DRI1);
 use, period=muon_line;

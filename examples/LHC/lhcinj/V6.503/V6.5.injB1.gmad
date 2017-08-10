@@ -456,33 +456,33 @@ x2zdc002: drift, l = l.x2zdc002;
 x5zdc001: drift, l = l.x5zdc001;
 x5zdc002: drift, l = l.x5zdc002;
 ! ---------------------- hcorrector     ---------------------------------------------
-mcbch: hkick, l = l.mcbch;
-mcbh: hkick, l = l.mcbh;
-mcbwh: hkick, l = l.mcbwh;
-mcbxh: hkick, l = l.mcbxh;
-mcbyh: hkick, l = l.mcbyh;
+mcbch: hkicker, l = l.mcbch;
+mcbh: hkicker, l = l.mcbh;
+mcbwh: hkicker, l = l.mcbwh;
+mcbxh: hkicker, l = l.mcbxh;
+mcbyh: hkicker, l = l.mcbyh;
 ! ---------------------- hkicker        ---------------------------------------------
-mblw: hkick, l = l.mblw;
-mbxwh: hkick, l = l.mbxwh;
-mbxws: hkick, l = l.mbxws;
-mu: hkick, l = l.mu;
+mblw: hkicker, l = l.mblw;
+mbxwh: hkicker, l = l.mbxwh;
+mbxws: hkicker, l = l.mbxws;
+mu: hkicker, l = l.mu;
 ! ---------------------- instrument     ---------------------------------------------
 brana: instrument, l = l.brana;
 branb: instrument, l = l.branb;
 xrph: instrument, l = l.xrph;
 xrpv: instrument, l = l.xrpv;
 ! ---------------------- kicker         ---------------------------------------------
-!replace with hkick for now *****
-mkd: hkick, l = l.mkd;
-mki__192: vkick, l = l.mki__192;
-mki__193: hkick, l = l.mki__193;
-mkqa: hkick, l = l.mkqa;
-msda: hkick, l = l.msda;
-msdb: hkick, l = l.msdb;
-msdb2: hkick, l = l.msdb2;
-msdc: hkick, l = l.msdc;
-msia: hkick, l = l.msia;
-msib: hkick, l = l.msib;
+!replace with hkicker for now *****
+mkd: hkicker, l = l.mkd;
+mki__192: vkicker, l = l.mki__192;
+mki__193: hkicker, l = l.mki__193;
+mkqa: hkicker, l = l.mkqa;
+msda: hkicker, l = l.msda;
+msdb: hkicker, l = l.msdb;
+msdb2: hkicker, l = l.msdb2;
+msdc: hkicker, l = l.msdc;
+msia: hkicker, l = l.msia;
+msib: hkicker, l = l.msib;
 ! ---------------------- markerer         ---------------------------------------------
 omk: markerer;
 ! ---------------------- markertor        ---------------------------------------------
@@ -670,15 +670,15 @@ mbas2: solenoid, l = l.mbas2;
 mbcs2: solenoid, l = l.mbcs2;
 mbls2: solenoid, l = l.mbls2;
 ! ---------------------- vcorrector     ---------------------------------------------
-mcbcv: vkick, l = l.mcbcv;
-mcbv: vkick, l = l.mcbv;
-mcbwv: vkick, l = l.mcbwv;
-mcbxv: vkick, l = l.mcbxv;
-mcbyv: vkick, l = l.mcbyv;
+mcbcv: vkicker, l = l.mcbcv;
+mcbv: vkicker, l = l.mcbv;
+mcbwv: vkicker, l = l.mcbwv;
+mcbxv: vkicker, l = l.mcbxv;
+mcbyv: vkicker, l = l.mcbyv;
 ! ---------------------- vkicker        ---------------------------------------------
-mbaw: vkick, l = l.mbaw;
-mbwmd: vkick, l = l.mbwmd;
-mbxwt: vkick, l = l.mbxwt;
+mbaw: vkicker, l = l.mbaw;
+mbwmd: vkicker, l = l.mbwmd;
+mbxwt: vkicker, l = l.mbxwt;
 ! ------------------------- lhc sequence                   --------------------------
 len_lhcb1 = lhclength;
 

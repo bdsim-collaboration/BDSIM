@@ -3,6 +3,8 @@ file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 # Remove mains from dictionary
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/edbdsim.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
 
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
@@ -31,30 +33,19 @@ foreach(header ${rebdsimLibLinkDefs})
     MATH(EXPR beginpos "${dir}+1")
     MATH(EXPR length "${pos}-${beginpos}")
     string(SUBSTRING ${header} ${beginpos} ${length} className)
-    #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
     if (${ROOT_MAJOR_VERSION} STREQUAL "6")
         # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
         # root6 .pcm file needs to be at library level
         # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
         add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
                 COMMAND ${ROOTCINT_EXECUTABLE}
-                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                ${PREPROCESSOR_DEFS}
-#                -noIncludePaths -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-                -I${CMAKE_CURRENT_SOURCE_DIR}/../
-                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths -inlineInputHeader
+                ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include
+                -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
-        )
-        add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                ${CMAKE_CURRENT_BINARY_DIR}
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
         )
         # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
         set_property(
@@ -70,9 +61,9 @@ foreach(header ${rebdsimLibLinkDefs})
                 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.h
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                -c -p
                 ${PREPROCESSOR_DEFS}
-                -I${CMAKE_CURRENT_SOURCE_DIR}/../
+		-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
@@ -94,6 +85,11 @@ add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimOptics rebdsimLib bdsimRootEvent)
 bdsim_install_targets(rebdsimOptics)
+
+add_executable(rebdsimOrbit rebdsimOrbit.cc)
+set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimOrbit rebdsimLib bdsimRootEvent)
+bdsim_install_targets(rebdsimOrbit)
 
 if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	add_executable(edbdsim edbdsim.cc)
@@ -128,6 +124,7 @@ bdsim_install_analysis_headers(${rebdsimHeaders})
 
 get_target_property(rebdsimBinaryName rebdsim OUTPUT_NAME)
 set(rebdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${rebdsimBinaryName} CACHE STRING "rebdsim binary")
+mark_as_advanced(rebdsimBinary)
 
 # load test macros
 include(rebdsim_test_macros)

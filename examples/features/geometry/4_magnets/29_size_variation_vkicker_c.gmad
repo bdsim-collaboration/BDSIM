@@ -1,3 +1,3 @@
-el: vkick, l=0.5*m, angle=0.02;
+el: vkicker, l=0.5*m, angle=0.02;
 include size_variation.gmad;
 option, magnetGeometryType="polescircular";

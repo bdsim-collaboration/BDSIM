@@ -10,14 +10,14 @@
 
 class BDSFieldInfo;
 
-BDSElement::BDSElement(G4String      name,
-		       G4double      length,
+BDSElement::BDSElement(G4String      nameIn,
+		       G4double      lengthIn,
 		       G4double      outerDiameterIn,
-		       G4String      geometry,
+		       G4String      geometryIn,
 		       G4String      fieldNameIn):
-  BDSAcceleratorComponent(name, length, 0, "element"),
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "element"),
   outerDiameter(outerDiameterIn),
-  geometryFileName(geometry),
+  geometryFileName(geometryIn),
   fieldName(fieldNameIn)
 {;}
 
@@ -27,7 +27,9 @@ void BDSElement::BuildContainerLogicalVolume()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
 
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(geometryFileName, nullptr,
+  // The outerDiameter here is a suggested outerDiameter for the factory. Each subfactory may treat this
+  // differently.
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
 									    chordLength, outerDiameter);
   
   if (!geom)
@@ -37,7 +39,7 @@ void BDSElement::BuildContainerLogicalVolume()
       exit(1);
     }
   
-  // We don't registe the geometry as a daughter as the geometry factory retains
+  // We don't register the geometry as a daughter as the geometry factory retains
   // ownership of the geometry and will clean it up at the end.
   
   // make the beam pipe container, this object's container
@@ -67,13 +69,5 @@ void BDSElement::BuildContainerLogicalVolume()
 
   // Get the field definition from the parser
   // Note, the field factory manages the deletion of this info instance.
-  auto fieldInfo = BDSFieldFactory::Instance()->GetDefinition(fieldName);
-
-  // In case there was no field, the info might but nullptr - check
-  if (fieldInfo)
-    {// valid field specification - register for construction.
-      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(fieldInfo,
-								containerLogicalVolume,
-								true);
-    }
+  SetField(BDSFieldFactory::Instance()->GetDefinition(fieldName));
 }

@@ -41,17 +41,17 @@ typedef CLHEP::HepRotation G4RotationMatrix;
 class BDSGeometryComponent
 {
 public:
-  BDSGeometryComponent(G4VSolid*        containerSolidIn,
-		       G4LogicalVolume* containerLVIn);
   BDSGeometryComponent(G4VSolid*         containerSolidIn,
 		       G4LogicalVolume*  containerLVIn,
-		       BDSExtent         extentIn,
+		       BDSExtent         extentIn            = BDSExtent(),
 		       BDSExtent         innerExtentIn       = BDSExtent(),
 		       G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
 		       G4RotationMatrix* placementRotationIn = nullptr);
   
-  /// Copy constructor
+  /// Copy constructor (no copying of registered objects)
   BDSGeometryComponent(const BDSGeometryComponent& component);
+  /// Assignment operator not used
+  BDSGeometryComponent& operator=(const BDSGeometryComponent&) = delete;
   virtual ~BDSGeometryComponent();
 
   /// @{ Accessor - see member for more info
@@ -160,6 +160,9 @@ public:
   
   /// Access all sensitive volumes belonging to this component
   virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
+
+  /// Make all logical volumes sensitive (flagged only) - does not attach an SD.
+  inline void MakeAllVolumesSensitive() {RegisterSensitiveVolume(GetAllLogicalVolumes());}
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);

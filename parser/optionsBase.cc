@@ -67,6 +67,18 @@ OptionsBase::OptionsBase()
   ffact                 = 1.0;
   beamEnergy            = 0.0;
 
+  beamlineX         = 0;
+  beamlineY         = 0;
+  beamlineZ         = 0;
+  beamlinePhi       = 0;
+  beamlineTheta     = 0;
+  beamlinePsi       = 0;
+  beamlineAxisX     = 0;
+  beamlineAxisY     = 0;
+  beamlineAxisZ     = 0;
+  beamlineAngle     = 0;
+  beamlineAxisAngle = false;
+
   X0 = 0.0, Y0 = 0.0, Z0 = 0.0, S0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
@@ -123,14 +135,14 @@ OptionsBase::OptionsBase()
   eventNumberOffset       = 0;
 
   // general geometrical prameters
-  checkOverlaps           = 0;
+  checkOverlaps           = false;
   xsize=0.0, ysize=0.0;
 
   // magnet geometry
   magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
-  thinElementLength    = 1e-6;
+  thinElementLength    = 1e-7;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
@@ -172,6 +184,8 @@ OptionsBase::OptionsBase()
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
 
+  removeTemporaryFiles = 0;
+  
   // samplers
   samplerDiameter     = 5; // m
 
@@ -181,13 +195,13 @@ OptionsBase::OptionsBase()
   sensitiveBLMs            = true;
 
   // physics processes
-  turnOnCerenkov           = true;
   turnOnOpticalAbsorption  = true;
   turnOnMieScattering      = true;
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
   scintYieldFactor         = 1.0;
   maximumPhotonsPerStep    = -1;  ///< -1 -> no action take (could want 0)
+  maximumBetaChangePerStep = 10;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -202,13 +216,13 @@ OptionsBase::OptionsBase()
   defaultBiasMaterial      = "";
 
   // tracking options
-  integratorSet            = "bdsim";
-  lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
+  integratorSet            = "bdsimtwo";
+  lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
-  maximumStepLength        = 1;       // m, quite big
+  maximumStepLength        = 20;      // m, quite big
   maximumTrackLength       = 1e90;    // m, no limit but smaller than DBL_MAX for safe *CLHEP::m
-  chordStepMinimum         = 0.000001;// m
-  deltaIntersection        = 1e-10;   // m
+  chordStepMinimum         = 1e-8;    // m
+  deltaIntersection        = 1e-8;    // m - should be greater than lengthSafety!
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;
@@ -264,7 +278,6 @@ void OptionsBase::print() const
   std::cout<<"n particles           : " << nGenerate                << std::endl;
   std::cout<<"sigmaX                : " << sigmaX                   << std::endl;
   std::cout<<"BV sign               : " << ffact                    << std::endl;
-  std::cout<<"Cerenkov on           : " << turnOnCerenkov           << std::endl;
   std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption  << std::endl;
   std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
   std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;

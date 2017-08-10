@@ -5,27 +5,29 @@
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldEInterpolated.hh"
 #include "BDSFieldESinusoid.hh"
+#include "BDSFieldEZero.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldEMGlobal.hh"
 #include "BDSFieldEMInterpolated.hh"
 #include "BDSFieldEMRFCavity.hh"
+#include "BDSFieldEMZero.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
-#include "BDSFieldMagDummy.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
-#include "BDSFieldMagSBend.hh"
+#include "BDSFieldMagDipole.hh"
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagSolenoid.hh"
+#include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGeometryType.hh"
@@ -35,6 +37,7 @@
 #include "BDSIntegratorDipole2.hh"
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorEuler.hh"
+#include "BDSIntegratorKickerThin.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorMultipoleThin.hh"
@@ -42,6 +45,7 @@
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
@@ -257,10 +261,25 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 							 scalingKey);
 	break;
       }
+    case BDSFieldType::bzero:
+      {field = new BDSFieldMagZero(); break;}
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-      {field = new BDSFieldMagSBend(strength, brho); break;}
+      {
+	G4ThreeVector unitDirection = G4ThreeVector(0,1,0);
+	field = new BDSFieldMagDipole(strength, brho, unitDirection);
+	break;
+      }
+    case BDSFieldType::dipole3d:
+      {
+	G4ThreeVector unitDirection = G4ThreeVector((*strength)["bx"],
+						    (*strength)["by"],
+						    (*strength)["bz"]);
+	unitDirection = unitDirection.unit(); // ensure unit vector
+	field = new BDSFieldMagDipole(strength, brho, unitDirection);
+	break;
+      }
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::dipolequadrupole:
@@ -314,12 +333,14 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfcavity:
-      {field = new BDSFieldEMRFCavity(info.CavityInfo()); break;}
+      {field = new BDSFieldEMRFCavity(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::ebmap1d:
     case BDSFieldType::ebmap2d:
     case BDSFieldType::ebmap3d:
     case BDSFieldType::ebmap4d:
       {field = BDSFieldLoader::Instance()->LoadEMField(info); break;}
+    case BDSFieldType::ebzero:
+      {field = new BDSFieldEMZero(); break;}
     default:
       return nullptr;
       break;
@@ -349,12 +370,14 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rf:
-      {field = new BDSFieldESinusoid(info.CavityInfo()); break;}
+      {field = new BDSFieldESinusoid(info.MagnetStrength(), info.BRho()); break;}
     case BDSFieldType::emap1d:
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
     case BDSFieldType::emap4d:
       {field = BDSFieldLoader::Instance()->LoadEField(info); break;}
+    case BDSFieldType::ezero:
+      {field = new BDSFieldEZero(); break;}
     default:
       return nullptr;
       break;
@@ -419,9 +442,11 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::multipolethin:
       integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
-      integrator = new BDSIntegratorDipoleFringe(strength, eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleFringe(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::euler:
       integrator = new BDSIntegratorEuler(eqOfM); break;
+    case BDSIntegratorType::kickerthin:
+      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -518,7 +543,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
   const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
-  G4MagneticField* bGlobalField       = new BDSFieldMagDummy(); //Zero magnetic field.
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
   BDSFieldObjects* completeField      = new BDSFieldObjects(nullptr, bGlobalField,

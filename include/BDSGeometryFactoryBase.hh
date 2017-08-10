@@ -27,7 +27,8 @@ public:
   virtual ~BDSGeometryFactoryBase();
 
   /// Main method to load and construct geometry.
-  virtual BDSGeometryExternal* Build(G4String fileName,
+  virtual BDSGeometryExternal* Build(G4String componentName,
+				     G4String fileName,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
 				     G4double suggestedLength        = 0,
 				     G4double suggestedOuterDiameter = 0) = 0;
