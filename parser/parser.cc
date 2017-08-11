@@ -119,13 +119,12 @@ void Parser::ParseFile(FILE *f)
     {
       yyparse();
     }
-
+  
+  expand_sequences();
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
-
   // clear temporary stuff
-
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
@@ -211,10 +210,6 @@ void Parser::quit()
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
-#ifdef BDSDEBUG 
-  std::cout << "k1=" << params.k1 << ", k2=" << params.k2 << ", k3=" << params.k3 << ",type=" << typestr(type) << std::endl;
-#endif
-
   Element e;
   e.set(params,*name,type);
   if (isLine)
@@ -223,13 +218,32 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       allocated_lines.push_back(e.lst);
       // clean list
       tmp_list.clear();
+      sequences.push_back(*name); // append to all sequence definitions
     }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
 }
 
+void Parser::expand_sequences()
+{
+  for (const auto& name : sequences)
+    {
+      FastList<Element>* newLine = new FastList<Element>();
+      expand_line(*newLine, name);
+      expandedSequences[name] = newLine;
+    }
+}
+
 void Parser::expand_line(const std::string& name, std::string start, std::string end)
+{
+  expand_line(beamline_list, name, start, end);
+}
+
+void Parser::expand_line(FastList<Element>& target,
+			 const std::string& name,
+			 std::string        start,
+			 std::string        end)
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
@@ -237,19 +251,17 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
     exit(1);
   }
 
-  // delete the previous beamline
-  
-  beamline_list.clear();
+  // delete the previous beamline  
+  target.clear();
   
   // expand the desired beamline
-  
   Element e;
   e.type = line.type;
   e.name = name;
   e.l = 0;
   e.lst = nullptr;
   
-  beamline_list.push_back(e);
+  target.push_back(e);
 
 #ifdef BDSDEBUG 
   std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
@@ -263,13 +275,13 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
   // copy the list into the resulting list
   switch(line.type){
   case ElementType::_LINE:
-    beamline_list.insert(beamline_list.end(),sit,eit);
+    target.insert(target.end(),sit,eit);
     break;
   case ElementType::_REV_LINE:
-    beamline_list.insert(beamline_list.end(),line.lst->rbegin(),line.lst->rend());
+    target.insert(target.end(),line.lst->rbegin(),line.lst->rend());
     break;
   default:
-    beamline_list.insert(beamline_list.end(),sit,eit);
+    target.insert(target.end(),sit,eit);
   }
   // bool to check if beamline is fully expanded
   bool is_expanded = false;
@@ -280,8 +292,8 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
     {
       is_expanded = true;
       // start at second element
-      std::list<Element>::iterator it = ++beamline_list.begin();
-      for(;it!=beamline_list.end();++it)
+      std::list<Element>::iterator it = ++target.begin();
+      for(;it!=target.end();++it)
 	{
 	  Element& element = *it; // alias
 	  const ElementType& type = element.type;
@@ -301,7 +313,7 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
 	    std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
 #endif
 	    if(type == ElementType::_LINE)
-	      beamline_list.insert(it,list.lst->begin(),list.lst->end());
+	      target.insert(it,list.lst->begin(),list.lst->end());
 	    else if(type == ElementType::_REV_LINE){
 	      //iterate over list and invert any sublines contained within. SPM
 	      std::list<Element> tmpList;
@@ -313,13 +325,13 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
 		else if ((*itLineInverter).type == ElementType::_REV_LINE)
 		  (*itLineInverter).type = ElementType::_LINE;
 	      }
-	      beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
+	      target.insert(it,tmpList.rbegin(),tmpList.rend());
 	    }
 #ifdef BDSDEBUG
 	    std::cout << "inserted" << std::endl;
 #endif
 	    // delete the list pointer
-	    beamline_list.erase(it--);
+	    target.erase(it--);
 	  } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
 	    //transfer properties from the main list
 #ifdef BDSDEBUG 
@@ -351,29 +363,35 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
   
   if( !start.empty()) // determine the start element
     {
-      std::list<Element>::const_iterator startIt = beamline_list.find(std::string(start));
+      std::list<Element>::const_iterator startIt = target.find(std::string(start));
       
-      if(startIt!=beamline_list.end())
-	{
-	  beamline_list.erase(beamline_list.begin(),startIt);
-	}
+      if(startIt!=target.end())
+	{target.erase(target.begin(),startIt);}
     }
   
   if( !end.empty()) // determine the end element
     {
-      std::list<Element>::const_iterator endIt = beamline_list.find(std::string(end));
+      std::list<Element>::const_iterator endIt = target.find(std::string(end));
       
-      if(endIt!=beamline_list.end())
-	{
-	  beamline_list.erase(++endIt,beamline_list.end());
-	}
+      if(endIt!=target.end())
+	{target.erase(++endIt,target.end());}
     }
   
   // insert the tunnel if present
   
   std::list<Element>::iterator itTunnel = element_list.find("tunnel");
   if(itTunnel!=element_list.end())
-    beamline_list.push_back(*itTunnel);
+    {target.push_back(*itTunnel);}
+}
+
+const FastList<Element>& Parser::get_sequence(const std::string& name)
+{
+  // search for previously queried beamlines
+  const auto search = expandedSequences.find(name);
+  if (search != expandedSequences.end())
+    {return *(search->second);}
+  else
+    {std::cerr << "parser> no such sequence \"" << name << "\"" << std::endl; exit(1);} 
 }
 
 void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)

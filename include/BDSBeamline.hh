@@ -99,8 +99,12 @@ public:
   /// Return a reference to the last element
   inline const BDSBeamlineElement* GetLastItem() const {return back();}
 
-  /// Get an element by name. Returns null pointer if not found.
-  BDSBeamlineElement* GetElement(G4String name) const;
+  /// Get the ith placement of an element in the beam line. Returns null pointer if not found.
+  BDSBeamlineElement* GetElement(G4String acceleratorComponentName, G4int i = 0) const;
+
+  /// Get the transform to the centre of the ith placement of element by name.  Uses
+  /// GetElement(). Exits if no such element found.
+  G4Transform3D GetTransformForElement(G4String acceleratorComponentName, G4int i = 0) const;
   
   /// Get the total length of the beamline - the sum of the chord length of each element
   inline G4double     GetTotalChordLength() const {return totalChordLength;}
@@ -124,7 +128,7 @@ public:
   /// to global coordinates. 0,0 transverse position by default.
   G4Transform3D GetGlobalEuclideanTransform(G4double s,
 					    G4double x = 0,
-					    G4double y = 0);
+					    G4double y = 0) const;
 
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.
@@ -144,11 +148,11 @@ public:
   /// searched for the vector. If there is no such element or no previous
   /// element because it's the beginning, then a nullptr is returned. The
   /// caller should test on this.
-  BDSBeamlineElement* GetPrevious(BDSBeamlineElement* element);
-  BDSBeamlineElement* GetNext(BDSBeamlineElement* element);
+  const BDSBeamlineElement* GetPrevious(const BDSBeamlineElement* element) const;
+  const BDSBeamlineElement* GetNext(const BDSBeamlineElement* element) const;
 
-  BDSBeamlineElement* GetPrevious(G4int index);
-  BDSBeamlineElement* GetNext(G4int index);
+  const BDSBeamlineElement* GetPrevious(G4int index) const;
+  const BDSBeamlineElement* GetNext(G4int index) const;
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
@@ -211,11 +215,7 @@ private:
   /// The gap added for padding between each component.
   static G4double paddingLength;
 
-  /// Map of objects by name stored in this beam line. For now,
-  /// only the base name (no suffix) will be used for the component
-  /// and also not the names of the internal components ie the beam pipe
-  /// name. This would result in a particularly large number of volumes
-  /// and may not always be unique.
+  /// Map of objects by placement name stored in this beam line.
   std::map<G4String, BDSBeamlineElement*> components;
 
   /// Vector of s coordinates at the end of each element. This is intended

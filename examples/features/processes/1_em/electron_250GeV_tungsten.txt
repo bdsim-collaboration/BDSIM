@@ -1,5 +1,5 @@
 Debug					0
-InputFilePath				./electron_250GeV_tungsten_event.root
+InputFilePath				./electron_250GeV_tungsten.root
 OutputFileName				./electron_250GeV_tungsten_anal.root
 CalculateOpticalFunctions		0
 CalculateOpticalFunctionsFileName	./output.dat

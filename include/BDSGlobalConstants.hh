@@ -3,7 +3,7 @@
 
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 #include "BDSParticle.hh"
 
 #include "globals.hh"
@@ -78,7 +78,7 @@ public:
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
   inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
-  inline BDSOutputFormat OutputFormat()    const {return outputFormat;}
+  inline BDSOutputType OutputFormat()      const {return outputType;}
   inline G4bool   Survey()                 const {return G4bool  (options.survey);}
   inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
   inline G4bool   Batch()                  const {return G4bool  (options.batch);}
@@ -152,10 +152,6 @@ public:
   inline G4bool   CheckOverlaps()            const {return false;}
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
-  inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
-  inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
-  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
@@ -163,7 +159,11 @@ public:
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
-  inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold);}
+  inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
+  inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
+  inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
+  inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
@@ -205,9 +205,6 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
-  inline G4double SMax()                     const {return sMax;}
-  inline G4double SMaxHistograms()           const {return sMaxHistograms;}
-  inline G4int    NBins()                    const {return nBins;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
@@ -231,7 +228,6 @@ public:
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetBRho(G4double value)                 {brho = value;}
   inline void SetInitialPoint(BDSParticle& particle);
-  inline void SetSMax(G4double sMaxIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -270,18 +266,6 @@ private:
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
 
-  /// Beamline length in mm
-  G4double sMax;
-  
-  /// The maximum s in mm such that there is an integer number of
-  /// elossHistoBinWidths along the line. Used for histogramming purposes.
-  G4double sMaxHistograms;
-
-  G4int nBins; ///< Number of bins for each histogram required.
-
-  /// Calculate the number of bins and required maximum s.
-  void CalculateHistogramParameters();
-  
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
   ///@}
@@ -319,16 +303,10 @@ private:
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 
-  BDSOutputFormat outputFormat;       ///< Output type enum for output format to be used.
-  BDSIntegratorSetType integratorSet; ///< Integrator type enum for integrator set to be used.
-  G4Transform3D beamlineTransform;    ///< Transform for start of beam line.
+  BDSOutputType        outputType;         ///< Output type enum for output format to be used.
+  BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
+  G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
 };
-
-inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
-{
-  sMax = sMaxIn;
-  CalculateHistogramParameters();
-}
 
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}

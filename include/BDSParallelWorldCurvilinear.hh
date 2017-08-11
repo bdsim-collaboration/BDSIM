@@ -1,8 +1,7 @@
 #ifndef BDSPARALLELWORLDCURVILINEAR_H
 #define BDSPARALLELWORLDCURVILINEAR_H
 
-#include "BDSBeamlinePlacement.hh"
-
+#include "G4String.hh"
 #include "G4VUserParallelWorld.hh"
 
 class G4VisAttributes;
@@ -16,10 +15,11 @@ class G4VisAttributes;
  * @author Laurie Nevay
  */
 
-class BDSParallelWorldCurvilinear: public G4VUserParallelWorld, public BDSBeamlinePlacement
+class BDSParallelWorldCurvilinear: public G4VUserParallelWorld
 {
 public:
-  BDSParallelWorldCurvilinear();
+  /// Constructor with name of sequence this world is for.
+  BDSParallelWorldCurvilinear(G4String name);
   virtual ~BDSParallelWorldCurvilinear();
 
   /// Construct the required parallel world geometry. This must
@@ -27,6 +27,12 @@ public:
   virtual void Construct();
 
 private:
+  /// No default constructor.
+  BDSParallelWorldCurvilinear() = delete;
+
+  /// Just the input part of the name.
+  G4String suffix;
+  
   /// Visualisation attributes for the world volume
   G4VisAttributes* clWorldVis;
 };

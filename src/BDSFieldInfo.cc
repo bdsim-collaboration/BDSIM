@@ -1,4 +1,3 @@
-#include "BDSCavityInfo.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
 #include "BDSIntegratorType.hh"
@@ -19,7 +18,6 @@ BDSFieldInfo::BDSFieldInfo():
   magnetStrength(nullptr),
   provideGlobalTransform(false),
   transform(G4Transform3D()),
-  cavityInfo(nullptr),
   magneticFieldFilePath(""),
   magneticFieldFormat(BDSFieldFormat::none),
   magneticInterpolatorType(BDSInterpolatorType::nearest3d),
@@ -39,7 +37,6 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   const BDSMagnetStrength* magnetStrengthIn,
 			   G4bool                   provideGlobalTransformIn,
 			   G4Transform3D            transformIn,
-			   const BDSCavityInfo*     cavityInfoIn,
 			   G4String                 magneticFieldFilePathIn,
 			   BDSFieldFormat           magneticFieldFormatIn,
 			   BDSInterpolatorType      magneticInterpolatorTypeIn,
@@ -57,7 +54,6 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   magnetStrength(magnetStrengthIn),
   provideGlobalTransform(provideGlobalTransformIn),
   transform(transformIn),
-  cavityInfo(cavityInfoIn),
   magneticFieldFilePath(magneticFieldFilePathIn),
   magneticFieldFormat(magneticFieldFormatIn),
   magneticInterpolatorType(magneticInterpolatorTypeIn),
@@ -74,7 +70,6 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
-  delete cavityInfo;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
@@ -99,10 +94,6 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
   else
     {magnetStrength = nullptr;} // also nullptr
-  if (other.cavityInfo)
-    {cavityInfo = new BDSCavityInfo(*other.cavityInfo);}
-  else
-    {cavityInfo = nullptr;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)

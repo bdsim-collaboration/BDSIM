@@ -1,9 +1,9 @@
-#ifndef BDSBunchFactory_h
-#define BDSBunchFactory_h
+#ifndef BDSOUTPUTFACTORY_H
+#define BDSOUTPUTFACTORY_H
 
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 
-class BDSOutputBase;
+class BDSOutput;
 
 /**
  * @brief factory class for BDSOutput
@@ -11,11 +11,13 @@ class BDSOutputBase;
  * @author Jochem Snuverink
  */
 
-class BDSOutputFactory {
-
+class BDSOutputFactory
+{
 public:
   /// factory method
-  static BDSOutputBase* CreateOutput(BDSOutputFormat format);
+  static BDSOutput* CreateOutput(BDSOutputType format,
+				 G4String      fileName,
+				 G4int         fileNumberOffset = -1);
 };
 
 #endif

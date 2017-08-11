@@ -62,11 +62,11 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
     }
 
   // record all pvs and lvs used in this loaded geometry
-  std::vector<G4VPhysicalVolume*> pvs;
-  std::vector<G4LogicalVolume*>   lvs;
-  GetAllLogicalAndPhysical(containerPV, pvs, lvs);
+  std::vector<G4VPhysicalVolume*> pvsGDML;
+  std::vector<G4LogicalVolume*>   lvsGDML;
+  GetAllLogicalAndPhysical(containerPV, pvsGDML, lvsGDML);
 
-  auto vises = ApplyColourMapping(lvs, mapping);
+  auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
   /// Now overwrite container lv vis attributes
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
@@ -77,26 +77,26 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
                                                         outerInner.first,  /*outer*/
                                                         outerInner.second, /*inner*/
                                                         gdmlWorldOrigin);
-  result->RegisterLogicalVolume(lvs);
-  result->RegisterPhysicalVolume(pvs);
-  result->RegisterVisAttributes(vises);
+  result->RegisterLogicalVolume(lvsGDML);
+  result->RegisterPhysicalVolume(pvsGDML);
+  result->RegisterVisAttributes(visesGDML);
 
   delete parser;
   return result;
 }
 
 void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*         volume,
-						      std::vector<G4VPhysicalVolume*>& pvs,
-						      std::vector<G4LogicalVolume*>&   lvs)
+						      std::vector<G4VPhysicalVolume*>& pvsIn,
+						      std::vector<G4LogicalVolume*>&   lvsIn)
 {
   const auto& lv = volume->GetLogicalVolume();
   lvs.push_back(lv);
   for (G4int i = 0; i < lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
-      pvs.push_back(pv);
-      lvs.push_back(lv);
-      GetAllLogicalAndPhysical(pv, pvs, lvs); // recurse into daughter
+      pvsIn.push_back(pv);
+      lvsIn.push_back(lv);
+      GetAllLogicalAndPhysical(pv, pvsIn, lvsIn); // recurse into daughter
     }
 }
 

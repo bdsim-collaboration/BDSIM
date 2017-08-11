@@ -177,9 +177,9 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 
   // convert to G4String for lower case convenience
   std::vector<G4String> physicsListNames;
-  for (auto s : physicsListNamesS)
+  for (auto physicsListName : physicsListNamesS)
     {
-      G4String name = G4String(s); // convert string to G4String.
+      G4String name = G4String(physicsListName); // convert string to G4String.
       name.toLower(); // change to lower case - physics lists are case insensitive
       physicsListNames.push_back(name);
     }

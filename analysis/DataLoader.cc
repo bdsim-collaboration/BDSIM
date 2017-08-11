@@ -90,11 +90,9 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       globfree(&glob_result);
     }
   
-  if(debug)
-    {
-      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
-	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
-    }
+  for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+    {std::cout << "Loading> " << *fn << std::endl;}
+  
   if (fileNames.size() == 0)
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
@@ -176,26 +174,26 @@ void DataLoader::ChainTrees()
     }
 }
 
-void DataLoader::SetBranchAddress(bool allBranchesOn,
-				  const RBDS::BranchMap* branchesToTurnOn)
+void DataLoader::SetBranchAddress(bool allOn,
+				  const RBDS::BranchMap* bToTurnOn)
 {
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
   opt->SetBranchAddress(optChain, true); // true = always turn on all branches
   // note we can't parse the :: properly in the options tree so we turn on by default
 
   const RBDS::VectorString* evtBranches = nullptr;
-  if (branchesToTurnOn)
+  if (bToTurnOn)
     {
-      if (branchesToTurnOn->find("Event.") != branchesToTurnOn->end())
-	{evtBranches = &(*branchesToTurnOn).at("Event.");}
+      if (bToTurnOn->find("Event.") != bToTurnOn->end())
+	{evtBranches = &(*bToTurnOn).at("Event.");}
     }
-  evt->SetBranchAddress(evtChain, &samplerNames, allBranchesOn, evtBranches);
+  evt->SetBranchAddress(evtChain, &samplerNames, allOn, evtBranches);
 
   const RBDS::VectorString* runBranches = nullptr;
-  if (branchesToTurnOn)
+  if (bToTurnOn)
     {
-      if (branchesToTurnOn->find("Run.") != branchesToTurnOn->end())
-	{runBranches = &(*branchesToTurnOn).at("Run.");}
+      if (bToTurnOn->find("Run.") != bToTurnOn->end())
+	{runBranches = &(*bToTurnOn).at("Run.");}
     }
-  run->SetBranchAddress(runChain, allBranchesOn, runBranches);
+  run->SetBranchAddress(runChain, allOn, runBranches);
 }

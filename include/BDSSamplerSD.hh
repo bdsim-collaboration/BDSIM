@@ -38,7 +38,7 @@ public:
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH);
 
 private:
-  /// The hits collection for this sensitive detector class that's owned
+  /// The hits collection for this sensitive detector class that's owned by each instance.
   BDSSamplerHitsCollection* SamplerCollection;
 
   /// The name of the hits collection that's created and registered.

@@ -845,7 +845,7 @@ G4RotationMatrix* BDSGeometryFactorySQL::RotateComponent(G4double psi,G4double p
 }
 
 void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
-				     std::vector<G4LogicalVolume*> VOL_LIST)
+					    std::vector<G4LogicalVolume*> VOL_LISTIn)
 {
   G4String::caseCompare cmpmode = G4String::ignoreCase;
   for(G4int k=0; k<NVariables; k++) // Now run through and place according to
@@ -855,9 +855,9 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       if(PARENTNAME!="")
 	{
 	  PARENTNAME+="_LogVol";
-	  for(G4int i=0; i<(G4int)VOL_LIST.size(); i++)
+	  for(G4int i=0; i<(G4int)VOL_LISTIn.size(); i++)
 	    {
-	      if(PARENTNAME.compareTo(VOL_LIST[i]->GetName(),cmpmode)==0)
+	      if(PARENTNAME.compareTo(VOL_LISTIn[i]->GetName(),cmpmode)==0)
 		{
 		  PARENTID = i;
 		  continue;
@@ -868,9 +868,9 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       // to being in line with logvol names (needed for name checking loop
       G4String tmpname = Name+"_LogVol";
       G4int ID=0;
-      for(G4int i=0; i<(G4int)VOL_LIST.size(); i++)
+      for(G4int i=0; i<(G4int)VOL_LISTIn.size(); i++)
 	{
-	  if(tmpname.compareTo(VOL_LIST[i]->GetName(),cmpmode)==0)
+	  if(tmpname.compareTo(VOL_LISTIn[i]->GetName(),cmpmode)==0)
 	    {
 	      ID = i;
 	      continue;
@@ -878,16 +878,16 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	}
       
       if(SetSensitive)
-	{sensitiveComponents.push_back(VOL_LIST[ID]);}
+	{sensitiveComponents.push_back(VOL_LISTIn[ID]);}
       G4ThreeVector PlacementPoint(PosX,PosY,PosZ);
 
       if(InheritStyle.compareTo("",cmpmode))
 	{ //True if InheritStyle is set
 	  if(InheritStyle.compareTo("SUBTRACT",cmpmode)==0)
 	    {
-	      G4VSolid* original = VOL_LIST[PARENTID]->GetSolid();
-	      G4VSolid* sub = VOL_LIST[ID]->GetSolid();
-	      VOL_LIST[PARENTID]->SetSolid(new G4SubtractionSolid(VOL_LIST[PARENTID]->GetName(),
+	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
+	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
+	      VOL_LISTIn[PARENTID]->SetSolid(new G4SubtractionSolid(VOL_LISTIn[PARENTID]->GetName(),
 								  original,
 								  sub,
 								  RotateComponent(RotPsi,RotPhi,RotTheta),
@@ -896,9 +896,9 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	    }
 	  else if(InheritStyle.compareTo("INTERSECT",cmpmode)==0)
 	    {
-	      G4VSolid* original = VOL_LIST[PARENTID]->GetSolid();
-	      G4VSolid* sub = VOL_LIST[ID]->GetSolid();
-	      VOL_LIST[PARENTID]->SetSolid(new G4IntersectionSolid(VOL_LIST[PARENTID]->GetName(),
+	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
+	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
+	      VOL_LISTIn[PARENTID]->SetSolid(new G4IntersectionSolid(VOL_LISTIn[PARENTID]->GetName(),
 								   original,
 								   sub,
 								   RotateComponent(RotPsi,RotPhi,RotTheta),
@@ -907,9 +907,9 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	    }
 	  else if(InheritStyle.compareTo("UNION",cmpmode)==0)
 	    {
-	      G4VSolid* original = VOL_LIST[PARENTID]->GetSolid();
-	      G4VSolid* sub = VOL_LIST[ID]->GetSolid();
-	      VOL_LIST[PARENTID]->SetSolid(new G4UnionSolid(VOL_LIST[PARENTID]->GetName(),
+	      G4VSolid* original = VOL_LISTIn[PARENTID]->GetSolid();
+	      G4VSolid* sub = VOL_LISTIn[ID]->GetSolid();
+	      VOL_LISTIn[PARENTID]->SetSolid(new G4UnionSolid(VOL_LISTIn[PARENTID]->GetName(),
 							    original,
 							    sub,
 							    RotateComponent(RotPsi,RotPhi,RotTheta),
@@ -918,10 +918,10 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	}
       
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " k = " << k << ", volume = " << VOL_LIST[ID]->GetName() << G4endl;
+      G4cout << __METHOD_NAME__ << " k = " << k << ", volume = " << VOL_LISTIn[ID]->GetName() << G4endl;
 #endif
 
-      G4LogicalVolume* volume = VOL_LIST[ID];
+      G4LogicalVolume* volume = VOL_LISTIn[ID];
       G4int copyNumber = 0;
       auto result = samplerIDs.find(volume);
       if (result != samplerIDs.end())
@@ -936,9 +936,9 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       G4VPhysicalVolume* PhysiComp = 
 	new G4PVPlacement(RotateComponent(RotPsi,RotPhi,RotTheta),
 			  PlacementPoint,
-			  VOL_LIST[ID],
+			  VOL_LISTIn[ID],
 			  Name,
-			  VOL_LIST[PARENTID],
+			  VOL_LISTIn[PARENTID],
 			  false,
 			  copyNumber,
 			  BDSGlobalConstants::Instance()->CheckOverlaps());

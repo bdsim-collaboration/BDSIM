@@ -49,8 +49,8 @@ public:
   void ChainTrees();
 
   /// Map each chain to the member instance of each storage class in this class.
-  void SetBranchAddress(bool allBranchesOn = true,
-                        const RBDS::BranchMap* branchesToTurnOn = nullptr);
+  void SetBranchAddress(bool allOn = true,
+                        const RBDS::BranchMap* bToTurnOn = nullptr);
 
   /// @{ Accessor
   std::vector<std::string>   GetTreeNames()    {return treeNames;};

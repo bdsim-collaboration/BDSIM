@@ -156,14 +156,14 @@ void Element::PublishMembers()
   publish("colour", &Element::colour);
 }
 
-std::string Element::getPublishedName(std::string name)const
+std::string Element::getPublishedName(std::string nameIn)const
 {
-  auto it = alternativeNames.find(name);
+  auto it = alternativeNames.find(nameIn);
   if (it != alternativeNames.end()) {
     return it->second;
   }
   // if not found return name
-  return name;
+  return nameIn;
 }
 
 bool Element::isSpecial()const {

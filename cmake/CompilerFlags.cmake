@@ -1,10 +1,13 @@
 # warning flags
-set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual -Wno-shadow -Wnon-virtual-dtor")
+set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual -Wnon-virtual-dtor")
 # for ROOT dictionaries
 # stop warnings from Clang version (for versions 7 and greater)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
     set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 8.0)
+    set(WFLAGS "${WFLAGS} -Wno-undefined-var-template")
   endif()
 endif()
 

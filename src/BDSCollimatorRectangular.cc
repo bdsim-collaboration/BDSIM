@@ -6,20 +6,20 @@
 #include "G4Trd.hh"
 #include "G4VSolid.hh"
 
-BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
-						   G4double length,
-						   G4double outerDiameter,
-						   G4double xAperture,
-						   G4double yAperture,
-						   G4double xOutAperture,
-						   G4double yOutAperture,
-						   G4String collimatorMaterial,
-						   G4String vacuumMaterial,
-						   G4String colour):
-  BDSCollimatorBase(name, length, outerDiameter, "rcol",
-		    xAperture, yAperture,xOutAperture, yOutAperture,
-		    collimatorMaterial,
-		    vacuumMaterial, colour)
+BDSCollimatorRectangular::BDSCollimatorRectangular(G4String nameIn,
+						   G4double lengthIn,
+						   G4double outerDiameterIn,
+						   G4double xApertureIn,
+						   G4double yApertureIn,
+						   G4double xOutApertureIn,
+						   G4double yOutApertureIn,
+						   G4String collimatorMaterialIn,
+						   G4String vacuumMaterialIn,
+						   G4String colourIn):
+  BDSCollimatorBase(nameIn, lengthIn, outerDiameterIn, "rcol",
+		    xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
+		    collimatorMaterialIn,
+		    vacuumMaterialIn, colourIn)
 {;}
 
 void BDSCollimatorRectangular::BuildInnerCollimator()

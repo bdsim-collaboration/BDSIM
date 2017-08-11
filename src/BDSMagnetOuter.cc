@@ -5,17 +5,17 @@
 
 #include "G4ThreeVector.hh"
 
-BDSMagnetOuter::BDSMagnetOuter(G4VSolid*             containerSolid,
-			       G4LogicalVolume*      containerLV,
-			       BDSExtent             extent,
+BDSMagnetOuter::BDSMagnetOuter(G4VSolid*             containerSolidIn,
+			       G4LogicalVolume*      containerLVIn,
+			       BDSExtent             extentIn,
 			       BDSGeometryComponent* magnetContainerIn,
-			       G4ThreeVector         placementOffset,
+			       G4ThreeVector         placementOffsetIn,
 			       BDSSimpleComponent*   endPieceBeforeIn,
 			       BDSSimpleComponent*   endPieceAfterIn,
 			       G4ThreeVector         inputFaceNormalIn,
 			       G4ThreeVector         outputFaceNormalIn):
-  BDSGeometryComponent(containerSolid, containerLV, extent, BDSExtent(),
-		       placementOffset),
+  BDSGeometryComponent(containerSolidIn, containerLVIn, extentIn, BDSExtent(),
+		       placementOffsetIn),
   magnetContainer(magnetContainerIn),
   endPieceBefore(endPieceBeforeIn),
   endPieceAfter(endPieceAfterIn),

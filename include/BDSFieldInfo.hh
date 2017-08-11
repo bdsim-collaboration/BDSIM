@@ -12,7 +12,6 @@
 
 #include <ostream>
 
-class BDSCavityInfo;
 class BDSMagnetStrength;
 
 /**
@@ -41,7 +40,6 @@ public:
 	       const BDSMagnetStrength* magnetStrengthIn           = nullptr,
 	       G4bool                   provideGlobalTransformIn   = true,
 	       G4Transform3D            transformIn                = G4Transform3D(),
-	       const BDSCavityInfo*     cavityInfoIn               = nullptr,
 	       G4String                 magneticFieldFilePathIn    = "",
 	       BDSFieldFormat           magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
 	       BDSInterpolatorType      magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
@@ -66,7 +64,6 @@ public:
   inline BDSIntegratorType   IntegratorType()           const {return integratorType;}
   inline G4Transform3D       Transform()                const {return transform;}
   inline const BDSMagnetStrength*  MagnetStrength()     const {return magnetStrength;}
-  inline const BDSCavityInfo*      CavityInfo()         const {return cavityInfo;}
   inline G4bool              ProvideGlobal()            const {return provideGlobalTransform;}
   inline G4String            MagneticFile()             const {return magneticFieldFilePath;}
   inline BDSFieldFormat      MagneticFormat()           const {return magneticFieldFormat;}
@@ -106,7 +103,6 @@ private:
   const BDSMagnetStrength* magnetStrength;
   G4bool                   provideGlobalTransform;
   G4Transform3D            transform;  ///< Transform w.r.t. solid field will be attached to
-  const BDSCavityInfo*     cavityInfo;
   G4String                 magneticFieldFilePath;
   BDSFieldFormat           magneticFieldFormat;
   BDSInterpolatorType      magneticInterpolatorType;

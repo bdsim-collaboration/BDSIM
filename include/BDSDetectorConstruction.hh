@@ -4,6 +4,7 @@
 #include "BDSExtent.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
 
@@ -18,9 +19,12 @@ class G4VPhysicalVolume;
 namespace GMAD {
   struct Element;
   template<typename T> class FastList;
+  class Placement;
 }
 
 class BDSAcceleratorModel;
+class BDSBeamline;
+class BDSBeamlineSet;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -56,6 +60,24 @@ public:
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
+
+  /// Loop over a beam line and place elements in a container (world). If a sensitive
+  /// detector is specified, this is applied to each component. If regions are desired,
+  /// the element is looked up in the region definitions and that is set up. If
+  /// registerInfo, physical volume info is created and placed in a pv info registry.
+  /// Public and static so it can be used by parallel world constructors. Last argument
+  /// is whether to use the placement transform for curvilinear coordinate geometry that's
+  /// different in the case of tilted dipoles.
+  static void PlaceBeamlineInWorld(BDSBeamline*          beamline,
+				   G4VPhysicalVolume*    containerPV,
+				   G4bool                checkOverlaps     = false,
+				   G4VSensitiveDetector* sensitiveDetector = nullptr,
+				   G4bool                setRegions        = false,
+				   G4bool                registerInfo      = false,
+				   G4bool                useCLPlacementTransform = false);
+
+  /// Create a transform based on the information in the placement.
+  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -65,9 +87,16 @@ private:
   /// Create and set parameters for various G4Regions
   void InitialiseRegions();
   
-  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
-  /// and put in BDSBeamline container that calculates coordinates and extent of beamline
-  void BuildBeamline();
+  /// Build the main beam line and then any other required beam lines.
+  void BuildBeamlines();
+
+  /// Convert a parser beamline_list to BDSAcceleratorComponents with help of
+  /// BDSComponentFactory and put in a BDSBeamline container that calculates coordinates
+  /// and extents of the beamline.
+  BDSBeamlineSet BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
+			       G4String             name,
+			       const G4Transform3D& initialTransform   = G4Transform3D(),
+			       G4bool               beamlineIsCircular = false);
 
   /// Build the tunnel around the already constructed flat beam line.
   void BuildTunnel();
@@ -76,7 +105,7 @@ private:
   /// in BuildBeamline()
   G4VPhysicalVolume* BuildWorld();
   
-  /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
+  /// Place beam line, tunnel beam line, end pieces and placements in world.
   void ComponentPlacement(G4VPhysicalVolume* worldPV);
 
   /// Detect whether the first element has an angled face such that it might overlap
@@ -110,11 +139,9 @@ private:
   /// All fields
   std::vector<BDSFieldObjects*> fields;
 
-  /// Whether or not we're building a circular machine.
-  G4bool circular;
-
-  /// Record of the world extent.
-  BDSExtent worldExtent;
+  G4bool       circular;    ///< Whether or not we're building a circular machine.
+  BDSExtent    worldExtent; ///< Record of the world extent.
+  BDSBeamline* placementBL; ///< Placement beam line.
 };
 
 #endif

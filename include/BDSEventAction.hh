@@ -8,6 +8,7 @@
 #include <string>
 
 class BDSEventInfo;
+class BDSOutput;
 class G4Event;
 class G4PrimaryVertex;
 
@@ -18,18 +19,17 @@ class G4PrimaryVertex;
 class BDSEventAction: public G4UserEventAction
 {
 public:
-  BDSEventAction();
+  BDSEventAction(BDSOutput* outputIn);
   virtual ~BDSEventAction();
   
 public:
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
-  void         WritePrimaryVertex(G4int                  eventID,
-				  const G4PrimaryVertex* primaryVertexIn);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
     
 private:
+  BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
   G4int  verboseEventNumber; ///< Copy of BDSGlobalConstants::VerboseEventNumber()
   G4bool isBatch;

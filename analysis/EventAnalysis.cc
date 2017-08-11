@@ -23,28 +23,30 @@ EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
   printModulo(1),
-  processSamplers(false)
+  processSamplers(false),
+  emittanceOnTheFly(false)
 {;}
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
-			     TChain* chain,
+			     TChain* chainIn,
 			     bool    processSamplersIn,
-			     bool    debug,
-			     double  printModuloFraction):
-  Analysis("Event.", chain, "EventHistogramsMerged", debug),
+			     bool    debugIn,
+			     double  printModuloFraction,
+			     bool    emittanceOnTheFlyIn):
+  Analysis("Event.", chainIn, "EventHistogramsMerged", debugIn),
   event(eventIn),
-  processSamplers(processSamplersIn)
+  processSamplers(processSamplersIn),
+  emittanceOnTheFly(emittanceOnTheFlyIn)
 {
   if (processSamplers)
     {// Create sampler analyses if needed
       // Analyse the primary sampler in the optics too.
-      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries(), event->GetPrimaries());
+      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
       samplerAnalyses.push_back(sa);
       
       for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
 	{
-	  auto i0 = event->samplers.begin();
-	  sa = new SamplerAnalysis(*i,*i0);
+	  sa = new SamplerAnalysis(*i);
 	  this->samplerAnalyses.push_back(sa);
 	}
     }
@@ -125,9 +127,11 @@ void EventAnalysis::Terminate()
 
   if (processSamplers)
     {
+      //vector of emittance values and errors: emitt_x, emitt_y, err_emitt_x, err_emitt_y
+      std::vector<double> emittance = {0,0,0,0};
       for (auto samplerAnalysis : samplerAnalyses)
 	{
-	  samplerAnalysis->Terminate();
+	  emittance = samplerAnalysis->Terminate(emittance, !emittanceOnTheFly);
 	  opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
 	}
     }

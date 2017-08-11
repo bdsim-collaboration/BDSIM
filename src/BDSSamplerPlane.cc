@@ -9,11 +9,11 @@
 // geometry tolerance is 1e-12 and dz of the box must be greater than this
 const G4double BDSSamplerPlane::chordLength = 0.01*CLHEP::nm;
 
-BDSSamplerPlane::BDSSamplerPlane(G4String name,
+BDSSamplerPlane::BDSSamplerPlane(G4String nameIn,
 				 G4double boxHalfWidth):
-  BDSSampler(name)
+  BDSSampler(nameIn)
 {
-  containerSolid = new G4Box(name + "_solid",
+  containerSolid = new G4Box(nameIn + "_solid",
 			     boxHalfWidth,
 			     boxHalfWidth,
 			     chordLength*0.5);

@@ -9,6 +9,9 @@ macro(root_test test_name input_args)
   set(TESTING_ARGS ${TESTING_ARGS})
   separate_arguments(TESTING_ARGS)
   add_test(NAME ${test_name} COMMAND ${ROOT_EXECUTABLE} -b -q -l ${args} ${TESTING_ARGS})
+  # Set ROOT_INCLUDE_PATH
+  set_tests_properties(${test_name}
+    PROPERTIES ENVIRONMENT ROOT_INCLUDE_PATH=${CMAKE_SOURCE_DIR}/include:${CMAKE_SOURCE_DIR}/analysis)
   # unset TESTING_ARGS so only used for this test
   unset(TESTING_ARGS)
 endmacro()

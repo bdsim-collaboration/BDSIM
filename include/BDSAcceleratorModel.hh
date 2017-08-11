@@ -1,6 +1,8 @@
 #ifndef BDSACCELERATORMODEL_H
 #define BDSACCELERATORMODEL_H
 
+#include "BDSBeamlineSet.hh"
+
 #include "globals.hh"         // geant4 globals / types
 
 #include <map>
@@ -46,47 +48,31 @@ public:
   /// Access the physical volume of the world
   inline G4VPhysicalVolume* GetWorldPV() const {return worldPV;}
 
-  /// Register the flat beam line - flat means that each element in the beamline represents
-  /// one element in the accelerator lattice
-  inline void RegisterFlatBeamline(BDSBeamline* beamlineIn) {flatBeamline = beamlineIn;}
+  /// Register the main beam line set.
+  inline void RegisterBeamlineSetMain(BDSBeamlineSet setIn) {mainBeamlineSet = setIn;}
 
-  /// Access flat beam line
-  inline BDSBeamline* GetFlatBeamline() const {return flatBeamline;}
-
-  /// Register the curvilinear geometry beam line.
-  inline void RegisterCurvilinearBeamline(BDSBeamline* beamlineIn)
-  {curvilinearBeamline = beamlineIn;}
-
-  /// Register the curvilinear bridging geometry beam line.
-  inline void RegisterCurvilinearBridgeBeamline(BDSBeamline* beamlineIn)
-  {curvilinearBridgeBeamline = beamlineIn;}
-
-  /// @{ Accessor.
-  inline BDSBeamline* GetCurvilinearBeamline() const {return curvilinearBeamline;}
-  inline BDSBeamline* GetCurvilinearBridgeBeamline() const {return curvilinearBridgeBeamline;}
-  /// @}
+  /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
+  void RegisterBeamlineSetExtra(G4String       name,
+				BDSBeamlineSet setIn);
   
-  /// Register the beam line containing all the magnet supports
-  inline void RegisterSupportsBeamline(BDSBeamline* beamlineIn) {supportsBeamline = beamlineIn;}
+  /// @{ Accessor.
+  inline const BDSBeamlineSet& BeamlineSetMain() const {return mainBeamlineSet;}
+  const BDSBeamlineSet& BeamlineSet(G4String name) const;
+  inline const std::map<G4String, BDSBeamlineSet>& ExtraBeamlines() const {return extraBeamlines;}
+  const BDSBeamline* BeamlineMain() const {return mainBeamlineSet.massWorld;}
+  /// @}
 
-  /// Access the beam line containing all the magnet supports
-  inline BDSBeamline* GetSupportsBeamline() const {return supportsBeamline;}
+  /// Register the  beam line of arbitrary placements.
+  inline void RegisterPlacementBeamline(BDSBeamline* placementBLIn) {placementBeamline = placementBLIn;}
 
+  /// Access the beam line of arbitrary placements.
+  inline BDSBeamline* PlacementBeamline() const {return placementBeamline;}
+  
   /// Register the beam line containing all the tunnel segments
   inline void RegisterTunnelBeamline(BDSBeamline* beamlineIn) {tunnelBeamline = beamlineIn;}
 
   /// Access the beam line containing all the tunnel segments
   inline BDSBeamline* GetTunnelBeamline() const {return tunnelBeamline;}
-
-  /// Register the beam line of end pieces.
-  inline void RegisterEndPieceBeamline(BDSBeamline* beamlineIn) {endPieceBeamline = beamlineIn;}
-
-  /// Access the beam line of end pieces.
-  inline BDSBeamline* GetEndPieceBeamline() const {return endPieceBeamline;}
-
-  inline void RegisterPlacementBeamline(BDSBeamline* beamlineIn) {placementBeamline = beamlineIn;}
-
-  inline BDSBeamline* GetPlacementBeamline() const {return placementBeamline;}
   
   /// Register all field objects
   inline void RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn){fields = fieldsIn;}
@@ -101,6 +87,7 @@ public:
 
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
+
   /// Simpler accessor for production cuts vs regions.
   G4ProductionCuts* ProductionCuts(G4String name) {return cuts.at(name);}
 
@@ -115,14 +102,12 @@ private:
   G4LogicalVolume*   worldLV;
   G4VSolid*          worldSolid;
 
-  BDSBeamline* flatBeamline;              ///< Flat beam line.
-  BDSBeamline* curvilinearBeamline;       ///< Curvilinear geometry beamline.
-  BDSBeamline* curvilinearBridgeBeamline; ///< Curvilinear bridging volumes beamline.
-  BDSBeamline* supportsBeamline;          ///< Element supports beam line.
-  BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
-  BDSBeamline* endPieceBeamline;          ///< End Pieces beam line.
-  BDSBeamline* placementBeamline;         ///< Placement geometry beam line.
+  BDSBeamlineSet mainBeamlineSet;
+  std::map<G4String, BDSBeamlineSet> extraBeamlines; ///< Extra beamlines.
 
+  BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
+  BDSBeamline* placementBeamline;         ///< Placement beam line
+  
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
   std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.

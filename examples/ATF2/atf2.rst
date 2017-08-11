@@ -8,7 +8,7 @@ model represents only the ~100m extraction line.
 
 How to run::
 
-  bdsim --file=atf2.gmad --output=root --outfile=test1
+  bdsim --file=atf2.gmad --outfile=test1
 
 .. figure:: atf2.png
 	    :width: 100%
