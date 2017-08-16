@@ -28,8 +28,6 @@ BDSMaterials::BDSMaterials()
 #endif
 
   DefineElements();
-  // define materials
-  // convention: material name in small letters (to be able to find materials regardless of capitalisation)
   DefineMetals();
   DefineSuperconductors();
   DefineNonMetalSolids();
@@ -215,6 +213,7 @@ void BDSMaterials::DefineNonMetalSolids()
   G4String name;
   G4double density;
 
+  //Boron Nickel (absorber)
   AddMaterial(name="bn5000"        , density=  1.925, kStateSolid, 300, 1, {"B","Ni","O","Ca","Si"}, 
 	      std::list<double>{0.383249242, 0.472071387, 0.0366276887, 0.0228923054, 0.0851593762});
 
@@ -365,7 +364,8 @@ void BDSMaterials::DefineScintillators()
 
   //UPS-923A  - see http://www.amcrys-h.com/
   //Define the material properties (copy from NIST table of materials).
-  G4Material* polystyrene = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
+  G4NistManager* nistManager = G4NistManager::Instance();
+  G4Material* polystyrene = nistManager->FindOrBuildMaterial("G4_POLYSTYRENE",true,true);
   tmpMaterial = new G4Material(name="ups923a",density=polystyrene->GetDensity(),1);
   tmpMaterial->AddMaterial(polystyrene,1);
   tmpMaterial->SetName(name.c_str());
@@ -422,9 +422,9 @@ void BDSMaterials::DefineScintillators()
 			      pet_nelements,
 			      pet_state
 			      );
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("C",true),10);
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("H",true),8);
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("O",true),4);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("C",true),10);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("H",true),8);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("O",true),4);
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
   G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
@@ -440,9 +440,9 @@ void BDSMaterials::DefineScintillators()
 			      pet_nelements,
 			      pet_state
 			      );
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("C",true),10);
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("H",true),8);
-  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("O",true),4);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("C",true),10);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("H",true),8);
+  tmpMaterial->AddElement(nistManager->FindOrBuildElement("O",true),4);
   const G4int Pet_Opaque_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_Opaque_RIND[Pet_Opaque_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
   G4double Pet_Opaque_Energy[Pet_Opaque_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
@@ -454,7 +454,7 @@ void BDSMaterials::DefineScintillators()
   materials[name]=tmpMaterial;
 
   //Gadolinium oxysulphate Gd_2 O_2 S
-  G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
+  G4Material* GOS = nistManager->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
 
   //Ganolinium oxysulphate in a polyurethane elastomer (lanex)
   G4double fill_factor=0.5;
@@ -823,6 +823,7 @@ void BDSMaterials::AddMaterial(G4String aName,
 			       G4double itsTemp,     //temperature
 			       G4double itsPressure) //pressure
 {
+  // convention: material name in small letters (to be able to find materials regardless of capitalisation)
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3, itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
   AddMaterial(tmpMaterial,aName);
