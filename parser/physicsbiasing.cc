@@ -33,7 +33,7 @@ void PhysicsBiasing::print() const
   std::cout << std::endl;
 }
 
-void PhysicsBiasing::set_value(std::string property, double value )
+void PhysicsBiasing::set_value(const std::string& property, double value )
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
@@ -46,7 +46,7 @@ void PhysicsBiasing::set_value(std::string property, double value )
   exit(1);
 }
 
-void PhysicsBiasing::set_value(std::string property, Array* value )
+void PhysicsBiasing::set_value(const std::string& property, Array* value )
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property;
@@ -71,13 +71,13 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
   exit(1);
 }
 
-void PhysicsBiasing::set_value(std::string property, std::string value )
+void PhysicsBiasing::set_value(const std::string& property, std::string value )
 {
   #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
 
-  if (property=="name")           {name = value; return;}
+  if (property=="name")           {name     = value; return;}
   if (property=="particle")       {particle = value; return;}
   if ((property=="proc") || (property=="process"))
     {
