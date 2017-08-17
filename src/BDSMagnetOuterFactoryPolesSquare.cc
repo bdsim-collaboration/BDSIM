@@ -120,11 +120,11 @@ void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
   order = orderIn; // copy to member variable - this is the first function to be called with order
   
   G4int nPoles = 2*orderIn;
+  segmentAngle = CLHEP::twopi/nPoles; // angle per pole
   // create different poles to fit inside square yoke
   for (G4int i = 0; i < nPoles; ++i)
     {
       G4RotationMatrix* iPoleRM = new G4RotationMatrix();
-      G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
       G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
       iPoleRM->rotateZ(rotationAngle);
       allRotationMatrices.push_back(iPoleRM);
@@ -204,11 +204,11 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
   if (!buildPole)
     {return;}
   G4double nPoles = 2*orderIn;
+  segmentAngle = CLHEP::twopi/nPoles; // angle per pole
   G4PVPlacement* aPlacement = nullptr;
   for (G4int n = 0; n < 2*orderIn; ++n)
     {
       G4RotationMatrix* rm = new G4RotationMatrix();
-      G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
       G4double rotationAngle = (0.5-n)*segmentAngle + CLHEP::pi*0.5;
       rm->rotateZ(-rotationAngle);
       allRotationMatrices.push_back(rm);
@@ -232,7 +232,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
 								    G4int        orderIn,
 								    G4double     outerDiameter,
 								    G4Material*  outerMaterial,
-								    G4double     magnetContainerRadius,
+								    G4double     magnetContainerRadiusIn,
 								    G4bool       buildEndPiece)
 {
 #ifdef BDSDEBUG
@@ -240,7 +240,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
 #endif
   BDSMagnetOuter* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
 									    orderIn, outerDiameter,
-									    outerMaterial, magnetContainerRadius,buildEndPiece);
+									    outerMaterial, magnetContainerRadiusIn,buildEndPiece);
   
   outer->RegisterLogicalVolume(poleLVs);
   outer->RegisterSensitiveVolume(poleLVs);

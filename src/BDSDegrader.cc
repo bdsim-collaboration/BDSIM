@@ -16,15 +16,15 @@
 #include "globals.hh" // geant4 globals / types
 #include <vector>
 
-BDSDegrader::BDSDegrader (G4String   name, 
-			  G4double   length,
+BDSDegrader::BDSDegrader (G4String   nameIn, 
+			  G4double   lengthIn,
 			  G4double   outerDiameterIn,
 			  G4int      numberWedgesIn,
 			  G4double   wedgeLengthIn,
 			  G4double   degraderHeightIn,
 			  G4double   degraderOffsetIn,
 			  G4String   degraderMaterialIn ):
-  BDSAcceleratorComponent(name, length, 0, "degrader"),
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "degrader"),
   outerDiameter(outerDiameterIn),
   numberWedges(numberWedgesIn),
   wedgeLength(wedgeLengthIn),

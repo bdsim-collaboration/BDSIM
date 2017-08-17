@@ -126,8 +126,8 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(std::vector<BDSTrajectory*> &trajVec);
-  void Fill(BDSEnergyCounterHitsCollection *phc);
+  void Fill(const std::vector<BDSTrajectory*> &trajVec);
+  void Fill(const BDSEnergyCounterHitsCollection* phc);
 #endif
 
   /// Required to find beamline index careful including in streamer.

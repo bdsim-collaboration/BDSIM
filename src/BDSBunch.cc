@@ -119,7 +119,7 @@ void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "initialising beam line reference" << G4endl;
 #endif
-      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+      beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
       if (!beamline)
 	{
 	  G4cout << __METHOD_NAME__ << "ERROR no beamline constructed! " << G4endl;

@@ -12,12 +12,12 @@
 #include "G4TwoVector.hh"
 
 
-BDSScreenFrameRectangular::BDSScreenFrameRectangular(G4String      name,
-						     G4ThreeVector size,
-						     G4TwoVector   windowSize,
-						     G4TwoVector   windowOffset,
-						     G4Material*   material):
-  BDSScreenFrame(name, size, windowSize, windowOffset, material),
+BDSScreenFrameRectangular::BDSScreenFrameRectangular(G4String      nameIn,
+						     G4ThreeVector sizeIn,
+						     G4TwoVector   windowSizeIn,
+						     G4TwoVector   windowOffsetIn,
+						     G4Material*   materialIn):
+  BDSScreenFrame(nameIn, sizeIn, windowSizeIn, windowOffsetIn, materialIn),
   zeroRot(new G4RotationMatrix(0,0,0))
 {
   Build();

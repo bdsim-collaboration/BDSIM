@@ -73,7 +73,7 @@ namespace Compare
   /// Loop over results and print any failed ones. Returns true if all passed.
   bool Summarise(std::vector<Result*> results);
 
-  /// Check wether a string is prefixed with another string.
+  /// Check whether a string is prefixed with another string.
   bool StringStartsWith(std::string aString, std::string prefix);
 
   bool IsInVector(std::string key, const std::vector<std::string>& vec);

@@ -373,8 +373,8 @@ The 3D Cartesian field vectors are therefore:
 
 .. math::
 
-   \mathbf{B} & = (B_{\phi}\,\cos(\phi),\, &B_{\phi}\,\sin(\phi), \,&0) \\
-   \mathbf{E} & = (0, \,&0, \,&E_z)
+   \mathbf{B} & = (B_{\phi}\,\cos(\phi),\, B_{\phi}\,\sin(\phi), \,0) \\
+   \mathbf{E} & = (0, \,0, \,E_z)
    
 
 .. _field-map-formats:

@@ -2,7 +2,6 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryElliptical.hh"
 #include "BDSCavityInfo.hh"
-#include "BDSColours.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
@@ -44,8 +43,8 @@ G4double BDSCavityFactoryElliptical::CreateSolids(G4String             name,
   G4double equatorRadius    = info->equatorRadius;
   G4double irisRSemiAxis    = info->irisVerticalAxis;
   G4double irisZSemiAxis    = info->irisHorizontalAxis;     //iris ellipse horizontal semiaxis
-  G4double equatorRSemiAxis = info->equatorEllipseSemiAxis ;//equator ellipse vertical semiaxis
-  G4double equatorZSemiAxis = info->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
+  G4double equatorRSemiAxis = info->equatorVerticalAxis ;   //equator ellipse vertical semiaxis
+  G4double equatorZSemiAxis = info->equatorHorizontalAxis;  //equator ellipse horizontal semiaxis
   G4double tangentAngle     = info->tangentLineAngle;
   G4double irisRadius       = info->irisRadius;
   G4double thickness        = info->thickness;

@@ -1,4 +1,4 @@
-# - Finds ROOT instalation
+# - Finds ROOT installation
 # This module sets up ROOT information 
 # It defines:
 # ROOT_FOUND          If the ROOT is found
@@ -14,15 +14,13 @@ if(ROOT_CONFIG_EXECUTABLE AND EXISTS ${ROOT_CONFIG_EXECUTABLE})
   # do nothing
 elseif(EXISTS "${ROOTSYS}/bin/root-config")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
-elseif(EXISTS "${ROOTSYS}/bin/root-config5")
-  set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config5")
 elseif(EXISTS "${ROOTSYS}/bin/root-config6")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config6")
 else()
   if($ENV{VERBOSE})
        message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
   endif()
-  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5 root-config6)
+  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config6)
 endif()
 
 if(NOT ROOT_CONFIG_EXECUTABLE OR
@@ -88,7 +86,7 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 HINTS ${ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint rootcint6 HINTS ${ROOTSYS}/bin)
 if(NOT ROOTCINT_EXECUTABLE OR
     NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
   MESSAGE(FATAL_ERROR "rootcint not found")

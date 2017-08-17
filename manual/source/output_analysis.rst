@@ -4,9 +4,10 @@
 Output Analysis
 ===============
 
-This describes how to load and view data from the main output form `rootevent`.
+This describes how to load and view data from the recommend output **rootevent**
+format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM that provides the ability
+BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides the ability
 to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
@@ -70,8 +71,8 @@ specified) is the output file name that the resultant analysis will be written t
 Examples::
 
   rebdsim analysisConfig.txt
-  rebdsim analysisConfig.txt output_event.root
-  rebdsim analysisConfig.txt output_event.root results.root
+  rebdsim analysisConfig.txt output.root
+  rebdsim analysisConfig.txt output.root results.root
 
 See `Preparing an Analysis Configuration File`_ for details on the analysis configuration.
 
@@ -104,7 +105,7 @@ Loading this library exposes all classes that are found in :code:`<bdsim>/analys
 are familiar with ROOT, you may use the ROOT file as you would any other given the
 classes provided by the library::
 
-  root> TFile* f = new TFile("output_event.root", "READ");
+  root> TFile* f = new TFile("output.root", "READ");
   root> TTree* eventTree = (TTree*)f->Get("Event");
   root> BDSOutputROOTEventLoss* elosslocal = new BDSOutputROOTEventLoss();
   root> eventTree->SetBranchAddress("Eloss.", &elosslocal);
@@ -127,7 +128,7 @@ that would commonly use the :code:`TTree->Draw()` method.
 An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt` ::
 
   Debug                           True
-  InputFilePath                   ./output_event.root
+  InputFilePath                   ./output.root
   OutputFileName                  ./ana_1.root
   CalculateOpticalFunctions       True
   OpticalFunctionsFileName       ./ana_1.dat
@@ -146,11 +147,16 @@ An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analy
 * Empty lines are also ignored.
 * For bins and binning, the dimensions are separated by :code:`,`.
 * For bins and binning, the range from low to high is specified by :code:`low:high`.
-* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.x:samplername.y`.
+* For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * A 3D histogram is shown on the last line.
 * True or False as well as 1 or 0 may be used for Boolean options.
 
+.. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
+	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
+	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This only applies to the variable and
+	     not to the bin specification.
+  
 The following (case-insensitive) options may be specified in the top part.
 
 
@@ -195,7 +201,7 @@ The variables for histograms are described in :ref:`output-section`. However, th
 user can also quickly determine what they want by using a ROOT TBrowser to inspect
 a file::
 
-  root output_event.root
+  root output.root
   root> TBrowser tb;
 
 At which point, a browser window will appear with the specified file open. The variable

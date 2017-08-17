@@ -30,16 +30,16 @@
 class G4Userlimits;
 
 
-BDSMagnet::BDSMagnet(BDSMagnetType       type,
-		     G4String            name,
-		     G4double            length,
-		     BDSBeamPipeInfo*    beamPipeInfo,
+BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
+		     G4String            nameIn,
+		     G4double            lengthIn,
+		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
-		     G4double            angle,
+		     G4double            angleIn,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, angle, type.ToString(), beamPipeInfo),
-  magnetType(type),
+  BDSAcceleratorComponent(nameIn, lengthIn, angleIn, typeIn.ToString(), beamPipeInfoIn),
+  magnetType(typeIn),
   magnetOuterInfo(magnetOuterInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -49,7 +49,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   outer(nullptr),
   beamPipePlacementTransform(G4Transform3D())
 {
-  outerDiameter   = magnetOuterInfo->outerDiameter;
+  outerDiameter   = magnetOuterInfoIn->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,-1);
   outputface      = G4ThreeVector(0,0, 1);
@@ -60,10 +60,10 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   placeBeamPipe = false;
 
   // It's not possible to build advanced outer geometry for a very thin magnet.
-  if (length < 1e-4*CLHEP::m) // 100um minimum length for geometry
+  if (lengthIn < 1e-4*CLHEP::m) // 100um minimum length for geometry
     {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
   // No beam pipe geometry for really short 'magnets'
-  if (length < 1e-6*CLHEP::m)
+  if (lengthIn < 1e-6*CLHEP::m)
     {GetBeamPipeInfo()->beamPipeType = BDSBeamPipeType::circularvacuum;}
 }
 

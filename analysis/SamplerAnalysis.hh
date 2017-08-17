@@ -20,7 +20,6 @@ public:
 		  bool debugIn = false);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
-		  BDSOutputROOTEventSampler<double>* samplerFirst,
 		  bool debugIn = false);
 #endif
   /// Initialisation of arrays for optical function calculations
@@ -51,8 +50,8 @@ protected:
   long long int npart;
   double S;
 
-    //6d phase space coordinates for each event
-    std::vector<double> coordinates;
+  //6d phase space coordinates for each event
+  std::vector<double> coordinates;
 
   // initial values to use for mean subtraction.
   std::vector<double> offsets;

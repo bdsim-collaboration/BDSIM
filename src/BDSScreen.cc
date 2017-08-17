@@ -9,18 +9,18 @@
 #include <list>
 #include <sstream>
 
-BDSScreen::BDSScreen(G4String         name,  
-		     G4double         chordLength,
-		     BDSBeamPipeInfo* beamPipeInfo, 
+BDSScreen::BDSScreen(G4String         nameIn,  
+		     G4double         chordLengthIn,
+		     BDSBeamPipeInfo* beamPipeInfoIn,
 		     G4TwoVector      sizeIn, //X Y dimensions of screen
 		     G4double         screenAngleIn):
-  BDSDrift(name,chordLength,beamPipeInfo),
+  BDSDrift(nameIn,chordLengthIn,beamPipeInfoIn),
   size(sizeIn), 
   screenAngle(screenAngleIn),
   screenPos(G4ThreeVector()),
   nLayers(0)
 {
-  mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
+  mlScreen = new BDSMultilayerScreen(size, nameIn+"_mlscreen");
   
   screenRot = new G4RotationMatrix();
   screenRot->rotateY(screenAngle);

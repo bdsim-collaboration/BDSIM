@@ -26,7 +26,7 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 
 #ifndef __ROOTBUILD__
 
-void BDSOutputROOTEventLoss::Fill(BDSTrajectoryPoint* hit)
+void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
 {
   n++;
   energy.push_back( (float &&) hit->GetEnergy() / CLHEP::GeV);
@@ -51,7 +51,7 @@ void BDSOutputROOTEventLoss::Fill(BDSTrajectoryPoint* hit)
   }
 
 }
-void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
+void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
 {
   this->n++;
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
