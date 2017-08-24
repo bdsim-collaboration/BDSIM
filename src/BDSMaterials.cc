@@ -362,6 +362,7 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial->SetMaterialPropertiesTable(mpt_YAG);
   AddMaterial(tmpMaterial,name);
 
+ 
   //UPS-923A  - see http://www.amcrys-h.com/
   //Define the material properties (copy from NIST table of materials).
   G4NistManager* nistManager = G4NistManager::Instance();
@@ -687,6 +688,26 @@ void BDSMaterials::DefineLiquids()
   G4double density;
   AddMaterial(name="liquidhelium"  , density=  0.12498, kStateLiquid, 4.15, 1, {"He"}, std::list<int>{1});
   AddMaterial(name="water"         , density=  1.00   , kStateLiquid, 300 , 1, {"O","H"}, std::list<int>{1,2});
+  
+  //Water for Cherenkov radiation detector
+  G4Material* tmpMaterial = new G4Material(name="waterCkov", density=1.*CLHEP::g/CLHEP::cm3, 2);
+  tmpMaterial->AddElement(elements["O"],1);
+  tmpMaterial->AddElement(elements["H"],2);
+  const G4int nEntries = 9;
+  G4MaterialPropertiesTable* mpt_waterCkov = CreatePropertiesTable();
+  G4double PhotonEnergy[nEntries];
+  G4double dNEntries=(G4double)nEntries;
+  G4double energyMin=1.*CLHEP::eV;
+  G4double energyMax=3.*CLHEP::eV;
+  G4double deltaEnergy=(energyMax-energyMin)/(dNEntries-1.0);
+  G4double energy=energyMin;
+  for(G4int i=0; i<nEntries; energy += deltaEnergy, i++){
+    PhotonEnergy[i]=energy;
+  }
+  G4double RefractiveIndex[nEntries] = { 1.325, 1.325, 1.326, 1.327, 1.328, 1.33, 1.333, 1.336, 1.343};
+  mpt_waterCkov->AddProperty("RINDEX",PhotonEnergy, RefractiveIndex,nEntries);
+  tmpMaterial->SetMaterialPropertiesTable(mpt_waterCkov);
+  AddMaterial(tmpMaterial,name);  
 }
 
 void BDSMaterials::DefineGases()

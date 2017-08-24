@@ -7,9 +7,11 @@ New Features
 * Executable option --writeseedstate is now --writeSeedState.
 * Executable option --exportgeometryto is now --exportGeometryTo
 * Executable option --distrfile is now --distrFile.
-  
+
 Bug Fixes
 ---------
+
+* Cherenkov radiation in water being fixed -> Need to add refractive index to water.
 
 General
 -------
