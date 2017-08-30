@@ -34,10 +34,6 @@ public:
   G4Material* GetMaterial(G4String aMaterial)const;
   /// Get element by name
   G4Element*  GetElement(G4String aSymbol)const;
-  /// Check if material is defined
-  G4bool CheckMaterial(G4String aMaterial)const;
-  /// Check if element is defined
-  G4bool CheckElement(G4String aSymbol)const;
 
 protected:
   BDSMaterials();
@@ -60,10 +56,12 @@ protected:
 		   G4double pressure);
 
   /** Add materials
-      @param[in] density  in g/cm3
-      @param[in] state    solid/gas
-      @param[in] temp     in kelvin
-      @param[in] pressure in atm
+      @param[in] density    in g/cm3
+      @param[in] state      solid/gas
+      @param[in] temp       in kelvin
+      @param[in] pressure   in atm
+      @param[in] components list of elements
+      @param[in] componentsFractions list of fractions or integers of the elements
   */
   template <typename Type>
   void AddMaterial(G4String aName, 
@@ -73,6 +71,11 @@ protected:
 		   G4double pressure,
 		   std::list<G4String> components,
 		   std::list<Type> componentsFractions);
+
+  /// Check if material is defined
+  G4bool CheckMaterial(G4String aMaterial)const;
+  /// Check if element is defined
+  G4bool CheckElement(G4String aSymbol)const;
 
   /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials; 

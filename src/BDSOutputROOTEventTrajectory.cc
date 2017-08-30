@@ -216,6 +216,13 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
 {
+  /*
+  for(auto it = trackID_trackIndex.cbegin(); it != trackID_trackIndex.cend(); ++it)
+  {
+    std::cout << it->first << " "  << it->second << "\n";
+  }
+   */
+
   int                ti = trackID_trackIndex.at(trackid);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
@@ -275,17 +282,35 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
   return tpv;
 }
 
-void BDSOutputROOTEventTrajectory::print(int i)
+void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
+  int wdt = 8;
+
+  std::cout << std::setw(wdt) << "trIx"     << " " << std::setw(wdt) << "trkId"    << " "
+            << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
+            << std::setw(wdt) << "prStpIx" << " " << std::setw(wdt) << "pID"      << " "
+            << std::setw(wdt) << "prePrcT"   << " " << std::setw(wdt) << "prePrcST" << " "
+            << std::setw(wdt) << "pstPrcT"   << " " << std::setw(wdt) << "pstPrcST" << " "
+            << std::setw(wdt) << "X"         << " " << std::setw(wdt) << "Y"        << " "
+            << std::setw(wdt) << "Z"         << " " << std::setw(wdt) << "E"        << " "
+            << std::setw(wdt) << "p"         << " " << std::setw(wdt) << "p_x"      << " "
+            << std::setw(wdt) << "p_y"       << " " << std::setw(wdt) << "p_z" << std::endl;
+
   for(size_t j=0;j<trajectories[i].size();++j)
   {
-    std::cout << j << " " << trackID[i] << " " << parentID[i] << " " << parentIndex[i] << " " << parentStepIndex[i] << " " << partID[i] << " "
-              << preProcessTypes[i][j]  << " " << preProcessSubTypes[i][j] << " "
-              << postProcessTypes[i][j] << " " << postProcessSubTypes[i][j] << " "
-              << trajectories[i][j].X() << " " << trajectories[i][j].Y() << " " <<  trajectories[i][j].Z() << " "
-              << energies[i][j] << " " << momenta[i][j].Mag() << " " << momenta[i][j].X()      << " " << momenta[i][j].Y()      << " " <<  momenta[i][j].Z() << std::endl;
+    std::cout << std::setw(wdt) << j << " " << std::setw(wdt) <<  trackID[i] << " "
+              << std::setw(wdt) << parentID[i]            << " " << std::setw(wdt) << parentIndex[i]           << " "
+              << std::setw(wdt) << parentStepIndex[i]     << " " << std::setw(wdt) << partID[i]                << " "
+              << std::setw(wdt) << preProcessTypes[i][j]  << " " << std::setw(wdt) << preProcessSubTypes[i][j] << " "
+              << std::setw(wdt) << postProcessTypes[i][j] << " " << std::setw(wdt) << postProcessSubTypes[i][j]<< " "
+              << std::setw(wdt) << trajectories[i][j].X() << " " << std::setw(wdt) << trajectories[i][j].Y()   << " "
+              << std::setw(wdt) << trajectories[i][j].Z() << " " << std::setw(wdt) << energies[i][j]           << " "
+              << std::setw(wdt) << momenta[i][j].Mag()    << " " << std::setw(wdt) << momenta[i][j].X()        << " "
+              << std::setw(wdt) << momenta[i][j].Y()      << " " << std::setw(wdt) << momenta[i][j].Z() << std::endl;
   }
 }
+
+
 
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
