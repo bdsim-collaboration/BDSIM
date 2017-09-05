@@ -172,12 +172,12 @@ The following (case-insensitive) options may be specified in the top part.
 +----------------------------+------------------------------------------------------+
 | CalculateOpticalFunctions  | Whether to calculate optical functions or not.       |
 +----------------------------+------------------------------------------------------+
-| OpticalFunctionsFileName   | The name of a separate text file copy of the opcial  |
-|                            | functions output.                                    |
+| OpticalFunctionsFileName   | The name of a separate text file copy of the         |
+|                            | optical functions output.                            |
 +----------------------------+------------------------------------------------------+
 | PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
 |                            | If you require print out for every event, set this   |
-|                            | to be very small.                                    |
+|                            | to 0.                                                |
 +----------------------------+------------------------------------------------------+
 | ProcessSamplers            | Whether to load the sampler data or not.             |
 +----------------------------+------------------------------------------------------+
