@@ -125,13 +125,13 @@ The analysis configuration file is a simple text file. This can be prepared by c
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
 
-An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt` ::
+An example can be found in :code:`<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt` ::
 
-  Debug                           True
-  InputFilePath                   ./output.root
-  OutputFileName                  ./ana_1.root
-  CalculateOpticalFunctions       True
-  OpticalFunctionsFileName       ./ana_1.dat
+  Debug                                   True
+  InputFilePath                           ./output.root
+  OutputFileName                          ./ana_1.root
+  CalculateOpticalFunctions               True
+  CalculateOpticalFunctionsFileName       ./ana_1.dat
   # Object  Tree Name Histogram Name  # of Bins  Binning             Variable            Selection
   Histogram1D  Event.    Primaryx        {100}      {-0.1:0.1}          Primary.x           1
   Histogram1D  Event.    Primaryy        {100}      {-0.1:0.1}          Primary.y           1
@@ -149,7 +149,9 @@ An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analy
 * For bins and binning, the range from low to high is specified by :code:`low:high`.
 * For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below.
 * Variables must contain the full 'address' of a variable inside a Tree.
+* Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get the kinetic energy of proton primaries in MeV).
 * A 3D histogram is shown on the last line.
+* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * True or False as well as 1 or 0 may be used for Boolean options.
 
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
