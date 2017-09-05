@@ -1920,11 +1920,12 @@ by contacting the developers - see :ref:`feature-request`).
 
 More details can be found in the Geant4 documentation:
 
-Physics Lists In BDSIM
-^^^^^^^^^^^^^^^^^^^^^^
-
    * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
+   * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
+
+Physics Lists In BDSIM
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
