@@ -906,7 +906,13 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
 #ifdef BDSDEBUG
       G4cout << "Using NIST material " << aMaterial << G4endl;
 #endif
-      return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
+      G4Material* mat = G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
+      if (mat == nullptr)
+        {
+          G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" could not be found by NIST." << G4endl;
+          exit(1);
+        }
+      return mat;
     }
   else
     {
@@ -935,7 +941,13 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)const
 #ifdef BDSDEBUG
       G4cout << "Using NIST material " << aSymbol << G4endl;
 #endif
-      return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
+      G4Element* element = G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
+      if (element == nullptr)
+        {
+          G4cout << __METHOD_NAME__ << "\"" << aSymbol << "\" could not be found by NIST." << G4endl;
+          exit(1);
+        }
+      return element;
     }
   else
     {
