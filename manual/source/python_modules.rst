@@ -37,11 +37,12 @@ Documentation
 In the following sections is individual documentatino for each python package.
 These are also available when using ipython by typing ? after any module or class.
 
+   * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
+   * `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_
+
 .. toctree::
    :maxdepth: 2
-
-   pybdsim.rst
-   pymadx
+   
    pymad8
 
 
