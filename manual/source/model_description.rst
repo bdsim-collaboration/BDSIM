@@ -2709,8 +2709,16 @@ Examples::
 userFile
 ^^^^^^^^
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle coordinates
-that are tab-delimited. The column names and the units are specified in an input string.
+The `userFile` distribution allows the user to supply an ASCII text file with particle
+coordinates that are tab-delimited. The column names and the units are specified in an
+input string.
+
+The file may also be compressed using tar and gz. Any file with the extentsion `.tar.gz`
+will be automatically decompressed during the run without any temporary files. This is
+recommended as compressed ASCII is significantly smaller in size.
+
+.. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
+	  by default on.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
