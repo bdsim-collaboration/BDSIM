@@ -2205,18 +2205,23 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPhotons                   | standard overall production cuts for photons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectrons                 | standard overall production cuts for electrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPositrons                 | standard overall production cuts for positrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtons                   | standard overall production cuts for protons          |
-+----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 1e-3) [m]                                |
+|                                  | cut. Overwrites other production cuts unless these    |
+|                                  | are explicitly set (default 1e-3) [m].                |
++----------------------------------+-------------------------------------------------------+
+| prodCutPhotons                   | standard overall production cuts for photons          |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutElectrons                 | standard overall production cuts for electrons        |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutPositrons                 | standard overall production cuts for positrons        |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+

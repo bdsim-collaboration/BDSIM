@@ -296,23 +296,24 @@ void BDSModularPhysicsList::SetCuts()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
+  // set default value
   SetDefaultCutValue(globals->DefaultRangeCut());
 
-  G4double prodCutPhotons   = globals->ProdCutPhotons();
-  G4double prodCutElectrons = globals->ProdCutElectrons();
-  G4double prodCutPositrons = globals->ProdCutPositrons();
-  G4double prodCutProtons   = globals->ProdCutProtons();
+  // overwrite when explicitly set in options
+  if (globals->ProdCutPhotonsSet())
+    {SetCutValue(globals->ProdCutPhotons(),  "gamma");}
+  if (globals->ProdCutElectronsSet())
+    {SetCutValue(globals->ProdCutElectrons(),"e-");}
+  if (globals->ProdCutPositronsSet())
+    {SetCutValue(globals->ProdCutPositrons(),"e+");}
+  if (globals->ProdCutProtonsSet())
+    {SetCutValue(globals->ProdCutProtons(),  "proton");}
 
-  G4cout << __METHOD_NAME__ << "Default production range cut  " << globals->DefaultRangeCut()  << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Photon production range cut   " << prodCutPhotons   << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Electron production range cut " << prodCutElectrons << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Positron production range cut " << prodCutPositrons << " mm" << G4endl;
-  G4cout << __METHOD_NAME__ << "Proton production range cut   " << prodCutProtons   << " mm" << G4endl;
-  
-  SetCutValue(prodCutPhotons,  "gamma");
-  SetCutValue(prodCutElectrons,"e-");
-  SetCutValue(prodCutPositrons,"e+");
-  SetCutValue(prodCutProtons,  "proton");
+  G4cout << __METHOD_NAME__ << "Default production range cut  " << GetDefaultCutValue()  << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Photon production range cut   " << GetCutValue("gamma")  << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Electron production range cut " << GetCutValue("e-")     << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Positron production range cut " << GetCutValue("e+")     << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Proton production range cut   " << GetCutValue("proton") << " mm" << G4endl;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "List of all constructed particles by physics lists" << G4endl;
@@ -322,7 +323,7 @@ void BDSModularPhysicsList::SetCuts()
 #endif
   
   DumpCutValuesTable(); 
-}  
+}
 
 void BDSModularPhysicsList::SetParticleDefinition()
 {
