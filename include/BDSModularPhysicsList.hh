@@ -65,13 +65,6 @@ public:
 private:
   /// Private default constructor to force use of supplied one.
   BDSModularPhysicsList();
-  
-  G4bool verbose;
-#ifdef BDSDEBUG 
-  bool debug = true;
-#else 
-  bool debug = false;
-#endif
 
   /// Update variables in global constants with all information about the primary particle
   /// momenta etc.

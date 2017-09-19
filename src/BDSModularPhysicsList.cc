@@ -71,7 +71,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #endif
   
   globals = BDSGlobalConstants::Instance();
-  verbose = globals->Verbose();
   
   SetVerboseLevel(1);
 
@@ -212,9 +211,9 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 
 void BDSModularPhysicsList::ConstructMinimumParticleSet()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // e-, e+, v_e, v_e(bar)
   G4Electron::ElectronDefinition();
   G4Positron::PositronDefinition();
@@ -263,16 +262,19 @@ void BDSModularPhysicsList::ConstructAllIons()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   if(opticalPhysics)
     {ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
 
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
@@ -290,8 +292,9 @@ void BDSModularPhysicsList::ConfigureOptical()
 
 void BDSModularPhysicsList::SetCuts()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   
   SetDefaultCutValue(globals->DefaultRangeCut());
 
@@ -300,13 +303,11 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutPositrons = globals->ProdCutPositrons();
   G4double prodCutProtons   = globals->ProdCutProtons();
 
-#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Default production range cut  " << globals->DefaultRangeCut()  << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Photon production range cut   " << prodCutPhotons   << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut " << prodCutElectrons << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut " << prodCutPositrons << " mm" << G4endl;
   G4cout << __METHOD_NAME__ << "Proton production range cut   " << prodCutProtons   << " mm" << G4endl;
-#endif
   
   SetCutValue(prodCutPhotons,  "gamma");
   SetCutValue(prodCutElectrons,"e-");
@@ -325,15 +326,16 @@ void BDSModularPhysicsList::SetCuts()
 
 void BDSModularPhysicsList::SetParticleDefinition()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
 
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName = globals->ParticleName();
   globals->SetParticleDefinition(particleTable->FindParticle(particleName));
   
-  if(!globals->GetParticleDefinition()) 
+  if(!globals->GetParticleDefinition())
     {
       G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
       exit(1);
