@@ -31,9 +31,14 @@ public:
   /// Return options
   const GMAD::Options& GetOptions() const {return options;}
 
+  const GMAD::Beam& GetBeam() const {return beam;}
+  GMAD::Beam& GetBeam() {return beam;}
+
   /// Amalgamate the input options with the ones stored in the parser.
   void AmalgamateOptions(const GMAD::Options& optionsIn);
-  /// Check options for consistency
+  /// Amalgamate the input beam definition with the ones stored in teh parser.
+  void AmalgamateBeam(const GMAD::Beam& beamIn, bool recreate);
+  /// Check options for consistency. This also checks the beam options.
   void CheckOptions();
 
   /// Return the vector of region objects.

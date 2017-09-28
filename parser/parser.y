@@ -690,7 +690,6 @@ print   : PRINT
         | PRINT ','
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
-        | BEAM ',' beam_parameters
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
@@ -714,6 +713,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION ',' option_parameters
+	| BEAM ',' beam_parameters
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1035,8 +1035,19 @@ option_parameters : paramassign '=' aexpr option_parameters_extend
 			Parser::Instance()->SetValue<Options>(*$1,*$3);
 		    }
 
-// beam_parameter same as option_parameters, might change in future
-beam_parameters : option_parameters
+beam_parameters_extend :  /* nothing */
+                       | ',' beam_parameters
+
+beam_parameters : paramassign '=' aexpr beam_parameters_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Beam>(*$1,$3);
+		    }   
+                  | paramassign '=' string beam_parameters_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Beam>(*$1,*$3);
+		    }
 
 %%
 

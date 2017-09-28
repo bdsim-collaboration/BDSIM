@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "atom.h"
+#include "beam.h"
 #include "cavitymodel.h"
 #include "element.h"
 #include "elementtype.h"
@@ -195,6 +196,8 @@ namespace GMAD
     Options options;
     /// Atom instance;
     Atom atom;
+    /// Beam instance;
+    Beam beam;
     /// Field instance;
     Field field;
     /// Material instance;
