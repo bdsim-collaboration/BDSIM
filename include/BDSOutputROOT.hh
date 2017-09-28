@@ -28,6 +28,9 @@ public:
   virtual void CloseFile();                   ///< Write contents and close file.
 
 private:
+  /// Copy beam and write to file.
+  virtual void WriteBeam();
+  
   /// Copy options and write to file.
   virtual void WriteOptions();
 
@@ -47,6 +50,9 @@ private:
 
   /// Output file.
   TFile* theRootOutputFile = nullptr;
+
+  /// Beam Tree.
+  TTree* theBeamOutputTree = nullptr;
 
   /// Options tree.
   TTree* theOptionsOutputTree = nullptr;

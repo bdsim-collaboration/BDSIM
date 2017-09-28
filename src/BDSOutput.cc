@@ -6,6 +6,7 @@
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -22,6 +23,7 @@
 #include "G4PrimaryParticle.hh"
 #include "G4PrimaryVertex.hh"
 
+#include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 
 #include <cmath>
@@ -57,6 +59,13 @@ void BDSOutput::InitialiseGeometryDependent()
 {
   CreateHistograms();
   InitialiseSamplers();
+}
+
+void BDSOutput::FillBeam(const GMAD::BeamBase* beam)
+{
+  *beamOutput = BDSOutputROOTEventBeam(beam);
+  WriteBeam();
+  ClearStructuresBeam();
 }
 
 void BDSOutput::FillOptions(const GMAD::OptionsBase* options)
