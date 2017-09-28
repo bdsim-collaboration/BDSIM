@@ -15,33 +15,33 @@
 #include "BDSBunchType.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #ifdef USE_GZSTREAM
 #include "gzstream.h"
 #endif
 
-BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Options& options,
+BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)  
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
-  G4String distribName = G4String(options.distribType);
+  G4String distrName = G4String(beam.distrType);
 
   // This will exit if no correct bunch type found.
-  BDSBunchType distribType = BDS::DetermineBunchType(distribName);
+  BDSBunchType distrType = BDS::DetermineBunchType(distrName);
 
-  return CreateBunch(distribType, options, beamlineTransform);
+  return CreateBunch(distrType, beam, beamlineTransform);
 }
 
-BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
-				       const GMAD::Options& options,
+BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType      distrType,
+				       const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)
 { 
   BDSBunch* bdsBunch = nullptr;
 
-  switch (distribType.underlying())
+  switch (distrType.underlying())
     {
     case BDSBunchType::reference:
       {bdsBunch = new BDSBunch(); break;}
@@ -63,13 +63,13 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
       {bdsBunch = new BDSBunchHalo(); break;}
     case BDSBunchType::userfile:
       {
-	G4String distribFile = G4String(options.distribFile);
-	if(distribFile.rfind("gz") != std::string::npos)	  
+	G4String distrFile = G4String(beam.distrFile);
+	if(distrFile.rfind("gz") != std::string::npos)	  
 #ifdef USE_GZSTREAM
 	  {bdsBunch = new BDSBunchUserFile<igzstream>();}
 #else
 	{
-	  G4cerr << __METHOD_NAME__ << options.distribFile << " is a compressed file "
+	  G4cerr << __METHOD_NAME__ << beam.distrFile << " is a compressed file "
 		 << "but BDSIM is compiled without GZIP." << G4endl;
 	  exit(1);
 	}
@@ -84,13 +84,13 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
       {bdsBunch = new BDSBunchPtc(); break;}
     default:
       {
-	G4cerr << "distribType \"" << distribType << "\" not found" << G4endl;
+	G4cerr << "distrType \"" << distrType << "\" not found" << G4endl;
 	exit(1);
 	break;
       }
     }
 
-  bdsBunch->SetOptions(options, beamlineTransform);
+  bdsBunch->SetOptions(beam, beamlineTransform);
   
   return bdsBunch;
 }

@@ -1,7 +1,10 @@
 #include "BDSBunchSixTrack.hh"
 #include "BDSDebug.hh"
-#include "parser/options.h"
+
+#include "parser/beam.h"
+
 #include "CLHEP/Units/SystemOfUnits.h"
+
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
@@ -76,15 +79,15 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   infile.close();
 }
 
-void BDSBunchSixTrack::SetOptions(const GMAD::Options& opt,
+void BDSBunchSixTrack::SetOptions(const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
+  G4cout << __METHOD_NAME__ << " " << opt.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetDistribFile(G4String(opt.distribFile)); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetDistrFile(G4String(beam.distrFile)); 
   LoadSixTrackFile();
 }
 

@@ -3,6 +3,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
+#include "parser/beam.h"
+
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 
@@ -30,10 +32,10 @@ void BDSBunchUserFile<T>::OpenBunchFile()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  InputBunchFile.open(distribFile);
+  InputBunchFile.open(distrFile);
   if(!InputBunchFile.good())
     { 
-      G4cerr<<"Cannot open bunch file "<< distribFile <<G4endl; 
+      G4cerr<<"Cannot open bunch file "<< distrFile <<G4endl; 
       exit(1); 
     }
 }
@@ -203,8 +205,9 @@ void BDSBunchUserFile<T>::skip(G4int nvalues){
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SetDistribFile(G4String filename){
-  distribFile = BDS::GetFullPath(filename);
+void BDSBunchUserFile<T>::SetDistrFile(G4String filename)
+{
+  distrFile = BDS::GetFullPath(filename);
 }
 
 template<class T>
@@ -216,18 +219,15 @@ void BDSBunchUserFile<T>::SkipLines()
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt,
+void BDSBunchUserFile<T>::SetOptions(const GMAD::Beam& beam,
 				     G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetDistribFile((G4String)opt.distribFile); 
-  SetBunchFormat((G4String)opt.distribFileFormat);
-  // if we're recreating from a file, still load external file but
-  // advance to the event number
-  if (opt.recreate)
-    {SetNLinesIgnore(opt.nlinesIgnore + opt.startFromEvent);}
-  else
-    {SetNLinesIgnore(opt.nlinesIgnore);}
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetDistrFile((G4String)beam.distrFile); 
+  SetBunchFormat((G4String)beam.distrFileFormat);
+  // Note this will be automatically advanced to the right nlinesIgnore
+  // if we're recreating.
+  SetNLinesIgnore(beam.nlinesIgnore);
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();

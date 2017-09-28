@@ -21,13 +21,13 @@ class BDSBunchUserFile: public BDSBunch
 public: 
   BDSBunchUserFile();
   virtual ~BDSBunchUserFile();
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);
 protected: 
-  G4String distribFile; ///< bunch file
+  G4String distrFile; ///< bunch file
   G4String bunchFormat; ///< the format of the file
   G4int nlinesIgnore; ///< number of lines that will be ignored after each particle (default 0)
   
@@ -44,7 +44,7 @@ private:
     G4double unit; ///< relative to SI units, i.e. mm=0.001 etc.
   };
   std::list<Doublet> fields;
-  void SetDistribFile(G4String filename);
+  void SetDistrFile(G4String filename);
   void SetBunchFormat(G4String val) {bunchFormat=val;}
   void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}
   G4double ParseEnergyUnit(G4String &fmt);

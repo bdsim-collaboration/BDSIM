@@ -2,7 +2,7 @@
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "globals.hh" // geant4 types / globals
 
@@ -37,35 +37,35 @@ BDSBunchHalo::~BDSBunchHalo()
   delete FlatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
+void  BDSBunchHalo::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetBetaX(opt.betx);
-  SetBetaY(opt.bety);
-  SetAlphaX(opt.alfx);
-  SetAlphaY(opt.alfy);
-  SetEmitX(opt.haloEmitX);
-  SetEmitY(opt.haloEmitY);  
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetBetaX(beam.betx);
+  SetBetaY(beam.bety);
+  SetAlphaX(beam.alfx);
+  SetAlphaY(beam.alfy);
+  SetEmitX(beam.haloEmitX);
+  SetEmitY(beam.haloEmitY);  
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;  
-  SetEnvelopeX(opt.envelopeX); 
-  SetEnvelopeY(opt.envelopeY);
-  SetEnvelopeXp(opt.envelopeXp);
-  SetEnvelopeYp(opt.envelopeYp);
-  SetEnvelopeEmitX(opt.haloEnvelopeEmitX);
-  SetEnvelopeEmitY(opt.haloEnvelopeEmitY);
-  SetEnvelopeCollMinX(opt.haloEnvelopeCollMinX);
-  SetEnvelopeCollMaxX(opt.haloEnvelopeCollMaxX);
-  SetEnvelopeCollMinXp(opt.haloEnvelopeCollMinXp);
-  SetEnvelopeCollMaxXp(opt.haloEnvelopeCollMaxXp);
-  SetEnvelopeCollMinY(opt.haloEnvelopeCollMinY);
-  SetEnvelopeCollMaxY(opt.haloEnvelopeCollMaxY);
-  SetEnvelopeCollMinYp(opt.haloEnvelopeCollMinYp);
-  SetEnvelopeCollMaxYp(opt.haloEnvelopeCollMaxYp);
+  SetEnvelopeX(beam.envelopeX); 
+  SetEnvelopeY(beam.envelopeY);
+  SetEnvelopeXp(beam.envelopeXp);
+  SetEnvelopeYp(beam.envelopeYp);
+  SetEnvelopeEmitX(beam.haloEnvelopeEmitX);
+  SetEnvelopeEmitY(beam.haloEnvelopeEmitY);
+  SetEnvelopeCollMinX(beam.haloEnvelopeCollMinX);
+  SetEnvelopeCollMaxX(beam.haloEnvelopeCollMaxX);
+  SetEnvelopeCollMinXp(beam.haloEnvelopeCollMinXp);
+  SetEnvelopeCollMaxXp(beam.haloEnvelopeCollMaxXp);
+  SetEnvelopeCollMinY(beam.haloEnvelopeCollMinY);
+  SetEnvelopeCollMaxY(beam.haloEnvelopeCollMaxY);
+  SetEnvelopeCollMinYp(beam.haloEnvelopeCollMinYp);
+  SetEnvelopeCollMaxYp(beam.haloEnvelopeCollMaxYp);
 
-  SetWeightParameter(opt.haloPSWeightParameter);
-  SetWeightFunction(opt.haloPSWeightFunction);
+  SetWeightParameter(beam.haloPSWeightParameter);
+  SetWeightFunction(beam.haloPSWeightFunction);
   
   if (BDS::IsFinite(envelopeCollMinX) ||  BDS::IsFinite(envelopeCollMaxX))
   {

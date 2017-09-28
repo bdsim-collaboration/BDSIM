@@ -25,12 +25,12 @@ public:
   explicit BDSBunchSixTrack(G4String fileNameIn);
   virtual ~BDSBunchSixTrack(); 
   void LoadSixTrackFile(); 
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
                                G4double& t , G4double&  E, G4double& weight);
-  void SetDistribFile(G4String distribFileNameIn) {fileName = distribFileNameIn;}
+  inline void SetDistrFile(G4String distrFileNameIn) {fileName = distrFileNameIn;}
   G4String GetDistribFile() {return fileName;}
   G4int GetNParticles() {return nPart;}
 };
