@@ -16,7 +16,6 @@ namespace GMAD
     {
     public:
       BeamBase();
-      ~BeamBase(){;}
 
       ///@{ beam parameters
       std::string particleName;

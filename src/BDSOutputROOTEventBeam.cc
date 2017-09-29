@@ -2,8 +2,7 @@
 
 ClassImp(BDSOutputROOTEventBeam)
 
-BDSOutputROOTEventBeam::BDSOutputROOTEventBeam():
-BeamBase()
+BDSOutputROOTEventBeam::BDSOutputROOTEventBeam() : BeamBase()
 {;}
 
 BDSOutputROOTEventBeam::BDSOutputROOTEventBeam(const GMAD::BeamBase* ob): BeamBase(*ob)
