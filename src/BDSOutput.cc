@@ -218,7 +218,7 @@ void BDSOutput::CalculateHistogramParameters()
   // (max - min) / bin width -> min = 0 here.
   const G4double binWidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  if (flatBeamline)
+  if (flatBeamline && flatBeamline->empty()==false)
     {
       G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
       nbins = (int) std::ceil(sMax / binWidth); // round up to integer # of bins

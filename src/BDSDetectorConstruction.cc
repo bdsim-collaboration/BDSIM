@@ -135,6 +135,14 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
   G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
+  const auto& mainBeamLineFL = BDSParser::Instance()->GetBeamline();
+
+  if (mainBeamLineFL.empty())
+    {
+      G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
+	     << "to have at least one element" << G4endl;
+      exit(1);
+    }
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
 					      "main beam line",
 					      initialTransform,
