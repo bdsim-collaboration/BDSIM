@@ -1,5 +1,5 @@
 void evtRates() {
-  TFile *f = new TFile("output_event.root");
+  TFile *f = new TFile("output.root");
   TTree *t = (TTree*)f->Get("Event");
   int elastic   = t->Draw("Trajectory.n","Trajectory.primaryHadronic()==111","goff");
   int inelastic = t->Draw("Trajectory.n","Trajectory.primaryHadronic()==121","goff");

@@ -36,7 +36,8 @@ class BDSOutput: protected BDSOutputStructures
 {
 public:
   /// Constructor with base file name (without extension or number suffix).
-  BDSOutput(G4String fileName,
+  BDSOutput(G4String baseFileNameIn,
+	    G4String fileExtentionIn,
 	    G4int    fileNumberOffset);
   virtual ~BDSOutput(){;}
 
@@ -183,7 +184,8 @@ private:
   /// No default constructor.
   BDSOutput() = delete;
   
-  G4String filename;        ///< Base file name.
+  const G4String baseFileName;  ///< Base file name.
+  const G4String fileExtension; ///< File extension to add to each file.
   G4int numberEventPerFile; ///< Number of events stored per file.
   G4int outputFileNumber;   ///< Number of output file.
   G4bool writePrimaries;    ///< Whether to write primaries or not.

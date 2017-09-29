@@ -37,10 +37,12 @@ const std::set<G4String> BDSOutput::protectedNames = {
   "Trajectory"
 };
 
-BDSOutput::BDSOutput(G4String fileName,
+BDSOutput::BDSOutput(G4String baseFileNameIn,
+		     G4String fileExtensionIn,
 		     G4int    fileNumberOffset):
   BDSOutputStructures(BDSGlobalConstants::Instance()),
-  filename(fileName),
+  baseFileName(baseFileNameIn),
+  fileExtension(fileExtensionIn),
   outputFileNumber(fileNumberOffset),
   sMaxHistograms(0),
   nbins(0)
@@ -173,31 +175,32 @@ G4String BDSOutput::GetNextFileName()
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   // Base root file name 
-  G4String basefilename = filename;
-  basefilename = basefilename+std::string("_event");
+  G4String newFileName = baseFileName;
 
   // if more than one file add number (starting at 0)
-  if (numberEventPerFile>0 && globalConstants->NGenerate()>numberEventPerFile)
-    {basefilename += "_" + std::to_string(outputFileNumber);}
-  filename = basefilename + std::string(".root");
-
+  // of numberEventPerFile is specified and the number already generated exceeds that
+  if (numberEventPerFile > 0 && globalConstants->NGenerate() > numberEventPerFile)
+    {newFileName += "_" + std::to_string(outputFileNumber);} // note underscore
+  
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
   if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch())
-    {
-      // check if file exists
-      int nTimeAppended = 1;
-      while (BDS::FileExists(filename))
-	{
-	  // if exists remove trailing .root
-	  filename = basefilename + std::string("-") + std::to_string(nTimeAppended);
-	  filename += ".root";
+    {// check if file exists
+      G4String original = newFileName; // could have nper file number suffix too
+      G4int nTimeAppended = 1;
+      while (BDS::FileExists(newFileName + fileExtension)) // always test with extension
+	{// if exists increment suffix integer
+	  newFileName = original + "-" + std::to_string(nTimeAppended);
 	  nTimeAppended +=1;
 	}
     }
-  G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
 
-  return filename;
+  // add extension now we've got the base part fixed
+  newFileName += fileExtension;
+  
+  G4cout << __METHOD_NAME__ << "Setting up new file: " << newFileName << G4endl;
+
+  return newFileName;
 }
 
 void BDSOutput::CalculateHistogramParameters()
@@ -206,7 +209,7 @@ void BDSOutput::CalculateHistogramParameters()
   // (max - min) / bin width -> min = 0 here.
   const G4double binWidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  if (flatBeamline)
+  if (flatBeamline && flatBeamline->empty()==false)
     {
       G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
       nbins = (int) std::ceil(sMax / binWidth); // round up to integer # of bins
@@ -287,7 +290,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
+  G4cout << __METHOD_NAME__ << hits->entries() << std::endl;
 #endif
   // Here, we don't switch on the type of the hits as the samplers are all
   // prepared and stored in one vector in the sampler registry.  The output
@@ -369,7 +372,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 void BDSOutput::FillTrajectories(const std::vector<BDSTrajectory*>& trajectories)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
+  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;
 #endif
   traj->Fill(trajectories);
 }

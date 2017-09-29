@@ -27,6 +27,16 @@ public:
   /// converts parser material list
   void PrepareRequiredMaterials(G4bool verbose = false);
 
+  /// output available materials
+  void ListMaterials()const;
+
+  /// Get material by name
+  G4Material* GetMaterial(G4String aMaterial)const;
+  /// Get element by name
+  G4Element*  GetElement(G4String aSymbol)const;
+
+protected:
+  BDSMaterials();
   /// Add G4Material
   void AddMaterial(G4Material* aMaterial,G4String aName);
   /** Add materials
@@ -46,10 +56,12 @@ public:
 		   G4double pressure);
 
   /** Add materials
-      @param[in] density  in g/cm3
-      @param[in] state    solid/gas
-      @param[in] temp     in kelvin
-      @param[in] pressure in atm
+      @param[in] density    in g/cm3
+      @param[in] state      solid/gas
+      @param[in] temp       in kelvin
+      @param[in] pressure   in atm
+      @param[in] components list of elements
+      @param[in] componentsFractions list of fractions or integers of the elements
   */
   template <typename Type>
   void AddMaterial(G4String aName, 
@@ -60,20 +72,11 @@ public:
 		   std::list<G4String> components,
 		   std::list<Type> componentsFractions);
 
-  /// output available materials
-  void ListMaterials();
-
-  /// Get material by name
-  G4Material* GetMaterial(G4String aMaterial);
-  /// Get element by name
-  G4Element*  GetElement(G4String aSymbol); 
   /// Check if material is defined
-  G4bool CheckMaterial(G4String aMaterial);
+  G4bool CheckMaterial(G4String aMaterial)const;
   /// Check if element is defined
-  G4bool CheckElement(G4String aSymbol); 
+  G4bool CheckElement(G4String aSymbol)const;
 
-protected:
-  BDSMaterials();
   /// map of materials, convention name lowercase
   std::map<G4String,G4Material*> materials; 
   /// map of elements, convention name lowercase
@@ -82,9 +85,23 @@ private:
   /// Singleton instance
   static BDSMaterials* _instance;
 
+  ///@{ Methods called by constructor
+  void DefineElements();
+  void DefineMetals();
+  void DefineSuperconductors();
+  void DefineNonMetalSolids();
+  void DefineScintillators();
+  void DefineLHCComponents();
+  void DefineLiquids();
+  void DefineGases();
+  void DefinePlasmas();
+  void DefineVacuums();
+  ///@}
+
+  ///@{ Add a G4Element
   void AddElement(G4Element* aElement,G4String aName);
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
-
+  ///@}
   /// Material tables for storing pointers
   std::vector<G4MaterialPropertiesTable*> propertiesTables;
   /// Create new properties table and store in vector

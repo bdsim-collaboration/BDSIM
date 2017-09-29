@@ -15,6 +15,8 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 {
   // the beamline of end pieces to be placed.
   BDSBeamline* endPieces = new BDSBeamline();
+  if (beamline->empty())
+    {return endPieces;}
 
   // references to first and last item for checking
   const BDSBeamlineElement* firstItem = beamline->GetFirstItem();

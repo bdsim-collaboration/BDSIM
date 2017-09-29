@@ -1,0 +1,5 @@
+! Sun, 25 Jun 2017 22:07:23 +0000
+! pybdsim.Builder 
+! OPTIONS DEFINITION 
+
+option,	beampipeRadius=12.49999*mm;

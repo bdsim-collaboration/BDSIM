@@ -1,5 +1,5 @@
 Debug						0
-InputFilePath					./output_event*
+InputFilePath					./sampleFiles/*
 OutputFileName					./merged_output.root
 CalculateOpticalFunctions			1
 CalculateOpticalFunctionsFileName		./output_merged.dat

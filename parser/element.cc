@@ -59,13 +59,15 @@ void Element::PublishMembers()
   publish("tOffset",   &Element::tOffset);
   
   publish("beampipeThickness",&Element::beampipeThickness);
-  publish("aper",&Element::aper1);
+  publish("aper1",    &Element::aper1);
+  publish("aper",     &Element::aper1);
   alternativeNames["aper"] = "aper1";
   publish("aperture", &Element::aper1);
   alternativeNames["aperture"] = "aper1";
-  publish("aper1",    &Element::aper1);
   publish("aperture1",&Element::aper1);
   alternativeNames["aperture1"] = "aper1";
+  publish("beampipeRadius",&Element::aper1);
+  alternativeNames["beampipeRadius"] = "aper1";
   publish("aper2",    &Element::aper2);
   publish("aperture2",&Element::aper2);
   alternativeNames["aperture2"] = "aper2";

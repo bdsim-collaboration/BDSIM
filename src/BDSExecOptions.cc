@@ -58,13 +58,13 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "seed",           1, 0, 0},
 					{ "recreate",       1, 0, 0},
 					{ "startFromEvent", 1, 0, 0},
-					{ "writeseedstate", 0, 0, 0},
-					{ "seedstate",      1, 0, 0},
+					{ "writeSeedState", 0, 0, 0},
+					{ "seedState",      1, 0, 0},
 					{ "seedStateFileName", 1, 0, 0},
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
-					{ "exportgeometryto", 1, 0, 0 },
+					{ "exportGeometryTo", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ "ignoresigint", 0, 0, 0},
 					{ 0, 0, 0, 0 }};
@@ -182,9 +182,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("startFromEvent", result);
 	}
-      else if( !strcmp(optionName, "writeseedstate") )
+      else if( !strcmp(optionName, "writeSeedState") )
 	{options.set_value("writeSeedState", true);}
-      else if( !strcmp(optionName, "seedstate")  || !strcmp(optionName, "seedStateFileName"))
+      else if( !strcmp(optionName, "seedState")  || !strcmp(optionName, "seedStateFileName"))
 	{
           options.set_value("useASCIISeedState", true);
           options.set_value("seedStateFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));
@@ -200,7 +200,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("generatePrimariesOnly", true);}
       else if( !strcmp(optionName, "ignoresigint") )
 	{ignoreSIGINT = true;}
-      else if( !strcmp(optionName, "exportgeometryto") )
+      else if( !strcmp(optionName, "exportGeometryTo") )
 	{// TBC - this should be put into geometry classes
 	  std::string fn = optarg;
 	  if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
@@ -253,24 +253,25 @@ void BDSExecOptions::Parse(int argc, char **argv)
 void BDSExecOptions::Usage() const
 {
   G4cout<<"Usage: bdsim [options]"<<G4endl;
+  G4cout<<"Note options are case sensitive."<<G4endl;
   G4cout<<"Options:"<<G4endl;
   G4cout<<"--file=<filename>         : specify the lattice and options file "<<G4endl
 	<<"--batch                   : batch mode - no graphics"<<G4endl
 	<<"--circular                : assume circular machine - turn control"<<G4endl
 	<<"--distrFile=<file>        : specify which file to use for the bunch distribution" << G4endl
-	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
+	<<"--exportGeometryTo=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
 	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
 	<<"--help                    : display this message"<<G4endl
 	<<"--materials               : list materials included in bdsim by default"<<G4endl
+	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
+	<<"                            option in the input gmad file" << G4endl
 	<<"--output=<fmt>            : output format (rootevent|none), default rootevent"<<G4endl
 	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
-	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
-	<<"                            option in the input gmad file" << G4endl
         <<"--seed=N                  : the seed to use for the random number generator" << G4endl
+    	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
 	<<"--seedStateFileName=<file>: use this ASCII file seed state to run an event" << G4endl
-	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
 	<<"--startFromEvent=N        : event offset to start from when recreating events" << G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl

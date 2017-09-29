@@ -184,7 +184,7 @@ OptionsBase::OptionsBase()
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
 
-  removeTemporaryFiles = 0;
+  removeTemporaryFiles = false;
   
   // samplers
   samplerDiameter     = 5; // m
@@ -221,7 +221,7 @@ OptionsBase::OptionsBase()
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   maximumStepLength        = 20;      // m, quite big
   maximumTrackLength       = 1e90;    // m, no limit but smaller than DBL_MAX for safe *CLHEP::m
-  chordStepMinimum         = 1e-8;    // m
+  chordStepMinimum         = 1e-9;    // m // minimum step in a field for an integrator
   deltaIntersection        = 1e-8;    // m - should be greater than lengthSafety!
 
   // default value in Geant4, old value 0 - error must be greater than this

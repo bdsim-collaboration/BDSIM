@@ -14,7 +14,7 @@
 class BDSOutputNone: public BDSOutput
 {
 public: 
-  BDSOutputNone(): BDSOutput("", -1){;} ///< Default constructor.
+  BDSOutputNone(): BDSOutput("", "", -1){;} ///< Default constructor.
   virtual ~BDSOutputNone(){;}
 
   /// @{ No action.

@@ -622,7 +622,7 @@ BDSIM Field Map File Preparation
 The Python BDSIM utility *pybdsim* may be used to prepare a BDSIM format field map file
 from a Python numpy array.
 
-The pybdsim field classes are fully documented here :ref:`pybdsim-field-module`.
+The pybdsim field classes are fully documented in the pybdsim documentation `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_.
 
 
 .. _field-interpolators:
