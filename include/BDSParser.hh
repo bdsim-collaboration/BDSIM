@@ -31,6 +31,9 @@ public:
   /// Return options
   const GMAD::Options& GetOptions() const {return options;}
 
+  /// Return bare options base class
+  const GMAD::OptionsBase* GetOptionsBase() const {return dynamic_cast<const GMAD::OptionsBase*>(&options);}
+
   /// Amalgamate the input options with the ones stored in the parser.
   void AmalgamateOptions(const GMAD::Options& optionsIn);
   /// Check options for consistency
