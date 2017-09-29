@@ -58,7 +58,7 @@ void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
   int    nEntries = chain->GetEntries();
   printModulo = (int)ceil(nEntries * fraction);
-  if (printModulo < 0)
+  if (printModulo <= 0)
     {printModulo = 1;}
 }
 

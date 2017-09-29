@@ -1,0 +1,7 @@
+d1: drift, l=250.0;
+lat : line = ();
+
+beam,  particle="e-",
+       energy=1.5 * GeV;
+
+use, period=lat;

@@ -40,10 +40,10 @@ namespace GMAD
     void print()const;
     /// set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+      void set_value(const std::string& property, T value);
     // Template overloading for Array pointers
     /// Set method for lists
-    void set_value(std::string property, Array* value);
+    void set_value(const std::string& property, Array* value);
 
   private:
     /// publish members so these can be looked up from parser
@@ -51,7 +51,7 @@ namespace GMAD
   };
 
   template <typename T>
-    void Material::set_value(std::string property, T value)
+    void Material::set_value(const std::string& property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;

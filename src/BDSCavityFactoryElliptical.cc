@@ -2,7 +2,6 @@
 #include "BDSCavity.hh"
 #include "BDSCavityFactoryElliptical.hh"
 #include "BDSCavityInfo.hh"
-#include "BDSColours.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"

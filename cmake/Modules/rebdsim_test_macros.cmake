@@ -6,7 +6,7 @@ macro(_rebdsimAnalTest testName configFile)
 endmacro()
 
 macro(rebdsim_test_manual testName configFile inputFile outputFile)
-  add_test(NAME ${testName} COMMAND rebdsim ${configFile} ${inputFile} $outputFile})
+  add_test(NAME ${testName} COMMAND rebdsim ${configFile} ${inputFile} ${outputFile})
 endmacro()
 
 # run analysis then a comparison

@@ -56,7 +56,7 @@ void Material::print()const
 }
 
 // template specialisation for Array pointers, to be merged into templated function
-void Material::set_value(std::string property, Array* value)
+void Material::set_value(const std::string& property, Array* value)
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;

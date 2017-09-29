@@ -36,7 +36,7 @@ private:
   G4int    iRay;      ///< Iterator counter for current ray.
   std::vector<double*> ptcData; ///< Data.
 
-  G4bool loopedOver;  ///< Wether we've reset to loop over the file again.
+  G4bool loopedOver;  ///< Whether we've reset to loop over the file again.
 };
 
 #endif
