@@ -177,6 +177,8 @@ namespace GMAD
 
     // protected implementation (for inheritance to BDSParser - hackish)
   protected:
+    /// Beam instance;
+    Beam beam;
     /// General options
     Options options;
     /// Beamline
@@ -218,8 +220,6 @@ namespace GMAD
     Parameters params;
     /// Atom instance;
     Atom atom;
-    /// Beam instance;
-    Beam beam;
     /// Field instance;
     Field field;
     /// Material instance;
