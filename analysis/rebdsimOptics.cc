@@ -9,6 +9,7 @@
 #include "EventAnalysis.hh"
 
 #include "TFile.h"
+#include "TChain.h"
 
 void usage()
 { 
@@ -31,6 +32,11 @@ int main(int argc, char* argv[])
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
+
+  auto modelTree = dl.GetModelTree();
+  modelTree->CloneTree(-1, "fast");
+  outputFile->Write();
+
   evtAnalysis->Write(outputFile);
   outputFile->Close();
 

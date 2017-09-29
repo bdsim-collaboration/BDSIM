@@ -31,8 +31,17 @@ public:
   /// Return options
   const GMAD::Options& GetOptions() const {return options;}
 
+  /// Return bare options base class.
+  const GMAD::OptionsBase* GetOptionsBase() const {return dynamic_cast<const GMAD::OptionsBase*>(&options);}
+
+  /// Return beam.
   const GMAD::Beam& GetBeam() const {return beam;}
+
+  /// Return beam non-const. Requried when loading a file and need to change beam parameters to match.
   GMAD::Beam& GetBeam() {return beam;}
+
+  /// Return bare beam base class.
+  const GMAD::BeamBase* GetBeamBase() const {return dynamic_cast<const GMAD::BeamBase*>(&beam);}
 
   /// Amalgamate the input options with the ones stored in the parser.
   void AmalgamateOptions(const GMAD::Options& optionsIn);
