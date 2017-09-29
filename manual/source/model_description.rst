@@ -1640,7 +1640,7 @@ The following is an example syntax is used to place a piece of geometry::
   leadblock: placement, x = 10*m,
                         y = 3*cm,
 			z = 12*m,
-			geometryFile="gdml:mygeometry/detector.gdml;
+			geometryFile="gdml:mygeometry/detector.gdml";
 
 
 
@@ -1920,11 +1920,12 @@ by contacting the developers - see :ref:`feature-request`).
 
 More details can be found in the Geant4 documentation:
 
-Physics Lists In BDSIM
-^^^^^^^^^^^^^^^^^^^^^^
-
    * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
+   * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
+
+Physics Lists In BDSIM
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2123,6 +2124,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | aper4                            | default aper4 parameter                               |
 +----------------------------------+-------------------------------------------------------+
+| dontSplitSBends                  | If true, do not split sbends into multiple segments   |
+|                                  | (default = false)                                     |
++----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in options will be used.                              |
@@ -2201,18 +2205,23 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPhotons                   | standard overall production cuts for photons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectrons                 | standard overall production cuts for electrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPositrons                 | standard overall production cuts for positrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtons                   | standard overall production cuts for protons          |
-+----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 1e-3) [m]                                |
+|                                  | cut. Overwrites other production cuts unless these    |
+|                                  | are explicitly set (default 1e-3) [m].                |
++----------------------------------+-------------------------------------------------------+
+| prodCutPhotons                   | standard overall production cuts for photons          |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutElectrons                 | standard overall production cuts for electrons        |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutPositrons                 | standard overall production cuts for positrons        |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
@@ -2705,8 +2714,16 @@ Examples::
 userFile
 ^^^^^^^^
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle coordinates
-that are tab-delimited. The column names and the units are specified in an input string.
+The `userFile` distribution allows the user to supply an ASCII text file with particle
+coordinates that are tab-delimited. The column names and the units are specified in an
+input string.
+
+The file may also be compressed using tar and gz. Any file with the extentsion `.tar.gz`
+will be automatically decompressed during the run without any temporary files. This is
+recommended as compressed ASCII is significantly smaller in size.
+
+.. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
+	  by default on.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |

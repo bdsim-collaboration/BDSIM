@@ -1,0 +1,18 @@
+! Sun, 25 Jun 2017 22:07:23 +0000
+! pybdsim.Builder 
+! BEAM DEFINITION 
+
+beam,	Yp0=0.0,
+	distrType="gausstwiss", 
+	particle="e-", 
+	sigmaE=0.0008, 
+	energy=1.282*GeV, 
+	betx=6.848560987*m, 
+	alfx=1.108024744, 
+	emitx=2e-09*m, 
+	emity=1.195785323e-11*m, 
+	Y0=0.0*m, 
+	X0=0.0*m, 
+	Xp0=0.0, 
+	alfy=-1.907222942, 
+	bety=2.935758992*m;

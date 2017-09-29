@@ -428,6 +428,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
   switch(_vacuumChamberType){
   case 0:
     _vacChamb=nullptr;
+    break;
   case 1:
     _vacChamb = new BDSSpectrVacChamb(name + "_vacChamb",
 				      chordLength,

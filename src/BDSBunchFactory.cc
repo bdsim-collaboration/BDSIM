@@ -63,12 +63,18 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
       {bdsBunch = new BDSBunchHalo(); break;}
     case BDSBunchType::userfile:
       {
-#ifdef USE_GZSTREAM
 	G4String distribFile = G4String(options.distribFile);
-	if(distribFile.rfind("gz") != std::string::npos)
+	if(distribFile.rfind("gz") != std::string::npos)	  
+#ifdef USE_GZSTREAM
 	  {bdsBunch = new BDSBunchUserFile<igzstream>();}
-	else
+#else
+	{
+	  G4cerr << __METHOD_NAME__ << options.distribFile << " is a compressed file "
+		 << "but BDSIM is compiled without GZIP." << G4endl;
+	  exit(1);
+	}
 #endif
+	else
 	  {bdsBunch = new BDSBunchUserFile<std::ifstream>();}
 	break;
       }

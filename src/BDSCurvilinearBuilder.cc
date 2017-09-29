@@ -47,7 +47,10 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
 {  
   BDSBeamline* result = new BDSBeamline();
 
-  if (!circular)
+  //prepend small sections to machine when non-circular
+  G4bool bonusSections = (circular == false && beamline->empty() == false);
+
+  if (bonusSections == true)
     {//prepend small section to machine
       BDSBeamlineElement* bonusBit = CreateBonusSectionStart(beamline);
       result->AddBeamlineElement(bonusBit);
@@ -63,7 +66,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
 	{result->AddBeamlineElement(temp);}
     }
 
-  if (!circular)
+  if (bonusSections == true)
     {// append small section to machine
       BDSBeamlineElement* bonusBit = CreateBonusSectionEnd(beamline);
       if (bonusBit)
@@ -381,7 +384,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateBonusSectionStart(BDSBeamline const* const beamline)
 {  
-  // we're ingnoring any possible angled face of the curvilinear geometry
+  // we're ignoring any possible angled face of the curvilinear geometry
   BDSSimpleComponent* component = factory->CreateCurvilinearVolume("cl_start",
 								   bonusChordLength,
 								   curvilinearRadius);
