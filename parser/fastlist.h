@@ -47,6 +47,8 @@ namespace GMAD
     /// option to check for unique element name (exits in case name is not unique), false by default
     void push_back(const T& el, bool unique=false);
 
+    inline bool empty() const {return itsList.empty();} ///< Whether the list is empty.
+    
     /// size of list
     int size()const;
     /// empty lists
