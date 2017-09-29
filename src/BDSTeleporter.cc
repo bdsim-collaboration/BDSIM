@@ -46,6 +46,8 @@ void BDSTeleporter::BuildContainerLogicalVolume()
 
 G4ThreeVector BDS::CalculateTeleporterDelta(BDSBeamline* thebeamline)
 {
+  if (thebeamline->empty())
+    {return G4ThreeVector();}
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
   G4ThreeVector lastitemposition  = thebeamline->back()->GetReferencePositionEnd();
