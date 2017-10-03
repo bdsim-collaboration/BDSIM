@@ -4,7 +4,6 @@
 #include "BDSParser.hh"
 #include "BDSRunAction.hh"
 
-#include "parser/options.h"
 #include "parser/optionsBase.h"
 
 #include "globals.hh"               // geant4 globals / types
@@ -49,8 +48,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   output->NewFile();
 
   // Write options now file open.
-  const GMAD::Options o = BDSParser::Instance()->GetOptions();
-  const GMAD::OptionsBase* ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
+  const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
   output->FillOptions(ob);
 
   // Write model now file open.
@@ -77,5 +75,5 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   info->Flush();
 
   // note difftime only calculates to the integer second
-  G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;
+  G4cout << __METHOD_NAME__ << "Run Duration >> " << (int)duration << " s" << G4endl;
 }
