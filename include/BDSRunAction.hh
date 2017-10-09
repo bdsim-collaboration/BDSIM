@@ -18,7 +18,7 @@ class G4Run;
 class BDSRunAction: public G4UserRunAction
 {
 public:
-  BDSRunAction(BDSOutput* outputIn);
+  explicit BDSRunAction(BDSOutput* outputIn);
   virtual ~BDSRunAction();
   
   virtual void BeginOfRunAction(const G4Run*);

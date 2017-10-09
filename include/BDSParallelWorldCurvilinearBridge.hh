@@ -20,7 +20,7 @@ class G4VisAttributes;
 class BDSParallelWorldCurvilinearBridge: public G4VUserParallelWorld
 {
 public:
-  BDSParallelWorldCurvilinearBridge(G4String name);
+  explicit BDSParallelWorldCurvilinearBridge(G4String name);
   virtual ~BDSParallelWorldCurvilinearBridge();
 
   /// Construct the required parallel world geometry. This must

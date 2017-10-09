@@ -9,7 +9,7 @@ class G4VisAttributes;
 /**
  * @brief A parallel world for curvilinear coordinates.
  *
- * The world isn't used in the main (bdsim.cc) with a paralle world physics
+ * The world isn't used in the main (bdsim.cc) with a parallel world physics
  * process so the boundaries in this world don't affect tracking.
  *
  * @author Laurie Nevay
@@ -19,7 +19,7 @@ class BDSParallelWorldCurvilinear: public G4VUserParallelWorld
 {
 public:
   /// Constructor with name of sequence this world is for.
-  BDSParallelWorldCurvilinear(G4String name);
+  explicit BDSParallelWorldCurvilinear(G4String name);
   virtual ~BDSParallelWorldCurvilinear();
 
   /// Construct the required parallel world geometry. This must

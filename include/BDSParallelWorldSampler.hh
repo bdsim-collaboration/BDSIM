@@ -19,7 +19,7 @@ class BDSSampler;
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
 public:
-  BDSParallelWorldSampler(G4String name);
+  explicit BDSParallelWorldSampler(G4String name);
   virtual ~BDSParallelWorldSampler();
 
   /// Construct the required parallel world geometry. This must
