@@ -11,7 +11,7 @@
 #include <stdexcept>
 
 BDSIonDefinition::BDSIonDefinition(G4String definition):
-  a(1), z(1), charge(1), energy(0)
+  a(1), z(1), charge(1), energy(0), overrideCharge(false)
 {
   try
     {Parse(definition);}
@@ -43,12 +43,18 @@ void BDSIonDefinition::Parse(const G4String& definition)
   for (auto i = wordsBegin; i != wordsEnd; ++i, ++counter)
     {
       std::smatch match = *i;
+      if (counter > 1)
+	{overrideCharge = true;} // charge is specified
       try
 	{
 	  if (counter > 2) // E - only double
 	    {energy = std::stod(match[1])*CLHEP::keV;}
 	  else
-	    {(*vals[counter]) = std::stoi(match[1]);}
+	    {
+	      (*vals[counter]) = std::stoi(match[1]);
+	      if (counter == 2) // units for charge
+		{(*vals[counter]) *= CLHEP::eplus;}
+	    }
 	}
       catch (std::invalid_argument) // if stod can't convert number to double / int
 	{throw std::exception();}
