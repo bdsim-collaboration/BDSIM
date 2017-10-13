@@ -8,5 +8,5 @@ option, physicsList="ion";
 
 option, checkOverlaps=1;
 
-beam, particle="Xe",
+beam, particle="ion 6 12 6 0.0",
       energy=50*GeV;
