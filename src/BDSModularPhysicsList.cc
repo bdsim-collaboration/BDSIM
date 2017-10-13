@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
@@ -338,19 +339,36 @@ void BDSModularPhysicsList::SetParticleDefinition()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
   // set primary particle definition and kinetic beam parameters other than total energy
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName = globals->ParticleName();
-  globals->SetParticleDefinition(particleTable->FindParticle(particleName));
-  
-  if(!globals->GetParticleDefinition())
+  particleName.toLower();
+  if (particleName.contains("ion"))
     {
-      G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
-      exit(1);
+      BDSIonDefinition ionDef = BDSIonDefinition(particleName); // parse the ion definition
+      G4ParticleDefinition* ion = nullptr;
+      G4GenericIon::GenericIonDefinition();
+      ion =  G4IonTable::GetIonTable()->GetIon(ionDef.Z(), ionDef.A(), ionDef.ExcitationEnergy());
+      if (!ion)
+	{G4cout << "Ion " << ionDef << " is not defined" << G4endl; exit(1);}
+      else
+	{
+	  globals->SetParticleDefinition(ion);
+	  globals->SetOverrideCharge(ionDef.Charge() * CLHEP::eplus);
+	}
     }
-  
-  // set kinetic beam parameters other than total energy
+    else
+      {    
+      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+      globals->SetParticleDefinition(particleTable->FindParticle(particleName));
+      
+      if(!globals->GetParticleDefinition())
+	{
+	  G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
+	  exit(1);
+	}
+    }
+
+    // set kinetic beam parameters other than total energy
   globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   globals->SetParticleMomentum(std::sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
@@ -361,6 +379,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
   // charge (in e units)
   // rigidity (in T*m)
   G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
+  if (globals->OverrideCharge()) // if override for ions
+  {charge = globals->ParticleCharge();}
   G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
   if (BDS::IsFinite(charge)) {
     brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
@@ -453,7 +473,9 @@ void BDSModularPhysicsList::HadronicElastic()
 
 void BDSModularPhysicsList::Ion()
 {
-  if (!physicsActivated["ion"])
+    G4IonConstructor iConstructor;
+
+    if (!physicsActivated["ion"])
     {
       constructors.push_back(new G4IonPhysics());
       physicsActivated["ion"] = true;
