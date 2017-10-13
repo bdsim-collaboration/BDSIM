@@ -133,6 +133,10 @@ private:
   void EmExtra();
   void EmLow();
   void HadronicElastic();
+  void Ion();
+  void IonPHP();
+  void IonINCLXX();
+  void IonBinary();
   void SynchRad();
   void Muon();					
   void Optical();

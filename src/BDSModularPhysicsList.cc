@@ -31,6 +31,10 @@
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4IonBinaryCascadePhysics.hh"
+#include "G4IonINCLXXPhysics.hh"
+#include "G4IonPhysics.hh"
+#include "G4IonPhysicsPHP.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #if G4VERSION_NUMBER > 1020
@@ -83,6 +87,10 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic_elastic", &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("ion",              &BDSModularPhysicsList::Ion));
+  physicsConstructors.insert(std::make_pair("ionphp",           &BDSModularPhysicsList::IonPHP));
+  physicsConstructors.insert(std::make_pair("ioninclxx",        &BDSModularPhysicsList::IonINCLXX));
+  physicsConstructors.insert(std::make_pair("ionbinary",        &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
@@ -440,6 +448,42 @@ void BDSModularPhysicsList::HadronicElastic()
     {
       constructors.push_back(new G4HadronElasticPhysics());
       physicsActivated["hadronic_elastic"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Ion()
+{
+  if (!physicsActivated["ion"])
+    {
+      constructors.push_back(new G4IonPhysics());
+      physicsActivated["ion"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonPHP()
+{
+  if (!physicsActivated["ionphp"])
+    {
+      constructors.push_back(new G4IonPhysicsPHP());
+      physicsActivated["ionphp"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonINCLXX()
+{
+  if (!physicsActivated["ioninclxx"])
+    {
+      constructors.push_back(new G4IonINCLXXPhysics());
+      physicsActivated["ioninclxx"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonBinary()
+{
+  if (!physicsActivated["ionbinary"])
+    {
+      constructors.push_back(new G4IonBinaryCascadePhysics());
+      physicsActivated["ionbinary"] = true;
     }
 }
 							  
