@@ -265,6 +265,7 @@ void BDSModularPhysicsList::ConstructAllBaryons()
 
 void BDSModularPhysicsList::ConstructAllIons()
 {
+  G4GenericIon::GenericIonDefinition();
   G4IonConstructor iConstructor;
   iConstructor.ConstructParticle();
 }
