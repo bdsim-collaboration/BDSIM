@@ -25,6 +25,7 @@ class G4UserLimits;
 class G4VisAttributes;
 
 class BDSBeamPipeInfo;
+class BDSIonDefinition;
 class BDSTunnelInfo;
 
 /**
@@ -204,8 +205,6 @@ public:
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4bool   OverrideCharge()           const {return overrideCharge;}
-  inline G4double ParticleCharge()           const {return particleCharge;}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
@@ -230,7 +229,6 @@ public:
 
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  inline void SetOverrideCharge(G4double charge)      {overrideCharge = true; particleCharge = charge;}
   inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
   inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
   inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
@@ -278,9 +276,6 @@ private:
 
   /// Particle name
   G4String particleName;
-  
-  G4bool   overrideCharge; ///< Whether to purposively override charge from particle definition (for ions).
-  G4double particleCharge; ///< Charge that will be used to override particle definition.
   
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
