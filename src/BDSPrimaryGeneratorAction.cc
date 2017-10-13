@@ -61,9 +61,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
 
+  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   if (useASCIISeedState)
     {
-      G4String fileName = BDSGlobalConstants::Instance()->SeedStateFileName();
+      G4String fileName = globals->SeedStateFileName();
       BDSRandom::LoadSeedState(fileName);
     }
 
@@ -73,7 +74,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
-  particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
+  particleGun->SetParticleDefinition(globals->GetParticleDefinition());
+
+  // In the case of ions we should override the default charge of 0
+  if (globals->OverrideCharge())
+    {particleGun->SetParticleCharge(globals->ParticleCharge());}
 
   G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
 
