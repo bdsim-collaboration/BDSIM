@@ -213,6 +213,8 @@ public:
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
+  inline G4bool                IonPrimary()              const {return ionPrimary;}
+  inline const BDSIonDefinition* IonDefinition()         const {return ionDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -232,6 +234,7 @@ public:
   inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
   inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
   inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
+  inline void SetIonDefinition(BDSIonDefinition* ionDefIn) {ionDefinition = ionDefIn; ionPrimary = true;}
   inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetBRho(G4double value)                 {brho = value;}
@@ -258,6 +261,11 @@ private:
 
   /// Initial bunch parameters
   G4ParticleDefinition* beamParticleDefinition;
+
+  G4bool ionPrimary; ///< Whether the primary is an ion.
+  
+  /// Specification for ion if primary beam is one.
+  BDSIonDefinition* ionDefinition;
 
   /// Reference beam energy
   G4double beamMomentum, beamKineticEnergy;

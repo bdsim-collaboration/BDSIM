@@ -3,6 +3,7 @@
 #include "BDSEventInfo.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticle.hh"
 #include "BDSPrimaryGeneratorAction.hh"
@@ -12,6 +13,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
+#include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
 
@@ -20,7 +22,10 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   weight(1),
   bdsBunch(bdsBunchIn),
   recreateFile(nullptr),
-  eventOffset(0)
+  eventOffset(0),
+  ionDefinition(nullptr),
+  overrideCharge(false),
+  particleCharge(0)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -38,6 +43,14 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   G4cout << __METHOD_NAME__ << "Primary particle is "
 	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
 #endif
+  ionPrimary = BDSGlobalConstants::Instance()->IonPrimary();
+  if (ionPrimary)
+    {
+      ionDefinition  = BDSGlobalConstants::Instance()->IonDefinition();
+      overrideCharge = ionDefinition->OverrideCharge();
+      if (overrideCharge)
+	{particleCharge = ionDefinition->Charge();}
+    }
   
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
@@ -74,11 +87,27 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
+
+  if (ionPrimary)
+    {// ion setup has to be done here
+      if (!globals->GetParticleDefinition())
+	{
+	  G4ParticleDefinition* ion = nullptr;
+	  G4IonTable* ionTable = G4IonTable::GetIonTable();
+	  ion = ionTable->GetIon(ionDefinition->Z(),
+				 ionDefinition->A(),
+				 ionDefinition->ExcitationEnergy());
+	  if (!ion)
+	    {G4cout << "Ion: " << *ionDefinition << " is not defined" << G4endl; exit(1);}
+	  else
+	    {BDSGlobalConstants::Instance()->SetParticleDefinition(ion);}
+	}
+    }
   particleGun->SetParticleDefinition(globals->GetParticleDefinition());
 
   // In the case of ions we should override the default charge of 0
-  if (globals->OverrideCharge())
-    {particleGun->SetParticleCharge(globals->ParticleCharge());}
+  if (overrideCharge)
+    {particleGun->SetParticleCharge(particleCharge);}
 
   G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
 

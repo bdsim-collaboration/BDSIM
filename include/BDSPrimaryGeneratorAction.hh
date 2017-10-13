@@ -6,6 +6,7 @@
 
 class BDSBunch;
 class BDSExtent;
+class BDSIonDefinition;
 class BDSOutputLoader;
 class G4Event;
 class G4ParticleGun;
@@ -51,6 +52,11 @@ private:
 
   /// World extent that particle coordinates are checked against to ensure they're inside it.
   BDSExtent worldExtent;
+
+  G4bool ionPrimary; ///< The primary particle will be an ion.
+  const BDSIonDefinition* ionDefinition; ///< Ion definition. This doesn't own it.
+  G4bool   overrideCharge; ///< Whether to override default charge.
+  G4double particleCharge; ///< Charge that will replace default ion charge.
 };
 
 #endif

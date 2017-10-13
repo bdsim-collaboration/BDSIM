@@ -34,6 +34,8 @@ BDSGlobalConstants* BDSGlobalConstants::Instance()
 BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   options(opt),
   beamParticleDefinition(nullptr),
+  ionPrimary(false),
+  ionDefinition(nullptr),
   beamMomentum(0.0),
   beamKineticEnergy(0.0),
   particleMomentum(0.0),

@@ -344,21 +344,12 @@ void BDSModularPhysicsList::SetParticleDefinition()
   G4String particleName = globals->ParticleName();
   particleName.toLower();
   if (particleName.contains("ion"))
-    {
-      BDSIonDefinition ionDef = BDSIonDefinition(particleName); // parse the ion definition
-      G4ParticleDefinition* ion = nullptr;
-      G4GenericIon::GenericIonDefinition();
-      ion =  G4IonTable::GetIonTable()->GetIon(ionDef.Z(), ionDef.A(), ionDef.ExcitationEnergy());
-      if (!ion)
-	{G4cout << "Ion " << ionDef << " is not defined" << G4endl; exit(1);}
-      else
-	{
-	  globals->SetParticleDefinition(ion);
-	  globals->SetOverrideCharge(ionDef.Charge() * CLHEP::eplus);
-	}
+    {// we can't set the particle definition yet - doesn't work for ions here
+      BDSIonDefinition* ionDef = new BDSIonDefinition(particleName); // parse the ion definition
+      BDSGlobalConstants::Instance()->SetIonDefinition(ionDef); // also sets IonPrimary = true
     }
-    else
-      {    
+  else
+    {// we can set the particle definition now
       G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
       globals->SetParticleDefinition(particleTable->FindParticle(particleName));
       
@@ -368,8 +359,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
 	  exit(1);
 	}
     }
-
-    // set kinetic beam parameters other than total energy
+  
+  // set kinetic beam parameters other than total energy
   globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   globals->SetParticleMomentum(std::sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
@@ -380,8 +371,13 @@ void BDSModularPhysicsList::SetParticleDefinition()
   // charge (in e units)
   // rigidity (in T*m)
   G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
-  if (globals->OverrideCharge()) // if override for ions
-  {charge = globals->ParticleCharge();}
+  const auto ionDef = globals->IonDefinition();
+  if (ionDef) // if override for ions
+    {
+      if (ionDef->OverrideCharge())
+	{charge = ionDef->Charge();}
+    }
+  
   G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
   if (BDS::IsFinite(charge)) {
     brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
