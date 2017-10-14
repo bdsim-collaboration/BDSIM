@@ -1,4 +1,5 @@
 #include "DataLoader.hh"
+#include "Beam.hh"
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
