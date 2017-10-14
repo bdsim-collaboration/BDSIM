@@ -8,12 +8,13 @@ option,	physicsList="em",
 	prodCutPhotons=1*cm,
 	checkOverlaps=1;
 
+option, ngenerate=1;
+
 !to show only the beampipe
 option, magnetGeometryType="none";
 
 beam, particle="proton",
       energy=10.0*GeV,
       distrType="reference",
-      ngenerate=1,
       X0=0.0,
       Y0=0.0;
