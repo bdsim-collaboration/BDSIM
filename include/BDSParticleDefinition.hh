@@ -3,6 +3,8 @@
 
 #include "globals.hh"
 
+#include <ostream>
+
 class G4ParticleDefinition;
 
 class BDSIonDefinition;
@@ -26,7 +28,7 @@ public:
   BDSParticleDefinition(G4ParticleDefinition* particleIn,
 			G4double              totalEnergyIn,
 			BDSIonDefinition*     ionDefinitionIn = nullptr);
-  ~BDSParticleDefinition(){;}
+  ~BDSParticleDefinition();
 
   /// @{ Accessor.
   inline G4ParticleDefinition* ParticleDefinition() const {return particle;}
@@ -36,6 +38,9 @@ public:
   inline G4double Momentum()      const {return momentum;}
   inline G4double BRho()          const {return brho;}
   /// @}
+
+  /// Output stream operator implementation.
+  friend std::ostream& operator<< (std::ostream& out, BDSParticleDefinition const& def);
   
 private:
   /// No default constructor.
