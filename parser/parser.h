@@ -174,6 +174,32 @@ namespace GMAD
     /// Expand all sequences define with 'line' into FastLists.
     void expand_sequences();
 
+    // protected implementation (for inheritance to BDSParser - hackish)
+  protected:
+    /// General options
+    Options options;
+    /// Beamline
+    FastList<Element>   beamline_list;
+    /// List of parser defined atoms
+    std::vector<Atom>   atom_list;
+    /// List of parser defined fields
+    std::vector<Field>  field_list;
+    /// List of parser defined materials
+    std::vector<Material> material_list;
+    /// List of parser defined query objects
+    std::vector<Query> query_list;
+    /// List of parser defined regions
+    std::vector<Region> region_list;
+    /// List of parser defined tunnels
+    std::vector<Tunnel> tunnel_list;
+    /// List of parser defined cross section biasing objects
+    FastList<PhysicsBiasing> xsecbias_list;
+    /// List of parser defined placements.
+    std::vector<Placement> placement_list;
+    /// List of parser defined rf cavity models
+    std::vector<CavityModel> cavitymodel_list;
+
+  private:
     // *****************
     // Private members *
     // *****************
@@ -187,12 +213,8 @@ namespace GMAD
     /// vector of defined lines for memory management
     std::vector<std::list<Element>*> allocated_lines;
 
-    // protected implementation (for inheritance to BDSParser - hackish)
-  protected:
     /// Parameters to copy to Element
     Parameters params;
-    /// General options
-    Options options;
     /// Atom instance;
     Atom atom;
     /// Field instance;
@@ -218,34 +240,12 @@ namespace GMAD
     /// Temporary list
     std::list<Element> tmp_list;
     
-    /// Beamline
-    FastList<Element>   beamline_list;
-
     /// Names of all defined sequences in the parser with 'line'.
     std::vector<std::string> sequences;
 
-    /// Cached copy of expaneded sequences.
+    /// Cached copy of expanded sequences.
     std::map<std::string, FastList<Element>*> expandedSequences;
 
-    /// List of parser defined atoms
-    std::vector<Atom>   atom_list;
-    /// List of parser defined fields
-    std::vector<Field>  field_list;
-    /// List of parser defined materials
-    std::vector<Material> material_list;
-    /// List of parser defined query objects
-    std::vector<Query> query_list;
-    /// List of parser defined regions
-    std::vector<Region> region_list;
-    /// List of parser defined tunnels
-    std::vector<Tunnel> tunnel_list;
-    /// List of parser defined cross section biasing objects
-    FastList<PhysicsBiasing> xsecbias_list;
-    /// List of parser defined placements.
-    std::vector<Placement> placement_list;
-    /// List of parser defined rf cavity models
-    std::vector<CavityModel> cavitymodel_list;
-    
     /// Parser symbol map
     SymbolMap symtab_map;
     /// Variable vector for memory storage

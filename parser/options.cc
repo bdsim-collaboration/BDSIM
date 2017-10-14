@@ -236,21 +236,16 @@ void Options::PublishMembers()
   publish("Rmax",&Options::Rmax);
 
   // options for beam distrType="halo"
-  publish("haloEmitX",             &Options::haloEmitX);
-  publish("haloEmitY",             &Options::haloEmitY);
-  publish("haloEnvelopeEmitX",     &Options::haloEnvelopeEmitX);
-  publish("haloEnvelopeEmitY",     &Options::haloEnvelopeEmitY);
-  publish("haloEnvelopeCollMinX",  &Options::haloEnvelopeCollMinX);
-  publish("haloEnvelopeCollMaxX",  &Options::haloEnvelopeCollMaxX);
-  publish("haloEnvelopeCollMinXp", &Options::haloEnvelopeCollMinXp);
-  publish("haloEnvelopeCollMaxXp", &Options::haloEnvelopeCollMaxXp);
-  publish("haloEnvelopeCollMinY",  &Options::haloEnvelopeCollMinY);
-  publish("haloEnvelopeCollMaxY",  &Options::haloEnvelopeCollMaxY);
-  publish("haloEnvelopeCollMinYp", &Options::haloEnvelopeCollMinYp);
-  publish("haloEnvelopeCollMaxYp", &Options::haloEnvelopeCollMaxYp);
+
+  publish("haloNSigmaXInner",      &Options::haloNSigmaXInner);
+  publish("haloNSigmaXOuter",      &Options::haloNSigmaXOuter);
+  publish("haloNSigmaYInner",      &Options::haloNSigmaYInner);
+  publish("haloNSigmaYOuter",      &Options::haloNSigmaYOuter);
+  publish("haloXCutInner",         &Options::haloXCutInner);
+  publish("haloYCutInner",         &Options::haloYCutInner);
   publish("haloPSWeightParameter", &Options::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Options::haloPSWeightFunction);
-
+  
   publish("sigmaE",&Options::sigmaE);
 
   publish("checkOverlaps",&Options::checkOverlaps);

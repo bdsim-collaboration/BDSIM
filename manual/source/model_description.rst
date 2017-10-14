@@ -2649,17 +2649,21 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                                                     |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeX`                      | Horizontal position maximum [m]                                             |
+| `haloNSigmaXInner`               | Inner radius of halo in x (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeY`                      | Vertical position maximum [m]                                               |
+| `haloNSigmaXOuter`               | Outer radius of halo in x (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeXp`                     | Horizontal angle maximum [m]                                                |
+| `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeYp`                     | Vertical angle maximum [m]                                                  |
+| `haloeNSigmaYOuter`              | Outer radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightFunction`           | Phase space weight function [string]                                        |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightParameter`          | Phase space weight function parameters []                                   |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloXCutInner`                  | X position cut in halo (multiples of sigma)                                 |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
 
 composite

@@ -1,4 +1,3 @@
-#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorKickerThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -9,21 +8,15 @@
 
 #include <cmath>
 
-G4double BDSIntegratorKickerThin::thinElementLength = -1; // unphyiscal
-
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 						 G4double                 brhoIn,
 						 G4Mag_EqRhs*             eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  eqOfM(eqOfMIn),
   hkick((*strength)["hkick"]),
   vkick((*strength)["vkick"]),
   brho(brhoIn)
 {
   zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
-
-  if (thinElementLength < 0)
-    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 }
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
