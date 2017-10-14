@@ -1,0 +1,2 @@
+beam,  particle="e-",
+       energy=1.5 * GeV;

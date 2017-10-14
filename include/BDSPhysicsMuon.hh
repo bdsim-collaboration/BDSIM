@@ -25,7 +25,7 @@ class BDSPhysicsMuon: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
   BDSPhysicsMuon();
-  BDSPhysicsMuon(G4bool emWillBeUsed);
+  explicit BDSPhysicsMuon(G4bool emWillBeUsed);
   virtual ~BDSPhysicsMuon();
   /// Construct all leptions, photons (inc optical), and pion +- just in case.
   virtual void ConstructParticle();
