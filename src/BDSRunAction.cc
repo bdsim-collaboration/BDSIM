@@ -4,6 +4,7 @@
 #include "BDSParser.hh"
 #include "BDSRunAction.hh"
 
+#include "parser/beamBase.h"
 #include "parser/optionsBase.h"
 
 #include "globals.hh"               // geant4 globals / types
@@ -50,6 +51,10 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // Write options now file open.
   const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
   output->FillOptions(ob);
+
+  // Write beam
+  const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
+  output->FillBeam(bb);
 
   // Write model now file open.
   output->FillModel();
