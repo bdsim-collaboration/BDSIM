@@ -199,7 +199,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("ngenerate", result);
-	  options.set_value("matchDistrFileLength", false); // ngenerate overrides.
+	  beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
