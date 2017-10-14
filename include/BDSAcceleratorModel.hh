@@ -49,11 +49,11 @@ public:
   inline G4VPhysicalVolume* GetWorldPV() const {return worldPV;}
 
   /// Register the main beam line set.
-  inline void RegisterBeamlineSetMain(BDSBeamlineSet setIn) {mainBeamlineSet = setIn;}
+  inline void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn) {mainBeamlineSet = setIn;}
 
   /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
-  void RegisterBeamlineSetExtra(G4String       name,
-				BDSBeamlineSet setIn);
+  void RegisterBeamlineSetExtra(G4String              name,
+				const BDSBeamlineSet& setIn);
   
   /// @{ Accessor.
   inline const BDSBeamlineSet& BeamlineSetMain() const {return mainBeamlineSet;}

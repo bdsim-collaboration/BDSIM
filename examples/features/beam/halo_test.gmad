@@ -1,3 +1,14 @@
+include options.gmad
+!include fodo.gmad;
+
+d1: drift, l=0.1*m;
+
+l1: line=(d1);
+use, period=l1;
+
+option, ngenerate=1000;
+
+
 emitX     = 5e-9;
 emitY     = 5e-9;
 betX      = 0.6;
@@ -14,13 +25,13 @@ beam, particle              = "e-",
       alfy                  = alfY,
       emitx                 = emitX,
       emity                 = emitY,
-      haloNSigmaXInner      = 0.1,
-      haloNSigmaXOuter      = 2,
-      haloNSigmaYInner      = 0.1,
-      haloNSigmaYOuter      = 2,
+      haloNSigmaXInner      = 5,
+      haloNSigmaXOuter      = 40,
+      haloNSigmaYInner      = 5,
+      haloNSigmaYOuter      = 40,
       haloPSWeightParameter = 1,
-      haloPSWeightFunction  = "oneoverr";
+      haloPSWeightFunction  = "exp",
 
 
-      !haloXCutInner         = 10,
-      !haloYCutInner         = 10;
+      haloXCutInner         = 0,
+      haloYCutInner         = 0;

@@ -1,0 +1,8 @@
+! drift is too short
+d1: drift, l=1e-12;
+lat : line = (d1);
+
+beam,  particle="e-",
+       energy=1.5 * GeV;
+
+use, period=lat;

@@ -185,18 +185,12 @@ void Beam::PublishMembers()
   publish("Rmax",&Beam::Rmax);
 
   // options for beam distrType="halo"
-  publish("haloEmitX",             &Beam::haloEmitX);
-  publish("haloEmitY",             &Beam::haloEmitY);
-  publish("haloEnvelopeEmitX",     &Beam::haloEnvelopeEmitX);
-  publish("haloEnvelopeEmitY",     &Beam::haloEnvelopeEmitY);
-  publish("haloEnvelopeCollMinX",  &Beam::haloEnvelopeCollMinX);
-  publish("haloEnvelopeCollMaxX",  &Beam::haloEnvelopeCollMaxX);
-  publish("haloEnvelopeCollMinXp", &Beam::haloEnvelopeCollMinXp);
-  publish("haloEnvelopeCollMaxXp", &Beam::haloEnvelopeCollMaxXp);
-  publish("haloEnvelopeCollMinY",  &Beam::haloEnvelopeCollMinY);
-  publish("haloEnvelopeCollMaxY",  &Beam::haloEnvelopeCollMaxY);
-  publish("haloEnvelopeCollMinYp", &Beam::haloEnvelopeCollMinYp);
-  publish("haloEnvelopeCollMaxYp", &Beam::haloEnvelopeCollMaxYp);
+  publish("haloNSigmaXInner",      &Beam::haloNSigmaXInner);
+  publish("haloNSigmaXOuter",      &Beam::haloNSigmaXOuter);
+  publish("haloNSigmaYInner",      &Beam::haloNSigmaYInner);
+  publish("haloNSigmaYOuter",      &Beam::haloNSigmaYOuter);
+  publish("haloXCutInner",         &Beam::haloXCutInner);
+  publish("haloYCutInner",         &Beam::haloYCutInner);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
 }

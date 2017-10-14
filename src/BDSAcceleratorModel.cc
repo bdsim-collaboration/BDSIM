@@ -81,8 +81,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   instance = nullptr;
 }
 
-void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String       name,
-						   BDSBeamlineSet setIn)
+void BDSAcceleratorModel::RegisterBeamlineSetExtra(G4String              name,
+						   const BDSBeamlineSet& setIn)
 {
   auto search = extraBeamlines.find(name);
   if (search != extraBeamlines.end()) // already exists!

@@ -75,19 +75,13 @@ namespace GMAD
       ///@}
       
       ///@{ for the halo distribution
-      double      haloEmitX;
-      double      haloEmitY;
-      double      haloEnvelopeEmitX;
-      double      haloEnvelopeEmitY;
-      double      haloEnvelopeCollMinX;
-      double      haloEnvelopeCollMaxX;
-      double      haloEnvelopeCollMinXp;
-      double      haloEnvelopeCollMaxXp;
-      double      haloEnvelopeCollMinY;
-      double      haloEnvelopeCollMaxY;
-      double      haloEnvelopeCollMinYp;
-      double      haloEnvelopeCollMaxYp;
-      double      haloPSWeightParameter;
+      double haloNSigmaXInner;
+      double haloNSigmaXOuter;
+      double haloNSigmaYInner;
+      double haloNSigmaYOuter;
+      double haloXCutInner;
+      double haloYCutInner;
+      double haloPSWeightParameter;
       std::string haloPSWeightFunction;
       ///@}
     };

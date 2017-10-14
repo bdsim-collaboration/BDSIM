@@ -19,7 +19,7 @@ class G4PrimaryVertex;
 class BDSEventAction: public G4UserEventAction
 {
 public:
-  BDSEventAction(BDSOutput* outputIn);
+  explicit BDSEventAction(BDSOutput* outputIn);
   virtual ~BDSEventAction();
   
 public:

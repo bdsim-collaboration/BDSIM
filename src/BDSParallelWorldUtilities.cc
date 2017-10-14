@@ -60,7 +60,7 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
   std::vector<BDSParallelWorldInfo> worldInfos = BDS::NumberOfExtraWorldsRequired();
 
   // register of all created
-  std::map<G4String, G4VUserParallelWorld*> worlds;
+  //std::map<G4String, G4VUserParallelWorld*> worlds;
   std::vector<G4VUserParallelWorld*> samplerWorlds;
   samplerWorlds.push_back(samplerWorld);
   
@@ -70,15 +70,15 @@ std::vector<G4VUserParallelWorld*> BDS::ConstructAndRegisterParallelWorlds(G4VUs
 	{
 	  auto cLWorld       = new BDSParallelWorldCurvilinear(info.sequenceName);
 	  auto cLBridgeWorld = new BDSParallelWorldCurvilinearBridge(info.sequenceName);
-	  worlds[info.sequenceName + "_cl"] = cLWorld;
+	  //worlds[info.sequenceName + "_cl"] = cLWorld;
 	  massWorld->RegisterParallelWorld(cLWorld);
-	  worlds[info.sequenceName + "_clb"] = cLBridgeWorld;
+	  //worlds[info.sequenceName + "_clb"] = cLBridgeWorld;
 	  massWorld->RegisterParallelWorld(cLBridgeWorld);
 	}
       if (info.samplerWorld)
 	{
 	  BDSParallelWorldSampler* sWorld = new BDSParallelWorldSampler(info.sequenceName);
-	  worlds[info.sequenceName + "_s"] = sWorld;
+	  //worlds[info.sequenceName + "_s"] = sWorld;
 	  samplerWorlds.push_back(sWorld);
 	  massWorld->RegisterParallelWorld(sWorld);
 	}
