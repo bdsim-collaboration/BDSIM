@@ -2313,11 +2313,12 @@ Beam Parameters
 To specify the input particle distribution to the accelerator model, the `beam` command is
 used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
-the momentum of the reference particle and therefore the magnetic field of dipole magnets
-if only the `angle` parameter has been specified.
+the momentum of the reference particle and therefore the magnetic rigidity that magnetic
+field strengths are calculated with respect to. For example, the field of dipole magnets
+is calculated using this if only the `angle` parameter has been specified.
 
-.. note:: A design energy can be specified and in addition, the central energy, of say
-	  a bunch with a Gaussian distribution, can be specified with `E0`.
+.. note:: The design energy is required to be specified, but the central energy, of say
+	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
 
 The user **must** specify at least `energy` and the `particle` type. In this case the
 `reference`_ distribution will be used as well as default parameters. The minimum

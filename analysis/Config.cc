@@ -16,7 +16,7 @@ ClassImp(Config)
 
 Config* Config::instance = nullptr;
 
-std::vector<std::string> Config::treeNames = {"Options.", "Model.", "Run.", "Event."};
+std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
 Config::Config(std::string fileNameIn,
 	       std::string inputFilePathIn,

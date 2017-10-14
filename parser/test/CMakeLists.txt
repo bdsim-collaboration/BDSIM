@@ -178,6 +178,9 @@ add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
 # test atom
 add_test(gmad-atom ${gmadBinary} atom.gmad)
 
+# test beam
+add_test(gmad-beam ${gmadBinary} beam.gmad)
+
 # test material
 add_test(gmad-material ${gmadBinary} material.gmad)
 

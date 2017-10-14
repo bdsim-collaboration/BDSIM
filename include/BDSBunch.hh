@@ -14,7 +14,7 @@ namespace CLHEP {
 class BDSBeamline;
 
 namespace GMAD {
-  class Options;
+  class Beam;
 }
 
 /**
@@ -68,7 +68,7 @@ protected :
 public : 
   BDSBunch();
   virtual ~BDSBunch();
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
 
   /// Each derived class can override this default method of reference

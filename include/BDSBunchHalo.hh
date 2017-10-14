@@ -58,7 +58,7 @@ private:
 public: 
   BDSBunchHalo();
   virtual ~BDSBunchHalo();
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

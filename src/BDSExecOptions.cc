@@ -12,11 +12,13 @@
 #include "BDSOutputLoader.hh"
 #include "BDSUtilities.hh"
 
+#include "parser/beam.h"
 #include "parser/getEnv.h"
 #include "parser/options.h"
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv):
   options(GMAD::Options()),
+  beam(GMAD::Beam()),
   ignoreSIGINT(false)
 {
   Parse(argc, argv);
@@ -29,9 +31,12 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
     {
       BDSOutputLoader loader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
+      GMAD::Beam    recreateBeam    = loader.Beam();
       // Give precedence to exec options - only ones that have been set.
       recreateOptions.Amalgamate(options, true);
+      recreateBeam.Amalgamate(beam, true, options.startFromEvent);
       options = recreateOptions; // Now replace member.
+      beam    = recreateBeam;
     }
 }
 
@@ -152,7 +157,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName, "distrFile") )
 	{// build absolute path
-          options.set_value("distrFile", BDS::GetCurrentDir() + "/" + std::string(optarg));
+          beam.set_value("distrFile", BDS::GetCurrentDir() + "/" + std::string(optarg));
         }
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
@@ -194,7 +199,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("ngenerate", result);
-	  options.set_value("matchDistribFileLength", false); // ngenerate overrides.
+	  beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
@@ -293,7 +298,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFileName: "       << std::setw(15) << options.inputFileName       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << options.batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << options.circular            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " distrFile: "           << std::setw(15) << options.distribFile         << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " distrFile: "           << std::setw(15) << beam.distrFile         << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << options.exportFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << options.generatePrimariesOnly << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " ngenerate: "           << std::setw(15) << options.nGenerate           << G4endl;

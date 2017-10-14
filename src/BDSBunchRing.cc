@@ -1,7 +1,7 @@
 #include "BDSBunchRing.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
@@ -20,16 +20,16 @@ BDSBunchRing::~BDSBunchRing()
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(const GMAD::Options& opt,
+void BDSBunchRing::SetOptions(const GMAD::Beam& beam,
 			      G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetRMin(opt.Rmin);  
-  SetRMax(opt.Rmax);  
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetRMin(beam.Rmin);  
+  SetRMax(beam.Rmax);  
 }
 
 void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

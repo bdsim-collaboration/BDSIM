@@ -1,7 +1,7 @@
 #include "BDSBunchSquare.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
@@ -22,20 +22,20 @@ BDSBunchSquare::~BDSBunchSquare()
   delete FlatGen;
 }
 
-void BDSBunchSquare::SetOptions(const GMAD::Options& opt,
+void BDSBunchSquare::SetOptions(const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetEnvelopeX(opt.envelopeX); 
-  SetEnvelopeY(opt.envelopeY);
-  SetEnvelopeXp(opt.envelopeXp);
-  SetEnvelopeYp(opt.envelopeYp);
-  SetEnvelopeT(opt.envelopeT);
-  SetEnvelopeE(opt.envelopeE); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetEnvelopeX(beam.envelopeX); 
+  SetEnvelopeY(beam.envelopeY);
+  SetEnvelopeXp(beam.envelopeXp);
+  SetEnvelopeYp(beam.envelopeYp);
+  SetEnvelopeT(beam.envelopeT);
+  SetEnvelopeE(beam.envelopeE); 
 }
 
 void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

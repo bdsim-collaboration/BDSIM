@@ -28,6 +28,5 @@ option, ngenerate=1,
 beam, particle="proton",
       energy=10.0*GeV,
       distrType="reference",
-      ngenerate=1,
       X0=0.0,
       Y0=0.0;

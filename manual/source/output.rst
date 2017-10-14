@@ -64,6 +64,8 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
 +=============+=====================================================================+
+| Beam        | A record of all options associated with the beam definition.        |
++-------------+---------------------------------------------------------------------+
 | Options     | A record of all options used by BDSIM.                              |
 +-------------+---------------------------------------------------------------------+
 | Model       | A record of the lengths and placement transforms of every element   |
@@ -75,6 +77,17 @@ of the BDSIM classes.  The trees are:
 | Event       | Information collected per Event                                     |
 +-------------+---------------------------------------------------------------------+
 
+Beam Tree
+^^^^^^^^^
+
+.. figure:: figures/rootevent_beam_tree.png
+	    :width: 47%
+	    :align: center
+
+The beam tree contains a single branch called "Beam." (note the "."). This branch
+represents an instance of :code:`parser/BeamBase.hh`. The tree typically contains one
+entry as only one definition of the beam was used per execution of BDSIM.
+		   
 Options Tree
 ^^^^^^^^^^^^
 
@@ -83,7 +96,7 @@ Options Tree
 	    :align: center
 
 The options tree contains a single branch called "Options." (note the "."). This branch
-represents an instance of :code:`parser/OptionsBase.hh`. The Tree typically contains one
+represents an instance of :code:`parser/OptionsBase.hh`. The tree typically contains one
 entry as only one set of options were used per execution of BDSIM.
 
 Model Tree

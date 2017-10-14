@@ -13,6 +13,7 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include "parser/beam.h"
 #include "parser/options.h"
 
 #include <map>
@@ -54,7 +55,8 @@ class BDSGlobalConstants
 {
 protected:
   /// Protected constructor based on a set of gmad options.
-  explicit BDSGlobalConstants(const GMAD::Options&);
+  explicit BDSGlobalConstants(const GMAD::Options& opt,
+			      GMAD::Beam&          beamIn);
 
 private:
   /// Singleton instance
@@ -62,6 +64,9 @@ private:
 
   /// Options instance that this is largely based on and extends
   const GMAD::Options& options;
+
+  /// Copy of beam definition. Can't be const as we may update the contents.
+  GMAD::Beam& beam;
 
   ///@{ Unused default constructors
   BDSGlobalConstants() = delete;
@@ -120,7 +125,7 @@ public:
   inline G4double TunnelOffsetX()            const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()            const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
   inline G4double ElossHistoBinWidth()       const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
-  inline G4double BeamTotalEnergy()          const {return G4double(options.beamEnergy)*CLHEP::GeV;}
+  inline G4double BeamTotalEnergy()          const {return G4double(beam.beamEnergy)*CLHEP::GeV;}
   inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
   inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double SamplerDiameter()          const {return G4double(options.samplerDiameter)*CLHEP::m;}
@@ -146,7 +151,7 @@ public:
   inline G4double MaxTrackLength()           const {return G4double(options.maximumTrackLength)*CLHEP::m;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
-  inline G4double ParticleTotalEnergy()      const {return G4double(options.E0)*CLHEP::GeV;}
+  inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
@@ -200,7 +205,7 @@ public:
   inline G4double YMax()                     const {return G4double(options.ymax) * CLHEP::m;}
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
-  inline G4bool   MatchDistribFileLength()   const {return G4bool  (options.matchDistribFileLength);}
+  inline G4bool   MatchDistrFileLength()     const {return G4bool  (beam.matchDistrFileLength);}
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
   
   // options that require members in this class (for value checking or because they're from another class)
@@ -209,7 +214,7 @@ public:
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
   inline G4double ParticleMomentum()         const {return particleMomentum;}
-  inline G4String ParticleName()             const {return particleName;}
+  inline G4String ParticleName()             const {return beam.particleName;}
   inline G4double BRho()                     const {return brho;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline G4bool                IonPrimary()              const {return ionPrimary;}
@@ -229,7 +234,7 @@ public:
 
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
+  inline void SetParticleName(G4String aParticleName) {beam.particleName = aParticleName;}
   inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
   inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
   inline void SetIonDefinition(BDSIonDefinition* ionDefIn) {ionDefinition = ionDefIn; ionPrimary = true;}

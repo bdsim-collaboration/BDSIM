@@ -2,7 +2,7 @@
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "globals.hh" // geant4 types / globals
 
@@ -40,28 +40,28 @@ BDSBunchHalo::~BDSBunchHalo()
   delete FlatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(const GMAD::Options& opt,
+void  BDSBunchHalo::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  alphaX                = G4double(opt.alfx);
-  alphaY                = G4double(opt.alfy);
-  betaX                 = G4double(opt.betx);
-  betaY                 = G4double(opt.bety);
-  emitX                 = G4double(opt.emitx);
-  emitY                 = G4double(opt.emity);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  alphaX                = G4double(beam.alfx);
+  alphaY                = G4double(beam.alfy);
+  betaX                 = G4double(beam.betx);
+  betaY                 = G4double(beam.bety);
+  emitX                 = G4double(beam.emitx);
+  emitY                 = G4double(beam.emity);
   gammaX                = (1.0+alphaX*alphaX)/betaX;
   gammaY                = (1.0+alphaY*alphaY)/betaY;
   sigmaX                = sqrt(emitX * betaX);
   sigmaY                = sqrt(emitY * betaY);    
-  haloNSigmaXInner      = G4double(opt.haloNSigmaXInner);
-  haloNSigmaXOuter      = G4double(opt.haloNSigmaXOuter);
-  haloNSigmaYInner      = G4double(opt.haloNSigmaYInner);
-  haloNSigmaYOuter      = G4double(opt.haloNSigmaYOuter);
-  haloXCutInner         = G4double(opt.haloXCutInner);
-  haloYCutInner         = G4double(opt.haloYCutInner);  
-  haloPSWeightParameter = G4double(opt.haloPSWeightParameter);
-  weightFunction = G4String(opt.haloPSWeightFunction);  
+  haloNSigmaXInner      = G4double(beam.haloNSigmaXInner);
+  haloNSigmaXOuter      = G4double(beam.haloNSigmaXOuter);
+  haloNSigmaYInner      = G4double(beam.haloNSigmaYInner);
+  haloNSigmaYOuter      = G4double(beam.haloNSigmaYOuter);
+  haloXCutInner         = G4double(beam.haloXCutInner);
+  haloYCutInner         = G4double(beam.haloYCutInner);  
+  haloPSWeightParameter = G4double(beam.haloPSWeightParameter);
+  weightFunction = G4String(beam.haloPSWeightFunction);  
 
   haloNSigmaXpOuter     = std::sqrt(gammaX * emitX);
   haloNSigmaYpOuter     = std::sqrt(gammaY * emitY);   

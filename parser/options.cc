@@ -127,18 +127,7 @@ void Options::PublishMembers()
   
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
-
-  // options for the "beam" command
-  publish("particle",&Options::particleName);
-
-  publish("distrType", &Options::distribType);
-  publish("xDistrType",&Options::xDistribType);
-  publish("yDistrType",&Options::yDistribType);
-  publish("zDistrType",&Options::zDistribType);
-  publish("distrFile", &Options::distribFile);
-  publish("distrFileFormat",   &Options::distribFileFormat);
-  publish("matchDistribFileLength", &Options::matchDistribFileLength);
-  publish("nlinesIgnore",      &Options::nlinesIgnore);
+  
   publish("eventOffset",       &Options::eventOffset);
   publish("recreateSeedState", &Options::recreateSeedState);
 
@@ -146,8 +135,6 @@ void Options::PublishMembers()
   publish("defaultRangeCut",&Options::defaultRangeCut);
   publish("ffact",&Options::ffact);
   publish("bv",   &Options::ffact); // MadX naming
-
-  publish("energy",&Options::beamEnergy);
 
   publish("beamlineX",         &Options::beamlineX);
   publish("beamlineY",         &Options::beamlineY);
@@ -160,93 +147,6 @@ void Options::PublishMembers()
   publish("beamlineAxisZ",     &Options::beamlineAxisZ);
   publish("beamlineAngle",     &Options::beamlineAngle);
   publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
-  
-  publish("X0",&Options::X0);
-  publish("Y0",&Options::Y0);
-  publish("Z0",&Options::Z0);
-  publish("S0",&Options::S0);
-  publish("Xp0",&Options::Xp0);
-  publish("Yp0",&Options::Yp0);
-  publish("Zp0",&Options::Zp0);
-  publish("T0",&Options::T0);
-  publish("E0",&Options::E0);
-  publish("sigmaT",&Options::sigmaT);
-  publish("betx",&Options::betx);
-  publish("bety",&Options::bety);
-  publish("alfx",&Options::alfx);
-  publish("alfy",&Options::alfy);
-  publish("emitx",&Options::emitx);
-  publish("emity",&Options::emity);
-  publish("dispx",&Options::dispx);
-  publish("dispy",&Options::dispy);
-  publish("dispxp",&Options::dispxp);
-  publish("dispyp",&Options::dispyp);
-  
-  // options for beam distrType="gauss"
-  publish("sigmaX",&Options::sigmaX);
-  publish("sigmaXp",&Options::sigmaXp);
-  publish("sigmaY",&Options::sigmaY);
-  publish("sigmaYp",&Options::sigmaYp);
-
-  // options for beam distrType="square" or distrType="circle"
-  publish("envelopeX",&Options::envelopeX);
-  publish("envelopeXp",&Options::envelopeXp);
-  publish("envelopeY",&Options::envelopeY);
-  publish("envelopeYp",&Options::envelopeYp);
-  publish("envelopeT",&Options::envelopeT);
-  publish("envelopeE",&Options::envelopeE);
-  publish("envelopeR",&Options::envelopeR);
-  publish("envelopeRp",&Options::envelopeRp);
-
-  // options for beam distrType="gaussmatrix"
-  publish("sigma11",&Options::sigma11);
-  publish("sigma12",&Options::sigma12);
-  publish("sigma13",&Options::sigma13);
-  publish("sigma14",&Options::sigma14);
-  publish("sigma15",&Options::sigma15);
-  publish("sigma16",&Options::sigma16);
-  publish("sigma22",&Options::sigma22);
-  publish("sigma23",&Options::sigma23);
-  publish("sigma24",&Options::sigma24);
-  publish("sigma25",&Options::sigma25);
-  publish("sigma26",&Options::sigma26);
-  publish("sigma33",&Options::sigma33);
-  publish("sigma34",&Options::sigma34);
-  publish("sigma35",&Options::sigma35);
-  publish("sigma36",&Options::sigma36);
-  publish("sigma44",&Options::sigma44);
-  publish("sigma45",&Options::sigma45);
-  publish("sigma46",&Options::sigma46);
-  publish("sigma55",&Options::sigma55);
-  publish("sigma56",&Options::sigma56);
-  publish("sigma66",&Options::sigma66);
-
-  // options for beam distrType="eshell"
-  publish("shellX",&Options::shellX);
-  publish("shellXp",&Options::shellXp);
-  publish("shellY",&Options::shellY);
-  publish("shellYp",&Options::shellYp);
-  publish("shellXWidth",&Options::shellXWidth);
-  publish("shellXpWidth",&Options::shellXpWidth);
-  publish("shellYWidth",&Options::shellYWidth);
-  publish("shellYpWidth",&Options::shellYpWidth);
-
-  // options for beam distrType="ring"
-  publish("Rmin",&Options::Rmin);
-  publish("Rmax",&Options::Rmax);
-
-  // options for beam distrType="halo"
-
-  publish("haloNSigmaXInner",      &Options::haloNSigmaXInner);
-  publish("haloNSigmaXOuter",      &Options::haloNSigmaXOuter);
-  publish("haloNSigmaYInner",      &Options::haloNSigmaYInner);
-  publish("haloNSigmaYOuter",      &Options::haloNSigmaYOuter);
-  publish("haloXCutInner",         &Options::haloXCutInner);
-  publish("haloYCutInner",         &Options::haloYCutInner);
-  publish("haloPSWeightParameter", &Options::haloPSWeightParameter);
-  publish("haloPSWeightFunction",  &Options::haloPSWeightFunction);
-  
-  publish("sigmaE",&Options::sigmaE);
 
   publish("checkOverlaps",&Options::checkOverlaps);
   publish("nperfile",&Options::numberOfEventsPerNtuple);

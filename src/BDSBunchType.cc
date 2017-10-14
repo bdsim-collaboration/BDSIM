@@ -24,7 +24,7 @@ std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
       {BDSBunchType::ptc,         "ptc"}
 });	
 
-BDSBunchType BDS::DetermineBunchType(G4String distribType)
+BDSBunchType BDS::DetermineBunchType(G4String distrType)
 {
   std::map<G4String, BDSBunchType> types;
 
@@ -44,13 +44,13 @@ BDSBunchType BDS::DetermineBunchType(G4String distribType)
   types["composite"]      = BDSBunchType::composite;
   types["ptc"]            = BDSBunchType::ptc;
 
-  distribType.toLower();
+  distrType.toLower();
 
-  auto result = types.find(distribType);
+  auto result = types.find(distrType);
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << distribType << " is not a valid distribution" << G4endl;
+      G4cerr << __METHOD_NAME__ << distrType << " is not a valid distribution" << G4endl;
 
       G4cout << "Available distributions are:" << G4endl;
       for (auto it : types)
