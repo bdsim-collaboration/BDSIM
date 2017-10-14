@@ -49,7 +49,7 @@ void BDSOutputROOT::NewFile()
   theEventOutputTree     = new TTree("Event","BDSIM event");
 
   // Build beam and write structure
-  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",beamOutput,3200,2);
+  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",beamOutput,32000,2);
   
   // Build options and write structure
   theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",optionsOutput,32000,2);
