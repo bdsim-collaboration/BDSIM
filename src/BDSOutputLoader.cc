@@ -47,15 +47,17 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
     }
 
   beamTree = static_cast<TTree*>(file->Get("Beam"));
+  if (!beamTree)
+    {G4cerr << "Invalid file \"" << filePath << "\" - doesn't contain beam Tree" << G4endl; exit(1);}
   localBeam = new BDSOutputROOTEventBeam();
   beamTree->SetBranchAddress("Beam.", &localBeam);
 
   // set up local structure copies.
   optionsTree = static_cast<TTree*>(file->Get("Options"));
-  // Note we don't check on optionsTree pointer as we assume it's valid given
-  // we've checked this is a rootevent file.
+  if (!optionsTree)
+    {G4cerr << "Invalid file \"" << filePath << "\" - doesn't contain options structure" << G4endl; exit(1);}
   localOptions = new BDSOutputROOTEventOptions();
-  optionsTree->SetBranchAddress("Options.", &localOptions); 
+  optionsTree->SetBranchAddress("Options.", &localOptions);
   
   eventTree = static_cast<TTree*>(file->Get("Event"));
   localEventInfo = new BDSOutputROOTEventInfo();
