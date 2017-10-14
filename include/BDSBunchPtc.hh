@@ -18,7 +18,7 @@ class BDSBunchPtc: public BDSBunch
 public: 
   BDSBunchPtc();
   virtual ~BDSBunchPtc(); 
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
@@ -29,7 +29,7 @@ private:
   void LoadPtcFile();
 
   /// Assign the distribution file by finding the full path of it.
-  void SetDistribFile(G4String distribFileNameIn);
+  void SetDistrFile(G4String distrFileNameIn);
   
   G4int    nRays;     ///< Number of rays in file (1 counting).
   G4String fileName;  ///< File name.

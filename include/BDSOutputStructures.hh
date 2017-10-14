@@ -8,6 +8,7 @@
 
 // forward declarations
 class BDSGlobalConstants;
+class BDSOutputROOTEventBeam;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -39,6 +40,9 @@ protected:
   /// Clear the local model structure.
   void ClearStructuresModel();
 
+  /// Clear the local beam structure.
+  void ClearStructuresBeam();
+
   /// Clear the local options structure.
   void ClearStructuresOptions();
   
@@ -59,6 +63,7 @@ protected:
                          std::vector<double>& edges);
   ///@}
 
+  BDSOutputROOTEventBeam*    beamOutput;    ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
   BDSOutputROOTEventModel*   modelOutput;   ///< Model output.
 

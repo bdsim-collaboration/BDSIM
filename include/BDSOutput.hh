@@ -25,6 +25,7 @@ class TRKBunch;
 class G4PrimaryVertex;
 
 namespace GMAD {
+  class BeamBase;
   class OptionsBase;
 }
 
@@ -53,6 +54,9 @@ public:
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
 
+  /// Fill the local structure beam with the original ones from the parser.
+  void FillBeam(const GMAD::BeamBase* beam);
+  
   /// Fill the local structure options with the original ones from the parser.
   void FillOptions(const GMAD::OptionsBase* options);
 
@@ -118,6 +122,9 @@ private:
   /// Enum for different types of energy loss that can be written out.
   enum class LossType {energy, tunnel};
 
+  /// Write the beam.
+  virtual void WriteBeam() = 0;
+  
   /// Write the options.
   virtual void WriteOptions() = 0;
 

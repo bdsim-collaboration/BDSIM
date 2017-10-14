@@ -3,7 +3,7 @@
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -42,24 +42,24 @@ BDSBunch::BDSBunch():
 BDSBunch::~BDSBunch()
 {;}
 
-void BDSBunch::SetOptions(const GMAD::Options& opt,
+void BDSBunch::SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn)
 {
   beamlineTransform = beamlineTransformIn;
   nonZeroTransform  = beamlineTransform != G4Transform3D::Identity;
   
-  X0 = opt.X0;
-  Y0 = opt.Y0;
-  Z0 = opt.Z0;
-  S0 = opt.S0;
-  T0 = opt.T0;
-  Xp0 = opt.Xp0;
-  Yp0 = opt.Yp0;
-  E0  = opt.E0;
-  sigmaE = opt.sigmaE;
-  sigmaT = opt.sigmaT;
+  X0     = beam.X0;
+  Y0     = beam.Y0;
+  Z0     = beam.Z0;
+  S0     = beam.S0;
+  T0     = beam.T0;
+  Xp0    = beam.Xp0;
+  Yp0    = beam.Yp0;
+  E0     = beam.E0;
+  sigmaE = beam.sigmaE;
+  sigmaT = beam.sigmaT;
 
-  Zp0 = CalculateZp(Xp0,Yp0,opt.Zp0);
+  Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
   if (S0 > 0)
     {

@@ -4,6 +4,7 @@ OutputFileName					./ana_1.root
 CalculateOpticalFunctions			1
 CalculateOpticalFunctionsFileName		./ana_1.dat
 # Object	treeName	Histogram Name           # Bins     Binning	       Variable                 Selection
+Histogram1D    Beam.          X0                       {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1
 Histogram1D	Event.		Primaryx                 {100}       {-5e-6:5e-6}     Primary.x                      1
 Histogram1D	Event.		Primaryy                 {100}       {-5e-6:5e-6}     Primary.y                      1
 Histogram1D	Options.	seedState                {200}       {0:200}          Options.GMAD::OptionsBase.seed 1

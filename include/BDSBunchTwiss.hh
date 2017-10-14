@@ -44,7 +44,7 @@ public:
   BDSBunchTwiss();
   virtual ~BDSBunchTwiss();
   
-  virtual void SetOptions(const GMAD::Options& opt,
+  virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

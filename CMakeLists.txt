@@ -164,6 +164,7 @@ set(bdsimRootEventSources ${root_dicts} ${root_files})
 
 # Add parser options
 list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/beamBase.cc)
 if($ENV{VERBOSE})
   message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
 endif()

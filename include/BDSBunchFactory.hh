@@ -10,7 +10,7 @@ class BDSBunch;
 
 namespace GMAD
 {
-  class Options;
+  class Beam;
 }
 
 /**
@@ -27,11 +27,11 @@ class BDSBunchFactory
 {
 public:
   /// factory method
-  static BDSBunch* CreateBunch(const GMAD::Options& options,
+  static BDSBunch* CreateBunch(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
 
-  static BDSBunch* CreateBunch(BDSBunchType distribType,
-			       const GMAD::Options& options,
+  static BDSBunch* CreateBunch(BDSBunchType      distrType,
+			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
 };
 

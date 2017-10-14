@@ -1,5 +1,5 @@
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#ifndef BEAM_H
+#define BEAM_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,26 +7,26 @@
 #include <vector>
 
 #include "published.h"
-#include "optionsBase.h"
+#include "beamBase.h"
 
 namespace GMAD
 {
   /**
-   * @brief Options class
+   * @brief Beam class
    * 
-   * Options passed with option command. This inherits
-   * the OptionsBase class which contains all the members and 
+   * Beam passed with beam command. This inherits
+   * the BeamBase class which contains all the members and 
    * provides templated filling functions. This separation allows
-   * the OptionsBase class to be more easily written out to ROOT files
+   * the BeamBase class to be more easily written out to ROOT files
    * or other formats for strong reproducibility in a BDSIM run.
    *
    * @author I. Agapov, J. Snuverink
    */
-  class Options: public Published<OptionsBase>, public OptionsBase
+  class Beam: public Published<BeamBase>, public BeamBase
   {
   public:
-    Options();
-    explicit Options(const GMAD::OptionsBase& options);
+    Beam();
+    explicit Beam(const GMAD::BeamBase& options);
     
     /// set methods by property name
     template<typename T>
@@ -40,7 +40,7 @@ namespace GMAD
     /// has access to as C++ treats encapsulation at the class level).
     /// If override is true, the input option will override the existing
     /// one in this instance.
-    void Amalgamate(const Options& optionsIn, bool override);
+    void Amalgamate(const Beam& optionsIn, bool override, int startFromEvent = 0);
 
     /// Whether a parameter has been set using the set_value method or not.
     bool HasBeenSet(std::string name) const;
@@ -54,10 +54,10 @@ namespace GMAD
   };
 
   template<typename T>
-  void Options::set_value(std::string name, T value)
+  void Beam::set_value(std::string name, T value)
   {
 #ifdef BDSDEBUG
-    std::cout << "options> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+    std::cout << "beam> setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
     // member method can throw runtime_error, catch and exit gracefully
     try
@@ -67,7 +67,7 @@ namespace GMAD
       }
     catch (std::runtime_error)
     {
-      std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
+      std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
       exit(1);
     }
   }

@@ -42,6 +42,15 @@ BDSParser::BDSParser(std::string name):GMAD::Parser(name)
   std::cout << __METHOD_NAME__ << "Using input file : "<< name << std::endl;
 }
 
+void BDSParser::AmalgamateBeam(const GMAD::Beam& beamIn,
+			       G4bool recreate)
+{
+  if (recreate)
+    {beam = beamIn;} // totally overwrite options
+  else
+    {beam.Amalgamate(beamIn, true);}
+}
+
 void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 {
   if (optionsIn.recreate)
@@ -55,14 +64,14 @@ void BDSParser::CheckOptions()
   if (options.nGenerate <= 0) // run at least 1 event!
     {options.nGenerate = 1;}
   
-  if (options.beamEnergy <= 0)
+  if (beam.beamEnergy <= 0)
     {
       std::cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" << std::endl;
       exit(1);
     }
   
-  if (!BDS::IsFinite(options.E0))
-    {options.E0 = options.beamEnergy;}
+  if (!BDS::IsFinite(beam.E0))
+    {beam.E0 = beam.beamEnergy;}
 
   if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps

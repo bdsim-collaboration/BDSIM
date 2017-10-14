@@ -1,7 +1,7 @@
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
@@ -27,24 +27,24 @@ BDSBunchTwiss::~BDSBunchTwiss()
   delete GaussMultiGen;
 }
 
-void BDSBunchTwiss::SetOptions(const GMAD::Options& opt,
+void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetBetaX(opt.betx);
-  SetBetaY(opt.bety);
-  SetAlphaX(opt.alfx);
-  SetAlphaY(opt.alfy);
-  SetEmitX(opt.emitx);
-  SetEmitY(opt.emity);
-  SetDispX(opt.dispx);
-  SetDispY(opt.dispy);
-  SetDispXP(opt.dispxp);
-  SetDispYP(opt.dispyp);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetBetaX(beam.betx);
+  SetBetaY(beam.bety);
+  SetAlphaX(beam.alfx);
+  SetAlphaY(beam.alfy);
+  SetEmitX(beam.emitx);
+  SetEmitY(beam.emity);
+  SetDispX(beam.dispx);
+  SetDispY(beam.dispy);
+  SetDispXP(beam.dispxp);
+  SetDispYP(beam.dispyp);
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
   

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+class Beam;
 class Event;
 class Options;
 class Model;
@@ -56,10 +57,12 @@ public:
   std::vector<std::string>   GetTreeNames()    {return treeNames;};
   std::vector<std::string>   GetBranchNames()  {return branchNames;}
   std::vector<std::string>   GetSamplerNames() {return samplerNames;}
+  Beam*                      GetBeam()         {return bea;}
   Options*                   GetOptions()      {return opt;}
   Model*                     GetModel()        {return mod;}
   Event*                     GetEvent()        {return evt;}
-  Run*                       GetRun()          {return run;};
+  Run*                       GetRun()          {return run;}
+  TChain*                    GetBeamTree()     {return beaChain;}
   TChain*                    GetOptionsTree()  {return optChain;}
   TChain*                    GetModelTree()    {return modChain;}
   TChain*                    GetEventTree()    {return evtChain;}
@@ -73,7 +76,8 @@ private:
   bool processSamplers;
   bool allBranchesOn;
   const RBDS::BranchMap* branchesToTurnOn;
-  
+
+  Beam*   bea;
   Options                      *opt;
   Model                        *mod;
   Event                        *evt;
@@ -87,6 +91,7 @@ private:
   std::vector<std::string>      samplerNames; // sampler branch names
   std::map<std::string, int>    samplerNameMap;
 
+  TChain* beaChain;
   TChain *optChain;
   TChain *modChain;
   TChain *evtChain;

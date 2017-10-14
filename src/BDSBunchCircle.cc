@@ -1,7 +1,7 @@
 #include "BDSBunchCircle.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
@@ -21,14 +21,14 @@ BDSBunchCircle::~BDSBunchCircle()
   delete FlatGen;
 }
 
-void BDSBunchCircle::SetOptions(const GMAD::Options& opt,
+void BDSBunchCircle::SetOptions(const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetEnvelopeR(opt.envelopeR); 
-  SetEnvelopeRp(opt.envelopeRp);
-  SetEnvelopeT(opt.envelopeT);
-  SetEnvelopeE(opt.envelopeE); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetEnvelopeR(beam.envelopeR); 
+  SetEnvelopeRp(beam.envelopeRp);
+  SetEnvelopeT(beam.envelopeT);
+  SetEnvelopeE(beam.envelopeE); 
 }
 
 void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

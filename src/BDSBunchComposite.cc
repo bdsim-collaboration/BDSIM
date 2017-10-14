@@ -3,7 +3,8 @@
 #include "BDSBunchFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
-#include "parser/options.h"
+
+#include "parser/beam.h"
 
 BDSBunchComposite::BDSBunchComposite()
 {
@@ -22,22 +23,22 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
+void BDSBunchComposite::SetOptions(const GMAD::Beam& beam,
 				   G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;
   delete zBunch;
 
-  BDSBunchType xType = BDS::DetermineBunchType(opt.xDistribType);
-  BDSBunchType yType = BDS::DetermineBunchType(opt.yDistribType);
-  BDSBunchType zType = BDS::DetermineBunchType(opt.zDistribType);
+  BDSBunchType xType = BDS::DetermineBunchType(beam.xDistrType);
+  BDSBunchType yType = BDS::DetermineBunchType(beam.yDistrType);
+  BDSBunchType zType = BDS::DetermineBunchType(beam.zDistrType);
 
   if (xType == BDSBunchType::composite ||
       yType == BDSBunchType::composite ||
@@ -47,9 +48,9 @@ void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
       exit(1);
     }
   
-  xBunch = BDSBunchFactory::CreateBunch(xType, opt, beamlineTransformIn);
-  yBunch = BDSBunchFactory::CreateBunch(yType, opt, beamlineTransformIn);
-  zBunch = BDSBunchFactory::CreateBunch(zType, opt, beamlineTransformIn);
+  xBunch = BDSBunchFactory::CreateBunch(xType, beam, beamlineTransformIn);
+  yBunch = BDSBunchFactory::CreateBunch(yType, beam, beamlineTransformIn);
+  zBunch = BDSBunchFactory::CreateBunch(zType, beam, beamlineTransformIn);
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
