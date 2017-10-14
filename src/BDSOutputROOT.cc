@@ -2,6 +2,7 @@
 
 #include "parser/options.h"
 #include "BDSDebug.hh"
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -36,6 +37,8 @@ void BDSOutputROOT::NewFile()
   theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
+  // beam data tree
+  theBeamOutputTree      = new TTree("Beam", "BDSIM beam");
   // options data tree
   theOptionsOutputTree   = new TTree("Options","BDSIM options");
   // model data tree
@@ -44,6 +47,9 @@ void BDSOutputROOT::NewFile()
   theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
   theEventOutputTree     = new TTree("Event","BDSIM event");
+
+  // Build beam and write structure
+  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",beamOutput,32000,2);
   
   // Build options and write structure
   theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",optionsOutput,32000,2);
@@ -84,6 +90,11 @@ void BDSOutputROOT::NewFile()
                                  "BDSOutputROOTEventSampler",
                                  samplerTreeLocal,32000,0);
     }
+}
+
+void BDSOutputROOT::WriteBeam()
+{
+  theBeamOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteOptions()

@@ -13,6 +13,7 @@
 #include "Analysis.hh"
 #include "Config.hh"
 #include "DataLoader.hh"
+#include "BeamAnalysis.hh"
 #include "EventAnalysis.hh"
 #include "ModelAnalysis.hh"
 #include "OptionsAnalysis.hh"
@@ -69,7 +70,8 @@ int main(int argc, char *argv[])
 			     Config::Instance()->ProcessSamplers(),
 			     allBranches,
 			     branchesToActivate);
-  
+
+  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(), dl.GetBeamTree(), debug);
   EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
                                                    dl.GetEventTree(),
                                                    Config::Instance()->ProcessSamplers(),
@@ -79,7 +81,8 @@ int main(int argc, char *argv[])
   RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree(), debug);
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree(), debug);
   ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree(), debug);
-  
+
+  analyses.push_back(beaAnalysis);
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
   analyses.push_back(optAnalysis);

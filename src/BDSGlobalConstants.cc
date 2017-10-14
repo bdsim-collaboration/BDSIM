@@ -27,12 +27,15 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(instance == nullptr)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions(),
+				       BDSParser::Instance()->GetBeam());}
   return instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
+				       GMAD::Beam&          beamIn):
   options(opt),
+  beam(beamIn),
   beamParticleDefinition(nullptr),
   beamMomentum(0.0),
   beamKineticEnergy(0.0),
@@ -43,7 +46,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 {
   outputType = BDS::DetermineOutputType(options.outputFormat);
 
-  particleName = G4String(options.particleName);
+  particleName = G4String(beam.particleName);
 
   numberToGenerate = G4int(options.nGenerate);
 

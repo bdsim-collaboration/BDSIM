@@ -21,6 +21,7 @@ public:
   virtual void NewFile(){;}
   virtual void CloseFile(){;}
 private:
+  virtual void WriteBeam(){;}
   virtual void WriteOptions(){;}
   virtual void WriteModel(){;}
   virtual void WriteFileEventLevel(){;}

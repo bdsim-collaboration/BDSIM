@@ -1,7 +1,7 @@
 #include "BDSBunchEShell.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
@@ -21,21 +21,21 @@ BDSBunchEShell::~BDSBunchEShell()
   delete FlatGen;
 }
 
-void BDSBunchEShell::SetOptions(const GMAD::Options& opt,
+void BDSBunchEShell::SetOptions(const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetShellX (opt.shellX);
-  SetShellY (opt.shellY);
-  SetShellXp(opt.shellXp);
-  SetShellYp(opt.shellYp);
-  SetShellXWidth (opt.shellXWidth );
-  SetShellXpWidth(opt.shellXpWidth);
-  SetShellYWidth (opt.shellYWidth );
-  SetShellYpWidth(opt.shellYpWidth);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetShellX (beam.shellX);
+  SetShellY (beam.shellY);
+  SetShellXp(beam.shellXp);
+  SetShellYp(beam.shellYp);
+  SetShellXWidth (beam.shellXWidth );
+  SetShellXpWidth(beam.shellXpWidth);
+  SetShellYWidth (beam.shellYWidth );
+  SetShellYpWidth(beam.shellYpWidth);
 }
 
 void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

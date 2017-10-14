@@ -642,6 +642,9 @@ const FastList<Element>& Parser::GetBeamline()const
 // put explicitly in namespace since g++ complains
 namespace GMAD {
   template<>
+  Beam& Parser::GetGlobal(){return beam;}
+  
+  template<>
   Parameters& Parser::GetGlobal(){return params;}
 
   template<>

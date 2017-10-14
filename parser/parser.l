@@ -128,7 +128,7 @@ include   BEGIN(incl);  //reserved commands
 
 beam { return BEAM; }
 option { return OPTION; }
-beta0 { return OPTION; }  // beta0 is a synonym of option
+beta0 { return BEAM; }  // beta0 is a synonym of beam
 print { return PRINT; }
 "return" { return STOP; }
 stop {return STOP;}

@@ -1,7 +1,7 @@
 #include "BDSBunchGaussian.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Matrix/SymMatrix.h"
@@ -26,19 +26,19 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete GaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(const GMAD::Options& opt,
+void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
   
-  SetSigmaX(opt.sigmaX); 
-  SetSigmaY(opt.sigmaY);
-  SetSigmaXp(opt.sigmaXp);
-  SetSigmaYp(opt.sigmaYp);
+  SetSigmaX(beam.sigmaX); 
+  SetSigmaY(beam.sigmaY);
+  SetSigmaXp(beam.sigmaXp);
+  SetSigmaYp(beam.sigmaYp);
   
   meansGM[0]    = X0;
   meansGM[1]    = Xp0;
@@ -47,37 +47,37 @@ void BDSBunchGaussian::SetOptions(const GMAD::Options& opt,
   meansGM[4]    = T0;
   meansGM[5]    = 1;
 
-  if(strcmp(opt.distribType.data(),"gaussmatrix") == 0) {
-    sigmaGM[0][0] = opt.sigma11; 
-    sigmaGM[0][1] = opt.sigma12;
-    sigmaGM[0][2] = opt.sigma13;
-    sigmaGM[0][3] = opt.sigma14;
-    sigmaGM[0][4] = opt.sigma15;
-    sigmaGM[0][5] = opt.sigma16;  
-    sigmaGM[1][1] = opt.sigma22;
-    sigmaGM[1][2] = opt.sigma23;
-    sigmaGM[1][3] = opt.sigma24;
-    sigmaGM[1][4] = opt.sigma25;
-    sigmaGM[1][5] = opt.sigma26;  
-    sigmaGM[2][2] = opt.sigma33;
-    sigmaGM[2][3] = opt.sigma34;
-    sigmaGM[2][4] = opt.sigma35;
-    sigmaGM[2][5] = opt.sigma36;  
-    sigmaGM[3][3] = opt.sigma44;
-    sigmaGM[3][4] = opt.sigma45;
-    sigmaGM[3][5] = opt.sigma46;  
-    sigmaGM[4][4] = opt.sigma55;
-    sigmaGM[4][5] = opt.sigma56;  
-    sigmaGM[5][5] = opt.sigma66;
+  if(strcmp(beam.distrType.data(),"gaussmatrix") == 0) {
+    sigmaGM[0][0] = beam.sigma11; 
+    sigmaGM[0][1] = beam.sigma12;
+    sigmaGM[0][2] = beam.sigma13;
+    sigmaGM[0][3] = beam.sigma14;
+    sigmaGM[0][4] = beam.sigma15;
+    sigmaGM[0][5] = beam.sigma16;  
+    sigmaGM[1][1] = beam.sigma22;
+    sigmaGM[1][2] = beam.sigma23;
+    sigmaGM[1][3] = beam.sigma24;
+    sigmaGM[1][4] = beam.sigma25;
+    sigmaGM[1][5] = beam.sigma26;  
+    sigmaGM[2][2] = beam.sigma33;
+    sigmaGM[2][3] = beam.sigma34;
+    sigmaGM[2][4] = beam.sigma35;
+    sigmaGM[2][5] = beam.sigma36;  
+    sigmaGM[3][3] = beam.sigma44;
+    sigmaGM[3][4] = beam.sigma45;
+    sigmaGM[3][5] = beam.sigma46;  
+    sigmaGM[4][4] = beam.sigma55;
+    sigmaGM[4][5] = beam.sigma56;  
+    sigmaGM[5][5] = beam.sigma66;
   }
-  else if (strcmp(opt.distribType.data(),"gauss") == 0) 
+  else if (strcmp(beam.distrType.data(),"gauss") == 0) 
   {    
-    sigmaGM[0][0] = std::pow(opt.sigmaX,2); 
-    sigmaGM[1][1] = std::pow(opt.sigmaXp,2); 
-    sigmaGM[2][2] = std::pow(opt.sigmaY,2); 
-    sigmaGM[3][3] = std::pow(opt.sigmaYp,2);       
-    sigmaGM[4][4] = std::pow(opt.sigmaT,2); 
-    sigmaGM[5][5] = std::pow(opt.sigmaE,2);
+    sigmaGM[0][0] = std::pow(beam.sigmaX,2); 
+    sigmaGM[1][1] = std::pow(beam.sigmaXp,2); 
+    sigmaGM[2][2] = std::pow(beam.sigmaY,2); 
+    sigmaGM[3][3] = std::pow(beam.sigmaYp,2);       
+    sigmaGM[4][4] = std::pow(beam.sigmaT,2); 
+    sigmaGM[5][5] = std::pow(beam.sigmaE,2);
   }
 #ifdef BDSDEBUG
   G4cout << "sigmaGM" << sigmaGM << G4endl;

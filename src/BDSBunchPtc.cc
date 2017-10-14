@@ -3,6 +3,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
+#include "parser/beam.h"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <fstream>
@@ -99,27 +101,27 @@ void BDSBunchPtc::LoadPtcFile()
   // set number of available rays in options
   nRays = ptcData.size();
   
-  if (BDSGlobalConstants::Instance()->MatchDistribFileLength())
+  if (BDSGlobalConstants::Instance()->MatchDistrFileLength())
     {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
 
   return;
 }
 
-void BDSBunchPtc::SetOptions(const GMAD::Options& opt,
+void BDSBunchPtc::SetOptions(const GMAD::Beam& beam,
 			     G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
+  G4cout << __METHOD_NAME__ << " " << opt.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetDistribFile((G4String)opt.distribFile); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();
 }
 
-void BDSBunchPtc::SetDistribFile(G4String distribFileName)
+void BDSBunchPtc::SetDistrFile(G4String distrFileName)
 {
-  fileName = BDS::GetFullPath(distribFileName);
+  fileName = BDS::GetFullPath(distrFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

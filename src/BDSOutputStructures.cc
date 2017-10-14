@@ -3,6 +3,7 @@
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputStructures.hh"
+#include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -29,6 +30,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeLocal  = globals->StoreELossLocal();
   G4bool storeGlobal = globals->StoreELossGlobal();
 
+  beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
   
@@ -53,6 +55,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
+  delete beamOutput;
   delete optionsOutput;
   delete modelOutput;
   delete primary;
@@ -102,6 +105,11 @@ void BDSOutputStructures::InitialiseSamplers()
 void BDSOutputStructures::ClearStructuresModel()
 {
   modelOutput->Flush();
+}
+
+void BDSOutputStructures::ClearStructuresBeam()
+{
+  *beamOutput = BDSOutputROOTEventBeam(); // default
 }
 
 void BDSOutputStructures::ClearStructuresOptions()

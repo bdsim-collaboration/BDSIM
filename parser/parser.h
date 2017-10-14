@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "atom.h"
+#include "beam.h"
 #include "cavitymodel.h"
 #include "element.h"
 #include "elementtype.h"
@@ -176,6 +177,8 @@ namespace GMAD
 
     // protected implementation (for inheritance to BDSParser - hackish)
   protected:
+    /// Beam instance;
+    Beam beam;
     /// General options
     Options options;
     /// Beamline

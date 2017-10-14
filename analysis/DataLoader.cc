@@ -1,4 +1,5 @@
 #include "DataLoader.hh"
+#include "Beam.hh"
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -30,11 +31,13 @@ DataLoader::DataLoader(std::string fileName,
 
 DataLoader::~DataLoader()
 {
+  delete bea;
   delete opt;
   delete mod;
   delete evt;
   delete run;
 
+  delete beaChain;
   delete optChain;
   delete modChain;
   delete evtChain;
@@ -43,11 +46,13 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor(std::string fileName)
 {
+  bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug);
   evt = new Event(debug, processSamplers);
   run = new Run(debug);
 
+  beaChain = new TChain("Beam","Beam");
   optChain = new TChain("Options","Options");
   modChain = new TChain("Model","Model");
   evtChain = new TChain("Event","Event");
@@ -167,6 +172,7 @@ void DataLoader::ChainTrees()
   // loop over files and chain trees
   for (auto filename : fileNames)
     {
+      beaChain->Add(filename.c_str());
       optChain->Add(filename.c_str());
       modChain->Add(filename.c_str());
       evtChain->Add(filename.c_str());
@@ -177,6 +183,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
+  bea->SetBranchAddress(beaChain, true); // true = alwasy turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
   opt->SetBranchAddress(optChain, true); // true = always turn on all branches
   // note we can't parse the :: properly in the options tree so we turn on by default
