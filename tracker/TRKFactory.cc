@@ -31,12 +31,11 @@
 #include "TRKThick.hh"
 #include "TRKHybrid.hh"
 
-//parser info
+#include "parser/beam.h"
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/options.h"
 
-//aperture
 #include "TRKAperture.hh"
 #include "TRKApertureCircular.hh"
 #include "TRKApertureRectangular.hh"
@@ -44,13 +43,14 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKFactory::TRKFactory(const GMAD::Options& options)
+TRKFactory::TRKFactory(const GMAD::Options& options,
+		       const GMAD::Beam&    beam)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
   // define charge and momentum from options
-  charge = TRKParticleDefinition::Instance()->GetParticleCharge(options.particleName);
+  charge = TRKParticleDefinition::Instance()->GetParticleCharge(beam.particleName);
   momentum = BDSGlobalConstants::Instance()->ParticleMomentum()/CLHEP::GeV;
   // magnetic rigidity
   if (charge!=0)

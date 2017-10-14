@@ -1,10 +1,13 @@
 #ifndef TRKPhysicsCalculations
 #define TRKPhysicsCalculations
 
-#include "parser/options.h"
+namespace GMAD
+{
+  class Beam;
+}
 
 namespace TRK
 {
-  void CalculateKineticEnergy(const GMAD::Options& options);
+  void CalculateKineticEnergy(const GMAD::Beam& beam);
 }
 #endif

@@ -6,7 +6,10 @@
 #include <utility>
 #include <string>
 
-#include "parser/options.h"
+namespace GMAD
+{
+  class Beam;
+}
 
 #include "TRKParticle.hh"
 
@@ -19,7 +22,7 @@ typedef std::vector<TRKParticle>::iterator TRKBunchIter;
 class TRKBunch
 { 
 public:
-  TRKBunch(const GMAD::Options& opt);
+  TRKBunch(const GMAD::Beam& beam);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
   
@@ -43,7 +46,7 @@ private:
   std::vector <TRKParticle> bunch;
 
   /// populate particles using options and random number generator
-  void Populate(const GMAD::Options& opt);
+  void Populate(const GMAD::Beam& beam);
   
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 };

@@ -13,19 +13,19 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKBunch::TRKBunch(const GMAD::Options& opt)
+TRKBunch::TRKBunch(const GMAD::Beam& beam)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
   //calculate energy based on particle mass - must do before we populate
-  TRK::CalculateKineticEnergy(opt);
+  TRK::CalculateKineticEnergy(beam);
   //populate particles using options & random number generator
-  Populate(opt);
+  Populate(beam);
 }
 
 TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
@@ -33,7 +33,7 @@ TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
   bunch = particleVectorIn;
 }
 
-void TRKBunch::Populate(const GMAD::Options& opt)
+void TRKBunch::Populate(const GMAD::Beam& beam)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Generating particles" << std::endl;
@@ -43,7 +43,7 @@ void TRKBunch::Populate(const GMAD::Options& opt)
   //mass and charge
   //if we assume all the same, then it could be done on a global
   //basis, which would save around 20% memory on each particle...
-  std::string particlename = std::string(opt.particleName);
+  std::string particlename = std::string(beam.particleName);
   std::pair<double, int> pmc = TRKParticleDefinition::Instance()->GetParticleMassAndCharge(particlename);
   double mass = pmc.first*0.001; //mass converted from MeV to GeV manually without CLHEP
   int  charge = pmc.second;
@@ -52,7 +52,7 @@ void TRKBunch::Populate(const GMAD::Options& opt)
   BDSBunch bdsbunch;
 
   // Get bunch type from gmad options for correct population
-  bdsbunch.SetOptions(opt);
+  bdsbunch.SetOptions(beam);
 
 
   // Update population according to changes in bunch type

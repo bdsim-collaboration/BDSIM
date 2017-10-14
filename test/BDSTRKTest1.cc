@@ -1,3 +1,4 @@
+#include "parser/beam.h"
 #include "parser/options.h"
 
 #include "tracker/TRKBunch.hh"
@@ -33,6 +34,7 @@ int main (int argc, char** argv)
   
   /// Local shortcut to options
   const GMAD::Options& options = BDSParser::Instance()->GetOptions();
+  const GMAD::Beam&    beam    = BDSParser::Instance()->GetBeam();
   
   /// Initialise output
   BDSOutput* output = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
@@ -43,12 +45,12 @@ int main (int argc, char** argv)
   BDSRandom::SetSeed(); // set the seed from options or from exec options
 
   /// Build bunch
-  TRKBunch* bunch = new TRKBunch(options);
+  TRKBunch* bunch = new TRKBunch(beam);
   /// Write primaries to output file
   output->WriteTrackerBunch("primaries",bunch,true);
   
   /// Build beamline
-  TRKFactory* factory   = new TRKFactory(options);
+  TRKFactory* factory   = new TRKFactory(options, beam);
   TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 

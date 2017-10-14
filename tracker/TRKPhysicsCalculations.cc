@@ -3,18 +3,19 @@
 
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
-#include "parser/options.h"
+
+#include "parser/beam.h"
 
 #include <cmath>
 #include <string>
 #include <iostream>
 
-void TRK::CalculateKineticEnergy(const GMAD::Options& options)
+void TRK::CalculateKineticEnergy(const GMAD::Beam& beam)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << std::endl;
 #endif
-  double particlemass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)options.particleName);
+  double particlemass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)beam.particleName);
 
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   

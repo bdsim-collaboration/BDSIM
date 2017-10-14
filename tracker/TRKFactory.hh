@@ -6,7 +6,12 @@
 
 #include "parser/element.h"
 #include "parser/fastlist.h"
-#include "parser/options.h"
+
+namespace GMAD
+{
+  class Beam;
+  class Options;
+}
 
 #include <string>
 
@@ -23,7 +28,8 @@ class TRKStrategy;
 
 class TRKFactory {
  public:
-  TRKFactory(const GMAD::Options& options);
+  TRKFactory(const GMAD::Options& options,
+	     const GMAD::Beam&    beam);
 
   TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
