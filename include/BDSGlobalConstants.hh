@@ -204,7 +204,7 @@ public:
   inline G4double YMax()                     const {return G4double(options.ymax) * CLHEP::m;}
   inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
-  inline G4bool   MatchDistrFileLength()     const {return G4bool  (beam.matchDistribFileLength);}
+  inline G4bool   MatchDistrFileLength()     const {return G4bool  (beam.matchDistrFileLength);}
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
   
   // options that require members in this class (for value checking or because they're from another class)

@@ -97,16 +97,16 @@ bool Beam::HasBeenSet(std::string name) const
 
 void Beam::PublishMembers()
 {
-  publish("particle",               &Beam::particleName);
-  publish("energy",                 &Beam::beamEnergy);
-  publish("distrType",              &Beam::distrType);
-  publish("xDistrType",             &Beam::xDistrType);
-  publish("yDistrType",             &Beam::yDistrType);
-  publish("zDistrType",             &Beam::zDistrType);
-  publish("distrFile",              &Beam::distrFile);
-  publish("distrFileFormat",        &Beam::distrFileFormat);
-  publish("matchDistribFileLength", &Beam::matchDistribFileLength);
-  publish("nlinesIgnore",           &Beam::nlinesIgnore);
+  publish("particle",             &Beam::particleName);
+  publish("energy",               &Beam::beamEnergy);
+  publish("distrType",            &Beam::distrType);
+  publish("xDistrType",           &Beam::xDistrType);
+  publish("yDistrType",           &Beam::yDistrType);
+  publish("zDistrType",           &Beam::zDistrType);
+  publish("distrFile",            &Beam::distrFile);
+  publish("distrFileFormat",      &Beam::distrFileFormat);
+  publish("matchDistrFileLength", &Beam::matchDistrFileLength);
+  publish("nlinesIgnore",         &Beam::nlinesIgnore);
   
   publish("X0",    &Beam::X0);
   publish("Y0",    &Beam::Y0);

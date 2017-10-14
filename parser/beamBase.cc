@@ -6,16 +6,16 @@ using namespace GMAD;
 
 BeamBase::BeamBase()
 {
-  particleName           = "";
-  beamEnergy             = 0.0;
-  distrType              = "reference";
-  xDistrType             = "";
-  yDistrType             = "";
-  zDistrType             = "";
-  distrFile              = "";
-  distrFileFormat        = "";
-  matchDistribFileLength = true;  
-  nlinesIgnore           = 0;
+  particleName         = "";
+  beamEnergy           = 0.0;
+  distrType            = "reference";
+  xDistrType           = "";
+  yDistrType           = "";
+  zDistrType           = "";
+  distrFile            = "";
+  distrFileFormat      = "";
+  matchDistrFileLength = true;  
+  nlinesIgnore         = 0;
   
   X0  = 0.0;
   Y0  = 0.0;

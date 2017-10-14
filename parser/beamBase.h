@@ -26,7 +26,7 @@ namespace GMAD
       std::string zDistrType;
       std::string distrFile;
       std::string distrFileFormat;
-      bool        matchDistribFileLength;
+      bool        matchDistrFileLength;
       ///@}
       int         nlinesIgnore; ///< ignore first lines in the input bunch file
 
