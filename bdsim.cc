@@ -301,7 +301,7 @@ int main(int argc,char** argv)
   delete runManager;
   delete bdsBunch;
 
-  G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
+  G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;
 
   return 0;
 }

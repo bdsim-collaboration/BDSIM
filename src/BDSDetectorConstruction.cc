@@ -308,7 +308,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   delete theComponentFactory;
 
   // print summary
-  G4cout << __METHOD_NAME__ << name << " " << *massWorld;
+  G4cout << __METHOD_NAME__ << "\"" << name << "\" " << G4endl << *massWorld;
 
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();

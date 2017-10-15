@@ -294,30 +294,30 @@ void BDSExecOptions::Usage() const
 
 void BDSExecOptions::Print() const
 {
-  G4cout << std::boolalpha; // print textual representation of bool
-  G4cout << __METHOD_NAME__ << std::setw(23) << " inputFileName: "       << std::setw(15) << options.inputFileName       << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << options.batch               << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << options.circular            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " distrFile: "           << std::setw(15) << beam.distrFile         << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << options.exportFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << options.generatePrimariesOnly << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " ngenerate: "           << std::setw(15) << options.nGenerate           << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " seedstate: "           << std::setw(15) << options.seedStateFileName   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << options.survey              << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFileName: "      << std::setw(15) << options.surveyFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << options.verbose             << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << options.verboseEvent        << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << options.verboseStep         << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseRunLevel: "     << std::setw(15) << options.verboseRunLevel     << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << options.verboseEventLevel   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << options.verboseTrackingLevel<< G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << options.verboseSteppingLevel<< G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFileName: "    << std::setw(15) << options.visMacroFileName    << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << options.visDebug            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " ignoreSIGINT: "        << std::setw(15) << ignoreSIGINT                << G4endl;
+  G4cout << std::boolalpha << std::left; // print textual representation of bool
+  G4cout << __METHOD_NAME__ << std::setw(24) << "inputFileName: "       << std::setw(15) << std::left << options.inputFileName       << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "batch: "               << std::setw(15) << std::left << options.batch               << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "circular: "            << std::setw(15) << std::left << options.circular            << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "distrFile: "           << std::setw(15) << std::left << beam.distrFile              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "exportgeometryto "     << std::setw(15) << std::left << options.exportFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "generatePrimariesOnly "<< std::setw(15) << std::left << options.generatePrimariesOnly << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "ngenerate: "           << std::setw(15) << std::left << options.nGenerate           << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "outputFileName: "      << std::setw(15) << std::left << options.outputFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "outputFormat: "        << std::setw(15) << std::left << options.outputFormat        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "seed: "                << std::setw(15) << std::left << options.seed                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "seedstate: "           << std::setw(15) << std::left << options.seedStateFileName   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "survey: "              << std::setw(15) << std::left << options.survey              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "surveyFileName: "      << std::setw(15) << std::left << options.surveyFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verbose: "             << std::setw(15) << std::left << options.verbose             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseEvent: "        << std::setw(15) << std::left << options.verboseEvent        << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseStep: "         << std::setw(15) << std::left << options.verboseStep         << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseRunLevel: "     << std::setw(15) << std::left << options.verboseRunLevel     << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseEventLevel: "   << std::setw(15) << std::left << options.verboseEventLevel   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseTrackingLevel: "<< std::setw(15) << std::left << options.verboseTrackingLevel<< G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseSteppingLevel: "<< std::setw(15) << std::left << options.verboseSteppingLevel<< G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "visMacroFileName: "    << std::setw(15) << std::left << options.visMacroFileName    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "visDebug: "            << std::setw(15) << std::left << options.visDebug            << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "ignoreSIGINT: "        << std::setw(15) << std::left << ignoreSIGINT                << G4endl;
   G4cout << std::noboolalpha; // reset to default printing
 }
 

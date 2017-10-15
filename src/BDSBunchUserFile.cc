@@ -214,7 +214,7 @@ template<class T>
 void BDSBunchUserFile<T>::SkipLines()
 {
   //Skip the a number of lines defined by the user option.
-  G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
+  G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
   skip((G4int)(nlinesIgnore * fields.size()));
 }
 
