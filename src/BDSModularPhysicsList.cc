@@ -454,7 +454,11 @@ void BDSModularPhysicsList::HadronicElastic()
 
 void BDSModularPhysicsList::Ion()
 {
-    G4IonConstructor iConstructor;
+  ConstructAllLeptons();
+  ConstructAllShortLived();
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllMesons();
 
   if (!physicsActivated["ion"])
     {
