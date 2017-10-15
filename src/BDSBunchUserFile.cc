@@ -17,15 +17,6 @@ template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
   nlinesIgnore(0)
 {
-  // update base class flag - user file can specify different particles
-  particleCanBeDifferent = true;
-
-  // default used for beam particle
-  auto particleDef = BDSGlobalConstants::Instance()->GetBeamParticleDefinition()->ParticleDefinition();
-  if (!particleDef)
-    {G4cerr << __METHOD_NAME__ << "";}
-  else
-    {particleMass = particleDef->GetPDGMass();}
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
 
@@ -318,6 +309,12 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
   
   G4int type;
 
+  if (particleMass < 0)
+    {
+      auto particleDef = BDSGlobalConstants::Instance()->GetBeamParticleDefinition()->ParticleDefinition();
+      particleMass = particleDef->GetPDGMass(); // should always exist at this point
+    }
+  
   for(auto it=fields.begin();it!=fields.end();it++)
     {
 #ifdef BDSDEBUG 
@@ -381,6 +378,9 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
       else if(it->name=="pt")
 	{// particle type
+	  // update base class flag - user file can specify different particles
+	  if (!particleCanBeDifferent)
+	    {particleCanBeDifferent = true;}
 	  ReadValue(type);
 	  G4String particleName = type;
 	  if (InputBunchFile.good())
