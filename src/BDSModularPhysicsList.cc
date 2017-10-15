@@ -2,6 +2,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsLaserWire.hh"
@@ -340,67 +341,51 @@ void BDSModularPhysicsList::SetParticleDefinition()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  // set primary particle definition and kinetic beam parameters other than total energy
+  PrintDefinedParticles();
+  
+  G4ParticleDefinition*  particleDef  = nullptr;
+  BDSParticleDefinition* particleDefB = nullptr;
+  BDSIonDefinition*      ionDef       = nullptr; //optional
+
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable(); 
+
   G4String particleName = globals->ParticleName();
   particleName.toLower();
+  
   if (particleName.contains("ion"))
     {// we can't set the particle definition yet - doesn't work for ions here
-      BDSIonDefinition* ionDef = new BDSIonDefinition(particleName); // parse the ion definition
-      BDSGlobalConstants::Instance()->SetIonDefinition(ionDef); // also sets IonPrimary = true
+      G4GenericIon::Definition();
+      ionDef = new BDSIonDefinition(particleName); // parse the ion definition
+      G4IonTable* ionTable = particleTable->GetIonTable();
+      ionTable->CreateAllIon();
+      //CreateIon(ionDef->Z(),
+      //		  ionDef->A(),
+      //		  ionDef->ExcitationEnergy());
+      particleDef = ionTable->GetIon(ionDef->Z(),
+				     ionDef->A(),
+				     ionDef->ExcitationEnergy());
+      globals->SetIonDefinition(ionDef); // also sets IonPrimary = true
     }
   else
-    {// we can set the particle definition now
-      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-      globals->SetParticleDefinition(particleTable->FindParticle(particleName));
-      
-      if(!globals->GetParticleDefinition())
-	{
-	  G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
-	  exit(1);
-	}
-    }
-  
-  // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
-  globals->SetParticleMomentum(std::sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+    {particleDef = particleTable->FindParticle(particleName);}
 
-  // compute signed magnetic rigidity brho
-  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
-  // charge (in e units)
-  // rigidity (in T*m)
-  G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
-  const auto ionDef = globals->IonDefinition();
-  if (ionDef) // if override for ions
+  if (!particleDef)
     {
-      if (ionDef->OverrideCharge())
-	{charge = ionDef->Charge();}
+      G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
+      exit(1);
     }
-  
-  G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
-  if (BDS::IsFinite(charge)) {
-    brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
-    // rigidity (in Geant4 units)
-    brho *= CLHEP::tesla*CLHEP::m;
-  }
+
+  // Wrap in our class that calculates momentum and kinetic energy.
+  particleDefB = new BDSParticleDefinition(particleDef,
+					   globals->BeamTotalEnergy(),
+					   ionDef); // ok to construct with ionDef=nullptr
+  globals->SetParticleDefinition(particleDefB);
+
   // set in globals
-  globals->SetBRho(brho);
+  globals->SetBRho(particleDefB->BRho());
   
-  G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Particle : " 
-	 << globals->GetParticleDefinition()->GetParticleName()<<G4endl;
-  G4cout << __METHOD_NAME__ << "Mass : " 
-	 << globals->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Charge : " << charge << " e" << G4endl;
-  G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Momentum : "
-	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
-	 << brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Beam particle properties:" << G4endl;
+  G4cout << *particleDefB << G4endl;
 }
 
 void BDSModularPhysicsList::Cherenkov()

@@ -18,7 +18,6 @@
 
 #include <map>
 
-class G4ParticleDefinition;
 class G4FieldManager;
 class G4ParticleDefinition;
 class G4UniformMagField;
@@ -27,6 +26,7 @@ class G4VisAttributes;
 
 class BDSBeamPipeInfo;
 class BDSIonDefinition;
+class BDSParticleDefinition;
 class BDSTunnelInfo;
 
 /**
@@ -216,7 +216,7 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return beam.particleName;}
   inline G4double BRho()                     const {return brho;}
-  inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
+  inline BDSParticleDefinition* GetParticleDefinition()  const {return particleDefinition;}
   inline G4bool                IonPrimary()              const {return ionPrimary;}
   inline const BDSIonDefinition* IonDefinition()         const {return ionDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
@@ -233,8 +233,8 @@ public:
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
-  inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  inline void SetParticleName(G4String aParticleName) {beam.particleName = aParticleName;}
+  inline void SetParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
+  inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
   inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
   inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
   inline void SetIonDefinition(BDSIonDefinition* ionDefIn) {ionDefinition = ionDefIn; ionPrimary = true;}
@@ -263,7 +263,7 @@ private:
   G4FieldManager*    zeroFieldManager;
 
   /// Initial bunch parameters
-  G4ParticleDefinition* beamParticleDefinition;
+  BDSParticleDefinition* particleDefinition;
 
   G4bool ionPrimary; ///< Whether the primary is an ion.
   
@@ -327,8 +327,8 @@ private:
   G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
 };
 
-inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
-{beamParticleDefinition = aBeamParticleDefinition;}
+inline void BDSGlobalConstants::SetParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
+{particleDefinition = particleDefinitionIn;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
