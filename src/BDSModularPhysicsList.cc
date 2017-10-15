@@ -140,7 +140,6 @@ void BDSModularPhysicsList::ConstructProcess()
   G4VModularPhysicsList::ConstructProcess();
   SetCuts();
   DumpCutValuesTable(100);
-
 }
 
 void BDSModularPhysicsList::Print()
@@ -158,7 +157,7 @@ void BDSModularPhysicsList::PrintDefinedParticles() const
   auto it = G4ParticleTable::GetParticleTable()->GetIterator();
   it->reset();
   while ((*it)())
-  {G4cout <<  it->value()->GetParticleName() << " ";}
+    {G4cout <<  it->value()->GetParticleName() << " ";}
   G4cout << G4endl;
 }
 
@@ -457,7 +456,7 @@ void BDSModularPhysicsList::Ion()
 {
     G4IonConstructor iConstructor;
 
-    if (!physicsActivated["ion"])
+  if (!physicsActivated["ion"])
     {
       constructors.push_back(new G4IonPhysics());
       physicsActivated["ion"] = true;
