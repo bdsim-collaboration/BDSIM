@@ -6,6 +6,7 @@
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticle.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh"
 
@@ -86,31 +87,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-  G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
-
-  if (ionPrimary)
-    {// ion setup has to be done here
-      if (!globals->GetParticleDefinition())
-	{
-	  G4ParticleDefinition* ion = nullptr;
-	  G4IonTable* ionTable = G4IonTable::GetIonTable();
-	  ion = ionTable->GetIon(ionDefinition->Z(),
-				 ionDefinition->A(),
-				 ionDefinition->ExcitationEnergy());
-	  if (!ion)
-	    {G4cout << "Ion: " << *ionDefinition << " is not defined" << G4endl; exit(1);}
-	  else
-	    {BDSGlobalConstants::Instance()->SetParticleDefinition(ion);}
-	}
-    }
-  particleGun->SetParticleDefinition(globals->GetParticleDefinition());
-
-  // In the case of ions we should override the default charge of 0
-  if (overrideCharge)
-    {particleGun->SetParticleCharge(particleCharge);}
-
   G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
-
+  
+  G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
   // continue generating particles until positive finite kinetic energy.
   G4int n = 0;
   while (n < 100) // prevent infinite loops
@@ -121,6 +100,19 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       if ((E - mass) > 0)
         {break;}
     }
+
+  // set particle definition
+  // either from input bunch file, an ion, or regular beam particle
+  if (bdsBunch->ParticleCanBeDifferentFromBeam())
+    {
+      particleGun->SetParticleDefinition(bdsBunch->ParticleDefinition()->ParticleDefinition());
+    }
+  else
+    {particleGun->SetParticleDefinition(globals->GetParticleDefinition()->ParticleDefinition());}
+
+  // In the case of ions we should override the default charge of 0
+  if (overrideCharge)
+    {particleGun->SetParticleCharge(particleCharge);}
 
   // check that kinetic energy is positive and finite anyway and abort if not.
   G4double EK = E - mass;
