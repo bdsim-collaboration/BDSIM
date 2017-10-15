@@ -229,7 +229,6 @@ public:
   inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
-  inline G4double              COverGeV()                const {return cOverGeV;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
@@ -315,9 +314,6 @@ private:
   
   /// Turn Control
   G4int turnsTaken;
-
-  /// speed of light / 1 GeV, used for scaling in brho calculation
-  G4double cOverGeV;
 
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;

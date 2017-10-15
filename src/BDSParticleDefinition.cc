@@ -2,6 +2,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSUtilities.hh"
 
 #include "G4ParticleDefinition.hh"

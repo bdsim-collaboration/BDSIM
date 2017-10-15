@@ -97,8 +97,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   zeroFieldManager->SetDetectorField(zeroMagField);
   zeroFieldManager->CreateChordFinder(zeroMagField);
 
-  cOverGeV = CLHEP::c_light /CLHEP::GeV;
-
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
