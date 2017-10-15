@@ -148,10 +148,17 @@ int main(int argc,char** argv)
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
-  BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
+  BDSModularPhysicsList* physList  = new BDSModularPhysicsList(physicsListName);
+
   // Construction of the physics lists defines the necessary particles and therefore
-  // calculates the beam rigidity for the particle the beam is designed w.r.t. This
-  // must happen before the geometry is constructed (called by runManager->Initialize()).
+  // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
+  // must happen before the geometry is constructed (which is called by
+  // runManager->Initialize()).
+  G4double beamRigidity = physList->CalculateBeamRigidity(globalConstants->ParticleName(),
+							  globalConstants->BeamTotalEnergy(),
+							  globalConstants->FFact());
+  realWorld->SetRigidityForConstruction(beamRigidity);
+  
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
   runManager->SetUserInitialization(physList);
