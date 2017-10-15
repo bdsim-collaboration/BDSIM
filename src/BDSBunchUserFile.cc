@@ -21,7 +21,12 @@ BDSBunchUserFile<T>::BDSBunchUserFile():
   particleCanBeDifferent = true;
 
   // default used for beam particle
-  particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->ParticleDefinition()->GetPDGMass();
+  auto particleDef = BDSGlobalConstants::Instance()->GetBeamParticleDefinition()->ParticleDefinition();
+  if (!particleDef)
+    {G4cerr << __METHOD_NAME__ << "";}
+  else
+    {particleMass = particleDef->GetPDGMass();}
+  ffact = BDSGlobalConstants::Instance()->FFact();
 }
 
 template<class T>
@@ -391,7 +396,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 	      // Wrap in our class that calculates momentum and kinetic energy.
 	      // Requires that total energy 'E' already be set.
 	      delete particleDefinition;
-	      particleDefinition = new BDSParticleDefinition(particleDef, E); // update member
+	      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
 	    }
 	}
       else if(it->name=="weight")

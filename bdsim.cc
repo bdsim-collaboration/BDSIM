@@ -36,6 +36,7 @@
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
+#include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -154,10 +155,12 @@ int main(int argc,char** argv)
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
   // runManager->Initialize()).
-  G4double beamRigidity = physList->CalculateBeamRigidity(globalConstants->ParticleName(),
-							  globalConstants->BeamTotalEnergy(),
-							  globalConstants->FFact());
-  realWorld->SetRigidityForConstruction(beamRigidity);
+  BDSParticleDefinition* beamParticle;
+  beamParticle = physList->ConstructBeamParticle(globalConstants->ParticleName(),
+						 globalConstants->BeamTotalEnergy(),
+						 globalConstants->FFact());
+  G4cout << "main> Beam particle properties:" << *beamParticle << G4endl;
+  realWorld->SetRigidityForConstruction(beamParticle->BRho());
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());

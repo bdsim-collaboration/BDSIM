@@ -134,7 +134,6 @@ void BDSModularPhysicsList::ConstructParticle()
 {
   ConstructMinimumParticleSet();
   G4VModularPhysicsList::ConstructParticle();
-  SetParticleDefinition();
 }
 
 void BDSModularPhysicsList::ConstructProcess()
@@ -337,109 +336,50 @@ void BDSModularPhysicsList::SetCuts()
   DumpCutValuesTable(); 
 }
 
-G4double BDSModularPhysicsList::CalculateBeamRigidity(G4String particleName,
-						      G4double totalEnergy,
-						      G4double ffact) const
+BDSParticleDefinition* BDSModularPhysicsList::ConstructBeamParticle(G4String particleName,
+								    G4double totalEnergy,
+								    G4double ffact) const
 {
   particleName.toLower();
-  G4double mass   = -1;
-  G4double charge = 0;
+
+  BDSParticleDefinition* particleDefB = nullptr; // result can be constructed in two ways
+  
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   
   if (particleName.contains("ion"))
     {
+      G4GenericIon::GenericIonDefinition(); // construct general ion particle
       auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
 
       G4IonTable* ionTable = particleTable->GetIonTable();
-      mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
-      charge = ionDef->Charge(); // correct even if overridden
+      G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
+      G4double charge = ionDef->Charge(); // correct even if overridden
+      particleDefB = new BDSParticleDefinition(particleName, mass, charge,
+					       totalEnergy, ffact, ionDef);
+      // this takes ownership of the ion definition
     }
   else
     {
+      ConstructBeamParticleG4(particleName);
       auto particleDef = particleTable->FindParticle(particleName);
-      mass   = particleDef->GetPDGMass();
-      charge = particleDef->GetPDGCharge();
+      if (!particleDef)
+	{
+	  G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
+	  exit(1);
+	}
+      particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
     }
 
-  if (mass < 0) // check mass
-    {
-      G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
-      exit(1);
-    }
-
-  G4double brho = std::numeric_limits<double>::max();
-  // momentum
-  G4double momentum = 0;
-  try
-    {momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));}
-  catch (std::domain_error) // sqrt(-ve)
-    {
-      G4cerr << __METHOD_NAME__ << "Total energy insufficient to include mass or particle" << G4endl;
-      exit(1);
-    }
-
-  // magnetic rigidity (brho)
-  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
-  // charge (in e units); rigidity (in T*m)
-  if (BDS::IsFinite(charge))
-    {
-      brho = ffact * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
-      brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
-    }
-  
-  return brho;
+  globals->SetBeamParticleDefinition(particleDefB); // export for bunch distribution
+  return particleDefB;
 }
 
-void BDSModularPhysicsList::SetParticleDefinition()
+void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  PrintDefinedParticles();
-  
-  G4ParticleDefinition*  particleDef  = nullptr;
-  BDSParticleDefinition* particleDefB = nullptr;
-  BDSIonDefinition*      ionDef       = nullptr; //optional
-
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable(); 
-
-  G4String particleName = globals->ParticleName();
-  particleName.toLower();
-  
-  if (particleName.contains("ion"))
-    {// we can't set the particle definition yet - doesn't work for ions here
-      G4GenericIon::Definition();
-      ionDef = new BDSIonDefinition(particleName); // parse the ion definition
-      G4IonTable* ionTable = particleTable->GetIonTable();
-      ionTable->CreateAllIon();
-      //CreateIon(ionDef->Z(),
-      //		  ionDef->A(),
-      //		  ionDef->ExcitationEnergy());
-      particleDef = ionTable->GetIon(ionDef->Z(),
-				     ionDef->A(),
-				     ionDef->ExcitationEnergy());
-      globals->SetIonDefinition(ionDef); // also sets IonPrimary = true
-    }
-  else
-    {particleDef = particleTable->FindParticle(particleName);}
-
-  if (!particleDef)
-    {
-      G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
-      exit(1);
-    }
-
-  // Wrap in our class that calculates momentum and kinetic energy.
-  particleDefB = new BDSParticleDefinition(particleDef,
-					   globals->BeamTotalEnergy(),
-					   ionDef); // ok to construct with ionDef=nullptr
-  globals->SetParticleDefinition(particleDefB);
-
-  // set in globals
-  globals->SetBRho(particleDefB->BRho());
-  
-  G4cout << __METHOD_NAME__ << "Beam particle properties:" << G4endl;
-  G4cout << *particleDefB << G4endl;
+  if (name == "proton")
+    {G4Proton::ProtonDefinition();}
+  else if (name == "e-")
+    {G4Electron::ElectronDefinition();}
 }
 
 void BDSModularPhysicsList::Cherenkov()
