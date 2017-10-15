@@ -21,6 +21,13 @@ BDSIonDefinition::BDSIonDefinition(G4String definition):
 	     << definition << G4endl;
       exit(1);
     }
+
+  if (a < z)
+    {
+      G4cerr << __METHOD_NAME__ << "Invalid ion definition: \""
+	     << definition << "\" -> A is less than Z" << G4endl;
+      exit(1);
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSIonDefinition const& io)
