@@ -378,8 +378,24 @@ void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
 {
   if (name == "proton")
     {G4Proton::ProtonDefinition();}
+  else if (name == "antiproton")
+    {G4AntiProton::AntiProtonDefinition();}
   else if (name == "e-")
     {G4Electron::ElectronDefinition();}
+  else if (name == "e+")
+    {G4Positron::PositronDefinition();}
+  else if (name == "pi-")
+    {G4PionMinus::PionMinusDefinition();}
+  else if (name == "neutron")
+    {G4Neutron::NeutronDefinition();}
+  else if (name == "photon" || name == "gamma")
+    {G4Gamma::Gamma();}
+  else if (name == "mu-")
+    {G4MuonMinus::MuonMinusDefinition();}
+  else if (name == "mu+")
+    {G4MuonPlus::MuonPlusDefinition();}
+  else
+    {G4cerr << "Unknown particle type \"" << name << "\"" << G4endl;}
 }
 
 void BDSModularPhysicsList::Cherenkov()
