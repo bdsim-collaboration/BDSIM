@@ -62,10 +62,10 @@
 #include <utility>
 using namespace GMAD;
 
-BDSComponentFactory::BDSComponentFactory()
+BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
+  brho(brhoIn)
 {
   lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
-  brho          = BDSGlobalConstants::Instance()->BRho();
   BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
   integratorSet = BDS::IntegratorSet(intSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << intSetType << "\" set of integrators" << G4endl;

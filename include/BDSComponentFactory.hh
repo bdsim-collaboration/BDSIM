@@ -49,7 +49,7 @@ class BDSTiltOffset;
 class BDSComponentFactory
 {
 public:
-  BDSComponentFactory();
+  explicit BDSComponentFactory(G4double brhoIn);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -127,6 +127,9 @@ public:
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
+  /// No default constructor
+  BDSComponentFactory() = delete;
+  
   /// length safety from global constants
   G4double lengthSafety;
   /// rigidity in T*m for beam particles
