@@ -3,6 +3,7 @@
 #include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsLaserWire.hh"
@@ -61,6 +62,7 @@
 #include "G4ShortLivedConstructor.hh"
 
 #include <iterator>
+#include <limits>
 #include <map>
 #include <ostream>
 #include <string>
@@ -333,6 +335,59 @@ void BDSModularPhysicsList::SetCuts()
 #endif
   
   DumpCutValuesTable(); 
+}
+
+G4double BDSModularPhysicsList::CalculateBeamRigidity(G4String particleName,
+						      G4double totalEnergy,
+						      G4double ffact) const
+{
+  particleName.toLower();
+  G4double mass   = -1;
+  G4double charge = 0;
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  
+  if (particleName.contains("ion"))
+    {
+      auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
+
+      G4IonTable* ionTable = particleTable->GetIonTable();
+      mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
+      charge = ionDef->Charge(); // correct even if overridden
+    }
+  else
+    {
+      auto particleDef = particleTable->FindParticle(particleName);
+      mass   = particleDef->GetPDGMass();
+      charge = particleDef->GetPDGCharge();
+    }
+
+  if (mass < 0) // check mass
+    {
+      G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
+      exit(1);
+    }
+
+  G4double brho = std::numeric_limits<double>::max();
+  // momentum
+  G4double momentum = 0;
+  try
+    {momentum = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));}
+  catch (std::domain_error) // sqrt(-ve)
+    {
+      G4cerr << __METHOD_NAME__ << "Total energy insufficient to include mass or particle" << G4endl;
+      exit(1);
+    }
+
+  // magnetic rigidity (brho)
+  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
+  // charge (in e units); rigidity (in T*m)
+  if (BDS::IsFinite(charge))
+    {
+      brho = ffact * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
+      brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
+    }
+  
+  return brho;
 }
 
 void BDSModularPhysicsList::SetParticleDefinition()

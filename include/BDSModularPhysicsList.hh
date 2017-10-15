@@ -46,6 +46,13 @@ public:
   /// but also set cuts and print physics table.
   virtual void ConstructProcess();
 
+  /// Look up the particle by name for the mass and charge and calculate the
+  /// beam rigidity. 'ffact' is typically 1 or -1 used to flip the sign for
+  /// difference between convention and what's required.
+  G4double CalculateBeamRigidity(G4String particleName,
+				 G4double totalEnergy,
+				 G4double ffact = 1) const;
+
   /// Print out which physics lists are activated.
   void Print();
 
