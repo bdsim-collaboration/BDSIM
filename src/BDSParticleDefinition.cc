@@ -63,13 +63,13 @@ BDSParticleDefinition::~BDSParticleDefinition()
 
 std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
 {
-  out << "Particle:        " << def.name << G4endl;
-  out << "Mass:            " << def.mass/CLHEP::GeV << " GeV" << G4endl;
-  out << "Charge:          " << def.charge                       << " e" << G4endl;
+  out << "Particle:       \""<< def.name << "\"" << G4endl;
+  out << "Mass:            " << def.mass/CLHEP::GeV              << " GeV" << G4endl;
+  out << "Charge:          " << def.charge                       << " e"   << G4endl;
   out << "Total Energy:    " << def.totalEnergy/CLHEP::GeV       << " GeV" << G4endl;
   out << "Kinetic Energy:  " << def.kineticEnergy/CLHEP::GeV     << " GeV" << G4endl;
   out << "Momentum:        " << def.momentum/CLHEP::GeV          << " GeV" << G4endl;
-  out << "Rigidity (Brho): " << def.brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  out << "Rigidity (Brho): " << def.brho/(CLHEP::tesla*CLHEP::m) << " T*m" << G4endl;
   return out;
 }
 

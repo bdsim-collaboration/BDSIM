@@ -159,7 +159,7 @@ int main(int argc,char** argv)
   beamParticle = physList->ConstructBeamParticle(globalConstants->ParticleName(),
 						 globalConstants->BeamTotalEnergy(),
 						 globalConstants->FFact());
-  G4cout << "main> Beam particle properties:" << *beamParticle << G4endl;
+  G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
