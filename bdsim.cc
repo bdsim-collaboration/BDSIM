@@ -134,6 +134,7 @@ int main(int argc,char** argv)
 #endif
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
   auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  
 
@@ -148,6 +149,9 @@ int main(int argc,char** argv)
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
   BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
+  // Construction of the physics lists defines the necessary particles and therefore
+  // calculates the beam rigidity for the particle the beam is designed w.r.t. This
+  // must happen before the geometry is constructed (called by runManager->Initialize()).
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
   runManager->SetUserInitialization(physList);
