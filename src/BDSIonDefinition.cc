@@ -38,22 +38,28 @@ void BDSIonDefinition::Parse(const G4String& definition)
   auto wordsEnd   = std::sregex_iterator();
 
   // A Z Q E
-  G4int counter = 0; // 0,1
-  std::vector<G4int*> vals = {&a, &z, &charge};
+  G4int counter = 0;
+  std::vector<G4int*> vals = {&a, &z};
   for (auto i = wordsBegin; i != wordsEnd; ++i, ++counter)
     {
       std::smatch match = *i;
-      if (counter > 1)
+      if (counter == 2) // ie > 1
 	{overrideCharge = true;} // charge is specified
       try
 	{
-	  if (counter > 2) // E - only double
-	    {energy = std::stod(match[1])*CLHEP::keV;}
+	  if (counter > 1)
+	    {// double
+	      G4double value = std::stod(match[1]);
+	      if (counter == 1)
+		{energy = value*CLHEP::keV;}
+	      else
+		{charge = value*CLHEP::eplus;}
+	    }
 	  else
-	    {
+	    {// integer
 	      (*vals[counter]) = std::stoi(match[1]);
-	      if (counter == 2) // units for charge
-		{(*vals[counter]) *= CLHEP::eplus;}
+	      if (counter ==1) // by default copy Z as value of Q
+		{charge = (G4double)*vals[counter] * CLHEP::eplus;}
 	    }
 	}
       catch (std::invalid_argument) // if stod can't convert number to double / int

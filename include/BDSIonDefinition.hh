@@ -20,7 +20,7 @@ public:
   /// @{ Accessor.
   inline G4int    A()                const {return a;}
   inline G4int    Z()                const {return z;}
-  inline G4int    Charge()           const {return charge;}
+  inline G4double Charge()           const {return charge;}
   inline G4double ExcitationEnergy() const {return energy;}
   inline G4bool   OverrideCharge()   const {return overrideCharge;}
   /// @}
@@ -37,7 +37,7 @@ private:
 
   G4int    a;
   G4int    z;
-  G4int    charge;         ///< In units of eplus
+  G4double charge;         ///< In units of eplus
   G4double energy;         ///< Excitation energy. G4units.
   G4bool   overrideCharge; ///< Whether to specify the charge.
 };
