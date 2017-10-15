@@ -209,7 +209,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Primary Generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch, beamParticle));
 
   /// Initialize G4 kernel
 #ifdef BDSDEBUG 
