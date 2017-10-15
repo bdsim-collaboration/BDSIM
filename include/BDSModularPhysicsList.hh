@@ -86,7 +86,7 @@ private:
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();
 
-  ///  Construct resonances and quarks - sometimes required explicitly.
+  /// Construct resonances and quarks - sometimes required explicitly.
   void ConstructAllShortLived();
 
   /// Construct mesons.
