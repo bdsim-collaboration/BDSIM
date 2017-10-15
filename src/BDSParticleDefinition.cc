@@ -47,7 +47,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
   if (BDS::IsFinite(charge))
     {
       BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-      brho = globals->FFact() * momentum / CLHEP::GeV / globals->COverGeV() / charge;
+      brho = globals->FFact() * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
       brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
     }
 }
