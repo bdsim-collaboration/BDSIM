@@ -139,7 +139,6 @@ void BDSModularPhysicsList::ConstructParticle()
 void BDSModularPhysicsList::ConstructProcess()
 {
   G4VModularPhysicsList::ConstructProcess();
-  SetCuts();
   DumpCutValuesTable(100);
 }
 
