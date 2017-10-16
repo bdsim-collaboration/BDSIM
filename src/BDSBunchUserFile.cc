@@ -1,6 +1,7 @@
 #include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/beam.h"
@@ -13,11 +14,10 @@
 #endif
 
 template <class T>
-BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
+BDSBunchUserFile<T>::BDSBunchUserFile():
+  nlinesIgnore(0)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+  ffact = BDSGlobalConstants::Instance()->FFact();
 }
 
 template<class T>
@@ -214,7 +214,7 @@ template<class T>
 void BDSBunchUserFile<T>::SkipLines()
 {
   //Skip the a number of lines defined by the user option.
-  G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
+  G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
   skip((G4int)(nlinesIgnore * fields.size()));
 }
 
@@ -309,6 +309,12 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
   
   G4int type;
 
+  if (particleMass < 0)
+    {
+      auto particleDef = BDSGlobalConstants::Instance()->GetBeamParticleDefinition()->ParticleDefinition();
+      particleMass = particleDef->GetPDGMass(); // should always exist at this point
+    }
+  
   for(auto it=fields.begin();it!=fields.end();it++)
     {
 #ifdef BDSDEBUG 
@@ -319,9 +325,9 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 #ifdef BDSDEBUG 
 	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
 #endif
-	E+=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+	E += particleMass;
 #ifdef BDSDEBUG 
-	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
+	G4cout << "******** Particle Mass = " << particleMass << G4endl;
 	G4cout << "******** Particle Total Energy = " << E << G4endl;
 	G4cout<< __METHOD_NAME__ << E <<G4endl;
 #endif
@@ -339,7 +345,6 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="P") { 
 	G4double P=0;
 	ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
-	G4double particleMass = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
 	G4double totalEnergy  = std::hypot(P,particleMass);
 	E = totalEnergy - particleMass;
 #ifdef BDSDEBUG 
@@ -371,27 +376,37 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
-      else if(it->name=="pt") {
-	ReadValue(type);
-	if(InputBunchFile.good()){
-	  BDSGlobalConstants::Instance()->SetParticleName(G4ParticleTable::GetParticleTable()->FindParticle(type)->GetParticleName());
-	  BDSGlobalConstants::Instance()->SetParticleDefinition(G4ParticleTable::
-								GetParticleTable()
-								->FindParticle(type));
-	  if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
+      else if(it->name=="pt")
+	{// particle type
+	  // update base class flag - user file can specify different particles
+	  if (!particleCanBeDifferent)
+	    {particleCanBeDifferent = true;}
+	  ReadValue(type);
+	  G4String particleName = type;
+	  if (InputBunchFile.good())
 	    {
-	      G4Exception("Particle not found, quitting!", "-1", FatalErrorInArgument, "");
-	      exit(1);
+	      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	      G4ParticleDefinition* particleDef = particleTable->FindParticle(particleName);
+	      if (!particleDef)
+		{
+		  G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
+		  exit(1);
+		}
+	      
+	      // Wrap in our class that calculates momentum and kinetic energy.
+	      // Requires that total energy 'E' already be set.
+	      delete particleDefinition;
+	      particleDefinition = new BDSParticleDefinition(particleDef, E, ffact); // update member
 	    }
 	}
-      }
-      else if(it->name=="weight") ReadValue(weight);
+      else if(it->name=="weight")
+	{ReadValue(weight);}
       
       else if(it->name=="skip") {double dummy; ReadValue(dummy);}
 
       // If energy isn't specified, use the central beam energy (kinetic for Geant4)
       if (!BDS::IsFinite(E))
-	{E = BDSGlobalConstants::Instance()->BeamKineticEnergy();}
+	{E = E0;}
       
       // compute zp from xp and yp if it hasn't been read from file
       if (!zpdef) zp = CalculateZp(xp,yp,1);

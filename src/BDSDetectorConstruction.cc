@@ -53,12 +53,14 @@
 #include "CLHEP/Vector/EulerAngles.h"
 
 #include <iterator>
+#include <limits>
 #include <list>
 #include <map>
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  placementBL(nullptr)
+  placementBL(nullptr),
+  brho(std::numeric_limits<double>::max())
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -188,7 +190,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      const G4Transform3D& initialTransform,
 						      G4bool               beamlineIsCircular)
 {
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho);
   BDSBeamline* massWorld = new BDSBeamline(initialTransform);
     
   if (beamlineIsCircular)
@@ -306,7 +308,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   delete theComponentFactory;
 
   // print summary
-  G4cout << __METHOD_NAME__ << name << " " << *massWorld;
+  G4cout << __METHOD_NAME__ << "\"" << name << "\" " << G4endl << *massWorld;
 
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();

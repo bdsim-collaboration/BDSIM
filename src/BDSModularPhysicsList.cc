@@ -1,6 +1,9 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSModularPhysicsList.hh"
+#include "BDSParticleDefinition.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
 #include "BDSPhysicsLaserWire.hh"
@@ -31,6 +34,10 @@
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4IonBinaryCascadePhysics.hh"
+#include "G4IonINCLXXPhysics.hh"
+#include "G4IonPhysics.hh"
+#include "G4IonPhysicsPHP.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #if G4VERSION_NUMBER > 1020
@@ -55,6 +62,7 @@
 #include "G4ShortLivedConstructor.hh"
 
 #include <iterator>
+#include <limits>
 #include <map>
 #include <ostream>
 #include <string>
@@ -83,6 +91,10 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic_elastic", &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("ion",              &BDSModularPhysicsList::Ion));
+  physicsConstructors.insert(std::make_pair("ionphp",           &BDSModularPhysicsList::IonPHP));
+  physicsConstructors.insert(std::make_pair("ioninclxx",        &BDSModularPhysicsList::IonINCLXX));
+  physicsConstructors.insert(std::make_pair("ionbinary",        &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
@@ -122,15 +134,12 @@ void BDSModularPhysicsList::ConstructParticle()
 {
   ConstructMinimumParticleSet();
   G4VModularPhysicsList::ConstructParticle();
-  SetParticleDefinition();
 }
 
 void BDSModularPhysicsList::ConstructProcess()
 {
   G4VModularPhysicsList::ConstructProcess();
-  SetCuts();
   DumpCutValuesTable(100);
-
 }
 
 void BDSModularPhysicsList::Print()
@@ -148,7 +157,7 @@ void BDSModularPhysicsList::PrintDefinedParticles() const
   auto it = G4ParticleTable::GetParticleTable()->GetIterator();
   it->reset();
   while ((*it)())
-  {G4cout <<  it->value()->GetParticleName() << " ";}
+    {G4cout <<  it->value()->GetParticleName() << " ";}
   G4cout << G4endl;
 }
 
@@ -256,6 +265,7 @@ void BDSModularPhysicsList::ConstructAllBaryons()
 
 void BDSModularPhysicsList::ConstructAllIons()
 {
+  G4GenericIon::GenericIonDefinition();
   G4IonConstructor iConstructor;
   iConstructor.ConstructParticle();
 }
@@ -325,57 +335,68 @@ void BDSModularPhysicsList::SetCuts()
   DumpCutValuesTable(); 
 }
 
-void BDSModularPhysicsList::SetParticleDefinition()
+BDSParticleDefinition* BDSModularPhysicsList::ConstructBeamParticle(G4String particleName,
+								    G4double totalEnergy,
+								    G4double ffact) const
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+  particleName.toLower();
 
-  // set primary particle definition and kinetic beam parameters other than total energy
+  BDSParticleDefinition* particleDefB = nullptr; // result can be constructed in two ways
+  
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4String particleName = globals->ParticleName();
-  globals->SetParticleDefinition(particleTable->FindParticle(particleName));
   
-  if(!globals->GetParticleDefinition())
+  if (particleName.contains("ion"))
     {
-      G4cerr << "Particle \"" << particleName << "\"not found: quitting!" << G4endl;
-      exit(1);
-    }
-  
-  // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum(std::sqrt(std::pow(globals->BeamTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
-  globals->SetParticleMomentum(std::sqrt(std::pow(globals->ParticleTotalEnergy(),2)-std::pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+      G4GenericIon::GenericIonDefinition(); // construct general ion particle
+      auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
 
-  // compute signed magnetic rigidity brho
-  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
-  // charge (in e units)
-  // rigidity (in T*m)
-  G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
-  G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
-  if (BDS::IsFinite(charge)) {
-    brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
-    // rigidity (in Geant4 units)
-    brho *= CLHEP::tesla*CLHEP::m;
-  }
-  // set in globals
-  globals->SetBRho(brho);
-  
-  G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Particle : " 
-	 << globals->GetParticleDefinition()->GetParticleName()<<G4endl;
-  G4cout << __METHOD_NAME__ << "Mass : " 
-	 << globals->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Charge : " << charge << " e" << G4endl;
-  G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Momentum : "
-	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
-	 << brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+      G4IonTable* ionTable = particleTable->GetIonTable();
+      G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
+      G4double charge = ionDef->Charge(); // correct even if overridden
+      particleDefB = new BDSParticleDefinition(particleName, mass, charge,
+					       totalEnergy, ffact, ionDef);
+      // this takes ownership of the ion definition
+    }
+  else
+    {
+      ConstructBeamParticleG4(particleName);
+      auto particleDef = particleTable->FindParticle(particleName);
+      if (!particleDef)
+	{
+	  G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
+	  exit(1);
+	}
+      particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
+    }
+
+  globals->SetBeamParticleDefinition(particleDefB); // export for bunch distribution
+  return particleDefB;
+}
+
+void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
+{
+  if (name == "proton")
+    {G4Proton::ProtonDefinition();}
+  else if (name == "antiproton")
+    {G4AntiProton::AntiProtonDefinition();}
+  else if (name == "e-")
+    {G4Electron::ElectronDefinition();}
+  else if (name == "e+")
+    {G4Positron::PositronDefinition();}
+  else if (name == "pi-")
+    {G4PionMinus::PionMinusDefinition();}
+  else if (name == "pi+")
+    {G4PionPlus::PionPlusDefinition();}
+  else if (name == "neutron")
+    {G4Neutron::NeutronDefinition();}
+  else if (name == "photon" || name == "gamma")
+    {G4Gamma::Gamma();}
+  else if (name == "mu-")
+    {G4MuonMinus::MuonMinusDefinition();}
+  else if (name == "mu+")
+    {G4MuonPlus::MuonPlusDefinition();}
+  else
+    {G4cerr << "Unknown particle type \"" << name << "\"" << G4endl;}
 }
 
 void BDSModularPhysicsList::Cherenkov()
@@ -440,6 +461,48 @@ void BDSModularPhysicsList::HadronicElastic()
     {
       constructors.push_back(new G4HadronElasticPhysics());
       physicsActivated["hadronic_elastic"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Ion()
+{
+  ConstructAllLeptons();
+  ConstructAllShortLived();
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllMesons();
+
+  if (!physicsActivated["ion"])
+    {
+      constructors.push_back(new G4IonPhysics());
+      physicsActivated["ion"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonPHP()
+{
+  if (!physicsActivated["ionphp"])
+    {
+      constructors.push_back(new G4IonPhysicsPHP());
+      physicsActivated["ionphp"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonINCLXX()
+{
+  if (!physicsActivated["ioninclxx"])
+    {
+      constructors.push_back(new G4IonINCLXXPhysics());
+      physicsActivated["ioninclxx"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonBinary()
+{
+  if (!physicsActivated["ionbinary"])
+    {
+      constructors.push_back(new G4IonBinaryCascadePhysics());
+      physicsActivated["ionbinary"] = true;
     }
 }
 							  

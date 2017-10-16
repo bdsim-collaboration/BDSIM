@@ -5,6 +5,7 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
 #include "BDSParticle.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -18,7 +19,6 @@
 
 #include <map>
 
-class G4ParticleDefinition;
 class G4FieldManager;
 class G4ParticleDefinition;
 class G4UniformMagField;
@@ -26,6 +26,7 @@ class G4UserLimits;
 class G4VisAttributes;
 
 class BDSBeamPipeInfo;
+class BDSIonDefinition;
 class BDSTunnelInfo;
 
 /**
@@ -208,35 +209,22 @@ public:
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
   
   // options that require members in this class (for value checking or because they're from another class)
-  inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
-  inline G4double BeamMomentum()             const {return beamMomentum;}
-  inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
-  inline G4double ParticleMomentum()         const {return particleMomentum;}
-  inline G4String ParticleName()             const {return beam.particleName;}
-  inline G4double BRho()                     const {return brho;}
-  inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
+  inline G4int                 TurnsTaken()              const {return turnsTaken;}
+  inline G4String              ParticleName()            const {return beam.particleName;}
+  inline BDSParticleDefinition* GetBeamParticleDefinition() const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
-  inline G4FieldManager*       GetZeroFieldManager()     const {return zeroFieldManager;}
   inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
   inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
-  inline G4double              COverGeV()                const {return cOverGeV;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
-  inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  inline void SetParticleName(G4String aParticleName) {beam.particleName = aParticleName;}
-  inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
-  inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
-  inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
-  inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
-  inline void SetBRho(G4double value)                 {brho = value;}
+  inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
@@ -254,21 +242,7 @@ public:
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
 private:
-
-  G4UniformMagField* zeroMagField;
-  G4FieldManager*    zeroFieldManager;
-
-  /// Initial bunch parameters
-  G4ParticleDefinition* beamParticleDefinition;
-
-  /// Reference beam energy
-  G4double beamMomentum, beamKineticEnergy;
-
-  /// Particle energy
-  G4double particleMomentum, particleKineticEnergy;
-
-  /// BRho calculated from supplied parameters and particle type.
-  G4double brho;
+  BDSParticleDefinition* beamParticleDefinition; ///< Initial bunch parameters
 
   /// Particle name
   G4String particleName;
@@ -307,9 +281,6 @@ private:
   /// Turn Control
   G4int turnsTaken;
 
-  /// speed of light / 1 GeV, used for scaling in brho calculation
-  G4double cOverGeV;
-
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 
@@ -318,8 +289,8 @@ private:
   G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
 };
 
-inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
-{beamParticleDefinition = aBeamParticleDefinition;}
+inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
+{beamParticleDefinition = particleDefinitionIn;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}

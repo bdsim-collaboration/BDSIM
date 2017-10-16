@@ -49,6 +49,9 @@ class BDSFieldFactory
 public:
   /// Public accessor method for singleton pattern.
   static BDSFieldFactory* Instance();
+
+  /// Update the internal cache of the rigidity.
+  static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
   
   ~BDSFieldFactory();
 
@@ -94,21 +97,21 @@ private:
 					    G4EquationOfMotion* eqOfM);
 
   /// Create only a local field object
-  BDSField* CreateFieldMagLocal(const BDSFieldType       type,
-				const BDSMagnetStrength* strength,
-				const G4double           brho);
+  //BDSField* CreateFieldMagLocal(const BDSFieldType       type,
+  //				const BDSMagnetStrength* strength,
+  //				const G4double           brho);
 
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
-  BDSFieldObjects* CreateFieldEquation(const BDSFieldType       type,
-				       const BDSMagnetStrength* strength,
-				       const G4double           brho);
+  //BDSFieldObjects* CreateFieldEquation(const BDSFieldType       type,
+  //				       const BDSMagnetStrength* strength,
+  //				       const G4double           brho);
 
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
-  BDSFieldObjects* CreateFieldMagEquation(const BDSMagnetType      type,
-					  const BDSMagnetStrength* strength,
-					  const G4double           brho);
+  //BDSFieldObjects* CreateFieldMagEquation(const BDSMagnetType      type,
+  //					  const BDSMagnetStrength* strength,
+  //					  const G4double           brho);
 
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
@@ -135,5 +138,8 @@ private:
 
   /// BDSFieldInfo definitions prepare from parser vector of definitions.
   std::map<G4String, BDSFieldInfo*> parserDefinitions;
+
+  /// Cache of default rigidity.
+  static G4double defaultRigidity;
 };
 #endif

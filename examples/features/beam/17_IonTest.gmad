@@ -1,4 +1,4 @@
-include 1_Reference.gmad
+include 17_Ion.gmad
 include options.gmad
 include fodo.gmad;
 

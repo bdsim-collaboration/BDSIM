@@ -53,10 +53,14 @@ public:
   /// and returns the finished world physical volume.
   virtual G4VPhysicalVolume* Construct();
 
+  /// Construct sensitive detectors and fields.
   virtual void ConstructSDandField();
 
   /// Create biasing operations.
   void BuildPhysicsBias();
+
+  /// Update member brho (rigidity) for use in constructing accelerator elements.
+  void SetRigidityForConstruction(G4double brhoIn) {brho = brhoIn;}
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
@@ -142,6 +146,7 @@ private:
   G4bool       circular;    ///< Whether or not we're building a circular machine.
   BDSExtent    worldExtent; ///< Record of the world extent.
   BDSBeamline* placementBL; ///< Placement beam line.
+  G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
 };
 
 #endif

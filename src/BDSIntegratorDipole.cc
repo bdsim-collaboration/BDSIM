@@ -2,6 +2,7 @@
 #include "BDSIntegratorDipole.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSPhysicalConstants.hh"
 #include "BDSStep.hh"
 
 #include <utility>
@@ -15,13 +16,12 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 					 G4double                  /*brho*/,
 					 G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
+  cOverGeV(BDS::cOverGeV),
   angle((*strength)["angle"]),
   length((*strength)["length"]),
   bField((*strength)["field"]),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
-  cOverGeV = BDSGlobalConstants::Instance()->COverGeV();
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
 #endif
