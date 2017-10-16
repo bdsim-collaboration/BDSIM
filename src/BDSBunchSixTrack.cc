@@ -83,7 +83,7 @@ void BDSBunchSixTrack::SetOptions(const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << opt.distrFile << G4endl;
+  G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
 #endif
 
   BDSBunch::SetOptions(beam, beamlineTransformIn);
