@@ -33,9 +33,7 @@ public:
   ///@}
 
 private:
-  TRKHybrid(); ///< not implemented
-  double nominalenergy;
-  double nominalmomentum;
+  TRKHybrid() = delete; ///< not implemented
 };
 
 

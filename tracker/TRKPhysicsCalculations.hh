@@ -6,8 +6,10 @@ namespace GMAD
   class Beam;
 }
 
+class BDSParticleDefinition;
+
 namespace TRK
 {
-  void CalculateKineticEnergy(const GMAD::Beam& beam);
+  BDSParticleDefinition* DefineParticle(const GMAD::Beam& beam);
 }
 #endif

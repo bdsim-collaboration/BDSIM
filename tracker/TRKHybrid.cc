@@ -21,11 +21,9 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "BDSGlobalConstants.hh"
 
-TRKHybrid::TRKHybrid(int trackingStepsIn) :
-  TRKStrategy(trackingStepsIn) {
-  nominalenergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-  nominalmomentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
-}
+TRKHybrid::TRKHybrid(int trackingStepsIn):
+  TRKStrategy(trackingStepsIn)
+{;}
 
 TRKHybrid::~TRKHybrid() {
 }
@@ -259,7 +257,7 @@ void TRKHybrid::Track(TRKSBend* el, TRKBunch* bunch) {
     // Reference: Wiedemann Particle Accelerator Physics (C.5)
     
     // Rigidity effects on B field (linearly scaling in theta)
-    double relangle = angle * (nominalmomentum/part.P());
+    double relangle = angle * (nominalMomentum/part.P());
     
     // rho = arclength / angle
     double gyroradius = arclength / relangle;
@@ -328,7 +326,7 @@ void TRKHybrid::Track(TRKRBend* el, TRKBunch* bunch) {
     double xp = part.Xp();
     double yp = part.Yp();
     
-    double relangle = angle * (nominalmomentum/part.P());
+    double relangle = angle * (nominalMomentum/part.P());
     
     // Geometric relation from chord/angle
     double gyroradius = 0.5 * chordlength / std::sin(relangle*0.5);
@@ -397,7 +395,7 @@ void TRKHybrid::Track(TRKQuadrupole* el, TRKBunch* bunch) {
       
 #endif
       
-      double k = strength * (nominalmomentum/part.P()); // k in T/m
+      double k = strength * (nominalMomentum/part.P()); // k in T/m
       
       double rootK=sqrt(std::abs(k));
       double rootKh=rootK*h;

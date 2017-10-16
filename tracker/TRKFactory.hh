@@ -7,6 +7,8 @@
 #include "parser/element.h"
 #include "parser/fastlist.h"
 
+class BDSParticleDefinition;
+
 namespace GMAD
 {
   class Beam;
@@ -26,10 +28,11 @@ class TRKStrategy;
  * @brief factory to create beamline elements
  */
 
-class TRKFactory {
+class TRKFactory
+{
  public:
   TRKFactory(const GMAD::Options& options,
-	     const GMAD::Beam&    beam);
+	     BDSParticleDefinition* particle);
 
   TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
@@ -65,6 +68,7 @@ private:
   int charge;
   /// beam momentum in GeV
   double momentum;
+  double energy;
   double brho;
 
   /// global placement position

@@ -22,6 +22,13 @@ void TRKStrategy::Track(TRKElement* el, TRKBunch* bunch) {
 }
 */
 
+void TRKStrategy::SetMomentumAndEnergy(double nominalMomentumIn,
+				       double nominalEnergyIn)
+{
+  nominalMomentum = nominalMomentumIn;
+  nominalEnergy   = nominalEnergyIn;
+}
+
 void TRKStrategy::Track(TRKTiltOffset* el, TRKBunch* bunch)
 {
   std::cout << __METHOD_NAME__ << " TiltOffset" << std::endl;

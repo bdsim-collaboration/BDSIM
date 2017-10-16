@@ -10,20 +10,26 @@
 #include "TRKPhysicsCalculations.hh"
 
 #include "BDSBunch.hh"
+#include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "parser/beam.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKBunch::TRKBunch(const GMAD::Beam& beam)
+TRKBunch::TRKBunch(const GMAD::Beam& beam,
+		   BDSParticleDefinition* particle)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
-  //calculate energy based on particle mass - must do before we populate
-  TRK::CalculateKineticEnergy(beam);
+  mass   = particle->Mass()*0.001; //mass converted from MeV to GeV manually without CLHEP
+  charge = particle->Charge();
+  totalEnergy   = particle->TotalEnergy();
+  kineticEnergy = particle->KineticEnergy();
+  
   //populate particles using options & random number generator
   Populate(beam);
 }
@@ -32,6 +38,9 @@ TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
 {
   bunch = particleVectorIn;
 }
+
+TRKBunch::~TRKBunch()
+{;}
 
 void TRKBunch::Populate(const GMAD::Beam& beam)
 {
@@ -43,28 +52,21 @@ void TRKBunch::Populate(const GMAD::Beam& beam)
   //mass and charge
   //if we assume all the same, then it could be done on a global
   //basis, which would save around 20% memory on each particle...
-  std::string particlename = std::string(beam.particleName);
-  std::pair<double, int> pmc = TRKParticleDefinition::Instance()->GetParticleMassAndCharge(particlename);
-  double mass = pmc.first*0.001; //mass converted from MeV to GeV manually without CLHEP
-  int  charge = pmc.second;
 
   // Initialise bunch
-  BDSBunch bdsbunch;
-
-  // Get bunch type from gmad options for correct population
-  bdsbunch.SetOptions(beam);
-
+  BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(beam);
 
   // Update population according to changes in bunch type
   population = BDSGlobalConstants::Instance()->NGenerate();
 
   //must have positive number of particles
-  if (population < 0){population = abs(population);}
-    //must have at least 1 particle
-    if (population == 0){population = 1;}
-      //initialise the vector of particles
-      bunch.reserve(population);
-
+  if (population < 0)
+    {population = abs(population);}
+  //must have at least 1 particle
+  if (population == 0)
+    {population = 1;}
+  //initialise the vector of particles
+  bunch.reserve(population);
 
   //note in this tracker there are only local rectilinear coordinates
   //therefore 'z' is misleading and 's' should be used instead
@@ -73,7 +75,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam)
   for (int i = 0; i < population; i++)
     {
       // bdsbunch generates values in CLHEP mm standard.
-      bdsbunch.GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
+      bdsbunch->GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
 
       double energy = E/CLHEP::GeV;
       //momentum back calculated from kinetic energy - can't change bds bunch
@@ -88,10 +90,6 @@ void TRKBunch::Populate(const GMAD::Beam& beam)
       //weight not required - maybe should be kept though to pass on to bdsim
     }
 }
-
-
-TRKBunch::~TRKBunch() {}
-
 
 std::ostream& operator<< (std::ostream &out, const TRKBunch &beam)
 {

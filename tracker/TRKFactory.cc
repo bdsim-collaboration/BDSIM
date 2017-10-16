@@ -7,7 +7,7 @@
 #include "BDSDebug.hh"
 
 //for momentum
-#include "BDSGlobalConstants.hh"
+#include "BDSParticleDefinition.hh"
 
 //individual beam elements
 #include "TRKLine.hh"
@@ -44,23 +44,16 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 TRKFactory::TRKFactory(const GMAD::Options& options,
-		       const GMAD::Beam&    beam)
+		       BDSParticleDefinition* particle)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
 #endif
   // define charge and momentum from options
-  charge = TRKParticleDefinition::Instance()->GetParticleCharge(beam.particleName);
-  momentum = BDSGlobalConstants::Instance()->ParticleMomentum()/CLHEP::GeV;
-  // magnetic rigidity
-  if (charge!=0)
-    {brho = options.ffact * momentum / 0.299792458 / charge;}
-  else
-    {
-      // zero charge particles have infinite magnetic rigidity
-      brho = 0;
-    }
-  brho *= CLHEP::tesla*CLHEP::m;
+  charge   = particle->Charge();
+  momentum = particle->Momentum();
+  energy   = particle->TotalEnergy();
+  brho     = particle->BRho();
   
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Rigidity (Brho) : " << brho/(CLHEP::tesla*CLHEP::m) << " T*m" << std::endl;
@@ -70,7 +63,7 @@ TRKFactory::TRKFactory(const GMAD::Options& options,
 #endif
   
   /// start placement, could be updated after every new element
-  placement = NULL;//new TRKPlacement();
+  placement = nullptr;//new TRKPlacement();
 
   //pull out info from options
   strategy        = SetStrategyEnum(options.trackingType);
@@ -112,19 +105,22 @@ TRK::Strategy TRKFactory::SetStrategyEnum(std::string sIn)
 
 TRKStrategy* TRKFactory::CreateStrategy()
 {
+  TRKStrategy* result = nullptr;
   switch(strategy)
     {
     case TRK::THIN:
-      return new TRKThin(trackingsteps);
+      result = new TRKThin(trackingsteps);
     case TRK::THINSYMPLECTIC:
-      return new TRKThinSymplectic(trackingsteps);
+      result = new TRKThinSymplectic(trackingsteps);
     case TRK::THICK:
-      return new TRKThick(trackingsteps);
+      result = new TRKThick(trackingsteps);
     case TRK::HYBRID:
-      return new TRKHybrid(trackingsteps);
+      result = new TRKHybrid(trackingsteps);
     default:
-      return NULL;
+      return nullptr;
     }
+  if (result)
+    {result->SetMomentumAndEnergy(momentum, energy);}
 }
 
 TRK::Aperture TRKFactory::SetApertureEnum(std::string aIn)

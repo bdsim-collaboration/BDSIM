@@ -1,31 +1,24 @@
 #include "TRKParticleDefinition.hh"
 #include "TRKPhysicsCalculations.hh"
 
-#include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "parser/beam.h"
 
-#include <cmath>
 #include <string>
-#include <iostream>
 
-void TRK::CalculateKineticEnergy(const GMAD::Beam& beam)
+
+BDSParticleDefinition* TRK::DefineParticle(const GMAD::Beam& beam)
 {
-#ifdef TRKDEBUG
-  std::cout << __METHOD_NAME__ << std::endl;
-#endif
-  double particlemass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)beam.particleName);
+  double mass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)beam.particleName);
+  double charge = (double)TRKParticleDefinition::Instance()->GetParticleCharge((std::string)beam.particleName);
+  double energy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  double ffact  = BDSGlobalConstants::Instance()->FFact();
+  
+  BDSParticleDefinition* particleDefB = new BDSParticleDefinition(beam.particleName, mass, charge,
+								  energy, ffact);
 
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  
-  // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum( sqrt(pow(globals->BeamTotalEnergy(),2) - pow(particlemass,2)) );
-  
-  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy() - particlemass );
-  
-  globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2) - pow(particlemass,2)) );
-  
-  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy() - particlemass);
-
+  return particleDefB;
 }

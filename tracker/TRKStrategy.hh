@@ -18,11 +18,14 @@ class TRKTiltOffset;
 /**
  * @brief virtual base class for a track strategy
  */
-class TRKStrategy {
-public : 
-
+class TRKStrategy
+{
+public: 
   TRKStrategy(int trackingSteps);
-		     
+
+  void SetMomentumAndEnergy(double nominalMomentumIn,
+			    double nominalEnergyIn);
+  
   virtual ~TRKStrategy(); 
 
   /// returns tracking type
@@ -50,8 +53,11 @@ protected:
   /// number of tracking steps
   int trackingSteps;
 
+  double nominalMomentum;
+  double nominalEnergy;
+
 private:
-  TRKStrategy(); ///< not implemented
+  TRKStrategy() = delete; ///< not implemented
 };
 
 

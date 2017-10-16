@@ -6,6 +6,8 @@
 #include <utility>
 #include <string>
 
+class BDSParticleDefinition;
+
 namespace GMAD
 {
   class Beam;
@@ -22,7 +24,8 @@ typedef std::vector<TRKParticle>::iterator TRKBunchIter;
 class TRKBunch
 { 
 public:
-  TRKBunch(const GMAD::Beam& beam);
+  TRKBunch(const GMAD::Beam& beam,
+	   BDSParticleDefinition* particle);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
   ~TRKBunch();
   
@@ -49,6 +52,11 @@ private:
   void Populate(const GMAD::Beam& beam);
   
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
+
+  double mass;
+  double charge;
+  double totalEnergy;
+  double kineticEnergy;
 };
 
 #endif
