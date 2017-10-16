@@ -209,9 +209,9 @@ public:
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
   
   // options that require members in this class (for value checking or because they're from another class)
-  inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4String ParticleName()             const {return beam.particleName;}
-  inline BDSParticleDefinition* GetBeamParticleDefinition()  const {return beamParticleDefinition;}
+  inline G4int                 TurnsTaken()              const {return turnsTaken;}
+  inline G4String              ParticleName()            const {return beam.particleName;}
+  inline BDSParticleDefinition* GetBeamParticleDefinition() const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -242,8 +242,7 @@ public:
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
 private:
-  /// Initial bunch parameters
-  BDSParticleDefinition* beamParticleDefinition;
+  BDSParticleDefinition* beamParticleDefinition; ///< Initial bunch parameters
 
   /// Particle name
   G4String particleName;
