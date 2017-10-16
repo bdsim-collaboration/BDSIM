@@ -385,6 +385,8 @@ void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
     {G4Positron::PositronDefinition();}
   else if (name == "pi-")
     {G4PionMinus::PionMinusDefinition();}
+  else if (name == "pi+")
+    {G4PionPlus::PionPlusDefinition();}
   else if (name == "neutron")
     {G4Neutron::NeutronDefinition();}
   else if (name == "photon" || name == "gamma")
