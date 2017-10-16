@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -43,6 +44,8 @@
 #include <vector>
 
 BDSGeometryFactorySQL* BDSGeometryFactorySQL::instance = nullptr;
+
+G4double BDSGeometryFactorySQL::defaultRigidity = std::numeric_limits<double>::max();
 
 BDSGeometryFactorySQL::BDSGeometryFactorySQL()
 {
@@ -967,7 +970,7 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	}
 
       // magnetic rigidity brho
-      G4double brho = BDSGlobalConstants::Instance()->BRho();
+      G4double brho = defaultRigidity;
 
       if(MagType.compareTo("QUAD",cmpmode)==0)
 	{

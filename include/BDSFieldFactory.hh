@@ -49,6 +49,9 @@ class BDSFieldFactory
 public:
   /// Public accessor method for singleton pattern.
   static BDSFieldFactory* Instance();
+
+  /// Update the internal cache of the rigidity.
+  static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
   
   ~BDSFieldFactory();
 
@@ -135,5 +138,8 @@ private:
 
   /// BDSFieldInfo definitions prepare from parser vector of definitions.
   std::map<G4String, BDSFieldInfo*> parserDefinitions;
+
+  /// Cache of default rigidity.
+  static G4double defaultRigidity;
 };
 #endif

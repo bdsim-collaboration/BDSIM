@@ -36,6 +36,8 @@ public:
   /// Singleton accessor
   static BDSGeometryFactorySQL* Instance();
 
+  static void SetDefaultRigidity(G4double rigidityIn) {defaultRigidity = rigidityIn;}
+
   virtual ~BDSGeometryFactorySQL();
 
   /// Main interface overrides base class method to construct a file with
@@ -153,6 +155,9 @@ private:
   std::map<G4String, G4double> quadVolBgrad;
   std::map<G4String, G4double> sextVolBgrad;
   std::map<G4String, G4double> octVolBgrad;
+
+  /// Cache of default rigidity for possibly constructing fields (only SQL)
+  static G4double defaultRigidity;
 };
 
 #endif

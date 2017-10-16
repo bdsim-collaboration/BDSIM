@@ -215,10 +215,7 @@ public:
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return beam.particleName;}
-  inline G4double BRho()                     const {return brho;}
   inline BDSParticleDefinition* GetBeamParticleDefinition()  const {return beamParticleDefinition;}
-  inline G4bool                IonPrimary()              const {return ionPrimary;}
-  inline const BDSIonDefinition* IonDefinition()         const {return ionDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
@@ -236,10 +233,8 @@ public:
   inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
   inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
   inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
-  inline void SetIonDefinition(BDSIonDefinition* ionDefIn) {ionDefinition = ionDefIn; ionPrimary = true;}
   inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
-  inline void SetBRho(G4double value)                 {brho = value;}
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
@@ -264,19 +259,11 @@ private:
   /// Initial bunch parameters
   BDSParticleDefinition* beamParticleDefinition;
 
-  G4bool ionPrimary; ///< Whether the primary is an ion.
-  
-  /// Specification for ion if primary beam is one.
-  BDSIonDefinition* ionDefinition;
-
   /// Reference beam energy
   G4double beamMomentum, beamKineticEnergy;
 
   /// Particle energy
   G4double particleMomentum, particleKineticEnergy;
-
-  /// BRho calculated from supplied parameters and particle type.
-  G4double brho;
 
   /// Particle name
   G4String particleName;

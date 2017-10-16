@@ -28,7 +28,9 @@
 #include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
@@ -161,6 +163,8 @@ int main(int argc,char** argv)
 						 globalConstants->FFact());
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
+  BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
+  BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
@@ -291,6 +295,7 @@ int main(int argc,char** argv)
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
+  delete BDSFieldFactory::Instance();
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();

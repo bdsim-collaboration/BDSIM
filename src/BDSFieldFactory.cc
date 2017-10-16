@@ -80,9 +80,12 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
 
+#include <limits>
 #include <map>
 #include <utility>
 #include <vector>
+
+G4double BDSFieldFactory::defaultRigidity = std::numeric_limits<double>::max();
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
@@ -96,7 +99,7 @@ BDSFieldFactory* BDSFieldFactory::Instance()
 BDSFieldFactory::BDSFieldFactory()
 {
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
-			  BDSGlobalConstants::Instance()->BRho());
+			  defaultRigidity);
 }
 
 BDSFieldFactory::~BDSFieldFactory()

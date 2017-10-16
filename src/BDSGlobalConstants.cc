@@ -37,13 +37,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   options(opt),
   beam(beamIn),
   beamParticleDefinition(nullptr),
-  ionPrimary(false),
-  ionDefinition(nullptr),
   beamMomentum(0.0),
   beamKineticEnergy(0.0),
   particleMomentum(0.0),
-  particleKineticEnergy(0.0),
-  brho(0.0),
+  particleKineticEnergy(0.0)
   turnsTaken(0)
 {
   outputType = BDS::DetermineOutputType(options.outputFormat);
