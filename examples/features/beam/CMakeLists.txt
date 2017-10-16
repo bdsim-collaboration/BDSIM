@@ -23,4 +23,5 @@ set(TESTING_ARGS --ngenerate=32)
 simple_testing(14_bunchtest_Ptc_loop_file "--file=14_PtcTest.gmad" "")
 
 simple_testing(15_bunchtest_SixTrack "--file=15_SixTrackTest.gmad" "")
-simple_testing(16_bunchtest_Halo "--file=16_HaloTest.gmad" "")
+simple_testing(16_bunchtest_Halo     "--file=16_HaloTest.gmad" "")
+simple_testing(17_bunchtest_Ion      "--file=17_IonTest.gmad" "")
