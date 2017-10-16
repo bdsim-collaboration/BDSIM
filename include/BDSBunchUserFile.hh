@@ -51,6 +51,9 @@ private:
   G4double ParseLengthUnit(G4String &fmt);
   G4double ParseAngleUnit(G4String &fmt);
   G4double ParseTimeUnit(G4String &fmt);
+
+  G4double particleMass; ///< PDG mass of nominal beam particle.
+  G4double ffact;
 };
 
 #endif

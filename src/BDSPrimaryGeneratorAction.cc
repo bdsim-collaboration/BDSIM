@@ -3,8 +3,10 @@
 #include "BDSEventInfo.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticle.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh"
 
@@ -12,15 +14,21 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
+#include "G4IonTable.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
 
-BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
-  G4VUserPrimaryGeneratorAction(),
+BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
+						     BDSParticleDefinition* beamParticleIn):
+  beamParticle(beamParticleIn),
+  ionDefinition(beamParticleIn->IonDefinition()),
   weight(1),
-  bdsBunch(bdsBunchIn),
+  bunch(bunchIn),
   recreateFile(nullptr),
-  eventOffset(0)
+  eventOffset(0),
+  ionPrimary(beamParticleIn->IsAnIon()),
+  ionCached(false),
+  particleCharge(beamParticleIn->Charge()) // always right even if ion
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
@@ -33,15 +41,9 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
       recreateFile = new BDSOutputLoader(BDSGlobalConstants::Instance()->RecreateFileName());
       eventOffset  = BDSGlobalConstants::Instance()->StartFromEvent();
     }
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Primary particle is "
-	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
-#endif
   
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
-  particleGun->SetParticleEnergy(BDSGlobalConstants::Instance()->BeamKineticEnergy());
   particleGun->SetParticleTime(0);
 }
 
@@ -61,9 +63,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
 
+  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   if (useASCIISeedState)
     {
-      G4String fileName = BDSGlobalConstants::Instance()->SeedStateFileName();
+      G4String fileName = globals->SeedStateFileName();
       BDSRandom::LoadSeedState(fileName);
     }
 
@@ -72,29 +75,61 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
+  G4double mass = beamParticle->Mass();
+
+  // update particle definition if special case of an ion - can only be done here
+  // do this before call the bunch as it may use particle definition in globals
+  if (ionPrimary && !ionCached)
+  {
+    G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+    G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
+                                                            ionDefinition->A(),
+                                                            ionDefinition->ExcitationEnergy());
+    beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
+    ionCached = true;
+  }
+  
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
-  particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
-
-  G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
-
   // continue generating particles until positive finite kinetic energy.
   G4int n = 0;
   while (n < 100) // prevent infinite loops
     {
       ++n;
-      bdsBunch->GetNextParticle(x0, y0, z0, xp, yp, zp, t, E, weight); // get next starting point
+      bunch->GetNextParticle(x0, y0, z0, xp, yp, zp, t, E, weight); // get next starting point
 
       if ((E - mass) > 0)
         {break;}
     }
 
+  // set particle definition
+  // either from input bunch file, an ion, or regular beam particle
+  G4ParticleDefinition* particleDef = beamParticle->ParticleDefinition();
+  if (bunch->ParticleCanBeDifferentFromBeam())
+    {
+      BDSParticleDefinition* particleToUse = bunch->ParticleDefinition();
+      if (particleToUse->IsAnIon())
+	{
+	  BDSIonDefinition* id = particleToUse->IonDefinition();
+	  G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+	  particleDef = ionTable->GetIon(id->Z(), id->A(), id->ExcitationEnergy());
+	}
+      else
+	{particleDef = particleToUse->ParticleDefinition();}
+    }
+
+  particleGun->SetParticleDefinition(particleDef);
+  
+  // Always update the charge - ok for normal particles; fixes purposively specified ions.
+  particleGun->SetParticleCharge(particleCharge);
+  
   // check that kinetic energy is positive and finite anyway and abort if not.
-  G4double EK = E - mass;
+  G4double EK = E - particleDef->GetPDGMass();
   if(EK <= 0)
-  {
-    G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! This will not be tracked." << G4endl;
-    anEvent->SetEventAborted();
-  }
+    {
+      G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! "
+	     << "This will not be tracked." << G4endl;
+      anEvent->SetEventAborted();
+    }
 
   /// Write initial particle position and momentum
   if (writeASCIISeedState) {

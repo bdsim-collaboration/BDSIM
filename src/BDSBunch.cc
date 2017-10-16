@@ -35,6 +35,8 @@ BDSBunch::BDSBunch():
   X0(0.0), Y0(0.0), Z0(0.0), S0(0.0), T0(0.0), 
   Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), sigmaT(0.0), sigmaE(0.0),
   useCurvilinear(false),
+  particleCanBeDifferent(false),
+  particleDefinition(nullptr),
   beamlineTransform(G4Transform3D()), nonZeroTransform(false),
   beamline(nullptr)
 {;}
@@ -86,7 +88,6 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = 0.0; 
   E = E0 * CLHEP::GeV;
   weight = 1.0;
-  return;
 }
 
 void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,

@@ -28,7 +28,9 @@
 #include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
@@ -36,6 +38,7 @@
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
+#include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -134,6 +137,7 @@ int main(int argc,char** argv)
 #endif
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  /// Here the geometry isn't actually constructed - this is called by the runManager->Initialize()
   auto samplerWorlds = BDS::ConstructAndRegisterParallelWorlds(realWorld);
   runManager->SetUserInitialization(realWorld);  
 
@@ -147,7 +151,21 @@ int main(int argc,char** argv)
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
-  BDSModularPhysicsList*  physList  = new BDSModularPhysicsList(physicsListName);
+  BDSModularPhysicsList* physList  = new BDSModularPhysicsList(physicsListName);
+
+  // Construction of the physics lists defines the necessary particles and therefore
+  // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
+  // must happen before the geometry is constructed (which is called by
+  // runManager->Initialize()).
+  BDSParticleDefinition* beamParticle;
+  beamParticle = physList->ConstructBeamParticle(globalConstants->ParticleName(),
+						 globalConstants->BeamTotalEnergy(),
+						 globalConstants->FFact());
+  G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
+  realWorld->SetRigidityForConstruction(beamParticle->BRho());
+  BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
+  BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
+  
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
   runManager->SetUserInitialization(physList);
@@ -195,7 +213,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Primary Generator"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
+  runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch, beamParticle));
 
   /// Initialize G4 kernel
 #ifdef BDSDEBUG 
@@ -277,6 +295,7 @@ int main(int argc,char** argv)
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
+  delete BDSFieldFactory::Instance();
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
@@ -287,7 +306,7 @@ int main(int argc,char** argv)
   delete runManager;
   delete bdsBunch;
 
-  G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
+  G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;
 
   return 0;
 }

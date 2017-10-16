@@ -9,6 +9,7 @@
 
 class BDSGlobalConstants;
 class BDSModularPhysicsList;
+class BDSParticleDefinition;
 class G4OpticalPhysics;
 class G4VPhysicsConstructor;
 
@@ -46,6 +47,13 @@ public:
   /// but also set cuts and print physics table.
   virtual void ConstructProcess();
 
+  /// Construct beam particle definition. Ensure that particle is instantiated
+  /// from a Geant4 point of view.  'ffact' is typically 1 or -1 used to flip
+  /// the sign of the rigidity for difference between convention and what's required.
+  BDSParticleDefinition* ConstructBeamParticle(G4String particleName,
+					       G4double totalEnergy,
+					       G4double ffact = 1) const;
+  
   /// Print out which physics lists are activated.
   void Print();
 
@@ -66,10 +74,9 @@ private:
   /// Private default constructor to force use of supplied one.
   BDSModularPhysicsList();
 
-  /// Update variables in global constants with all information about the primary particle
-  /// momenta etc.
-  void SetParticleDefinition();
-
+  /// Ensure required beam particle has been constructed for Geant4 purposes.
+  void ConstructBeamParticleG4(G4String name) const;
+  
   /// Construct the minimum particle set required (gamma, electron, positron,
   /// proton and anti-proton.
   void ConstructMinimumParticleSet();
@@ -79,7 +86,7 @@ private:
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();
 
-  ///  Construct resonances and quarks - sometimes required explicitly.
+  /// Construct resonances and quarks - sometimes required explicitly.
   void ConstructAllShortLived();
 
   /// Construct mesons.
@@ -133,6 +140,10 @@ private:
   void EmExtra();
   void EmLow();
   void HadronicElastic();
+  void Ion();
+  void IonPHP();
+  void IonINCLXX();
+  void IonBinary();
   void SynchRad();
   void Muon();					
   void Optical();

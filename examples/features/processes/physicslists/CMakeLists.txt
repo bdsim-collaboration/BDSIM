@@ -6,6 +6,7 @@ simple_testing(physics_emlow           "--file=emlow.gmad"           ${OVERLAP_C
 simple_testing(physics_ftfpbert        "--file=ftfpbert.gmad"        ${OVERLAP_CHECK})
 simple_testing_long(physics_ftfpberthp "--file=ftfpberthp.gmad"      ${OVERLAP_CHECK})
 simple_testing(physics_hadronicelastic "--file=hadronicelastic.gmad" ${OVERLAP_CHECK})
+simple_testing(physics_ion             "--file=ion.gmad"             ${OVERLAP_CHECK})
 simple_testing(physics_muon            "--file=muon.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics_optical         "--file=optical.gmad"         ${OVERLAP_CHECK})
 simple_testing(physics_qgspbert        "--file=qgspbert.gmad"        ${OVERLAP_CHECK})

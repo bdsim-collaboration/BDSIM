@@ -10,11 +10,9 @@
 #include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
-#include "G4FieldManager.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
-#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
@@ -37,11 +35,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   options(opt),
   beam(beamIn),
   beamParticleDefinition(nullptr),
-  beamMomentum(0.0),
-  beamKineticEnergy(0.0),
-  particleMomentum(0.0),
-  particleKineticEnergy(0.0),
-  brho(0.0),
   turnsTaken(0)
 {
   outputType = BDS::DetermineOutputType(options.outputFormat);
@@ -89,13 +82,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   itsLaserwireDir = G4ThreeVector(1,0,0);
   itsLaserwireTrackPhotons = true;
   itsLaserwireTrackElectrons = true;
-  
-  zeroMagField = new G4UniformMagField(G4ThreeVector());
-  zeroFieldManager=new G4FieldManager();
-  zeroFieldManager->SetDetectorField(zeroMagField);
-  zeroFieldManager->CreateChordFinder(zeroMagField);
-
-  cOverGeV = CLHEP::c_light /CLHEP::GeV;
 
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
@@ -176,8 +162,6 @@ G4int BDSGlobalConstants::PrintModulo()const
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete defaultBeamPipeModel;
-  delete zeroFieldManager;
-  delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
   delete invisibleVisAttr;

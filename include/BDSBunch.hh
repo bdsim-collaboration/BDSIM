@@ -12,6 +12,7 @@ namespace CLHEP {
 }
 
 class BDSBeamline;
+class BDSParticleDefinition;
 
 namespace GMAD {
   class Beam;
@@ -65,6 +66,14 @@ protected :
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
+  /// Wether the bunch distribution can specify a particle that's different
+  /// from the one used for the reference particle that created the beam line.
+  /// Derived class must change explicitly.
+  G4bool particleCanBeDifferent;
+
+  /// Optional particle definition that can be used.
+  BDSParticleDefinition* particleDefinition;
+
 public : 
   BDSBunch();
   virtual ~BDSBunch();
@@ -77,6 +86,10 @@ public :
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);
+
+  inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
+
+  inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.

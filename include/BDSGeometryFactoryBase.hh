@@ -4,6 +4,7 @@
 #include "BDSExtent.hh"
 
 #include "globals.hh"
+#include "G4RotationMatrix.hh"
 #include "G4String.hh"
 
 #include <map>
@@ -12,6 +13,8 @@
 class G4Colour;
 class G4LogicalVolume;
 class G4VisAttributes;
+class G4VPhysicalVolume;
+class G4VSolid;
 class BDSGeometryExternal;
 
 /**

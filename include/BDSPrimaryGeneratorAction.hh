@@ -6,7 +6,9 @@
 
 class BDSBunch;
 class BDSExtent;
+class BDSIonDefinition;
 class BDSOutputLoader;
+class BDSParticleDefinition;
 class G4Event;
 class G4ParticleGun;
 
@@ -18,7 +20,8 @@ class G4ParticleGun;
 class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
-  explicit BDSPrimaryGeneratorAction(BDSBunch*);    
+  BDSPrimaryGeneratorAction(BDSBunch*              bunchIn,
+			    BDSParticleDefinition* beamParticleIn);
   virtual ~BDSPrimaryGeneratorAction();
   
   virtual void GeneratePrimaries(G4Event*);
@@ -27,12 +30,16 @@ public:
   inline void SetWorldExtent(const BDSExtent worldExtentIn) {worldExtent = worldExtentIn;}
   
 private:
+  /// Beam particle.
+  BDSParticleDefinition* beamParticle;
+  const BDSIonDefinition* ionDefinition; ///< Ion definition. This doesn't own it.
+  
   /// Pointer a to G4 service class.
   G4ParticleGun*   particleGun;	  
   /// Weight of the primaries (currently always 1 and not possible to change it).
   G4double         weight;
   /// Pointer to the particle distribution generator.
-  BDSBunch*        bdsBunch;
+  BDSBunch*        bunch;
 
   /// Cache of whether to write seed state as ASCII per event.
   G4bool writeASCIISeedState;
@@ -51,6 +58,14 @@ private:
 
   /// World extent that particle coordinates are checked against to ensure they're inside it.
   BDSExtent worldExtent;
+
+  G4bool ionPrimary; ///< The primary particle will be an ion.
+
+  /// Can only get a G4ParticleDefinition for an ion when primary generator is called
+  /// so cache the first time. This is the flag of that cache.
+  G4bool ionCached; 
+  
+  G4double particleCharge; ///< Charge that will replace default ion charge.
 };
 
 #endif

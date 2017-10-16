@@ -2320,6 +2320,9 @@ is calculated using this if only the `angle` parameter has been specified.
 .. note:: The design energy is required to be specified, but the central energy, of say
 	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
 
+.. note:: `energy` here is the total energy of the particle. This must be greater than
+	  the rest mass of the particle.
+
 The user **must** specify at least `energy` and the `particle` type. In this case the
 `reference`_ distribution will be used as well as default parameters. The minimum
 beam definitions is::
@@ -2336,17 +2339,26 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is in `GeV` by default. The particle is typically one of the following:
+Energy is the total energy in `GeV`. The beam particle may be one of the following:
 
-* `e-`
-* `e+`
-* `proton`
+* `e-` or `e+`
+* `proton` or `antiproton`
 * `gamma`
-* `mu-`
-* `mu+`
+* `neutron`
+* `mu-` or `mu+`
+* `pi-` or `pi+`
 
-However, many particles can be used and are taken from the Geant4 particle table directly
-and therefore the Geant4 naming scheme should be used.
+The user may also specify any ion with the following syntax::
+
+  beam, particle="ion A Z";
+
+or::
+  
+  beam, particle="ion A Z Q";
+
+where `A`, `Z` and `Q` should be replaced by the the atomic number, the number of protons
+in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
+ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
