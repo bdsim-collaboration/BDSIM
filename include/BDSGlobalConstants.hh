@@ -5,6 +5,7 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
 #include "BDSParticle.hh"
+#include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -26,7 +27,6 @@ class G4VisAttributes;
 
 class BDSBeamPipeInfo;
 class BDSIonDefinition;
-class BDSParticleDefinition;
 class BDSTunnelInfo;
 
 /**
@@ -210,10 +210,6 @@ public:
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
-  inline G4double BeamMomentum()             const {return beamMomentum;}
-  inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
-  inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return beam.particleName;}
   inline BDSParticleDefinition* GetBeamParticleDefinition()  const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
@@ -230,11 +226,6 @@ public:
 
   /// @{ Setter
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
-  inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
-  inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
-  inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
-  inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
-  inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
@@ -258,12 +249,6 @@ private:
 
   /// Initial bunch parameters
   BDSParticleDefinition* beamParticleDefinition;
-
-  /// Reference beam energy
-  G4double beamMomentum, beamKineticEnergy;
-
-  /// Particle energy
-  G4double particleMomentum, particleKineticEnergy;
 
   /// Particle name
   G4String particleName;
