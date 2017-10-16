@@ -215,7 +215,6 @@ public:
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
-  inline G4FieldManager*       GetZeroFieldManager()     const {return zeroFieldManager;}
   inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
@@ -243,10 +242,6 @@ public:
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
 private:
-
-  G4UniformMagField* zeroMagField;
-  G4FieldManager*    zeroFieldManager;
-
   /// Initial bunch parameters
   BDSParticleDefinition* beamParticleDefinition;
 
