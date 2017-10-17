@@ -291,7 +291,6 @@ int main(int argc,char** argv)
   delete BDSAcceleratorModel::Instance();
   delete globalConstants;
   delete BDSMaterials::Instance();
-  delete parser;
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
@@ -305,6 +304,7 @@ int main(int argc,char** argv)
 #endif
   delete runManager;
   delete bdsBunch;
+  delete parser;
 
   G4cout << __FUNCTION__ << "> End of Run. Thank you for using BDSIM!" << G4endl;
 
