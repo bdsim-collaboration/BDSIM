@@ -141,7 +141,9 @@ private:
   void EmLow();
   void HadronicElastic();
   void Ion();
+#if G4VERSION_NUMBER > 1022
   void IonPHP();
+#endif
   void IonINCLXX();
   void IonBinary();
   void SynchRad();

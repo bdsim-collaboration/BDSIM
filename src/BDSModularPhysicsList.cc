@@ -37,7 +37,9 @@
 #include "G4IonBinaryCascadePhysics.hh"
 #include "G4IonINCLXXPhysics.hh"
 #include "G4IonPhysics.hh"
+#if G4VERSION_NUMBER > 1022
 #include "G4IonPhysicsPHP.hh"
+#endif
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #if G4VERSION_NUMBER > 1020
@@ -92,7 +94,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("ion",              &BDSModularPhysicsList::Ion));
+#if G4VERSION_NUMBER > 1022
   physicsConstructors.insert(std::make_pair("ionphp",           &BDSModularPhysicsList::IonPHP));
+#endif
   physicsConstructors.insert(std::make_pair("ioninclxx",        &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("ionbinary",        &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
@@ -479,6 +483,7 @@ void BDSModularPhysicsList::Ion()
     }
 }
 
+#if G4VERSION_NUMBER > 1022
 void BDSModularPhysicsList::IonPHP()
 {
   if (!physicsActivated["ionphp"])
@@ -487,6 +492,7 @@ void BDSModularPhysicsList::IonPHP()
       physicsActivated["ionphp"] = true;
     }
 }
+#endif
 
 void BDSModularPhysicsList::IonINCLXX()
 {
