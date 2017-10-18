@@ -138,7 +138,17 @@ private:
   void CutsAndLimits();
   void Em();
   void EmExtra();
-  void EmLow();
+  void EmPenelope();
+  void EmLivermore();
+  void EmLivermorePolarised();
+  void EmLowEP();
+  void EmGS();
+  void EmSS();
+  void EmWVI();
+  void Em1();
+  void Em2();
+  void Em3();
+  void Em4();
   void HadronicElastic();
   void Ion();
 #if G4VERSION_NUMBER > 1022
