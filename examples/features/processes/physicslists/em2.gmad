@@ -1,0 +1,12 @@
+c1: rcol, l=2*cm, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="em_2";
+
+option, checkOverlaps=1;
+
+beam, particle="e-",
+      energy=1*MeV;
