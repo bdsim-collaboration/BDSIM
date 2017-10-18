@@ -190,10 +190,21 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
   auto particleName = globals->ParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-  
-  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
+
+  auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
+  if (!particle)
+    {// could be ion that isn't defined
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "primary particle not defined yet - could be ion" << G4endl;
+#endif
+      return;
+    } 
+  else
+    {
+      auto pl = particle->GetProcessManager()->GetProcessList();
+      for (G4int i = 0; i < pl->length(); i++)
+	{ G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl; }
+    }
 }
 
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
