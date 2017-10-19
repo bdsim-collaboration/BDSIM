@@ -30,7 +30,9 @@
 #include "G4EmLowEPPhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmStandardPhysics.hh"
+#if G4VERSION_NUMBER > 1019
 #include "G4EmStandardPhysicsGS.hh"
+#endif
 #include "G4EmStandardPhysicsSS.hh"
 #include "G4EmStandardPhysicsWVI.hh"
 #include "G4EmStandardPhysics_option1.hh"
@@ -104,7 +106,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("em_livermore",     &BDSModularPhysicsList::EmLivermore));
   physicsConstructors.insert(std::make_pair("em_livermore_polarised", &BDSModularPhysicsList::EmLivermorePolarised));
   physicsConstructors.insert(std::make_pair("em_low_ep",        &BDSModularPhysicsList::EmLowEP));
+#if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",            &BDSModularPhysicsList::EmGS));
+#endif
   physicsConstructors.insert(std::make_pair("em_ss",            &BDSModularPhysicsList::EmSS));
   physicsConstructors.insert(std::make_pair("em_wvi",           &BDSModularPhysicsList::EmWVI));
   physicsConstructors.insert(std::make_pair("em_1",             &BDSModularPhysicsList::Em1));
@@ -521,6 +525,7 @@ void BDSModularPhysicsList::EmLowEP()
     }
 }
 
+#if G4VERSION_NUMBER > 1019
 void BDSModularPhysicsList::EmGS()
 {
   ConstructAllLeptons();
@@ -530,6 +535,7 @@ void BDSModularPhysicsList::EmGS()
       physicsActivated["em_gs"] = true;
     }
 }
+#endif
 
 void BDSModularPhysicsList::EmSS()
 {

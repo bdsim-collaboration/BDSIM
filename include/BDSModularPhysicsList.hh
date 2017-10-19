@@ -142,7 +142,9 @@ private:
   void EmLivermore();
   void EmLivermorePolarised();
   void EmLowEP();
+#if G4VERSION_NUMBER > 1019
   void EmGS();
+#endif
   void EmSS();
   void EmWVI();
   void Em1();
