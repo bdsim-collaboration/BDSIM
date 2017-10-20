@@ -1987,6 +1987,14 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
 +---------------------------+------------------------------------------------------------------------+
+| ion                       | A shortcut for `G4IonPhysics`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| ionphp                    | A shortcut for `G4IonPhysicsPHP`.                                      |
++---------------------------+------------------------------------------------------------------------+
+| ioninclxx                 | A shortcut for `G4IonINCLXXPhysics`.                                   |
++---------------------------+------------------------------------------------------------------------+
+| ionbinary                 | A shortcut for `G4IonBinaryCascadePhysics`.                            |
++---------------------------+------------------------------------------------------------------------+
 | muon                      | Provides muon production and scattering processes. Gamma to muons,     |
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
 |                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
