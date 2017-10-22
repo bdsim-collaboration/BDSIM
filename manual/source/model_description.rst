@@ -1989,11 +1989,11 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 | ion                       | A shortcut for `G4IonPhysics`.                                         |
 +---------------------------+------------------------------------------------------------------------+
-| ionphp                    | A shortcut for `G4IonPhysicsPHP`.                                      |
+| ionphp (*)                | A shortcut for `G4IonPhysicsPHP`.                                      |
 +---------------------------+------------------------------------------------------------------------+
-| ioninclxx                 | A shortcut for `G4IonINCLXXPhysics`.                                   |
+| ioninclxx (*)             | A shortcut for `G4IonINCLXXPhysics`.                                   |
 +---------------------------+------------------------------------------------------------------------+
-| ionbinary                 | A shortcut for `G4IonBinaryCascadePhysics`.                            |
+| ionbinary (*)             | A shortcut for `G4IonBinaryCascadePhysics`.                            |
 +---------------------------+------------------------------------------------------------------------+
 | muon                      | Provides muon production and scattering processes. Gamma to muons,     |
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
@@ -2031,6 +2031,12 @@ Physics Lists In BDSIM
 |                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                           | `G4SynchrotronRadiation`.                                              |
 +---------------------------+------------------------------------------------------------------------+
+
+
+.. warning:: (*) These physics lists require the optional low energy data from Geant4. The user should
+	     download this data from the Geant4 website and install it (for example: extract to
+	     <install-dir>/share/Geant4-10.3.3/data/ beside the other data) and export the environmental
+	     variable `G4PARTICLEHPDATA` to point to this directory.
 
 
 Physics Biasing

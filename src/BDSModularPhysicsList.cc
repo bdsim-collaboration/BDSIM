@@ -609,11 +609,11 @@ void BDSModularPhysicsList::HadronicElastic()
 
 void BDSModularPhysicsList::Ion()
 {
-  ConstructAllLeptons();
-  ConstructAllShortLived();
   ConstructAllBaryons();
   ConstructAllIons();
+  ConstructAllLeptons();
   ConstructAllMesons();
+  ConstructAllShortLived();
 
   if (!physicsActivated["ion"])
     {
@@ -625,6 +625,13 @@ void BDSModularPhysicsList::Ion()
 #if G4VERSION_NUMBER > 1022
 void BDSModularPhysicsList::IonPHP()
 {
+  BDS::CheckLowEnergyDataExists("ionphp");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ionphp"])
     {
       constructors.push_back(new G4IonPhysicsPHP());
@@ -635,6 +642,13 @@ void BDSModularPhysicsList::IonPHP()
 
 void BDSModularPhysicsList::IonINCLXX()
 {
+  BDS::CheckLowEnergyDataExists("ioninclxx");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ioninclxx"])
     {
       constructors.push_back(new G4IonINCLXXPhysics());
@@ -644,6 +658,13 @@ void BDSModularPhysicsList::IonINCLXX()
 
 void BDSModularPhysicsList::IonBinary()
 {
+  BDS::CheckLowEnergyDataExists("ionbinary");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ionbinary"])
     {
       constructors.push_back(new G4IonBinaryCascadePhysics());

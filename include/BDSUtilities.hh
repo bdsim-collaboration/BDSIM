@@ -91,6 +91,11 @@ namespace BDS
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
+
+  /// Check if the optional G4PARTICLEHPDATA exists in the environment for ions.
+  /// Will print out error and exit if no variable found. Physics list argument
+  /// used for feedback purposes.
+  void CheckLowEnergyDataExists(G4String physicsListName);
     
   ///@{ Get parameter value from the specification ('spec') string
   G4double GetParameterValueDouble(G4String spec, G4String name);
