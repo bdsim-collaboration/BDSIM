@@ -18,9 +18,6 @@ simple_testing(physics_ftfpbert        "--file=ftfpbert.gmad"        ${OVERLAP_C
 simple_testing_long(physics_ftfpberthp "--file=ftfpberthp.gmad"      ${OVERLAP_CHECK})
 simple_testing(physics_hadronicelastic "--file=hadronicelastic.gmad" ${OVERLAP_CHECK})
 simple_testing(physics_ion             "--file=ion.gmad"             ${OVERLAP_CHECK})
-simple_testing(physics_ionphp          "--file=ionphp.gmad"          ${OVERLAP_CHECK})
-simple_testing(physics_ioninclxx       "--file=ioninclxx.gmad"       ${OVERLAP_CHECK})
-simple_testing(physics_ionbinary       "--file=ionbinary.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics_muon            "--file=muon.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics_optical         "--file=optical.gmad"         ${OVERLAP_CHECK})
 simple_testing(physics_qgspbert        "--file=qgspbert.gmad"        ${OVERLAP_CHECK})
@@ -34,5 +31,9 @@ simple_testing(physics_synchrad        "--file=synchrad.gmad"        ${OVERLAP_C
 
 
 # test invalid physics list
-simple_testing(physics_invalid         "--file=gibberish.gmad"       ${OVERLAP_CHECK})
-set_tests_properties(physics_invalid PROPERTIES WILL_FAIL 1)
+simple_fail(physics_invalid         "--file=gibberish.gmad"       ${OVERLAP_CHECK})
+
+# these require the optional G4PARTICLEHPDATA set from the Geant4 website
+simple_fail(physics_ionphp          "--file=ionphp.gmad"          ${OVERLAP_CHECK})
+simple_fail(physics_ioninclxx       "--file=ioninclxx.gmad"       ${OVERLAP_CHECK})
+simple_fail(physics_ionbinary       "--file=ionbinary.gmad"       ${OVERLAP_CHECK})
