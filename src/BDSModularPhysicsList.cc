@@ -75,6 +75,7 @@
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
 
+#include <iomanip>
 #include <iterator>
 #include <limits>
 #include <map>
