@@ -25,8 +25,20 @@
 // physics processes / builders
 #include "G4DecayPhysics.hh"
 #include "G4EmExtraPhysics.hh"
+#include "G4EmLivermorePhysics.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
+#include "G4EmLowEPPhysics.hh"
 #include "G4EmPenelopePhysics.hh"
 #include "G4EmStandardPhysics.hh"
+#if G4VERSION_NUMBER > 1019
+#include "G4EmStandardPhysicsGS.hh"
+#endif
+#include "G4EmStandardPhysicsSS.hh"
+#include "G4EmStandardPhysicsWVI.hh"
+#include "G4EmStandardPhysics_option1.hh"
+#include "G4EmStandardPhysics_option2.hh"
+#include "G4EmStandardPhysics_option3.hh"
+#include "G4EmStandardPhysics_option4.hh"
 #include "G4HadronElasticPhysics.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #include "G4HadronPhysicsFTFP_BERT_HP.hh"
@@ -37,7 +49,9 @@
 #include "G4IonBinaryCascadePhysics.hh"
 #include "G4IonINCLXXPhysics.hh"
 #include "G4IonPhysics.hh"
+#if G4VERSION_NUMBER > 1022
 #include "G4IonPhysicsPHP.hh"
+#endif
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #if G4VERSION_NUMBER > 1020
@@ -61,6 +75,7 @@
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
 
+#include <iomanip>
 #include <iterator>
 #include <limits>
 #include <map>
@@ -87,12 +102,27 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
   physicsConstructors.insert(std::make_pair("em_extra",         &BDSModularPhysicsList::EmExtra));
-  physicsConstructors.insert(std::make_pair("em_low",           &BDSModularPhysicsList::EmLow));
+  physicsConstructors.insert(std::make_pair("em_low",           &BDSModularPhysicsList::EmPenelope));  // alias
+  physicsConstructors.insert(std::make_pair("em_penelope",      &BDSModularPhysicsList::EmPenelope));
+  physicsConstructors.insert(std::make_pair("em_livermore",     &BDSModularPhysicsList::EmLivermore));
+  physicsConstructors.insert(std::make_pair("em_livermore_polarised", &BDSModularPhysicsList::EmLivermorePolarised));
+  physicsConstructors.insert(std::make_pair("em_low_ep",        &BDSModularPhysicsList::EmLowEP));
+#if G4VERSION_NUMBER > 1019
+  physicsConstructors.insert(std::make_pair("em_gs",            &BDSModularPhysicsList::EmGS));
+#endif
+  physicsConstructors.insert(std::make_pair("em_ss",            &BDSModularPhysicsList::EmSS));
+  physicsConstructors.insert(std::make_pair("em_wvi",           &BDSModularPhysicsList::EmWVI));
+  physicsConstructors.insert(std::make_pair("em_1",             &BDSModularPhysicsList::Em1));
+  physicsConstructors.insert(std::make_pair("em_2",             &BDSModularPhysicsList::Em2));
+  physicsConstructors.insert(std::make_pair("em_3",             &BDSModularPhysicsList::Em3));
+  physicsConstructors.insert(std::make_pair("em_4",             &BDSModularPhysicsList::Em4));
   physicsConstructors.insert(std::make_pair("hadronic_elastic", &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("ion",              &BDSModularPhysicsList::Ion));
+#if G4VERSION_NUMBER > 1022
   physicsConstructors.insert(std::make_pair("ionphp",           &BDSModularPhysicsList::IonPHP));
+#endif
   physicsConstructors.insert(std::make_pair("ioninclxx",        &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("ionbinary",        &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
@@ -165,10 +195,21 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
   auto particleName = globals->ParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-  
-  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
+
+  auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
+  if (!particle)
+    {// could be ion that isn't defined
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "primary particle not defined yet - could be ion" << G4endl;
+#endif
+      return;
+    } 
+  else
+    {
+      auto pl = particle->GetProcessManager()->GetProcessList();
+      for (G4int i = 0; i < pl->length(); i++)
+	{ G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl; }
+    }
 }
 
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
@@ -444,13 +485,116 @@ void BDSModularPhysicsList::EmExtra()
     }
 }
 							  
-void BDSModularPhysicsList::EmLow()
+void BDSModularPhysicsList::EmPenelope()
 {
   ConstructAllLeptons();
-  if (!physicsActivated["em_low"])
+  if (!physicsActivated["em_penelope"])
     {
       constructors.push_back(new G4EmPenelopePhysics());
+      physicsActivated["em_penelope"] = true;
+    }
+}
+
+void BDSModularPhysicsList::EmLivermore()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_livermore"] || !physicsActivated["em_low"])
+    {
+      constructors.push_back(new G4EmLivermorePhysics());
+      physicsActivated["em_livermore"] = true;
+      physicsActivated["em_low"]       = true;
+    }
+}
+
+void BDSModularPhysicsList::EmLivermorePolarised()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_livermore_polarised"])
+    {
+      constructors.push_back(new G4EmLivermorePolarizedPhysics());
       physicsActivated["em_low"] = true;
+    }
+}
+
+void BDSModularPhysicsList::EmLowEP()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_low_ep"])
+    {
+      constructors.push_back(new G4EmLowEPPhysics());
+      physicsActivated["em_low_ep"] = true;
+    }
+}
+
+#if G4VERSION_NUMBER > 1019
+void BDSModularPhysicsList::EmGS()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_gs"])
+    {
+      constructors.push_back(new G4EmStandardPhysicsGS());
+      physicsActivated["em_gs"] = true;
+    }
+}
+#endif
+
+void BDSModularPhysicsList::EmSS()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_ss"])
+    {
+      constructors.push_back(new G4EmStandardPhysicsSS());
+      physicsActivated["em_ss"] = true;
+    }
+}
+
+void BDSModularPhysicsList::EmWVI()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_wvi"])
+    {
+      constructors.push_back(new G4EmStandardPhysicsWVI());
+      physicsActivated["em_wvi"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Em1()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_1"])
+    {
+      constructors.push_back(new G4EmStandardPhysics_option1());
+      physicsActivated["em_1"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Em2()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_2"])
+    {
+      constructors.push_back(new G4EmStandardPhysics_option2());
+      physicsActivated["em_2"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Em3()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_3"])
+    {
+      constructors.push_back(new G4EmStandardPhysics_option3());
+      physicsActivated["em_3"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Em4()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_4"])
+    {
+      constructors.push_back(new G4EmStandardPhysics_option4());
+      physicsActivated["em_4"] = true;
     }
 }
 
@@ -466,11 +610,11 @@ void BDSModularPhysicsList::HadronicElastic()
 
 void BDSModularPhysicsList::Ion()
 {
-  ConstructAllLeptons();
-  ConstructAllShortLived();
   ConstructAllBaryons();
   ConstructAllIons();
+  ConstructAllLeptons();
   ConstructAllMesons();
+  ConstructAllShortLived();
 
   if (!physicsActivated["ion"])
     {
@@ -479,17 +623,33 @@ void BDSModularPhysicsList::Ion()
     }
 }
 
+#if G4VERSION_NUMBER > 1022
 void BDSModularPhysicsList::IonPHP()
 {
+  BDS::CheckLowEnergyDataExists("ionphp");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ionphp"])
     {
       constructors.push_back(new G4IonPhysicsPHP());
       physicsActivated["ionphp"] = true;
     }
 }
+#endif
 
 void BDSModularPhysicsList::IonINCLXX()
 {
+  BDS::CheckLowEnergyDataExists("ioninclxx");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ioninclxx"])
     {
       constructors.push_back(new G4IonINCLXXPhysics());
@@ -499,6 +659,13 @@ void BDSModularPhysicsList::IonINCLXX()
 
 void BDSModularPhysicsList::IonBinary()
 {
+  BDS::CheckLowEnergyDataExists("ionbinary");
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  
   if (!physicsActivated["ionbinary"])
     {
       constructors.push_back(new G4IonBinaryCascadePhysics());

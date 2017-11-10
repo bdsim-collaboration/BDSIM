@@ -1892,33 +1892,32 @@ are a predetermined set of physics processes suitable for a certain applications
 the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
 Geant4 ones.
 
-Note, using extra physics processes that are not required will slow the simulation and produce
-many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
-only use the minimal set of physics processes required.
-
 The physics list can be selected with the following syntax (delimited by a space)::
 
   option, physicsList = "physicslistname anotherphysicslistname";
 
   option, physicsList = "em optical";
 
-For general high energy physics we recommend::
+For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
+.. note:: Using extra physics processes that are not required will slow the simulation and produce
+	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
+	  only use the minimal set of physics processes required.
+  
 .. note:: The strings for the physics list are case-insensitive.
 
 .. versionadded:: 0.92
-
-   Note, the physics lists changed from BDSIM produced physics lists to using the Geant4
-   modular physics lists in version 0.92. This also introduced the space-delimited syntax
-   slight changes to the physics list names.
+		  The physics lists changed from BDSIM produced physics lists to using the Geant4
+		  modular physics lists in version 0.92. This also introduced the space-delimited syntax
+		  slight changes to the physics list names.
 
   
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-More details can be found in the Geant4 documentation:
+BDSIM uses the Geant4 physics lists directly and more details can be found in the Geant4 documentation:
 
    * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
@@ -1950,6 +1949,29 @@ Physics Lists In BDSIM
 | em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
 |                           | `G4EmPenelopePhysics`.                                                 |
 +---------------------------+------------------------------------------------------------------------+
+| em_penelope               | The same as `em` but using low energy electromagnetic models. Uses     |
+|                           | `G4EmPenelopePhysics`.                                                 |
++---------------------------+------------------------------------------------------------------------+
+| em_livermore              | `G4EmLivermorePhysics`.                                                |
++---------------------------+------------------------------------------------------------------------+
+| em_livermore_polarised    | `G4EmLivermorePolarizedPhysics`.                                       |
++---------------------------+------------------------------------------------------------------------+
+| em_low_ep                 | `G4EmLowEPPhysics`.                                                    |
++---------------------------+------------------------------------------------------------------------+
+| em_gs                     | `G4EmStandardPhysicsGS`.                                               |
++---------------------------+------------------------------------------------------------------------+
+| em_ss                     | `G4EmStandardPhysicsSS`.                                               |
++---------------------------+------------------------------------------------------------------------+
+| em_wvi                    | `G4EmStandardPhysicsWVI`.                                              |
++---------------------------+------------------------------------------------------------------------+
+| em_1                      | `G4EmStandardPhysics_option1`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| em_2                      | `G4EmStandardPhysics_option2`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| em_3                      | `G4EmStandardPhysics_option3`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| em_4                      | `G4EmStandardPhysics_option4`.                                         |
++---------------------------+------------------------------------------------------------------------+
 | ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
 |                           | is based on the FRITIOF description of string excitation and           |
 |                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
@@ -1964,6 +1986,14 @@ Physics Lists In BDSIM
 | hadronic                  | A shortcut for `QGSP_BERT`.                                            |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| ion                       | A shortcut for `G4IonPhysics`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| ionphp (*)                | A shortcut for `G4IonPhysicsPHP`.                                      |
++---------------------------+------------------------------------------------------------------------+
+| ioninclxx (*)             | A shortcut for `G4IonINCLXXPhysics`.                                   |
++---------------------------+------------------------------------------------------------------------+
+| ionbinary (*)             | A shortcut for `G4IonBinaryCascadePhysics`.                            |
 +---------------------------+------------------------------------------------------------------------+
 | muon                      | Provides muon production and scattering processes. Gamma to muons,     |
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
@@ -2001,6 +2031,12 @@ Physics Lists In BDSIM
 |                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                           | `G4SynchrotronRadiation`.                                              |
 +---------------------------+------------------------------------------------------------------------+
+
+
+.. warning:: (*) These physics lists require the optional low energy data from Geant4. The user should
+	     download this data from the Geant4 website and install it (for example: extract to
+	     <install-dir>/share/Geant4-10.3.3/data/ beside the other data) and export the environmental
+	     variable `G4PARTICLEHPDATA` to point to this directory.
 
 
 Physics Biasing

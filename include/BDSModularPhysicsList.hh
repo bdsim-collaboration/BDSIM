@@ -138,10 +138,24 @@ private:
   void CutsAndLimits();
   void Em();
   void EmExtra();
-  void EmLow();
+  void EmPenelope();
+  void EmLivermore();
+  void EmLivermorePolarised();
+  void EmLowEP();
+#if G4VERSION_NUMBER > 1019
+  void EmGS();
+#endif
+  void EmSS();
+  void EmWVI();
+  void Em1();
+  void Em2();
+  void Em3();
+  void Em4();
   void HadronicElastic();
   void Ion();
+#if G4VERSION_NUMBER > 1022
   void IonPHP();
+#endif
   void IonINCLXX();
   void IonBinary();
   void SynchRad();

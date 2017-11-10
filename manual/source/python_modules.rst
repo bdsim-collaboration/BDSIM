@@ -11,6 +11,7 @@ sections.
 * pybdsim - conversion and building of input as well as ASCII data analysis
 * pymadx  - file loader for MADX Tfs file format
 * pymad8  - file loader for MAD8 file format
+* pytransport - file loader for Transport file format
 
 Installing Python Packages
 ==========================
@@ -37,8 +38,9 @@ Documentation
 In the following sections is individual documentatino for each python package.
 These are also available when using ipython by typing ? after any module or class.
 
-   * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_
+   * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
+   * `<http://www.pp.rhul.ac.uk/bdsim/pytransport/>`_
 
 .. toctree::
    :maxdepth: 2
