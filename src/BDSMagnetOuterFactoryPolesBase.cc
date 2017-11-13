@@ -1646,7 +1646,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   if (buildVertically)
     {std::swap(bpHalfWidth, bpHalfHeight);}
   G4double poleHalfWidth  = bpHalfWidth  + lengthSafetyLarge;
-  poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.25);
+  poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.18);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleHalfWidth > 0.4*outerDiameter)
     {poleHalfWidth = outerDiameter*0.15;}
@@ -1664,7 +1664,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     }
 
   // propose yoke thickness
-  G4double yokeThickness = 0.15 * outerDiameter;
+  G4double yokeThickness = 0.12 * outerDiameter;
   // check it's a suitable size and will fit in
   if (yokeThickness > outerHalf - poleHalfHeight)
     {
@@ -1684,7 +1684,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double coilHeightOriginal = coilHeight;
   // reduce the coils from the absolute maximum;
   coilHeight *= 0.8;
-  coilWidth  *= 0.65;
+  coilWidth  *= 0.8;
 
   // Vertical offset of coil from pole tip
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
