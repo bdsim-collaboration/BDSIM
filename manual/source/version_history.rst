@@ -1,4 +1,4 @@
-V0.993 - 2017 / 08 / ??
+V0.993 - 2017 / 11 / ??
 =======================
 
 New Features
@@ -7,21 +7,40 @@ New Features
 * Executable option --writeseedstate is now --writeSeedState.
 * Executable option --exportgeometryto is now --exportGeometryTo
 * Executable option --distrfile is now --distrFile.
-
+* Redefined simpler syntax for halo distribution. Please see manual for new parameters.
+* Support for all EM physics lists included with Geant4.
+* Support for an ion as the primary beam particle.
+* Support for ion physics lists.
+  
 Bug Fixes
 ---------
 
-* Cherenkov radiation in water being fixed -> Need to add refractive index to water.
+* Cherenkov radiation in water fixed with specification of optical refractive index.
+* Fix ATF2 example input syntax and update model.
+* Compilation fixes for compilers with XCode 9.
 
+Output Changes
+--------------
+
+* Options split into options and beam - beam contains all information related to beam definition.
+* Associated output classes and analysis classes added for Beam in output.
+* Remove older output format.
+  
 General
 -------
+
+* Updated automatic Geant4 from AFS to version 10.3.p01.
+* Updated automatic ROOT from AFS to version 6.06.08.
+* Remove support for ROOT v5 and require v6 onwards.
 
 Utilities
 ---------
 
-* pymadx v0.9
-* pybdsim v1.2
-* pymad8 v0.7
+* Python utilities now use a setup.py compatable with PIP.
+* pybdsim v1.3
+* pymadx v1.0
+* pymad8 v0.8
+* pytransport v0.1
 
 
 V0.992 - 2017 / 07 / 26
