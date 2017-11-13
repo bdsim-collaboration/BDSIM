@@ -169,7 +169,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 	outer = factory->CreateSectorBend(name, outerLength, beamPipe,
 					  outerDiameter, containerLength,
 					  outerInfo->angleIn, outerInfo->angleOut,
-					  yokeOnLeft, outerMaterial, buildEndPiece);
+					  yokeOnLeft, outerInfo->hStyle,
+					  outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::rectangularbend:
@@ -177,7 +178,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 	outer = factory->CreateRectangularBend(name, outerLength, beamPipe,
 					       outerDiameter, containerLength,
 					       outerInfo->angleIn, outerInfo->angleOut,
-					       yokeOnLeft, outerMaterial, buildEndPiece);
+					       yokeOnLeft, outerInfo->hStyle,
+					       outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::sextupole:

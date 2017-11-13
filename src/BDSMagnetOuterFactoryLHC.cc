@@ -47,6 +47,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      angleIn,
 							   G4double      angleOut,
 							   G4bool        /*yokeOnLeft*/,
+							   G4bool        /*hStyle*/,
 							   G4Material*   outerMaterial,
 							   G4bool        /*buildEndPiece*/)
 
@@ -923,6 +924,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      angleIn,
 								G4double      angleOut,
 								G4bool        yokeOnLeft,
+								G4bool        hStyle,
 								G4Material*   outerMaterial,
 								G4bool        buildEndPiece)
 {
@@ -937,6 +939,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     angleIn,
 									     angleOut,
 									     yokeOnLeft,
+									     hStyle,
 									     outerMaterial,
 									     buildEndPiece);
 }

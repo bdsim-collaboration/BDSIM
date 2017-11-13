@@ -36,6 +36,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name
 							    G4double      /*angleIn*/,
 							    G4double      /*angelOut*/,
 							    G4bool        /*yokeOnLeft*/,
+							    G4bool        /*hStyle*/,
 							    G4Material*   /*outerMaterial*/,
 							    G4bool        /*buildEndPiece*/)
 {
@@ -53,6 +54,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,
 								 G4bool        /*yokeOnLeft*/,
+								 G4bool        /*hStyle*/,
 								 G4Material*   /*outerMaterial*/,
 								 G4bool        /*buildEndPiece*/)
 {

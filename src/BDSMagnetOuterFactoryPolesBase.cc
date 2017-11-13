@@ -94,6 +94,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4double      angleIn,
 								 G4double      angleOut,
 								 G4bool        yokeOnLeft,
+								 G4bool        hStyle,
 								 G4Material*   outerMaterial,
 								 G4bool        buildEndPiece)
 {
@@ -113,6 +114,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      angleIn,
 								      G4double      angleOut,
 								      G4bool        yokeOnLeft,
+								      G4bool        hStyle,
 								      G4Material*   outerMaterial,
 								      G4bool        buildEndPiece)
 {
