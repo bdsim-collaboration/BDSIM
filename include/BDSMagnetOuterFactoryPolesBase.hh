@@ -289,18 +289,31 @@ protected:
 
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
   /// and can optionally be built vertically.
-  BDSMagnetOuter* CreateDipole(G4String     name,
-			       G4double     length,
-			       BDSBeamPipe* beamPipe,
-			       G4double     outerDiameter,
-			       G4double     containerLength,
-			       G4double     angleIn,
-			       G4double     angleOut,
-			       G4Material*  material,
-			       G4bool       bendLeft,
-			       G4Colour*    colour,
-			       G4bool       buildVertically = false,
-			       G4bool       buildEndPiece   = true);
+  BDSMagnetOuter* CreateDipoleC(G4String     name,
+				G4double     length,
+				BDSBeamPipe* beamPipe,
+				G4double     outerDiameter,
+				G4double     containerLength,
+				G4double     angleIn,
+				G4double     angleOut,
+				G4Material*  material,
+				G4bool       yokeOnLeft,
+				G4Colour*    colour,
+				G4bool       buildVertically = false,
+				G4bool       buildEndPiece   = true);
+
+  /// Routine to construct an H shaped dipole magnet and can optionally be built vertically.
+  BDSMagnetOuter* CreateDipoleH(G4String     name,
+				G4double     length,
+				BDSBeamPipe* beamPipe,
+				G4double     outerDiameter,
+				G4double     containerLength,
+				G4double     angleIn,
+				G4double     angleOut,
+				G4Material*  material,
+				G4Colour*    colour,
+				G4bool       buildVertically = false,
+				G4bool       buildEndPiece   = true);
 };
 
 #endif

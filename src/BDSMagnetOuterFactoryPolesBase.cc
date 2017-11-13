@@ -20,6 +20,7 @@
 #include "G4IntersectionSolid.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4TwoVector.hh"
@@ -102,8 +103,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   auto colour = BDSColours::Instance()->GetColour("sectorbend");
-  return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-		      angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
+  if (hStyle)
+    {
+      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+			   angleOut, outerMaterial, colour, false, buildEndPiece);
+    }
+  else
+    {
+      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
+    }
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String      name,
@@ -122,8 +131,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   auto colour = BDSColours::Instance()->GetColour("rectangularbend");
-  return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-		      angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece); 
+  if (hStyle)
+    {
+      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+			   angleOut, outerMaterial, colour, false, buildEndPiece);
+    }
+  else
+    {
+      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
+    }
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
@@ -256,8 +273,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 #endif
   G4String colourName = (vertical) ? "vkicker" : "hkicker";
   auto colour = BDSColours::Instance()->GetColour(colourName);
-  return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-		      outerMaterial, true, colour, vertical, buildEndPiece);
+  return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
+		       outerMaterial, true, colour, vertical, buildEndPiece);
 }
 
 /// functions below here are private to this particular factory
@@ -808,18 +825,18 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
-							     G4double     length,
-							     BDSBeamPipe* beamPipe,
-							     G4double     outerDiameter,
-							     G4double     containerLength,
-							     G4double     angleIn,
-							     G4double     angleOut,
-							     G4Material*  material,
-							     G4bool       yokeOnLeft,
-							     G4Colour*    colour,
-							     G4bool       buildVertically,
-							     G4bool       buildEndPiece)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
+							      G4double     length,
+							      BDSBeamPipe* beamPipe,
+							      G4double     outerDiameter,
+							      G4double     containerLength,
+							      G4double     angleIn,
+							      G4double     angleOut,
+							      G4Material*  material,
+							      G4bool       yokeOnLeft,
+							      G4Colour*    colour,
+							      G4bool       buildVertically,
+							      G4bool       buildEndPiece)
 {
   CleanUp();
 
@@ -1301,6 +1318,746 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   std::vector<G4TwoVector> outEPPoints; // output face end piece points
 
   G4double inXO = poleHalfWidth - lengthSafetyLarge;
+
+  // create an ellipse with no angle, then shear it to match the angle
+  G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
+  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += CLHEP::halfpi/nSegments)
+    { // left side
+      G4double x = -inXO + coilWidth*cos(t);
+      G4double y = coilWidth*sin(t);
+      inEPPoints.push_back(G4TwoVector(x,y));
+    }
+  
+  for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += CLHEP::halfpi/nSegments)
+    { // right side
+      G4double x = inXO + coilWidth*cos(t);
+      G4double y = coilWidth*sin(t);
+      inEPPoints.push_back(G4TwoVector(x,y));
+    }
+
+  // shear it
+  // (x')   (1        0) (x)
+  // (y') = (tan(phi) 1) (y)
+  // ->  x' = x; y' = tan(phi)*x + y
+  // copy the points, flip in y and shear for output angle
+  for (const auto point : inEPPoints) // copying this time
+    {
+      G4double outy = -1*(point.x()*tan(-angleOut) + point.y());
+      outEPPoints.push_back(G4TwoVector(point.x(),outy));
+    }
+  for (auto& point : inEPPoints)  // modify in place for shearing original points
+    {point.setY(point.x()*tan(-angleIn) + point.y());}
+
+  // these are projected by coilHeight in z as they'll be rotated later
+  G4VSolid* endPieceSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
+						   inEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5 - lsl, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+
+  // these are projected by coilHeight in z as they'll be rotated later
+  G4VSolid* endPieceSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
+						   outEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5 - lsl, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+  
+  // end piece container solids - simple extruded solid intersectd with cut tubs for
+  // angled faces build about magnet zero so we get the coordinates right for general placement
+  std::vector<G4TwoVector> contEPPoints;
+  const G4double connector = 1*CLHEP::mm;
+  G4double xmax = poleHalfWidth + coilWidth + connector;
+  G4double ymax = poleHalfHeight + coilHeight + cDY + connector;
+  G4double yInn = poleHalfHeight + cDY;
+  contEPPoints.push_back(G4TwoVector(xmax + connector,  ymax));
+  contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
+  contEPPoints.push_back(G4TwoVector(-xmax,  yInn));
+  contEPPoints.push_back(G4TwoVector( xmax,  yInn));
+  contEPPoints.push_back(G4TwoVector( xmax, -yInn));
+  contEPPoints.push_back(G4TwoVector(-xmax, -yInn));
+  contEPPoints.push_back(G4TwoVector(-xmax, -ymax));
+  contEPPoints.push_back(G4TwoVector(xmax + connector, -ymax));
+  
+  if (buildVertically)
+    {
+      for (auto& point : contEPPoints)
+	{point = BDS::Rotate(point, CLHEP::halfpi);}
+    }
+  
+  // calculate length for each end piece container volume - could be different due to different angles
+  G4double ePInLength  = coilWidth + lengthSafetyLarge; // adjustable for intersection
+  G4double ePInLengthZ = ePInLength; // copy that will be final length of object
+  if (BDS::IsFinite(angleIn))
+    {
+      G4double dzIn = tan(std::abs(angleIn)) * outerDiameter;
+      ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
+    }
+
+    BDSExtent ePExtOuter = BDSExtent(-xmax, xmax + connector,
+                                     -ymax, ymax,
+                                     -ePInLengthZ*0.5, ePInLengthZ*0.5);
+    BDSExtent ePExtInner = BDSExtent(-xmax, xmax,
+                                     -yInn, yInn,
+                                     -ePInLengthZ*0.5, ePInLengthZ*0.5);
+
+  G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
+						 contEPPoints,   // transverse 2d coordinates
+						 ePInLength*0.5, // z half length
+						 zOffsets, zScale,
+						 zOffsets, zScale);
+
+  G4double ePOutLength  = coilWidth + lengthSafetyLarge; // adjustable for intersection
+  G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
+  if (BDS::IsFinite(angleOut))
+    {
+      G4double dzOut = tan(std::abs(angleOut)) * outerDiameter;
+      ePOutLength    = std::max(2*ePOutLength, 2*dzOut); // 2x as long for intersection
+    }
+
+  G4VSolid* ePContSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
+						 contEPPoints,   // transverse 2d coordinates
+						 ePOutLength*0.5, // z half length
+						 zOffsets, zScale,
+						 zOffsets, zScale);
+
+  // If there is a finite input face angle, the extruded solid above will be longer and
+  // we now make a cut tubs for the angled faces to intersect it with.
+  if (BDS::IsFinite(angleIn))
+    {
+      
+      G4ThreeVector inputfaceReversed = inputFaceNormal * -1;
+      G4VSolid* ePContSolidInAng = new G4CutTubs(name + "_angled_face_solid", // name
+						 0,                           // inner radius
+						 outerDiameter,               // outer radius
+						 ePInLengthZ*0.5,             // z half length
+						 0,                           // start angle
+						 CLHEP::twopi,                // sweep angle
+						 inputFaceNormal,             // input face normal
+						 inputfaceReversed);          // output face normal
+
+      // potential memory leak here with overwriting
+      ePContSolidIn = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name
+					      ePContSolidIn,
+					      ePContSolidInAng);
+    }
+
+  if (BDS::IsFinite(angleOut))
+    {
+      
+      G4ThreeVector outputfaceReversed = outputFaceNormal * -1;
+      G4VSolid* ePContSolidOutAng = new G4CutTubs(name + "_angled_face_solid", // name
+						  0,                           // inner radius
+						  outerDiameter,               // outer radius
+						  ePOutLengthZ*0.5,            // z half length
+						  0,                           // start angle
+						  CLHEP::twopi,                // sweep angle
+						  outputfaceReversed,          // input face normal
+						  outputFaceNormal);           // output face normal
+
+      // potential memory leak here with overwriting
+      ePContSolidOut = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name
+					       ePContSolidOut,
+					       ePContSolidOutAng);
+    }
+
+  // end piece logical volumes
+  // coil end piece lv
+  G4Material* copper = BDSMaterials::Instance()->GetMaterial("copper");
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  
+  G4LogicalVolume* ePInLV = new G4LogicalVolume(endPieceSolidIn,           // solid
+						copper,                    // material
+						name + "_end_coil_in_lv"); // name
+  
+  G4LogicalVolume* ePContInLV = new G4LogicalVolume(ePContSolidIn,             // solid
+						    emptyMaterial,             // material
+						    name + "_end_cont_in_lv"); // name
+
+  G4LogicalVolume* ePOutLV = new G4LogicalVolume(endPieceSolidOut,           // solid
+						 copper,                     // material
+						 name + "_end_coil_out_lv"); // name
+  
+  G4LogicalVolume* ePContOutLV = new G4LogicalVolume(ePContSolidOut,             // solid
+						     emptyMaterial,              // material
+						     name + "_end_cont_out_lv"); // name
+
+  G4Colour* coilColour = BDSColours::Instance()->GetColour("coil");
+  G4VisAttributes* coilVisIn  = new G4VisAttributes(*coilColour);
+  coilVisIn->SetVisibility(true);
+  G4VisAttributes* coilVisOut = new G4VisAttributes(*coilVisIn);
+
+  ePInLV->SetVisAttributes(coilVisIn);
+  ePOutLV->SetVisAttributes(coilVisOut);
+  ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+
+  auto defaultUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  ePInLV->SetUserLimits(defaultUserLimits);
+  ePOutLV->SetUserLimits(defaultUserLimits);
+  ePContInLV->SetUserLimits(defaultUserLimits);
+  ePContOutLV->SetUserLimits(defaultUserLimits);
+  
+  // placements
+  G4RotationMatrix* endCoilInRM = new G4RotationMatrix();
+  endCoilInRM->rotateX(-CLHEP::halfpi);
+  if (buildVertically)
+    {endCoilInRM->rotateY(CLHEP::halfpi);}
+  G4ThreeVector endCoilTranslationInTop(0, coilDY-lsl, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationInLow(0,-coilDY+lsl, 0.5*coilWidth);
+  G4RotationMatrix* vertRot = new G4RotationMatrix();
+  vertRot->rotateZ(CLHEP::halfpi);
+  if (buildVertically)
+    {
+      endCoilTranslationInTop.transform(*vertRot);
+      endCoilTranslationInLow.transform(*vertRot);
+    }
+  G4PVPlacement* ePInTopPv = new G4PVPlacement(endCoilInRM,        // rotation
+					       endCoilTranslationInTop, // position
+					       ePInLV,             // logical volume
+					       name + "_end_piece_in_top_pv", // name
+					       ePContInLV,         // mother lv to be placed in
+					       false,              // no boolean operation
+					       0,                  // copy number
+					       checkOverlaps);     // check overlaps
+  G4PVPlacement* ePInLowPv = new G4PVPlacement(endCoilInRM,        // rotation
+					       endCoilTranslationInLow, // position
+					       ePInLV,             // logical volume
+					       name + "_end_piece_in_low_pv", // name
+					       ePContInLV,         // mother lv to be placed in
+					       false,              // no boolean operation
+					       0,                  // copy number
+					       checkOverlaps);     // check overlaps
+
+  G4RotationMatrix* endCoilOutRM = new G4RotationMatrix(*endCoilInRM); // copy as independent objects
+  
+  G4ThreeVector endCoilTranslationOutTop(0, coilDY, -0.5*coilWidth);
+  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, -0.5*coilWidth);
+  if (buildVertically)
+    {
+      endCoilTranslationOutTop.transform(*vertRot);
+      endCoilTranslationOutLow.transform(*vertRot);
+    }
+  delete vertRot;
+  G4PVPlacement* ePOutTopPv = new G4PVPlacement(endCoilOutRM,       // rotation
+						endCoilTranslationOutTop, // position
+						ePOutLV,            // logical volume
+						name + "_end_piece_out_top_pv", // name
+						ePContOutLV,        // mother lv to be placed in
+						false,              // no boolean operation
+						0,                  // copy number
+						checkOverlaps);     // check overlaps
+  G4PVPlacement* ePOutLowPv = new G4PVPlacement(endCoilOutRM,        // rotation
+						endCoilTranslationOutLow, // position
+						ePOutLV,             // logical volume
+						name + "_end_piece_out_low_pv", // name
+						ePContOutLV,        // mother lv to be placed in
+						false,              // no boolean operation
+						0,                  // copy number
+						checkOverlaps);     // check overlaps
+  
+  // packaging - geometry component
+  G4ThreeVector inputFaceNormalR = inputFaceNormal * -1; // just -1 as parallel but opposite
+  BDSSimpleComponent* endPieceInSC = new BDSSimpleComponent(name + "_end_piece_in",
+							    ePInLengthZ,
+							    0/*angle*/,
+							    ePContSolidIn,
+							    ePContInLV,
+							    inputFaceNormal,
+							    inputFaceNormalR);
+  
+  endPieceInSC->RegisterPhysicalVolume(ePInTopPv);
+  endPieceInSC->RegisterPhysicalVolume(ePInLowPv);
+  endPieceInSC->RegisterRotationMatrix(endCoilInRM);
+  endPieceInSC->RegisterVisAttributes(coilVisIn);
+  endPieceInSC->RegisterLogicalVolume(ePInLV);
+  endPieceInSC->RegisterSolid(endPieceSolidIn);
+  endPieceInSC->RegisterSensitiveVolume(ePInLV);
+  endPieceInSC->SetExtent(ePExtOuter);
+  endPieceInSC->SetInnerExtent(ePExtInner);
+  
+  G4ThreeVector outputFaceNormalR = outputFaceNormal * -1; // just -1 as parallel but opposite
+  BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
+							     ePOutLengthZ,
+							     0/*angle*/,
+							     ePContSolidOut,
+							     ePContOutLV,
+							     outputFaceNormalR,
+							     outputFaceNormal);
+  
+  endPieceOutSC->RegisterPhysicalVolume(ePOutTopPv);
+  endPieceOutSC->RegisterPhysicalVolume(ePOutLowPv);
+  endPieceOutSC->RegisterRotationMatrix(endCoilOutRM);
+  endPieceOutSC->RegisterVisAttributes(coilVisOut);
+  endPieceOutSC->RegisterLogicalVolume(ePOutLV);
+  endPieceOutSC->RegisterSolid(endPieceSolidOut);
+  endPieceOutSC->RegisterSensitiveVolume(ePOutLV);
+  endPieceOutSC->SetExtent(ePExtOuter);
+  endPieceOutSC->SetInnerExtent(ePExtInner);
+
+  // attach to the magnet outer
+  outer->SetEndPieceBefore(endPieceInSC);
+  outer->SetEndPieceAfter(endPieceOutSC);
+  
+  return outer;
+}
+
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
+							      G4double     length,
+							      BDSBeamPipe* beamPipe,
+							      G4double     outerDiameter,
+							      G4double     containerLength,
+							      G4double     angleIn,
+							      G4double     angleOut,
+							      G4Material*  material,
+							      G4Colour*    colour,
+							      G4bool       buildVertically,
+							      G4bool       buildEndPiece)
+{
+  G4double vhRatio = 0.8;
+  
+  CleanUp();
+
+  // Test input parameters
+  TestInputParameters(beamPipe, outerDiameter, material);
+
+  // Test faces
+  if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
+    {
+      G4cout << __METHOD_NAME__ << "Error: Faces of magnet (section) named \""
+	     << name << "\" will overlap!" << G4endl;
+      G4cout << "Length of magnet " << length << " mm"
+	     << " is too short for the angle of the pole faces: (" << angleIn << "," << angleOut << ")." << G4endl;
+      exit(1);
+    }
+
+  // 1 calculations
+  // 2 h shaped solid
+  // 3 angled solids for intersection
+  // 4 intersection solids
+  // 5 logical volumes
+  // 6 placement
+  // general order - yoke, container, magnet container, coils
+
+  // calculate any geometrical parameters
+  const auto extXbp = beamPipe->GetExtentX();
+  const auto extYbp = beamPipe->GetExtentY();
+  G4double bpHalfWidth  = std::max(std::abs(extXbp.first), std::abs(extXbp.second));
+  G4double bpHalfHeight = std::max(std::abs(extYbp.first), std::abs(extYbp.second));
+  if (buildVertically)
+    {std::swap(bpHalfWidth, bpHalfHeight);}
+  G4double poleHalfWidth  = bpHalfWidth  + lengthSafetyLarge;
+  poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.25);
+  // in the case of a very wide beam pipe, we can't build a pole that matches
+  if (poleHalfWidth > 0.4*outerDiameter)
+    {poleHalfWidth = outerDiameter*0.15;}
+  G4double poleHalfHeight = bpHalfHeight + lengthSafetyLarge;
+  G4double outerHalf      = outerDiameter * 0.5;
+  G4double outerHalfHorizontal = outerDiameter * 0.5;
+  G4double outerHalfVertical   = outerHalf * vhRatio;
+
+  // outerDiameter must be > max ( bp height , bp width )
+  G4double maxOfBP = std::max(poleHalfWidth, poleHalfHeight);
+  if (std::min(outerHalfVertical, outerHalf) <= maxOfBP)
+    {
+      outerHalfVertical   = maxOfBP + 4*lengthSafetyLarge;
+      outerHalfHorizontal = outerHalfVertical / vhRatio;
+    }
+
+  // propose yoke thickness
+  G4double yokeThickness = 0.15 * outerDiameter;
+  // check it's a suitable size and will fit in
+  if (yokeThickness > outerHalf - poleHalfHeight)
+    {
+      buildPole     = false;
+      yokeThickness = outerHalf - poleHalfHeight;
+    }
+
+  // distance from axis to inside of yoke horizontally
+  G4double yokeInsideX = outerHalfHorizontal - yokeThickness;
+  G4double yokeInsideY = outerHalfVertical   - yokeThickness;
+
+  // coil calculations
+  // these are full height and width maximum so that they'd fit
+  coilHeight = outerHalfVertical - poleHalfHeight - yokeThickness;
+  G4double coilWidth  = outerDiameter - yokeThickness - 2*poleHalfWidth;
+
+  G4double coilHeightOriginal = coilHeight;
+  // reduce the coils from the absolute maximum;
+  coilHeight *= 0.8;
+  coilWidth  *= 0.65;
+
+  // Vertical offset of coil from pole tip
+  G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
+
+  const G4double lsl = lengthSafetyLarge; // shortcut
+
+  // T = top, B = bottom, L = left, R = right
+  G4double coilDX = poleHalfWidth  + 0.5*coilWidth  + lsl;
+  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lsl + cDY;
+  G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
+  G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
+  G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
+  G4ThreeVector coilBRDisp = G4ThreeVector(-coilDX,-coilDY, 0);
+  std::vector<G4ThreeVector> coilDisps;
+  coilDisps.push_back(coilTLDisp);
+  coilDisps.push_back(coilTRDisp);
+  coilDisps.push_back(coilBLDisp);
+  coilDisps.push_back(coilBRDisp);
+
+  // must ensure that:
+  // yoke length < outer container length < full magnet container length
+  // whether straight or angled
+  // yoke full length -> length - 2*lsl
+  // outer container full length -> length - 2*ls
+  // full magnet container full length -> container length
+  G4double sLength = length; // default is normal length
+  G4double containerSLength = containerLength;
+  // if we have angled faces, make square faced solids longer for intersection.
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    {
+      // create yoke, coil, container and magnet container solids
+      // create a safe length here so solids are long enough for intersection
+      // note we can have short magnets with strong parallel faces - can't just
+      // do 2x length for 'safe' length
+      G4double dzIn  = tan(std::abs(angleIn))  * 1.3*outerHalf; // over estimation, but ok
+      G4double dzOut = tan(std::abs(angleOut)) * 1.3*outerHalf;
+      // safe length for intersection
+      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
+      containerSLength = sLength;
+    }
+
+  // these may be used later so need to be outside if statement below
+  // create vectors of points for extruded solids
+  std::vector<G4TwoVector> yokePoints;
+  std::vector<G4TwoVector> cPoints;  // container points (for 'magnet outer' inner only)
+  std::vector<G4TwoVector> mCPoints; // magnet container points
+
+  // variables for extents
+  G4double extXPos = 0;
+  G4double extXNeg = 0;
+  G4double extYPos = 0;
+  G4double extYNeg = 0;
+
+  G4VSolid* yokeInnerSolid      = nullptr;
+  // these are used further down for other solids
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1;       // the scale at each end of the points = 1
+
+  if (buildPole)
+    {// use extruded solid for inner yoke shape and box for out with subtraction
+      // create yoke + pole (as one solid about 0,0,0)
+      // points are done in clock wise order from the bottom right corner of the top pole.
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl  -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight - lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -poleHalfHeight - lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  poleHalfHeight + lsl));
+      
+      yokeInnerSolid = new G4ExtrudedSolid(name + "_yoke_inner_solid", // name
+					   yokePoints,                 // transverse 2d coordinates
+					   sLength * 0.5,              // z half length
+					   zOffsets, zScale, // dx,dy offset for each face, scaling
+					   zOffsets, zScale);// dx,dy offset for each face, scaling
+      // note 0.7x length > 0.5 length for unambiguous subtraction
+    }
+  else // if build pole
+    {// don't build pole - just build yoke -> box
+      yokeInnerSolid = new G4Box(name + "_yoke_inner_solid", // name
+				 yokeInsideX - lsl,          // x half length
+				 yokeInsideY - lsl,          // y half length
+				 sLength * 0.7);             // z half length
+      // note 0.7x length > 0.5 length for unambiguous subtraction
+    }
+
+  // extents
+  extXPos =  outerHalfHorizontal + lsl;
+  extXNeg = -outerHalfHorizontal - lsl;
+  extYPos =  outerHalfVertical   + lsl;
+  extYNeg = -outerHalfVertical   - lsl;
+  
+  // rotate if building vertically
+  if (buildVertically)
+    {
+      for (auto& point : yokePoints)
+	{point = BDS::Rotate(point, CLHEP::halfpi);}
+      
+      // 'rotate' extents too
+      std::swap(extXPos, extYPos);
+      std::swap(extXNeg, extYNeg);
+    }
+  BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
+			    -length*0.5, length*0.5);
+  magContExtent = ext; // copy to container variable - basically the same
+  
+  G4VSolid* yokeOuterSolid = new G4Box(name + "_yoke_outer_solid", // name
+				       outerHalfHorizontal - lsl,  // x half length
+				       outerHalfVertical - lsl,    // y half length
+				       sLength * 0.5 - lsl);       // z half length
+  
+  yokeSolid = new G4SubtractionSolid(name + "_yoke_solid", // name,
+				     yokeOuterSolid,       // this
+				     yokeInnerSolid);      // minus this
+  
+  // container for magnet outer 
+  G4double containerdx = yokeInsideX;
+  G4double containerdy = yokeInsideY;
+  if (buildVertically)
+    {std::swap(containerdx, containerdy);}
+
+  // full length for unambiguous subtraction
+  G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
+					    containerdx, containerdy, sLength);
+  G4VSolid* containerOuterSolid = new G4Box(name + "_container_outer_solid", // name
+					    outerHalfHorizontal, // x half length
+					    outerHalfVertical,   // y half length
+					    sLength * 0.5);      // z half length
+
+  containerSolid = new G4SubtractionSolid(name + "_outer_sq_container_solid", // name
+					  containerOuterSolid,  // this
+					  containerInnerSolid); // minus this
+
+  // container for full magnet
+  magnetContainerSolid = new G4Box(name + "_sq_container_solid", // name
+				   outerHalfHorizontal + lsl,    // x half length
+				   outerHalfVertical + lsl,      // y half length
+				   containerSLength * 0.5);      // z half length
+  
+  // create coil - one solid that will be placed 4 times... or
+  // if we have angled faces, they're all unique unfortunately so use a vector of solids
+  // and place individually
+  G4VSolid* coilSolid = nullptr;
+  std::vector<G4VSolid*>        coilsSolids;
+  std::vector<G4LogicalVolume*> coilLVs;
+  G4bool individualCoilsSolids = false;
+  if (buildPole)
+    {
+      coilSolid = new G4Box(name + "_coil_solid",   // name
+			    coilWidth*0.5,          // x half width
+			    coilHeight*0.5,         // y half height
+			    sLength*0.5 - lsl);     // z half length - same as yoke
+    }
+
+  // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
+  // as the intersection is only done if one of the angles is finite.
+
+  // If we have angled faces, we need to also intersect the outer magnet container and
+  // we therefore have an extra solid that should belong to that geometry component
+  // and not the magnet outer - create a vector for holding any extra solids. These can
+  // only be registered once the container object is created and that can only happen
+  // once the solid and logical volumes are fully complete.
+  std::vector<G4VSolid*> magnetContainerExtraSolids;
+  
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    { 
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+      inputFaceNormal  = faces.first;
+      outputFaceNormal = faces.second;
+
+      // 1.3x for margin
+      G4double minimumR = std::hypot(outerHalfHorizontal, outerHalfVertical) * 1.3;
+      
+      // angled solid for magnet outer and coils
+      G4VSolid* angledFaces = new G4CutTubs(name + "_angled_face_solid", // name
+					    0,                           // inner radius
+					    minimumR,                    // outer radius
+					    length*0.5 - lsl,            // z half length
+					    0,                           // start angle
+					    CLHEP::twopi,                // sweep angle
+					    inputFaceNormal,             // input face normal
+					    outputFaceNormal);           // output face normal
+      
+      // angled solid for magnet outer container volume
+      G4VSolid* angledFacesCont = new G4CutTubs(name + "_angled_face_cont_solid", // name
+						0,                           // inner radius
+						minimumR,                    // outer radius
+						length*0.5 - lengthSafety,   // z half length
+						0,                           // start angle
+						CLHEP::twopi,                // sweep angle
+						inputFaceNormal,             // input face normal
+						outputFaceNormal);           // output face normal
+      
+      // angled solid for full magnet container
+      G4VSolid* angledFacesMagCont = new G4CutTubs(name + "_angled_face_mag_cont_solid", // name
+						   0,                    // inner radius
+						   minimumR,             // outer radius
+						   containerLength*0.5,  // z half length
+						   0,                    // start angle
+						   CLHEP::twopi,         // sweep angle
+						   inputFaceNormal,      // input face normal
+						   outputFaceNormal);    // output face normal
+
+      // register angled solids
+      allSolids.push_back(angledFaces);
+      allSolids.push_back(angledFacesCont);
+      allSolids.push_back(angledFacesMagCont);
+
+      // register existing square solids as we're going to overwrite them with intersected ones
+      allSolids.push_back(yokeInnerSolid);
+      allSolids.push_back(yokeOuterSolid);
+      allSolids.push_back(yokeSolid);
+      allSolids.push_back(containerInnerSolid);
+      allSolids.push_back(containerOuterSolid);
+      allSolids.push_back(containerSolid);
+      allSolids.push_back(coilSolid);
+      allSolids.push_back(magnetContainerSolid);
+      
+      // now do intersections overwriting existing pointers
+      yokeSolid = new G4IntersectionSolid(name + "_yoke_solid", // name
+					  yokeSolid,            // solid a - existing yoke
+					  angledFaces);         // solid b
+      
+      containerSolid = new G4IntersectionSolid(name + "_outer_container_solid", // name
+					       containerSolid,                  // solid a
+					       angledFacesCont);                // solid b
+
+      magnetContainerSolid = new G4IntersectionSolid(name + "_container_solid", // name
+						     magnetContainerSolid,      // solid a
+						     angledFacesMagCont);       // solid b
+
+      individualCoilsSolids = true; // flag that we have individual coil solids
+      for (G4int i = 0; i < 4; i++)
+	{
+	  G4VSolid* coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
+						    angledFaces,                // solid a
+						    coilSolid,                  // solid b
+						    (G4RotationMatrix*)nullptr, // 0 rotation
+						    coilDisps[i]);              // translation
+	  coilsSolids.push_back(coilS);
+	  allSolids.push_back(coilS);
+	}
+    }
+  
+  // logical volumes
+  CreateLogicalVolumes(name, colour, material);
+  // we only use one coil solid here so do that here
+  G4LogicalVolume* coilLV = nullptr;
+  if (buildPole)
+    {
+      G4Colour* coil = BDSColours::Instance()->GetColour("coil");
+      G4VisAttributes* coilVis = new G4VisAttributes(*coil);
+      coilVis->SetVisibility(true);
+      allVisAttributes.push_back(coilVis);
+      G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+      if (individualCoilsSolids)
+	{
+	  for (G4int i = 0; i < 4; i++)
+	    {
+	      G4String theName =  name + "_coil_solid_" + std::to_string(i);
+	      G4LogicalVolume* aCoilLV = new G4LogicalVolume(coilsSolids[i],
+							     coilMaterial,
+							     theName);
+	      aCoilLV->SetVisAttributes(coilVis);
+	      coilLVs.push_back(aCoilLV);
+	      allLogicalVolumes.push_back(aCoilLV);
+	    }
+	}
+      else
+	{
+	  coilLV = new G4LogicalVolume(coilSolid,
+				       coilMaterial,
+				       name + "_coil_lv");
+	  coilLV->SetVisAttributes(coilVis);
+	  allLogicalVolumes.push_back(coilLV);
+	}
+    }
+  
+  // placement
+  // place yoke+pole (one solid) together
+  G4bool buildPoleOriginal = buildPole;
+  buildPole = false; // this will avoid PlaceComponents trying to place poles that don't exist
+  PlaceComponents(name, 1); // places yoke
+  buildPole = buildPoleOriginal;
+  // place coils
+  if (buildPole)
+    {
+      G4PVPlacement* aCoilPV = nullptr;
+      // coils intersection was done such that the coordinates of the resultant solid
+      // are the same as the plain coil G4Box. This allows us to programmatically place
+      // the coils here irrespective if there's one or 4 unqiue coils.
+      for (G4int i = 0; i < 4; i++)
+	{
+	  G4LogicalVolume* volToPlace = coilLV;
+	  G4ThreeVector displacement = G4ThreeVector();
+	  if (individualCoilsSolids)
+	    {volToPlace = coilLVs[i];}
+	  else
+	    {displacement = coilDisps[i];} // with no intersection we have to displace it
+	  G4String theName = name + "_coil_" + std::to_string(i) + "_pv";
+	  G4RotationMatrix* rot = new G4RotationMatrix();
+	  allRotationMatrices.push_back(rot);
+	  if (buildVertically)
+	    {
+	      rot->rotateZ(CLHEP::halfpi);
+	      displacement.transform(*rot);
+	    }
+	  aCoilPV = new G4PVPlacement(rot,             // no rotation
+				      displacement,    // position
+				      volToPlace,      // lv to be placed
+				      theName,         // name
+				      containerLV,     // mother lv to be placed in
+				      false,           // no boolean operation
+				      0,               // copy number
+				      checkOverlaps);
+	  allPhysicalVolumes.push_back(aCoilPV);
+	}
+    }
+
+  // magnet outer instance
+  CreateMagnetContainerComponent();
+  magnetContainer->RegisterSolid(magnetContainerExtraSolids);
+
+  // build the BDSMagnetOuter instance and return it
+  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
+					     containerLV, ext,
+					     magnetContainer);
+
+  outer->SetInputFaceNormal(inputFaceNormal);
+  outer->SetOutputFaceNormal(outputFaceNormal);
+  
+  outer->RegisterSolid(allSolids);
+  outer->RegisterLogicalVolume(allLogicalVolumes);
+  outer->RegisterRotationMatrix(allRotationMatrices);
+  outer->RegisterPhysicalVolume(allPhysicalVolumes);
+  outer->RegisterVisAttributes(allVisAttributes);
+  
+  outer->RegisterSolid(yokeSolid);
+  outer->RegisterLogicalVolume(yokeLV);
+
+  outer->RegisterSensitiveVolume(yokeLV);
+
+  // no need to proceed with end pieces if we didn't build poles - just return
+  if (!buildPole)
+    {return outer;}
+
+  // continue with registration of objects and end piece construction  
+  if (individualCoilsSolids)
+    {outer->RegisterSensitiveVolume(coilLVs);}
+  else
+    {outer->RegisterSensitiveVolume(coilLV);}
+
+  // skip rest of this construction if no end pieces required
+  if (!buildEndPiece)
+    {return outer;}
+  
+  // end pieces - note with bends both are likely to be different so build independently here
+
+  // end piece coil solids - build in x-y plane and project in z as that's the
+  // only way with an extruded solid then rotate so it's along z
+  // curved sections are elliptical with major axis being the projected with of the coil
+  // at an angle and the minor being the normal coil width.
+  // x = x0 + acos(t)cos(phi) - bsin(t)sin(phi)
+  // y = y0 + acos(t)sin(phi) + bsin(t)cos(phi)
+  std::vector<G4TwoVector> inEPPoints;  // input face end piece points
+  std::vector<G4TwoVector> outEPPoints; // output face end piece points
+
+  G4double inXO = poleHalfWidth - lsl;
 
   // create an ellipse with no angle, then shear it to match the angle
   G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
