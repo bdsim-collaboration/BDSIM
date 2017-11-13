@@ -1679,8 +1679,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // coil calculations
   // these are full height and width maximum so that they'd fit
   coilHeight = outerHalfVertical - poleHalfHeight - yokeThickness;
-  G4double coilWidth  = outerDiameter - yokeThickness - 2*poleHalfWidth;
-
+  G4double coilWidth = yokeInsideX - poleHalfWidth;
+  
   G4double coilHeightOriginal = coilHeight;
   // reduce the coils from the absolute maximum;
   coilHeight *= 0.8;
@@ -1747,33 +1747,34 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     {// use extruded solid for inner yoke shape and box for out with subtraction
       // create yoke + pole (as one solid about 0,0,0)
       // points are done in clock wise order from the bottom right corner of the top pole.
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl  -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  yokeInsideY    + lsl));
+
       yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  poleHalfHeight + lsl));
-      
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -poleHalfHeight - lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight - lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl, -yokeInsideY    - lsl));
+      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  yokeInsideY    + lsl));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
+
       yokeInnerSolid = new G4ExtrudedSolid(name + "_yoke_inner_solid", // name
 					   yokePoints,                 // transverse 2d coordinates
-					   sLength * 0.5,              // z half length
+					   sLength,                    // z half length
 					   zOffsets, zScale, // dx,dy offset for each face, scaling
 					   zOffsets, zScale);// dx,dy offset for each face, scaling
-      // note 0.7x length > 0.5 length for unambiguous subtraction
+      // note 1.0x length > 0.5 length for unambiguous subtraction
     }
   else // if build pole
     {// don't build pole - just build yoke -> box
       yokeInnerSolid = new G4Box(name + "_yoke_inner_solid", // name
 				 yokeInsideX - lsl,          // x half length
 				 yokeInsideY - lsl,          // y half length
-				 sLength * 0.7);             // z half length
-      // note 0.7x length > 0.5 length for unambiguous subtraction
+				 sLength);                   // z half length
+      // note 1.0x length > 0.5 length for unambiguous subtraction
     }
 
   // extents
@@ -1807,7 +1808,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   
   // container for magnet outer 
   G4double containerdx = yokeInsideX;
-  G4double containerdy = yokeInsideY;
+  G4double containerdy = poleHalfHeight;
   if (buildVertically)
     {std::swap(containerdx, containerdy);}
 
