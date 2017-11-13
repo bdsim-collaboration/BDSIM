@@ -174,6 +174,7 @@ void Options::PublishMembers()
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
   publish("thinElementLength", &Options::thinElementLength);
+  publish("hStyle",            &Options::hStyle);
 
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);

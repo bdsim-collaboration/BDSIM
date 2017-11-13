@@ -108,6 +108,7 @@ namespace GMAD
     std::string outerMaterialName;
     double      outerDiameter;
     double      thinElementLength;
+    bool        hStyle; ///< H Style dipoles (if not, C Style).
 
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;

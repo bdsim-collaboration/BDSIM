@@ -78,7 +78,8 @@ OptionsBase::OptionsBase()
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
   thinElementLength    = 1e-7;
-
+  hStyle               = false;
+  
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
