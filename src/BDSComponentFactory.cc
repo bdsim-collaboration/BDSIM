@@ -1089,6 +1089,11 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   // yoke direction
   info->yokeOnLeft = yokeOnLeft;
 
+  if (element->hStyle < 0) // unset
+    {info->hStyle = BDSGlobalConstants::Instance()->HStyle();}
+  else
+    {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
+
   return info;
 }
 

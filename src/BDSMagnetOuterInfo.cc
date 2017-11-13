@@ -12,6 +12,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   angleIn(0),
   angleOut(0),
   yokeOnLeft(false),
+  hStyle(false),
   buildEndPieces(true),
   geometryTypeAndPath("")
 {;}
@@ -23,6 +24,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4double              angleInIn,
 				       G4double              angleOutIn,
 				       G4bool                yokeOnLeftIn,
+				       G4bool                hStyleIn,
 				       G4bool                buildEndPiecesIn,
 				       G4String              geometryTypeAndPathIn):
   name(nameIn),
@@ -32,6 +34,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
   angleIn(angleInIn),
   angleOut(angleOutIn),
   yokeOnLeft(yokeOnLeftIn),
+  hStyle(hStyleIn),
   buildEndPieces(buildEndPiecesIn),
   geometryTypeAndPath(geometryTypeAndPathIn)
 {;}
@@ -44,6 +47,9 @@ std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
   out << "Material:           "  << info.outerMaterial->GetName() << G4endl;
   out << "Angle In:           "  << info.angleIn                  << G4endl;
   out << "Angle Out:          "  << info.angleOut                 << G4endl;
+  out << "Yoke on Left:       "  << info.yokeOnLeft               << G4endl;
+  out << "H Style (C if not): "  << info.hStyle                   << G4endl;
+  out << "Build end pieces:   "  << info.buildEndPieces           << G4endl;
   out << "Geometry:           "  << info.geometryTypeAndPath      << G4endl;
   return out;
 }

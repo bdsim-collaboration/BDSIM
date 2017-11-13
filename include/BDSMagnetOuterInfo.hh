@@ -33,6 +33,7 @@ public:
 		     G4double              angleInIn             = 0,
 		     G4double              angleOutIn            = 0,
 		     G4bool                yokeOnLeft            = false,
+		     G4bool                hStyle                = false,
 		     G4bool                buildEndPiecesIn      = true,
 		     G4String              geometryTypeAndPathIn = "");
 
@@ -43,6 +44,7 @@ public:
   G4double              angleIn;
   G4double              angleOut;
   G4bool                yokeOnLeft;
+  G4bool                hStyle;       ///< H Style for dipoles. If not, it's assumed C style.
   G4bool                buildEndPieces;
   G4String              geometryTypeAndPath;
 
