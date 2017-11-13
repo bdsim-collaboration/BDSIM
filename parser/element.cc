@@ -134,6 +134,7 @@ void Element::PublishMembers()
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
+  publish("hStyle",       &Element::hStyle);
   publish("apertureType",&Element::apertureType);
   publish("magnetGeometryType",&Element::magnetGeometryType);
   publish("beampipeMaterial",&Element::beampipeMaterial);
@@ -341,6 +342,7 @@ void Element::flush()
   outerMaterial = "";
   outerDiameter = 0;
   yokeOnInside  = true;
+  hStyle        = -1;
   
   tilt = 0;
   xsize = 0;

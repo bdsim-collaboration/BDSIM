@@ -64,6 +64,7 @@ namespace GMAD
     std::string outerMaterial;
     double outerDiameter;
     bool   yokeOnInside;
+    int    hStyle; //< -1 = unset; 0 = false (ie c style); 1 = true, use hstyle
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
