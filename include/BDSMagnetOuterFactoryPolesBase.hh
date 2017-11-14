@@ -313,10 +313,13 @@ protected:
 			  const G4double& angleIn,
 			  const G4double& angleOut,
 			  const G4double& yokeThicknessFraction,
+			  const G4double& vhRatio,
 			  G4double&    bpHalfWidth,
 			  G4double&    poleHalfWidth,
 			  G4double&    poleHalfHeight,
 			  G4double&    outerHalf,
+			  G4double&    outerHalfHorizontal,
+			  G4double&    outerHalfVertical,
 			  G4double&    yokeThickness,
 			  G4double&    sLength,
 			  G4double&    containerSLength);
