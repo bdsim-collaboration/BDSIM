@@ -306,6 +306,7 @@ protected:
 			  const G4double& outerDiameter,
 			  const G4double& angleIn,
 			  const G4double& angleOut,
+			  const G4double& yokeThicknessFraction,
 			  G4double&    bpHalfWidth,
 			  G4double&    poleHalfWidth,
 			  G4double&    poleHalfHeight,

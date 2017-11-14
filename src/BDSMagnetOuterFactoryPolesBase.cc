@@ -858,6 +858,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
 							const G4double& outerDiameter,
 							const G4double& angleIn,
 							const G4double& angleOut,
+							const G4double& yokeThicknessFraction,
 							G4double&    bpHalfWidth,
 							G4double&    poleHalfWidth,
 							G4double&    poleHalfHeight,
@@ -882,7 +883,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
   outerHalf      = outerDiameter * 0.5;
 
   // propose yoke thickness
-  yokeThickness = 0.12 * outerDiameter;
+  yokeThickness = yokeThicknessFraction * outerDiameter;
   // check it's a suitable size and will fit in
   if (yokeThickness > outerHalf - poleHalfHeight)
     {
@@ -966,7 +967,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double sLength             = length; // 'safe' length fo intersection - default is normal length
   G4double containerSLength    = containerLength; // similarly for the container
   DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
-		     angleOut, bpHalfWidth, poleHalfWidth, poleHalfHeight,
+		     angleOut, 0.23, bpHalfWidth, poleHalfWidth, poleHalfHeight,
 		     outerHalf, yokeThickness, sLength, containerSLength);
 
   // outerDiameter must be > max ( bp height , bp width )
@@ -1190,7 +1191,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double sLength             = length; // 'safe' length fo intersection - default is normal length
   G4double containerSLength    = containerLength; // similarly for the container
   DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
-		     angleOut, bpHalfWidth, poleHalfWidth, poleHalfHeight,
+		     angleOut, 0.12, bpHalfWidth, poleHalfWidth, poleHalfHeight,
 		     outerHalf, yokeThickness, sLength, containerSLength);
 
   G4double outerHalfHorizontal = outerDiameter * 0.5;
