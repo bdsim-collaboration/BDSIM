@@ -277,6 +277,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     G4bool        vertical,
 							     G4Material*   outerMaterial,
 							     G4bool        buildEndPiece,
+							     G4bool        hStyle,
 							     G4double      vhRatio,
 							     G4double      coilWidthFraction,
 							     G4double      coilHeightFraction)
@@ -286,9 +287,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 #endif
   G4String colourName = (vertical) ? "vkicker" : "hkicker";
   auto colour = BDSColours::Instance()->GetColour(colourName);
-  return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-		       outerMaterial, true, colour, vertical, buildEndPiece, vhRatio,
-		       coilWidthFraction, coilHeightFraction);
+  if (hStyle)
+    {
+      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
+			   outerMaterial, colour, vertical, buildEndPiece, vhRatio,
+			   coilWidthFraction, coilHeightFraction);
+    }
+  else
+    {
+      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
+			   outerMaterial, true, colour, vertical, buildEndPiece, vhRatio,
+			   coilWidthFraction, coilHeightFraction);
+    }
 }
 
 /// functions below here are private to this particular factory

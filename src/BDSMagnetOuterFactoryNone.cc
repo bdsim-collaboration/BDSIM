@@ -190,6 +190,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
 							G4bool        /*vertical*/,
 							G4Material*   /*outerMaterial*/,
 							G4bool        /*buildEndPiece*/,
+							G4bool        /*hStyle*/,
 							G4double      /*vhRatio*/,
 							G4double      /*coilWidthFraction*/,
 							G4double      /*coiHeightFraction*/)

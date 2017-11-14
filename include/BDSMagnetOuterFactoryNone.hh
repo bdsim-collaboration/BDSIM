@@ -146,6 +146,7 @@ public:
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
 				       G4bool       buildEndPiece = false,
+				       G4bool       hStyle             = false,
 				       G4double     vhRatio            = 1.0,
 				       G4double     coilWidthFraction  = 0.65,
 				       G4double     coilHeightFraction = 0.8
