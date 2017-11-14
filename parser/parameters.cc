@@ -51,6 +51,7 @@ Parameters::Parameters()
   setMap["outerDiameter"] = false;
   setMap["yokeOnInside"]  = false;
   setMap["hStyle"]        = false;
+  setMap["vhRatio"]       = false;
   setMap["tilt"] = false;
   setMap["xsize"] = false;
   setMap["ysize"] = false;
