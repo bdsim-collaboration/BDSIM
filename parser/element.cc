@@ -345,8 +345,8 @@ void Element::flush()
   outerMaterial = "";
   outerDiameter = 0;
   yokeOnInside  = true;
-  hStyle        = -1;
-  vhRatio       = 0.8;
+  hStyle             = -1;
+  vhRatio            = -1;
   coilWidthFraction  = -1;
   coilHeightFraction = -1; // signifies use default in factory
   
