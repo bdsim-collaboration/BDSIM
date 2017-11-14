@@ -107,7 +107,10 @@ public:
   /// between input and output faces.
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
 						    const BDSMagnetStrength* st,
-						    G4double defaultOuterDiameter = -1);
+						    G4double defaultOuterDiameter      = -1,
+						    G4double defaultVHRatio            = 1.0,
+						    G4double defaultCoilWidthFraction  = -1,
+						    G4double defaultCoilHeightFraction = -1);
 
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
@@ -115,8 +118,11 @@ public:
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
 						    const G4double angleIn,
 						    const G4double angleOut,
-						    const G4bool   yokeOnLeft           = false,
-						    G4double       defaultOuterDiameter = -1);
+						    const G4bool   yokeOnLeft                = false,
+						    G4double       defaultOuterDiameter      = -1,
+						    G4double       defaultVHRatio            =  0.8,
+						    G4double       defaultCoilWidthFraction  = -1,
+						    G4double       defaultCoilHeightFraction = -1);
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
