@@ -850,14 +850,19 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(G4String     na
 
 }
 
-void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe* beamPipe,
-							G4bool       buildVertically,
-							G4double     outerDiameter,
+void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe,
+							const G4double& length,
+							const G4bool&   buildVertically,
+							const G4double& outerDiameter,
+							const G4double& angleIn,
+							const G4double& angleOut,
 							G4double&    bpHalfWidth,
 							G4double&    poleHalfWidth,
 							G4double&    poleHalfHeight,
 							G4double&    outerHalf,
-							G4double&    yokeThickness)
+							G4double&    yokeThickness,
+							G4double&    sLength,
+							G4double&    containerSLength)
 {
   // calculate any geometrical parameters
   const auto extXbp = beamPipe->GetExtentX();
@@ -881,6 +886,26 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe* beamPipe,
     {
       buildPole     = false;
       yokeThickness = outerHalf - poleHalfHeight;
+    }
+
+  // must ensure that:
+  // yoke length < outer container length < full magnet container length
+  // whether straight or angled
+  // yoke full length -> length - 2*lsl
+  // outer container full length -> length - 2*ls
+  // full magnet container full length -> container length
+  // if we have angled faces, make square faced solids longer for intersection.
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    {
+      // create yoke, coil, container and magnet container solids
+      // create a safe length here so solids are long enough for intersection
+      // note we can have short magnets with strong parallel faces - can't just
+      // do 2x length for 'safe' length
+      G4double dzIn  = tan(std::abs(angleIn))  * 1.3*outerHalf; // over estimation, but ok
+      G4double dzOut = tan(std::abs(angleOut)) * 1.3*outerHalf;
+      // safe length for intersection
+      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
+      containerSLength = sLength;
     }
 }
 
@@ -936,8 +961,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double poleHalfHeight      = 0;
   G4double outerHalf           = 0;
   G4double yokeThickness       = 0;
-  DipoleCalculations(beamPipe, buildVertically, outerDiameter, bpHalfWidth,
-		     poleHalfWidth, poleHalfHeight, outerHalf, yokeThickness);
+  G4double sLength             = length; // 'safe' length fo intersection - default is normal length
+  G4double containerSLength    = containerLength; // similarly for the container
+  DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
+		     angleOut, bpHalfWidth, poleHalfWidth, poleHalfHeight,
+		     outerHalf, yokeThickness, sLength, containerSLength);
 
   // outerDiameter must be > max ( bp height , bp width )
   G4double maxOfBP = std::max(poleHalfWidth, poleHalfHeight);
@@ -1096,29 +1124,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
 			    -length*0.5, length*0.5);
   magContExtent = ext; // copy to container variable - basically the same
-
-  G4double sLength = length; // default is normal length
-  G4double containerSLength = containerLength;
-  // if we have angled faces, make square faced solids longer for intersection.
-  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-    {
-      // create yoke, coil, container and magnet container solids
-      // create a safe length here so solids are long enough for intersection
-      // note we can have short magnets with strong parallel faces - can't just
-      // do 2x length for 'safe' length
-      G4double dzIn  = tan(std::abs(angleIn))  * outerDiameter; // over estimation, but ok
-      G4double dzOut = tan(std::abs(angleOut)) * outerDiameter;
-      // safe length for intersection
-      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
-      containerSLength = sLength;
-    }
-
-  // must ensure that:
-  // yoke length < outer container length < full magnet container length
-  // whether straight or angled
-  // yoke full length -> length - 2*lsl
-  // outer container full length -> length - 2*ls
-  // full magnet container full length -> container length
   
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
@@ -1181,8 +1186,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double poleHalfHeight      = 0;
   G4double outerHalf           = 0;
   G4double yokeThickness       = 0;
-  DipoleCalculations(beamPipe, buildVertically, outerDiameter, bpHalfWidth,
-		     poleHalfWidth, poleHalfHeight, outerHalf, yokeThickness);
+  G4double sLength             = length; // 'safe' length fo intersection - default is normal length
+  G4double containerSLength    = containerLength; // similarly for the container
+  DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
+		     angleOut, bpHalfWidth, poleHalfWidth, poleHalfHeight,
+		     outerHalf, yokeThickness, sLength, containerSLength);
 
   G4double outerHalfHorizontal = outerDiameter * 0.5;
   G4double outerHalfVertical   = outerHalf * vhRatio;
@@ -1218,28 +1226,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double coilDX = 0, coilDY = 0;
   std::vector<G4ThreeVector> coilDisps = CalculateCoilDisplacements(poleHalfWidth, poleHalfHeight, coilWidth,
 								    coilHeight, cDY, coilDX, coilDY);
-
-  // must ensure that:
-  // yoke length < outer container length < full magnet container length
-  // whether straight or angled
-  // yoke full length -> length - 2*lsl
-  // outer container full length -> length - 2*ls
-  // full magnet container full length -> container length
-  G4double sLength = length; // default is normal length
-  G4double containerSLength = containerLength;
-  // if we have angled faces, make square faced solids longer for intersection.
-  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-    {
-      // create yoke, coil, container and magnet container solids
-      // create a safe length here so solids are long enough for intersection
-      // note we can have short magnets with strong parallel faces - can't just
-      // do 2x length for 'safe' length
-      G4double dzIn  = tan(std::abs(angleIn))  * 1.3*outerHalf; // over estimation, but ok
-      G4double dzOut = tan(std::abs(angleOut)) * 1.3*outerHalf;
-      // safe length for intersection
-      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
-      containerSLength = sLength;
-    }
 
   // these may be used later so need to be outside if statement below
   // create vectors of points for extruded solids

@@ -300,14 +300,19 @@ protected:
 
   /// Common calculations to both dipole construction routines in one place. Pass by reference
   /// to modify variables declared in each function.
-  void DipoleCalculations(BDSBeamPipe* beamPipe,
-			  G4bool       buildVertically,
-			  G4double     outerDiameter,
+  void DipoleCalculations(BDSBeamPipe*    beamPipe,
+			  const G4double& length,
+			  const G4bool&   buildVertically,
+			  const G4double& outerDiameter,
+			  const G4double& angleIn,
+			  const G4double& angleOut,
 			  G4double&    bpHalfWidth,
 			  G4double&    poleHalfWidth,
 			  G4double&    poleHalfHeight,
 			  G4double&    outerHalf,
-			  G4double&    yokeThickness);
+			  G4double&    yokeThickness,
+			  G4double&    sLength,
+			  G4double&    containerSLength);
 
   /// Calculate the placement offsets for each of the four coil placements. Common to both dipole
   /// construction routines.
