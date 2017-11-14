@@ -49,7 +49,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4bool        /*yokeOnLeft*/,
 							   G4bool        /*hStyle*/,
 							   G4Material*   outerMaterial,
-							   G4bool        /*buildEndPiece*/)
+							   G4bool        /*buildEndPiece*/,
+							   G4double      /*vhRatio*/)
 
 {
 #ifdef BDSDEBUG
@@ -926,7 +927,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4bool        yokeOnLeft,
 								G4bool        hStyle,
 								G4Material*   outerMaterial,
-								G4bool        buildEndPiece)
+								G4bool        buildEndPiece,
+								G4double      vhRatio)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -941,7 +943,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     yokeOnLeft,
 									     hStyle,
 									     outerMaterial,
-									     buildEndPiece);
+									     buildEndPiece,
+									     vhRatio);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,

@@ -33,7 +33,8 @@ public:
 					   G4bool       yokeOnLeft,            // build magnet yoke on left of bend
 					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false
+					   G4bool       buildEndPiece = false,
+					   G4double     vhRatio       = 1.0     // ratio of vertical to horizontal proportions
 					   );
 
   /// rectangular bend outer volume
@@ -47,7 +48,8 @@ public:
 						G4bool       yokeOnLeft,            // build magnet yoke on left of bend
 						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false
+						G4bool       buildEndPiece = false,
+						G4double     vhRatio       = 1.0     // ratio of vertical to horizontal proportions
 						);
   
   /// quadrupole outer volume

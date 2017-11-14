@@ -45,8 +45,8 @@ public:
 					   G4bool       yokeOnLeft,      // build magnet yoke on left of bend
 					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false
-					   );
+					   G4bool       buildEndPiece = false,
+					   G4double     vhRatio       = 1.0);
 
   /// rectangular bend outer volume
   virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
@@ -59,8 +59,8 @@ public:
 						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
 						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false
-						);
+						G4bool       buildEndPiece = false,
+						G4double     vhRatio       = 1.0);
   
   /// quadrupole outer volume
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
@@ -350,7 +350,8 @@ protected:
 				G4Material*  material,
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
-				G4bool       buildEndPiece   = true);
+				G4bool       buildEndPiece   = true,
+				G4double     vhRatio         = 1.0);
 
   BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
 					   G4double    outerDiameter,

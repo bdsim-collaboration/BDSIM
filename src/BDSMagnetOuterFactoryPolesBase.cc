@@ -97,7 +97,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4bool        yokeOnLeft,
 								 G4bool        hStyle,
 								 G4Material*   outerMaterial,
-								 G4bool        buildEndPiece)
+								 G4bool        buildEndPiece,
+								 G4double      vhRatio)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -106,7 +107,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   if (hStyle)
     {
       return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, colour, false, buildEndPiece);
+			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio);
     }
   else
     {
@@ -125,7 +126,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4bool        yokeOnLeft,
 								      G4bool        hStyle,
 								      G4Material*   outerMaterial,
-								      G4bool        buildEndPiece)
+								      G4bool        buildEndPiece,
+								      G4double      vhRatio)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -134,7 +136,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   if (hStyle)
     {
       return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, colour, false, buildEndPiece);
+			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio);
     }
   else
     {
@@ -1167,10 +1169,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4Material*  material,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
-							      G4bool       buildEndPiece)
+							      G4bool       buildEndPiece,
+							      G4double     vhRatio)
 {
-  G4double vhRatio = 0.8;
-
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
     
   // 1 calculations

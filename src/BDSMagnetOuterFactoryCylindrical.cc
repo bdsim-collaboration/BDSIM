@@ -51,7 +51,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4bool       /*yokeOnLeft*/,
 								   G4bool       /*hStyle*/,
 								   G4Material*  outerMaterial,
-								   G4bool       /*buildEndPiece*/)
+								   G4bool       /*buildEndPiece*/,
+								   G4double     /*vhRatio*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -96,7 +97,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4bool       /*yokeOnLeft*/,
 									G4bool       /*hStyle*/,
 									G4Material*  outerMaterial,
-									G4bool       /*buildEndPiece*/)
+									G4bool       /*buildEndPiece*/,
+									G4double     /*vhRatio*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
