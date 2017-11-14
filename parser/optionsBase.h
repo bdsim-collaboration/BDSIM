@@ -109,6 +109,9 @@ namespace GMAD
     double      outerDiameter;
     double      thinElementLength;
     bool        hStyle; ///< H Style dipoles (if not, C Style).
+    double      vhRatio;
+    double      coilWidthFraction;
+    double      coilHeightFraction;
 
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
