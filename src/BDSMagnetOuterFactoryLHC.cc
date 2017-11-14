@@ -50,7 +50,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4bool        /*hStyle*/,
 							   G4Material*   outerMaterial,
 							   G4bool        /*buildEndPiece*/,
-							   G4double      /*vhRatio*/)
+							   G4double      /*vhRatio*/,
+							   G4double      /*coilWidthFraction*/,
+							   G4double      /*coilHeightFraction*/)
 
 {
 #ifdef BDSDEBUG
@@ -928,7 +930,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4bool        hStyle,
 								G4Material*   outerMaterial,
 								G4bool        buildEndPiece,
-								G4double      vhRatio)
+								G4double      vhRatio,
+								G4double      coilWidthFraction,
+								G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -944,7 +948,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     hStyle,
 									     outerMaterial,
 									     buildEndPiece,
-									     vhRatio);
+									     vhRatio,
+									     coilWidthFraction,
+									     coilHeightFraction);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
@@ -1644,13 +1650,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 						       G4double      containerLength,
 						       G4bool        vertical,
 						       G4Material*   outerMaterial,
-						       G4bool        buildEndPiece)
+						       G4bool        buildEndPiece,
+						       G4double      vhRatio,
+						       G4double      coilWidthFraction,
+						       G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,outerDiameter,
-								    containerLength,vertical,outerMaterial,buildEndPiece);
+								    containerLength,vertical,outerMaterial,
+								    buildEndPiece, vhRatio, coilWidthFraction,
+								    coilHeightFraction);
 }
 
 /// functions below here are private to this particular factory

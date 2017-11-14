@@ -98,7 +98,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4bool        hStyle,
 								 G4Material*   outerMaterial,
 								 G4bool        buildEndPiece,
-								 G4double      vhRatio)
+								 G4double      vhRatio,
+								 G4double      coilWidthFraction,
+								 G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -107,12 +109,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   if (hStyle)
     {
       return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio);
+			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio,
+			   coilWidthFraction, coilHeightFraction);
     }
   else
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
+			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
+			   coilWidthFraction, coilHeightFraction);
     }
 }
 
@@ -127,7 +131,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4bool        hStyle,
 								      G4Material*   outerMaterial,
 								      G4bool        buildEndPiece,
-								      G4double      vhRatio)
+								      G4double      vhRatio,
+								      G4double      coilWidthFraction,
+								      G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -136,12 +142,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   if (hStyle)
     {
       return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio);
+			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio,
+			   coilWidthFraction, coilHeightFraction);
     }
   else
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
+			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
+			   coilWidthFraction, coilHeightFraction);
     }
 }
 
@@ -268,7 +276,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     G4double      containerLength,
 							     G4bool        vertical,
 							     G4Material*   outerMaterial,
-							     G4bool        buildEndPiece)
+							     G4bool        buildEndPiece,
+							     G4double      vhRatio,
+							     G4double      coilWidthFraction,
+							     G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -276,7 +287,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
   G4String colourName = (vertical) ? "vkicker" : "hkicker";
   auto colour = BDSColours::Instance()->GetColour(colourName);
   return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-		       outerMaterial, true, colour, vertical, buildEndPiece);
+		       outerMaterial, true, colour, vertical, buildEndPiece, vhRatio,
+		       coilWidthFraction, coilHeightFraction);
 }
 
 /// functions below here are private to this particular factory
@@ -947,7 +959,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4bool       yokeOnLeft,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
-							      G4bool       buildEndPiece)
+							      G4bool       buildEndPiece,
+							      G4double     vhRatio,
+							      G4double     coilWidthFraction,
+							      G4double     coilHeightFraction)
 {
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
 
@@ -984,8 +999,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 
   G4double coilHeightOriginal = coilHeight;
   // reduce the coils from the absolute maximum;
-  coilHeight *= 0.8;
-  coilWidth  *= 0.65;
+  coilHeight *= coilHeightFraction;
+  coilWidth  *= coilWidthFraction;
 
   // vertical offset of coil from pole tip
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
@@ -1171,7 +1186,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece,
-							      G4double     vhRatio)
+							      G4double     vhRatio,
+							      G4double     coilWidthFraction,
+							      G4double     coilHeightFraction)
 {
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
     
@@ -1218,8 +1235,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   
   G4double coilHeightOriginal = coilHeight;
   // reduce the coils from the absolute maximum;
-  coilHeight *= 0.8;
-  coilWidth  *= 0.8;
+  coilHeight *= coilHeightFraction;
+  coilWidth  *= coilWidthFraction;
 
   // Vertical offset of coil from pole tip
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;

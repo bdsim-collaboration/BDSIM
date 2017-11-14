@@ -46,7 +46,9 @@ public:
 					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
 					   G4bool       buildEndPiece = false,
-					   G4double     vhRatio       = 1.0);
+					   G4double     vhRatio       = 1.0,
+					   G4double     coilWidthFraction  = 0.65,
+					   G4double     coilHeightFraction = 0.8);
 
   /// rectangular bend outer volume
   virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
@@ -60,7 +62,9 @@ public:
 						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
 						G4bool       buildEndPiece = false,
-						G4double     vhRatio       = 1.0);
+						G4double     vhRatio       = 1.0,
+						G4double     coilWidthFraction  = 0.65,
+						G4double     coilHeightFraction = 0.8);
   
   /// quadrupole outer volume
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
@@ -151,8 +155,10 @@ public:
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false
-				       );
+				       G4bool       buildEndPiece = false,
+				       G4double     vhRatio            = 1.0,
+				       G4double     coilWidthFraction  = 0.65,
+				       G4double     coilHeightFraction = 0.8);
   
 protected:
   // geometry parameters
@@ -338,7 +344,10 @@ protected:
 				G4bool       yokeOnLeft,
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
-				G4bool       buildEndPiece   = true);
+				G4bool       buildEndPiece   = true,
+				G4double     vhRatio         = 1.0,
+				G4double     coilWidthFraction  = 0.65,
+				G4double     coilHeightFraction = 0.8);
 
   /// Routine to construct an H shaped dipole magnet and can optionally be built vertically.
   BDSMagnetOuter* CreateDipoleH(G4String     name,
@@ -352,7 +361,9 @@ protected:
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
 				G4bool       buildEndPiece   = true,
-				G4double     vhRatio         = 1.0);
+				G4double     vhRatio         = 1.0,
+				G4double     coilWidthFraction  = 0.8,
+				G4double     coilHeightFraction = 0.8);
 
   BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
 					   G4double    outerDiameter,

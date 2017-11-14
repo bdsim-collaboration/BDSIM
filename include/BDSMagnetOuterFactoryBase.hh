@@ -55,7 +55,9 @@ public:
 					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
 					   G4bool       buildEndPiece = false,  // build and end piece
-					   G4double     vhRatio       = 1.0     // ratio of vertical to horizontal proportions
+					   G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
+					   G4double     coilWidthFraction  = 0.65,
+					   G4double     coilHeightFraction = 0.8
 					   ) = 0;
   
   /// rectangular bend outer volume
@@ -70,7 +72,9 @@ public:
 						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
 						G4bool       buildEndPiece = false,  // build and end piece
-						G4double     vhRatio       = 1.0     // ratio of vertical to horizontal proportions
+						G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
+						G4double     coilWidthFraction  = 0.65,
+						G4double     coilHeightFraction = 0.8
 						) = 0;
   
   
@@ -163,7 +167,10 @@ public:
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false   // build and end piece
+				       G4bool       buildEndPiece = false,  // build and end piece
+				       G4double     vhRatio            = 1.0,
+				       G4double     coilWidthFraction  = 0.65,
+				       G4double     coilHeightFraction = 0.8
 				       ) = 0;
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope

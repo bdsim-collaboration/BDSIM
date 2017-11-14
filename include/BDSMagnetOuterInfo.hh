@@ -36,6 +36,8 @@ public:
 		     G4bool                yokeOnLeft            = false,
 		     G4bool                hStyle                = false,
 		     G4bool                buildEndPiecesIn      = true,
+		     G4double              coilWidthFractionIn   = 0.65,
+		     G4double              coilHeightFractionIn  = 0.8,
 		     G4String              geometryTypeAndPathIn = "");
 
   G4String              name;
@@ -48,6 +50,8 @@ public:
   G4bool                yokeOnLeft;
   G4bool                hStyle;       ///< H Style for dipoles. If not, it's assumed C style.
   G4bool                buildEndPieces;
+  G4double              coilWidthFraction;
+  G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
 
   /// Output stream operator implementation.

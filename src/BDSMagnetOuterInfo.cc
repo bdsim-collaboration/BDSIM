@@ -15,6 +15,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   yokeOnLeft(false),
   hStyle(false),
   buildEndPieces(true),
+  coilWidthFraction(0.65),
+  coilHeightFraction(0.8),
   geometryTypeAndPath("")
 {;}
 
@@ -28,6 +30,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4bool                yokeOnLeftIn,
 				       G4bool                hStyleIn,
 				       G4bool                buildEndPiecesIn,
+				       G4double              coilWidthFractionIn,
+				       G4double              coilHeightFractionIn,
 				       G4String              geometryTypeAndPathIn):
   name(nameIn),
   geometryType(geometryTypeIn),
@@ -39,21 +43,25 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
   yokeOnLeft(yokeOnLeftIn),
   hStyle(hStyleIn),
   buildEndPieces(buildEndPiecesIn),
+  coilWidthFraction(coilWidthFractionIn),
+  coilHeightFraction(coilHeightFractionIn),
   geometryTypeAndPath(geometryTypeAndPathIn)
 {;}
   
 std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
 {
-  out << "Magnet Outer Info: \"" << info.name << "\""             << G4endl;
-  out << "Geometry Type:      "  << info.geometryType             << G4endl;
-  out << "Diameter:           "  << info.outerDiameter            << G4endl;
-  out << "Material:           "  << info.outerMaterial->GetName() << G4endl;
-  out << "V / H Ratio:        "  << info.vhRatio                  << G4endl;
-  out << "Angle In:           "  << info.angleIn                  << G4endl;
-  out << "Angle Out:          "  << info.angleOut                 << G4endl;
-  out << "Yoke on Left:       "  << info.yokeOnLeft               << G4endl;
-  out << "H Style (C if not): "  << info.hStyle                   << G4endl;
-  out << "Build end pieces:   "  << info.buildEndPieces           << G4endl;
-  out << "Geometry:           "  << info.geometryTypeAndPath      << G4endl;
+  out << "Magnet Outer Info:  \"" << info.name << "\""             << G4endl;
+  out << "Geometry Type:       "  << info.geometryType             << G4endl;
+  out << "Diameter:            "  << info.outerDiameter            << G4endl;
+  out << "Material:            "  << info.outerMaterial->GetName() << G4endl;
+  out << "V / H Ratio:         "  << info.vhRatio                  << G4endl;
+  out << "Angle In:            "  << info.angleIn                  << G4endl;
+  out << "Angle Out:           "  << info.angleOut                 << G4endl;
+  out << "Yoke on Left:        "  << info.yokeOnLeft               << G4endl;
+  out << "H Style (C if not):  "  << info.hStyle                   << G4endl;
+  out << "Build end pieces:    "  << info.buildEndPieces           << G4endl;
+  out << "Coil Width Fraction  "  << info.coilWidthFraction        << G4endl;
+  out << "Coil Height Fraction "  << info.coilHeightFraction       << G4endl;
+  out << "Geometry:            "  << info.geometryTypeAndPath      << G4endl;
   return out;
 }

@@ -1094,7 +1094,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   else
     {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
 
-  info->vhRatio = G4double(element->vhRatio);
+  info->vhRatio            = G4double(element->vhRatio);
+  info->coilWidthFraction  = G4double(element->coilWidthFraction);
+  info->coilHeightFraction = G4double(element->coilHeightFraction);
 
   return info;
 }

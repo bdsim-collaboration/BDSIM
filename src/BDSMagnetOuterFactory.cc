@@ -100,6 +100,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
   G4bool yokeOnLeft                     = outerInfo->yokeOnLeft;
   G4bool buildEndPiece                  = outerInfo->buildEndPieces;
+  G4double coilWidthFraction            = outerInfo->coilWidthFraction;
+  G4double coilHeightFraction           = outerInfo->coilHeightFraction;
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
@@ -171,7 +173,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 					  outerInfo->angleIn, outerInfo->angleOut,
 					  yokeOnLeft, outerInfo->hStyle,
 					  outerMaterial, buildEndPiece,
-					  outerInfo->vhRatio);
+					  outerInfo->vhRatio, coilWidthFraction,
+					  coilHeightFraction);
 	break;
       }
     case BDSMagnetType::rectangularbend:
@@ -181,7 +184,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 					       outerInfo->angleIn, outerInfo->angleOut,
 					       yokeOnLeft, outerInfo->hStyle,
 					       outerMaterial, buildEndPiece,
-					       outerInfo->vhRatio);
+					       outerInfo->vhRatio, coilWidthFraction,
+					       coilHeightFraction);
 	break;
       }
     case BDSMagnetType::sextupole:
