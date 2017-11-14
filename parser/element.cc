@@ -347,8 +347,8 @@ void Element::flush()
   yokeOnInside  = true;
   hStyle        = -1;
   vhRatio       = 0.8;
-  coilWidthFraction  = 0.65;
-  coilHeightFraction = 0.8;
+  coilWidthFraction  = -1;
+  coilHeightFraction = -1; // signifies use default in factory
   
   tilt = 0;
   xsize = 0;
