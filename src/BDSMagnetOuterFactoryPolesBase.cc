@@ -1331,6 +1331,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
       yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  yokeInsideY    + lsl));
       yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
 
+      // rotate if building vertically
+      if (buildVertically)
+	{
+	  for (auto& point : yokePoints)
+	    {point = BDS::Rotate(point, CLHEP::halfpi);}
+	}
+
       G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
       G4double zScale = 1;       // the scale at each end of the points = 1
       yokeInnerSolid = new G4ExtrudedSolid(name + "_yoke_inner_solid", // name
@@ -1355,23 +1362,23 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   extYPos =  outerHalfVertical   + lsl;
   extYNeg = -outerHalfVertical   - lsl;
   
-  // rotate if building vertically
   if (buildVertically)
-    {
-      for (auto& point : yokePoints)
-	{point = BDS::Rotate(point, CLHEP::halfpi);}
-      
-      // 'rotate' extents too
+    {// 'rotate' extents too
       std::swap(extXPos, extYPos);
       std::swap(extXNeg, extYNeg);
     }
   BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
 			    -length*0.5, length*0.5);
   magContExtent = ext; // copy to container variable - basically the same
-  
+
+  G4double yokeOuterX = outerHalfHorizontal - lsl;
+  G4double yokeOuterY = outerHalfVertical - lsl;
+  // rotate if building vertically
+  if (buildVertically)
+    {std::swap(yokeOuterX, yokeOuterY);}
   G4VSolid* yokeOuterSolid = new G4Box(name + "_yoke_outer_solid", // name
-				       outerHalfHorizontal - lsl,  // x half length
-				       outerHalfVertical - lsl,    // y half length
+				       yokeOuterX,                 // x half length
+				       yokeOuterY,                 // y half length
 				       sLength * 0.5 - lsl);       // z half length
   
   yokeSolid = new G4SubtractionSolid(name + "_yoke_solid", // name,
