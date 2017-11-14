@@ -884,6 +884,30 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe* beamPipe,
     }
 }
 
+std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplacements(G4double  poleHalfWidthIn,
+										      G4double  poleHalfHeightIn,
+										      G4double  coilWidthIn,
+										      G4double  coilHeightIn,
+										      G4double  cDY,
+										      G4double& coilDX,
+										      G4double& coilDY)
+{
+  // T = top, B = bottom, L = left, R = right
+  coilDX = poleHalfWidthIn  + 0.5*coilWidthIn  + lengthSafetyLarge;
+  coilDY = poleHalfHeightIn + 0.5*coilHeightIn + lengthSafetyLarge + cDY;
+  
+  G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
+  G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
+  G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
+  G4ThreeVector coilBRDisp = G4ThreeVector(-coilDX,-coilDY, 0);
+  std::vector<G4ThreeVector> coilDisps;
+  coilDisps.push_back(coilTLDisp);
+  coilDisps.push_back(coilTRDisp);
+  coilDisps.push_back(coilBLDisp);
+  coilDisps.push_back(coilBRDisp);
+  return coilDisps;
+}
+
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     length,
 							      BDSBeamPipe* beamPipe,
@@ -932,21 +956,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   coilHeight *= 0.8;
   coilWidth  *= 0.65;
 
-  // Vertical offset of coil from pole tip
+  // vertical offset of coil from pole tip
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
 
-  // T = top, B = bottom, L = left, R = right
-  G4double coilDX = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
-  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge + cDY;
-  G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
-  G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
-  G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
-  G4ThreeVector coilBRDisp = G4ThreeVector(-coilDX,-coilDY, 0);
-  std::vector<G4ThreeVector> coilDisps;
-  coilDisps.push_back(coilTLDisp);
-  coilDisps.push_back(coilTRDisp);
-  coilDisps.push_back(coilBLDisp);
-  coilDisps.push_back(coilBRDisp);
+  // coil displacements
+  G4double coilDX = 0, coilDY = 0;
+  std::vector<G4ThreeVector> coilDisps = CalculateCoilDisplacements(poleHalfWidth, poleHalfHeight, coilWidth,
+								    coilHeight, cDY, coilDX, coilDY);
 
   // create vectors of points for extruded solids
   // create yoke + pole (as one solid about 0,0,0)
@@ -1197,19 +1213,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
 
   const G4double lsl = lengthSafetyLarge; // shortcut
-
-  // T = top, B = bottom, L = left, R = right
-  G4double coilDX = poleHalfWidth  + 0.5*coilWidth  + lsl;
-  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lsl + cDY;
-  G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
-  G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
-  G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
-  G4ThreeVector coilBRDisp = G4ThreeVector(-coilDX,-coilDY, 0);
-  std::vector<G4ThreeVector> coilDisps;
-  coilDisps.push_back(coilTLDisp);
-  coilDisps.push_back(coilTRDisp);
-  coilDisps.push_back(coilBLDisp);
-  coilDisps.push_back(coilBRDisp);
+  
+  // coil displacements
+  G4double coilDX = 0, coilDY = 0;
+  std::vector<G4ThreeVector> coilDisps = CalculateCoilDisplacements(poleHalfWidth, poleHalfHeight, coilWidth,
+								    coilHeight, cDY, coilDX, coilDY);
 
   // must ensure that:
   // yoke length < outer container length < full magnet container length

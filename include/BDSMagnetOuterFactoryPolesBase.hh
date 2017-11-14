@@ -308,6 +308,16 @@ protected:
 			  G4double&    poleHalfHeight,
 			  G4double&    outerHalf,
 			  G4double&    yokeThickness);
+
+  /// Calculate the placement offsets for each of the four coil placements. Common to both dipole
+  /// construction routines.
+  std::vector<G4ThreeVector> CalculateCoilDisplacements(G4double  poleHalfWidthIn,
+							G4double  poleHalfHeightIn,
+							G4double  coilWidthIn,
+							G4double  coilHeightIn,
+							G4double  cDY,
+							G4double& coilDX,
+							G4double& coilDY);
     
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
   /// and can optionally be built vertically.
