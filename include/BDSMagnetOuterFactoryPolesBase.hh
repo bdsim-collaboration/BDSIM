@@ -294,6 +294,14 @@ protected:
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
 
+  /// Ensure the coil fractions lie with [0.05, 0.98] and if they're negative set them to
+  /// a provided default. -ve is assumed to require the default parameter and allows different
+  /// usages of the function (in C and H dipoles) to control the defaults.
+  void TestCoilFractions(G4double& coilWidthFraction,
+			 G4double& coilHeightFraction,
+			 G4double  coilWidthFractionDefault,
+			 G4double  coilHeightFractionDefault);
+
   /// Common task to both dipole construction routines. Clean up, test  inputs and check
   /// if faces will intersect and warn user. Note reference to material pointer so it can
   /// be fixed if needs be to the default.

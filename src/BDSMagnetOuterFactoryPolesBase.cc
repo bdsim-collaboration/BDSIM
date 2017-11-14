@@ -688,6 +688,35 @@ void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
     }
 }
 
+void BDSMagnetOuterFactoryPolesBase::TestCoilFractions(G4double& coilWidthFraction,
+						       G4double& coilHeightFraction,
+						       G4double  coilWidthFractionDefault,
+						       G4double  coilHeightFractionDefault)
+{
+  const G4double  lowerLimit   = 0.05;
+  const G4double  upperLimit   = 0.98;
+  std::vector<G4double*> fractions = {&coilWidthFraction, &coilHeightFraction};
+  std::vector<G4double>  defaults  = {coilWidthFractionDefault, coilHeightFractionDefault};
+  G4String names[2] = {"coilWidthFraction", "coilHeightFraction"};
+  for (G4int i = 0; i < 2; i++)
+    {
+      if ((*(fractions[i]) < lowerLimit) && (*(fractions[i]) >= 0))
+	{
+	  *(fractions[i]) = lowerLimit;
+	  G4cout << names[i] << " is below lower limit - limiting to " << lowerLimit << G4endl;
+	}
+      else if (*(fractions[i]) > upperLimit)
+	{
+	  *(fractions[i]) = upperLimit;
+	  G4cout << names[i] << " is above upper limit - limiting to " << upperLimit << G4endl;
+	}
+      else if (*(fractions[i]) < 0)
+	{*(fractions[i]) = defaults[i];}
+      else
+	{continue;}
+    }
+}
+
 void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 						     G4int    order)
 {
@@ -981,6 +1010,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     coilHeightFraction)
 {
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
+  TestCoilFractions(coilWidthFraction, coilHeightFraction, 0.65, 0.8);
 
   // 1 calculations
   // 2 c shaped solid
@@ -1211,6 +1241,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4double     coilHeightFraction)
 {
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
+  TestCoilFractions(coilWidthFraction, coilHeightFraction, 0.8, 0.8);
     
   // 1 calculations
   // 2 h shaped solid
