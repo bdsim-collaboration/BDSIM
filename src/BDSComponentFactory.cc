@@ -586,12 +586,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
+  G4double defaultOuterDiameter = 0.4 * BDSGlobalConstants::Instance()->OuterDiameter();
   
   return new BDSMagnet(t,
 		       elementName,
 		       chordLength,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
+		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter),
 		       vacuumField);
 }
 
@@ -1041,18 +1042,20 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const BDSMagnetStrength* st)
+								const BDSMagnetStrength* st,
+								G4double defaultOuterDiameter)
 {
   G4bool yokeOnLeft = YokeOnLeft(element,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft);
+  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft, defaultOuterDiameter);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
 								const G4double angleIn,
 								const G4double angleOut,
-								const G4bool   yokeOnLeft)
+								const G4bool   yokeOnLeft,
+								G4double defaultOuterDiameter)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   
@@ -1073,7 +1076,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   info->angleOut = angleOut;
   
   // outer diameter
-  info->outerDiameter = PrepareOuterDiameter(element);
+  info->outerDiameter = PrepareOuterDiameter(element, defaultOuterDiameter);
 
   // outer material
   G4Material* outerMaterial;
@@ -1101,12 +1104,16 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el)
+G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el,
+						   G4double defaultOuterDiameter)
 {
   G4double outerDiameter = el->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
+    {//outerDiameter not set - use either global or specified default
+      if (defaultOuterDiameter > 0)
+	{outerDiameter = defaultOuterDiameter;}
+      else
+	{outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
     }
   return outerDiameter;
 }
