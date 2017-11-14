@@ -287,6 +287,28 @@ protected:
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
 
+  /// Common task to both dipole construction routines. Clean up, test  inputs and check
+  /// if faces will intersect and warn user. Note reference to material pointer so it can
+  /// be fixed if needs be to the default.
+  void DipoleCommonPreConstruction(G4String     name,
+				   BDSBeamPipe* beamPipe,
+				   G4double     outerDiameter,
+				   G4Material*& material,
+				   G4double     angleIn,
+				   G4double     angleOut,
+				   G4double     length);
+
+  /// Common calculations to both dipole construction routines in one place. Pass by reference
+  /// to modify variables declared in each function.
+  void DipoleCalculations(BDSBeamPipe* beamPipe,
+			  G4bool       buildVertically,
+			  G4double     outerDiameter,
+			  G4double&    bpHalfWidth,
+			  G4double&    poleHalfWidth,
+			  G4double&    poleHalfHeight,
+			  G4double&    outerHalf,
+			  G4double&    yokeThickness);
+    
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
   /// and can optionally be built vertically.
   BDSMagnetOuter* CreateDipoleC(G4String     name,
@@ -314,6 +336,27 @@ protected:
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
 				G4bool       buildEndPiece   = true);
+
+  BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
+					   G4double    outerDiameter,
+					   G4bool      buildEndPiece,
+					   G4double    coilWidth,
+					   G4double    length,
+					   G4double    containerLength,
+					   G4double    sLength,
+					   G4double    angleIn,
+					   G4double    angleOut,
+					   G4double    outerHalfHorizontal,
+					   G4double    outerHalfVertical,
+					   G4Colour*   colour,
+					   G4Material* material,
+					   std::vector<G4ThreeVector>& coilDisps,
+					   G4bool      buildVertically,
+					   BDSExtent&  ext,
+					   G4double    poleHalfWidth,
+					   G4double    poleHalfHeight,
+					   G4double    cDY,
+					   G4double    coilDY);
 };
 
 #endif
