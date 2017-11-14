@@ -290,13 +290,13 @@ protected:
   /// Common task to both dipole construction routines. Clean up, test  inputs and check
   /// if faces will intersect and warn user. Note reference to material pointer so it can
   /// be fixed if needs be to the default.
-  void DipoleCommonPreConstruction(G4String     name,
-				   BDSBeamPipe* beamPipe,
-				   G4double     outerDiameter,
-				   G4Material*& material,
-				   G4double     angleIn,
-				   G4double     angleOut,
-				   G4double     length);
+  void DipoleCommonPreConstruction(BDSBeamPipe*    beamPipe,
+				   const G4String& name,
+				   const G4double& angleIn,
+				   const G4double& angleOut,
+				   const G4double& length,
+				   G4double&       outerDiameter,
+				   G4Material*&    material);
 
   /// Common calculations to both dipole construction routines in one place. Pass by reference
   /// to modify variables declared in each function.

@@ -825,13 +825,13 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
 
-void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(G4String     name,
-								 BDSBeamPipe* beamPipe,
-								 G4double     outerDiameter,
-								 G4Material*& material,
-								 G4double     angleIn,
-								 G4double     angleOut,
-								 G4double     length)
+void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*    beamPipe,
+								 const G4String& name,
+								 const G4double& angleIn,
+								 const G4double& angleOut,
+								 const G4double& length,
+								 G4double&       outerDiameter,
+								 G4Material*&    material)
 {
   CleanUp();
  
@@ -946,7 +946,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece)
 {
-  DipoleCommonPreConstruction(name, beamPipe, outerDiameter, material, angleIn, angleOut, length);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
 
   // 1 calculations
   // 2 c shaped solid
@@ -1170,8 +1170,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4bool       buildEndPiece)
 {
   G4double vhRatio = 0.8;
-  
-  DipoleCommonPreConstruction(name, beamPipe, outerDiameter, material, angleIn, angleOut, length);
+
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
     
   // 1 calculations
   // 2 h shaped solid
