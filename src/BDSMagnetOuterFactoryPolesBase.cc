@@ -1081,73 +1081,73 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   const G4double lsl = lengthSafetyLarge;   // shortcut
   const G4double ohh = outerHalfHorizontal; // shortcut
   const G4double ohv = outerHalfVertical;   // shortcut
-  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl,  poleHalfHeight + lsl));
-  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl,  ohv - lsl));
-  yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - 2*ohh,  ohv - lsl));
-  yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - 2*ohh, -ohv + lsl));
-  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl, -ohv + lsl));
-  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl, -poleHalfHeight - lsl));
+  yokePoints.emplace_back(poleHalfWidth - lsl,  poleHalfHeight + lsl);
+  yokePoints.emplace_back(poleHalfWidth - lsl,  ohv - lsl);
+  yokePoints.emplace_back(poleHalfWidth + lsl - 2*ohh,  ohv - lsl);
+  yokePoints.emplace_back(poleHalfWidth + lsl - 2*ohh, -ohv + lsl);
+  yokePoints.emplace_back(poleHalfWidth - lsl, -ohv + lsl);
+  yokePoints.emplace_back(poleHalfWidth - lsl, -poleHalfHeight - lsl);
   if (buildPole)
     {
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -ohv + yokeThickness));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   - lsl, -ohv + yokeThickness));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   - lsl,  ohv - yokeThickness));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  ohv - yokeThickness));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
+      yokePoints.emplace_back(-poleHalfWidth + lsl, -poleHalfHeight - lsl);
+      yokePoints.emplace_back(-poleHalfWidth + lsl, -ohv + yokeThickness);
+      yokePoints.emplace_back( yokeInsideX   - lsl, -ohv + yokeThickness);
+      yokePoints.emplace_back( yokeInsideX   - lsl,  ohv - yokeThickness);
+      yokePoints.emplace_back(-poleHalfWidth + lsl,  ohv - yokeThickness);
+      yokePoints.emplace_back(-poleHalfWidth + lsl,  poleHalfHeight + lsl);
     }
   else
     {
-      yokePoints.push_back(G4TwoVector(yokeInsideX - lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector(yokeInsideX - lsl,  poleHalfHeight + lsl));
+      yokePoints.emplace_back(yokeInsideX - lsl, -poleHalfHeight - lsl);
+      yokePoints.emplace_back(yokeInsideX - lsl,  poleHalfHeight + lsl);
     }
   
   // points for container for magnet outer only
   if (buildPole == false) // redundant point when buildPole == true
-    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));}
+    {cPoints.emplace_back(poleHalfWidth + lsl, poleHalfHeight);}
   else
     {
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl + cDY));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 2*lsl + cDY));
+      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight);
+      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl + cDY);
+      cPoints.emplace_back(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 2*lsl + cDY);
     }
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl,          ohv + lsl));
-  cPoints.push_back(G4TwoVector(poleHalfWidth - 2*ohh - lsl,  ohv + lsl));
-  cPoints.push_back(G4TwoVector(poleHalfWidth - 2*ohh - lsl, -ohv - lsl));
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl,         -ohv - lsl));
+  cPoints.emplace_back(poleHalfWidth + lsl,          ohv + lsl);
+  cPoints.emplace_back(poleHalfWidth - 2*ohh - lsl,  ohv + lsl);
+  cPoints.emplace_back(poleHalfWidth - 2*ohh - lsl, -ohv - lsl);
+  cPoints.emplace_back(poleHalfWidth + lsl,         -ohv - lsl);
   if (buildPole)
     {
-      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight));
+      cPoints.emplace_back(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY);
+      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY);
+      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight);
     }
   else // redundant point when buildPole == true
-    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));}
-  cPoints.push_back(G4TwoVector(yokeInsideX, -poleHalfHeight));
-  cPoints.push_back(G4TwoVector(yokeInsideX,  poleHalfHeight));
+    {cPoints.emplace_back(poleHalfWidth + lsl, -poleHalfHeight);}
+  cPoints.emplace_back(yokeInsideX, -poleHalfHeight);
+  cPoints.emplace_back(yokeInsideX,  poleHalfHeight);
 
   // points for container for full magnet object including beam pipe
   // first one in y here is -lsl to cancel +lsl to poleHalfHeight originally
   // container can be same height as beam pipe as it's always wider
   G4double maxLeft = std::max(poleHalfWidth, bpHalfWidth);
-  mCPoints.push_back(G4TwoVector(maxLeft + lsl, poleHalfHeight - lsl));
+  mCPoints.emplace_back(maxLeft + lsl, poleHalfHeight - lsl);
   if (buildPole)
     {
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight - lsl));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY));
+      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight - lsl);
+      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY);
+      mCPoints.emplace_back(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY);
     }
-  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl,          ohv + 2*lsl));
-  mCPoints.push_back(G4TwoVector(poleHalfWidth - 2*ohh - 2*lsl,  ohv + 2*lsl));
-  mCPoints.push_back(G4TwoVector(poleHalfWidth - 2*ohh - 2*lsl, -ohv - 2*lsl));
-  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl,         -ohv - 2*lsl));
+  mCPoints.emplace_back(poleHalfWidth + 2*lsl,          ohv + 2*lsl);
+  mCPoints.emplace_back(poleHalfWidth - 2*ohh - 2*lsl,  ohv + 2*lsl);
+  mCPoints.emplace_back(poleHalfWidth - 2*ohh - 2*lsl, -ohv - 2*lsl);
+  mCPoints.emplace_back(poleHalfWidth + 2*lsl,         -ohv - 2*lsl);
   if (buildPole)
     {
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight + lsl));
+      mCPoints.emplace_back(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY);
+      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY);
+      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight + lsl);
     }
-  mCPoints.push_back(G4TwoVector(maxLeft + lsl, -poleHalfHeight + lsl));
+  mCPoints.emplace_back(maxLeft + lsl, -poleHalfHeight + lsl);
   
   // extents
   extXPos = poleHalfWidth + lsl;
@@ -1311,18 +1311,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
       // create yoke + pole (as one solid about 0,0,0)
       // points are done in clock wise order from the bottom right corner of the top pole.
 
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  poleHalfHeight + lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector( yokeInsideX   + lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector( poleHalfWidth - lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight - lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl, -yokeInsideY    - lsl));
-      yokePoints.push_back(G4TwoVector(-yokeInsideX   - lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  yokeInsideY    + lsl));
-      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight + lsl));
+      yokePoints.emplace_back( poleHalfWidth - lsl,  poleHalfHeight + lsl);
+      yokePoints.emplace_back( poleHalfWidth - lsl,  yokeInsideY    + lsl);
+      yokePoints.emplace_back( yokeInsideX   + lsl,  yokeInsideY    + lsl);
+      yokePoints.emplace_back( yokeInsideX   + lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back( poleHalfWidth - lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back( poleHalfWidth - lsl, -poleHalfHeight - lsl);
+      yokePoints.emplace_back(-poleHalfWidth + lsl, -poleHalfHeight - lsl);
+      yokePoints.emplace_back(-poleHalfWidth + lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back(-yokeInsideX   - lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back(-yokeInsideX   - lsl,  yokeInsideY    + lsl);
+      yokePoints.emplace_back(-poleHalfWidth + lsl,  yokeInsideY    + lsl);
+      yokePoints.emplace_back(-poleHalfWidth + lsl,  poleHalfHeight + lsl);
 
       // rotate if building vertically
       if (buildVertically)
@@ -1666,14 +1666,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
     { // left side
       G4double x = -inXO + coilWidth*cos(t);
       G4double y = coilWidth*sin(t);
-      inEPPoints.push_back(G4TwoVector(x,y));
+      inEPPoints.emplace_back(x,y);
     }
   
   for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += CLHEP::halfpi/nSegments)
     { // right side
       G4double x = inXO + coilWidth*cos(t);
       G4double y = coilWidth*sin(t);
-      inEPPoints.push_back(G4TwoVector(x,y));
+      inEPPoints.emplace_back(x,y);
     }
 
   // shear it
@@ -1684,7 +1684,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   for (const auto point : inEPPoints) // copying this time
     {
       G4double outy = -1*(point.x()*tan(-angleOut) + point.y());
-      outEPPoints.push_back(G4TwoVector(point.x(),outy));
+      outEPPoints.emplace_back(point.x(),outy);
     }
   for (auto& point : inEPPoints)  // modify in place for shearing original points
     {point.setY(point.x()*tan(-angleIn) + point.y());}
@@ -1713,14 +1713,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double xmax = poleHalfWidth + coilWidth + connector;
   G4double ymax = poleHalfHeight + coilHeight + cDY + connector;
   G4double yInn = poleHalfHeight + cDY;
-  contEPPoints.push_back(G4TwoVector(xmax + connector,  ymax));
-  contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
-  contEPPoints.push_back(G4TwoVector(-xmax,  yInn));
-  contEPPoints.push_back(G4TwoVector( xmax,  yInn));
-  contEPPoints.push_back(G4TwoVector( xmax, -yInn));
-  contEPPoints.push_back(G4TwoVector(-xmax, -yInn));
-  contEPPoints.push_back(G4TwoVector(-xmax, -ymax));
-  contEPPoints.push_back(G4TwoVector(xmax + connector, -ymax));
+  contEPPoints.emplace_back(xmax + connector,  ymax);
+  contEPPoints.emplace_back(-xmax,  ymax);
+  contEPPoints.emplace_back(-xmax,  yInn);
+  contEPPoints.emplace_back( xmax,  yInn);
+  contEPPoints.emplace_back( xmax, -yInn);
+  contEPPoints.emplace_back(-xmax, -yInn);
+  contEPPoints.emplace_back(-xmax, -ymax);
+  contEPPoints.emplace_back(xmax + connector, -ymax);
   
   if (buildVertically)
     {
