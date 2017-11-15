@@ -463,16 +463,16 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
 
   // add bottom left quadrant - miss out first point so don't reach apex.
   for (G4int i = 0; i < (G4int)xEllipse.size()-1; i++)
-    {points.push_back(G4TwoVector(xEllipse[i], ellipsoidCentreY-yEllipse[i]));}
-  points.push_back(G4TwoVector(poleSquareWidth*0.5, poleSquareStartRadius));
+    {points.emplace_back(xEllipse[i], ellipsoidCentreY-yEllipse[i]);}
+  points.emplace_back(poleSquareWidth*0.5, poleSquareStartRadius);
   // top points are x poleStopFactor for unambiguous intersection later on
-  points.push_back(G4TwoVector(poleSquareWidth*0.5, poleFinishRadius*poleStopFactor));
-  points.push_back(G4TwoVector(-poleSquareWidth*0.5, poleFinishRadius*poleStopFactor));
-  points.push_back(G4TwoVector(-poleSquareWidth*0.5, poleSquareStartRadius));
+  points.emplace_back(poleSquareWidth*0.5, poleFinishRadius*poleStopFactor);
+  points.emplace_back(-poleSquareWidth*0.5, poleFinishRadius*poleStopFactor);
+  points.emplace_back(-poleSquareWidth*0.5, poleSquareStartRadius);
   // add bottom right quadrant - miss out first point so don't reach apex.
   // required start index is of course size()-1 also.
   for (G4int i = (G4int)xEllipse.size()-2; i > 0; i--)
-    {points.push_back(G4TwoVector(-xEllipse[i], ellipsoidCentreY-yEllipse[i]));}
+    {points.emplace_back(-xEllipse[i], ellipsoidCentreY-yEllipse[i]);}
   
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
@@ -545,16 +545,16 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
   endPieceInnerR   = lowerY - lengthSafetyLarge;
   endPieceOuterR   = yokeStartRadius;
   
-  leftPoints.push_back(G4TwoVector(innerX, lowerY));
-  leftPoints.push_back(G4TwoVector(outerX, lowerY));
-  leftPoints.push_back(G4TwoVector(outerX, upperY));
-  leftPoints.push_back(G4TwoVector(innerX, upperY));
+  leftPoints.emplace_back(innerX, lowerY);
+  leftPoints.emplace_back(outerX, lowerY);
+  leftPoints.emplace_back(outerX, upperY);
+  leftPoints.emplace_back(innerX, upperY);
 
   // must be in clockwise order
-  rightPoints.push_back(G4TwoVector(-innerX, lowerY));
-  rightPoints.push_back(G4TwoVector(-innerX, upperY));
-  rightPoints.push_back(G4TwoVector(-outerX, upperY));
-  rightPoints.push_back(G4TwoVector(-outerX, lowerY));
+  rightPoints.emplace_back(-innerX, lowerY);
+  rightPoints.emplace_back(-innerX, upperY);
+  rightPoints.emplace_back(-outerX, upperY);
+  rightPoints.emplace_back(-outerX, lowerY);
 
   // this will be the eventual length along z but for now its the amplitude in y.
   // make slightly smaller version as endPieceLength used for container dimensions
@@ -563,13 +563,13 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
     {
       G4double x = outerX + endPieceLength * (cos(angle) - 1.0);
       G4double y = endPieceLength * sin(angle);
-      endPiecePoints.push_back(G4TwoVector(x,y));
+      endPiecePoints.emplace_back(x,y);
     }
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
       G4double x = -outerX - endPieceLength * (sin(angle) - 1.0);
       G4double y = endPieceLength * cos(angle);
-      endPiecePoints.push_back(G4TwoVector(x,y));
+      endPiecePoints.emplace_back(x,y);
     }
 }
 
