@@ -928,16 +928,18 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleHalfWidth > 0.45*outerDiameter)
     {poleHalfWidth = outerDiameter*0.15;}
-  poleHalfHeight = bpHalfHeight + lengthSafetyLarge;
-  outerHalf      = outerDiameter * 0.5;
+  poleHalfHeight      = bpHalfHeight + lengthSafetyLarge;
+  outerHalf           = outerDiameter * 0.5;
+  outerHalfHorizontal = outerHalf;
+  outerHalfVertical   = outerHalf * vhRatio;
 
   // propose yoke thickness
   yokeThickness = yokeThicknessFraction * outerDiameter;
   // check it's a suitable size and will fit in
-  if (yokeThickness > outerHalf - poleHalfHeight)
+  if (yokeThickness > outerHalfVertical - poleHalfHeight)
     {
       buildPole     = false;
-      yokeThickness = outerHalf - poleHalfHeight;
+      yokeThickness = outerHalfVertical - poleHalfHeight;
     }
 
   // must ensure that:
@@ -960,8 +962,6 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
       containerSLength = sLength;
     }
 
-  outerHalfHorizontal = outerDiameter * 0.5;
-  outerHalfVertical   = outerHalf * vhRatio;
 }
 
 std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplacements(G4double  poleHalfWidthIn,
