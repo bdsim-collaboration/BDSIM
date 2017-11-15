@@ -951,13 +951,15 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
   // if we have angled faces, make square faced solids longer for intersection.
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
-      // create yoke, coil, container and magnet container solids
-      // create a safe length here so solids are long enough for intersection
-      // note we can have short magnets with strong parallel faces - can't just
-      // do 2x length for 'safe' length
-      G4double dzIn  = tan(std::abs(angleIn))  * 1.3*outerHalf; // over estimation, but ok
-      G4double dzOut = tan(std::abs(angleOut)) * 1.3*outerHalf;
-      // safe length for intersection
+      // In the case of angled faces, calculate a length so that the straight solids
+      // used in intersection are long enough to reach the edges of the angled faces.
+      // Could simply do 2x length, but for short dipole sections with strongly angled
+      // faces this doesn't work. Calculate extent along z for each angled face. This
+      // is called the 'safe' length -> sLength
+      G4double hypotenuse = std::hypot(outerHalfHorizontal, outerHalfVertical);
+      G4double dzIn  = tan(std::abs(angleIn))  * 1.2*hypotenuse; // 20% over estimation for safety
+      G4double dzOut = tan(std::abs(angleOut)) * 1.2*hypotenuse;
+      // take the longest of different estimations (2x and 1.5x + dZs)
       sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
       containerSLength = sLength;
     }
