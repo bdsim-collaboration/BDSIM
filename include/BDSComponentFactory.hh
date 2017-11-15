@@ -120,7 +120,7 @@ public:
 						    const G4double angleOut,
 						    const G4bool   yokeOnLeft                = false,
 						    G4double       defaultOuterDiameter      = -1,
-						    G4double       defaultVHRatio            =  0.8,
+						    G4double       defaultVHRatio            = -1,
 						    G4double       defaultCoilWidthFraction  = -1,
 						    G4double       defaultCoilHeightFraction = -1);
 

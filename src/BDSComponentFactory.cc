@@ -1110,8 +1110,10 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
     {info->vhRatio = G4double(element->vhRatio);}
   else if (globals->VHRatio() > 0)
     {info->vhRatio = globals->VHRatio();}
-  else
+  else if (defaultVHRatio > 0) // allow calling function to supply optional default
     {info->vhRatio = defaultVHRatio;}
+  else
+    {info->vhRatio = info->hStyle ? 0.8 : 1.0;} // h default : c default
   
   if (element->coilWidthFraction > 0)
     {info->coilWidthFraction = G4double(element->coilWidthFraction);}
