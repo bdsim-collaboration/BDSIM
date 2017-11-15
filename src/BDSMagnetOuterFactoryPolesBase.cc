@@ -116,7 +116,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
 			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
-			   coilWidthFraction, coilHeightFraction);
+			   vhRatio, coilWidthFraction, coilHeightFraction);
     }
 }
 
@@ -149,7 +149,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
 			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
-			   coilWidthFraction, coilHeightFraction);
+			   vhRatio, coilWidthFraction, coilHeightFraction);
     }
 }
 
