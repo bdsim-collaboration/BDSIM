@@ -41,12 +41,12 @@ public:
   inline std::pair<G4double, G4double> ExtentY() const {return std::make_pair(extYNeg, extYPos);}
   inline std::pair<G4double, G4double> ExtentZ() const {return std::make_pair(extZNeg, extZPos);}
   
-  inline G4double XPos() const {return extXNeg;}
-  inline G4double XNeg() const {return extXPos;}
-  inline G4double YPos() const {return extYNeg;}
-  inline G4double YNeg() const {return extYPos;}
-  inline G4double ZPos() const {return extZNeg;}
-  inline G4double ZNeg() const {return extZPos;}
+  inline G4double XNeg() const {return extXNeg;}
+  inline G4double XPos() const {return extXPos;}
+  inline G4double YNeg() const {return extYNeg;}
+  inline G4double YPos() const {return extYPos;}
+  inline G4double ZNeg() const {return extZNeg;}
+  inline G4double ZPos() const {return extZPos;}
   
   inline G4ThreeVector ExtentPositive() const
   {return G4ThreeVector(extXPos, extYPos, extZPos);}
