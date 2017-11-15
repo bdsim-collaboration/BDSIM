@@ -962,6 +962,15 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
       containerSLength = sLength;
     }
 
+  // ensure outer edges aren't smaller than beam pipe
+  G4double verticalLowerLimit   = poleHalfHeight;
+  G4double horizontalLowerLimit = poleHalfWidth;
+  if (buildVertically)
+    {std::swap(verticalLowerLimit, horizontalLowerLimit);}
+  if (outerHalfHorizontal <= horizontalLowerLimit)
+    {outerHalfHorizontal = horizontalLowerLimit + 4*lengthSafetyLarge;}
+  if (outerHalfVertical <= verticalLowerLimit)
+    {outerHalfVertical = verticalLowerLimit + 4*lengthSafetyLarge;}
 }
 
 std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplacements(G4double  poleHalfWidthIn,
@@ -1029,11 +1038,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
 		     outerHalf, outerHalfHorizontal, outerHalfVertical,
 		     yokeThickness, sLength, containerSLength);
-
-  // outerDiameter must be > max ( bp height , bp width )
-  G4double maxOfBP = std::max(poleHalfWidth, poleHalfHeight);
-  if (outerHalf <= maxOfBP)
-    {outerHalf = maxOfBP + 4*lengthSafetyLarge;}
 
   G4double yokeInsideX = poleHalfWidth - outerDiameter + yokeThickness;
 
@@ -1260,16 +1264,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
 		     outerHalf, outerHalfHorizontal, outerHalfVertical,
 		     yokeThickness, sLength, containerSLength);
-
-  // ensure outer edges aren't smaller than beam pipe
-  G4double verticalLowerLimit   = poleHalfHeight;
-  G4double horizontalLowerLimit = poleHalfWidth;
-  if (buildVertically)
-    {std::swap(verticalLowerLimit, horizontalLowerLimit);}
-  if (outerHalfHorizontal <= horizontalLowerLimit)
-    {outerHalfHorizontal = horizontalLowerLimit + 4*lengthSafetyLarge;}
-  if (outerHalfVertical <= verticalLowerLimit)
-    {outerHalfVertical = verticalLowerLimit + 4*lengthSafetyLarge;}
 
   // distance from axis to inside of yoke horizontally
   G4double yokeInsideX = outerHalfHorizontal - yokeThickness;
