@@ -237,7 +237,7 @@ protected:
   /// geometrical parameters that may be required for the final geometry.
   virtual void CalculatePoleAndYoke(G4double     outerDiameter,
 				    BDSBeamPipe* beamPipe,
-				    G4double     order);
+				    G4int        order);
   
   /// Create pole for magnet of order N where npoles = Nx2. This contains some calcultion
   /// of geometrical parameters pertinent to the exact geometry being required.

@@ -368,7 +368,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 
 void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiameter,
 							  BDSBeamPipe* beamPipe,
-							  G4double     order)
+							  G4int        order)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -455,7 +455,8 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
   std::vector<G4double> xEllipse;
   std::vector<G4double> yEllipse;
   const G4int numAngPoints = 6;
-  for (G4double angle = 0; angle < CLHEP::halfpi; angle += CLHEP::halfpi/(G4double)numAngPoints)
+  const G4double iterant = CLHEP::halfpi/(G4double)numAngPoints;
+  for (G4double angle = 0; angle < CLHEP::halfpi; angle += iterant)
     {
       xEllipse.push_back(0.5*ellipsoidWidth*sin(angle));
       yEllipse.push_back(0.5*ellipsoidHeight*cos(angle));
