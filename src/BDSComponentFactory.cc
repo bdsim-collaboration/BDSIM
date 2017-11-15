@@ -587,7 +587,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   G4double defaultOuterDiameter = 0.4 * BDSGlobalConstants::Instance()->OuterDiameter();
-  auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.8, 0.9);
+  auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
