@@ -86,13 +86,13 @@ public:
   /// Return whether the extent encompasses the point.  Similar, but with separate x,y,z coordinates.
   G4bool Encompasses(G4double x,
 		     G4double y,
-		     G4double z) const;
-
+		     G4double z) const {return Encompasses(G4ThreeVector(x,y,z));}
+  
   /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
   BDSExtent Tilted(G4double angle) const;
 
   /// @{ Provide a new copy of this extent with an offset applied.
-  BDSExtent Translate(G4ThreeVector offset) const;
+  BDSExtent Translate(G4ThreeVector offset) const {return Translate(offset.x(), offset.y(), offset.z());}
   BDSExtent Translate(G4double dx, G4double dy, G4double dz) const;
   /// @}
 

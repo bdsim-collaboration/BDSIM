@@ -66,11 +66,6 @@ BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
   return offset;
 }
 
-BDSExtent BDSExtent::Translate(G4ThreeVector offset) const
-{
-  return Translate(offset.x(), offset.y(), offset.z());
-}
-
 BDSExtent BDSExtent::Translate(G4double dx, G4double dy, G4double dz) const
 {
   return BDSExtent(extXNeg + dx, extXPos + dx,
@@ -133,11 +128,4 @@ G4bool BDSExtent::Encompasses(G4ThreeVector point) const
 {
   BDSExtent extentPoint = BDSExtent(point);
   return extentPoint < (*this);
-}
-
-G4bool BDSExtent::Encompasses(G4double x,
-			      G4double y,
-			      G4double z) const
-{
-  return Encompasses(G4ThreeVector(x,y,z));
 }
