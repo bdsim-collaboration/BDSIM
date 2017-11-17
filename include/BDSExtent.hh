@@ -35,7 +35,7 @@ public:
   /// Symmetric from three vector.
   explicit BDSExtent(G4ThreeVector extIn);
 	    
-  ~BDSExtent();
+  virtual ~BDSExtent();
 
   /// @{ Accessor
   inline std::pair<G4double, G4double> ExtentX() const {return std::make_pair(extXNeg, extXPos);}
