@@ -92,8 +92,8 @@ public:
   BDSExtent Tilted(G4double angle) const;
 
   /// @{ Provide a new copy of this extent with an offset applied.
-  BDSExtent Offset(G4ThreeVector offset) const;
-  BDSExtent Offset(G4double dx, G4double dy, G4double dz) const;
+  BDSExtent Translate(G4ThreeVector offset) const;
+  BDSExtent Translate(G4double dx, G4double dy, G4double dz) const;
   /// @}
 
   /// Provide a new copy of this extent with both a tilt and an offset applied.
@@ -101,13 +101,7 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSExtent const &ext);
-
-  /// Return a copy of this extent shifted in x and y by a given amount.
-  BDSExtent Shift(G4double x, G4double y) const;
-
-  BDSExtent ShiftX(G4double x) const;  ///< Return a copy of this extent shift in x only.
-  BDSExtent ShiftY(G4double y) const;  ///< Return a copy of this extent shift in y only.
-
+  
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
 

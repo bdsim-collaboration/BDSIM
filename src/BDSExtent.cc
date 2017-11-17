@@ -62,16 +62,16 @@ BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
   if (!tiltOffset)
     {return BDSExtent(*this);}
   BDSExtent tilted = Tilted(tiltOffset->GetTilt());
-  BDSExtent offset = tilted.Offset(tiltOffset->GetOffset());
+  BDSExtent offset = tilted.Translate(tiltOffset->GetOffset());
   return offset;
 }
 
-BDSExtent BDSExtent::Offset(G4ThreeVector offset) const
+BDSExtent BDSExtent::Translate(G4ThreeVector offset) const
 {
-  return Offset(offset.x(), offset.y(), offset.z());
+  return Translate(offset.x(), offset.y(), offset.z());
 }
 
-BDSExtent BDSExtent::Offset(G4double dx, G4double dy, G4double dz) const
+BDSExtent BDSExtent::Translate(G4double dx, G4double dy, G4double dz) const
 {
   return BDSExtent(extXNeg + dx, extXPos + dx,
 		   extYNeg + dy, extYPos + dy,
@@ -112,28 +112,6 @@ std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
   out << ext.extYNeg << " " << ext.extYPos << " ";
   out << ext.extZNeg << " " << ext.extZPos;
   return out;
-}
-
-BDSExtent BDSExtent::Shift(G4double x, G4double y) const
-{
-  BDSExtent xShifted = ShiftX(x);
-  return xShifted.ShiftY(y);
-}
-
-BDSExtent BDSExtent::ShiftX(G4double x) const
-{
-  BDSExtent result = BDSExtent(extXNeg + x, extXPos + x,
-			       extYNeg, extYPos,
-			       extZNeg, extZPos);
-  return result;
-}
-
-BDSExtent BDSExtent::ShiftY(G4double y) const
-{
-  BDSExtent result = BDSExtent(extXNeg, extXPos,
-			       extYNeg + y, extYPos + y,
-			       extZNeg, extZPos);
-  return result;
 }
 
 G4double BDSExtent::MaximumAbs() const
