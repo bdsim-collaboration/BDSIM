@@ -148,6 +148,7 @@ endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
+target_link_libraries(bdsim ${ROOT_EVELIBRARIES})
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
