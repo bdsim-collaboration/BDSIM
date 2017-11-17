@@ -3,6 +3,7 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
 #include <algorithm>
@@ -56,6 +57,20 @@ BDSExtent::BDSExtent(G4ThreeVector extIn):
 
 BDSExtent::~BDSExtent()
 {;}
+
+std::vector<G4ThreeVector> BDSExtent::AllBoundaryPoints() const
+{
+  std::vector<G4ThreeVector> result;
+  result.emplace_back(extXNeg, extYNeg, extZNeg);
+  result.emplace_back(extXNeg, extYPos, extZNeg);
+  result.emplace_back(extXPos, extYNeg, extZNeg);
+  result.emplace_back(extXPos, extYPos, extZNeg);
+  result.emplace_back(extXNeg, extYNeg, extZPos);
+  result.emplace_back(extXNeg, extYPos, extZPos);
+  result.emplace_back(extXPos, extYNeg, extZPos);
+  result.emplace_back(extXPos, extYPos, extZPos);
+  return result;
+}
 
 BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
 {

@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <utility> // for pair and pair relational operators
+#include <vector>
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -53,6 +54,9 @@ public:
 
   inline G4ThreeVector ExtentNegative() const
   {return G4ThreeVector(extXNeg, extYNeg, extZNeg);}
+
+  /// All 8 boundary points of the bounding box.
+  std::vector<G4ThreeVector> AllBoundaryPoints() const;
   /// @}
 
   /// @{ The difference in a dimension.
