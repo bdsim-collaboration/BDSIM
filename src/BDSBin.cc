@@ -7,15 +7,7 @@
 
 BDSBin::BDSBin(G4double xMinIn, G4double xMaxIn):
   xmin(xMinIn), xmax(xMaxIn), total(0.0), sumWeightsSquared(0.0)
-{
-  /* // this creates a lot of output!
-#ifdef BDSDEBUG
-  G4cout << "New bin -> xmin: " << std::setw(7) << xmin 
-	 << " m, xmax:  "       << std::setw(7) << xmax 
-	 << " m" << G4endl;
-#endif
-  */
-}
+{;}
 
 BDSBin BDSBin::operator+= (const G4double& weight)
 {

@@ -1,0 +1,12 @@
+c1: rcol, l=20*cm, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="ionbinary";
+
+option, checkOverlaps=1;
+
+beam, particle="ion 12 6",
+      energy=50*GeV;

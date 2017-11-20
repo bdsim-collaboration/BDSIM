@@ -278,6 +278,21 @@ G4bool BDS::Geant4EnvironmentIsSet()
   return result;
 }
 
+void BDS::CheckLowEnergyDataExists(G4String physicsListName)
+{
+  const char* envHPData = std::getenv("G4PARTICLEHPDATA");
+  if (!envHPData)
+    {
+      G4cerr << "The G4TENDL low energy data is not available!" << G4endl;
+      G4cout << "G4TENDL data is required through the environmental variable "
+	     << "\"G4PARTICLEHPDATA\"" << G4endl;
+      G4cout << "This is required for the \"" << physicsListName << "\" physics list." << G4endl;
+      G4cout << "This data is an optional download from the Geant4 website. Please "
+	     << "download from the Geant4 website and export the environmental variable." << G4endl;
+      exit(1);
+    }
+}
+
 G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
 {
   try{
