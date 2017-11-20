@@ -253,6 +253,7 @@ parameter         description          default     required
 		  defined
 ================  ===================  ==========  =========
 
+
 * The `aperture parameters`_ may also be specified.
 
 Examples::
@@ -746,6 +747,8 @@ degrader
 
 `degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
 
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
 ===================    =======================================  ==========  ===========
 parameter              description                              default     required
 `l`                    length [m]                               0           yes
@@ -1238,6 +1241,8 @@ Cavity Geometry Parameters
 A more detailed rf cavity geometry may be described by constructing a 'cavity' object
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
+
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{5cm}|
 
 +--------------------------+-----------------+-----------------------------------------------------------------+
 | **Parameter**            | **Required**    | **Description**                                                 |
