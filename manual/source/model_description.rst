@@ -1242,7 +1242,7 @@ A more detailed rf cavity geometry may be described by constructing a 'cavity' o
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
 
-.. tabularcolumns:: |p{3cm}|p{2cm}|p{5}|
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{5cm}|
 
 +--------------------------+-----------------+-----------------------------------------------------------------+
 | **Parameter**            | **Required**    | **Description**                                                 |
