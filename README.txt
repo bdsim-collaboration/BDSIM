@@ -1,13 +1,12 @@
+Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London 2001 - 2017
+
 General Information
 ===================
 
-BDSIM version 0.992, Geant4 toolkit for radiation transport in accelerators
+BDSIM version 0.992, program for radiation transport in accelerators
 
 The official web site is:
 	http://www.pp.rhul.ac.uk/bdsim
-
-The official Geant4 web site is:
-	http://geant4.web.cern.ch
 
 Currently maintained and developed by (alphabetically):
 
@@ -59,15 +58,16 @@ tested on:
     compiler: gcc 4.9, clang 6 (fully c++ 11 compliant)
    
 mandatory:
-    Geant versions Geant4.10 or greater (10.3.p01 recommended)
-    Latest patch version recommended of any 10.X version.
-
-    CLHEP (recommended version 2.1.3.1 or greater)
-
-    ROOT 6.x
+   - BISON
+   - CLHEP (recommended version 2.1.3.1 or greater)
+   - FLEX
+   - Geant4 versions Geant4.10 or greater (10.3.p03 recommended)
+     Latest patch version recommended of any 10.X version. 
+   - ROOT 6
 
 optional: 
-    OpenGL
+   - OpenGL / QT (for interactive visualiser)
+   - XercesC3 (for GDML)
 
 To compile, see http://www.pp.rhul.ac.uk/bdsim/manual/installation.html
 
