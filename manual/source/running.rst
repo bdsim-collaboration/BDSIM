@@ -29,7 +29,7 @@ be used literally.  The following command may be used to dipslay all options::
 
   bdsim --help
 
-
+.. tabularcolumns:: |p{6cm}|p{9cm}|
 
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
