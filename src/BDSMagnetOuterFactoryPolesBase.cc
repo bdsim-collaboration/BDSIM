@@ -1664,14 +1664,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   // create an ellipse with no angle, then shear it to match the angle
   G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
-  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += CLHEP::halfpi/nSegments)
+  G4double increment = CLHEP::halfpi/nSegments;
+  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += increment)
     { // left side
       G4double x = -inXO + coilWidth*cos(t);
       G4double y = coilWidth*sin(t);
       inEPPoints.emplace_back(x,y);
     }
   
-  for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += CLHEP::halfpi/nSegments)
+  for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += increment)
     { // right side
       G4double x = inXO + coilWidth*cos(t);
       G4double y = coilWidth*sin(t);
