@@ -370,6 +370,8 @@ It is useful to change a few options with Geant4 for practical purposes.
 	    :width: 90%
 	    :align: center
 
+.. tabularcolumns:: |p{7cm}|p{8cm}|
+	       
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
