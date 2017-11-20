@@ -86,15 +86,13 @@ std::vector<G4ThreeVector> BDSExtentGlobal::AllBoundaryPointsGlobal() const
 
 std::vector<TGLVertex3> BDSExtentGlobal::AllVerticesGlobal() const
 {
+  std::vector<G4ThreeVector> local = AllBoundaryPoints();
   std::vector<TGLVertex3> result;
-  result.emplace_back(extXNegG, extYNegG, extZNegG);
-  result.emplace_back(extXPosG, extYNegG, extZNegG);
-  result.emplace_back(extXPosG, extYPosG, extZNegG);
-  result.emplace_back(extXNegG, extYPosG, extZNegG);
-  result.emplace_back(extXNegG, extYNegG, extZPosG);
-  result.emplace_back(extXPosG, extYNegG, extZPosG);
-  result.emplace_back(extXPosG, extYPosG, extZPosG);
-  result.emplace_back(extXNegG, extYPosG, extZPosG);
+  for (const auto& p : local)
+  {
+    G4ThreeVector global = transform * (HepGeom::Point3D<G4double>)p;
+    result.emplace_back(global.x(), global.y(), global.z());
+  }
   return result;
 }
 
