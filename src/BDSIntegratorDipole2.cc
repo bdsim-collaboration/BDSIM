@@ -39,7 +39,8 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
     }
   
   // Arrays for field querying (g4 interface)
-  G4double bO[4]; // original location field value
+  G4double bO[6]; // original location field value
+
   eqOfM->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
 
@@ -79,7 +80,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
         {yErr[i] = 0;}
       return; // saves long if else
     }
-  
+
   // normal error estimation - do two half steps and compare difference to
   // the result from one full step
   G4double yTemp[7];
