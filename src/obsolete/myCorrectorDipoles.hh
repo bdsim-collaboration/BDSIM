@@ -1,21 +1,21 @@
-/*
- * Merlin C++ Class Library for Charged Particle Accelerator Simulations
- * 
- * Class library version 2.0 (1999)
- * 
- * file AcceleratorModel\StdComponent\CorrectorDipoles.h
- * last modified 07/06/99 23:07:04
- */
-/*
- * This file is derived from software bearing the following
- * restrictions:
- *
- * MERLIN C++ class library for 
- * Charge Particle Accelerator Simulations
- * Copyright (c) 1999 by N.J.Walker.  ALL RIGHTS RESERVED. 
- *
- * Permission to use, copy, modify, distribute and sell this
- * software and its documentation for any purpose is hereby
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
  * granted without fee, provided that the above copyright notice
  * appear in all copies and that both that copyright notice and
  * this permission notice appear in supporting documentation.
