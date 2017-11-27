@@ -42,11 +42,12 @@ function add_copyright {
     fi
 }
 
-if grep -q 'Copyright' src/BDSAcceleratorComponent.cc; then
-    remove_copyright src/BDSAcceleratorComponent.cc
-fi
-add_copyright src/BDSAcceleratorComponent.cc
-mv src/BDSAcceleratorComponent.cc.new src/BDSAcceleratorComponent.cc
+# development test
+#if grep -q 'Copyright' src/BDSAcceleratorComponent.cc; then
+#    remove_copyright src/BDSAcceleratorComponent.cc
+#fi
+#add_copyright src/BDSAcceleratorComponent.cc
+#mv src/BDSAcceleratorComponent.cc.new src/BDSAcceleratorComponent.cc
 
 echo "Inserting "$LICENCEFILE" into .cc and .hh files."
 for file in $(find . -name "*.hh" -or -name "*.cc"); do

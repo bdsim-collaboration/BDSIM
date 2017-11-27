@@ -16,14 +16,9 @@ sections.
 Installing Python Packages
 ==========================
 
-To access (import) the supplied packages from anywhere on your system,
-the `utils` directory should be added to your `PYTHONPATH` environmental
-variable::
+To access (import) the supplied packages from anywhere on your system, simply run ``make`` from the ``utils`` directory.  For this to work you should have the python package installer ``pip`` in your PATH.
 
-  export PYTHONPATH=$PYTHONPATH:~/physics/reps/bdsim/utils
-
-This should allow you to import the python utilities without error
-from any location::
+This should allow you to import the python utilities::
 
   cd ~/
   python

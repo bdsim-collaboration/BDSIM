@@ -1,21 +1,21 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 19.1.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-/* BDSComponentOffset. Version 1.0
-   Author: John C.Carter, Royal Holloway, Univ. of London
-   Date: 10 Mar 2005
-*/
-#include "BDSGlobalConstants.hh" 
-#include "BDSComponentOffset.hh"
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
 
-//============================================================
+This file is part of BDSIM.
 
-BDSComponentOffset::BDSComponentOffset (G4String& aName,
-					G4double aXoffset,
-					G4double aYoffset):
-  BDSAcceleratorComponent(aName,
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 			  0,0,0,0,
 			  NULL,"","",0,
 			  aXoffset,

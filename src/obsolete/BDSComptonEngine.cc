@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 G4double BDSComptonEngine::ComptonDifferentialCrossSection(G4double costh, G4double lgamma){ //lgamma is the lorentz gamma, costheta is the scattering angle
   G4double f1=(1+costh*costh)/(1+lgamma*(1-costh)*(1-costh));
   G4double f2=1+(lgamma*lgamma*(1-costh)*(1-costh))/((1+costh*costh)*(1+lgamma*(1-costh)));
