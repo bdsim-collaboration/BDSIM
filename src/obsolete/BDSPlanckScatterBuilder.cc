@@ -1,21 +1,21 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 9.3.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSPlanckScatterBuilder.hh"
-
-#include "globals.hh"
-#include "G4ios.hh"
-#include <iomanip>
-
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTable.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4ProcessManager.hh"
-
-#include "BDSPlanckScatter.hh"
 
 BDSPlanckScatterBuilder::BDSPlanckScatterBuilder() 
 {}

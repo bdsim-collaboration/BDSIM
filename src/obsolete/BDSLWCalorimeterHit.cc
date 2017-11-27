@@ -1,17 +1,18 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "BDSLWCalorimeterHit.hh"
-#include "G4ios.hh"
-
-G4Allocator<BDSLWCalorimeterHit> BDSLWCalorimeterHitAllocator;
-
-BDSLWCalorimeterHit::BDSLWCalorimeterHit(G4int nCopy, G4double anEnergy,G4int nEvent)
-  :itsEnergy(anEnergy),itsCopyNumber(nCopy),itsEventNo(nEvent)
-{;}
-
-BDSLWCalorimeterHit::~BDSLWCalorimeterHit()
-{;}
