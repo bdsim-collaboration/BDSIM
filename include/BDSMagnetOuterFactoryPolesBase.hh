@@ -327,7 +327,8 @@ protected:
 				   const G4double& angleOut,
 				   const G4double& length,
 				   G4double&       outerDiameter,
-				   G4Material*&    material);
+				   G4Material*&    material,
+				   G4double&       vhRatio);
 
   /// Common calculations to both dipole construction routines in one place. Pass by reference
   /// to modify variables declared in each function.

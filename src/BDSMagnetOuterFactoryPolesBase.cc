@@ -900,7 +900,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
 								 const G4double& angleOut,
 								 const G4double& length,
 								 G4double&       outerDiameter,
-								 G4Material*&    material)
+								 G4Material*&    material,
+								 G4double&       vhRatio)
 {
   CleanUp();
  
@@ -916,7 +917,12 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
 	     << " is too short for the angle of the pole faces: (" << angleIn << "," << angleOut << ")." << G4endl;
       exit(1);
     }
-
+  
+  // vhratio - don't allow a ratio greater than 10:1
+  if (vhRatio > 10)
+    {vhRatio = 10;}
+  else if (vhRatio < 0.1)
+    {vhRatio = 0.1;}
 }
 
 void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe,
@@ -1046,7 +1052,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
 
   // 1 calculations
@@ -1275,7 +1281,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
     
   // 1 calculations
