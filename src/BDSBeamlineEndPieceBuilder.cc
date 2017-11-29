@@ -151,6 +151,7 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 	      if (willIntersect)
 		{placeBefore = false;}
 
+	      /*
 	      // 3d check
 	      auto thisEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
 								   currentIndex);
@@ -161,6 +162,7 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 		  placeBefore = false;
 		  delete thisEl;
 		}
+	      */
 	    }
 	  if (placeBefore)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line

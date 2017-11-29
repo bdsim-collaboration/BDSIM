@@ -32,8 +32,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Geometry/Point3D.h"
 
-#include "TGLBoundingBox.h"
-#include "TGLUtil.h" // for TGLVertex3
 
 BDSExtentGlobal::BDSExtentGlobal():
   transform(G4Transform3D()),
@@ -102,38 +100,18 @@ std::vector<G4ThreeVector> BDSExtentGlobal::AllBoundaryPointsGlobal() const
   return result;
 }
 
-std::vector<TGLVertex3> BDSExtentGlobal::AllVerticesGlobal() const
+std::vector<G4ThreeVector> BDSExtentGlobal::AllVerticesGlobal() const
 {
   std::vector<G4ThreeVector> local = AllBoundaryPoints();
-  std::vector<TGLVertex3> result;
+  std::vector<G4ThreeVector> result;
   for (const auto& p : local)
-  {
-    G4ThreeVector global = transform * (HepGeom::Point3D<G4double>)p;
-    result.emplace_back(global.x(), global.y(), global.z());
-  }
+    {result.emplace_back(transform * (HepGeom::Point3D<G4double>)p);}
   return result;
 }
 
-G4bool BDSExtentGlobal::Overlaps(const BDSExtentGlobal& other) const
+G4bool BDSExtentGlobal::Overlaps(const BDSExtentGlobal& /*other*/) const
 {
-  //    y
-  //    |
-  //    |
-  //    |________x
-  //   /  3-------2
-  //  /  /|      /|
-  // z  7-------6 |
-  //    | 0-----|-1
-  //    |/      |/
-  //    4-------5
-  //
-
-  std::vector<TGLVertex3> thisVertices  = AllVerticesGlobal();
-  std::vector<TGLVertex3> otherVertices = other.AllVerticesGlobal();
-  TGLBoundingBox thisBox(thisVertices.data());
-  TGLBoundingBox otherBox(otherVertices.data());
-  
-  return thisBox.Overlap(otherBox);
+  return false;
 }
 
 BDSExtentGlobal BDSExtentGlobal::TranslateGlobal(G4double dx, G4double dy, G4double dz) const
@@ -175,18 +153,6 @@ G4bool BDSExtentGlobal::EncompassesGlobal(G4double x,
 {
   G4ThreeVector point = G4ThreeVector(x,y,z);
   
-  //    y
-  //    |
-  //    |
-  //    |________x
-  //   /  3-------2
-  //  /  /|      /|
-  // z  7-------6 |
-  //    | 0-----|-1
-  //    |/      |/
-  //    4-------5
-  //
-
   auto p = AllBoundaryPointsGlobal();
   
   // construct vectors for each side

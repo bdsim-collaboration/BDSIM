@@ -29,8 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
-#include "TGLUtil.h" // for TGLVertex3
-
 class BDSTiltOffset;
 
 /**
@@ -82,7 +80,7 @@ public:
 
   /// All 8 boundary points of the bounding box.
   std::vector<G4ThreeVector> AllBoundaryPointsGlobal() const;
-  std::vector<TGLVertex3>    AllVerticesGlobal() const;
+  std::vector<G4ThreeVector> AllVerticesGlobal() const;
   /// @}
 
   G4bool Overlaps(const BDSExtentGlobal& other) const;
