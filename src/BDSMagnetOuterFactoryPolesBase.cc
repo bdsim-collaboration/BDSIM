@@ -972,7 +972,12 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
       buildPole     = false;
       yokeThickness = outerHalfVertical - poleHalfHeight;
     }
-
+  else if (yokeThickness > outerHalfHorizontal - poleHalfWidth)
+    {
+      buildPole = false;
+      yokeThickness = outerHalfHorizontal - poleHalfWidth;
+    }
+  
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
   if (yokeThickness + 2*poleHalfWidth > outerDiameter - margin)
