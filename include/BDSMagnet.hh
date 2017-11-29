@@ -112,11 +112,6 @@ protected:
   /// Place the beam pipe and outer geometry in the overall container. If there's no outer
   /// geometry, then we don't need to place either as the beam pipe becomes the container.
   virtual void PlaceComponents();
-
-  ///@{ normal vector for faces when preparing solids
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
-  ///@}
   
   /// Magnet type
   BDSMagnetType magnetType;

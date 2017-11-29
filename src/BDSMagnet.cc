@@ -69,8 +69,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
 {
   outerDiameter   = magnetOuterInfoIn->outerDiameter;
   containerRadius = 0.5*outerDiameter;
-  inputface       = G4ThreeVector(0,0,-1);
-  outputface      = G4ThreeVector(0,0, 1);
   
   beampipe = nullptr;
   outer    = nullptr;
