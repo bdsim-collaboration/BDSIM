@@ -930,7 +930,6 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
 							G4double&    bpHalfWidth,
 							G4double&    poleHalfWidth,
 							G4double&    poleHalfHeight,
-							G4double&    outerHalf,
 							G4double&    outerHalfHorizontal,
 							G4double&    outerHalfVertical,
 							G4double&    yokeThickness,
@@ -950,7 +949,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
   if (poleHalfWidth > 0.45*outerDiameter)
     {poleHalfWidth = outerDiameter*0.15;}
   poleHalfHeight      = bpHalfHeight + lengthSafetyLarge;
-  outerHalf           = outerDiameter * 0.5;
+  G4double outerHalf  = outerDiameter * 0.5;
   outerHalfHorizontal = outerHalf;
   outerHalfVertical   = outerHalf * vhRatio;
   
@@ -1056,7 +1055,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double bpHalfWidth         = 0;
   G4double poleHalfWidth       = 0;
   G4double poleHalfHeight      = 0;
-  G4double outerHalf           = 0;
   G4double outerHalfHorizontal = 0;
   G4double outerHalfVertical   = 0;
   G4double yokeThickness       = 0;
@@ -1065,7 +1063,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
 		     angleOut, 0.23, vhRatio,
 		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
-		     outerHalf, outerHalfHorizontal, outerHalfVertical,
+		     outerHalfHorizontal, outerHalfVertical,
 		     yokeThickness, sLength, containerSLength);
 
   G4double yokeInsideX = poleHalfWidth - outerDiameter + yokeThickness;
@@ -1250,9 +1248,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   allSolids.push_back(containerSolid);
   allSolids.push_back(magnetContainerSolid);
   
-  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length, containerLength, sLength, angleIn,
-				  angleOut, outerHalf, outerHalf, colour, material,
-				  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight, cDY, coilDY);
+  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
+                                  containerLength, sLength, angleIn, angleOut,
+                                  outerHalfHorizontal, outerHalfVertical, colour, material,
+                                  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight,
+                                  cDY, coilDY);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
@@ -1284,7 +1284,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double bpHalfWidth         = 0;
   G4double poleHalfWidth       = 0;
   G4double poleHalfHeight      = 0;
-  G4double outerHalf           = 0;
   G4double outerHalfHorizontal = 0;
   G4double outerHalfVertical   = 0;
   G4double yokeThickness       = 0;
@@ -1293,7 +1292,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
 		     angleOut, 0.12, vhRatio,
 		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
-		     outerHalf, outerHalfHorizontal, outerHalfVertical,
+		     outerHalfHorizontal, outerHalfVertical,
 		     yokeThickness, sLength, containerSLength);
 
   // distance from axis to inside of yoke horizontally

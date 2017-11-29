@@ -342,7 +342,6 @@ protected:
 			  G4double&    bpHalfWidth,
 			  G4double&    poleHalfWidth,
 			  G4double&    poleHalfHeight,
-			  G4double&    outerHalf,
 			  G4double&    outerHalfHorizontal,
 			  G4double&    outerHalfVertical,
 			  G4double&    yokeThickness,
