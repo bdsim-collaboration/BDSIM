@@ -111,6 +111,18 @@ G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
   return result;
 }
 
+void BDSMagnet::SetInputFaceNormal(const G4ThreeVector& input)
+{
+  if (outer)
+    {outer->SetInputFaceNormal(input);}
+}
+
+void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
+{
+  if (outer)
+    {outer->SetOutputFaceNormal(output);}
+}
+
 void BDSMagnet::Build()
 {
 #ifdef BDSDEBUG

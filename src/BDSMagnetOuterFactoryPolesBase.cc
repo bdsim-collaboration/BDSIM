@@ -380,7 +380,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 
   outer->SetEndPieceBefore(endPiece);
   outer->SetEndPieceAfter(endPiece);
-  
+
+  SetFaceNormals(outer);
+
   return outer;
 }
 
@@ -1638,9 +1640,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV, ext,
 					     magnetContainer);
-
-  outer->SetInputFaceNormal(inputFaceNormal);
-  outer->SetOutputFaceNormal(outputFaceNormal);
   
   outer->RegisterSolid(allSolids);
   outer->RegisterLogicalVolume(allLogicalVolumes);
@@ -1665,7 +1664,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   // skip rest of this construction if no end pieces required
   if (!buildEndPiece)
-    {return outer;}
+    {
+      SetFaceNormals(outer); // would also update end pieces if they existed
+      return outer;
+    }
   
   // end pieces - note with bends both are likely to be different so build independently here
 
@@ -1962,6 +1964,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // attach to the magnet outer
   outer->SetEndPieceBefore(endPieceInSC);
   outer->SetEndPieceAfter(endPieceOutSC);
+  
+  // update normals of outer and end pieces
+  SetFaceNormals(outer);
   
   return outer;
 }
