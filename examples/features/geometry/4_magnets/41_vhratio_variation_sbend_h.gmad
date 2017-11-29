@@ -1,0 +1,3 @@
+el: sbend, l=0.5*m, angle=0.2, hStyle=1;
+include vhratio_variation.gmad;
+option, magnetGeometryType="polescircular";
