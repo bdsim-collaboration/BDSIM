@@ -983,6 +983,13 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
       buildPole = false;
       yokeThickness = outerHalfHorizontal - poleHalfWidth;
     }
+
+  // ensure the yoke isn't too thick - choose smaller of two limits
+  G4double yokeThicknessLimitHorizontal = outerHalfHorizontal - horizontalLowerLimit - margin*0.5;
+  G4double yokeThicknessLimitVertical   = outerHalfVertical   - verticalLowerLimit   - margin*0.5;
+  G4double yokeThicknessLimit           = std::min(yokeThicknessLimitHorizontal, yokeThicknessLimitVertical);
+  if (yokeThickness > yokeThicknessLimit)
+    {yokeThickness = yokeThicknessLimit;}
   
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
