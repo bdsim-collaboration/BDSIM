@@ -31,3 +31,7 @@ simple_testing(29_size_variation_vkicker_c      "--file=29_size_variation_vkicke
 simple_testing_long(30_dipole_pole_face         "--file=30_dipole_pole_face.gmad"              ${OVERLAP_CHECK})
 simple_testing(31_yoke_placement                "--file=31_yoke_placement.gmad"                ${OVERLAP_CHECK})
 simple_fail(32_outer_too_small,                 "--file=32_outer_too_small.gmad"               ${OVERLAP_CHECK})
+simple_testing(33_hstyle_default                "--file=33_hstyle_global_default.gmad"         ${OVERLAP_CHECK})
+simple_testing(34_hstyle_per_element            "--file=34_hstyle_per_element.gmad"            ${OVERLAP_CHECK})
+simple_testing(35_hstyle_size_variation_sbend   "--file=35_size_variation_sbend_h.gmad"        ${OVERLAP_CHECK})
+simple_testing(36_hstyle_size_variation_rbend   "--file=36_size_variation_rbend_h.gmad"        ${OVERLAP_CHECK})
