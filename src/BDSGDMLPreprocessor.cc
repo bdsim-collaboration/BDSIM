@@ -139,17 +139,21 @@ G4String BDS::PreprocessGDML(const G4String& file,
 
   // write file from DOM
   DOMImplementation* pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
-  DOMLSSerializer*   pSerializer       = ((DOMImplementationLS*)pImplement)->createLSSerializer();
+  DOMLSSerializer*   pSerializer       = (static_cast<DOMImplementationLS*>(pImplement))->createLSSerializer();
   DOMConfiguration*  pDomConfiguration = pSerializer->getDomConfig();
   pDomConfiguration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-  XMLFormatTarget*   pTarget           = new LocalFileFormatTarget("./test.xml");
-  DOMLSOutput*       pDomLsOutput      = ((DOMImplementationLS*)pImplement)->createLSOutput();
+
+  G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file, prefix);
+  
+  XMLFormatTarget*   pTarget           = new LocalFileFormatTarget(newFile);
+  DOMLSOutput*       pDomLsOutput      = (static_cast<DOMImplementationLS*>(pImplement))->createLSOutput();
   pDomLsOutput->setByteStream(pTarget);  
   pSerializer->write(doc, pDomLsOutput);
 
   delete parser;
   delete errHandler;
-  return G4String("temp");
+
+  return newFile;
 }
 
 
