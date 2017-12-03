@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
+#include "BDSGDMLPreprocessor.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
@@ -62,12 +63,12 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 {
   CleanUp();
 
-  G4String tempFileName = ReplaceStringInFile(componentName, fileName,
-					      "PREPEND", componentName);
-  BDSAcceleratorModel::Instance()->RegisterTemporaryFile(tempFileName);
+  // Compensate for G4GDMLParser deficiency in loading more than one file with similar names
+  // in objects. Prepend all names with component name.
+  G4String processedFile = BDS::PreprocessGDML(fileName, componentName);
   
   G4GDMLParser* parser = new G4GDMLParser();
-  parser->Read(tempFileName, /*validate=*/true);
+  parser->Read(processedFile, /*validate=*/true);
 
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
   G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
