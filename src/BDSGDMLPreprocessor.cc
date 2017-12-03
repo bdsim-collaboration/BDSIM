@@ -81,7 +81,7 @@ G4String BDS::PreprocessGDML(const G4String& file,
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
   DOMElement* docRootNode    = doc->getDocumentElement();
-  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,NULL,true);
+  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT, nullptr, true);
 
   std::vector<std::string> names;
   std::map<std::string, int> count;  
@@ -109,7 +109,7 @@ G4String BDS::PreprocessGDML(const G4String& file,
 
   // walk through nodes again to replace names and references
   docWalker->detach();
-  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
+  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT, nullptr, true);
   
   for (DOMNode* currentNode = docWalker->nextNode(); currentNode != 0; currentNode = docWalker->nextNode())
     {
