@@ -28,10 +28,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <algorithm>
 #include <iostream>
 #include <map>
+#include <string>
 #include <vector>
-#include <algorithm>
+
 
 using namespace xercesc;
 
@@ -43,7 +45,7 @@ G4String BDS::PreprocessGDML(const G4String& file,
   catch (const XMLException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.getMessage());
-      cout << "Error during initialization! :\n"
+      G4cout << "Error during initialization! :\n"
 	   << message << "\n";
       XMLString::release(&message);
       exit(1);
@@ -57,15 +59,14 @@ G4String BDS::PreprocessGDML(const G4String& file,
   parser->setErrorHandler(errHandler);
 
   //  char* xmlFile = "./iba/GDML/B1G_Coils.gdml;
-  char *xmlFile = args[1];
-  char *prefix  = args[2];
+  //char *prefix  = args[2];
 
   try
-    {parser->parse(xmlFile);}
+    {parser->parse(file.c_str());}
   catch (const XMLException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.getMessage());
-      cout << "Exception message is: \n"
+      G4cout << "Exception message is: \n"
 	   << message << "\n";
       XMLString::release(&message);
       exit(1);
@@ -73,38 +74,38 @@ G4String BDS::PreprocessGDML(const G4String& file,
   catch (const DOMException& toCatch)
     {
       char* message = XMLString::transcode(toCatch.msg);
-      cout << "Exception message is: \n"
+      G4cout << "Exception message is: \n"
 	   << message << "\n";
       XMLString::release(&message);
       exit(1);
     }
   catch (...)
     {
-    cout << "Unexpected Exception \n" ;
+    G4cout << "Unexpected Exception \n" ;
     return -1;
     }
   
   // walk through all nodes to extract names and attributes
-  DOMDocument *doc           = parser->getDocument();
-  DOMElement *docRootNode    = doc->getDocumentElement();
-  DOMNodeIterator *docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,NULL,true);
+  DOMDocument* doc           = parser->getDocument();
+  DOMElement* docRootNode    = doc->getDocumentElement();
+  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,NULL,true);
 
   std::vector<std::string> names;
   std::map<std::string,int> count;  
 
-  for (DOMNode *current_node = docWalker->nextNode(); current_node != 0; current_node = docWalker->nextNode())
+  for (DOMNode* current_node = docWalker->nextNode(); current_node != 0; current_node = docWalker->nextNode())
     {
-      string thisNodeName = XMLString::transcode(current_node->getNodeName());
-      DOMNamedNodeMap *attrMap = current_node->getAttributes();
+      std::string thisNodeName = XMLString::transcode(current_node->getNodeName());
+      DOMNamedNodeMap* attrMap = current_node->getAttributes();
       
       // loop over attributes
-      for(int i=0;i<attrMap->getLength();i++)
+      for(int i = 0; i < static_cast<int>(attrMap->getLength()); i++)
 	{
-	  DOMNode *attr = attrMap->item(i);
+	  DOMNode* attr = attrMap->item(i);
 	  // cout << thisNodeName << " " << XMLString::transcode(attr->getNodeName()) << " " <<XMLString::transcode(attr->getNodeValue()) << std::endl;
-	  string name = XMLString::transcode(attr->getNodeValue());
+	  std::string name = XMLString::transcode(attr->getNodeValue());
 	  
-	  if(XMLString::compareIString(attr->getNodeName(),XMLString::transcode("name")) == 0)
+	  if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
 	    {
 	      names.push_back(name);
 	      count[name] = 0;
@@ -117,36 +118,35 @@ G4String BDS::PreprocessGDML(const G4String& file,
     } 
   
   // print label and reference usage
-  for(vector<string>::iterator i = names.begin(); i != names.end(); ++i)
+  /*for(const auto& i : names)
     {
-      cout << *i << " " << count[*i] << endl;
-    }
+      G4cout << i << " " << G4endl;
+    }*/
 
   // walk through nodes again to replace names and references
   docWalker->detach();
-  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,NULL,true);
+  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
   
-  for (DOMNode *current_node = docWalker->nextNode(); current_node != 0; current_node = docWalker->nextNode())
+  for (DOMNode* current_node = docWalker->nextNode(); current_node != 0; current_node = docWalker->nextNode())
     {
-      DOMNamedNodeMap *attrMap = current_node->getAttributes();
+      DOMNamedNodeMap* attrMap = current_node->getAttributes();
       
       // loop over attributes
-      for(int i=0;i<attrMap->getLength();i++)
+      for(int i = 0; i < static_cast<int>(attrMap->getLength()); i++)
 	{
-	  DOMNode *attr = attrMap->item(i);
-	  string name = XMLString::transcode(attr->getNodeValue());
+	  DOMNode* attr = attrMap->item(i);
+	  std::string name = XMLString::transcode(attr->getNodeValue());
 	  
 	  if(XMLString::compareIString(attr->getNodeName(),XMLString::transcode("name")) == 0)
 	    {
-	      string name = XMLString::transcode(attr->getNodeValue());
-	      name = prefix+string("_")+name;
+	      std::string newName = prefix + "_" + name;
 	      attr->setNodeValue(XMLString::transcode(name.c_str()));
 	    }
 	  else
 	    {
-	      string value = XMLString::transcode(attr->getNodeValue());
+	      std::string value = XMLString::transcode(attr->getNodeValue());
 	      if(find(names.begin(), names.end(), value) != names.end()) {
-		attr->setNodeValue(XMLString::transcode((string(prefix)+string("_")+value).c_str()));
+		attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));
 	      }
 	    }
 	}
@@ -155,12 +155,12 @@ G4String BDS::PreprocessGDML(const G4String& file,
   docWalker->detach();
 
   // write file from DOM
-  DOMImplementation *pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
-  DOMLSSerializer   *pSerializer       = ((DOMImplementationLS*)pImplement)->createLSSerializer();
-  DOMConfiguration  *pDomConfiguration = pSerializer->getDomConfig();
+  DOMImplementation* pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
+  DOMLSSerializer*   pSerializer       = ((DOMImplementationLS*)pImplement)->createLSSerializer();
+  DOMConfiguration*  pDomConfiguration = pSerializer->getDomConfig();
   pDomConfiguration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-  XMLFormatTarget   *pTarget           = new LocalFileFormatTarget("./test.xml");
-  DOMLSOutput       *pDomLsOutput      = ((DOMImplementationLS*)pImplement)->createLSOutput();
+  XMLFormatTarget*   pTarget           = new LocalFileFormatTarget("./test.xml");
+  DOMLSOutput*       pDomLsOutput      = ((DOMImplementationLS*)pImplement)->createLSOutput();
   pDomLsOutput->setByteStream(pTarget);  
   pSerializer->write(doc, pDomLsOutput);
 

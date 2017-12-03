@@ -21,9 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 
-namesacpe BDS
+namespace BDS
 {
-  G4String PreprocessesGDML(const G4String& file,
+  G4String PreprocessGDML(const G4String& file,
 			    const G4String& prefix);
 }
 
