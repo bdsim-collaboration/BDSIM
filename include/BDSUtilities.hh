@@ -84,6 +84,12 @@ namespace BDS
   /// will return the absolute filename path
   G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
 
+  /// Split a full file path into the path and file components. The path
+  /// ends with '/'.
+  void SplitPathAndFileName(const G4String& filePath,
+			    G4String& path,
+			    G4String& filename);
+
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.
   void HandleAborts(int signal_number);

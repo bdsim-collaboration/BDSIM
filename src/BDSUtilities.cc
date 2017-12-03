@@ -164,8 +164,7 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
       inputFilename = fileName.substr(found); // the rest
     }
   else
-    {
-      // no slash, only filename
+    {// no slash, only filename
       inputFilepath = "";
       inputFilename = fileName;
     }
@@ -187,6 +186,23 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   G4cout << __METHOD_NAME__ << "determined full path to be: " << fullPath << G4endl;
 #endif
   return fullPath;
+}
+
+void BDS::SplitPathAndFileName(const G4String& filePath,
+			       G4String&       path,
+			       G4String&       fileName)
+{
+  G4String::size_type found = fileName.rfind("/"); // find the last '/'
+  if (found != G4String::npos)
+    {
+      path     = filePath.substr(0,found) + "/"; // the path is the bit before that
+      fileName = filePath.substr(found); // the rest
+    }
+  else
+    {// no slash, only file name
+      path     = "./";     // use current directory
+      fileName = filePath;
+    }
 }
 
 void BDS::HandleAborts(int signal_number)
