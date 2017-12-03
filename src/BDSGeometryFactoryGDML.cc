@@ -119,11 +119,10 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
     }
 }
 
-
-G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
-						     G4String fileName,
-						     G4String key,
-						     G4String replacement)
+void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
+						 const G4String& outputFileName,
+						 const G4String& key,
+						 const G4String& replacement)
 {
   // open input file in read mode
   std::ifstream ifs(fileName);
@@ -134,11 +133,8 @@ G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
       G4cerr << __METHOD_NAME__ << "Cannot open file \"" << fileName << "\"" << G4endl;
       exit(1);
     }
-  
-  // temporary file name
-  std::string tempFileName = "temp_" + componentName + ".gdml";
-  //std::string tempFileName = std::string(std::tmpnam(nullptr)) + "_.gdml";
-  std::ofstream fout(tempFileName);
+
+  std::ofstream fout(outputFileName);
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Original file:  " << fileName     << G4endl;
@@ -165,8 +161,6 @@ G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
   // clean up
   ifs.close();
   fout.close();
-  
-  return G4String(tempFileName);
 }
 
 
