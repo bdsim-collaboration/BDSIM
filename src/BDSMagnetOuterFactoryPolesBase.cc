@@ -733,7 +733,7 @@ void BDSMagnetOuterFactoryPolesBase::TestCoilFractions(G4double& coilWidthFracti
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
+void BDSMagnetOuterFactoryPolesBase::PlaceComponents(const G4String& name,
 						     G4int    order)
 {
 #ifdef BDSDEBUG
@@ -741,7 +741,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 #endif
   // place the components inside the container
   yokePV = new G4PVPlacement((G4RotationMatrix *) nullptr, // no rotation
-			     (G4ThreeVector) 0,            // position
+			     G4ThreeVector(),              // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
 			     containerLV,                  // mother lv to be placed in
@@ -839,7 +839,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
+void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
 {
   // container solid
   endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name

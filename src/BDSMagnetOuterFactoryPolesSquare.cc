@@ -200,7 +200,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   CreateLogicalVolumesCoil(name);
 }
 
-void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
+void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(const G4String& name,
 						       G4int    orderIn)
 {
 #ifdef BDSDEBUG
@@ -233,7 +233,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
       G4String pvName = name + "_pole_" + std::to_string(n) + "_pv";
       // only need to test the end of one iterator as both should be the same length
       aPlacement = new G4PVPlacement(rm,                 // rotation
-				     (G4ThreeVector)0,   // position
+				     G4ThreeVector(),    // position
 				     poleLVs[n],         // logical volume
 				     pvName,             // name      
 				     containerLV,        // mother lv to be placed in
