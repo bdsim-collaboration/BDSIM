@@ -97,34 +97,6 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   DOMElement* docRootNode    = doc->getDocumentElement();
   DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT, nullptr, true);
 
-  std::vector<std::string> names;
-  std::map<std::string, int> count;  
-
-  for (DOMNode* currentNode = docWalker->nextNode(); currentNode != 0; currentNode = docWalker->nextNode())
-    {
-      std::string thisNodeName = XMLString::transcode(currentNode->getNodeName());
-      DOMNamedNodeMap* attrMap = currentNode->getAttributes();
-      
-      // loop over attributes
-      for(int i = 0; i < static_cast<int>(attrMap->getLength()); i++)
-	{
-	  DOMNode* attr = attrMap->item(i);
-	  std::string name = XMLString::transcode(attr->getNodeValue());
-	  
-	  if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
-	    {
-	      names.push_back(name);
-	      count[name] = 0;
-	    }
-	  else
-	    {count[name]++;}
-	}
-    }
-
-  // walk through nodes again to replace names and references
-  docWalker->detach();
-  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT, nullptr, true);
-  
   for (DOMNode* currentNode = docWalker->nextNode(); currentNode != 0; currentNode = docWalker->nextNode())
     {
       DOMNamedNodeMap* attrMap = currentNode->getAttributes();
@@ -169,6 +141,36 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   delete errHandler;
 
   return newFile;
+
 }
 
+void BDSGDMLPreprocessor::ReadNodes(DOMNodeList* nodes)
+{
+  for (XMLSize_t i = 0; i < nodes->getLength(); i++)
+    {ReadNode(nodes[i]);}
+}
 
+void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
+{
+  std::string thisNodeName = XMLString::transcode(currentNode->getNodeName());
+  DOMNamedNodeMap* attrMap = currentNode->getAttributes();
+
+  ReadAttriubutes(attrMap);
+}
+
+void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
+{
+  // loop over attributes
+  for(XMLSize_t i = 0; i < static_cast<int>(attributeMap->getLength()); i++)
+    {
+      DOMNode* attr = attributeMap->item(i);
+      std::string name = XMLString::transcode(attr->getNodeValue());
+      if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
+	{
+	  names.push_back(name);
+	  count[name] = 0;
+	}
+      else
+	{count[name]++;}
+    }
+}
