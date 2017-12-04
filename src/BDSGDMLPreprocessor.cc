@@ -48,7 +48,7 @@ BDSGDMLPreprocessor::BDSGDMLPreprocessor()
 {;}
 
 BDSGDMLPreprocessor::~BDSGDMLPreprocessor()
-x3{;}
+{;}
 
 G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
 		    			 const G4String& prefix)
@@ -102,7 +102,7 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
       DOMNamedNodeMap* attrMap = currentNode->getAttributes();
       
       // loop over attributes
-      for(int i = 0; i < static_cast<int>(attrMap->getLength()); i++)
+      for(XMLSize_t i = 0; i < attrMap->getLength(); i++)
 	{
 	  DOMNode* attr = attrMap->item(i);
 	  std::string name = XMLString::transcode(attr->getNodeValue());
@@ -147,21 +147,21 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
 void BDSGDMLPreprocessor::ReadNodes(DOMNodeList* nodes)
 {
   for (XMLSize_t i = 0; i < nodes->getLength(); i++)
-    {ReadNode(nodes[i]);}
+    {ReadNode(nodes->item(i));}
 }
 
 void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
 {
-  std::string thisNodeName = XMLString::transcode(currentNode->getNodeName());
-  DOMNamedNodeMap* attrMap = currentNode->getAttributes();
+  std::string thisNodeName = XMLString::transcode(node->getNodeName());
+  DOMNamedNodeMap* attrMap = node->getAttributes();
 
-  ReadAttriubutes(attrMap);
+  ReadAttributes(attrMap);
 }
 
 void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
 {
   // loop over attributes
-  for(XMLSize_t i = 0; i < static_cast<int>(attributeMap->getLength()); i++)
+  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string name = XMLString::transcode(attr->getNodeValue());
