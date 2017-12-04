@@ -66,6 +66,9 @@ private:
   /// upon cleaning up something that wasn't used.
   void InitialiseTempDir();
 
+  /// User feedback that new file has been created.
+  void WarnOfNewFile(const G4String& newFileName);
+
   /// Singleton instance.
   static BDSTemporaryFiles* instance;
 

@@ -77,6 +77,8 @@ void BDSTemporaryFiles::InitialiseTempDir()
       G4cerr << "Required for operation - exiting" << G4endl;
       exit(1);
     }
+  else
+    {G4cout << __METHOD_NAME__ << "Created temporary directory in: " << temporaryDirectory << G4endl;}
 }
 
 BDSTemporaryFiles::~BDSTemporaryFiles()
@@ -128,6 +130,7 @@ G4String BDSTemporaryFiles::CreateTemporaryFile(G4String extension)
   unamedFileCount += 1;
 
   allocatedFiles.push_back(newFileName);
+  WarnOfNewFile(newFileName);
   return newFileName;
 }
 
@@ -147,9 +150,14 @@ G4String BDSTemporaryFiles::CreateTemporaryFile(const G4String& originalFilePath
   if (!fileNameSuffix.empty() && (fileNameSuffix.front()))
     {fileNameSuffix.index('_', 0);}// ensure starts with "_" for padding
   
-  G4String newFileName = temporaryDirectory;
-  newFileName += fileNamePrefix + fileName + fileNameSuffix;
+  G4String newFileName = temporaryDirectory + fileNamePrefix + fileName + fileNameSuffix;
+  
   allocatedFiles.push_back(newFileName);
+  WarnOfNewFile(newFileName);
   return newFileName;
 }
    
+void BDSTemporaryFiles::WarnOfNewFile(const G4String& newFileName)
+{
+  G4cout << "New temporary file created: " << newFileName << G4endl;
+}
