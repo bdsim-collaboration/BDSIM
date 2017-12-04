@@ -108,15 +108,15 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   
   // rewrite all names in loaded structure.
   ProcessDoc(docWalker, prefix);
+
+  // create new temporary file that modified gdml can be written to.
+  G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file, prefix);
   
   // write file from DOM
   DOMImplementation* pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
   DOMLSSerializer*   pSerializer       = (static_cast<DOMImplementationLS*>(pImplement))->createLSSerializer();
   DOMConfiguration*  pDomConfiguration = pSerializer->getDomConfig();
   pDomConfiguration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
-
-  // create new temporary file that modified gdml can be written to.
-  G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file, prefix);
   XMLFormatTarget*   pTarget           = new LocalFileFormatTarget(newFile);
   DOMLSOutput*       pDomLsOutput      = (static_cast<DOMImplementationLS*>(pImplement))->createLSOutput();
   pDomLsOutput->setByteStream(pTarget);  
