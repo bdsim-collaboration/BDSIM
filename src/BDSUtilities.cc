@@ -203,9 +203,9 @@ void BDS::SplitPathAndFileName(const G4String& filePath,
     }
 }
 
-void BDS::SplitFileAndExtentions(const G4String& fileName,
-				 G4String&       file,
-				 G4String&       extension)
+void BDS::SplitFileAndExtention(const G4String& fileName,
+				G4String&       file,
+				G4String&       extension)
 {
   G4String::size_type found = fileName.rfind("."); // fine the last '.'
   if (found != G4String::npos)
