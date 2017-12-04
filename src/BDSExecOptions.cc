@@ -40,11 +40,14 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
   ignoreSIGINT(false)
 {
   Parse(argc, argv);
-  /// after parsing the absolute path can be reconstructed  
-  options.set_value("bdsimPath", std::string(GetPath(options.inputFileName)));
+
+  /// after parsing the absolute path can be reconstructed
+  std::string bp = GetPath(options.inputFileName);
+  options.set_value("bdsimPath", bp);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
+
   if (options.recreate)
     {
       BDSOutputLoader loader(options.recreateFileName);
