@@ -126,7 +126,7 @@ G4String BDSTemporaryFiles::CreateTemporaryFile(G4String extension)
   if (!temporaryDirectorySet)
     {InitialiseTempDir();}
 
-  G4String newFileName = temporaryDirectory + "/bdsTemp_" + std::to_string(unamedFileCount) + "." + extension;
+  G4String newFileName = temporaryDirectory + "bdsTemp_" + std::to_string(unamedFileCount) + "." + extension;
   unamedFileCount += 1;
 
   allocatedFiles.push_back(newFileName);
