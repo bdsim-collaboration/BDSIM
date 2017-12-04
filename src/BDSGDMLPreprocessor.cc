@@ -45,13 +45,16 @@ G4String BDS::PreprocessGDML(const G4String& file,
 }
 
 BDSGDMLPreprocessor::BDSGDMLPreprocessor()
-{;}
+{
+  //ignoreNodes = {"setup"};
+  ignoreAttrs = {"formula"};
+}
 
 BDSGDMLPreprocessor::~BDSGDMLPreprocessor()
 {;}
 
 G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
-		    			 const G4String& prefix)
+					     const G4String& prefix)
 {
   try
     {XMLPlatformUtils::Initialize();}
@@ -95,33 +98,16 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   // walk through all nodes to extract names and attributes
   DOMDocument* doc           = parser->getDocument();
   DOMElement* docRootNode    = doc->getDocumentElement();
-  DOMNodeIterator* docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT, nullptr, true);
+  DOMNodeIterator *docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
+  // map structure and all names used
+  ReadDoc(docWalker);
 
-  for (DOMNode* currentNode = docWalker->nextNode(); currentNode != 0; currentNode = docWalker->nextNode())
-    {
-      DOMNamedNodeMap* attrMap = currentNode->getAttributes();
-      
-      // loop over attributes
-      for(XMLSize_t i = 0; i < attrMap->getLength(); i++)
-	{
-	  DOMNode* attr = attrMap->item(i);
-	  std::string name = XMLString::transcode(attr->getNodeValue());
-	  
-	  if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
-	    {
-	      std::string newName = prefix + "_" + name;
-	      attr->setNodeValue(XMLString::transcode(name.c_str()));
-	    }
-	  else
-	    {
-	      std::string value = XMLString::transcode(attr->getNodeValue());
-	      if(find(names.begin(), names.end(), value) != names.end())
-		{attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));}
-	    }
-
-	}
-    }
+  // reset iterator
   docWalker->detach();
+  docWalker = doc->createNodeIterator(docRootNode, DOMNodeFilter::SHOW_ELEMENT,nullptr,true);
+  
+  // rewrite all names in loaded structure.
+  ProcessDoc(docWalker, prefix);
   
   // write file from DOM
   DOMImplementation* pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
@@ -131,46 +117,121 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
 
   // create new temporary file that modified gdml can be written to.
   G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file, prefix);
-  
   XMLFormatTarget*   pTarget           = new LocalFileFormatTarget(newFile);
   DOMLSOutput*       pDomLsOutput      = (static_cast<DOMImplementationLS*>(pImplement))->createLSOutput();
   pDomLsOutput->setByteStream(pTarget);  
   pSerializer->write(doc, pDomLsOutput);
+  pSerializer->release();
 
+  delete pTarget;
   delete parser;
   delete errHandler;
 
   return newFile;
+}
 
+void BDSGDMLPreprocessor::ReadDoc(DOMNodeIterator* docIterator)
+{
+  for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
+    {ReadNode(current_node);}
 }
 
 void BDSGDMLPreprocessor::ReadNodes(DOMNodeList* nodes)
 {
+  if (!nodes)
+    {return;}
   for (XMLSize_t i = 0; i < nodes->getLength(); i++)
     {ReadNode(nodes->item(i));}
 }
 
 void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
 {
-  std::string thisNodeName = XMLString::transcode(node->getNodeName());
-  DOMNamedNodeMap* attrMap = node->getAttributes();
+  if (!node)
+    {return;}
 
-  ReadAttributes(attrMap);
+  std::string thisNodeName = XMLString::transcode(node->getNodeName());
+  auto search = std::find(ignoreNodes.begin(), ignoreNodes.end(), thisNodeName);
+  if (search != ignoreNodes.end())
+    {return;} // ignore this node
+  else
+    {ReadAttributes(node->getAttributes());}
 }
 
 void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
 {
-  // loop over attributes
+  if (!attributeMap)
+    {return;}
+  
   for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string name = XMLString::transcode(attr->getNodeValue());
+        auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
+        if (search != ignoreAttrs.end())
+        {continue;} // ignore this attribute
       if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
 	{
 	  names.push_back(name);
 	  count[name] = 0;
 	}
+    }
+}
+
+void BDSGDMLPreprocessor::ProcessDoc(DOMNodeIterator* docIterator,
+const G4String& prefix)
+{
+  for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
+    {ProcessNode(current_node, prefix);}
+}
+
+void BDSGDMLPreprocessor::ProcessNodes(DOMNodeList*    nodes,
+				       const G4String& prefix)
+{
+  if (!nodes)
+    {return;}
+  for (XMLSize_t i = 0; i < nodes->getLength(); i++)
+    {ProcessNode(nodes->item(i), prefix);}
+}
+
+void BDSGDMLPreprocessor::ProcessNode(DOMNode*        node,
+				      const G4String& prefix)
+{
+  if (!node)
+    {return;}
+
+  std::string thisNodeName = XMLString::transcode(node->getNodeName());
+  auto search = std::find(ignoreNodes.begin(), ignoreNodes.end(), thisNodeName);
+  if (search != ignoreNodes.end())
+    {return;} // ignore this node
+  else
+    {ProcessAttributes(node->getAttributes(), prefix);}
+}
+
+void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
+					   const G4String&  prefix)
+{
+  if (!attributeMap)
+    {return;}
+
+  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+    {
+      DOMNode* attr = attributeMap->item(i);
+      std::string name = XMLString::transcode(attr->getNodeValue());
+
+      auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
+      if (search != ignoreAttrs.end())
+        {continue;} // ignore this attribute
+      
+      if (XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
+	{
+	  std::string newName = prefix + "_" + name;
+	  attr->setNodeValue(XMLString::transcode(newName.c_str()));
+	}
       else
-	{count[name]++;}
+	{
+	  std::string value = XMLString::transcode(attr->getNodeValue());
+	  if (find(names.begin(), names.end(), value) != names.end())
+	    {attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));}
+	}
     }
 }
