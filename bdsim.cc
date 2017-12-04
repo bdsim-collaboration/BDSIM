@@ -65,6 +65,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
+#include "BDSTemporaryFiles.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
@@ -316,6 +317,7 @@ int main(int argc,char** argv)
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
+  delete BDSTemporaryFiles::Instance();
   
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;

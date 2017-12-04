@@ -28,6 +28,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * A single place where all temporary file names are held. The
  * class determines a directory to put them when required and 
  * cleans up all temporary files upon deletion.
+ *
+ * Has a separate method to initialise the temporary directory
+ * so that it's possible to delete the singleton at the end of the
+ * program without having to construct the temporary directory
+ * and possibly encountering an error.
  * 
  * @author Laurie Nevay
  */
@@ -55,12 +60,19 @@ private:
   /// Private default constructor as singleton.
   BDSTemporaryFiles();
 
+  /// Separate function to initialise temporary directory. This way it can
+  /// be optionally called in case the temp dir isn't used at all and the singleton
+  /// is deleted at the end of the program. No point getting error about temp dir
+  /// upon cleaning up something that wasn't used.
+  void InitialiseTempDir();
+
   /// Singleton instance.
   static BDSTemporaryFiles* instance;
 
-  G4String              temporaryDirectory; ///< Directory all files will be placed in.
-  std::vector<G4String> allocatedFiles;     ///< Record of of all files allocated.
-  G4int                 unamedFileCount;    ///< Count of unnamed files created.
+  G4String              temporaryDirectory;    ///< Directory all files will be placed in.
+  G4bool                temporaryDirectorySet; ///< Whether directory has been set and made.
+  std::vector<G4String> allocatedFiles;        ///< Record of of all files allocated.
+  G4int                 unamedFileCount;       ///< Count of unnamed files created.
 };
 
 #endif
