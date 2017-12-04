@@ -142,7 +142,13 @@ G4String BDSTemporaryFiles::CreateTemporaryFile(const G4String& originalFilePath
   G4String fileName = "";
   BDS::SplitPathAndFileName(originalFilePath, path, fileName);
 
-  G4String newFileName = temporaryDirectory + "/" + fileNamePrefix + fileName + fileNameSuffix;
+  if (!fileNamePrefix.empty() && (fileNamePrefix.back() != '_'))
+    {fileNamePrefix += "_";}       // ensure ends with "_" for padding
+  if (!fileNameSuffix.empty() && (fileNameSuffix.front()))
+    {fileNameSuffix.index('_', 0);}// ensure starts with "_" for padding
+  
+  G4String newFileName = temporaryDirectory;
+  newFileName += fileNamePrefix + fileName + fileNameSuffix;
   allocatedFiles.push_back(newFileName);
   return newFileName;
 }

@@ -143,6 +143,7 @@ G4String BDS::PreprocessGDML(const G4String& file,
   DOMConfiguration*  pDomConfiguration = pSerializer->getDomConfig();
   pDomConfiguration->setParameter(XMLUni::fgDOMWRTFormatPrettyPrint, true);
 
+  // create new temporary file that modified gdml can be written to.
   G4String newFile = BDSTemporaryFiles::Instance()->CreateTemporaryFile(file, prefix);
   
   XMLFormatTarget*   pTarget           = new LocalFileFormatTarget(newFile);
