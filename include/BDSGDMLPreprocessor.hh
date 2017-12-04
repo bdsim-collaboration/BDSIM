@@ -21,10 +21,35 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4String.hh"
 
+#include <vector>
+#include <map>
+
+#include "xercesc/dom/DOM.hpp"
+#include "xercesc/dom/DOMNodeList.hpp"
+
 namespace BDS
 {
   G4String PreprocessGDML(const G4String& file,
-			    const G4String& prefix);
+			  const G4String& prefix);
 }
+
+class BDSGDMLPreprocessor
+{
+public:
+  BDSGDMLPreprocessor();
+  ~BDSGDMLPreprocessor();
+
+  G4String PreprocessFile(const G4String& file,
+			  const G4String& prefix);
+private:
+
+  void ReadNodes(xercesc::DOMNodeList* nodes);
+  void ReadNode(xercesc::DOMNode* node);
+  void ReadAttributes(xercesc::DOMNamedNodeMap* attributeMap);
+
+  std::vector<std::string> names;
+  std::map<std::string, int> count;  
+
+};
 
 #endif

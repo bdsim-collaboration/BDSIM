@@ -39,6 +39,20 @@ using namespace xercesc;
 G4String BDS::PreprocessGDML(const G4String& file,
 			     const G4String& prefix)
 {
+  BDSGDMLPreprocessor processor;
+  G4String processedFile = processor.PreprocessFile(file, prefix);
+  return processedFile;
+}
+
+BDSGDMLPreprocessor::BDSGDMLPreprocessor()
+{;}
+
+BDSGDMLPreprocessor::~BDSGDMLPreprocessor()
+x3{;}
+
+G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
+		    			 const G4String& prefix)
+{
   try
     {XMLPlatformUtils::Initialize();}
   catch (const XMLException& toCatch)
@@ -132,11 +146,11 @@ G4String BDS::PreprocessGDML(const G4String& file,
 	      if(find(names.begin(), names.end(), value) != names.end())
 		{attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));}
 	    }
+
 	}
     }
-  
   docWalker->detach();
-
+  
   // write file from DOM
   DOMImplementation* pImplement        = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("LS"));
   DOMLSSerializer*   pSerializer       = (static_cast<DOMImplementationLS*>(pImplement))->createLSSerializer();
