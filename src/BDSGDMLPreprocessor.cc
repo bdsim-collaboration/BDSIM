@@ -136,14 +136,6 @@ void BDSGDMLPreprocessor::ReadDoc(DOMNodeIterator* docIterator)
     {ReadNode(current_node);}
 }
 
-void BDSGDMLPreprocessor::ReadNodes(DOMNodeList* nodes)
-{
-  if (!nodes)
-    {return;}
-  for (XMLSize_t i = 0; i < nodes->getLength(); i++)
-    {ReadNode(nodes->item(i));}
-}
-
 void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
 {
   if (!node)
@@ -182,15 +174,6 @@ const G4String& prefix)
 {
   for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
     {ProcessNode(current_node, prefix);}
-}
-
-void BDSGDMLPreprocessor::ProcessNodes(DOMNodeList*    nodes,
-				       const G4String& prefix)
-{
-  if (!nodes)
-    {return;}
-  for (XMLSize_t i = 0; i < nodes->getLength(); i++)
-    {ProcessNode(nodes->item(i), prefix);}
 }
 
 void BDSGDMLPreprocessor::ProcessNode(DOMNode*        node,

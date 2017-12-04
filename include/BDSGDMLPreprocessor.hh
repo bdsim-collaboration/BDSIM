@@ -44,11 +44,9 @@ public:
 private:
 
   void ReadDoc(xercesc::DOMNodeIterator* docIterator);
-  void ReadNodes(xercesc::DOMNodeList* nodes);
   void ReadNode(xercesc::DOMNode* node);
   void ReadAttributes(xercesc::DOMNamedNodeMap* attributeMap);
   void ProcessDoc(xercesc::DOMNodeIterator* dotIterator, const G4String& prefix);
-  void ProcessNodes(xercesc::DOMNodeList* nodes, const G4String& prefix);
   void ProcessNode(xercesc::DOMNode* node, const G4String& prefix);
   void ProcessAttributes(xercesc::DOMNamedNodeMap* attributeMap, const G4String& prefix);
 
