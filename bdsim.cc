@@ -308,6 +308,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
   delete BDSAcceleratorModel::Instance();
+  delete BDSTemporaryFiles::Instance();
   delete globalConstants;
   delete BDSMaterials::Instance();
 
@@ -317,7 +318,6 @@ int main(int argc,char** argv)
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
-  delete BDSTemporaryFiles::Instance();
   
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;

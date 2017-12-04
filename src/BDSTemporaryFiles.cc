@@ -33,7 +33,9 @@ BDSTemporaryFiles::BDSTemporaryFiles():
   temporaryDirectory(""),
   temporaryDirectorySet(false),
   unamedFileCount(0)
-{;}
+{
+  removeTemporaryFiles = BDSGlobalConstants::Instance()->RemoveTemporaryFiles();
+}
 
 void BDSTemporaryFiles::InitialiseTempDir()
 {
@@ -83,7 +85,7 @@ void BDSTemporaryFiles::InitialiseTempDir()
 
 BDSTemporaryFiles::~BDSTemporaryFiles()
 {
-  if (BDSGlobalConstants::Instance()->RemoveTemporaryFiles())
+  if (removeTemporaryFiles)
     {
       if (allocatedFiles.empty())
 	{// no need to warn user about deleting no files.
