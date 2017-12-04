@@ -74,8 +74,8 @@ G4String BDS::PreprocessGDML(const G4String& file,
     }
   catch (...)
     {
-    G4cout << "Unexpected Exception \n" ;
-    exit(1);
+      G4cout << "Unexpected Exception \n" ;
+      exit(1);
     }
   
   // walk through all nodes to extract names and attributes
