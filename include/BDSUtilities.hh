@@ -69,6 +69,9 @@ namespace BDS
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
 
+  /// Check if directory exists.
+  G4bool DirectoryExists(G4String path);
+
   /// Get the current dir the program was executed from.
   std::string GetCurrentDir();
   

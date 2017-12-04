@@ -39,6 +39,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <utility>
 
+#include <sys/stat.h>
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h> // for executable path
 #endif
@@ -99,6 +101,13 @@ G4bool BDS::FileExists(G4String fileName)
   std::ifstream infile(fileName.c_str());
   return infile.good();
   // note the destructor of ifstream will close the stream
+}
+
+G4bool BDS::DirectoryExists(G4String path)
+{
+  struct stat sb;  
+  bool result = (stat(path.c_str(), &sb) == 0) && S_ISDIR(sb.st_mode);
+  return G4bool(result);
 }
 
 std::string BDS::GetCurrentDir()
