@@ -158,8 +158,8 @@ void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
     {
       DOMNode* attr = attributeMap->item(i);
       std::string name = XMLString::transcode(attr->getNodeValue());
-        auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
-        if (search != ignoreAttrs.end())
+      auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
+      if (search != ignoreAttrs.end())
         {continue;} // ignore this attribute
       if(XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
 	{
@@ -170,7 +170,7 @@ void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
 }
 
 void BDSGDMLPreprocessor::ProcessDoc(DOMNodeIterator* docIterator,
-const G4String& prefix)
+				     const G4String&  prefix)
 {
   for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
     {ProcessNode(current_node, prefix);}
@@ -191,7 +191,7 @@ void BDSGDMLPreprocessor::ProcessNode(DOMNode*        node,
 }
 
 void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
-					   const G4String&  prefix)
+					    const G4String&  prefix)
 {
   if (!attributeMap)
     {return;}
