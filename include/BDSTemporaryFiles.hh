@@ -76,6 +76,7 @@ private:
   G4bool                temporaryDirectorySet; ///< Whether directory has been set and made.
   std::vector<G4String> allocatedFiles;        ///< Record of of all files allocated.
   G4int                 unamedFileCount;       ///< Count of unnamed files created.
+  G4bool                removeTemporaryFiles;  ///< Whether to clean up.
 };
 
 #endif
