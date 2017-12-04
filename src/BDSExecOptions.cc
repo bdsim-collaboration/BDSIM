@@ -361,10 +361,14 @@ G4String BDSExecOptions::GetPath(G4String fileName)
 	  fullPath = inputFilepath;
 	}
       else
-	{fullPath = BDS::GetCurrentDir() + "/" + inputFilepath;}
+	{
+	  G4String curDir = BDS::GetCurrentDir();
+	  fullPath = curDir + "/" + inputFilepath;
+	}
     }
-  // add additional slash just to be safe
-  fullPath += "/";
+  
+  if (fullPath.back() != '/') // ensure ends in '/'
+    {fullPath += "/";} // only add if needed
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "fullpath = " << fullPath << G4endl;
 #endif

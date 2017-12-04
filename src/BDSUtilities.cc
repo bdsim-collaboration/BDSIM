@@ -162,13 +162,12 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // need to know whether it's an absolute or relative path
   if ((fileName.substr(0,1)) == "/")
     {fullPath = inputFilepath;}
-  else
-    {
-      // the main file has a relative path or just the file name, add bdsimpath
-      fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + "/" + inputFilepath;
-    }
-  // add additional slash just to be safe
-  fullPath += "/";
+  else // the main file has a relative path or just the file name, add bdsimpath
+    {fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + inputFilepath;}
+  
+  if (fullPath.back() != '/') // ensure ends in '/'
+    {fullPath += "/";} // only add if needed
+
   // add filename if not excluded
   if (!excludeNameFromPath)
     {fullPath += inputFilename;}
@@ -182,11 +181,11 @@ void BDS::SplitPathAndFileName(const G4String& filePath,
 			       G4String&       path,
 			       G4String&       fileName)
 {
-  G4String::size_type found = fileName.rfind("/"); // find the last '/'
+  G4String::size_type found = filePath.rfind("/"); // find the last '/'
   if (found != G4String::npos)
     {
       path     = filePath.substr(0,found) + "/"; // the path is the bit before that
-      fileName = filePath.substr(found); // the rest
+      fileName = filePath.substr(found+1); // the rest
     }
   else
     {// no slash, only file name
