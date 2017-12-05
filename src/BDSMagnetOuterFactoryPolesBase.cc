@@ -1460,9 +1460,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   allSolids.push_back(containerSolid);
   allSolids.push_back(magnetContainerSolid);
 
-  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length, containerLength, sLength, angleIn,
-				  angleOut, outerHalfHorizontal, outerHalfVertical, colour, material,
-				  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight, cDY, coilDY);
+  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
+				  containerLength, sLength, angleIn, angleOut,
+				  outerHalfHorizontal, outerHalfVertical, colour, material,
+				  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight,
+				  cDY, coilDY);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4String    name,
