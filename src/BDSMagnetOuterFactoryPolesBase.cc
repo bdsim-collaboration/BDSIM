@@ -943,28 +943,33 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe
 							G4double&    containerSLength)
 {
   // calculate any geometrical parameters
-  const auto extXbp = beamPipe->GetExtentX();
-  const auto extYbp = beamPipe->GetExtentY();
-  bpHalfWidth  = std::max(std::abs(extXbp.first), std::abs(extXbp.second));
-  G4double bpHalfHeight = std::max(std::abs(extYbp.first), std::abs(extYbp.second));
-  if (buildVertically)
-    {std::swap(bpHalfWidth, bpHalfHeight);}
+  bpHalfWidth           = beamPipe->GetExtent().MaximumX();
+  G4double bpHalfHeight = beamPipe->GetExtent().MaximumY();
+  
   poleHalfWidth = bpHalfWidth  + lengthSafetyLarge;
   poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.18);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleHalfWidth > 0.45*outerDiameter)
     {poleHalfWidth = outerDiameter*0.15;}
+
   poleHalfHeight      = bpHalfHeight + lengthSafetyLarge;
+
   G4double outerHalf  = outerDiameter * 0.5;
-  outerHalfHorizontal = outerHalf;
-  outerHalfVertical   = outerHalf * vhRatio;
+  if (buildVertically)
+    {
+      outerHalfHorizontal = outerHalf * vhRatio;
+      outerHalfVertical   = outerHalf;
+    }
+  else
+    {
+      outerHalfHorizontal = outerHalf;
+      outerHalfVertical   = outerHalf * vhRatio;
+    }
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
   G4double verticalLowerLimit   = bpHalfHeight + margin;
   G4double horizontalLowerLimit = bpHalfWidth + margin;
-  if (buildVertically)
-    {std::swap(verticalLowerLimit, horizontalLowerLimit);}
   if (outerHalfHorizontal <= horizontalLowerLimit)
     {outerHalfHorizontal = horizontalLowerLimit + margin;}
   if (outerHalfVertical <= verticalLowerLimit)
@@ -1411,8 +1416,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double yokeOuterX = outerHalfHorizontal - lsl;
   G4double yokeOuterY = outerHalfVertical - lsl;
   // rotate if building vertically
-  if (buildVertically)
-    {std::swap(yokeOuterX, yokeOuterY);}
+  //if (buildVertically)
+  //  {std::swap(yokeOuterX, yokeOuterY);}
   G4VSolid* yokeOuterSolid = new G4Box(name + "_yoke_outer_solid", // name
 				       yokeOuterX,                 // x half length
 				       yokeOuterY,                 // y half length
@@ -1425,8 +1430,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // container for magnet outer 
   G4double containerdx = yokeInsideX;
   G4double containerdy = std::min(poleHalfHeight, yokeInsideY); // in case there's a pole
-  if (buildVertically)
-    {std::swap(containerdx, containerdy);}
+  //if (buildVertically)
+  //  {std::swap(containerdx, containerdy);}
 
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
