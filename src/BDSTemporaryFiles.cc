@@ -44,7 +44,6 @@ void BDSTemporaryFiles::InitialiseTempDir()
   std::string workingDirTemp = bdsimExecDir + "temp/";
   std::vector<G4String> dirsToTry = {"/tmp/", "/temp/", workingDirTemp};
   
-  G4bool dirSet = false;
   for (const auto& dir : dirsToTry)
     {
       if (BDS::DirectoryExists(dir))
@@ -65,13 +64,13 @@ void BDSTemporaryFiles::InitialiseTempDir()
 	      temporaryDirectory = newTempDir;
 	      if (temporaryDirectory.back() != '/')
                 {temporaryDirectory += "/";}
-	      dirSet = true;
+	      temporaryDirectorySet = true;
             }
 	  break;
         }
     }
   
-  if (!dirSet) // check it's ok
+  if (!temporaryDirectorySet) // check it's ok
     {
       G4cerr << __METHOD_NAME__ << "Could not create temporary dir in one of:" << G4endl;
       for (const auto& dir : dirsToTry)
