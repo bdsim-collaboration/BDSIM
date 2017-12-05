@@ -40,7 +40,7 @@ How to run::
   bdsim --file=3_twogdmls.gmad
 
 .. figure:: 3_twogdmls.png
-	    :width: 40%
+	    :width: 60%
 
 
 .. note:: Two shapes are visible alongside a beam pipe - a cuboid and
