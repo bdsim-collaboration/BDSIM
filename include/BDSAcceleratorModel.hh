@@ -99,10 +99,6 @@ public:
   /// it - note, no checking for double registration.
   void RegisterRegion(G4Region* region, G4ProductionCuts* cut);
 
-  /// Register a temporary file for possible deletion at the deletion of the accelerator model
-  /// based on the option from BDSGlobalConstants.
-  void RegisterTemporaryFile(G4String fileName);
-
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
 
@@ -113,8 +109,6 @@ private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
   static BDSAcceleratorModel* instance;
-
-  G4bool removeTemporaryFiles;
 
   G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
   G4LogicalVolume*   worldLV;
@@ -129,7 +123,6 @@ private:
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
   std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.
-  std::vector<G4String> temporaryFiles;       ///< All temporary file paths.
 };
 
 #endif

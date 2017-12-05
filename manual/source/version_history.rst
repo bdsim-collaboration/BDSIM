@@ -1,4 +1,4 @@
-V0.993 - 2017 / 11 / ??
+V0.993 - 2017 / 12 / ??
 =======================
 
 New Features
@@ -11,13 +11,16 @@ New Features
 * Support for all EM physics lists included with Geant4.
 * Support for an ion as the primary beam particle.
 * Support for ion physics lists.
+* Ability to load two GDML files with degenerate object names correctly compensating for
+  definiciency in Geant4 GDML parser.
   
 Bug Fixes
 ---------
 
+* Compilation fixes for compilers with XCode 9.
 * Cherenkov radiation in water fixed with specification of optical refractive index.
 * Fix ATF2 example input syntax and update model.
-* Compilation fixes for compilers with XCode 9.
+* Remove temporary files created in current working directory.
 
 Output Changes
 --------------
