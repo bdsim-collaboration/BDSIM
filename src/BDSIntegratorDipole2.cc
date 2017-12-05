@@ -106,7 +106,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 
   // resample field at midway point (although if pure dipole, this is
   // unnecessary) - could go outside the range of the field though
-  G4double bM[4]; // mid point location field value
+  G4double bM[6]; // mid point location field value
   GetEquationOfMotion()->GetFieldValue(yTemp, bM);
   G4ThreeVector bMid = G4ThreeVector(bM[0],bM[1],bM[2]);
 
