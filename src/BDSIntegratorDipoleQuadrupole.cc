@@ -16,21 +16,15 @@
 
 #include <cmath>
 
-BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strength,
+BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strengthIn,
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn):
   BDSIntegratorMag(eqOfMIn, 6),
   dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
-  angle((*strength)["angle"]),
-  arcLength((*strength)["length"]),
-  brho(brhoIn)
+  strength(strengthIn)
 {
-  bPrime            = std::abs(brhoIn) * (*strength)["k1"] / CLHEP::m2;
-  radiusOfCurvature = arcLength / angle;
-  chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
-  radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
-  unitField         = G4ThreeVector(0,(*strength)["field"],0).unit();
+  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"] / CLHEP::m2;
 }
 
 BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
@@ -74,7 +68,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // convert to true curvilinear
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  BDSStep       localCL     = GlobalToCurvilinear(globalPos, globalMom, h, false);
+  BDSStep       localCL     = GlobalToCurvilinear(strength, globalPos, globalMom, h, false);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -226,40 +220,3 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   */
 }
 
-BDSStep BDSIntegratorDipoleQuadrupole::GlobalToCurvilinear(G4ThreeVector position,
-							   G4ThreeVector unitMomentum,
-							   G4double      h,
-							   G4bool        useCurvilinearWorld)
-{
-  BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
-
-  // We could test on finite angle here, but we assume this integrator is only
-  // used where necessary as opposed to just a dipole or quadrupole.
-  // If the angle is 0, there is no need for a further transform.
-  
-  G4ThreeVector localPos   = local.PreStepPoint();
-  G4ThreeVector localMom   = local.PostStepPoint();
-  G4double      localZ     = localPos.z();
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
-
-  // This will range from -angle/2 to +angle/2
-  G4double partialAngle = atan(localZ / radiusAtChord);
-
-  G4ThreeVector localMomCL = localMom.rotate(partialAngle, localUnitF);
-
-  G4ThreeVector unitX      = G4ThreeVector(1,0,0);
-  G4ThreeVector localUnitX = ConvertAxisToLocal(unitX, useCurvilinearWorld);
-  G4double      dx         = radiusOfCurvature * (1 - cos(partialAngle));
-  G4ThreeVector dpos       = localUnitX * dx;
-  G4ThreeVector localPosCL = localPos + dpos;
-  
-  return BDSStep(localPosCL, localMomCL);
-}
-
-
-BDSStep BDSIntegratorDipoleQuadrupole::CurvilinearToGlobal(G4ThreeVector localPositionCL,
-							   G4ThreeVector localMomentumCL,
-							   G4bool        useCurvilinearWorld)
-{
-  return ConvertToGlobalStep(localPositionCL, localMomentumCL, useCurvilinearWorld);
-}

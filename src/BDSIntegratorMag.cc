@@ -1,6 +1,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorMag.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -42,4 +44,58 @@ void BDSIntegratorMag::ConvertToGlobal(const G4ThreeVector& localPos,
   yOut[3] = GlobalTangent.x();
   yOut[4] = GlobalTangent.y();
   yOut[5] = GlobalTangent.z();
+}
+
+BDSStep BDSIntegratorMag::GlobalToCurvilinear(G4ThreeVector position,
+                                              G4ThreeVector unitMomentum,
+                                              G4double      h,
+                                              G4bool        useCurvilinearWorld)
+{
+  return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+}
+
+
+BDSStep BDSIntegratorMag::CurvilinearToGlobal(G4ThreeVector localPosition,
+                                              G4ThreeVector localMomentum,
+                                              G4bool        useCurvilinearWorld)
+{
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
+}
+
+BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
+                                              G4ThreeVector position,
+                                              G4ThreeVector unitMomentum,
+                                              G4double      h,
+                                              G4bool        useCurvilinearWorld)
+{
+  G4double angle             = (*strength)["angle"];
+  G4double arcLength         = (*strength)["length"];
+  G4double radiusOfCurvature = arcLength / angle;
+  G4double chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
+  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+
+  BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+
+  // Test on finite angle here. If the angle is 0, there is no need for a further transform.
+  if (BDS::IsFinite(angle))
+    {return local;}
+
+  G4ThreeVector localPos   = local.PreStepPoint();
+  G4ThreeVector localMom   = local.PostStepPoint();
+  G4double      localZ     = localPos.z();
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+
+  // This will range from -angle/2 to +angle/2
+  G4double partialAngle = atan(localZ / radiusAtChord);
+
+  G4ThreeVector localMomCL = localMom.rotate(partialAngle, localUnitF);
+
+  G4ThreeVector unitX      = G4ThreeVector(1,0,0);
+  G4ThreeVector localUnitX = ConvertAxisToLocal(unitX, useCurvilinearWorld);
+  G4double      dx         = radiusOfCurvature * (1 - cos(partialAngle));
+  G4ThreeVector dpos       = localUnitX * dx;
+  G4ThreeVector localPosCL = localPos + dpos;
+
+  return BDSStep(localPosCL, localMomCL);
 }

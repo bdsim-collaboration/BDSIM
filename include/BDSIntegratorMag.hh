@@ -3,6 +3,7 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDrift.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
@@ -38,7 +39,7 @@ public:
   /// Cache of thin element length to know maximum possible length scale step
   /// for coordinate lookup.
   static G4double thinElementLength;
-  
+
 protected:
   /// Convert final local position and direction to global frame. Allow
     /// scaling of momentum in case localMom is a unit vector
@@ -62,6 +63,22 @@ protected:
   /// outside the (transverse) momentum range applicable for the integration scheme
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
+
+  /// Convert to curvilinear coordinates.
+  BDSStep GlobalToCurvilinear(BDSMagnetStrength const* strength,
+                                      G4ThreeVector position,
+                                      G4ThreeVector unitMomentum,
+                                      G4double      h,
+                                      G4bool        useCurvilinearWorld);
+
+  BDSStep GlobalToCurvilinear(G4ThreeVector position,
+                                      G4ThreeVector unitMomentum,
+                                      G4double      h,
+                                      G4bool        useCurvilinearWorld);
+
+  BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
+                                      G4ThreeVector localMomentum,
+                                      G4bool        useCurvilinearWorld);
 
 private:
   /// Private default constructor to force use of specific constructor

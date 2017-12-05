@@ -191,19 +191,4 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     }
 }
 
-BDSStep BDSIntegratorQuadrupole::GlobalToCurvilinear(G4ThreeVector position,
-						     G4ThreeVector unitMomentum,
-						     G4double      h,
-						     G4bool        useCurvilinearWorld)
-{
-  return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
-}
 
-
-BDSStep BDSIntegratorQuadrupole::CurvilinearToGlobal(G4ThreeVector localPosition,
-						     G4ThreeVector localMomentum,
-						     G4bool        useCurvilinearWorld)
-{
-  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
-}
-  

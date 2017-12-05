@@ -40,17 +40,6 @@ public:
 		       G4double       yOut[],
 		       G4double       yErr[]);
 
-protected:
-
-  virtual BDSStep GlobalToCurvilinear(G4ThreeVector position,
-				      G4ThreeVector unitMomentum,
-				      G4double      h,
-				      G4bool        useCurvilinearWorld);
-
-  virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
-				      G4ThreeVector localMomentum,
-				      G4bool        useCurvilinearWorld);
-  
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorQuadrupole();

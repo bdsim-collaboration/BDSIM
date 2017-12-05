@@ -47,30 +47,13 @@ protected:
 	       G4ThreeVector& posOut,
 	       G4ThreeVector& momOut) const;
 
-  /// Convert to curvilinear coordinates.
-  virtual BDSStep GlobalToCurvilinear(G4ThreeVector position,
-				      G4ThreeVector unitMomentum,
-				      G4double      h,
-				      G4bool        useCurvilinearWorld);
-
-  /// Convert to global coordinates.
-  virtual BDSStep CurvilinearToGlobal(G4ThreeVector localPositionCL,
-				      G4ThreeVector localMomentumCL,
-				      G4bool        useCurvilinearWorld);
-  
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
 
   BDSIntegratorDipole2* dipole;
-  G4double              angle;
-  G4double              arcLength;
-  G4double              brho;
   G4double              bPrime;
-  G4double              radiusOfCurvature;
-  G4double              chordLength;
-  G4double              radiusAtChord;
-  G4ThreeVector         unitField;
+  BDSMagnetStrength const* strength;
 };
 
 #endif
