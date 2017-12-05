@@ -69,6 +69,9 @@ namespace BDS
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
 
+  /// Check if directory exists.
+  G4bool DirectoryExists(G4String path);
+
   /// Get the current dir the program was executed from.
   std::string GetCurrentDir();
   
@@ -83,6 +86,17 @@ namespace BDS
   /// getFullPath(filename,true) + filename 
   /// will return the absolute filename path
   G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
+
+  /// Split a full file path into the path and file components. The path
+  /// ends with '/'.
+  void SplitPathAndFileName(const G4String& filePath,
+			    G4String& path,
+			    G4String& filename);
+
+  /// Split a filename.ext into filename and extension. Extension includes '.'.
+  void SplitFileAndExtention(const G4String& fileName,
+			     G4String&       file,
+			     G4String&       extension);
 
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.

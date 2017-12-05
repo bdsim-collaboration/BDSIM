@@ -141,7 +141,7 @@ OptionsBase::OptionsBase()
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
 
-  removeTemporaryFiles = false;
+  removeTemporaryFiles = true;
   
   // samplers
   samplerDiameter     = 5; // m

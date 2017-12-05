@@ -65,6 +65,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
+#include "BDSTemporaryFiles.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
@@ -307,6 +308,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
   delete BDSAcceleratorModel::Instance();
+  delete BDSTemporaryFiles::Instance();
   delete globalConstants;
   delete BDSMaterials::Instance();
 
