@@ -1,9 +1,28 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifdef USE_GDML
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
+#include "BDSGDMLPreprocessor.hh"  // also only available with USE_GDML
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
@@ -44,12 +63,12 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 {
   CleanUp();
 
-  G4String tempFileName = ReplaceStringInFile(componentName, fileName,
-					      "PREPEND", componentName);
-  BDSAcceleratorModel::Instance()->RegisterTemporaryFile(tempFileName);
+  // Compensate for G4GDMLParser deficiency in loading more than one file with similar names
+  // in objects. Prepend all names with component name.
+  G4String processedFile = BDS::PreprocessGDML(fileName, componentName);
   
   G4GDMLParser* parser = new G4GDMLParser();
-  parser->Read(tempFileName, /*validate=*/true);
+  parser->Read(processedFile, /*validate=*/true);
 
   G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
   G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
@@ -100,11 +119,10 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
     }
 }
 
-
-G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
-						     G4String fileName,
-						     G4String key,
-						     G4String replacement)
+void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
+						 const G4String& outputFileName,
+						 const G4String& key,
+						 const G4String& replacement)
 {
   // open input file in read mode
   std::ifstream ifs(fileName);
@@ -115,11 +133,8 @@ G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
       G4cerr << __METHOD_NAME__ << "Cannot open file \"" << fileName << "\"" << G4endl;
       exit(1);
     }
-  
-  // temporary file name
-  std::string tempFileName = "temp_" + componentName + ".gdml";
-  //std::string tempFileName = std::string(std::tmpnam(nullptr)) + "_.gdml";
-  std::ofstream fout(tempFileName);
+
+  std::ofstream fout(outputFileName);
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Original file:  " << fileName     << G4endl;
@@ -146,8 +161,6 @@ G4String BDSGeometryFactoryGDML::ReplaceStringInFile(G4String componentName,
   // clean up
   ifs.close();
   fout.close();
-  
-  return G4String(tempFileName);
 }
 
 

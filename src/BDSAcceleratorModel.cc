@@ -1,10 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineSet.hh"
 #include "BDSDebug.hh"
 #include "BDSFieldObjects.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "globals.hh"
@@ -34,7 +51,6 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   tunnelBeamline(nullptr),
   placementBeamline(nullptr)
 {
-  removeTemporaryFiles = BDSGlobalConstants::Instance()->RemoveTemporaryFiles();
   BDSAcceleratorComponentRegistry::Instance();
   BDSPhysicalVolumeInfoRegistry::Instance();
 }
@@ -68,16 +84,6 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
 
   G4cout << "BDSAcceleratorModel> Deletion complete" << G4endl;
 
-  if (removeTemporaryFiles)
-    {
-      G4cout << "BDSAcceleratorModel> Removing temporary files" << G4endl;
-      for (auto& filename : temporaryFiles)
-	{
-	  G4cout << "Removing \"" << filename << "\"" << G4endl;
-	  std::remove(filename);
-	}
-      G4cout << "BDSAcceleratorModel> Temporary files removed" << G4endl;
-    }
   instance = nullptr;
 }
 
@@ -107,11 +113,6 @@ void BDSAcceleratorModel::RegisterRegion(G4Region* region, G4ProductionCuts* cut
   G4String name = region->GetName();
   regions[name] = region;
   cuts[name]    = cut;
-}
-
-void BDSAcceleratorModel::RegisterTemporaryFile(G4String fileName)
-{
-  temporaryFiles.push_back(fileName);
 }
 
 G4Region* BDSAcceleratorModel::Region(G4String name) const

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSACCELERATORMODEL_H
 #define BDSACCELERATORMODEL_H
 
@@ -81,10 +99,6 @@ public:
   /// it - note, no checking for double registration.
   void RegisterRegion(G4Region* region, G4ProductionCuts* cut);
 
-  /// Register a temporary file for possible deletion at the deletion of the accelerator model
-  /// based on the option from BDSGlobalConstants.
-  void RegisterTemporaryFile(G4String fileName);
-
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
 
@@ -95,8 +109,6 @@ private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
   static BDSAcceleratorModel* instance;
-
-  G4bool removeTemporaryFiles;
 
   G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
   G4LogicalVolume*   worldLV;
@@ -111,7 +123,6 @@ private:
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
   std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.
-  std::vector<G4String> temporaryFiles;       ///< All temporary file paths.
 };
 
 #endif

@@ -1,21 +1,21 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-// BDSParticle.hh
-// Bunch format interfacing to PLACET output file
-// G.A.Blair (RHUL) 10.12.01
-// adapted from code supplied by D.Schulte (CERN)
-
-#ifndef BDSParticle_h
-#define BDSParticle_h 1
-
-#include "globals.hh"
-
-class BDSParticle
-{
-public:
   BDSParticle();
   G4double energy,wgt,y,yp;
   G4double x,xp;

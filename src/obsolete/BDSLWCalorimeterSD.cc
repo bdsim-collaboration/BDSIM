@@ -1,21 +1,21 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2017.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include "BDSGlobalConstants.hh" 
-
-#include "BDSRunManager.hh"
-#include "BDSLWCalorimeterSD.hh"
-#include "BDSLWCalorimeterHit.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4VTouchable.hh"
-#include "G4TouchableHistory.hh"
 #include "G4ios.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
