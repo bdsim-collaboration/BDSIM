@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+	<define/>
+	<materials/>
+	<solids>
+		<box lunit="mm" name="PREPEND_box" x="2*20" y="2*30" z="2*40"/>
+		<box lunit="mm" name="PREPEND_world" x="2*200" y="2*200" z="2*200"/>
+	</solids>
+	<structure>
+		<volume name="PREPEND_boxlv_lv">
+			<materialref ref="G4_Cu"/>
+			<solidref ref="PREPEND_box"/>
+		</volume>
+		<volume name="PREPEND_worldlv_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="PREPEND_world"/>
+			<physvol name="PREPEND_boxpv_pv">
+				<volumeref ref="PREPEND_boxlv_lv"/>
+				<position name="PREPEND_boxpv_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_boxpv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_boxpv_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+		<volume name="PREPEND_worldlv_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="PREPEND_world"/>
+			<physvol name="PREPEND_boxpv_pv">
+				<volumeref ref="PREPEND_boxlv_lv"/>
+				<position name="PREPEND_boxpv_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_boxpv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_boxpv_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+		<volume name="PREPEND_worldlv_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="PREPEND_world"/>
+			<physvol name="PREPEND_boxpv_pv">
+				<volumeref ref="PREPEND_boxlv_lv"/>
+				<position name="PREPEND_boxpv_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_boxpv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_boxpv_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+		<volume name="PREPEND_worldlv_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="PREPEND_world"/>
+			<physvol name="PREPEND_boxpv_pv">
+				<volumeref ref="PREPEND_boxlv_lv"/>
+				<position name="PREPEND_boxpv_pos" x="0" y="0" z="0"/>
+				<rotation name="PREPEND_boxpv_rot" x="0" y="0" z="0"/>
+				<scale name="PREPEND_boxpv_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="PREPEND_worldlv_lv"/>
+	</setup>
+</gdml>

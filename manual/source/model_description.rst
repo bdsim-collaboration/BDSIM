@@ -1647,6 +1647,9 @@ The following is an example syntax is used to place a piece of geometry::
 			z = 12*m,
 			geometryFile="gdml:mygeometry/detector.gdml";
 
+.. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
+	     were declared again here, the first definition would be updated with parameters
+	     from the second leading to possibly unexpected geometry.
 
 
 External Magnet Geometry

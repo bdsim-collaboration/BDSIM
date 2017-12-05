@@ -39,6 +39,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <utility>
 
+#include <sys/stat.h>
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h> // for executable path
 #endif
@@ -101,6 +103,13 @@ G4bool BDS::FileExists(G4String fileName)
   // note the destructor of ifstream will close the stream
 }
 
+G4bool BDS::DirectoryExists(G4String path)
+{
+  struct stat sb;  
+  bool result = (stat(path.c_str(), &sb) == 0) && S_ISDIR(sb.st_mode);
+  return G4bool(result);
+}
+
 std::string BDS::GetCurrentDir()
 { 
   char currentPath[PATH_MAX]; // defined in <limits>
@@ -157,29 +166,17 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
 
   // split input into path and filename
   G4String inputFilepath, inputFilename;
-  G4String::size_type found = fileName.rfind("/"); // find the last '/'
-  if (found != G4String::npos)
-    {
-      inputFilepath = fileName.substr(0,found); // the path is the bit before that
-      inputFilename = fileName.substr(found); // the rest
-    }
-  else
-    {
-      // no slash, only filename
-      inputFilepath = "";
-      inputFilename = fileName;
-    }
+  BDS::SplitPathAndFileName(fileName, inputFilepath, inputFilename);
   
   // need to know whether it's an absolute or relative path
   if ((fileName.substr(0,1)) == "/")
     {fullPath = inputFilepath;}
-  else
-    {
-      // the main file has a relative path or just the file name, add bdsimpath
-      fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + "/" + inputFilepath;
-    }
-  // add additional slash just to be safe
-  fullPath += "/";
+  else // the main file has a relative path or just the file name, add bdsimpath
+    {fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + inputFilepath;}
+  
+  if (fullPath.back() != '/') // ensure ends in '/'
+    {fullPath += "/";} // only add if needed
+
   // add filename if not excluded
   if (!excludeNameFromPath)
     {fullPath += inputFilename;}
@@ -187,6 +184,40 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   G4cout << __METHOD_NAME__ << "determined full path to be: " << fullPath << G4endl;
 #endif
   return fullPath;
+}
+
+void BDS::SplitPathAndFileName(const G4String& filePath,
+			       G4String&       path,
+			       G4String&       fileName)
+{
+  G4String::size_type found = filePath.rfind("/"); // find the last '/'
+  if (found != G4String::npos)
+    {
+      path     = filePath.substr(0,found) + "/"; // the path is the bit before that
+      fileName = filePath.substr(found+1); // the rest
+    }
+  else
+    {// no slash, only file name
+      path     = "./";     // use current directory
+      fileName = filePath;
+    }
+}
+
+void BDS::SplitFileAndExtention(const G4String& fileName,
+				G4String&       file,
+				G4String&       extension)
+{
+  G4String::size_type found = fileName.rfind("."); // fine the last '.'
+  if (found != G4String::npos)
+    {
+      file      = fileName.substr(0, found);
+      extension = fileName.substr(found); // the rest
+    }
+  else
+    {
+      file      = fileName;
+      extension = "";
+    }
 }
 
 void BDS::HandleAborts(int signal_number)

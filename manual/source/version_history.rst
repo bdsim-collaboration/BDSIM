@@ -29,6 +29,7 @@ Output Changes
 General
 -------
 
+* Licence specified as GPL3.
 * Updated automatic Geant4 from AFS to version 10.3.p01.
 * Updated automatic ROOT from AFS to version 6.06.08.
 * Remove support for ROOT v5 and require v6 onwards.
