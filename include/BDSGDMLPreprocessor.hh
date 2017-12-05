@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifdef USE_GDML
+
 #ifndef BDSGDMLPREPROCESSOR_H
 #define BDSGDMLPREPROCESSOR_H
 
@@ -56,5 +58,7 @@ private:
   std::map<std::string, int> count;     ///< Debugging.
 
 };
+
+#endif
 
 #endif

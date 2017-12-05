@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
-#include "BDSGDMLPreprocessor.hh"
+#include "BDSGDMLPreprocessor.hh"  // also only available with USE_GDML
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
