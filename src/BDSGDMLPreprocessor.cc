@@ -132,8 +132,8 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
 
 void BDSGDMLPreprocessor::ReadDoc(DOMNodeIterator* docIterator)
 {
-  for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
-    {ReadNode(current_node);}
+  for (DOMNode* currentNode = docIterator->nextNode(); currentNode != 0; currentNode = docIterator->nextNode())
+    {ReadNode(currentNode);}
 }
 
 void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
@@ -172,8 +172,8 @@ void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
 void BDSGDMLPreprocessor::ProcessDoc(DOMNodeIterator* docIterator,
 				     const G4String&  prefix)
 {
-  for (DOMNode *current_node = docIterator->nextNode(); current_node != 0; current_node = docIterator->nextNode())
-    {ProcessNode(current_node, prefix);}
+  for (DOMNode* currentNode = docIterator->nextNode(); currentNode != 0; currentNode = docIterator->nextNode())
+    {ProcessNode(currentNode, prefix);}
 }
 
 void BDSGDMLPreprocessor::ProcessNode(DOMNode*        node,
