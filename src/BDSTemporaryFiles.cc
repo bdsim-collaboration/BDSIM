@@ -23,9 +23,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include <cstdlib>
 #include <cstdio>
 #include <string>
 #include <sys/stat.h>
+#include <unistd.h>
 
 BDSTemporaryFiles* BDSTemporaryFiles::instance = nullptr;
 
@@ -48,19 +50,19 @@ void BDSTemporaryFiles::InitialiseTempDir()
     {
       if (BDS::DirectoryExists(dir))
         {// found a dir we can use - create bdsim-specific dir in it
-	  // use mktemp, which takes template char* (non-const)
+	  // use mkdtemp, which takes template char* (non-const)
 	  // use a vector for automatic clearing up with scope
-	  G4String templateDir = "/tmp/bdsim_XXXXXX";
+	  G4String templateDir = dir + "bdsim_XXXXXX";
 	  std::vector<char> v(templateDir.length() + 1);
 	  std::strcpy(&v[0], templateDir.c_str());
 	  char* pc = &v[0];
 	  
-	  G4String newTempDir = G4String(mktemp(pc));
-	  int success = mkdir(newTempDir.c_str(), 0777);
-	  if (success < 0)
-            {G4cerr << __METHOD_NAME__ << "Unable to create directory: " << newTempDir << G4endl; exit(1);}
+	  char* newTempDirC = mkdtemp(pc);
+	  if (!newTempDirC)
+            {G4cerr << __METHOD_NAME__ << "Unable to create directory: " << templateDir << G4endl; exit(1);}
 	  else
             {
+	      G4String newTempDir = G4String(newTempDirC);
 	      temporaryDirectory = newTempDir;
 	      if (temporaryDirectory.back() != '/')
                 {temporaryDirectory += "/";}
