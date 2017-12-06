@@ -111,7 +111,7 @@ BDSTemporaryFiles::~BDSTemporaryFiles()
 #endif
         }
     }
-  // remove directory which should not be empty (if not won't be deleted)
+  // remove directory which should be empty (if not won't be deleted)
   rmdir(temporaryDirectory);
 
   G4cout << __METHOD_NAME__ << "Temporary files removed" << G4endl;
