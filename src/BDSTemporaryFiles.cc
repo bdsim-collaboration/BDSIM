@@ -86,35 +86,35 @@ void BDSTemporaryFiles::InitialiseTempDir()
 
 BDSTemporaryFiles::~BDSTemporaryFiles()
 {
-  if (removeTemporaryFiles)
+  if (removeTemporaryFiles == false || (allocatedFiles.empty()))
     {
-      if (allocatedFiles.empty())
-	{// no need to warn user about deleting no files.
-	  instance = nullptr;
-	  return;
-	}
-      
-      G4cout << __METHOD_NAME__<< "Removing temporary files" << G4endl;
-      
-      for (const auto& fn : allocatedFiles)
-        {
-	  if (BDS::FileExists(fn))
-            {
-#ifdef BDSDEBUG
-	      G4cout << "Removing \"" << filename << "\"" << G4endl;
-#endif
-	      int result = remove(fn.c_str()); // delete file
-	      if (result != 0)
-#ifdef BDSDEBUG
-		{G4cout << "Error deleting file: \"" << fn << "\"" << G4endl;}
-#else
-	      {continue;}
-#endif
-	    }
-        }
-      G4cout << __METHOD_NAME__ << "Temporary files removed" << G4endl;
+      // no need to warn user about deleting no files.
+      instance = nullptr;
+      return;
     }
-  instance = nullptr;
+
+  G4cout << __METHOD_NAME__<< "Removing temporary files" << G4endl;
+    
+  for (const auto& fn : allocatedFiles)
+    {
+      if (BDS::FileExists(fn))
+        {
+#ifdef BDSDEBUG
+          G4cout << "Removing \"" << filename << "\"" << G4endl;
+#endif
+          int result = remove(fn.c_str()); // delete file
+          if (result != 0)
+#ifdef BDSDEBUG
+            {G4cout << "Error deleting file: \"" << fn << "\"" << G4endl;}
+#else
+          {continue;}
+#endif
+        }
+    }
+  // remove directory which should not be empty (if not won't be deleted)
+  rmdir(temporaryDirectory);
+
+  G4cout << __METHOD_NAME__ << "Temporary files removed" << G4endl;
 }
 
 BDSTemporaryFiles* BDSTemporaryFiles::Instance()
