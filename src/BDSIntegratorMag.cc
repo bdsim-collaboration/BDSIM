@@ -96,7 +96,7 @@ BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
   BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 
   // Test on finite angle here. If the angle is 0, there is no need for a further transform.
-  if (BDS::IsFinite(angle))
+  if (!BDS::IsFinite(angle))
     {return local;}
 
   G4ThreeVector localPos   = local.PreStepPoint();
