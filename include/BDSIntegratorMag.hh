@@ -98,6 +98,11 @@ protected:
                                       G4ThreeVector localMomentum,
                                       G4bool        useCurvilinearWorld);
 
+  BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
+                                      G4ThreeVector localPosition,
+                                      G4ThreeVector localMomentum,
+                                      G4bool        useCurvilinearWorld);
+
 private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorMag() = delete;

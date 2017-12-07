@@ -72,14 +72,6 @@ BDSStep BDSIntegratorMag::GlobalToCurvilinear(G4ThreeVector position,
   return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 }
 
-
-BDSStep BDSIntegratorMag::CurvilinearToGlobal(G4ThreeVector localPosition,
-                                              G4ThreeVector localMomentum,
-                                              G4bool        useCurvilinearWorld)
-{
-  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
-}
-
 BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
                                               G4ThreeVector position,
                                               G4ThreeVector unitMomentum,
@@ -116,4 +108,26 @@ BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
   G4ThreeVector localPosCL = localPos + dpos;
 
   return BDSStep(localPosCL, localMomCL);
+}
+
+BDSStep BDSIntegratorMag::CurvilinearToGlobal(G4ThreeVector localPosition,
+                                              G4ThreeVector localMomentum,
+                                              G4bool        useCurvilinearWorld)
+{
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
+}
+
+BDSStep BDSIntegratorMag::CurvilinearToGlobal(BDSMagnetStrength const* strength,
+                                              G4ThreeVector localPosition,
+                                              G4ThreeVector localMomentum,
+                                              G4bool        useCurvilinearWorld)
+{
+  G4double angle             = (*strength)["angle"];
+  G4double arcLength         = (*strength)["length"];
+  G4double radiusOfCurvature = arcLength / angle;
+  G4double chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
+  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
