@@ -118,8 +118,8 @@ BDSStep BDSIntegratorMag::CurvilinearToGlobal(G4ThreeVector localPosition,
 }
 
 BDSStep BDSIntegratorMag::CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                                              G4ThreeVector localPosition,
-                                              G4ThreeVector localMomentum,
+                                              G4ThreeVector CLPosition,
+                                              G4ThreeVector CLMomentum,
                                               G4bool        useCurvilinearWorld)
 {
   G4double angle             = (*strength)["angle"];
@@ -128,6 +128,13 @@ BDSStep BDSIntegratorMag::CurvilinearToGlobal(BDSMagnetStrength const* strength,
   G4double chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
   G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+
+  // Test on finite angle here. If the angle is 0, return convert to global transform.
+  if (!BDS::IsFinite(angle))
+   {return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);}
+
+  G4ThreeVector localPosition = CLPosition;
+  G4ThreeVector localMomentum = CLMomentum;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
