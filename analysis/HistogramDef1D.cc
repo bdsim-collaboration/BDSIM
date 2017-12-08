@@ -24,9 +24,11 @@ HistogramDef1D::HistogramDef1D(std::string treeNameIn,
 			       double      xLowIn,
 			       double      xHighIn,
 			       std::string variableIn,
-			       std::string selectionIn):
+			       std::string selectionIn,
+			       bool        logarithmicXIn):
   HistogramDef(treeNameIn, histNameIn, 1, variableIn, selectionIn),
   xNBins(xNBinsIn),
   xLow(xLowIn),
-  xHigh(xHighIn)
+  xHigh(xHighIn),
+  logarithmicX(logarithmicXIn)
 {;}

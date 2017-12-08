@@ -44,12 +44,16 @@ public:
 		 double      zLowIn,
 		 double      zHighIn,
 		 std::string plotIn,
-		 std::string selectionIn = "1");
+		 std::string selectionIn    = "1",
+		 bool        logarithmicX   = false,
+		 bool        logarithmicY   = false,
+		 bool        logarithmicZIn = false);
   virtual ~HistogramDef3D(){;}
 
   int         zNBins;
   double      zLow;
   double      zHigh;
+  bool        logarithmicZ;
 
 private:
   /// No default constructor

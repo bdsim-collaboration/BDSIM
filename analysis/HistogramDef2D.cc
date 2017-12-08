@@ -28,12 +28,15 @@ HistogramDef2D::HistogramDef2D(std::string treeNameIn,
 			       double      yLowIn,
 			       double      yHighIn,
 			       std::string plotIn,
-			       std::string selectionIn):
+			       std::string selectionIn,
+			       bool        logarithmicX,
+			       bool        logarithmicYIn):
   HistogramDef1D(treeNameIn, histNameIn, xNBinsIn, xLowIn,
-		 xHighIn, plotIn, selectionIn),
+		 xHighIn, plotIn, selectionIn, logarithmicX),
   yNBins(yNBinsIn),
   yLow(yLowIn),
-  yHigh(yHighIn)
+  yHigh(yHighIn),
+  logarithmicY(logarithmicYIn)
 {
   nDimensions = 2;
 }

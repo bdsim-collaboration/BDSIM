@@ -31,13 +31,17 @@ HistogramDef3D::HistogramDef3D(std::string treeNameIn,
 			       double      zLowIn,
 			       double      zHighIn,
 			       std::string plotIn,
-			       std::string selectionIn):
+			       std::string selectionIn,
+			       bool        logarithmicX,
+			       bool        logarithmicY,
+			       bool        logarithmicZIn):
   HistogramDef2D(treeNameIn, histNameIn, xNBinsIn, yNBinsIn,
 		 xLowIn, xHighIn, yLowIn, yHighIn,
-		 plotIn, selectionIn),
+		 plotIn, selectionIn, logarithmicX, logarithmicY),
   zNBins(zNBinsIn),
   zLow(zLowIn),
-  zHigh(zHighIn)
+  zHigh(zHighIn),
+  logarithmicZ(logarithmicZIn)
 {
   nDimensions = 3;
 }
