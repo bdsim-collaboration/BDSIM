@@ -198,7 +198,7 @@ void BDSGDMLPreprocessor::ProcessGDMLNode(DOMNamedNodeMap* attributeMap)
 	  G4String newNodeValue;
 	  if (nodeValue.substr(0,2) == "./")
 	    {
-	      G4String remainder = nodeValue.substr(0,2); // strip off ./
+	      G4String remainder = nodeValue.substr(2); // strip off ./
 	      newNodeValue = remainder.prepend(parentDir); // prepend parent directory
 	    }
 	  else
