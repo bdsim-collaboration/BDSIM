@@ -1,0 +1,1 @@
+bdsim_install_gdml(*.xsd)

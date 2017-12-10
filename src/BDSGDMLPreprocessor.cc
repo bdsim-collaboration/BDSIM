@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSGDMLPreprocessor.hh"
 #include "BDSTemporaryFiles.hh"
+#include "BDSUtilities.hh"
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
@@ -43,6 +44,29 @@ G4String BDS::PreprocessGDML(const G4String& file,
   BDSGDMLPreprocessor processor;
   G4String processedFile = processor.PreprocessFile(file, prefix);
   return processedFile;
+}
+
+G4String BDS::GDMLSchemaLocation()
+{
+  G4String result;
+  G4String bdsimExecPath = BDS::GetBDSIMExecPath();
+  G4String localPath = bdsimExecPath + "src-external/gdml/schema/gdml.xsd";
+  G4String installPath = bdsimExecPath + "../share/bdsim/gdml/schema/gdml.xsd";
+  if (FILE *file = fopen(localPath.c_str(), "r"))
+    {
+      fclose(file);
+      return localPath;
+    }
+  else if ( (file = fopen(installPath.c_str(), "r")) )
+    {
+      fclose(file);
+      return installPath;
+    }
+  else
+   {
+     G4cout << "ERROR: local GDML schema could not be found!" << G4endl;
+     exit(1);
+   }
 }
 
 BDSGDMLPreprocessor::BDSGDMLPreprocessor()
