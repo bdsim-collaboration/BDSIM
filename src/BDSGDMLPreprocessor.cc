@@ -90,6 +90,10 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
       XMLString::release(&message);
       exit(1);
     }
+
+  /// Update folder containing gdml file.
+  G4String filename;
+  BDS::SplitPathAndFileName(file, parentDir, filename);
   
   XercesDOMParser* parser = new XercesDOMParser();
   parser->setValidationScheme(XercesDOMParser::Val_Always);
@@ -191,12 +195,15 @@ void BDSGDMLPreprocessor::ProcessGDMLNode(DOMNamedNodeMap* attributeMap)
       if (nodeName == "xsi:noNamespaceSchemaLocation")
 	{
 	  G4String nodeValue = G4String(XMLString::transcode(attr->getNodeValue()));
+	  G4String newNodeValue;
 	  if (nodeValue.substr(0,2) == "./")
 	    {
 	      G4String remainder = nodeValue.substr(0,2); // strip off ./
-	      G4String newNodeValue = remainder.prepend(parentDir); // prepend parent directory
-	      attr->setNodeValue(XMLString::transcode(newNodeValue.c_str()));
+	      newNodeValue = remainder.prepend(parentDir); // prepend parent directory
 	    }
+	  else
+	    {newNodeValue = BDS::GDMLSchemaLocation();}
+	  attr->setNodeValue(XMLString::transcode(newNodeValue.c_str()));
 	} 
     }
 }
