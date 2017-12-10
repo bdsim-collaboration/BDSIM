@@ -143,11 +143,38 @@ void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
     {return;}
 
   std::string thisNodeName = XMLString::transcode(node->getNodeName());
+  if (thisNodeName == "gdml")
+    {// to update location of schema
+      ProcessGDMLNode(node->getAttributes());
+      return;
+    }
   auto search = std::find(ignoreNodes.begin(), ignoreNodes.end(), thisNodeName);
   if (search != ignoreNodes.end())
     {return;} // ignore this node
   else
     {ReadAttributes(node->getAttributes());}
+}
+
+void BDSGDMLPreprocessor::ProcessGDMLNode(DOMNamedNodeMap* attributeMap)
+{
+  if (!attributeMap)
+  {return;}
+
+  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+    {
+      DOMNode* attr = attributeMap->item(i);
+      std::string nodeName = XMLString::transcode(attr->getNodeName());
+      if (nodeName == "xsi:noNamespaceSchemaLocation")
+	{
+	  G4String nodeValue = G4String(XMLString::transcode(attr->getNodeValue()));
+	  if (nodeValue.substr(0,2) == "./")
+	    {
+	      G4String remainder = nodeValue.substr(0,2); // strip off ./
+	      G4String newNodeValue = remainder.prepend(parentDir); // prepend parent directory
+	      attr->setNodeValue(XMLString::transcode(newNodeValue.c_str()));
+	    }
+	} 
+    }
 }
 
 void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)
