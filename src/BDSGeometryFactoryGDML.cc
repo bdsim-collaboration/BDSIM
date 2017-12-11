@@ -137,8 +137,8 @@ void BDSGeometryFactoryGDML::ReplaceStringInFile(const G4String& fileName,
   std::ofstream fout(outputFileName);
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Original file:  " << fileName     << G4endl;
-  G4cout << __METHOD_NAME__ << "Temporary file: " << tempFileName << G4endl;
+  G4cout << __METHOD_NAME__ << "Original file:  " << fileName       << G4endl;
+  G4cout << __METHOD_NAME__ << "Temporary file: " << outputFileName << G4endl;
 #endif
 
   int lenOfKey = key.size();

@@ -67,7 +67,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
     }
   
   // Arrays for field querying (g4 interface)
-  G4double bO[4]; // original location field value
+  G4double bO[6]; // original location field value - must be 6 long
   eqOfM->GetFieldValue(yIn, bO);
   G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
 
@@ -114,7 +114,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 
   // resample field at midway point (although if pure dipole, this is
   // unnecessary) - could go outside the range of the field though
-  G4double bM[4]; // mid point location field value
+  G4double bM[6]; // mid point location field value - must be 6 long
   GetEquationOfMotion()->GetFieldValue(yTemp, bM);
   G4ThreeVector bMid = G4ThreeVector(bM[0],bM[1],bM[2]);
 
