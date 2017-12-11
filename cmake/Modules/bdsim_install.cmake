@@ -70,6 +70,11 @@ macro(bdsim_install_macros)
     DESTINATION share/bdsim/analysis
     COMPONENT Scripts)
 endmacro()
+macro(bdsim_install_gdml)
+  install(FILES ${ARGN}
+        DESTINATION share/bdsim/gdml/schema
+        COMPONENT GDML)
+endmacro()
 
 # This macro fixes the MACOSX_BUNDLES
 # since we do not make a "traditional app"
