@@ -95,11 +95,13 @@ BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
   G4ThreeVector localMom   = local.PostStepPoint();
   G4double      localZ     = localPos.z();
   G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
-  G4double sign = (angle < 0)? -1:1;
 
-  G4ThreeVector arcCentre    = G4ThreeVector(-1*radiusAtChord,0,0);
-  G4ThreeVector partVectToCentre  = arcCentre - localPos;
-  G4double partToCentreDist  = partVectToCentre.mag();
+  // only find angle between particle and radiusAtChord in x-z plane,
+  // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
+  G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
+  G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
+  G4ThreeVector partVectToCentre  = arcCentre - localXZPos;
+  G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
   G4double theta = acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
@@ -108,13 +110,20 @@ BDSStep BDSIntegratorMag::GlobalToCurvilinear(BDSMagnetStrength const* strength,
   if (localZ < 0)
     {theta *= -1;}
 
+  // vector from origin to CL arc centre depends on sign of dipole angle
+  G4double sign = (angle < 0)? -1:1;
+
   G4double CLXOffset  = sign*partToCentreDist - radiusOfCurvature;
   G4double distAlongS = theta * sign * radiusOfCurvature;
 
-  G4ThreeVector localMomCL = localMom.rotate(-theta, localUnitF);
+  // normalise momentum rotation to particle charge
+  G4double charge = 0;
+  charge = (eqOfM->FCof() < 0)? -1: 1;
+
+  G4ThreeVector localMomCL = localMom.rotate(charge*theta, localUnitF);
   G4ThreeVector localPosCL = G4ThreeVector(CLXOffset, localPos.y(), distAlongS);
 
-/* Lauries algorithm
+/* Lauries algorithm - keep for now
   // This will range from -angle/2 to +angle/2
   G4double partialAngle = atan(localZ / radiusAtChord);
 
@@ -161,11 +170,18 @@ BDSStep BDSIntegratorMag::CurvilinearToGlobal(BDSMagnetStrength const* strength,
   G4double partToCentreDist  = CLPosition.x() + radiusOfCurvature;
   G4double localZ = partToCentreDist * sin(theta);
   G4double localX = (partToCentreDist * cos(theta)) - radiusAtChord;
-  if (localZ < 0)
-    {theta *= (-1*sign);}
+
+  // normalise momentum rotation to particle charge
+  G4double charge = 0;
+  charge = (eqOfM->FCof() < 0)? -1: 1;
+
+  // rotation angle should be negative for second 'half' of dipole
+  G4double rotationAngle = charge*std::abs(theta);
+  if (localZ > 0)
+    {rotationAngle *= -1;}
 
   G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
-  G4ThreeVector localMomentum = CLMomentum.rotate(theta, localUnitF);;
+  G4ThreeVector localMomentum = CLMomentum.rotate(rotationAngle, localUnitF);;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
