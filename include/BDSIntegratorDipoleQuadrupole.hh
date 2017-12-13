@@ -71,6 +71,8 @@ private:
 
   BDSIntegratorDipole2* dipole;
   G4double              bPrime;
+  G4double 				bRho;
+  G4double 				k1;
   BDSMagnetStrength const* strength;
 };
 

@@ -42,7 +42,9 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   strength(strengthIn)
 {
-  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"] / CLHEP::m2;
+  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"];// / CLHEP::m2;
+  k1 = (*strengthIn)["k1"];
+  bRho = brhoIn;
 }
 
 BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
@@ -68,8 +70,8 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
   // if no quadrupole component, simply return
-  if (!BDS::IsFinite(bPrime))
-    {return;}
+  //if (!BDS::IsFinite(bPrime))
+  //  {return;}
 
   // If the particle might spiral, we return and just use the dipole only component
   // Aimed at particles of much lower momentum than the design energy.
@@ -106,7 +108,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   OneStep(localCLPos, localCLMom, localCLMomU, h, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(localCLPosOut, localCLMomOut, false);
+  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 
@@ -128,21 +130,24 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 					    G4ThreeVector& momOut) const
 {
   G4double momInMag = momIn.mag();
-  G4double delta    = eqOfM->FCof() / momInMag;
+  //G4double delta    = eqOfM->FCof() / momInMag;
+  G4double rho      = dipole->RadiusOfHelix();
   
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double Kappa    = eqOfM->FCof()*bPrime/momInMag;
+  G4double K1    = std::abs(eqOfM->FCof())*bPrime/momInMag;
 
-  // K = k + k_0^2
-  //G4double Kappa     = 0;
-  G4bool   focussing = Kappa >= 0; // depends on charge as well (in eqOfM->FCof())
-  // In -ve K case we would take sqrt(|K|), so valid in either case
-  G4double sqrtKappa = std::sqrt(std::abs(Kappa));
+  G4double kx2 = pow(1.0 / rho,2) + K1;
+  G4double kx  = sqrt(std::abs(kx2));
+  G4double ky2 = -K1;
+  G4double ky  = sqrt(std::abs(ky2));
 
-  G4double theta = sqrtKappa * h;
+  G4double kxl = kx * h;
+  G4double kyl = ky * h;
+
+  G4bool focussing = K1 >= 0; // depends on charge as well (in eqOfM->FCof())
 
   G4double x0  = posIn.x();
   G4double y0  = posIn.y();
@@ -156,36 +161,32 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
-  
-  G4double rootK  = std::sqrt(std::abs(Kappa*zp)); // direction independent
-  if (std::isnan(rootK))
-    {rootK = 0;}
-  G4double rootKh = rootK*h*zp;
+
   G4double X11,X12,X21,X22 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
 
   if (focussing)
     {//focussing
-      X11= cos(rootKh);
-      X12= sin(rootKh)/rootK;
-      X21=-std::abs(Kappa)*X12;
+      X11= cos(kxl);
+      X12= sin(kxl)/kx;
+      X21=-std::abs(kx2)*X12;
       X22= X11;
       
-      Y11= cosh(rootKh);
-      Y12= sinh(rootKh)/rootK;
-      Y21= std::abs(Kappa)*Y12;
+      Y11= cosh(kyl);
+      Y12= sinh(kyl)/ky;
+      Y21= std::abs(ky2)*Y12;
       Y22= Y11;
     }
   else
     {// defocussing
-      X11= cosh(rootKh);
-      X12= sinh(rootKh)/rootK;
-      X21= std::abs(Kappa)*X12;
+      X11= cosh(kxl);
+      X12= sinh(kxl)/kx2;
+      X21= std::abs(kx2)*X12;
       X22= X11;
       
-      Y11= cos(rootKh);
-      Y12= sin(rootKh)/rootK;
-      Y21= -std::abs(Kappa)*Y12;
+      Y11= cos(kyl);
+      Y12= sin(kyl)/ky;
+      Y21= -std::abs(ky2)*Y12;
       Y22= Y11;
     }
       
