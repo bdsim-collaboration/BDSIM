@@ -7,3 +7,6 @@
 [submodule "utils/pymadx"]
 	path = utils/pymadx
 	url = https://bitbucket.org/jairhul/pymadx
+[submodule "utils/pytransport"]
+	path = utils/pytransport
+	url = https://bitbucket.org/jairhul/pytransport
