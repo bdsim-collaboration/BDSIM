@@ -1,3 +1,13 @@
+V0.994 - 2017 / 12 / ??
+=======================
+
+New Features
+------------
+
+* H-style dipoles controllable by default or per element with `hStyle` option.
+* Control over dipole proportions with global and per element options `vhRatio`,
+  `coilWidthFraction` and `coilHeightFraction`.
+
 V0.993 - 2017 / 12 / 11
 =======================
 
