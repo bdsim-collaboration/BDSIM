@@ -1105,9 +1105,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
 
   // coil displacements
-  G4double coilDX = 0, coilDY = 0;
-  std::vector<G4ThreeVector> coilDisps = CalculateCoilDisplacements(poleHalfWidth, poleHalfHeight, coilWidth,
-								    coilHeight, cDY, coilDX, coilDY);
+  std::vector<G4ThreeVector> coilDisps;
+  G4double coilDY = 0;
+  if (buildPole)
+    {
+      coilDisps= CalculateCoilDisplacements(0.5*poleWidth, poleHalfGap, coilWidth,
+					    coilHeight, cDY, coilDY);
+    }
 
   // create vectors of points for extruded solids
   // create yoke + pole (as one solid about 0,0,0)
@@ -1338,9 +1342,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   const G4double lsl = lengthSafetyLarge; // shortcut
   
   // coil displacements
-  G4double coilDX = 0, coilDY = 0;
-  std::vector<G4ThreeVector> coilDisps = CalculateCoilDisplacements(poleHalfWidth, poleHalfHeight, coilWidth,
-								    coilHeight, cDY, coilDX, coilDY);
+  std::vector<G4ThreeVector> coilDisps;
+  G4double coilDY = 0;
+  if (buildPole)
+    {
+      coilDisps = CalculateCoilDisplacements(0.5*poleWidth, poleHalfGap,
+					     coilWidth, coilHeight, cDY, coilDY);
+    }
 
   // these may be used later so need to be outside if statement below
   // create vectors of points for extruded solids
@@ -1572,18 +1580,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       magnetContainerSolid = new G4IntersectionSolid(name + "_container_solid", // name
 						     magnetContainerSolid,      // solid a
 						     angledFacesMagCont);       // solid b
-
+      
       individualCoilsSolids = true; // flag that we have individual coil solids
-      for (G4int i = 0; i < 4; i++)
-	{
-	  G4VSolid* coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
-						    angledFaces,                // solid a
-						    coilSolid,                  // solid b
-						    (G4RotationMatrix*)nullptr, // 0 rotation
-						    coilDisps[i]);              // translation
-	  coilsSolids.push_back(coilS);
-	  allSolids.push_back(coilS);
-	}
+      if (buildPole)
+        {
+	  for (G4int i = 0; i < 4; i++)
+            {
+	      G4VSolid *coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
+							angledFaces,                // solid a
+							coilSolid,                  // solid b
+							(G4RotationMatrix *) nullptr, // 0 rotation
+							coilDisps[i]);              // translation
+	      coilsSolids.push_back(coilS);
+	      allSolids.push_back(coilS);
+            }
+        }
     }
   
   // logical volumes
