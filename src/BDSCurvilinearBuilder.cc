@@ -46,7 +46,7 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
   if (globals->BuildTunnel() || globals->BuildTunnelStraight())
     {// query the default tunnel model
       BDSExtent tunnelExtent = globals->TunnelInfo()->IndicativeExtent();
-      tunnelExtent = tunnelExtent.Shift(globals->TunnelOffsetX(), globals->TunnelOffsetY());
+      tunnelExtent = tunnelExtent.Translate(globals->TunnelOffsetX(), globals->TunnelOffsetY(), 0);
       G4double maxTunnelR = tunnelExtent.MaximumAbs();
       curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
     }

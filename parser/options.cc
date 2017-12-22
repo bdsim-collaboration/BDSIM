@@ -191,8 +191,12 @@ void Options::PublishMembers()
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
-  publish("thinElementLength", &Options::thinElementLength);
-
+  publish("thinElementLength",  &Options::thinElementLength);
+  publish("hStyle",             &Options::hStyle);
+  publish("vhRatio",            &Options::vhRatio);
+  publish("coilWidthFraction",  &Options::coilWidthFraction);
+  publish("coilHeightFraction", &Options::coilHeightFraction);
+  
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);
   publish("buildTunnelStraight",&Options::buildTunnelStraight);

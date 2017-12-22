@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 #include <utility> // for pair and pair relational operators
+#include <vector>
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -52,25 +53,28 @@ public:
   /// Symmetric from three vector.
   explicit BDSExtent(G4ThreeVector extIn);
 	    
-  ~BDSExtent();
+  virtual ~BDSExtent();
 
   /// @{ Accessor
   inline std::pair<G4double, G4double> ExtentX() const {return std::make_pair(extXNeg, extXPos);}
   inline std::pair<G4double, G4double> ExtentY() const {return std::make_pair(extYNeg, extYPos);}
   inline std::pair<G4double, G4double> ExtentZ() const {return std::make_pair(extZNeg, extZPos);}
   
-  inline G4double XPos() const {return extXNeg;}
-  inline G4double XNeg() const {return extXPos;}
-  inline G4double YPos() const {return extYNeg;}
-  inline G4double YNeg() const {return extYPos;}
-  inline G4double ZPos() const {return extZNeg;}
-  inline G4double ZNeg() const {return extZPos;}
+  inline G4double XNeg() const {return extXNeg;}
+  inline G4double XPos() const {return extXPos;}
+  inline G4double YNeg() const {return extYNeg;}
+  inline G4double YPos() const {return extYPos;}
+  inline G4double ZNeg() const {return extZNeg;}
+  inline G4double ZPos() const {return extZPos;}
   
   inline G4ThreeVector ExtentPositive() const
   {return G4ThreeVector(extXPos, extYPos, extZPos);}
 
   inline G4ThreeVector ExtentNegative() const
   {return G4ThreeVector(extXNeg, extYNeg, extZNeg);}
+
+  /// All 8 boundary points of the bounding box.
+  std::vector<G4ThreeVector> AllBoundaryPoints() const;
   /// @}
 
   /// @{ The difference in a dimension.
@@ -104,14 +108,14 @@ public:
   /// Return whether the extent encompasses the point.  Similar, but with separate x,y,z coordinates.
   G4bool Encompasses(G4double x,
 		     G4double y,
-		     G4double z) const;
-
+		     G4double z) const {return Encompasses(G4ThreeVector(x,y,z));}
+  
   /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
   BDSExtent Tilted(G4double angle) const;
 
   /// @{ Provide a new copy of this extent with an offset applied.
-  BDSExtent Offset(G4ThreeVector offset) const;
-  BDSExtent Offset(G4double dx, G4double dy, G4double dz) const;
+  BDSExtent Translate(G4ThreeVector offset) const {return Translate(offset.x(), offset.y(), offset.z());}
+  BDSExtent Translate(G4double dx, G4double dy, G4double dz) const;
   /// @}
 
   /// Provide a new copy of this extent with both a tilt and an offset applied.
@@ -119,15 +123,13 @@ public:
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSExtent const &ext);
-
-  /// Return a copy of this extent shifted in x and y by a given amount.
-  BDSExtent Shift(G4double x, G4double y) const;
-
-  BDSExtent ShiftX(G4double x) const;  ///< Return a copy of this extent shift in x only.
-  BDSExtent ShiftY(G4double y) const;  ///< Return a copy of this extent shift in y only.
-
+  
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
+
+  G4double MaximumX() const {return std::max(std::abs(extXNeg), std::abs(extXPos));}
+  G4double MaximumY() const {return std::max(std::abs(extYNeg), std::abs(extYPos));}
+  G4double MaximumZ() const {return std::max(std::abs(extZNeg), std::abs(extZPos));}
 
   /// Return the maximum absolute value considering only x,y.
   G4double MaximumAbsTransverse() const;

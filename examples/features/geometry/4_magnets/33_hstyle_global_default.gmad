@@ -1,0 +1,10 @@
+sb1: sbend, l=1*m, angle=30*mrad;
+
+l1: line=(sb1);
+
+use, l1;
+
+option, hStyle=1;
+
+beam, particle="e-",
+      energy=3*GeV;

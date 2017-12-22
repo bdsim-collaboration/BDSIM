@@ -1,0 +1,5 @@
+el: rbend, l=0.5*m, angle=0.2;
+include size_variation.gmad;
+option, magnetGeometryType="polescircular";
+
+option, hStyle=1;

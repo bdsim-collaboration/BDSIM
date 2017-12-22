@@ -604,12 +604,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
+  G4double defaultOuterDiameter = 0.3 * BDSGlobalConstants::Instance()->OuterDiameter();
+  auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
 		       chordLength,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
+		       magOutInf,
 		       vacuumField);
 }
 
@@ -1059,27 +1061,37 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const BDSMagnetStrength* st)
+								const BDSMagnetStrength* st,
+								G4double defaultOuterDiameter,
+								G4double defaultVHRatio,
+								G4double defaultCoilWidthFraction,
+								G4double defaultCoilHeightFraction)
 {
   G4bool yokeOnLeft = YokeOnLeft(element,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft);
+  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft, defaultOuterDiameter,
+				defaultVHRatio, defaultCoilWidthFraction, defaultCoilHeightFraction);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
 								const G4double angleIn,
 								const G4double angleOut,
-								const G4bool   yokeOnLeft)
+								const G4bool   yokeOnLeft,
+								G4double       defaultOuterDiameter,
+								G4double       defaultVHRatio,
+								G4double       defaultCoilWidthFraction,
+								G4double       defaultCoilHeightFraction)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
-  
+
+  const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   // name
   info->name = element->name;
   
   // magnet geometry type
   if (element->magnetGeometryType == "")
-    {info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();}
+    {info->geometryType = globals->GetMagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
@@ -1091,13 +1103,13 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   info->angleOut = angleOut;
   
   // outer diameter
-  info->outerDiameter = PrepareOuterDiameter(element);
+  info->outerDiameter = PrepareOuterDiameter(element, defaultOuterDiameter);
 
   // outer material
   G4Material* outerMaterial;
   if(element->outerMaterial == "")
     {
-      G4String defaultMaterialName = BDSGlobalConstants::Instance()->OuterMaterialName();
+      G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
@@ -1107,15 +1119,51 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   // yoke direction
   info->yokeOnLeft = yokeOnLeft;
 
+  if (element->hStyle < 0) // it's unset
+    {info->hStyle = globals->HStyle();}
+  else
+    {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
+
+  if (element->vhRatio > 0)
+    {info->vhRatio = G4double(element->vhRatio);}
+  else if (globals->VHRatio() > 0)
+    {info->vhRatio = globals->VHRatio();}
+  else if (defaultVHRatio > 0) // allow calling function to supply optional default
+    {info->vhRatio = defaultVHRatio;}
+  else
+    {info->vhRatio = info->hStyle ? 0.8 : 1.0;} // h default : c default
+  
+  if (element->coilWidthFraction > 0)
+    {info->coilWidthFraction = G4double(element->coilWidthFraction);}
+  else if (globals->CoilWidthFraction() > 0)
+    {info->coilWidthFraction = globals->CoilWidthFraction();}
+  else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
+    {info->coilWidthFraction = defaultCoilWidthFraction;}
+  else
+    {info->coilWidthFraction = info->hStyle ? 0.8 : 0.65;} // h default : c default
+
+  if (element->coilHeightFraction > 0)
+    {info->coilHeightFraction = G4double(element->coilHeightFraction);}
+  else if (globals->CoilHeightFraction() > 0)
+    {info->coilHeightFraction = globals->CoilHeightFraction();}
+  else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
+    {info->coilHeightFraction = defaultCoilHeightFraction;}
+  else
+    {info->coilHeightFraction = 0.8;} // default for both h and c type
+  
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el)
+G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el,
+						   G4double defaultOuterDiameter)
 {
   G4double outerDiameter = el->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
+    {//outerDiameter not set - use either global or specified default
+      if (defaultOuterDiameter > 0)
+	{outerDiameter = defaultOuterDiameter;}
+      else
+	{outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
     }
   return outerDiameter;
 }

@@ -68,6 +68,10 @@ Parameters::Parameters()
   setMap["outerMaterial"] = false;
   setMap["outerDiameter"] = false;
   setMap["yokeOnInside"]  = false;
+  setMap["hStyle"]        = false;
+  setMap["vhRatio"]       = false;
+  setMap["coilWidthFraction"]  = false;
+  setMap["coilHeightFraction"] = false;
   setMap["tilt"] = false;
   setMap["xsize"] = false;
   setMap["ysize"] = false;

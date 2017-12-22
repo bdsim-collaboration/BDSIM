@@ -76,7 +76,7 @@ private:
 				    G4Material* outerMaterial);
 
   /// Place the poles and yoke in the container volume
-  virtual void PlaceComponents(G4String name,
+  virtual void PlaceComponents(const G4String& name,
 			       G4int    order);
 
   /// Common construction tasks to all methods - assemble yoke and poles in container

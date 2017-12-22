@@ -68,6 +68,11 @@ public:
   /// Determine which is the appropriate key to query a BDSMagnetStrength with for
   /// a given type of magnet.
   static G4String DetermineScalingKey(BDSMagnetType typeIn);
+
+  /// @{ Update face normal and also to beam pipe and magnet outer.
+  virtual void SetInputFaceNormal(const G4ThreeVector& input);
+  virtual void SetOutputFaceNormal(const G4ThreeVector& output);
+  /// @}
   
 protected:
   /// Private default constructor to force the use of the supplied one.
@@ -107,11 +112,6 @@ protected:
   /// Place the beam pipe and outer geometry in the overall container. If there's no outer
   /// geometry, then we don't need to place either as the beam pipe becomes the container.
   virtual void PlaceComponents();
-
-  ///@{ normal vector for faces when preparing solids
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
-  ///@}
   
   /// Magnet type
   BDSMagnetType magnetType;
