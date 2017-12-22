@@ -918,11 +918,11 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
       exit(1);
     }
   
-  // vhratio - don't allow a ratio greater than 10:1
-  if (vhRatio > 10)
-    {vhRatio = 10;}
-  else if (vhRatio < 0.1)
-    {vhRatio = 0.1;}
+  // aspect - don't allow a ratio greater than 10:1
+  if (aspect > 10)
+    {aspect = 10;}
+  else if (aspect < 0.1)
+    {aspect = 0.1;}
 }
 
 void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe,
