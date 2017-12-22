@@ -967,7 +967,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 
   // propose outer dimensions.
   yokeWidth      = outerDiameter;
-  yokeHalfHeight = 0.5 * outerDiameter * (buildVertically ? 1./aspect : aspect);
+  yokeHalfHeight = 0.5 * outerDiameter * aspect;
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
@@ -988,11 +988,22 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
       buildPole     = false;
       yokeThickness = yokeHalfHeight - poleHalfGap;
     }
-  if (yokeThickness > yokeWidth - poleWidth)
+
+  // don't build pole if there's not enough room - coerce yoke thickness
+  G4double factor = hStyle ? 2.0 : 1.0; // 2x thickness for h style
+  if (factor * yokeThickness > yokeWidth - poleWidth)
     {
       buildPole = false;
-      yokeThickness = yokeWidth - poleWidth;
+      yokeThickness = (yokeWidth - poleWidth) / factor;
     }
+  // don't build pole if yoke tight around beam pipe - coerce yoke thickness
+  G4double test = buildVertically ? bpHalfWidth : bpHalfHeight;
+  if (factor * yokeThickness > yokeWidth - 2*test)
+    {
+      buildPole = false;
+      yokeThickness = (yokeWidth - 2*test) / factor;
+    }
+  
   if (buildPole)
     {poleHeight = yokeHalfHeight - yokeThickness - poleHalfGap;}
   else
@@ -1050,11 +1061,6 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   coilHeightIn = poleHeight * coilHeightFraction;
   coilToYokeGap = (poleHeight - coilHeightIn) * 0.5;
   coilToPoleGap = lengthSafetyLarge;
-  if (buildVertically)
-    {
-      std::swap(coilWidth, coilHeightIn);
-      std::swap(coilToYokeGap, coilToPoleGap);
-    }
 }
 
 std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplacements(G4double  poleHalfWidthIn,
