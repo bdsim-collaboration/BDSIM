@@ -1824,6 +1824,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   contEPPoints.emplace_back(-xmax, -yInn);
   contEPPoints.emplace_back(-xmax, -ymax);
   contEPPoints.emplace_back(xmax + connector, -ymax);
+
+  G4double containerIntersectionRadius = std::hypot(ymax, xmax);
   
   if (buildVertically)
     {
@@ -1875,7 +1877,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       G4ThreeVector inputfaceReversed = inputFaceNormal * -1;
       G4VSolid* ePContSolidInAng = new G4CutTubs(name + "_angled_face_solid", // name
 						 0,                           // inner radius
-						 outerDiameter,               // outer radius
+						 containerIntersectionRadius, // outer radius
 						 ePInLengthZ*0.5,             // z half length
 						 0,                           // start angle
 						 CLHEP::twopi,                // sweep angle
@@ -1894,7 +1896,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       G4ThreeVector outputfaceReversed = outputFaceNormal * -1;
       G4VSolid* ePContSolidOutAng = new G4CutTubs(name + "_angled_face_solid", // name
 						  0,                           // inner radius
-						  outerDiameter,               // outer radius
+						  containerIntersectionRadius, // outer radius
 						  ePOutLengthZ*0.5,            // z half length
 						  0,                           // start angle
 						  CLHEP::twopi,                // sweep angle
