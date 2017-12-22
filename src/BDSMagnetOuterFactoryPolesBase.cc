@@ -901,7 +901,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
 								 const G4double& length,
 								 G4double&       outerDiameter,
 								 G4Material*&    material,
-								 G4double&       aspect)
+								 G4double&       vhRatio)
 {
   CleanUp();
  
@@ -918,11 +918,11 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
       exit(1);
     }
   
-  // aspect - don't allow a ratio greater than 10:1
-  if (aspect > 10)
-    {aspect = 10;}
-  else if (aspect < 0.1)
-    {aspect = 0.1;}
+  // vhRatio - don't allow a ratio greater than 10:1
+  if (vhRatio > 10)
+    {vhRatio = 10;}
+  else if (vhRatio < 0.1)
+    {vhRatio = 0.1;}
 }
 
 void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyle,
@@ -933,7 +933,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							const G4double&    angleIn,
 							const G4double&    angleOut,
 							const G4double&    yokeThicknessFraction,
-							const G4double&    aspect,
+							const G4double&    vhRatio,
 							const G4double&    coilWidthFraction,
 							const G4double&    coilHeightFraction,
 							G4double& bpHalfWidth,
@@ -967,7 +967,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 
   // propose outer dimensions.
   yokeWidth      = outerDiameter;
-  yokeHalfHeight = 0.5 * outerDiameter * aspect;
+  yokeHalfHeight = 0.5 * outerDiameter * vhRatio;
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
@@ -1098,12 +1098,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece,
-							      G4double     aspect,
+							      G4double     vhRatio,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
   DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter,
-			      material, aspect);
+			      material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
 
   // 1 calculations
@@ -1131,7 +1131,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double containerSLength    = containerLength; // similarly for the container
   G4double intersectionRadius  = 0;
   DipoleCalculations(false, buildVertically, beamPipe, length, outerDiameter, angleIn,
-		     angleOut, 0.23, aspect, coilWidthFraction, coilHeightFraction,
+		     angleOut, 0.23, vhRatio, coilWidthFraction, coilHeightFraction,
 		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang, coilWidth,
 		     coilHeight, coilToYokeGap, coilToPoleGap,
@@ -1334,11 +1334,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece,
-							      G4double     aspect,
+							      G4double     vhRatio,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, aspect);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
     
   // 1 calculations
@@ -1366,7 +1366,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double containerSLength = containerLength; // similarly for the container
   G4double intersectionRadius = 0;
   DipoleCalculations(true, buildVertically, beamPipe, length, outerDiameter, angleIn,
-		     angleOut, 0.12, aspect, coilWidthFraction, coilHeightFraction,
+		     angleOut, 0.12, vhRatio, coilWidthFraction, coilHeightFraction,
 		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang,
 		     coilWidth, coilHeight, coilToYokeGap, coilToPoleGap,
