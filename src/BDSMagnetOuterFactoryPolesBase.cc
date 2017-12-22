@@ -1480,8 +1480,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 				     yokeInnerSolid);      // minus this
   
   // container for magnet outer 
-  G4double containerdx = yokeInsideX;
-  G4double containerdy = std::min(poleHalfGap, yokeInsideY); // in case there's a pole
+  G4double containerdx = buildVertically ? bpHalfWidth : yokeInsideX;
+  G4double containerdy = buildVertically ? yokeInsideX : bpHalfHeight;
 
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
