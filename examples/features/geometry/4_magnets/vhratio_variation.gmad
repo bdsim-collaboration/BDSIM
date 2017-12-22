@@ -24,7 +24,7 @@ m4: m1, vhRatio=0.95;
 m5: m1, vhRatio=1.1;
 
 ! large
-m6: m1, 5.6;
+m6: m1, vhRatio=5.6;
 
 d1: drift, l=0.5*m;
 
