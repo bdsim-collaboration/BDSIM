@@ -69,8 +69,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
 {
   outerDiameter   = magnetOuterInfoIn->outerDiameter;
   containerRadius = 0.5*outerDiameter;
-  inputface       = G4ThreeVector(0,0,-1);
-  outputface      = G4ThreeVector(0,0, 1);
   
   beampipe = nullptr;
   outer    = nullptr;
@@ -109,6 +107,18 @@ G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
     };
 
   return result;
+}
+
+void BDSMagnet::SetInputFaceNormal(const G4ThreeVector& input)
+{
+  if (outer)
+    {outer->SetInputFaceNormal(input);}
+}
+
+void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
+{
+  if (outer)
+    {outer->SetOutputFaceNormal(output);}
 }
 
 void BDSMagnet::Build()

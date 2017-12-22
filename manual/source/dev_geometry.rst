@@ -185,6 +185,23 @@ taken as the radius. It should be noted that for non-cylindrical magnet geometri
 is (arbitrarily) 1.25 times smaller, this is due to their geometries being transversely smaller than their cylindrical container
 volumes.
 
+Poled Dipole Geometry Code Conventions
+--------------------------------------
+
+The C++ code to generate the pole dipole geometry is by necessity fairly complex. The code exists in
+`BDSMagnetOuterFactoryPolesBase.cc` and what common code there is is grouped together. The code must
+produce both H and C style dipoles with a variety of scalings and optionally with poles and coils if
+there is room. When poles are created, the shapes are typically created by creating a vector of 2D
+boundary points and extruding the solid. In the case of vertical kickers, this geometry should be rotated.
+It cannot be simply rotated as the transforms for a field would be incorrect. However, the points can
+be generated as normal and then a 2D rotation applied to them before construction of the `G4ExtrudedSolid`.
+Note, the variables for 'horizontal' and 'vertical' therefore are used in the original orientation. Care
+is taken when comparing the dimensions of the beam pipe. The following diagrams illustrate the large
+number of required variables.
+
+.. figure:: dev_figures/dipole_parameterisation.pdf
+	    :width: 100%
+
 Specific Element Details
 ========================
 

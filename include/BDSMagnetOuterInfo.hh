@@ -48,20 +48,28 @@ public:
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
 		     G4Material*           outerMaterialIn,
+		     G4double              vhRatioIn             = 1,
 		     G4double              angleInIn             = 0,
 		     G4double              angleOutIn            = 0,
 		     G4bool                yokeOnLeft            = false,
+		     G4bool                hStyle                = false,
 		     G4bool                buildEndPiecesIn      = true,
+		     G4double              coilWidthFractionIn   = 0.65,
+		     G4double              coilHeightFractionIn  = 0.8,
 		     G4String              geometryTypeAndPathIn = "");
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
   G4double              outerDiameter;
   G4Material*           outerMaterial;
+  G4double              vhRatio;
   G4double              angleIn;
   G4double              angleOut;
   G4bool                yokeOnLeft;
+  G4bool                hStyle;       ///< H Style for dipoles. If not, it's assumed C style.
   G4bool                buildEndPieces;
+  G4double              coilWidthFraction;
+  G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
 
   /// Output stream operator implementation.

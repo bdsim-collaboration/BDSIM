@@ -90,8 +90,8 @@ public:
   /// @}
 
   /// @{ Setter for face normals.
-  inline void SetInputFaceNormal(const G4ThreeVector input)   {inputFaceNormal = input;}
-  inline void SetOutputFaceNormal(const G4ThreeVector output) {outputFaceNormal = output;}
+  void SetInputFaceNormal(const G4ThreeVector input);
+  void SetOutputFaceNormal(const G4ThreeVector output);
   /// @}
   
 protected:

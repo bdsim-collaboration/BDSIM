@@ -96,7 +96,11 @@ OptionsBase::OptionsBase()
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
   thinElementLength    = 1e-7;
-
+  hStyle               = false;
+  vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
+  coilWidthFraction    = -1;
+  coilHeightFraction   = -1;
+  
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;

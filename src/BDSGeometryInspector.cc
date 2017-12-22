@@ -74,8 +74,8 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectDisplacedSolid(const G4VSolid* solid
 
   // only going to shift x,y without any rotation.
   G4ThreeVector translation = transform.NetTranslation();
-  BDSExtent outer = ext.first.Shift(translation.x(), translation.y());
-  BDSExtent inner = ext.second.Shift(translation.x(), translation.y());
+  BDSExtent outer = ext.first.Translate(translation.x(), translation.y(), 0);
+  BDSExtent inner = ext.second.Translate(translation.x(), translation.y(), 0);
   
   return std::make_pair(outer, inner);
 }
