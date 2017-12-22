@@ -285,11 +285,12 @@ parameter         description                  default     required
 `e1`              input poleface angle [rad]   0           no
 `e2`              output poleface angle [rad]  0           no
 `material`        magnet outer material        Iron        no
+`yokeOnInside`    yoke on inside of bend       0           no
+`hStyle`          H style poled geometry       0           no
 ================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
 	  is represented by a straight (chord) section and even nominal energy particles
@@ -352,11 +353,12 @@ parameter         description                           default     required
 `fint`            fringe field integral for exit face   0           no
 `fintx`           fringe field integral for entrance    0           no
 `hgap`            vertical gap for fringe field [m]     0           no
+`yokeOnInside`    yoke on inside of bend                0           no
+`hStyle`          H style poled geometry                0           no
 ================  ====================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
@@ -1056,8 +1058,30 @@ The magnet geometry is controlled by the following parameters.
 |                       | | bend and if false, it's on the outside. Applicable only    |               |           |
 |                       | | to dipoles.                                                |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `hStyle`              | | Whether a dipole (only a dipole) will be an H style one    | 0             | no        |
+|                       | | or a C style one (c style by default. True ('1') or False  |               |           |
+|                       | | ('0').                                                     |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | no        |
+|                       | | will always be the `outerDiameter` and the height will     |               |           |
+|                       | | scale according to this ratio. In the case of a vertical   |               |           |
+|                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
+|                       | | the geometry is simple rotated). Ranges from 0.1 to 10.    |               |           |
+|                       | | This currently only applies to dipoles with poled          |               |           |
+|                       | | geometry.                                                  |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | no        |
+|                       | | pole and the yoke for dipole geometry that the coil will   |               |           |
+|                       | | occupy. This currently only applies to dipoles with poled  |               |           |
+|                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `coilHeightFraction`  | | Fraction of the available vertical space between the pole  | 0.9           | no        |
+|                       | | tip and the yoke for dipole geometry that the coil will    |               |           |
+|                       | | occupy. This currently only applies to dipoles with poled  |               |           |
+|                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
 
-Example::
+Examples::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
@@ -2120,6 +2144,17 @@ as their value.
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
 +----------------------------------+-------------------------------------------------------+
 | eventNumberOffset                | event the recreation should start from                |
++----------------------------------+-------------------------------------------------------+
+| hStyle                           | whether default dipole style is H style vs. C style   |
+|                                  | (default false)                                       |
++----------------------------------+-------------------------------------------------------+
+| vhRatio                          | default vertical to horizontal ratio for dipoles      |
++----------------------------------+-------------------------------------------------------+
+| coilWidthFraction                | 0.05 - 0.98 - fraction of available horizontal space  |
+|                                  | between pole and yoke that coil will occupy.          |
++----------------------------------+-------------------------------------------------------+
+| coilHeightFraction               | 0.05 - 0.98 - fraction of available vertical space    |
+|                                  | between pole tip and yoke that coil will occupy.      |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
