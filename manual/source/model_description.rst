@@ -265,7 +265,7 @@ rbend
 ^^^^^
 
 .. figure:: figures/rbend.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 
 .. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
@@ -329,7 +329,7 @@ sbend
 ^^^^^
 
 .. figure:: figures/sbend.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 	    
 
@@ -394,7 +394,6 @@ quadrupole
 
 .. figure:: figures/quadrupole.png
 	    :width: 30%
-	    :align: right
 
 `quadrupole` defines a quadrupole magnet. The strength parameter :math:`k1` is defined as
 :math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
@@ -420,7 +419,6 @@ sextupole
 
 .. figure:: figures/sextupole.png
 	    :width: 30%
-	    :align: right
 
 `sextupole` defines a sextupole magnet. The strength parameter :math:`k2` is defined as
 :math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
@@ -446,7 +444,6 @@ octupole
 
 .. figure:: figures/octupole.png
 	    :width: 30%
-	    :align: right
 
 `octupole` defines an octupole magnet. The strength parameter :math:`k3` is defined as
 :math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
@@ -469,7 +466,8 @@ Examples::
 decapole
 ^^^^^^^^
 
-.. TODO: add picture
+.. figure:: figures/decapole.png
+	    :width: 30%
 
 `decapole` defines a decapole magnet. The strength parameter :math:`k4` is defined as
 :math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
