@@ -24,7 +24,7 @@ m4: m1, coilWidthFraction=0.6;
 m5: m1, coilWidthFraction=0.9;
 
 ! too big - should coerce
-m6: m1, coilHeightFraction=1.1;
+m6: m1, coilWidthFraction=1.1;
 
 d1: drift, l=0.5*m;
 
