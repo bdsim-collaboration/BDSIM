@@ -8,7 +8,7 @@
 option, beampipeRadius=4*cm,
 	beampipeThickness = 1.5*mm;
 
-! unphyiscally different - should still cope with this / default to beam pipe width
+! unphyiscal aspect ratio - should still cope with this / default to beam pipe width
 m1: el, l=0.5*m, vhRatio=0.01;
 
 ! small
@@ -20,7 +20,7 @@ m3: m1, vhRatio=0.5;
 ! another step up
 m4: m1, vhRatio=0.95;
 
-! reaonable size
+! reasonable size
 m5: m1, vhRatio=1.1;
 
 ! large
