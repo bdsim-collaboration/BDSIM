@@ -1313,7 +1313,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
                                   containerLength, sLength, angleIn, angleOut,
                                   colour, material,
-                                  coilDisps, buildVertically, ext, phw, phg,
+                                  coilDisps, buildVertically, ext, 0.5*poleWidth, poleHalfGap,
                                   cDY, coilDY, intersectionRadius);
 }
 
@@ -1522,7 +1522,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 									 G4bool      buildVertically,
 									 BDSExtent&  ext,
 									 G4double    poleHalfWidth,
-									 G4double    poleHalfHeight,
+									 G4double    poleHalfGap,
 									 G4double    cDY,
 									 G4double    coilDY,
 									 G4double    intersectionRadius)
@@ -1802,8 +1802,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   std::vector<G4TwoVector> contEPPoints;
   const G4double connector = 1*CLHEP::mm;
   G4double xmax = poleHalfWidth + coilWidth + connector;
-  G4double ymax = poleHalfHeight + coilHeight + cDY + connector;
-  G4double yInn = poleHalfHeight + cDY;
+  G4double ymax = poleHalfGap + coilHeight + cDY + connector;
+  G4double yInn = poleHalfGap + cDY;
   contEPPoints.emplace_back(xmax + connector,  ymax);
   contEPPoints.emplace_back(-xmax,  ymax);
   contEPPoints.emplace_back(-xmax,  yInn);

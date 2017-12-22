@@ -418,7 +418,7 @@ protected:
 					   G4bool      buildVertically,
 					   BDSExtent&  ext,
 					   G4double    poleHalfWidth,
-					   G4double    poleHalfHeight,
+					   G4double    poleHalfGap,
 					   G4double    cDY,
 					   G4double    coilDY,
 					   G4double    intersectionRadius);
