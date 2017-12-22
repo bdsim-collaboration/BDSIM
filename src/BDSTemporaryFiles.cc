@@ -100,7 +100,7 @@ BDSTemporaryFiles::~BDSTemporaryFiles()
       if (BDS::FileExists(fn))
         {
 #ifdef BDSDEBUG
-          G4cout << "Removing \"" << filename << "\"" << G4endl;
+          G4cout << "Removing \"" << fn << "\"" << G4endl;
 #endif
           int result = remove(fn.c_str()); // delete file
           if (result != 0)

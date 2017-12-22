@@ -1,3 +1,5 @@
+add_subdirectory(gdml)
+
 #find_package(ZLIB)
 
 option(USE_GZSTREAM "Zlib support through gzstream library - requires zlib" ON)

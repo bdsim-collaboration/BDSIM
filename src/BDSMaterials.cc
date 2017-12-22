@@ -423,8 +423,10 @@ void BDSMaterials::DefineScintillators()
   birks = (0.014/1.06)*CLHEP::cm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
   ups923a_mt->AddProperty("FASTCOMPONENT",ups923a_PhotonEnergy, ups923a_emission, ups923a_numentries)->SetSpline(true);
+#if G4VERSION_NUMBER < 1039
   ups923a_mt->AddConstProperty("RINDEX", 1.52);
   ups923a_mt->AddConstProperty("ABSLENGTH", 1*CLHEP::m);
+#endif
   G4double scintYieldAnthracene=14200; //Anthracene yield per 1 CLHEP::MeV
   G4double scintYieldUPS923A=scintYieldAnthracene*0.60;//60% of anthracene
   ups923a_mt->AddConstProperty("SCINTILLATIONYIELD",scintYieldUPS923A/CLHEP::MeV);
@@ -497,7 +499,9 @@ void BDSMaterials::DefineScintillators()
   mptLanex->AddConstProperty("SCINTILLATIONYIELD",7.8e4/CLHEP::MeV);
   mptLanex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+#if G4VERSION_NUMBER < 1039
   mptLanex->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
+#endif
   mptLanex->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_BACKWARD", 0.91);
   mptLanex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
@@ -515,7 +519,9 @@ void BDSMaterials::DefineScintillators()
   mptLanex2->AddConstProperty("SCINTILLATIONYIELD",8.9e4/CLHEP::MeV);
   mptLanex2->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptLanex2->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+#if G4VERSION_NUMBER < 1039
   mptLanex2->AddConstProperty("MIEHG", 60.3e-3*CLHEP::mm);
+#endif
   mptLanex2->AddConstProperty("MIEHG_FORWARD", 0.91);
   mptLanex2->AddConstProperty("MIEHG_BACKWARD", 0.91);
   mptLanex2->AddConstProperty("MIEHG_FORWARD_RATIO", 0.5);
@@ -533,7 +539,6 @@ void BDSMaterials::DefineScintillators()
   G4double rindexGOSLanexTab[]={rindexGOSLanex, rindexGOSLanex};
   G4double emitspecGOSLanex[]={1.0, 1.0};
   G4double abslenGOSLanex[]={7*CLHEP::mm, 7*CLHEP::mm};
-  G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
   G4double gosLanexMiehgForward=0.911;
   G4double gosLanexMiehgBackward=0.911;
   G4double gosLanexMiehgForwardRatio=0.5;
@@ -543,7 +548,10 @@ void BDSMaterials::DefineScintillators()
   mptGOSLanex->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanex->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanex->AddConstProperty("YIELDRATIO", 1.0);
+#if G4VERSION_NUMBER < 1039
+  G4double mieScatteringLengthGOSLanex=60.3*CLHEP::um;
   mptGOSLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+#endif
   mptGOSLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
   mptGOSLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
   mptGOSLanex->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
@@ -562,7 +570,9 @@ void BDSMaterials::DefineScintillators()
   mptGOSLanexRi1->AddConstProperty("RESOLUTIONSCALE", 1.0);
   mptGOSLanexRi1->AddConstProperty("FASTTIMECONSTANT", mieHgTimeConst);
   mptGOSLanexRi1->AddConstProperty("YIELDRATIO", 1.0);
+#if G4VERSION_NUMBER < 1039
   mptGOSLanexRi1->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+#endif
   mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
   mptGOSLanexRi1->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
   mptGOSLanexRi1->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
@@ -576,7 +586,9 @@ void BDSMaterials::DefineScintillators()
   tmpMaterial = new G4Material(name="pet_lanex", density=pet_lanex_density, 1);
   tmpMaterial->AddMaterial(GetMaterial("polyurethane"), 1.0);
   G4MaterialPropertiesTable* mptPETLanex = CreatePropertiesTable();
+#if G4VERSION_NUMBER < 1039
   mptPETLanex->AddConstProperty("MIEHG", mieScatteringLengthGOSLanex);
+#endif
   mptPETLanex->AddConstProperty("MIEHG_FORWARD", gosLanexMiehgForward);
   mptPETLanex->AddConstProperty("MIEHG_BACKWARD", gosLanexMiehgBackward);
   mptPETLanex->AddConstProperty("MIEHG_FORWARD_RATIO", gosLanexMiehgForwardRatio);
@@ -607,7 +619,9 @@ void BDSMaterials::DefineScintillators()
   mptMedex->AddConstProperty("SCINTILLATIONYIELD",scintScalingFactor*2.94e4/CLHEP::MeV);
   mptMedex->AddConstProperty("RESOLUTIONSCALE",1.0);
   mptMedex->AddConstProperty("FASTTIMECONSTANT", 1.*CLHEP::ns);
+#if G4VERSION_NUMBER < 1039
   mptMedex->AddConstProperty("MIEHG", 230e-3*CLHEP::mm);
+#endif
   mptMedex->AddConstProperty("MIEHG_FORWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
