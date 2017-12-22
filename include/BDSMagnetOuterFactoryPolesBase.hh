@@ -64,7 +64,7 @@ public:
 					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
 					   G4bool       buildEndPiece = false,
-					   G4double     vhRatio       = 1.0,
+					   G4double     aspect        = 1.0,
 					   G4double     coilWidthFraction  = 0.65,
 					   G4double     coilHeightFraction = 0.8);
 
@@ -80,7 +80,7 @@ public:
 						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
 						G4bool       buildEndPiece = false,
-						G4double     vhRatio       = 1.0,
+						G4double     aspect        = 1.0,
 						G4double     coilWidthFraction  = 0.65,
 						G4double     coilHeightFraction = 0.8);
   
@@ -175,7 +175,7 @@ public:
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
 				       G4bool       buildEndPiece = false,
 				       G4bool       hStyle             = false,
-				       G4double     vhRatio            = 1.0,
+				       G4double     aspect             = 1.0,
 				       G4double     coilWidthFraction  = 0.65,
 				       G4double     coilHeightFraction = 0.8);
   
@@ -328,7 +328,7 @@ protected:
 				   const G4double& length,
 				   G4double&       outerDiameter,
 				   G4Material*&    material,
-				   G4double&       vhRatio);
+				   G4double&       aspect);
 
   /// Common calculations to both dipole construction routines in one place. Pass by reference
   /// to modify variables declared in each function.
@@ -373,7 +373,7 @@ protected:
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
 				G4bool       buildEndPiece   = true,
-				G4double     vhRatio         = 1.0,
+				G4double     aspect          = 1.0,
 				G4double     coilWidthFraction  = 0.65,
 				G4double     coilHeightFraction = 0.8);
 
@@ -389,7 +389,7 @@ protected:
 				G4Colour*    colour,
 				G4bool       buildVertically = false,
 				G4bool       buildEndPiece   = true,
-				G4double     vhRatio         = 1.0,
+				G4double     aspect          = 1.0,
 				G4double     coilWidthFraction  = 0.8,
 				G4double     coilHeightFraction = 0.8);
 

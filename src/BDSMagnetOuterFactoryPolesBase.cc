@@ -901,7 +901,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
 								 const G4double& length,
 								 G4double&       outerDiameter,
 								 G4Material*&    material,
-								 G4double&       vhRatio)
+								 G4double&       aspect)
 {
   CleanUp();
  
