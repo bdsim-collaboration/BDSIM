@@ -1454,8 +1454,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // extents
   extXPos =  0.5*yokeWidth + lsl;
   extXNeg = -0.5*yokeWidth - lsl;
-  extYPos =  0.5*yokeWidth   + lsl;
-  extYNeg = -0.5*yokeWidth   - lsl;
+  extYPos =  0.5*yokeWidth + lsl;
+  extYNeg = -0.5*yokeWidth - lsl;
   
   if (buildVertically)
     {// 'rotate' extents too
