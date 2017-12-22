@@ -1442,9 +1442,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     }
   else // if build pole
     {// don't build pole - just build yoke -> box
+      G4double yIX = buildVertically ? yokeInsideY : yokeInsideX;
+      G4double yIY = buildVertically ? yokeInsideX : yokeInsideY;
       yokeInnerSolid = new G4Box(name + "_yoke_inner_solid", // name
-				 yokeInsideX + lsl,          // x half length
-				 yokeInsideY + lsl,          // y half length
+				 yIX + lsl,                  // x half length
+				 yIY + lsl,                  // y half length
 				 sLength);                   // z half length
       // note 1.0x length > 0.5 length for unambiguous subtraction
     }
@@ -1466,9 +1468,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 
   G4double yokeOuterX = 0.5*yokeWidth - lsl;
   G4double yokeOuterY = yokeHalfHeight - lsl;
+  G4double yOX = buildVertically ? yokeOuterY : yokeOuterX;
+  G4double yOY = buildVertically ? yokeOuterX : yokeOuterY;
   G4VSolid* yokeOuterSolid = new G4Box(name + "_yoke_outer_solid", // name
-				       yokeOuterX,                 // x half length
-				       yokeOuterY,                 // y half length
+				       yOX,                        // x half length
+				       yOY,                        // y half length
 				       sLength * 0.5 - lsl);       // z half length
   
   yokeSolid = new G4SubtractionSolid(name + "_yoke_solid", // name,
@@ -1482,10 +1486,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
 					    containerdx, containerdy, sLength);
+  G4double cOX = buildVertically ? yokeHalfHeight : 0.5*yokeWidth;
+  G4double cOY = buildVertically ? 0.5*yokeWidth : yokeHalfHeight;
   G4VSolid* containerOuterSolid = new G4Box(name + "_container_outer_solid", // name
-					    0.5*yokeWidth,       // x half length
-					    yokeHalfHeight,      // y half length
-					    sLength * 0.5);      // z half length
+					    cOX,                             // x half length
+					    cOY,                             // y half length
+					    sLength * 0.5);                  // z half length
 
   containerSolid = new G4SubtractionSolid(name + "_outer_sq_container_solid", // name
 					  containerOuterSolid,  // this
@@ -1493,8 +1499,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 
   // container for full magnet
   magnetContainerSolid = new G4Box(name + "_sq_container_solid", // name
-				   0.5*yokeWidth + lsl,          // x half length
-				   yokeHalfHeight + lsl,         // y half length
+				   cOX + lsl,                    // x half length
+				   cOY + lsl,                    // y half length
 				   containerSLength * 0.5);      // z half length
 
   // register existing square solids as we're going to overwrite them with intersected ones
