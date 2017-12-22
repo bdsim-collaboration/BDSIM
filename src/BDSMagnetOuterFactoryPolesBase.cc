@@ -1031,26 +1031,42 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
       // Could simply do 2x length, but for short dipole sections with strongly angled
       // faces this doesn't work. Calculate extent along z for each angled face. This
       // is called the 'safe' length -> sLength
-      G4double hypotenuse = std::hypot(outerHalfHorizontal, outerHalfVertical);
+      G4double hypotenuse = std::hypot(yokeWidth, yokeHalfHeight);
       G4double dzIn  = tan(std::abs(angleIn))  * 1.2*hypotenuse; // 20% over estimation for safety
       G4double dzOut = tan(std::abs(angleOut)) * 1.2*hypotenuse;
       // take the longest of different estimations (2x and 1.5x + dZs)
       sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
       containerSLength = sLength;
     }
+
+  intersectionRadius = std::hypot(0.5*poleWidth + yokeOverHang, poleHalfGap + poleHeight);
+  // if finite thickness yoke (independent of overall size)
+  if (yokeThickness > 0.05*outerDiameter) // nicely round edges of outer side without cutting inner
+    {intersectionRadius += 0.8 * std::hypot(yokeThickness, yokeThickness);}
+  else
+    {intersectionRadius *= 1.3;} // some margin
+
+  coilWidth = yokeOverHang * coilWidthFraction;
+  coilHeightIn = poleHeight * coilHeightFraction;
+  coilToYokeGap = (poleHeight - coilHeightIn) * 0.5;
+  coilToPoleGap = lengthSafetyLarge;
+  if (buildVertically)
+    {
+      std::swap(coilWidth, coilHeightIn);
+      std::swap(coilToYokeGap, coilToPoleGap);
+    }
 }
 
 std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplacements(G4double  poleHalfWidthIn,
-										      G4double  poleHalfHeightIn,
+										      G4double  poleHalfGapIn,
 										      G4double  coilWidthIn,
 										      G4double  coilHeightIn,
 										      G4double  cDY,
-										      G4double& coilDX,
 										      G4double& coilDY)
 {
   // T = top, B = bottom, L = left, R = right
-  coilDX = poleHalfWidthIn  + 0.5*coilWidthIn  + lengthSafetyLarge;
-  coilDY = poleHalfHeightIn + 0.5*coilHeightIn + lengthSafetyLarge + cDY;
+  G4double coilDX = poleHalfWidthIn  + 0.5*coilWidthIn  + lengthSafetyLarge;
+  coilDY = poleHalfGapIn + 0.5*coilHeightIn + lengthSafetyLarge + cDY;
   
   G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
   G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
@@ -1076,11 +1092,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece,
-							      G4double     vhRatio,
+							      G4double     aspect,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter,
+			      material, aspect);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
 
   // 1 calculations
@@ -1092,33 +1109,33 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   // general order - yoke, container, magnet container, coils
 
   G4double bpHalfWidth         = 0;
-  G4double poleHalfWidth       = 0;
-  G4double poleHalfHeight      = 0;
-  G4double outerHalfHorizontal = 0;
-  G4double outerHalfVertical   = 0;
+  G4double bpHalfHeight        = 0;
+  G4double poleHalfGap         = 0;
+  G4double poleWidth           = 0;
+  G4double poleHeight          = 0;
+  G4double yokeWidth           = 0;
+  G4double yokeHalfHeight      = 0;
   G4double yokeThickness       = 0;
+  G4double yokeOverHang        = 0;
+  G4double coilWidth           = 0;
+  // coilHeight is class member
+  G4double coilToYokeGap       = 0;
+  G4double coilToPoleGap       = 0;
   G4double sLength             = length; // 'safe' length fo intersection - default is normal length
   G4double containerSLength    = containerLength; // similarly for the container
-  DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
-		     angleOut, 0.23, vhRatio,
-		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
-		     outerHalfHorizontal, outerHalfVertical,
-		     yokeThickness, sLength, containerSLength);
-
-  G4double yokeInsideX = poleHalfWidth - outerDiameter + yokeThickness;
-
-  // coil calculations
-  // these are full height and width maximum so that they'd fit
-  coilHeight = outerHalfVertical - poleHalfHeight - yokeThickness;
-  G4double coilWidth  = outerDiameter - yokeThickness - 2*poleHalfWidth;
-
-  G4double coilHeightOriginal = coilHeight;
-  // reduce the coils from the absolute maximum;
-  coilHeight *= coilHeightFraction;
-  coilWidth  *= coilWidthFraction;
+  G4double intersectionRadius  = 0;
+  DipoleCalculations(false, buildVertically, beamPipe, length, outerDiameter, angleIn,
+		     angleOut, 0.23, aspect, coilWidthFraction, coilHeightFraction,
+		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
+		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang, coilWidth,
+		     coilHeight, coilToYokeGap, coilToPoleGap,
+		     sLength, containerSLength, intersectionRadius);
+  
+  //G4double yokeInsideX = 0.5*poleWidth - yokeWidth + yokeThickness;
+  G4double yokeInsideX = -0.5*poleWidth - yokeOverHang;
 
   // vertical offset of coil from pole tip
-  G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
+  G4double cDY = (poleHeight - coilHeight)*0.5;
 
   // coil displacements
   std::vector<G4ThreeVector> coilDisps;
@@ -1147,81 +1164,83 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   // and flip it if required. Points are done in clock wise order from the bottom left
   // corner of the top pole.
   const G4double lsl = lengthSafetyLarge;   // shortcut
-  const G4double ohh = outerHalfHorizontal; // shortcut
-  const G4double ohv = outerHalfVertical;   // shortcut
-  yokePoints.emplace_back(poleHalfWidth - lsl,  poleHalfHeight + lsl);
-  yokePoints.emplace_back(poleHalfWidth - lsl,  ohv - lsl);
-  yokePoints.emplace_back(poleHalfWidth + lsl - 2*ohh,  ohv - lsl);
-  yokePoints.emplace_back(poleHalfWidth + lsl - 2*ohh, -ohv + lsl);
-  yokePoints.emplace_back(poleHalfWidth - lsl, -ohv + lsl);
-  yokePoints.emplace_back(poleHalfWidth - lsl, -poleHalfHeight - lsl);
+  const G4double phw = 0.5*poleWidth;       // shortcut
+  const G4double phg = poleHalfGap;         // shortcut
+  const G4double yw  = yokeWidth; // shortcut
+  const G4double yhh = yokeHalfHeight;   // shortcut
+  yokePoints.emplace_back(phw - lsl,       phg + lsl);
+  yokePoints.emplace_back(phw - lsl,       yhh - lsl);
+  yokePoints.emplace_back(phw + lsl - yw,  yhh - lsl);
+  yokePoints.emplace_back(phw + lsl - yw, -yhh + lsl);
+  yokePoints.emplace_back(phw - lsl,      -yhh + lsl);
+  yokePoints.emplace_back(phw - lsl,      -phg - lsl);
   if (buildPole)
     {
-      yokePoints.emplace_back(-poleHalfWidth + lsl, -poleHalfHeight - lsl);
-      yokePoints.emplace_back(-poleHalfWidth + lsl, -ohv + yokeThickness);
-      yokePoints.emplace_back( yokeInsideX   - lsl, -ohv + yokeThickness);
-      yokePoints.emplace_back( yokeInsideX   - lsl,  ohv - yokeThickness);
-      yokePoints.emplace_back(-poleHalfWidth + lsl,  ohv - yokeThickness);
-      yokePoints.emplace_back(-poleHalfWidth + lsl,  poleHalfHeight + lsl);
+      yokePoints.emplace_back(-phw + lsl,         -phg - lsl);
+      yokePoints.emplace_back(-phw + lsl,         -yhh + yokeThickness);
+      yokePoints.emplace_back( yokeInsideX - lsl, -yhh + yokeThickness);
+      yokePoints.emplace_back( yokeInsideX - lsl,  yhh - yokeThickness);
+      yokePoints.emplace_back(-phw + lsl,          yhh - yokeThickness);
+      yokePoints.emplace_back(-phw + lsl,          phg + lsl);
     }
   else
     {
-      yokePoints.emplace_back(yokeInsideX - lsl, -poleHalfHeight - lsl);
-      yokePoints.emplace_back(yokeInsideX - lsl,  poleHalfHeight + lsl);
+      yokePoints.emplace_back(yokeInsideX - lsl, -phg - lsl);
+      yokePoints.emplace_back(yokeInsideX - lsl,  phg + lsl);
     }
   
   // points for container for magnet outer only
   if (buildPole == false) // redundant point when buildPole == true
-    {cPoints.emplace_back(poleHalfWidth + lsl, poleHalfHeight);}
+    {cPoints.emplace_back(phw + lsl, phg);}
   else
     {
-      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight);
-      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl + cDY);
-      cPoints.emplace_back(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 2*lsl + cDY);
+      cPoints.emplace_back(phw + coilWidth + 2*lsl, phg);
+      cPoints.emplace_back(phw + coilWidth + 2*lsl, phg + coilHeight + 2*lsl + cDY);
+      cPoints.emplace_back(phw + lsl, phg + coilHeight + 2*lsl + cDY);
     }
-  cPoints.emplace_back(poleHalfWidth + lsl,          ohv + lsl);
-  cPoints.emplace_back(poleHalfWidth - 2*ohh - lsl,  ohv + lsl);
-  cPoints.emplace_back(poleHalfWidth - 2*ohh - lsl, -ohv - lsl);
-  cPoints.emplace_back(poleHalfWidth + lsl,         -ohv - lsl);
+  cPoints.emplace_back(phw + lsl,       yhh + lsl);
+  cPoints.emplace_back(phw - yw - lsl,  yhh + lsl);
+  cPoints.emplace_back(phw - yw - lsl, -yhh - lsl);
+  cPoints.emplace_back(phw + lsl,      -yhh - lsl);
   if (buildPole)
     {
-      cPoints.emplace_back(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY);
-      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY);
-      cPoints.emplace_back(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight);
+      cPoints.emplace_back(phw + lsl, -phg - coilHeight - 2*lsl - cDY);
+      cPoints.emplace_back(phw + coilWidth + 2*lsl, -phg - coilHeight - 2*lsl - cDY);
+      cPoints.emplace_back(phw + coilWidth + 2*lsl, -phg);
     }
   else // redundant point when buildPole == true
-    {cPoints.emplace_back(poleHalfWidth + lsl, -poleHalfHeight);}
-  cPoints.emplace_back(yokeInsideX, -poleHalfHeight);
-  cPoints.emplace_back(yokeInsideX,  poleHalfHeight);
+    {cPoints.emplace_back(phw + lsl, -phg);}
+  cPoints.emplace_back(yokeInsideX, -phg);
+  cPoints.emplace_back(yokeInsideX,  phg);
 
   // points for container for full magnet object including beam pipe
-  // first one in y here is -lsl to cancel +lsl to poleHalfHeight originally
+  // first one in y here is -lsl to cancel +lsl to phg originally
   // container can be same height as beam pipe as it's always wider
-  G4double maxLeft = std::max(poleHalfWidth, bpHalfWidth);
-  mCPoints.emplace_back(maxLeft + lsl, poleHalfHeight - lsl);
+  G4double maxLeft = std::max(phw, bpHalfWidth);
+  mCPoints.emplace_back(maxLeft + lsl, phg - lsl);
   if (buildPole)
     {
-      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight - lsl);
-      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY);
-      mCPoints.emplace_back(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 3*lsl + cDY);
+      mCPoints.emplace_back(phw + coilWidth + 4*lsl, phg - lsl);
+      mCPoints.emplace_back(phw + coilWidth + 4*lsl, phg + coilHeight + 3*lsl + cDY);
+      mCPoints.emplace_back(phw + 2*lsl, phg + coilHeight + 3*lsl + cDY);
     }
-  mCPoints.emplace_back(poleHalfWidth + 2*lsl,          ohv + 2*lsl);
-  mCPoints.emplace_back(poleHalfWidth - 2*ohh - 2*lsl,  ohv + 2*lsl);
-  mCPoints.emplace_back(poleHalfWidth - 2*ohh - 2*lsl, -ohv - 2*lsl);
-  mCPoints.emplace_back(poleHalfWidth + 2*lsl,         -ohv - 2*lsl);
+  mCPoints.emplace_back(phw + 2*lsl,       yhh + 2*lsl);
+  mCPoints.emplace_back(phw - yw - 2*lsl,  yhh + 2*lsl);
+  mCPoints.emplace_back(phw - yw - 2*lsl, -yhh - 2*lsl);
+  mCPoints.emplace_back(phw + 2*lsl,      -yhh - 2*lsl);
   if (buildPole)
     {
-      mCPoints.emplace_back(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY);
-      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 3*lsl - cDY);
-      mCPoints.emplace_back(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight + lsl);
+      mCPoints.emplace_back(phw + 2*lsl, -phg - coilHeight - 3*lsl - cDY);
+      mCPoints.emplace_back(phw + coilWidth + 4*lsl, -phg - coilHeight - 3*lsl - cDY);
+      mCPoints.emplace_back(phw + coilWidth + 4*lsl, -phg + lsl);
     }
-  mCPoints.emplace_back(maxLeft + lsl, -poleHalfHeight + lsl);
+  mCPoints.emplace_back(maxLeft + lsl, -phg + lsl);
   
   // extents
-  extXPos = poleHalfWidth + lsl;
-  extXNeg = poleHalfWidth - 2*ohh - 2*lsl;
-  extYPos = ohv + lsl;
-  extYNeg = -(ohv +lsl);
+  extXPos = phw + lsl;
+  extXNeg = phw - yw - 2*lsl;
+  extYPos = yhh + lsl;
+  extYNeg = -(yhh +lsl);
   if (buildPole)
     {extXPos += coilWidth + lsl;}
 
@@ -1293,9 +1312,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   
   return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
                                   containerLength, sLength, angleIn, angleOut,
-                                  outerHalfHorizontal, outerHalfVertical, colour, material,
-                                  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight,
-                                  cDY, coilDY);
+                                  colour, material,
+                                  coilDisps, buildVertically, ext, phw, phg,
+                                  cDY, coilDY, intersectionRadius);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
@@ -1309,11 +1328,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4Colour*    colour,
 							      G4bool       buildVertically,
 							      G4bool       buildEndPiece,
-							      G4double     vhRatio,
+							      G4double     aspect,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
+  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, aspect);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
     
   // 1 calculations
@@ -1324,36 +1343,37 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // 6 placement
   // general order - yoke, container, magnet container, coils
   
-  G4double bpHalfWidth         = 0;
-  G4double poleHalfWidth       = 0;
-  G4double poleHalfHeight      = 0;
-  G4double outerHalfHorizontal = 0;
-  G4double outerHalfVertical   = 0;
-  G4double yokeThickness       = 0;
-  G4double sLength             = length; // 'safe' length fo intersection - default is normal length
-  G4double containerSLength    = containerLength; // similarly for the container
-  DipoleCalculations(beamPipe, length, buildVertically, outerDiameter, angleIn,
-		     angleOut, 0.12, vhRatio,
-		     bpHalfWidth, poleHalfWidth, poleHalfHeight,
-		     outerHalfHorizontal, outerHalfVertical,
-		     yokeThickness, sLength, containerSLength);
+  G4double bpHalfWidth    = 0;
+  G4double bpHalfHeight   = 0;
+  G4double poleHalfGap    = 0;
+  G4double poleWidth      = 0;
+  G4double poleHeight     = 0;
+  G4double yokeWidth      = 0;
+  G4double yokeHalfHeight = 0;
+  G4double yokeThickness  = 0;
+  G4double yokeOverHang   = 0;
+  G4double coilWidth      = 0;
+  // coilHeight is member variable
+  G4double coilToYokeGap  = 0;
+  G4double coilToPoleGap  = 0;
+  G4double sLength        = length; // 'safe' length fo intersection - default is normal length
+  G4double containerSLength = containerLength; // similarly for the container
+  G4double intersectionRadius = 0;
+  DipoleCalculations(true, buildVertically, beamPipe, length, outerDiameter, angleIn,
+		     angleOut, 0.12, aspect, coilWidthFraction, coilHeightFraction,
+		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
+		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang,
+		     coilWidth, coilHeight, coilToYokeGap, coilToPoleGap,
+		     sLength, containerSLength, intersectionRadius);
 
   // distance from axis to inside of yoke horizontally
-  G4double yokeInsideX = outerHalfHorizontal - yokeThickness;
-  G4double yokeInsideY = outerHalfVertical   - yokeThickness;
-
-  // coil calculations
-  // these are full height and width maximum so that they'd fit
-  coilHeight = outerHalfVertical - poleHalfHeight - yokeThickness;
-  G4double coilWidth = yokeInsideX - poleHalfWidth;
+  G4double yokeInsideX = -0.5*poleWidth - yokeOverHang;
+  //yokeWidth*0.5 - yokeThickness;
+  //G4double yokeInsideY = yokeHalfHeight - yokeThickness;
+  G4double yokeInsideY = poleHalfGap + poleHeight;
   
-  G4double coilHeightOriginal = coilHeight;
-  // reduce the coils from the absolute maximum;
-  coilHeight *= coilHeightFraction;
-  coilWidth  *= coilWidthFraction;
-
   // Vertical offset of coil from pole tip
-  G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
+  G4double cDY = (poleHeight - coilHeight)*0.5;
 
   const G4double lsl = lengthSafetyLarge; // shortcut
   
@@ -1378,24 +1398,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double extYPos = 0;
   G4double extYNeg = 0;
 
-  G4VSolid* yokeInnerSolid      = nullptr;
+  G4VSolid* yokeInnerSolid = nullptr;
   if (buildPole)
     {// use extruded solid for inner yoke shape and box for out with subtraction
       // create yoke + pole (as one solid about 0,0,0)
       // points are done in clock wise order from the bottom right corner of the top pole.
-
-      yokePoints.emplace_back( poleHalfWidth - lsl,  poleHalfHeight + lsl);
-      yokePoints.emplace_back( poleHalfWidth - lsl,  yokeInsideY    + lsl);
+      const G4double phw = 0.5*poleWidth;
+      const G4double phg = poleHalfGap;
+      yokePoints.emplace_back( phw - lsl,  phg + lsl);
+      yokePoints.emplace_back( phw - lsl,  yokeInsideY    + lsl);
       yokePoints.emplace_back( yokeInsideX   + lsl,  yokeInsideY    + lsl);
       yokePoints.emplace_back( yokeInsideX   + lsl, -yokeInsideY    - lsl);
-      yokePoints.emplace_back( poleHalfWidth - lsl, -yokeInsideY    - lsl);
-      yokePoints.emplace_back( poleHalfWidth - lsl, -poleHalfHeight - lsl);
-      yokePoints.emplace_back(-poleHalfWidth + lsl, -poleHalfHeight - lsl);
-      yokePoints.emplace_back(-poleHalfWidth + lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back( phw - lsl, -yokeInsideY    - lsl);
+      yokePoints.emplace_back( phw - lsl, -phg - lsl);
+      yokePoints.emplace_back(-phw + lsl, -phg - lsl);
+      yokePoints.emplace_back(-phw + lsl, -yokeInsideY    - lsl);
       yokePoints.emplace_back(-yokeInsideX   - lsl, -yokeInsideY    - lsl);
       yokePoints.emplace_back(-yokeInsideX   - lsl,  yokeInsideY    + lsl);
-      yokePoints.emplace_back(-poleHalfWidth + lsl,  yokeInsideY    + lsl);
-      yokePoints.emplace_back(-poleHalfWidth + lsl,  poleHalfHeight + lsl);
+      yokePoints.emplace_back(-phw + lsl,  yokeInsideY    + lsl);
+      yokePoints.emplace_back(-phw + lsl,  phg + lsl);
 
       // rotate if building vertically
       if (buildVertically)
@@ -1423,10 +1444,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     }
 
   // extents
-  extXPos =  outerHalfHorizontal + lsl;
-  extXNeg = -outerHalfHorizontal - lsl;
-  extYPos =  outerHalfVertical   + lsl;
-  extYNeg = -outerHalfVertical   - lsl;
+  extXPos =  0.5*yokeWidth + lsl;
+  extXNeg = -0.5*yokeWidth - lsl;
+  extYPos =  0.5*yokeWidth   + lsl;
+  extYNeg = -0.5*yokeWidth   - lsl;
   
   if (buildVertically)
     {// 'rotate' extents too
@@ -1437,11 +1458,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 			    -length*0.5, length*0.5);
   magContExtent = ext; // copy to container variable - basically the same
 
-  G4double yokeOuterX = outerHalfHorizontal - lsl;
-  G4double yokeOuterY = outerHalfVertical - lsl;
-  // rotate if building vertically
-  //if (buildVertically)
-  //  {std::swap(yokeOuterX, yokeOuterY);}
+  G4double yokeOuterX = 0.5*yokeWidth - lsl;
+  G4double yokeOuterY = yokeHalfHeight - lsl;
   G4VSolid* yokeOuterSolid = new G4Box(name + "_yoke_outer_solid", // name
 				       yokeOuterX,                 // x half length
 				       yokeOuterY,                 // y half length
@@ -1453,16 +1471,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   
   // container for magnet outer 
   G4double containerdx = yokeInsideX;
-  G4double containerdy = std::min(poleHalfHeight, yokeInsideY); // in case there's a pole
-  //if (buildVertically)
-  //  {std::swap(containerdx, containerdy);}
+  G4double containerdy = std::min(poleHalfGap, yokeInsideY); // in case there's a pole
 
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
 					    containerdx, containerdy, sLength);
   G4VSolid* containerOuterSolid = new G4Box(name + "_container_outer_solid", // name
-					    outerHalfHorizontal, // x half length
-					    outerHalfVertical,   // y half length
+					    0.5*yokeWidth,       // x half length
+					    yokeHalfHeight,      // y half length
 					    sLength * 0.5);      // z half length
 
   containerSolid = new G4SubtractionSolid(name + "_outer_sq_container_solid", // name
@@ -1471,8 +1487,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 
   // container for full magnet
   magnetContainerSolid = new G4Box(name + "_sq_container_solid", // name
-				   outerHalfHorizontal + lsl,    // x half length
-				   outerHalfVertical + lsl,      // y half length
+				   0.5*yokeWidth + lsl,          // x half length
+				   yokeHalfHeight + lsl,         // y half length
 				   containerSLength * 0.5);      // z half length
 
   // register existing square solids as we're going to overwrite them with intersected ones
@@ -1486,9 +1502,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 
   return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
 				  containerLength, sLength, angleIn, angleOut,
-				  outerHalfHorizontal, outerHalfVertical, colour, material,
-				  coilDisps, buildVertically, ext, poleHalfWidth, poleHalfHeight,
-				  cDY, coilDY);
+				  colour, material,
+				  coilDisps, buildVertically, ext, poleWidth*0.5, poleHalfGap,
+				  cDY, coilDY, intersectionRadius);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4String    name,
@@ -1500,8 +1516,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 									 G4double    sLength,
 									 G4double    angleIn,
 									 G4double    angleOut,
-									 G4double    outerHalfHorizontal,
-									 G4double    outerHalfVertical,
 									 G4Colour*   colour,
 									 G4Material* material,
 									 std::vector<G4ThreeVector>& coilDisps,
@@ -1510,7 +1524,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 									 G4double    poleHalfWidth,
 									 G4double    poleHalfHeight,
 									 G4double    cDY,
-									 G4double    coilDY)
+									 G4double    coilDY,
+									 G4double    intersectionRadius)
 {
   const G4double lsl = lengthSafetyLarge; // shortcut
   
@@ -1545,14 +1560,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
       inputFaceNormal  = faces.first;
       outputFaceNormal = faces.second;
-
-      // 1.3x for margin
-      G4double minimumR = std::hypot(outerHalfHorizontal, outerHalfVertical) * 1.3;
       
       // angled solid for magnet outer and coils
       G4VSolid* angledFaces = new G4CutTubs(name + "_angled_face_solid", // name
 					    0,                           // inner radius
-					    minimumR,                    // outer radius
+					    intersectionRadius,          // outer radius
 					    length*0.5 - lsl,            // z half length
 					    0,                           // start angle
 					    CLHEP::twopi,                // sweep angle
@@ -1562,7 +1574,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       // angled solid for magnet outer container volume
       G4VSolid* angledFacesCont = new G4CutTubs(name + "_angled_face_cont_solid", // name
 						0,                           // inner radius
-						minimumR,                    // outer radius
+						intersectionRadius,          // outer radius
 						length*0.5 - lengthSafety,   // z half length
 						0,                           // start angle
 						CLHEP::twopi,                // sweep angle
@@ -1572,7 +1584,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       // angled solid for full magnet container
       G4VSolid* angledFacesMagCont = new G4CutTubs(name + "_angled_face_mag_cont_solid", // name
 						   0,                    // inner radius
-						   minimumR,             // outer radius
+						   intersectionRadius,   // outer radius
 						   containerLength*0.5,  // z half length
 						   0,                    // start angle
 						   CLHEP::twopi,         // sweep angle

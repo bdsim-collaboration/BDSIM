@@ -412,8 +412,6 @@ protected:
 					   G4double    sLength,
 					   G4double    angleIn,
 					   G4double    angleOut,
-					   G4double    outerHalfHorizontal,
-					   G4double    outerHalfVertical,
 					   G4Colour*   colour,
 					   G4Material* material,
 					   std::vector<G4ThreeVector>& coilDisps,
@@ -422,7 +420,8 @@ protected:
 					   G4double    poleHalfWidth,
 					   G4double    poleHalfHeight,
 					   G4double    cDY,
-					   G4double    coilDY);
+					   G4double    coilDY,
+					   G4double    intersectionRadius);
 };
 
 #endif
