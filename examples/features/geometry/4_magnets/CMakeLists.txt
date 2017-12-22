@@ -45,3 +45,7 @@ simple_testing(43_coilwidth_variation_sbend_c   "--file=43_coilwidth_variation_s
 simple_testing(44_coilheight_variation_sbend_c  "--file=44_coilheight_variation_sbend_c.gmad"  ${OVERLAP_CHECK})
 simple_testing(45_asymmetric_beampipe_kickers_c "--file=45_asymmetric_beampipe_kickers_c.gmad" ${OVERLAP_CHECK})
 simple_testing(46_asymmetric_beampipe_kickers_h "--file=46_asymmetric_beampipe_kickers_h.gmad" ${OVERLAP_CHECK})
+simple_testing(47_asymmetric_beampipe_sbend_c   "--file=47_asymmetric_beampipe_sbend_c.gmad"   ${OVERLAP_CHECK})
+simple_testing(48_asymmetric_beampipe_rbend_c   "--file=48_asymmetric_beampipe_rbend_c.gmad"   ${OVERLAP_CHECK})
+simple_testing(49_asymmetric_beampipe_sbend_h   "--file=49_asymmetric_beampipe_sbend_h.gmad"   ${OVERLAP_CHECK})
+simple_testing(50_asymmetric_beampipe_rbend_h   "--file=50_asymmetric_beampipe_rbend_h.gmad"   ${OVERLAP_CHECK})
