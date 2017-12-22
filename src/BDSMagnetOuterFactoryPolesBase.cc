@@ -1373,7 +1373,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 		     sLength, containerSLength, intersectionRadius);
 
   // distance from axis to inside of yoke horizontally
-  G4double yokeInsideX = -0.5*poleWidth - yokeOverHang;
+  G4double yokeInsideX = 0.5*poleWidth + yokeOverHang;
   //yokeWidth*0.5 - yokeThickness;
   //G4double yokeInsideY = yokeHalfHeight - yokeThickness;
   G4double yokeInsideY = poleHalfGap + poleHeight;
