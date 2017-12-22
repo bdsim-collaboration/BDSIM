@@ -332,31 +332,41 @@ protected:
 
   /// Common calculations to both dipole construction routines in one place. Pass by reference
   /// to modify variables declared in each function.
-  void DipoleCalculations(BDSBeamPipe*    beamPipe,
-			  const G4double& length,
-			  const G4bool&   buildVertically,
-			  const G4double& outerDiameter,
-			  const G4double& angleIn,
-			  const G4double& angleOut,
-			  const G4double& yokeThicknessFraction,
-			  const G4double& vhRatio,
-			  G4double&    bpHalfWidth,
-			  G4double&    poleHalfWidth,
-			  G4double&    poleHalfHeight,
-			  G4double&    outerHalfHorizontal,
-			  G4double&    outerHalfVertical,
-			  G4double&    yokeThickness,
-			  G4double&    sLength,
-			  G4double&    containerSLength);
+  void DipoleCalculations(const G4bool&      hStyle,
+			  const G4bool&      buildVertically,
+			  const BDSBeamPipe* beamPipe,
+			  const G4double&    length,
+			  const G4double&    outerDiameter,
+			  const G4double&    angleIn,
+			  const G4double&    angleOut,
+			  const G4double&    yokeThicknessFraction,
+			  const G4double&    aspect,
+			  const G4double&    coilWidthFraction,
+			  const G4double&    coilHeightFraction,
+			  G4double& bpHalfWidth,
+			  G4double& bpHalfHeight,
+			  G4double& poleHalfGap,
+			  G4double& poleWidth,
+			  G4double& poleHeight,
+			  G4double& yokeWidth,
+			  G4double& yokeHalfHeight,
+			  G4double& yokeThickness,
+			  G4double& yokeOverHang,
+			  G4double& coilWidth,
+			  G4double& coilHeightIn, // to avoid shadowing member variable
+			  G4double& coilToYokeGap,
+			  G4double& coilToPoleGap,
+			  G4double& sLength,
+			  G4double& containerSLength,
+			  G4double& intersectionRadius);
 
   /// Calculate the placement offsets for each of the four coil placements. Common to both dipole
   /// construction routines.
   std::vector<G4ThreeVector> CalculateCoilDisplacements(G4double  poleHalfWidthIn,
-							G4double  poleHalfHeightIn,
+							G4double  poleHalfGapIn,
 							G4double  coilWidthIn,
 							G4double  coilHeightIn,
 							G4double  cDY,
-							G4double& coilDX,
 							G4double& coilDY);
     
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right

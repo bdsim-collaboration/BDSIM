@@ -925,81 +925,97 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
     {aspect = 0.1;}
 }
 
-void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(BDSBeamPipe*    beamPipe,
-							const G4double& length,
-							const G4bool&   buildVertically,
-							const G4double& outerDiameter,
-							const G4double& angleIn,
-							const G4double& angleOut,
-							const G4double& yokeThicknessFraction,
-							const G4double& vhRatio,
-							G4double&    bpHalfWidth,
-							G4double&    poleHalfWidth,
-							G4double&    poleHalfHeight,
-							G4double&    outerHalfHorizontal,
-							G4double&    outerHalfVertical,
-							G4double&    yokeThickness,
-							G4double&    sLength,
-							G4double&    containerSLength)
+void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyle,
+							const G4bool&      buildVertically,
+							const BDSBeamPipe* beamPipe,
+							const G4double&    length,
+							const G4double&    outerDiameter,
+							const G4double&    angleIn,
+							const G4double&    angleOut,
+							const G4double&    yokeThicknessFraction,
+							const G4double&    aspect,
+							const G4double&    coilWidthFraction,
+							const G4double&    coilHeightFraction,
+							G4double& bpHalfWidth,
+							G4double& bpHalfHeight,
+							G4double& poleHalfGap,
+							G4double& poleWidth,
+							G4double& poleHeight,
+							G4double& yokeWidth,
+							G4double& yokeHalfHeight,
+							G4double& yokeThickness,
+							G4double& yokeOverHang,
+							G4double& coilWidth,
+							G4double& coilHeightIn,
+							G4double& coilToYokeGap,
+							G4double& coilToPoleGap,
+							G4double& sLength,
+							G4double& containerSLength,
+							G4double& intersectionRadius)
 {
   // calculate any geometrical parameters
-  bpHalfWidth           = beamPipe->GetExtent().MaximumX();
-  G4double bpHalfHeight = beamPipe->GetExtent().MaximumY();
+  bpHalfWidth  = beamPipe->GetExtent().MaximumX();
+  bpHalfHeight = beamPipe->GetExtent().MaximumY();
   
-  poleHalfWidth = bpHalfWidth  + lengthSafetyLarge;
-  poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.18);
+  poleWidth = 2*(buildVertically ? bpHalfHeight : bpHalfWidth)  + 2*lengthSafetyLarge;
+  poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
-  if (poleHalfWidth > 0.45*outerDiameter)
-    {poleHalfWidth = outerDiameter*0.15;}
+  if (poleWidth > 0.9*outerDiameter)
+    {poleWidth = outerDiameter*0.36;}
+  
+  poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
 
-  poleHalfHeight      = bpHalfHeight + lengthSafetyLarge;
-
-  G4double outerHalf  = outerDiameter * 0.5;
-  if (buildVertically)
-    {
-      outerHalfHorizontal = outerHalf * vhRatio;
-      outerHalfVertical   = outerHalf;
-    }
-  else
-    {
-      outerHalfHorizontal = outerHalf;
-      outerHalfVertical   = outerHalf * vhRatio;
-    }
+  // propose outer dimensions.
+  yokeWidth      = outerDiameter;
+  yokeHalfHeight = 0.5 * outerDiameter * (buildVertically ? 1./aspect : aspect);
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
-  G4double verticalLowerLimit   = bpHalfHeight + margin;
-  G4double horizontalLowerLimit = bpHalfWidth + margin;
-  if (outerHalfHorizontal <= horizontalLowerLimit)
-    {outerHalfHorizontal = horizontalLowerLimit + margin;}
-  if (outerHalfVertical <= verticalLowerLimit)
-    {outerHalfVertical = verticalLowerLimit + margin;}
+  G4double yokeWidthLowerLimit      = 2*(buildVertically ? bpHalfHeight : bpHalfWidth) + margin;
+  G4double yokeHalfHeightLowerLimit = (buildVertically ? bpHalfWidth  : bpHalfHeight)+ margin;
+  if (yokeWidth <= yokeWidthLowerLimit)
+    {yokeWidth = yokeWidthLowerLimit + margin;}
+  if (yokeHalfHeight <= yokeHalfHeightLowerLimit)
+    {yokeHalfHeight = yokeHalfHeightLowerLimit + margin;}
   
   // propose yoke thickness
   yokeThickness = yokeThicknessFraction * outerDiameter;
-  // check it's a suitable size and will fit in
-  if (yokeThickness > outerHalfVertical - poleHalfHeight)
+  // if there's not enough space (given the beam pipe and outer edge)
+  // for the specified fraction of yoke, don't build pole. Also coerce
+  // yoke thickness.
+  if (yokeThickness > yokeHalfHeight - poleHalfGap)
     {
       buildPole     = false;
-      yokeThickness = outerHalfVertical - poleHalfHeight;
+      yokeThickness = yokeHalfHeight - poleHalfGap;
     }
-  else if (yokeThickness > outerHalfHorizontal - poleHalfWidth)
+  if (yokeThickness > yokeWidth - poleWidth)
     {
       buildPole = false;
-      yokeThickness = outerHalfHorizontal - poleHalfWidth;
+      yokeThickness = yokeWidth - poleWidth;
     }
+  if (buildPole)
+    {poleHeight = yokeHalfHeight - yokeThickness - poleHalfGap;}
+  else
+    {poleHeight = 0;} 
 
   // ensure the yoke isn't too thick - choose smaller of two limits
-  G4double yokeThicknessLimitHorizontal = outerHalfHorizontal - horizontalLowerLimit - margin*0.5;
-  G4double yokeThicknessLimitVertical   = outerHalfVertical   - verticalLowerLimit   - margin*0.5;
-  G4double yokeThicknessLimit           = std::min(yokeThicknessLimitHorizontal, yokeThicknessLimitVertical);
+  G4double yokeThicknessLimitHorizontal = yokeWidth - yokeWidthLowerLimit - margin*0.5;
+  G4double yokeThicknessLimitVertical   = yokeHalfHeight - yokeHalfHeightLowerLimit - margin;
+  G4double yokeThicknessLimit           = std::min(yokeThicknessLimitHorizontal, 2*yokeThicknessLimitVertical);
   if (yokeThickness > yokeThicknessLimit)
     {yokeThickness = yokeThicknessLimit;}
+  if (yokeThickness < margin)
+    {yokeThickness = margin;} // ensure minimum width of yoke
   
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
-  if (yokeThickness + 2*poleHalfWidth > outerDiameter - margin)
-    {yokeThickness = outerDiameter - 2*poleHalfWidth - margin;}
+  if (yokeThickness + poleWidth > outerDiameter - margin)
+    {yokeThickness = outerDiameter - poleWidth - margin;}
+
+  if (hStyle)
+    {yokeOverHang = 0.5*yokeWidth - yokeThickness - 0.5*poleWidth;}
+  else
+    {yokeOverHang = yokeWidth - yokeThickness - poleWidth;}
 
   // must ensure that:
   // yoke length < outer container length < full magnet container length
