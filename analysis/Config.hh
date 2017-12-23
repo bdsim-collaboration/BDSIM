@@ -117,6 +117,12 @@ public:
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string line, const int nDim);
 
+  /// Parse whether each dimension is log or linear.
+  void ParseLog(const std::string& definition,
+		bool& xLog,
+		bool& yLog,
+		bool& zLog) const;
+
   /// Update the vector of required branches for a particular tree to be
   /// activated for analysis.
   void UpdateRequiredBranches(const HistogramDef* def);

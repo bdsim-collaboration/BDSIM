@@ -155,11 +155,14 @@ void Config::ParseHistogramLine(const std::string& line)
 {
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
-  std::regex histNDim("^Histogram([1-3])D\\s+(.*)", std::regex_constants::icase);
+  std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
   
   if (std::regex_search(line, match, histNDim))
-    {ParseHistogram(match[2], std::stoi(match[1]));}
+    {
+      int nDim = std::stoi(match[1]);
+      ParseHistogram(line, nDim);
+    }
   else
     {
       std::string errString = "Invalid histogram type on line #" + std::to_string(lineCounter)
@@ -169,7 +172,7 @@ void Config::ParseHistogramLine(const std::string& line)
 }
 
 void Config::ParseHistogram(const std::string line, const int nDim)
-{
+{  
   // split line on white space
   // doesn't inspect words themselves
   // checks number of words, ie number of columns is correct
@@ -184,22 +187,27 @@ void Config::ParseHistogram(const std::string line, const int nDim)
       results.push_back(res);
     }
   
-  if (results.size() < 6)
+  if (results.size() < 7)
     {// ensure enough columns
       std::string errString = "Invalid line #" + std::to_string(lineCounter)
 	+ " - invalid number of columns";
       throw std::string(errString);
     }
+
+  bool xLog = false;
+  bool yLog = false;
+  bool zLog = false;
+  ParseLog(results[0], xLog, yLog, zLog);
   
-  std::string treeName  = results[0];
+  std::string treeName  = results[1];
   if (InvalidTreeName(treeName))
     {throw std::string("Invalid tree name \"" + treeName + "\"");}
   
-  std::string histName  = results[1];
-  std::string bins      = results[2];
-  std::string binning   = results[3];
-  std::string variable  = results[4];
-  std::string selection = results[5];
+  std::string histName  = results[2];
+  std::string bins      = results[3];
+  std::string binning   = results[4];
+  std::string variable  = results[5];
+  std::string selection = results[6];
 
   int nBinsX = 1;
   int nBinsY = 1;
@@ -221,7 +229,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
       {
 	result = new HistogramDef1D(treeName, histName,
 				    nBinsX, xLow, xHigh,
-				    variable, selection);
+				    variable, selection,
+				    xLog);
 	break;
       }
     case 2:
@@ -230,7 +239,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
 				    nBinsX, nBinsY,
 				    xLow, xHigh,
 				    yLow, yHigh,
-				    variable, selection);
+				    variable, selection,
+				    xLog, yLog);
 	break;
       }
     case 3:
@@ -240,7 +250,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
 				    xLow, xHigh,
 				    yLow, yHigh,
 				    zLow, zHigh,
-				    variable, selection);
+				    variable, selection,
+				    xLog, yLog, zLog);
 	break;
       }
     default:
@@ -251,6 +262,25 @@ void Config::ParseHistogram(const std::string line, const int nDim)
     {
       histoDefs[treeName].push_back(result);
       UpdateRequiredBranches(result);
+    }
+}
+
+void Config::ParseLog(const std::string& definition,
+		      bool& xLog,
+		      bool& yLog,
+		      bool& zLog) const
+{
+  // capture any lin log definitions after Histogram[1-3]D
+  std::regex linLogWords("(Lin)|(Log)", std::regex_constants::icase);
+  std::sregex_token_iterator iter(definition.begin(), definition.end(), linLogWords);
+  std::sregex_token_iterator end;
+  std::vector<bool*> results = {&xLog, &yLog, &zLog};
+  int index = 0;
+  for (; iter != end; ++iter, ++index)
+    {
+      std::string res = (*iter).str();
+      std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+      *(results[index]) = res == "log";
     }
 }
 

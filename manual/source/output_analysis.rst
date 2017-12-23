@@ -140,6 +140,9 @@ An example can be found in :code:`<bdsim>/examples/features/io/1_rootevent/analy
   Histogram1D  Run.      runDuration     {1000}     {0:1000}            Info.duration       1
   Histogram2D  Event.    XvsY            {100,100}  {-0.1:0.1,-0.1:0.1} Primary.x:Primary.y 1
   Histogram3D  Event.    PhaseSpace3D    {50,50,50} {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
+  Histogram1DLog Event.  PrimaryXAbs     {20}       {-9:-3}      abs(Primary.x)                 1
+  Histogram2DLinLog Event. PhaseSpaceAbs {20,20}    {-1e-6:1e-5,-9:-3} Primary.x:abs(Primary.y) 1
+  Histogram2DLog    Event. PhaseSpaceAbs2 {20,20}   {-9:-3,-1e-6:1e-5} abs(Primary.x):Primary.y 1
 
 * Arguments in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
@@ -150,13 +153,32 @@ An example can be found in :code:`<bdsim>/examples/features/io/1_rootevent/analy
 * For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get the kinetic energy of proton primaries in MeV).
-* A 3D histogram is shown on the last line.
 * Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * True or False as well as 1 or 0 may be used for Boolean options.
 
+Logarithmic Binning
+-------------------
+
+Logarithmic binning may be used by specifying 'Log' after 'HistogramND' for each dimension. The dimensions specified
+in order are `x`, `y`, `z`. If a linearly spaced dimension is required the user should write 'Lin'. If nothing is
+specified it is assumed to be linear.
+
+Examples::
+
+  Histogram1D       // linearly spaced
+  Histogram1DLog    // logarithmically spaced
+  Histogram2D       // X and Y are linearly spaced
+  Histogram2DLog    // X is logarithmically spaced and Y linearly
+  Histgoram2DLinLog // X is linearly spaced and Y logarithmically
+
+The bin lower edges and upper edges should be an exponent of 10. For example to generate a 1D histogram
+with 30 logarithmically spaced bins from 1e-3 to 1e3, the following syntax would be used::
+
+  Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
+  
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
 	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
-	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This only applies to the variable and
+	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
 	     not to the bin specification.
   
 The following (case-insensitive) options may be specified in the top part.

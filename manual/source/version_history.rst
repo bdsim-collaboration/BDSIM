@@ -7,6 +7,7 @@ New Features
 * H-style dipoles controllable by default or per element with `hStyle` option.
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
+* Logarithmic binning of histograms in rebdsim.
 
 V0.993 - 2017 / 12 / 11
 =======================
