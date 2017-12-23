@@ -55,7 +55,8 @@ namespace RBDS
   std::vector<double> LogSpace(const double& start,
 			       const double& stop,
 			       const int&    nBins,
-			       const double  base = 10);
+			       const double  base = 10,
+			       const bool    includeLastPoint = true);
 
 }
   

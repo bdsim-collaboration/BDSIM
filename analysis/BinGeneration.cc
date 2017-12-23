@@ -25,13 +25,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 std::vector<double> RBDS::LogSpace(const double& start,
 				   const double& stop,
 				   const int&    nBins,
-				   const double  base)
+				   const double  base,
+				   const bool    includeLastPoint)
 {
   double realStart = std::pow(base, start);
   double realBase  = std::pow(base, (stop-start)/nBins);
 
   std::vector<double> result;
-  result.reserve(nBins);
-  std::generate_n(std::back_inserter(result), nBins, RBDS::Logspace<double>(realStart,realBase));
+  int n = includeLastPoint ? nBins+1 : nBins;
+  result.reserve(n);
+  std::generate_n(std::back_inserter(result), n, RBDS::Logspace<double>(realStart,realBase));
+  return result;
+}
   return result;
 }
