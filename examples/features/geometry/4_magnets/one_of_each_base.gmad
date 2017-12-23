@@ -1,5 +1,6 @@
 d1: drift, l=0.4*m;
-d2: drift, l=0.05*m;
+!d2: drift, l=0.05*m;
+d3: drift, l=1*m;
 q1: quadrupole, l=0.5*m, k1=1.31, outerDiameter=1*m;
 sex1: sextupole, l=0.5*m, k2=0.31,aper1=2*cm;
 oct1: octupole, l=0.5*m, k3=3.31, outerDiameter=0.876*m;
@@ -13,7 +14,7 @@ vk1: vkicker, l=0.2*m, outerDiameter=0.3*m, angle=-0.1*mrad;
 mul1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 }, outerDiameter=0.876*m;
 musp1 : muspoiler,l=0.5*m, aper1=1*cm, outerDiameter=240*cm, B=1.5;
 
-rf1 : rfcavity, l=0.5*m, gradient = 0.1 * MV / m, outerDiameter=0.3*mm, material = "Copper", cavityModel = "Tesla9Cell", frequency = 8*MHz;
+rf1 : rfcavity, l=0.13*m, gradient = 0.1 * MV / m, outerDiameter=0.3*mm, material = "Copper", cavityModel = "Tesla9Cell", frequency = 8*MHz;
 Tesla9Cell: cavitymodel,
        type="elliptical",
        irisRadius = 35*mm,
@@ -28,7 +29,7 @@ Tesla9Cell: cavitymodel,
        numberOfPoints = 24,
        numberOfCells = 1;
 
-l1: line = (d1,q1,d1,sex1,d1,oct1,d1,dec1,d1,sol1,d1,sb1,d1,rb1,d1,hk1,d2,vk1,d2,mul1,d2,musp1,d2,rf1,d2,endoftheline);
+l1: line = (d1,q1,d1,sex1,d1,oct1,d1,dec1,d1,sol1,d1,sb1,d3,rb1,d1,hk1,d1,vk1,d1,mul1,d1,musp1,d1,rf1,d1,endoftheline);
 
 use,period=l1;
 

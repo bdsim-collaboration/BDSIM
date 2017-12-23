@@ -180,9 +180,11 @@ public:
   BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
   BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
 
-  void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
-  void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
-
+  /// @{ Allow updating of face normals. Virtual so derived class may apply it to daughters.
+  virtual void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
+  virtual void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
+  /// @}
+  
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;

@@ -951,7 +951,7 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       /// Offset extent of individual solid and expand it.
       G4VSolid* solid = volume->GetSolid();
       BDSExtent ext = unShiftedExtents[solid];
-      BDSExtent extShifted = ext.Offset(PlacementPoint);
+      BDSExtent extShifted = ext.Translate(PlacementPoint);
       ExpandExtent(extShifted);
       
       G4VPhysicalVolume* PhysiComp = 

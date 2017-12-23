@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
 #include <algorithm>
@@ -75,21 +76,30 @@ BDSExtent::BDSExtent(G4ThreeVector extIn):
 BDSExtent::~BDSExtent()
 {;}
 
+std::vector<G4ThreeVector> BDSExtent::AllBoundaryPoints() const
+{
+  std::vector<G4ThreeVector> result;
+  result.emplace_back(extXNeg, extYNeg, extZNeg);
+  result.emplace_back(extXNeg, extYPos, extZNeg);
+  result.emplace_back(extXPos, extYNeg, extZNeg);
+  result.emplace_back(extXPos, extYPos, extZNeg);
+  result.emplace_back(extXNeg, extYNeg, extZPos);
+  result.emplace_back(extXNeg, extYPos, extZPos);
+  result.emplace_back(extXPos, extYNeg, extZPos);
+  result.emplace_back(extXPos, extYPos, extZPos);
+  return result;
+}
+
 BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
 {
   if (!tiltOffset)
     {return BDSExtent(*this);}
   BDSExtent tilted = Tilted(tiltOffset->GetTilt());
-  BDSExtent offset = tilted.Offset(tiltOffset->GetOffset());
+  BDSExtent offset = tilted.Translate(tiltOffset->GetOffset());
   return offset;
 }
 
-BDSExtent BDSExtent::Offset(G4ThreeVector offset) const
-{
-  return Offset(offset.x(), offset.y(), offset.z());
-}
-
-BDSExtent BDSExtent::Offset(G4double dx, G4double dy, G4double dz) const
+BDSExtent BDSExtent::Translate(G4double dx, G4double dy, G4double dz) const
 {
   return BDSExtent(extXNeg + dx, extXPos + dx,
 		   extYNeg + dy, extYPos + dy,
@@ -132,28 +142,6 @@ std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
   return out;
 }
 
-BDSExtent BDSExtent::Shift(G4double x, G4double y) const
-{
-  BDSExtent xShifted = ShiftX(x);
-  return xShifted.ShiftY(y);
-}
-
-BDSExtent BDSExtent::ShiftX(G4double x) const
-{
-  BDSExtent result = BDSExtent(extXNeg + x, extXPos + x,
-			       extYNeg, extYPos,
-			       extZNeg, extZPos);
-  return result;
-}
-
-BDSExtent BDSExtent::ShiftY(G4double y) const
-{
-  BDSExtent result = BDSExtent(extXNeg, extXPos,
-			       extYNeg + y, extYPos + y,
-			       extZNeg, extZPos);
-  return result;
-}
-
 G4double BDSExtent::MaximumAbs() const
 {
   std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
@@ -173,11 +161,4 @@ G4bool BDSExtent::Encompasses(G4ThreeVector point) const
 {
   BDSExtent extentPoint = BDSExtent(point);
   return extentPoint < (*this);
-}
-
-G4bool BDSExtent::Encompasses(G4double x,
-			      G4double y,
-			      G4double z) const
-{
-  return Encompasses(G4ThreeVector(x,y,z));
 }

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef USE_GDML
 #include "BDSGDMLPreprocessor.hh"
 #include "BDSTemporaryFiles.hh"
+#include "BDSUtilities.hh"
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
@@ -45,6 +46,29 @@ G4String BDS::PreprocessGDML(const G4String& file,
   return processedFile;
 }
 
+G4String BDS::GDMLSchemaLocation()
+{
+  G4String result;
+  G4String bdsimExecPath = BDS::GetBDSIMExecPath();
+  G4String localPath = bdsimExecPath + "src-external/gdml/schema/gdml.xsd";
+  G4String installPath = bdsimExecPath + "../share/bdsim/gdml/schema/gdml.xsd";
+  if (FILE *file = fopen(localPath.c_str(), "r"))
+    {
+      fclose(file);
+      return localPath;
+    }
+  else if ( (file = fopen(installPath.c_str(), "r")) )
+    {
+      fclose(file);
+      return installPath;
+    }
+  else
+   {
+     G4cout << "ERROR: local GDML schema could not be found!" << G4endl;
+     exit(1);
+   }
+}
+
 BDSGDMLPreprocessor::BDSGDMLPreprocessor()
 {
   //ignoreNodes = {"setup"};
@@ -66,6 +90,10 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
       XMLString::release(&message);
       exit(1);
     }
+
+  /// Update folder containing gdml file.
+  G4String filename;
+  BDS::SplitPathAndFileName(file, parentDir, filename);
   
   XercesDOMParser* parser = new XercesDOMParser();
   parser->setValidationScheme(XercesDOMParser::Val_Always);
@@ -143,11 +171,41 @@ void BDSGDMLPreprocessor::ReadNode(DOMNode* node)
     {return;}
 
   std::string thisNodeName = XMLString::transcode(node->getNodeName());
+  if (thisNodeName == "gdml")
+    {// to update location of schema
+      ProcessGDMLNode(node->getAttributes());
+      return;
+    }
   auto search = std::find(ignoreNodes.begin(), ignoreNodes.end(), thisNodeName);
   if (search != ignoreNodes.end())
     {return;} // ignore this node
   else
     {ReadAttributes(node->getAttributes());}
+}
+
+void BDSGDMLPreprocessor::ProcessGDMLNode(DOMNamedNodeMap* attributeMap)
+{
+  if (!attributeMap)
+  {return;}
+
+  for(XMLSize_t i = 0; i < attributeMap->getLength(); i++)
+    {
+      DOMNode* attr = attributeMap->item(i);
+      std::string nodeName = XMLString::transcode(attr->getNodeName());
+      if (nodeName == "xsi:noNamespaceSchemaLocation")
+	{
+	  G4String nodeValue = G4String(XMLString::transcode(attr->getNodeValue()));
+	  G4String newNodeValue;
+	  if (nodeValue.substr(0,2) == "./")
+	    {
+	      G4String remainder = nodeValue.substr(2); // strip off ./
+	      newNodeValue = remainder.prepend(parentDir); // prepend parent directory
+	    }
+	  else
+	    {newNodeValue = BDS::GDMLSchemaLocation();}
+	  attr->setNodeValue(XMLString::transcode(newNodeValue.c_str()));
+	} 
+    }
 }
 
 void BDSGDMLPreprocessor::ReadAttributes(DOMNamedNodeMap* attributeMap)

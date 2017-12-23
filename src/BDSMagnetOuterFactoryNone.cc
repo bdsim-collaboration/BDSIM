@@ -54,8 +54,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name
 							    G4double      /*angleIn*/,
 							    G4double      /*angelOut*/,
 							    G4bool        /*yokeOnLeft*/,
+							    G4bool        /*hStyle*/,
 							    G4Material*   /*outerMaterial*/,
-							    G4bool        /*buildEndPiece*/)
+							    G4bool        /*buildEndPiece*/,
+							    G4double      /*vhRatio*/,
+							    G4double      /*coilWidthFraction*/,
+							    G4double      /*coilHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -71,8 +75,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,
 								 G4bool        /*yokeOnLeft*/,
+								 G4bool        /*hStyle*/,
 								 G4Material*   /*outerMaterial*/,
-								 G4bool        /*buildEndPiece*/)
+								 G4bool        /*buildEndPiece*/,
+								 G4double      /*vhRatio*/,
+								 G4double      /*coilWidthFraction*/,
+								 G4double      /*coilHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -199,7 +207,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
 							G4double      /*containerLength*/,
 							G4bool        /*vertical*/,
 							G4Material*   /*outerMaterial*/,
-							G4bool        /*buildEndPiece*/)
+							G4bool        /*buildEndPiece*/,
+							G4bool        /*hStyle*/,
+							G4double      /*vhRatio*/,
+							G4double      /*coilWidthFraction*/,
+							G4double      /*coiHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

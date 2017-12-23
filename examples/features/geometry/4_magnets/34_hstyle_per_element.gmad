@@ -1,0 +1,13 @@
+sb1: sbend, l=1*m, angle=30*mrad;
+sb2: sbend, l=1*m, angle=-30*mrad, hStyle=1;
+d1: drift, l=1*m;
+
+
+l1: line=(sb1,d1,sb2);
+
+use, l1;
+
+option, hStyle=0;
+
+beam, particle="e-",
+      energy=3*GeV;

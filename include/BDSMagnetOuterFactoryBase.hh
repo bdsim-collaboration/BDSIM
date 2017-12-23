@@ -70,8 +70,12 @@ public:
 					   G4double     angleIn,                // input face angle w.r.t. chord
 					   G4double     angleOut,               // output face angle w.r.t. chord
 					   G4bool       yokeOnLeft,             // build magnet yoke on left of bend
+					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false   // build and end piece
+					   G4bool       buildEndPiece = false,  // build and end piece
+					   G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
+					   G4double     coilWidthFraction  = 0.65,
+					   G4double     coilHeightFraction = 0.8
 					   ) = 0;
   
   /// rectangular bend outer volume
@@ -83,8 +87,12 @@ public:
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
 						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
+						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false   // build and end piece
+						G4bool       buildEndPiece = false,  // build and end piece
+						G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
+						G4double     coilWidthFraction  = 0.65,
+						G4double     coilHeightFraction = 0.8
 						) = 0;
   
   
@@ -177,7 +185,11 @@ public:
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false   // build and end piece
+				       G4bool       buildEndPiece = false,  // build and end piece
+				       G4bool       hStyle             = false,
+				       G4double     vhRatio            = 1.0,
+				       G4double     coilWidthFraction  = 0.65,
+				       G4double     coilHeightFraction = 0.8
 				       ) = 0;
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope

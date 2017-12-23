@@ -213,6 +213,10 @@ public:
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
   inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
+  inline G4bool   HStyle()                   const {return G4bool  (options.hStyle);}
+  inline G4double VHRatio()                  const {return G4double(options.vhRatio);}
+  inline G4double CoilWidthFraction()        const {return G4double(options.coilWidthFraction);}
+  inline G4double CoilHeightFraction()       const {return G4double(options.coilHeightFraction);}
   inline G4int    NBinsX()                   const {return G4int   (options.nbinsx);}
   inline G4int    NBinsY()                   const {return G4int   (options.nbinsy);}
   inline G4int    NBinsZ()                   const {return G4int   (options.nbinsz);}

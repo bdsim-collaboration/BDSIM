@@ -33,6 +33,9 @@ namespace BDS
 {
   G4String PreprocessGDML(const G4String& file,
 			  const G4String& prefix);
+
+  /// Get GDML Schema location included with BDSIM.
+  G4String GDMLSchemaLocation();
 }
 
 class BDSGDMLPreprocessor
@@ -47,11 +50,13 @@ private:
 
   void ReadDoc(xercesc::DOMNodeIterator* docIterator);
   void ReadNode(xercesc::DOMNode* node);
+  void ProcessGDMLNode(xercesc::DOMNamedNodeMap* attributeMap);
   void ReadAttributes(xercesc::DOMNamedNodeMap* attributeMap);
   void ProcessDoc(xercesc::DOMNodeIterator* dotIterator, const G4String& prefix);
   void ProcessNode(xercesc::DOMNode* node, const G4String& prefix);
   void ProcessAttributes(xercesc::DOMNamedNodeMap* attributeMap, const G4String& prefix);
 
+  G4String parentDir;                   ///< Directory of main gdml file.
   std::vector<std::string> ignoreNodes; ///< Nodes to ignore.
   std::vector<std::string> ignoreAttrs; ///< Attributes to ignore
   std::vector<std::string> names;       ///< Names to replace.

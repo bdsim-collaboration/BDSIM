@@ -66,7 +66,7 @@ BDSColours::BDSColours()
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["quadrupole"]       = new G4Colour(0.82,  0,     0);     // red
+  colours["quadrupole"]       = new G4Colour(0.82,  0.1,   0.1);   // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
   colours["decapole"]         = new G4Colour(0.3,   0.2,   0.7);   // purple
@@ -76,8 +76,8 @@ BDSColours::BDSColours()
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
   colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
-  colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
+  colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
   

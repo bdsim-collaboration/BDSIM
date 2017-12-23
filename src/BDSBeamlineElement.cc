@@ -20,10 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSTiltOffset.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -157,3 +159,15 @@ std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
 
   return out;
 }
+
+G4bool BDSBeamlineElement::Overlaps(const BDSBeamlineElement* otherElement) const
+{
+  BDSExtentGlobal thisGlobal  = BDSExtentGlobal(component->GetExtent(),
+						*(GetPlacementTransform()));
+  BDSExtentGlobal otherGlobal = BDSExtentGlobal(otherElement->GetAcceleratorComponent()->GetExtent(),
+						*(otherElement->GetPlacementTransform()));
+
+  return thisGlobal.Overlaps(otherGlobal);
+}
+
+

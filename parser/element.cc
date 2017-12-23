@@ -152,6 +152,10 @@ void Element::PublishMembers()
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
+  publish("hStyle",       &Element::hStyle);
+  publish("vhRatio",      &Element::vhRatio);
+  publish("coilWidthFraction",  &Element::coilWidthFraction);
+  publish("coilHeightFraction", &Element::coilHeightFraction);
   publish("apertureType",&Element::apertureType);
   publish("magnetGeometryType",&Element::magnetGeometryType);
   publish("beampipeMaterial",&Element::beampipeMaterial);
@@ -359,6 +363,10 @@ void Element::flush()
   outerMaterial = "";
   outerDiameter = 0;
   yokeOnInside  = true;
+  hStyle             = -1;
+  vhRatio            = -1;
+  coilWidthFraction  = -1;
+  coilHeightFraction = -1; // signifies use default in factory
   
   tilt = 0;
   xsize = 0;

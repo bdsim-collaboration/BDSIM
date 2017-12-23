@@ -1,4 +1,14 @@
-V0.993 - 2017 / 12 / ??
+V0.994 - 2017 / 12 / ??
+=======================
+
+New Features
+------------
+
+* H-style dipoles controllable by default or per element with `hStyle` option.
+* Control over dipole proportions with global and per element options `vhRatio`,
+  `coilWidthFraction` and `coilHeightFraction`.
+
+V0.993 - 2017 / 12 / 11
 =======================
 
 New Features
@@ -8,16 +18,21 @@ New Features
 * Executable option --exportgeometryto is now --exportGeometryTo
 * Executable option --distrfile is now --distrFile.
 * Redefined simpler syntax for halo distribution. Please see manual for new parameters.
-* Support for all EM physics lists included with Geant4.
+* Support for all EM physics lists included with Geant4.10.3.p03.
 * Support for an ion as the primary beam particle.
 * Support for ion physics lists.
 * Ability to load two GDML files with degenerate object names correctly compensating for
   definiciency in Geant4 GDML parser.
+* Local copy of GDML schema included. No longer require internet access to load GDML files. Custom
+  local schema still supported.
+* Support for Geant4.10.4 - however we don't recommend using this until p01 is used as there
+  is a fault with G4ExtrudedSolid that is used for all poled magnet geometry.
   
 Bug Fixes
 ---------
 
 * Compilation fixes for compilers with XCode 9.
+* Fix compiler dependent possible tracking bug where particle would get stuck in dipole.
 * Cherenkov radiation in water fixed with specification of optical refractive index.
 * Fix ATF2 example input syntax and update model.
 * Remove temporary files created in current working directory.
@@ -32,7 +47,7 @@ Output Changes
 General
 -------
 
-* Updated automatic Geant4 from AFS to version 10.3.p01.
+* Updated automatic Geant4 from AFS to version 10.3.p01 (latest available).
 * Updated automatic ROOT from AFS to version 6.06.08.
 * Remove support for ROOT v5 and require v6 onwards.
 
@@ -43,7 +58,7 @@ Utilities
 * pybdsim v1.3
 * pymadx v1.0
 * pymad8 v0.8
-* pytransport v0.1
+* pytransport v0.1 (new)
 
 
 V0.992 - 2017 / 07 / 26

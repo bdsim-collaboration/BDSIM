@@ -61,9 +61,12 @@ public:
 					   G4double     angleIn,         // input face angle w.r.t. chord
 					   G4double     angleOut,        // output face angle w.r.t. chord
 					   G4bool       yokeOnLeft,      // build magnet yoke on left of bend
+					   G4bool       hStyle,                 // H style magnet (c shaped if not)
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false
-					   );
+					   G4bool       buildEndPiece = false,
+					   G4double     vhRatio       = 1.0,
+					   G4double     coilWidthFraction  = 0.65,
+					   G4double     coilHeightFraction = 0.8);
 
   /// rectangular bend outer volume
   virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
@@ -74,9 +77,12 @@ public:
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
 						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
+						G4bool       hStyle,                 // H style magnet (c shaped if not)
 						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false
-						);
+						G4bool       buildEndPiece = false,
+						G4double     vhRatio       = 1.0,
+						G4double     coilWidthFraction  = 0.65,
+						G4double     coilHeightFraction = 0.8);
   
   /// quadrupole outer volume
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
@@ -167,8 +173,11 @@ public:
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false
-				       );
+				       G4bool       buildEndPiece = false,
+				       G4bool       hStyle             = false,
+				       G4double     vhRatio            = 1.0,
+				       G4double     coilWidthFraction  = 0.65,
+				       G4double     coilHeightFraction = 0.8);
   
 protected:
   // geometry parameters
@@ -246,7 +255,7 @@ protected:
   /// geometrical parameters that may be required for the final geometry.
   virtual void CalculatePoleAndYoke(G4double     outerDiameter,
 				    BDSBeamPipe* beamPipe,
-				    G4double     order);
+				    G4int        order);
   
   /// Create pole for magnet of order N where npoles = Nx2. This contains some calcultion
   /// of geometrical parameters pertinent to the exact geometry being required.
@@ -288,10 +297,10 @@ protected:
 
   /// Create the solids, logical volumes for the end piece - everything
   /// but the placement. Also, create the geometry component now.
-  virtual void CreateEndPiece(G4String name);
+  virtual void CreateEndPiece(const G4String& name);
   
   /// Place the poles and yoke in the container volume.
-  virtual void PlaceComponents(G4String name,
+  virtual void PlaceComponents(const G4String& name,
 			       G4int    order);
 
   /// If we're building coils, place two coils for each pole.
@@ -303,20 +312,116 @@ protected:
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
 
+  /// Ensure the coil fractions lie with [0.05, 0.98] and if they're negative set them to
+  /// a provided default. -ve is assumed to require the default parameter and allows different
+  /// usages of the function (in C and H dipoles) to control the defaults.
+  void TestCoilFractions(G4double& coilWidthFraction,
+			 G4double& coilHeightFraction);
+  
+  /// Common task to both dipole construction routines. Clean up, test  inputs and check
+  /// if faces will intersect and warn user. Note reference to material pointer so it can
+  /// be fixed if needs be to the default.
+  void DipoleCommonPreConstruction(BDSBeamPipe*    beamPipe,
+				   const G4String& name,
+				   const G4double& angleIn,
+				   const G4double& angleOut,
+				   const G4double& length,
+				   G4double&       outerDiameter,
+				   G4Material*&    material,
+				   G4double&       vhRatio);
+
+  /// Common calculations to both dipole construction routines in one place. Pass by reference
+  /// to modify variables declared in each function.
+  void DipoleCalculations(const G4bool&      hStyle,
+			  const G4bool&      buildVertically,
+			  const BDSBeamPipe* beamPipe,
+			  const G4double&    length,
+			  const G4double&    outerDiameter,
+			  const G4double&    angleIn,
+			  const G4double&    angleOut,
+			  const G4double&    yokeThicknessFraction,
+			  const G4double&    vhRatio,
+			  const G4double&    coilWidthFraction,
+			  const G4double&    coilHeightFraction,
+			  G4double& bpHalfWidth,
+			  G4double& bpHalfHeight,
+			  G4double& poleHalfGap,
+			  G4double& poleWidth,
+			  G4double& poleHeight,
+			  G4double& yokeWidth,
+			  G4double& yokeHalfHeight,
+			  G4double& yokeThickness,
+			  G4double& yokeOverHang,
+			  G4double& coilWidth,
+			  G4double& coilHeightIn, // to avoid shadowing member variable
+			  G4double& coilToYokeGap,
+			  G4double& coilToPoleGap,
+			  G4double& sLength,
+			  G4double& containerSLength,
+			  G4double& intersectionRadius);
+
+  /// Calculate the placement offsets for each of the four coil placements. Common to both dipole
+  /// construction routines.
+  std::vector<G4ThreeVector> CalculateCoilDisplacements(G4double  poleHalfWidthIn,
+							G4double  poleHalfGapIn,
+							G4double  coilWidthIn,
+							G4double  coilHeightIn,
+							G4double  cDY,
+							G4double& coilDY);
+    
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
   /// and can optionally be built vertically.
-  BDSMagnetOuter* CreateDipole(G4String     name,
-			       G4double     length,
-			       BDSBeamPipe* beamPipe,
-			       G4double     outerDiameter,
-			       G4double     containerLength,
-			       G4double     angleIn,
-			       G4double     angleOut,
-			       G4Material*  material,
-			       G4bool       bendLeft,
-			       G4Colour*    colour,
-			       G4bool       buildVertically = false,
-			       G4bool       buildEndPiece   = true);
+  BDSMagnetOuter* CreateDipoleC(G4String     name,
+				G4double     length,
+				BDSBeamPipe* beamPipe,
+				G4double     outerDiameter,
+				G4double     containerLength,
+				G4double     angleIn,
+				G4double     angleOut,
+				G4Material*  material,
+				G4bool       yokeOnLeft,
+				G4Colour*    colour,
+				G4bool       buildVertically = false,
+				G4bool       buildEndPiece   = true,
+				G4double     vhRatio         = 1.0,
+				G4double     coilWidthFraction  = 0.65,
+				G4double     coilHeightFraction = 0.8);
+
+  /// Routine to construct an H shaped dipole magnet and can optionally be built vertically.
+  BDSMagnetOuter* CreateDipoleH(G4String     name,
+				G4double     length,
+				BDSBeamPipe* beamPipe,
+				G4double     outerDiameter,
+				G4double     containerLength,
+				G4double     angleIn,
+				G4double     angleOut,
+				G4Material*  material,
+				G4Colour*    colour,
+				G4bool       buildVertically = false,
+				G4bool       buildEndPiece   = true,
+				G4double     vhRatio         = 1.0,
+				G4double     coilWidthFraction  = 0.8,
+				G4double     coilHeightFraction = 0.8);
+
+  BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
+					   G4double    outerDiameter,
+					   G4bool      buildEndPiece,
+					   G4double    coilWidth,
+					   G4double    length,
+					   G4double    containerLength,
+					   G4double    sLength,
+					   G4double    angleIn,
+					   G4double    angleOut,
+					   G4Colour*   colour,
+					   G4Material* material,
+					   std::vector<G4ThreeVector>& coilDisps,
+					   G4bool      buildVertically,
+					   BDSExtent&  ext,
+					   G4double    poleHalfWidth,
+					   G4double    poleHalfGap,
+					   G4double    cDY,
+					   G4double    coilDY,
+					   G4double    intersectionRadius);
 };
 
 #endif

@@ -150,6 +150,19 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 	      G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	      if (willIntersect)
 		{placeBefore = false;}
+
+	      /*
+	      // 3d check
+	      auto thisEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
+								   currentIndex);
+
+	      G4bool willIntersect3D = endPieces->back()->Overlaps(thisEl);
+	      if (willIntersect3D)
+		{
+		  placeBefore = false;
+		  delete thisEl;
+		}
+	      */
 	    }
 	  if (placeBefore)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line

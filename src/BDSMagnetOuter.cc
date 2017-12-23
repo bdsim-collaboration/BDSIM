@@ -65,6 +65,12 @@ BDSMagnetOuter::BDSMagnetOuter(BDSGeometryExternal*  external,
   outputFaceNormal(G4ThreeVector(0,0,1))
 {;}
 
+BDSMagnetOuter::~BDSMagnetOuter()
+{
+  ClearMagnetContainer();
+  ClearEndPieces();
+}
+
 void BDSMagnetOuter::ClearMagnetContainer()
 {
   if (magnetContainer)
@@ -82,8 +88,16 @@ void BDSMagnetOuter::ClearEndPieces()
     {delete endPieceBefore; endPieceBefore = nullptr;}
 }
 
-BDSMagnetOuter::~BDSMagnetOuter()
+void BDSMagnetOuter::SetInputFaceNormal(const G4ThreeVector input)
 {
-  ClearMagnetContainer();
-  ClearEndPieces();
+  inputFaceNormal = input;
+  if (endPieceBefore)
+    {endPieceBefore->SetInputFaceNormal(input);}
+}
+
+void BDSMagnetOuter::SetOutputFaceNormal(const G4ThreeVector output)
+{
+  outputFaceNormal = output;
+  if (endPieceAfter)
+    {endPieceBefore->SetInputFaceNormal(output);}
 }
