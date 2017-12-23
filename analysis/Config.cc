@@ -155,11 +155,14 @@ void Config::ParseHistogramLine(const std::string& line)
 {
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
-  std::regex histNDim("^Histogram([1-3])D\\s+(.*)", std::regex_constants::icase);
+  std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
   
   if (std::regex_search(line, match, histNDim))
-    {ParseHistogram(match[2], std::stoi(match[1]));}
+    {
+      int nDim = std::stoi(match[1]);
+      ParseHistogram(line, nDim);
+    }
   else
     {
       std::string errString = "Invalid histogram type on line #" + std::to_string(lineCounter)
