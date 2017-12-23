@@ -70,10 +70,7 @@ execute_process(
     OUTPUT_VARIABLE git_file_list)
   separate_arguments(in_file_list UNIX_COMMAND "${git_file_list}")
   FOREACH(file ${in_file_list})
-    set(in_file "${CMAKE_SOURCE_DIR}/${file}")
-    set(out_file "${CMAKE_BINARY_DIR}/${file}")
-    # Copy if changed, and link to bdsim target
-    COPY_FILE_IF_CHANGED(${in_file} ${out_file} bdsimexec)
+    configure_file(${CMAKE_SOURCE_DIR}/${file} ${CMAKE_BINARY_DIR}/${file} COPYONLY)
   ENDFOREACH(file)
 ENDMACRO(copy_gdml_to_build)
 
