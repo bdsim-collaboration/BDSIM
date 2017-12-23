@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Analysis.hh"
+#include "BinGeneration.hh"
 #include "Config.hh"
 #include "HistogramDef.hh"
 #include "HistogramDef1D.hh"
@@ -96,8 +97,17 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 1:
       {
 	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
-	TH1D* h = new TH1D(name.c_str(), name.c_str(),
-			   d->xNBins, d->xLow, d->xHigh);
+	TH1D* h;
+	if (d->logarithmicX)
+          {// note ROOT requires len(binEdges) = nBins + 1
+	    std::vector<double> binEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
+	    h = new TH1D(name.c_str(), name.c_str(), d->xNBins, binEdges.data());
+          }
+	else
+          {
+	    h = new TH1D(name.c_str(), name.c_str(),
+			 d->xNBins, d->xLow, d->xHigh);
+          }
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms1D[name] = h;
@@ -106,9 +116,35 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 2:
       {
 	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
-	TH2D* h = new TH2D(name.c_str(), name.c_str(),
-			   d->xNBins, d->xLow, d->xHigh,
-			   d->yNBins, d->yLow, d->yHigh);
+	TH2D* h;
+	if (d->logarithmicX && d->logarithmicY)
+          {
+	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
+	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
+	    h = new TH2D(name.c_str(), name.c_str(),
+			 d->xNBins, xBinEdges.data(),
+			 d->yNBins, yBinEdges.data());
+          }
+	else if (d->logarithmicX)
+          {
+	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
+	    h = new TH2D(name.c_str(), name.c_str(),
+			 d->xNBins, xBinEdges.data(),
+			 d->yNBins, d->yLow, d->yHigh);
+          }
+	else if (d->logarithmicY)
+          {
+	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
+	    h = new TH2D(name.c_str(), name.c_str(),
+			 d->xNBins, d->xLow, d->xHigh,
+			 d->yNBins, yBinEdges.data());
+          }
+	else
+          {
+	    h = new TH2D(name.c_str(), name.c_str(),
+			 d->xNBins, d->xLow, d->xHigh,
+			 d->yNBins, d->yLow, d->yHigh);
+          }
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms2D[name] = h;
@@ -117,10 +153,36 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 3:
       {
 	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
-	TH3D* h = new TH3D(name.c_str(), name.c_str(),
-			   d->xNBins, d->xLow, d->xHigh,
-			   d->yNBins, d->yLow, d->yHigh,
-			   d->zNBins, d->zLow, d->zHigh);
+	TH3D* h;
+	if (d->logarithmicX || d->logarithmicY || d->logarithmicZ)
+	  {
+	    std::vector<double> xBinEdges;
+	    std::vector<double> yBinEdges;
+	    std::vector<double> zBinEdges;
+	    if (d->logarithmicX)
+	      {xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);}
+	    else
+	      {xBinEdges = RBDS::LinSpace(d->xLow, d->xHigh, d->xNBins);}
+	    if (d->logarithmicY)
+	      {yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);}
+	    else
+	      {yBinEdges = RBDS::LinSpace(d->yLow, d->yHigh, d->yNBins);}
+	    if (d->logarithmicZ)
+	      {zBinEdges = RBDS::LogSpace(d->zLow, d->zHigh, d->zNBins);}
+	    else
+	      {zBinEdges = RBDS::LinSpace(d->zLow, d->zHigh, d->zNBins);}
+	    h = new TH3D(name.c_str(), name.c_str(),
+			 d->xNBins, xBinEdges.data(),
+			 d->yNBins, yBinEdges.data(),
+			 d->zNBins, zBinEdges.data());
+	  }
+	else
+	  {
+	    h = new TH3D(name.c_str(), name.c_str(),
+			 d->xNBins, d->xLow, d->xHigh,
+			 d->yNBins, d->yLow, d->yHigh,
+			 d->zNBins, d->zLow, d->zHigh);
+	  }
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms3D[name] = h;
