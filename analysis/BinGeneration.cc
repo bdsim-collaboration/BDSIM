@@ -37,5 +37,18 @@ std::vector<double> RBDS::LogSpace(const double& start,
   std::generate_n(std::back_inserter(result), n, RBDS::Logspace<double>(realStart,realBase));
   return result;
 }
+
+std::vector<double> RBDS::LinSpace(const double& start,
+				   const double& stop,
+				   const int&    nBins,
+				   const bool    includeLastPoint)
+{
+  std::vector<double> result;
+  int n = includeLastPoint ? nBins+1 : nBins;
+  result.reserve(n);
+  double step = (stop - start) / (double)nBins;
+  int i = 0; // counter
+  for (double value = start; i < n; value += step, i++)
+    {result.push_back(value);}
   return result;
 }

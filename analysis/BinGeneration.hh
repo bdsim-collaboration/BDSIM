@@ -58,6 +58,11 @@ namespace RBDS
 			       const double  base = 10,
 			       const bool    includeLastPoint = true);
 
+  /// Linear range of values.
+  std::vector<double> LinSpace(const double& start,
+			       const double& stop,
+			       const int&    nBins,
+			       const bool    includeLastPoint = true);
 }
   
 #endif
