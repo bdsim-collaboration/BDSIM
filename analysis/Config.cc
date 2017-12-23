@@ -279,7 +279,8 @@ void Config::ParseLog(const std::string& definition,
   for (; iter != end; ++iter, ++index)
     {
       std::string res = (*iter).str();
-      *(results[index]) = res == "Log";
+      std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+      *(results[index]) = res == "log";
     }
 }
 
