@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTypeSafeEnum.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Version.hh"
 
 /**
  * @brief Type definition for integrator sets.
@@ -31,7 +32,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct integratorsettype_def
 {
-  enum type {geant4, bdsimone, bdsimtwo};
+  enum type {geant4, bdsimone, bdsimtwo
+#if G4VERSION_NUMBER > 1029
+	     ,
+	     geant4dp
+#endif
+  };
 };
 
 typedef BDSTypeSafeEnum<integratorsettype_def, int> BDSIntegratorSetType;
