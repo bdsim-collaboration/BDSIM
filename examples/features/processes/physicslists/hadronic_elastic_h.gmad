@@ -4,7 +4,7 @@ l1: line = (c1);
 
 use, l1;
 
-option, physicsList="hadronic_elastic_he";
+option, physicsList="hadronic_elastic_h";
 
 option, checkOverlaps=1;
 

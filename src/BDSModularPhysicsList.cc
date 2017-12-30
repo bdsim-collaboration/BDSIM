@@ -159,10 +159,10 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic",               &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_elastic",       &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_d",     &BDSModularPhysicsList::HadronicElasticD));
+  physicsConstructors.insert(std::make_pair("hadronic_elastic_h",     &BDSModularPhysicsList::HadronicElasticH));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_hp",    &BDSModularPhysicsList::HadronicElasticHP));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_lend",  &BDSModularPhysicsList::HadronicElasticLEND));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_xs",    &BDSModularPhysicsList::HadronicElasticXS));
-  physicsConstructors.insert(std::make_pair("hadronic_elastic_he",    &BDSModularPhysicsList::HadronicElasticHE));
   physicsConstructors.insert(std::make_pair("ion",                    &BDSModularPhysicsList::Ion));
   physicsConstructors.insert(std::make_pair("ion_binary",             &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("ion_elastic",            &BDSModularPhysicsList::IonElastic));
@@ -731,6 +731,16 @@ void BDSModularPhysicsList::HadronicElasticD()
     }
 }
 
+void BDSModularPhysicsList::HadronicElasticH()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["hadronic_elastic_h"])
+    {
+      constructors.push_back(new G4HadronHElasticPhysics());
+      physicsActivated["hadronic_elastic_h"] = true;
+    }
+}
+
 void BDSModularPhysicsList::HadronicElasticHP()
 {
   ConstructAllLeptons();
@@ -759,16 +769,6 @@ void BDSModularPhysicsList::HadronicElasticXS()
     {
       constructors.push_back(new G4HadronElasticPhysicsXS());
       physicsActivated["hadronic_elastic_xs"] = true;
-    }
-}
-
-void BDSModularPhysicsList::HadronicElasticHE()
-{
-  ConstructAllLeptons();
-  if (!physicsActivated["hadronic_elastic_he"])
-    {
-      constructors.push_back(new G4HadronHElasticPhysics());
-      physicsActivated["hadronic_elastic_he"] = true;
     }
 }
 
