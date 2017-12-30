@@ -1,0 +1,12 @@
+d1: drift, l=300*m, apertureType="circularvacuum", material="air", aper1=50*cm;
+
+l1: line = (d1);
+
+use, l1;
+
+option, physicsList="decay_spin";
+
+option, checkOverlaps=1;
+
+beam, particle="pi-",
+      energy=3*GeV;
