@@ -172,7 +172,12 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   if ((fileName.substr(0,1)) == "/")
     {fullPath = inputFilepath;}
   else // the main file has a relative path or just the file name, add bdsimpath
-    {fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + inputFilepath;}
+    {
+      if (inputFilepath == "./") // don't insert a ./ in path
+	{fullPath = BDSGlobalConstants::Instance()->BDSIMPath();}
+      else
+	{fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + inputFilepath;}
+    }
   
   if (fullPath.back() != '/') // ensure ends in '/'
     {fullPath += "/";} // only add if needed
