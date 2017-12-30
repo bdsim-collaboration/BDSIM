@@ -194,8 +194,8 @@ void BDSModularPhysicsList::Print()
 {
   for (const auto& physics : physicsActivated)
     {
-      G4String result = (physics.second ? "activated" : "inactive");
-      G4cout << std::setw(25) << ("\"" + physics.first + "\" : ") << result << G4endl;
+      G4String result = (physics.second ? "active" : "inactive");
+      G4cout << std::setw(27) << ("\"" + physics.first + "\": ") << result << G4endl;
     }
 }
 
