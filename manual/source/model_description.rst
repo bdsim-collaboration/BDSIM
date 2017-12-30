@@ -1512,48 +1512,78 @@ Integrators
 
 The following integrators are provided.  The majority are interfaces to Geant4 ones.
 *g4classicalrk4* is typically the recommended default and is very robust.
-*g4cakskarprkf45* is similar but slightly less CPU-intensive.
+*g4cakskarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
+onwards, *g4dormandprince745* is the default recommended by Geant4 (although not the
+BDSIM default currently). Note, any integrator capable of operating on EM fields
+will work on solely B or E fields.
 
-+----------------------+----------+------------------+
-|  **String**          | **B/EM** | **Time Varying** |
-+======================+==========+==================+
-| g4cashkarprkf45      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4classicalrk4       | EM       | Y                |
-+----------------------+----------+------------------+
-| g4constrk4           | B        | N                |
-+----------------------+----------+------------------+
-| g4expliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4impliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simpleheum         | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simplerunge        | EM       | Y                |
-+----------------------+----------+------------------+
-| g4exacthelixstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixexpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixheum          | B        | N                |
-+----------------------+----------+------------------+
-| g4heliximpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixmixedstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixsimplerunge   | B        | N                |
-+----------------------+----------+------------------+
-| g4nystromrk4         | B        | N                |
-+----------------------+----------+------------------+
-| g4rkg3stepper        | B        | N                |
-+----------------------+----------+------------------+
+We recommend looking at the source .hh files in the geant4 source code for an
+explanation of each as this is where they are documented. The source files can
+be found in `<geant4-source-dir>/source/geometry/magneticfield/include`.
+
++----------------------+----------+------------------+-----------------------------+
+|  **String**          | **B/EM** | **Time Varying** | Required Geant4 Version (>) |
++======================+==========+==================+=============================+
+| g4cashkarprkf45      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4classicalrk4       | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4constrk4           | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4expliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4impliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simpleheum         | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simplerunge        | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4exacthelixstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixexpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixheum          | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4heliximpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixmixedstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixsimplerunge   | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4nystromrk4         | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rkg3stepper        | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine23  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine45  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dolomcprik34       | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprince745   | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk56  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk78  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4tsitourasrk45      | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq1          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq2          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq3          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+
 
 Interpolators
 ^^^^^^^^^^^^^
 
-There are many algorithms which one can use to interpolate the field map data. The field
-may be queried at any point inside the volume, so an interpolator is required. A
-mathematical description as well as example plots are shown in :ref:`field-interpolators`.
+The field may be queried at any point inside the volume so an interpolator is required
+to provide a value of the field in between specified points in the field map.
+There are many algorithms that can be use to interpolate the field map data. A
+mathematical description of the ones provided in BDSIM as well as example plots
+are shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 

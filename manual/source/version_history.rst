@@ -8,7 +8,15 @@ New Features
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
 * Logarithmic binning of histograms in rebdsim.
+* Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
+* New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
 
+General
+-------
+
+* "bdsim" integrator set now maps to "bdsimtwo" integrator set.
+
+  
 V0.993 - 2017 / 12 / 11
 =======================
 

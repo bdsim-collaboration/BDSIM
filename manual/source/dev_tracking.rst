@@ -69,7 +69,7 @@ more sets can be added that mix and match routines as required.
 .. note:: "bdsim" is the default.
 
 .. note:: Prior to v0.96, the set described by "bdsimold" was the default, although
-	  in v0.95 it was labelled "bdsim".
+	  in v0.95 it was labelled "bdsimone".
 
 The specific details are described in _`Integrator Algorithms`.
 
@@ -180,6 +180,43 @@ The integrator set may be one of the following (case-insensitive):
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 +------------+-------------------------+--------------------------------+
+| geant4dp*  | Solenoid                | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Dipole                  | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Quadrupole              | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Sextupole               | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Octupole                | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Decapole                | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Thick Multipole         | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Muon Spoiler            | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | RF Cavity (EM)          | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | RF (E only)             | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | General Default         | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Skew Quadrupole         | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Skew Sextupole          | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Skew Octupole           | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Skew Decapole           | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Dipole Fringe           | BDSIM Dipole Fringe            |
+|            +-------------------------+--------------------------------+
+|            | Thin Multipole          | BDSIM Thin Multipole           |
++------------+-------------------------+--------------------------------+
+
+.. Note:: `*` "geant4dp" is only available when BDSIM is compiled against
+	  Geant 4.10.3 or higher.
  
 .. Note:: Both dipole fringe and thin multipole fields are *thin* elements
 	  and have no *thick* equivalent and therefore have no field that
