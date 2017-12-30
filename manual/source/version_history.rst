@@ -8,15 +8,17 @@ New Features
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
 * Logarithmic binning of histograms in rebdsim.
+* Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`, `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`, `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
 
 General
 -------
 
+* Physics list names are now consistently named with '_' between words. Old list names are still supported.
+* `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are recommended by Geant4 for high energy hadronic interactions.
 * "bdsim" integrator set now maps to "bdsimtwo" integrator set.
 
-  
 V0.993 - 2017 / 12 / 11
 =======================
 

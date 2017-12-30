@@ -7,7 +7,7 @@ option, beampipeRadius = 50 * cm,
         thresholdCutPhotons = 15 * GeV;
 
 !option,physicsList="FTFP_BERT";
-option,physicsList="hadronic";
+option,physicsList="qgsp_bert";
 option,ngenerate=10;
 
 !option, gammaToMuFe=1e4, annihiToMuFe=1e4;

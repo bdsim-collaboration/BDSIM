@@ -8,7 +8,7 @@ option, beampipeRadius = 10 * cm,
         prodCutElectrons=1000*m,
         prodCutPositrons=1000*m;
 	
-option,physicsList="hadronic";
+option,physicsList="ftfp_bert";
 
 ! 1 : all particles,
 ! 2 : primary 

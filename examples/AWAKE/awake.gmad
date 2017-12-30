@@ -1,4 +1,4 @@
-option,physicsList="hadronic optical";
+option,physicsList="ftfp_bert optical";
 !option,physicsList="";
 !option,physicsList="em";
 include options.gmad;
