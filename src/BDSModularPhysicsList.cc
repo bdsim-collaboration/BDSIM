@@ -510,6 +510,7 @@ void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
 
 void BDSModularPhysicsList::ChargeExchange()
 {
+  ConstructAllIons();
   if (!physicsActivated["charge_exchange"])
     {
       constructors.push_back(new G4ChargeExchangePhysics());
@@ -742,6 +743,7 @@ void BDSModularPhysicsList::HadronicElasticHP()
 
 void BDSModularPhysicsList::HadronicElasticLEND()
 {
+  BDS::CheckLowEnergyDataExists("hadronic_elastic_lend");
   ConstructAllLeptons();
   if (!physicsActivated["hadronic_elastic_lend"])
     {

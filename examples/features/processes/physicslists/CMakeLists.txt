@@ -4,7 +4,6 @@ simple_testing(physics_decay                  "--file=decay.gmad"               
 simple_testing(physics_decay_radioactive      "--file=decay_radioactive.gmad"      ${OVERLAP_CHECK})
 simple_testing(physics_em                     "--file=em.gmad"                     ${OVERLAP_CHECK})
 simple_testing(physics_em_extra               "--file=em_extra.gmad"               ${OVERLAP_CHECK})
-simple_testing(physics_em_low                 "--file=em_low.gmad"                 ${OVERLAP_CHECK})
 simple_testing(physics_em_penelope            "--file=em_penelope.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics_em_livermore           "--file=em_livermore.gmad"           ${OVERLAP_CHECK})
 simple_testing(physics_em_livermore_polarised "--file=em_livermore_polarised.gmad" ${OVERLAP_CHECK})
@@ -21,7 +20,6 @@ simple_testing(physics_hadronic_elastic       "--file=hadronic_elastic.gmad"    
 simple_testing(physics_hadronic_elastic_d     "--file=hadronic_elastic_d.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics_hadronic_elastic_he    "--file=hadronic_elastic_he.gmad"    ${OVERLAP_CHECK})
 simple_testing(physics_hadronic_elastic_hp    "--file=hadronic_elastic_hp.gmad"    ${OVERLAP_CHECK})
-simple_testing(physics_hadronic_elastic_lend  "--file=hadronic_elastic_lend.gmad"  ${OVERLAP_CHECK})
 simple_testing(physics_hadronic_elastic_xs    "--file=hadronic_elastic_xs.gmad"    ${OVERLAP_CHECK})
 simple_testing(physics_ion                    "--file=ion.gmad"                    ${OVERLAP_CHECK})
 simple_testing(physics_ion_elastic            "--file=ion_elastic.gmad"            ${OVERLAP_CHECK})
@@ -52,15 +50,18 @@ endif()
 simple_fail(physics_invalid          "--file=gibberish.gmad"        ${OVERLAP_CHECK})
 
 # these require the optional G4PARTICLEHPDATA set from the Geant4 website
-simple_fail(physics_ion_php          "--file=ion_php.gmad"          ${OVERLAP_CHECK})
-simple_fail(physics_ion_inclxx       "--file=ion_inclxx.gmad"       ${OVERLAP_CHECK})
-simple_fail(physics_ion_binary       "--file=ion_binary.gmad"       ${OVERLAP_CHECK})
+simple_fail(physics_hadronic_elastic_lend  "--file=hadronic_elastic_lend.gmad" ${OVERLAP_CHECK})
+simple_fail(physics_ion_php                "--file=ion_php.gmad"               ${OVERLAP_CHECK})
+simple_fail(physics_alias_ionphp           "--file=alias_ionphp.gmad"          ${OVERLAP_CHECK})
+simple_fail(physics_ion_inclxx             "--file=ion_inclxx.gmad"            ${OVERLAP_CHECK})
+simple_fail(physics_alias_ioninclxx        "--file=alias_ioninclxx.gmad"       ${OVERLAP_CHECK})
+simple_fail(physics_ion_binary             "--file=ion_binary.gmad"            ${OVERLAP_CHECK})
 
 #aliases
 simple_testing(physics_alias_cerenkov    "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics_alias_emlow       "--file=alias_emlow.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics_alias_hadronic_hp "--file=alias_hadronic_hp.gmad"  ${OVERLAP_CHECK})
 simple_testing(physics_alias_ionbinary   "--file=alias_ionbinary.gmad"    ${OVERLAP_CHECK})
-simple_testing(physics_alias_ioninclxx   "--file=alias_ioninclxx.gmad"    ${OVERLAP_CHECK})
-simple_testing(physics_alias_ionphp      "--file=alias_ionphp.gmad"       ${OVERLAP_CHECK})
+
+
 simple_testing(physics_alias_synchrad    "--file=alias_synchrad.gmad"     ${OVERLAP_CHECK})
