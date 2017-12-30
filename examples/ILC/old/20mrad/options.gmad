@@ -9,7 +9,7 @@ option, beampipeRadius = 6 * cm,
         thresholdCutPhotons = 1 * MeV;
 
 
-!option,physicsList="hadronic";
+!option,physicsList="ftfp_bert";
 option,physicsList="em";
 
 !option,stopTracks=1;
