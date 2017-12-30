@@ -1,3 +1,5 @@
-include b_field_3d.gmad;
+include fielddefinition.gmad;
 
 f1: integrator="g4dormandprince745";
+
+include common.gmad;
