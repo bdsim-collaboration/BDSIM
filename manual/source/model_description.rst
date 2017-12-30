@@ -211,7 +211,11 @@ This defines a drift element with name `d1` and a length of 5 metres. The defini
 
   d1: l=3*m, aper=0.1*m;
 
-Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres.
+
+.. Warning:: This only works for beam line elements and not other objects in GMAD syntax (such as a placement).
+
+An element can also be defined by copying an existing element::
 
   d2: d1, l=2*m;
 
