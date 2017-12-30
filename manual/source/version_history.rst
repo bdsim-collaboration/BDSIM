@@ -8,6 +8,13 @@ New Features
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
 * Logarithmic binning of histograms in rebdsim.
+* Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`, `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`, `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
+
+General
+-------
+
+* Physics list names are now consistently named with '_' between words. Old list names are still supported.
+* `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are recommended by Geant4 for high energy hadronic interactions.
 
 V0.993 - 2017 / 12 / 11
 =======================
