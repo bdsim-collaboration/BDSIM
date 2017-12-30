@@ -156,7 +156,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("em_4",                   &BDSModularPhysicsList::Em4));
   physicsConstructors.insert(std::make_pair("ftfp_bert",              &BDSModularPhysicsList::FTFPBERT));
   physicsConstructors.insert(std::make_pair("ftfp_bert_hp",           &BDSModularPhysicsList::FTFPBERTHP));
-  physicsConstructors.insert(std::make_pair("hadronic",               &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_elastic",       &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_d",     &BDSModularPhysicsList::HadronicElasticD));
   physicsConstructors.insert(std::make_pair("hadronic_elastic_h",     &BDSModularPhysicsList::HadronicElasticH));
@@ -190,9 +189,10 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   aliasToOriginal["cerenkov"]      = "cherenkov";
   aliasToOriginal["cutsandlimits"] = "cuts_and_limits";
   aliasToOriginal["em_low"]        = "em_penelope";
-  aliasToOriginal["hadronic_hp"]   = "qgsp_bert_hp";
-  aliasToOriginal["ioninclxx"]     = "ion_inclxx";
+  aliasToOriginal["hadronic"]      = "ftfp_bert";
+  aliasToOriginal["hadronic_hp"]   = "ftfp_bert_hp";
   aliasToOriginal["ionbinary"]     = "ion_binary";
+  aliasToOriginal["ioninclxx"]     = "ion_inclxx";
   aliasToOriginal["ionphp"]        = "ion_php";
   aliasToOriginal["spindecay"]     = "decay_spin";
   aliasToOriginal["synchrad"]      = "synch_rad";
