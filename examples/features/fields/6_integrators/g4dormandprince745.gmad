@@ -1,0 +1,3 @@
+include b_field_3d.gmad;
+
+f1: integrator="g4dormandprince745";
