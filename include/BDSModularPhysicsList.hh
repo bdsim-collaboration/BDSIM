@@ -176,10 +176,10 @@ private:
   void FTFPBERTHP();
   void HadronicElastic();
   void HadronicElasticD();
+  void HadronicElasticH();
   void HadronicElasticHP();
   void HadronicElasticLEND();
   void HadronicElasticXS();
-  void HadronicElasticHE();
   void Ion();
   void IonBinary();
   void IonElastic();
