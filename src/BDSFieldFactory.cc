@@ -78,6 +78,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+#include "G4Version.hh"
+
 // geant4 integrators
 #include "G4CashKarpRKF45.hh"
 #include "G4ClassicalRK4.hh"
@@ -94,6 +96,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RKG3_Stepper.hh"
 #include "G4SimpleHeum.hh"
 #include "G4SimpleRunge.hh"
+#if G4VERSION_NUMBER > 1029
+#include "G4BogackiShampine23.hh"
+#include "G4BogackiShampine45.hh"
+#include "G4DoLoMcPriRK34.hh"
+#include "G4DormandPrince745.hh"
+#include "G4DormandPrinceRK56.hh"
+#include "G4DormandPrinceRK78.hh"
+#include "G4TsitourasRK45.hh"
+#endif
+#if G4VERSION_NUMBER > 1039
+#include "G4RK547FEq1.hh"
+#include "G4RK547FEq2.hh"
+#include "G4RK547FEq3.hh"
+#endif
 
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
@@ -491,6 +507,20 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::g4impliciteuler:
     case BDSIntegratorType::g4simpleheum:
     case BDSIntegratorType::g4simplerunge:
+#if G4VERSION_NUMBER > 1029
+    case BDSIntegratorType::g4bogackishampine23:
+    case BDSIntegratorType::g4bogackishampine45:
+    case BDSIntegratorType::g4dolomcprirk34:
+    case BDSIntegratorType::g4dormandprince745:
+    case BDSIntegratorType::g4dormandprincerk56:
+    case BDSIntegratorType::g4dormandprincerk78:
+    case BDSIntegratorType::g4tsitourasrk45:
+#endif
+#if G4VERSION_NUMBER > 1039
+    case BDSIntegratorType::g4rk547feq1:
+    case BDSIntegratorType::g4rk547feq2:
+    case BDSIntegratorType::g4rk547feq3:
+#endif
       integrator = CreateIntegratorEM(info, (G4EquationOfMotion*)eqOfM); break;
     default:
       break; // returns nullptr;
@@ -518,6 +548,30 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
       integrator = new G4SimpleHeum(eqOfM, 8); break;
     case BDSIntegratorType::g4simplerunge:
       integrator = new G4SimpleRunge(eqOfM, 8); break;
+#if G4VERSION_NUMBER > 1029
+    case BDSIntegratorType::g4bogackishampine23:
+      {integrator = new G4BogackiShampine45(eqOfM, 8); break;}
+    case BDSIntegratorType::g4bogackishampine45:
+      {integrator = new G4BogackiShampine45(eqOfM, 8); break;}
+    case BDSIntegratorType::g4dolomcprirk34:
+      {integrator = new G4DoLoMcPriRK34(eqOfM, 8); break;}
+    case BDSIntegratorType::g4dormandprince745:
+      {integrator = new G4DormandPrince745(eqOfM, 8); break;}
+    case BDSIntegratorType::g4dormandprincerk56:
+      {integrator = new G4DormandPrinceRK56(eqOfM, 8); break;}
+    case BDSIntegratorType::g4dormandprincerk78:
+      {integrator = new G4DormandPrinceRK78(eqOfM, 8); break;}
+    case BDSIntegratorType::g4tsitourasrk45:
+      {integrator = new G4TsitourasRK45(eqOfM, 8); break;}
+#endif
+#if G4VERSION_NUMBER > 1039
+    case BDSIntegratorType::g4rk547feq1:
+      {integrator = new G4RK547FEq1(eqOfM, 8); break;}
+    case BDSIntegratorType::g4rk547feq2:
+      {integrator = new G4RK547FEq2(eqOfM, 8); break;}
+    case BDSIntegratorType::g4rk547feq3:
+      {integrator = new G4RK547FEq3(eqOfM, 8); break;}
+#endif
     case BDSIntegratorType::solenoid:
     case BDSIntegratorType::dipole:
     case BDSIntegratorType::quadrupole:
@@ -543,7 +597,24 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
 	  BDSIntegratorType::g4expliciteuler,
 	  BDSIntegratorType::g4impliciteuler,
 	  BDSIntegratorType::g4simpleheum,
-	  BDSIntegratorType::g4simplerunge};
+	  BDSIntegratorType::g4simplerunge
+#if G4VERSION_NUMBER > 1029
+	  ,
+	  BDSIntegratorType::g4bogackishampine23,
+	  BDSIntegratorType::g4bogackishampine45,
+	  BDSIntegratorType::g4dolomcprirk34,
+	  BDSIntegratorType::g4dormandprince745,
+	  BDSIntegratorType::g4dormandprincerk56,
+	  BDSIntegratorType::g4dormandprincerk78,
+	  BDSIntegratorType::g4tsitourasrk45
+#endif
+#if G4VERSION_NUMBER > 1039
+	  ,
+	  BDSIntegratorType::g4rk547feq1,
+	  BDSIntegratorType::g4rk547feq2,
+	  BDSIntegratorType::g4rk547feq3
+#endif
+	};
 	for (auto type : types)
 	  {G4cout << type << G4endl;}
 	exit(1);
