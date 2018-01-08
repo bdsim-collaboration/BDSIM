@@ -25,6 +25,7 @@ simple_testing(physics_ion                    "--file=ion.gmad"                 
 simple_testing(physics_ion_elastic            "--file=ion_elastic.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics_ion_elastic_qmd        "--file=ion_elastic_qmd.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics_muon                   "--file=muon.gmad"                   ${OVERLAP_CHECK})
+simple_testing(physics_optical                "--file=optical.gmad"                ${OVERLAP_CHECK})
 simple_testing(physics_qgsp_bert              "--file=qgsp_bert.gmad"              ${OVERLAP_CHECK})
 simple_testing_long(physics_qgsp_bert_hp      "--file=qgsp_bert_hp.gmad"           ${OVERLAP_CHECK})
 simple_testing(physics_qgsp_bic               "--file=qgsp_bic.gmad"               ${OVERLAP_CHECK})
@@ -36,10 +37,6 @@ if (G4_MINOR_VERSION GREATER 1)
   simple_testing(physics_cherenkov         "--file=cherenkov.gmad"          ${OVERLAP_CHECK})
   simple_testing(physics_em_gs             "--file=em_gs.gmad"              ${OVERLAP_CHECK})
   simple_testing(physics_decay_spin        "--file=decay_spin.gmad"         ${OVERLAP_CHECK})
-
-  if (G4_MINOR_VERSION GREATER 2 OR (G4_MINOR_VERSION EQUAL 2 AND G4_PATCH_LEVEL GREATER 2))
-    simple_testing(physics_optical         "--file=optical.gmad"            ${OVERLAP_CHECK})
-  endif()
 endif()
 
 if (G4_MINOR_VERSION GREATER 3)
@@ -50,18 +47,22 @@ endif()
 simple_fail(physics_invalid          "--file=gibberish.gmad"        ${OVERLAP_CHECK})
 
 # these require the optional G4PARTICLEHPDATA set from the Geant4 website
-simple_fail(physics_hadronic_elastic_lend  "--file=hadronic_elastic_lend.gmad" ${OVERLAP_CHECK})
-simple_fail(physics_ion_php                "--file=ion_php.gmad"               ${OVERLAP_CHECK})
-simple_fail(physics_alias_ionphp           "--file=alias_ionphp.gmad"          ${OVERLAP_CHECK})
-simple_fail(physics_ion_inclxx             "--file=ion_inclxx.gmad"            ${OVERLAP_CHECK})
-simple_fail(physics_alias_ioninclxx        "--file=alias_ioninclxx.gmad"       ${OVERLAP_CHECK})
-simple_fail(physics_ion_binary             "--file=ion_binary.gmad"            ${OVERLAP_CHECK})
+if($ENV{G4PARTICLEHPDATA})
+  simple_testing(physics_hadronic_elastic_lend  "--file=hadronic_elastic_lend.gmad" ${OVERLAP_CHECK})
+  if (G4_MINOR_VERSION GREATER 2 OR (G4_MINOR_VERSION EQUAL 2 AND G4_PATCH_LEVEL GREATER 2))
+    simple_testing(physics_ion_php                "--file=ion_php.gmad"               ${OVERLAP_CHECK})
+    simple_testing(physics_alias_ionphp           "--file=alias_ionphp.gmad"          ${OVERLAP_CHECK})
+  endif()
+  simple_testing(physics_ion_inclxx             "--file=ion_inclxx.gmad"            ${OVERLAP_CHECK})
+  simple_testing(physics_alias_ioninclxx        "--file=alias_ioninclxx.gmad"       ${OVERLAP_CHECK})
+  simple_testing(physics_ion_binary             "--file=ion_binary.gmad"            ${OVERLAP_CHECK})
+  simple_testing(physics_alias_ionbinary        "--file=alias_ionbinary.gmad"       ${OVERLAP_CHECK})
+endif()
 
 #aliases
 simple_testing(physics_alias_cerenkov    "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics_alias_emlow       "--file=alias_emlow.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics_alias_hadronic_hp "--file=alias_hadronic_hp.gmad"  ${OVERLAP_CHECK})
-simple_testing(physics_alias_ionbinary   "--file=alias_ionbinary.gmad"    ${OVERLAP_CHECK})
 
 
 simple_testing(physics_alias_synchrad    "--file=alias_synchrad.gmad"     ${OVERLAP_CHECK})
