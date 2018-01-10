@@ -167,6 +167,16 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
+# test non valid extension
+add_test(gmad-extend-nonvalid ${gmadBinary} extendnonvalid.gmad)
+set_tests_properties(gmad-extend-nonvalid PROPERTIES WILL_FAIL 1)
+
+# test field extension
+add_test(gmad-extend-field ${gmadBinary} extendfield.gmad)
+
+# test material extension
+add_test(gmad-extend-material ${gmadBinary} extendmaterial.gmad)
+
 # test string (issue #126)
 add_test(gmad-string ${gmadBinary} string.gmad)
 
