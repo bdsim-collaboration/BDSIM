@@ -250,10 +250,16 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
          }
      }
-     | VARIABLE ':' error_noparams
+     | VARIABLE ':' component
      {
          if(execute) {
              yyerror("ERROR: Element needs parameters");
+         }
+     }
+     | VARIABLE ':' object_noparams
+     {
+         if(execute) {
+             yyerror("ERROR: Object needs parameters");
          }
      }
      | symdef
@@ -307,42 +313,16 @@ query : QUERY ',' query_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
 
-// every element needs parameters
-error_noparams : DRIFT
-               | RF
-               | SBEND
-               | RBEND
-               | VKICKER
-               | HKICKER
-               | KICKER
-               | TKICKER
-               | QUADRUPOLE
-               | SEXTUPOLE
-               | OCTUPOLE
-               | DECAPOLE
-               | MULTIPOLE
-               | THINMULT
-               | SOLENOID
-               | ECOL
-               | RCOL
-               | MUSPOILER
-               | SHIELD
-               | DEGRADER
-               | LASER
-               | SCREEN
-               | AWAKESCREEN
-               | AWAKESPECTROMETER
-               | TRANSFORM3D
-               | ELEMENT
-               | MATERIAL
-               | ATOM
-               | REGION
-               | PLACEMENT
-               | FIELD
-               | CAVITYMODEL
-               | QUERY
-               | TUNNEL
-               | XSECBIAS
+// every object needs parameters
+object_noparams : MATERIAL
+                | ATOM
+                | REGION
+                | PLACEMENT
+                | FIELD
+                | CAVITYMODEL
+                | QUERY
+                | TUNNEL
+                | XSECBIAS
 
 newinstance : VARIABLE ',' parameters
             {
