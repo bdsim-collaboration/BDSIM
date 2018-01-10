@@ -324,9 +324,10 @@ error_noparams : DRIFT
                | THINMULT
                | SOLENOID
                | ECOL
+               | RCOL
                | MUSPOILER
                | SHIELD
-               | RCOL
+               | DEGRADER
                | LASER
                | SCREEN
                | AWAKESCREEN
