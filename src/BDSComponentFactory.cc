@@ -604,13 +604,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
-  G4double defaultOuterDiameter = 0.3 * BDSGlobalConstants::Instance()->OuterDiameter();
+  auto bpInf = PrepareBeamPipeInfo(element);
+  
+  // Decide on a default outerDiameter for the kicker - try 0.3x ie smaller kicker
+  // than typical magnet, but if that would not fit around the beam pipe - go back to
+  // the default outerDiameter. Code further along will warn if it still doesn't fit.
+  const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
+  G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
+  BDSExtent bpExt = bpInf->IndicativeExtent();
+  G4double bpDX = bpExt.DX();
+  G4double bpDY = bpExt.DY();
+  if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
+    {defaultOuterDiameter = globalDefaultOD;}
+  else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
+    {defaultOuterDiameter = globalDefaultOD;}
+  
   auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
 		       chordLength,
-		       PrepareBeamPipeInfo(element),
+		       bpInf,
 		       magOutInf,
 		       vacuumField);
 }
