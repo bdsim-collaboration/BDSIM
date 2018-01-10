@@ -135,149 +135,133 @@ atomic_stmt :
 
 // instantiate an object
 decl : VARIABLE ':' component_with_params
-       {
-	 if(execute) {
-	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << static_cast<ElementType>($3) << std::endl;
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-      | VARIABLE ':' MARKER
-       {
-	 if(execute) {
-	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << ElementType::_MARKER << std::endl;
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_MARKER);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << static_cast<ElementType>($3) << std::endl;
+             // check parameters and write into element table
+             Parser::Instance()->write_table($1,static_cast<ElementType>($3));
+             Parser::Instance()->ClearParams();
+         }
+     }
+     | VARIABLE ':' MARKER
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << ElementType::_MARKER << std::endl;
+             // check parameters and write into element table
+             Parser::Instance()->write_table($1,ElementType::_MARKER);
+             Parser::Instance()->ClearParams();
+         }
+     }
      | VARIABLE ':' line 
-       {
-	 if(execute)
-	   {
-	     // copy tmp_list to params
-	     Parser::Instance()->write_table($1,ElementType::_LINE,true);
-	   }
-       }
+     {
+         if(execute) {
+             // copy tmp_list to params
+             Parser::Instance()->write_table($1,ElementType::_LINE,true);
+         }
+     }
      | VARIABLE ':' newinstance
-       {
-         if(execute)
-	   {
-	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << *($1) << " : " << type << std::endl;
-	     if(type != ElementType::_NONE)
-	       {
-		 Parser::Instance()->write_table($1,type);
-	       }
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-       | VARIABLE ':' parameters
-       {
-	 if(execute)
-	   {
-	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << *($1) << std::endl;
-	     Parser::Instance()->OverwriteElement(*$1);
-	   }
-       }
+     {
+         if(execute) {
+             ElementType type = static_cast<ElementType>($3);
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << *($1) << " : " << type << std::endl;
+             if(type != ElementType::_NONE) {
+                 Parser::Instance()->write_table($1,type);
+             }
+             Parser::Instance()->ClearParams();
+         }
+     }
+     | VARIABLE ':' parameters
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << *($1) << std::endl;
+             Parser::Instance()->OverwriteElement(*$1);
+         }
+     }
      | VARIABLE ':' atom
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
-	     Parser::Instance()->SetValue<Atom>("name",*($1));
-	     Parser::Instance()->Add<Atom>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
+             Parser::Instance()->SetValue<Atom>("name",*($1));
+             Parser::Instance()->Add<Atom>();
+         }
+     }
      | VARIABLE ':' material
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
-	     Parser::Instance()->SetValue<Material>("name",*($1));
-	     Parser::Instance()->Add<Material>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
+             Parser::Instance()->SetValue<Material>("name",*($1));
+             Parser::Instance()->Add<Material>();
+         }
+     }
      | VARIABLE ':' tunnel
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
-	     Parser::Instance()->SetValue<Tunnel>("name",*($1));
-	     Parser::Instance()->Add<Tunnel>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
+             Parser::Instance()->SetValue<Tunnel>("name",*($1));
+             Parser::Instance()->Add<Tunnel>();
+         }
+     }
      | VARIABLE ':' region
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : region" << std::endl;
-	     Parser::Instance()->SetValue<Region>("name",*($1));
-	     Parser::Instance()->Add<Region>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : region" << std::endl;
+             Parser::Instance()->SetValue<Region>("name",*($1));
+             Parser::Instance()->Add<Region>();
+         }
+     }
      | VARIABLE ':' placement
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : placement" << std::endl;
-	     Parser::Instance()->SetValue<Placement>("name",*($1));
-	     Parser::Instance()->Add<Placement>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : placement" << std::endl;
+             Parser::Instance()->SetValue<Placement>("name",*($1));
+             Parser::Instance()->Add<Placement>();
+         }
+     }
      | VARIABLE ':' query
-       {
-	 if(execute)
-	   {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : query" << std::endl;
-	     Parser::Instance()->SetValue<Query>("name", *($1));
-	     Parser::Instance()->Add<Query>();
-	   }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : query" << std::endl;
+             Parser::Instance()->SetValue<Query>("name", *($1));
+             Parser::Instance()->Add<Query>();
+         }
+     }
      | VARIABLE ':' field
-       {
-	 if(execute)
-	   {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : field" << std::endl;
-	     Parser::Instance()->SetValue<Field>("name", *($1));
-	     Parser::Instance()->Add<Field>();
-	   }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : field" << std::endl;
+             Parser::Instance()->SetValue<Field>("name", *($1));
+             Parser::Instance()->Add<Field>();
+         }
+     }
      | VARIABLE ':' cavitymodel
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
-	     Parser::Instance()->SetValue<CavityModel>("name",*($1));
-	     Parser::Instance()->Add<CavityModel>();
-           }
-       }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
+             Parser::Instance()->SetValue<CavityModel>("name",*($1));
+             Parser::Instance()->Add<CavityModel>();
+         }
+     }
      | VARIABLE ':' xsecbias
-       {
-         if(execute)
-           {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
-	     Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
-	     Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
-           }
-       }
-      | VARIABLE ':' error_noparams
-      {
-	if(execute)
-	  {
-	    yyerror("ERROR: Element needs parameters");
-	  }
-      }
-      | symdef
-      {
-	if(execute)
-	  {
-	    std::string errorstring = "ERROR: " + $1->GetName() + " is already defined or a reserved name or function\n";
-	    yyerror(errorstring.c_str());
-	  }
-      }
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
+             Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
+             Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
+         }
+     }
+     | VARIABLE ':' error_noparams
+     {
+         if(execute) {
+             yyerror("ERROR: Element needs parameters");
+         }
+     }
+     | symdef
+     {
+         if(execute) {
+             std::string errorstring = "ERROR: " + $1->GetName() + " is already defined or a reserved name or function\n";
+             yyerror(errorstring.c_str());
+         }
+     }
 
 symdef : FUNC ':'   { $$ = $1; }
        | NUMVAR ':' { $$ = $1; }
