@@ -170,11 +170,12 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->ClearParams();
          }
      }
-     | VARIABLE ':' parameters
+     // extend an existing object
+     | VARIABLE ':' extend_options
      {
          if(execute) {
-             if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << *($1) << std::endl;
-             Parser::Instance()->OverwriteElement(*$1);
+             if(ECHO_GRAMMAR) std::cout << "edit : EXTENDING   -- " << *($1) << std::endl;
+             Parser::Instance()->Overwrite(*$1);
          }
      }
      | VARIABLE ':' atom
@@ -387,21 +388,20 @@ parameters_extend : /* nothing */
                   | ',' parameters
 
 parameters: paramassign '=' aexpr parameters_extend
-            {
-	      if(execute)
-		Parser::Instance()->SetValue<Parameters>(*($1),$3);
-	    }
+          {
+              if(execute)
+                  Parser::Instance()->SetValue<Parameters>(*($1),$3);
+          }
           | paramassign '=' vecexpr parameters_extend
-            {
-	      if(execute) 
-		Parser::Instance()->SetValue<Parameters>(*($1),$3);
-	    }
+          {
+              if(execute) 
+                  Parser::Instance()->SetValue<Parameters>(*($1),$3);
+          }
           | paramassign '=' string parameters_extend
-            {
-	      if(execute) {
-		Parser::Instance()->SetValue<Parameters>(*($1),*$3);
-	      }
-	    }
+          {
+              if(execute)
+                  Parser::Instance()->SetValue<Parameters>(*($1),*$3);
+          }
 
 line : LINE '=' '(' element_seq ')'
 
@@ -697,7 +697,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION ',' option_parameters
-	| BEAM ',' beam_parameters
+        | BEAM   ',' beam_parameters
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1033,12 +1033,31 @@ beam_parameters : paramassign '=' aexpr beam_parameters_extend
 			Parser::Instance()->SetValue<Beam>(*$1,*$3);
 		    }
 
+extend_options_extend : /* nothing */
+                      | ',' extend_options
+
+extend_options : paramassign '=' aexpr extend_options_extend
+               {
+                   if (execute)
+                       Parser::Instance()->ExtendValue(*($1),$3)
+               }
+               | paramassign '=' vecexpr parameters_extend
+               {
+                   if(execute) 
+                       Parser::Instance()->ExtendValue(*($1),$3)
+               }
+               | paramassign '=' string beam_parameters_extend
+               {
+                   if (execute)
+                       Parser::Instance()->ExtendValue(*($1),*$3)
+               }
+
 %%
 
 int yyerror(const char *s)
 {
   std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
-  std::cout << "symbol '" << yytext << "' unexpected" << std::endl;
+  std::cout << "symbol '" << yytext << "' unexpected (misspelt or semicolon forgotten?)" << std::endl;
   exit(1);
 }
 

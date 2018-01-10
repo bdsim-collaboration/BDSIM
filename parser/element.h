@@ -1,6 +1,8 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include <iomanip>
+#include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -142,7 +144,15 @@ namespace GMAD
     std::string mountmaterial;  ///< for AWAKE spectrometer
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
+
+    /// Override colour for certain items
+    std::string colour;
   
+    /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
+    /// field. This allows us to distinguish later on.
+    /// NOTE: this is not used in Params.
+    bool   angleSet;
+
     /// in case the element is a list itself (line)
     std::list <Element> *lst;
 
@@ -165,15 +175,10 @@ namespace GMAD
     void set(const Parameters& params);
     void set(const Parameters& params,std::string nameIn, ElementType typeIn);
     ///@}
-
-    /// Override colour for certain items
-    std::string colour;
-
-    /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
-    /// field. This allows us to distinguish later on.
-    /// NOTE: this is not used in Params.
-    bool   angleSet;
-  
+    /// Set methods by property name and value
+    template <typename T>
+      void set_value(std::string property, T value);
+ 
     /// constructor
     Element();
 
@@ -187,6 +192,22 @@ namespace GMAD
     /// returns 'official' member name for property
     std::string getPublishedName(std::string name)const;
   };
+
+  template <typename T>
+    void Element::set_value(std::string property, T value)
+    {
+#ifdef BDSDEBUG
+      std::cout << "element> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+#endif
+      // member method can throw runtime_error, catch and exit gracefully
+      try {
+        Published<Element>::set(this,property,value);
+      }
+      catch(std::runtime_error) {
+        std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
+        exit(1);
+      }
+    }
 }
  
 #endif

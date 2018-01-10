@@ -623,12 +623,69 @@ void Parser::ClearParams()
   params.flush();
 }
 
-void Parser::OverwriteElement(const std::string& elementName)
+void Parser::Overwrite(const std::string& objectName)
 {
-  Element& element = find_element(elementName);
-  // add and overwrite properties if set
-  element.set(params);
-  ClearParams();
+  // find object and set values
+
+  // possible object types are:
+  // element, atom, field, material, physicsbiasing, placement, query, region, tunnel, cavitymodel
+  bool extended = false;
+  auto element_it = element_list.find(objectName);
+  if (element_it != element_list.end()) {
+    ExtendObject(*element_it);
+    extended = true;
+  } else {
+    auto it = xsecbias_list.find(objectName);
+    if (it != xsecbias_list.end() ) {
+      ExtendObject(*it);
+      extended = true;
+    }
+  }
+  // vectors
+  if (extended == false) {
+    if (      (extended = FindAndExtend<Atom>       (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Field>      (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Material>   (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Placement>  (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Query>      (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Region>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Tunnel>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
+  }
+
+  if (extended==false) {
+    std::cerr << "parser.h> Error: object \"" << objectName << "\" has not been defined and can't be extended." << std::endl;
+    exit(1);
+  }
+
+  // clear maps
+  extendedNumbers.clear();
+  extendedStrings.clear();
+  extendedVectors.clear();
+}
+
+template <class C>
+bool Parser::FindAndExtend(const std::string& objectName)
+{
+  auto vec = GetList<C>();
+  for (auto it = vec.begin(); it!=vec.end(); ++it) {
+    if ((*it).name == objectName) {
+      ExtendObject(*it);
+      return true;
+    }
+  }
+  return false;
+}
+
+template<class C>
+void Parser::ExtendObject(C& object)
+{
+  for (auto option : extendedNumbers)
+    {object.set_value(option.first, option.second);}
+  for (auto option : extendedStrings)
+    {object.set_value(option.first, option.second);}
+  for (auto option : extendedVectors)
+    {object.set_value(option.first, option.second);}
 }
 
 void Parser::AddVariable(std::string* name)
@@ -720,5 +777,15 @@ namespace GMAD {
   PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
 
   template<>
-  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
+  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing, FastList<PhysicsBiasing>>(){return xsecbias_list;}
+
+  template<>
+  void Parser::ExtendValue(std::string property, double value)
+  {extendedNumbers[property]=value;}
+  template<>
+  void Parser::ExtendValue(std::string property, std::string value)
+  {extendedStrings[property]=value;}
+  template<>
+  void Parser::ExtendValue(std::string property, Array* value)
+  {extendedVectors[property]=value;}
 }
