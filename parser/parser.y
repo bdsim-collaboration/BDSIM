@@ -1020,17 +1020,17 @@ extend_options_extend : /* nothing */
 extend_options : paramassign '=' aexpr extend_options_extend
                {
                    if (execute)
-                       Parser::Instance()->ExtendValue(*($1),$3)
+                       Parser::Instance()->ExtendValue(*($1),$3);
                }
                | paramassign '=' vecexpr parameters_extend
                {
                    if(execute) 
-                       Parser::Instance()->ExtendValue(*($1),$3)
+                       Parser::Instance()->ExtendValue(*($1),$3);
                }
                | paramassign '=' string beam_parameters_extend
                {
                    if (execute)
-                       Parser::Instance()->ExtendValue(*($1),*$3)
+                       Parser::Instance()->ExtendValue(*($1),*$3);
                }
 
 %%
