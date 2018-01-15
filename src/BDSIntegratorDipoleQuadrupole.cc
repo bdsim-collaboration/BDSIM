@@ -70,8 +70,8 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
   // if no quadrupole component, simply return
-  //if (!BDS::IsFinite(bPrime))
-  //  {return;}
+  if (!BDS::IsFinite(bPrime))
+    {return;}
 
   // If the particle might spiral, we return and just use the dipole only component
   // Aimed at particles of much lower momentum than the design energy.
@@ -132,18 +132,21 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double momInMag = momIn.mag();
   //G4double delta    = eqOfM->FCof() / momInMag;
   G4double rho      = dipole->RadiusOfHelix();
-  
+
+  G4double nomMomentum = std::abs(bRho * eqOfM->FCof());
+  G4double deltaPoverP = (momInMag - nomMomentum) / nomMomentum;
+
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double K1    = std::abs(eqOfM->FCof())*bPrime/momInMag;
+  G4double K1  = std::abs(eqOfM->FCof())*bPrime/momInMag;
 
   G4double kx2 = pow(1.0 / rho,2) + K1;
   G4double kx  = sqrt(std::abs(kx2));
   G4double ky2 = -K1;
   G4double ky  = sqrt(std::abs(ky2));
-
+  //h = 1000;
   G4double kxl = kx * h;
   G4double kyl = ky * h;
 
@@ -162,8 +165,10 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double yp1 = yp;
   G4double zp1 = zp;
 
-  G4double X11,X12,X21,X22 = 0;
+  G4double X11,X12,X16,X21,X22,X26 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
+
+  G4double beta = 1;
 
   if (focussing)
     {//focussing
@@ -171,7 +176,9 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      
+      X16 = (-(1.0/rho) / kx2) * (1 - cos(kxl));
+      X26 = -(1.0/rho) * X12;
+
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
       Y21= std::abs(ky2)*Y12;
@@ -180,9 +187,11 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   else
     {// defocussing
       X11= cosh(kxl);
-      X12= sinh(kxl)/kx2;
+      X12= sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
+      X16 = -(1.0/rho) / kx2 * (1 - cosh(kxl));
+      X26 = (1.0/rho) * X12;
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;
@@ -190,8 +199,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       Y22= Y11;
     }
       
-  x1  = X11*x0 + X12*xp;    
-  xp1 = X21*x0 + X22*xp;
+  x1  = X11*x0 + X12*xp + X16*deltaPoverP;
+  xp1 = X21*x0 + X22*xp + X26*deltaPoverP;
   
   y1  = Y11*y0 + Y12*yp;    
   yp1 = Y21*y0 + Y22*yp;
