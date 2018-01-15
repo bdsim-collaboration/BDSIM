@@ -102,7 +102,9 @@ Parameters::Parameters()
   setMap["theta"] = false;
   setMap["psi"] = false;
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
-  setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
+  setMap["bias"]         = false;
+  setMap["biasMaterial"] = false;
+  setMap["biasVacuum"]   = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
   setMap["samplerRadius"] = false;
