@@ -584,15 +584,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
 
-      G4String bias;
-      if (bs.empty())
-	{// no bias but default specified
-	  bias = defaultBias;
-	}
-      else
-	{// bias specified - look it up and ignore default
-	  bias = bs;
-	}
+      // if no bias, use default else copy name of bias to use
+      G4String bias = bs.empty() ? defaultBias : bs;
       
       auto result = biasObjectList.find(bias);
       if (result == biasObjectList.end())
