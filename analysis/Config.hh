@@ -117,6 +117,10 @@ public:
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string line, const int nDim);
 
+  /// Check whether a histogram definition word contains the world 'simple' and
+  /// if so, it's not a per-entry histogram.
+  void ParsePerEntry(const std::string& name, bool& perEntry) const;
+
   /// Parse whether each dimension is log or linear.
   void ParseLog(const std::string& definition,
 		bool& xLog,
