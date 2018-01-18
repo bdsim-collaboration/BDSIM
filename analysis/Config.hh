@@ -128,7 +128,9 @@ public:
 		bool& zLog) const;
 
   /// Update the vector of required branches for a particular tree to be
-  /// activated for analysis.
+  /// activated for analysis. Note this is not required for simple histograms
+  /// that will be used with TTree->Draw(). Only per-entry histograms require
+  /// loading the data.
   void UpdateRequiredBranches(const HistogramDef* def);
 
   /// Update the vector of required branches for a particular tree to be

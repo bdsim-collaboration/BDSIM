@@ -146,8 +146,8 @@ void Config::ParseInputFile()
     }
   if (optionsBool.at("mergehistograms"))
     {
-      branches["Event."].push_back("Histos.");
-      branches["Run."].push_back("Histos.");
+      branches["Event."].push_back("Histos");
+      branches["Run."].push_back("Histos");
     }
 }
 
