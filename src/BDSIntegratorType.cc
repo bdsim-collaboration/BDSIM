@@ -31,8 +31,9 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::none,                 "none"},
       {BDSIntegratorType::teleporter,           "teleporter"},
       {BDSIntegratorType::solenoid,             "solenoid"},
-      {BDSIntegratorType::dipole,               "dipole"},
-      {BDSIntegratorType::dipole2,              "dipole2"},
+      {BDSIntegratorType::dipolerodrigues,      "dipolerodrigues"},
+      {BDSIntegratorType::dipolerodrigues2,     "dipolerodrigues2"},
+      {BDSIntegratorType::dipolematrix,         "dipolematrix"},
       {BDSIntegratorType::quadrupole,           "quadrupole"},
       {BDSIntegratorType::sextupole,            "sextupole"},
       {BDSIntegratorType::octupole,             "octupole"},
@@ -65,8 +66,9 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["none"]                 = BDSIntegratorType::none;
   types["teleporter"]           = BDSIntegratorType::teleporter;
   types["solenoid"]             = BDSIntegratorType::solenoid;
-  types["dipole"]               = BDSIntegratorType::dipole;
-  types["dipole2"]              = BDSIntegratorType::dipole2;
+  types["dipolerodrigues"]      = BDSIntegratorType::dipolerodrigues;
+  types["dipolerodrigues2"]     = BDSIntegratorType::dipolerodrigues2;
+  types["dipolematrix"]         = BDSIntegratorType::dipolematrix;
   types["quadrupole"]           = BDSIntegratorType::quadrupole;
   types["sextupole"]            = BDSIntegratorType::sextupole;
   types["octupole"]             = BDSIntegratorType::octupole;

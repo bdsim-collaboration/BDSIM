@@ -447,9 +447,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     {
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
-    case BDSIntegratorType::dipole:
+    case BDSIntegratorType::dipolerodrigues:
       integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
-    case BDSIntegratorType::dipole2:
+    case BDSIntegratorType::dipolerodrigues2:
       integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
@@ -519,7 +519,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
     case BDSIntegratorType::g4simplerunge:
       integrator = new G4SimpleRunge(eqOfM, 8); break;
     case BDSIntegratorType::solenoid:
-    case BDSIntegratorType::dipole:
+    case BDSIntegratorType::dipolerodrigues:
     case BDSIntegratorType::quadrupole:
     case BDSIntegratorType::sextupole:
     case BDSIntegratorType::octupole:
