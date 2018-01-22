@@ -85,7 +85,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   // elements
   if (!BDS::IsFinite(angle))
     {      
-      BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+      BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   intType,
@@ -162,7 +162,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 
   // field recipe for one segment of the sbend
   G4String centralName = baseName + "_even_ang";
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+    BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* semiVacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   intType,
@@ -367,8 +367,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   magnetOuterInfo->name = name;
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
-  
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+
+  BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
@@ -503,7 +503,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   (*st)["length"] = centralArcLength;
   (*st)["angle"]  = centralAngle;
 
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+  BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
@@ -618,4 +618,17 @@ G4double BDS::CalculateFringeFieldCorrection(G4double rho,
   G4double gOverRho = 2 * hgap / rho;
   G4double corrValue = fint * gOverRho * (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
   return corrValue;
+}
+
+BDSIntegratorType BDS::GetDipoleIntegratorType(const BDSIntegratorSet* integratorSet,
+                                               const Element*          element)
+{
+  // default is dipole integrator
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+
+  // check for finite k1 and change integrator type if needed
+  if (BDS::IsFinite(element->k1))
+    {intType = integratorSet->Integrator(BDSFieldType::dipolequadrupole);}
+
+  return intType;
 }
