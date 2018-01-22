@@ -70,6 +70,11 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["calculateoptics"]   = false;
   optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
+  optionsBool["perEntryBeam"]      = false;
+  optionsBool["perEntryEvent"]     = false;
+  optionsBool["perEntryRun"]       = false;
+  optionsBool["perEntryOption"]    = false;
+  optionsBool["perEntryModel"]     = false;
 
   optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";
@@ -143,11 +148,13 @@ void Config::ParseInputFile()
     {
       allBranchesActivated = true;
       optionsBool["processsamplers"] = true;
+      optionsBool["perEntryEvent"]   = true;
     }
   if (optionsBool.at("mergehistograms"))
     {
       branches["Event."].push_back("Histos");
       branches["Run."].push_back("Histos");
+      optionsBool["perEntryEvent"]   = true;
     }
 }
 
@@ -206,6 +213,13 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   std::string treeName  = results[1];
   if (InvalidTreeName(treeName))
     {throw std::string("Invalid tree name \"" + treeName + "\"");}
+
+  if (perEntry)
+    {
+      std::string treeNameWithoutPoint = treeName; // make copy to modify
+      treeNameWithoutPoint.pop_back();             // delete last character
+      optionsBool["perEntry"+treeNameWithoutPoint] = true;
+    }
   
   std::string histName  = results[2];
   std::string bins      = results[3];

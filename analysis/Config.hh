@@ -98,6 +98,13 @@ public:
   inline bool   ProcessAllTrees() const           {return optionsBool.at("processalltrees");}
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
   /// @}
+  /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().
+  inline bool   PerEntryBeam()   const {return optionsBool.at("perEntryBeam");}
+  inline bool   PerEntryEvent()  const {return optionsBool.at("perEntryEvent");}
+  inline bool   PerEntryRun()    const {return optionsBool.at("perEntryRun");}
+  inline bool   PerEntryOption() const {return optionsBool.at("perEntryOption");}
+  inline bool   PerEntryModel()  const {return optionsBool.at("perEntryModel");}
+  /// @}
   
  protected:
   /// Private constructor for singleton pattern.
