@@ -78,34 +78,34 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  bool allBranches = Config::Instance()->AllBranchesToBeActivated();
-  const RBDS::BranchMap* branchesToActivate = &(Config::Instance()->BranchesToBeActivated());
-
-  std::vector<Analysis*> analyses;
-
-  bool debug = Config::Instance()->Debug();
-  DataLoader dl = DataLoader(Config::Instance()->InputFilePath(),
+  Config* config = Config::Instance();
+  
+  bool allBranches = config->AllBranchesToBeActivated();
+  const RBDS::BranchMap* branchesToActivate = &(config->BranchesToBeActivated());
+  
+  bool debug = config->Debug();
+  DataLoader dl = DataLoader(config->InputFilePath(),
 			     debug,
-			     Config::Instance()->ProcessSamplers(),
+			     config->ProcessSamplers(),
 			     allBranches,
 			     branchesToActivate);
 
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(), dl.GetBeamTree(), debug);
   EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
                                                    dl.GetEventTree(),
-                                                   Config::Instance()->ProcessSamplers(),
+						   config->ProcessSamplers(),
                                                    debug,
-                                                   Config::Instance()->PrintModuloFraction(),
+                                                   config->PrintModuloFraction(),
   Config::Instance()->GetOptionBool("emittanceonthefly"));
   RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree(), debug);
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree(), debug);
   ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree(), debug);
 
-  analyses.push_back(beaAnalysis);
-  analyses.push_back(evtAnalysis);
-  analyses.push_back(runAnalysis);
-  analyses.push_back(optAnalysis);
-  analyses.push_back(modAnalysis);
+  std::vector<Analysis*> analyses = {beaAnalysis,
+				     evtAnalysis,
+				     runAnalysis,
+				     optAnalysis,
+				     modAnalysis};
 
   for (auto& analysis : analyses)
     {analysis->Execute();}
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
   // write output
   try
     {
-      TFile* outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
+      TFile* outputFile = new TFile(config->OutputFileName().c_str(),"RECREATE");
       for (auto& analysis : analyses)
 	{analysis->Write(outputFile);}
 
