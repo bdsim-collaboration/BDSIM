@@ -397,7 +397,7 @@ void Config::ParseBinning(const std::string binning,
 	  (*vals[2*counter])     = std::stod(match[1]);
 	  (*vals[(2*counter)+1]) = std::stod(match[2]);
 	}
-      catch (std::invalid_argument) // if stod can't convert number to double
+      catch (std::invalid_argument&) // if stod can't convert number to double
 	{throw std::string("Invalid binning number: \"" + match[0].str() + "\" on line #" + std::to_string(lineCounter));}
     }
   
