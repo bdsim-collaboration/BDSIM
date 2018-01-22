@@ -338,7 +338,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
   resultantField->SetTransform(info.Transform());
 
   // Always this equation of motion for magnetic (only) fields
-  G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(resultantField);
+  BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
 
   // Create appropriate integrator
   G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
