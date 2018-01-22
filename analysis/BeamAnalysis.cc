@@ -30,8 +30,11 @@ BeamAnalysis::BeamAnalysis():
   beam(nullptr)
 {;}
 
-BeamAnalysis::BeamAnalysis(Beam* beamIn, TChain* chainIn, bool debugIn):
-  Analysis("Beam.", chainIn, "BeamHistogramsMerged", debugIn),
+BeamAnalysis::BeamAnalysis(Beam*   beamIn,
+			   TChain* chainIn,
+			   bool    perEntryAnalysis,
+			   bool    debugIn):
+  Analysis("Beam.", chainIn, "BeamHistogramsMerged", perEntryAnalysis, debugIn),
   beam(beamIn)
 {;}
 

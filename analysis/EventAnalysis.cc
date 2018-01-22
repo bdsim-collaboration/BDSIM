@@ -47,11 +47,12 @@ EventAnalysis::EventAnalysis():
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
 			     TChain* chainIn,
+			     bool    perEntryAnalysis,
 			     bool    processSamplersIn,
 			     bool    debugIn,
 			     double  printModuloFraction,
 			     bool    emittanceOnTheFlyIn):
-  Analysis("Event.", chainIn, "EventHistogramsMerged", debugIn),
+  Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn)

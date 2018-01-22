@@ -44,18 +44,21 @@ class Analysis
 public:
   /// Requires the name of the tree to analysed, the chain of files to operate on,
   /// the name of the directory to create in the output root file for the combined
-  /// existing histrograms from that tree and whether or not we're in debug mode.
+  /// existing histrograms from that tree, whether to operate on each entry in the
+  /// tree and whether or not we're in debug mode.
   Analysis(std::string treeNameIn,
 	   TChain*     chainIn,
 	   std::string mergedHistogramNameIn,
-	   bool        debugIn = false);
+	   bool        perEntryAnalysis = true,
+	   bool        debugIn          = false);
   virtual ~Analysis();
 
   /// Method which calls all other methods in order.
   virtual void Execute();
 
   /// Operate on each entry in the tree. Pure virutal as it is not known what
-  /// analysis will be formed in any derived class.
+  /// analysis will be formed in any derived class. This is only called if
+  /// perEntry is true (by default it is).
   virtual void Process() = 0;
 
   /// Virtual function for user to overload and use. Does nothing by default.

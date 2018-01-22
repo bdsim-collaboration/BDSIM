@@ -28,8 +28,11 @@ RunAnalysis::RunAnalysis():
   run(nullptr)
 {;}
 
-RunAnalysis::RunAnalysis(Run* runIn, TChain* chainIn, bool debugIn):
-  Analysis("Run.", chainIn, "RunHistogramsMerged", debugIn),
+RunAnalysis::RunAnalysis(Run*    runIn,
+			 TChain* chainIn,
+			 bool    perEntryAnalysis,
+			 bool    debugIn):
+  Analysis("Run.", chainIn, "RunHistogramsMerged", perEntryAnalysis, debugIn),
   run(runIn)
 {;}
 

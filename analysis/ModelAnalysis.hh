@@ -41,7 +41,10 @@ public:
   ModelAnalysis();
 
   /// Constructor intended for use to construct a model analysis object.
-  ModelAnalysis(Model* model, TChain* chain, bool debug = false);
+  ModelAnalysis(Model*  model,
+		TChain* chain,
+		bool    perEntryAnalysis = true,
+		bool    debugIn          = false);
   virtual ~ModelAnalysis(){};
 
   /// Operate on each entry in the model tree.

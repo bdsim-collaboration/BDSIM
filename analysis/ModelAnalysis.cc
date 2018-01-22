@@ -29,7 +29,10 @@ ModelAnalysis::ModelAnalysis():
   model(nullptr)
 {}
 
-ModelAnalysis::ModelAnalysis(Model* modelIn, TChain* chainIn, bool debugIn):
-  Analysis("Model.", chainIn, "ModelHistogramsMerged", debugIn),
+ModelAnalysis::ModelAnalysis(Model*  modelIn,
+			     TChain* chainIn,
+			     bool    perEntryAnalysis,
+			     bool    debugIn):
+  Analysis("Model.", chainIn, "ModelHistogramsMerged", perEntryAnalysis, debugIn),
   model(modelIn)
 {;}

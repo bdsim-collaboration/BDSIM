@@ -90,16 +90,29 @@ int main(int argc, char *argv[])
 			     allBranches,
 			     branchesToActivate);
 
-  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(), dl.GetBeamTree(), debug);
+  BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(),
+						  dl.GetBeamTree(),
+						  config->PerEntryBeam(),
+						  debug);
   EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(),
                                                    dl.GetEventTree(),
+						   config->PerEntryEvent(),
 						   config->ProcessSamplers(),
                                                    debug,
                                                    config->PrintModuloFraction(),
-  Config::Instance()->GetOptionBool("emittanceonthefly"));
-  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree(), debug);
-  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree(), debug);
-  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree(), debug);
+						   config->GetOptionBool("emittanceonthefly"));
+  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(),
+						 dl.GetRunTree(),
+						 config->PerEntryRun(),
+						 debug);
+  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(),
+						     dl.GetOptionsTree(),
+						     config->PerEntryOption(),
+						     debug);
+  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(),
+						   dl.GetModelTree(),
+						   config->PerEntryModel(),
+						   debug);
 
   std::vector<Analysis*> analyses = {beaAnalysis,
 				     evtAnalysis,

@@ -30,8 +30,11 @@ OptionsAnalysis::OptionsAnalysis():
   options(nullptr)
 {;}
 
-OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chainIn, bool debugIn):
-  Analysis("Options.", chainIn, "OptionsHistogramsMerged", debugIn),
+OptionsAnalysis::OptionsAnalysis(Options* optionsIn,
+				 TChain*  chainIn,
+				 bool     perEntryAnalysis,
+				 bool     debugIn):
+  Analysis("Options.", chainIn, "OptionsHistogramsMerged", perEntryAnalysis, debugIn),
   options(optionsIn)
 {;}
 

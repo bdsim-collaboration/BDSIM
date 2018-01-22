@@ -30,12 +30,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 Analysis::Analysis(std::string treeNameIn,
 		   TChain*     chainIn,
 		   std::string mergedHistogramNameIn,
+		   bool        perEntryAnalysis,
 		   bool        debugIn):
   treeName(treeNameIn),
   chain(chainIn),
   mergedHistogramName(mergedHistogramNameIn),
   histoSum(nullptr),
-  debug(debugIn)
+  debug(debugIn),
+  perEntry(perEntryAnalysis)
 {;}
 
 Analysis::~Analysis()
@@ -47,7 +49,8 @@ Analysis::~Analysis()
 void Analysis::Execute()
 {
   std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
-  Process();
+  if (perEntry)
+    {Process();}
   SimpleHistograms();
   Terminate();
   std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;

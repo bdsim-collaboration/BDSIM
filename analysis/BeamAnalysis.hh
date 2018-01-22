@@ -41,7 +41,10 @@ public:
   BeamAnalysis();
 
   /// Constructor intended for use to construct a beam analysis object.
-  BeamAnalysis(Beam* optionsIn, TChain* chain, bool debug = false);
+  BeamAnalysis(Beam*   beamIn,
+	       TChain* chain,
+	       bool    perEntryAnalysis = true,
+	       bool    debugIn          = false);
 
   virtual ~BeamAnalysis();
 

@@ -41,7 +41,10 @@ public:
   OptionsAnalysis();
 
   /// Constructor intended for use to construct an options analysis object.
-  OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug = false);
+  OptionsAnalysis(Options* optionsIn,
+		  TChain*  chain,
+		  bool     perEntryAnalysis = true,
+		  bool     debugIn          = false);
 
   virtual ~OptionsAnalysis();
 

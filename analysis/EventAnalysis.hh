@@ -46,8 +46,9 @@ public:
   /// Constructor intended for use to construct an event analysis object.
   EventAnalysis(Event*  eventIn,
 		TChain* chain,
-		bool    processSamplersIn   = false,
-		bool    debug               = false,
+		bool    perEntryAnalysis    = true,
+		bool    processSamplersIn   = true,
+		bool    debugIn             = false,
 		double  printModuloFraction = 0.01,
 		bool    emittanceOnTheFlyIn = false);
 
@@ -73,11 +74,14 @@ private:
 
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
+
+  /// Process each sampler analysis object.
   void ProcessSamplers(bool firstTime = false);
 
   int  printModulo;       ///< Cache of print modulo fraction
   bool processSamplers;   ///< Whether to process samplers.
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
+  
   ClassDef(EventAnalysis,1);
 };
 

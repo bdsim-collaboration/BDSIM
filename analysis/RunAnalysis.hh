@@ -43,7 +43,10 @@ public:
   RunAnalysis();
 
   /// Constructor intended for use to construct a run analysis object.
-  RunAnalysis(Run *r, TChain *c, bool debug = false);
+  RunAnalysis(Run*    runIn,
+	      TChain* chainIn,
+	      bool    perEntryAnalysis = true,
+	      bool    debugIn          = false);
 
   virtual ~RunAnalysis();
 
