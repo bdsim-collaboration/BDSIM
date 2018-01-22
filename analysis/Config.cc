@@ -53,6 +53,12 @@ Config::Config(std::string fileNameIn,
 Config::~Config()
 {
   instance = nullptr;
+
+  for (auto& nameDefs : histoDefs)
+    {
+      for (auto& histoDef : nameDefs.second)
+	{delete histoDef;}
+    }
 }
 
 void Config::InitialiseOptions(std::string analysisFile)
