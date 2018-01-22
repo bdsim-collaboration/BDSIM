@@ -160,6 +160,16 @@ void Config::ParseInputFile()
 
 void Config::ParseHistogramLine(const std::string& line)
 {
+  // Settings with histogram in name can be misidentified - check here.
+  // This is the easiest way to do it for now.
+  std::string copyLine = line;
+  std::transform(copyLine.begin(), copyLine.end(), copyLine.begin(), ::tolower); // convert to lower case
+  if (copyLine.find("mergehistograms") != std::string::npos)
+    {
+      ParseSetting(line);
+      return;
+    }
+  
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
   std::regex histNDim("(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
