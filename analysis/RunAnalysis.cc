@@ -40,16 +40,17 @@ void RunAnalysis::Process()
 {
   if (debug)
     {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+
   // loop over events
   for(int i=0; i < chain->GetEntries(); ++i)
-  {
-    chain->GetEntry(i);
-
-    if (i == 0)
-      {histoSum = new HistogramMerge(run->histos);}
-    else
-      {histoSum->Add(run->histos);}
-
-    UserProcess();
-  }
+    {
+      chain->GetEntry(i);
+      
+      if (i == 0)
+	{histoSum = new HistogramMerge(run->histos);}
+      else
+	{histoSum->Add(run->histos);}
+      
+      UserProcess();
+    }
 }

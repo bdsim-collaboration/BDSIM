@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
   if (argc > 3)
     {outputFileName = std::string(argv[3]);}
 
+  // parse input file with options and histogram definitions
   try
     {Config::Instance(configFilePath, inputFilePath, outputFileName);}
   catch (std::string error)
