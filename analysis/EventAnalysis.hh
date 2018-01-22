@@ -61,16 +61,16 @@ protected:
   Event* event;
   std::vector<SamplerAnalysis*> samplerAnalyses;
   std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< optical functions from all samplers
-  ClassDef(EventAnalysis,1);
 
 private:
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
   void ProcessSamplers(bool firstTime = false);
 
-  int  printModulo;     ///< Cache of print modulo fraction
-  bool processSamplers; ///< Whether to process samplers.
+  int  printModulo;       ///< Cache of print modulo fraction
+  bool processSamplers;   ///< Whether to process samplers.
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
+  ClassDef(EventAnalysis,1);
 };
 
 #endif
