@@ -86,39 +86,50 @@ void Event::SetBranchAddress(TTree *t,
 
   // turn off all branches except standard output branches.
   t->SetBranchStatus("*", 0);
-  if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
-    {t->SetBranchStatus("Primary*",       1);}
-  t->SetBranchStatus("Eloss*",          1);
-  t->SetBranchStatus("Histos*",         1);
-  t->SetBranchStatus("PrimaryFirstHit*",1);
-  t->SetBranchStatus("PrimaryLastHit*", 1);
-  t->SetBranchStatus("TunnelHit*",      1);
-  t->SetBranchStatus("Trajectory*",     1);
-  t->SetBranchStatus("Info*",           1);
 
+  // turn on only what we need to speed up analysis as with more things
+  // on, more data is loaded from the file for each GetEntry().
+  // these objects are small - always load
+  // the primary is optionally stored (e.g. not stored for tracking comparison files)
+  if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
+    {
+      t->SetBranchStatus("Primary*",  1);
+      t->SetBranchAddress("Primary.", &primaries);
+    }
+
+  t->SetBranchStatus("Info*", 1);
+  t->SetBranchAddress("Info.", &info);
+  
+  t->SetBranchStatus("PrimaryFirstHit*", 1);
+  t->SetBranchAddress("PrimaryFirstHit.", &primaryFirstHit);
+
+  t->SetBranchStatus("PrimaryLastHit*", 1);
+  t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
+  
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
   else if (branchesToTurnOn)
     {
-      for (auto name : *branchesToTurnOn)
+      for (const auto& name : *branchesToTurnOn)
 	{
 	  std::string nameStar = name + "*";
 	  if (debug)
 	    {std::cout << "Event::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
+
+	  // we can't automatically do this as SetBranchAddress must use the pointer
+	  // of the object type and not the base class (say TObject) so there's no
+	  // way to easily map these -> ifs
+	  if (name == "Eloss")
+	    {t->SetBranchAddress("Eloss.", &eloss);}
+	  else if (name == "Histos")
+	    {t->SetBranchAddress("Histos.", &histos);}
+	  else if (name == "TunnelHit")
+	    {t->SetBranchAddress("TunnelHit.", &tunnelHit);}
+	  else if (name == "Trajectory")
+	    {t->SetBranchAddress("Trajectory.", &trajectory);}
 	}
     }
-  
-  // only set address of primary branch if it exists
-  if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
-    {t->SetBranchAddress("Primary.",     &primaries);}
-  t->SetBranchAddress("Eloss.",          &eloss);
-  t->SetBranchAddress("Histos.",         &histos);
-  t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
-  t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
-  t->SetBranchAddress("TunnelHit.",      &tunnelHit);
-  t->SetBranchAddress("Trajectory.",     &trajectory);
-  t->SetBranchAddress("Info.",           &info);
 
   if(debug)
     {
@@ -145,7 +156,7 @@ void Event::SetBranchAddress(TTree *t,
 	  samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
 #endif
 	  t->SetBranchAddress(sampName.c_str(), &samplers[i]);
-      t->SetBranchStatus((sampName+"*").c_str(), 1);
+	  t->SetBranchStatus((sampName+"*").c_str(), 1);
 	  if(debug)
 	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
 	}
