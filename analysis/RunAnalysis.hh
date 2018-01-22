@@ -34,17 +34,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Stuart Walker.
  */
 
-class RunAnalysis : public Analysis
+class RunAnalysis: public Analysis
 {
 public:
+  /// The default constructor is not intended for use and will not
+  /// work for the purpose of analysis. It is required by the ROOT
+  /// C++ reflection system in case you wish to save the object.
   RunAnalysis();
+
+  /// Constructor intended for use to construct a run analysis object.
   RunAnalysis(Run *r, TChain *c, bool debug = false);
+
   virtual ~RunAnalysis();
 
+  /// Operate on each entry in the run tree.
   virtual void Process();
 
 protected:
-  Run* run;
+  Run* run; ///< Run object that data loaded from the file will be loaded into.
 
   ClassDef(RunAnalysis,1);
 };

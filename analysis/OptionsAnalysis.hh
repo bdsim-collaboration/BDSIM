@@ -32,18 +32,25 @@ class TChain;
  * @author Stuart Walker.
  */
 
-class OptionsAnalysis : public Analysis
+class OptionsAnalysis: public Analysis
 {
 public:
+  /// The default constructor is not intended for use and will not
+  /// work for the purpose of analysis. It is required by the ROOT
+  /// C++ reflection system in case you wish to save the object.
   OptionsAnalysis();
+
+  /// Constructor intended for use to construct an options analysis object.
   OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug = false);
+
   virtual ~OptionsAnalysis();
 
+  /// Operate on each entry in the options tree.
   virtual void Process(){};
-  virtual void Terminate(){};
 
 protected:
-  Options* options;
+  Options* options; ///< Options object that data loaded from the file will be loaded into.
+  
   ClassDef(OptionsAnalysis,1);
 };
 

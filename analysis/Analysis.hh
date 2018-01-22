@@ -51,14 +51,21 @@ public:
 	   bool        debugIn = false);
   virtual ~Analysis();
 
-  /// Method which calls all other methods.
+  /// Method which calls all other methods in order.
   virtual void Execute();
+
+  /// Operate on each entry in the tree. Pure virutal as it is not known what
+  /// analysis will be formed in any derived class.
   virtual void Process() = 0;
 
   /// Virtual function for user to overload and use. Does nothing by default.
   virtual void UserProcess();
+  
   /// Process histogram definitions from configuration instance.
   virtual void SimpleHistograms();
+
+  /// Optional final action after Process() and SimpleHistograms(). The version
+  /// in this base class termiantes the histogram merges if there are any in histoSum.
   virtual void Terminate();
 
   /// Write rebdsim histograms.
@@ -74,13 +81,16 @@ protected:
   std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms
   HistogramMerge*             histoSum;       ///< Bdsim histograms
   bool                        debug;
+
+  /// Whether to analyse each entry in the tree in a for loop or not.
+  bool                        perEntry;
   
 private:
+  /// No default constructor for this base class.
   Analysis() = delete;
   
   /// Create an individual histogram based on a definition.
   void FillHistogram(HistogramDef* definition);
-
 };
 
 #endif

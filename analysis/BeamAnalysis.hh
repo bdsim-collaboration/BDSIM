@@ -32,18 +32,25 @@ class TChain;
  * @author Stuart Walker.
  */
 
-class BeamAnalysis : public Analysis
+class BeamAnalysis: public Analysis
 {
 public:
+  /// The default constructor is not intended for use and will not
+  /// work for the purpose of analysis. It is required by the ROOT
+  /// C++ reflection system in case you wish to save the object.
   BeamAnalysis();
+
+  /// Constructor intended for use to construct a beam analysis object.
   BeamAnalysis(Beam* optionsIn, TChain* chain, bool debug = false);
+
   virtual ~BeamAnalysis();
 
+  /// Operate on each entry in the run tree.
   virtual void Process(){};
-  virtual void Terminate(){};
 
 protected:
-  Beam* beam;
+  Beam* beam; ///< Beam object that data loaded from the file will be loaded into.
+
   ClassDef(BeamAnalysis,1);
 };
 
