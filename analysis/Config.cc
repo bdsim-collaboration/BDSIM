@@ -371,7 +371,7 @@ void Config::ParseBins(const std::string bins,
   auto words_end   = std::sregex_iterator();
   int counter = 0;
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {(*binValues[counter]) = std::stod((*i).str());}
+    {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
     {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
