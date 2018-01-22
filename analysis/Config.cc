@@ -63,12 +63,12 @@ void Config::InitialiseOptions(std::string analysisFile)
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
-  optionsBool["debug"]           = false;
-  optionsBool["processsamplers"] = false;
-  optionsBool["processlosses"]   = false;
-  optionsBool["processalltrees"] = false;
-  optionsBool["calculateoptics"] = false;
-  optionsBool["mergehistograms"] = true;
+  optionsBool["debug"]             = false;
+  optionsBool["processsamplers"]   = false;
+  optionsBool["processlosses"]     = false;
+  optionsBool["processalltrees"]   = false;
+  optionsBool["calculateoptics"]   = false;
+  optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
 
   optionsString["inputfilepath"]  = "./output.root";
