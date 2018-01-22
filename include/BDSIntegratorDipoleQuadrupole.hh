@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORDIPOLEQUADRUPOLE_H
 
 #include "BDSIntegratorMag.hh"
-
+#include "BDSMagUsualEqRhs.hh"
 #include "globals.hh"
 
 class BDSIntegratorDipole2;
@@ -70,9 +70,11 @@ private:
   BDSIntegratorDipoleQuadrupole() = delete;
 
   BDSIntegratorDipole2* dipole;
+  BDSMagUsualEqRhs*     eq;
   G4double              bPrime;
-  G4double 				bRho;
-  G4double 				k1;
+  G4double 		bRho;
+  G4double 		k1;
+  G4double 		beta;
   BDSMagnetStrength const* strength;
 };
 

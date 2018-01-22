@@ -42,7 +42,8 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   strength(strengthIn)
 {
-  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"];// / CLHEP::m2;
+  eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
+  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"];
   k1 = (*strengthIn)["k1"];
   bRho = brhoIn;
 }
@@ -65,7 +66,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-  
+
+  // get beta (v/c)
+  beta = eq->Beta(yIn);
+
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
@@ -130,23 +134,29 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 					    G4ThreeVector& momOut) const
 {
   G4double momInMag = momIn.mag();
-  //G4double delta    = eqOfM->FCof() / momInMag;
-  G4double rho      = dipole->RadiusOfHelix();
 
+  // nominal bending radius.
+  G4double magnetRho = bRho / (*strength)["field"];
+
+  G4double c = CLHEP::c_light * CLHEP::m;
   G4double nomMomentum = std::abs(bRho * eqOfM->FCof());
-  G4double deltaPoverP = (momInMag - nomMomentum) / nomMomentum;
+  G4double energy = eq->TotalEnergy(momIn);
+  G4double nomEnergy = std::sqrt(pow(nomMomentum,2) + eq->Mass());
 
-  // quad strength k normalised to charge and momentum of this particle
-  // note bPrime was calculated w.r.t. the nominal rigidity.
+  // deltaE/(P0*c) to match literature.
+  G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum * c) ;
+
+  // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double K1  = std::abs(eqOfM->FCof())*bPrime/momInMag;
+  G4double K1  = std::abs(eqOfM->FCof())*bPrime/nomMomentum;
 
-  G4double kx2 = pow(1.0 / rho,2) + K1;
+  // separate focussing strengths for vertical and horizontal axes.
+  // Used by matrix elements so must be derived from nominal values.
+  G4double kx2 = pow(1.0 / magnetRho, 2) + K1;
   G4double kx  = sqrt(std::abs(kx2));
   G4double ky2 = -K1;
   G4double ky  = sqrt(std::abs(ky2));
-  //h = 1000;
   G4double kxl = kx * h;
   G4double kyl = ky * h;
 
@@ -168,16 +178,15 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double X11,X12,X16,X21,X22,X26 = 0;
   G4double Y11,Y12,Y21,Y22 = 0;
 
-  G4double beta = 1;
-
+  // matrix elements. All must derived from nominal parameters.
   if (focussing)
     {//focussing
       X11= cos(kxl);
       X12= sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (-(1.0/rho) / kx2) * (1 - cos(kxl));
-      X26 = -(1.0/rho) * X12;
+      X16 = (1.0/beta) * (-(1.0/magnetRho) / kx2) * (1 - cos(kxl));
+      X26 = (1.0/beta) * -(1.0/magnetRho) * X12;
 
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
@@ -190,8 +199,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = -(1.0/rho) / kx2 * (1 - cosh(kxl));
-      X26 = (1.0/rho) * X12;
+      X16 = (1.0/beta) * (-(1.0/magnetRho) / kx2) * (1 - cosh(kxl));
+      X26 = (1.0/beta) * -(1.0/magnetRho) * X12;
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;
@@ -199,8 +208,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       Y22= Y11;
     }
       
-  x1  = X11*x0 + X12*xp + X16*deltaPoverP;
-  xp1 = X21*x0 + X22*xp + X26*deltaPoverP;
+  x1  = X11*x0 + X12*xp + X16*deltaEoverPc;
+  xp1 = X21*x0 + X22*xp + X26*deltaEoverPc;
   
   y1  = Y11*y0 + Y12*yp;    
   yp1 = Y21*y0 + Y22*yp;
