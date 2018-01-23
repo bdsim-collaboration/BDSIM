@@ -377,7 +377,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   if (plBeamline) // optional placements beam line
     {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
   
-  BDSBeamline* tunnelBeamline = acceleratorModel->GetTunnelBeamline();
+  BDSBeamline* tunnelBeamline = acceleratorModel->TunnelBeamline();
   if (tunnelBeamline)
     {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
@@ -470,7 +470,7 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 		       BDSSDManager::Instance()->GetEnergyCounterSD());
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
-      PlaceBeamlineInWorld(acceleratorModel->GetTunnelBeamline(),
+      PlaceBeamlineInWorld(acceleratorModel->TunnelBeamline(),
 			   worldPV, checkOverlaps,
 			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
