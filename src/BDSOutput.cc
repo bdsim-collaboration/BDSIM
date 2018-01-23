@@ -236,10 +236,13 @@ void BDSOutput::CalculateHistogramParameters()
   // (max - min) / bin width -> min = 0 here.
   const G4double binWidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
-  if (flatBeamline && flatBeamline->empty()==false)
-    {
-      G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
-      nbins = (int) std::ceil(sMax / binWidth); // round up to integer # of bins
+  if (flatBeamline)
+    {// don't access a nullptr
+      if (!flatBeamline->empty())
+        {
+	  G4double sMax = flatBeamline->GetLastItem()->GetSPositionEnd();
+	  nbins = (int) std::ceil(sMax / binWidth); // round up to integer # of bins
+        }
     }
   else
     {nbins = 1;} // can happen for generate primaries only
