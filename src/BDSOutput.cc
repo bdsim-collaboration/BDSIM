@@ -284,8 +284,8 @@ void BDSOutput::CreateHistograms()
   if (tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
-      Create1DHistogram("ElossTunnelHisto", "Energy Loss in Tunnel", nbins, smin,smax); // 7
-      Create1DHistogram("ElossTunnelHisto", "Energy Loss in Tunnel", binedges); // 8
+      Create1DHistogram("ElossTunnelHisto",   "Energy Loss in Tunnel", nbins, smin,smax); // 7
+      Create1DHistogram("ElossTunnelPEHisto", "Energy Loss in Tunnel per Element", binedges); // 8
     }
   
   if (useScoringMap)
