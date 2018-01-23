@@ -261,9 +261,9 @@ void BDSOutput::CreateHistograms()
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
-  Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
-  Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax);
+  Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax); // 1
+  Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax); // 2
+  Create1DHistogram("ElossHisto","Energy Loss",  nbins,smin,smax); // 3
   // prepare bin edges for a by-element histogram
   std::vector<G4double> binedges;
   const BDSBeamline* flatBeamline = BDSAcceleratorModel::Instance()->BeamlineMain();
@@ -272,9 +272,9 @@ void BDSOutput::CreateHistograms()
   else
     {binedges = {0,1};}
   // create per element ("pe") bin width histograms
-  Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
-  Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
-  Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges);
+  Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges); // 4
+  Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges); // 5
+  Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
   
   if (useScoringMap)
     {
