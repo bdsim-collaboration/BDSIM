@@ -278,6 +278,15 @@ void BDSOutput::CreateHistograms()
   Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges); // 4
   Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges); // 5
   Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
+
+  // only create tunnel histograms if we build the tunnel
+  const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
+  if (tunnelBeamline)
+    {
+      binedges = tunnelBeamline->GetEdgeSPositions();
+      Create1DHistogram("ElossTunnelHisto", "Energy Loss in Tunnel", nbins, smin,smax); // 7
+      Create1DHistogram("ElossTunnelHisto", "Energy Loss in Tunnel", binedges); // 8
+    }
   
   if (useScoringMap)
     {
@@ -340,37 +349,48 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 }
 
 void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
-			       const LossType lType)
+			       const LossType lossType)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   G4int n_hit = hits->entries();
   for(G4int i=0;i<n_hit;i++)
-  {
-    BDSEnergyCounterHit* hit = (*hits)[i];
-    switch (lType)
-      {
-      case BDSOutput::LossType::energy:
-	{eLoss->Fill(hit); break;}
-      case BDSOutput::LossType::tunnel:
-	{tHit->Fill(hit); break;}
-      default:
-	{eLoss->Fill(hit); break;}
-      }
-    G4double sHit = hit->GetSHit()/CLHEP::m;
-    G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
-    runHistos->Fill1DHistogram(2, sHit, eW);
-    evtHistos->Fill1DHistogram(2, sHit, eW);
-    runHistos->Fill1DHistogram(5, sHit, eW);
-    evtHistos->Fill1DHistogram(5, sHit, eW);
-    if (useScoringMap)
     {
-      G4double x = hit->Getx()/CLHEP::m;
-      G4double y = hit->Gety()/CLHEP::m;
-      evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+      BDSEnergyCounterHit* hit = (*hits)[i];
+      G4double sHit = hit->GetSHit()/CLHEP::m;
+      G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
+      switch (lossType)
+	{
+	case BDSOutput::LossType::energy:
+	  {// number - 1 for the index
+	    eLoss->Fill(hit);
+	    runHistos->Fill1DHistogram(2, sHit, eW);
+	    evtHistos->Fill1DHistogram(2, sHit, eW);
+	    runHistos->Fill1DHistogram(5, sHit, eW);
+	    evtHistos->Fill1DHistogram(5, sHit, eW);
+	    break;
+	  }
+	case BDSOutput::LossType::tunnel:
+	  {
+	    tHit->Fill(hit);
+	    runHistos->Fill1DHistogram(6, sHit, eW);
+	    evtHistos->Fill1DHistogram(6, sHit, eW);
+	    runHistos->Fill1DHistogram(7, sHit, eW);
+	    evtHistos->Fill1DHistogram(7, sHit, eW);
+	    break;
+	  }
+	default:
+	  {return;} // only to prevent compiler warning
+	}
+      
+      if (useScoringMap)
+	{
+	  G4double x = hit->Getx()/CLHEP::m;
+	  G4double y = hit->Gety()/CLHEP::m;
+	  evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+	}
     }
-  }
 }
 
 void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
