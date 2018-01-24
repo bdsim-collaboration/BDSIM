@@ -111,12 +111,11 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
 						      std::vector<G4LogicalVolume*>&   lvsIn)
 {
   const auto& lv = volume->GetLogicalVolume();
-  lvs.push_back(lv);
+  lvsIn.push_back(lv);
   for (G4int i = 0; i < lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
       pvsIn.push_back(pv);
-      lvsIn.push_back(lv);
       GetAllLogicalAndPhysical(pv, pvsIn, lvsIn); // recurse into daughter
     }
 }
