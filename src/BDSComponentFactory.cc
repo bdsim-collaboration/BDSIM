@@ -429,8 +429,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
 #ifdef BDSDEBUG
-  G4cout << "Angle " << (*st)["angle"] << G4endl;
-  G4cout << "Field " << (*st)["field"] << G4endl;
+  G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
+  G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
   
   auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
