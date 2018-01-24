@@ -1,8 +1,9 @@
-Debug						0
+Debug						1
 InputFilePath					./output.root
 OutputFileName					./ana_1.root
-CalculateOpticalFunctions			1
+CalculateOpticalFunctions			0
 CalculateOpticalFunctionsFileName		./ana_1.dat
+MergeHistograms true
 # Object	treeName	Histogram Name           # Bins     Binning	       Variable                 Selection
 SimpleHistogram1D    Beam.          X0                       {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1
 SimpleHistogram1D	Event.		Primaryx                 {100}       {-5e-6:5e-6}     Primary.x                      1
