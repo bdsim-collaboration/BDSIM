@@ -58,7 +58,7 @@ void BDSParallelWorldCurvilinear::Construct()
 
   // visualisation
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  clWorldVis = new G4VisAttributes(*(globals->GetVisibleDebugVisAttr()));
+  clWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   clWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   clWorldLV->SetVisAttributes(clWorldVis);
 

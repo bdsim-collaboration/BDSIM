@@ -798,7 +798,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G
   aperYUp = 50.*CLHEP::mm;
   aperYDown = 200.*CLHEP::mm;
   aperDy = 0.*CLHEP::mm;
-  thickness = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->beamPipeThickness;
+  thickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->beamPipeThickness;
   length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=nullptr)

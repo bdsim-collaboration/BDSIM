@@ -233,15 +233,15 @@ public:
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4String              ParticleName()            const {return beam.particleName;}
-  inline BDSParticleDefinition* GetBeamParticleDefinition() const {return beamParticleDefinition;}
-  inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
-  inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
+  inline BDSParticleDefinition* BeamParticleDefinition() const {return beamParticleDefinition;}
+  inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
+  inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
   inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
-  inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
-  inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
-  inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
+  inline G4VisAttributes*      VisibleDebugVisAttr()     const {return visibleDebugVisAttr;}
+  inline G4VisAttributes*      ContainerVisAttr()        const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
+  inline G4UserLimits*         DefaultUserLimits()       const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 

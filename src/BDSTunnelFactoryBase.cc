@@ -215,7 +215,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container & read out
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
 void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
@@ -268,7 +268,7 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
 
 void BDSTunnelFactoryBase::SetUserLimits()
 {
-  auto tunnelUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto tunnelUserLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
   if (soilLV)

@@ -423,12 +423,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   
   // visual attributes
   // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetContainerVisAttr()));
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(debugWorldVis);
 	
   // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation

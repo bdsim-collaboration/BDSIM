@@ -88,7 +88,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
   /// Now overwrite container lv vis attributes
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   std::pair<BDSExtent, BDSExtent> outerInner = BDS::DetermineExtents(containerSolid);
   

@@ -1105,7 +1105,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   
   // magnet geometry type
   if (element->magnetGeometryType == "")
-    {info->geometryType = globals->GetMagnetGeometryType();}
+    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
@@ -1196,7 +1196,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
 							  const G4ThreeVector inputFaceNormalIn,
 							  const G4ThreeVector outputFaceNormalIn)
 {
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
   if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
     {
