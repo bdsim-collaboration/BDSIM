@@ -951,7 +951,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   if (element->fieldAll.empty())
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
-      (*awakeStrength)["field"] = element->B;
+      (*awakeStrength)["field"] = element->B * CLHEP::tesla;
 
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,
