@@ -87,6 +87,8 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
+  ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
+
   /// Now overwrite container lv vis attributes
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 

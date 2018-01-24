@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class G4Colour;
 class G4LogicalVolume;
+class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 class G4VSolid;
@@ -63,6 +64,10 @@ public:
   /// precidence order.
   virtual std::vector<G4VisAttributes*> ApplyColourMapping(std::vector<G4LogicalVolume*>& lvs,
 							   std::map<G4String, G4Colour*>* mapping);
+
+  /// Attach a set of user limits to every logical volume supplied.
+  virtual void ApplyUserLimits(const std::vector<G4LogicalVolume*>& lvsIn,
+			       G4UserLimits* userLimits);
 
 protected:
 
