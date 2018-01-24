@@ -314,7 +314,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(G4String
 						     emptyMaterial,
 						     name + "_container_lv");
 
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   BDSGeometryComponent* container = new BDSGeometryComponent(containerSolid,
 							     containerLV,

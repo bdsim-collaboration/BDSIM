@@ -90,7 +90,7 @@ void BDSScreenLayer::BuildScreen()
 			    (name+"_log").c_str());
   CutGrooves();
     
-  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  log->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 void BDSScreenLayer::CutGrooves()
@@ -156,7 +156,7 @@ void BDSScreenLayer::AssignSampler()
   G4String samplerName = name;
   log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
-  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  log->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 /*

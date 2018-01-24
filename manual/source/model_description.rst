@@ -540,7 +540,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 In the case of a thick kicker, the resulting bending angle is calculated as:
@@ -576,7 +576,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`hkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle

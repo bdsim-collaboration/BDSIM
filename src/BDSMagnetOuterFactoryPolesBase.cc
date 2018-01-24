@@ -877,7 +877,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
   // user limits - don't register as using global one
-  endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // package it all up
   endPiece = new BDSSimpleComponent(name + "_end_piece",
@@ -1937,10 +1937,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   ePInLV->SetVisAttributes(coilVisIn);
   ePOutLV->SetVisAttributes(coilVisOut);
-  ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
-  auto defaultUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUserLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   ePInLV->SetUserLimits(defaultUserLimits);
   ePOutLV->SetUserLimits(defaultUserLimits);
   ePContInLV->SetUserLimits(defaultUserLimits);

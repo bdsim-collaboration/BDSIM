@@ -329,7 +329,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 
   if (particleMass < 0)
     {
-      auto particleDef = BDSGlobalConstants::Instance()->GetBeamParticleDefinition()->ParticleDefinition();
+      auto particleDef = BDSGlobalConstants::Instance()->BeamParticleDefinition()->ParticleDefinition();
       particleMass = particleDef->GetPDGMass(); // should always exist at this point
     }
   

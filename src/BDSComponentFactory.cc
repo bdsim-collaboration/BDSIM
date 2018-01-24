@@ -429,8 +429,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
 #ifdef BDSDEBUG
-  G4cout << "Angle " << (*st)["angle"] << G4endl;
-  G4cout << "Field " << (*st)["field"] << G4endl;
+  G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
+  G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
   
   auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
@@ -951,7 +951,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   if (element->fieldAll.empty())
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
-      (*awakeStrength)["field"] = element->B;
+      (*awakeStrength)["field"] = element->B * CLHEP::tesla;
 
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -1105,7 +1105,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   
   // magnet geometry type
   if (element->magnetGeometryType == "")
-    {info->geometryType = globals->GetMagnetGeometryType();}
+    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
@@ -1196,7 +1196,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
 							  const G4ThreeVector inputFaceNormalIn,
 							  const G4ThreeVector outputFaceNormalIn)
 {
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
   if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
     {

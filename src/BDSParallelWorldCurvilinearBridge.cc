@@ -57,7 +57,7 @@ void BDSParallelWorldCurvilinearBridge::Construct()
   // Visualisation
   G4LogicalVolume* clbWorldLV = clbWorld->GetLogicalVolume();
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  clbWorldVis = new G4VisAttributes(*(globals->GetVisibleDebugVisAttr()));
+  clbWorldVis = new G4VisAttributes(*(globals->VisibleDebugVisAttr()));
   clbWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   clbWorldLV->SetVisAttributes(clbWorldVis);
 

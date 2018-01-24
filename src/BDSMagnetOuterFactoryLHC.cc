@@ -864,7 +864,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
@@ -894,11 +894,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
     {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
@@ -1487,7 +1487,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
@@ -1515,11 +1515,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
     {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
