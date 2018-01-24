@@ -48,8 +48,14 @@ private:
   std::map<std::string, double>      optionsNumber;
   /// @}
 
-  /// Storage of histogram options.
+  /// Storage of histogram options. This owns th HistogramDef objects.
   std::map<std::string, std::vector<HistogramDef*> > histoDefs;
+
+  /// Copy of defintion used to identify only 'simple' histogram definitions. Doesn't own.
+  std::map<std::string, std::vector<HistogramDef*> > histoDefsSimple;
+
+  /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
+  std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
   
 public:
   virtual ~Config();
@@ -70,6 +76,14 @@ public:
   /// Access all histogram definitions.
   inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const
   {return histoDefs.at(treeName);}
+
+  /// Access all simple histogram definitions - throws exception if out of range.
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(std::string treeName) const
+  {return histoDefsSimple.at(treeName);}
+
+  /// Access all per entry histogram definitions - throws exception if out of range.
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(std::string treeName) const
+  {return histoDefsPerEntry.at(treeName);}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated

@@ -92,8 +92,10 @@ void Config::InitialiseOptions(std::string analysisFile)
   // ensure keys exist for all trees.
   for (auto name : treeNames)
     {
-      histoDefs[name] = std::vector<HistogramDef*>();
-      branches[name]  = std::vector<std::string>();
+      histoDefs[name]         = std::vector<HistogramDef*>();
+      histoDefsSimple[name]   = std::vector<HistogramDef*>();
+      histoDefsPerEntry[name] = std::vector<HistogramDef*>();
+      branches[name]          = std::vector<std::string>();
     }
 }
 
@@ -295,6 +297,10 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   if (result)
     {
       histoDefs[treeName].push_back(result);
+      if (perEntry)
+	{histoDefsPerEntry[treeName].push_back(result);}
+      else
+	{histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
 }
