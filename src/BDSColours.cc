@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4Colour.hh"
 
+#include <iomanip>
 #include <map>
 #include <sstream>
 
@@ -103,6 +104,25 @@ BDSColours::BDSColours()
   colours["cyan"]    = new G4Colour(G4Colour::Cyan());
   colours["magenta"] = new G4Colour(G4Colour::Magenta());
   colours["yellow"]  = new G4Colour(G4Colour::Yellow());
+
+#ifdef BDSDEBUG
+  // auto-generate the manual coolour table in rst syntax
+  G4cout << __METHOD_NAME__ << "Colour Table" << G4endl;
+  G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+  G4cout << "| Name            |  R  |  G  |  B  |" << G4endl;
+  G4cout << "+=================+=====+=====+=====+" << G4endl;
+  for (const auto& col : colours)
+    {
+      int r = (int)(col.second->GetRed() * 255);
+      int g = (int)(col.second->GetGreen() * 255);
+      int b = (int)(col.second->GetBlue() * 255);
+      G4cout << "| " << std::setw(16) << col.first << "| "
+	     << std::setw(3) << r << " | "
+	     << std::setw(3) << g << " | "
+	     << std::setw(3) << b << " |" << G4endl;
+      G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+    }
+#endif
 }
 
 G4Colour* BDSColours::GetColour(G4String type)
@@ -113,6 +133,12 @@ G4Colour* BDSColours::GetColour(G4String type)
     {
       colourName = type.substr(0, type.find(":"));
       canDefine  = true;
+      if (colours.find(colourName) != colours.end())
+	{
+	  G4cerr << "Colour \"" << colourName
+		 << "\" is already defined - clashing definitions" << G4endl;
+	  exit(1);
+	}
     }
     
   auto it = colours.find(colourName);

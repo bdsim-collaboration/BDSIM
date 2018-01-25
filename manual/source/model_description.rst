@@ -961,13 +961,111 @@ A few items allow you to define a custom colour for them to aid in visualisation
 only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
 where the RGB values are space delimited and given from 0 to 255. Once the colour name has
 been defined it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined.
+colour may not be redefined. The syntax is::
+
+  color="NAME: R G B";
+
+where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
+colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
 
 Examples::
 
   col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
   col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
-   
+
+* Colour names are case-sensitive.
+* Note the colon `:` in the syntax is crucial.
+  
+If a colour is already defined, that will be used. In the case a colour is already defined in
+BDSIM, that colour will be used. The user should therefore choose a different name if they
+wish to use their colour. The predefined colours in BDSIM are:
+
++-----------------+-----+-----+-----+
+| Name            |  R  |  G  |  B  |
++=================+=====+=====+=====+
+| LHCcoil         | 229 | 191 | 0   |
++-----------------+-----+-----+-----+
+| LHCcollar       | 229 | 229 | 229 |
++-----------------+-----+-----+-----+
+| LHCcopperskin   | 184 | 133 | 10  |
++-----------------+-----+-----+-----+
+| LHCyoke         | 0   | 127 | 255 |
++-----------------+-----+-----+-----+
+| LHCyokered      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| beampipe        | 102 | 102 | 102 |
++-----------------+-----+-----+-----+
+| black           | 0   | 0   | 0   |
++-----------------+-----+-----+-----+
+| blue            | 0   | 0   | 255 |
++-----------------+-----+-----+-----+
+| brown           | 114 | 63  | 0   |
++-----------------+-----+-----+-----+
+| coil            | 184 | 115 | 51  |
++-----------------+-----+-----+-----+
+| collimator      | 76  | 102 | 51  |
++-----------------+-----+-----+-----+
+| cyan            | 0   | 255 | 255 |
++-----------------+-----+-----+-----+
+| decapole        | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| default         | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| degrader        | 159 | 159 | 159 |
++-----------------+-----+-----+-----+
+| gdml            | 102 | 51  | 0   |
++-----------------+-----+-----+-----+
+| gray            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| green           | 0   | 255 | 0   |
++-----------------+-----+-----+-----+
+| grey            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| hkicker         | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| magenta         | 255 | 0   | 255 |
++-----------------+-----+-----+-----+
+| multipole       | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| muspoiler       | 0   | 205 | 208 |
++-----------------+-----+-----+-----+
+| octupole        | 0   | 153 | 76  |
++-----------------+-----+-----+-----+
+| quadrupole      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| rectangularbend | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| red             | 255 | 0   | 0   |
++-----------------+-----+-----+-----+
+| rfcavity        | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| screenframe     | 178 | 178 | 178 |
++-----------------+-----+-----+-----+
+| sectorbend      | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| sextupole       | 255 | 204 | 0   |
++-----------------+-----+-----+-----+
+| shield          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| soil            | 138 | 90  | 0   |
++-----------------+-----+-----+-----+
+| solenoid        | 255 | 139 | 0   |
++-----------------+-----+-----+-----+
+| srfcavity       | 175 | 196 | 222 |
++-----------------+-----+-----+-----+
+| tunnel          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| tunnelfloor     | 127 | 127 | 114 |
++-----------------+-----+-----+-----+
+| vkicker         | 186 | 84  | 211 |
++-----------------+-----+-----+-----+
+| warning         | 255 | 19  | 146 |
++-----------------+-----+-----+-----+
+| white           | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| yellow          | 255 | 255 | 0   |
++-----------------+-----+-----+-----+
+  
 
 Aperture Parameters
 -------------------

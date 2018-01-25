@@ -1,0 +1,25 @@
+d1: drift, l=0.5*m;
+
+! by setting the aperture type to circular vacuum we get a drift
+! without any beam pipe - invisible by default - use --vis_debug to see it
+
+airCylinder: drift, l=2*m, apertureType="circularVacuum", vacuumMaterial="air", aper1=40*cm;
+airCylinder2: drift, l=50*cm, apertureType="circularVacuum", vacuumMaterial="air", aper1=40*cm;
+
+! by defining an rectangular collimator with no opening, we get a square block
+
+waterBlock: rcol, l=20*cm, material="water", colour="blueish: 0 128 255";
+
+! similarly a recangular block of water but with a casing as provided by the beam pipe
+
+waterBox: drift, l=1*m, apertureType="rectangular", beampipeThickness=1*cm, aper1=20*cm, aper2=40*cm, vacuumMaterial="water";
+
+l1: line=(d1, airCylinder, waterBlock, airCylinder2, waterBox);
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, physicsList="em em_livermore",
+	elossHistoBinWidth=10*cm,
+	ngenerate=100;

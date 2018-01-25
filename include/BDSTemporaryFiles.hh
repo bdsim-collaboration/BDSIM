@@ -23,7 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-/* @brief Holder for all temporary files created by BDSIM.
+/**
+ * @brief Holder for all temporary files created by BDSIM.
  * 
  * A single place where all temporary file names are held. The
  * class determines a directory to put them when required and 
