@@ -4,6 +4,7 @@ d1: drift, l=0.5*m;
 ! without any beam pipe - invisible by default - use --vis_debug to see it
 
 airCylinder: drift, l=2*m, apertureType="circularVacuum", vacuumMaterial="air", aper1=40*cm;
+airCylinder2: drift, l=50*cm, apertureType="circularVacuum", vacuumMaterial="air", aper1=40*cm;
 
 ! by defining an rectangular collimator with no opening, we get a square block
 
@@ -13,7 +14,7 @@ waterBlock: rcol, l=20*cm, material="water", colour="blueish: 0 128 255";
 
 waterBox: drift, l=1*m, apertureType="rectangular", beampipeThickness=1*cm, aper1=20*cm, aper2=40*cm, vacuumMaterial="water";
 
-l1: line=(d1, airCylinder, waterBlock, d1, waterBox);
+l1: line=(d1, airCylinder, waterBlock, airCylinder2, waterBox);
 use, l1;
 
 beam, particle="e-",
