@@ -247,6 +247,8 @@ void PerEntryHistogram::Terminate()
 	// create a copy of the histogram with the same dimensions
 	result    = static_cast<TH1D*>(mean->Clone(histName.c_str()));
 	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
+	result->Reset();
+	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    std = std::sqrt(variance->GetBinContent(j));
@@ -261,6 +263,8 @@ void PerEntryHistogram::Terminate()
       {
 	result    = static_cast<TH2D*>(mean->Clone(histName.c_str()));
 	resultSTD = static_cast<TH2D*>(mean->Clone((histName + "_std").c_str()));
+	result->Reset();
+	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
@@ -278,6 +282,8 @@ void PerEntryHistogram::Terminate()
       {
 	result    = static_cast<TH3D*>(mean->Clone(histName.c_str()));
 	resultSTD = static_cast<TH3D*>(mean->Clone((histName + "_std").c_str()));
+	result->Reset();
+	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
