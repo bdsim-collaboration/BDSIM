@@ -316,5 +316,8 @@ void PerEntryHistogram::Terminate()
 void PerEntryHistogram::Write()
 {
   if (result)
-    {result->Write();}
+    {
+      result->Write();
+      resultSTD->Write();
+    }
 }
