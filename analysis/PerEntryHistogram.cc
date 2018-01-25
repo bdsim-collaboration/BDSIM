@@ -33,5 +33,8 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition)
 void PerEntryHistogram::AccumulateCurrentEntry()
 {;}
 
+void PerEntryHistogram::Terminate()
+{;}
+
 void PerEntryHistogram::Write()
 {;}

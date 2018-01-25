@@ -33,6 +33,8 @@ public:
 
   void AccumulateCurrentEntry();
 
+  void Terminate();
+
   void Write();
   
   TH1D*       mean;
