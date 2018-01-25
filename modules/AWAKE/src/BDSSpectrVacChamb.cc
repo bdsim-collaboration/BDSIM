@@ -486,7 +486,7 @@ void BDSSpectrVacChamb::printTrapVertices(std::vector<G4TwoVector> vertices, con
 
 void BDSSpectrVacChamb::SetUserLimits()
 {
-    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
     for(unsigned long i=0; i<_logVols.size(); i++) {
     _logVols.at(i)->SetUserLimits(userLimits);
     }
