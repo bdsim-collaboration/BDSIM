@@ -100,7 +100,7 @@ void EventAnalysis::Process()
   const int entries = chain->GetEntries();
   for(int i=0; i<entries; ++i)
     {
-      this->chain->GetEntry(i);
+      chain->GetEntry(i);
       // event analysis feedback
       if (i % printModulo == 0)
 	{
@@ -110,7 +110,8 @@ void EventAnalysis::Process()
 	  else
 	    {std::cout << std::endl;}
 	}
-      
+
+      // merge histograms stored per event in the output
       if(i==0)
 	{histoSum = new HistogramMerge(event->histos, debug);}
       else
