@@ -23,12 +23,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class HistogramDef;
 
-class TH1D;
+class TChain;
+class TH1;
 
 class PerEntryHistogram
 {
 public:
-  PerEntryHistogram(const HistogramDef* definition);
+  explicit PerEntryHistogram(const HistogramDef* definition,
+			     TChain*             chain);
   ~PerEntryHistogram(){;}
 
   void AccumulateCurrentEntry();
@@ -36,15 +38,30 @@ public:
   void Terminate();
 
   void Write();
-  
-  TH1D*       mean;
-  TH1D*       variance;
-  int         n;
-  std::string command;
-  std::string selection;
+
+  TChain*       chain;        ///< Cache of chain pointer that provides data.
+  unsigned int  nDimensions;  ///< Number of dimensions.
+  unsigned long n;            ///< Current entry number.
+  std::string   histName;     ///< Base name of histogram.
+  std::string   selection;    ///< Selection command.
+
+  TH1*          temp;         ///< Histogram for temporary 1 event data.
+  TH1*          mean;         ///< Histogram for accumulated mean across events.
+  TH1*          variance;     ///< Histogram for accumualted variances across events.
+  TH1*          result;       ///< Final result with errors as the error on the mean.
+  TH1*          resultSTD;    ///< Final result with errors as the standard devitation.
+  std::string   command;      ///< Draw command.
+  bool          terminated;   ///< Record of whether the instance has been terminated (single use).
   
 private:
   PerEntryHistogram() = delete;
+
+  void AccumulateSingleValue(const double&  oldMean,
+			     const double&  oldVari,
+			     const double&  x,
+			     unsigned long& n,
+			     double&        newMean,
+			     double&        newVari);
 };
 
 #endif
