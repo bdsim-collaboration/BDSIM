@@ -157,7 +157,8 @@ void PerEntryHistogram::AccumulateCurrentEntry()
   // This is used as it doesn't matter if the variable is a vector
   // or singly valued - therefore we don't need to keep a map of
   // which variables to loop over and which not to.
-  chain->Draw(command.c_str(), selection.c_str(), "goff", 1, 0);
+  std::cout << command << std::endl;
+  chain->Draw(command.c_str(), selection.c_str(), "goff", 1, n);
 
   // temporary variables
   double newMean = 0;
