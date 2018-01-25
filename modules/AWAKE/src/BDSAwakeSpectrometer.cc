@@ -625,7 +625,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 //void BDSAwakeSpectrometer::BuildFresnelLens(){
@@ -695,7 +695,7 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 void BDSAwakeSpectrometer::Build()
@@ -895,7 +895,7 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
 
 void BDSAwakeSpectrometer::SetUserLimits()
 {
-    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
     for(unsigned long i=0; i<_logVols.size(); i++) {
         _logVols.at(i)->SetUserLimits(userLimits);
     }
