@@ -46,7 +46,7 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 {
   std::string meanName = histName + "Mean";
   std::string variName = histName + "Variance";
-  std::string tempName = histName + "MeanTemp";
+  std::string tempName = histName + "Temp";
   command = definition->variable + " >> " + tempName;
   
   switch (nDimensions)
