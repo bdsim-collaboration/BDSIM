@@ -133,6 +133,12 @@ G4Colour* BDSColours::GetColour(G4String type)
     {
       colourName = type.substr(0, type.find(":"));
       canDefine  = true;
+      if (colours.find(colourName) != colours.end())
+	{
+	  G4cerr << "Colour \"" << colourName
+		 << "\" is already defined - clashing definitions" << G4endl;
+	  exit(1);
+	}
     }
     
   auto it = colours.find(colourName);
