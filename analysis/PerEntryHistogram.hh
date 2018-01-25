@@ -59,7 +59,6 @@ private:
   void AccumulateSingleValue(const double&  oldMean,
 			     const double&  oldVari,
 			     const double&  x,
-			     unsigned long& n,
 			     double&        newMean,
 			     double&        newVari);
 };
