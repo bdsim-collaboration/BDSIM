@@ -251,7 +251,7 @@ void PerEntryHistogram::Terminate()
 	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
-	    std = std::sqrt(variance->GetBinContent(j));
+	    std = std::sqrt(variance->GetBinContent(j) / ((double)n-1));
 	    result->SetBinContent(j,    mean->GetBinContent(j));
 	    result->SetBinError(j,      factor*std);
 	    resultSTD->SetBinContent(j, mean->GetBinContent(j));
@@ -269,7 +269,7 @@ void PerEntryHistogram::Terminate()
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
-		std = std::sqrt(variance->GetBinContent(j,k));
+		std = std::sqrt(variance->GetBinContent(j,k) / ((double)n-1));
 		result->SetBinContent(j, k,    mean->GetBinContent(j,k));
 		result->SetBinError(j, k,      factor*std);
 		resultSTD->SetBinContent(j, j, mean->GetBinContent(j,k));
@@ -290,7 +290,7 @@ void PerEntryHistogram::Terminate()
 	      {
 		for (int l = 0; l <= result->GetNbinsZ()+1; ++l)
 		  {
-		    std = std::sqrt(variance->GetBinContent(j,k,l));
+		    std = std::sqrt(variance->GetBinContent(j,k,l) / ((double)n-1));
 		    result->SetBinContent(j,k,l,    mean->GetBinContent(j,k,l));
 		    result->SetBinError(j,k,l,      factor*std);
 		    resultSTD->SetBinContent(j,k,l, mean->GetBinContent(j,k,l));
