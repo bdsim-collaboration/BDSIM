@@ -49,7 +49,7 @@ public:
   virtual ~OptionsAnalysis();
 
   /// Operate on each entry in the options tree.
-  virtual void Process(){};
+  virtual void Process();
 
 protected:
   Options* options; ///< Options object that data loaded from the file will be loaded into.

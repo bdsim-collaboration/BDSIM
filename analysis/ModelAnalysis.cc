@@ -36,3 +36,12 @@ ModelAnalysis::ModelAnalysis(Model*  modelIn,
   Analysis("Model.", chainIn, "ModelHistogramsMerged", perEntryAnalysis, debugIn),
   model(modelIn)
 {;}
+
+void ModelAnalysis::Process()
+{
+  for (int i = 0; i < entries; i++)
+    {
+      // per event histograms
+      AccumulatePerEntryHistograms();
+    }
+}

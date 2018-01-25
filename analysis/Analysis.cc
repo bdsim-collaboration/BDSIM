@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "PerEntryHistogram.hh"
 #include "rebdsim.hh"
 
 #include "TChain.h"
@@ -41,7 +42,9 @@ Analysis::Analysis(std::string treeNameIn,
   histoSum(nullptr),
   debug(debugIn),
   perEntry(perEntryAnalysis)
-{;}
+{
+  entries = chain->GetEntries();
+}
 
 Analysis::~Analysis()
 {
@@ -53,7 +56,15 @@ void Analysis::Execute()
 {
   std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
   if (perEntry)
-    {Process();}
+    {
+      // ensure new histograms are added to file
+      // crucial for draw command to work as it identifies the histograms by name
+      TH1::AddDirectory(kTRUE);
+      TH2::AddDirectory(kTRUE);
+      TH3::AddDirectory(kTRUE);
+      PreparePerEntryHistograms();
+      Process();
+    }
   SimpleHistograms();
   Terminate();
   std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
@@ -77,12 +88,35 @@ void Analysis::SimpleHistograms()
     }
 }
 
+void Analysis::PreparePerEntryHistograms()
+{
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  for (const auto& def : definitions)
+    {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
+}
+
+void Analysis::AccumulatePerEntryHistograms()
+{
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  for (auto& peHist : perEntryHistograms)
+    {peHist->AccumulateCurrentEntry();}
+}
+
+void Analysis::TerminatePerEntryHistograms()
+{
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  for (auto& peHist : perEntryHistograms)
+    {peHist->Terminate();}
+}
+
 void Analysis::Terminate()
 {
   if (debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   if (histoSum)
     {histoSum->Terminate();}
+  if (perEntry)
+    {TerminatePerEntryHistograms();}
 }
 
 void Analysis::Write(TFile* outputFile)
@@ -98,8 +132,8 @@ void Analysis::Write(TFile* outputFile)
     {h.second->Write();}
   for (auto h : histograms3D)
     {h.second->Write();}
-  //for (auto& h : profiles1D)
-  //  {h.second->Write();}
+  for (auto h : perEntryHistograms)
+    {h->Write();}
   outputFile->cd("/");
   
   // Merged Histograms for this analysis instance (could be run, event etc)
@@ -115,6 +149,7 @@ void Analysis::Write(TFile* outputFile)
 void Analysis::FillHistogram(HistogramDef* definition)
 {
   // ensure new histograms are added to file..
+  // this is crucial for the draw command to work as it finds the histograms by name
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
   TH3::AddDirectory(kTRUE);

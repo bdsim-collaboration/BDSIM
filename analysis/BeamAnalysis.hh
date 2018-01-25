@@ -49,7 +49,7 @@ public:
   virtual ~BeamAnalysis();
 
   /// Operate on each entry in the run tree.
-  virtual void Process(){};
+  virtual void Process();
 
 protected:
   Beam* beam; ///< Beam object that data loaded from the file will be loaded into.

@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class HistogramDef;
+class PerEntryHistogram;
 class TChain;
 class TFile;
 
@@ -67,6 +68,15 @@ public:
   /// Process histogram definitions from configuration instance.
   virtual void SimpleHistograms();
 
+  /// Create structures necessary for per entry histograms.
+  void PreparePerEntryHistograms();
+
+  /// Accumulate means and variances for per entry histograms.
+  void AccumulatePerEntryHistograms();
+
+  /// Prepare result of per entry histogram accumulation.
+  void TerminatePerEntryHistograms();
+
   /// Optional final action after Process() and SimpleHistograms(). The version
   /// in this base class termiantes the histogram merges if there are any in histoSum.
   virtual void Terminate();
@@ -77,14 +87,15 @@ public:
 protected:
   std::string treeName;
   TChain*     chain;
-  std::string                 mergedHistogramName; ///< Name of directory for merged histograms
-  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names
-  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histogram
-  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms
-  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms
-  HistogramMerge*             histoSum;       ///< Bdsim histograms
-  bool                        debug;
-
+  std::string                 mergedHistogramName; ///< Name of directory for merged histograms.
+  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names.
+  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histograms for each 
+  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
+  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
+  std::vector<PerEntryHistogram*> perEntryHistograms;
+  HistogramMerge*             histoSum;       ///< Bdsim histograms.
+  bool                        debug;          ///< Whether debug print out is used or not.
+  long int                    entries;        ///< Number of entries in the chain.
   /// Whether to analyse each entry in the tree in a for loop or not.
   bool                        perEntry;
   

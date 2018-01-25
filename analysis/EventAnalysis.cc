@@ -117,6 +117,9 @@ void EventAnalysis::Process()
       else
 	{histoSum->Add(event->histos);}
 
+      // per event histograms
+      AccumulatePerEntryHistograms();
+
       UserProcess();
 
       if(debug)

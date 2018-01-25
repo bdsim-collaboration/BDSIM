@@ -48,7 +48,7 @@ public:
   virtual ~ModelAnalysis(){};
 
   /// Operate on each entry in the model tree.
-  virtual void Process(){};
+  virtual void Process();
 
 protected:
   Model* model; ///< Model object that data loaded from the file will be loaded into.
