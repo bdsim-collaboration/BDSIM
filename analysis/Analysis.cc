@@ -90,21 +90,21 @@ void Analysis::SimpleHistograms()
 
 void Analysis::PreparePerEntryHistograms()
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (const auto& def : definitions)
     {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
 }
 
 void Analysis::AccumulatePerEntryHistograms()
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry();}
 }
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry("Event.");
+  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->Terminate();}
 }
