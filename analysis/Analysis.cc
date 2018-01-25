@@ -82,6 +82,33 @@ void Analysis::Terminate()
     {histoSum->Terminate();}
 }
 
+void Analysis::Write(TFile* outputFile)
+{
+  //treeName typically has a "." at the end, deleting it here:
+  std::string cleanedName = treeName.erase(treeName.size() - 1);
+  std::string outputDirName = cleanedName + std::string("Histograms");
+  TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
+  rebdsimDir->cd();
+  for(auto h : histograms1D)
+    {h.second->Write();}
+  for(auto h : histograms2D)
+    {h.second->Write();}
+  for (auto h : histograms3D)
+    {h.second->Write();}
+  //for (auto& h : profiles1D)
+  //  {h.second->Write();}
+  outputFile->cd("/");
+  
+  // Merged Histograms for this analysis instance (could be run, event etc)
+  if (histoSum)
+    {
+      std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
+      TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
+      bdsimDir->cd();
+      histoSum->Write(outputFile);
+    }
+}
+
 void Analysis::FillHistogram(HistogramDef* definition)
 {
   // ensure new histograms are added to file..
@@ -196,27 +223,3 @@ void Analysis::FillHistogram(HistogramDef* definition)
     }
 }
 
-void Analysis::Write(TFile* outputFile)
-{
-  //treeName typically has a "." at the end, deleting it here:
-  std::string cleanedName = treeName.erase(treeName.size() - 1);
-  std::string outputDirName = cleanedName + std::string("Histograms");
-  TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
-  rebdsimDir->cd();
-  for(auto h : histograms1D)
-    {h.second->Write();}
-  for(auto h : histograms2D)
-    {h.second->Write();}
-  for (auto h : histograms3D)
-    {h.second->Write();}
-  outputFile->cd("/");
-  
-  // Merged Histograms for this analysis instance (could be run, event etc)
-  if (histoSum)
-    {
-      std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
-      TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
-      bdsimDir->cd();
-      histoSum->Write(outputFile);
-    }
-}
