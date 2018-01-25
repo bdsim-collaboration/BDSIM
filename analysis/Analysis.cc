@@ -26,6 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "rebdsim.hh"
 
 #include "TChain.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TH3D.h"
 
 Analysis::Analysis(std::string treeNameIn,
 		   TChain*     chainIn,
