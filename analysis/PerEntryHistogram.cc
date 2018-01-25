@@ -64,7 +64,9 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 	    mean = new TH1D(meanName.c_str(), meanName.c_str(),
 			    d->xNBins, d->xLow, d->xHigh);
           }
-	variance = static_cast<TH1D*>(mean->Clone());
+	variance = static_cast<TH1D*>(mean->Clone(variName.c_str()));
+	temp     = static_cast<TH1D*>(mean->Clone(tempName.c_str()));
+	break;
       }
     case 2:
       {
@@ -97,7 +99,9 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 			    d->xNBins, d->xLow, d->xHigh,
 			    d->yNBins, d->yLow, d->yHigh);
           }
-	variance = static_cast<TH2D*>(mean->Clone());
+	variance = static_cast<TH2D*>(mean->Clone(variName.c_str()));
+	temp     = static_cast<TH2D*>(mean->Clone(tempName.c_str()));
+	break;
       }
     case 3:
       {
@@ -131,14 +135,13 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 			    d->yNBins, d->yLow, d->yHigh,
 			    d->zNBins, d->zLow, d->zHigh);
 	  }
-	variance = static_cast<TH3D*>(mean->Clone());
-	variance->SetName(variName.c_str());
+	variance = static_cast<TH3D*>(mean->Clone(variName.c_str()));
+	temp     = static_cast<TH3D*>(mean->Clone(tempName.c_str()));
+	break;
       }
 	default:
 	  {break;}
       }
-  // in all cases rename variance histogram
-  variance->SetName(variName.c_str());
 }
       
 void PerEntryHistogram::AccumulateCurrentEntry()
@@ -242,8 +245,8 @@ void PerEntryHistogram::Terminate()
     case 1:
       {
 	// create a copy of the histogram with the same dimensions
-	result    = static_cast<TH1D*>(mean->Clone());
-	resultSTD = static_cast<TH1D*>(mean->Clone());
+	result    = static_cast<TH1D*>(mean->Clone(histName.c_str()));
+	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    std = std::sqrt(variance->GetBinContent(j));
@@ -252,13 +255,12 @@ void PerEntryHistogram::Terminate()
 	    resultSTD->SetBinContent(j, mean->GetBinContent(j));
 	    resultSTD->SetBinError(j,   std);
 	  }
-
 	break;
       }
     case 2:
       {
-	result    = static_cast<TH2D*>(mean->Clone());
-	resultSTD = static_cast<TH2D*>(mean->Clone());
+	result    = static_cast<TH2D*>(mean->Clone(histName.c_str()));
+	resultSTD = static_cast<TH2D*>(mean->Clone((histName + "_std").c_str()));
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
@@ -274,8 +276,8 @@ void PerEntryHistogram::Terminate()
       }
     case 3:
       {
-	result    = static_cast<TH3D*>(mean->Clone());
-	resultSTD = static_cast<TH3D*>(mean->Clone());
+	result    = static_cast<TH3D*>(mean->Clone(histName.c_str()));
+	resultSTD = static_cast<TH3D*>(mean->Clone((histName + "_std").c_str()));
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
@@ -294,13 +296,6 @@ void PerEntryHistogram::Terminate()
       }
     default:
       {break;}
-    }
-
-  if (result)
-    {
-      result->SetName(histName.c_str());
-      resultSTD->SetName((histName + "_std").c_str());
-      
     }
   
   // delete files to remove from output
