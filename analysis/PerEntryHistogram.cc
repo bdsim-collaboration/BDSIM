@@ -257,6 +257,8 @@ void PerEntryHistogram::Terminate()
 	    resultSTD->SetBinContent(j, mean->GetBinContent(j));
 	    resultSTD->SetBinError(j,   std);
 	  }
+	result->SetEntries(n);
+	resultSTD->SetEntries(n);
 	break;
       }
     case 2:
@@ -276,6 +278,8 @@ void PerEntryHistogram::Terminate()
 		resultSTD->SetBinError(j, k,   std);
 	      }
 	  }
+	result->SetEntries(n);
+	resultSTD->SetEntries(n);
 	break;
       }
     case 3:
