@@ -14,3 +14,4 @@ documentation and in the .rst files beside the each example.
    ilc
    lhc
    simpleMachine
+   airwatertarget

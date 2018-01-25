@@ -9,6 +9,7 @@ set(TESTING_PERM_ARGS --batch)
 # kill a job! Long standing bug in cmake
 set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --ignoresigint)
 
+add_subdirectory(airwatertarget)
 add_subdirectory(ATF2)
 add_subdirectory(LHC)
 
