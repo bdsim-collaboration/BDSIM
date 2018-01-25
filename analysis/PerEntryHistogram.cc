@@ -292,6 +292,8 @@ void PerEntryHistogram::Terminate()
 		  }
 	      }
 	  }
+	result->SetEntries(n);
+	resultSTD->SetEntries(n);
 	break;
       }
     default:
