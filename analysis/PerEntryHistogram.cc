@@ -146,6 +146,7 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
       
 void PerEntryHistogram::AccumulateCurrentEntry()
 {
+  n++;
   if (terminated)
     {
       std::cerr << "PerEntryHistogram already terminated" << std::endl;
@@ -175,7 +176,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 	    AccumulateSingleValue(h1->GetBinContent(j),
 				  h1e->GetBinContent(j),
 				  ht->GetBinContent(j),
-				  n, newMean, newVari);
+				  newMean, newVari);
 	    h1->SetBinContent(j, newMean);
 	    h1e->SetBinContent(j, newVari);
 	  }
@@ -192,7 +193,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 		AccumulateSingleValue(h1->GetBinContent(j,k),
 				      h1e->GetBinContent(j,k),
 				      ht->GetBinContent(j,k),
-				      n, newMean, newVari);
+				      newMean, newVari);
 		h1->SetBinContent(j, k, newMean);
 		h1e->SetBinContent(j, k, newVari);
 	      }
@@ -212,7 +213,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 		    AccumulateSingleValue(h1->GetBinContent(j,k,l),
 					  h1e->GetBinContent(j,k,l),
 					  ht->GetBinContent(j,k,l),
-					  n, newMean, newVari);
+					  newMean, newVari);
 		    h1->SetBinContent(j, k, l, newMean);
 		    h1e->SetBinContent(j, k, l, newVari);
 		  }
@@ -227,12 +228,10 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 void PerEntryHistogram::AccumulateSingleValue(const double&  oldMean,
 					      const double&  oldVari,
 					      const double&  x,
-					      unsigned long& nIn,
 					      double&        newMean,
 					      double&        newVari)
 {
-  nIn++; // incremented before used
-  newMean = oldMean + (x - oldMean) / nIn;
+  newMean = oldMean + ((x - oldMean) / n);
   newVari = oldVari + ((x - oldMean) * (x - newMean));
 }
 
