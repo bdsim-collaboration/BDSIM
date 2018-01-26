@@ -280,7 +280,7 @@ void BDSOutput::CreateHistograms()
   Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges); // 6
 
   // only create tunnel histograms if we build the tunnel
-  const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->TunnelBeamline();
+  const BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
   if (tunnelBeamline)
     {
       binedges = tunnelBeamline->GetEdgeSPositions();
