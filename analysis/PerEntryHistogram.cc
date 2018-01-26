@@ -247,21 +247,23 @@ void PerEntryHistogram::Terminate()
     {std::cerr << "Double Termination!!" << std::endl; exit(1);}
   double factor = std::sqrt(1./(double)n);
   double std    = 0; // temporary variable
+  double val    = 0; // temporary variable
   switch (nDimensions)
     {
     case 1:
       {
 	// create a copy of the histogram with the same dimensions
-	result    = static_cast<TH1D*>(mean->Clone(histName.c_str()));
+	result    = static_cast<TH1D*>(mean->Clone((histName+"_1").c_str()));
 	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
 	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
+	    val = mean->GetBinContent(j);
 	    std = std::sqrt(variance->GetBinContent(j) / ((double)n-1));
-	    result->SetBinContent(j,    mean->GetBinContent(j));
+	    result->SetBinContent(j,    val);
 	    result->SetBinError(j,      factor*std);
-	    resultSTD->SetBinContent(j, mean->GetBinContent(j));
+	    resultSTD->SetBinContent(j, val);
 	    resultSTD->SetBinError(j,   std);
 	  }
 	result->SetEntries(n);
@@ -278,10 +280,11 @@ void PerEntryHistogram::Terminate()
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
+		val = mean->GetBinContent(j,k);
 		std = std::sqrt(variance->GetBinContent(j,k) / ((double)n-1));
-		result->SetBinContent(j, k,    mean->GetBinContent(j,k));
+		result->SetBinContent(j, k,    val);
 		result->SetBinError(j, k,      factor*std);
-		resultSTD->SetBinContent(j, j, mean->GetBinContent(j,k));
+		resultSTD->SetBinContent(j, j, val);
 		resultSTD->SetBinError(j, k,   std);
 	      }
 	  }
@@ -301,10 +304,11 @@ void PerEntryHistogram::Terminate()
 	      {
 		for (int l = 0; l <= result->GetNbinsZ()+1; ++l)
 		  {
+		    val = mean->GetBinContent(j,k,l);
 		    std = std::sqrt(variance->GetBinContent(j,k,l) / ((double)n-1));
-		    result->SetBinContent(j,k,l,    mean->GetBinContent(j,k,l));
+		    result->SetBinContent(j,k,l,    val);
 		    result->SetBinError(j,k,l,      factor*std);
-		    resultSTD->SetBinContent(j,k,l, mean->GetBinContent(j,k,l));
+		    resultSTD->SetBinContent(j,k,l, val);
 		    resultSTD->SetBinError(j,k,l,   std);
 		  }
 	      }
