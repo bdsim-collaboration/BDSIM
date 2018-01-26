@@ -172,11 +172,16 @@ void BDSOutputROOTEventModel::Fill()
 
     // beam pipe
     BDSBeamPipeInfo *beampipeinfo = (*i)->GetBeamPipeInfo();
-    this->beamPipeType.push_back(beampipeinfo ?  beampipeinfo->beamPipeType.underlying() : 0);
-    this->beamPipeAper1.push_back(beampipeinfo ? beampipeinfo->aper1/CLHEP::m : 0);
-    this->beamPipeAper2.push_back(beampipeinfo ? beampipeinfo->aper2/CLHEP::m : 0);
-    this->beamPipeAper3.push_back(beampipeinfo ? beampipeinfo->aper3/CLHEP::m : 0);
-    this->beamPipeAper4.push_back(beampipeinfo ? beampipeinfo->aper4/CLHEP::m : 0);
+    this->beamPipeType.push_back(beampipeinfo ?
+				 beampipeinfo->beamPipeType.ToString() : "");
+    this->beamPipeAper1.push_back(beampipeinfo ?
+				  beampipeinfo->aper1 / CLHEP::m : 0);
+    this->beamPipeAper2.push_back(beampipeinfo ?
+				  beampipeinfo->aper2 / CLHEP::m : 0);
+    this->beamPipeAper3.push_back(beampipeinfo ?
+				  beampipeinfo->aper3 / CLHEP::m : 0);
+    this->beamPipeAper4.push_back(beampipeinfo ?
+				  beampipeinfo->aper4 / CLHEP::m : 0);
 
   }
 }
