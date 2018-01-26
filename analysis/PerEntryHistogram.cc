@@ -146,7 +146,6 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
       
 void PerEntryHistogram::AccumulateCurrentEntry()
 {
-  n++;
   if (terminated)
     {
       std::cerr << "PerEntryHistogram already terminated" << std::endl;
@@ -157,13 +156,14 @@ void PerEntryHistogram::AccumulateCurrentEntry()
   // This is used as it doesn't matter if the variable is a vector
   // or singly valued - therefore we don't need to keep a map of
   // which variables to loop over and which not to.
-  std::cout << command << std::endl;
-  chain->Draw(command.c_str(), selection.c_str(), "goff", 1, n);
+  temp->Reset();
+  chain->Draw(command.c_str(), selection.c_str(), "", 1, n);
 
   // temporary variables
   double newMean = 0;
   double newVari = 0;
 
+  n++; // this has to be after the Draw command -> entry index starts from 0, averaging uses 1
   // update mean & variance
   switch (nDimensions)
     {
