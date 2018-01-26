@@ -243,6 +243,8 @@ void PerEntryHistogram::AccumulateSingleValue(const double&  oldMean,
 
 void PerEntryHistogram::Terminate()
 {
+  if (terminated)
+    {std::cerr << "Double Termination!!" << std::endl; exit(1);}
   double factor = std::sqrt(1./(double)n);
   double std    = 0; // temporary variable
   switch (nDimensions)
