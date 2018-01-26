@@ -66,6 +66,8 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
           }
 	variance = static_cast<TH1D*>(mean->Clone(variName.c_str()));
 	temp     = static_cast<TH1D*>(mean->Clone(tempName.c_str()));
+	variance->SetTitle(variName.c_str());
+	temp->SetTitle(tempName.c_str());
 	break;
       }
     case 2:
