@@ -181,6 +181,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 	    h1->SetBinContent(j, newMean);
 	    h1e->SetBinContent(j, newVari);
 	  }
+	break;
       }
     case 2:
       {
@@ -199,6 +200,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 		h1e->SetBinContent(j, k, newVari);
 	      }
 	  }
+	break;
       }
     case 3:
       {
@@ -220,9 +222,10 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 		  }
 	      }
 	  }
+	break;
       }
     default:
-      {return;}
+      {break;}
     }
 }
 

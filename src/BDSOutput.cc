@@ -381,7 +381,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	    break;
 	  }
 	default:
-	  {return;} // only to prevent compiler warning
+	  {break;} // only to prevent compiler warning
 	}
       
       if (useScoringMap)
