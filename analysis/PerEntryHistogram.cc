@@ -253,10 +253,12 @@ void PerEntryHistogram::Terminate()
     case 1:
       {
 	// create a copy of the histogram with the same dimensions
-	result    = static_cast<TH1D*>(mean->Clone((histName+"_1").c_str()));
+	result    = static_cast<TH1D*>(mean->Clone(histName.c_str()));
 	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
 	resultSTD->Reset();
+	result->SetTitle(histName.c_str());
+	resultSTD->SetTitle(histName.c_str());
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    val = mean->GetBinContent(j);
