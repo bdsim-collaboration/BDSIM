@@ -82,7 +82,7 @@ void Analysis::SimpleHistograms()
   auto c = Config::Instance();
   if (c)
     {
-      auto definitions = Config::Instance()->HistogramDefinitions(treeName);
+      auto definitions = Config::Instance()->HistogramDefinitionsSimple(treeName);
       for (auto definition : definitions)
 	{FillHistogram(definition);}
     }
