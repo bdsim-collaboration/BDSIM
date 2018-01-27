@@ -159,7 +159,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
   // or singly valued - therefore we don't need to keep a map of
   // which variables to loop over and which not to.
   temp->Reset();
-  chain->Draw(command.c_str(), selection.c_str(), "", 1, n);
+  chain->Draw(command.c_str(), selection.c_str(), "goff", 1, n);
 
   // temporary variables
   double newMean = 0;
