@@ -1,17 +1,7 @@
-Debug						1
-InputFilePath					./output.root
-OutputFileName					./ana_1.root
-CalculateOpticalFunctions			0
-CalculateOpticalFunctionsFileName		./ana_1.dat
-MergeHistograms true
-# Object	treeName	Histogram Name           # Bins     Binning	       Variable                 Selection
-SimpleHistogram1D    Beam.          X0                       {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1
-SimpleHistogram1D	Event.		Primaryx                 {100}       {-5e-6:5e-6}     Primary.x                      1
-SimpleHistogram1D	Event.		Primaryy                 {100}       {-5e-6:5e-6}     Primary.y                      1
-SimpleHistogram1D	Options.	seedState                {200}       {0:200}          Options.GMAD::OptionsBase.seed 1
-SimpleHistogram1D    Model.         componentLength          {100}       {0.0:100}        Model.length                   1
-SimpleHistogram1D    Run.           runDuration              {1000}      {0:1000}         Info.duration                  1
-SimpleHistogram2D    Event.         PrimaryPhaseSpace        {50,50}     {-5e-6:5e-6,-5e-6:5e-6}            Primary.x:Primary.y           1
-SimpleHistogram3D    Event.         PrimaryPhaseSpace3D      {50,50,50}  {-5e-6:5e-6,-5e-6:5e-6,-5e-6:5e-6} Primary.x:Primary.y:Primary.z 1
-SimpleHistogram1DLog Event.         EnergySpectrum           {50}        {-5:-1}           Eloss.energy                   1
-Histogram1D    		Event.         EnergySpectrum2           {22}        {0:22}           Eloss.S              Eloss.energy
+InputFilePath	    ./output.root
+OutputFileName	    ./output_ana1.root
+# Object	treeName   Histogram Name       # Bins   Binning	          Variable          Selection
+Histogram1D    	Event.     EnergyLoss           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
+Histogram2D    Event.     Flux			  {50,50}  {-2.5:2.5,-2.5:2.5}  fq1.x:fq1.y       fq1.energy*fq1.weight
+Histogram1D    Run.	   RunDuration	 	  {100}    {0:100}               Info.duration     1
+Histogram1D    Model.     ElementLength         {10}     {0:22}               Model.length       1
