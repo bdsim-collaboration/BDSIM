@@ -220,6 +220,9 @@ standard error on the beam, i.e.
 
 where :math:`\sigma` is the standard deviation of the values in that bin for all events.
 
+.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+
 Analysis Configuration File
 ===========================
 
@@ -265,6 +268,11 @@ Examples can be found in:
 * Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
 * True or False as well as 1 or 0 may be used for Boolean options.
+
+.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
+	  useful for per-event analysis on the Event tree.
 
 Logarithmic Binning
 ===================
