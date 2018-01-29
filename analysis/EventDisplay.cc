@@ -211,11 +211,11 @@ void EventDisplay::DrawElossHits()
 {
   std::cout << "EventDisplay::DrawElossHits>" << std::endl;
   TEvePointSet *ps = new TEvePointSet("Eloss");
-  for(int i=0;i<(int)event->eloss->X.size();++i)
+  for(int i=0;i<(int)event->Eloss->X.size();++i)
   {
-    ps->SetNextPoint(event->eloss->X[i]*100.0,
-                     event->eloss->Y[i]*100.0,
-                     event->eloss->Z[i]*100.0);
+    ps->SetNextPoint(event->Eloss->X[i]*100.0,
+                     event->Eloss->Y[i]*100.0,
+                     event->Eloss->Z[i]*100.0);
   }
   ps->SetMainColor(kWhite);
   gEve->AddElement(ps);
@@ -229,14 +229,14 @@ void EventDisplay::DrawTunnelHits()
   TEveBoxSet *bs = new TEveBoxSet("TunnelHits");
   bs->Reset(TEveBoxSet::kBT_AABox, kFALSE,64);
 
-  for(int i=0;i<(int)event->tunnelHit->X.size();++i)
+  for(int i=0;i<(int)event->TunnelHit->X.size();++i)
   {
-    bs->AddBox(event->tunnelHit->X[i]*100.0,
-               event->tunnelHit->Y[i]*100.0,
-               event->tunnelHit->Z[i]*100.0,
-               -event->tunnelHit->energy[i]*5000.0,
-               -event->tunnelHit->energy[i]*5000.0,
-               -event->tunnelHit->energy[i]*5000.0);
+    bs->AddBox(event->TunnelHit->X[i]*100.0,
+               event->TunnelHit->Y[i]*100.0,
+               event->TunnelHit->Z[i]*100.0,
+               -event->TunnelHit->energy[i]*5000.0,
+               -event->TunnelHit->energy[i]*5000.0,
+               -event->TunnelHit->energy[i]*5000.0);
   }
   bs->RefitPlex();
 
@@ -250,7 +250,7 @@ void EventDisplay::DrawSamplers()
   std::cout << "EventDisplay::DrawSamplers>" << std::endl;
 
   // loop over samplers
-  for(auto sampler : event->samplers)
+  for(auto sampler : event->Samplers)
   {
     TEvePointSet *ps = new TEvePointSet((std::string("Sampler_")+sampler->samplerName.c_str()).c_str());
 
@@ -276,19 +276,19 @@ void EventDisplay::DrawSamplers()
 void EventDisplay::DrawTrajectories()
 {
   std::cout << "EventDisplay::DrawTrajectories>" << std::endl;
-  std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->trajectory->trajectories.size() << std::endl;
+  std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->Trajectory->trajectories.size() << std::endl;
 
   int iTraj = 0;
-  for(auto t : event->trajectory->trajectories) {
+  for(auto t : event->Trajectory->trajectories) {
 
     std::string trajNameAppend = std::string();
-    if(event->trajectory->trackID[iTraj] == 1)
+    if(event->Trajectory->trackID[iTraj] == 1)
     {
       trajNameAppend = "_primary";
     }
     else
     {
-      trajNameAppend = "_"+std::to_string(event->trajectory->trackID[iTraj]);
+      trajNameAppend = "_"+std::to_string(event->Trajectory->trackID[iTraj]);
     }
 
     TEveLine *et = new TEveLine((std::string("Trajectory")+trajNameAppend).c_str());

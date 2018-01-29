@@ -48,32 +48,32 @@ Event::Event(bool debugIn,
 
 Event::~Event()
 {
-  delete primaries;
-  delete eloss;
-  delete primaryFirstHit;
-  delete primaryLastHit;
-  delete tunnelHit;
-  delete trajectory;
-  delete histos;
-  delete info;
-  for (auto s : samplers)
+  delete Primary;
+  delete Eloss;
+  delete PrimaryFirstHit;
+  delete PrimaryLastHit;
+  delete TunnelHit;
+  delete Trajectory;
+  delete Histos;
+  delete Info;
+  for (auto s : Samplers)
     {delete s;}
 }
 
 void Event::CommonCtor()
 {
 #ifdef __ROOTDOUBLE__
-  primaries       = new BDSOutputROOTEventSampler<double>();
+  Primary         = new BDSOutputROOTEventSampler<double>();
 #else
-  primaries       = new BDSOutputROOTEventSampler<float>();
+  Primary         = new BDSOutputROOTEventSampler<float>();
 #endif
-  eloss           = new BDSOutputROOTEventLoss();
-  primaryFirstHit = new BDSOutputROOTEventLoss();
-  primaryLastHit  = new BDSOutputROOTEventLoss();
-  tunnelHit       = new BDSOutputROOTEventLoss();
-  trajectory      = new BDSOutputROOTEventTrajectory();
-  histos          = new BDSOutputROOTEventHistograms();
-  info            = new BDSOutputROOTEventInfo();
+  Eloss           = new BDSOutputROOTEventLoss();
+  PrimaryFirstHit = new BDSOutputROOTEventLoss();
+  PrimaryLastHit  = new BDSOutputROOTEventLoss();
+  TunnelHit       = new BDSOutputROOTEventLoss();
+  Trajectory      = new BDSOutputROOTEventTrajectory();
+  Histos          = new BDSOutputROOTEventHistograms();
+  Info            = new BDSOutputROOTEventInfo();
 }
 
 void Event::SetBranchAddress(TTree *t,
@@ -94,17 +94,17 @@ void Event::SetBranchAddress(TTree *t,
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
     {
       t->SetBranchStatus("Primary*",  1);
-      t->SetBranchAddress("Primary.", &primaries);
+      t->SetBranchAddress("Primary.", &Primary);
     }
 
   t->SetBranchStatus("Info*", 1);
-  t->SetBranchAddress("Info.", &info);
+  t->SetBranchAddress("Info.", &Info);
   
   t->SetBranchStatus("PrimaryFirstHit*", 1);
-  t->SetBranchAddress("PrimaryFirstHit.", &primaryFirstHit);
+  t->SetBranchAddress("PrimaryFirstHit.", &PrimaryFirstHit);
 
   t->SetBranchStatus("PrimaryLastHit*", 1);
-  t->SetBranchAddress("PrimaryLastHit.", &primaryLastHit);
+  t->SetBranchAddress("PrimaryLastHit.", &PrimaryLastHit);
   
   if (allBranchesOn)
     {t->SetBranchStatus("*", 1);}
@@ -121,44 +121,44 @@ void Event::SetBranchAddress(TTree *t,
 	  // of the object type and not the base class (say TObject) so there's no
 	  // way to easily map these -> ifs
 	  if (name == "Eloss")
-	    {t->SetBranchAddress("Eloss.", &eloss);}
+	    {t->SetBranchAddress("Eloss.", &Eloss);}
 	  else if (name == "Histos")
-	    {t->SetBranchAddress("Histos.", &histos);}
+	    {t->SetBranchAddress("Histos.", &Histos);}
 	  else if (name == "TunnelHit")
-	    {t->SetBranchAddress("TunnelHit.", &tunnelHit);}
+	    {t->SetBranchAddress("TunnelHit.", &TunnelHit);}
 	  else if (name == "Trajectory")
-	    {t->SetBranchAddress("Trajectory.", &trajectory);}
+	    {t->SetBranchAddress("Trajectory.", &Trajectory);}
 	}
     }
 
   if(debug)
     {
-      std::cout << "Event::SetBranchAddress> Primary.         " << primaries       << std::endl;
-      std::cout << "Event::SetBranchAddress> Eloss.           " << eloss           << std::endl;
-      std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << primaryFirstHit << std::endl;
-      std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << primaryLastHit  << std::endl;
-      std::cout << "Event::SetBranchAddress> TunnelHit.       " << tunnelHit       << std::endl;
-      std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory      << std::endl;
-      std::cout << "Event::SetBranchAddress> Histos.          " << histos          << std::endl;
-      std::cout << "Event::SetBranchAddress> Info.            " << info            << std::endl;
+      std::cout << "Event::SetBranchAddress> Primary.         " << Primary       << std::endl;
+      std::cout << "Event::SetBranchAddress> Eloss.           " << Eloss           << std::endl;
+      std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << PrimaryFirstHit << std::endl;
+      std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << PrimaryLastHit  << std::endl;
+      std::cout << "Event::SetBranchAddress> TunnelHit.       " << TunnelHit       << std::endl;
+      std::cout << "Event::SetBranchAddress> Trajectory.      " << Trajectory      << std::endl;
+      std::cout << "Event::SetBranchAddress> Histos.          " << Histos          << std::endl;
+      std::cout << "Event::SetBranchAddress> Info.            " << Info            << std::endl;
     }
 
   if (processSamplers && samplerNames)
     {
       unsigned int nrSamplers = samplerNames->size();
-      samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
+      Samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
       for (unsigned int i=0; i < nrSamplers; ++i)
 	{
 	  const auto sampName = (*samplerNames)[i];
 #ifdef __ROOTDOUBLE__
-	  samplers[i] = new BDSOutputROOTEventSampler<double>(sampName);
+	  Samplers[i] = new BDSOutputROOTEventSampler<double>(sampName);
 #else
-	  samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
+	  Samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
 #endif
-	  t->SetBranchAddress(sampName.c_str(), &samplers[i]);
+	  t->SetBranchAddress(sampName.c_str(), &Samplers[i]);
 	  t->SetBranchStatus((sampName+"*").c_str(), 1);
 	  if(debug)
-	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << Samplers[i] << std::endl;}
 	}
     }
 }

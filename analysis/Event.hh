@@ -50,17 +50,17 @@ public:
 
   /// @{ Accessor
 #ifdef __ROOTDOUBLE__  
-  BDSOutputROOTEventSampler<double>* GetPrimaries() {return primaries;}
+  BDSOutputROOTEventSampler<double>* GetPrimaries() {return Primary;}
 #else
-  BDSOutputROOTEventSampler<float>*  GetPrimaries() {return primaries;}
+  BDSOutputROOTEventSampler<float>*  GetPrimaries() {return Primary;}
 #endif
-  BDSOutputROOTEventLoss*            GetLoss()             {return eloss;}
-  BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return primaryFirstHit;}
-  BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return primaryLastHit;}
-  BDSOutputROOTEventLoss*            GetTunnelHit()        {return tunnelHit;}
-  BDSOutputROOTEventTrajectory*      GetTrajectory()       {return trajectory;}
-  BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
-  BDSOutputROOTEventInfo*            GetInfo()             {return info;}
+  BDSOutputROOTEventLoss*            GetLoss()             {return Eloss;}
+  BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return PrimaryFirstHit;}
+  BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return PrimaryLastHit;}
+  BDSOutputROOTEventLoss*            GetTunnelHit()        {return TunnelHit;}
+  BDSOutputROOTEventTrajectory*      GetTrajectory()       {return Trajectory;}
+  BDSOutputROOTEventHistograms*      GetHistograms()       {return Histos;}
+  BDSOutputROOTEventInfo*            GetInfo()             {return Info;}
   /// @}
 
   /// Set the branch addresses to address the contents of the file. The vector
@@ -72,22 +72,22 @@ public:
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>              *primaries;
+  BDSOutputROOTEventSampler<double>* Primary;
 #else
-  BDSOutputROOTEventSampler<float>               *primaries;
+  BDSOutputROOTEventSampler<float>* Primary;
 #endif
-  BDSOutputROOTEventLoss                         *eloss;
-  BDSOutputROOTEventLoss                         *primaryFirstHit;
-  BDSOutputROOTEventLoss                         *primaryLastHit;
-  BDSOutputROOTEventLoss                         *tunnelHit;
-  BDSOutputROOTEventTrajectory                   *trajectory;
+  BDSOutputROOTEventLoss*       Eloss;
+  BDSOutputROOTEventLoss*       PrimaryFirstHit;
+  BDSOutputROOTEventLoss*       PrimaryLastHit;
+  BDSOutputROOTEventLoss*       TunnelHit;
+  BDSOutputROOTEventTrajectory* Trajectory;
 #ifdef __ROOTDOUBLE__
-  std::vector<BDSOutputROOTEventSampler<double>*> samplers;
+  std::vector<BDSOutputROOTEventSampler<double>*> Samplers;
 #else
-  std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
+  std::vector<BDSOutputROOTEventSampler<float>*>  Samplers;
 #endif
-  BDSOutputROOTEventHistograms                   *histos;
-  BDSOutputROOTEventInfo                         *info;
+  BDSOutputROOTEventHistograms* Histos;
+  BDSOutputROOTEventInfo*       Info;
   /// @}
 
 private:
