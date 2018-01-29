@@ -44,6 +44,8 @@ Analysis::Analysis(std::string treeNameIn,
   perEntry(perEntryAnalysis)
 {
   entries = chain->GetEntries();
+  // only activate per entry histograms if at least 2 entries.
+  runPerEntryHistograms = entries > 1;
 }
 
 Analysis::~Analysis()
@@ -91,12 +93,21 @@ void Analysis::SimpleHistograms()
 void Analysis::PreparePerEntryHistograms()
 {
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
+  if (!runPerEntryHistograms && definitions.size() > 0)
+    {
+      std::cout << "Warning: per-entry histograms specified, but insufficient\n ";
+      std::cout << "        number of events (" << entries << ") to calculate means and variances." << std::endl;
+      std::cout << "Per-entry histograms will not be produced for this Tree." << std::endl;
+      return;
+    }
   for (const auto& def : definitions)
     {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
 }
 
 void Analysis::AccumulatePerEntryHistograms()
 {
+  if (!runPerEntryHistograms)
+    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry();}
@@ -104,6 +115,8 @@ void Analysis::AccumulatePerEntryHistograms()
 
 void Analysis::TerminatePerEntryHistograms()
 {
+  if (!runPerEntryHistograms)
+    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->Terminate();}
@@ -132,8 +145,11 @@ void Analysis::Write(TFile* outputFile)
     {h.second->Write();}
   for (auto h : histograms3D)
     {h.second->Write();}
-  for (auto h : perEntryHistograms)
-    {h->Write();}
+  if (runPerEntryHistograms)
+    {
+      for (auto h : perEntryHistograms)
+	{h->Write();}
+    }
   outputFile->cd("/");
   
   // Merged Histograms for this analysis instance (could be run, event etc)
