@@ -73,10 +73,6 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
-  // if no quadrupole component, simply return
-  if (!BDS::IsFinite(bPrime))
-    {return;}
-
   // If the particle might spiral, we return and just use the dipole only component
   // Aimed at particles of much lower momentum than the design energy.
   G4double dipoleDC          = dipole->DistChord();
@@ -190,6 +186,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
+      if (!BDS::IsFinite(ky))  //otherwise y12 is nan from div by 0 in previous line
+        {Y12 = h;}
       Y21= std::abs(ky2)*Y12;
       Y22= Y11;
     }
@@ -204,6 +202,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;
+      if (!BDS::IsFinite(ky))  //otherwise y12 is nan from div by 0 in previous line
+        {Y12 = h;}
       Y21= -std::abs(ky2)*Y12;
       Y22= Y11;
     }
