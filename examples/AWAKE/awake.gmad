@@ -1,4 +1,10 @@
-option,physicsList="ftfp_bert optical";
+option,physicsList="ftfp_bert em";
+
+option, stopSecondaries=1;
+
+! turn off optical phyiscs for quick simulation
+!optical";
+
 !option,physicsList="";
 !option,physicsList="em";
 include options.gmad;
