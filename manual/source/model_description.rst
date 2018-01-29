@@ -39,7 +39,7 @@ While GMAD is very similar to MADX, not all MADX commands are supported.
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
-* boolean operators <, >, <=, >=, <> (not equal), == are valid
+* Boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
 * !comments start with an exclamation mark "!"
@@ -776,7 +776,7 @@ parameter              description                              default     requ
 Examples::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
-    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm;
 
 
 muspoiler
