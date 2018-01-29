@@ -66,8 +66,6 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
           }
 	variance = static_cast<TH1D*>(mean->Clone(variName.c_str()));
 	temp     = static_cast<TH1D*>(mean->Clone(tempName.c_str()));
-	variance->SetTitle(variName.c_str());
-	temp->SetTitle(tempName.c_str());
 	break;
       }
     case 2:
@@ -144,6 +142,8 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
 	default:
 	  {break;}
       }
+  variance->SetTitle(variName.c_str());
+  temp->SetTitle(tempName.c_str());
 }
       
 void PerEntryHistogram::AccumulateCurrentEntry()
@@ -257,8 +257,6 @@ void PerEntryHistogram::Terminate()
 	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
 	resultSTD->Reset();
-	result->SetTitle(histName.c_str());
-	resultSTD->SetTitle(histName.c_str());
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    val = mean->GetBinContent(j);
@@ -268,8 +266,6 @@ void PerEntryHistogram::Terminate()
 	    resultSTD->SetBinContent(j, val);
 	    resultSTD->SetBinError(j,   std);
 	  }
-	result->SetEntries(n);
-	resultSTD->SetEntries(n);
 	break;
       }
     case 2:
@@ -290,8 +286,6 @@ void PerEntryHistogram::Terminate()
 		resultSTD->SetBinError(j, k,   std);
 	      }
 	  }
-	result->SetEntries(n);
-	resultSTD->SetEntries(n);
 	break;
       }
     case 3:
@@ -315,13 +309,16 @@ void PerEntryHistogram::Terminate()
 		  }
 	      }
 	  }
-	result->SetEntries(n);
-	resultSTD->SetEntries(n);
 	break;
       }
     default:
       {break;}
     }
+
+  result->SetTitle(histName.c_str());
+  resultSTD->SetTitle(histName.c_str());
+  result->SetEntries(n);
+  resultSTD->SetEntries(n);
   
   // delete files to remove from output
   delete temp;
