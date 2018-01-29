@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct integratorsettype_def
 {
-  enum type {geant4, bdsimone, bdsimtwo};
+  enum type {geant4, bdsimone, bdsimtwo, bdsimmatrix};
 };
 
 typedef BDSTypeSafeEnum<integratorsettype_def, int> BDSIntegratorSetType;
