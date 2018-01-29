@@ -32,18 +32,27 @@ class TChain;
  * @author Stuart Walker.
  */
 
-class ModelAnalysis : public Analysis
+class ModelAnalysis: public Analysis
 {
 public:
+  /// The default constructor is not intended for use and will not
+  /// work for the purpose of analysis. It is required by the ROOT
+  /// C++ reflection system in case you wish to save the object.
   ModelAnalysis();
-  ModelAnalysis(Model* model, TChain* chain, bool debug = false);
+
+  /// Constructor intended for use to construct a model analysis object.
+  ModelAnalysis(Model*  model,
+		TChain* chain,
+		bool    perEntryAnalysis = true,
+		bool    debugIn          = false);
   virtual ~ModelAnalysis(){};
 
-  virtual void Process(){};
-  virtual void Terminate(){};
+  /// Operate on each entry in the model tree.
+  virtual void Process();
 
 protected:
-  Model* model;
+  Model* model; ///< Model object that data loaded from the file will be loaded into.
+
   ClassDef(ModelAnalysis,1);
 };
 

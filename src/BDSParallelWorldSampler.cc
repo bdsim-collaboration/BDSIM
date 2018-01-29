@@ -63,7 +63,7 @@ void BDSParallelWorldSampler::Construct()
   G4VPhysicalVolume* samplerWorld   = GetWorld();
   G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
 
-  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   

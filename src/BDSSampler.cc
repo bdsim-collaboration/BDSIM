@@ -35,5 +35,5 @@ void BDSSampler::CommonConstruction()
 					       nullptr,
 					       GetName() + "_lv");
   
-  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->VisibleDebugVisAttr());
 }

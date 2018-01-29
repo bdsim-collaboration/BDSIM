@@ -47,11 +47,12 @@ EventAnalysis::EventAnalysis():
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
 			     TChain* chainIn,
+			     bool    perEntryAnalysis,
 			     bool    processSamplersIn,
 			     bool    debugIn,
 			     double  printModuloFraction,
 			     bool    emittanceOnTheFlyIn):
-  Analysis("Event.", chainIn, "EventHistogramsMerged", debugIn),
+  Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn)
@@ -61,11 +62,11 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
       // Analyse the primary sampler in the optics too.
       SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
       samplerAnalyses.push_back(sa);
-      
-      for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
+
+      for (const auto& sampler : event->Samplers)
 	{
-	  sa = new SamplerAnalysis(*i);
-	  this->samplerAnalyses.push_back(sa);
+	  sa = new SamplerAnalysis(sampler);
+	  samplerAnalyses.push_back(sa);
 	}
     }
   
@@ -74,7 +75,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  int    nEntries = chain->GetEntries();
+  int nEntries = (int)chain->GetEntries();
   printModulo = (int)ceil(nEntries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
@@ -99,7 +100,7 @@ void EventAnalysis::Process()
   const int entries = chain->GetEntries();
   for(int i=0; i<entries; ++i)
     {
-      this->chain->GetEntry(i);
+      chain->GetEntry(i);
       // event analysis feedback
       if (i % printModulo == 0)
 	{
@@ -109,11 +110,15 @@ void EventAnalysis::Process()
 	  else
 	    {std::cout << std::endl;}
 	}
-      
+
+      // merge histograms stored per event in the output
       if(i==0)
-	{histoSum = new HistogramMerge(event->histos, debug);}
+	{histoSum = new HistogramMerge(event->Histos, debug);}
       else
-	{histoSum->Add(event->histos);}
+	{histoSum->Add(event->Histos);}
+
+      // per event histograms
+      AccumulatePerEntryHistograms();
 
       UserProcess();
 
@@ -123,12 +128,12 @@ void EventAnalysis::Process()
         if (processSamplers)
         {
             std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-            std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
-            std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
+            std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
+            std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
+            std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
             //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
         }
 	}

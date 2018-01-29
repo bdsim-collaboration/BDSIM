@@ -134,13 +134,13 @@ void BDSAcceleratorComponent::Build()
   if(containerLogicalVolume)
     {
       // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
       //copy the default and update with the length of the object rather than the default 1m
       G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
       if (ul != defaultUL) // if it's not the default register it
         {RegisterUserLimits(ul);}
       containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
     }
 }
 

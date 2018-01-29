@@ -99,12 +99,12 @@ void AnalysisUser::Analysis()
     std::cout << "New event " << std::endl;
     std::cout << "--------- " << std::endl;
 
-    for(int j = 0; j<this->event->samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
+    for(int j = 0; j<this->event->Samplers[0]->n; ++j)              // Loop over sampler hits in sampler 0
     {
-      int trackID = this->event->samplers[0]->trackID[j];           // track ID for sampler particle
+      int trackID = this->event->Samplers[0]->trackID[j];           // track ID for sampler particle
       if(trackID != 1) {                                            // does not work for the primary
         BDSOutputROOTEventTrajectoryPoint point =
-                event->trajectory->primaryProcessPoint(trackID);    // get initial process point
+                event->Trajectory->primaryProcessPoint(trackID);    // get initial process point
         std::cout << i << " " << j << " "
                   << trackID << " "
                   << point.processType << " "

@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class HistogramDef;
+class PerEntryHistogram;
 class TChain;
 class TFile;
 
@@ -44,21 +45,40 @@ class Analysis
 public:
   /// Requires the name of the tree to analysed, the chain of files to operate on,
   /// the name of the directory to create in the output root file for the combined
-  /// existing histrograms from that tree and whether or not we're in debug mode.
+  /// existing histrograms from that tree, whether to operate on each entry in the
+  /// tree and whether or not we're in debug mode.
   Analysis(std::string treeNameIn,
 	   TChain*     chainIn,
 	   std::string mergedHistogramNameIn,
-	   bool        debugIn = false);
+	   bool        perEntryAnalysis = true,
+	   bool        debugIn          = false);
   virtual ~Analysis();
 
-  /// Method which calls all other methods.
+  /// Method which calls all other methods in order.
   virtual void Execute();
+
+  /// Operate on each entry in the tree. Pure virutal as it is not known what
+  /// analysis will be formed in any derived class. This is only called if
+  /// perEntry is true (by default it is).
   virtual void Process() = 0;
 
   /// Virtual function for user to overload and use. Does nothing by default.
   virtual void UserProcess();
+  
   /// Process histogram definitions from configuration instance.
   virtual void SimpleHistograms();
+
+  /// Create structures necessary for per entry histograms.
+  void PreparePerEntryHistograms();
+
+  /// Accumulate means and variances for per entry histograms.
+  void AccumulatePerEntryHistograms();
+
+  /// Prepare result of per entry histogram accumulation.
+  void TerminatePerEntryHistograms();
+
+  /// Optional final action after Process() and SimpleHistograms(). The version
+  /// in this base class termiantes the histogram merges if there are any in histoSum.
   virtual void Terminate();
 
   /// Write rebdsim histograms.
@@ -67,20 +87,31 @@ public:
 protected:
   std::string treeName;
   TChain*     chain;
-  std::string                 mergedHistogramName; ///< Name of directory for merged histograms
-  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names
-  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histogram
-  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms
-  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms
-  HistogramMerge*             histoSum;       ///< Bdsim histograms
-  bool                        debug;
+  std::string                 mergedHistogramName; ///< Name of directory for merged histograms.
+  std::vector<std::string>    histogramNames; ///< Rebdsim generated histogram names.
+  std::map<std::string, TH1*> histograms1D;   ///< Rebdsim 1d histograms for each 
+  std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
+  std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
+  std::vector<PerEntryHistogram*> perEntryHistograms;
+  HistogramMerge*             histoSum;       ///< Bdsim histograms.
+  bool                        debug;          ///< Whether debug print out is used or not.
+  long int                    entries;        ///< Number of entries in the chain.
+
+  /// Whether to analyse each entry in the tree in a for loop or not.
+  bool                        perEntry;
+
+  /// Whether to go ahead and create per entry histograms. These only work with greater
+  /// than 1 entries (ie at least 2) in the chain / tree, so use this flag to disable
+  /// them if insufficient entries. This means we can tolerate user input faults and
+  /// do the other analysis.
+  bool                        runPerEntryHistograms;
   
 private:
+  /// No default constructor for this base class.
   Analysis() = delete;
   
   /// Create an individual histogram based on a definition.
   void FillHistogram(HistogramDef* definition);
-
 };
 
 #endif

@@ -28,6 +28,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSOutputROOTEventHistograms.hh"
 
+class TDirectory;
+
 /**
  * @brief Merge a set of histgrams.
  * 
@@ -56,7 +58,8 @@ public:
   void Terminate();
 
   /// Write the resultant histograms to an output file - ignores the argument for now.
-  void Write(TFile *outputFile);
+  void Write(TFile* outputFile,
+	     TDirectory* dir = nullptr);
 
 private:
   bool debug;

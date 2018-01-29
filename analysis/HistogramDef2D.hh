@@ -41,13 +41,17 @@ public:
 		 double      yLowIn,
 		 double      yHighIn,
 		 std::string plotIn,
-		 std::string selectionIn = "1");
+		 std::string selectionIn    = "1",
+		 bool        perEntryIn     = true,
+		 bool        logarithmicXIn = false,
+		 bool        logarithmicYIn = false);
   virtual ~HistogramDef2D(){;}
 
   int         yNBins;
   double      yLow;
   double      yHigh;
-
+  bool        logarithmicY;
+  
 private:
   /// No default constructor
   HistogramDef2D() = delete;

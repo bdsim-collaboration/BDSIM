@@ -429,8 +429,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
 #ifdef BDSDEBUG
-  G4cout << "Angle " << (*st)["angle"] << G4endl;
-  G4cout << "Field " << (*st)["field"] << G4endl;
+  G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
+  G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
   
   auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
@@ -604,13 +604,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 					       fieldTrans);
 
   G4bool yokeOnLeft = YokeOnLeft(element, st);
-  G4double defaultOuterDiameter = 0.3 * BDSGlobalConstants::Instance()->OuterDiameter();
+  auto bpInf = PrepareBeamPipeInfo(element);
+  
+  // Decide on a default outerDiameter for the kicker - try 0.3x ie smaller kicker
+  // than typical magnet, but if that would not fit around the beam pipe - go back to
+  // the default outerDiameter. Code further along will warn if it still doesn't fit.
+  const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
+  G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
+  BDSExtent bpExt = bpInf->IndicativeExtent();
+  G4double bpDX = bpExt.DX();
+  G4double bpDY = bpExt.DY();
+  if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
+    {defaultOuterDiameter = globalDefaultOD;}
+  else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
+    {defaultOuterDiameter = globalDefaultOD;}
+  
   auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
 		       chordLength,
-		       PrepareBeamPipeInfo(element),
+		       bpInf,
 		       magOutInf,
 		       vacuumField);
 }
@@ -937,7 +951,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   if (element->fieldAll.empty())
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
-      (*awakeStrength)["field"] = element->B;
+      (*awakeStrength)["field"] = element->B * CLHEP::tesla;
 
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -1091,7 +1105,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   
   // magnet geometry type
   if (element->magnetGeometryType == "")
-    {info->geometryType = globals->GetMagnetGeometryType();}
+    {info->geometryType = globals->MagnetGeometryType();}
   else
     {
       info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
@@ -1182,7 +1196,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* el,
 							  const G4ThreeVector inputFaceNormalIn,
 							  const G4ThreeVector outputFaceNormalIn)
 {
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   BDSBeamPipeInfo* result; 
   if (!BDSGlobalConstants::Instance()->IgnoreLocalAperture())
     {

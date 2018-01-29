@@ -1,0 +1,4 @@
+d1: drift, l=0.5*m, phi=0.05;
+
+! extend non existing element
+d2: aper=0.1*m, l=0.2*m;

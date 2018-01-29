@@ -167,7 +167,7 @@ void BDSCollimatorBase::Build()
   RegisterVisAttributes(collimatorVisAttr);
   
   // user limits
-  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
@@ -188,7 +188,7 @@ void BDSCollimatorBase::Build()
     {
       G4Material* vMaterial = nullptr;
       if (vacuumMaterial == "")
-	{vMaterial = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->vacuumMaterial;}
+	{vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial;}
       else
 	{vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);}
       G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
@@ -196,7 +196,7 @@ void BDSCollimatorBase::Build()
 						      name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+      vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
 

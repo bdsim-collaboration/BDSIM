@@ -314,7 +314,7 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(G4String
 						     emptyMaterial,
 						     name + "_container_lv");
 
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   BDSGeometryComponent* container = new BDSGeometryComponent(containerSolid,
 							     containerLV,
@@ -332,7 +332,8 @@ void BDSMagnetOuterFactory::CheckOuterBiggerThanBeamPipe(const G4String         
   BDSExtent bpExtent = beamPipe->GetExtent();
   if (od < bpExtent.DX() || od < bpExtent.DY())
     {
-      G4cerr << "Magnet outer dimensions too small to encompass beam pipe for element " << name << G4endl;
+      G4cerr << __METHOD_NAME__ << "Magnet outer dimensions too small to "
+	     << "encompass beam pipe for element " << name << G4endl;
       G4cerr << "outerDiameter -> " << od << G4endl;
       G4cerr << "Beam pipe width : " << bpExtent.DX() << ", height : " << bpExtent.DY() << G4endl;
       exit(1);

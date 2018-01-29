@@ -131,11 +131,11 @@ BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CommonFinalConstruction(G4String 
 				    vacuumMaterialIn,
 				    nameIn + "_container_lv");
 
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   vacuumLV = containerLV; // copy pointer for referencing in BuildBeamPipeAndRegisterVolumes.
 
   // user limits
-  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, lengthIn);
   if (ul != defaultUL) // if it's not the default register it

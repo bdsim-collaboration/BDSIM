@@ -307,14 +307,15 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
+  // Order important here because of singletons relying on each other
   delete BDSAcceleratorModel::Instance();
   delete BDSTemporaryFiles::Instance();
+  delete BDSFieldFactory::Instance(); // this uses BDSGlobalConstants which uses BDSMaterials
   delete globalConstants;
   delete BDSMaterials::Instance();
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
-  delete BDSFieldFactory::Instance();
   delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();

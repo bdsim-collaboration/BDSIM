@@ -109,7 +109,7 @@ void BDSCavityFactoryBase::CreateLogicalVolumes(G4String             name,
 
 void BDSCavityFactoryBase::SetUserLimits(G4double length)
 {
-  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
 
@@ -133,7 +133,7 @@ void BDSCavityFactoryBase::SetVisAttributes(G4String colourName)
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
 void BDSCavityFactoryBase::PlaceComponents(G4String name)

@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTypeSafeEnum.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Version.hh"
 
 /**
  * @brief Type definition for integrators.
@@ -31,7 +32,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct integratortypes_def
 {
-
   enum type {none, teleporter, solenoid, dipole, dipole2, quadrupole, sextupole,
 	     multipole, multipolethin, octupole, decapole, dipolefringe,
 	     euler, kickerthin,
@@ -39,7 +39,18 @@ struct integratortypes_def
 	     g4impliciteuler, g4simpleheum, g4simplerunge,
 	     g4exacthelixstepper, g4helixexpliciteuler, g4helixheum,
 	     g4heliximpliciteuler, g4helixmixedstepper, g4helixsimplerunge,
-	     g4nystromrk4, g4rkg3stepper};
+	     g4nystromrk4, g4rkg3stepper
+#if G4VERSION_NUMBER > 1029
+	     // introduced in version 10.3
+	     , g4bogackishampine23, g4bogackishampine45, g4dolomcprirk34,
+	     g4dormandprince745, g4dormandprincerk56, g4dormandprincerk78,
+	     g4tsitourasrk45
+#endif
+#if G4VERSION_NUMBER > 1039
+	     // introduced in version 10.4
+	     , g4rk547feq1, g4rk547feq2, g4rk547feq3
+#endif
+  };
 };
 
 typedef BDSTypeSafeEnum<integratortypes_def,int> BDSIntegratorType;

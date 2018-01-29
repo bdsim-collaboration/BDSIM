@@ -1,0 +1,12 @@
+c1: rcol, l=20*cm, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="hadronic_hp";
+
+option, checkOverlaps=1;
+
+beam, particle="proton",
+      energy=10*GeV;

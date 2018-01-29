@@ -38,12 +38,15 @@ public:
 		 double      xLowIn,
 		 double      xHighIn,
 		 std::string variableIn,
-		 std::string selectionIn = "1");
+		 std::string selectionIn  = "1",
+		 bool        perEntryIn   = true,
+		 bool        logarithmicX = false);
   virtual ~HistogramDef1D(){;}
   
   int         xNBins;
   double      xLow;
   double      xHigh;
+  bool        logarithmicX;
 
 private:
   /// No default constructor

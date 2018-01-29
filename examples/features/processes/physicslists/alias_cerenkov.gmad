@@ -1,0 +1,12 @@
+block: rcol, l=1*cm, outerDiameter=5*cm, material="yag";
+
+l1: line = (block);
+
+use, l1;
+
+sample, all;
+
+option, physicsList="cerenkov";
+
+beam, particle="e-",
+      energy=1*GeV;

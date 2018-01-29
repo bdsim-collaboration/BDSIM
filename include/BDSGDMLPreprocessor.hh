@@ -38,6 +38,16 @@ namespace BDS
   G4String GDMLSchemaLocation();
 }
 
+/**
+ * @brief Process a GDML file to allow multiple file loading.
+ * 
+ * Replace names with uniques ones in a GDML file to compensate
+ * for the Geant4 GDML parser's lack of ability to indpendently load
+ * multiple GDML files. This may also be used in future for parameterising
+ * geometry via subsitution of variables.
+ * 
+ * @author Stewart Boogert
+ */
 class BDSGDMLPreprocessor
 {
 public:

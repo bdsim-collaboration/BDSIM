@@ -86,6 +86,13 @@ std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::ve
   return visAttributes;
 }
 
+void BDSGeometryFactoryBase::ApplyUserLimits(const std::vector<G4LogicalVolume*>& lvsIn,
+					     G4UserLimits* userLimits)
+{
+  for (auto& lv : lvsIn)
+    {lv->SetUserLimits(userLimits);}
+}
+
 void BDSGeometryFactoryBase::CleanUp()
 {
   xmin = 0;

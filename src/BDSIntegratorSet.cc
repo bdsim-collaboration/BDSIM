@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorType.hh"
 
 #include "globals.hh" // geant4 types / globals
-
+#include "G4Version.hh"
 
 BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType dipoleIn,
@@ -122,6 +122,28 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin); // thin multipole
+
+#if G4VERSION_NUMBER > 1029
+  const BDSIntegratorSet* integratorsGeant4DP =
+    new BDSIntegratorSet(BDSIntegratorType::g4dormandprince745, // solenoid
+			 BDSIntegratorType::g4dormandprince745, // dipole
+			 BDSIntegratorType::g4dormandprince745, // dipole3d
+			 BDSIntegratorType::g4dormandprince745, // quadrupole
+			 BDSIntegratorType::g4dormandprince745, // sextupole
+			 BDSIntegratorType::g4dormandprince745, // octupole
+			 BDSIntegratorType::g4dormandprince745, // decapole
+			 BDSIntegratorType::g4dormandprince745, // multipole
+			 BDSIntegratorType::g4dormandprince745, // muonspoiler
+			 BDSIntegratorType::g4dormandprince745, // rfcavity
+			 BDSIntegratorType::g4dormandprince745, // rf
+			 BDSIntegratorType::g4dormandprince745, // general
+			 BDSIntegratorType::g4dormandprince745, // skew quadrupole
+			 BDSIntegratorType::g4dormandprince745, // skew sextupole
+			 BDSIntegratorType::g4dormandprince745, // skew octupole
+			 BDSIntegratorType::g4dormandprince745, // skew decapole
+			 BDSIntegratorType::dipolefringe,       // dipole fringe field
+			 BDSIntegratorType::multipolethin);     // thin multipole
+#endif
 }
 
 const BDSIntegratorSet* BDS::IntegratorSet(G4String sets)
@@ -135,6 +157,10 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
     {
     case BDSIntegratorSetType::geant4:
       {return BDS::integratorsGeant4; break;}
+#if G4VERSION_NUMBER > 1029
+    case BDSIntegratorSetType::geant4dp:
+      {return BDS::integratorsGeant4DP; break;}
+#endif
     case BDSIntegratorSetType::bdsimone:
       {return BDS::integratorsBDSIMOne;  break;}
     case BDSIntegratorSetType::bdsimtwo:

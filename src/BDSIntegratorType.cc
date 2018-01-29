@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -57,6 +58,24 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::g4helixsimplerunge,   "g4helixsimplerunge"},
       {BDSIntegratorType::g4nystromrk4,         "g4nystromrk4"},
       {BDSIntegratorType::g4rkg3stepper,        "g4rkg3stepper"}
+#if G4VERSION_NUMBER > 1029
+      // introduced in version 10.3
+      ,
+      {BDSIntegratorType::g4bogackishampine23,  "g4bogackishampine23"},
+      {BDSIntegratorType::g4bogackishampine45,  "g4bogackishampine45"},
+      {BDSIntegratorType::g4dolomcprirk34,      "g4dolomcprirk34"},
+      {BDSIntegratorType::g4dormandprince745,   "g4dormandprince745"},
+      {BDSIntegratorType::g4dormandprincerk56,  "g4dormandprincerk56"},
+      {BDSIntegratorType::g4dormandprincerk78,  "g4dormandprincerk78"},
+      {BDSIntegratorType::g4tsitourasrk45,      "g4tsitourasrk45"}
+#endif
+#if G4VERSION_NUMBER > 1039
+      // introduced in version 10.4
+      ,
+      {BDSIntegratorType::g4rk547feq1,          "g4rk547feq1"},
+      {BDSIntegratorType::g4rk547feq2,          "g4rk547feq2"},
+      {BDSIntegratorType::g4rk547feq3,          "g4rk547feq3"}
+#endif
     });
 
 BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
@@ -90,6 +109,22 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["g4helixsimplerunge"]   = BDSIntegratorType::g4helixsimplerunge;
   types["g4nystromrk4"]         = BDSIntegratorType::g4nystromrk4;
   types["g4rkg3stepper"]        = BDSIntegratorType::g4rkg3stepper;
+#if G4VERSION_NUMBER > 1029
+  // introduced in version 10.3
+  types["g4bogackishampine23"]  = BDSIntegratorType::g4bogackishampine23;
+  types["g4bogackishampine45"]  = BDSIntegratorType::g4bogackishampine45;
+  types["g4dolomcprirk34"]      = BDSIntegratorType::g4dolomcprirk34;
+  types["g4dormandprince745"]   = BDSIntegratorType::g4dormandprince745;
+  types["g4dormandprincerk56"]  = BDSIntegratorType::g4dormandprincerk56;
+  types["g4dormandprincerk78"]  = BDSIntegratorType::g4dormandprincerk78;
+  types["g4tsitourasrk45"]      = BDSIntegratorType::g4tsitourasrk45;
+#endif
+#if G4VERSION_NUMBER > 1039
+  // introduced in version 10.4
+  types["g4rk547feq1"]          = BDSIntegratorType::g4rk547feq1;
+  types["g4rk547feq2"]          = BDSIntegratorType::g4rk547feq2;
+  types["g4rk547feq3"]          = BDSIntegratorType::g4rk547feq3;
+#endif
 
   integratorType.toLower();
 

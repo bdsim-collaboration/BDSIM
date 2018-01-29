@@ -1,0 +1,1 @@
+simple_testing(AIR_WATER "--file=air.gmad" "")

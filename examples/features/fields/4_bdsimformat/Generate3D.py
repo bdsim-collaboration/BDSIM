@@ -63,7 +63,7 @@ def Plot(array):
     
     fig = _plt.figure()
     ax = fig.gca(projection='3d')
-    ax.quiver(a[:,:,:,0], a[:,:,:,1], a[:,:,:,2], a[:,:,:,3], a[:,:,:,4], a[:,:,:,5], length=2, cmap=_plt.cm.magma)
+    ax.quiver(a[:,:,:,0], a[:,:,:,1], a[:,:,:,2], a[:,:,:,3], a[:,:,:,4], a[:,:,:,5], length=0.2, cmap=_plt.cm.magma)
     _plt.xlabel('X (cm)')
     _plt.ylabel('Y (cm)')
     ax.set_zlabel('Z (cm)')

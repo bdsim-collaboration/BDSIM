@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<gdml  xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<define/>
+	<materials/>
+	<solids>
+		<box name="abox" x="1000.0" y="1000.0" z="1000.0"/>
+		<box name="wbox" x="1002.0" y="1002.0" z="1002.0"/>
+	</solids>
+	<structure>
+		<volume name="abox_vol_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="abox"/>
+		</volume>
+		<volume name="wbox_vol_lv">
+			<materialref ref="G4_Galactic"/>
+			<solidref ref="wbox"/>
+			<physvol name="abox_vol_pv">
+				<volumeref ref="abox_vol_lv"/>
+				<position name="abox_vol_pos" x="0" y="0" z="0"/>
+				<rotation name="abox_vol_rot" x="0" y="0" z="0"/>
+				<scale name="abox_vol_sca" x="1" y="1" z="1"/>
+			</physvol>
+		</volume>
+	</structure>
+	<setup name="Default" version="1.0">
+		<world ref="wbox_vol_lv"/>
+	</setup>
+</gdml>

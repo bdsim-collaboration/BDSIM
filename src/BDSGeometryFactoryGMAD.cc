@@ -284,6 +284,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String /*componentName*/,
   containerLV->SetSolid(containerSolid); // update container solid
 
   ApplyColourMapping(lvs, mapping);
+  ApplyUserLimits(lvs, BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV, Extent());
   result->RegisterRotationMatrix(rotations);

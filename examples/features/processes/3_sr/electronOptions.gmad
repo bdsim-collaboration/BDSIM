@@ -14,7 +14,7 @@ option, beampipeRadius = 10 * cm,
 ! option,apertureType="rectangular";
 ! option,aper2=15*cm;
 
-option,physicsList="em synchrad";
+option,physicsList="em synch_rad";
 
 
 

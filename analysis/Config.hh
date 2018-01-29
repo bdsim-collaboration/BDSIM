@@ -48,8 +48,14 @@ private:
   std::map<std::string, double>      optionsNumber;
   /// @}
 
-  /// Storage of histogram options.
+  /// Storage of histogram options. This owns th HistogramDef objects.
   std::map<std::string, std::vector<HistogramDef*> > histoDefs;
+
+  /// Copy of defintion used to identify only 'simple' histogram definitions. Doesn't own.
+  std::map<std::string, std::vector<HistogramDef*> > histoDefsSimple;
+
+  /// Copy of defintion used to identify only 'per entry' histogram definitions. Doesn't own.
+  std::map<std::string, std::vector<HistogramDef*> > histoDefsPerEntry;
   
 public:
   virtual ~Config();
@@ -70,6 +76,14 @@ public:
   /// Access all histogram definitions.
   inline const std::vector<HistogramDef*>& HistogramDefinitions(std::string treeName) const
   {return histoDefs.at(treeName);}
+
+  /// Access all simple histogram definitions - throws exception if out of range.
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsSimple(std::string treeName) const
+  {return histoDefsSimple.at(treeName);}
+
+  /// Access all per entry histogram definitions - throws exception if out of range.
+  inline const std::vector<HistogramDef*>& HistogramDefinitionsPerEntry(std::string treeName) const
+  {return histoDefsPerEntry.at(treeName);}
 
   /// Access all branches that are required for activation. This does not specialise on the
   /// leaf inside the branch and if one variable is required, the whole branch will be activated
@@ -94,9 +108,14 @@ public:
   inline bool   Debug() const                     {return optionsBool.at("debug");}
   inline bool   CalculateOpticalFunctions() const {return optionsBool.at("calculateoptics");}
   inline bool   ProcessSamplers() const           {return optionsBool.at("processsamplers");}
-  inline bool   ProcessLosses() const             {return optionsBool.at("processlosses");}
-  inline bool   ProcessAllTrees() const           {return optionsBool.at("processalltrees");}
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
+  /// @}
+  /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().
+  inline bool   PerEntryBeam()   const {return optionsBool.at("perEntryBeam");}
+  inline bool   PerEntryEvent()  const {return optionsBool.at("perEntryEvent");}
+  inline bool   PerEntryRun()    const {return optionsBool.at("perEntryRun");}
+  inline bool   PerEntryOption() const {return optionsBool.at("perEntryOption");}
+  inline bool   PerEntryModel()  const {return optionsBool.at("perEntryModel");}
   /// @}
   
  protected:
@@ -117,8 +136,20 @@ public:
   /// Parse everything after the histogram declaration and check all parameters.
   void ParseHistogram(const std::string line, const int nDim);
 
+  /// Check whether a histogram definition word contains the world 'simple' and
+  /// if so, it's not a per-entry histogram.
+  void ParsePerEntry(const std::string& name, bool& perEntry) const;
+
+  /// Parse whether each dimension is log or linear.
+  void ParseLog(const std::string& definition,
+		bool& xLog,
+		bool& yLog,
+		bool& zLog) const;
+
   /// Update the vector of required branches for a particular tree to be
-  /// activated for analysis.
+  /// activated for analysis. Note this is not required for simple histograms
+  /// that will be used with TTree->Draw(). Only per-entry histograms require
+  /// loading the data.
   void UpdateRequiredBranches(const HistogramDef* def);
 
   /// Update the vector of required branches for a particular tree to be

@@ -190,11 +190,11 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   // user limits
   for (auto lv : poleLVs)
-    {lv->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());}
+    {lv->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());}
 
   // create logical volumes for the coils using base class method
   CreateLogicalVolumesCoil(name);
