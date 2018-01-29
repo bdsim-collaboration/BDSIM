@@ -225,8 +225,14 @@ Analysis Configuration File
 
 The input text file has roughly two sections - options and histogram definitions.
 
-An example can be found in :code:`<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt` ::
+Examples can be found in:
 
+* `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
+* `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
+  
+::
+   
   Debug                                   True
   InputFilePath                           ./output.root
   OutputFileName                          ./ana_1.root
