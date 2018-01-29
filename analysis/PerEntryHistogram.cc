@@ -213,7 +213,7 @@ void PerEntryHistogram::AccumulateCurrentEntry()
 	  {
 	    for (int k = 0; k <= h1->GetNbinsY() + 1; ++k)
 	      {
-		for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
+		for (int l = 0; l <= h1->GetNbinsZ() + 1; ++l)
 		  {
 		    AccumulateSingleValue(h1->GetBinContent(j,k,l),
 					  h1e->GetBinContent(j,k,l),
@@ -246,8 +246,13 @@ void PerEntryHistogram::Terminate()
   if (terminated)
     {std::cerr << "Double Termination!!" << std::endl; exit(1);}
   double factor = std::sqrt(1./(double)n);
+  double mn     = 0; // temporary variable
   double std    = 0; // temporary variable
-  double val    = 0; // temporary variable
+  double var    = 0; // temporary variable
+
+  // lambda to avoid repeating calculation even if it's simple
+  auto getSTD  = [](auto& varIn, auto& nIn) {return std::sqrt(varIn / ((double)nIn-1));};
+
   switch (nDimensions)
     {
     case 1:
@@ -259,11 +264,12 @@ void PerEntryHistogram::Terminate()
 	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
-	    val = mean->GetBinContent(j);
-	    std = std::sqrt(variance->GetBinContent(j) / ((double)n-1));
-	    result->SetBinContent(j,    val);
+	    mn  = mean->GetBinContent(j);
+	    var = variance->GetBinContent(j);
+	    std = getSTD(var, n);
+	    result->SetBinContent(j,    mn);
 	    result->SetBinError(j,      factor*std);
-	    resultSTD->SetBinContent(j, val);
+	    resultSTD->SetBinContent(j, mn);
 	    resultSTD->SetBinError(j,   std);
 	  }
 	break;
@@ -278,9 +284,9 @@ void PerEntryHistogram::Terminate()
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
-		val = mean->GetBinContent(j,k);
-		std = std::sqrt(variance->GetBinContent(j,k) / ((double)n-1));
-		result->SetBinContent(j, k,    val);
+		mn  = mean->GetBinContent(j,k);
+		std = getSTD(var, n);
+		result->SetBinContent(j, k,    mn);
 		result->SetBinError(j, k,      factor*std);
 		resultSTD->SetBinContent(j, k, mn);
 		resultSTD->SetBinError(j, k,   std);
@@ -298,13 +304,13 @@ void PerEntryHistogram::Terminate()
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
-		for (int l = 0; l <= result->GetNbinsZ()+1; ++l)
+		for (int l = 0; l <= result->GetNbinsZ() + 1; ++l)
 		  {
-		    val = mean->GetBinContent(j,k,l);
-		    std = std::sqrt(variance->GetBinContent(j,k,l) / ((double)n-1));
-		    result->SetBinContent(j,k,l,    val);
+		    mn  = mean->GetBinContent(j,k,l);
+		    std = getSTD(var, n);
+		    result->SetBinContent(j,k,l,    mn);
 		    result->SetBinError(j,k,l,      factor*std);
-		    resultSTD->SetBinContent(j,k,l, val);
+		    resultSTD->SetBinContent(j,k,l, mn);
 		    resultSTD->SetBinError(j,k,l,   std);
 		  }
 	      }
