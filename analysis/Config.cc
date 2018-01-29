@@ -71,8 +71,6 @@ void Config::InitialiseOptions(std::string analysisFile)
   
   optionsBool["debug"]             = false;
   optionsBool["processsamplers"]   = false;
-  optionsBool["processlosses"]     = false;
-  optionsBool["processalltrees"]   = false;
   optionsBool["calculateoptics"]   = false;
   optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;

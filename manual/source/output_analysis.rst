@@ -207,10 +207,6 @@ The following (case-insensitive) options may be specified in the top part.
 +----------------------------+------------------------------------------------------+
 | ProcessSamplers            | Whether to load the sampler data or not.             |
 +----------------------------+------------------------------------------------------+
-| ProcessLosses              | TBC.                                                 |
-+----------------------------+------------------------------------------------------+
-| ProcessAllTrees            | TBC.                                                 |
-+----------------------------+------------------------------------------------------+
 | MergeHistograms            | Whether to merge the event level default histograms  |
 |                            | provided by BDSIM. Turning this off will             |
 |                            | significantly improve the speed of analysis if only  |
