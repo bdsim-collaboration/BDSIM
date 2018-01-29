@@ -16,10 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-/* BDSIM code.   
-*/
-
-
 #ifndef BDSSpectrVacChamb_h
 #define BDSSpectrVacChamb_h 
 
@@ -35,20 +31,29 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSSpectrVacChamb 
 {
-
 public:
-  BDSSpectrVacChamb(const G4String& name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ,
-                    G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness,
-                    G4double windowOffsetX, G4double strutSizeX, G4double strutSizeZ, G4String strutMaterial);
+  BDSSpectrVacChamb(const G4String& name,
+		    G4double lengthZ,
+		    G4double magStartZ,
+		    G4double vacuumEndZ,
+                    G4double screenWidth,
+		    G4double screenAngle,
+		    G4double sizeX,
+		    G4double sizeY,
+		    G4double thickness,
+                    G4double windowOffsetX,
+		    G4double strutSizeX,
+		    G4double strutSizeZ,
+		    G4String strutMaterial);
   ~BDSSpectrVacChamb();
 
   void Place(G4LogicalVolume* motherVolume);
 
-    //container of pointers to all logical volumes
-    inline std::vector<G4LogicalVolume*> logVols(){return _logVols;}
+  //container of pointers to all logical volumes
+  inline std::vector<G4LogicalVolume*> logVols(){return _logVols;}
 
 private:
-  BDSSpectrVacChamb();
+  BDSSpectrVacChamb() = delete;
 
   G4String _name;
   G4double _lengthZ;
@@ -59,10 +64,10 @@ private:
   G4double _sizeX; //The size of the incoming beam pipe
   G4double _sizeY;
   G4double _thickness;
-    G4double _windowOffsetX;
+  G4double _windowOffsetX;
   G4double _strutSizeX;
   G4double _strutSizeZ;
-  G4bool _bBuildStrut;
+  G4bool   _bBuildStrut;
   G4String _strutMaterial;
   G4double _trapLengthZ;
   G4double _trapLengthX;
@@ -114,7 +119,7 @@ private:
   void BuildBox2Inner(); 
   void BuildBox3Inner(); 
   void CalculateGeometry();
-    void SetUserLimits();
+  void SetUserLimits();
   void printGeom();
   void printTrapVertices(std::vector<G4TwoVector> vertices, const G4String& name);
 
@@ -158,8 +163,8 @@ private:
 
   // G4double _screenAngle2;
 
-    //A container of pointers to all the log vols.
-    std::vector<G4LogicalVolume*> _logVols;
+  //A container of pointers to all the log vols.
+  std::vector<G4LogicalVolume*> _logVols;
 };
 
 #endif
