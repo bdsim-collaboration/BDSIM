@@ -245,9 +245,14 @@ would be used::
 	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
 	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
 	     not to the bin specification.
-  
+
+
+Analysis Configuration Options
+==============================
+
 The following (case-insensitive) options may be specified in the top part.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------+------------------------------------------------------+
 | **Option**                 | **Description**                                      |
@@ -259,10 +264,16 @@ The following (case-insensitive) options may be specified in the top part.
 +----------------------------+------------------------------------------------------+
 | OutputFileName             | The name of the result file to written to.           |
 +----------------------------+------------------------------------------------------+
-| CalculateOpticalFunctions  | Whether to calculate optical functions or not.       |
+| CalculateOptics            | Whether to calculate optical functions or not.       |
 +----------------------------+------------------------------------------------------+
-| OpticalFunctionsFileName   | The name of a separate text file copy of the         |
+| OpticsFileName             | The name of a separate text file copy of the         |
 |                            | optical functions output.                            |
++----------------------------+------------------------------------------------------+
+| EmittanceOnTheFly          | Whether to calculate the emittance freshly at each   |
+|                            | sampler or simply use the emittance calcualted from  |
+|                            | the first sampler (ie the primaries). The default is |
+|                            | false and therefore to calculate the emittance at    |
+|                            | each sampler.                                        |
 +----------------------------+------------------------------------------------------+
 | PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
 |                            | If you require print out for every event, set this   |
@@ -274,8 +285,6 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | provided by BDSIM. Turning this off will             |
 |                            | significantly improve the speed of analysis if only  |
 |                            | separate user-defined histograms are desired.        |
-+----------------------------+------------------------------------------------------+
-| GDMLFileName               | TBC.                                                 |
 +----------------------------+------------------------------------------------------+
 
 
