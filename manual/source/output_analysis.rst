@@ -100,7 +100,7 @@ When using ROOT's interpreter, you can use the functionality of the BDSIM classe
 dynamically. First you must load the shared library (if not done so in your root logon
 macro) to provide the classes::
 
-  root> gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
+  root> gSystem->Load("librebdsimLib");
 
 Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
 are familiar with ROOT, you may use the ROOT file as you would any other given the
@@ -117,6 +117,69 @@ classes provided by the library::
 
 The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
 of each class.
+
+This would of course be fairly tedious to load all the structures in the output. Therefore,
+a data loader class is provided that constructs local instances of all the objects and
+sets the branch address on them (links them to the open file). For example::
+
+  root> gSystem->Load("librebdsimLib");
+  root> DataLoader* dl = new DataLoader("output.root");
+  root> Event* evt = dl->GetEvent();
+  root> TTree* evtTree = dl->GetEventTree();
+
+Here, a file is loaded and by default all data is loaded in the file. We get access to
+the local event object and the event tree (here, a chain of all files). We can then load
+a particular entry in the tree, which for the Event tree is an individual event::
+  
+  root> evtTree->GetEntry(10);
+
+The event object now contains the data loaded from the file.::
+
+  root> evt->Eloss.n
+  (int_t) 430
+
+For our example, the file has 430 entries of energy loss for event \#10. The analysis loading
+classes are designed to have the same structure as the output file. Look at
+`bdsim/analysis/Event.hh` to see what objects the class has.
+
+One may manually loop over the events in a macro::
+
+  void DoLoop()
+  {
+    gSystem->Load("librebdsimLib");
+    DataLoader* dl = new DataLoader("output.root");
+    Event* evt = dl->GetEvent();
+    TTree* evtTree = dl->GetEventTree()
+    int nentries = (int)evtTree->GetEntries();
+    for (int i = 0; i < nentries; ++i)
+      {
+        evtTree->GetEntry(i)
+	std::cout << evt->Eloss.n >> std::endl;
+      }
+  }
+
+  root> .L myMacro.C
+  root> DoLoop()
+  
+
+This would loop over all entries and print the number of energy deposition hits per
+event.
+
+Samplers are dynamically added to the output based on the names the user decides in
+their input accelerator model. The names of the samplers can be accessed from the
+DataLoader class::
+
+  std::vector<std::string> samplerNames = dl->GetSamplerNames();
+
+
+The following classes are used for data loading and can be found in `bdsim/analysis`:
+
+* DataLoader.hh
+* Beam.hh
+* Event.hh
+* Model.hh
+* Options.hh
+* Run.hh
   
 
 Preparing an Analysis Configuration File
