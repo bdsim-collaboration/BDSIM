@@ -141,7 +141,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("cuts_and_limits",        &BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("decay",                  &BDSModularPhysicsList::Decay));
   physicsConstructors.insert(std::make_pair("decay_radioactive",      &BDSModularPhysicsList::DecayRadioactive));
-  physicsConstructors.insert(std::make_pair("decay_spin",             &BDSModularPhysicsList::DecaySpin));
   physicsConstructors.insert(std::make_pair("em",                     &BDSModularPhysicsList::Em));
   physicsConstructors.insert(std::make_pair("em_extra",               &BDSModularPhysicsList::EmExtra));
   physicsConstructors.insert(std::make_pair("em_livermore",           &BDSModularPhysicsList::EmLivermore));
@@ -177,6 +176,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("synch_rad",              &BDSModularPhysicsList::SynchRad));
 #if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",                  &BDSModularPhysicsList::EmGS));
+#endif
+#if G4VERSION_NUMBER > 1020
+  physicsConstructors.insert(std::make_pair("decay_spin",             &BDSModularPhysicsList::DecaySpin));
 #endif
 #if G4VERSION_NUMBER > 1022
   physicsConstructors.insert(std::make_pair("ion_php",                &BDSModularPhysicsList::IonPHP));
