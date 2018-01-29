@@ -7,8 +7,8 @@ Output Analysis
 This describes how to load and view data from the recommend output **rootevent**
 format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides the ability
-to use simple text input files to specify histograms and process data. It also
+BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides
+the ability to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
 REBDSIM is based on a set of analysis classes that are compiled into a library. These
@@ -23,8 +23,9 @@ Setup
 2) Environmental variables should be set.
 3) A ROOT logon macro may be written for convenience.
 
-Once BDSIM has been installed the following environmental variables must be updated to allow the analysis
-tool, 'rebdsim' (root event BDSIM), to function.  These can be set manually or added to your :code:`.profile` or
+Once BDSIM has been installed the following environmental variables must be updated to
+allow the analysis tool, 'rebdsim' (root event BDSIM), to function.  These can be set
+manually or added to your :code:`.profile` or
 :code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
@@ -40,9 +41,9 @@ tool, 'rebdsim' (root event BDSIM), to function.  These can be set manually or a
 	    :width: 100%
 	    :align: center
 
-If the analysis will be regularly used interactively, it is worth automating the library loading
-in root by finding and editing the :code:`rootlogon.C` in your :code:`<root-install-dir>/macros/`
-directory.  Example text would be::
+If the analysis will be regularly used interactively, it is worth automating the library
+loading in root by finding and editing the :code:`rootlogon.C` in your
+:code:`<root-install-dir>/macros/` directory.  Example text would be::
 
   cout << "Loading rebdsim libraries" << endl;
   gSystem->Load("librebdsimLib");
@@ -159,9 +160,9 @@ An example can be found in :code:`<bdsim>/examples/features/io/1_rootevent/analy
 Logarithmic Binning
 -------------------
 
-Logarithmic binning may be used by specifying 'Log' after 'HistogramND' for each dimension. The dimensions specified
-in order are `x`, `y`, `z`. If a linearly spaced dimension is required the user should write 'Lin'. If nothing is
-specified it is assumed to be linear.
+Logarithmic binning may be used by specifying 'Log' after 'HistogramND' for each dimension.
+The dimensions specified in order are `x`, `y`, `z`. If a linearly spaced dimension is
+required the user should write 'Lin'. If nothing is specified it is assumed to be linear.
 
 Examples::
 
@@ -171,8 +172,9 @@ Examples::
   Histogram2DLog    // X is logarithmically spaced and Y linearly
   Histgoram2DLinLog // X is linearly spaced and Y logarithmically
 
-The bin lower edges and upper edges should be an exponent of 10. For example to generate a 1D histogram
-with 30 logarithmically spaced bins from 1e-3 to 1e3, the following syntax would be used::
+The bin lower edges and upper edges should be an exponent of 10. For example to generate
+a 1D histogram with 30 logarithmically spaced bins from 1e-3 to 1e3, the following syntax
+would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
   
