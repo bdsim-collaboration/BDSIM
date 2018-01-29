@@ -260,9 +260,7 @@ void PerEntryHistogram::Terminate()
       {
 	// create a copy of the histogram with the same dimensions
 	result    = static_cast<TH1D*>(mean->Clone(histName.c_str()));
-	resultSTD = static_cast<TH1D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
-	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    mn  = mean->GetBinContent(j);
@@ -270,17 +268,13 @@ void PerEntryHistogram::Terminate()
 	    std = getSTD(var, n);
 	    result->SetBinContent(j,    mn);
 	    result->SetBinError(j,      factor*std);
-	    resultSTD->SetBinContent(j, mn);
-	    resultSTD->SetBinError(j,   std);
 	  }
 	break;
       }
     case 2:
       {
 	result    = static_cast<TH2D*>(mean->Clone(histName.c_str()));
-	resultSTD = static_cast<TH2D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
-	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
@@ -289,8 +283,6 @@ void PerEntryHistogram::Terminate()
 		std = getSTD(var, n);
 		result->SetBinContent(j, k,    mn);
 		result->SetBinError(j, k,      factor*std);
-		resultSTD->SetBinContent(j, k, mn);
-		resultSTD->SetBinError(j, k,   std);
 	      }
 	  }
 	break;
@@ -298,9 +290,7 @@ void PerEntryHistogram::Terminate()
     case 3:
       {
 	result    = static_cast<TH3D*>(mean->Clone(histName.c_str()));
-	resultSTD = static_cast<TH3D*>(mean->Clone((histName + "_std").c_str()));
 	result->Reset();
-	resultSTD->Reset();
 	for (int j = 0; j <= result->GetNbinsX() + 1; ++j)
 	  {
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
@@ -311,8 +301,6 @@ void PerEntryHistogram::Terminate()
 		    std = getSTD(var, n);
 		    result->SetBinContent(j,k,l,    mn);
 		    result->SetBinError(j,k,l,      factor*std);
-		    resultSTD->SetBinContent(j,k,l, mn);
-		    resultSTD->SetBinError(j,k,l,   std);
 		  }
 	      }
 	  }
@@ -323,9 +311,7 @@ void PerEntryHistogram::Terminate()
     }
 
   result->SetTitle(histName.c_str());
-  resultSTD->SetTitle(histName.c_str());
   result->SetEntries(n);
-  resultSTD->SetEntries(n);
   
   // delete files to remove from output
   delete temp;
@@ -339,11 +325,7 @@ void PerEntryHistogram::Write(TDirectory* dir)
   if (result)
     {
       if (dir)
-	{
-	  dir->Add(result);
-	  dir->Add(resultSTD);
-	}
+	{dir->Add(result);}
       result->Write();
-      resultSTD->Write();
     }
 }

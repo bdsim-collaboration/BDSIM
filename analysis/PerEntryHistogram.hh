@@ -69,7 +69,6 @@ public:
   TH1*          mean;         ///< Histogram for accumulated mean across events.
   TH1*          variance;     ///< Histogram for accumualted variances across events.
   TH1*          result;       ///< Final result with errors as the error on the mean.
-  TH1*          resultSTD;    ///< Final result with errors as the standard devitation.
   std::string   command;      ///< Draw command.
   bool          terminated;   ///< Record of whether the instance has been terminated (single use).
   
