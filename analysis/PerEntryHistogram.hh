@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class HistogramDef;
 
 class TChain;
+class TDirectory;
 class TH1;
 
 /**
@@ -55,8 +56,8 @@ public:
   void Terminate();
 
   /// Forwarding function - call Write on result histograms on the currently
-  /// open file.
-  void Write();
+  /// open file. Optional directory to specify where the histogram should be moved to.
+  void Write(TDirectory* dir = nullptr);
 
   TChain*       chain;        ///< Cache of chain pointer that provides data.
   unsigned int  nDimensions;  ///< Number of dimensions.

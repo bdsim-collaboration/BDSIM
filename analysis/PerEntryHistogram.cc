@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "PerEntryHistogram.hh"
 
 #include "TChain.h"
+#include "TDirectory.h"
 #include "TH1.h"
 #include "TH1D.h"
 #include "TH2D.h"
@@ -333,10 +334,15 @@ void PerEntryHistogram::Terminate()
   terminated = true;
 }
 
-void PerEntryHistogram::Write()
+void PerEntryHistogram::Write(TDirectory* dir)
 {
   if (result)
     {
+      if (dir)
+	{
+	  dir->Add(result);
+	  dir->Add(resultSTD);
+	}
       result->Write();
       resultSTD->Write();
     }

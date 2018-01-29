@@ -134,32 +134,49 @@ void Analysis::Terminate()
 
 void Analysis::Write(TFile* outputFile)
 {
-  //treeName typically has a "." at the end, deleting it here:
-  std::string cleanedName = treeName.erase(treeName.size() - 1);
-  std::string outputDirName = cleanedName + std::string("Histograms");
-  TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
-  rebdsimDir->cd();
-  for(auto h : histograms1D)
-    {h.second->Write();}
-  for(auto h : histograms2D)
-    {h.second->Write();}
-  for (auto h : histograms3D)
-    {h.second->Write();}
+  // treeName typically has a "." at the end, deleting it here:
+  std::string cleanedName     = treeName.erase(treeName.size() - 1);
+  std::string outputDirName   = cleanedName;
+  std::string perEntryDirName = "PerEntryHistograms";
+  std::string simpleDirName   = "SimpleHistograms";
+  std::string mergedDirName   = "MergedHistograms";
+  TDirectory* rebdsimDir  = outputFile->mkdir(outputDirName.c_str());
+  TDirectory* perEntryDir = rebdsimDir->mkdir(perEntryDirName.c_str());
+  TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
+  TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
+
+  // per entry histograms
   if (runPerEntryHistograms)
     {
+      perEntryDir->cd();
       for (auto h : perEntryHistograms)
-	{h->Write();}
+	{h->Write(perEntryDir);}
     }
-  outputFile->cd("/");
-  
-  // Merged Histograms for this analysis instance (could be run, event etc)
+
+  // simple histograms
+  simpleDir->cd();
+  for (auto& h : histograms1D)
+    {simpleDir->Add(h.second);}
+  for (auto& h : histograms2D)
+    {simpleDir->Add(h.second);}
+  for (auto& h : histograms3D)
+    {simpleDir->Add(h.second);}
+  for (auto& h : histograms1D)
+    {h.second->Write();}
+  for (auto& h : histograms2D)
+    {h.second->Write();}
+  for (auto& h : histograms3D)
+    {h.second->Write();}
+
+  // merged histograms
   if (histoSum)
     {
+      mergedDir->cd();
       std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
-      TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
-      bdsimDir->cd();
-      histoSum->Write(outputFile);
+      histoSum->Write(outputFile, mergedDir);
     }
+
+  outputFile->cd("/");  // return to root of the file
 }
 
 void Analysis::FillHistogram(HistogramDef* definition)
