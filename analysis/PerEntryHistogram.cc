@@ -282,7 +282,7 @@ void PerEntryHistogram::Terminate()
 		std = std::sqrt(variance->GetBinContent(j,k) / ((double)n-1));
 		result->SetBinContent(j, k,    val);
 		result->SetBinError(j, k,      factor*std);
-		resultSTD->SetBinContent(j, j, val);
+		resultSTD->SetBinContent(j, k, mn);
 		resultSTD->SetBinError(j, k,   std);
 	      }
 	  }
