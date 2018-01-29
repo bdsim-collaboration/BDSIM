@@ -96,7 +96,7 @@ void Analysis::PreparePerEntryHistograms()
   if (!runPerEntryHistograms && definitions.size() > 0)
     {
       std::cout << "Warning: per-entry histograms specified, but insufficient\n ";
-      std::cout << "        number of events (" << entries << ") to calculate means and variances." << std::endl;
+      std::cout << "        number of entries (" << entries << ") to calculate means and variances." << std::endl;
       std::cout << "Per-entry histograms will not be produced for this Tree." << std::endl;
       return;
     }
