@@ -45,7 +45,7 @@ class DataLoader
 public:
   DataLoader(std::string fileName,
 	     bool        debugIn           = false,
-	     bool        processSamplersIn = false,
+	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,
 	     const RBDS::BranchMap* branchesToTurnOn = nullptr);
   virtual ~DataLoader();
