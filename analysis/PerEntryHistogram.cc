@@ -75,6 +75,7 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
     default:
       {break;}
     }
+  temp->Reset();
   temp->SetTitle(tempName.c_str());
   
   accumulator = new HistogramAccumulator(baseHist, nDimensions, histName, histName);

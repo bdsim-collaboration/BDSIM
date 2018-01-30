@@ -66,7 +66,11 @@ HistogramAccumulator::HistogramAccumulator(TH1*               baseHistogram,
     default:
       {break;}
     }
+  // empty contents
+  mean->Reset();
+  variance->Reset();
   result->Reset();
+  // set title
   result->SetTitle(resultHistTitle.c_str());
   mean->SetTitle(meanName.c_str());
   variance->SetTitle(variName.c_str());
