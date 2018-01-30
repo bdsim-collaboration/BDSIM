@@ -17,9 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "RunAnalysis.hh"
-
 #include "rebdsim.hh"
-#include "Config.hh"
+
+#include "TChain.h"
+
+#include <iostream>
 
 ClassImp(RunAnalysis)
 
@@ -42,10 +44,10 @@ RunAnalysis::~RunAnalysis()
 void RunAnalysis::Process()
 {
   if (debug)
-    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+    {std::cout << __METHOD_NAME__ << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  for(int i = 0; i < chain->GetEntries(); ++i)
+  for (int i = 0; i < chain->GetEntries(); ++i)
     {
       chain->GetEntry(i);
       
