@@ -61,12 +61,12 @@ public:
   virtual void Terminate();
 
   /// Write analysis including optical functions to an output file.
-  virtual void Write(TFile *outputFileName);
+  virtual void Write(TFile* outputFileName);
 
 protected:
   Event* event; ///< Event object that data loaded from the file will be loaded into.
   std::vector<SamplerAnalysis*> samplerAnalyses; ///< Holder for sampler analysis objects.
-  std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< Optical functions from all samplers.
+  std::vector<std::vector<std::vector<double> > > opticalFunctions; ///< Optical functions from all samplers.
 
 private:
   /// Set how often to print out information about the event.
