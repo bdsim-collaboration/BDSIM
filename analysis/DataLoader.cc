@@ -76,11 +76,11 @@ void DataLoader::CommonCtor(std::string fileName)
   evtChain = new TChain("Event","Event");
   runChain = new TChain("Run","Run");
 
-  this->BuildInputFileList(fileName);
-  this->BuildTreeNameList();
-  this->BuildEventBranchNameList();
-  this->ChainTrees();
-  this->SetBranchAddress(allBranchesOn, branchesToTurnOn);
+  BuildInputFileList(fileName);
+  BuildTreeNameList();
+  BuildEventBranchNameList();
+  ChainTrees();
+  SetBranchAddress(allBranchesOn, branchesToTurnOn);
 }
 
 void DataLoader::BuildInputFileList(std::string inputPath)
