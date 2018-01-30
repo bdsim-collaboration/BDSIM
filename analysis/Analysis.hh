@@ -23,13 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-#include "HistogramMerge.hh"
-
 #include <map>
 #include <string>
 #include <vector>
 
 class HistogramDef;
+class HistogramMeanFromFile;
 class PerEntryHistogram;
 class TChain;
 class TFile;
@@ -93,7 +92,7 @@ protected:
   std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
   std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
   std::vector<PerEntryHistogram*> perEntryHistograms;
-  HistogramMerge*             histoSum;       ///< Bdsim histograms.
+  HistogramMeanFromFile*      histoSum;       ///< Merge of per event stored histograms.
   bool                        debug;          ///< Whether debug print out is used or not.
   long int                    entries;        ///< Number of entries in the chain.
 

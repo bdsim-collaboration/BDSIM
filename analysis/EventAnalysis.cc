@@ -21,7 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
-#include "HistogramMerge.hh"
+#include "HistogramMeanFromFile.hh"
 #include "SamplerAnalysis.hh"
 #include "rebdsim.hh"
 
@@ -113,9 +113,9 @@ void EventAnalysis::Process()
 
       // merge histograms stored per event in the output
       if(i==0)
-	{histoSum = new HistogramMerge(event->Histos, debug);}
+	{histoSum = new HistogramMeanFromFile(event->Histos);}
       else
-	{histoSum->Add(event->Histos);}
+	{histoSum->Accumulate(event->Histos);}
 
       // per event histograms
       AccumulatePerEntryHistograms(i);

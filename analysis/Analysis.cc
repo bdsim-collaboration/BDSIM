@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
 #include "HistogramFactory.hh"
+#include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogram.hh"
 #include "rebdsim.hh"
 
@@ -181,7 +182,7 @@ void Analysis::Write(TFile* outputFile)
     {
       mergedDir->cd();
       std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
-      histoSum->Write(outputFile, mergedDir);
+      histoSum->Write(mergedDir);
     }
 
   outputFile->cd("/");  // return to root of the file
