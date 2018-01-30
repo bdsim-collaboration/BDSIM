@@ -23,6 +23,7 @@ New Features
 General
 -------
 
+* "librebdsimlib" has been changed to "librebdsimLib" to be more consistent for output loading.
 * Physics list names are now consistently named with '_' between words. Old list names are still supported.
 * `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are recommended by Geant4 for high energy hadronic interactions.
 * "bdsim" integrator set now maps to "bdsimtwo" integrator set.
