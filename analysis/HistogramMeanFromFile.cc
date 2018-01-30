@@ -30,24 +30,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 HistogramMeanFromFile::HistogramMeanFromFile(BDSOutputROOTEventHistograms* h)
 {
-  auto h1i = h->Get1DHistograms();
-  for(auto hist : h1i)
+  for(auto hist : h->Get1DHistograms())
     {
       std::string name  = std::string(hist->GetName());
       std::string title = std::string(hist->GetTitle());
       histograms1d.push_back(new HistogramAccumulator(hist, 1, name, title));
     }
 
-  auto h2i = h->Get2DHistograms();
-  for(auto hist : h2i)
+  for(auto hist : h->Get2DHistograms())
     {
       std::string name  = std::string(hist->GetName());
       std::string title = std::string(hist->GetTitle());
       histograms2d.push_back(new HistogramAccumulator(hist, 2, name, title));
     }
 
-  auto h3i = h->Get3DHistograms();
-  for(auto hist : h3i)
+  for(auto hist : h->Get3DHistograms())
     {
       std::string name  = std::string(hist->GetName());
       std::string title = std::string(hist->GetTitle());
