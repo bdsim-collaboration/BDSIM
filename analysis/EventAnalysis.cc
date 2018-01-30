@@ -118,7 +118,7 @@ void EventAnalysis::Process()
 	{histoSum->Add(event->Histos);}
 
       // per event histograms
-      AccumulatePerEntryHistograms();
+      AccumulatePerEntryHistograms(i);
 
       UserProcess();
 

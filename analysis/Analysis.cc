@@ -104,13 +104,13 @@ void Analysis::PreparePerEntryHistograms()
     {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
 }
 
-void Analysis::AccumulatePerEntryHistograms()
+void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
 {
   if (!runPerEntryHistograms)
     {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
-    {peHist->AccumulateCurrentEntry();}
+    {peHist->AccumulateCurrentEntry(entryNumber);}
 }
 
 void Analysis::TerminatePerEntryHistograms()

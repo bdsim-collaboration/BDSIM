@@ -72,7 +72,7 @@ public:
   void PreparePerEntryHistograms();
 
   /// Accumulate means and variances for per entry histograms.
-  void AccumulatePerEntryHistograms();
+  void AccumulatePerEntryHistograms(const int& entryNumber);
 
   /// Prepare result of per entry histogram accumulation.
   void TerminatePerEntryHistograms();

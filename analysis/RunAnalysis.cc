@@ -55,7 +55,7 @@ void RunAnalysis::Process()
 	{histoSum->Add(run->histos);}
 
       // per event histograms
-      AccumulatePerEntryHistograms();
+      AccumulatePerEntryHistograms(i);
       
       UserProcess();
     }
