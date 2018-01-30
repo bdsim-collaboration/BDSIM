@@ -41,6 +41,9 @@ class TH1;
  * 
  * Each instance is single use. Once termianted, the accumulation should
  * not be used.
+ * 
+ * The algorithm used to calculate the mean and variance is one that supports
+ * online calculation and is numerically stable. 
  *
  * @author Laurie Nevay
  */
@@ -89,6 +92,10 @@ protected:
   TH1*              mean;
   TH1*              variance;
   TH1*              result;
+
+private:
+  /// No need for default constructor.
+  HistogramAccumulator() = delete;
 };
 
 #endif

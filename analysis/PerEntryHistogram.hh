@@ -31,11 +31,10 @@ class TH1;
  * @brief Holder for information to calculate per entry histograms.
  *
  * This creates a histogram per event and accumualtes the mean and variance
- * for every bin in a cloned histogram. This produces the mean and variance
- * per event. Minimum number of events required is 2. 
+ * for every bin in a cloned histogram. Minimum number of events required is 2. 
  * 
- * The algorithm used to calculate the mean and variance is one that supports
- * online calculation and is numerically stable.
+ * This uses a HistogramAccumulator object rather than inheritance as this
+ * class has to prepare the base histogram in the constructor first.
  * 
  * @author Laurie Nevay
  */

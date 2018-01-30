@@ -98,7 +98,7 @@ void EventAnalysis::Process()
 
   // loop over events
   const int entries = chain->GetEntries();
-  for(int i=0; i<entries; ++i)
+  for(int i = 0; i < entries; ++i)
     {
       chain->GetEntry(i);
       // event analysis feedback

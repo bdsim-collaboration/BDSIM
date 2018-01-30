@@ -45,7 +45,7 @@ void RunAnalysis::Process()
     {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  for(int i=0; i < chain->GetEntries(); ++i)
+  for(int i = 0; i < chain->GetEntries(); ++i)
     {
       chain->GetEntry(i);
       
