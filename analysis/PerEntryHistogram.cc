@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramFactory.hh"
 #include "PerEntryHistogram.hh"
 
 #include "TChain.h"
@@ -53,93 +54,29 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
     case 1:
       {
 	const HistogramDef1D* d = static_cast<const HistogramDef1D*>(definition);
-	if (d->logarithmicX)
-          {// note ROOT requires len(binEdges) = nBins + 1
-	    std::vector<double> binEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    baseHist = new TH1D(baseName.c_str(), baseName.c_str(), d->xNBins, binEdges.data());
-          }
-	else
-          {
-	    baseHist = new TH1D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, d->xLow, d->xHigh);
-          }
+	baseHist = HistogramFactory::CreateHistogram1D(d, baseName, baseName);
 	temp = static_cast<TH1D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
     case 2:
       {
 	const HistogramDef2D* d = static_cast<const HistogramDef2D*>(definition);
-	if (d->logarithmicX && d->logarithmicY)
-          {
-	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
-	    baseHist = new TH2D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, xBinEdges.data(),
-				d->yNBins, yBinEdges.data());
-          }
-	else if (d->logarithmicX)
-          {
-	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    baseHist = new TH2D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, xBinEdges.data(),
-				d->yNBins, d->yLow, d->yHigh);
-          }
-	else if (d->logarithmicY)
-          {
-	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
-	    baseHist = new TH2D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, d->xLow, d->xHigh,
-				d->yNBins, yBinEdges.data());
-          }
-	else
-          {
-	    baseHist = new TH2D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, d->xLow, d->xHigh,
-				d->yNBins, d->yLow, d->yHigh);
-          }
+	baseHist = HistogramFactory::CreateHistogram2D(d, baseName, baseName);
 	temp = static_cast<TH2D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
     case 3:
       {
 	const HistogramDef3D* d = static_cast<const HistogramDef3D*>(definition);
-	if (d->logarithmicX || d->logarithmicY || d->logarithmicZ)
-	  {
-	    std::vector<double> xBinEdges;
-	    std::vector<double> yBinEdges;
-	    std::vector<double> zBinEdges;
-	    if (d->logarithmicX)
-	      {xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);}
-	    else
-	      {xBinEdges = RBDS::LinSpace(d->xLow, d->xHigh, d->xNBins);}
-	    if (d->logarithmicY)
-	      {yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);}
-	    else
-	      {yBinEdges = RBDS::LinSpace(d->yLow, d->yHigh, d->yNBins);}
-	    if (d->logarithmicZ)
-	      {zBinEdges = RBDS::LogSpace(d->zLow, d->zHigh, d->zNBins);}
-	    else
-	      {zBinEdges = RBDS::LinSpace(d->zLow, d->zHigh, d->zNBins);}
-	    baseHist = new TH3D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, xBinEdges.data(),
-				d->yNBins, yBinEdges.data(),
-				d->zNBins, zBinEdges.data());
-	  }
-	else
-	  {
-	    baseHist = new TH3D(baseName.c_str(), baseName.c_str(),
-				d->xNBins, d->xLow, d->xHigh,
-				d->yNBins, d->yLow, d->yHigh,
-				d->zNBins, d->zLow, d->zHigh);
-	  }
+	baseHist = HistogramFactory::CreateHistogram3D(d, baseName, baseName);
 	temp = static_cast<TH3D*>(baseHist->Clone(tempName.c_str()));
 	break;
       }
-	default:
-	  {break;}
-      }
+    default:
+      {break;}
+    }
   temp->SetTitle(tempName.c_str());
-
+  
   accumulator = new HistogramAccumulator(baseHist, nDimensions, histName, histName);
 }
       
