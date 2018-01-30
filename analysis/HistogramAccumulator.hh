@@ -44,6 +44,10 @@ class TH1;
  * 
  * The algorithm used to calculate the mean and variance is one that supports
  * online calculation and is numerically stable. 
+ * 
+ * Normally, at least 2 entries should be accumulated to calculate the variance
+ * and to avoid nans from 1/(n-1), however, in this special case, the bin error
+ * is set to 0.
  *
  * @author Laurie Nevay
  */

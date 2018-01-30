@@ -48,12 +48,9 @@ Analysis::Analysis(std::string treeNameIn,
   mergedHistogramName(mergedHistogramNameIn),
   histoSum(nullptr),
   debug(debugIn),
+  entries(chain->GetEntries()),
   perEntry(perEntryAnalysis)
-{
-  entries = chain->GetEntries();
-  // only activate per entry histograms if at least 2 entries.
-  runPerEntryHistograms = entries > 1;
-}
+{;}
 
 Analysis::~Analysis()
 {
@@ -102,21 +99,12 @@ void Analysis::SimpleHistograms()
 void Analysis::PreparePerEntryHistograms()
 {
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
-  if (!runPerEntryHistograms && definitions.size() > 0)
-    {
-      std::cout << "Warning: per-entry histograms specified, but insufficient\n ";
-      std::cout << "        number of entries (" << entries << ") to calculate means and variances." << std::endl;
-      std::cout << "Per-entry histograms will not be produced for this Tree." << std::endl;
-      return;
-    }
   for (const auto& def : definitions)
     {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
 }
 
 void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
 {
-  if (!runPerEntryHistograms)
-    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->AccumulateCurrentEntry(entryNumber);}
@@ -124,8 +112,6 @@ void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  if (!runPerEntryHistograms)
-    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->Terminate();}
@@ -154,13 +140,9 @@ void Analysis::Write(TFile* outputFile)
   TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
   TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
 
-  // per entry histograms
-  if (runPerEntryHistograms)
-    {
-      perEntryDir->cd();
-      for (auto h : perEntryHistograms)
-	{h->Write(perEntryDir);}
-    }
+  perEntryDir->cd();
+  for (auto h : perEntryHistograms)
+    {h->Write(perEntryDir);}
 
   // simple histograms
   simpleDir->cd();

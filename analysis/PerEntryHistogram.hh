@@ -32,7 +32,8 @@ class TH1;
  * @brief Holder for information to calculate per entry histograms.
  *
  * This creates a histogram per event and accumualtes the mean and variance
- * for every bin in a cloned histogram. Minimum number of events required is 2. 
+ * for every bin in a cloned histogram. In the case of 1 event, the bin error
+ * is 0. 
  * 
  * This uses a HistogramAccumulator object rather than inheritance as this
  * class has to prepare the base histogram in the constructor first.

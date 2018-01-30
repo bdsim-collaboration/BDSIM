@@ -161,6 +161,8 @@ TH1* HistogramAccumulator::Terminate()
   // lambda to avoid repeating calculation even if it's simple
   auto getSTD  = [](auto& varIn, auto& nIn) {return std::sqrt(varIn / ((double)nIn-1));};
 
+  // note here we set the std to 0 if there's only one entry (ie n = 1) to avoid
+  // division by zero and nans
   switch (nDimensions)
     {
     case 1:
@@ -169,9 +171,9 @@ TH1* HistogramAccumulator::Terminate()
 	  {
 	    mn  = mean->GetBinContent(j);
 	    var = variance->GetBinContent(j);
-	    std = getSTD(var, n);
-	    result->SetBinContent(j,    mn);
-	    result->SetBinError(j,      factor*std);
+	    std = n > 1 ? getSTD(var, n) : 0;
+	    result->SetBinContent(j, mn);
+	    result->SetBinError(j,   factor*std);
 	  }
 	break;
       }
@@ -182,9 +184,9 @@ TH1* HistogramAccumulator::Terminate()
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
 		mn  = mean->GetBinContent(j,k);
-		std = getSTD(var, n);
-		result->SetBinContent(j, k,    mn);
-		result->SetBinError(j, k,      factor*std);
+		std = n > 1 ? getSTD(var, n) : 0;
+		result->SetBinContent(j, k, mn);
+		result->SetBinError(j, k,   factor*std);
 	      }
 	  }
 	break;
@@ -198,9 +200,9 @@ TH1* HistogramAccumulator::Terminate()
 		for (int l = 0; l <= result->GetNbinsZ() + 1; ++l)
 		  {
 		    mn  = mean->GetBinContent(j,k,l);
-		    std = getSTD(var, n);
-		    result->SetBinContent(j,k,l,    mn);
-		    result->SetBinError(j,k,l,      factor*std);
+		    std = n > 1 ? getSTD(var, n) : 0;
+		    result->SetBinContent(j,k,l, mn);
+		    result->SetBinError(j,k,l,   factor*std);
 		  }
 	      }
 	  }

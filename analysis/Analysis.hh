@@ -98,12 +98,6 @@ protected:
 
   /// Whether to analyse each entry in the tree in a for loop or not.
   bool                        perEntry;
-
-  /// Whether to go ahead and create per entry histograms. These only work with greater
-  /// than 1 entries (ie at least 2) in the chain / tree, so use this flag to disable
-  /// them if insufficient entries. This means we can tolerate user input faults and
-  /// do the other analysis.
-  bool                        runPerEntryHistograms;
   
 private:
   /// No default constructor for this base class.
