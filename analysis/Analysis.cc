@@ -53,6 +53,8 @@ Analysis::~Analysis()
 {
   delete chain;
   delete histoSum;
+  for (auto pe : perEntryHistograms)
+    {delete pe;}
 }
 
 void Analysis::Execute()

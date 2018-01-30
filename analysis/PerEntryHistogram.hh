@@ -45,7 +45,7 @@ public:
   /// Constructor with a histogram definition and the chain to operate on.
   PerEntryHistogram(const HistogramDef* definition,
 		    TChain*             chain);
-  virtual ~PerEntryHistogram(){;}
+  virtual ~PerEntryHistogram();
 
   /// Create a histogram of the approprate dimensions for the currently loaded
   /// event then add it to the online (ie running) means and variances.

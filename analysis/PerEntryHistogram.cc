@@ -79,6 +79,12 @@ PerEntryHistogram::PerEntryHistogram(const HistogramDef* definition,
   
   accumulator = new HistogramAccumulator(baseHist, nDimensions, histName, histName);
 }
+
+PerEntryHistogram::~PerEntryHistogram()
+{
+  delete temp; // this removes it from the current ROOT file
+  delete accumulator;
+}
       
 void PerEntryHistogram::AccumulateCurrentEntry(const int& entryNumber)
 {  
