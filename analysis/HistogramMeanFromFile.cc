@@ -39,7 +39,7 @@ HistogramMeanFromFile::HistogramMeanFromFile(BDSOutputROOTEventHistograms* h)
     }
 
   auto h2i = h->Get2DHistograms();
-  for(auto hist : h1i)
+  for(auto hist : h2i)
     {
       std::string name  = std::string(hist->GetName());
       std::string title = std::string(hist->GetTitle());
@@ -47,7 +47,7 @@ HistogramMeanFromFile::HistogramMeanFromFile(BDSOutputROOTEventHistograms* h)
     }
 
   auto h3i = h->Get3DHistograms();
-  for(auto hist : h1i)
+  for(auto hist : h3i)
     {
       std::string name  = std::string(hist->GetName());
       std::string title = std::string(hist->GetTitle());
