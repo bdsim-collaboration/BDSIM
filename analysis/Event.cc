@@ -107,7 +107,13 @@ void Event::SetBranchAddress(TTree *t,
   t->SetBranchAddress("PrimaryLastHit.", &PrimaryLastHit);
   
   if (allBranchesOn)
-    {t->SetBranchStatus("*", 1);}
+    {
+      t->SetBranchStatus("*", 1);
+      t->SetBranchAddress("Eloss.", &Eloss);
+      t->SetBranchAddress("Histos.", &Histos);
+      t->SetBranchAddress("TunnelHit.", &TunnelHit);
+      t->SetBranchAddress("Trajectory.", &Trajectory);
+    }
   else if (branchesToTurnOn)
     {
       for (const auto& name : *branchesToTurnOn)
