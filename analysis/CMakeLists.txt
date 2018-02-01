@@ -5,6 +5,7 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/edbdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombine.cc)
 
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
@@ -59,6 +60,11 @@ target_link_libraries(rebdsimLib bdsimRootEvent)
 add_executable(rebdsim rebdsim.cc)
 set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
+
+add_executable(rebdsimCombineExec rebdsimCombine.cc)
+set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimCombineExec rebdsimLib bdsimRootEvent)
+bdsim_install_targets(rebdsimCombineExec)
 
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
