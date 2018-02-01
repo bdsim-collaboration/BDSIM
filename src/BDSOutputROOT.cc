@@ -121,7 +121,7 @@ void BDSOutputROOT::NewFile()
 
 void BDSOutputROOT::WriteHeader()
 {
-  headerOutput->Flush(); // updates time stamp
+  headerOutput->Fill(); // updates time stamp
   theHeaderOutputTree->Fill();
 }
 
