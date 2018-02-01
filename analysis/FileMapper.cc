@@ -21,11 +21,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSOutputROOTEventHeader.hh"
 
+#include "TDirectory.h"
 #include "TFile.h"
+#include "TH1.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TH3D.h"
 #include "TList.h"
+#include "TKey.h"
 #include "TTree.h"
 
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -82,3 +89,23 @@ bool RBDS::IsREBDSIMOutputFile(TFile* file)
 
   return fileType == "REBDISM";
 }
+
+int RBDS::DetermineDimensionality(TH1* h)
+{
+  if (dynamic_cast<TH1D*>(h))
+    {return 1;}
+  else if (dynamic_cast<TH2D*>(h))
+    {return 2;}
+  else if (dynamic_cast<TH3D*>(h))
+    {return 3;}
+  else
+    {return 1;}
+}
+
+void RBDS::WarningMissingHistogram(const std::string& histName,
+				   const std::string& fileName)
+{
+  std::cout << "No histogram \"" << histName << "\" in file "
+	    << fileName << std::endl;
+}
+

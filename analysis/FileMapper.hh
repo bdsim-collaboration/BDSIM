@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 class TFile;
+class TH1;
 
 namespace RBDS
 {
@@ -39,6 +40,11 @@ namespace RBDS
   /// Whether the file type is a REBDSIM output one. Does not close file. May change
   /// the branch address for the header in the file.
   bool IsREBDSIMOutputFile(TFile* file);
+
+  int DetermineDimensionality(TH1* h);
+
+  void WarningMissingHistogram(const std::string& histName,
+			       const std::string& fileName);
 }
 
 #endif
