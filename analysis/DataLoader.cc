@@ -136,16 +136,16 @@ void DataLoader::BuildTreeNameList()
   TList *kl = f->GetListOfKeys();
 
   for(int i=0;i<kl->GetEntries();++i)
-    {this->treeNames.push_back(std::string(kl->At(i)->GetName()));}
+    {treeNames.push_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
   delete f;
 
   if(debug)
-  {
-    for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
-      std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
-  }
+    {
+      for (const auto& tr : treeNames)
+	{std::cout << "DataLoader::BuildTreeNameList> " <<  tr << std::endl;}
+    }
 }
 
 void DataLoader::BuildEventBranchNameList()
