@@ -200,14 +200,24 @@ void HistogramMerge::Terminate()
     }
 }
 
-void HistogramMerge::Write(TFile* /*outputFile*/)
+void HistogramMerge::Write(TFile* /*outputFile*/,
+			   TDirectory* dir)
 {
-  // ROOT just writes object to the open file
-  // is there a way to do this explictly?  kDirectory?
-  for (auto h : histograms1D)
-    { h->Write(); }
-  for (auto h : histograms2D)
-    { h->Write(); }
-  for (auto h : histograms3D)
-    { h->Write(); }
+  if (dir)
+    {// move to directory in output file
+      for (auto& h : histograms1D)
+	{dir->Add(h);}
+      for (auto& h : histograms2D)
+	{dir->Add(h);}
+      for (auto& h : histograms3D)
+	{dir->Add(h);}
+    }
+
+  // write to currently open file.
+  for (auto& h : histograms1D)
+    {h->Write();}
+  for (auto& h : histograms2D)
+    {h->Write();}
+  for (auto& h : histograms3D)
+    {h->Write();}
 }

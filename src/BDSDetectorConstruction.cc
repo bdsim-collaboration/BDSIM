@@ -377,7 +377,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   if (plBeamline) // optional placements beam line
     {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
   
-  BDSBeamline* tunnelBeamline = acceleratorModel->GetTunnelBeamline();
+  BDSBeamline* tunnelBeamline = acceleratorModel->TunnelBeamline();
   if (tunnelBeamline)
     {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
@@ -423,12 +423,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   
   // visual attributes
   // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetContainerVisAttr()));
+  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
   debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   worldLV->SetVisAttributes(debugWorldVis);
 	
   // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
@@ -470,7 +470,7 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 		       BDSSDManager::Instance()->GetEnergyCounterSD());
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
-      PlaceBeamlineInWorld(acceleratorModel->GetTunnelBeamline(),
+      PlaceBeamlineInWorld(acceleratorModel->TunnelBeamline(),
 			   worldPV, checkOverlaps,
 			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
@@ -584,15 +584,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
 
-      G4String bias;
-      if (bs.empty())
-	{// no bias but default specified
-	  bias = defaultBias;
-	}
-      else
-	{// bias specified - look it up and ignore default
-	  bias = bs;
-	}
+      // if no bias, use default else copy name of bias to use
+      G4String bias = bs.empty() ? defaultBias : bs;
       
       auto result = biasObjectList.find(bias);
       if (result == biasObjectList.end())

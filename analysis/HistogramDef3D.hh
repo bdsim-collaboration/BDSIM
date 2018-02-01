@@ -45,8 +45,9 @@ public:
 		 double      zHighIn,
 		 std::string plotIn,
 		 std::string selectionIn    = "1",
-		 bool        logarithmicX   = false,
-		 bool        logarithmicY   = false,
+		 bool        perEntryIn     = true,
+		 bool        logarithmicXIn = false,
+		 bool        logarithmicYIn = false,
 		 bool        logarithmicZIn = false);
   virtual ~HistogramDef3D(){;}
 

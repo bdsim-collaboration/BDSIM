@@ -45,7 +45,7 @@ class DataLoader
 public:
   DataLoader(std::string fileName,
 	     bool        debugIn           = false,
-	     bool        processSamplersIn = false,
+	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,
 	     const RBDS::BranchMap* branchesToTurnOn = nullptr);
   virtual ~DataLoader();
@@ -95,25 +95,24 @@ private:
   bool allBranchesOn;
   const RBDS::BranchMap* branchesToTurnOn;
 
-  Beam*   bea;
-  Options                      *opt;
-  Model                        *mod;
-  Event                        *evt;
-  Run                          *run;
+  Beam*    bea;
+  Options* opt;
+  Model*   mod;
+  Event*   evt;
+  Run*     run;
 
-  std::vector<std::string>      fileNames;
-  std::vector<std::string>      safeFileNames;
-
-  std::vector<std::string>      treeNames;
-  std::vector<std::string>      branchNames;  // non-sampler branch names
-  std::vector<std::string>      samplerNames; // sampler branch names
-  std::map<std::string, int>    samplerNameMap;
+  std::vector<std::string>    fileNames;
+  std::vector<std::string>    safeFileNames;
+  std::vector<std::string>    treeNames;
+  std::vector<std::string>    branchNames;  // non-sampler branch names
+  std::vector<std::string>    samplerNames; // sampler branch names
+  std::map<std::string, int>  samplerNameMap;
 
   TChain* beaChain;
-  TChain *optChain;
-  TChain *modChain;
-  TChain *evtChain;
-  TChain *runChain;
+  TChain* optChain;
+  TChain* modChain;
+  TChain* evtChain;
+  TChain* runChain;
 
   ClassDef(DataLoader,1);
 };

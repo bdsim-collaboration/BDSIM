@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSIntegratorSetType.hh"
 
+#include "G4Version.hh"
+
 #include <map>
 #include <string>
 
@@ -29,6 +31,11 @@ std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
       {BDSIntegratorSetType::bdsimone, "bdsimone"},
       {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"},
       {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"}
+      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"}
+#if G4VERSION_NUMBER > 1029
+      ,
+      {BDSIntegratorSetType::geant4dp, "geant4dp"}
+#endif
     });
 
 BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
@@ -39,6 +46,13 @@ BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
   types["bdsimone"]    = BDSIntegratorSetType::bdsimone;
   types["bdsimtwo"]    = BDSIntegratorSetType::bdsimtwo;
   types["bdsimmatrix"] = BDSIntegratorSetType::bdsimmatrix;
+  types["geant4"]   = BDSIntegratorSetType::geant4;
+#if G4VERSION_NUMBER > 1029
+  types["geant4dp"] = BDSIntegratorSetType::geant4dp;
+#endif
+  types["bdsim"]    = BDSIntegratorSetType::bdsimtwo; // alias for bdsim two the default
+  types["bdsimone"] = BDSIntegratorSetType::bdsimone;
+  types["bdsimtwo"] = BDSIntegratorSetType::bdsimtwo;
 
   integratorSet.toLower();
 

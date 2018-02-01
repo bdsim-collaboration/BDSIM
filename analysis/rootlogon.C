@@ -1,7 +1,5 @@
 {
-  gSystem->Load("libbdsimRootEvent");
   gSystem->Load("librebdsimLib");
-  //gSystem->AddIncludePath("-D__ROOTBUILD__");
 }
 
 void setup()

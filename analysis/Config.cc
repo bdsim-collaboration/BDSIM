@@ -53,6 +53,12 @@ Config::Config(std::string fileNameIn,
 Config::~Config()
 {
   instance = nullptr;
+
+  for (auto& nameDefs : histoDefs)
+    {
+      for (auto& histoDef : nameDefs.second)
+	{delete histoDef;}
+    }
 }
 
 void Config::InitialiseOptions(std::string analysisFile)
@@ -63,13 +69,16 @@ void Config::InitialiseOptions(std::string analysisFile)
   alternateKeys["calculateopticalfunctions"]         = "calculateoptics";
   alternateKeys["calculateopticalfunctionsfilename"] = "opticsfilename";
   
-  optionsBool["debug"]           = false;
-  optionsBool["processsamplers"] = false;
-  optionsBool["processlosses"]   = false;
-  optionsBool["processalltrees"] = false;
-  optionsBool["calculateoptics"] = false;
-  optionsBool["mergehistograms"] = true;
+  optionsBool["debug"]             = false;
+  optionsBool["processsamplers"]   = false;
+  optionsBool["calculateoptics"]   = false;
+  optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
+  optionsBool["perEntryBeam"]      = false;
+  optionsBool["perEntryEvent"]     = false;
+  optionsBool["perEntryRun"]       = false;
+  optionsBool["perEntryOption"]    = false;
+  optionsBool["perEntryModel"]     = false;
 
   optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";
@@ -81,8 +90,10 @@ void Config::InitialiseOptions(std::string analysisFile)
   // ensure keys exist for all trees.
   for (auto name : treeNames)
     {
-      histoDefs[name] = std::vector<HistogramDef*>();
-      branches[name]  = std::vector<std::string>();
+      histoDefs[name]         = std::vector<HistogramDef*>();
+      histoDefsSimple[name]   = std::vector<HistogramDef*>();
+      histoDefsPerEntry[name] = std::vector<HistogramDef*>();
+      branches[name]          = std::vector<std::string>();
     }
 }
 
@@ -121,7 +132,7 @@ void Config::ParseInputFile()
   // match a line starting with #
   std::regex comment("^\\#.*");
   // match a line starting with 'histogram', ignoring case
-  std::regex histogram("^histogram.*", std::regex_constants::icase);
+  std::regex histogram("(?:simple)*histogram.*", std::regex_constants::icase);
 
   while(std::getline(f, line))
     {
@@ -143,19 +154,32 @@ void Config::ParseInputFile()
     {
       allBranchesActivated = true;
       optionsBool["processsamplers"] = true;
+      optionsBool["perEntryEvent"]   = true;
     }
   if (optionsBool.at("mergehistograms"))
     {
-      branches["Event."].push_back("Histos.");
-      branches["Run."].push_back("Histos.");
+      branches["Event."].push_back("Histos");
+      branches["Run."].push_back("Histos");
+      optionsBool["perEntryEvent"]   = true;
     }
 }
 
 void Config::ParseHistogramLine(const std::string& line)
 {
+  // Settings with histogram in name can be misidentified - check here.
+  // This is the easiest way to do it for now.
+  std::string copyLine = line;
+  std::transform(copyLine.begin(), copyLine.end(), copyLine.begin(), ::tolower); // convert to lower case
+  if (copyLine.find("mergehistograms") != std::string::npos)
+    {
+      ParseSetting(line);
+      return;
+    }
+  
   // we know the line starts with 'histogram'
   // extract number after it as 1st match and rest of line as 2nd match
-  std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
+  std::regex histNDim("(?:Simple)*Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
+  //std::regex histNDim("^Histogram([1-3])D[a-zA-Z]*\\s+(.*)", std::regex_constants::icase);
   std::smatch match;
   
   if (std::regex_search(line, match, histNDim))
@@ -198,10 +222,20 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   bool yLog = false;
   bool zLog = false;
   ParseLog(results[0], xLog, yLog, zLog);
+
+  bool perEntry = true;
+  ParsePerEntry(results[0], perEntry);
   
   std::string treeName  = results[1];
   if (InvalidTreeName(treeName))
     {throw std::string("Invalid tree name \"" + treeName + "\"");}
+
+  if (perEntry)
+    {
+      std::string treeNameWithoutPoint = treeName; // make copy to modify
+      treeNameWithoutPoint.pop_back();             // delete last character
+      optionsBool["perEntry"+treeNameWithoutPoint] = true;
+    }
   
   std::string histName  = results[2];
   std::string bins      = results[3];
@@ -230,7 +264,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
 	result = new HistogramDef1D(treeName, histName,
 				    nBinsX, xLow, xHigh,
 				    variable, selection,
-				    xLog);
+				    perEntry, xLog);
 	break;
       }
     case 2:
@@ -240,7 +274,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
 				    xLow, xHigh,
 				    yLow, yHigh,
 				    variable, selection,
-				    xLog, yLog);
+				    perEntry, xLog, yLog);
 	break;
       }
     case 3:
@@ -250,7 +284,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
 				    xLow, xHigh,
 				    yLow, yHigh,
 				    zLow, zHigh,
-				    variable, selection,
+				    variable, selection, perEntry,
 				    xLog, yLog, zLog);
 	break;
       }
@@ -261,8 +295,19 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   if (result)
     {
       histoDefs[treeName].push_back(result);
+      if (perEntry)
+	{histoDefsPerEntry[treeName].push_back(result);}
+      else
+	{histoDefsSimple[treeName].push_back(result);}
       UpdateRequiredBranches(result);
     }
+}
+
+void Config::ParsePerEntry(const std::string& name, bool& perEntry) const
+{
+  std::string res = name;
+  std::transform(res.begin(), res.end(), res.begin(), ::tolower); // convert to lower case
+  perEntry = res.find("simple") == std::string::npos;
 }
 
 void Config::ParseLog(const std::string& definition,
@@ -336,7 +381,7 @@ void Config::ParseBins(const std::string bins,
   auto words_end   = std::sregex_iterator();
   int counter = 0;
   for (std::sregex_iterator i = words_begin; i != words_end; ++i, ++counter)
-    {(*binValues[counter]) = std::stod((*i).str());}
+    {(*binValues[counter]) = std::stoi((*i).str());}
   if (counter < nDim-1)
     {throw std::string("Invalid bin specification on line #" + std::to_string(lineCounter));}
 }
@@ -362,7 +407,7 @@ void Config::ParseBinning(const std::string binning,
 	  (*vals[2*counter])     = std::stod(match[1]);
 	  (*vals[(2*counter)+1]) = std::stod(match[2]);
 	}
-      catch (std::invalid_argument) // if stod can't convert number to double
+      catch (std::invalid_argument&) // if stod can't convert number to double
 	{throw std::string("Invalid binning number: \"" + match[0].str() + "\" on line #" + std::to_string(lineCounter));}
     }
   

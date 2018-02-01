@@ -40,13 +40,8 @@ class BDSFieldInfo;
 class BDSSpectrVacChamb;
 class G4MagIntegratorStepper;
 
-class BDSAwakeSpectrometer :public BDSAcceleratorComponent
+class BDSAwakeSpectrometer: public BDSAcceleratorComponent
 {
-
-
-
-  
-
 public:
   BDSAwakeSpectrometer(G4String aName, 
                        G4double magnetOffsetX,
@@ -60,8 +55,8 @@ public:
 		       G4double angle,
 		       G4double windowThickness,
 		       G4String windowMaterial,
-	           G4double mountThickness,
-	           G4String mountMaterial,
+		       G4double mountThickness,
+		       G4String mountMaterial,
 		       G4double screenEnd,
 		       G4String spec,
 		       G4double screenWidth);
@@ -261,15 +256,15 @@ private:
   //  BDS3DMagField* _magField;
   //Y component of the B field.
 
-    G4double _windowOffsetX;
-		G4double _windowOffsetXFromVCEdge;
+  G4double _windowOffsetX;
+  G4double _windowOffsetXFromVCEdge;
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
 
-    //Containter to hold pointers to all the logical volumes in the class
-    std::vector<G4LogicalVolume*> _logVols;
-    void SetUserLimits();
+  //Containter to hold pointers to all the logical volumes in the class
+  std::vector<G4LogicalVolume*> _logVols;
+  void SetUserLimits();
 };
 
 #endif

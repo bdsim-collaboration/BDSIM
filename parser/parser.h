@@ -142,8 +142,12 @@ namespace GMAD
     template <class C>
       double GetValue(std::string property);
 
-    /// Overwrite element with current parameters
-    void OverwriteElement(const std::string& elementName);
+    /// Add value to be extended to object
+    template <typename T>
+        void ExtendValue(std::string property, T value);
+
+    /// Overwrite object with current values
+    void Overwrite(const std::string& objectName);
     /// Add variable memory to variable list for memory management
     void AddVariable(std::string* name);
     ///@{ Print methods
@@ -237,6 +241,20 @@ namespace GMAD
     /// RF Cavity model instance
     CavityModel cavitymodel;
     
+    /// Find object by name in list
+    template <class C>
+      bool FindAndExtend(const std::string& objectName);
+    /// Extend object with maps
+    template <class C>
+      void ExtendObject(C& object);
+
+    /// Map for options of type double for extending objects
+    std::map<std::string, double> extendedNumbers;
+    /// Map for options of type string for extending objects
+    std::map<std::string, std::string> extendedStrings;
+    /// Map for options of type vector for extending objects
+    std::map<std::string, Array*> extendedVectors;
+
     /// List of all encountered elements
     FastList<Element> element_list;
     

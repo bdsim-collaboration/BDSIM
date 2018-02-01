@@ -141,6 +141,9 @@ private:
   /// of which ones have been activated and if the required ones haven't,
   /// activate them. This is also constructed from the physicsConstructors map.
   std::map<G4String, G4bool> physicsActivated;
+
+  /// Map of possible aliases for a given physics list.
+  std::map<G4String, G4String> aliasToOriginal;
   
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
@@ -152,42 +155,56 @@ private:
   G4bool emWillBeUsed;
 
   /// @{Physics constructor loader.
+  void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();
+  void Decay();
+  void DecayRadioactive();
   void Em();
   void EmExtra();
-  void EmPenelope();
   void EmLivermore();
   void EmLivermorePolarised();
   void EmLowEP();
-#if G4VERSION_NUMBER > 1019
-  void EmGS();
-#endif
+  void EmPenelope();
   void EmSS();
   void EmWVI();
   void Em1();
   void Em2();
   void Em3();
   void Em4();
+  void FTFPBERT();
+  void FTFPBERTHP();
   void HadronicElastic();
+  void HadronicElasticD();
+  void HadronicElasticH();
+  void HadronicElasticHP();
+  void HadronicElasticLEND();
+  void HadronicElasticXS();
   void Ion();
-#if G4VERSION_NUMBER > 1022
-  void IonPHP();
-#endif
-  void IonINCLXX();
   void IonBinary();
-  void SynchRad();
-  void Muon();					
+  void IonElastic();
+  void IonElasticQMD();
+  void IonINCLXX();
+  void LaserWire();
+  void Muon();
   void Optical();
-  void Decay();
-  void SpinDecay();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();
   void QGSPBICHP();
-  void FTFPBERT();
-  void FTFPBERTHP();
-  void LaserWire();
+  void SynchRad();
+#if G4VERSION_NUMBER > 1019
+  void EmGS();
+#endif
+#if G4VERSION_NUMBER > 1020
+  void DecaySpin();
+#endif
+#if G4VERSION_NUMBER > 1022
+  void IonPHP();
+#endif
+#if G4VERSION_NUMBER > 1029
+  void DecayMuonicAtom();
+#endif
   /// @}
 };
 

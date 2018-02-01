@@ -34,7 +34,8 @@ public:
 	       std::string histNameIn,
 	       int         nDimensionsIn,
                std::string variable,
-	       std::string selectionIn = "1");
+	       std::string selectionIn = "1",
+	       bool        perEnetry   = true);
   virtual ~HistogramDef(){;}
   
   std::string treeName;
@@ -42,6 +43,7 @@ public:
   int         nDimensions;
   std::string variable;
   std::string selection;
+  bool        perEntry;
 
 private:
   /// No default constructor

@@ -1,1 +1,21 @@
 simple_testing(integrators_bdsim2  "--file=one_of_each_base.gmad"  "")
+
+if (USE_GZSTREAM)
+  simple_testing(integrators_g4classicalrk4      "--file=g4classicalrk4.gmad" "")
+
+  if (G4_MINOR_VERSION GREATER 2)
+    simple_testing(integrators_g4bogackishampine23  "--file=g4bogackishampine23.gmad" "")
+    simple_testing(integrators_g4bogackishampine45  "--file=g4bogackishampine45.gmad" "")
+    simple_testing(integrators_g4dolomcprirk34      "--file=g4dolomcprirk34.gmad"     "")
+    simple_testing(integrators_g4dormandprince745   "--file=g4dormandprince745.gmad"  "")
+    simple_testing(integrators_g4dormandprincerk56  "--file=g4dormandprincerk56.gmad" "")
+    simple_testing(integrators_g4dormandprincerk78  "--file=g4dormandprincerk78.gmad" "")
+    simple_testing(integrators_g4tsitourasrk45      "--file=g4tsitourasrk45.gmad"     "")
+  endif()
+
+  if (G4_MINOR_VERSION GREATER 3)
+    simple_testing(integrators_g4rk547feq1          "--file=g4rk547feq1.gmad"         "")
+    simple_testing(integrators_g4rk547feq2          "--file=g4rk547feq2.gmad"         "")
+    simple_testing(integrators_g4rk547feq3          "--file=g4rk547feq3.gmad"         "")
+  endif()
+endif()

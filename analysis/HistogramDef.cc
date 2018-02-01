@@ -22,10 +22,12 @@ HistogramDef::HistogramDef(std::string treeNameIn,
 			   std::string histNameIn,
 			   int         nDimensionsIn,
 			   std::string variableIn,
-			   std::string selectionIn):
+			   std::string selectionIn,
+			   bool        perEntryIn):
   treeName(treeNameIn),
   histName(histNameIn),
   nDimensions(nDimensionsIn),
   variable(variableIn),
-  selection(selectionIn)
+  selection(selectionIn),
+  perEntry(perEntryIn)
 {;}

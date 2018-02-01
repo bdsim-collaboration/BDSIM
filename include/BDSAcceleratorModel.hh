@@ -64,7 +64,7 @@ public:
   /// @}
   
   /// Access the physical volume of the world
-  inline G4VPhysicalVolume* GetWorldPV() const {return worldPV;}
+  inline G4VPhysicalVolume* WorldPV() const {return worldPV;}
 
   /// Register the main beam line set.
   inline void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn) {mainBeamlineSet = setIn;}
@@ -90,7 +90,7 @@ public:
   inline void RegisterTunnelBeamline(BDSBeamline* beamlineIn) {tunnelBeamline = beamlineIn;}
 
   /// Access the beam line containing all the tunnel segments
-  inline BDSBeamline* GetTunnelBeamline() const {return tunnelBeamline;}
+  inline BDSBeamline* TunnelBeamline() const {return tunnelBeamline;}
   
   /// Register all field objects
   inline void RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn){fields = fieldsIn;}

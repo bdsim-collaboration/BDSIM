@@ -30,12 +30,24 @@ BeamAnalysis::BeamAnalysis():
   beam(nullptr)
 {;}
 
-BeamAnalysis::BeamAnalysis(Beam* beamIn, TChain* chainIn, bool debugIn):
-  Analysis("Beam.", chainIn, "BeamHistogramsMerged", debugIn),
+BeamAnalysis::BeamAnalysis(Beam*   beamIn,
+			   TChain* chainIn,
+			   bool    perEntryAnalysis,
+			   bool    debugIn):
+  Analysis("Beam.", chainIn, "BeamHistogramsMerged", perEntryAnalysis, debugIn),
   beam(beamIn)
 {;}
 
 BeamAnalysis::~BeamAnalysis()
 {
   delete beam;
+}
+
+void BeamAnalysis::Process()
+{
+  for (int i = 0; i < entries; i++)
+    {
+      // per event histograms
+      AccumulatePerEntryHistograms();
+    }
 }

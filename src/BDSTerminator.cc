@@ -63,7 +63,7 @@ void BDSTerminator::BuildContainerLogicalVolume()
   containerLogicalVolume->SetUserLimits(userLimits);
 
   // visual attributes
-  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
       
   // register extents with BDSGeometryComponent base class
   SetExtent(BDSExtent(radius, radius, chordLength*0.5));

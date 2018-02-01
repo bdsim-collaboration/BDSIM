@@ -61,7 +61,7 @@ void Run::SetBranchAddress(TTree *t,
 	{
 	  std::string nameStar = name + "*";
 	  if (debug)
-	    {std::cout << "Turning on branch \"" << nameStar << "\"" << std::endl;}
+	    {std::cout << "Run::SetBranchAddress> Turning on branch \"" << nameStar << "\"" << std::endl;}
 	  t->SetBranchStatus(nameStar.c_str(), 1);
 	}
     }

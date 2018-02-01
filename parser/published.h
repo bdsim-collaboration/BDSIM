@@ -28,13 +28,13 @@ namespace GMAD
     protected:
       /// Make pointer to member from class C and type T with accessible with a name
       template<typename T>
-	void publish(const std::string& name, T C::*mp);
+        void publish(const std::string& name, T C::*mp);
       ///@{
       /// Set member with name of class instance to value.
       /// Throws std::runtime_error if not found
       void set(C* instance, const std::string& name, double value);
       template<typename T>
-	void set(C* instance, const std::string& name, const T& value);
+        void set(C* instance, const std::string& name, const T& value);
       ///@}
 
       /// Set member with name of class instance to value of second instance
@@ -42,7 +42,7 @@ namespace GMAD
       
       /// Define AttributeMap of string and class member pointer
       template <typename T>
-	using AttributeMap = typename std::unordered_map<std::string, T C::*>;
+        using AttributeMap = typename std::unordered_map<std::string, T C::*>;
       
       /// Access method to static map for type T and class C
       template <typename T>
@@ -50,12 +50,12 @@ namespace GMAD
 
       /// Get method for class C
       template <typename T>
-	T get(const C* instance, const std::string& name) const;
+        T get(const C* instance, const std::string& name) const;
       
     private:
       /// Access to member pointer
       template<typename T>
-	T C::* member(const std::string& name) const;
+        T C::* member(const std::string& name) const;
     };
 
   // implementation for templated class needs to be in header
@@ -73,30 +73,30 @@ namespace GMAD
       // but difficult since member pointers have different types
       // better would be to keep a list of arithmetic types published and loop over those
       try {
-	double C::* mp = member<double>(name);
-	(instance)->*mp = value;
+        double C::* mp = member<double>(name);
+        (instance)->*mp = value;
       }
       catch (std::runtime_error) {
-	try {
-	  int C::* mp = member<int>(name);
-	  (instance)->*mp = value;
-	}
-	catch (std::runtime_error) {
-	  try {
-	    bool C::* mp = member<bool>(name);
-	    (instance)->*mp = value;
-	  }
-	  catch (std::runtime_error) {
-	    try {
-	      long C::* mp = member<long>(name);
-	      (instance)->*mp = value;
-	    }
-	    catch (std::runtime_error) {
-	      // if not found throw error
-	      throw std::runtime_error("Unknown member " + name);
-	    }
-	  }
-	}
+        try {
+          int C::* mp = member<int>(name);
+            (instance)->*mp = value;
+        }
+        catch (std::runtime_error) {
+          try {
+            bool C::* mp = member<bool>(name);
+            (instance)->*mp = value;
+          }
+          catch (std::runtime_error) {
+            try {
+              long C::* mp = member<long>(name);
+              (instance)->*mp = value;
+            }
+            catch (std::runtime_error) {
+              // if not found throw error
+              throw std::runtime_error("Unknown member " + name);
+            }
+          }
+        }
       }
     }
 
@@ -105,12 +105,12 @@ namespace GMAD
     void Published<C>::set(C* instance, const std::string& name, const T& value)
     {
       try {
-	T C::* mp = member<T>(name);
-	(instance)->*mp = value;
+        T C::* mp = member<T>(name);
+        (instance)->*mp = value;
       }
       catch (std::runtime_error) {
-	// if not found throw error
-	throw std::runtime_error("Unknown member " + name);
+        // if not found throw error
+        throw std::runtime_error("Unknown member " + name);
       }
     }
 
@@ -119,56 +119,56 @@ namespace GMAD
     {
       // unfortunately, have to try all existing types
       try {
-	// pointer to member
-	double C::* mp = member<double>(name);
-	// set value
-	(instance)->*mp = (instance2)->*mp;
+        // pointer to member
+        double C::* mp = member<double>(name);
+        // set value
+        (instance)->*mp = (instance2)->*mp;
       }
       catch (std::runtime_error) {
-	try {
-	  int C::* mp = member<int>(name);
-	  (instance)->*mp = (instance2)->*mp;
-	}
-	catch (std::runtime_error) {
-	  try {
-	    bool C::* mp = member<bool>(name);
-	    (instance)->*mp = (instance2)->*mp;
-	  }
-	  catch (std::runtime_error) {
-	    try {
-	      std::string C::* mp = member<std::string>(name);
-	      (instance)->*mp = (instance2)->*mp;
-	    }
-	    catch (std::runtime_error) {
-	      try {
-		std::list<std::string> C::* mp = member<std::list<std::string>>(name);
-		(instance)->*mp = (instance2)->*mp;
-	      }
-	      catch (std::runtime_error) {
-		try {
-		  std::list<int> C::* mp = member<std::list<int>>(name);
-		  (instance)->*mp = (instance2)->*mp;
-		}
-		catch (std::runtime_error) {
-		  try {
-		    std::list<double> C::* mp = member<std::list<double>>(name);
-		    (instance)->*mp = (instance2)->*mp;
-		  }
-		  catch (std::runtime_error) {
-		    try {
-		      long C::* mp = member<long>(name);
-		      (instance)->*mp = (instance2)->*mp;
-		    }
-		    catch (std::runtime_error) {
-		      // if not found throw error
-		      throw std::runtime_error("Unknown member " + name);
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
+        try {
+          int C::* mp = member<int>(name);
+          (instance)->*mp = (instance2)->*mp;
+        }
+        catch (std::runtime_error) {
+          try {
+            bool C::* mp = member<bool>(name);
+            (instance)->*mp = (instance2)->*mp;
+          }
+          catch (std::runtime_error) {
+            try {
+              std::string C::* mp = member<std::string>(name);
+              (instance)->*mp = (instance2)->*mp;
+            }
+            catch (std::runtime_error) {
+              try {
+                std::list<std::string> C::* mp = member<std::list<std::string>>(name);
+                (instance)->*mp = (instance2)->*mp;
+              }
+              catch (std::runtime_error) {
+                try {
+                  std::list<int> C::* mp = member<std::list<int>>(name);
+                  (instance)->*mp = (instance2)->*mp;
+                }
+                catch (std::runtime_error) {
+                  try {
+                    std::list<double> C::* mp = member<std::list<double>>(name);
+                    (instance)->*mp = (instance2)->*mp;
+                  }
+                  catch (std::runtime_error) {
+                    try {
+                      long C::* mp = member<long>(name);
+                      (instance)->*mp = (instance2)->*mp;
+                    }
+                    catch (std::runtime_error) {
+                      // if not found throw error
+                      throw std::runtime_error("Unknown member " + name);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
 
@@ -188,10 +188,10 @@ namespace GMAD
       AttributeMap<T>& m = attribute_map<T>();
       typename AttributeMap<T>::const_iterator it=m.find(name);
       if (it == m.end()) {
-	// if not found throw error
-	throw std::runtime_error("Unknown member " + name);
+        // if not found throw error
+        throw std::runtime_error("Unknown member " + name);
       } else {
-	return it->second;
+        return it->second;
       }
     }
 

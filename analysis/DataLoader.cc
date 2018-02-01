@@ -201,7 +201,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
-  bea->SetBranchAddress(beaChain, true); // true = alwasy turn on all branches
+  bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
   opt->SetBranchAddress(optChain, true); // true = always turn on all branches
   // note we can't parse the :: properly in the options tree so we turn on by default

@@ -38,17 +38,23 @@ class TFile;
 class EventAnalysis: public Analysis
 {
 public:
+  /// The default constructor is not intended for use and will not
+  /// work for the purpose of analysis. It is required by the ROOT
+  /// C++ reflection system in case you wish to save the object.
   EventAnalysis();
+  
+  /// Constructor intended for use to construct an event analysis object.
   EventAnalysis(Event*  eventIn,
 		TChain* chain,
-		bool    processSamplersIn   = false,
-		bool    debug               = false,
+		bool    perEntryAnalysis    = true,
+		bool    processSamplersIn   = true,
+		bool    debugIn             = false,
 		double  printModuloFraction = 0.01,
 		bool    emittanceOnTheFlyIn = false);
+
   virtual ~EventAnalysis();
 
-  void SetPrintModuloFraction(double fraction);
-
+  /// Operate on each entry in the event tree.
   virtual void Process();
 
   /// Terminate each individual sampler analysis and append optical functions.
@@ -58,19 +64,25 @@ public:
   virtual void Write(TFile *outputFileName);
 
 protected:
-  Event* event;
-  std::vector<SamplerAnalysis*> samplerAnalyses;
-  std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< optical functions from all samplers
-  ClassDef(EventAnalysis,1);
+  Event* event; ///< Event object that data loaded from the file will be loaded into.
+  std::vector<SamplerAnalysis*> samplerAnalyses; ///< Holder for sampler analysis objects.
+  std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< Optical functions from all samplers.
 
 private:
+  /// Set how often to print out information about the event.
+  void SetPrintModuloFraction(double fraction);
+
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
+
+  /// Process each sampler analysis object.
   void ProcessSamplers(bool firstTime = false);
 
-  int  printModulo;     ///< Cache of print modulo fraction
-  bool processSamplers; ///< Whether to process samplers.
+  int  printModulo;       ///< Cache of print modulo fraction
+  bool processSamplers;   ///< Whether to process samplers.
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
+  
+  ClassDef(EventAnalysis,1);
 };
 
 #endif

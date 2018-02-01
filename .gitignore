@@ -19,6 +19,7 @@
 # Emacs autosave files
 .#*
 *#
+cmake-build-debug
 
 # Packages #
 ############

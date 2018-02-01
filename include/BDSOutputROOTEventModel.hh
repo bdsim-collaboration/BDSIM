@@ -57,7 +57,7 @@ public:
   std::vector<float>       staS;
   std::vector<float>       midS;
   std::vector<float>       endS;
-  std::vector<int>         beamPipeType;
+  std::vector<std::string> beamPipeType;
   std::vector<double>      beamPipeAper1;
   std::vector<double>      beamPipeAper2;
   std::vector<double>      beamPipeAper3;

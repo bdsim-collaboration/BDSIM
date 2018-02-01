@@ -42,7 +42,8 @@ public:
 		 double      yHighIn,
 		 std::string plotIn,
 		 std::string selectionIn    = "1",
-		 bool        logarithmicX   = false,
+		 bool        perEntryIn     = true,
+		 bool        logarithmicXIn = false,
 		 bool        logarithmicYIn = false);
   virtual ~HistogramDef2D(){;}
 

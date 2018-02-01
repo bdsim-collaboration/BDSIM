@@ -1,0 +1,7 @@
+f1: field, type="bmap3d",
+    	     magneticFile="bdsim3d:3dexample.tar.gz",
+	         magneticInterpolator="cubic3d",
+	         bScaling=0.5;
+
+! extend and change properties
+f1: bScaling=0.1, integrator="g4classicalrk4";

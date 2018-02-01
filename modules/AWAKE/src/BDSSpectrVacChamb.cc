@@ -26,29 +26,34 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSSpectrVacChamb::BDSSpectrVacChamb(){}
-BDSSpectrVacChamb::~BDSSpectrVacChamb(){}
-
-BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ,
-                                     G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY,
-                                     G4double thickness, G4double windowOffsetX=5*CLHEP::cm, G4double strutSizeX=0,
+BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name,
+				     G4double lengthZ,
+				     G4double magStartZ,
+				     G4double vacuumEndZ,
+                                     G4double screenWidth,
+				     G4double screenAngle,
+				     G4double sizeX,
+				     G4double sizeY,
+                                     G4double thickness,
+				     G4double windowOffsetX=5*CLHEP::cm,
+				     G4double strutSizeX=0,
                                      G4double strutSizeZ=0,
                                      G4String strutMaterial="G4_STAINLESS-STEEL"):
-        _name(name),
-        _lengthZ(lengthZ), //Length of the vacuum chamber
-  _magStartZ(magStartZ),   //Start Z position of the magnet
-  _vacuumEndZ(vacuumEndZ), //End Z position of the vacuum chamber
-        _screenWidth(screenWidth),
-        _screenAngle(screenAngle),
-        _sizeX(sizeX),     //Size of the vacuum window/scintillator screen
-        _sizeY(sizeY),
-        _thickness(thickness),  //Thickness of the vacuum chamber walls
-        _windowOffsetX(windowOffsetX), //Offset X between the edge of the window and the edge of the beam pipe
-  _strutSizeX(strutSizeX),             //The size of the support strut
+  _name(name),
+  _lengthZ(lengthZ),       // Length of the vacuum chamber
+  _magStartZ(magStartZ),   // Start Z position of the magnet
+  _vacuumEndZ(vacuumEndZ), // End Z position of the vacuum chamber
+  _screenWidth(screenWidth),
+  _screenAngle(screenAngle),
+  _sizeX(sizeX),                 // Size of the vacuum window/scintillator screen
+  _sizeY(sizeY),
+  _thickness(thickness),         // Thickness of the vacuum chamber walls
+  _windowOffsetX(windowOffsetX), // Offset X between the edge of the window and the edge of the beam pipe
+  _strutSizeX(strutSizeX),       // The size of the support strut
   _strutSizeZ(strutSizeZ),
-  _strutMaterial(strutMaterial)        //The material of the support strut
+  _strutMaterial(strutMaterial)  // The material of the support strut
 {
-    CalculateGeometry();
+  CalculateGeometry();
   Build();
   SetUserLimits();
 
@@ -56,18 +61,15 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4d
   _innerLogVol = new G4LogicalVolume(_innerSolid,
 				     BDSMaterials::Instance()->GetMaterial("vacuum"),
 				     _name+"_inner_log");
-  */
-  
-
-  /*  
+				     
   G4double screenAngle2=shapeOuter->screenAngle2();
   G4double deltaMagStart=std::abs(thickness*cos(screenAngle2));
   G4double deltaScreenEnd=-std::abs(thickness*cos(screenAngle));
   BDSSpectrVacChambShape* shapeInner = new BDSSpectrVacChambShape(_name+"_inner", lengthZ, magStartZ+deltaMagStart, vacuumEndZ+deltaScreenEnd, screenWidth, screenAngle, sizeX, sizeY, thickness);
   */
-
-
 }
+
+BDSSpectrVacChamb::~BDSSpectrVacChamb(){;}
 
 void BDSSpectrVacChamb::Build(){
   if((_strutSizeX>0)&&(_strutSizeZ>0)) {
@@ -486,7 +488,7 @@ void BDSSpectrVacChamb::printTrapVertices(std::vector<G4TwoVector> vertices, con
 
 void BDSSpectrVacChamb::SetUserLimits()
 {
-    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
     for(unsigned long i=0; i<_logVols.size(); i++) {
     _logVols.at(i)->SetUserLimits(userLimits);
     }

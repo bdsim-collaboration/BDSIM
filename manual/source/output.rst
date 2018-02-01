@@ -12,9 +12,11 @@ The output format 'rootevent' is written to a ROOT file. This format
 is preferred as it lends itself nicely to particle physics information; is stored as compressed
 binary internally; and can store and load complex custom structures.
 
-Units, unless specified, are SI (i.e. m, rad), plus energy in GeV and time in nanoseconds.
-Small letters denote local (to that object) coordinates whereas capitals represent
-global coordinates.
+* Units, unless specified, are SI (i.e. m, rad).
+* Energy is in GeV and is the total energy of a particle.
+* Time in nanoseconds.
+* Small letters denote local (to that object) coordinates whereas capitals represent
+  global coordinates.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 	     
@@ -48,9 +50,12 @@ Structure Of Output
 -------------------
 
 BDSIM uses a series of classes to accumulate information about a Geant4 Run and Event.
-These are stored directly in the file so that the same classes can be used by the output
-analysis tool (rebdsim) to read and process the data. A BDSIM ROOT event file has the
-following structure.
+Instances of these classes are 'filled' with information during the simulation and copied
+to the output.
+
+In the case of the ROOT event output format, these classes are stored directly in the file
+so that the same classes can be used by the output analysis tool (rebdsim) to read
+and process the data. A BDSIM ROOT event file has the following structure.
 
 .. figure:: figures/rootevent_contents.png
 	    :width: 40%
@@ -233,7 +238,10 @@ Histograms
 
 BDSIM produces six histograms by default during the simulation. These are: primary
 hits per bin width; primary losses per bin width; energy loss per metre (GeV);
-primary hits per element; primary losses per element; and Energy loss per element.
+primary hits per element; primary losses per element; and energy loss per element.
+
+If the tunnel is constructed in the simulation, two more histograms for energy loss
+and energy loss per tunnel element are also constructed.
 
 The per element histograms are integrated across the length of each element so they
 will have a different bin width. The other histograms are evenly binned according

@@ -87,8 +87,10 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String componentName,
 
   auto visesGDML = ApplyColourMapping(lvsGDML, mapping);
 
+  ApplyUserLimits(lvsGDML, BDSGlobalConstants::Instance()->DefaultUserLimits());
+
   /// Now overwrite container lv vis attributes
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   std::pair<BDSExtent, BDSExtent> outerInner = BDS::DetermineExtents(containerSolid);
   
@@ -109,12 +111,11 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
 						      std::vector<G4LogicalVolume*>&   lvsIn)
 {
   const auto& lv = volume->GetLogicalVolume();
-  lvs.push_back(lv);
+  lvsIn.push_back(lv);
   for (G4int i = 0; i < lv->GetNoDaughters(); i++)
     {
       const auto& pv = lv->GetDaughter(i);
       pvsIn.push_back(pv);
-      lvsIn.push_back(lv);
       GetAllLogicalAndPhysical(pv, pvsIn, lvsIn); // recurse into daughter
     }
 }

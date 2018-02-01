@@ -119,12 +119,12 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
 void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
 {
-  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
 

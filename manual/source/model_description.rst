@@ -39,7 +39,7 @@ While GMAD is very similar to MADX, not all MADX commands are supported.
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
-* boolean operators <, >, <=, >=, <> (not equal), == are valid
+* Boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
 * !comments start with an exclamation mark "!"
@@ -211,7 +211,11 @@ This defines a drift element with name `d1` and a length of 5 metres. The defini
 
   d1: l=3*m, aper=0.1*m;
 
-Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres.
+
+.. Warning:: This only works for beam line elements and not other objects in GMAD syntax (such as a placement).
+
+An element can also be defined by copying an existing element::
 
   d2: d1, l=2*m;
 
@@ -536,7 +540,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 In the case of a thick kicker, the resulting bending angle is calculated as:
@@ -572,7 +576,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`hkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle
@@ -772,7 +776,7 @@ parameter              description                              default     requ
 Examples::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
-    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm;
 
 
 muspoiler
@@ -957,13 +961,111 @@ A few items allow you to define a custom colour for them to aid in visualisation
 only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
 where the RGB values are space delimited and given from 0 to 255. Once the colour name has
 been defined it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined.
+colour may not be redefined. The syntax is::
+
+  color="NAME: R G B";
+
+where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
+colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
 
 Examples::
 
   col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
   col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
-   
+
+* Colour names are case-sensitive.
+* Note the colon `:` in the syntax is crucial.
+  
+If a colour is already defined, that will be used. In the case a colour is already defined in
+BDSIM, that colour will be used. The user should therefore choose a different name if they
+wish to use their colour. The predefined colours in BDSIM are:
+
++-----------------+-----+-----+-----+
+| Name            |  R  |  G  |  B  |
++=================+=====+=====+=====+
+| LHCcoil         | 229 | 191 | 0   |
++-----------------+-----+-----+-----+
+| LHCcollar       | 229 | 229 | 229 |
++-----------------+-----+-----+-----+
+| LHCcopperskin   | 184 | 133 | 10  |
++-----------------+-----+-----+-----+
+| LHCyoke         | 0   | 127 | 255 |
++-----------------+-----+-----+-----+
+| LHCyokered      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| beampipe        | 102 | 102 | 102 |
++-----------------+-----+-----+-----+
+| black           | 0   | 0   | 0   |
++-----------------+-----+-----+-----+
+| blue            | 0   | 0   | 255 |
++-----------------+-----+-----+-----+
+| brown           | 114 | 63  | 0   |
++-----------------+-----+-----+-----+
+| coil            | 184 | 115 | 51  |
++-----------------+-----+-----+-----+
+| collimator      | 76  | 102 | 51  |
++-----------------+-----+-----+-----+
+| cyan            | 0   | 255 | 255 |
++-----------------+-----+-----+-----+
+| decapole        | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| default         | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| degrader        | 159 | 159 | 159 |
++-----------------+-----+-----+-----+
+| gdml            | 102 | 51  | 0   |
++-----------------+-----+-----+-----+
+| gray            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| green           | 0   | 255 | 0   |
++-----------------+-----+-----+-----+
+| grey            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| hkicker         | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| magenta         | 255 | 0   | 255 |
++-----------------+-----+-----+-----+
+| multipole       | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| muspoiler       | 0   | 205 | 208 |
++-----------------+-----+-----+-----+
+| octupole        | 0   | 153 | 76  |
++-----------------+-----+-----+-----+
+| quadrupole      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| rectangularbend | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| red             | 255 | 0   | 0   |
++-----------------+-----+-----+-----+
+| rfcavity        | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| screenframe     | 178 | 178 | 178 |
++-----------------+-----+-----+-----+
+| sectorbend      | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| sextupole       | 255 | 204 | 0   |
++-----------------+-----+-----+-----+
+| shield          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| soil            | 138 | 90  | 0   |
++-----------------+-----+-----+-----+
+| solenoid        | 255 | 139 | 0   |
++-----------------+-----+-----+-----+
+| srfcavity       | 175 | 196 | 222 |
++-----------------+-----+-----+-----+
+| tunnel          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| tunnelfloor     | 127 | 127 | 114 |
++-----------------+-----+-----+-----+
+| vkicker         | 186 | 84  | 211 |
++-----------------+-----+-----+-----+
+| warning         | 255 | 19  | 146 |
++-----------------+-----+-----+-----+
+| white           | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| yellow          | 255 | 255 | 0   |
++-----------------+-----+-----+-----+
+  
 
 Aperture Parameters
 -------------------
@@ -1512,48 +1614,78 @@ Integrators
 
 The following integrators are provided.  The majority are interfaces to Geant4 ones.
 *g4classicalrk4* is typically the recommended default and is very robust.
-*g4cakskarprkf45* is similar but slightly less CPU-intensive.
+*g4cakskarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
+onwards, *g4dormandprince745* is the default recommended by Geant4 (although not the
+BDSIM default currently). Note, any integrator capable of operating on EM fields
+will work on solely B or E fields.
 
-+----------------------+----------+------------------+
-|  **String**          | **B/EM** | **Time Varying** |
-+======================+==========+==================+
-| g4cashkarprkf45      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4classicalrk4       | EM       | Y                |
-+----------------------+----------+------------------+
-| g4constrk4           | B        | N                |
-+----------------------+----------+------------------+
-| g4expliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4impliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simpleheum         | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simplerunge        | EM       | Y                |
-+----------------------+----------+------------------+
-| g4exacthelixstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixexpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixheum          | B        | N                |
-+----------------------+----------+------------------+
-| g4heliximpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixmixedstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixsimplerunge   | B        | N                |
-+----------------------+----------+------------------+
-| g4nystromrk4         | B        | N                |
-+----------------------+----------+------------------+
-| g4rkg3stepper        | B        | N                |
-+----------------------+----------+------------------+
+We recommend looking at the source .hh files in the geant4 source code for an
+explanation of each as this is where they are documented. The source files can
+be found in `<geant4-source-dir>/source/geometry/magneticfield/include`.
+
++----------------------+----------+------------------+-----------------------------+
+|  **String**          | **B/EM** | **Time Varying** | Required Geant4 Version (>) |
++======================+==========+==================+=============================+
+| g4cashkarprkf45      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4classicalrk4       | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4constrk4           | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4expliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4impliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simpleheum         | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simplerunge        | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4exacthelixstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixexpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixheum          | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4heliximpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixmixedstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixsimplerunge   | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4nystromrk4         | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rkg3stepper        | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine23  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine45  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dolomcprik34       | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprince745   | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk56  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk78  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4tsitourasrk45      | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq1          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq2          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq3          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+
 
 Interpolators
 ^^^^^^^^^^^^^
 
-There are many algorithms which one can use to interpolate the field map data. The field
-may be queried at any point inside the volume, so an interpolator is required. A
-mathematical description as well as example plots are shown in :ref:`field-interpolators`.
+The field may be queried at any point inside the volume so an interpolator is required
+to provide a value of the field in between specified points in the field map.
+There are many algorithms that can be use to interpolate the field map data. A
+mathematical description of the ones provided in BDSIM as well as example plots
+are shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 
@@ -1958,109 +2090,152 @@ Physics Lists In BDSIM
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+---------------------------+------------------------------------------------------------------------+
-| **String to use**         | **Description**                                                        |
-+---------------------------+------------------------------------------------------------------------+
-|                           | Transportation of primary particles only - no scattering in material.  |
-+---------------------------+------------------------------------------------------------------------+
-| cherenkov                 | Provides Cherenkov radiation for all charged particles. Provided by    |
-|                           | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
-|                           | `G4CherenkovProcess`.                                                  |
-+---------------------------+------------------------------------------------------------------------+
-| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
-+---------------------------+------------------------------------------------------------------------+
-| em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
-|                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
-+---------------------------+------------------------------------------------------------------------+
-| em_extra                  | This provides extra electromagnetic models including, muon nuclear     |
-|                           | processes, bertini electro-nuclear model and synchrotron radiation     |
-|                           | (not in material). Provided by `G4EmPhysicsExtra`.                     |
-+---------------------------+------------------------------------------------------------------------+
-| em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
-|                           | `G4EmPenelopePhysics`.                                                 |
-+---------------------------+------------------------------------------------------------------------+
-| em_penelope               | The same as `em` but using low energy electromagnetic models. Uses     |
-|                           | `G4EmPenelopePhysics`.                                                 |
-+---------------------------+------------------------------------------------------------------------+
-| em_livermore              | `G4EmLivermorePhysics`.                                                |
-+---------------------------+------------------------------------------------------------------------+
-| em_livermore_polarised    | `G4EmLivermorePolarizedPhysics`.                                       |
-+---------------------------+------------------------------------------------------------------------+
-| em_low_ep                 | `G4EmLowEPPhysics`.                                                    |
-+---------------------------+------------------------------------------------------------------------+
-| em_gs                     | `G4EmStandardPhysicsGS`.                                               |
-+---------------------------+------------------------------------------------------------------------+
-| em_ss                     | `G4EmStandardPhysicsSS`.                                               |
-+---------------------------+------------------------------------------------------------------------+
-| em_wvi                    | `G4EmStandardPhysicsWVI`.                                              |
-+---------------------------+------------------------------------------------------------------------+
-| em_1                      | `G4EmStandardPhysics_option1`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| em_2                      | `G4EmStandardPhysics_option2`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| em_3                      | `G4EmStandardPhysics_option3`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| em_4                      | `G4EmStandardPhysics_option4`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
-|                           | is based on the FRITIOF description of string excitation and           |
-|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
-+---------------------------+------------------------------------------------------------------------+
-| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
-|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
-|                           | `G4HadronElasticPhysics.`                                              |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic                  | A shortcut for `QGSP_BERT`.                                            |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| ion                       | A shortcut for `G4IonPhysics`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| ionphp (*)                | A shortcut for `G4IonPhysicsPHP`.                                      |
-+---------------------------+------------------------------------------------------------------------+
-| ioninclxx (*)             | A shortcut for `G4IonINCLXXPhysics`.                                   |
-+---------------------------+------------------------------------------------------------------------+
-| ionbinary (*)             | A shortcut for `G4IonBinaryCascadePhysics`.                            |
-+---------------------------+------------------------------------------------------------------------+
-| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
-|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
-|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                           | builder (a la Geant4) `BDSPhysicsMuon`.                                |
-+---------------------------+------------------------------------------------------------------------+
-| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
-|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
-|                           | This uses `G4OpticalPhysics` class.                                    |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
-|                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
-|                           | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                           | (>10 GeV).                                                             |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
-|                           | precision neutron models to transport neutrons below 20 MeV down to    |
-|                           | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
-|                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
-|                           | model for protons and neutrons In comparison to the LEP model, Binary  |
-|                           | cascade better describes production of secondary particles produced in |
-|                           | interactions of protons and neutrons with nuclei. This is provided by  |
-|                           | `G4HadronPhysicsQGSP_BIC`.                                             |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
-|                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
-+---------------------------+------------------------------------------------------------------------+
-| spindecay                 | Decay physics but with spin correctly implemented. Note, only the      |
-|                           | Geant4 tracking integrators track spin correctly.                      |
-+---------------------------+------------------------------------------------------------------------+
-| synchrad                  | Provides synchrotron radiation for all charged particles. Provided by  |
-|                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
-|                           | `G4SynchrotronRadiation`.                                              |
-+---------------------------+------------------------------------------------------------------------+
++-----------------------------+------------------------------------------------------------------------+
+| **String to use**           | **Description**                                                        |
++=============================+========================================================================+
+|                             | Transportation of primary particles only - no scattering in material.  |
++-----------------------------+------------------------------------------------------------------------+
+| charge_exchange             | `G4ChargeExchangePhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| cherenkov                   | Provides Cherenkov radiation for all charged particles. Provided by    |
+|                             | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
+|                             | `G4CherenkovProcess`.                                                  |
++-----------------------------+------------------------------------------------------------------------+
+| decay                       | Provides radioactive decay processes using `G4DecayPhysics`. Crucial   |
+|                             | for pion decay for example.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| decay_radioactive           | Radioactive decay of long lived nuclei.                                |
++-----------------------------+------------------------------------------------------------------------+
+| decay_spin                  | Decay physics but with spin correctly implemented. Note, only the      |
+|                             | Geant4 tracking integrators track spin correctly.                      |
++-----------------------------+------------------------------------------------------------------------+
+| em                          | Transportation of primary particles, ionisation, bremsstrahlung,       |
+|                             | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++-----------------------------+------------------------------------------------------------------------+
+| em_extra                    | This provides extra electromagnetic models including, muon nuclear     |
+|                             | processes, bertini electro-nuclear model and synchrotron radiation     |
+|                             | (not in material). Provided by `G4EmPhysicsExtra`.                     |
++-----------------------------+------------------------------------------------------------------------+
+| em_gs                       | `G4EmStandardPhysicsGS`.                                               |
++-----------------------------+------------------------------------------------------------------------+
+| em_livermore                | `G4EmLivermorePhysics`.                                                |
++-----------------------------+------------------------------------------------------------------------+
+| em_livermore_polarised      | `G4EmLivermorePolarizedPhysics`.                                       |
++-----------------------------+------------------------------------------------------------------------+
+| em_low_ep                   | `G4EmLowEPPhysics`.                                                    |
++-----------------------------+------------------------------------------------------------------------+
+| em_penelope                 | The same as `em` but using low energy electromagnetic models. Uses     |
+|                             | `G4EmPenelopePhysics`.                                                 |
++-----------------------------+------------------------------------------------------------------------+
+| em_ss                       | `G4EmStandardPhysicsSS`.                                               |
++-----------------------------+------------------------------------------------------------------------+
+| em_wvi                      | `G4EmStandardPhysicsWVI`.                                              |
++-----------------------------+------------------------------------------------------------------------+
+| em_1                        | `G4EmStandardPhysics_option1`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_2                        | `G4EmStandardPhysics_option2`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_3                        | `G4EmStandardPhysics_option3`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_4                        | `G4EmStandardPhysics_option4`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| ftfp_bert                   | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                             | is based on the FRITIOF description of string excitation and           |
+|                             | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                             | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
++-----------------------------+------------------------------------------------------------------------+
+| ftfp_bert_hp                | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                             | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic            | Elastic hadronic processes. This is provided by                        |
+|                             | `G4HadronElasticPhysics.`                                              |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_d          | `G4HadronDElasticPhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_h          | `G4HadronHElasticPhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_hp         | `G4HadronElasticPhysicsHP`.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_lend (`*`) | `G4HadronElasticPhysicsLEND`.                                          |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_xs         | `G4HadronElasticPhysicsXS`.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| ion                         | `G4IonPhysics`.                                                        |
++-----------------------------+------------------------------------------------------------------------+
+| ion_binary (`*`)            | `G4IonBinaryCascadePhysics`.                                           |
++-----------------------------+------------------------------------------------------------------------+
+| ion_elastic                 | `G4IonElasticPhysics`.                                                 |
++-----------------------------+------------------------------------------------------------------------+
+| ion_elastic_qmd             | `G4IonQMDPhysics`.                                                     |
++-----------------------------+------------------------------------------------------------------------+
+| ion_inclxx (`*`)            | `G4IonINCLXXPhysics`.                                                  |
++-----------------------------+------------------------------------------------------------------------+
+| ion_php (`*`)               | `G4IonPhysicsPHP`.                                                     |
++-----------------------------+------------------------------------------------------------------------+
+| lw                          | Laserwire photon producing process as if the laserwire had scattered   |
+|                             | photons from the beam. Not actively developed, but will register       |
+|                             | process.                                                               |
++-----------------------------+------------------------------------------------------------------------+
+| muon                        | Provides muon production and scattering processes. Gamma to muons,     |
+|                             | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                             | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                             | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                             | builder (a la Geant4) `BDSPhysicsMuon`.                                |
++-----------------------------+------------------------------------------------------------------------+
+| optical                     | Optical physics processes including absorption, Rayleigh scattering,   |
+|                             | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                             | This uses `G4OpticalPhysics` class.                                    |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bert                   | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
+|                             | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
+|                             | hadronic elastic and inelastic processes. Suitable for high energy     |
+|                             | (>10 GeV).                                                             |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bert_hp                | Similar to `QGSP_BERT` but with the addition of data driven high       |
+|                             | precision neutron models to transport neutrons below 20 MeV down to    |
+|                             | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bic                    | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
+|                             | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
+|                             | model for protons and neutrons In comparison to the LEP model, Binary  |
+|                             | cascade better describes production of secondary particles produced in |
+|                             | interactions of protons and neutrons with nuclei. This is provided by  |
+|                             | `G4HadronPhysicsQGSP_BIC`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bic_hp                 | Similar to `QGSP_BIC` but with the high precision neutron package.     |
+|                             | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++-----------------------------+------------------------------------------------------------------------+
+| synch_rad                   | Provides synchrotron radiation for all charged particles. Provided by  |
+|                             | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
+|                             | `G4SynchrotronRadiation`.                                              |
++-----------------------------+------------------------------------------------------------------------+
+
+The following are also accepted as aliases to current physics lists. These are typically previously
+used names.
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|
+
++---------------------------+--------------------------+
+| **Physics List**          | **Alias To**             |
++===========================+==========================+
+| cerenkov                  | cherenkov                |
++---------------------------+--------------------------+
+| em_low                    | em_penelope              |
++---------------------------+--------------------------+
+| hadronic                  | ftfp_bert                |
++---------------------------+--------------------------+
+| hadronic_hp               | ftfp_bert_hp             |
++---------------------------+--------------------------+
+| ionbinary                 | ion_binary               |
++---------------------------+--------------------------+
+| ioninclxx                 | ion_inclxx               |
++---------------------------+--------------------------+
+| ionphp                    | ion_php                  |
++---------------------------+--------------------------+
+| spindecay                 | decay_spin               |
++---------------------------+--------------------------+
+| synchrad                  | synch_rad                |
++---------------------------+--------------------------+
 
 
 .. warning:: (*) These physics lists require the optional low energy data from Geant4. The user should

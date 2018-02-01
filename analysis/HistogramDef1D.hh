@@ -39,6 +39,7 @@ public:
 		 double      xHighIn,
 		 std::string variableIn,
 		 std::string selectionIn  = "1",
+		 bool        perEntryIn   = true,
 		 bool        logarithmicX = false);
   virtual ~HistogramDef1D(){;}
   
