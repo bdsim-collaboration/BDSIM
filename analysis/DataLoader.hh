@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class Beam;
 class Event;
+class Header;
 class Options;
 class Model;
 class Run;
@@ -75,11 +76,13 @@ public:
   std::vector<std::string>   GetTreeNames()    {return treeNames;};
   std::vector<std::string>   GetBranchNames()  {return branchNames;}
   std::vector<std::string>   GetSamplerNames() {return samplerNames;}
+  Header*                    GetHeader()       {return hea;}
   Beam*                      GetBeam()         {return bea;}
   Options*                   GetOptions()      {return opt;}
   Model*                     GetModel()        {return mod;}
   Event*                     GetEvent()        {return evt;}
   Run*                       GetRun()          {return run;}
+  TChain*                    GetHeaderTree()   {return heaChain;}
   TChain*                    GetBeamTree()     {return beaChain;}
   TChain*                    GetOptionsTree()  {return optChain;}
   TChain*                    GetModelTree()    {return modChain;}
@@ -95,6 +98,7 @@ private:
   bool allBranchesOn;
   const RBDS::BranchMap* branchesToTurnOn;
 
+  Header*  hea;
   Beam*    bea;
   Options* opt;
   Model*   mod;
@@ -108,6 +112,7 @@ private:
   std::vector<std::string>    samplerNames; // sampler branch names
   std::map<std::string, int>  samplerNameMap;
 
+  TChain* heaChain;
   TChain* beaChain;
   TChain* optChain;
   TChain* modChain;

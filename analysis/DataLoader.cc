@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "Beam.hh"
 #include "Event.hh"
+#include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
 #include "RebdsimTypes.hh"
@@ -49,12 +50,14 @@ DataLoader::DataLoader(std::string fileName,
 
 DataLoader::~DataLoader()
 {
+  delete hea;
   delete bea;
   delete opt;
   delete mod;
   delete evt;
   delete run;
 
+  delete heaChain;
   delete beaChain;
   delete optChain;
   delete modChain;
@@ -64,17 +67,19 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor(std::string fileName)
 {
+  hea = new Header(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug);
   evt = new Event(debug, processSamplers);
   run = new Run(debug);
 
-  beaChain = new TChain("Beam","Beam");
-  optChain = new TChain("Options","Options");
-  modChain = new TChain("Model","Model");
-  evtChain = new TChain("Event","Event");
-  runChain = new TChain("Run","Run");
+  heaChain = new TChain("Header",  "Header");
+  beaChain = new TChain("Beam",    "Beam");
+  optChain = new TChain("Options", "Options");
+  modChain = new TChain("Model",   "Model");
+  evtChain = new TChain("Event",   "Event");
+  runChain = new TChain("Run",     "Run");
 
   BuildInputFileList(fileName);
   BuildTreeNameList();
@@ -190,6 +195,7 @@ void DataLoader::ChainTrees()
   // loop over files and chain trees
   for (auto filename : fileNames)
     {
+      heaChain->Add(filename.c_str());
       beaChain->Add(filename.c_str());
       optChain->Add(filename.c_str());
       modChain->Add(filename.c_str());
@@ -201,6 +207,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
+  hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
   opt->SetBranchAddress(optChain, true); // true = always turn on all branches
