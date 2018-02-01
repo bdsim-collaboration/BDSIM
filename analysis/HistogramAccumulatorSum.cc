@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "HistogramAccumulatorMerge.hh"
+#include "HistogramAccumulatorSum.hh"
 
 #include "TH1.h"
 #include "TH1D.h"
@@ -27,17 +27,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 
-HistogramAccumulatorMerge::HistogramAccumulatorMerge(TH1*               baseHistogram,
-						     const int&         nDimensionsIn,
-						     const std::string  resultHistNameIn,
-						     const std::string& resultHistTitleIn):
+HistogramAccumulatorSum::HistogramAccumulatorSum(TH1*               baseHistogram,
+						 const int&         nDimensionsIn,
+						 const std::string  resultHistNameIn,
+						 const std::string& resultHistTitleIn):
   HistogramAccumulator(baseHistogram,
 		       nDimensionsIn,
 		       resultHistNameIn,
 		       resultHistTitleIn)
 {;}
 
-void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
+void HistogramAccumulatorSum::Accumulate(TH1* newValue)
 {
   // temporary variables
   double newMean = 0;
@@ -129,14 +129,14 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
   n = newTotalEntries; // updated to Terminate() works correctly
 }
 
-void HistogramAccumulatorMerge::AccumulateSingleValue(const double&  oldMean,
-						      const double&  oldVari,
-						      const double&  x,
-						      const double&  xVari,
-						      const unsigned long& nEntriesAccumulated,
-						      const unsigned long& nEntriesToAccumulate,
-						      double&        newMean,
-						      double&        newVari) const
+void HistogramAccumulatorSum::AccumulateSingleValue(const double&  oldMean,
+						    const double&  oldVari,
+						    const double&  x,
+						    const double&  xVari,
+						    const unsigned long& nEntriesAccumulated,
+						    const unsigned long& nEntriesToAccumulate,
+						    double&        newMean,
+						    double&        newVari) const
 {
   double dMean        = x - oldMean;
   double dMean2       = std::pow(dMean, 2);
