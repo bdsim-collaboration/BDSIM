@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventHeader.hh"
+#include "version.h"
 
 #include "G4Version.hh"
 
@@ -39,7 +40,7 @@ BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
 
 void BDSOutputROOTEventHeader::Flush()
 {
-  bdsimVersion  = "@BDSIM_VERSION@";
+  bdsimVersion  = GIT_VERSION;
   geant4Version = G4Version;
   rootVersion   = std::string(gROOT->GetVersion());
   clhepVersion  = CLHEP::Version::String();
