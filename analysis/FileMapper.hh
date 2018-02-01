@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define FILEMAPPER_H
 
 #include <string>
+#include <vector>
 
 class TFile;
 class TH1;
@@ -46,5 +47,21 @@ namespace RBDS
   void WarningMissingHistogram(const std::string& histName,
 			       const std::string& fileName);
 }
+
+class HistogramMap
+{
+public:
+  HistogramMap(TFile* file);
+  ~HistogramMap(){;}
+  
+  inline const std::vector<std::string>& HistogramMeanPaths() const {return histsMeanPath;}
+  inline const std::vector<std::string>& HistogramSumPaths()  const {return histsSumPath;}
+
+private:
+  HistogramMap() = delete;
+
+  std::vector<std::string> histsMeanPath;
+  std::vector<std::string> histsSumPath;
+};
 
 #endif

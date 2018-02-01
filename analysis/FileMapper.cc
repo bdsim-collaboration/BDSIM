@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "FileMapper.hh"
 #include "Header.hh"
+#include "HistogramAccumulatorMerge.hh"
+#include "HistogramAccumulatorSum.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
 
@@ -109,3 +111,42 @@ void RBDS::WarningMissingHistogram(const std::string& histName,
 	    << fileName << std::endl;
 }
 
+HistogramMap::HistogramMap(TFile* file)
+{
+  std::vector<std::string> trees = {"Beam", "Event", "Model", "Options", "Run"};
+  std::vector<std::string> means = {"PerEntryHistograms", "MergedHistograms"};
+  std::vector<std::string> sums  = {"SimpleHistograms"};
+
+  std::string currentDir;
+  for (const auto& tree : trees)
+    {
+      for (const auto& dir : means)
+	{
+	  currentDir = tree+"/"+dir;
+	  TDirectory* d = file->GetDirectory(currentDir.c_str());
+	  if (!d)
+	    {continue;}
+	  TList* keys = d->GetListOfKeys();
+	  for (const auto& key : *keys)
+	    {
+	      TObject* ob = d->Get(key->GetName());
+	      if (ob->InheritsFrom("TH1"))
+		{histsMeanPath.push_back(currentDir + "/" + ob->GetName());}
+	    }
+	}
+      for (const auto& dir : sums)
+	{
+	  currentDir = tree+"/"+dir;
+	  TDirectory* d = file->GetDirectory(currentDir.c_str());
+	  if (!d)
+	    {continue;}
+	  TList* keys = d->GetListOfKeys();
+	  for (const auto& key : *keys)
+	    {
+	      TObject* ob = d->Get(key->GetName());
+	      if (ob->InheritsFrom("TH1"))
+		{histsSumPath.push_back(currentDir + "/" + ob->GetName());}
+	    }
+	}
+    }
+}
