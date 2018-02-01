@@ -88,7 +88,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // convert to true curvilinear
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  BDSStep       localCL     = GlobalToCurvilinear(strength, globalPos, globalMom, h, false);
+  BDSStep       localCL     = BDSAuxiliaryNavigator::GlobalToCurvilinear(strength, globalPos, globalMom, h, false, eqOfM->FCof());
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -108,7 +108,8 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   OneStep(localCLPos, localCLMom, localCLMomU, h, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false);
+  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
+
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 

@@ -82,27 +82,6 @@ protected:
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
 
-  /// Convert to curvilinear coordinates.
-  BDSStep GlobalToCurvilinear(BDSMagnetStrength const* strength,
-                                      G4ThreeVector position,
-                                      G4ThreeVector unitMomentum,
-                                      G4double      h,
-                                      G4bool        useCurvilinearWorld);
-
-  BDSStep GlobalToCurvilinear(G4ThreeVector position,
-                                      G4ThreeVector unitMomentum,
-                                      G4double      h,
-                                      G4bool        useCurvilinearWorld);
-
-  BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
-                                      G4ThreeVector localMomentum,
-                                      G4bool        useCurvilinearWorld);
-
-  BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                                      G4ThreeVector localPosition,
-                                      G4ThreeVector localMomentum,
-                                      G4bool        useCurvilinearWorld);
-
 private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorMag() = delete;
