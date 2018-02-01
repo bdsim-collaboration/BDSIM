@@ -19,12 +19,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef FILEMAPPER_H
 #define FILEMAPPER_H
 
+#include <string>
+
 class TFile;
 
 namespace RBDS
 {
+  /// Get the format of the root file open (bdsim, rebdsim, combined). Returns
+  /// true for success and false otherwise. Filetype string is written to the
+  /// string passed by reference. Changes the branch address of header if it's
+  /// already set.
+  bool GetFileType(TFile* file,
+		   std::string& fileType);
+
+  /// Whether the file type is a BDSIM output one. Does not close file. May change
+  /// the branch address for the header in the file.
   bool IsBDSIMOutputFile(TFile* file);
 
+  /// Whether the file type is a REBDSIM output one. Does not close file. May change
+  /// the branch address for the header in the file.
+  bool IsREBDSIMOutputFile(TFile* file);
 }
 
 #endif

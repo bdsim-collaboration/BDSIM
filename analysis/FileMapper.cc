@@ -17,14 +17,20 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "FileMapper.hh"
+#include "Header.hh"
+
+#include "BDSOutputROOTEventHeader.hh"
 
 #include "TFile.h"
 #include "TList.h"
+#include "TTree.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
-bool RBDS::IsBDSIMOutputFile(TFile* file)
+bool RBDS::GetFileType(TFile*       file,
+		       std::string& fileType)
 {
   // check if valid file at all
   if (file->IsZombie())
@@ -39,6 +45,40 @@ bool RBDS::IsBDSIMOutputFile(TFile* file)
   if (result == treeNames.end())
     {return false;} // no header so definitely not a bdsim file
 
-  //BDSOutputROOTEvent
-  return false;
+  // load header to get which type of file it is
+  Header* headerLocal = new Header();
+  TTree* headerTree = static_cast<TTree*>(file->Get("Header"));
+  headerLocal->SetBranchAddress(headerTree);
+  headerTree->GetEntry(0);
+  fileType = headerLocal->header->fileType;
+  delete headerLocal;
+  return true;
+}
+
+bool RBDS::IsBDSIMOutputFile(TFile* file)
+{
+  // check if valid file at all
+  if (file->IsZombie())
+    {return false;}
+  
+  std::string fileType;
+  bool success = GetFileType(file, fileType);
+  if (!success)
+    {return false;}
+
+  return fileType == "BDSIM";
+}
+
+bool RBDS::IsREBDSIMOutputFile(TFile* file)
+{
+  // check if valid file at all
+  if (file->IsZombie())
+    {return false;}
+
+  std::string fileType;
+  bool success = GetFileType(file, fileType);
+  if (!success)
+    {return false;}
+
+  return fileType == "REBDISM";
 }
