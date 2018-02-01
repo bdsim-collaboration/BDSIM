@@ -31,7 +31,6 @@ std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
       {BDSIntegratorSetType::bdsimone, "bdsimone"},
       {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"},
       {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"}
-      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"}
 #if G4VERSION_NUMBER > 1029
       ,
       {BDSIntegratorSetType::geant4dp, "geant4dp"}
@@ -41,18 +40,14 @@ std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
 BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
 {
   std::map<G4String, BDSIntegratorSetType> types;
-  types["geant4"]      = BDSIntegratorSetType::geant4;
-  types["bdsim"]       = BDSIntegratorSetType::bdsimone; // alias for bdsim one
+  types["bdsim"]       = BDSIntegratorSetType::bdsimtwo; // alias for bdsim two the default
   types["bdsimone"]    = BDSIntegratorSetType::bdsimone;
   types["bdsimtwo"]    = BDSIntegratorSetType::bdsimtwo;
   types["bdsimmatrix"] = BDSIntegratorSetType::bdsimmatrix;
-  types["geant4"]   = BDSIntegratorSetType::geant4;
+  types["geant4"]      = BDSIntegratorSetType::geant4;
 #if G4VERSION_NUMBER > 1029
-  types["geant4dp"] = BDSIntegratorSetType::geant4dp;
+  types["geant4dp"]    = BDSIntegratorSetType::geant4dp;
 #endif
-  types["bdsim"]    = BDSIntegratorSetType::bdsimtwo; // alias for bdsim two the default
-  types["bdsimone"] = BDSIntegratorSetType::bdsimone;
-  types["bdsimtwo"] = BDSIntegratorSetType::bdsimtwo;
 
   integratorSet.toLower();
 
