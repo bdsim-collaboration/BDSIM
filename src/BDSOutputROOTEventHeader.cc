@@ -40,7 +40,7 @@ BDSOutputROOTEventHeader::~BDSOutputROOTEventHeader()
 
 void BDSOutputROOTEventHeader::Flush()
 {
-  bdsimVersion  = GIT_VERSION;
+  bdsimVersion  = std::string(GIT_VERSION);
   geant4Version = G4Version;
   rootVersion   = std::string(gROOT->GetVersion());
   clhepVersion  = CLHEP::Version::String();
