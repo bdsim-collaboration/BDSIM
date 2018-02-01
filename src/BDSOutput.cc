@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -77,6 +78,13 @@ void BDSOutput::InitialiseGeometryDependent()
 {
   CreateHistograms();
   InitialiseSamplers();
+}
+
+void BDSOutput::FillHeader()
+{
+  // Flushing causes the time stampe to be updated. All other information is fixed.
+  headerOutput->Flush();
+  WriteHeader();
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)

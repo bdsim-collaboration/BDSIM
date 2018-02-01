@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 // forward declarations
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
+class BDSOutputROOTEventHeader;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
@@ -55,6 +56,9 @@ protected:
   /// Construct samplers.
   void InitialiseSamplers();
 
+  /// Clear the local header structure.
+  void ClearStructuresHeader();
+
   /// Clear the local model structure.
   void ClearStructuresModel();
 
@@ -81,6 +85,7 @@ protected:
                          std::vector<double>& edges);
   ///@}
 
+  BDSOutputROOTEventHeader*  headerOutput;  ///< Information about the file.
   BDSOutputROOTEventBeam*    beamOutput;    ///< Beam output.
   BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
   BDSOutputROOTEventModel*   modelOutput;   ///< Model output.

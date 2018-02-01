@@ -46,6 +46,9 @@ public:
   virtual void CloseFile();                   ///< Write contents and close file.
 
 private:
+  /// Copy header and write to file.
+  virtual void WriteHeader();
+  
   /// Copy beam and write to file.
   virtual void WriteBeam();
   
@@ -68,6 +71,9 @@ private:
 
   /// Output file.
   TFile* theRootOutputFile = nullptr;
+
+  /// Header Tree.
+  TTree* theHeaderOutputTree = nullptr;
 
   /// Beam Tree.
   TTree* theBeamOutputTree = nullptr;
