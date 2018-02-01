@@ -82,9 +82,15 @@ public:
 protected:
   /// Accumulate a single value into the online mean and variance histograms.
   /// This by default accumulates the mean and variance with a new value x.
+  /// The xVari argument is not used in the implementation provided with this
+  /// class but is used in derived classes with different AccumulateSingleValue
+  /// implementations.
   virtual void AccumulateSingleValue(const double&  oldMean,
 				     const double&  oldVari,
 				     const double&  x,
+				     const double&  xVari,
+				     const unsigned long& nEntriesAccumulated,
+				     const unsigned long& nEntriesToAccumulate,
 				     double&        newMean,
 				     double&        newVari) const;
 

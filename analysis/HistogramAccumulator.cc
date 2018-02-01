@@ -89,7 +89,9 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
   // temporary variables
   double newMean = 0;
   double newVari = 0;
-
+  const double error   = 0; // needed to pass reference to unused parameter
+  const unsigned long nEntriesToAccumulate = 1;
+  
   n++;
   switch (nDimensions)
     {
@@ -103,6 +105,7 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 	    AccumulateSingleValue(h1->GetBinContent(j),
 				  h1e->GetBinContent(j),
 				  ht->GetBinContent(j),
+				  error, n, nEntriesToAccumulate,
 				  newMean, newVari);
 	    h1->SetBinContent(j, newMean);
 	    h1e->SetBinContent(j, newVari);
@@ -121,6 +124,7 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 		AccumulateSingleValue(h1->GetBinContent(j,k),
 				      h1e->GetBinContent(j,k),
 				      ht->GetBinContent(j,k),
+				      error, n, nEntriesToAccumulate,
 				      newMean, newVari);
 		h1->SetBinContent(j, k, newMean);
 		h1e->SetBinContent(j, k, newVari);
@@ -142,6 +146,7 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 		    AccumulateSingleValue(h1->GetBinContent(j,k,l),
 					  h1e->GetBinContent(j,k,l),
 					  ht->GetBinContent(j,k,l),
+					  error, n, nEntriesToAccumulate,
 					  newMean, newVari);
 		    h1->SetBinContent(j, k, l, newMean);
 		    h1e->SetBinContent(j, k, l, newVari);
@@ -222,9 +227,12 @@ TH1* HistogramAccumulator::Terminate()
 void HistogramAccumulator::AccumulateSingleValue(const double&  oldMean,
 						 const double&  oldVari,
 						 const double&  x,
+						 const double&/*xVari*/,
+						 const unsigned long& nEntriesAccumulated,
+						 const unsigned long& /*nEntriesToAccumulate*/,
 						 double&        newMean,
 						 double&        newVari) const
 {
-  newMean = oldMean + ((x - oldMean) / n);
+  newMean = oldMean + ((x - oldMean) / nEntriesAccumulated);
   newVari = oldVari + ((x - oldMean) * (x - newMean));
 }
