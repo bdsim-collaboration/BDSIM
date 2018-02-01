@@ -162,14 +162,14 @@ void HistogramAccumulator::Accumulate(TH1* newValue)
 
 TH1* HistogramAccumulator::Terminate()
 {
-  double factor = std::sqrt(1./(double)n);
-  double mn     = 0; // temporary variable
-  double std    = 0; // temporary variable
-  double var    = 0; // temporary variable
-
-  // lambda to avoid repeating calculation even if it's simple
-  auto getSTD  = [](auto& varIn, auto& nIn) {return std::sqrt(varIn / ((double)nIn-1));};
-
+  // error on mean is sqrt(1/n) * std = sqrt(1/n) * sqrt(1/(n-1)) * sqrt(variance)
+  // the only variable is the variance, so take the rest out as a factor.
+  const double nD = (double)n; // cast only once
+  const double factor = std::sqrt(1./(nD * (nD - 1))); // nan if n = 1 -> won't be used
+  double mn     = 0; // temporary variable for mean
+  double err    = 0; // temporary variable for standard error on mean
+  double var    = 0; // temporary variable for variance
+  
   // note here we set the std to 0 if there's only one entry (ie n = 1) to avoid
   // division by zero and nans
   switch (nDimensions)
@@ -180,9 +180,9 @@ TH1* HistogramAccumulator::Terminate()
 	  {
 	    mn  = mean->GetBinContent(j);
 	    var = variance->GetBinContent(j);
-	    std = n > 1 ? getSTD(var, n) : 0;
+	    err = n > 1 ? factor*std::sqrt(var) : 0;
 	    result->SetBinContent(j, mn);
-	    result->SetBinError(j,   factor*std);
+	    result->SetBinError(j,   err);
 	  }
 	break;
       }
@@ -193,9 +193,9 @@ TH1* HistogramAccumulator::Terminate()
 	    for (int k = 0; k <= result->GetNbinsY() + 1; ++k)
 	      {
 		mn  = mean->GetBinContent(j,k);
-		std = n > 1 ? getSTD(var, n) : 0;
+		err = n > 1 ? factor*std::sqrt(var) : 0;
 		result->SetBinContent(j, k, mn);
-		result->SetBinError(j, k,   factor*std);
+		result->SetBinError(j, k,   err);
 	      }
 	  }
 	break;
@@ -209,9 +209,9 @@ TH1* HistogramAccumulator::Terminate()
 		for (int l = 0; l <= result->GetNbinsZ() + 1; ++l)
 		  {
 		    mn  = mean->GetBinContent(j,k,l);
-		    std = n > 1 ? getSTD(var, n) : 0;
+		    err = n > 1 ? factor*std::sqrt(var) : 0;
 		    result->SetBinContent(j,k,l, mn);
-		    result->SetBinError(j,k,l,   factor*std);
+		    result->SetBinError(j,k,l,   err);
 		  }
 	      }
 	  }
