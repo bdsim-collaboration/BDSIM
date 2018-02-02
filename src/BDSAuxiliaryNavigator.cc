@@ -293,7 +293,6 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
-  G4double chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
   G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
@@ -369,7 +368,6 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* stre
   G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
-  G4double chordLength       = 2 * radiusOfCurvature * sin(angle*0.5);
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
   G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
