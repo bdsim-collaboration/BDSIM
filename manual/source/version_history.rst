@@ -12,10 +12,10 @@ New Features
 * Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`, `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`, `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
-* "HistogramND" in REBDSIM now creates per-entry histograms on the tree. This introduces the
+* "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
   style histograms that are a sum across all events are now made with "SimpleHistogramND".
-* New option in REBDSIM to turn off histogram merging (for speed).
+* New option in rebdsim to turn off histogram merging (for speed).
 * Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Significantly improved analysis documentation.
@@ -30,7 +30,7 @@ General
 * All objects in the parser can now be extended later rather than just elements.
 * Tuned colours of hkicker and vkicker.
 * Relative file paths are no longer padded excessively with slashes when translated to absolute paths.
-* More efficient file IO in REBDSIM improves analysis speed.
+* More efficient file IO in rebdsim improves analysis speed.
 
 Bug Fixes
 ---------

@@ -1,4 +1,8 @@
+# option to turn event display, and therefore dependency on ROOT EVE libraries off or on.
+option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." ON )
+
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
 # Remove mains from dictionary
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
@@ -7,7 +11,10 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombine.cc)
 
-file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
+if (NOT USE_EVENTDISPLAY)
+  list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
+  list(REMOVE_ITEM rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
+endif()
 
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 #message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
@@ -76,13 +83,16 @@ set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION
 target_link_libraries(rebdsimOrbit rebdsimLib bdsimRootEvent)
 bdsim_install_targets(rebdsimOrbit)
 
-
-add_executable(edbdsim edbdsim.cc)
-set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
-target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
-# Installation
-bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+if (USE_EVENTDISPLAY)
+  add_executable(edbdsim edbdsim.cc)
+  set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+  target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
+  target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
+  # Installation
+  bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+else()
+  bdsim_install_targets(rebdsim rebdsimLib)
+endif()
 
 # Install pcms
 bdsim_install_libs(${rebdsim_pcms})
@@ -96,6 +106,10 @@ file(GLOB rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
 foreach(header ${rebdsimLibLinkDefs})
   list(REMOVE_ITEM rebdsimHeaders ${header})
 endforeach()
+if (NOT USE_EVENTDISPLAY)
+  list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.hh)
+  list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
+endif()
 bdsim_install_analysis_headers(${rebdsimHeaders})
 #message(STATUS "rebdsimHeaders ${rebdsimHeaders}")
 
