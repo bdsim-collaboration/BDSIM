@@ -43,7 +43,7 @@ class TFile;
 class Analysis
 {
 public:
-  /// Requires the name of the tree to analysed, the chain of files to operate on,
+  /// Requires the name of the tree to analyse, the chain of files to operate on,
   /// the name of the directory to create in the output root file for the combined
   /// existing histrograms from that tree, whether to operate on each entry in the
   /// tree and whether or not we're in debug mode.

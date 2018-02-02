@@ -259,9 +259,9 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
 }
 
 void Parser::expand_line(FastList<Element>& target,
-			 const std::string& name,
-			 std::string        start,
-			 std::string        end)
+                         const std::string& name,
+                         std::string        start,
+                         std::string        end)
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
@@ -312,67 +312,67 @@ void Parser::expand_line(FastList<Element>& target,
       // start at second element
       std::list<Element>::iterator it = ++target.begin();
       for(;it!=target.end();++it)
-	{
-	  Element& element = *it; // alias
-	  const ElementType& type = element.type;
+        {
+          Element& element = *it; // alias
+          const ElementType& type = element.type;
 #ifdef BDSDEBUG 
-	  std::cout << element.name << " , " << type << std::endl;
+          std::cout << element.name << " , " << type << std::endl;
 #endif
-	  // if list - expand further
-	  if(type != ElementType::_LINE && type != ElementType::_REV_LINE)
-	    {continue;}
-	  is_expanded = false;
-	  // lookup the line in main list
-	  std::list<Element>::const_iterator tmpit = element_list.find(element.name);
-	  std::list<Element>::const_iterator iterEnd = element_list.end();
-	  if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
-	    const Element& list = *tmpit; // alias
+          // if list - expand further
+          if(type != ElementType::_LINE && type != ElementType::_REV_LINE)
+            {continue;}
+          is_expanded = false;
+          // lookup the line in main list
+          std::list<Element>::const_iterator tmpit = element_list.find(element.name);
+          std::list<Element>::const_iterator iterEnd = element_list.end();
+          if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
+            const Element& list = *tmpit; // alias
 #ifdef BDSDEBUG
-	    std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
+            std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
 #endif
-	    if(type == ElementType::_LINE)
-	      target.insert(it,list.lst->begin(),list.lst->end());
-	    else if(type == ElementType::_REV_LINE){
-	      //iterate over list and invert any sublines contained within. SPM
-	      std::list<Element> tmpList;
-	      tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
-	      for(std::list<Element>::iterator itLineInverter = tmpList.begin();
-		  itLineInverter != tmpList.end(); ++itLineInverter){
-		if((*itLineInverter).type == ElementType::_LINE)
-		  (*itLineInverter).type = ElementType::_REV_LINE;
-		else if ((*itLineInverter).type == ElementType::_REV_LINE)
-		  (*itLineInverter).type = ElementType::_LINE;
-	      }
-	      target.insert(it,tmpList.rbegin(),tmpList.rend());
-	    }
+            if(type == ElementType::_LINE)
+              target.insert(it,list.lst->begin(),list.lst->end());
+            else if(type == ElementType::_REV_LINE){
+              //iterate over list and invert any sublines contained within. SPM
+              std::list<Element> tmpList;
+              tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
+              for(std::list<Element>::iterator itLineInverter = tmpList.begin();
+                  itLineInverter != tmpList.end(); ++itLineInverter){
+                if((*itLineInverter).type == ElementType::_LINE)
+                  (*itLineInverter).type = ElementType::_REV_LINE;
+                else if ((*itLineInverter).type == ElementType::_REV_LINE)
+                  (*itLineInverter).type = ElementType::_LINE;
+              }
+              target.insert(it,tmpList.rbegin(),tmpList.rend());
+            }
 #ifdef BDSDEBUG
-	    std::cout << "inserted" << std::endl;
+            std::cout << "inserted" << std::endl;
 #endif
-	    // delete the list pointer
-	    target.erase(it--);
-	  } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
-	    //transfer properties from the main list
+            // delete the list pointer
+            target.erase(it--);
+          } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
+            //transfer properties from the main list
 #ifdef BDSDEBUG 
-	    std::cout << "keeping element..." << element.name << std::endl;
+            std::cout << "keeping element..." << element.name << std::endl;
 #endif
-	    // copy properties
-	    element = (*tmpit);
+            // copy properties
+            element = (*tmpit);
 
 #ifdef BDSDEBUG 
-	    std::cout << "done" << std::endl;
+            std::cout << "done" << std::endl;
 #endif
-	  } else { // element of undefined type
-	    std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
-	    exit(1);
-	  }
-	}
+          } else { // element of undefined type
+            std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
+            exit(1);
+          }
+        }
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
-	{
-	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
-		    << "possible recursive line definition, quitting" << std::endl;
-	  exit(1);
-	}
+        {
+          std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+                    << "possible recursive line definition, quitting" << std::endl;
+          exit(1);
+        }
     }// while
   
   // leave only the desired range
@@ -384,7 +384,7 @@ void Parser::expand_line(FastList<Element>& target,
       std::list<Element>::const_iterator startIt = target.find(std::string(start));
       
       if(startIt!=target.end())
-	{target.erase(target.begin(),startIt);}
+        {target.erase(target.begin(),startIt);}
     }
   
   if( !end.empty()) // determine the end element
@@ -392,7 +392,7 @@ void Parser::expand_line(FastList<Element>& target,
       std::list<Element>::const_iterator endIt = target.find(std::string(end));
       
       if(endIt!=target.end())
-	{target.erase(++endIt,target.end());}
+        {target.erase(++endIt,target.end());}
     }
   
   // insert the tunnel if present
@@ -440,24 +440,24 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
 	exit(1);
       }
       for (auto it = itPair.first; it!= itPair.second; ++it) {
-	// if sampler is attached to a marker, really attach it to the previous element with the name of marker
-	auto elementIt = (it->second);
-	std::string samplerName = elementIt->name;
-	if ((*elementIt).type == ElementType::_MARKER) {
-	  // need to find real element before
-	  // but careful not to go beyond first element also!
-	  while ((*elementIt).isSpecial()) {
-	    elementIt--;
-	    // have to break first before continue since in while loop
-	    if (elementIt==beamline_list.begin()) break;
-	  }
+        // if sampler is attached to a marker, really attach it to the previous element with the name of marker
+        auto elementIt = (it->second);
+        std::string samplerName = elementIt->name;
+        if ((*elementIt).type == ElementType::_MARKER) {
+          // need to find real element before
+          // but careful not to go beyond first element also!
+          while ((*elementIt).isSpecial()) {
+            elementIt--;
+            // have to break first before continue since in while loop
+            if (elementIt==beamline_list.begin()) break;
+          }
 	  
-	  if (elementIt==beamline_list.begin()) {
-	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
-	    continue;
-	  }
-	}
-	(*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
+          if (elementIt==beamline_list.begin()) {
+            std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+            continue;
+          }
+        }
+        (*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
       }
     }
   else
@@ -470,15 +470,15 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
       // if sampler is attached to a marker, really attach it to the previous element with the name of marker
       std::string samplerName = (*it).name;
       if ((*it).type == ElementType::_MARKER) {
-	  // need to find real element before
-	  // but careful not to go beyond first element also!
-	while ((*it).isSpecial()) {
-	  it--;
-	  if (it==beamline_list.begin()) {
-	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
-	    return;
-	  }
-	}
+        // need to find real element before
+        // but careful not to go beyond first element also!
+        while ((*it).isSpecial()) {
+          it--;
+          if (it==beamline_list.begin()) {
+            std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+            return;
+          }
+        }
       }
       (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
     }
@@ -782,9 +782,11 @@ namespace GMAD {
   template<>
   void Parser::ExtendValue(std::string property, double value)
   {extendedNumbers[property]=value;}
+
   template<>
   void Parser::ExtendValue(std::string property, std::string value)
   {extendedStrings[property]=value;}
+
   template<>
   void Parser::ExtendValue(std::string property, Array* value)
   {extendedVectors[property]=value;}

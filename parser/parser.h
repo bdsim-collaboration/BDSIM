@@ -84,9 +84,9 @@ namespace GMAD
     /// Expand a sequence by name from start to end into the target list. This
     /// removes sublines from the beamline into one LINE.
     void expand_line(FastList<Element>& target,
-		     const std::string& name,
-		     std::string        start = "",
-		     std::string        end   = "");
+                     const std::string& name,
+                     std::string        start = "",
+                     std::string        end   = "");
 
     /// Expand the main beamline as defined by the use command.
     void expand_line(const std::string& name, std::string start, std::string end);

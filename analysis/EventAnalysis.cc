@@ -75,8 +75,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  int nEntries = (int)chain->GetEntries();
-  printModulo = (int)ceil(nEntries * fraction);
+  printModulo = (int)ceil(entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
@@ -97,7 +96,6 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  const int entries = chain->GetEntries();
   for(int i=0; i<entries; ++i)
     {
       chain->GetEntry(i);
