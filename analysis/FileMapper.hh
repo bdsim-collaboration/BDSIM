@@ -50,11 +50,14 @@ namespace RBDS
   /// Similar but opens file first.
   bool IsREBDSIMOutputFile(const std::string filePath);
 
+  /// Determine the number of dimensions of a histogram by dynamically casting.
   int DetermineDimensionality(TH1* h);
 
+  /// Common print out method.
   void WarningMissingHistogram(const std::string& histName,
 			       const std::string& fileName);
 
+  /// Basic structure for accumulating histogram from rebdsim output file.
   struct HistogramPath
   {
     std::string path; // without histogram name
@@ -63,12 +66,18 @@ namespace RBDS
     TDirectory* outputDir;
   };
 
+  /// Types of merging.
   enum class MergeType {none, meanmerge, sum};
 
+  /// Determine merge type from parent directory name.
   MergeType DetermineMergeType(const std::string& parentDir);
-
 }
 
+/**
+ * @brief
+ *
+ * @author Laurie Nevay
+ */
 
 class HistogramMap
 {
@@ -78,21 +87,20 @@ public:
 	       bool   debugIn = false);
   ~HistogramMap(){;}
 
+  /// Recursively inspect a directory and create similar directories in the output
+  /// file. Also make histogram paths.
   void MapDirectory(TDirectory* dir,
 		    TFile*      output,
 		    const std::string& parentDir);
-  
+
+  /// Access full map of histograms.
   inline const std::vector<RBDS::HistogramPath> Histograms() const {return histograms;}
   
-  //inline const std::vector<std::string>& HistogramMeanPaths() const {return histsMeanPath;}
-  //inline const std::vector<std::string>& HistogramSumPaths()  const {return histsSumPath;}
-
 private:
   HistogramMap() = delete;
 
-  bool debug;
-
-  std::vector<RBDS::HistogramPath> histograms;
+  bool debug;                                   ///< Debug flag.
+  std::vector<RBDS::HistogramPath> histograms;  ///< Storage of all objects.
 };
 
 #endif

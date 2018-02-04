@@ -131,16 +131,15 @@ void DataLoader::BuildInputFileList(std::string inputPath)
 void DataLoader::BuildTreeNameList()
 {
   // open file - this is the first opening so test here if it's valid
-  TFile *f = new TFile(fileNames[0].c_str());
+  TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-  {
-    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-    exit(1);
-  }
-
-  TList *kl = f->GetListOfKeys();
-
-  for(int i=0;i<kl->GetEntries();++i)
+    {
+      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+      exit(1);
+    }
+  
+  TList* kl = f->GetListOfKeys();
+  for (int i = 0; i < kl->GetEntries(); ++i)
     {treeNames.push_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
@@ -157,10 +156,10 @@ void DataLoader::BuildEventBranchNameList()
 {
   TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-  {
-    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-    exit(1);
-  }
+    {
+      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+      exit(1);
+    }
 
   // We don't need to prepare a vector of samplers that will be set branch on
   // if we're not going to process the samplers.
