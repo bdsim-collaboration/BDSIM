@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "Beam.hh"
 #include "Event.hh"
+#include "FileMapper.hh"
 #include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -39,13 +40,14 @@ DataLoader::DataLoader(std::string fileName,
 		       bool        debugIn,
 		       bool        processSamplersIn,
 		       bool        allBranchesOnIn,
-		       const RBDS::BranchMap* branchesToTurnOnIn):
+		       const RBDS::BranchMap* branchesToTurnOnIn,
+		       bool        backwardsCompatible):
   debug(debugIn),
   processSamplers(processSamplersIn),
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn)
 {
-  CommonCtor(fileName);
+  CommonCtor(fileName, backwardsCompatible);
 }
 
 DataLoader::~DataLoader()
@@ -65,8 +67,11 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName)
+void DataLoader::CommonCtor(std::string fileName,
+			    bool backwardsCompatible)
 {
+  BuildInputFileList(fileName, backwardsCompatible);
+
   hea = new Header(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
@@ -81,30 +86,31 @@ void DataLoader::CommonCtor(std::string fileName)
   evtChain = new TChain("Event",   "Event");
   runChain = new TChain("Run",     "Run");
 
-  BuildInputFileList(fileName);
   BuildTreeNameList();
   BuildEventBranchNameList();
   ChainTrees();
   SetBranchAddress(allBranchesOn, branchesToTurnOn);
 }
 
-void DataLoader::BuildInputFileList(std::string inputPath)
+void DataLoader::BuildInputFileList(std::string inputPath,
+				    bool backwardsCompatible)
 {
   if(inputPath == "")
     {throw std::string("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
+  std::vector<std::string> fileNamesTemp;
   if(inputPath.find("*") != std::string::npos)
     {
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for(unsigned int i=0;i<glob_result.gl_pathc;++i)
-	{fileNames.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
   // single file
   else if(inputPath.find(".root") != std::string::npos)
-    {fileNames.push_back(inputPath);}
+    {fileNamesTemp.push_back(inputPath);}
   // directory
   else if(inputPath[inputPath.length()-1] == std::string("/"))
     {
@@ -114,14 +120,25 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for(unsigned int i=0;i<glob_result.gl_pathc;++i)
-	{fileNames.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
+
+  // loop over files and check they're the right type
+  for(const auto& fn : fileNamesTemp)
+    {
+      if (backwardsCompatible)
+	{fileNames.push_back(fn);} // don't check if header -> old files don't have this
+      else if (RBDS::IsBDSIMOutputFile(fn))
+	{
+	  std::cout << "Loading> " << fn << std::endl;
+	  fileNames.push_back(fn);
+	}
+      else
+	{std::cout << fn << " is not a BDSIM output file - skipping!" << std::endl;}
+    }
   
-  for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
-    {std::cout << "Loading> " << *fn << std::endl;}
-  
-  if (fileNames.size() == 0)
+  if (fileNames.size() == 0) // exit if no valid files.
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
       exit(1);

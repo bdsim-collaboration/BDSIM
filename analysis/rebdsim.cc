@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
 			     debug,
 			     config->ProcessSamplers(),
 			     allBranches,
-			     branchesToActivate);
+			     branchesToActivate,
+			     config->GetOptionBool("backwardsCompatible"));
 
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(),
 						  dl.GetBeamTree(),

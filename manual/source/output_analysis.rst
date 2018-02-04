@@ -340,6 +340,13 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | significantly improve the speed of analysis if only  |
 |                            | separate user-defined histograms are desired.        |
 +----------------------------+------------------------------------------------------+
+| BackwardsCompatible        | ROOT event output files from BDSIM prior to v0.994   |
+|                            | do not have the header structure that is used to     |
+|                            | ensure the files are the right format and prevent    |
+|                            | a segfault from ROOT. If this options is true, the   |
+|                            | header will not be checked allowing old files to be  |
+|                            | analysed.                                            |
++----------------------------+------------------------------------------------------+
 
 
 Variables In Data

@@ -19,6 +19,7 @@ New Features
 * Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Significantly improved analysis documentation.
+* Output files now have header structure with software versions.
 
 General
 -------
@@ -40,6 +41,8 @@ Bug Fixes
 * Fixed bug where some visualisation settings wouldn't be applied to all logical volumes in external geometry.
 * Fixed bug where some file paths may not be translated to absolute paths correctly.
 * Fixed a bug where recreate mode would fail with the new Beam structure in the output.
+* Prevent segfault when analysing wrong type of file with rebdsim (use 'backwardsCompatible'
+  option to analyse old files withou the new header structure).
 
 
 V0.993 - 2017 / 12 / 11
