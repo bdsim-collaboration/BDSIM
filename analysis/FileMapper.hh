@@ -74,7 +74,7 @@ namespace RBDS
 }
 
 /**
- * @brief
+ * @brief Class to map a rebdsim file structure and create duplicate in output.
  *
  * @author Laurie Nevay
  */
@@ -97,7 +97,7 @@ public:
   inline const std::vector<RBDS::HistogramPath> Histograms() const {return histograms;}
   
 private:
-  HistogramMap() = delete;
+  HistogramMap() = delete; ///< No need for default constructor.
 
   bool debug;                                   ///< Debug flag.
   std::vector<RBDS::HistogramPath> histograms;  ///< Storage of all objects.
