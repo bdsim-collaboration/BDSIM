@@ -61,37 +61,37 @@ foreach(header ${rebdsimLibLinkDefs})
 endforeach()
 
 
-add_library(rebdsimLib SHARED ${rebdsimLibSources})
-target_link_libraries(rebdsimLib bdsimRootEvent)
+add_library(rebdsim SHARED ${rebdsimLibSources})
+target_link_libraries(rebdsim bdsimRootEvent)
 
-add_executable(rebdsim rebdsim.cc)
-set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
+add_executable(rebdsimexec rebdsim.cc)
+set_target_properties(rebdsimexec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimexec rebdsim bdsimRootEvent)
 
 add_executable(rebdsimCombineExec rebdsimCombine.cc)
 set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimCombineExec rebdsimLib bdsimRootEvent)
+target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimCombineExec)
 
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOptics rebdsimLib bdsimRootEvent)
+target_link_libraries(rebdsimOptics rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimOptics)
 
 add_executable(rebdsimOrbit rebdsimOrbit.cc)
 set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOrbit rebdsimLib bdsimRootEvent)
+target_link_libraries(rebdsimOrbit rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimOrbit)
 
 if (USE_EVENTDISPLAY)
   add_executable(edbdsim edbdsim.cc)
   set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-  target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
-  target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
+  target_link_libraries(edbdsim rebdsim ${ROOT_EVELIBRARIES})
+  target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
   # Installation
-  bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+  bdsim_install_targets(rebdsimexec edbdsim rebdsim)
 else()
-  bdsim_install_targets(rebdsim rebdsimLib)
+  bdsim_install_targets(rebdsimexec rebdsim)
 endif()
 
 # Install pcms
