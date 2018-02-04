@@ -24,7 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TChain.h"
 #include "TFile.h"
+#include "TTree.h"
 
+#include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 
@@ -127,6 +129,17 @@ int main(int argc, char *argv[])
   try
     {
       TFile* outputFile = new TFile(config->OutputFileName().c_str(),"RECREATE");
+
+      // add header for file type and version details
+      outputFile->cd();
+      BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+      headerOut->Fill(); // updates time stamp
+      headerOut->SetFileType("REBDSIM");
+      TTree* headerTree = new TTree("Header", "REBDSIM Header");
+      headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+      headerTree->Fill();
+      outputFile->Write(0,TObject::kOverwrite);
+      
       for (auto& analysis : analyses)
 	{analysis->Write(outputFile);}
 
