@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
 
+#include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -60,79 +61,52 @@ int main(int argc, char* argv[])
   // ensure new histograms are written to file
   TH1::AddDirectory(true);
   TH2::AddDirectory(true);
-  TH3::AddDirectory(true);
+  TH3::AddDirectory(true);  
 
-  // map first file and prepare histograms
-  std::vector<std::string> histMeanPaths;
-  std::vector<std::string> histSumPaths;
-  std::vector<HistogramAccumulatorMerge*> histMeans;
-  std::vector<HistogramAccumulatorSum*>   histSums;
-  unsigned int nHistMeans;
-  unsigned int nHistSums;
+  TFile* f = nullptr; // temporary variable
 
-  HistogramMap* histMap = nullptr;
-  
+  // initialise file map
+  f = new TFile(inputFiles[0].c_str());
+  HistogramMap* histMap = new HistogramMap(f, output, true); // map out file
+
+  std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
+
   // loop over files and accumulate
-  TFile* f = nullptr;
   for (const auto& file : inputFiles)
     {
       f = new TFile(file.c_str());
       if (RBDS::IsREBDSIMOutputFile(f))
 	{
-	  if (!histMap)
-	    {// initialise file map
-	      histMap       = new HistogramMap(f); // map out file
-	      histMeanPaths = histMap->HistogramMeanPaths(); // get list of histograms
-	      histSumPaths  = histMap->HistogramSumPaths();
-	      nHistMeans    = (unsigned long) histMeans.size();
-	      nHistSums     = (unsigned long) histSums.size();
-	      for (const auto& hist : histMeanPaths)
-		{// initialise accumulators
-		  TH1* h = static_cast<TH1*>(f->Get(hist.c_str()));
-		  int nDim = RBDS::DetermineDimensionality(h);
-		  histMeans.push_back(new HistogramAccumulatorMerge(h, nDim,
-								    h->GetName(),
-								    h->GetTitle()));
-		}
-	      for (const auto& hist : histSumPaths)
-		{// initialise accumulators
-		  TH1* h = static_cast<TH1*>(f->Get(hist.c_str()));
-		  int nDim = RBDS::DetermineDimensionality(h);
-		  histSums.push_back(new HistogramAccumulatorSum(h, nDim,
-								 h->GetName(),
-								 h->GetTitle()));
-
-		}
-	    }
-	  
-	  for (unsigned int i = 0; i < nHistMeans; ++i)
+	  std::cout << "Accumulating> " << file << std::endl;
+	  for (const auto& hist : histograms)
 	    {
-	      TH1* h = static_cast<TH1*>(f->Get(histMeanPaths[i].c_str()));
+	      std::string histPath = hist.path + "/" + hist.name;
+	      TH1* h = static_cast<TH1*>(f->Get(histPath.c_str()));
 	      if (!h)
-		{RBDS::WarningMissingHistogram(histMeanPaths[i], file); continue;}
-	      histMeans[i]->Accumulate(h);
+		{RBDS::WarningMissingHistogram(histPath, file); continue;}
+	      hist.accumulator->Accumulate(h);
 	    }
-	  for (unsigned int i = 0; i < nHistSums; ++i)
-	    {
-	      TH1* h = static_cast<TH1*>(f->Get(histSumPaths[i].c_str()));
-	      if (!h)
-		{RBDS::WarningMissingHistogram(histSumPaths[i], file); continue;}
-	      histSums[i]->Accumulate(h);
-	    }
-	}// else skip and close file
-	  
+	}
+      else
+	{std::cout << "Skipping " << file << " as not a rebdsim output file" << std::endl;}
       f->Close();
       delete f;
+    }
+
+  // terminate and write output
+  for (const auto& hist : histograms)
+    {
+      TH1* result = hist.accumulator->Terminate();
+      hist.outputDir->Add(result);
+      result->Write();
     }
 
   output->Write();
   output->Close();
   delete output;
 
-  for (auto mean : histMeans)
-    {delete mean;}
-  for (auto sum : histSums)
-    {delete sum;}
+  for (auto& hist : histograms)
+    {delete hist.accumulator;}
 
   return 0;
 }
