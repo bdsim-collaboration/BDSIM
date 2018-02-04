@@ -81,6 +81,15 @@ bool RBDS::IsBDSIMOutputFile(TFile* file)
   return fileType == "BDSIM";
 }
 
+bool RBDS::IsBDSIMOutputFile(const std::string filePath)
+{
+  TFile* f = new TFile(filePath.c_str());
+  bool result = IsBDSIMOutputFile(f);
+  f->Close();
+  delete f;
+  return result;
+}
+
 bool RBDS::IsREBDSIMOutputFile(TFile* file)
 {
   // check if valid file at all
@@ -93,6 +102,15 @@ bool RBDS::IsREBDSIMOutputFile(TFile* file)
     {return false;}
   
   return fileType == "REBDSIM";
+}
+
+bool RBDS::IsREBDSIMOutputFile(const std::string filePath)
+{
+  TFile* f = new TFile(filePath.c_str());
+  bool result = IsREBDSIMOutputFile(f);
+  f->Close();
+  delete f;
+  return result;
 }
 
 int RBDS::DetermineDimensionality(TH1* h)

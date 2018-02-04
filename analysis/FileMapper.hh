@@ -40,9 +40,15 @@ namespace RBDS
   /// the branch address for the header in the file.
   bool IsBDSIMOutputFile(TFile* file);
 
+  /// Similar but opens file first.
+  bool IsBDSIMOutputFile(const std::string filePath);
+
   /// Whether the file type is a REBDSIM output one. Does not close file. May change
   /// the branch address for the header in the file.
   bool IsREBDSIMOutputFile(TFile* file);
+
+  /// Similar but opens file first.
+  bool IsREBDSIMOutputFile(const std::string filePath);
 
   int DetermineDimensionality(TH1* h);
 
