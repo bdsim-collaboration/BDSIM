@@ -22,10 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
+class BDSStep;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
@@ -57,7 +57,7 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-  
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorQuadrupole();

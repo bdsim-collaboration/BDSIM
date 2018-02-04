@@ -81,6 +81,9 @@ public:
 				 G4double       yOut[],
 				 G4double       yErr[]);
 
+  /// Public accessor for protected variable in base class.
+  inline G4double RadiusOfHelix() const {return GetRadHelix();}
+
 protected:
   /// DistChord() is non-virtual function in base class so set Ang and RadHelix appropriately
   /// such that DistChord() will return 0.

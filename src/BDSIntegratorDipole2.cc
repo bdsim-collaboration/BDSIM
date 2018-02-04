@@ -48,21 +48,11 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
 				   G4double       yOut[],
 				   G4double       yErr[])
 {
-  // Protect against very small steps.
-  if (h < 1e-12)
+  // Protect against very small steps or neutral particles drift through.
+  if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()))
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
-      return;
-    }
-  
-  // Extra storage arrays.
-  G4double yTemp[7], yTemp2[7];
-
-  // Neutral particles drift through.
-  if(eqOfM->FCof() == 0)
-    {
-      AdvanceDriftMag(yIn, h, yOut, yErr);
-      FudgeDistChordToZero();
+      FudgeDistChordToZero(); // see doxygen in header for explanation
       return;
     }
   
@@ -107,9 +97,10 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
         {yErr[i] = 0;}
       return; // saves long if else
     }
-  
+
   // normal error estimation - do two half steps and compare difference to
   // the result from one full step
+  G4double yTemp[7];
   AdvanceHelix(yIn, bOriginal, h*0.5, yTemp); // first step
 
   // resample field at midway point (although if pure dipole, this is
@@ -118,6 +109,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   GetEquationOfMotion()->GetFieldValue(yTemp, bM);
   G4ThreeVector bMid = G4ThreeVector(bM[0],bM[1],bM[2]);
 
+  G4double yTemp2[7];
   AdvanceHelix(yTemp, bMid, h*0.5, yTemp2); // second step
   
   // Error estimation

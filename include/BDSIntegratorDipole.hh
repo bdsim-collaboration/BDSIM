@@ -75,6 +75,9 @@ protected:
   /// Uniform magnetic field in global Y direction.
   G4double bField;
 
+  /// Magnet strength object needed by curvilinear transforms.
+  BDSMagnetStrength const* strength;
+
   std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,
 						     G4double h,
 						     G4ThreeVector localPos,

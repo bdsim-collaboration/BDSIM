@@ -18,7 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorMag.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
@@ -61,3 +63,4 @@ void BDSIntegratorMag::ConvertToGlobal(const G4ThreeVector& localPos,
   yOut[4] = GlobalTangent.y();
   yOut[5] = GlobalTangent.z();
 }
+
