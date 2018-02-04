@@ -169,15 +169,18 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  if (debug)
 	    {gDirectory->pwd();}
 	  
-	  std::string histPath = dirPath;
+	  std::string histPath = dirPath + "/";
 	  histPath.erase(0,1); // erase leading '/'
 	  std::string histName  = std::string(h->GetName());
 	  std::string histTitle = std::string(h->GetTitle());
 	  TDirectory* outDir = output->GetDirectory(histPath.c_str());
 	  if (!outDir)
-	    {outDir = output->mkdir(histPath.c_str());}
-	  outDir->cd();
-	  
+	    {output->mkdir(histPath.c_str());} // this returs the parent dir for some stupid reason
+	  // instead get the directory from the output, knowing it now exists
+	  outDir = output->GetDirectory(histPath.c_str());
+	  output->cd(histPath.c_str()); // change into it so new histograms are added to it
+
+	  // create appropriate type of merge
 	  HistogramAccumulator* acc = nullptr;
 	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
 	  switch (mergeType)
@@ -198,10 +201,9 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	      {continue; break;}
 	    }
 	  
-	  RBDS::HistogramPath path = {std::string(dir->GetPath()),
-				      histName, acc, outDir};
+	  RBDS::HistogramPath path = {histPath, histName, acc, outDir};
 	  histograms.push_back(path);
-	  std::cout << "Found histogram> " << histPath << "/" << histName << std::endl;
+	  std::cout << "Found histogram> " << histPath << histName << std::endl;
 	}
       else
 	{continue;} // don't care about other objects

@@ -107,21 +107,19 @@ int main(int argc, char* argv[])
       f->Close();
       delete f;
     }
-
+  
   // terminate and write output
   for (const auto& hist : histograms)
     {
       TH1* result = hist.accumulator->Terminate();
+      result->SetDirectory(hist.outputDir);
       hist.outputDir->Add(result);
-      result->Write();
+      delete hist.accumulator; // this removes temporary histograms from the file
     }
 
-  output->Write();
+  output->Write(nullptr,TObject::kOverwrite);
   output->Close();
   delete output;
-
-  for (auto& hist : histograms)
-    {delete hist.accumulator;}
-
+  
   return 0;
 }
