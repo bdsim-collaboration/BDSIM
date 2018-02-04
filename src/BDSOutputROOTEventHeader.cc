@@ -48,12 +48,10 @@ void BDSOutputROOTEventHeader::Flush()
   fileType      = "BDSIM";
 }
 
-#ifndef __ROOTBUILD__
 void BDSOutputROOTEventHeader::Fill()
 {
   time_t rawtime;
   time(&rawtime);
   timeStamp = std::string(ctime(&rawtime));
 }
-#endif
   

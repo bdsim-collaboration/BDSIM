@@ -42,9 +42,14 @@ public:
   std::string timeStamp;
   std::string fileType;
 
-#ifndef __ROOTBUILD__   
+  /// Update the file type.
+  void SetFileType(std::string fileTypeIn) {fileType = fileTypeIn;}
+  
+  /// #ifndef __ROOTBUILD__
+  /// Nominally, we don't expose the fill methods to the analysis root dictionaries
+  /// but as this doesn't use geant4 and is required when creating analysis output
+  /// file, we break that convention.
   void Fill();
-#endif
 
   ClassDef(BDSOutputROOTEventHeader,1);
 };
