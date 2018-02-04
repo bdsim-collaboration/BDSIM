@@ -51,7 +51,17 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-  
+
+  /// Calculate a single step using dipole fringe field matrix.
+  /// Unit momentum is provided as an argument because it is already calculated in the
+  /// Stepper method.
+  void OneStep(G4ThreeVector  posIn,
+               G4ThreeVector  momIn,
+               G4ThreeVector  momUIn, // assumed unit momentum of momIn
+               G4double       h,
+               G4ThreeVector& posOut,
+               G4ThreeVector& momOut) const;
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;
