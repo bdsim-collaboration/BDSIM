@@ -27,6 +27,15 @@ class BDSOutputROOTEventHistograms;
 
 class TDirectory;
 
+/**
+ * @brief Accumulator to merge pre-made per-entry histograms.
+ *
+ * Operate on a stored series of histograms to merge them. Single
+ * use only.
+ * 
+ * @author Stewart Boogert.
+ */
+
 class HistogramMeanFromFile
 {
 public:
@@ -34,9 +43,14 @@ public:
 
   ~HistogramMeanFromFile();
 
+  /// Add a new set of histograms to the running total. Assume
+  /// exact same structure in BDSOutputROOTEventHistogams input.
   void Accumulate(BDSOutputROOTEventHistograms* hNew);
+
+  /// Finish calculation.
   void Terminate();
 
+  /// Write to file.
   void Write(TDirectory* dir = nullptr);
 
 private:
