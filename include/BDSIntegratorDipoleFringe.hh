@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
 
@@ -62,6 +63,7 @@ private:
   /// Brho for momentum normalisation
   const G4double brho;
 
+  BDSMagnetStrength const* strength;
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;

@@ -29,14 +29,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 G4double BDSIntegratorDipoleFringe::thinElementLength = -1; // unphyiscal
 
-BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
+BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strengthIn,
                              G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
                              G4double                 minimumRadiusOfCurvatureIn):
   BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  polefaceAngle((*strength)["polefaceangle"]),
-  fringeCorr((*strength)["fringecorr"]),
-  brho(brhoIn)
+  polefaceAngle((*strengthIn)["polefaceangle"]),
+  fringeCorr((*strengthIn)["fringecorr"]),
+  brho(brhoIn),
+  strength(strengthIn)
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
@@ -57,7 +58,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 
   G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  
+
   // global to local (curvilinear) - 'true' = use local volume for transform
   // this class doesn't and can't inherit BDSIntegratorMag, so just access the
   // static step limit length from there
@@ -69,13 +70,13 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   if (localMom.unit().z() < 0.9)
     {return;}
   
-  // get radius of curvature already calculated in base class step
-  G4double rho = GetRadHelix();
+  G4double magnetRho = brho / (*strength)["field"];
 
   G4double momMag = localMom.mag();
   G4ThreeVector normMom = localMom.unit();
 
   G4double ratio = (eqOfM->FCof() * brho ) / momMag;
+  ratio = 1;
 
   // fraction of kick applied in case of multiple steps in element
   G4double fraction = h / thinElementLength;
@@ -85,14 +86,21 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 
   // calculate fractional fringe field kick
   G4double          y0 = localPos[1] / CLHEP::m;
-  G4double ymatElement = tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  G4double ymatElement = -tan(polefaceAngle - fringeCorr) / (magnetRho / CLHEP::m);
   G4double       ykick = ratio * fraction * y0 * ymatElement;
 
+  // calculate fractional fringe field kick
+  G4double          x0 = localPos[0] / CLHEP::m;
+  G4double xmatElement = tan(polefaceAngle) / (magnetRho / CLHEP::m);
+  G4double       xkick = ratio * fraction * x0 * xmatElement;
+
   // apply kick to unit momentum and recalculate zp to conserve.
+  normMom[0] += xkick;
   normMom[1] += ykick;
   normMom[2] = sqrt(1.0 - pow(normMom[0],2) - pow(normMom[1],2));
   normMom *= momMag;
   G4ThreeVector globalMom = ConvertAxisToGlobal(normMom, true);
+  //BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
 
   // update output momentum coordinates - i+3 for momentum
   for (G4int i = 0; i < 3; i++)
