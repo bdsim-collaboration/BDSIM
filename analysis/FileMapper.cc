@@ -48,18 +48,11 @@ bool RBDS::GetFileType(TFile*       file,
   if (file->IsZombie())
     {return false;}
 
-  std::vector<std::string> treeNames;
-  TList* kl = file->GetListOfKeys();
-  for (int i = 0; i < kl->GetEntries(); ++i)
-    {treeNames.push_back(std::string(kl->At(i)->GetName()));}
-
-  auto result = std::find(treeNames.begin(), treeNames.end(), "Header");
-  if (result == treeNames.end())
-    {return false;} // no header so definitely not a bdsim file
-
   // load header to get which type of file it is
-  Header* headerLocal = new Header();
   TTree* headerTree = static_cast<TTree*>(file->Get("Header"));
+  if (!headerTree)
+    {return false;} // no header -> definitely not a bdsim file
+  Header* headerLocal = new Header();
   headerLocal->SetBranchAddress(headerTree);
   headerTree->GetEntry(0);
   fileType = headerLocal->header->fileType;
