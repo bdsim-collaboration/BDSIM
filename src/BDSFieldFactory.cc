@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorDipole2.hh"
 #include "BDSIntegratorDipoleFringe.hh"
+#include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorEuler.hh"
 #include "BDSIntegratorKickerThin.hh"
 #include "BDSIntegratorOctupole.hh"
@@ -354,7 +355,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
   resultantField->SetTransform(info.Transform());
 
   // Always this equation of motion for magnetic (only) fields
-  G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(resultantField);
+  BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
 
   // Create appropriate integrator
   G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
@@ -463,10 +464,12 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     {
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
-    case BDSIntegratorType::dipole:
+    case BDSIntegratorType::dipolerodrigues:
       integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
-    case BDSIntegratorType::dipole2:
+    case BDSIntegratorType::dipolerodrigues2:
       integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
+    case BDSIntegratorType::dipolematrix:
+      integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::sextupole:
@@ -573,7 +576,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
       {integrator = new G4RK547FEq3(eqOfM, 8); break;}
 #endif
     case BDSIntegratorType::solenoid:
-    case BDSIntegratorType::dipole:
+    case BDSIntegratorType::dipolerodrigues:
     case BDSIntegratorType::quadrupole:
     case BDSIntegratorType::sextupole:
     case BDSIntegratorType::octupole:

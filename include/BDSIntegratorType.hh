@@ -32,7 +32,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct integratortypes_def
 {
-  enum type {none, teleporter, solenoid, dipole, dipole2, quadrupole, sextupole,
+
+  enum type {none, teleporter, solenoid, dipolerodrigues, dipolerodrigues2,
+	     dipolematrix, quadrupole, sextupole,
 	     multipole, multipolethin, octupole, decapole, dipolefringe,
 	     euler, kickerthin,
 	     g4cashkarprkf45, g4classicalrk4, g4constrk4, g4expliciteuler,

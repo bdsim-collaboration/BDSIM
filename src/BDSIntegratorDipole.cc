@@ -30,14 +30,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 
-BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
+BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strengthIn,
 					 G4double                  /*brho*/,
 					 G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
   cOverGeV(BDS::cOverGeV),
-  angle((*strength)["angle"]),
-  length((*strength)["length"]),
-  bField((*strength)["field"]),
+  angle((*strengthIn)["angle"]),
+  length((*strengthIn)["length"]),
+  bField((*strengthIn)["field"]),
+  strength(strengthIn),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
 #ifdef BDSDEBUG
@@ -105,7 +106,10 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   
   // This uses the mass world volume for the transform!
   ConvertToGlobal(outputLocalPos, outputLocalMomUnit, yOut, momMag);
-  
+
+  BDSStep localCL   = GlobalToCurvilinear(strength, pos, mom, h, false, eqOfM->FCof());
+  BDSStep globalOut = CurvilinearToGlobal(strength, localCL.PreStepPoint(), localCL.PostStepPoint(), false, eqOfM->FCof());
+
   // If the radius of curvature is too small, reduce the momentum by 2%. This will
   // cause artificial spiralling for what must be particles well below the design momenta.
   // Nominally adding a small z increment along the axis of the helix wasn't reliable,

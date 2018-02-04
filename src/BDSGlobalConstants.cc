@@ -34,7 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-#include "CLHEP/Units/PhysicalConstants.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
 

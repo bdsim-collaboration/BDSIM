@@ -39,7 +39,6 @@ void EventAnalysisOrbit::Clear()
 
 void EventAnalysisOrbit::ExtractOrbit(int index)
 {
-  const int entries = chain->GetEntries();
   if (index > entries-1)
     {
       std::string errString = "Orbit index: " + std::to_string(index) +

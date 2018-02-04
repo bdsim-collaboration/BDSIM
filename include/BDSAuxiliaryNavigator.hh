@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
+#include "BDSMagnetStrength.hh"
 
 class BDSStep;
 class G4Step;
@@ -125,6 +126,14 @@ public:
   G4ThreeVector ConvertToLocal(const G4ThreeVector& globalPosition,
 			       const G4bool&        useCurvilinear = true) const;
 
+  /// Convert an axis to curvilinear coordinates using the existing cached transforms.
+  /// Therefore, this should only be used if you have converted a point or axis already
+  /// in the current volume. Provided for the situation where multiple axis conversions
+  /// are required without relocating the volume in the hierarchy, which may introduce
+  /// ambiguities.
+  G4ThreeVector ConvertAxisToLocal(const G4ThreeVector& globalAxis,
+				   const G4bool&        useCurvilinear = true) const;
+
   /// Calculate the local version of a global vector (axis). This is done
   /// w.r.t. a point - ie, the point is used to initialise the transform
   /// if not done already.
@@ -167,7 +176,30 @@ public:
   G4ThreeVector ConvertToGlobal(const G4ThreeVector& globalPosition,
 				const G4ThreeVector& localPosition,
 				const G4bool&        useCurvilinear = true) const;
-  
+
+  /// Convert to curvilinear coordinates.
+  BDSStep GlobalToCurvilinear(BDSMagnetStrength const* strength,
+                G4ThreeVector position,
+                G4ThreeVector unitMomentum,
+                G4double      h,
+                G4bool        useCurvilinearWorld,
+                G4double      FCof);
+
+  BDSStep GlobalToCurvilinear(G4ThreeVector position,
+                G4ThreeVector unitMomentum,
+                G4double      h,
+                G4bool        useCurvilinearWorld);
+
+  BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
+                G4ThreeVector localMomentum,
+                G4bool        useCurvilinearWorld);
+
+  BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
+                G4ThreeVector localPosition,
+                G4ThreeVector localMomentum,
+                G4bool        useCurvilinearWorld,
+                G4double      FCof);
+
 protected:
   mutable G4AffineTransform globalToLocal;
   mutable G4AffineTransform localToGlobal;

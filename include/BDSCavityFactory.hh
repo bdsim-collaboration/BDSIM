@@ -51,14 +51,19 @@ public:
 
   /// Main function to create a piece of cavity geometry.
   BDSCavity* CreateCavity(G4String             name,
-			  G4double             totalChordLength,
-			  const BDSCavityInfo* info,
-			  G4Material*          vacuumMaterial);
+                          G4double             totalChordLength,
+                          const BDSCavityInfo* info,
+                          G4Material*          vacuumMaterial);
 
 private:
   BDSCavityFactory(); ///< Private constructor as singleton pattern.
 
   static BDSCavityFactory* instance; ///< Singleton instance.
+
+  ///@{ Unused default constructors
+  BDSCavityFactory(const BDSCavityFactory&) = delete;
+  BDSCavityFactory& operator=(const BDSCavityFactory&) = delete;
+  ///@}
 
   BDSCavityFactoryBase* GetAppropriateFactory(const BDSCavityType cavityType);
 

@@ -76,12 +76,12 @@ protected:
   
   ///@{ Create histograms for evtHistos and runHistos.
   void Create1DHistogram(G4String name,
-			 G4String title,
+                         G4String title,
                          G4int    nbins,
-			 G4double xmin,
-			 G4double xmax);
+                         G4double xmin,
+                         G4double xmax);
   void Create1DHistogram(G4String name,
-			 G4String title,
+                         G4String title,
                          std::vector<double>& edges);
   ///@}
 
@@ -120,7 +120,13 @@ private:
   /// should only prepare the local samplers once, hence this cache variable.
   G4bool localSamplersInitialised;
 
+  ///@{ Unused default constructors
   BDSOutputStructures() = delete;
+  BDSOutputStructures(const BDSOutputStructures&) = delete;
+  BDSOutputStructures& operator=(const BDSOutputStructures&) = delete;
+  ///@}
+
+
 };
 
 #endif

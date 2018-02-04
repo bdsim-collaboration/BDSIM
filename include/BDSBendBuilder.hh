@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBENDBUILDER_H
 
 #include "globals.hh" // geant4 globals / types
+#include "BDSIntegratorType.hh"
 
 class BDSIntegratorSet;
 class BDSLine;
@@ -99,6 +100,11 @@ namespace BDS
 			   const G4double e2,
 			   G4double&      segmentAngleIn,
 			   G4double&      segmentAngleOut);
+
+  /// Function to get the integrator type. Test for finite K1 and returns
+  /// dipole or dipolequadrupole integrator as appropriate.
+  BDSIntegratorType GetDipoleIntegratorType(const BDSIntegratorSet* integratorSet,
+									        const GMAD::Element*          element);
 }
 
 #endif
