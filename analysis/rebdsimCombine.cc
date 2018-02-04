@@ -74,13 +74,15 @@ int main(int argc, char* argv[])
   // ensure new histograms are written to file
   TH1::AddDirectory(true);
   TH2::AddDirectory(true);
-  TH3::AddDirectory(true);  
+  TH3::AddDirectory(true);
 
   TFile* f = nullptr; // temporary variable
 
   // initialise file map
   f = new TFile(inputFiles[0].c_str());
-  HistogramMap* histMap = new HistogramMap(f, output, true); // map out file
+  HistogramMap* histMap = new HistogramMap(f, output); // map out first file
+  f->Close();
+  delete f;
 
   std::vector<RBDS::HistogramPath> histograms = histMap->Histograms();
 
