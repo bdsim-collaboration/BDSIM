@@ -23,11 +23,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
 
+#include "BDSOutputROOTEventHeader.hh"
+
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
+#include "TTree.h"
 
 #include <iostream>
 #include <string>
@@ -45,6 +48,16 @@ int main(int argc, char* argv[])
   // output file must be opened before histograms are created because root does
   // everything statically behind the scenes
   TFile* output = new TFile(outputFile.c_str(), "RECREATE");
+  
+  // add header for file type and version details
+  output->cd();
+  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+  headerOut->Fill(); // updates time stamp
+  headerOut->SetFileType("REBDSIMCOMBINE");
+  TTree* headerTree = new TTree("Header", "REBDSIM Header");
+  headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  headerTree->Fill();
+  output->Write(nullptr,TObject::kOverwrite);
   
   // build input file list
   std::vector<std::string> inputFiles;
