@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "FileMapper.hh"
 #include "Header.hh"
+#include "HistogramAccumulator.hh"
 #include "HistogramAccumulatorMerge.hh"
 #include "HistogramAccumulatorSum.hh"
 
@@ -31,12 +32,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH3D.h"
 #include "TList.h"
 #include "TKey.h"
+#include "TObject.h"
 #include "TTree.h"
 
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
+
 
 bool RBDS::GetFileType(TFile*       file,
 		       std::string& fileType)
@@ -111,42 +114,99 @@ void RBDS::WarningMissingHistogram(const std::string& histName,
 	    << fileName << std::endl;
 }
 
-HistogramMap::HistogramMap(TFile* file)
+HistogramMap::HistogramMap(TFile* file,
+			   TFile* output,
+			   bool   debugIn):
+  debug(debugIn)
 {
   std::vector<std::string> trees = {"Beam", "Event", "Model", "Options", "Run"};
   std::vector<std::string> means = {"PerEntryHistograms", "MergedHistograms"};
   std::vector<std::string> sums  = {"SimpleHistograms"};
 
-  std::string currentDir;
-  for (const auto& tree : trees)
+  TDirectory* rootDir = static_cast<TDirectory*>(file);
+
+    std::string rootDirName = "";
+  MapDirectory(rootDir, output, rootDirName);
+}
+
+void HistogramMap::MapDirectory(TDirectory* dir,
+				TFile*      output,
+				const std::string& dirPath)
+{
+  // to safely return to where we were and not affect other code
+  // cache the current directory
+  TDirectory* originalDir = TDirectory::CurrentDirectory();
+
+  if (debug)
     {
-      for (const auto& dir : means)
-	{
-	  currentDir = tree+"/"+dir;
-	  TDirectory* d = file->GetDirectory(currentDir.c_str());
-	  if (!d)
-	    {continue;}
-	  TList* keys = d->GetListOfKeys();
-	  for (const auto& key : *keys)
-	    {
-	      TObject* ob = d->Get(key->GetName());
-	      if (ob->InheritsFrom("TH1"))
-		{histsMeanPath.push_back(currentDir + "/" + ob->GetName());}
-	    }
-	}
-      for (const auto& dir : sums)
-	{
-	  currentDir = tree+"/"+dir;
-	  TDirectory* d = file->GetDirectory(currentDir.c_str());
-	  if (!d)
-	    {continue;}
-	  TList* keys = d->GetListOfKeys();
-	  for (const auto& key : *keys)
-	    {
-	      TObject* ob = d->Get(key->GetName());
-	      if (ob->InheritsFrom("TH1"))
-		{histsSumPath.push_back(currentDir + "/" + ob->GetName());}
-	    }
-	}
+      std::cout << "Original directory " << originalDir->GetName() << std::endl;
+      std::cout << "Directory " << dir->GetName() << std::endl;
     }
+  dir->cd(); // change into dir
+  TList* dirk = dir->GetListOfKeys();
+  for(int i = 0; i < dirk->GetEntries(); ++i)
+    {
+      TObject* keyObject = dirk->At(i); // key object in list of keys
+      TObject* dirObject = dir->Get(keyObject->GetName()); // object in file
+
+      std::string objectName = std::string(keyObject->GetName());
+      std::string className  = std::string(dirObject->ClassName());
+
+      if (className == "TDirectory" || className == "TDirectoryFile")
+	{
+	  TDirectory* subDir = static_cast<TDirectory*>(dirObject);
+	  MapDirectory(subDir, output, dirPath + "/" + objectName); // recursion!
+	}
+      else if (dirObject->InheritsFrom("TH1"))
+	{
+	  TH1* h = static_cast<TH1*>(dirObject);
+	  int nDim = RBDS::DetermineDimensionality(h);
+
+	  std::string histPath = dirPath;
+	  std::string histName  = std::string(h->GetName());
+	  std::string histTitle = std::string(h->GetTitle());
+	  TDirectory* outDir = output->mkdir(histPath.c_str());
+
+	  HistogramAccumulator* acc = nullptr;
+	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
+	  switch (mergeType)
+	    {
+	    case RBDS::MergeType::none:
+	      {continue; break;}
+	    case RBDS::MergeType::meanmerge:
+	      {
+		acc = new HistogramAccumulatorMerge(h, nDim, histName, histTitle);
+		break;
+	      }
+	    case RBDS::MergeType::sum:
+	      {
+		acc = new HistogramAccumulatorSum(h, nDim, histName, histTitle);
+		break;
+	      }
+	    default:
+	      {continue; break;}
+	    }
+	  
+	  RBDS::HistogramPath path = {std::string(dir->GetPath()),
+				      histName, acc, outDir};
+	  histograms.push_back(path);
+	  std::cout << "Found histogram> " << histPath << "/" << histName << std::endl;
+	}
+      else
+	{continue;} // don't care about other objects
+    }
+
+  originalDir->cd();
+}
+
+RBDS::MergeType RBDS::DetermineMergeType(const std::string& parentDir)
+{
+  if (parentDir == "PerEntryHistograms")
+    {return RBDS::MergeType::meanmerge;}
+  else if (parentDir == "MergedHistograms")
+    {return RBDS::MergeType::meanmerge;}
+  else if (parentDir == "SimpleHistograms")
+    {return RBDS::MergeType::sum;}
+  else
+    {return RBDS::MergeType::none;}
 }

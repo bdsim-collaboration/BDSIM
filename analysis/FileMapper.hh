@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+class HistogramAccumulator;
+class TDirectory;
 class TFile;
 class TH1;
 
@@ -46,22 +48,45 @@ namespace RBDS
 
   void WarningMissingHistogram(const std::string& histName,
 			       const std::string& fileName);
+
+  struct HistogramPath
+  {
+    std::string path; // without histogram name
+    std::string name; // name of histogram
+    HistogramAccumulator* accumulator;
+    TDirectory* outputDir;
+  };
+
+  enum class MergeType {none, meanmerge, sum};
+
+  MergeType DetermineMergeType(const std::string& parentDir);
+
 }
+
 
 class HistogramMap
 {
 public:
-  HistogramMap(TFile* file);
+  HistogramMap(TFile* file,
+	       TFile* output,
+	       bool   debugIn = false);
   ~HistogramMap(){;}
+
+  void MapDirectory(TDirectory* dir,
+		    TFile*      output,
+		    const std::string& parentDir);
   
-  inline const std::vector<std::string>& HistogramMeanPaths() const {return histsMeanPath;}
-  inline const std::vector<std::string>& HistogramSumPaths()  const {return histsSumPath;}
+  inline const std::vector<RBDS::HistogramPath> Histograms() const {return histograms;}
+  
+  //inline const std::vector<std::string>& HistogramMeanPaths() const {return histsMeanPath;}
+  //inline const std::vector<std::string>& HistogramSumPaths()  const {return histsSumPath;}
 
 private:
   HistogramMap() = delete;
 
-  std::vector<std::string> histsMeanPath;
-  std::vector<std::string> histsSumPath;
+  bool debug;
+
+  std::vector<RBDS::HistogramPath> histograms;
 };
 
 #endif
