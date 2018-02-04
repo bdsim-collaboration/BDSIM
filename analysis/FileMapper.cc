@@ -91,8 +91,8 @@ bool RBDS::IsREBDSIMOutputFile(TFile* file)
   bool success = GetFileType(file, fileType);
   if (!success)
     {return false;}
-
-  return fileType == "REBDISM";
+  
+  return fileType == "REBDSIM";
 }
 
 int RBDS::DetermineDimensionality(TH1* h)
@@ -125,7 +125,7 @@ HistogramMap::HistogramMap(TFile* file,
 
   TDirectory* rootDir = static_cast<TDirectory*>(file);
 
-    std::string rootDirName = "";
+  std::string rootDirName = "";
   MapDirectory(rootDir, output, rootDirName);
 }
 
@@ -139,8 +139,8 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 
   if (debug)
     {
-      std::cout << "Original directory " << originalDir->GetName() << std::endl;
-      std::cout << "Directory " << dir->GetName() << std::endl;
+      std::cout << "Original directory: " << originalDir->GetName() << std::endl;
+      std::cout << "Directory: " << dir->GetName() << std::endl;
     }
   dir->cd(); // change into dir
   TList* dirk = dir->GetListOfKeys();
