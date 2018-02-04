@@ -220,6 +220,9 @@ standard error on the beam, i.e.
 
 where :math:`\sigma` is the standard deviation of the values in that bin for all events.
 
+.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+
 Analysis Configuration File
 ===========================
 
@@ -265,6 +268,11 @@ Examples can be found in:
 * Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
 * True or False as well as 1 or 0 may be used for Boolean options.
+
+.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
+	  useful for per-event analysis on the Event tree.
 
 Logarithmic Binning
 ===================
@@ -332,6 +340,13 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | significantly improve the speed of analysis if only  |
 |                            | separate user-defined histograms are desired.        |
 +----------------------------+------------------------------------------------------+
+| BackwardsCompatible        | ROOT event output files from BDSIM prior to v0.994   |
+|                            | do not have the header structure that is used to     |
+|                            | ensure the files are the right format and prevent    |
+|                            | a segfault from ROOT. If this options is true, the   |
+|                            | header will not be checked allowing old files to be  |
+|                            | analysed.                                            |
++----------------------------+------------------------------------------------------+
 
 
 Variables In Data
@@ -373,6 +388,34 @@ each entry.
 
 REBDSIM 'turns off' the loading of all data and only loads what is necessary for the
 given analysis.
+
+Scaling Up - Parallelising Analysis
+-----------------------------------
+
+For high statistics studies, it's common to run multiple instances of BDSIM with different
+seeds (different seeds ensures different results) on a high throughput computer cluster.
+In this situation, each instance of BDSIM provides an output file. Rebdsim can analyse
+all of these files together by specifying `"*.root"` in the input analysis configuration
+(i.e. analysisConfig.txt) but for large numbers of events, this can take some time.
+
+In this case, it is better to analyse each output file with rebdsim separately and then
+combine the results. In the case of per-event histograms, rebdsim provides the mean
+per event along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`
+is provided that can combine these rebdsim output files correctly to provide the
+overall mean and error on the mean as if all events had been analysed in one execution
+of rebdsim.
+
+The combination of the histograms from the rebdsim output files is very quick in comparison
+to the analysis. `rebdsimCombine` is used as follows: ::
+
+  rebdsimCombine <result.root> <file1.root> <file2.root> ....
+
+where `<result.root>` is the desired name of the merge output file and `<file.root>` etc.
+are input files to be merged. This workflow is shown schematically in the figure below.
+
+.. figure:: figures/multiple_analyses.pdf
+	    :width: 100%
+	    :align: center
 
 
 Converting ROOT trees as numpy arrays
@@ -453,10 +496,36 @@ online mean calculation:
 
    \mathrm{for}~ i~ [1\, ... \,n_{event}]
 
-
 After processing all entries, the variance is used to calculate the standard error on the mean
 with:
 
 .. math::
 
    \sigma_{\bar{x}} = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{\sqrt{n-1}} Var\,(x)}
+
+
+Merging Histograms
+==================
+
+`rebdsimCombine` merges histograms that already have the mean and the error on the
+mean in each bin. These are combined with a separate algorithm that is also numerically
+stable.
+
+The mean is calculated as:
+
+.. math::
+
+   \bar{x}_{i = 0} &= 0\\
+   \delta &= \bar{x}_{i+1} - \bar{x}_{i}\\
+   \bar{x}_{i+1} &= \bar{x}_{i} + n_{i+1}\frac{\delta}{n_{i} + n_{i+1}}
+
+
+.. math::
+
+   Var\,(x)_{i = 0} &= 0 \\
+   Var\,(x)_{i+1} &= Var\,(x)_{i} + Var\,(x)_{i+1} + (n_{i}\,n_{i+1} \frac{\delta^{2}}{n_{i} + n_{i+1}})
+
+
+.. math::
+
+   \mathrm{for}~ i~ [1\, ... \,n_{rebdsim\, files}]

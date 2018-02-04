@@ -264,13 +264,10 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
       G4cout << __METHOD_NAME__ << "primary particle not defined yet - could be ion" << G4endl;
 #endif
       return;
-    } 
-  else
-    {
-      auto pl = particle->GetProcessManager()->GetProcessList();
-      for (G4int i = 0; i < pl->length(); i++)
-	{ G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl; }
     }
+  auto pl = particle->GetProcessManager()->GetProcessList();
+  for (G4int i = 0; i < pl->length(); i++)
+    { G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl; }
 }
 
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
@@ -1020,17 +1017,16 @@ void BDSModularPhysicsList::BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD:
 
   if (!anyBiases)
     {return;}
-  else
-    {// there are biases
-      G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
-      for (auto part : particlesToBias)
-	{
-	  if (part.second)
-	    {
-	      G4cout << __METHOD_NAME__ << "wrapping \"" << part.first << "\" for biasing" << G4endl;
-	      physBias->Bias(part.first);
-	    }
-	}
-      RegisterPhysics(physBias);
+
+  // there are biases
+  G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
+  for (auto part : particlesToBias)
+    {
+      if (part.second)
+        {
+          G4cout << __METHOD_NAME__ << "wrapping \"" << part.first << "\" for biasing" << G4endl;
+          physBias->Bias(part.first);
+        }
     }
+  RegisterPhysics(physBias);
 }

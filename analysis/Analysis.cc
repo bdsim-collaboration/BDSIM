@@ -23,13 +23,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "HistogramDef1D.hh"
 #include "HistogramDef2D.hh"
 #include "HistogramDef3D.hh"
+#include "HistogramFactory.hh"
+#include "HistogramMeanFromFile.hh"
 #include "PerEntryHistogram.hh"
 #include "rebdsim.hh"
 
 #include "TChain.h"
+#include "TFile.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TH3D.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
 
 Analysis::Analysis(std::string treeNameIn,
 		   TChain*     chainIn,
@@ -41,17 +48,16 @@ Analysis::Analysis(std::string treeNameIn,
   mergedHistogramName(mergedHistogramNameIn),
   histoSum(nullptr),
   debug(debugIn),
+  entries(chain->GetEntries()),
   perEntry(perEntryAnalysis)
-{
-  entries = chain->GetEntries();
-  // only activate per entry histograms if at least 2 entries.
-  runPerEntryHistograms = entries > 1;
-}
+{;}
 
 Analysis::~Analysis()
 {
   delete chain;
   delete histoSum;
+  for (auto pe : perEntryHistograms)
+    {delete pe;}
 }
 
 void Analysis::Execute()
@@ -93,30 +99,19 @@ void Analysis::SimpleHistograms()
 void Analysis::PreparePerEntryHistograms()
 {
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
-  if (!runPerEntryHistograms && definitions.size() > 0)
-    {
-      std::cout << "Warning: per-entry histograms specified, but insufficient\n ";
-      std::cout << "        number of entries (" << entries << ") to calculate means and variances." << std::endl;
-      std::cout << "Per-entry histograms will not be produced for this Tree." << std::endl;
-      return;
-    }
   for (const auto& def : definitions)
     {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
 }
 
-void Analysis::AccumulatePerEntryHistograms()
+void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
 {
-  if (!runPerEntryHistograms)
-    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
-    {peHist->AccumulateCurrentEntry();}
+    {peHist->AccumulateCurrentEntry(entryNumber);}
 }
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  if (!runPerEntryHistograms)
-    {return;}
   auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
   for (auto& peHist : perEntryHistograms)
     {peHist->Terminate();}
@@ -145,13 +140,9 @@ void Analysis::Write(TFile* outputFile)
   TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
   TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
 
-  // per entry histograms
-  if (runPerEntryHistograms)
-    {
-      perEntryDir->cd();
-      for (auto h : perEntryHistograms)
-	{h->Write(perEntryDir);}
-    }
+  perEntryDir->cd();
+  for (auto h : perEntryHistograms)
+    {h->Write(perEntryDir);}
 
   // simple histograms
   simpleDir->cd();
@@ -173,7 +164,7 @@ void Analysis::Write(TFile* outputFile)
     {
       mergedDir->cd();
       std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
-      histoSum->Write(outputFile, mergedDir);
+      histoSum->Write(mergedDir);
     }
 
   outputFile->cd("/");  // return to root of the file
@@ -198,17 +189,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 1:
       {
 	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
-	TH1D* h;
-	if (d->logarithmicX)
-          {// note ROOT requires len(binEdges) = nBins + 1
-	    std::vector<double> binEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    h = new TH1D(name.c_str(), name.c_str(), d->xNBins, binEdges.data());
-          }
-	else
-          {
-	    h = new TH1D(name.c_str(), name.c_str(),
-			 d->xNBins, d->xLow, d->xHigh);
-          }
+	TH1D* h = HistogramFactory::CreateHistogram1D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms1D[name] = h;
@@ -217,35 +198,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 2:
       {
 	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
-	TH2D* h;
-	if (d->logarithmicX && d->logarithmicY)
-          {
-	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
-	    h = new TH2D(name.c_str(), name.c_str(),
-			 d->xNBins, xBinEdges.data(),
-			 d->yNBins, yBinEdges.data());
-          }
-	else if (d->logarithmicX)
-          {
-	    std::vector<double> xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);
-	    h = new TH2D(name.c_str(), name.c_str(),
-			 d->xNBins, xBinEdges.data(),
-			 d->yNBins, d->yLow, d->yHigh);
-          }
-	else if (d->logarithmicY)
-          {
-	    std::vector<double> yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);
-	    h = new TH2D(name.c_str(), name.c_str(),
-			 d->xNBins, d->xLow, d->xHigh,
-			 d->yNBins, yBinEdges.data());
-          }
-	else
-          {
-	    h = new TH2D(name.c_str(), name.c_str(),
-			 d->xNBins, d->xLow, d->xHigh,
-			 d->yNBins, d->yLow, d->yHigh);
-          }
+	TH2D* h = HistogramFactory::CreateHistogram2D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms2D[name] = h;
@@ -254,36 +207,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
     case 3:
       {
 	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
-	TH3D* h;
-	if (d->logarithmicX || d->logarithmicY || d->logarithmicZ)
-	  {
-	    std::vector<double> xBinEdges;
-	    std::vector<double> yBinEdges;
-	    std::vector<double> zBinEdges;
-	    if (d->logarithmicX)
-	      {xBinEdges = RBDS::LogSpace(d->xLow, d->xHigh, d->xNBins);}
-	    else
-	      {xBinEdges = RBDS::LinSpace(d->xLow, d->xHigh, d->xNBins);}
-	    if (d->logarithmicY)
-	      {yBinEdges = RBDS::LogSpace(d->yLow, d->yHigh, d->yNBins);}
-	    else
-	      {yBinEdges = RBDS::LinSpace(d->yLow, d->yHigh, d->yNBins);}
-	    if (d->logarithmicZ)
-	      {zBinEdges = RBDS::LogSpace(d->zLow, d->zHigh, d->zNBins);}
-	    else
-	      {zBinEdges = RBDS::LinSpace(d->zLow, d->zHigh, d->zNBins);}
-	    h = new TH3D(name.c_str(), name.c_str(),
-			 d->xNBins, xBinEdges.data(),
-			 d->yNBins, yBinEdges.data(),
-			 d->zNBins, zBinEdges.data());
-	  }
-	else
-	  {
-	    h = new TH3D(name.c_str(), name.c_str(),
-			 d->xNBins, d->xLow, d->xHigh,
-			 d->yNBins, d->yLow, d->yHigh,
-			 d->zNBins, d->zLow, d->zHigh);
-	  }
+	TH3D* h = HistogramFactory::CreateHistogram3D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
 	histograms3D[name] = h;

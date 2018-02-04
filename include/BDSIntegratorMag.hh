@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDrift.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
@@ -56,7 +57,7 @@ public:
   /// Cache of thin element length to know maximum possible length scale step
   /// for coordinate lookup.
   static G4double thinElementLength;
-  
+
 protected:
   /// Convert final local position and direction to global frame. Allow
     /// scaling of momentum in case localMom is a unit vector

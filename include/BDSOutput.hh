@@ -60,7 +60,7 @@ public:
 	    G4int    fileNumberOffset);
   virtual ~BDSOutput(){;}
 
-  /// Open a new file.
+  /// Open a new file. This should call WriteHeader() in it.
   virtual void NewFile() = 0;
 
   /// Write any unwritten contents and close the currently open file. The instance
@@ -71,6 +71,9 @@ public:
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
+
+  /// Fill the local structure header with information - updates time stamp.
+  void FillHeader();
 
   /// Fill the local structure beam with the original ones from the parser.
   void FillBeam(const GMAD::BeamBase* beam);
@@ -139,6 +142,9 @@ private:
 
   /// Enum for different types of energy loss that can be written out.
   enum class LossType {energy, tunnel};
+
+  /// Write the header.
+  virtual void WriteHeader() = 0;
 
   /// Write the beam.
   virtual void WriteBeam() = 0;

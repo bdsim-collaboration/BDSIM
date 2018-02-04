@@ -2,6 +2,8 @@ InputFilePath	    ./output.root
 OutputFileName	    ./output_ana1.root
 # Object	treeName   Histogram Name       # Bins   Binning	          Variable          Selection
 Histogram1D    	Event.     EnergyLoss           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
+SimpleHistogram1D    	Event.     EnergyLossSimple           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
+SimpleHistogram1D    	Event.     EnergyLossSimple2           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight*(Entry$==0)
 Histogram2D    Event.     Flux			  {30,30}  {-2.5:2.5,-2.5:2.5}  fq1.y:fq1.x       fq1.energy*fq1.weight
 Histogram3D    Event.     Flux3D               {30,30,100} {-2.5:2.5,-2.5:2.5,0:1} fq1.x:fq1.y:fq1.energy  1
 Histogram1D    Run.	   RunDuration	 	  {100}    {0:100}               Info.duration     1

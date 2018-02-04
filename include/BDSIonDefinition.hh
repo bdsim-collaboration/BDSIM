@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSIonDefinition
 {
 public:
-  BDSIonDefinition(G4String definition);
+  explicit BDSIonDefinition(G4String definition);
   ~BDSIonDefinition(){;}
 
   /// @{ Accessor.

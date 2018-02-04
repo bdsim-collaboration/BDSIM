@@ -52,7 +52,7 @@ class BDSIntegratorSet
 public:
   BDSIntegratorSet(BDSIntegratorType solenoidIn,
 		   BDSIntegratorType dipoleIn,
-		   BDSIntegratorType dipole3dIn,
+		   BDSIntegratorType dipolematrixIn,
 		   BDSIntegratorType quadrupoleIn,
 		   BDSIntegratorType sextupoleIn,
 		   BDSIntegratorType octupoleIn,
@@ -74,7 +74,7 @@ public:
 
   BDSIntegratorType solenoid;
   BDSIntegratorType dipole;
-  BDSIntegratorType dipole3d;
+  BDSIntegratorType dipolematrix;
   BDSIntegratorType quadrupole;
   BDSIntegratorType sextupole;
   BDSIntegratorType octupole;

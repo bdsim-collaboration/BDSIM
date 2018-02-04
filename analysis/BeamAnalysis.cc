@@ -48,6 +48,6 @@ void BeamAnalysis::Process()
   for (int i = 0; i < entries; i++)
     {
       // per event histograms
-      AccumulatePerEntryHistograms();
+      AccumulatePerEntryHistograms(i);
     }
 }

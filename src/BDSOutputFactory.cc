@@ -31,13 +31,15 @@ BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
 #endif
+  BDSOutput* result = nullptr;
   switch (format.underlying())
     {
     case BDSOutputType::none:
-      {return new BDSOutputNone(); break;}
+      {result = new BDSOutputNone(); break;}
     case BDSOutputType::rootevent:
-      {return new BDSOutputROOT(fileName, fileNumberOffset); break;}
+      {result = new BDSOutputROOT(fileName, fileNumberOffset); break;}
     default:
-      {return new BDSOutputNone(); break;} // absolute default - should not reach this
+      {result = new BDSOutputNone(); break;} // absolute default - should not reach this
     }
+  return result;
 }

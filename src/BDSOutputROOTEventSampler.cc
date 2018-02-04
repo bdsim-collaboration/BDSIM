@@ -98,14 +98,12 @@ void BDSOutputROOTEventSampler<T>::Fill(const BDSSamplerHit* hit)
   t.push_back((T &&) (hit->GetT() / CLHEP::ns));
   modelID = hit->GetBeamlineIndex();
 
-#if 0
-  X.push_back(hit->GetGlobalX()           / CLHEP::m);
-  Y.push_back(hit->GetGlobalY()           / CLHEP::m);
-  Z = hit->GetGlobalZ()                   / CLHEP::m;  
-  Xp.push_back(hit->GetGlobalXPrime()     / CLHEP::radian);
-  Yp.push_back(hit->GetGlobalYPrime()     / CLHEP::radian);
-  Zp.push_back(hit->GetGlobalZPrime()     / CLHEP::radian);
-#endif
+  // X.push_back(hit->GetGlobalX()           / CLHEP::m);
+  // Y.push_back(hit->GetGlobalY()           / CLHEP::m);
+  // Z = hit->GetGlobalZ()                   / CLHEP::m;  
+  // Xp.push_back(hit->GetGlobalXPrime()     / CLHEP::radian);
+  // Yp.push_back(hit->GetGlobalYPrime()     / CLHEP::radian);
+  // Zp.push_back(hit->GetGlobalZPrime()     / CLHEP::radian);
 
   weight.push_back((T &&) hit->GetWeight());
   partID.push_back(hit->GetPDGtype());
@@ -133,14 +131,14 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   yp.clear();
   zp.clear();
   t.clear();
-#if 0
-  X.clear();
-  Y.clear();
-  Z = 0.0;      
-  Xp.clear();
-  Yp.clear();
-  Zp.clear();
-#endif
+
+  // X.clear();
+  // Y.clear();
+  // Z = 0.0;      
+  // Xp.clear();
+  // Yp.clear();
+  // Zp.clear();
+
   weight.clear();
   partID.clear();
   parentID.clear();
