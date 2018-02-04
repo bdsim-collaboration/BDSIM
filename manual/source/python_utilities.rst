@@ -1,8 +1,8 @@
-.. _python-packages:
+.. _python-utilities:
 
-***************
-Python Packages
-***************
+****************
+Python Utilities
+****************
 
 Several python packages are provided to aid preparation and conversion
 of models to a from BDSIM's gmad format and are described the following
@@ -13,10 +13,12 @@ sections.
 * pymad8  - file loader for MAD8 file format
 * pytransport - file loader for Transport file format
 
-Installing Python Packages
-==========================
+Installing Python Utilities
+===========================
 
-To access (import) the supplied packages from anywhere on your system, simply run ``make`` from the ``utils`` directory.  For this to work you should have the python package installer ``pip`` in your PATH.
+To access (import) the supplied packages from anywhere on your system, simply
+run ``make`` from the ``utils`` directory.  For this to work you should have
+the python package installer ``pip`` in your PATH.
 
 This should allow you to import the python utilities::
 

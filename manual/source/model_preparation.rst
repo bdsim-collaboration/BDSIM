@@ -10,7 +10,7 @@ MADX, MAD8 or Transport, to that of BDSIM - gmad.
 The automatic conversion is typically achieved by preparing a 'rendered'
 or 'flat' output description of each element in the accelerator from
 whatever optics program you use to design the accelerator, and then
-converting this using our Python utility pybdsim - see :ref:`python-packages`.
+converting this using our Python utility pybdsim - see :ref:`python-utilities`.
 
 Additionally, the python tools can be used to programatically create
 an accelerator lattice of your own design, which is described in
@@ -67,7 +67,7 @@ MAD8 Conversion
 ---------------
 
 This can be prepared in a similar fashion to a MADX model. The user must have our
-pymad8 and pybdsim packages (see :ref:`python-packages`).
+pymad8 and pybdsim packages (see :ref:`python-utilities`).
 
 This is described in more detail in the dedicated pybdsim documentation
 `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/convert.html>`_.

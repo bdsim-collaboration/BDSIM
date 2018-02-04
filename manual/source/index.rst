@@ -17,7 +17,7 @@ Contents:
    model_preparation
    output
    output_analysis
-   python_modules
+   python_utilities
    visualisation
    examples/examples
    support
