@@ -134,8 +134,8 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   if (std::isnan(rootK))
     {rootK = 0;}
   G4double rootKh = rootK*h*zp;
-  G4double X11,X12,X21,X22 = 0;
-  G4double Y11,Y12,Y21,Y22 = 0;
+  G4double X11=0,X12=0,X21=0,X22=0;
+  G4double Y11=0,Y12=0,Y21=0,Y22=0;
   
   if (kappa > 0)
     {//focussing
