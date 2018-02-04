@@ -136,13 +136,17 @@ void HistogramMap::MapDirectory(TDirectory* dir,
   // to safely return to where we were and not affect other code
   // cache the current directory
   TDirectory* originalDir = TDirectory::CurrentDirectory();
-
   if (debug)
     {
+      gDirectory->pwd();
       std::cout << "Original directory: " << originalDir->GetName() << std::endl;
       std::cout << "Directory: " << dir->GetName() << std::endl;
     }
   dir->cd(); // change into dir
+
+  if (debug)
+    {gDirectory->pwd();}
+
   TList* dirk = dir->GetListOfKeys();
   for(int i = 0; i < dirk->GetEntries(); ++i)
     {
