@@ -432,8 +432,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
-  
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
+
+  // geometric face rotations
+  std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
+  G4double e1 = polefaceAngles.first;
+  G4double e2 = polefaceAngles.second;
+
+  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet, e1, e2);
   
   return sBendLine;
 }
@@ -464,12 +469,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
+  // geometric face rotations
+  std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
+  G4double e1 = polefaceAngles.first;
+  G4double e2 = polefaceAngles.second;
+
   BDSLine* rbendline = BDS::BuildRBendLine(element,
 					   prevElement,
 					   nextElement,
 					   brho,
 					   st,
-					   integratorSet);
+					   integratorSet,
+                       e1,
+                       e2);
   return rbendline;
 }
 void BDSComponentFactory::GetKickValue(G4double& hkick,
@@ -1636,7 +1648,9 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
   // we need angle though to decide which way it goes
   
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  G4double e2 = el->e2*CLHEP::rad;
+  //G4double e2 = el->e2*CLHEP::rad;
+  std::pair<G4double, G4double> polefaceAngles = GetGeometricPolefaceAngles(element);
+  G4double e2 = polefaceAngles.second;
   if (BDS::IsFinite(e2))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
@@ -1666,7 +1680,9 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
   // we need angle though to decide which way it goes
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  G4double e1 = el->e1*CLHEP::rad;
+  //G4double e1 = el->e1*CLHEP::rad;
+  std::pair<G4double, G4double> polefaceAngles = GetGeometricPolefaceAngles(element);
+  G4double e1 = polefaceAngles.first;
   if (BDS::IsFinite(e1))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
@@ -1674,4 +1690,38 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
     }
   
   return incomingFaceAngle;
+}
+
+std::pair<G4double, G4double> BDSComponentFactory::GetGeometricPolefaceAngles(const Element* el) const
+{
+  // convention - +ve e1 / e2 reduces outside of bend
+  // extra factor of -1 for 'strength' to cartesian
+  const G4double angle = BendAngle(el);
+  G4double factor = angle < 0 ? -1 : 1;
+
+  // initialise as their geometric angles by default
+  G4double e1 = factor * el->e1 * CLHEP::rad;
+  G4double e2 = factor * el->e2 * CLHEP::rad;
+
+  BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
+  G4String intSetTypestr = intSetType.ToString();
+
+  // if integratorset is bdsimmatrix, ie mad-x matrix style dipole tracking, then don't
+  // geometrically construct the poleface angles.
+  // Also, if the dipole has a finite k1 then all integrators revert to mad-x matrix style dipole
+  // tracking anyway, in which case also don't geometrically construct the dipoles.
+  if (!std::strcmp(intSetTypestr, "bdsimmatrix"))
+    {
+      e1 = 0;
+      e2 = 0;
+    }
+  else if (BDS::IsFinite(el->k1))
+    {
+      e1 = 0;
+      e2 = 0;
+    }
+
+  std::pair<G4double, G4double> polefaceAngles = std::make_pair(e1, e2);
+
+  return polefaceAngles;
 }
