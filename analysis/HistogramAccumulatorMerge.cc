@@ -50,8 +50,8 @@ void HistogramAccumulatorMerge::Accumulate(TH1* newValue)
   unsigned long oldEntries = (unsigned long)mean->GetEntries();       // works for base class*
   unsigned long newEntries = (unsigned long)newValue->GetEntries(); // works for base class*
   unsigned long newTotalEntries = oldEntries + newEntries;
-  const double oD     = (double)oldEntries;
-  const double factor = oD * (oD - 1);
+  const double nD     = (double)newEntries;
+  const double factor = nD * (nD - 1);
   
   switch (nDimensions)
     {
