@@ -389,6 +389,34 @@ each entry.
 REBDSIM 'turns off' the loading of all data and only loads what is necessary for the
 given analysis.
 
+Scaling Up - Parallelising Analysis
+-----------------------------------
+
+For high statistics studies, it's common to run multiple instances of BDSIM with different
+seeds (different seeds ensures different results) on a high throughput computer cluster.
+In this situation, each instance of BDSIM provides an output file. Rebdsim can analyse
+all of these files together by specifying `"*.root"` in the input analysis configuration
+(i.e. analysisConfig.txt) but for large numbers of events, this can take some time.
+
+In this case, it is better to analyse each output file with rebdsim separately and then
+combine the results. In the case of per-event histograms, rebdsim provides the mean
+per event along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`
+is provided that can combine these rebdsim output files correctly to provide the
+overall mean and error on the mean as if all events had been analysed in one execution
+of rebdsim.
+
+The combination of the histograms from the rebdsim output files is very quick in comparison
+to the analysis. `rebdsimCombine` is used as follows: ::
+
+  rebdsimCombine <result.root> <file1.root> <file2.root> ....
+
+where `<result.root>` is the desired name of the merge output file and `<file.root>` etc.
+are input files to be merged. This workflow is shown schematically in the figure below.
+
+.. figure:: figures/multiple_analyses.pdf
+	    :width: 100%
+	    :align: center
+
 
 Converting ROOT trees as numpy arrays
 -------------------------------------
@@ -468,10 +496,36 @@ online mean calculation:
 
    \mathrm{for}~ i~ [1\, ... \,n_{event}]
 
-
 After processing all entries, the variance is used to calculate the standard error on the mean
 with:
 
 .. math::
 
    \sigma_{\bar{x}} = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{\sqrt{n-1}} Var\,(x)}
+
+
+Merging Histograms
+==================
+
+`rebdsimCombine` merges histograms that already have the mean and the error on the
+mean in each bin. These are combined with a separate algorithm that is also numerically
+stable.
+
+The mean is calculated as:
+
+.. math::
+
+   \bar{x}_{i = 0} &= 0\\
+   \delta &= \bar{x}_{i+1} - \bar{x}_{i}\\
+   \bar{x}_{i+1} &= \bar{x}_{i} + n_{i+1}\frac{\delta}{n_{i} + n_{i+1}}
+
+
+.. math::
+
+   Var\,(x)_{i = 0} &= 0 \\
+   Var\,(x)_{i+1} &= Var\,(x)_{i} + Var\,(x)_{i+1} + (n_{i}\,n_{i+1} \frac{\delta^{2}}{n_{i} + n_{i+1}})
+
+
+.. math::
+
+   \mathrm{for}~ i~ [1\, ... \,n_{rebdsim\, files}]
