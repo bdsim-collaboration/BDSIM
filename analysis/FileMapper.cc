@@ -162,11 +162,18 @@ void HistogramMap::MapDirectory(TDirectory* dir,
 	  TH1* h = static_cast<TH1*>(dirObject);
 	  int nDim = RBDS::DetermineDimensionality(h);
 
+	  if (debug)
+	    {gDirectory->pwd();}
+	  
 	  std::string histPath = dirPath;
+	  histPath.erase(0,1); // erase leading '/'
 	  std::string histName  = std::string(h->GetName());
 	  std::string histTitle = std::string(h->GetTitle());
-	  TDirectory* outDir = output->mkdir(histPath.c_str());
-
+	  TDirectory* outDir = output->GetDirectory(histPath.c_str());
+	  if (!outDir)
+	    {outDir = output->mkdir(histPath.c_str());}
+	  outDir->cd();
+	  
 	  HistogramAccumulator* acc = nullptr;
 	  RBDS::MergeType mergeType = RBDS::DetermineMergeType(dir->GetName());
 	  switch (mergeType)
