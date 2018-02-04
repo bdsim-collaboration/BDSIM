@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 	  std::cout << "Accumulating> " << file << std::endl;
 	  for (const auto& hist : histograms)
 	    {
-	      std::string histPath = hist.path + "/" + hist.name;
+	      std::string histPath = hist.path + hist.name; // histPath has trailing '/'
 	      TH1* h = static_cast<TH1*>(f->Get(histPath.c_str()));
 	      if (!h)
 		{RBDS::WarningMissingHistogram(histPath, file); continue;}
