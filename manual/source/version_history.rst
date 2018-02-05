@@ -12,6 +12,7 @@ New Features
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
 * Significantly improved analysis documentation.
+* New component: gap.
 
 
 Output \& Analysis Changes
