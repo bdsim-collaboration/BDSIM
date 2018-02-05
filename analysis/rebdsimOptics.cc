@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   std::string outputFileName = std::string(argv[2]);
 
   DataLoader dl = DataLoader(inputFileName, false, true);
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(), true);
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(), false, true);
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
