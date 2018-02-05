@@ -54,6 +54,10 @@ public:
 
   virtual ~EventAnalysis();
 
+  /// Method which calls all other methods in order. Here we also test if we
+  /// have to process the samplers on whether to call Process().
+  virtual void Execute();
+
   /// Operate on each entry in the event tree.
   virtual void Process();
 
