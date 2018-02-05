@@ -96,7 +96,6 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  const int entries = chain->GetEntries();
   for(int i = 0; i < entries; ++i)
     {
       chain->GetEntry(i);
