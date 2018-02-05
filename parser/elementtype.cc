@@ -87,6 +87,8 @@ std::string GMAD::typestr(ElementType type) {
     return "awakespectrometer";
   case ElementType::_DEGRADER :
     return "degrader";
+  case ElementType::_GAP :
+    return "gap";
   default:
     return "none";
   }

@@ -192,6 +192,7 @@ private:
   BDSAcceleratorComponent* CreateMuSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
+  BDSAcceleratorComponent* CreateGap();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
