@@ -2,11 +2,11 @@
 
 # run an analysis - 'rebdsim' gets expanded by cmake to full path of executable target
 macro(_rebdsimAnalTest testName configFile)
-  add_test(NAME ${testName} COMMAND rebdsim ${configFile})
+  add_test(NAME ${testName} COMMAND rebdsimexec ${configFile})
 endmacro()
 
 macro(rebdsim_test_manual testName configFile inputFile outputFile)
-  add_test(NAME ${testName} COMMAND rebdsim ${configFile} ${inputFile} ${outputFile})
+  add_test(NAME ${testName} COMMAND rebdsimexec ${configFile} ${inputFile} ${outputFile})
 endmacro()
 
 # run analysis then a comparison
