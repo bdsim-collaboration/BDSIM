@@ -73,6 +73,24 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   SetPrintModuloFraction(printModuloFraction);
 }
 
+void EventAnalysis::Execute()
+{
+  std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
+  if (perEntry || processSamplers)
+  {
+    // ensure new histograms are added to file
+    // crucial for draw command to work as it identifies the histograms by name
+    TH1::AddDirectory(kTRUE);
+    TH2::AddDirectory(kTRUE);
+    TH3::AddDirectory(kTRUE);
+    PreparePerEntryHistograms();
+    Process();
+  }
+  SimpleHistograms();
+  Terminate();
+  std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
+}
+
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
   printModulo = (int)ceil(entries * fraction);
