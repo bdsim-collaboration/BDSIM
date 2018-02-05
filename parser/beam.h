@@ -62,14 +62,14 @@ namespace GMAD
     // member method can throw runtime_error, catch and exit gracefully
     try
       {
-	set(this, name, value);
-	setKeys.push_back(name);
+        set(this, name, value);
+        setKeys.push_back(name);
       }
     catch (std::runtime_error)
-    {
-      std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
-      exit(1);
-    }
+      {
+        std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
+        exit(1);
+      }
   }
 }
 

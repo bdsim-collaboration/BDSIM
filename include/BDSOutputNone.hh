@@ -39,6 +39,7 @@ public:
   virtual void NewFile(){;}
   virtual void CloseFile(){;}
 private:
+  virtual void WriteHeader(){;}
   virtual void WriteBeam(){;}
   virtual void WriteOptions(){;}
   virtual void WriteModel(){;}

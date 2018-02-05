@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "Beam.hh"
 #include "Event.hh"
+#include "FileMapper.hh"
+#include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
 #include "RebdsimTypes.hh"
@@ -38,23 +40,26 @@ DataLoader::DataLoader(std::string fileName,
 		       bool        debugIn,
 		       bool        processSamplersIn,
 		       bool        allBranchesOnIn,
-		       const RBDS::BranchMap* branchesToTurnOnIn):
+		       const RBDS::BranchMap* branchesToTurnOnIn,
+		       bool        backwardsCompatible):
   debug(debugIn),
   processSamplers(processSamplersIn),
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn)
 {
-  CommonCtor(fileName);
+  CommonCtor(fileName, backwardsCompatible);
 }
 
 DataLoader::~DataLoader()
 {
+  delete hea;
   delete bea;
   delete opt;
   delete mod;
   delete evt;
   delete run;
 
+  delete heaChain;
   delete beaChain;
   delete optChain;
   delete modChain;
@@ -62,44 +67,50 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName)
+void DataLoader::CommonCtor(std::string fileName,
+			    bool backwardsCompatible)
 {
+  BuildInputFileList(fileName, backwardsCompatible);
+
+  hea = new Header(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug);
   evt = new Event(debug, processSamplers);
   run = new Run(debug);
 
-  beaChain = new TChain("Beam","Beam");
-  optChain = new TChain("Options","Options");
-  modChain = new TChain("Model","Model");
-  evtChain = new TChain("Event","Event");
-  runChain = new TChain("Run","Run");
+  heaChain = new TChain("Header",  "Header");
+  beaChain = new TChain("Beam",    "Beam");
+  optChain = new TChain("Options", "Options");
+  modChain = new TChain("Model",   "Model");
+  evtChain = new TChain("Event",   "Event");
+  runChain = new TChain("Run",     "Run");
 
-  this->BuildInputFileList(fileName);
-  this->BuildTreeNameList();
-  this->BuildEventBranchNameList();
-  this->ChainTrees();
-  this->SetBranchAddress(allBranchesOn, branchesToTurnOn);
+  BuildTreeNameList();
+  BuildEventBranchNameList();
+  ChainTrees();
+  SetBranchAddress(allBranchesOn, branchesToTurnOn);
 }
 
-void DataLoader::BuildInputFileList(std::string inputPath)
+void DataLoader::BuildInputFileList(std::string inputPath,
+				    bool backwardsCompatible)
 {
   if(inputPath == "")
     {throw std::string("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
+  std::vector<std::string> fileNamesTemp;
   if(inputPath.find("*") != std::string::npos)
     {
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for(unsigned int i=0;i<glob_result.gl_pathc;++i)
-	{fileNames.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
   // single file
   else if(inputPath.find(".root") != std::string::npos)
-    {fileNames.push_back(inputPath);}
+    {fileNamesTemp.push_back(inputPath);}
   // directory
   else if(inputPath[inputPath.length()-1] == std::string("/"))
     {
@@ -109,14 +120,25 @@ void DataLoader::BuildInputFileList(std::string inputPath)
       glob_t glob_result;
       glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
       for(unsigned int i=0;i<glob_result.gl_pathc;++i)
-	{fileNames.push_back(glob_result.gl_pathv[i]);}
+	{fileNamesTemp.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
+
+  // loop over files and check they're the right type
+  for(const auto& fn : fileNamesTemp)
+    {
+      if (backwardsCompatible)
+	{fileNames.push_back(fn);} // don't check if header -> old files don't have this
+      else if (RBDS::IsBDSIMOutputFile(fn))
+	{
+	  std::cout << "Loading> " << fn << std::endl;
+	  fileNames.push_back(fn);
+	}
+      else
+	{std::cout << fn << " is not a BDSIM output file - skipping!" << std::endl;}
+    }
   
-  for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
-    {std::cout << "Loading> " << *fn << std::endl;}
-  
-  if (fileNames.size() == 0)
+  if (fileNames.size() == 0) // exit if no valid files.
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
       exit(1);
@@ -126,36 +148,35 @@ void DataLoader::BuildInputFileList(std::string inputPath)
 void DataLoader::BuildTreeNameList()
 {
   // open file - this is the first opening so test here if it's valid
-  TFile *f = new TFile(fileNames[0].c_str());
+  TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-  {
-    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-    exit(1);
-  }
-
-  TList *kl = f->GetListOfKeys();
-
-  for(int i=0;i<kl->GetEntries();++i)
-    {this->treeNames.push_back(std::string(kl->At(i)->GetName()));}
+    {
+      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+      exit(1);
+    }
+  
+  TList* kl = f->GetListOfKeys();
+  for (int i = 0; i < kl->GetEntries(); ++i)
+    {treeNames.push_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
   delete f;
 
   if(debug)
-  {
-    for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
-      std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
-  }
+    {
+      for (const auto& tr : treeNames)
+	{std::cout << "DataLoader::BuildTreeNameList> " <<  tr << std::endl;}
+    }
 }
 
 void DataLoader::BuildEventBranchNameList()
 {
   TFile* f = new TFile(fileNames[0].c_str());
   if (f->IsZombie())
-  {
-    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
-    exit(1);
-  }
+    {
+      std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+      exit(1);
+    }
 
   // We don't need to prepare a vector of samplers that will be set branch on
   // if we're not going to process the samplers.
@@ -190,6 +211,7 @@ void DataLoader::ChainTrees()
   // loop over files and chain trees
   for (auto filename : fileNames)
     {
+      heaChain->Add(filename.c_str());
       beaChain->Add(filename.c_str());
       optChain->Add(filename.c_str());
       modChain->Add(filename.c_str());
@@ -201,6 +223,7 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
+  hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
   opt->SetBranchAddress(optChain, true); // true = always turn on all branches

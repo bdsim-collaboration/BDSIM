@@ -16,14 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDebug.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
-#include "HistogramMerge.hh"
+#include "HistogramMeanFromFile.hh"
 #include "SamplerAnalysis.hh"
+#include "rebdsim.hh"
 
 #include "TROOT.h"
 #include "TChain.h"
@@ -75,8 +75,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
 
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  int nEntries = (int)chain->GetEntries();
-  printModulo = (int)ceil(nEntries * fraction);
+  printModulo = (int)ceil(entries * fraction);
   if (printModulo <= 0)
     {printModulo = 1;}
 }
@@ -98,7 +97,7 @@ void EventAnalysis::Process()
 
   // loop over events
   const int entries = chain->GetEntries();
-  for(int i=0; i<entries; ++i)
+  for(int i = 0; i < entries; ++i)
     {
       chain->GetEntry(i);
       // event analysis feedback
@@ -113,12 +112,12 @@ void EventAnalysis::Process()
 
       // merge histograms stored per event in the output
       if(i==0)
-	{histoSum = new HistogramMerge(event->Histos, debug);}
+	{histoSum = new HistogramMeanFromFile(event->Histos);}
       else
-	{histoSum->Add(event->Histos);}
+	{histoSum->Accumulate(event->Histos);}
 
       // per event histograms
-      AccumulatePerEntryHistograms();
+      AccumulatePerEntryHistograms(i);
 
       UserProcess();
 

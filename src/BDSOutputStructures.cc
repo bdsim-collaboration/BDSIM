@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -48,6 +49,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeLocal  = globals->StoreELossLocal();
   G4bool storeGlobal = globals->StoreELossGlobal();
 
+  headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
@@ -73,6 +75,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
+  delete headerOutput;
   delete beamOutput;
   delete optionsOutput;
   delete modelOutput;
@@ -118,6 +121,11 @@ void BDSOutputStructures::InitialiseSamplers()
 	  samplerNames.push_back(samplerName);
         }
     }
+}
+
+void BDSOutputStructures::ClearStructuresHeader()
+{
+  headerOutput->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresModel()

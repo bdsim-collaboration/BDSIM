@@ -23,13 +23,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TH2D.h"
 #include "TH3D.h"
 
-#include "HistogramMerge.hh"
-
 #include <map>
 #include <string>
 #include <vector>
 
 class HistogramDef;
+class HistogramMeanFromFile;
 class PerEntryHistogram;
 class TChain;
 class TFile;
@@ -43,7 +42,7 @@ class TFile;
 class Analysis
 {
 public:
-  /// Requires the name of the tree to analysed, the chain of files to operate on,
+  /// Requires the name of the tree to analyse, the chain of files to operate on,
   /// the name of the directory to create in the output root file for the combined
   /// existing histrograms from that tree, whether to operate on each entry in the
   /// tree and whether or not we're in debug mode.
@@ -72,7 +71,7 @@ public:
   void PreparePerEntryHistograms();
 
   /// Accumulate means and variances for per entry histograms.
-  void AccumulatePerEntryHistograms();
+  void AccumulatePerEntryHistograms(const int& entryNumber);
 
   /// Prepare result of per entry histogram accumulation.
   void TerminatePerEntryHistograms();
@@ -93,18 +92,12 @@ protected:
   std::map<std::string, TH2*> histograms2D;   ///< Rebdsim 2d histograms.
   std::map<std::string, TH3*> histograms3D;   ///< Rebdsim 3d histograms.
   std::vector<PerEntryHistogram*> perEntryHistograms;
-  HistogramMerge*             histoSum;       ///< Bdsim histograms.
+  HistogramMeanFromFile*      histoSum;       ///< Merge of per event stored histograms.
   bool                        debug;          ///< Whether debug print out is used or not.
   long int                    entries;        ///< Number of entries in the chain.
 
   /// Whether to analyse each entry in the tree in a for loop or not.
   bool                        perEntry;
-
-  /// Whether to go ahead and create per entry histograms. These only work with greater
-  /// than 1 entries (ie at least 2) in the chain / tree, so use this flag to disable
-  /// them if insufficient entries. This means we can tolerate user input faults and
-  /// do the other analysis.
-  bool                        runPerEntryHistograms;
   
 private:
   /// No default constructor for this base class.

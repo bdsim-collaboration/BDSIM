@@ -24,7 +24,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TChain.h"
 #include "TFile.h"
+#include "TTree.h"
 
+#include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 
@@ -41,23 +43,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 int main(int argc, char *argv[])
 {
   // check input
-  if(argc < 2 || argc > 4)
-  {
-    std::cout << "usage: rebdsim <analysisConfig> (<dataFile>) (<outputFile>)" << std::endl;
-    std::cout << " <datafile> (optional) - root file to operate on" << std::endl;
-    std::cout << " <outputfile> (optional) - output file name for analysis" << std::endl;
-    std::cout << " if no <datafile> and <outputfile> are specified, those from <analysisConfig> are used." << std::endl;
-    exit(1);
-  }
+  if (argc < 2 || argc > 4)
+    {
+      std::cout << "usage: rebdsim <analysisConfig> (<dataFile>) (<outputFile>)" << std::endl;
+      std::cout << " <datafile> (optional) - root file to operate on" << std::endl;
+      std::cout << " <outputfile> (optional) - output file name for analysis" << std::endl;
+      std::cout << " if no <datafile> and <outputfile> are specified, those from <analysisConfig> are used." << std::endl;
+      exit(1);
+    }
 
   std::string configFilePath = std::string(argv[1]); //create a string from arguments so able to use find_last_of and substr  methods
   std::string configFileExtension =  configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
-  if(configFileExtension != "txt")
-  {
-    std::cout << "Unrecognised filetype: '." << configFileExtension << "'" <<  std::endl;
-    std::cout << "Make sure the config file is plain text with the .txt extension!" << std::endl;
-    exit(1);
-  }
+  if (configFileExtension != "txt")
+    {
+      std::cout << "Unrecognised filetype: '." << configFileExtension << "'" <<  std::endl;
+      std::cout << "Make sure the config file is plain text with the .txt extension!" << std::endl;
+      exit(1);
+    }
 
   std::cout << "rebdsim> configuration file name : " << configFilePath << std::endl;
 
@@ -88,7 +90,8 @@ int main(int argc, char *argv[])
 			     debug,
 			     config->ProcessSamplers(),
 			     allBranches,
-			     branchesToActivate);
+			     branchesToActivate,
+			     config->GetOptionBool("backwardsCompatible"));
 
   BeamAnalysis*    beaAnalysis = new BeamAnalysis(dl.GetBeam(),
 						  dl.GetBeamTree(),
@@ -127,6 +130,17 @@ int main(int argc, char *argv[])
   try
     {
       TFile* outputFile = new TFile(config->OutputFileName().c_str(),"RECREATE");
+
+      // add header for file type and version details
+      outputFile->cd();
+      BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+      headerOut->Fill(); // updates time stamp
+      headerOut->SetFileType("REBDSIM");
+      TTree* headerTree = new TTree("Header", "REBDSIM Header");
+      headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+      headerTree->Fill();
+      outputFile->Write(0,TObject::kOverwrite);
+      
       for (auto& analysis : analyses)
 	{analysis->Write(outputFile);}
 

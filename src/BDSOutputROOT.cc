@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -55,6 +56,9 @@ void BDSOutputROOT::NewFile()
   theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
+
+  // header
+  theHeaderOutputTree    = new TTree("Header", "BDSIM Header");
   // beam data tree
   theBeamOutputTree      = new TTree("Beam", "BDSIM beam");
   // options data tree
@@ -66,6 +70,9 @@ void BDSOutputROOT::NewFile()
   // event data tree
   theEventOutputTree     = new TTree("Event","BDSIM event");
 
+  // Build header and write structure
+  theHeaderOutputTree->Branch("Header.",        "BDSOutputROOTEventHeader", headerOutput);
+  
   // Build beam and write structure
   theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",beamOutput,32000,2);
   
@@ -108,6 +115,14 @@ void BDSOutputROOT::NewFile()
                                  "BDSOutputROOTEventSampler",
                                  samplerTreeLocal,32000,0);
     }
+
+  WriteHeader();
+}
+
+void BDSOutputROOT::WriteHeader()
+{
+  headerOutput->Fill(); // updates time stamp
+  theHeaderOutputTree->Fill();
 }
 
 void BDSOutputROOT::WriteBeam()

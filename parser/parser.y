@@ -31,6 +31,7 @@
 
     /// bool to delay exit until full line is parsed to give possibly more meaningful message
     bool willExit = false;
+    /// bool used for parsing if / else clauses correctly
     bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
@@ -109,12 +110,12 @@ input :
 stmt :        if_clause '{' stmt '}'
               {
                 if(ECHO_GRAMMAR) std::cout << "stmt -> IF '(' aexpr ')' stmt" << std::endl;
-                execute = true;
+                execute = true; // reset execute after clause
               }
               | if_clause '{' stmt '}' else_clause '{' stmt '}' 
               {
                 if(ECHO_GRAMMAR) std::cout << "stmt -> IF '(' bool_expr ')' ELSE stmt" << std::endl;
-                execute = true;
+                execute = true; // reset execute after clause
               }
               | atomic_stmt    { if(ECHO_GRAMMAR) std::cout << "stmt -> atomic_stmt" << std::endl; }
               | BEGN input END { if(ECHO_GRAMMAR) std::cout << "stmt -> '{' stmt ';' atomic_stmt '}'" << std::endl;}
@@ -127,7 +128,7 @@ else_clause: ELSE
                else {execute = true;}
              }
 
-// atomic statements can be an mathematical expression, a declaration or a command
+// atomic statements can be empty, a mathematical expression, a declaration or a command
 atomic_stmt : 
             | expr    { if(ECHO_GRAMMAR) std::cout << "atomic_stmt -> expr" << std::endl; }
             | command { if(ECHO_GRAMMAR) std::cout << "atomic_stmt -> command" << std::endl; }
@@ -303,15 +304,15 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
 
-atom : ATOM ',' atom_options
-material : MATERIAL ',' material_options
-region : REGION ',' region_options
-placement : PLACEMENT ',' placement_options
-field : FIELD ',' field_options
+atom        : ATOM        ',' atom_options
+material    : MATERIAL    ',' material_options
+region      : REGION      ',' region_options
+placement   : PLACEMENT   ',' placement_options
+field       : FIELD       ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
-query : QUERY ',' query_options
-tunnel : TUNNEL ',' tunnel_options
-xsecbias : XSECBIAS ',' xsecbias_options
+query       : QUERY       ',' query_options
+tunnel      : TUNNEL      ',' tunnel_options
+xsecbias    : XSECBIAS    ',' xsecbias_options
 
 // every object needs parameters
 object_noparams : MATERIAL
@@ -654,7 +655,7 @@ letters : string ',' letters { if(execute) Parser::Instance()->Store(*$1);}
 print   : PRINT
         | PRINT ','
 
-command : STOP             { if(execute) Parser::Instance()->quit(); }
+command : STOP         { if(execute) Parser::Instance()->quit(); }
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
@@ -854,184 +855,103 @@ cavitymodel_options_extend : /* nothing */
                            | ',' cavitymodel_options
 
 cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<CavityModel>((*$1),$3);
-                    }
-                 | paramassign '=' string cavitymodel_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<CavityModel>(*$1,*$3);
-                    }
+                      { if(execute) Parser::Instance()->SetValue<CavityModel>((*$1),$3);}
+                    | paramassign '=' string cavitymodel_options_extend
+                      { if(execute) Parser::Instance()->SetValue<CavityModel>( *$1,*$3);}
 
 material_options_extend : /* nothing */
                         | ',' material_options
 
 material_options : paramassign '=' aexpr material_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Material>((*$1),$3);
-                    }
+                    { if(execute) Parser::Instance()->SetValue<Material>((*$1),$3);}
                  | paramassign '=' string material_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Material>(*$1,*$3);
-                    }
+                    { if(execute) Parser::Instance()->SetValue<Material>(*$1,*$3);}
                  | paramassign '=' vecexpr material_options_extend
-                    {
-                      if(execute) 
-                        Parser::Instance()->SetValue<Material>(*($1),$3);
-                    }
+                    { if(execute) Parser::Instance()->SetValue<Material>(*($1),$3);}
 
 atom_options_extend : /* nothing */
-                      | ',' atom_options
+                    | ',' atom_options
 
 atom_options : paramassign '=' aexpr atom_options_extend
-             {
-               if(execute)
-                 Parser::Instance()->SetValue<Atom>((*$1),$3);
-             }
+               { if(execute) Parser::Instance()->SetValue<Atom>((*$1),$3);}
              | paramassign '=' string atom_options_extend
-             {
-               if(execute)
-                 Parser::Instance()->SetValue<Atom>(*$1,*$3);
-             }
+               { if(execute) Parser::Instance()->SetValue<Atom>(*$1,*$3);}
 
 region_options_extend : /* nothing */
                       | ',' region_options
 
 region_options : paramassign '=' aexpr region_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Region>((*$1),$3);
-                    }
-                 | paramassign '=' string region_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Region>(*$1,*$3);
-                    }
+                 { if(execute) Parser::Instance()->SetValue<Region>((*$1),$3);}
+               | paramassign '=' string region_options_extend
+                 { if(execute) Parser::Instance()->SetValue<Region>(*$1,*$3);}
 
 placement_options_extend : /* nothing */
-                      | ',' placement_options
+                         | ',' placement_options
 
 placement_options : paramassign '=' aexpr placement_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Placement>((*$1),$3);
-                    }
-                 | paramassign '=' string placement_options_extend
-                    {
-                      if(execute)
-                        Parser::Instance()->SetValue<Placement>(*$1,*$3);
-                    }
+                    { if(execute) Parser::Instance()->SetValue<Placement>((*$1),$3);}
+                  | paramassign '=' string placement_options_extend
+                    { if(execute) Parser::Instance()->SetValue<Placement>(*$1,*$3);}
 
 query_options_extend : /* nothing */
                      | ',' query_options
 
 query_options : paramassign '=' aexpr query_options_extend
-              {
-                if(execute)
-                  Parser::Instance()->SetValue<Query>((*$1),$3);
-              }
+                { if(execute) Parser::Instance()->SetValue<Query>((*$1),$3);}
               | paramassign '=' string query_options_extend
-              {
-                if(execute)
-                  Parser::Instance()->SetValue<Query>((*$1),*$3);
-              }
+                { if(execute) Parser::Instance()->SetValue<Query>((*$1),*$3);}
 
 field_options_extend : /* nothing */
                      | ',' field_options
 
 field_options : paramassign '=' aexpr field_options_extend
-              {
-                if(execute)
-                  Parser::Instance()->SetValue<Field>((*$1),$3);
-              }
+                { if(execute) Parser::Instance()->SetValue<Field>((*$1),$3);}
               | paramassign '=' string field_options_extend
-              {
-                if(execute)
-                  Parser::Instance()->SetValue<Field>((*$1),*$3);
-              }
+                { if(execute) Parser::Instance()->SetValue<Field>((*$1),*$3);}
 
 tunnel_options_extend : /* nothing */
                       | ',' tunnel_options
 
 tunnel_options : paramassign '=' aexpr tunnel_options_extend
-               {
-                 if(execute)
-                   Parser::Instance()->SetValue<Tunnel>((*$1),$3);
-               }
+                 { if(execute) Parser::Instance()->SetValue<Tunnel>((*$1),$3);}
                | paramassign '=' string tunnel_options_extend
-               {
-                 if(execute)
-                   Parser::Instance()->SetValue<Tunnel>(*$1,*$3);
-               }
+                 { if(execute) Parser::Instance()->SetValue<Tunnel>(*$1,*$3);}
 
 xsecbias_options_extend : /* nothing */
                         | ',' xsecbias_options
 
 xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
-                 {
-                   if(execute)
-                     Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
-                 }
+                   { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);}
                  | paramassign '=' string xsecbias_options_extend
-                 {
-                   if(execute)
-                     Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);
-                 }
+                   { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);}
                  | paramassign '=' vecexpr xsecbias_options_extend
-                 {
-                   if(execute)
-                     Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
-                 }
+                   { if(execute) Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);}
 
 option_parameters_extend : /* nothing */
                          | ',' option_parameters
 
 option_parameters : paramassign '=' aexpr option_parameters_extend
-                  {
-                    if(execute)
-                      Parser::Instance()->SetValue<Options>(*$1,$3);
-                  }
+                    { if(execute) Parser::Instance()->SetValue<Options>(*$1,$3);}
                   | paramassign '=' string option_parameters_extend
-                  {
-                    if(execute)
-                      Parser::Instance()->SetValue<Options>(*$1,*$3);
-                  }
+                    { if(execute) Parser::Instance()->SetValue<Options>(*$1,*$3);}
 
 beam_parameters_extend :  /* nothing */
                        | ',' beam_parameters
 
 beam_parameters : paramassign '=' aexpr beam_parameters_extend
-                {
-                  if(execute)
-                    Parser::Instance()->SetValue<Beam>(*$1,$3);
-                }
+                  { if(execute) Parser::Instance()->SetValue<Beam>(*$1,$3);}
                 | paramassign '=' string beam_parameters_extend
-                {
-                  if(execute)
-                    Parser::Instance()->SetValue<Beam>(*$1,*$3);
-                }
+                  { if(execute) Parser::Instance()->SetValue<Beam>(*$1,*$3);}
 
 extend_options_extend : /* nothing */
                       | ',' extend_options
 
 extend_options : paramassign '=' aexpr extend_options_extend
-               {
-                   if (execute)
-                       Parser::Instance()->ExtendValue(*($1),$3);
-               }
+                 { if(execute) Parser::Instance()->ExtendValue(*($1),$3);}
                | paramassign '=' vecexpr parameters_extend
-               {
-                   if(execute) 
-                       Parser::Instance()->ExtendValue(*($1),$3);
-               }
+                 { if(execute) Parser::Instance()->ExtendValue(*($1),$3);}
                | paramassign '=' string beam_parameters_extend
-               {
-                   if (execute)
-                       Parser::Instance()->ExtendValue(*($1),*$3);
-               }
+                 { if (execute) Parser::Instance()->ExtendValue(*($1),*$3);}
 
 %%
 

@@ -65,11 +65,11 @@ namespace GMAD
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
-	set(this,property,value);
+        set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: tunnel> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
+        std::cerr << "Error: tunnel> unknown option \"" << property << "\" with value " << value  << std::endl;
+        exit(1);
       }
     }
 }

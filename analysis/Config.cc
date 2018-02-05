@@ -79,6 +79,7 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["perEntryRun"]       = false;
   optionsBool["perEntryOption"]    = false;
   optionsBool["perEntryModel"]     = false;
+  optionsBool["backwardsCompatible"] = false; // ignore file types for old data
 
   optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";

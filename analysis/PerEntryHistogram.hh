@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <string>
 
+class HistogramAccumulator;
 class HistogramDef;
 
 class TChain;
@@ -31,11 +32,11 @@ class TH1;
  * @brief Holder for information to calculate per entry histograms.
  *
  * This creates a histogram per event and accumualtes the mean and variance
- * for every bin in a cloned histogram. This produces the mean and variance
- * per event. Minimum number of events required is 2. 
+ * for every bin in a cloned histogram. In the case of 1 event, the bin error
+ * is 0. 
  * 
- * The algorithm used to calculate the mean and variance is one that supports
- * online calculation and is numerically stable.
+ * This uses a HistogramAccumulator object rather than inheritance as this
+ * class has to prepare the base histogram in the constructor first.
  * 
  * @author Laurie Nevay
  */
@@ -43,47 +44,32 @@ class PerEntryHistogram
 {
 public:
   /// Constructor with a histogram definition and the chain to operate on.
-  explicit PerEntryHistogram(const HistogramDef* definition,
-			     TChain*             chain);
-  ~PerEntryHistogram(){;}
+  PerEntryHistogram(const HistogramDef* definition,
+		    TChain*             chain);
+  virtual ~PerEntryHistogram();
 
   /// Create a histogram of the approprate dimensions for the currently loaded
   /// event then add it to the online (ie running) means and variances.
-  void AccumulateCurrentEntry();
+  virtual void AccumulateCurrentEntry(const int& entryNumber);
 
-  /// Calculate the standard deviation from the online variance calculation
-  /// then create an output histogram in the member result and resultSTD.
+  /// Terminate the accumulator and save the result to the result member variable.
   void Terminate();
 
   /// Forwarding function - call Write on result histograms on the currently
   /// open file. Optional directory to specify where the histogram should be moved to.
   void Write(TDirectory* dir = nullptr);
 
+protected:
+  HistogramAccumulator* accumulator;
   TChain*       chain;        ///< Cache of chain pointer that provides data.
-  unsigned int  nDimensions;  ///< Number of dimensions.
-  unsigned long n;            ///< Current entry number.
-  std::string   histName;     ///< Base name of histogram.
   std::string   selection;    ///< Selection command.
-
   TH1*          temp;         ///< Histogram for temporary 1 event data.
-  TH1*          mean;         ///< Histogram for accumulated mean across events.
-  TH1*          variance;     ///< Histogram for accumualted variances across events.
   TH1*          result;       ///< Final result with errors as the error on the mean.
   std::string   command;      ///< Draw command.
-  bool          terminated;   ///< Record of whether the instance has been terminated (single use).
   
 private:
   /// No need for the default constructor.
   PerEntryHistogram() = delete;
-
-  /// Function to accumulate for a single bin. Old mean and variance passed by const reference
-  /// and new value x is added to these. Resultant values of mean and variance are written to the
-  /// newMean and newVari parameters.
-  void AccumulateSingleValue(const double&  oldMean,
-			     const double&  oldVari,
-			     const double&  x,
-			     double&        newMean,
-			     double&        newVari);
 };
 
 #endif

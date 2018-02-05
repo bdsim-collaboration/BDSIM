@@ -18,8 +18,6 @@ namespace GMAD
   public:
     OptionsBase();
 
-    std::string gitVersion; ///< The version of BDSIM as given by the git repository.
-
     std::string inputFileName;    ///< input filename
     std::string visMacroFileName; ///< visualisation filename
     bool        visDebug;         ///< flag for visualisation debug

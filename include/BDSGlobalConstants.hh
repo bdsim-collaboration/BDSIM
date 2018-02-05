@@ -37,14 +37,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-class G4FieldManager;
-class G4ParticleDefinition;
-class G4UniformMagField;
 class G4UserLimits;
 class G4VisAttributes;
 
 class BDSBeamPipeInfo;
-class BDSIonDefinition;
 class BDSTunnelInfo;
 
 /**
