@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -87,6 +87,8 @@ void Analysis::SimpleHistograms()
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   // loop over histogram specifications and fill
+  // TBC - in future we should avoid the singleton accessor as rebdsimOptics
+  // doesn't use it but uses the event analysis.
   auto c = Config::Instance();
   if (c)
     {
@@ -98,23 +100,35 @@ void Analysis::SimpleHistograms()
 
 void Analysis::PreparePerEntryHistograms()
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
-  for (const auto& def : definitions)
-    {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
+      for (const auto &def : definitions)
+        {perEntryHistograms.push_back(new PerEntryHistogram(def, chain));}
+    }
 }
 
 void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
-  for (auto& peHist : perEntryHistograms)
-    {peHist->AccumulateCurrentEntry(entryNumber);}
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
+      for (auto &peHist : perEntryHistograms)
+        {peHist->AccumulateCurrentEntry(entryNumber);}
+    }
 }
 
 void Analysis::TerminatePerEntryHistograms()
 {
-  auto definitions = Config::Instance()->HistogramDefinitionsPerEntry(treeName);
-  for (auto& peHist : perEntryHistograms)
-    {peHist->Terminate();}
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto definitions = c->HistogramDefinitionsPerEntry(treeName);
+      for (auto &peHist : perEntryHistograms)
+        {peHist->Terminate();}
+    }
 }
 
 void Analysis::Terminate()

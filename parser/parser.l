@@ -98,6 +98,7 @@ awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
+gap { return GAP;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

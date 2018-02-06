@@ -6,7 +6,7 @@ list(REMOVE_ITEM comparatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/comparator.cc)
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_library(comparator SHARED ${comparatorLibSources})
-target_link_libraries(comparator bdsimRootEvent rebdsimLib)
+target_link_libraries(comparator bdsimRootEvent rebdsim)
 
 add_executable(comparatorexec comparator.cc)
 set_target_properties(comparatorexec PROPERTIES OUTPUT_NAME "comparator" VERSION ${BDSIM_VERSION})

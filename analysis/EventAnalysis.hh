@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -53,6 +53,10 @@ public:
 		bool    emittanceOnTheFlyIn = false);
 
   virtual ~EventAnalysis();
+
+  /// Method which calls all other methods in order. Here we also test if we
+  /// have to process the samplers on whether to call Process().
+  virtual void Execute();
 
   /// Operate on each entry in the event tree.
   virtual void Process();

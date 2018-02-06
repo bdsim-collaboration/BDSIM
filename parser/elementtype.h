@@ -41,7 +41,8 @@ namespace GMAD
     _TRANSFORM3D = 61,
     _MUSPOILER   = 62,
     _DEGRADER    = 63,
-    _THINMULT    = 64
+    _THINMULT    = 64,
+    _GAP         = 65
   };
 
   /// conversion from enum to string

@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -192,6 +192,7 @@ private:
   BDSAcceleratorComponent* CreateMuSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
+  BDSAcceleratorComponent* CreateGap();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();

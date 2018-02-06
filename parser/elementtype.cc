@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -87,6 +87,8 @@ std::string GMAD::typestr(ElementType type) {
     return "awakespectrometer";
   case ElementType::_DEGRADER :
     return "degrader";
+  case ElementType::_GAP :
+    return "gap";
   default:
     return "none";
   }

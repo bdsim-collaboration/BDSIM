@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -73,6 +73,24 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   SetPrintModuloFraction(printModuloFraction);
 }
 
+void EventAnalysis::Execute()
+{
+  std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
+  if (perEntry || processSamplers)
+  {
+    // ensure new histograms are added to file
+    // crucial for draw command to work as it identifies the histograms by name
+    TH1::AddDirectory(kTRUE);
+    TH2::AddDirectory(kTRUE);
+    TH3::AddDirectory(kTRUE);
+    PreparePerEntryHistograms();
+    Process();
+  }
+  SimpleHistograms();
+  Terminate();
+  std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
+}
+
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
   printModulo = (int)ceil(entries * fraction);
@@ -96,7 +114,6 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  const int entries = chain->GetEntries();
   for(int i = 0; i < entries; ++i)
     {
       chain->GetEntry(i);

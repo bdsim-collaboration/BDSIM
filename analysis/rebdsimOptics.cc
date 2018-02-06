@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   std::string outputFileName = std::string(argv[2]);
 
   DataLoader dl = DataLoader(inputFileName, false, true);
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(), true);
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(), false, true);
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");

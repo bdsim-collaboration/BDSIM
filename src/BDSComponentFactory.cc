@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -54,6 +54,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldFactory.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSGap.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
@@ -252,6 +253,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateShield(); break;
   case ElementType::_DEGRADER:
     component = CreateDegrader(); break;
+  case ElementType::_GAP:
+    component = CreateGap(); break;
   case ElementType::_LASER:
     component = CreateLaser(); break; 
   case ElementType::_SCREEN:
@@ -863,6 +866,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  element->material));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  return (new BDSGap(elementName,
+                     element->l*CLHEP::m,
+                     element->angle*CLHEP::rad));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()

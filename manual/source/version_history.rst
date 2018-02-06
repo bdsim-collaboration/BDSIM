@@ -1,4 +1,4 @@
-V0.994 - 2018 / 01 / ??
+V0.994 - 2018 / 02 / ??
 =======================
 
 New Features
@@ -8,23 +8,29 @@ New Features
 * H-style dipoles controllable by default or per element with `hStyle` option.
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
-* Support for logarithmic binning of histograms in rebdsim.
 * Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`, `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`, `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
+* Significantly improved analysis documentation.
+* New component: gap.
+
+
+Output \& Analysis Changes
+--------------------------
+
+* Output files now have header structure with software versions.
+* "librebdsimlib" has been changed to "librebdsim" to be more consistent for output loading.
+* Support for logarithmic binning of histograms in rebdsim.
 * "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
   style histograms that are a sum across all events are now made with "SimpleHistogramND".
 * New option in rebdsim to turn off histogram merging (for speed).
 * Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
   now "Eloss" in `bdsim/analysis/Event.hh`.
-* Significantly improved analysis documentation.
-* Output files now have header structure with software versions.
 
 General
 -------
 
-* "librebdsimlib" has been changed to "librebdsimLib" to be more consistent for output loading.
 * Physics list names are now consistently named with '_' between words. Old list names are still supported.
 * `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are recommended by Geant4 for high energy hadronic interactions.
 * "bdsim" integrator set now maps to "bdsimtwo" integrator set.

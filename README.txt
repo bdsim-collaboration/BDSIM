@@ -1,4 +1,4 @@
-Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London 2001 - 2017
+Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of London 2001 - 2018
 
 General Information
 ===================

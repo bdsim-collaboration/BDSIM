@@ -192,6 +192,7 @@ The following elements may be defined
 * `shield`_
 * `solenoid`_
 * `laser`_
+* `gap`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -863,6 +864,25 @@ parameter         description                                        default    
 Examples::
 
    laserwire: laser, l=1*um, x=1, y=0, z=0, wavelength=532*nm;
+
+
+gap
+^^^
+
+`gap` defines a gap where no physical geometry is placed. It will be a region of the world,
+composed of the same material as the world volume.
+
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
+===================    =======================================  ==========  ===========
+parameter              description                              default     required
+`l`                    length [m]                               0           yes
+`angle`                angle [rad]                              0           no
+===================    =======================================  ==========  ===========
+
+Examples::
+
+    GAP1: gap, l=0.25*m, angle=0.01*rad;
 
 
 transform3d

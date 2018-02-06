@@ -58,9 +58,9 @@ Requirements
 ============
 
 1) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher.)
-3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
-4) `ROOT`_ framework for output analysis (version 6 recommended)
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher).
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_.
+4) `ROOT`_ 6.0 or higher, for output & analysis.
 5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
 6) Flex 2.5.37 or higher
 7) Bison 2.3 or higher

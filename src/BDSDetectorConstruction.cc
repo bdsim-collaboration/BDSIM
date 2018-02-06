@@ -1,6 +1,6 @@
 /* 
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2017.
+University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
+#include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -496,7 +497,11 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     {return;}
   
   for (auto element : *beamline)
-    { 
+    {
+      // Do nothing for gap element
+      if (dynamic_cast<BDSGap*>(element->GetAcceleratorComponent()))
+       {continue;}
+
       if (setRegions)
 	{
 	  auto accComp = element->GetAcceleratorComponent();
