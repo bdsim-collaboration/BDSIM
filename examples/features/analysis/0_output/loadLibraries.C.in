@@ -1,7 +1,7 @@
 {
   cout << "Loading BDSIM Libraries"   << endl;
   cout << "Loading librebdsimLib"     << endl;
-  gSystem->Load("@CMAKE_BINARY_DIR@/analysis/librebdsimLib");
+  gSystem->Load("@CMAKE_BINARY_DIR@/analysis/librebdsim");
 
   cout << "BDSIM libraries loading complete" << endl;
   return 0;
