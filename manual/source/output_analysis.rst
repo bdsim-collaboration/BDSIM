@@ -421,8 +421,8 @@ This is shown schematically in the figure below.
 This strategy works best for a relatively low number of events and data volume (example
 numbers might be < 10000 events and < 10 GB of data). 
 		    
-Large Data Volume
-=================
+High Data Volume
+================
 
 In this case, it is better to analyse each output file with rebdsim separately and then
 combine the results. In the case of per-event histograms, rebdsim provides the mean
