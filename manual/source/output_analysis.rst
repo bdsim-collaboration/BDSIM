@@ -160,14 +160,20 @@ Examples can be found in:
 * For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below for order of variables.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get the kinetic energy of proton primaries in MeV).
-* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
-* True or False as well as 1 or 0 may be used for Boolean options.
+* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
+* Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
+* If a Boolean and a weight is desired, multiply both with the Boolean in brackets e.g.
+  :code:`Eloss.energy*(Eloss.S>145.3)`.
+* True or False as well as 1 or 0 may be used for Boolean options at the top.
 
 .. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
 	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
 	  useful for per-event analysis on the Event tree.
+
+A full explanation on the combination of selection parameters is given in the ROOT TTree class:
+`<https://root.cern.ch/doc/master/classTTree.html>`_.  See the "Draw" method and "selection".
 
 Logarithmic Binning
 ===================
