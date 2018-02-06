@@ -963,7 +963,7 @@ Example with field::
 marker
 ^^^^^^
 `marker` defines a point in the lattice. This element has no physical length and is only
-used as a reference. For example, a `sampler` (see `samplers - output`_ )
+used as a reference. For example, a `sampler` (see :ref:`sampler-output`)
 is used to record particle passage at the
 front of a component but how would you record particles exiting a particular component?
 The intended method is to use a `marker` and place it in the sequence after that element
@@ -1974,8 +1974,8 @@ simulations currently).  Details are provided in :ref:`multiple-beamlines`.
 
 .. _sampler-output:
    
-Samplers - Output
------------------
+Output After An Element - Samplers
+----------------------------------
 
 BDSIM provides a `sampler` as a means to observe the particle distribution at a
 point in the lattice. A sampler is 'attached' to an already defined element
@@ -2521,6 +2521,70 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
+
+Output Options
+^^^^^^^^^^^^^^
+
+The particle physics simulation in BDSIM can produce an impressive quantity of output
+information. The data describing a full record of every particle and their interaction
+would prove to difficult to manage or analyse sensibly. BDSIM records the most useful
+information, but provides options to record even more data. This is controlled with the
+following options. These options may increase the output file size by a large amount.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++-----------------------------------+--------------------------------------------------------------------+
+| Option                            | Description                                                        |
++===================================+====================================================================+
+| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossLinks                   | For each energy deposition hit the particle ID, track ID, parent   |
+|                                   | ID and beam line index will be stored - this is intended to help   |
+|                                   | 'link' the energy deposition back to other information.            |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
+|                                   | stored. This must be turned on to store any trajectories at all.   |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectories                 | An alias to `storeTrajectory`.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryDepth              | The depth of the particle tree to store the trajectories to. 0 is  |
+|                                   | the primary, 1 is the first generation of secondaries, etc.        |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticle           | The Geant4 name of particle(s) to only store trajectories for.     |
+|                                   | This is case sensitive. Multiple partilce names can be used with   |
+|                                   | a space them. e.g. "proton pi-".                                   |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticleID         | The PDG ID of the particle(s) to only store trajectories for.      |
+|                                   | Multiple particle IDs can be supplied with a space between them.   |
+|                                   | e.g. "11 12 22 13".                                                |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryEnergyThreshHold   | The threshold energy for storing trajectories. Trajectories for    |
+|                                   | any particles with energy less than this amount (in GeV) will not  |
+|                                   | be stored.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| trajConnect                       | Store all the trajectories that connect a trajectory that will be  |
+|                                   | stored all the way to the primary particle. For exapmle, if the    |
+|                                   | filters from other trajectory options are to store only muons      |
+|                                   | with an energy greater than 10 GeV, the few trajectories stored    |
+|                                   | would appear unrelated. This option forces the storage of only     |
+|                                   | the trajectories of any particles (irrespective of filters) that   |
+|                                   | lead to the muon in question.                                      |
++-----------------------------------+--------------------------------------------------------------------+
+| trajNoTransportation              | Suppress trajectory points generated by transportation. When a     |
+|                                   | particle hits a volume boundary, two trajectories would be created |
+|                                   | for before and afterwards even if it didn't interact or change.    |
+|                                   | This option removes these points.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| trajCutGTZ                        | Only store trajectories whose *global* z coordinate is greater     |
+|                                   | than this value. In metres.                                        |
++-----------------------------------+--------------------------------------------------------------------+
+| trajCutLTR                        | Only store trajectories whose *global* radius from the start       |
+|                                   | position (sqrt(x^2, y^2)).                                         |
++-----------------------------------+--------------------------------------------------------------------+
 
 .. _beamline-offset:
 
