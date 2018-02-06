@@ -238,11 +238,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	
 	// check on particle if not empty string
 	G4String particleToStore = BDSGlobalConstants::Instance()->StoreTrajectoryParticle();
-	if (!particleToStore.empty())
+	G4String particleIDToStore = BDSGlobalConstants::Instance()->StoreTrajectoryParticleID();
+	if (!particleToStore.empty() || !particleIDToStore.empty())
 	  {
-	    G4String particleName = traj->GetParticleName();
-	    std::size_t found = particleToStore.find(particleName);
-	    if (found != std::string::npos)
+	    G4String particleName  = traj->GetParticleName();
+	    G4String particleIDStr = G4String(std::to_string(traj->GetPDGEncoding()));
+	    std::size_t found  = particleToStore.find(particleName);
+	    std::size_t found2 = particleIDToStore.find(particleIDStr);
+	    if (found != std::string::npos || found2 != std::string::npos)
 	      {
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 		continue;

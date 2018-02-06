@@ -274,6 +274,7 @@ void Options::PublishMembers()
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
   publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
+  publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
   publish("trajConnect",                    &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);

@@ -199,7 +199,8 @@ OptionsBase::OptionsBase()
   storeElossGlobal         = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 0;
-  storeTrajectoryParticle  = "";
+  storeTrajectoryParticle   = "";
+  storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
   writePrimaries           = true;
 
