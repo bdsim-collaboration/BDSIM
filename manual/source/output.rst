@@ -69,6 +69,8 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
 +=============+=====================================================================+
+| Header      | Details about the file type and sofware versions.                   |
++-------------+---------------------------------------------------------------------+
 | Beam        | A record of all options associated with the beam definition.        |
 +-------------+---------------------------------------------------------------------+
 | Options     | A record of all options used by BDSIM.                              |
@@ -81,6 +83,19 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Event       | Information collected per Event                                     |
 +-------------+---------------------------------------------------------------------+
+
+Header Tree
+^^^^^^^^^^^
+
+.. figure:: figures/rootevent_header_tree.png
+	    :width: 40%
+	    :align: center
+
+The header tree contains a single branch called "Header." (note the "."). This branch
+represents a single instance of :code:`BDSOutputROOTEventHeader`. This stores the
+various software libraries BDSIM is compiled against as well as the BDSIM version.
+It also stores the time the file was created and the file type i.e. whether the file
+is from BDSIM, rebdsim or rebdsimCombine.
 
 Beam Tree
 ^^^^^^^^^
@@ -236,13 +251,51 @@ these variables are only stored once as a single number per event.
 Histograms
 ----------
 
-BDSIM produces six histograms by default during the simulation. These are: primary
-hits per bin width; primary losses per bin width; energy loss per metre (GeV);
-primary hits per element; primary losses per element; and energy loss per element.
+BDSIM produces six histograms by default during the simulation. These are:
+
+1) primary hits per bin width
+2) primary losses per bin width
+3) energy loss per metre (GeV)
+4) primary hits per element
+5) primary losses per element
+6) energy loss per element (GeV)
 
 If the tunnel is constructed in the simulation, two more histograms for energy loss
 and energy loss per tunnel element are also constructed.
 
 The per element histograms are integrated across the length of each element so they
-will have a different bin width. The other histograms are evenly binned according
+will have a different bin widths. The other histograms are evenly binned according
 to the option :code:`elossHistoBinWidth` (in metres).
+
+.. _basic-data-inspection:
+
+Basic Data Inspection
+---------------------
+
+To view the data as shown here, we recommend using a ROOT tree browser - `TBrowser`. Start
+ROOT (optionally with the file path specified to put it at the top of the list).
+
+.. figure:: figures/starting_root.png
+	    :width: 100%
+	    :align: center
+
+* The -l option stops the logo splash screen coming up and is slightly quicker.
+
+While in the ROOT interpreter, enter the following command to 'construct' a TBrowser object.
+
+.. figure:: figures/starting_tree_browser.png
+	    :width: 100%
+	    :align: center
+
+Double click the file and then the 'Trees' (small folders with green leaf on them)
+to explore the hierarchy of the file. Eventually, individual variables can be double-clicked-on
+to give a preview histogram on-the-fly that is a histogram of all entries in the Tree (ie
+all events in the Event Tree). If the variable is a vector each item in the vector is
+entered ('filled') into the histogram.
+
+.. figure:: figures/root-tbrowser.png
+	    :width: 100%
+	    :align: center
+
+.. note:: If a file is open in ROOT in a TBrowser but has been overwritten externally it will
+	  not show the correct contents - close the TBrowser and ROOT and reopen it.
