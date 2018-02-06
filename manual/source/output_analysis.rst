@@ -394,16 +394,42 @@ Scaling Up - Parallelising Analysis
 
 For high statistics studies, it's common to run multiple instances of BDSIM with different
 seeds (different seeds ensures different results) on a high throughput computer cluster.
-In this situation, each instance of BDSIM provides an output file. Rebdsim can analyse
-all of these files together by specifying `"*.root"` in the input analysis configuration
-(i.e. analysisConfig.txt) but for large numbers of events, this can take some time.
+There are two possible strategies to efficiently scale the statistics and analysis. Both
+produce numerically identical output but make different use of computing resources. The
+more data stored per event in the outpu files, the longer it takes to load it from disk and
+the longer the anlaysis. Similarly, the more events simulated, the longer the analysis will
+take. Of course either strategy can be used.
+
+Low Data Volume
+===============
+
+If the overall output data volume is relatively low, we recommend analysing all of the
+output files at once with rebdsim. In the `Analysis Configuration File`_ file,
+the `InputFilePath` should be specified as `"*.root"` to match all the root files
+in the current directory.
+
+.. note:: For `"*.root"` all files should be from the same simulation and only BDSIM
+	  output files (i.e. not rebdsim output files).
+
+rebdsim will 'chain' the files together to behave as one big file with all of the events.
+This is shown schematically in the figure below.
+
+.. figure:: figures/multiple_outputs_rebdsim.pdf
+	    :width: 100%
+	    :align: center
+
+This strategy works best for a relatively low number of events and data volume (example
+numbers might be < 10000 events and < 10 GB of data). 
+		    
+Large Data Volume
+=================
 
 In this case, it is better to analyse each output file with rebdsim separately and then
 combine the results. In the case of per-event histograms, rebdsim provides the mean
 per event along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`
-is provided that can combine these rebdsim output files correctly to provide the
-overall mean and error on the mean as if all events had been analysed in one execution
-of rebdsim.
+is provided that can combine these rebdsim output files correctly (i.e. the mean of the
+mean histograms) to provide the overall mean and error on the mean as if all events had
+been analysed in one execution of rebdsim.
 
 The combination of the histograms from the rebdsim output files is very quick in comparison
 to the analysis. `rebdsimCombine` is used as follows: ::
