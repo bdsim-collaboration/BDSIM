@@ -155,13 +155,13 @@ void Config::ParseInputFile()
     {
       allBranchesActivated = true;
       optionsBool["processsamplers"] = true;
-      optionsBool["perEntryEvent"]   = true;
+      optionsBool["perentryevent"]   = true;
     }
   if (optionsBool.at("mergehistograms"))
     {
       branches["Event."].push_back("Histos");
       branches["Run."].push_back("Histos");
-      optionsBool["perEntryEvent"]   = true;
+      optionsBool["perentryevent"]   = true;
     }
 }
 
@@ -235,7 +235,8 @@ void Config::ParseHistogram(const std::string line, const int nDim)
     {
       std::string treeNameWithoutPoint = treeName; // make copy to modify
       treeNameWithoutPoint.pop_back();             // delete last character
-      optionsBool["perEntry"+treeNameWithoutPoint] = true;
+      treeNameWithoutPoint = LowerCase(treeNameWithoutPoint);
+      optionsBool["perentry"+treeNameWithoutPoint] = true;
     }
   
   std::string histName  = results[2];
