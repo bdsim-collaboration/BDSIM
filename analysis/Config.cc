@@ -74,12 +74,12 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["calculateoptics"]   = false;
   optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
-  optionsBool["perEntryBeam"]      = false;
-  optionsBool["perEntryEvent"]     = false;
-  optionsBool["perEntryRun"]       = false;
-  optionsBool["perEntryOption"]    = false;
-  optionsBool["perEntryModel"]     = false;
-  optionsBool["backwardsCompatible"] = false; // ignore file types for old data
+  optionsBool["perentrybeam"]      = false;
+  optionsBool["perentryevent"]     = false;
+  optionsBool["perentryrun"]       = false;
+  optionsBool["perentryoption"]    = false;
+  optionsBool["perentrymodel"]     = false;
+  optionsBool["backwardscompatible"] = false; // ignore file types for old data
 
   optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";

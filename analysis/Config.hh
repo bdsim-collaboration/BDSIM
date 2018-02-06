@@ -111,11 +111,11 @@ public:
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
   /// @}
   /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().
-  inline bool   PerEntryBeam()   const {return optionsBool.at("perEntryBeam");}
-  inline bool   PerEntryEvent()  const {return optionsBool.at("perEntryEvent");}
-  inline bool   PerEntryRun()    const {return optionsBool.at("perEntryRun");}
-  inline bool   PerEntryOption() const {return optionsBool.at("perEntryOption");}
-  inline bool   PerEntryModel()  const {return optionsBool.at("perEntryModel");}
+  inline bool   PerEntryBeam()   const {return optionsBool.at("perentrybeam");}
+  inline bool   PerEntryEvent()  const {return optionsBool.at("perentryevent");}
+  inline bool   PerEntryRun()    const {return optionsBool.at("perentryrun");}
+  inline bool   PerEntryOption() const {return optionsBool.at("perentryoption");}
+  inline bool   PerEntryModel()  const {return optionsBool.at("perentrymodel");}
   /// @}
   
  protected:
