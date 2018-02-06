@@ -161,6 +161,10 @@ public:
   /// allowed tree names.
   bool InvalidTreeName(const std::string& treeName) const;
 
+  /// Check whether the tree name ends in a '.' or not and fix it (simple mistake.
+  /// Then apply InvalidTreeName and throw std::string error if it's a problem.
+  void CheckValidTreeName(std::string& treeName) const;
+
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.
   void ParseBins(const std::string bins,

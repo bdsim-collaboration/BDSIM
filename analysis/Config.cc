@@ -228,8 +228,7 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   ParsePerEntry(results[0], perEntry);
   
   std::string treeName  = results[1];
-  if (InvalidTreeName(treeName))
-    {throw std::string("Invalid tree name \"" + treeName + "\"");}
+  CheckValidTreeName(treeName);
 
   if (perEntry)
     {
@@ -362,6 +361,22 @@ void Config::SetBranchToBeActivated(const std::string treeName,
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
     {v.push_back(branchName);}
+}
+
+void Config::CheckValidTreeName(std::string& treeName) const
+{
+  // check it has a point at the end (simple mistake)
+  if (strcmp(&treeName.back(), ".") != 0)
+    {treeName += ".";}
+  
+  if (InvalidTreeName(treeName))
+    {
+      std::string err = "Invalid tree name \"" + treeName + "\"\n";
+      err += "Tree names are one of: ";
+      for (const auto& n : treeNames)
+	{err += "\"" + n + "\" ";}
+      throw(err);
+    }
 }
 
 bool Config::InvalidTreeName(const std::string& treeName) const
