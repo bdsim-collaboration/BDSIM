@@ -98,15 +98,14 @@ void BDSBunchTwiss::CommonConstruction()
   sigmaGM[3][3] =  emitY*gammaY; 
   sigmaGM[4][4] =  std::pow(sigmaT,2); 
   sigmaGM[5][5] =  std::pow(sigmaE,2);
-  sigmaGM[0][5] = dispX*std::pow(sigmaE,2);
-  sigmaGM[5][0] = dispX*std::pow(sigmaE,2);
-  sigmaGM[1][5] = dispXP*std::pow(sigmaE,2);
-  sigmaGM[5][1] = dispXP*std::pow(sigmaE,2);
-  sigmaGM[2][5] = dispY*std::pow(sigmaE,2);
-  sigmaGM[5][2] = dispY*std::pow(sigmaE,2);
-  sigmaGM[3][5] = dispYP*std::pow(sigmaE,2);
-  sigmaGM[5][3] = dispYP*std::pow(sigmaE,2);
-  
+  sigmaGM[0][5] =  std::pow(dispX*sigmaE,2);
+  sigmaGM[5][0] =  std::pow(dispX*sigmaE,2);
+  sigmaGM[1][5] =  std::pow(dispXP*sigmaE,2);
+  sigmaGM[5][1] =  std::pow(dispXP*sigmaE,2);
+  sigmaGM[2][5] =  std::pow(dispY*sigmaE,2);
+  sigmaGM[5][2] =  std::pow(dispY*sigmaE,2);
+  sigmaGM[3][5] =  std::pow(dispYP*sigmaE,2);
+  sigmaGM[5][3] =  std::pow(dispYP*sigmaE,2);
 
   delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
