@@ -67,9 +67,6 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  // get beta (v/c)
-  beta = eq->Beta(yIn);
-
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
@@ -101,6 +98,9 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
       SetDistChord(dipole->DistChord());
       return;
     }
+
+  // get beta (v/c)
+  beta = eq->Beta(yIn); // used in OneStep
   
   // calculate new position
   G4ThreeVector localCLPosOut;
