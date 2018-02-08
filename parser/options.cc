@@ -191,6 +191,7 @@ void Options::PublishMembers()
   publish("ignoreLocalAperture",  &Options::ignoreLocalAperture);
   publish("vacuumMaterial",       &Options::vacMaterial);
   publish("emptyMaterial",        &Options::emptyMaterial);
+  publish("worldMaterial",        &Options::worldMaterial);
   publish("dontSplitSBends",      &Options::dontSplitSBends);
   publish("thinElementLength",    &Options::thinElementLength);
   publish("hStyle",               &Options::hStyle);

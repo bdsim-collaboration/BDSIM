@@ -2389,6 +2389,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | writeSeedState                   | write the seed state of the last event start in ASCII |
 +----------------------------------+-------------------------------------------------------+
+| worldMaterial                    | the default material surrounding the model. This is   |
+|                                  | by default air.                                       |
++----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | aper1                            | default aper1 parameter                               |

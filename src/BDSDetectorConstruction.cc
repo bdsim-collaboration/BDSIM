@@ -416,10 +416,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   worldExtent          = BDSExtent(worldR);
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
-  G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
+  G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+  G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
-						      emptyMaterial,           // material
+						      worldMaterial,           // material
 						      worldName + "_lv");      // name
   
   // visual attributes

@@ -130,10 +130,9 @@ namespace GMAD
     bool        ignoreLocalAperture;
     ///@}
     
-    /// vacuum material
-    std::string vacMaterial;
-    /// world volume
-    std::string emptyMaterial;
+    std::string vacMaterial;   ///< vacuum material
+    std::string emptyMaterial; ///< material in container volumes
+    std::string worldMaterial;
 
     double    vacuumPressure;
     bool      sensitiveBeamPipe;

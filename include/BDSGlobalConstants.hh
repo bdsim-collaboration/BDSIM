@@ -199,6 +199,7 @@ public:
   inline G4double MinimumRange()             const {return G4double(options.minimumRange*CLHEP::m);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
+  inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
