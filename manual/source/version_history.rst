@@ -18,6 +18,8 @@ New Features
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
 * Significantly improved analysis documentation.
 * New component: 'gap'. Create a space in the beam line with no geometry.
+* Ability to specify the world volume material with the `worldMaterial` option.
+* Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
 
 
 Output \& Analysis Changes
