@@ -2366,8 +2366,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | the physics list to use                               |
 +----------------------------------+-------------------------------------------------------+
-| printModuloFraction              | the fraction of events to print out (default 0.1). If |
-|                                  | less than 1, all events will be printed out.          |
+| printModuloFraction              | how often to print out the event number as a fraction |
+|                                  | of the total number of events to simulation (default  |
+|                                  | is 0.05 i.e. 5%.  Varies from 0 to 1. -1 for all.     |
 +----------------------------------+-------------------------------------------------------+
 | recreate                         | whether to run in recreation mode (default 0)         |
 +----------------------------------+-------------------------------------------------------+
