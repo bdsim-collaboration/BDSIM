@@ -131,6 +131,76 @@ of :code:`include/BDSOutputROOTEventModel.hh`. There is also typically one entry
 is one model.  Note some variables here appear as 'leaf' icons and some as 'branch icons.
 This is because some of the variables are vectors.
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++--------------------+--------------------------+--------------------------------------------------------------+
+| **Branch Name**    | **Type**                 | **Description**                                              |
++====================+==========================+==============================================================+
+| samplerNamesUnique | std::vector<std::string> | The unique names of each of the samplers.  These             |
+|                    |                          | are identical to the names of the sampler branches           |
+|                    |                          | found in the Event tree.                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| componentName      | std::vector<std::string> | The beamline component names.                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| placementName      | std::vector<std::string> | Unique name for each placement.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| componentType      | std::vector<std::string> | Beamline component type; "drift", "sbend", etc.              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| length             | std::vector<float>       | Component length (metres).                                   |
++--------------------+--------------------------+--------------------------------------------------------------+
+| staPos             | std::vector<TVector3>    | Global coordindates of start of beamline element (metres).   |
++--------------------+--------------------------+--------------------------------------------------------------+
+| midPos             | std::vector<TVector3>    | Global coordindates of middle of beamline element (metres).  |
++--------------------+--------------------------+--------------------------------------------------------------+
+| endPos             | std::vector<TVector3>    | Global coordindates of end of beamline element (metres).     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| staRot             | std::vector<TRotation>   | Global rotation for the start of this beamline element.      |
++--------------------+--------------------------+--------------------------------------------------------------+
+| midRot             | std::vector<TRotation>   | Global rotation for the middle of this beamline element.     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| endRot             | std::vector<TRotation>   | Global rotation for the end of this beamline element.        |
++--------------------+--------------------------+--------------------------------------------------------------+
+| staRefPos          | std::vector<TVector3>    | Global coordinates for start of the beamline elements,       |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| midRefPos          | std::vector<TVector3>    | Global coordinates for the middle of the beamline elements,  |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| endRefPos          | std::vector<TVector3>    | Global coordinates for the start of the beamline elements,   |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| staRefRot          | std::vector<TRotation>   | Global rotation matrix for start of the beamline elements,   |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| midRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements,  |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| endRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements,  |
+|                    |                          | along the reference trajectory and without any tilt          |
+|                    |                          | or rotation from the component.                              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| staS               | std::vector<float>       | S position of start of start of element (metres).            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| midS               | std::vector<float>       | S position of start of middle of element (metres).           |
++--------------------+--------------------------+--------------------------------------------------------------+
+| endS               | std::vector<float>       | S position of start of end of element (metres).              |
++--------------------+--------------------------+--------------------------------------------------------------+
+| beamPipeType       | std::vector<std::string> | Aperture type; "circular", "lhc", etc.                       |
++--------------------+--------------------------+--------------------------------------------------------------+
+| beamPipeAper1      | std::vector<double>      | Aperture aper1 (metres).                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| beamPipeAper2      | std::vector<double>      | Aperture aper2 (metres).                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| beamPipeAper3      | std::vector<double>      | Aperture aper3 (metres).                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+| beamPipeAper4      | std::vector<double>      | Aperture aper4 (metres).                                     |
++--------------------+--------------------------+--------------------------------------------------------------+
+
 
 Run Tree
 ^^^^^^^^
