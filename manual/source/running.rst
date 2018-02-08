@@ -72,6 +72,10 @@ be used literally.  The following command may be used to dipslay all options::
 +----------------------------+----------------------------------------------+
 | --survey=<file>            | print survey info to <file>                  |
 +----------------------------+----------------------------------------------+
+| --printModuloFraction=N    | how often to print out events as a fraction  |
+|                            | of the total number of events to simulate    |
+|                            | (default 0.05 i.e. 5%). -1 for all.          |
++----------------------------+----------------------------------------------+
 | --verbose                  | display general parameters before run        |
 +----------------------------+----------------------------------------------+
 | --verbose\_event           | display information for every event          |
