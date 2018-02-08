@@ -220,12 +220,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
-
-  // TBC - this will kill all particles - both primaries and secondaries, but if it's being
-  // recorded in an SD that means it's hit something, so ok
-  // BUT, we can make the vacuum sensitive too for ionisation energy loss
-  if(stopTracks)
-    {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
 }

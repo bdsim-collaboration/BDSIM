@@ -6,9 +6,7 @@ option, beampipeRadius = 10 * cm,
         buildTunnelFloor=0,
         tunnelRadius= 2.0 * m,
         samplerDiameter = 2.0*m,
-        beampipeThickness = 0.5 * mm,
-        thresholdCutCharged = 100 * MeV,
-        thresholdCutPhotons = 200 * MeV;
+        beampipeThickness = 0.5 * mm;
 
 
 option,physicsList="em";

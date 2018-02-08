@@ -2384,9 +2384,6 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
-| stopTracks                       | whether to stop tracks after                          |
-|                                  | interaction (default = false)                         |
-+----------------------------------+-------------------------------------------------------+
 | useASCIISeedState                | whether to load an ASCII seed state file using        |
 |                                  | :code:`seedStateFileName`                             |
 +----------------------------------+-------------------------------------------------------+

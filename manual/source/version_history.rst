@@ -60,6 +60,7 @@ Bug Fixes
 * Fixed a bug where recreate mode would fail with the new Beam structure in the output.
 * Prevent segfault when analysing wrong type of file with rebdsim (use 'backwardsCompatible'
   option to analyse old files withou the new header structure).
+* The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
 
 
 V0.993 - 2017 / 12 / 11

@@ -227,7 +227,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSStackingAction);
+  runManager->SetUserAction(new BDSStackingAction(globalConstants));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Primary Generator"<<G4endl;

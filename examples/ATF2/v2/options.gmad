@@ -7,7 +7,6 @@ option, beampipeRadius = 2 * cm,
 	prodCutElectrons    = 20*cm,
 	prodCutPositrons    = 20*cm,
 	defaultRangeCut = 50*cm,
-	stopTracks = 0,
 	elossHistoBinWidth = 0.01*m;
 
 option,physicsList="em";

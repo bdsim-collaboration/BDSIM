@@ -282,7 +282,6 @@ void Options::PublishMembers()
   publish("trajNoTransportation",           &Options::trajNoTransportation);
 
   publish("stopSecondaries",          &Options::stopSecondaries);
-  publish("stopTracks",               &Options::stopTracks);
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",                   &Options::nturns);

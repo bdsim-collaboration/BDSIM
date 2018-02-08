@@ -183,7 +183,6 @@ OptionsBase::OptionsBase()
   minimumEpsilonStep       = 5e-25;
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
-  stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
