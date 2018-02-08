@@ -1,1 +1,5 @@
-! standard options for runing bdsim
+
+
+option, stopSecondaries=1;
+
+
