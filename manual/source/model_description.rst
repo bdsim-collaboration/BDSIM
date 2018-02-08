@@ -1750,7 +1750,32 @@ geometry can be used in three ways:
 2) Wrapped around the beam pipe in a BDSIM magnet element.
 3) As a general element in the beam line where the geometry constitutes the whole object.
 
-These are discussed in order.
+These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
+:ref:`element-external-geometry`.
+
+.. _geometry-formats:
+
+Geometry Formats
+^^^^^^^^^^^^^^^^
+
+The following geometry formats are supported. More may be added in collaboration with the BDSIM
+developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
+formats is described in more detail in :ref:`external-geometry-formats`.
+
++----------------------+---------------------------------------------------------------------+
+| **Format String**    | **Description**                                                     |
++======================+=====================================================================+
+| gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
+|                      | | persistency format - recommended.                                 |
++----------------------+---------------------------------------------------------------------+
+| ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
+|                      | | geometry classes.                                                 |
++----------------------+---------------------------------------------------------------------+
+| mokka                | | An SQL style description of geometry.                             |
++----------------------+---------------------------------------------------------------------+
+
+.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
 
 .. _placements:
 
@@ -1825,6 +1850,7 @@ The following is an example syntax is used to place a piece of geometry::
 	     were declared again here, the first definition would be updated with parameters
 	     from the second leading to possibly unexpected geometry.
 
+.. _external-magnet-geometry:
 
 External Magnet Geometry
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1843,35 +1869,13 @@ Example::
 
   q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
 
+.. _element-external-geometry:
 
 Element
 ^^^^^^^
 
 A general piece of geometry may be placed in the beam line along with any externally provided
 field map using the `element` beam line element.  See `element`_.
-
-.. _geometry-formats:
-
-Geometry Formats
-^^^^^^^^^^^^^^^^
-
-The following geometry formats are supported. More may be added in collaboration with the BDSIM
-developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
-formats is described in more detail in :ref:`external-geometry-formats`.
-
-+----------------------+---------------------------------------------------------------------+
-| **Format String**    | **Description**                                                     |
-+======================+=====================================================================+
-| gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
-|                      | | persistency format - recommended.                                 |
-+----------------------+---------------------------------------------------------------------+
-| ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
-|                      | | geometry classes.                                                 |
-+----------------------+---------------------------------------------------------------------+
-| mokka                | | An SQL style description of geometry.                             |
-+----------------------+---------------------------------------------------------------------+
-
-.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
 
 
 .. _offsets-and-tilts:
