@@ -157,13 +157,13 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   const G4double maxTime = MaxTime();
   if (maxTime > 0)
     {
-#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Setting maximum tracking time to " << maxTime << " ns" << G4endl;
-#endif
       defaultUserLimits->SetUserMaxTime(maxTime);
     }
   defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
   defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
+  defaultUserLimits->SetUserMinEkine(MinimumKineticEnergy());
+  defaultUserLimits->SetUserMinRange(MinimumRange());
 }
 
 G4int BDSGlobalConstants::PrintModulo()const

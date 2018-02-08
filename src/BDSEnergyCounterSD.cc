@@ -93,7 +93,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   // Get the energy deposited along the step
   enrg = aStep->GetTotalEnergyDeposit();
-  // Account for secondaries being artifically killed - add the total energy of the particle
+  // Account for secondaries being artificially killed - add the total energy of the particle
   // as it's artificially absorbed here.
   if(stopSecondaries && parentID > 0)
     {enrg += aStep->GetTrack()->GetTotalEnergy();}

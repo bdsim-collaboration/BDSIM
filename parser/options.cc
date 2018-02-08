@@ -229,6 +229,8 @@ void Options::PublishMembers()
   publish("maximumPhotonsPerStep",       &Options::maximumPhotonsPerStep);
   publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
+  publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
+  publish("minimumRange",                &Options::minimumRange);
   publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);

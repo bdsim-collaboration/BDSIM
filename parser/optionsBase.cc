@@ -158,6 +158,8 @@ OptionsBase::OptionsBase()
   maximumPhotonsPerStep    = -1;  ///< -1 -> no action taken (could want 0)
   maximumBetaChangePerStep = 10;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
+  minimumKineticEnergy     = 0;
+  minimumRange             = 0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
   prodCutElectrons         = 1e-3;
