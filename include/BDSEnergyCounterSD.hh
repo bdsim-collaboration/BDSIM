@@ -41,7 +41,9 @@ class G4TouchableHistory;
 class BDSEnergyCounterSD: public G4VSensitiveDetector
 {
 public:
-  explicit BDSEnergyCounterSD(G4String name);
+  BDSEnergyCounterSD(G4String name,
+		     G4bool   stopSecondariesIn,
+		     G4bool   verboseIn = false);
   virtual ~BDSEnergyCounterSD();
 
   virtual void Initialize(G4HCofThisEvent*HCE);
@@ -53,8 +55,9 @@ private:
   BDSEnergyCounterSD(BDSEnergyCounterSD&);
   BDSEnergyCounterSD() = delete;
 
-  G4bool   verbose;
-  G4String colName; ///< Collection name.
+  G4bool   stopSecondaries; ///< Cache of whether secondaries are stopped.
+  G4bool   verbose;         ///< Cache of whether verbose output.
+  G4String colName;         ///< Collection name.
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   G4int    HCIDe;
 
