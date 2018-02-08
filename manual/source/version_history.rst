@@ -50,6 +50,7 @@ General
 * Relative file paths are no longer padded excessively with slashes when translated
   to absolute paths.
 * More efficient file IO in rebdsim improves analysis speed.
+* The world material is now air instead of G4_Galatic.
 
 Bug Fixes
 ---------

@@ -1783,14 +1783,19 @@ Placements
 ^^^^^^^^^^
 
 Geometry provided in an external file, may be placed in 3D geometry at any location with
-any rotation, however the user is responsible for ensuring that the geometry does not
-overlap with any other geometry.
+any rotation. This is intended to place geometry alongside the beamline and **not** inside
+or as part of it.  The user is responsible for ensuring that the geometry does not
+overlap with any other geometry including the beamline.
 
-.. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
-	  incorrect results and there may not always be warnings provided. For this reason
-	  BDSIM will **always** use the Geant4 overlap checker when placing external geometry
-	  into the world volume. This only ensures the container doesn't overlap with BDSIM
-	  geometry, not that the internal geometry is valid.
+.. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
+	     incorrect results and there may not always be warnings provided. For this reason
+	     BDSIM will **always** use the Geant4 overlap checker when placing external geometry
+	     into the world volume. This only ensures the container doesn't overlap with BDSIM
+	     geometry, not that the internal geometry is valid.
+
+.. warning:: You cannot place external geometry 'inside' an accelerator component with a
+	     placement. Although it may appear ok in the visualiser, the hierarchy of the
+	     geometry will be wrong and the tracking will not work as expected. Avoid this.
 
 The following parameters may be specified.
 
