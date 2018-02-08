@@ -2,4 +2,4 @@ simple_testing(limit-all      "--file=all.gmad"                  ${OVERLAP_CHECK
 simple_testing(limit-minke    "--file=minimumKineticEnergy.gmad" ${OVERLAP_CHECK})
 simple_testing(limit-minrange "--file=minimumRange.gmad"         ${OVERLAP_CHECK})
 simple_testing(limit-none     "--file=standard.gmad"             ${OVERLAP_CHECK})
-simple_testing(limit-all      "--file=range.gmad"                ${OVERLAP_CHECK})
+simple_testing(limit-range    "--file=range.gmad"                ${OVERLAP_CHECK})
