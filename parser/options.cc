@@ -232,10 +232,6 @@ void Options::PublishMembers()
   publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
-
-  publish("thresholdCutCharged", &Options::thresholdCutCharged);
-  publish("thresholdCutPhotons", &Options::thresholdCutPhotons);
-
   publish("prodCutPhotons",   &Options::prodCutPhotons);
   publish("prodCutElectrons", &Options::prodCutElectrons);
   publish("prodCutPositrons", &Options::prodCutPositrons);

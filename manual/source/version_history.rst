@@ -61,6 +61,7 @@ Bug Fixes
 * Prevent segfault when analysing wrong type of file with rebdsim (use 'backwardsCompatible'
   option to analyse old files withou the new header structure).
 * The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
+* `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
 
 
 V0.993 - 2017 / 12 / 11
