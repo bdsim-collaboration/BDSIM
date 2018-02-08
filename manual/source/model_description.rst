@@ -2498,6 +2498,12 @@ as their value.
 | prodCutProtons                   | standard overall production cuts for protons          |
 |                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
+| minimumKineticEnergy             | a particle below this energy will be killed and the   |
+|                                  | energy deposition recorded at that location. (GeV).   |
++----------------------------------+-------------------------------------------------------+
+| minimumRange                     | a particle that would not travel this range           |
+|                                  | (a distance) in the current material will be cut. (m) |
++----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
@@ -2650,7 +2656,7 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
+used. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic rigidity that magnetic
 field strengths are calculated with respect to. For example, the field of dipole magnets
@@ -2659,7 +2665,7 @@ is calculated using this if only the `angle` parameter has been specified.
 .. note:: The design energy is required to be specified, but the central energy, of say
 	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
 
-.. note:: `energy` here is the total energy of the particle. This must be greater than
+.. note:: `energy` here is the **total energy** of the particle. This must be greater than
 	  the rest mass of the particle.
 
 The user **must** specify at least `energy` and the `particle` type. In this case the
@@ -3292,9 +3298,67 @@ the user may define additional regions and attach them to the objects desired.  
 
 .. rubric:: Footnotes
 
-.. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
-		      The distinction is kept for clarity, and this might be changed in the future.
 
+Controlling Simulation Speed
+----------------------------
+
+The particle showers created in high energy particle interactions with matter can lead to a
+very large number of particles being produced in an event. These in turn each take time to
+track through the model and the computational time per event increases. When simulating a
+very high energy scale, the user may not be interested in very low energy particles, however
+these may dominate the simulation time.
+
+To improve efficiency, there are several options the user can adjust. These however may reduce
+the accuracy of the results obtained and must be used cautiously and only where required.
+
+Range Cuts
+^^^^^^^^^^
+
+The production range cuts are the recommended method from Geant4, who stronly advocate
+these over energy based tracking cuts. These produce the most accurate results while
+reducing simulation time. Approximately, these are the length a secondary must travel
+before interacting. If the secondary would not travel further than this (depending on
+the secondary species, physics lists, material and energy), the secondary will not
+be produced. These can be set globally or for a *region* (see `Regions`_) that is attached
+to individual volumes through the "region" parameter for that accelerator element. In
+fact a range cut always exists in Geant4 (to prevent infrared divergence) and is by
+default 0.7 mm.
+::
+
+   rangecut=3*cm;
+   prodCutPhotons   = rangecut,
+   prodCutElectrons = rangecut,
+   prodCutPositrons = rangecut,
+   defaultRangeCut  = rangecut;
+
+.. warning:: The range cut should **not** be longer than the typical dimension of obects.
+	     i.e. a range cut of 1 km is likely to produce rough energy deposition
+	     around boundaries.
+
+Minimum Kinetic Energy
+^^^^^^^^^^^^^^^^^^^^^^
+
+The user may specify a minimum kinetic energy, below which any particle will be killed.
+This may break conservation of energy if used aggressively. The default is 0 eV as all
+particle are tracked to 0 energy (allowing for the above range cuts).::
+  
+   option, minimumKineticEnergy=10*MeV;
+
+.. warning:: This will affect the location of energy deposition - i.e. the curve of
+	     energy deposition of a particle showering in a material will be different.
+
+Minimum Range
+^^^^^^^^^^^^^
+
+The user may specify a minimum range for a particle to travel. Any particles with step
+sizes proposed below this will be killed. Again, this can break energy conservation
+if used agressively.::
+
+  option, minimumRange=2*cm;
+
+.. warning:: This will affect the location of energy deposition - i.e. the curve of
+	     energy deposition of a particle showering in a material will be different.
+		      
 .. _multiple-beamlines:
 
 Multiple Beam Lines
