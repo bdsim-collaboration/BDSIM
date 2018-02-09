@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
 
@@ -50,7 +51,17 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-  
+
+  /// Calculate a single step using dipole fringe field matrix.
+  /// Unit momentum is provided as an argument because it is already calculated in the
+  /// Stepper method.
+  void OneStep(G4ThreeVector  posIn,
+               G4ThreeVector  momIn,
+               G4ThreeVector  momUIn, // assumed unit momentum of momIn
+               G4double       h,
+               G4ThreeVector& posOut,
+               G4ThreeVector& momOut) const;
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;
@@ -62,6 +73,7 @@ private:
   /// Brho for momentum normalisation
   const G4double brho;
 
+  BDSMagnetStrength const* strength;
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;
