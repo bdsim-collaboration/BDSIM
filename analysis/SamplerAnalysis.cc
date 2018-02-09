@@ -140,16 +140,14 @@ void SamplerAnalysis::Process(bool firstTime)
       {continue;} // only use first turn particles
 
     coordinates[0] = s->x[i];
-      coordinates[1] = s->xp[i];
-      coordinates[2] = s->y[i];
-      coordinates[3] = s->yp[i];
-      coordinates[4] = s->energy[i];
-      coordinates[5] = s->t[i];
+    coordinates[1] = s->xp[i];
+    coordinates[2] = s->y[i];
+    coordinates[3] = s->yp[i];
+    coordinates[4] = s->energy[i];
+    coordinates[5] = s->t[i];
 
     if (firstTime)
-      {
-          offsets = coordinates;
-      }
+      {offsets = coordinates;}
 
     // power sums
     for(int a=0;a<6;++a)
