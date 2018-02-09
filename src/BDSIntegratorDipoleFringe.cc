@@ -97,16 +97,11 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
                                         G4ThreeVector& posOut,
                                         G4ThreeVector& momOut) const
 {
-  //G4double momMag = momIn.mag();
-  //G4double ratio = (eqOfM->FCof() * brho ) / momMag;
-  G4double ratio = 1;
-
-  // fraction of kick applied in case of multiple steps in element
-  G4double fraction = h / thinElementLength;
-
-  // prevent overkicking
-  if (fraction > 1)
-    {fraction = 1;}
+  // prevent overkicking - apply kick fractionally if the step length
+  // is less than the element length / 2.
+  G4double fraction = 1;
+  if (h < 0.5*thinElementLength)
+    {fraction = h / thinElementLength;}
 
   // nominal bending radius.
    G4double momInMag = momIn.mag();
@@ -131,13 +126,13 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   G4double X11=0,X12=0,X21=0,X22 = 0;
   G4double Y11=0,Y12=0,Y21=0,Y22 = 0;
 
-  // calculate fractional fringe field kick
+  // calculate (fractional) fringe field kick
   X11 = 1;
-  X21 = ratio * fraction * tan(polefaceAngle) / (magnetRho / CLHEP::m);
+  X21 = fraction * tan(polefaceAngle) / (magnetRho / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = ratio * fraction * -tan(polefaceAngle - fringeCorr) / (magnetRho / CLHEP::m);
+  Y21 = fraction * -tan(polefaceAngle - fringeCorr) / (magnetRho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
