@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSFieldType.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -156,11 +157,11 @@ public:
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
-  
-  /// length safety from global constants
-  G4double lengthSafety;
+
   /// rigidity in T*m for beam particles
   G4double brho;
+  /// length safety from global constants
+  G4double lengthSafety;
   /// length of a thin element
   G4double thinElementLength;
 
@@ -252,6 +253,9 @@ private:
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
+
+  /// Local copy of enum of the integrator set, i.e. which one it is specifically.
+  const BDSIntegratorSetType integratorSetType;
 
   /// Calculate the field from a given angle through a length of field - uses member
   /// rigidity and charge. Length & angle in g4 m / rad units.

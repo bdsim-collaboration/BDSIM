@@ -82,17 +82,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
-  brho(brhoIn)
+  brho(brhoIn),
+  lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
+  thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
+  integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
-  lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
-  BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
-  integratorSet = BDS::IntegratorSet(intSetType);
-  G4cout << __METHOD_NAME__ << "Using \"" << intSetType << "\" set of integrators" << G4endl;
+  integratorSet = BDS::IntegratorSet(integratorSetType);
+  G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
-  // prepare rf cavity model info from parser
-  PrepareCavityModels();
-  
-  thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
+  PrepareCavityModels(); // prepare rf cavity model info from parser
 }
 
 BDSComponentFactory::~BDSComponentFactory()
