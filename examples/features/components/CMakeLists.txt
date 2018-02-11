@@ -1,3 +1,6 @@
+# all bends / dipoles in here - lots of possiblities
+add_subdirectory(dipoles)
+
 # standard components
 simple_testing(component-csampler            "--file=csampler.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-decapole            "--file=decapole.gmad"        ${OVERLAP_CHECK})
@@ -15,17 +18,11 @@ simple_testing(component-muon-spoiler        "--file=muon_spoiler.gmad"    ${OVE
 simple_testing(component-octupole            "--file=octupole.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-quadrupole          "--file=quadrupole.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-quadrupole-offset   "--file=quadOffset.gmad"      ${OVERLAP_CHECK})
-simple_testing(component-rbend               "--file=rbend.gmad"           ${OVERLAP_CHECK})
-simple_testing(component-rbend-poleface      "--file=rbend_poleface.gmad"  ${OVERLAP_CHECK})
-simple_testing(component-rbend-fringe        "--file=rbend_fringe.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rcol                "--file=rcol.gmad"            ${OVERLAP_CHECK})
 simple_testing(component-rcol-Tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})
 simple_testing(component-rf-cavity           "--file=rfcavity.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-sampler             "--file=sampler.gmad"         ${OVERLAP_CHECK})
-simple_testing(component-sbend               "--file=sbend.gmad"           ${OVERLAP_CHECK})
-simple_testing_long(component-sbend-poleface "--file=sbend_poleface.gmad"  ${OVERLAP_CHECK})
-simple_testing_long(component-sbend-fringe   "--file=sbend_fringe.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-screen              "--file=screen.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-sextupole           "--file=sextupole.gmad"       ${OVERLAP_CHECK})
 simple_testing(component-shield              "--file=shield.gmad"          ${OVERLAP_CHECK})
@@ -47,5 +44,3 @@ simple_fail(component-teleport-protection "--file=teleporter_protection.gmad")
 if(USE_AWAKE)
   simple_testing(component-awakespectrometer "--file=awakespectrometer.gmad" ${OVERLAP_CHECK})
 endif()
-
-add_subdirectory(dipoles)
