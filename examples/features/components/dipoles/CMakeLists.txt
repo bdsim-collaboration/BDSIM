@@ -3,12 +3,20 @@ simple_testing(component-sbend               "--file=sbend.gmad"           ${OVE
 simple_testing_long(component-sbend-poleface "--file=sbend_poleface.gmad"  ${OVERLAP_CHECK})
 simple_testing_long(component-sbend-fringe   "--file=sbend_fringe.gmad"    ${OVERLAP_CHECK})
 
+# with 'bdsimmatrix' integrator set - different geometry constructed
+simple_testing(component-sbend-matrix               "--file=sbend.gmad"           ${OVERLAP_CHECK})
+simple_testing_long(component-sbend-matrix-poleface "--file=sbend_poleface.gmad"  ${OVERLAP_CHECK})
+simple_testing_long(component-sbend-matrix-fringe   "--file=sbend_fringe.gmad"    ${OVERLAP_CHECK})
 
 # standard rbends
 simple_testing(component-rbend                   "--file=rbend.gmad"           ${OVERLAP_CHECK})
 simple_testing(component-rbend-poleface          "--file=rbend_poleface.gmad"  ${OVERLAP_CHECK})
 simple_testing(component-rbend-fringe            "--file=rbend_fringe.gmad"    ${OVERLAP_CHECK})
 
+# with 'bdsimmatrix' integrator set - different geometry constructed
+simple_testing(component-rbend-matrix            "--file=rbend_matrix.gmad"           ${OVERLAP_CHECK})
+simple_testing(component-rbend-matrix-poleface   "--file=rbend_matrix_poleface.gmad"  ${OVERLAP_CHECK})
+simple_testing(component-rbend-matrix-fringe     "--file=rbend_matrix_fringe.gmad"    ${OVERLAP_CHECK})
 
 # bends with quadrupole components
 simple_testing(component-sbend-k1     "--file=sbend_k1.gmad"  ${OVERLAP_CHECK})
