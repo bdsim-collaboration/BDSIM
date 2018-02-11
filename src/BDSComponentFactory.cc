@@ -1723,17 +1723,12 @@ std::pair<G4double, G4double> BDSComponentFactory::GetGeometricPolefaceAngles(co
   // geometrically construct the poleface angles.
   // Also, if the dipole has a finite k1 then all integrators revert to mad-x matrix style dipole
   // tracking anyway, in which case also don't geometrically construct the dipoles.
-  if (!std::strcmp(intSetTypestr, "bdsimmatrix"))
+  if (intSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
     {
       e1 = 0;
       e2 = 0;
     }
-  else if (BDS::IsFinite(el->k1))
-    {
-      e1 = 0;
-      e2 = 0;
-    }
-
+  
   std::pair<G4double, G4double> polefaceAngles = std::make_pair(e1, e2);
 
   return polefaceAngles;
