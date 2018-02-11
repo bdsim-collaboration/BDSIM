@@ -6,7 +6,7 @@ simple_testing(simpleMachine "--file=sm.gmad" ${OVERLAP_CHECK})
 
 # no output formats
 set(TESTING_ARGS --output=none)
-simple_testing(simpleMachineNone "--file=sm.gmad" "")
+simple_testing(example-simple-machine-none "--file=sm.gmad" "")
 # root event output format
 set(TESTING_ARGS --output=rootevent)
 simple_testing(simpleMachineROOTEvent "--file=sm.gmad" "")
