@@ -10,6 +10,10 @@ simple_testing(component-rbend-poleface          "--file=rbend_poleface.gmad"  $
 simple_testing(component-rbend-fringe            "--file=rbend_fringe.gmad"    ${OVERLAP_CHECK})
 
 
+# bends with quadrupole components
+simple_testing(component-sbend-k1     "--file=sbend_k1.gmad"  ${OVERLAP_CHECK})
+simple_testing(component-rbend-k1     "--file=rbend_k1.gmad"  ${OVERLAP_CHECK})
+
 simple_testing(component-rbend-strong-single-e-neg-B   "--file=rbend_strong_single_e_neg_B.gmad"   ${OVERLAP_CHECK})
 simple_testing(component-rbend-strong-single-e-neg-ang "--file=rbend_strong_single_e_neg_ang.gmad" ${OVERLAP_CHECK})
 simple_testing(component-rbend-strong-single-e-pos-B   "--file=rbend_strong_single_e_pos_B.gmad"   ${OVERLAP_CHECK})

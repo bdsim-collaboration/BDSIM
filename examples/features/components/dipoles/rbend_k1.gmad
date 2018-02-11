@@ -1,4 +1,4 @@
-sb1: sbend, l=1*m, angle=0.1, k1=0.002;
+sb1: rbend, l=1*m, angle=0.1, k1=0.02;
 
 l1: line = (sb1);
 
