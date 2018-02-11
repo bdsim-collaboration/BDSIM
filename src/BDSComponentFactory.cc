@@ -441,11 +441,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
+  // geometric face angles (can be different from specification depending on integrator set used)
+  G4double incomingFaceAngle = IncomingFaceAngle(element);
+  G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
-  // geometric face rotations
-  std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
-  G4double e1 = polefaceAngles.first;
-  G4double e2 = polefaceAngles.second;
   auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet,
                                        incomingFaceAngle, outgoingFaceAngle,
 				       includeFringeFields);

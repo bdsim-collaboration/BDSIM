@@ -45,8 +45,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     BDSMagnetStrength*      st,
 					     const G4double          brho,
 					     const BDSIntegratorSet* integratorSet,
-					     G4double                e1,
-					     G4double                e2)
+					     const G4double          incomingFaceAngle,
+					     const G4double          outgoingFaceAngle,
 					     const G4bool&           includeFringe)
 {
   const G4String             baseName = element->name;
@@ -63,13 +63,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
     {bendingRadius = - brho / (*st)["field"];}
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
-/*
-  // face rotations
-  // convention: +ve e1 / e2 reduces outside of bend
-  G4double   factor = angle < 0 ? -1 : 1; 
-  const G4double e1 = factor * element->e1 * CLHEP::rad;
-  const G4double e2 = factor * element->e2 * CLHEP::rad;
-*/
+
   // don't build the fringe element if there's no face angle - no physical effect
   if (!BDS::IsFinite(element->e1))
     {buildFringeIncoming = false;}
@@ -77,10 +71,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
     {buildFringeOutgoing = false;}
 
   // Calculate number of sbends to split parent into
-  G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, e1, e2);
-
-  const G4double  angleIn = 0.5 * angle + e1;
-  const G4double angleOut = 0.5 * angle + e2;
+  G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
+					       outgoingFaceAngle);
   
   // If no angle, means no strength, so even if there are pole face rotations, we don't
   // need the fringe elements. If there's only 1 segment we may still have a finite
@@ -96,9 +88,10 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 						   true,
 						   fieldTiltOffset);
       // prepare one sbend segment
-      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
-      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn,
-								-angleOut, yokeOnLeft);
+      auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle,
+							     -outgoingFaceAngle);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -incomingFaceAngle,
+								-outgoingFaceAngle, yokeOnLeft);
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
 					 arcLength,
@@ -148,14 +141,14 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   // not overlap given the outer diamter.
   // calculate extent along z due poleface rotation at half the outer diameter.
   G4double outerDiameter = BDSComponentFactory::PrepareOuterDiameter(element);
-  if (angleIn > 0)
-    {zExtentIn = 0.5*outerDiameter*tan(angleIn - 0.5*std::abs(semiAngle));}
-  else if (angleIn < 0)
-    {zExtentIn = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + angleIn);}
-  if (angleOut > 0)
-    {zExtentOut = 0.5*outerDiameter*tan(angleOut - 0.5*std::abs(semiAngle));}
-  else if (angleOut < 0)
-    {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + angleOut);}
+  if (incomingFaceAngle > 0)
+    {zExtentIn = 0.5*outerDiameter*tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
+  else if (incomingFaceAngle < 0)
+    {zExtentIn = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + incomingFaceAngle);}
+  if (outgoingFaceAngle > 0)
+    {zExtentOut = 0.5*outerDiameter*tan(outgoingFaceAngle - 0.5*std::abs(semiAngle));}
+  else if (outgoingFaceAngle < 0)
+    {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
   
   //decide if segment angles fade or not depending on the extents
   if (std::abs(zExtentIn) < semiArcLength/4.0)
@@ -185,7 +178,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					  -semiAngle); // minus for 3d cartesian conversion
   
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn, -angleOut, yokeOnLeft);
+  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element, -incomingFaceAngle,
+                                                                                         -outgoingFaceAngle, yokeOnLeft);
   // minus for conversion to 3d cartesian
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
 						      magnetOuterInfoCheck->outerDiameter,
@@ -202,8 +196,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       (*fringeStIn)["polefaceangle"] = element->e1;
       (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e1, element->fint, element->hgap*CLHEP::m);
       G4String segmentName           = baseName + "_e1_fringe";
-      G4double fringeAngleIn         = 0.5*oneFringeAngle - e1;
-      G4double fringeAngleOut        = 0.5*oneFringeAngle + e1;
+      G4double fringeAngleIn         = 0.5*oneFringeAngle - incomingFaceAngle;
+      G4double fringeAngleOut        = 0.5*oneFringeAngle + incomingFaceAngle;
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						      segmentName, fringeStIn, brho,
 						      integratorSet);
@@ -226,13 +220,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       G4String name = baseName;
       if (i < numSegmentsEitherSide)
         {// first half of magnet
-          if (!BDS::IsFinite(e1)) // no pole face rotation so just repeat central segment
+          if (!BDS::IsFinite(incomingFaceAngle)) // no pole face rotation so just repeat central segment
             {oneBend = centralWedge;}
           else if (fadeIn) // build incremented angled segment
             {
 	      name += "_"+std::to_string(numberOfUniqueComponents);
 	      numberOfUniqueComponents++;
-	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,e1,e2,segmentAngleIn,segmentAngleOut);
+	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,incomingFaceAngle,outgoingFaceAngle,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
 					      brho, integratorSet, yokeOnLeft);
@@ -243,7 +237,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
                 {
 		  name += "_"+std::to_string(numberOfUniqueComponents);
 		  numberOfUniqueComponents++;
-		  segmentAngleIn  = 0.5*semiAngle - e1; // whole pole face angle
+		  segmentAngleIn  = 0.5*semiAngle - incomingFaceAngle; // whole pole face angle
 		  segmentAngleOut = 0.5*semiAngle;      // even matching angle
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
@@ -255,13 +249,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
         }
       else if (i > numSegmentsEitherSide) // i is zero counting
         {// second half of magnet
-          if (!BDS::IsFinite(e2)) // no pole face rotation so just repeat central segment
+          if (!BDS::IsFinite(outgoingFaceAngle)) // no pole face rotation so just repeat central segment
             {oneBend = centralWedge;}
           else if (fadeOut) // build incremented angled segment
 	    {
 	      name += "_"+std::to_string(numberOfUniqueComponents);
 	      numberOfUniqueComponents++;
-	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,e1,e2,segmentAngleIn,segmentAngleOut);
+	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,incomingFaceAngle,outgoingFaceAngle,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
 					      brho, integratorSet, yokeOnLeft);
@@ -273,7 +267,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 		  name += "_"+std::to_string(numberOfUniqueComponents);
 		  numberOfUniqueComponents++;
 		  segmentAngleIn  = 0.5*semiAngle;
-		  segmentAngleOut = 0.5*semiAngle - e2;
+		  segmentAngleOut = 0.5*semiAngle - outgoingFaceAngle;
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
 						  brho, integratorSet, yokeOnLeft);
@@ -297,8 +291,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e2, element->fintx, element->hgap*CLHEP::m);
       (*fringeStOut)["length"]        = thinElementArcLength;
-      G4double fringeAngleIn          = 0.5*oneFringeAngle + e2;
-      G4double fringeAngleOut         = 0.5*oneFringeAngle - e2;
+      G4double fringeAngleIn          = 0.5*oneFringeAngle + outgoingFaceAngle;
+      G4double fringeAngleOut         = 0.5*oneFringeAngle - outgoingFaceAngle;
       G4String segmentName            = baseName + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
@@ -312,8 +306,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 void BDS::UpdateSegmentAngles(const G4int index,
 			      const G4int nSBends,
 			      const G4double semiAngle,
-			      const G4double e1,
-			      const G4double e2,
+			      const G4double incomingFaceAngle,
+			      const G4double outgoingFaceAngle,
 			      G4double& segmentAngleIn,
 			      G4double& segmentAngleOut)
 {
@@ -330,22 +324,22 @@ void BDS::UpdateSegmentAngles(const G4int index,
   G4bool       firstHalf = index + 1 < (nSBends + 1) / 2;
   G4int numberToFadeOver = (nSBends - 1) / 2;
   if (firstHalf)
-    {// fade from e1 to 0
-      G4double delta = e1 / (G4double) numberToFadeOver;
-      G4double inputFaceAngle  = e1 - ((G4double)index * delta);
-      G4double outputFaceAngle = e1 - ((G4double)(index+1) * delta);
-      // if e1 was 0, each would have 1/2 of semiAngle
+    {// fade from incomingFaceAngle to 0
+      G4double delta = incomingFaceAngle / (G4double) numberToFadeOver;
+      G4double inputFaceAngle  = incomingFaceAngle - ((G4double)index * delta);
+      G4double outputFaceAngle = incomingFaceAngle - ((G4double)(index+1) * delta);
+      // if incomingFaceAngle was 0, each would have 1/2 of semiAngle
       segmentAngleIn  = 0.5*semiAngle - inputFaceAngle;
       segmentAngleOut = 0.5*semiAngle + outputFaceAngle;
     }
   else
-    {// second half - fade from 0 to e2
-      G4double delta = e2 / (G4double) numberToFadeOver;
+    {// second half - fade from 0 to outgoingFaceAngle
+      G4double delta = outgoingFaceAngle / (G4double) numberToFadeOver;
       G4int secondHalfIndex = index - ((nSBends + 1) / 2);
       // here we fade from 0 contribution to maximum (opposite of above if statement)
-      G4double inputFaceAngle  = e2 - ( (G4double)(numberToFadeOver - secondHalfIndex) * delta);
-      G4double outputFaceAngle = e2 - ( (G4double)(numberToFadeOver - (secondHalfIndex + 1)) * delta);
-      // if e1 was 0, each would have 1/2 of semiAngle
+      G4double inputFaceAngle  = outgoingFaceAngle - ( (G4double)(numberToFadeOver - secondHalfIndex) * delta);
+      G4double outputFaceAngle = outgoingFaceAngle - ( (G4double)(numberToFadeOver - (secondHalfIndex + 1)) * delta);
+      // if incomingFaceAngle was 0, each would have 1/2 of semiAngle
       segmentAngleIn  = 0.5*semiAngle + inputFaceAngle;
       segmentAngleOut = 0.5*semiAngle - outputFaceAngle;
     }
@@ -397,8 +391,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
 			     const BDSIntegratorSet* integratorSet,
-                 G4double e1,
-                 G4double e2)
+			     G4double e1,
+			     G4double e2,
 			     const G4bool&           includeFringe)
 {
   const G4String name = element->name;
@@ -420,8 +414,10 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
-  // don't build the fringe element if there's no face angle in the original element definition - no physical effect.
-  // e1 and e2 may be geometrically be zero though for tracking purposes, but fringe field kick may still be wanted.
+  // don't build the fringe element if there's no face angle in the original element
+  // definition - no physical effect.
+  // e1 and e2 may be geometrically be zero though for tracking purposes, but fringe
+  // field kick may still be wanted.
   if (!BDS::IsFinite(element->e1))
     {buildFringeIncoming = false;}
   if (!BDS::IsFinite(element->e2))
@@ -584,10 +580,10 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 		       nullptr);
 }
 
-G4int BDS::CalculateNSBendSegments(const G4double length,
-				   const G4double angle,
-				   const G4double e1,
-				   const G4double e2,
+G4int BDS::CalculateNSBendSegments(const G4double& length,
+				   const G4double& angle,
+				   const G4double incomingFaceAngle,
+				   const G4double outgoingFaceAngle,
 				   const G4double aperturePrecision)
 {
   // Split a bend into equal segments such that the maximum distance between the
@@ -595,7 +591,7 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
   
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   // add poleface rotations onto angle as absolute number (just to be safe)
-  G4double totalAngle = std::abs(angle) + std::abs(e1) + std::abs(e2);
+  G4double totalAngle = std::abs(angle) + std::abs(incomingFaceAngle) + std::abs(outgoingFaceAngle);
   G4int nSBends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
   if (nSBends==0)
     {nSBends = 1;} // can happen in case angle = 0
