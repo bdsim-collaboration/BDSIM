@@ -158,12 +158,14 @@ private:
   /// No default constructor
   BDSComponentFactory() = delete;
 
-  /// rigidity in T*m for beam particles
+  /// Rigidity in T*m (G4units) for beam particles.
   G4double brho;
-  /// length safety from global constants
+  /// Length safety from global constants.
   G4double lengthSafety;
-  /// length of a thin element
+  /// Length of a thin element.
   G4double thinElementLength;
+  /// Cache of whether to include fringe fields.
+  G4bool includeFringeFields;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;

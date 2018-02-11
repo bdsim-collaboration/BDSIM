@@ -47,9 +47,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     const BDSIntegratorSet* integratorSet,
 					     G4double                e1,
 					     G4double                e2)
+					     const G4bool&           includeFringe)
 {
   const G4String             baseName = element->name;
-  const G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
   G4bool          buildFringeIncoming = includeFringe;
@@ -399,11 +399,11 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const BDSIntegratorSet* integratorSet,
                  G4double e1,
                  G4double e2)
+			     const G4bool&           includeFringe)
 {
   const G4String name = element->name;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
   
-  const G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
   G4bool          buildFringeIncoming = includeFringe;

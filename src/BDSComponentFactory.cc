@@ -85,6 +85,7 @@ BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
   brho(brhoIn),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
+  includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
   integratorSet = BDS::IntegratorSet(integratorSetType);
@@ -139,7 +140,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
-    {// bend builder will construct it to match - but here we just now it's different
+    {// bend builder will construct it to match - but here we just know it's different
       // match a previous rbend with half the angle
       if (prevElement && (prevElement->type == ElementType::_RBEND))
 	{differentFromDefinition = true;}
@@ -429,6 +430,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
+  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
+    {
+      G4cerr << G4endl << __METHOD_NAME__
+             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
+             << G4endl << G4endl;
+    }
+
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
@@ -438,8 +446,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
   G4double e1 = polefaceAngles.first;
   G4double e2 = polefaceAngles.second;
-
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet, e1, e2);
+  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet,
+                                       incomingFaceAngle, outgoingFaceAngle,
+				       includeFringeFields);
   
   return sBendLine;
 }
@@ -470,6 +479,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
+  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
+    {
+      G4cerr << G4endl << __METHOD_NAME__
+             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
+             << G4endl << G4endl;
+    }
+
   // geometric face rotations
   std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
   G4double e1 = polefaceAngles.first;
@@ -481,8 +497,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   brho,
 					   st,
 					   integratorSet,
-                       e1,
-                       e2);
+					   e1,
+					   e2,
+					   includeFringeFields);
   return rbendline;
 }
 void BDSComponentFactory::GetKickValue(G4double& hkick,
