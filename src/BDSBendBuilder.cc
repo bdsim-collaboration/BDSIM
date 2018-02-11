@@ -45,8 +45,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     BDSMagnetStrength*      st,
 					     const G4double          brho,
 					     const BDSIntegratorSet* integratorSet,
-					     const G4double          incomingFaceAngle,
-					     const G4double          outgoingFaceAngle,
+					     const G4double&         incomingFaceAngle,
+					     const G4double&         outgoingFaceAngle,
 					     const G4bool&           includeFringe)
 {
   const G4String             baseName = element->name;

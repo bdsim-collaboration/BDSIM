@@ -46,8 +46,8 @@ namespace BDS
 					  BDSMagnetStrength*      st,
 					  const G4double          brho,
 					  const BDSIntegratorSet* integratorSet,
-					  const G4double          incomingFaceAngle,
-					  const G4double          outgoingFaceAngle,
+					  const G4double&         incomingFaceAngle,
+					  const G4double&         outgoingFaceAngle,
 					  const G4bool&           includeFringe);
   
   /// Construct beamline for an rbend.  A line is returned with a single
