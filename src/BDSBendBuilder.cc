@@ -45,8 +45,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     BDSMagnetStrength*      st,
 					     const G4double          brho,
 					     const BDSIntegratorSet* integratorSet,
-                         G4double e1,
-                         G4double e2)
+					     G4double                e1,
+					     G4double                e2)
 {
   const G4String             baseName = element->name;
   const G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
