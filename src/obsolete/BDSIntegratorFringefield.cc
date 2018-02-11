@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* strength,
                                                    G4double                 brho,
                                                    G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorDipole(strength, brho, eqOfMIn),
+  BDSIntegratorDipoleRodrigues(strength, brho, eqOfMIn),
   polefaceAngle((*strength)["polefaceangle"]),
   fringeCorr((*strength)["fringecorr"])
 {;}

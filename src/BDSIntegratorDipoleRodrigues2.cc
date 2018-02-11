@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
 
@@ -27,14 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
+BDSIntegratorDipoleRodrigues2::BDSIntegratorDipoleRodrigues2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
   eqOfM(eqOfMIn),
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
 {;}
 
-void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
+void BDSIntegratorDipoleRodrigues2::DumbStepper(const G4double yIn[],
 				       G4ThreeVector  field,
 				       G4double       stepLength,
 				       G4double       yOut[])
@@ -42,7 +42,7 @@ void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
   AdvanceHelix(yIn, field, stepLength, yOut);
 }
 
-void BDSIntegratorDipole2::Stepper(const G4double yIn[],
+void BDSIntegratorDipoleRodrigues2::Stepper(const G4double yIn[],
 				   const G4double[] /*dydx*/,
 				   G4double       h,
 				   G4double       yOut[],
@@ -121,7 +121,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   SetRadHelix(rad);
 }
 
-void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
+void BDSIntegratorDipoleRodrigues2::AdvanceHelixForSpiralling(const G4double yIn[],
 						     G4ThreeVector  field,
 						     G4double       h,
 						     G4double       yOut[],
@@ -160,7 +160,7 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
     {yErr[i] = 1e-40;}
 }
 
-void BDSIntegratorDipole2::FudgeDistChordToZero()
+void BDSIntegratorDipoleRodrigues2::FudgeDistChordToZero()
 {
   // Large angle condition in G4MagHelicalStepper DistChord() method is faster, so set angle to 10.
   SetAngCurve(10);

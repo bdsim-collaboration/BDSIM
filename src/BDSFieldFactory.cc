@@ -51,8 +51,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"
-#include "BDSIntegratorDipole.hh"
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorEuler.hh"
@@ -465,9 +465,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolerodrigues:
-      integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDipoleRodrigues(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolerodrigues2:
-      integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleRodrigues2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::dipolematrix:
       integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:

@@ -33,7 +33,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
                              G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
                              G4double                 minimumRadiusOfCurvatureIn):
-  BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn),
+  BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr((*strengthIn)["fringecorr"]),
   brho(brhoIn),
@@ -51,7 +51,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 {
   G4double yTemp[7];
   // do the dipole kick using base class
-  BDSIntegratorDipole2::Stepper(yIn, dydx, h, yTemp, yErr);
+  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
 
   // don't do fringe kick if we're sampling the field  for a long step
   if (h > 1*CLHEP::cm)

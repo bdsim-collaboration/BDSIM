@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSINTEGRATORDIPOLE_H
-#define BDSINTEGRATORDIPOLE_H
+#ifndef BDSINTEGRATORDIPOLERODRIGUES_H
+#define BDSINTEGRATORDIPOLERODRIGUES_H
 
 #include "BDSIntegratorMag.hh"
 
@@ -38,14 +38,14 @@ class BDSMagnetStrength;
  * Originally part of BDSIM by many authors.
  */
 
-class BDSIntegratorDipole: public BDSIntegratorMag
+class BDSIntegratorDipoleRodrigues: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorDipole(BDSMagnetStrength const* strength,
+  BDSIntegratorDipoleRodrigues(BDSMagnetStrength const* strength,
 		      G4double                 brho,
 		      G4Mag_EqRhs*             eqOfMIn);
     
-  virtual ~BDSIntegratorDipole(){;}
+  virtual ~BDSIntegratorDipoleRodrigues(){;}
 
   /// Stepper for this integrator.  Calculates the new coordinates of a particle
   /// through a uniform magnetic field.

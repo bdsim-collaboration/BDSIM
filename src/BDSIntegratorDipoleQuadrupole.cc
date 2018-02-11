@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
@@ -39,7 +39,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  dipole(new BDSIntegratorDipole2(eqOfMIn, minimumRadiusOfCurvatureIn)),
+  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   strength(strengthIn)
 {
   eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);

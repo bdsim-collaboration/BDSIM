@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORDIPOLEFRINGE_H
 
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
@@ -34,7 +34,7 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringe: public BDSIntegratorDipole2, public BDSAuxiliaryNavigator
+class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleRodrigues2, public BDSAuxiliaryNavigator
 {
 public:
   BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,

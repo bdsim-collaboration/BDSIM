@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagUsualEqRhs.hh"
 #include "globals.hh"
 
-class BDSIntegratorDipole2;
+class BDSIntegratorDipoleRodrigues2;
 class BDSMagnetStrength;
 class BDSStep;
 class G4Mag_EqRhs;
@@ -69,7 +69,7 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
 
-  BDSIntegratorDipole2* dipole;
+  BDSIntegratorDipoleRodrigues2* dipole;
   BDSMagUsualEqRhs*     eq;
   G4double              bPrime;
   G4double 		bRho;

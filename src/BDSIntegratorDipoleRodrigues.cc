@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSIntegratorDipole.hh"
+#include "BDSIntegratorDipoleRodrigues.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSPhysicalConstants.hh"
@@ -30,7 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 
-BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strengthIn,
+BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength const*  strengthIn,
 					 G4double                  /*brho*/,
 					 G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
@@ -46,7 +46,7 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strengthIn,
 #endif
 }
 
-void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
+void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
 				       const G4double dydx[],
 				       G4double       h,
 				       G4double       yOut[],
@@ -126,7 +126,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double yIn[],
   return;
 }
 
-void BDSIntegratorDipole::Stepper(const G4double yIn[],
+void BDSIntegratorDipoleRodrigues::Stepper(const G4double yIn[],
 				  const G4double dydx[],
 				  const G4double h,
 				  G4double       yOut[],
@@ -139,7 +139,7 @@ void BDSIntegratorDipole::Stepper(const G4double yIn[],
   AdvanceHelix(yIn, dydx, h, yOut, yErr);
 }
 
-std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double      rho,
+std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipoleRodrigues::UpdatePandR(G4double      rho,
 									G4double      h,
 									G4ThreeVector localPos,
 									G4ThreeVector localMomUnit)

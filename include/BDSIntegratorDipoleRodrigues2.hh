@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSINTEGRATORDIPOLE2_H
-#define BDSINTEGRATORDIPOLE2_H
+#ifndef BDSINTEGRATORDIPOLERODRIGUES2_H
+#define BDSINTEGRATORDIPOLERODRIGUES2_H
 
 #include "BDSIntegratorDrift.hh"
 #include "BDSMagnetStrength.hh"
@@ -47,13 +47,13 @@ class G4Mag_EqRhs;
  * @author Laurie Nevay
  */
 
-class BDSIntegratorDipole2: public G4MagHelicalStepper, public BDSIntegratorDrift
+class BDSIntegratorDipoleRodrigues2: public G4MagHelicalStepper, public BDSIntegratorDrift
 {
 public:
-  BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
+  BDSIntegratorDipoleRodrigues2(G4Mag_EqRhs* eqOfMIn,
 		       G4double     minimumRadiusOfCurvature);
 
-  virtual ~BDSIntegratorDipole2(){;}
+  virtual ~BDSIntegratorDipoleRodrigues2(){;}
 
   /// Required to be provided by base class, but apparently should never be
   /// called by the driver.  Simply calls AdvanceHelix.
@@ -94,7 +94,7 @@ protected:
 
 private:
   /// Private default constructor to force use of provided one.
-  BDSIntegratorDipole2() = delete;
+  BDSIntegratorDipoleRodrigues2() = delete;
 
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.

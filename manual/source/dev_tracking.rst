@@ -318,7 +318,7 @@ base class for the majority of BDSIM integrators.
 BDSIM Dipole
 ------------
 
-* Class name: :code:`BDSIntegratorDipole`
+* Class name: :code:`BDSIntegratorDipoleRodrigues`
 
 This integrator is constructed with it's own strength parameter and **ignores** the field
 information provided by Geant4. The field value (already multiplied by :code:`CLHEP::telsa`) is
@@ -363,7 +363,7 @@ that works in 3D was written to improve upon this and is described in _`BDSIM Di
 BDSIM Dipole2
 -------------
 
-* Class name: :code:`BDSIntegratorDipole2`
+* Class name: :code:`BDSIntegratorDipoleRodrigues2`
 
 This routine makes use of the tracking routine provided in Geant4 for a pure magnetic field.
 This is provided in the :code:`G4MagHelicalStepper` class, which provides the tracking routine
@@ -731,13 +731,13 @@ BDSIM Dipole Fringe
 * Class name: :code:`BDSIntegratorDipoleFringe`
 
 This integrator provides a change in momentum only that represents the edge effect of a dipole
-with a pole face rotation. This class inherits :code:`BDSIntegratorDipole2` as it uses it
+with a pole face rotation. This class inherits :code:`BDSIntegratorDipoleRodrigues2` as it uses it
 for the dipole component of the motion. After that, the small change in momentum is applied.
 
 * If the step length is longer than 1 mm, the kick is not applied (i.e. not a thin dipole edge element).
 
 * The input coordinates are converted to the local curvilinear frame. This is required only for
-  this algorithm and not that in :code:`BDSIntegratorDipole2`.
+  this algorithm and not that in :code:`BDSIntegratorDipoleRodrigues2`.
 
 * If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
   is applied.
