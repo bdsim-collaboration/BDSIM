@@ -102,7 +102,7 @@ OptionsBase::OptionsBase()
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
-  includeFringeFields  = false;
+  includeFringeFields  = true;
 
   includeIronMagFields = false;
   sensitiveBeamlineComponents = true;
