@@ -566,7 +566,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
-  BDSIntegratorType intType = integratorSet->dipolefringe;
+  BDSIntegratorType intType = integratorSet->dipoleFringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,

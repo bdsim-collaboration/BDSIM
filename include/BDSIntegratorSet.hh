@@ -52,13 +52,13 @@ class BDSIntegratorSet
 public:
   BDSIntegratorSet(BDSIntegratorType solenoidIn,
 		   BDSIntegratorType dipoleIn,
-		   BDSIntegratorType dipolematrixIn,
+		   BDSIntegratorType dipoleQuadrupoleIn,
 		   BDSIntegratorType quadrupoleIn,
 		   BDSIntegratorType sextupoleIn,
 		   BDSIntegratorType octupoleIn,
 		   BDSIntegratorType decapoleIn,
-		   BDSIntegratorType multipoleIn,
-		   BDSIntegratorType muonspoilerIn,
+		   BDSIntegratorType multipoleThickIn,
+		   BDSIntegratorType muonSpoilerIn,
 		   BDSIntegratorType rfcavityIn,
 		   BDSIntegratorType rfIn,
 		   BDSIntegratorType generalIn,
@@ -66,21 +66,21 @@ public:
 		   BDSIntegratorType skewSextupoleIn,
 		   BDSIntegratorType skewOctupoleIn,
 		   BDSIntegratorType skewDecapoleIn,
-		   BDSIntegratorType dipolefringeIn,
-		   BDSIntegratorType multipolethinIn);
+		   BDSIntegratorType dipoleFringeIn,
+		   BDSIntegratorType multipoleThinIn);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
 
   BDSIntegratorType solenoid;
   BDSIntegratorType dipole;
-  BDSIntegratorType dipolematrix;
+  BDSIntegratorType dipoleQuadrupole;
   BDSIntegratorType quadrupole;
   BDSIntegratorType sextupole;
   BDSIntegratorType octupole;
   BDSIntegratorType decapole;
-  BDSIntegratorType multipole;
-  BDSIntegratorType muonspoiler;
+  BDSIntegratorType multipoleThick;
+  BDSIntegratorType muonSpoiler;
   BDSIntegratorType rfcavity;
   BDSIntegratorType rf;
   BDSIntegratorType general;
@@ -88,8 +88,8 @@ public:
   BDSIntegratorType skewSextupole;
   BDSIntegratorType skewOctupole;
   BDSIntegratorType skewDecapole;
-  BDSIntegratorType dipolefringe;
-  BDSIntegratorType multipolethin;
+  BDSIntegratorType dipoleFringe;
+  BDSIntegratorType multipoleThin;
 };
 
 #endif
