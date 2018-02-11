@@ -1654,14 +1654,18 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
       // by half the bend angle
       outgoingFaceAngle += 0.5 * bendAngle;
     }
-  // for an sbend, the output face or nominally normal to the outgoing
+
+  // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
+  // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
+  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+    {return outgoingFaceAngle;}
+
+  // for an sbend, the output face is nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes
   
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  //G4double e2 = el->e2*CLHEP::rad;
-  std::pair<G4double, G4double> polefaceAngles = GetGeometricPolefaceAngles(element);
-  G4double e2 = polefaceAngles.second;
+  G4double e2 = el->e2*CLHEP::rad;
   if (BDS::IsFinite(e2))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
@@ -1686,14 +1690,18 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
       // by half the bend angle
       incomingFaceAngle += 0.5 * bendAngle;
     }
+
+  // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
+  // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
+  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+    {return incomingFaceAngle;}
+
   // for an sbend, the output face or nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  //G4double e1 = el->e1*CLHEP::rad;
-  std::pair<G4double, G4double> polefaceAngles = GetGeometricPolefaceAngles(element);
-  G4double e1 = polefaceAngles.first;
+  G4double e1 = el->e1*CLHEP::rad;
   if (BDS::IsFinite(e1))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
