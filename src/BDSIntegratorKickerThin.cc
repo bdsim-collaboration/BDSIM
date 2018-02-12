@@ -48,8 +48,8 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
 
   const G4double fcof = eqOfM->FCof();
   if (fcof == 0 || zeroStrength)
-    {// neutral particle - drift through
-      AdvanceDriftMag(yIn, h, yOut);
+    {// neutral particle or zero strength - drift through
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -64,7 +64,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   // only use for paraxial momenta, else advance particle as if in a drift
   if (std::abs(localMomUnit.z()) < 0.9)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }

@@ -56,11 +56,12 @@ void BDSIntegratorEulerOld::Stepper(const G4double yIn[],
   try
     {
       // do two half steps
-      AdvanceHelix(yIn,   0.5*h, yTemp);
-      AdvanceHelix(yTemp, 0.5*h, yOut); 
+      G4double tempErr[7];
+      AdvanceHelix(yIn,   0.5*h, yTemp, tempErr);
+      AdvanceHelix(yTemp, 0.5*h, yOut, tempErr);
       
       // do a full step
-      AdvanceHelix(yIn, h, yTemp);
+      AdvanceHelix(yIn, h, yTemp, tempErr);
 
       // Error is difference between two half steps and full step
       for(G4int i = 0; i < nVariables; i++)

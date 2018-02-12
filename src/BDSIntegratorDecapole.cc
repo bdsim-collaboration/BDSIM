@@ -44,7 +44,8 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 
 void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
-					 G4double        yOut[])
+					 G4double        yOut[],
+                     G4double        yErr[])
 {
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double momMag   = mom.mag();
@@ -52,7 +53,7 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 
   if(std::abs(kappa)<1.e-20)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }

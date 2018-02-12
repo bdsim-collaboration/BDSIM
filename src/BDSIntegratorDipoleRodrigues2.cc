@@ -151,9 +151,9 @@ void BDSIntegratorDipoleRodrigues2::AdvanceHelixForSpiralling(const G4double yIn
     }
 
   // Simply advance as a drift along this vector.
-  AdvanceDriftMag(yModified, h, yOut);
+  AdvanceDriftMag(yModified, h, yOut, yErr);
 
-  // set error to be low.
+  // set error to be low - required
   for(G4int i = 0; i < 3; i++)
     {yErr[i] = 1e-20;}
   for(G4int i = 3; i < 6; i++)

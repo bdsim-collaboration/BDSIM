@@ -68,7 +68,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   // only use for forward paraxial momenta, else advance particle as if in a drift
   if (localMomUnit.z() < 0.9)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -163,7 +163,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
   if (std::isnan(zp1) || (zp1 < 0.9))
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
