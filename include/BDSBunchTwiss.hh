@@ -80,7 +80,7 @@ private:
   void SetDispX(double newDispX)   {dispX  = newDispX;}
   void SetDispY(double newDispY)   {dispY  = newDispY;}
   void SetDispXP(double newDispXP) {dispXP = newDispXP;}
-  void SetDispYP(double newDispYP) {dispXP = newDispYP;}
+  void SetDispYP(double newDispYP) {dispYP = newDispYP;}
   /// @}
 };
 
