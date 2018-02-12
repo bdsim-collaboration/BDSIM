@@ -1731,32 +1731,3 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
   
   return incomingFaceAngle;
 }
-
-std::pair<G4double, G4double> BDSComponentFactory::GetGeometricPolefaceAngles(const Element* el) const
-{
-  // convention - +ve e1 / e2 reduces outside of bend
-  // extra factor of -1 for 'strength' to cartesian
-  const G4double angle = BendAngle(el);
-  G4double factor = angle < 0 ? -1 : 1;
-
-  // initialise as their geometric angles by default
-  G4double e1 = factor * el->e1 * CLHEP::rad;
-  G4double e2 = factor * el->e2 * CLHEP::rad;
-
-  BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
-  G4String intSetTypestr = intSetType.ToString();
-
-  // if integratorset is bdsimmatrix, ie mad-x matrix style dipole tracking, then don't
-  // geometrically construct the poleface angles.
-  // Also, if the dipole has a finite k1 then all integrators revert to mad-x matrix style dipole
-  // tracking anyway, in which case also don't geometrically construct the dipoles.
-  if (intSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
-    {
-      e1 = 0;
-      e2 = 0;
-    }
-  
-  std::pair<G4double, G4double> polefaceAngles = std::make_pair(e1, e2);
-
-  return polefaceAngles;
-}

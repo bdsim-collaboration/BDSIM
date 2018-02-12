@@ -319,9 +319,5 @@ private:
 
   /// Variable used to pass around the possibly modified name of an element.
   G4String elementName;
-
-  /// Function to get the geometric poleface angles. Returns both as 0 if
-  /// mad-x matrix style tracking will be used in the element.
-  std::pair<G4double, G4double> GetGeometricPolefaceAngles(const GMAD::Element* element) const;
 };
 #endif
