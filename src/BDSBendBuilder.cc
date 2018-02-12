@@ -421,12 +421,13 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   // don't build the fringe element if there's no face angle in the original element
-  // definition - no physical effect.
-  // e1 and e2 may be geometrically be zero though for tracking purposes, but fringe
-  // field kick may still be wanted.
-  if (!BDS::IsFinite(element->e1))
+  // definition - no physical effect. Here, 'no face angle' really means that the
+  // rbend becomes an sbend. Calculate how far away we are from an sbend.
+  G4double incomingFaceAngleWRTSBend = incomingFaceAngle + angle*0.5;
+  G4double outgoingFaceangleWRTSBend = outgoingFaceAngle + angle*0.5;
+  if (!BDS::IsFinite(incomingFaceAngleWRTSBend))
     {buildFringeIncoming = false;}
-  if (!BDS::IsFinite(element->e2))
+  if (!BDS::IsFinite(outgoingFaceangleWRTSBend))
     {buildFringeOutgoing = false;}
 
   G4double e1 = incomingFaceAngle;
@@ -438,19 +439,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   G4double angleOut = outgoingFaceAngle;
   
   if (prevElement && prevElement->type == ElementType::_RBEND)
-    {
-      buildFringeIncoming = false;
-      // gives it a face perpendicular to the reference trajectory like an sbend
-      // this prevents overlaps if the next one is tilted
-      angleIn = 0.5 * angle;
-    }
+    {buildFringeIncoming = false;}
   if (nextElement && nextElement->type == ElementType::_RBEND)
-    {
-      buildFringeOutgoing = false;
-      // gives it a face perpendicular to the reference trajectory like an sbend
-      // this prevents overlaps if the next one is tilted
-      angleOut = 0.5 * angle;
-    }
+    {buildFringeOutgoing = false;}
   
   // if we're building the fringe elements, we reduce the length of the central section
   // and proportion the bending by their length w.r.t. the full length of the total rbend.
@@ -476,6 +467,12 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       fringeInOutputAngle    = - (e1 + (0.5*oneFringeAngle - 0.5*angle));
       centralInputFaceAngle  = e1;
     }
+  else if (buildFringeOutgoing)
+    {
+      centralInputFaceAngle  -= 0.5*oneFringeAngle;
+      centralOutputFaceAngle -= oneFringeAngle;
+    }
+  
   if (buildFringeOutgoing)
     {
       centralArcLength       -= thinElementArcLength;
@@ -484,6 +481,14 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       fringeOutInputAngle    = - (e2 + (0.5*oneFringeAngle - 0.5*angle));
       angleOut               = e2 + (0.5*oneFringeAngle - 0.5*angle);
     }
+  else if (buildFringeIncoming)
+    {
+      centralInputFaceAngle += 0.5*oneFringeAngle;
+      centralOutputFaceAngle -= 0.5*oneFringeAngle;
+    }
+  
+  if (buildFringeOutgoing && !buildFringeIncoming)
+    {fringeOutInputAngle += 0.5*oneFringeAngle;}
   
   if (buildFringeIncoming)
     {
