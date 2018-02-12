@@ -1,2 +1,3 @@
 include rbend_fringe.gmad;
-include matrixintegrators.gmad;
+
+option, integratorSet="bdsimmatrix";
