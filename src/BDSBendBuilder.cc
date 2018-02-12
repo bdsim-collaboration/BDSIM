@@ -437,12 +437,18 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   if (prevElement)
     {
       if (prevElement->type == ElementType::_RBEND)
-	{buildFringeIncoming = false;}
+	{
+	  buildFringeIncoming = false;
+	  e1 = angle*0.5;
+	}
     }
   if (nextElement)
     {
       if (nextElement->type == ElementType::_RBEND)
-	{buildFringeOutgoing = false;}
+	{
+	  buildFringeOutgoing = false;
+	  e2 = angle*0.5;
+	}
     }
 
   // used for debugging purposes to forefully try out one and not the other fringe
