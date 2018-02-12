@@ -439,10 +439,16 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   G4double angleIn  = incomingFaceAngle;
   G4double angleOut = outgoingFaceAngle;
   
-  if (prevElement && prevElement->type == ElementType::_RBEND)
-    {buildFringeIncoming = false;}
-  if (nextElement && nextElement->type == ElementType::_RBEND)
-    {buildFringeOutgoing = false;}
+  if (prevElement)
+    {
+      if (prevElement->type == ElementType::_RBEND)
+	{buildFringeIncoming = false;}
+    }
+  if (nextElement)
+    {
+      if (nextElement->type == ElementType::_RBEND)
+	{buildFringeOutgoing = false;}
+    }
 
   // used for debugging purposes to forefully try out one and not the other fringe
   //buildFringeIncoming = false;
@@ -503,7 +509,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   if (buildFringeIncoming)
     {
-      
+      // TBC - LN: should this be e1 + angle/2 -> ie for e1 = -angle/2, the rbend would be an sbend
       BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
       (*fringeStIn)["polefaceangle"] = element->e1;
       (*fringeStIn)["length"]        = thinElementArcLength;
