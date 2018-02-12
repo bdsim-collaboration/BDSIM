@@ -496,7 +496,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   outgoingFaceAngle -= 0.5*angle;
 
   BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
-					   brho, st, integratorSet,
+					   brho, st, integratorSet, integratorSetType,
 					   incomingFaceAngle, outgoingFaceAngle,
 					   includeFringeFields);
   return rbendline;

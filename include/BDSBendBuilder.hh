@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 globals / types
 #include "G4String.hh"
+#include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 
 class BDSAcceleratorComponent;
@@ -62,6 +63,7 @@ namespace BDS
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
 			  const BDSIntegratorSet* integratorSet,
+			  const BDSIntegratorSetType integratorSetType,
 			  const G4double&         incomingFaceAngle,
 			  const G4double&         outgoingFaceAngle,
 			  const G4bool&           includeFringe);

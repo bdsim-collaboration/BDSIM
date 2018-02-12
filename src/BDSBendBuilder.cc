@@ -397,6 +397,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
 			     const BDSIntegratorSet* integratorSet,
+			     const BDSIntegratorSetType integratorSetType,
 			     const G4double&         incomingFaceAngle,
 			     const G4double&         outgoingFaceAngle,
 			     const G4bool&           includeFringe)
@@ -425,9 +426,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // rbend becomes an sbend. Calculate how far away we are from an sbend.
   G4double incomingFaceAngleWRTSBend = incomingFaceAngle + angle*0.5;
   G4double outgoingFaceangleWRTSBend = outgoingFaceAngle + angle*0.5;
-  if (!BDS::IsFinite(incomingFaceAngleWRTSBend))
+  if (!BDS::IsFinite(incomingFaceAngleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeIncoming = false;}
-  if (!BDS::IsFinite(outgoingFaceangleWRTSBend))
+  if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeOutgoing = false;}
 
   G4double e1 = -incomingFaceAngle;
