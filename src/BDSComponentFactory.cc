@@ -1671,6 +1671,8 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
+      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+	{return outgoingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       outgoingFaceAngle += 0.5 * bendAngle;
@@ -1707,6 +1709,8 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
+      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+	{return incomingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       incomingFaceAngle += 0.5 * bendAngle;
