@@ -91,8 +91,10 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -incomingFaceAngle,
 							     -outgoingFaceAngle);
-      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -incomingFaceAngle,
-								-outgoingFaceAngle, yokeOnLeft);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(baseName, element,
+								-incomingFaceAngle,
+								-outgoingFaceAngle,
+								yokeOnLeft);
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 baseName,
 					 arcLength,
@@ -165,10 +167,12 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 						   intType,
 						   semiStrength,
 						   true,
-                           fieldTiltOffset);
+						   fieldTiltOffset);
   
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0.5*semiAngle, 0.5*semiAngle);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, 0.5*semiAngle, 0.5*semiAngle, yokeOnLeft);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(centralName, element,
+							    0.5*semiAngle, 0.5*semiAngle,
+							    yokeOnLeft);
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
@@ -179,7 +183,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					  -semiAngle); // minus for 3d cartesian conversion
   
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element, -incomingFaceAngle,
+  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo("checking", element, -incomingFaceAngle,
                                                                                          -outgoingFaceAngle, yokeOnLeft);
   // minus for conversion to 3d cartesian
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
@@ -360,7 +364,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 const G4bool             yokeOnLeft)
 {
   BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength);
-  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
+  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
   
@@ -512,7 +516,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 					       fieldTiltOffset);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, centralInputFaceAngle, centralOutputFaceAngle);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, centralInputFaceAngle, centralOutputFaceAngle, yokeOnLeft);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(elementName, element, centralInputFaceAngle, centralOutputFaceAngle, yokeOnLeft);
   mgInfo->name = elementName;
 
   // Here we change from the strength angle convention of +ve angle corresponds to
@@ -560,7 +564,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element,
+								     angleIn, angleOut);
   magnetOuterInfo->geometryType   = BDSMagnetGeometryType::none;
   magnetOuterInfo->name           = name;
   magnetOuterInfo->buildEndPieces = false;

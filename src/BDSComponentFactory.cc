@@ -536,7 +536,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	if (BDS::IsFinite(element->kick))
 	  {
 	    G4cout << __METHOD_NAME__ << "Warning: 'kick' defined in element"
-		   << "\"" << element->name << "\" but will be ignored as general kicker"
+		   << "\"" << elementName << "\" but will be ignored as general kicker"
 		   << G4endl;
 	  }
       }
@@ -648,7 +648,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
     {defaultOuterDiameter = globalDefaultOD;}
   
-  auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
+  auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, yokeOnLeft,
+					  defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -718,7 +719,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+							       -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipoleThin;
@@ -831,7 +833,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       elementName,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, st),
+		       PrepareMagnetOuterInfo(elementName, element, st),
 		       vacuumField,
 		       0,
 		       outerField);
@@ -935,14 +937,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 					element->angle); 
   if(element->layerThicknesses.size() != element->layerMaterials.size())
     {
-      G4cerr << __METHOD_NAME__ << "Element \"" << element->name << "\" must have the "
+      G4cerr << __METHOD_NAME__ << "Element \"" << elementName << "\" must have the "
 	     << "same number of materials as layers - check 'layerMaterials'" << G4endl;
       exit(1);
     }
 
   if(element->layerThicknesses.size() == 0 )
     {
-      G4cerr << __METHOD_NAME__ << "Element: \"" << element->name
+      G4cerr << __METHOD_NAME__ << "Element: \"" << elementName
 	     << "\" has 0 screen layers" << G4endl;
       exit(1);
     }
@@ -1060,7 +1062,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       elementName,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, st),
+		       PrepareMagnetOuterInfo(elementName, element, st),
 		       vacuumField,
 		       angle);
 }
@@ -1113,7 +1115,8 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   return yokeOnLeft;
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
+								const Element* element,
 								const BDSMagnetStrength* st,
 								G4double defaultOuterDiameter,
 								G4double defaultVHRatio,
@@ -1123,24 +1126,26 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   G4bool yokeOnLeft = YokeOnLeft(element,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft, defaultOuterDiameter,
-				defaultVHRatio, defaultCoilWidthFraction, defaultCoilHeightFraction);
+  return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, yokeOnLeft,
+				defaultOuterDiameter, defaultVHRatio, defaultCoilWidthFraction,
+				defaultCoilHeightFraction);
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const G4double angleIn,
-								const G4double angleOut,
-								const G4bool   yokeOnLeft,
-								G4double       defaultOuterDiameter,
-								G4double       defaultVHRatio,
-								G4double       defaultCoilWidthFraction,
-								G4double       defaultCoilHeightFraction)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
+								const Element*  element,
+								const G4double  angleIn,
+								const G4double  angleOut,
+								const G4bool    yokeOnLeft,
+								G4double        defaultOuterDiameter,
+								G4double        defaultVHRatio,
+								G4double        defaultCoilWidthFraction,
+								G4double        defaultCoilHeightFraction)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   // name
-  info->name = element->name;
+  info->name = elementNameIn;
   
   // magnet geometry type
   if (element->magnetGeometryType == "")

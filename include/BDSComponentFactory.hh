@@ -124,7 +124,8 @@ public:
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
   /// between input and output faces.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&          elementNameIn,
+						    const GMAD::Element*     el,
 						    const BDSMagnetStrength* st,
 						    G4double defaultOuterDiameter      = -1,
 						    G4double defaultVHRatio            = 1.0,
@@ -134,7 +135,8 @@ public:
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
   /// to a chord for a straight section of outer magnet geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&      elementNameIn,
+						    const GMAD::Element* el,
 						    const G4double angleIn,
 						    const G4double angleOut,
 						    const G4bool   yokeOnLeft                = false,
