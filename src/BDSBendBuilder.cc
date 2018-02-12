@@ -41,7 +41,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
+BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName,
+					     const Element*          element,
 					     BDSMagnetStrength*      st,
 					     const G4double          brho,
 					     const BDSIntegratorSet* integratorSet,
@@ -49,7 +50,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     const G4double&         outgoingFaceAngle,
 					     const G4bool&           includeFringe)
 {
-  const G4String             baseName = element->name;
+  const G4String             baseName = elementName;
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
   G4bool          buildFringeIncoming = includeFringe;
@@ -385,7 +386,8 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   return magnet;
 }
 
-BDSLine* BDS::BuildRBendLine(const Element*          element,
+BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
+			     const Element*          element,
 			     const Element*          prevElement,
 			     const Element*          nextElement,
 			     const G4double          brho,
@@ -395,7 +397,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const G4double&         outgoingFaceAngle,
 			     const G4bool&           includeFringe)
 {
-  const G4String name = element->name;
+  const G4String name = elementName;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
   
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -511,13 +513,13 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, centralInputFaceAngle, centralOutputFaceAngle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, centralInputFaceAngle, centralOutputFaceAngle, yokeOnLeft);
-  mgInfo->name = element->name;
+  mgInfo->name = elementName;
 
   // Here we change from the strength angle convention of +ve angle corresponds to
   // deflection in negative x, to correct 3d +ve angle corresponds to deflection in
   // positive x. Hence angle sign flip for construction.
   BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::rectangularbend,
-				     element->name,
+				     elementName,
 				     centralArcLength,
 				     bpInfo,
 				     mgInfo,

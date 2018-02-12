@@ -445,7 +445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double incomingFaceAngle = IncomingFaceAngle(element);
   G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet,
+  auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
                                        incomingFaceAngle, outgoingFaceAngle,
 				       includeFringeFields);
   
@@ -495,7 +495,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   incomingFaceAngle -= 0.5*angle;
   outgoingFaceAngle -= 0.5*angle;
 
-  BDSLine* rbendline = BDS::BuildRBendLine(element, prevElement, nextElement,
+  BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
 					   brho, st, integratorSet,
 					   incomingFaceAngle, outgoingFaceAngle,
 					   includeFringeFields);
