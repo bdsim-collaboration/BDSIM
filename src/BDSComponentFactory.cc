@@ -484,6 +484,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
              << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
              << G4endl << G4endl;
     }
+  if (prevElement)
+    {
+      if (BDS::IsFinite(prevElement->e2) && BDS::IsFinite(element->e1))
+	{
+	  G4cerr << __METHOD_NAME__ << prevElement->name << " has finite e2!" << G4endl;
+	  G4cerr << "Clashes with " << elementName << " with finite e1" << G4endl;
+	  exit(1);
+	}
+    }
+  if (nextElement)
+    {
+      if (BDS::IsFinite(nextElement->e1) && BDS::IsFinite(element->e2))
+	{
+	  G4cerr << __METHOD_NAME__ << nextElement->name << " has finite e1!" << G4endl;
+	  G4cerr << "Clashes with " << elementName << " with finite e2" << G4endl;
+	  exit(1);
+	}
+    }
 
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);
