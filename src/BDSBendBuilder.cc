@@ -433,11 +433,6 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 
   G4double e1 = -incomingFaceAngle;
   G4double e2 = -outgoingFaceAngle;
-
-  // default face angles for an rbend are 0 - ie parallel faces, plus any pole face rotation
-  // angle in and out of total rbend are nominally the face angles.
-  G4double angleIn  = incomingFaceAngle;
-  G4double angleOut = outgoingFaceAngle;
   
   if (prevElement)
     {
@@ -459,7 +454,10 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // angles of the faces are in order:
   // angleIn / fringeInOutputAngle / centralInputFaceAngle / centralOutputFaceAngle
   // fringeOutInputAngle / angleOut
-
+  // default face angles for an rbend are 0 - ie parallel faces, plus any pole face rotation
+  // angle in and out of total rbend are nominally the face angles.
+  G4double angleIn  = incomingFaceAngle;
+  G4double angleOut = outgoingFaceAngle;
   G4double fringeInOutputAngle    = 0;
   G4double centralInputFaceAngle  = angleIn;
   G4double centralOutputFaceAngle = angleOut;
