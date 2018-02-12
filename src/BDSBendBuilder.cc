@@ -430,8 +430,8 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   if (!BDS::IsFinite(outgoingFaceangleWRTSBend))
     {buildFringeOutgoing = false;}
 
-  G4double e1 = incomingFaceAngle;
-  G4double e2 = outgoingFaceAngle;
+  G4double e1 = -incomingFaceAngle;
+  G4double e2 = -outgoingFaceAngle;
 
   // default face angles for an rbend are 0 - ie parallel faces, plus any pole face rotation
   // angle in and out of total rbend are nominally the face angles.
@@ -442,6 +442,10 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     {buildFringeIncoming = false;}
   if (nextElement && nextElement->type == ElementType::_RBEND)
     {buildFringeOutgoing = false;}
+
+  // used for debugging purposes to forefully try out one and not the other fringe
+  //buildFringeIncoming = false;
+  //buildFringeOutgoing = false;
   
   // if we're building the fringe elements, we reduce the length of the central section
   // and proportion the bending by their length w.r.t. the full length of the total rbend.
@@ -459,36 +463,42 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   if (BDS::IsFinite(angle))
     {oneFringeAngle = (thinElementArcLength / arcLength) * angle;}
   
-  if (buildFringeIncoming)
-    {
+  if (buildFringeIncoming && buildFringeOutgoing)
+    {// both
+      centralArcLength      -= 2*thinElementArcLength;
+      centralAngle          -= 2*oneFringeAngle;
+      angleIn                = e1 + (0.5*oneFringeAngle - 0.5*angle);
+      fringeInOutputAngle    = -angleIn;
+      centralInputFaceAngle  = e1;
+      centralOutputFaceAngle = e2;
+      fringeOutInputAngle    = - (e2 + (0.5*oneFringeAngle - 0.5*angle));
+      angleOut               = -fringeOutInputAngle;
+    }
+  else if (buildFringeIncoming)
+    {// incoming only
       centralArcLength      -= thinElementArcLength;
       centralAngle          -= oneFringeAngle;
       angleIn                = e1 + (0.5*oneFringeAngle - 0.5*angle);
-      fringeInOutputAngle    = - (e1 + (0.5*oneFringeAngle - 0.5*angle));
-      centralInputFaceAngle  = e1;
+      fringeInOutputAngle    = -angleIn; // fringe built the same
+      centralInputFaceAngle  = e1 + 0.5*oneFringeAngle;
+      centralOutputFaceAngle = e2 - 0.5*oneFringeAngle;
     }
   else if (buildFringeOutgoing)
-    {
-      centralInputFaceAngle  -= 0.5*oneFringeAngle;
-      centralOutputFaceAngle -= oneFringeAngle;
+    {// outgoing only
+      centralArcLength      -= thinElementArcLength;
+      centralAngle          -= oneFringeAngle;
+      centralInputFaceAngle  = e1 - 0.5*oneFringeAngle;
+      centralOutputFaceAngle = e2 + 0.5*oneFringeAngle;
+      fringeOutInputAngle    = - (e2 + (0.5*oneFringeAngle - 0.5*angle));;
+      angleOut               = e2 + (0.5*oneFringeAngle - 0.5*angle);;
     }
-  
-  if (buildFringeOutgoing)
-    {
-      centralArcLength       -= thinElementArcLength;
-      centralAngle           -= oneFringeAngle;
+  else
+    {// neither
+      // centralArcLength the same
+      // centralAngle the same
+      centralInputFaceAngle  = e1;
       centralOutputFaceAngle = e2;
-      fringeOutInputAngle    = - (e2 + (0.5*oneFringeAngle - 0.5*angle));
-      angleOut               = e2 + (0.5*oneFringeAngle - 0.5*angle);
     }
-  else if (buildFringeIncoming)
-    {
-      centralInputFaceAngle += 0.5*oneFringeAngle;
-      centralOutputFaceAngle -= 0.5*oneFringeAngle;
-    }
-  
-  if (buildFringeOutgoing && !buildFringeIncoming)
-    {fringeOutInputAngle += 0.5*oneFringeAngle;}
   
   if (buildFringeIncoming)
     {
