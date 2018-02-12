@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4String.hh"
 #include "BDSIntegratorType.hh"
 
+class BDSAcceleratorComponent;
 class BDSIntegratorSet;
 class BDSLine;
 class BDSMagnet;
