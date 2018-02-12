@@ -485,19 +485,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
              << G4endl << G4endl;
     }
 
-  // geometric face rotations
-  std::pair<G4double, G4double> polefaceAngles = BDSComponentFactory::GetGeometricPolefaceAngles(element);
-  G4double e1 = polefaceAngles.first;
-  G4double e2 = polefaceAngles.second;
+  // geometric face angles (can be different from specification depending on integrator set used)
+  G4double incomingFaceAngle = IncomingFaceAngle(element);
+  G4double outgoingFaceAngle = OutgoingFaceAngle(element);
 
-  BDSLine* rbendline = BDS::BuildRBendLine(element,
-					   prevElement,
-					   nextElement,
-					   brho,
-					   st,
-					   integratorSet,
-					   e1,
-					   e2,
+  // the above in / out face angles are not w.r.t. the local coords - subtract angle/2 to convert
+  // this may seem like undoing the += in the functions, but they're used for the beam pipes
+  // and matching.
+  incomingFaceAngle -= 0.5*angle;
+  outgoingFaceAngle -= 0.5*angle;
+
+  BDSLine* rbendline = BDS::BuildRBendLine(element, prevElement, nextElement,
+					   brho, st, integratorSet,
+					   incomingFaceAngle, outgoingFaceAngle,
 					   includeFringeFields);
   return rbendline;
 }

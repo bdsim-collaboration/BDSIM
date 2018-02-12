@@ -391,8 +391,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
 			     const BDSIntegratorSet* integratorSet,
-			     G4double e1,
-			     G4double e2,
+			     const G4double&         incomingFaceAngle,
+			     const G4double&         outgoingFaceAngle,
 			     const G4bool&           includeFringe)
 {
   const G4String name = element->name;
@@ -423,10 +423,13 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   if (!BDS::IsFinite(element->e2))
     {buildFringeOutgoing = false;}
 
+  G4double e1 = incomingFaceAngle;
+  G4double e2 = outgoingFaceAngle;
+
   // default face angles for an rbend are 0 - ie parallel faces, plus any pole face rotation
   // angle in and out of total rbend are nominally the face angles.
-  G4double angleIn  = e1;
-  G4double angleOut = e2;
+  G4double angleIn  = incomingFaceAngle;
+  G4double angleOut = outgoingFaceAngle;
   
   if (prevElement && prevElement->type == ElementType::_RBEND)
     {

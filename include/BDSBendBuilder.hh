@@ -59,8 +59,8 @@ namespace BDS
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
 			  const BDSIntegratorSet* integratorSet,
-			  G4double e1,
-			  G4double e2,
+			  const G4double&         incomingFaceAngle,
+			  const G4double&         outgoingFaceAngle,
 			  const G4bool&           includeFringe);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
