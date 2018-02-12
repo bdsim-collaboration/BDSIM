@@ -436,6 +436,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
              << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
              << G4endl << G4endl;
     }
+  if (prevElement)
+    {
+      if (prevElement->type == ElementType::_SBEND && BDS::IsFinite(prevElement->e2 - element->e1))
+	{
+	  G4cerr << __METHOD_NAME__ << prevElement->name << " e2 clashes with "
+		 << elementName  << " e1" << G4endl;
+	  exit(1);
+	}
+
+    }
 
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
