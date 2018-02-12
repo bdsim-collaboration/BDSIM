@@ -60,7 +60,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 					    G4double       yErr[])
 {
   // Protect against very small steps or neutral particles drift through.
-  if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()))
+  if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()) || !BDS::IsFinite((*strength)["field"]))
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       SetDistChord(0);
