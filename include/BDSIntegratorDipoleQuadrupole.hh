@@ -75,6 +75,7 @@ private:
   G4double 		bRho;
   G4double 		k1;
   G4double 		beta;
+  G4bool        zeroStrength;
   BDSMagnetStrength const* strength;
 };
 
