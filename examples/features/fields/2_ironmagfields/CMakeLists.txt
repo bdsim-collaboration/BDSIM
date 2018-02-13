@@ -1,1 +1,1 @@
-simple_testing(2_ironmagfields "--file=2_ironmagfields.gmad" "")
+simple_testing(field-yoke-field "--file=2_ironmagfields.gmad" "")
