@@ -187,7 +187,7 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
-      if (!BDS::IsFinite(ky))  //otherwise y12 is nan from div by 0 in previous line
+      if (std::isnan(Y12))  //y12 can be nan from div by 0 in previous line
         {Y12 = h;}
       Y21= std::abs(ky2)*Y12;
       Y22= Y11;
@@ -203,7 +203,7 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;
-      if (!BDS::IsFinite(ky))  //otherwise y12 is nan from div by 0 in previous line
+      if (std::isnan(Y12))  //y12 can be nan from div by 0 in previous line
         {Y12 = h;}
       Y21= -std::abs(ky2)*Y12;
       Y22= Y11;
