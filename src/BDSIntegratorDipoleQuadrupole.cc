@@ -40,13 +40,13 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4double minimumRadiusOfCurvatureIn):
   BDSIntegratorMag(eqOfMIn, 6),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
+  bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
+  bRho(brhoIn),
+  rho(brhoIn / (*strengthIn)["field"]),
   strength(strengthIn)
 {
   eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
-  bPrime = std::abs(brhoIn) * (*strengthIn)["k1"];
-  k1 = (*strengthIn)["k1"];
-  bRho = brhoIn;
-  zeroStrength = !BDS::IsFinite((*strength)["field"]);
+  zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
 }
 
 BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
@@ -60,6 +60,9 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 					    G4double       yOut[],
 					    G4double       yErr[])
 {
+  // charge and unit normalisation
+  G4double fCof = eqOfM->FCof();
+
   // Protect against very small steps, neutral particles, and zero field: drift through.
   if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()) || zeroStrength)
     {
@@ -90,7 +93,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // convert to true curvilinear
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  BDSStep       localCL     = BDSAuxiliaryNavigator::GlobalToCurvilinear(strength, globalPos, globalMom, h, false, eqOfM->FCof());
+  BDSStep       localCL     = BDSAuxiliaryNavigator::GlobalToCurvilinear(strength, globalPos, globalMom, h, false, fCof);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -113,7 +116,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   OneStep(localCLPos, localCLMom, localCLMomU, h, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
+  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fCof);
 
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
@@ -135,13 +138,12 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 					    G4ThreeVector& posOut,
 					    G4ThreeVector& momOut) const
 {
+  G4double fCof = eqOfM->FCof();
+
   G4double momInMag = momIn.mag();
 
-  // nominal bending radius.
-  G4double magnetRho = bRho / (*strength)["field"];
-
   G4double c = CLHEP::c_light * CLHEP::m;
-  G4double nomMomentum = std::abs(bRho * eqOfM->FCof());
+  G4double nomMomentum = std::abs(bRho * fCof);
   G4double energy = eq->TotalEnergy(momIn);
   G4double nomEnergy = std::sqrt(pow(nomMomentum,2) + eq->Mass());
 
@@ -151,11 +153,11 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double K1  = std::abs(eqOfM->FCof())*bPrime/nomMomentum;
+  G4double K1  = std::abs(fCof)*bPrime/nomMomentum;
 
   // separate focussing strengths for vertical and horizontal axes.
   // Used by matrix elements so must be derived from nominal values.
-  G4double kx2 = pow(1.0 / magnetRho, 2) + K1;
+  G4double kx2 = pow(1.0 / rho, 2) + K1;
   G4double kx  = sqrt(std::abs(kx2));
   G4double ky2 = -K1;
   G4double ky  = sqrt(std::abs(ky2));
@@ -187,8 +189,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * (-(1.0/magnetRho) / kx2) * (1 - cos(kxl));
-      X26 = (1.0/beta) * -(1.0/magnetRho) * X12;
+      X16 = (1.0/beta) * (-(1.0/rho) / kx2) * (1 - cos(kxl));
+      X26 = (1.0/beta) * -(1.0/rho) * X12;
 
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
@@ -203,8 +205,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * (-(1.0/magnetRho) / kx2) * (1 - cosh(kxl));
-      X26 = (1.0/beta) * -(1.0/magnetRho) * X12;
+      X16 = (1.0/beta) * (-(1.0/rho) / kx2) * (1 - cosh(kxl));
+      X26 = (1.0/beta) * -(1.0/rho) * X12;
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;

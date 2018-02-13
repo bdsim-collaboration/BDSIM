@@ -69,13 +69,28 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
 
+  /// Backup integrator
   BDSIntegratorDipoleRodrigues2* dipole;
-  BDSMagUsualEqRhs*     eq;
-  G4double              bPrime;
-  G4double 		bRho;
-  G4double 		k1;
-  G4double 		beta;
-  G4bool        zeroStrength;
+
+  /// BDSIMs eqRhs class to give access to particle properties
+  BDSMagUsualEqRhs* eq;
+
+  /// Cached magnet property, B field gradient for calculating K1
+  const G4double    bPrime;
+
+  /// Cached magnet property, nominal magnetic rigidity
+  const G4double 	bRho;
+
+  /// Cached magnet property, nominal bending radius.
+  const G4double 	rho;
+
+  /// Particle velocity w.r.t the speed of light
+  G4double 			beta;
+
+  /// Cache of whether input parameters are 0 and therefore whether to kick at all.
+  G4bool        	zeroStrength;
+
+  /// Cache magnet strength, required for curvilinear transforms.
   BDSMagnetStrength const* strength;
 };
 
