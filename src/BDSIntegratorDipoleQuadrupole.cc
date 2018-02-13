@@ -172,8 +172,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double yp1 = yp;
   G4double zp1 = zp;
 
-  G4double X11,X12,X16,X21,X22,X26 = 0;
-  G4double Y11,Y12,Y21,Y22 = 0;
+  G4double X11=0,X12=0,X16=0,X21=0,X22=0,X26=0;
+  G4double Y11=0,Y12=0,Y21=0,Y22=0;
 
   // matrix elements. All must derived from nominal parameters.
   if (focussing)
