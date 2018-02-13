@@ -70,6 +70,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // try out a dipole step first
   dipole->Stepper(yIn, dydx, h, yOut, yErr);
 
+  // return just dipole kick for small step size
+  if (h < 1e-5)
+    {return;}
+
   // If the particle might spiral, we return and just use the dipole only component
   // Aimed at particles of much lower momentum than the design energy.
   G4double dipoleDC          = dipole->DistChord();
