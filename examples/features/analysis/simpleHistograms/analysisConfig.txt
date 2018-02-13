@@ -1,5 +1,5 @@
 Debug						0
-InputFilePath					./output.root
+InputFilePath					../../data/sample1.root
 OutputFileName					./ana_1.root
 # Object	treeName	Histogram Name           # Bins     Binning	       Variable                 Selection
 SimpleHistogram1D    Beam.          X0                       {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1
