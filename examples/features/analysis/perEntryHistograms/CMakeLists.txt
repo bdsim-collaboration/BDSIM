@@ -1,1 +1,1 @@
-rebdsim_test(ANALYSIS_perEntryHistograms  "analysisConfig.txt")
+rebdsim_test(analysis-per-entry-histograms  "analysisConfig.txt")
