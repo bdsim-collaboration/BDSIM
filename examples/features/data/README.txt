@@ -6,5 +6,7 @@ sample2.root - seed=321
 
 analysisConfigt.txt was used with rebdsim to generate the analysis output files
 
-sample1-ana.root - analysis of sample1.root
-sample2-ana.root - anlaysis of sample2.root
+ana1.root - analysis of sample1.root
+ana2.root - anlaysis of sample2.root
+
+output.seedstate.txt - example ascii seed state information

@@ -1,3 +1,4 @@
 add_subdirectory(0_output)
 add_subdirectory(perEntryHistograms)
+add_subdirectory(rebdsim)
 add_subdirectory(simpleHistograms)

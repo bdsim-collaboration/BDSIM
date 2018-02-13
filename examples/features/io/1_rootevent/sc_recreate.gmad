@@ -1,6 +1,6 @@
-include io.gmad;
+include sc.gmad;
 
 option, recreate=1, ! 1 = true here
-	recreateFileName="output.root",
+	recreateFileName="../../data/sample1.root",
 	startFromEvent=3,
 	ngenerate=2;
