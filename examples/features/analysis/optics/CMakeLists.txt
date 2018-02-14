@@ -1,0 +1,1 @@
+rebdsim_optics_test(analysis-optics "../../data/fodo.root" "optics.root")
