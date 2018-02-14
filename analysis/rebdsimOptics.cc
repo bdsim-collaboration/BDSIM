@@ -40,7 +40,11 @@ void usage()
 int main(int argc, char* argv[])
 {
   if (argc != 3)
-    {usage(); exit(1);}
+    {
+      std::cout << "Incorrect number of arguments." << std::endl;
+      usage();
+      exit(1);
+    }
 
   std::string inputFileName  = std::string(argv[1]);
   std::string outputFileName = std::string(argv[2]);
