@@ -49,14 +49,27 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
                                         G4double       yOut[],
                                         G4double       yErr[])
 {
+  // container for dipole step output, used as fringe step input
   G4double yTemp[7];
+
   // do the dipole kick using base class
   BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
 
   // don't do fringe kick if we're sampling the field  for a long step
   if (h > 1*CLHEP::cm)
-    {return;}
+    {
+      // copy output from dipole kick output
+      for (G4int i = 0; i < 3; i++)
+        {
+          yOut[i]     = yTemp[i];
+          yOut[i + 3] = yTemp[i + 3];
+          yErr[i]     = 1e-20;
+          yErr[i + 3] = 1e-20;
+        }
+      return;
+    }
 
+  // position and momentum post dipole kick.
   G4ThreeVector pos = G4ThreeVector(yTemp[0], yTemp[1], yTemp[2]);
   G4ThreeVector mom = G4ThreeVector(yTemp[3], yTemp[4], yTemp[5]);
 
