@@ -208,7 +208,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
     {
       yOut[i]   = globalPosOut[i];
       yOut[i+3] = globalMomOut[i];
-      yErr[i]   = globalMomOutU[i];;
+      yErr[i]   = globalMomOutU[i]*1e-10; // empirically this has to be very small
       yErr[i+3] = 1e-40;
     }
 }
