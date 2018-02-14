@@ -77,11 +77,17 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
   // check if we accidentally fell between the gaps and found the world volume
   if (useCurvilinear && selectedVol == curvilinearWorldPV)
     {// try the bridge world next
+#ifdef BDSDEBUGNAV
+      G4cout << "Trying bridge world" << G4endl;
+#endif
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(point, direction,
 							       pRelativeSearch, ignoreDirection);
       // if we find a non-world volume, then good. if we find the world volume even
       // of the bridge world, it must really lie outside the curvilinear volumes
       // eitherway, we return that volume.
+#ifdef BDSDEBUGNAV
+      G4cout << "Found " << selectedVol->GetName() << G4endl;
+#endif
       return selectedVol;
     }
   else if (selectedVol == worldPV)
@@ -124,10 +130,16 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   // check if we accidentally fell between the gaps and found the world volume
   if (useCurvilinear && selectedVol == curvilinearWorldPV)
     {// try the bridge world next
+#ifdef BDSDEBUGNAV
+      G4cout << "Trying bridge world" << G4endl;
+#endif
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(position, &globalDirUnit);
       // if we find a non-world volume, then good. if we find the world volume even
       // of the bridge world, it must really lie outside the curvilinear volumes
       // eitherway, we return that volume.
+#ifdef BDSDEBUGNAV
+      G4cout << "Found " << selectedVol->GetName() << G4endl;
+#endif
       return selectedVol;
     }
   else if (selectedVol == worldPV)
