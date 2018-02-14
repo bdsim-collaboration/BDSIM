@@ -121,13 +121,17 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 
+  // error along direction of travel really
+  G4ThreeVector globalMomOutU = globalMomOut.unit();
+  globalMomOutU *= 1e-8;
+
   // write out values and errors
   for (G4int i = 0; i < 3; i++)
     {
       yOut[i]     = globalPosOut[i];
       yOut[i + 3] = globalMomOut[i];
-      yErr[i]     = 0;
-      yErr[i + 3] = 0;
+      yErr[i]     = globalMomOutU[i];
+      yErr[i + 3] = 1e-40;
     }
 }
 
