@@ -107,8 +107,8 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   // This uses the mass world volume for the transform!
   ConvertToGlobal(outputLocalPos, outputLocalMomUnit, yOut, yErr, momMag);
 
-  BDSStep localCL   = GlobalToCurvilinear(strength, pos, mom, h, false, eqOfM->FCof());
-  BDSStep globalOut = CurvilinearToGlobal(strength, localCL.PreStepPoint(), localCL.PostStepPoint(), false, eqOfM->FCof());
+  //BDSStep localCL   = GlobalToCurvilinear(strength, pos, mom, h, false, eqOfM->FCof());
+  //BDSStep globalOut = CurvilinearToGlobal(strength, localCL.PreStepPoint(), localCL.PostStepPoint(), false, eqOfM->FCof());
 
   // If the radius of curvature is too small, reduce the momentum by 2%. This will
   // cause artificial spiralling for what must be particles well below the design momenta.
