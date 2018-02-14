@@ -105,7 +105,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
     {SetDistChord(dc);}
   
   // This uses the mass world volume for the transform!
-  ConvertToGlobal(outputLocalPos, outputLocalMomUnit, yOut, momMag);
+  ConvertToGlobal(outputLocalPos, outputLocalMomUnit, yOut, yErr, momMag);
 
   BDSStep localCL   = GlobalToCurvilinear(strength, pos, mom, h, false, eqOfM->FCof());
   BDSStep globalOut = CurvilinearToGlobal(strength, localCL.PreStepPoint(), localCL.PostStepPoint(), false, eqOfM->FCof());

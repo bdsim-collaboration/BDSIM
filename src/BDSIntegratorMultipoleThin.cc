@@ -170,10 +170,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, momMag);
-
-  for (G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
 }
 
 G4int BDSIntegratorMultipoleThin::Factorial(G4int n)

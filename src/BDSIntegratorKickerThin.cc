@@ -114,8 +114,5 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4ThreeVector localPosOut = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomOut = G4ThreeVector(px, py, pz);
   
-  ConvertToGlobal(localPosOut, localMomOut, yOut);
-
-  for (G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
 }

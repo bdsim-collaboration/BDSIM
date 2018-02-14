@@ -204,10 +204,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	 << G4endl; 
 #endif
 
-  ConvertToGlobal(LocalR, LocalRp, yOut, InitPMag);
-  
-  for(G4int i = 0; i < nVariables; i++)
-    {yErr[i]=0;} //set error to be zero
+  ConvertToGlobal(LocalR, LocalRp, yOut, yErr, InitPMag);
 }
 
 

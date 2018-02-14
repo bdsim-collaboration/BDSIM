@@ -64,6 +64,7 @@ protected:
   void ConvertToGlobal(const G4ThreeVector &localPos,
                        const G4ThreeVector &localMom,
                        G4double             yOut[],
+		       G4double             yErr[],
                        const G4double       momScaling = 1.0);
 
   /// Setter for distChord to private member.
