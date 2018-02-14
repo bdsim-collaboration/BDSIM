@@ -1,3 +1,5 @@
+InputFilePath	    ../../data/sample*
+OutputFileName	    ./ana-selection.root
 # Object	treeName Histogram Name       # Bins  Binning	       Variable                 Selection
 Histogram1D	Event.	 primaryElectrons 	{50}	{0:1.1}		dq1.energy	dq1.partID==11&&dq1.parentID==0
 Histogram1D	Event.	 secondaryElectrons 	{20}	{0:0.2}		dq1.energy	dq1.partID==11&&dq1.parentID!=0
