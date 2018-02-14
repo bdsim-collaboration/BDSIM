@@ -70,8 +70,8 @@ private:
   const G4double polefaceAngle;
   /// Fringe field correction term
   const G4double fringeCorr;
-  /// Brho for momentum normalisation
-  const G4double brho;
+  /// Nominal magnet bending radius
+  const G4double rho;
 
   BDSMagnetStrength const* strength;
   /// Cache of thin element length from global constants. Initialised via check

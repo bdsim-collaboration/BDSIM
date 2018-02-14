@@ -36,7 +36,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr((*strengthIn)["fringecorr"]),
-  brho(brhoIn),
+  rho(brhoIn / (*strengthIn)["field"]),
   strength(strengthIn)
 {
   if (thinElementLength < 0)
@@ -106,9 +106,6 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   // nominal bending radius.
    G4double momInMag = momIn.mag();
 
-  // nominal bending radius.
-  G4double magnetRho = brho / (*strength)["field"];
-
   G4double x0  = posIn.x() / CLHEP::m;
   G4double y0  = posIn.y() / CLHEP::m;
   G4double s0  = posIn.z();
@@ -128,11 +125,11 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
 
   // calculate (fractional) fringe field kick
   X11 = 1;
-  X21 = fraction * tan(polefaceAngle) / (magnetRho / CLHEP::m);
+  X21 = fraction * tan(polefaceAngle) / (rho / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = fraction * -tan(polefaceAngle - fringeCorr) / (magnetRho / CLHEP::m);
+  Y21 = fraction * -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
