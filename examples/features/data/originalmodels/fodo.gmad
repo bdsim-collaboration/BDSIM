@@ -1,0 +1,36 @@
+! Wed, 14 Feb 2018 08:47:20 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 6
+! total length       = 6.0 m
+
+fodostart: marker;
+QF: quadrupole, k1=0.541, l=0.25;
+D: drift, l=2.5;
+QD: quadrupole, k1=-0.541, l=0.25;
+fodoend: marker;
+theendoftheline: marker;
+
+l0: line = (fodostart, QF, D, QD, QD, D, QF, fodoend,theendoftheline);
+lattice: line = (l0);
+use, period=lattice;
+
+beam,	X0=0.0*m,
+	Xp0=0.0, 
+	Y0=0.0*m, 
+	Yp0=0.0, 
+	alfx=0.0, 
+	alfy=0.0, 
+	betx=11.611*m, 
+	bety=5.295*m, 
+	dispx=0.0*m, 
+	dispxp=0.0, 
+	dispy=0.0*m, 
+	dispyp=0.0, 
+	distrType="gausstwiss", 
+	emitx=1e-06*m, 
+	emity=1e-06*m, 
+	energy=10.0*GeV, 
+	particle="proton", 
+	sigmaE=0.0;
+
+sample, all;
