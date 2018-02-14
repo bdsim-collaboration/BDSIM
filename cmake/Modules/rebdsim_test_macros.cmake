@@ -32,3 +32,13 @@ endmacro()
 macro(rebdsim_optics_test testName inputFile outputFile)
   add_test(NAME ${testName} COMMAND rebdsimOptics ${inputFile} ${outputFile})
 endmacro()
+
+# rebdsimCombine - can only take two files for this test
+macro(rebdsim_combine_test testName outputFile inputFile1 inputFile2)
+  add_test(NAME ${testName} COMMAND rebdsimCombineExec ${outputFile} ${inputFile1} ${inputFile2})
+endmacro()
+
+# rebdsimOrbit - pull out one orbit
+macro(rebdsim_orbit_test testName inputFile outputFile index)
+  add_test(NAME ${testName} COMMAND rebdsimOrbit ${inputFile} ${outputFile} ${index})
+endmacro()
