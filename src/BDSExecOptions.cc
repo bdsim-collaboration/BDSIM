@@ -47,9 +47,10 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
-
+  
   if (options.recreate)
     {
+      bool runBatch = options.batch;
       BDSOutputLoader loader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
       GMAD::Beam    recreateBeam    = loader.Beam();
@@ -57,6 +58,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
       recreateOptions.Amalgamate(options, true);
       recreateBeam.Amalgamate(beam, true, options.startFromEvent);
       options = recreateOptions; // Now replace member.
+      options.batch = runBatch; // override batch flag to allow control
       beam    = recreateBeam;
     }
 }
