@@ -1,1 +1,1 @@
-simple_testing(simpleMachine "--file=sm.gmad" ${OVERLAP_CHECK})
+simple_testing(example-simple-machine "--file=sm.gmad" ${OVERLAP_CHECK})
