@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
+#include "G4DormandPrinceRK78.hh"
 #include "G4ElectroMagneticField.hh"
 #include "G4Field.hh"
 #include "G4FieldManager.hh"
@@ -72,7 +73,10 @@ BDSFieldObjects::~BDSFieldObjects()
   delete field;
   delete fieldManager;
   delete chordFinder;
-  delete magIntegratorStepper;
+  // total cludge to account for destructor of G4DormandPrinceRK78 segfaulting.
+  // if our magIntegratorStepper is this one, just leak it.
+  if (!dynamic_cast<G4DormandPrinceRK78*>(magIntegratorStepper))
+    {delete magIntegratorStepper;}
   delete equationOfMotion;
   //delete magIntDriver; // not needed since deleted by chordFinder
 }
