@@ -130,12 +130,11 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
 #endif
 
   integratorType.toLower();
-
   auto result = types.find(integratorType);
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid integrator type" << G4endl;
 
       G4cout << "Available integrator types are:" << G4endl;
       for (auto it : types)
