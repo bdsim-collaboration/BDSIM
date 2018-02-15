@@ -1,6 +1,6 @@
 Debug					0
-InputFilePath				./electron_250GeV_copper.root
-OutputFileName				./electron_250GeV_copper_anal.root
+InputFilePath				./processes-em-e-250GeV-copper.root
+OutputFileName				./processes-em-e-250GeV-copper_anal.root
 CalculateOpticalFunctions		0
 CalculateOpticalFunctionsFileName	./output.dat
 # Object	treeName	Histogram Name	# Bins	Binning		Variable	Selection
