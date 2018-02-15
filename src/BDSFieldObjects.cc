@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
-#include "G4DormandPrinceRK78.hh"
 #include "G4ElectroMagneticField.hh"
 #include "G4Field.hh"
 #include "G4FieldManager.hh"
