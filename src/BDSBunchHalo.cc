@@ -50,7 +50,7 @@ BDSBunchHalo::BDSBunchHalo():
   xpMax(0.0), ypMax(0.0)
 
 {
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
@@ -70,8 +70,8 @@ void  BDSBunchHalo::SetOptions(const GMAD::Beam& beam,
   emitY                 = G4double(beam.emity);
   gammaX                = (1.0+alphaX*alphaX)/betaX;
   gammaY                = (1.0+alphaY*alphaY)/betaY;
-  sigmaX                = sqrt(emitX * betaX);
-  sigmaY                = sqrt(emitY * betaY);    
+  sigmaX                = std::sqrt(emitX * betaX);
+  sigmaY                = std::sqrt(emitY * betaY);
   haloNSigmaXInner      = G4double(beam.haloNSigmaXInner);
   haloNSigmaXOuter      = G4double(beam.haloNSigmaXOuter);
   haloNSigmaYInner      = G4double(beam.haloNSigmaYInner);
@@ -94,8 +94,7 @@ void  BDSBunchHalo::SetOptions(const GMAD::Beam& beam,
   xpMax = std::sqrt(std::pow(haloNSigmaXOuter, 2) * emitX * gammaX);
   ypMax = std::sqrt(std::pow(haloNSigmaYOuter, 2) * emitY * gammaY);
   
-  CheckParameters();
-  
+  CheckParameters(); 
 }
 
 void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
