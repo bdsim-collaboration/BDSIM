@@ -80,6 +80,11 @@ public:
   inline G4ThreeVector GetPostPosLocal()       const {return postPosLocal;}
   /// @}
 
+  /// @{ Return the transverse local radius in x,y.
+  G4double PrePosR() const;
+  G4double PostPosR() const;
+  /// @}
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   

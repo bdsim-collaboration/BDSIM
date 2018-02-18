@@ -195,3 +195,13 @@ std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
   out << p.GetPosition();
   return out;
 }
+
+G4double BDSTrajectoryPoint::PrePosR() const
+{
+  return std::hypot(prePosLocal.x(), prePosLocal.y());
+}
+
+G4double BDSTrajectoryPoint::PostPosR() const
+{
+  return std::hypot(postPosLocal.x(), postPosLocal.y());
+}

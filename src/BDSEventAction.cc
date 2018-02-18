@@ -82,6 +82,8 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
   isBatch            = BDSGlobalConstants::Instance()->Batch();
   storeTrajectory    = BDSGlobalConstants::Instance()->StoreTrajectory();
+  trajectoryCutZ     = BDSGlobalConstants::Instance()->TrajCutGTZ();
+  trajectoryCutR     = BDSGlobalConstants::Instance()->TrajCutLTR();
 
   if(isBatch)
     {printModulo = BDSGlobalConstants::Instance()->PrintModulo();}
@@ -262,13 +264,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	
 	// check on coordinates (and TODO momentum)
 	// clear out trajectories that don't reach point TrajCutGTZ or greater than TrajCutLTR
-	BDSTrajectoryPoint *trajEndPoint = (BDSTrajectoryPoint *) traj->GetPoint(traj->GetPointEntries() - 1);
-	G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-	G4bool greaterThanZInteresting =
-	  trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
-	G4double radius = std::hypot(trajEndPointThreeVector.x() / CLHEP::m,
-				     trajEndPointThreeVector.y() / CLHEP::m);
-	G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
+	BDSTrajectoryPoint* trajEndPoint = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(traj->GetPointEntries() - 1));
+	G4bool greaterThanZInteresting = trajEndPoint->GetPosition().z() > trajectoryCutZ;
+	G4bool withinRInteresting      = trajEndPoint->PostPosR() < trajectoryCutR;
 	if (greaterThanZInteresting || withinRInteresting)
 	  {
 	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));

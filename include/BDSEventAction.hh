@@ -64,6 +64,9 @@ private:
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
 
+  G4double trajectoryCutZ; ///< Cache of variable from global constants.
+  G4double trajectoryCutR; ///< Cache of variable from global constants.
+
   std::string seedStateAtStart; ///< Seed state at start of the event.
 
   /// A copy of the pointer to event info instance that is registered to the event. Geant4
