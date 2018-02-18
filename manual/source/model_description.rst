@@ -1776,6 +1776,13 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 
 .. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
 
+.. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
+	     GMAD file is included in a parent file in a different location, the file will not be
+	     correctly located. i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
+	     geometry in "../a/relative/path/geometryfile.gdml", the file will not be found. If all
+	     GMAD files are located in the same directory, this will not be a problem. It is overall
+	     better / cleaner to use multiple GMAD input files and include them.
+
 
 .. _placements:
 
