@@ -66,15 +66,6 @@ int main(int argc, char* argv[])
       return EXIT_CODE::_EXIT_FILE_NOT_FOUND;
     }
 
-  // check they're files suitable for comparison - only rebdsim or rebdsimcombine files
-  bool file1Valid = RBDS::IsREBDSIMOrCombineOutputFile(f1);
-  bool file2Valid = RBDS::IsREBDSIMOrCombineOutputFile(f2);
-  if (!file1Valid || !file2Valid)
-    {
-      std::cout << "error: can only compare REBDSIM or REBDSIMCOMBINE files" << std::endl;
-      return EXIT_CODE::_EXIT_BAD_FILE;
-    }
-
   std::vector<Result*> results = Compare::Files(f1,f2);
 
   bool allPassed = Compare::Summarise(results);
