@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 2.8.12)
 project(bdsim)
 
 # project version
-set( BDSIM_MAJOR_VERSION 1 )
-set( BDSIM_MINOR_VERSION 0 )
-set( BDSIM_PATCH_LEVEL 0)
+set( BDSIM_MAJOR_VERSION 0 )
+set( BDSIM_MINOR_VERSION 993 )
+set( BDSIM_PATCH_LEVEL develop)
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
