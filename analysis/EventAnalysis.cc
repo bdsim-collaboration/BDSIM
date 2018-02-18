@@ -199,7 +199,7 @@ void EventAnalysis::Write(TFile *outputFile)
   lOpticsPoint.resize(24);
 
   // write optical functions
-  TTree *opticsTree = new TTree("optics","optics");
+  TTree* opticsTree = new TTree("Optics","Optics");
   opticsTree->Branch("Emitt_x", &(xOpticsPoint[0]), "Emitt_x/D");
   opticsTree->Branch("Emitt_y", &(yOpticsPoint[0]), "Emitt_y/D");
   opticsTree->Branch("Alpha_x", &(xOpticsPoint[1]), "Alpha_x/D");
