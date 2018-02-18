@@ -31,14 +31,9 @@ BDSBunchTwiss::BDSBunchTwiss():
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
   dispX(0.0), dispY(0.0),
-  dispXP(0.0), dispYP(0.0)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  GaussMultiGen = nullptr;   
-}
+  dispXP(0.0), dispYP(0.0),
+  GaussMultiGen(nullptr)
+{;}
 
 BDSBunchTwiss::~BDSBunchTwiss()
 {
@@ -48,35 +43,23 @@ BDSBunchTwiss::~BDSBunchTwiss()
 void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBunch::SetOptions(beam, beamlineTransformIn);
-  SetBetaX(beam.betx);
-  SetBetaY(beam.bety);
-  SetAlphaX(beam.alfx);
-  SetAlphaY(beam.alfy);
-  SetEmitX(beam.emitx);
-  SetEmitY(beam.emity);
-  SetDispX(beam.dispx);
-  SetDispY(beam.dispy);
-  SetDispXP(beam.dispxp);
-  SetDispYP(beam.dispyp);
+
+  betaX  = beam.betx;
+  betaY  = beam.bety;
+  alphaX = beam.alfx;
+  alphaY = beam.alfy;
+  emitX  = beam.emitx;
+  emitY  = beam.emity;
+  dispX  = beam.dispx;
+  dispY  = beam.dispy;
+  dispXP = beam.dispxp;
+  dispYP = beam.dispyp;
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
   
-  CommonConstruction();
-}
-
-void BDSBunchTwiss::CommonConstruction()
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   meansGM = CLHEP::HepVector(6);
-
+  
   // Fill means 
   meansGM[0] = X0;
   meansGM[1] = Xp0;
@@ -107,7 +90,6 @@ void BDSBunchTwiss::CommonConstruction()
   sigmaGM[3][5] = dispYP*std::pow(sigmaE,2);
   sigmaGM[5][3] = dispYP*std::pow(sigmaE,2);
   
-
   delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
@@ -116,10 +98,6 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   CLHEP::HepVector v = GaussMultiGen->fire();
   x0 = v[0] * CLHEP::m;
   xp = v[1] * CLHEP::rad;

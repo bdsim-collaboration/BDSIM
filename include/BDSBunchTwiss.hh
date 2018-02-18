@@ -35,7 +35,17 @@ namespace CLHEP {
 
 class BDSBunchTwiss: public BDSBunch
 {
-private: 
+public: 
+  BDSBunchTwiss();
+  virtual ~BDSBunchTwiss();
+  
+  virtual void SetOptions(const GMAD::Beam& beam,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
+  
+  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+		       G4double& xp, G4double& yp, G4double& zp,
+		       G4double& t , G4double&  E, G4double& weight);
+private:
   /// @{ Twiss parameters
   G4double betaX;
   G4double betaY;
@@ -57,31 +67,6 @@ private:
   /// Gaussian generator
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
-
-public: 
-  BDSBunchTwiss();
-  virtual ~BDSBunchTwiss();
-  
-  virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
-  void CommonConstruction();
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);
-
-private:
-  /// @{ Setter
-  void SetBetaX(double newBetaX)   {betaX  = newBetaX;}
-  void SetBetaY(double newBetaY)   {betaY  = newBetaY;}
-  void SetAlphaX(double newAlphaX) {alphaX = newAlphaX;}
-  void SetAlphaY(double newAlphaY) {alphaY = newAlphaY;}
-  void SetEmitX(double newEmitX)   {emitX  = newEmitX;}
-  void SetEmitY(double newEmitY)   {emitY  = newEmitY;}
-  void SetDispX(double newDispX)   {dispX  = newDispX;}
-  void SetDispY(double newDispY)   {dispY  = newDispY;}
-  void SetDispXP(double newDispXP) {dispXP = newDispXP;}
-  void SetDispYP(double newDispYP) {dispYP = newDispYP;}
-  /// @}
 };
 
 #endif

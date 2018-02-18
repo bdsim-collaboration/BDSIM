@@ -26,7 +26,7 @@ Output \& Analysis Changes
 --------------------------
 
 * Output files now have header structure with software versions.
-* "librebdsimlib" has been changed to "librebdsim" to be more consistent for output loading.
+* "**librebdsimlib**" has been changed to "**libRebdsim**" to be more consistent for output loading.
 * Support for logarithmic binning of histograms in rebdsim.
 * "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
@@ -35,6 +35,7 @@ Output \& Analysis Changes
 * Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
+* 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
 
 General
 -------

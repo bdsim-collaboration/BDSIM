@@ -106,6 +106,32 @@ bool RBDS::IsREBDSIMOutputFile(const std::string filePath)
   return result;
 }
 
+bool RBDS::IsREBDSIMOrCombineOutputFile(TFile* file)
+{
+  // check if valid file at all
+  if (file->IsZombie())
+    {return false;}
+
+  std::string fileType;
+  bool success = GetFileType(file, fileType);
+  if (!success)
+    {return false;}
+
+  // check if 'REBDSIM' is in the name at all
+  // 'REBDSIM' or 'REBDSIMCOMBINE' are possible options
+  std::size_t found = fileType.find("REBDSIM");
+  return found != std::string::npos;
+}
+
+bool RBDS::IsREBDSIMOrCombineOutputFile(const std::string filePath)
+{
+  TFile* f = new TFile(filePath.c_str());
+  bool result = IsREBDSIMOrCombineOutputFile(f);
+  f->Close();
+  delete f;
+  return result;
+}
+
 int RBDS::DetermineDimensionality(TH1* h)
 {
   if (dynamic_cast<TH1D*>(h))
