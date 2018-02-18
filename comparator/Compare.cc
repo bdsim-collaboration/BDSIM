@@ -54,7 +54,7 @@ const double   EVENTTREETOLERANCE = 1e-10;
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
-  std::vector<Result*> results;
+  std::vector<Result*> results; 
   // A TFile inherits TDirectory, so we simply use the TDirectory function.
   Compare::Directories((TDirectory*)f1, (TDirectory*)f2, results);
   return results;
