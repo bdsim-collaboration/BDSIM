@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 class BDSMagnetStrength;
+class G4UserLimits;
 
 /**
  * @brief All info required to build complete field of any type.
@@ -68,7 +69,8 @@ public:
 	       G4double                 eScalingIn                 = 1.0,
 	       G4double                 bScalingIn                 = 1.0,
 	       G4double                 timeOffsetIn               = 0,
-	       G4bool                   autoScaleIn                = false);
+	       G4bool                   autoScaleIn                = false,
+	       G4UserLimits*            stepLimitIn                = nullptr);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -94,6 +96,7 @@ public:
   inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
   inline G4bool              AutoScale()                const {return autoScale;}
+  inline G4UserLimits*       UserLimits()               const {return stepLimit;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -132,6 +135,7 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
+  G4UserLimits*            stepLimit;
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

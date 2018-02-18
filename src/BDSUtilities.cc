@@ -499,11 +499,9 @@ std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 }
 
 G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
-				    const G4double length)
+				    const G4double length,
+				    const G4double fraction)
 {
-  const G4double fraction = 1.1; // fraction of length that max step will be
-  // if it's exactly the length of an object, it can be problematic for tracking
-  // so give a slight margin
   G4UserLimits* result = nullptr;
   // construct a dummy G4Track that typically isn't used for the check
   G4Track t = G4Track();

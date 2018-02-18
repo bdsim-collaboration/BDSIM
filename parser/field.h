@@ -47,6 +47,9 @@ namespace GMAD
     bool   axisAngle; ///< Flag to use the axis angle construction of rotation.
 
     bool   autoScale; ///< Scale the field to the magnet it's attached to.
+
+    /// Maximum permitted step length in the volumes the field is attached to.
+    double maximumStepLength;
     
     /// Constructor
     Field();

@@ -20,6 +20,7 @@ New Features
 * New component: 'gap'. Create a space in the beam line with no geometry.
 * Ability to specify the world volume material with the `worldMaterial` option.
 * Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
+* Ability to limit step size in user-specified fields.
 
 
 Output \& Analysis Changes

@@ -1553,6 +1553,14 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | angle                | angle (rad) of defining axis / angle rotation.                  |
 +----------------------+-----------------------------------------------------------------+
+| autoScale            | This automatically calculates the field graident at the origin  |
+|                      | and the field magnitude will be automatically scaled according  |
+|                      | to the normalised `k` strength (such as `k1` for a quadrupole)  |
+|                      | for the magnet it's attached to. Only applicable for when       |
+|                      | attached to magnets.                                            |
++----------------------+-----------------------------------------------------------------+
+| maximumStepLength    | The maximum permitted step length through the field. (m)        |
++----------------------+-----------------------------------------------------------------+
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps is attached to and the coordinates

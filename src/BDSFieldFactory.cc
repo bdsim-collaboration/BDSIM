@@ -205,6 +205,13 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       BDSInterpolatorType eleIntType = BDSInterpolatorType::nearest2d;
       if (eleFileSpecified)
 	{eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));}
+
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      // copy the default and update with the length of the object rather than the default 1m
+      G4double limit = G4double(definition.maximumStepLength)*CLHEP::m;
+      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+      // only specify a user limit object if the step length was specified
+      G4UserLimits* fieldLimit = ul != defaultUL ? ul : nullptr;
       
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
@@ -222,7 +229,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.eScaling),
 					    G4double(definition.bScaling),
 					    G4double(definition.t*CLHEP::s),
-					    G4bool(definition.autoScale));
+					    G4bool(definition.autoScale),
+					    fieldLimit);
 
       parserDefinitions[G4String(definition.name)] = info;
     }
