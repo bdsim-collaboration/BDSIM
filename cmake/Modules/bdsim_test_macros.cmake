@@ -90,7 +90,7 @@ macro(generate_analyse_compare_long testName fileName analysisConfig)
   simple_testing_long(${testName}-LONG "--file=${fileName}" "")
 
   # analyse
-  rebdsim_test_manual(${testName}-analysis-LONG ${analysisConfig} ${testName}_data ${testName}_ana)
+  rebdsim_test_manual(${testName}-analysis-LONG ${analysisConfig} ${testName}_data.root ${testName}_ana.root)
   set_tests_properties(${testName}-analysis-LONG PROPERTIES DEPENDS ${testName}-LONG)
   set_tests_properties(${testName}-analysis-LONG PROPERTIES LABELS LONG)
 
