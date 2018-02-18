@@ -80,7 +80,7 @@ void Compare::Directories(TDirectory* d1,
       std::string className  = std::string(d1o->ClassName());
 
       // get writePrimaries from options tree.
-      if (objectName == "Options")
+      if (objectName == "Options" && className == "TTree")
         {
           std::vector<const char *> names;
           TTree *options = (TTree *) d1->Get(objectName.c_str());
