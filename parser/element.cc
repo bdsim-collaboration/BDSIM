@@ -146,7 +146,8 @@ void Element::PublishMembers()
   publish("materialThickness",&Element::materialThickness);
   publish("degraderOffset",&Element::degraderOffset);
 
-  publish("geometry",&Element::geometryFile);
+  publish("geometryFile",&Element::geometryFile);
+  alternativeNames["geometryFile"] = "geometry"; // backwards compatibility
   publish("bmap",    &Element::fieldAll);
   alternativeNames["bmap"] = "fieldAll";
   publish("outerMaterial",&Element::outerMaterial);

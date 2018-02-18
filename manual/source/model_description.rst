@@ -915,20 +915,25 @@ Examples::
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by external geometry and magnetic field
-maps. Several geometry formats are supported. The user must supply the length (accurately) as
-well as a diameter such that the geometry will be contained in a box that has horizontal and
-vertical size of diameter.
+`element` defines an arbitrary element that's defined by externally provided geometry. It includes
+the possibility of overlaying a field as well. Several geometry formats are supported. The user
+must supply the length (accurately) as well as a diameter such that the geometry will be
+contained in a box that has horizontal and vertical size of diameter.
+
+The geometry is simply placed in the beam line. There is no placement offset other than the
+offset \& tilt of the element in the beam line, therefore, the user must prepare geometry
+with the placement as required. An alternative strategy is to use the `gap`_ beam line element
+and make a placement at the appropriate point in global coordinates.
 
 ================  ===============================  ==========  ===========
 parameter         description                      default     required
-`geometry`        filename of geometry             NA          yes
+`geometryFile`    filename of geometry             NA          yes
 `l`               length                           NA          yes
 `outerDiameter`   diameter of component [m]        NA          yes
 `fieldAll`        name of field object to use      NA          no
 ================  ===============================  ==========  ===========
 
-`geometry` should be of the format `format:filename`, where `format` is the geometry
+`geometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
 file. See :ref:`externally-provided-geometry` for more details.
 
@@ -943,7 +948,7 @@ gmad file. The syntax for this is described in :ref:`field-maps`.
 
 Simple example::
 
-  detector: element, geometry="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
+  detector: element, geometryFile="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
 
 Example with field::
 
@@ -956,7 +961,7 @@ Example with field::
 		    electricFile = "poisson2d:/Another/File.TX",
 		    electricInterpolator = "linear2D";
   
-   detec: element, geometry="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
+   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
 
 
 
