@@ -240,13 +240,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_outer_container_lv");
     
   // coil solids
@@ -1110,13 +1110,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
   
   // coil solids

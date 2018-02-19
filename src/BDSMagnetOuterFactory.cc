@@ -309,9 +309,9 @@ BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainerForExternal(G4String
       containerExt = BDSExtent(radius, radius, length*0.5);
     }
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
-						     emptyMaterial,
+						     worldMaterial,
 						     name + "_container_lv");
 
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());

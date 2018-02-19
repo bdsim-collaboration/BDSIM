@@ -88,13 +88,13 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 			       outerMaterial,
 			       name + "_yoke_lv");
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_outer_container_lv");
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   
   // VISUAL ATTRIBUTES

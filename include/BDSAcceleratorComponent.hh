@@ -228,6 +228,7 @@ protected:
   /// Useful variables often used in construction
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
+  static G4Material* worldMaterial;
   static G4bool      checkOverlaps;
 
   /// The logical volume in this component that is the volume the beam passes through that
