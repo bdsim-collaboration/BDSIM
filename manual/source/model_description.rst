@@ -1511,6 +1511,8 @@ a drift pipe where it covers the full volume of the drift (not outside it though
   
 When defining a field, the following parameters can be specified.
 
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
 +======================+=================================================================+
@@ -1578,6 +1580,8 @@ Field Types
 
 * These are not case sensitive.
 
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+  
 +------------------+----------------------------------+
 | **Type String**  | **Description**                  |
 +==================+==================================+
@@ -1609,6 +1613,8 @@ Field Types
 
 Formats
 ^^^^^^^
+
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
@@ -2559,6 +2565,8 @@ as their value.
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
+.. _bdsim-options-output:
+  
 Output Options
 ^^^^^^^^^^^^^^
 
