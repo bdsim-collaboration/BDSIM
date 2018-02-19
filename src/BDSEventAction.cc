@@ -87,6 +87,9 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajectoryCutZ            = globals->TrajCutGTZ();
   trajectoryCutR            = globals->TrajCutLTR();
   trajConnect               = globals->TrajConnect();
+  particleToStore           = globals->StoreTrajectoryParticle();
+  particleIDToStore         = globals->StoreTrajectoryParticleID();
+  depth                     = globals->StoreTrajectoryDepth();
 
   if(isBatch)
     {printModulo = globals->PrintModulo();}
