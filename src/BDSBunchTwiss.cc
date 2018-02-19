@@ -70,17 +70,34 @@ void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
 
   sigmaGM = CLHEP::HepSymMatrix(6);
 
-  // Fill sigmas 
-  sigmaGM[0][0] =  emitX*betaX;  
-  sigmaGM[0][1] = -emitX*alphaX;
-  sigmaGM[1][0] = -emitX*alphaX;
-  sigmaGM[1][1] =  emitX*gammaX;
-  sigmaGM[2][2] =  emitY*betaY;
-  sigmaGM[2][3] = -emitY*alphaY;
-  sigmaGM[3][2] = -emitY*alphaY;
-  sigmaGM[3][3] =  emitY*gammaY; 
+  // Fill sigmas
+  //2x2 block in horizontal
+  sigmaGM[0][0] =  emitX*betaX + std::pow(dispX*sigmaE,2); 
+  sigmaGM[0][1] = -emitX*alphaX + dispX*dispXP*std::pow(sigmaE,2);
+  sigmaGM[1][0] = -emitX*alphaX + dispX*dispXP*std::pow(sigmaE,2);
+  sigmaGM[1][1] =  emitX*gammaX + std::pow(dispXP*sigmaE,2);
+
+  //2x2 block in vertical
+  sigmaGM[2][2] =  emitY*betaY + std::pow(dispY*sigmaE,2);
+  sigmaGM[2][3] = -emitY*alphaY + dispY*dispYP*std::pow(sigmaE,2);
+  sigmaGM[3][2] = -emitY*alphaY + dispY*dispYP*std::pow(sigmaE,2);;
+  sigmaGM[3][3] =  emitY*gammaY + std::pow(dispYP*sigmaE,2);
+
+  //2 2x2 blocks for horizontal-vertical coupling
+  sigmaGM[2][0] =  dispX*dispY*std::pow(sigmaE,2);
+  sigmaGM[0][2] =  dispX*dispY*std::pow(sigmaE,2);
+  sigmaGM[3][0] =  dispX*dispYP*std::pow(sigmaE,2);
+  sigmaGM[0][3] =  dispX*dispYP*std::pow(sigmaE,2);
+  sigmaGM[2][1] =  dispXP*dispY*std::pow(sigmaE,2);
+  sigmaGM[1][2] =  dispXP*dispY*std::pow(sigmaE,2);
+  sigmaGM[3][1] =  dispXP*dispYP*std::pow(sigmaE,2);
+  sigmaGM[1][3] =  dispXP*dispYP*std::pow(sigmaE,2);
+
+  //2x2 block in longitudinal
   sigmaGM[4][4] =  std::pow(sigmaT,2); 
   sigmaGM[5][5] =  std::pow(sigmaE,2);
+
+  //4 2x2 blocks for longitudinal-transverse coupling
   sigmaGM[0][5] = dispX*std::pow(sigmaE,2);
   sigmaGM[5][0] = dispX*std::pow(sigmaE,2);
   sigmaGM[1][5] = dispXP*std::pow(sigmaE,2);
