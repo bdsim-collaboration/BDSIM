@@ -215,7 +215,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     std::map<BDSTrajectory *, int> depthMap;
     for (auto iT1 : *trajVec)
       {
-	BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	if (traj->GetParentID() == 0) 
 	  {depthMap.insert(std::pair<BDSTrajectory *, int>(traj, 0));}
 	else
@@ -225,7 +225,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // loop over trajectories and determine if it should be stored
     for (auto iT1 : *trajVec)
       {
-	BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	G4int parentID = traj->GetParentID();
 	
 	// always store primaries
