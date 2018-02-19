@@ -62,7 +62,7 @@ void BDSShield::BuildContainerLogicalVolume()
 			     outerDiameter*0.5,
 			     chordLength*0.5);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
+					       worldMaterial,
 					       name + "_container_lv");
 }
 

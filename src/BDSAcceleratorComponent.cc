@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
+G4Material* BDSAcceleratorComponent::worldMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
@@ -72,6 +73,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
     {
       const auto globals = BDSGlobalConstants::Instance(); // shortcut
       emptyMaterial      = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());
+      worldMaterial      = BDSMaterials::Instance()->GetMaterial(globals->WorldMaterial());
       lengthSafety       = globals->LengthSafety();
       checkOverlaps      = globals->CheckOverlaps();
     }

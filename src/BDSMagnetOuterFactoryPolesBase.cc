@@ -850,9 +850,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
 				      CLHEP::twopi);                 // sweep angle
   
   // container lv
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   endPieceContainerLV = new G4LogicalVolume(endPieceContainerSolid,     // solid
-					    emptyMaterial,              // material
+					    worldMaterial,              // material
 					    name + "_end_container_lv");// name
   
   // coil end piece solid
@@ -1912,14 +1912,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // end piece logical volumes
   // coil end piece lv
   G4Material* copper = BDSMaterials::Instance()->GetMaterial("copper");
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   
   G4LogicalVolume* ePInLV = new G4LogicalVolume(endPieceSolidIn,           // solid
 						copper,                    // material
 						name + "_end_coil_in_lv"); // name
   
   G4LogicalVolume* ePContInLV = new G4LogicalVolume(ePContSolidIn,             // solid
-						    emptyMaterial,             // material
+						    worldMaterial,             // material
 						    name + "_end_cont_in_lv"); // name
 
   G4LogicalVolume* ePOutLV = new G4LogicalVolume(endPieceSolidOut,           // solid
@@ -1927,7 +1927,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 						 name + "_end_coil_out_lv"); // name
   
   G4LogicalVolume* ePContOutLV = new G4LogicalVolume(ePContSolidOut,             // solid
-						     emptyMaterial,              // material
+						     worldMaterial,              // material
 						     name + "_end_cont_out_lv"); // name
 
   G4Colour* coilColour = BDSColours::Instance()->GetColour("coil");

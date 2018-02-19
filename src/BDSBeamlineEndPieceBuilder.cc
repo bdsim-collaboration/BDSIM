@@ -86,8 +86,9 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 	      inspectedElement = beamline->GetPrevious(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
-		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {
+		  G4String inspectedElementType = inspectedElement->GetType();
+		  if (inspectedElementType == "drift" || inspectedElementType == "dipolefringe")
+		    {// leave keepGoing true here to keep going
 		      // check extents first
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();
@@ -190,8 +191,9 @@ BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
 	      inspectedElement = beamline->GetNext(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
-		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {
+		  G4String inspectedElementType = inspectedElement->GetType();
+		  if (inspectedElementType == "drift" || inspectedElementType == "dipolefringe")
+		    {// leave keepGoing true here to keep going
 		      // check extents first
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();

@@ -158,9 +158,9 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 					       G4Material* tunnelSoilMaterial)
 {  
   // build logical volumes
-  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
   
   tunnelLV    = new G4LogicalVolume(tunnelSolid,
