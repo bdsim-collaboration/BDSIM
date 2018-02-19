@@ -46,6 +46,44 @@ General Simulation Procedure
 4) Repeat 3) with greater statistics either as a single instance or on a farm.
 5) Analyse output data as desired.
 
+How BDSIM Works
+===============
+
+ * BDSIM builds a complete Geant4 model and runs it as a Geant4 model.
+ * BDSIM does not link to another particle tracking code.
+ * BDSIM does not pass information back and forth between two codes.
+ * BDSIM provides transforms between Cartesian and Curvilinear coordinate systems.
+ * Thick lens tracking routines are used in place of normal 4th order Runge-Kutta integrators.
+
+In a Geant4 program, code is written in C++ to construct a 3D model of the object
+to be simulated. Fields may be specified through a developer-provided class that returns
+the field vector as a function of global Cartesian `x`, `y`, `z` and `t`. BDSIM provides
+classes to describe the magnetic fields found for each type of accelerator magnet.
+
+Aside from the field, Geant4 uses a numerical integrator to calculate the motion of a
+charged particle through the field. Geant4 is designed to accurately simulate detectors
+so the presumed field description is a sampled field map with a non-uniform field. In this
+case, a numerical integrator is the best solution. In a detector, particles typically
+do not travel a great distance.
+
+In an accelerator however, the fields are mostly of a known form with only minor imperfections
+and the particle may traverse many different fields many different times. For these fields,
+there are exact or preferred solutions that provide greater physical accuracy and
+numerical stability. BDSIM provides these tracking routines for thick lens tracking.
+
+These 'integrators' are typically constructed with a strength that represents the field
+(such as `k1` for a quadrupole) and the field vector :math:`\vec{B}` is ignored. Of course,
+in a full radiation transport simulation, there can be many different types of particles
+in all directions (even backwards). The thick lens tracking routines do not work for
+particles travelling backwards or perpendicular, so we resort back to a numerical
+integrator (typically 4th order Runge-Kutta) in these cases. The thick lense particles
+are used for paraxial particle only.
+
+Thick lens tracking routines typically work in a curvilinear coordinate system
+that follows the reference trajectory, whereas Geant4 must work in global Cartesian
+coordinates. BDSIM bridges these two systems with an automatically created parallel
+geometry of simple cylinders that follow the beam line. Transforms between coordinate
+systems are created by using the coordinate system of this parallel geometry.
 
 A Little More Detail
 ====================
