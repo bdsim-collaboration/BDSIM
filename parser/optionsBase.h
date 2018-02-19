@@ -134,6 +134,8 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
 
+    double    worldVolumeMargin; ///< Padding margin for world volume size.
+
     double    vacuumPressure;
     bool      sensitiveBeamPipe;
     

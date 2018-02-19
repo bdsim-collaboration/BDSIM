@@ -20,6 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSExtent.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -89,6 +91,7 @@ public:
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
   inline G4double          GetAngle()                     const {return component->GetAngle();}
   inline BDSBeamPipeInfo*  GetBeamPipeInfo()              const {return component->GetBeamPipeInfo();}
+  inline BDSExtent         GetExtent()                    const {return component->GetExtent();}
   inline G4String          GetPlacementName()             const {return placementName;}
   inline G4int             GetCopyNo()                    const {return copyNumber;}
   inline G4LogicalVolume*  GetContainerLogicalVolume()    const {return component->GetContainerLogicalVolume();}
@@ -115,6 +118,9 @@ public:
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
   inline G4int             GetIndex()                     const {return index;}
   ///@}
+
+  /// Create a global extent object from the extent of the component.
+  BDSExtentGlobal GetExtentGlobal() const;
 
   /// @{ Return face normal accounting for placement tilt of this component.
   G4ThreeVector InputFaceNormal()  const;

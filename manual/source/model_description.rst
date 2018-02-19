@@ -2466,6 +2466,9 @@ as their value.
 | thinElementLength                | the length of all thinmultipoles and dipole           |
 |                                  | fringefields in a lattice (default 1e-6) [m]          |
 +----------------------------------+-------------------------------------------------------+
+| worldVolumeMargin                | the margin added in all directions to the world       |
+|                                  | volume (m). Default 5m, minimum 2m.                   |
++----------------------------------+-------------------------------------------------------+
 | **Tracking Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | deltaChord                       | chord finder precision                                |

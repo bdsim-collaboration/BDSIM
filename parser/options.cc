@@ -192,6 +192,7 @@ void Options::PublishMembers()
   publish("vacuumMaterial",       &Options::vacMaterial);
   publish("emptyMaterial",        &Options::emptyMaterial);
   publish("worldMaterial",        &Options::worldMaterial);
+  publish("worldVolumeMargin",    &Options::worldVolumeMargin);
   publish("dontSplitSBends",      &Options::dontSplitSBends);
   publish("thinElementLength",    &Options::thinElementLength);
   publish("hStyle",               &Options::hStyle);

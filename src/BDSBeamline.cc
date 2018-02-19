@@ -718,62 +718,20 @@ G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentN
 void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 {
   // calculate extents for world size determination
-  // project size in global coordinates
-  G4ThreeVector     referencePositionStart = element->GetReferencePositionStart();
-  G4RotationMatrix* referenceRotationStart = element->GetReferenceRotationStart();
-  G4ThreeVector     referencePositionEnd   = element->GetReferencePositionEnd();
-  G4RotationMatrix* referenceRotationEnd   = element->GetReferenceRotationEnd();
-  BDSAcceleratorComponent* component       = element->GetAcceleratorComponent();
-  G4ThreeVector eP                         = component->GetExtentPositive();
-  eP.setZ(0); // we get the z position from the start point, so only need the transverse bits
-  G4ThreeVector eN                         = component->GetExtentNegative();
-  eN.setZ(0); // we get the z position from the start point, so only need the transverse bits
-  G4ThreeVector ePStart                    = G4ThreeVector(eP).transform(*referenceRotationStart);
-  G4ThreeVector eNStart                    = G4ThreeVector(eN).transform(*referenceRotationStart);
-  G4ThreeVector ePEnd                      = G4ThreeVector(eP).transform(*referenceRotationEnd);
-  G4ThreeVector eNEnd                      = G4ThreeVector(eN).transform(*referenceRotationEnd);
-  G4ThreeVector extentposStart             = referencePositionStart + ePStart;
-  G4ThreeVector extentnegStart             = referencePositionStart + eNStart;
-  G4ThreeVector extentposEnd               = referencePositionEnd   + ePEnd;
-  G4ThreeVector extentnegEnd               = referencePositionEnd   + eNEnd;
- 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "start position (global):       " << referencePositionStart << G4endl;
-  G4cout << "end position (global):         " << referencePositionEnd   << G4endl;
-  G4cout << "local extent +ve:              " << eP                     << G4endl;
-  G4cout << "local extent -ve:              " << eN                     << G4endl;
-  G4cout << "extent +ve at start in global: " << ePStart                << G4endl;
-  G4cout << "extent -ve at start in global: " << eNStart                << G4endl;
-  G4cout << "extent +ve at end in global:   " << ePEnd                  << G4endl;
-  G4cout << "extent -ve at end in global:   " << eNEnd                  << G4endl;
-  G4cout << "current global extent +ve:     " << maximumExtentPositive  << G4endl;
-  G4cout << "current global extent -ve:     " << maximumExtentNegative  << G4endl;
-#endif
-  
-  // loop over each size and compare to cumulative extent
-  // do this at the start and end to be sure for long components
-  // start
-  for (int i=0; i<3; i++)
+  // get the boundary points in global coordinates.
+  BDSExtentGlobal extG = element->GetExtentGlobal();
+  const auto boundaryPoints = extG.AllBoundaryPointsGlobal();
+
+  // expand maximums based on the boundary points.
+  for (const auto& point : boundaryPoints)
     {
-      if (extentposStart[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentposStart[i];}
-      if (extentnegStart[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentnegStart[i];}
-    }
-  // end
-  for (int i=0; i<3; i++)
-    {
-      if (extentposEnd[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentposEnd[i];}
-      if (extentnegEnd[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentnegEnd[i];}
-    }
-  // end comparing negative extents with positive world just in case
-  for (int i=0; i<3; i++)
-    {
-      if (extentnegEnd[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentnegEnd[i];}
+      for (int i = 0; i < 3; ++i)
+	{
+	  if (point[i] > maximumExtentPositive[i])
+	    {maximumExtentPositive[i] = point[i];}
+	  if (point[i] < maximumExtentNegative[i])
+	    {maximumExtentNegative[i] = point[i];}
+	}
     }
 #ifdef BDSDEBUG
   G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;
