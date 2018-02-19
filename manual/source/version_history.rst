@@ -37,6 +37,7 @@ Output \& Analysis Changes
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
 * 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
+* Trajectory momentum is now in GeV.
 
 General
 -------
