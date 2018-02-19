@@ -64,8 +64,15 @@ private:
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
 
-  G4double trajectoryCutZ; ///< Cache of variable from global constants.
-  G4double trajectoryCutR; ///< Cache of variable from global constants.
+  /// @{ Cache of variable from global constants.
+  G4double trajectoryEnergyThreshold;
+  G4double trajectoryCutZ;
+  G4double trajectoryCutR;
+  G4bool   trajConnect;
+  G4String particleToStore;
+  G4String particleIDToStore;
+  G4int    depth;
+  /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
 
