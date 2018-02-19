@@ -407,9 +407,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
 #endif
-  worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
+  G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
+  margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
+  worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with 5m margin, it becomes in all dimensions: " << worldR << G4endl;
+  G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
 #endif
   
   G4String worldName   = "World";

@@ -68,6 +68,8 @@ Bug Fixes
   option to analyse old files withou the new header structure).
 * The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
 * `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
+* Fixed bug where world size would be too small with placements of large externally provided
+  geometry with strong rotations.
 
 
 V0.993 - 2017 / 12 / 11
