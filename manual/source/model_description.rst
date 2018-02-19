@@ -915,20 +915,25 @@ Examples::
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by external geometry and magnetic field
-maps. Several geometry formats are supported. The user must supply the length (accurately) as
-well as a diameter such that the geometry will be contained in a box that has horizontal and
-vertical size of diameter.
+`element` defines an arbitrary element that's defined by externally provided geometry. It includes
+the possibility of overlaying a field as well. Several geometry formats are supported. The user
+must supply the length (accurately) as well as a diameter such that the geometry will be
+contained in a box that has horizontal and vertical size of diameter.
+
+The geometry is simply placed in the beam line. There is no placement offset other than the
+offset \& tilt of the element in the beam line, therefore, the user must prepare geometry
+with the placement as required. An alternative strategy is to use the `gap`_ beam line element
+and make a placement at the appropriate point in global coordinates.
 
 ================  ===============================  ==========  ===========
 parameter         description                      default     required
-`geometry`        filename of geometry             NA          yes
+`geometryFile`    filename of geometry             NA          yes
 `l`               length                           NA          yes
 `outerDiameter`   diameter of component [m]        NA          yes
 `fieldAll`        name of field object to use      NA          no
 ================  ===============================  ==========  ===========
 
-`geometry` should be of the format `format:filename`, where `format` is the geometry
+`geometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
 file. See :ref:`externally-provided-geometry` for more details.
 
@@ -943,7 +948,7 @@ gmad file. The syntax for this is described in :ref:`field-maps`.
 
 Simple example::
 
-  detector: element, geometry="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
+  detector: element, geometryFile="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
 
 Example with field::
 
@@ -956,7 +961,7 @@ Example with field::
 		    electricFile = "poisson2d:/Another/File.TX",
 		    electricInterpolator = "linear2D";
   
-   detec: element, geometry="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
+   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
 
 
 
@@ -1506,6 +1511,8 @@ a drift pipe where it covers the full volume of the drift (not outside it though
   
 When defining a field, the following parameters can be specified.
 
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
 +======================+=================================================================+
@@ -1553,6 +1560,14 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | angle                | angle (rad) of defining axis / angle rotation.                  |
 +----------------------+-----------------------------------------------------------------+
+| autoScale            | This automatically calculates the field graident at the origin  |
+|                      | and the field magnitude will be automatically scaled according  |
+|                      | to the normalised `k` strength (such as `k1` for a quadrupole)  |
+|                      | for the magnet it's attached to. Only applicable for when       |
+|                      | attached to magnets.                                            |
++----------------------+-----------------------------------------------------------------+
+| maximumStepLength    | The maximum permitted step length through the field. (m)        |
++----------------------+-----------------------------------------------------------------+
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps is attached to and the coordinates
@@ -1565,6 +1580,8 @@ Field Types
 
 * These are not case sensitive.
 
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+  
 +------------------+----------------------------------+
 | **Type String**  | **Description**                  |
 +==================+==================================+
@@ -1596,6 +1613,8 @@ Field Types
 
 Formats
 ^^^^^^^
+
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
@@ -1775,6 +1794,13 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 +----------------------+---------------------------------------------------------------------+
 
 .. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
+.. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
+	     GMAD file is included in a parent file in a different location, the file will not be
+	     correctly located. i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
+	     geometry in "../a/relative/path/geometryfile.gdml", the file will not be found. If all
+	     GMAD files are located in the same directory, this will not be a problem. It is overall
+	     better / cleaner to use multiple GMAD input files and include them.
 
 
 .. _placements:
@@ -2440,6 +2466,9 @@ as their value.
 | thinElementLength                | the length of all thinmultipoles and dipole           |
 |                                  | fringefields in a lattice (default 1e-6) [m]          |
 +----------------------------------+-------------------------------------------------------+
+| worldVolumeMargin                | the margin added in all directions to the world       |
+|                                  | volume (m). Default 5m, minimum 2m.                   |
++----------------------------------+-------------------------------------------------------+
 | **Tracking Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | deltaChord                       | chord finder precision                                |
@@ -2539,6 +2568,8 @@ as their value.
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
+.. _bdsim-options-output:
+  
 Output Options
 ^^^^^^^^^^^^^^
 

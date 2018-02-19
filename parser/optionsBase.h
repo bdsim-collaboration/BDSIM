@@ -134,6 +134,8 @@ namespace GMAD
     std::string emptyMaterial; ///< material in container volumes
     std::string worldMaterial;
 
+    double    worldVolumeMargin; ///< Padding margin for world volume size.
+
     double    vacuumPressure;
     bool      sensitiveBeamPipe;
     
@@ -193,8 +195,8 @@ namespace GMAD
     /// Tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
-    double   maximumTrackingTime; ///< maximum tracking time per track [s]
-    double   maximumStepLength;   ///< maximum permitted step length in any volume
+    double   maximumTrackingTime; ///< Maximum tracking time per track [s].
+    double   maximumStepLength;   ///< Maximum permitted step length in any volume.
     double   maximumTrackLength;  ///< Maximum permitted track length [m].
     double   chordStepMinimum;
     double   deltaIntersection;

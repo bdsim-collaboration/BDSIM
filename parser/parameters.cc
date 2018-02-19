@@ -113,7 +113,7 @@ Parameters::Parameters()
   setMap["fieldVacuum"] = false;
   setMap["fieldAll"]    = false;
 
-  setMap["geometry"] = false; // for geometryFile
+  setMap["geometryFile"] = false;
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;

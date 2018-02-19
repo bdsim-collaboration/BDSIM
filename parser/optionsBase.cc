@@ -118,8 +118,11 @@ OptionsBase::OptionsBase()
   ignoreLocalAperture  = false;
   
   vacMaterial          = "Vacuum";
-  worldMaterial        = "air";
   emptyMaterial        = "G4_Galactic";
+  worldMaterial        = "air";
+
+  worldVolumeMargin = 5; //m
+
   vacuumPressure       = 1e-12;
   sensitiveBeamPipe    = true;
 

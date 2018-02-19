@@ -39,4 +39,6 @@ if (USE_GZSTREAM)
   simple_testing(field-map-em-2d "--file=em_field_2d.gmad" "")
   simple_testing(field-map-em-3d "--file=em_field_3d.gmad" "")
   simple_testing(field-map-em-4d "--file=em_field_4d.gmad" "")
+
+  simple_testing(field-map-step-size "--file=field_max_step.gmad" "")
 endif()

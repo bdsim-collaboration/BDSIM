@@ -66,7 +66,7 @@ This choice affects the computation time and accuracy of the simulation but each
 may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
 more sets can be added that mix and match routines as required.
 
-.. note:: "bdsim" is the default.
+.. note:: "bdsimtwo" is the default.
 
 .. note:: Prior to v0.96, the set described by "bdsimold" was the default, although
 	  in v0.95 it was labelled "bdsimone".

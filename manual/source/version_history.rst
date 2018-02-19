@@ -20,6 +20,7 @@ New Features
 * New component: 'gap'. Create a space in the beam line with no geometry.
 * Ability to specify the world volume material with the `worldMaterial` option.
 * Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
+* Ability to limit step size in user-specified fields.
 
 
 Output \& Analysis Changes
@@ -36,6 +37,7 @@ Output \& Analysis Changes
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
 * 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
+* Trajectory momentum is now in GeV.
 
 General
 -------
@@ -66,6 +68,8 @@ Bug Fixes
   option to analyse old files withou the new header structure).
 * The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
 * `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
+* Fixed bug where world size would be too small with placements of large externally provided
+  geometry with strong rotations.
 
 
 V0.993 - 2017 / 12 / 11
