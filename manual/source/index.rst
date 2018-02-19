@@ -44,6 +44,7 @@ Developer Documentation
    dev_geometry
    dev_tracking
    dev_fields
+   dev_beamgeneration
    dev_analysisoutput
    dev_analysissuite
 
