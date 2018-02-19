@@ -196,7 +196,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   {
     std::map<BDSTrajectory*, bool> interestingTraj;
 
-    TrajectoryVector *trajVec = trajCont->GetVector();
+    TrajectoryVector* trajVec = trajCont->GetVector();
 
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size()
@@ -204,7 +204,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 
     // build trackID map
-    std::map<int, BDSTrajectory *> trackIDMap;
+    std::map<int, BDSTrajectory*> trackIDMap;
     for (auto iT1 : *trajVec)
       {
 	BDSTrajectory *traj = (BDSTrajectory *) iT1;
@@ -212,14 +212,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
 
     // build depth map
-    std::map<BDSTrajectory *, int> depthMap;
+    std::map<BDSTrajectory*, int> depthMap;
     for (auto iT1 : *trajVec)
       {
 	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	if (traj->GetParentID() == 0) 
-	  {depthMap.insert(std::pair<BDSTrajectory *, int>(traj, 0));}
+	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, 0));}
 	else
-	  {depthMap.insert(std::pair<BDSTrajectory *, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
+	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
       }
 
     // loop over trajectories and determine if it should be stored
@@ -231,15 +231,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	// always store primaries
 	if (parentID == 0)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
-	// check on energy (if energy threshold is not negative
+	// check on energy (if energy threshold is not negative)
 	if (trajectoryEnergyThreshold >= 0 &&
 	    traj->GetInitialKineticEnergy() > trajectoryEnergyThreshold)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
@@ -260,7 +260,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	// check on trajectory tree depth (depth = 0 means only primaries)
 	if (depthMap[traj] <= depth)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
@@ -271,12 +271,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	G4bool withinRInteresting      = trajEndPoint->PostPosR() < trajectoryCutR;
 	if (greaterThanZInteresting || withinRInteresting)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 
 	// if not interesting store false
-	interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, false));
+	interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, false));
       }
     
     // Connect trajectory graphs
@@ -301,7 +301,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // Relabel with new track IDS
 
     // make map
-    std::map<BDSTrajectory *, G4int> interestingTrajIndexMap;
+    std::map<BDSTrajectory*, G4int> interestingTrajIndexMap;
     int idx = 0;
     for (auto i : interestingTrajVec)
       {
