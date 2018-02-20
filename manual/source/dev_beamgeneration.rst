@@ -28,16 +28,9 @@ Please note that
 :math:`\sigma_{\delta}` is used here for clarity, but its defintition is equivallent
 to :math:`\sigma_{E}` defined in :ref:`model-description`. 
 
-Having information about the machine optics and beam parameters at a given point
-in the machine allows the generation of a pseudo-random distribution of particles
-with appropriate coordinates at that point. In the Gauss Twiss matrix input the
-set of parameters described above is used to generate the beam.
-
-For linear optics, in the absence of dispersion or energy spread the 3 2x2 submatrices
+For linear optics, and in the absence of dispersion or energy spread the 3 2x2 submatrices
 along the diagonal of the sigma matrix fully represent each plane and can be treated
-independently of each other, which greatly simplifies the calculation. The well-known
-Courant-Snyder fomalisim is applied in this case. For example, the horisontal plane
-is parametrised as,
+independently of each other. For example, the horisontal plane is parametrised as,
 
 .. math::
    \begin{pmatrix}
@@ -54,16 +47,14 @@ is parametrised as,
 When dispersion and energy spread are present, numerous couplings are introduced
 which appear as off-diagonal elements in the sigma matrix. In this case the energy
 dependance of the coordinates results in both longitudinal-transverse and
-transverse-transverse couplings. In order to sucessfully generate a beam at an
-arbitrary :math:`S` in the machine, all those couplings need to be taken into
-acccount. Simply ignoring them or approximating them does not work because, in
-order to generate a real distribution, the sima matrix should be positive definite.
-A positive definite sgima matrix fulfills the fundamental requirement that the the
-beam distribution should have a non-negative 'size' is each dimension.
+transverse-transverse couplings.
 
-To arrive at expressions for these couplings in terms of machine and beam parameters
-the starting point is the effect of dispersion on single coordinates. For example,
-for an individual beam particle, the horizontal position is affected as follows,
+To be a valid covariance matrix, the sigma (*capital sigma*) matrix, must be positive
+definite. This ensures a positive variance in each dimension.
+
+To derive each term of the covariance matrix, we consider the effect of dispersion
+on single coordinates. For example, for an individual particle, the horizontal
+position is affected as follows,
 
 .. math::
    x_{i} = x_{\beta i} + \eta_{s}\delta_{i},
