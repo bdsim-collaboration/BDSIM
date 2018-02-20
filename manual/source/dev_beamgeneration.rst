@@ -90,18 +90,18 @@ the variance in terms of standard deviation.
 The covariance of the horizontal position and the energy offset can also be obtained as,
 
 .. math::
-   \langle x\delta\rangle = \textrm{cov}[x_{\beta}+\eta_{x}\delta, \delta] = \langle x_{\beta}\delta\rangle + \eta_{x}\langle \delta^{2}\rangle = \eta_{x}\langle\delta^{2}\rangle,
+   \langle x\,\delta\rangle = \textrm{cov}[x_{\beta}+\eta_{x}\delta, \delta] = \langle x_{\beta}\,\delta\rangle + \eta_{x}\langle \delta^{2}\rangle = \eta_{x}\langle\delta^{2}\rangle,
 
-as :math:`\langle x_{\beta}\delta\rangle = 0` by construction as explained above.
+as :math:`\langle x_{\beta}\,\delta\rangle = 0` by construction as explained above.
 
 Finally, correlations that involve two different variables affected by dispersion
 have the same form. For example,
 
 .. math::
-   \langle x\,y\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta, xp_{\beta}+\eta_{xp}\delta] \\
-                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\langle xp_{\beta}\delta\rangle + \eta_{xp}\langle x_{\beta}\delta\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle \\
-                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle \\
-                     &=-\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{xp}\sigma_{\delta}^{2}
+   \langle x\,y\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta,\,x^{\prime}_{\beta}+\eta_{x^{\prime}}\delta] \\
+                     &= \langle x_{\beta}\,x^{\prime}_{\beta}\rangle + \eta_{x}\langle x^{\prime}_{\beta}\,\delta\rangle + \eta_{x^{\prime}}\langle x_{\beta}\,\delta\rangle + \eta_{x}\,\eta_{x^{\prime}}\langle\delta^{2}\rangle \\
+                     &= \langle x_{\beta}\,x^{\prime}_{\beta}\rangle + \eta_{x}\eta_{x^{\prime}}\langle\delta^{2}\rangle \\
+                     &=-\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{x^{\prime}}\sigma_{\delta}^{2}
 
 All other couplings are done by analogy.
 
