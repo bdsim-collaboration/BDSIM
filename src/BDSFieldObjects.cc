@@ -82,6 +82,9 @@ void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
 				     G4bool penetrateToDaughterVolumes)
 {
   volume->SetFieldManager(fieldManager, penetrateToDaughterVolumes);
+  if (!info) // may not always exist
+    {return;}
+
   auto ul = info->UserLimits();
   if (ul)
     {
