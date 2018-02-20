@@ -93,10 +93,10 @@ Finally, correlations that involve two different variables affected by dispersio
 have the same form. For example,
 
 .. math::
-   \langle xy\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta, xp_{\beta}+\eta_{xp}\delta] =\\
-                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\langle xp_{\beta}\delta\rangle + \eta_{xp}\langle x_{\beta}\delta\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle= \\
-                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle =\\
-                     &=-\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{xp}\sigma_{\delta}^{2}.
+   \langle x\,y\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta, xp_{\beta}+\eta_{xp}\delta] \\
+                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\langle xp_{\beta}\delta\rangle + \eta_{xp}\langle x_{\beta}\delta\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle \\
+                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle \\
+                     &=-\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{xp}\sigma_{\delta}^{2}
 
 All other couplings are done by analogy.
 
@@ -105,6 +105,6 @@ Some useful relations:
 .. math::
    &\langle XY\rangle\equiv\mathrm{cov}[X,Y], \\
    &\langle X^2\rangle\equiv\mathrm{cov}[X,X]\equiv\mathrm{var}[X]\equiv\sigma_{X}^{2}, \\
-   &\mathrm{var}[X+Y]=\mathrm{var}[X]+\mathrm{var}[Y]\,\,\mathrm{if  X,Y independent}, \\
+   &\mathrm{var}[X+Y]=\mathrm{var}[X]+\mathrm{var}[Y]\,\,\mathrm{if\,\,X,Y \, are\,independent}, \\
    &\mathrm{cov}[aX+bY,cW+dV]=ac\mathrm{cov}[X,W]+ad\mathrm{cov}[X,V]+bc\mathrm{cov}[Y,W]+bd\mathrm{cov}[Y,V].
 
