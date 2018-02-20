@@ -12,14 +12,14 @@ Gauss Twiss Covariance Matrix
 
 The beam in an accelerator can be described as a 6D distribution of particles. The 6
 dimensions are 3 canonical conjugate coordinate pairs in three planes and can be
-represented by the vector - :math:`\boldsymbol{x} = (x,\,xp,\,y,yp,\,t,\,\delta)`.
+represented by the vector - :math:`\boldsymbol{x} = (x,\,x^{\prime},\,y,y^{\prime},\,t,\,\delta)`.
 The means of that distribution are the beam centroids and the 6x6 matrix of second
 order moments of the dsitribution is referred to as sigma matrix and can be represented
-compactly as :math:`\Sigma_{ij}=\langle\boldsymbol{x_{i}}\boldsymbol{x_{j}}\rangle`
+compactly as :math:`\Sigma_{ij}=\langle\boldsymbol{x_{i}}\,\boldsymbol{x_{j}}\rangle`
 with the angle brackets denoting a central moment.
 
 The beam is typically parameterised in an accelerator using the Twiss functions
-:math:`\beta,\alpha,\gamma` and dispersions :math:`\eta_x,\eta_x^{'},\eta_y,\eta_y^{'}`.
+:math:`\beta,\alpha,\gamma` and dispersions :math:`\eta_x,\eta_x^{\prime},\eta_y,\eta_y^{\prime}`.
 These are used in combination with beam parameters
 :math:`\epsilon_x,\epsilon_y,\sigma_{\delta},\sigma_{t}`. The combination of
 machine and beam parameters gives the physical observables such as beam size.
@@ -41,8 +41,8 @@ is parametrised as,
 
 .. math::
    \begin{pmatrix}
-   \langle x^{2}\rangle & \langle x xp\rangle \\
-   \langle x xp\rangle & \langle xp^{2}\rangle
+   \langle x^{2}\rangle & \langle x\,x^{\prime}\rangle \\
+   \langle x\,x^{\prime}\rangle & \langle x^{\prime 2}\rangle
    \end{pmatrix}
    =
    \epsilon_{x}
