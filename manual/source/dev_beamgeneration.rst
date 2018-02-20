@@ -16,7 +16,21 @@ represented by the vector - :math:`\boldsymbol{x} = (x,\,x^{\prime},\,y,y^{\prim
 The means of that distribution are the beam centroids and the 6x6 matrix of second
 order moments of the dsitribution is referred to as sigma matrix and can be represented
 compactly as :math:`\Sigma_{ij}=\langle\boldsymbol{x_{i}}\,\boldsymbol{x_{j}}\rangle`
-with the angle brackets denoting a central moment.
+with the angle brackets denoting a central moment. More explicitly for a particle beam,
+this is:
+
+.. math::
+   
+   \mathbf{\Sigma}=
+   \begin{pmatrix}
+   \langle x^{2}\rangle & \langle x\,x^{\prime}\rangle & \langle x\,y\rangle & \langle x\,y^{\prime}\rangle & \langle x\,t\rangle & \langle x\,\delta\rangle \\
+   \langle x^{\prime}x\rangle & \langle x^{\prime 2}\rangle & \langle x^{\prime}\,y\rangle & \langle x^{\prime}\,y^{\prime}\rangle & \langle x^{\prime}\,t\rangle & \langle x^{\prime}\,\delta\rangle \\
+   \langle y\,x\rangle & \langle y\,x^{\prime}\rangle & \langle y^{2}\rangle & \langle y\,y^{\prime}\rangle & \langle y\,t\rangle & \langle y\,\delta\rangle \\
+   \langle y^{\prime}x\rangle & \langle y^{\prime}x^{\prime}\rangle & \langle y^{\prime}y\rangle & \langle y^{\prime 2}\rangle & \langle y^{\prime}t\rangle & \langle y^{\prime}\delta\rangle \\
+   \langle t\,x\rangle & \langle t\,x^{\prime}\rangle & \langle t\,y\rangle & \langle t\,y^{\prime}\rangle & \langle t^{2}\rangle & \langle t\,\delta\rangle \\
+   \langle \delta\,x\rangle & \langle \delta\,x^{\prime}\rangle & \langle \delta\,y\rangle & \langle \delta\,y^{\prime}\rangle & \langle \delta\,t\rangle & \langle \delta^{2}\rangle \\   
+   \end{pmatrix}
+   
 
 The beam is typically parameterised in an accelerator using the Twiss functions
 :math:`\beta,\alpha,\gamma` and dispersions :math:`\eta_x,\eta_x^{\prime},\eta_y,\eta_y^{\prime}`.
