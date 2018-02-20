@@ -43,8 +43,29 @@ namespace GMAD {
  */
 
 class BDSBunch
-{ 
-protected : 
+{
+public:
+  BDSBunch();
+  virtual ~BDSBunch();
+
+  /// Extract and set the relevant options from the beam definition.
+  virtual void SetOptions(const GMAD::Beam& beam,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+
+  /// Each derived class can override this default method of reference
+  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
+  /// z0 will be treated as S and the global z0 be calculated.
+  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+			       G4double& xp, G4double& yp, G4double& zp,
+			       G4double& t , G4double&  E, G4double& weight);
+
+  /// Access whether the particle generated may be different from the design particle.
+  inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
+
+  /// Access the beam particle definition.
+  inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  
+protected:
   ///@{ Centre of distributions
   G4double X0;
   G4double Y0;
@@ -91,24 +112,7 @@ protected :
 
   /// Optional particle definition that can be used.
   BDSParticleDefinition* particleDefinition;
-
-public : 
-  BDSBunch();
-  virtual ~BDSBunch();
-  virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
-
-  /// Each derived class can override this default method of reference
-  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
-  /// z0 will be treated as S and the global z0 be calculated.
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);
-
-  inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
-
-  inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
-
+  
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.
   G4Transform3D beamlineTransform;
