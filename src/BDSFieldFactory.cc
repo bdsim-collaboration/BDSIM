@@ -206,13 +206,18 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       if (eleFileSpecified)
 	{eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));}
 
-      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      // copy the default and update with the length of the object rather than the default 1m
-      G4double limit = G4double(definition.maximumStepLength)*CLHEP::m;
-      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
-      // only specify a user limit object if the step length was specified
-      G4UserLimits* fieldLimit = ul != defaultUL ? ul : nullptr;
-      
+      G4UserLimits* fieldLimit = nullptr;
+      if (definition.maximumStepLength > 0)
+	{// only assign if specified
+	  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+	  // copy the default and update with the length of the object rather than the default 1m
+	  G4double limit = G4double(definition.maximumStepLength) * CLHEP::m;
+	  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+	  // only specify a user limit object if the step length was specified
+	  if (ul != defaultUL)
+	    {fieldLimit = ul;}
+	}
+
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,

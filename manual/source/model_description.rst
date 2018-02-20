@@ -2856,42 +2856,59 @@ correlations between phase space coordinates, so
 
 * All parameters from `reference`_ distribution as used as centroids.
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `sigmaX`                         | Horizontal gaussian sigma [m]                         |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaY`                         | Vertical gaussian sigma [m]                           |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaXp`                        | Sigma of the horizontal canonical momentum            |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaYp`                        | Sigma of the vertical canonical momentum              |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaE`                         | Relative energy spread                                |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaT`                         | Sigma of the temporal distribution [s]                |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------------------------------------------------------------------------------+
+| Option                           | Description                                                                         |
++==================================+=====================================================================================+
+| `sigmaX`                         | Horizontal gaussian sigma [m]                                                       |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaY`                         | Vertical gaussian sigma [m]                                                         |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaXp`                        | Sigma of the horizontal canonical momentum                                          |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaYp`                        | Sigma of the vertical canonical momentum                                            |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaE`                         | Relative energy spread :math:`\sigma_{E}/E`                                         |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaT`                         | Sigma of the temporal distribution [s]                                              |
++----------------------------------+-------------------------------------------------------------------------------------+
 
 
 gausstwiss
 ^^^^^^^^^^
 
-The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
-the usual beam :math:`\sigma`-matrix is calculated, using the following equations 
+The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and :math:`\gamma` plus dsipersion :math:`\eta` from which
+the beam :math:`\sigma` -matrix is calculated, using the following equations 
 
 .. math:: 
-   \sigma_{11} & =  \epsilon_x \beta_x  \\
-   \sigma_{12} & = -\epsilon_x \alpha_x \\  
-   \sigma_{21} & = -\epsilon_x \alpha_x \\
-   \sigma_{22} & =  \epsilon_x \gamma_x \\
-   \sigma_{33} & =  \epsilon_y \beta_y \\
-   \sigma_{34} & = -\epsilon_y \alpha_y \\ 
-   \sigma_{43} & = -\epsilon_y \alpha_y \\
-   \sigma_{44} & =  \epsilon_y \gamma_y \\    
+   \sigma_{11} & =  \epsilon_x \beta_x + \eta_{x}^{2}\sigma_{E}^{2} \\
+   \sigma_{12} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\  
+   \sigma_{21} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{22} & =  \epsilon_x \gamma_x + \eta_{xp}^{2}\sigma_{E}^{2}\\
+   \sigma_{33} & =  \epsilon_y \beta_y + \eta_{y}^{2}\sigma_{E}^{2}\\
+   \sigma_{34} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\ 
+   \sigma_{43} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{44} & =  \epsilon_y \gamma_y + \eta_{yp}^{2}\sigma_{E}^{2}\\
+   \sigma_{02} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{20} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{12} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{21} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{03} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{30} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{50} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{05} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{51} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{15} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{25} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{52} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{35} & = \eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{53} & = \eta_{x}\sigma_{E}^{2}\\
    \sigma_{55} & =  \sigma_{T}^2 \\  
    \sigma_{66} & =  \sigma_{E}^2  
 
 * All parameters from `reference`_ distribution as used as centroids.
+* Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
    
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -2907,6 +2924,14 @@ the usual beam :math:`\sigma`-matrix is calculated, using the following equation
 | `alfx`                           | Horizontal alpha function                             |
 +----------------------------------+-------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                               |
++----------------------------------+-------------------------------------------------------+
+| `dispx`                          | Horizontal dispersion function [m]                    |
++----------------------------------+-------------------------------------------------------+
+| `dispy`                          | Vertical dispersion function [m]                      |
++----------------------------------+-------------------------------------------------------+
+| `dispxp`                         | Horizontal angular dispersion function                |
++----------------------------------+-------------------------------------------------------+
+| `dispyp`                         | Vertical angular dispersion function                  |
 +----------------------------------+-------------------------------------------------------+
 
 circle
