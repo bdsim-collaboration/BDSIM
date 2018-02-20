@@ -12,7 +12,7 @@ Gauss Twiss Covariance Matrix
 
 The beam in an accelerator can be described as a 6D distribution of particles. The 6 dimensions are 3 canonical conjugate coordinate pairs in three planes and can be represented by the vector - :math:`\boldsymbol{x} = (x,\,xp,\,y,yp,\,t,\,\delta)`. The means of that distribution are the beam centroids and the 6x6 matrix of second order moments of the dsitribution is referred to as sigma matrix and can be represented compactly as :math:`\Sigma_{ij}=\langle\boldsymbol{x_{i}}\boldsymbol{x_{j}}\rangle` with the angle brackets denoting a central moment.
 
-This distribution is transformed when propagating thorugh the accelerator and the sigma matrix hence depends on :math:`S`. In the case of linear optics is possible to use matrix formalism and paramterise the transport of the beam distribution in the accelerator in terms of machine parameters: Twiss functions :math:`\beta,\alpha,\gamma` and dispersions :math:`\eta,\eta^{'}`, and beam parameters: :math:`\epsilon,\sigma_{\delta},\sigma_{t}`. The combination of machine and beam parameters gives the physical observables such as beam size.
+This distribution is transformed when propagating thorugh the accelerator and the sigma matrix hence depends on :math:`S`. In the case of linear optics is possible to use matrix formalism and paramterise the transport of the beam distribution in the accelerator in terms of machine parameters: Twiss functions :math:`\beta,\alpha,\gamma` and dispersions :math:`\eta,\eta^{'}`, and beam parameters: :math:`\epsilon,\sigma_{\delta},\sigma_{t}`. Please note that :math:`\sigma_{\delta}` is used here for clarity, but its defintition is equivallent to :math:`\sigma_{E}` defined in :ref:`model-description`. The combination of machine and beam parameters gives the physical observables such as beam size.
 
 Having information about the machine optics and beam parameters at a given point in the machine allows the generation of a pseudo-random distribution of particles with appropriate coordinates at that point. In the Gauss Twiss matrix input the set of parameters described above is used to generate the beam.
 
@@ -58,7 +58,8 @@ Finally, correlations that involve two different variables affected by dispersio
 .. math::
    \langle xy\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta, xp_{\beta}+\eta_{xp}\delta] =\\
                      &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\langle xp_{\beta}\delta\rangle + \eta_{xp}\langle x_{\beta}\delta\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle= \\
-                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle = -\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{xp}\sigma_{\delta}^{2}.
+                     &= \langle x_{\beta}xp_{\beta}\rangle + \eta_{x}\eta_{xp}\langle\delta^{2}\rangle =\\
+                     &=-\epsilon_{x}\alpha_{x} + \eta_{x}\eta_{xp}\sigma_{\delta}^{2}.
 
 All other couplings are done by analogy.
 
