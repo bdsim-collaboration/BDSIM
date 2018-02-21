@@ -2405,6 +2405,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | recreateFileName                 | which file to recreate events from                    |
 +----------------------------------+-------------------------------------------------------+
+| removeTemporaryFiles             | whether to delete temporary files (typically gdml)    |
+|                                  | when BDSIM exits. Default true.                       |
++----------------------------------+-------------------------------------------------------+
 | startFromEvent                   | event number offset to start from when recreating     |
 +----------------------------------+-------------------------------------------------------+
 | seed                             | the integer seed value for the random number          |
