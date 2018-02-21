@@ -430,6 +430,14 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     {buildFringeIncoming = false;}
   if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeOutgoing = false;}
+  // the poleface angles to be used in tracking only.
+  G4double trackingPolefaceAngleIn = element->e1;
+  G4double trackingPolefaceAngleOut = element->e2;
+  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+    {
+      trackingPolefaceAngleIn += angle*0.5;
+      trackingPolefaceAngleOut += angle*0.5;
+    }
 
   G4double e1 = -incomingFaceAngle;
   G4double e2 = -outgoingFaceAngle;
@@ -515,10 +523,10 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     {
       // TBC - LN: should this be e1 + angle/2 -> ie for e1 = -angle/2, the rbend would be an sbend
       BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
-      (*fringeStIn)["polefaceangle"] = incomingFaceAngleWRTSBend;
+      (*fringeStIn)["polefaceangle"] = trackingPolefaceAngleIn;
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, incomingFaceAngleWRTSBend, element->fint, element->hgap*CLHEP::m);
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleIn , element->fint, element->hgap*CLHEP::m);
       G4String fringeName            = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
@@ -564,10 +572,10 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     { 
       BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
       (*fringeStOut)["field"]         = (*st)["field"];
-      (*fringeStOut)["polefaceangle"] = outgoingFaceangleWRTSBend;
+      (*fringeStOut)["polefaceangle"] = trackingPolefaceAngleOut;
       (*fringeStOut)["length"]        = thinElementArcLength;
       (*fringeStOut)["angle"]         = oneFringeAngle;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, outgoingFaceangleWRTSBend, element->fintx, element->hgap*CLHEP::m);
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleOut, element->fintx, element->hgap*CLHEP::m);
       G4String fringeName             = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
