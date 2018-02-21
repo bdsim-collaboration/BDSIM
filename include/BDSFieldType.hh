@@ -45,7 +45,8 @@ struct fieldtypes_def
 	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf,
-             dipole3d};
+             dipole3d,
+	     multipoleouter};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated
