@@ -28,11 +28,7 @@ BDSBunchSquare::BDSBunchSquare() :
   BDSBunch(), envelopeX(0.0), envelopeY(0.0),
   envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchSquare::~BDSBunchSquare()
@@ -43,10 +39,6 @@ BDSBunchSquare::~BDSBunchSquare()
 void BDSBunchSquare::SetOptions(const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBunch::SetOptions(beam, beamlineTransformIn);
   SetEnvelopeX(beam.envelopeX); 
   SetEnvelopeY(beam.envelopeY);

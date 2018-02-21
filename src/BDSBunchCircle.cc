@@ -27,10 +27,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSBunchCircle::BDSBunchCircle():
   BDSBunch(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 

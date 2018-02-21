@@ -26,10 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+{
   useCurvilinear = true; // need to always convert from curvilinear
   iPart = 0;
   nPart = 0;

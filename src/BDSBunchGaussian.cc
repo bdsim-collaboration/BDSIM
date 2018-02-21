@@ -109,13 +109,9 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				       G4double& xp, G4double& yp, G4double& zp,
 				       G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   CLHEP::HepVector v = GaussMultiGen->fire();
 #ifdef BDSDEBUG 
-  G4cout << "HEPVECTOR" << v << G4endl;
+  G4cout << __METHOD_NAME__ << "HEPVECTOR " << v << G4endl;
 #endif
   x0 = v[0] * CLHEP::m;
   xp = v[1] * CLHEP::rad;
