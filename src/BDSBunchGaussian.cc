@@ -127,7 +127,9 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
-  E  = E0 * CLHEP::GeV * v[5];
+  E  = E0 * CLHEP::GeV;
+  if (finiteSigmaE)
+    {E *= v[5];} // only if there's a finite energy spread
   zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;

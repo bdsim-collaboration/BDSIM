@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
 
@@ -55,7 +56,10 @@ BDSBunch::BDSBunch():
   useCurvilinear(false),
   particleCanBeDifferent(false),
   particleDefinition(nullptr),
-  beamlineTransform(G4Transform3D()), nonZeroTransform(false),
+  finiteSigmaE(true),
+  finiteSigmaT(true),
+  beamlineTransform(G4Transform3D()),
+  nonZeroTransform(false),
   beamline(nullptr)
 {;}
 
@@ -78,6 +82,17 @@ void BDSBunch::SetOptions(const GMAD::Beam& beam,
   E0     = beam.E0;
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
+
+  if (!BDS::IsFinite(sigmaE))
+    {
+      finiteSigmaE = false;
+      sigmaE = 1e-50; // finite but small
+    }
+  if (!BDS::IsFinite(sigmaT))
+    {
+      finiteSigmaT = false;
+      sigmaT = 1e-50;
+    }
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
@@ -103,7 +118,7 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
-  t  = 0.0; 
+  t = 0.0;
   E = E0 * CLHEP::GeV;
   weight = 1.0;
 }

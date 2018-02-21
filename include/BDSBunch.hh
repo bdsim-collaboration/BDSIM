@@ -112,6 +112,11 @@ protected:
 
   /// Optional particle definition that can be used.
   BDSParticleDefinition* particleDefinition;
+
+  /// @{ Flags to ignore random number generator in case of no finite E or T.
+  G4bool finiteSigmaE;
+  G4bool finiteSigmaT;
+  /// @}
   
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.
