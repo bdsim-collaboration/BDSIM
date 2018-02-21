@@ -99,7 +99,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momy;
 
   // normalise to momentum and charge
-  G4double ratio = eqOfM->FCof() * brho / momMag;
+  G4double ratio = eqOfM->FCof() * std::abs(brho) / momMag;
 
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
