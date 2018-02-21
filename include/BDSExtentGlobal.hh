@@ -80,7 +80,6 @@ public:
 
   /// All 8 boundary points of the bounding box.
   std::vector<G4ThreeVector> AllBoundaryPointsGlobal() const;
-  std::vector<G4ThreeVector> AllVerticesGlobal() const;
   /// @}
 
   G4bool Overlaps(const BDSExtentGlobal& other) const;
