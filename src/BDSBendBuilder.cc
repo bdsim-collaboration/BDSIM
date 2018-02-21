@@ -521,7 +521,6 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   if (buildFringeIncoming)
     {
-      // TBC - LN: should this be e1 + angle/2 -> ie for e1 = -angle/2, the rbend would be an sbend
       BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
       (*fringeStIn)["polefaceangle"] = trackingPolefaceAngleIn;
       (*fringeStIn)["length"]        = thinElementArcLength;
