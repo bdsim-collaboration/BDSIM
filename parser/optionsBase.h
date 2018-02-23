@@ -111,6 +111,9 @@ namespace GMAD
     double      coilWidthFraction;
     double      coilHeightFraction;
 
+    /// geometry control
+    bool preprocessGDML;
+
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
     

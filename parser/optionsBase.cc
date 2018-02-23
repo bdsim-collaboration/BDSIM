@@ -98,6 +98,8 @@ OptionsBase::OptionsBase()
   vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
   coilWidthFraction    = -1;
   coilHeightFraction   = -1;
+
+  preprocessGDML = true;
   
   // geometry debugging
   // always split sbends into smaller chunks by default

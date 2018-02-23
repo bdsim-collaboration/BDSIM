@@ -199,6 +199,8 @@ void Options::PublishMembers()
   publish("vhRatio",              &Options::vhRatio);
   publish("coilWidthFraction",    &Options::coilWidthFraction);
   publish("coilHeightFraction",   &Options::coilHeightFraction);
+
+  publish("preprocessGDML",       &Options::preprocessGDML);
   
   // tunnel options
   publish("buildTunnel",         &Options::buildTunnel);
