@@ -17,27 +17,96 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSFieldMagOuterMultipole.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <cmath>
 
-BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int    nPolesIn,
-						     const G4double fieldStrengthIn,
-						     const G4double phiOffsetIn):
-  nPoles(nPolesIn),
-  fieldStrength(fieldStrengthIn),
-  phiOffset(phiOffsetIn)
+BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int              orderIn,
+						     const BDSMagnetStrength* /*stIn*/,
+						     const G4double&          /*poleTipRadius*/):
+  order(orderIn),
+  normalisation(1)
 {
-  itsSectorPhi=CLHEP::twopi/G4double(nPoles);
+  G4double angle = CLHEP::pi/(2.*order);
+  rotation = new G4RotationMatrix();
+  antiRotation = new G4RotationMatrix();
+  if (order > 1)
+    {// don't do for dipole
+      rotation->rotateZ(angle);
+      antiRotation->rotateZ(-angle);
+    }
+  factor = (order + 1)/2.;
+  m = G4TwoVector(0,1);
+}
+
+BDSFieldMagOuterMultipole::~BDSFieldMagOuterMultipole()
+{
+  delete rotation;
+  delete antiRotation;
 }
 
 G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
 						  const G4double       /*t*/) const
 {
+
+  G4ThreeVector rotatedPosition(position);
+  rotatedPosition = rotatedPosition.transform(*rotation);
+
+  // construct 2D vector of position
+  G4TwoVector r(rotatedPosition.x(), rotatedPosition.y());
+  G4double rmag = r.mag(); // calculate magnitude
+
+  // calculate angle in 2D polar coordinates from y axis vertical clockwise
+  G4double angle = std::atan2(r.x(),r.y());
+  if (angle < 0)
+    {angle = CLHEP::twopi + angle;}
+
+  // the point to query in the nominal dipole equation
+  G4TwoVector query(0,rmag);
+  query.rotate(-factor*angle);
+
+  G4TwoVector b = 3*query*(m.dot(query))/std::pow(rmag,5) - m/std::pow(rmag,3);
+
+  G4ThreeVector result = G4ThreeVector(b.x(), b.y(), 0);
+  
+  G4ThreeVector rotatedResult = (*antiRotation)*result;
+  return rotatedResult;
+  /*
+   *
+   *   G4double quadrant = thet / sectorAngle;
+
+  G4double firstQA = thet - (quadrant-1)*sectorAngle;
+
+  if (thet > CLHEP::pi)
+    {thet -= CLHEP::pi;}
+
+  G4double thetp = thet*2;
+
+  G4TwoVector rp = r;
+  rp.rotate(-thet);
+
+   *
+   *
+
+  G4TwoVector tu = ru;
+  tu.rotate(CLHEP::halfpi);
+  G4double theta = std::tan(r[0]/r[1]);
+
+  //G4TwoVector m(0,1);
+  G4double mmag = m.mag();
+
+  //G4TwoVector b = (mmag / (std::pow(rmag,3))) * (2*std::cos(theta)*ru + std::sin(theta)*tu);
+
+  //return G4ThreeVector(b.x(), b.y(), 0);
+
+  
   G4double BFactor = fieldStrength/position.mag();
   G4double phi     = position.phi() - phiOffset;
 
@@ -69,6 +138,7 @@ G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
     {localField[1] *= -1;}
   
   return localField;
+   */
 }
 
 

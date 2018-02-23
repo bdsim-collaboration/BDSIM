@@ -22,7 +22,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
+
+class BDSMagnetStrength;
 
 /**
  * @brief A simple parameterisation of N-Pole outer yoke magnetic field.
@@ -32,21 +36,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldMagOuterMultipole: public BDSFieldMag
 {
 public:
-  BDSFieldMagOuterMultipole(const G4int    nPolesIn,
-			    const G4double polField,
-			    const G4double phiOffset);
+  BDSFieldMagOuterMultipole(const G4int              orderIn,
+			    const BDSMagnetStrength* stIn,
+			    const G4double&          poleTipRadius);
 
-  virtual ~BDSFieldMagOuterMultipole(){;}
+  virtual ~BDSFieldMagOuterMultipole();
 
   /// Access the field value.
   virtual G4ThreeVector GetField(const G4ThreeVector &position,
 				 const double         t = 0) const;
 
 private:
-  const G4int    nPoles;
-  const G4double fieldStrength;
-  const G4double phiOffset;
-  G4double itsSectorPhi;
+  const G4int    order;
+  const G4double normalisation;
+  G4RotationMatrix* rotation;
+  G4RotationMatrix* antiRotation;
+  G4double          factor;
+  G4TwoVector       m;            ///< Magnetic dipole vector.
 };
 
 #endif

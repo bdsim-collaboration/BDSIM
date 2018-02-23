@@ -51,7 +51,10 @@ int main(int /*argc*/, char** /*argv*/)
 
   std::vector<std::string> names = {"dipole", "quadrupole", "sextupole", "octupole", "decapole",
 				    "skewqaudrupole", "skewsextupole", "skewoctupole",
-				    "skewdecapole", "muonspoiler", "multipole", "multipoleouter"};
+				    "skewdecapole", "muonspoiler", "multipole",
+				    "multipoleouterdipole", "multipoleouterquadrupole", "multipoleoutersextupole",
+				    "multipoleouteroctupole", "multipoleouterdecapole"};
+  
   std::vector<BDSFieldMag*> fields;
   
   G4ThreeVector unitDirection = G4ThreeVector(0,(*st)["field"],0);
@@ -67,7 +70,11 @@ int main(int /*argc*/, char** /*argv*/)
   fields.push_back(new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(st, brho), CLHEP::pi/10.));
   fields.push_back(new BDSFieldMagMuonSpoiler(st, brho));
   fields.push_back(new BDSFieldMagMultipole(st2, brho));
-  fields.push_back(new BDSFieldMagOuterMultipole(4, 3.3, 0));
+  fields.push_back(new BDSFieldMagOuterMultipole(1, nullptr, 1));
+  fields.push_back(new BDSFieldMagOuterMultipole(2, nullptr, 1));
+  fields.push_back(new BDSFieldMagOuterMultipole(3, nullptr, 1));
+  fields.push_back(new BDSFieldMagOuterMultipole(4, nullptr, 1));
+  fields.push_back(new BDSFieldMagOuterMultipole(5, nullptr, 1));
 
   // Angular data
   const G4int    nR    = 20;
