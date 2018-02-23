@@ -146,13 +146,12 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
 
   G4double momInMag = momIn.mag();
 
-  G4double c = CLHEP::c_light * CLHEP::m;
   G4double nomMomentum = std::abs(bRho * fCof);
   G4double energy = eq->TotalEnergy(momIn);
   G4double nomEnergy = std::sqrt(pow(nomMomentum,2) + eq->Mass());
 
   // deltaE/(P0*c) to match literature.
-  G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum * c) ;
+  G4double deltaEoverPc = (energy - nomEnergy) / nomMomentum ;
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
@@ -193,8 +192,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * (-(1.0/rho) / kx2) * (1 - cos(kxl));
-      X26 = (1.0/beta) * -(1.0/rho) * X12;
+      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - cos(kxl));
+      X26 = (1.0/beta) * (1.0/rho) * X12;
 
       Y11= cosh(kyl);
       Y12= sinh(kyl)/ky;
@@ -209,8 +208,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
       X12= sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * (-(1.0/rho) / kx2) * (1 - cosh(kxl));
-      X26 = (1.0/beta) * -(1.0/rho) * X12;
+      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - cosh(kxl));
+      X26 = (1.0/beta) * (1.0/rho) * X12;
       
       Y11= cos(kyl);
       Y12= sin(kyl)/ky;
