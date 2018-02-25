@@ -70,7 +70,8 @@ public:
 	       G4double                 bScalingIn                 = 1.0,
 	       G4double                 timeOffsetIn               = 0,
 	       G4bool                   autoScaleIn                = false,
-	       G4UserLimits*            stepLimitIn                = nullptr);
+	       G4UserLimits*            stepLimitIn                = nullptr,
+	       G4double                 scalingRadiusIn            = 1);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -97,21 +98,23 @@ public:
   inline G4double            TimeOffset()               const {return timeOffset;}
   inline G4bool              AutoScale()                const {return autoScale;}
   inline G4UserLimits*       UserLimits()               const {return stepLimit;}
+  inline G4double            ScalingRadius()            const {return scalingRadius;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
-  inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
+  inline void SetTransform(const G4Transform3D& transformIn) {transform = transformIn;}
 
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
-  inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
-  inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
+  inline void SetBScaling(const G4double& bScalingIn) {bScaling  = bScalingIn;}
+  inline void SetAutoScale(const G4bool& autoScaleIn) {autoScale = autoScaleIn;}
+  inline void SetScalingRadius(const G4double& scalingRadiusIn) {scalingRadius = scalingRadiusIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
   void Translate(G4ThreeVector translationIn);
 
   /// Turn on or off transform caching.
-  inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
+  inline void CacheTransforms(const G4bool& cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
@@ -136,6 +139,7 @@ private:
   G4double                 timeOffset;
   G4bool                   autoScale;
   G4UserLimits*            stepLimit;
+  G4double                 scalingRadius;  ///< Radius at which point the field will be scaled to.
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

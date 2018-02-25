@@ -49,7 +49,8 @@ BDSFieldInfo::BDSFieldInfo():
   bScaling(1.0),
   timeOffset(0),
   autoScale(false),
-  stepLimit(nullptr)
+  stepLimit(nullptr),
+  scalingRadius(1)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -69,7 +70,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
 			   G4bool                   autoScaleIn,
-			   G4UserLimits*            stepLimitIn):
+			   G4UserLimits*            stepLimitIn,
+			   G4double                 scalingRadiusIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -87,7 +89,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
   autoScale(autoScaleIn),
-  stepLimit(stepLimitIn)
+  stepLimit(stepLimitIn),
+  scalingRadius(scalingRadiusIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -112,7 +115,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   eScaling(other.eScaling),
   bScaling(other.bScaling),
   timeOffset(other.timeOffset),
-  autoScale(other.autoScale)
+  autoScale(other.autoScale),
+  scalingRadius(other.scalingRadius)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -141,7 +145,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E Scaling:         " << info.eScaling                 << G4endl;
   out << "B Scaling:         " << info.bScaling                 << G4endl;
   out << "t offset           " << info.timeOffset               << G4endl;
-  out << "auto scale         " << info.autoScale                << G4endl;
+  out << "Auto scale         " << info.autoScale                << G4endl;
+  out << "Scaling radius:    " << info.scalingRadius            << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)
