@@ -67,6 +67,10 @@ private:
   /// Gaussian generator
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
+
+  /// Internal particle generation
+  std::vector<double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
+  G4int iPartIteration;
 };
 
 #endif
