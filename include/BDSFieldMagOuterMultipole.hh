@@ -31,6 +31,15 @@ class BDSMagnetStrength;
 /**
  * @brief A simple parameterisation of N-Pole outer yoke magnetic field.
  *
+ * Field that roughly approximates the field in a yoke of an n-pole magnet.
+ * The field for a magnetic dipole is used and mapped to higher orders.
+ * This field only varies with x,y and not z - assumed x,y are transverse.
+ * The order is the number of poles / 2 -> for a quadrupole this is 2. The
+ * field is normalised to the regular magnetic field according to the strength
+ * in the supplied BDSMagnetStrength instance along with a the pole tip radius.
+ * The normal n-pole field is sampled at this radius.
+ *
+ * @author Laurie Nevay
  */
 
 class BDSFieldMagOuterMultipole: public BDSFieldMag
@@ -47,12 +56,12 @@ public:
 				 const double         t = 0) const;
 
 private:
-  const G4int    order;
-  const G4double normalisation;
-  G4RotationMatrix* rotation;
-  G4RotationMatrix* antiRotation;
-  G4double          factor;
-  G4TwoVector       m;            ///< Magnetic dipole vector.
+  const G4int       order;         ///< N-poles / 2.
+  const G4double    normalisation; ///< Storage of the overal normalisation factor.
+  G4RotationMatrix* rotation;      ///< Rotation into frame of magnetic dipole.
+  G4RotationMatrix* antiRotation;  ///< Corresponding anti-rotation.
+  G4double          factor;        ///< Scale factor for angle to query in dipole to get n-pole.
+  G4TwoVector       m;             ///< Magnetic dipole vector.
 };
 
 #endif

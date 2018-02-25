@@ -55,7 +55,7 @@ BDSFieldMagOuterMultipole::~BDSFieldMagOuterMultipole()
 G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
 						  const G4double       /*t*/) const
 {
-
+  // rotate from dipole frame to npole frame
   G4ThreeVector rotatedPosition(position);
   rotatedPosition = rotatedPosition.transform(*rotation);
 
@@ -72,74 +72,14 @@ G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
   G4TwoVector query(0,rmag);
   query.rotate(-factor*angle);
 
+  // calculate the field according to a magnetic dipole m at position r.
   G4TwoVector b = 3*query*(m.dot(query))/std::pow(rmag,5) - m/std::pow(rmag,3);
 
+  // package in 3-vector
   G4ThreeVector result = G4ThreeVector(b.x(), b.y(), 0);
-  
+
+  // rotate back to n-pole frame
   G4ThreeVector rotatedResult = (*antiRotation)*result;
+  rotatedResult *= normalisation;
   return rotatedResult;
-  /*
-   *
-   *   G4double quadrant = thet / sectorAngle;
-
-  G4double firstQA = thet - (quadrant-1)*sectorAngle;
-
-  if (thet > CLHEP::pi)
-    {thet -= CLHEP::pi;}
-
-  G4double thetp = thet*2;
-
-  G4TwoVector rp = r;
-  rp.rotate(-thet);
-
-   *
-   *
-
-  G4TwoVector tu = ru;
-  tu.rotate(CLHEP::halfpi);
-  G4double theta = std::tan(r[0]/r[1]);
-
-  //G4TwoVector m(0,1);
-  G4double mmag = m.mag();
-
-  //G4TwoVector b = (mmag / (std::pow(rmag,3))) * (2*std::cos(theta)*ru + std::sin(theta)*tu);
-
-  //return G4ThreeVector(b.x(), b.y(), 0);
-
-  
-  G4double BFactor = fieldStrength/position.mag();
-  G4double phi     = position.phi() - phiOffset;
-
-  // extra term for dipoles, because of rotation required during positioning
-  // of trapezoids
-  if (nPoles==2)
-    {phi += CLHEP::pi;}
-
-  // define sectors relative to the y-axis
-  phi = CLHEP::halfpi - phi;
-
-  if(phi < 0)
-    {phi += CLHEP::twopi;}
-  if(phi > CLHEP::twopi)
-    {phi -= CLHEP::twopi;}
-
-  G4int nSector = G4int(phi/itsSectorPhi);
-
-  BFactor *= std::pow(-1.0,nSector);
-
-  G4ThreeVector localField;
-  localField[0] = position.y()*BFactor;
-  localField[1] = -position.x()*BFactor;
-  localField[2] = 0;
-
-  // extra term for dipoles, because of rotation required during positioning
-  // of trapezoids
-  if (nPoles==2)
-    {localField[1] *= -1;}
-  
-  return localField;
-   */
 }
-
-
-
