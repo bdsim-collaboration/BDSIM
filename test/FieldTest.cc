@@ -14,7 +14,7 @@
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagMultipole.hh"
-#include "BDSFieldMagOuterMultipole.hh"
+#include "BDSFieldMagMultipoleOuter.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -70,11 +70,11 @@ int main(int /*argc*/, char** /*argv*/)
   fields.push_back(new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(st, brho), CLHEP::pi/10.));
   fields.push_back(new BDSFieldMagMuonSpoiler(st, brho));
   fields.push_back(new BDSFieldMagMultipole(st2, brho));
-  fields.push_back(new BDSFieldMagOuterMultipole(1, nullptr, 1));
-  fields.push_back(new BDSFieldMagOuterMultipole(2, nullptr, 1));
-  fields.push_back(new BDSFieldMagOuterMultipole(3, nullptr, 1));
-  fields.push_back(new BDSFieldMagOuterMultipole(4, nullptr, 1));
-  fields.push_back(new BDSFieldMagOuterMultipole(5, nullptr, 1));
+  fields.push_back(new BDSFieldMagMultipoleOuter(1, nullptr, 1));
+  fields.push_back(new BDSFieldMagMultipoleOuter(2, nullptr, 1));
+  fields.push_back(new BDSFieldMagMultipoleOuter(3, nullptr, 1));
+  fields.push_back(new BDSFieldMagMultipoleOuter(4, nullptr, 1));
+  fields.push_back(new BDSFieldMagMultipoleOuter(5, nullptr, 1));
 
   // Angular data
   const G4int    nR    = 20;
