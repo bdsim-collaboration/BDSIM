@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
+#include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagDipole.hh"
 #include "BDSFieldMagSextupole.hh"
@@ -297,6 +298,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
+  G4double scalingRadius      = info.ScalingRadius();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
     {
@@ -352,6 +354,16 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       {field = new BDSFieldMagSkewOwn(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;}
     case BDSFieldType::skewdecapole:
       {field = new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
+    case BDSFieldType::multipoleouterdipole:
+      {field = new BDSFieldMagMultipoleOuter(1, strength, scalingRadius); break;}
+    case BDSFieldType::multipoleouterquadrupole:
+      {field = new BDSFieldMagMultipoleOuter(2, strength, scalingRadius); break;}
+    case BDSFieldType::multipoleoutersextupole:
+      {field = new BDSFieldMagMultipoleOuter(3, strength, scalingRadius); break;}
+    case BDSFieldType::multipoleouteroctupole:
+      {field = new BDSFieldMagMultipoleOuter(4, strength, scalingRadius); break;}
+    case BDSFieldType::multipoleouterdecapole:
+      {field = new BDSFieldMagMultipoleOuter(5, strength, scalingRadius); break;}
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
