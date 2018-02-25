@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSFieldMagOuterMultipole.hh"
+#include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int              orderIn,
+BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              orderIn,
 						     const BDSMagnetStrength* /*stIn*/,
 						     const G4double&          /*poleTipRadius*/):
   order(orderIn),
@@ -46,13 +46,13 @@ BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int              or
   m = G4TwoVector(0,1);
 }
 
-BDSFieldMagOuterMultipole::~BDSFieldMagOuterMultipole()
+BDSFieldMagMultipoleOuter::~BDSFieldMagMultipoleOuter()
 {
   delete rotation;
   delete antiRotation;
 }
 
-G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position,
+G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector &position,
 						  const G4double       /*t*/) const
 {
   // rotate from dipole frame to npole frame

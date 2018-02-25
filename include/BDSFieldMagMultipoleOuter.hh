@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSFIELDMAGOUTERMULTIPOLE_H
-#define BDSFIELDMAGOUTERMULTIPOLE_H
+#ifndef BDSFIELDMAGMULTIPOLEOUTER_H
+#define BDSFIELDMAGMULTIPOLEOUTER_H
 
 #include "BDSFieldMag.hh"
 
@@ -42,14 +42,14 @@ class BDSMagnetStrength;
  * @author Laurie Nevay
  */
 
-class BDSFieldMagOuterMultipole: public BDSFieldMag
+class BDSFieldMagMultipoleOuter: public BDSFieldMag
 {
 public:
-  BDSFieldMagOuterMultipole(const G4int              orderIn,
+  BDSFieldMagMultipoleOuter(const G4int              orderIn,
 			    const BDSMagnetStrength* stIn,
 			    const G4double&          poleTipRadius);
 
-  virtual ~BDSFieldMagOuterMultipole();
+  virtual ~BDSFieldMagMultipoleOuter();
 
   /// Access the field value.
   virtual G4ThreeVector GetField(const G4ThreeVector &position,
