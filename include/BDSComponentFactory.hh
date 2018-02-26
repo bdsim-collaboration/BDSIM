@@ -40,6 +40,7 @@ namespace GMAD
 class BDSAcceleratorComponent;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
+class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
@@ -120,6 +121,12 @@ public:
   /// default.
   static G4double PrepareOuterDiameter(GMAD::Element const* el,
 				       G4double defaultOuterDiameter = -1);
+
+  BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
+                                            const BDSFieldType&       fieldType,
+					    const BDSBeamPipeInfo*    bpInfo,
+                                            const BDSMagnetOuterInfo* outerInfo,
+					    const G4Transform3D&      fieldTransform) const;
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle

@@ -1077,6 +1077,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 					     BDSMagnetType magnetType,
 					     G4double angle) const
 {
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
@@ -1086,13 +1087,17 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 					       true,
 					       fieldTrans);
 
+  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st);
+  BDSFieldInfo* outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);
+
   return new BDSMagnet(magnetType,
 		       elementName,
 		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(elementName, element, st),
+		       bpInfo,
+		       outerInfo,
 		       vacuumField,
-		       angle);
+		       angle,
+		       outerField);
 }
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
@@ -1141,6 +1146,45 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   else
     {yokeOnLeft = false;}
   return yokeOnLeft;
+}
+
+BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
+							       const BDSFieldType&       fieldType,
+							       const BDSBeamPipeInfo*    bpInfo,
+							       const BDSMagnetOuterInfo* outerInfo,
+							       const G4Transform3D&      fieldTransform) const
+{
+  BDSFieldType outerType;
+  switch (fieldType.underlying())
+    {
+    case BDSFieldType::dipole:
+      {outerType = BDSFieldType::multipoleouterdipole;    break;}
+    case BDSFieldType::quadrupole:
+      {outerType = BDSFieldType::multipoleouterquadrupole; break;}
+    case BDSFieldType::sextupole:
+      {outerType = BDSFieldType::multipoleoutersextupole;  break;}
+    case BDSFieldType::octupole:
+      {outerType = BDSFieldType::multipoleouteroctupole;   break;}
+    case BDSFieldType::decapole:
+      {outerType = BDSFieldType::multipoleouterdecapole;   break;}
+    default:
+      {return nullptr; break;} // no possible outer field for any other magnet types
+    }
+
+  BDSMagnetStrength* stCopy = new BDSMagnetStrength(*vacuumSt);
+  BDSIntegratorType intType = integratorSet->Integrator(fieldType);
+  BDSFieldInfo* outerField  = new BDSFieldInfo(fieldType,
+					       brho,
+					       intType,
+                                               stCopy,
+					       true,
+					       fieldTransform);
+  
+  if (outerInfo)
+    {outerField->SetScalingRadius(outerInfo->innerRadius);}
+  if (bpInfo)
+    {outerField->SetBeamPipeRadius(bpInfo->IndicativeRadius());}
+  return outerField;
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
