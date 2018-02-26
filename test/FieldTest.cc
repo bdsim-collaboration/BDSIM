@@ -47,13 +47,19 @@ int main(int /*argc*/, char** /*argv*/)
   (*st2)["k4"] = 0.0004;
   (*st2)["k5"] = -0.00005;
 
+  BDSMagnetStrength* st3 = new BDSMagnetStrength();
+  (*st3)["k1"] = -0.532;
+
   const G4double brho = 0.3456;
 
   std::vector<std::string> names = {"dipole", "quadrupole", "sextupole", "octupole", "decapole",
 				    "skewqaudrupole", "skewsextupole", "skewoctupole",
 				    "skewdecapole", "muonspoiler", "multipole",
-				    "multipoleouterdipole", "multipoleouterquadrupole", "multipoleoutersextupole",
-				    "multipoleouteroctupole", "multipoleouterdecapole"};
+				    "multipoleouterdipole", "multipoleouterquadrupole",
+				    "multipoleoutersextupole", "multipoleouteroctupole",
+				    "multipoleouterdecapole", "multipoleouterquadrupole-ve",
+				    "skewmultipoleouterquadrupole", "skewmultipoleouterssextupole",
+				    "skewmultipoleouteroctupole", "skewmultipoleouterdecapole"};
   
   std::vector<BDSFieldMag*> fields;
   
@@ -75,27 +81,62 @@ int main(int /*argc*/, char** /*argv*/)
   G4double beamPipeRadius = 25;
   BDSFieldMag* innerField;
   BDSFieldMag* field;
-  
+
+  // outer dipole
   innerField = new BDSFieldMagDipole(st, brho, unitDirection);
   field = new BDSFieldMagMultipoleOuter(1, st, poleTipRadius, innerField, beamPipeRadius);
   fields.push_back(field);
 
+  // outer quadrupole
   innerField = new BDSFieldMagQuadrupole(st, brho);
   field = new BDSFieldMagMultipoleOuter(2, st, poleTipRadius, innerField, beamPipeRadius);
   fields.push_back(field);
 
+  // outer sextupole
   innerField = new BDSFieldMagSextupole(st, brho);
   field = new BDSFieldMagMultipoleOuter(3, st, poleTipRadius, innerField, beamPipeRadius);
   fields.push_back(field);
 
+  // outer octupole
   innerField = new BDSFieldMagOctupole(st, brho);
   field = new BDSFieldMagMultipoleOuter(4, st, poleTipRadius, innerField, beamPipeRadius);
   fields.push_back(field);
-  
+
+  // outer decapole
   innerField = new BDSFieldMagDecapole(st, brho);
   field = new BDSFieldMagMultipoleOuter(5, st, poleTipRadius, innerField, beamPipeRadius);
   fields.push_back(field);
 
+  // outer quad with -ve k1
+  innerField = new BDSFieldMagQuadrupole(st3, brho); // -ve k1
+  field = new BDSFieldMagMultipoleOuter(2, st3, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
+
+  // outer skew quadrupole
+  BDSFieldMag* normalField;
+  innerField = new BDSFieldMagQuadrupole(st, brho);
+  normalField = new BDSFieldMagMultipoleOuter(2, st, poleTipRadius, innerField, beamPipeRadius);
+  field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
+  fields.push_back(field);
+
+  // outer skew sextupole
+  innerField = new BDSFieldMagSextupole(st, brho);
+  normalField = new BDSFieldMagMultipoleOuter(3, st, poleTipRadius, innerField, beamPipeRadius);
+  field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
+  fields.push_back(field);
+
+  // outer skew octupole
+  innerField = new BDSFieldMagOctupole(st, brho);
+  normalField = new BDSFieldMagMultipoleOuter(4, st, poleTipRadius, innerField, beamPipeRadius);
+  field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
+  fields.push_back(field);
+
+  // outer skew decapole
+  innerField = new BDSFieldMagDecapole(st, brho);
+  normalField = new BDSFieldMagMultipoleOuter(5, st, poleTipRadius, innerField, beamPipeRadius);
+  field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
+  fields.push_back(field);
+  
   // Angular data
   const G4int    nR    = 20;
   const G4int    nPhi  = 100;

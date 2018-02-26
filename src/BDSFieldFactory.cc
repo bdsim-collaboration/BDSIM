@@ -386,6 +386,34 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 	field = new BDSFieldMagMultipoleOuter(5, strength, poleTipRadius, innerField, beamPipeRadius);
 	break;
       }
+    case BDSFieldType::skewmultipoleouterquadrupole:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(2, strength, poleTipRadius, innerField, beamPipeRadius);
+	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
+	break;
+      }
+    case BDSFieldType::skewmultipoleoutersextupole:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(3, strength, poleTipRadius, innerField, beamPipeRadius);
+	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
+	break;
+      }
+    case BDSFieldType::skewmultipoleouteroctupole:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(4, strength, poleTipRadius, innerField, beamPipeRadius);
+	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
+	break;
+      }
+    case BDSFieldType::skewmultipoleouterdecapole:
+      {
+	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(5, strength, poleTipRadius, innerField, beamPipeRadius);
+	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
+	break;
+      }
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
