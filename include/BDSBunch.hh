@@ -22,19 +22,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
-#include <vector>
-
-namespace CLHEP {
-  class HepRandomEngine;
-  class HepSymMatrix;
-  class HepVector;
-  class RandMultiGauss;
-}
-
 class BDSBeamline;
 class BDSParticleDefinition;
 
-namespace GMAD {
+namespace GMAD
+{
   class Beam;
 }
 
@@ -48,7 +40,7 @@ class BDSBunch
 {
 public:
   BDSBunch();
-  virtual ~BDSBunch();
+  virtual ~BDSBunch(){;}
 
   /// Extract and set the relevant options from the beam definition.
   virtual void SetOptions(const GMAD::Beam& beam,
@@ -78,20 +70,10 @@ protected:
   /// those in a curvilinear system.  Here, z0 is treated as the intended
   /// S coordinate on input and is modifed to be the global z coordinate.
   void ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z0,
-				 G4double& xp, G4double& yp, G4double& zp) const;
-
-  /// Create multidimensional Gaussian random number generator
-  /// for Twiss and Gauss, could be moved elsewhere
-  /// can change sigma matrix to make non-definite
-  CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine & anEngine,
-					  const CLHEP::HepVector & mu,
-					  CLHEP::HepSymMatrix & sigma);
+				 G4double& xp, G4double& yp, G4double& zp) const;  
 
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
-  
-  /// Pregenerate all the particle coordinates and subtract the sample mean.
-  void PreGenerateEvents();
 
   ///@{ Centre of distributions
   G4double X0;
@@ -122,17 +104,6 @@ protected:
   G4bool finiteSigmaE;
   G4bool finiteSigmaT;
   /// @}
-
-  // Internal particle generation
-  G4bool offsetSampleMean; ///< Whether to offset the sample mean.
-
-  /// @{ Holder for pre-calcalculated coordinates.
-  std::vector<G4double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
-  /// @}
-  G4int iPartIteration; ///< Iterator for reading out pre-calculate coordinates
-  
-  /// Random number generators 
-  CLHEP::RandMultiGauss* gaussMultiGen;
   
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.

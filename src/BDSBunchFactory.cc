@@ -21,16 +21,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchCircle.hh"
 #include "BDSBunchComposite.hh"
 #include "BDSBunchEShell.hh"
-#include "BDSBunchGaussian.hh"
+
 #include "BDSBunch.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchUserFile.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchPtc.hh"
-#include "BDSBunchSixTrack.hh"
 #include "BDSBunchHalo.hh"
+#include "BDSBunchPtc.hh"
+#include "BDSBunchRing.hh"
+#include "BDSBunchSigmaMatrix.hh"
+#include "BDSBunchSixTrack.hh"
+#include "BDSBunchSquare.hh"
+#include "BDSBunchTwiss.hh"
 #include "BDSBunchType.hh"
+#include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
 
 #include "parser/beam.h"
@@ -64,7 +65,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType      distrType,
     case BDSBunchType::reference:
       {bdsBunch = new BDSBunch(); break;}
     case BDSBunchType::gaussian:
-      {bdsBunch = new BDSBunchGaussian(); break;}
+      {bdsBunch = new BDSBunchSigmaMatrix(); break;}
     case BDSBunchType::square:
       {bdsBunch = new BDSBunchSquare(); break;}
     case BDSBunchType::circle:
