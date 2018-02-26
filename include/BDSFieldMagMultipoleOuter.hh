@@ -63,6 +63,7 @@ private:
   G4RotationMatrix* rotation;      ///< Rotation into frame of magnetic dipole.
   G4RotationMatrix* antiRotation;  ///< Corresponding anti-rotation.
   G4double          factor;        ///< Scale factor for angle to query in dipole to get n-pole.
+  G4bool            negativeField; ///< Sign of magnetic field.
   const G4TwoVector m;             ///< Magnetic dipole vector.
   BDSFieldMag*      innerField;    ///< Field for inside pole tips.
   G4bool            useInnerField; ///< Whether to use it or not.

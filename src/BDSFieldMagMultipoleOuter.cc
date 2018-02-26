@@ -31,7 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              orderIn,
-						     const BDSMagnetStrength* /*stIn*/,
+						     const BDSMagnetStrength* stIn,
 						     const G4double&          poleTipRadiusIn,						     
 						     BDSFieldMag*             innerFieldIn,
 						     const G4double&          beamPipeRadius):
@@ -53,6 +53,7 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              or
       antiRotation->rotateZ(-angle);
     }
   factor = (order + 1)/2.;
+  negativeField = (*stIn)["k1"] < 0;
   
   // query inner field
   G4ThreeVector poleTipPoint = G4ThreeVector(0, poleTipRadius, 0);
@@ -132,6 +133,8 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
   if (antiRotation)
     {rotatedResult = (*antiRotation)*result;}
   rotatedResult *= normalisation;
+
+  rotatedResult *= negativeField ? -1. : 1.;
 
   if (useInnerField)
     {
