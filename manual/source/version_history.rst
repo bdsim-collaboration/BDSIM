@@ -70,6 +70,8 @@ Bug Fixes
 * `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
 * Fixed bug where world size would be too small with placements of large externally provided
   geometry with strong rotations.
+* When no energy was specified in the `userfile` bunch distribution, the central beam energy was
+  1000x too low - fixed - missing factory of GeV.
 
 
 V0.993 - 2017 / 12 / 11

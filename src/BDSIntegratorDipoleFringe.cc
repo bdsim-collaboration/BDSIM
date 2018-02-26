@@ -55,8 +55,16 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // do the dipole kick using base class
   BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
 
-  // don't do fringe kick if we're sampling the field  for a long step
-  if (h > 1*CLHEP::cm)
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // is taken resulting in a double kick.
+  G4double lengthFraction = h / thinElementLength;
+
+  // don't do fringe kick if we're sampling the field for a long step
+  if ((h > 1*CLHEP::cm) || (lengthFraction > 0.5))
     {
       // copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
@@ -142,11 +150,11 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
 
   // calculate (fractional) fringe field kick
   X11 = 1;
-  X21 = fraction * tan(polefaceAngle) / (rho / CLHEP::m);
+  X21 = tan(polefaceAngle) / (rho / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = fraction * -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  Y21 = -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;

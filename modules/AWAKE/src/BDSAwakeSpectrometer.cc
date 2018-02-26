@@ -881,14 +881,15 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
 			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2/2,
 			    chordLength/2.0); //z half length 
 
-  containerLogicalVolume=new G4LogicalVolume
-    (containerSolid, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     name+"_marker_log");
+  containerLogicalVolume=new G4LogicalVolume(containerSolid, 
+					     BDSMaterials::Instance()->GetMaterial("vacuum"),
+					     name+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
+
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
   _logVols.push_back(containerLogicalVolume);
 
 }
