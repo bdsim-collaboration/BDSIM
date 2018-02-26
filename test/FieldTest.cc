@@ -32,7 +32,7 @@
 int main(int /*argc*/, char** /*argv*/)
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["field"] = 1.3;   // T
+  (*st)["field"] = 1.3*CLHEP::tesla;   // T
   (*st)["angle"] = 0.014; // mrad
   (*st)["k1"] = 0.12;
   (*st)["k2"] = 0.02;
@@ -109,7 +109,7 @@ int main(int /*argc*/, char** /*argv*/)
 	      G4double x = r*cos(phi);
 	      G4double y = r*sin(phi);
 	      G4ThreeVector position(x,y,0);
-	      rfile << position << "\t" << field->GetField(position) << "\n";
+	      rfile << position << "\t" << field->GetField(position)/CLHEP::tesla << "\n";
 	    }
 	}
       rfile.close();
@@ -126,7 +126,7 @@ int main(int /*argc*/, char** /*argv*/)
 	  for (x=xMin, j=0; j < nX; x+=xStep, ++j)
 	    {
 	      G4ThreeVector position(x,y,0);
-	      cfile << position << "\t" << field->GetField(position) << "\n";
+	      cfile << position << "\t" << field->GetField(position)/CLHEP::tesla << "\n";
 	    }
 	}
       cfile.close();
