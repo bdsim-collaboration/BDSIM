@@ -31,26 +31,15 @@ BDSBunchGaussian::BDSBunchGaussian():
   BDSBunch(),
   sigmaX(0.0),sigmaY(0.0),sigmaXp(0.0),sigmaYp(0.0),
   meansGM(CLHEP::HepVector(6)),
-  sigmaGM(CLHEP::HepSymMatrix(6)),
-  GaussMultiGen(nullptr)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-}
+  sigmaGM(CLHEP::HepSymMatrix(6))
+{;}
 
 BDSBunchGaussian::~BDSBunchGaussian()
-{
-  delete GaussMultiGen;
-}
+{;}
 
 void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBunch::SetOptions(beam, beamlineTransformIn);
   
   SetSigmaX(beam.sigmaX); 
@@ -100,16 +89,18 @@ void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
 #ifdef BDSDEBUG
   G4cout << "sigmaGM" << sigmaGM << G4endl;
 #endif
-  delete GaussMultiGen;
-  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
-  return;
+  delete gaussMultiGen;
+  gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+
+  if (offsetSampleMean)
+    {PreGenerateEvents();}
 }
 
 void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				       G4double& xp, G4double& yp, G4double& zp,
 				       G4double& t , G4double&  E, G4double& weight)
 {
-  CLHEP::HepVector v = GaussMultiGen->fire();
+  CLHEP::HepVector v = gaussMultiGen->fire();
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "HEPVECTOR " << v << G4endl;
 #endif

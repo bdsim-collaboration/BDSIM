@@ -18,7 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "parser/beam.h"
 
@@ -32,21 +31,15 @@ BDSBunchTwiss::BDSBunchTwiss():
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
   dispX(0.0), dispY(0.0),
-  dispXP(0.0), dispYP(0.0),
-  GaussMultiGen(nullptr),
-  iPartIteration(0)
+  dispXP(0.0), dispYP(0.0)
 {;}
 
 BDSBunchTwiss::~BDSBunchTwiss()
-{
-  delete GaussMultiGen;
-}
+{;}
 
 void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-  iPartIteration = 0;
-
   BDSBunch::SetOptions(beam, beamlineTransformIn);
 
   betaX  = beam.betx;
@@ -111,95 +104,48 @@ void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
   sigmaGM[3][5] = dispYP*std::pow(sigmaE,2);
   sigmaGM[5][3] = dispYP*std::pow(sigmaE,2);
   
-  delete GaussMultiGen;
-  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+  delete gaussMultiGen;
+  gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 
-  // generate all required primaries first
-  G4double x0,xp,y0,yp,z0,zp,E,t,weight;
-  G4double x0_a = 0.0, xp_a = 0.0, y0_a = 0.0, yp_a = 0.0;
-  G4double z0_a = 0.0, zp_a = 0.0, E_a  = 0.0, t_a  = 0.0;
-
-  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
-  for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
-    {
-      CLHEP::HepVector v = GaussMultiGen->fire();
-      x0 = v[0] * CLHEP::m;
-      xp = v[1] * CLHEP::rad;
-      y0 = v[2] * CLHEP::m;
-      yp = v[3] * CLHEP::rad;
-      t = v[4] * CLHEP::s;
-      zp = 0.0 * CLHEP::rad;
-      z0 = Z0 * CLHEP::m;
-      if (finiteSigmaT)
-	{z0 += t * CLHEP::c_light;}
-      E = E0 * CLHEP::GeV;
-      if (finiteSigmaE)
-	{E *= v[5];}
-      
-      zp = CalculateZp(xp, yp, Zp0);
-      
-      ApplyTransform(x0, y0, z0, xp, yp, zp);
-      
-      weight = 1.0;
-      
-      x0_a += x0;
-      xp_a += xp;
-      y0_a += y0;
-      yp_a += yp;
-      z0_a += z0;
-      zp_a += zp;
-      E_a  += E;
-      t_a  += t;
-      
-      x0_v.push_back(x0);
-      xp_v.push_back(xp);
-      y0_v.push_back(y0);
-      yp_v.push_back(yp);
-      z0_v.push_back(z0);
-      zp_v.push_back(zp);
-      E_v.push_back(E);
-      t_v.push_back(t);
-      weight_v.push_back(weight);
-    }
-
-  // Compute difference between sample mean and specified means
-  x0_a = (x0_a / (G4double)nGenerate) - X0*CLHEP::m;
-  xp_a = (xp_a / (G4double)nGenerate) - Xp0*CLHEP::rad;
-  y0_a = (y0_a / (G4double)nGenerate) - Y0*CLHEP::m;
-  yp_a = (yp_a / (G4double)nGenerate) - Yp0*CLHEP::rad;
-  z0_a = (z0_a / (G4double)nGenerate) - Z0*CLHEP::m;
-  zp_a = (zp_a / (G4double)nGenerate) - Zp0*CLHEP::rad;
-  E_a  = (E_a  / (G4double)nGenerate) - E0*CLHEP::GeV;
-  t_a  = (t_a  / (G4double)nGenerate) - T0*CLHEP::s;
-
-  // Offset with different w.r.t. central value
-  for(G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
-    {
-      x0_v[iParticle] -= x0_a;
-      xp_v[iParticle] -= xp_a;
-      y0_v[iParticle] -= y0_a;
-      yp_v[iParticle] -= yp_a;
-      z0_v[iParticle] -= z0_a;
-      zp_v[iParticle] -= zp_a;
-      E_v[iParticle]  -= E_a;
-      t_v[iParticle]  -= t_a;
-    }
+  if (offsetSampleMean)
+    {PreGenerateEvents();}
 }
 
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight)
 {
-  // iPartIteration should never exceed the size of each vector.
-  x0     = x0_v[iPartIteration];
-  xp     = xp_v[iPartIteration];
-  y0     = y0_v[iPartIteration];
-  yp     = yp_v[iPartIteration];
-  z0     = z0_v[iPartIteration];
-  zp     = zp_v[iPartIteration];
-  t      = t_v[iPartIteration];
-  E      = E_v[iPartIteration];
-  weight = weight_v[iPartIteration];
-
-  iPartIteration++;
+  if (offsetSampleMean)
+    {
+      // iPartIteration should never exceed the size of each vector.
+      x0     = x0_v[iPartIteration];
+      xp     = xp_v[iPartIteration];
+      y0     = y0_v[iPartIteration];
+      yp     = yp_v[iPartIteration];
+      z0     = z0_v[iPartIteration];
+      zp     = zp_v[iPartIteration];
+      t      = t_v[iPartIteration];
+      E      = E_v[iPartIteration];
+      weight = weight_v[iPartIteration];
+      
+      iPartIteration++;
+    }
+  else
+    {
+      CLHEP::HepVector v = gaussMultiGen->fire();
+      x0 = v[0] * CLHEP::m;
+      xp = v[1] * CLHEP::rad;
+      y0 = v[2] * CLHEP::m;
+      yp = v[3] * CLHEP::rad;
+      t  = v[4] * CLHEP::s;
+      zp = 0.0  * CLHEP::rad;
+      z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+      E  = E0 * CLHEP::GeV * v[5];
+      
+      zp = CalculateZp(xp,yp,Zp0);
+      
+      ApplyTransform(x0,y0,z0,xp,yp,zp);
+      
+      weight = 1.0;
+    }
 }

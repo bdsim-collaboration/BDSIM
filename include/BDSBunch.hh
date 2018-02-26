@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
+#include <vector>
+
 namespace CLHEP {
   class HepRandomEngine;
   class HepSymMatrix;
@@ -120,6 +122,17 @@ protected:
   G4bool finiteSigmaE;
   G4bool finiteSigmaT;
   /// @}
+
+  // Internal particle generation
+  G4bool offsetSampleMean; ///< Whether to offset the sample mean.
+
+  /// @{ Holder for pre-calcalculated coordinates.
+  std::vector<G4double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
+  /// @}
+  G4int iPartIteration; ///< Iterator for reading out pre-calculate coordinates
+  
+  /// Random number generators 
+  CLHEP::RandMultiGauss* gaussMultiGen;
   
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.

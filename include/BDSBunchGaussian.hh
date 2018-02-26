@@ -52,9 +52,6 @@ protected:
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
-
-  // Multidimensional Gaussian random number generator
-  CLHEP::RandMultiGauss* GaussMultiGen;
   
 protected:
   void SetSigmaX(G4double sigmaXIn) {sigmaX = sigmaXIn;}

@@ -45,6 +45,7 @@ public:
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);
+  
 private:
   /// @{ Twiss parameters
   G4double betaX;
@@ -59,18 +60,11 @@ private:
   G4double dispY;
   G4double dispXP;
   G4double dispYP;
-  /// @}
-  
-  /// Random number generators 
-  CLHEP::RandMultiGauss* GaussMultiGen;  
+  /// @}  
 
   /// Gaussian generator
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
-
-  /// Internal particle generation
-  std::vector<double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
-  G4int iPartIteration;
 };
 
 #endif
