@@ -34,7 +34,16 @@ namespace CLHEP {
  */
 
 class BDSBunchGaussian: public BDSBunch
-{ 
+{
+public:
+  BDSBunchGaussian();
+  virtual ~BDSBunchGaussian();
+  virtual void SetOptions(const GMAD::Beam& beam,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
+  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+		       G4double& xp, G4double& yp, G4double& zp,
+		       G4double& t , G4double&  E, G4double& weight);
+  
 protected: 
   G4double sigmaX;
   G4double sigmaY;
@@ -46,15 +55,6 @@ protected:
 
   // Multidimensional Gaussian random number generator
   CLHEP::RandMultiGauss* GaussMultiGen;
-
-public:
-  BDSBunchGaussian();
-  virtual ~BDSBunchGaussian();
-  virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);  
   
 protected:
   void SetSigmaX(G4double sigmaXIn) {sigmaX = sigmaXIn;}

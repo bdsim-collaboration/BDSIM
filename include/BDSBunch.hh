@@ -66,23 +66,6 @@ public:
   inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
   
 protected:
-  ///@{ Centre of distributions
-  G4double X0;
-  G4double Y0;
-  G4double Z0;
-  G4double S0;
-  G4double T0; 
-  G4double Xp0; 
-  G4double Yp0;
-  G4double Zp0;
-  G4double E0;
-  G4double sigmaT; 
-  G4double sigmaE;
-  ///@}
-  
-  /// Whether to ignore z and use s and transform for curvilinear coordinates
-  G4bool   useCurvilinear;
-
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
   /// start of the beamline line. In the first case the beam line transform is picked
   /// up by definition.
@@ -104,6 +87,26 @@ protected:
 
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
+  
+  /// Pregenerate all the particle coordinates and subtract the sample mean.
+  void PreGenerateEvents();
+
+  ///@{ Centre of distributions
+  G4double X0;
+  G4double Y0;
+  G4double Z0;
+  G4double S0;
+  G4double T0; 
+  G4double Xp0; 
+  G4double Yp0;
+  G4double Zp0;
+  G4double E0;
+  G4double sigmaT; 
+  G4double sigmaE;
+  ///@}
+  
+  /// Whether to ignore z and use s and transform for curvilinear coordinates
+  G4bool   useCurvilinear;
 
   /// Wether the bunch distribution can specify a particle that's different
   /// from the one used for the reference particle that created the beam line.
