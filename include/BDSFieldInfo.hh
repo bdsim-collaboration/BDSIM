@@ -45,6 +45,10 @@ class G4UserLimits;
  * Owns G4ThreeVector for unitDirection. It's a pointer to save memory
  * on average.
  *
+ * Pole tip radius is used for normalisation purposes for outer yoke fields. 
+ * Beam pipe radius is used to decide whether there's a gap between the pole
+ * and the beam pipe and therefore to use a normal inner field for that part.
+ *
  * @author Laurie Nevay
  */
 
@@ -71,7 +75,8 @@ public:
 	       G4double                 timeOffsetIn               = 0,
 	       G4bool                   autoScaleIn                = false,
 	       G4UserLimits*            stepLimitIn                = nullptr,
-	       G4double                 scalingRadiusIn            = 1);
+	       G4double                 poleTipRadiusIn            = 1,
+	       G4double                 beamPipeRadiusIn           = 0);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -98,7 +103,8 @@ public:
   inline G4double            TimeOffset()               const {return timeOffset;}
   inline G4bool              AutoScale()                const {return autoScale;}
   inline G4UserLimits*       UserLimits()               const {return stepLimit;}
-  inline G4double            ScalingRadius()            const {return scalingRadius;}
+  inline G4double            PoleTipRadius()            const {return poleTipRadius;}
+  inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -107,7 +113,8 @@ public:
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
   inline void SetBScaling(const G4double& bScalingIn) {bScaling  = bScalingIn;}
   inline void SetAutoScale(const G4bool& autoScaleIn) {autoScale = autoScaleIn;}
-  inline void SetScalingRadius(const G4double& scalingRadiusIn) {scalingRadius = scalingRadiusIn;}
+  inline void SetScalingRadius(const G4double& poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
+  inline void SetBeamPipeRadius(const G4double& beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -139,7 +146,8 @@ private:
   G4double                 timeOffset;
   G4bool                   autoScale;
   G4UserLimits*            stepLimit;
-  G4double                 scalingRadius;  ///< Radius at which point the field will be scaled to.
+  G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
+  G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;
