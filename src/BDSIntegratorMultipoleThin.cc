@@ -119,19 +119,10 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       kick += result;
     }
 
-  // apply kick
-  xp1 -= kick.real();
-  yp1 += kick.imag();
-  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-  if (std::isnan(zp1))
-    {zp1 = zp;}
-
   // reset n for skewed kicks.
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
-
-  G4ThreeVector momOut = G4ThreeVector(xp1,yp1,zp1);
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
@@ -152,10 +143,26 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
           skewkick += result;
         }
     }
-  
-  //apply kick
-  xp1 -= skewkick.imag();
-  yp1 += skewkick.real();
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // is taken resulting in a double kick.
+  G4double lengthFraction = h / thinElementLength;
+
+  if (lengthFraction > 0.5)
+    {
+      // apply normal kick
+      xp1 -= kick.real();
+      yp1 += kick.imag();
+
+      //apply skewed kick
+      xp1 -= skewkick.imag();
+      yp1 += skewkick.real();
+    }
+
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
   if (std::isnan(zp1))
     {zp1 = zp;}

@@ -2841,6 +2841,11 @@ Examples::
 	 sigma12 = 1e-2,
 	 sigma34 = 1.4e-3;
 
+.. note:: By default, the coordinates are generated at the beginning of the run for all events
+	  and the sample mean from these events is subtracted from all. This removes the small
+	  systematic mean offset in each dimension that would be present. This behaviour can be
+	  turned off with `beam, offsetSampleMean=0;`.
+
 
 gauss
 ^^^^^
@@ -2875,12 +2880,18 @@ correlations between phase space coordinates, so
 | `sigmaT`                         | Sigma of the temporal distribution [s]                                              |
 +----------------------------------+-------------------------------------------------------------------------------------+
 
+.. note:: By default, the coordinates are generated at the beginning of the run for all events
+	  and the sample mean from these events is subtracted from all. This removes the small
+	  systematic mean offset in each dimension that would be present. This behaviour can be
+	  turned off with `beam, offsetSampleMean=0;`.
+
 
 gausstwiss
 ^^^^^^^^^^
 
-The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and :math:`\gamma` plus dsipersion :math:`\eta` from which
-the beam :math:`\sigma` -matrix is calculated, using the following equations 
+The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and
+:math:`\gamma` plus dsipersion :math:`\eta` from which the beam :math:`\sigma` -matrix
+is calculated, using the following equations:
 
 .. math:: 
    \sigma_{11} & =  \epsilon_x \beta_x + \eta_{x}^{2}\sigma_{E}^{2} \\
@@ -2936,6 +2947,11 @@ the beam :math:`\sigma` -matrix is calculated, using the following equations
 +----------------------------------+-------------------------------------------------------+
 | `dispyp`                         | Vertical angular dispersion function                  |
 +----------------------------------+-------------------------------------------------------+
+
+.. note:: By default, the coordinates are generated at the beginning of the run for all events
+	  and the sample mean from these events is subtracted from all. This removes the small
+	  systematic mean offset in each dimension that would be present. This behaviour can be
+	  turned off with `beam, offsetSampleMean=0;`.
 
 circle
 ^^^^^^

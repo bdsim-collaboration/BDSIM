@@ -84,6 +84,8 @@ namespace GMAD
       double haloPSWeightParameter;
       std::string haloPSWeightFunction;
       ///@}
+
+      bool offsetSampleMean;
     };
 }
 

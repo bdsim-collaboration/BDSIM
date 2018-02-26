@@ -22,8 +22,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/beam.h"
 
 #include "Randomize.hh"
-#include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/Matrix/Vector.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
+#include "CLHEP/Units/PhysicalConstants.h"
+
+#include <cmath>
+#include <vector>
 
 BDSBunchTwiss::BDSBunchTwiss():
   betaX(0.0), betaY(0.0),
@@ -31,19 +36,14 @@ BDSBunchTwiss::BDSBunchTwiss():
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
   dispX(0.0), dispY(0.0),
-  dispXP(0.0), dispYP(0.0),
-  GaussMultiGen(nullptr)
+  dispXP(0.0), dispYP(0.0)
 {;}
-
-BDSBunchTwiss::~BDSBunchTwiss()
-{
-  delete GaussMultiGen;
-}
 
 void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  // Fill means and class BDSBunch::SetOptions
+  BDSBunchGaussian::SetOptions(beam, beamlineTransformIn);
 
   betaX  = beam.betx;
   betaY  = beam.bety;
@@ -57,18 +57,6 @@ void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
   dispYP = beam.dispyp;
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
-  
-  meansGM = CLHEP::HepVector(6);
-  
-  // Fill means 
-  meansGM[0] = X0;
-  meansGM[1] = Xp0;
-  meansGM[2] = Y0;
-  meansGM[3] = Yp0;
-  meansGM[4] = T0;
-  meansGM[5] = 1;
-
-  sigmaGM = CLHEP::HepSymMatrix(6);
 
   // Fill sigmas
   //2x2 block in horizontal
@@ -107,31 +95,51 @@ void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
   sigmaGM[3][5] = dispYP*std::pow(sigmaE,2);
   sigmaGM[5][3] = dispYP*std::pow(sigmaE,2);
   
-  delete GaussMultiGen;
-  GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+  delete gaussMultiGen;
+  gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+
+  if (offsetSampleMean)
+    {PreGenerateEvents();}
 }
 
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight)
 {
-  CLHEP::HepVector v = GaussMultiGen->fire();
-  x0 = v[0] * CLHEP::m;
-  xp = v[1] * CLHEP::rad;
-  y0 = v[2] * CLHEP::m;
-  yp = v[3] * CLHEP::rad;
-  t  = v[4] * CLHEP::s;
-  zp = 0.0  * CLHEP::rad;
-  z0 = Z0 * CLHEP::m;
-  if (finiteSigmaT)
-    {z0 += t * CLHEP::c_light;}
-  E  = E0 * CLHEP::GeV;
-  if (finiteSigmaE)
-    {E *= v[5];}
-  
-  zp = CalculateZp(xp,yp,Zp0);
+  if (offsetSampleMean)
+    {
+      // iPartIteration should never exceed the size of each vector.
+      x0     = x0_v[iPartIteration];
+      xp     = xp_v[iPartIteration];
+      y0     = y0_v[iPartIteration];
+      yp     = yp_v[iPartIteration];
+      z0     = z0_v[iPartIteration];
+      zp     = zp_v[iPartIteration];
+      t      = t_v[iPartIteration];
+      E      = E_v[iPartIteration];
+      weight = weight_v[iPartIteration];
+      
+      iPartIteration++;
+    }
+  else
+    {
+      CLHEP::HepVector v = gaussMultiGen->fire();
+      x0 = v[0] * CLHEP::m;
+      xp = v[1] * CLHEP::rad;
+      y0 = v[2] * CLHEP::m;
+      yp = v[3] * CLHEP::rad;
+      t  = v[4] * CLHEP::s;
+      zp = 0.0  * CLHEP::rad;
+      z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
 
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-  
-  weight = 1.0;
+      E  = E0 * CLHEP::GeV;
+      if (finiteSigmaE)
+	{E *= v[5];} // only if there's a finite energy spread
+      
+      zp = CalculateZp(xp,yp,Zp0);
+      
+      ApplyTransform(x0,y0,z0,xp,yp,zp);
+      
+      weight = 1.0;
+    }
 }
