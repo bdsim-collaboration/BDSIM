@@ -21,6 +21,10 @@ New Features
 * Ability to specify the world volume material with the `worldMaterial` option.
 * Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
 * Ability to limit step size in user-specified fields.
+* By default `gauss`, `gaussmatrix` and `gausstwiss` now have the sample mean subtract from
+  the particle coordinates. These are now pregenerated at the beginning of the run. This results
+  in a **different set of coordinates** for the same seed and model used previously. This
+  removes the small systematic offset in optics comparisons.
 
 
 Output \& Analysis Changes
