@@ -298,7 +298,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 {
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
-  G4double scalingRadius      = info.ScalingRadius();
+  G4double poleTipRadius      = info.PoleTipRadius();
+  G4double beamPipeRadius     = info.BeamPipeRadius();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
     {
@@ -355,15 +356,36 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::skewdecapole:
       {field = new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
     case BDSFieldType::multipoleouterdipole:
-      {field = new BDSFieldMagMultipoleOuter(1, strength, scalingRadius); break;}
+      {
+	G4ThreeVector unitDirection = G4ThreeVector(0,1,0);
+	BDSFieldMag* innerField = new BDSFieldMagDipole(strength, brho, unitDirection);
+	field = new BDSFieldMagMultipoleOuter(1, strength, poleTipRadius, innerField, beamPipeRadius);
+	break;
+      }
     case BDSFieldType::multipoleouterquadrupole:
-      {field = new BDSFieldMagMultipoleOuter(2, strength, scalingRadius); break;}
+      {
+	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
+	field = new BDSFieldMagMultipoleOuter(2, strength, poleTipRadius, innerField, beamPipeRadius);
+	break;
+      }
     case BDSFieldType::multipoleoutersextupole:
-      {field = new BDSFieldMagMultipoleOuter(3, strength, scalingRadius); break;}
+      {
+	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
+	field = new BDSFieldMagMultipoleOuter(3, strength, poleTipRadius, innerField, beamPipeRadius);
+	break;
+      }
     case BDSFieldType::multipoleouteroctupole:
-      {field = new BDSFieldMagMultipoleOuter(4, strength, scalingRadius); break;}
+      {
+	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
+	field = new BDSFieldMagMultipoleOuter(4, strength, poleTipRadius, innerField, beamPipeRadius);
+	break;
+      }
     case BDSFieldType::multipoleouterdecapole:
-      {field = new BDSFieldMagMultipoleOuter(5, strength, scalingRadius); break;}
+      {
+	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
+	field = new BDSFieldMagMultipoleOuter(5, strength, poleTipRadius, innerField, beamPipeRadius);
+	break;
+      }
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;

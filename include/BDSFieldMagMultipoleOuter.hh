@@ -47,7 +47,9 @@ class BDSFieldMagMultipoleOuter: public BDSFieldMag
 public:
   BDSFieldMagMultipoleOuter(const G4int              orderIn,
 			    const BDSMagnetStrength* stIn,
-			    const G4double&          poleTipRadius);
+			    const G4double&          poleTipRadius,
+			    BDSFieldMag*             innerFieldIn,
+			    const G4double&          beamPipeRadius = 0);
 
   virtual ~BDSFieldMagMultipoleOuter();
 
@@ -57,11 +59,15 @@ public:
 
 private:
   const G4int       order;         ///< N-poles / 2.
-  const G4double    normalisation; ///< Storage of the overal normalisation factor.
+  G4double          normalisation; ///< Storage of the overal normalisation factor.
   G4RotationMatrix* rotation;      ///< Rotation into frame of magnetic dipole.
   G4RotationMatrix* antiRotation;  ///< Corresponding anti-rotation.
   G4double          factor;        ///< Scale factor for angle to query in dipole to get n-pole.
-  G4TwoVector       m;             ///< Magnetic dipole vector.
+  const G4TwoVector m;             ///< Magnetic dipole vector.
+  BDSFieldMag*      innerField;    ///< Field for inside pole tips.
+  G4bool            useInnerField; ///< Whether to use it or not.
+  G4double          poleTipRadius; ///< Radius of transition between inner and outer fields.
+  G4double          transitionLengthScale; ///< Length scale over which to fade between fields.
 };
 
 #endif

@@ -70,28 +70,48 @@ int main(int /*argc*/, char** /*argv*/)
   fields.push_back(new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(st, brho), CLHEP::pi/10.));
   fields.push_back(new BDSFieldMagMuonSpoiler(st, brho));
   fields.push_back(new BDSFieldMagMultipole(st2, brho));
-  fields.push_back(new BDSFieldMagMultipoleOuter(1, nullptr, 1));
-  fields.push_back(new BDSFieldMagMultipoleOuter(2, nullptr, 1));
-  fields.push_back(new BDSFieldMagMultipoleOuter(3, nullptr, 1));
-  fields.push_back(new BDSFieldMagMultipoleOuter(4, nullptr, 1));
-  fields.push_back(new BDSFieldMagMultipoleOuter(5, nullptr, 1));
+
+  G4double poleTipRadius  = 40;
+  G4double beamPipeRadius = 25;
+  BDSFieldMag* innerField;
+  BDSFieldMag* field;
+  
+  innerField = new BDSFieldMagDipole(st, brho, unitDirection);
+  field = new BDSFieldMagMultipoleOuter(1, st, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
+
+  innerField = new BDSFieldMagQuadrupole(st, brho);
+  field = new BDSFieldMagMultipoleOuter(2, st, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
+
+  innerField = new BDSFieldMagSextupole(st, brho);
+  field = new BDSFieldMagMultipoleOuter(3, st, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
+
+  innerField = new BDSFieldMagOctupole(st, brho);
+  field = new BDSFieldMagMultipoleOuter(4, st, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
+  
+  innerField = new BDSFieldMagDecapole(st, brho);
+  field = new BDSFieldMagMultipoleOuter(5, st, poleTipRadius, innerField, beamPipeRadius);
+  fields.push_back(field);
 
   // Angular data
   const G4int    nR    = 20;
   const G4int    nPhi  = 100;
-  const G4double rMax  = 20; // mm
+  const G4double rMax  = 100; // mm
   const G4double rStep = rMax / (G4double) nR;
   const G4double pStep = CLHEP::twopi / (G4double) (nPhi-1);
 
   // Regular carteasian grid - symmetric for x,y just now
   const G4int    nX    = 100;
-  const G4double xMin  = -20; // mm 
-  const G4double xMax  = 20;  // mm
+  const G4double xMin  = -100; // mm 
+  const G4double xMax  = 100;  // mm
   const G4double xStep = (xMax - xMin) / (G4double) (nX-1);
    
   for (int f = 0; f < (int)fields.size(); ++f)
     {
-      BDSFieldMag* field = fields[f];
+      field = fields[f]; // overwrite local pointer variable
       std::string nm = names[f];
       G4cout << "Generating field for type \"" << nm << "\"" << G4endl;
       std::ofstream rfile;
@@ -132,5 +152,17 @@ int main(int /*argc*/, char** /*argv*/)
       cfile.close();
     }
 
+
+  /*
+  field = fields[fields.size() - 4]; // should be quadrupole
+  G4double xMin2 = -100;
+  G4double xMax2 = 100;
+  G4double xStep2 = (xMax2 - xMin2)/ (G4double) (nX-1);
+  for (G4double x = xMin2, i=0; i < nX; x += xStep2, ++i)
+    {
+      G4ThreeVector pos(x,10,0);
+      G4cout << field->GetField(pos)/CLHEP::tesla << G4endl;
+    }
+  */
   return 0;
 }
