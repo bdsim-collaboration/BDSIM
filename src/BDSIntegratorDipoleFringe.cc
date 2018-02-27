@@ -95,7 +95,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // calculate new position
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
-  OneStep(localPos, localMom, localMomU, h, localCLPosOut, localCLMomOut);
+  OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
   BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
@@ -120,18 +120,11 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
                                         G4ThreeVector  momIn,
                                         G4ThreeVector  momUIn,
-                                        G4double       h,
                                         G4ThreeVector& posOut,
                                         G4ThreeVector& momOut) const
 {
-  // prevent overkicking - apply kick fractionally if the step length
-  // is less than the element length / 2.
-  G4double fraction = 1;
-  if (h < 0.5*thinElementLength)
-    {fraction = h / thinElementLength;}
-
   // nominal bending radius.
-   G4double momInMag = momIn.mag();
+  G4double momInMag = momIn.mag();
 
   G4double x0  = posIn.x() / CLHEP::m;
   G4double y0  = posIn.y() / CLHEP::m;
@@ -150,7 +143,7 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   G4double X11=0,X12=0,X21=0,X22 = 0;
   G4double Y11=0,Y12=0,Y21=0,Y22 = 0;
 
-  // calculate (fractional) fringe field kick
+  // calculate fringe field kick
   X11 = 1;
   X21 = tan(polefaceAngle) / (rho / CLHEP::m);
   X22 = 1;

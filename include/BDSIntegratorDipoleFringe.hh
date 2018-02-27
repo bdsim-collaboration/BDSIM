@@ -58,7 +58,6 @@ public:
   void OneStep(G4ThreeVector  posIn,
                G4ThreeVector  momIn,
                G4ThreeVector  momUIn, // assumed unit momentum of momIn
-               G4double       h,
                G4ThreeVector& posOut,
                G4ThreeVector& momOut) const;
 
