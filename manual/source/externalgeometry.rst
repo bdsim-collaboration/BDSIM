@@ -44,6 +44,12 @@ would not work as the *variable* "offsetX" is referred to in the *value* "x" in 
 * A BDSIM provided python tool is also under development to allow simple programmatic
   construction of GDML geometry as well as visualisation and overlap checking.
 
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
+
 ggmad
 -----
 

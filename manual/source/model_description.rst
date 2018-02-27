@@ -963,6 +963,11 @@ Example with field::
   
    detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
 
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
 
 
 marker
@@ -1793,7 +1798,13 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 | mokka                | | An SQL style description of geometry.                             |
 +----------------------+---------------------------------------------------------------------+
 
-.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+.. note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
 
 .. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
 	     GMAD file is included in a parent file in a different location, the file will not be
