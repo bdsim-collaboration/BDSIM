@@ -55,7 +55,9 @@ BDSBunchGaussian::BDSBunchGaussian():
   meansGM(CLHEP::HepVector(6)),
   sigmaGM(CLHEP::HepSymMatrix(6)),
   gaussMultiGen(nullptr)
-{;}
+{
+  coordinates = {&x0_v, &xp_v, &y0_v, &yp_v, &z0_v, &zp_v, &E_v, &t_v, &weight_v};
+}
 
 BDSBunchGaussian::~BDSBunchGaussian()
 {
@@ -76,6 +78,15 @@ void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
   meansGM[3] = Yp0;
   meansGM[4] = T0;
   meansGM[5] = 1;
+}
+
+void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
+{
+  /// clear previous means
+  for (auto& vec : coordinates)
+    {vec->clear();}
+  
+  PreGenerateEvents(numberOfEvents);
 }
 
 CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
@@ -132,14 +143,13 @@ CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
-void BDSBunchGaussian::PreGenerateEvents()
+void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
 {
   // generate all required primaries first
   G4double x0,xp,y0,yp,z0,zp,E,t,weight;
   G4double x0_a = 0.0, xp_a = 0.0, y0_a = 0.0, yp_a = 0.0;
   G4double z0_a = 0.0, zp_a = 0.0, E_a  = 0.0, t_a  = 0.0;
 
-  G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
   for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
       CLHEP::HepVector v = gaussMultiGen->fire();
