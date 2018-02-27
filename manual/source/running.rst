@@ -20,6 +20,8 @@ The following section describes other 'executable' options that may specify
 various options such as whether to run in 'batch' mode or interactively with a
 visualiser; and where to write output.
 
+.. _executable-options:
+
 Executable Options
 ==================
 
