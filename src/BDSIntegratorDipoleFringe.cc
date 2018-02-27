@@ -60,11 +60,13 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // by h / thinElementLength as the precise geometrical length depends on the geometry
   // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
   // prevent more than one step begin taken, but occasionally, a very small initial step
-  // is taken resulting in a double kick.
+  // can be taken resulting in a double kick.
   G4double lengthFraction = h / thinElementLength;
 
   // don't do fringe kick if we're sampling the field for a long step
-  if ((h > 1*CLHEP::cm) || (lengthFraction > 0.5))
+  // or if it's a half step inside the thin element apply the dipole
+  // motion but not the one-off fringe kick
+  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.51))
     {
       // copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
