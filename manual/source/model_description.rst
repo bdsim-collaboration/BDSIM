@@ -2878,12 +2878,13 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | minimum relative error acceptable in stepping                      |
 +-----------------------------------+--------------------------------------------------------------------+
-| offsetSampleMean                  | Default false. If true, this will remove the sample mean from the  |
+| beeam, offsetSampleMean=1         | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
 |                                   | be different for each run or even when using --recreate.  Only     |
-|                                   | suitable for large (>100) numbers of particles.                    |
+|                                   | suitable for large (>100) numbers of particles. Note, this isn't   |
+|                                   | an option, but part of the beam command.                           |
 +-----------------------------------+--------------------------------------------------------------------+
 
 
@@ -2962,8 +2963,8 @@ The following beam distributions are available in BDSIM
 - `userfile`_
 - `ptc`_
 
-.. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the option `offsetSampleMean` documented
-	  in :ref:`developer-options` can be used to pre-generate all particle coordinates and
+.. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
+	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
 	  subtract the sample mean from these effictively removing any small systematic offset in
 	  the bunch at the beginning of the line. This is used only for optical comparisons currently.
 
