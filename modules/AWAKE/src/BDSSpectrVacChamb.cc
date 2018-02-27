@@ -26,32 +26,32 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name,
-				     G4double lengthZ,
-				     G4double magStartZ,
-				     G4double vacuumEndZ,
-                                     G4double screenWidth,
-				     G4double screenAngle,
-				     G4double sizeX,
-				     G4double sizeY,
-                                     G4double thickness,
-				     G4double windowOffsetX=5*CLHEP::cm,
-				     G4double strutSizeX=0,
-                                     G4double strutSizeZ=0,
-                                     G4String strutMaterial="G4_STAINLESS-STEEL"):
-  _name(name),
-  _lengthZ(lengthZ),       // Length of the vacuum chamber
-  _magStartZ(magStartZ),   // Start Z position of the magnet
-  _vacuumEndZ(vacuumEndZ), // End Z position of the vacuum chamber
-  _screenWidth(screenWidth),
-  _screenAngle(screenAngle),
-  _sizeX(sizeX),                 // Size of the vacuum window/scintillator screen
-  _sizeY(sizeY),
-  _thickness(thickness),         // Thickness of the vacuum chamber walls
-  _windowOffsetX(windowOffsetX), // Offset X between the edge of the window and the edge of the beam pipe
-  _strutSizeX(strutSizeX),       // The size of the support strut
-  _strutSizeZ(strutSizeZ),
-  _strutMaterial(strutMaterial)  // The material of the support strut
+BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &nameIn,
+				     G4double lengthZIn,
+				     G4double magStartZIn,
+				     G4double vacuumEndZIn,
+				     G4double screenWidthIn,
+				     G4double screenAngleIn,
+				     G4double sizeXIn,
+				     G4double sizeYIn,
+				     G4double thicknessIn,
+				     G4double windowOffsetXIn=5*CLHEP::cm,
+				     G4double strutSizeXIn=0,
+                     G4double strutSizeZIn=0,
+                     G4String strutMaterialIn="G4_STAINLESS-STEEL"):
+  _name(nameIn),
+  _lengthZ(lengthZIn),       // Length of the vacuum chamber
+  _magStartZ(magStartZIn),   // Start Z position of the magnet
+  _vacuumEndZ(vacuumEndZIn), // End Z position of the vacuum chamber
+  _screenWidth(screenWidthIn),
+  _screenAngle(screenAngleIn),
+  _sizeX(sizeXIn),                 // Size of the vacuum window/scintillator screen
+  _sizeY(sizeYIn),
+  _thickness(thicknessIn),         // Thickness of the vacuum chamber walls
+  _windowOffsetX(windowOffsetXIn), // Offset X between the edge of the window and the edge of the beam pipe
+  _strutSizeX(strutSizeXIn),       // The size of the support strut
+  _strutSizeZ(strutSizeZIn),
+  _strutMaterial(strutMaterialIn)  // The material of the support strut
 {
   CalculateGeometry();
   Build();
