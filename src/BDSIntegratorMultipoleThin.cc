@@ -55,6 +55,21 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  G4double lengthFraction = h / thinElementLength;
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  if (lengthFraction < 0.51)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
@@ -143,25 +158,14 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
           skewkick += result;
         }
     }
-
-  // only apply the kick if we're taking a step longer than half the length of the item,
-  // in which case, apply the full kick. This appears more robust than scaling the kick
-  // by h / thinElementLength as the precise geometrical length depends on the geometry
-  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
-  // prevent more than one step begin taken, but occasionally, a very small initial step
-  // is taken resulting in a double kick.
-  G4double lengthFraction = h / thinElementLength;
-
-  if (lengthFraction > 0.5)
-    {
-      // apply normal kick
-      xp1 -= kick.real();
-      yp1 += kick.imag();
-
-      //apply skewed kick
-      xp1 -= skewkick.imag();
-      yp1 += skewkick.real();
-    }
+  
+  // apply normal kick
+  xp1 -= kick.real();
+  yp1 += kick.imag();
+  
+  //apply skewed kick
+  xp1 -= skewkick.imag();
+  yp1 += skewkick.real();
 
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
   if (std::isnan(zp1))
