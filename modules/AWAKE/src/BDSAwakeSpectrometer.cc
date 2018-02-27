@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh" 
 #include "BDSFieldInfo.hh"
 #include "BDSFieldBuilder.hh"
+#include "BDSFieldType.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 #include "BDSSampler.hh"
@@ -343,9 +344,24 @@ void BDSAwakeSpectrometer::BuildField()
     G4cout << __METHOD_NAME__ << itsBmapXOffset << " " << itsBmapZOffset << G4endl;
     _fieldInfo->Translate(poleTranslation);
 
-  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
-							    containerLogicalVolume,
-							    true);
+  if (_fieldInfo->FieldType() == BDSFieldType::dipole)
+  {// pure dipole field
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerBoxLogVol2(),
+                                                              true);
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerTrapLogVol(),
+                                                              true);
+  }
+  else
+  {// field map
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              containerLogicalVolume,
+                                                              true);
+  }
+
+
+
 }
 
 void BDSAwakeSpectrometer::BuildMagnet(){
@@ -474,6 +490,8 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 
 
 void BDSAwakeSpectrometer::PlaceVacuumChamber(){
+  // 2018 02 - LN - this first bit seems redundant as BuildVacuumChamber() is called in Build()
+  // before this method...
   if(_vacuumChamberType!=0){
     if(!_vacChamb){
       BuildVacuumChamber();

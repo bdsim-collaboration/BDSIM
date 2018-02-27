@@ -52,6 +52,9 @@ public:
   //container of pointers to all logical volumes
   inline std::vector<G4LogicalVolume*> logVols(){return _logVols;}
 
+  inline G4LogicalVolume* InnerBoxLogVol2() const {return _innerLogVolBox2;}
+  inline G4LogicalVolume* InnerTrapLogVol() const {return _innerLogVolTrap;}
+
 private:
   BDSSpectrVacChamb() = delete;
 
