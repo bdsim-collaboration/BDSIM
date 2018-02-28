@@ -59,7 +59,7 @@ void SamplerAnalysis::CommonCtor()
   varOptical.resize(3);
   for(int i=0;i<3;++i)
     {
-      optical[i].resize(24, 0);   //12 for central values and 12 for errors
+      optical[i].resize(25, 0);   //12 for central values and 12 for errors and 1 for xy correlation
       varOptical[i].resize(12, 0);
     }
 
@@ -319,6 +319,10 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
 	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
+
+  //Write out the correlation x-y coefficient to the output as a metrix of horizontal-vertical coupling
+  //Writen only to the x vector, but 0 is added to y and z vectors to keep all vector sizes the same
+  optical[0][24]=cenMoms[0][2][1][1]/std::sqrt(cenMoms[0][2][2][0]*cenMoms[0][2][0][2]);
 
   //emitt_x, emitt_y, err_emitt_x, err_emitt_y
   std::vector<double> emittanceOut = {optical[0][0],
