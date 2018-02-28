@@ -65,7 +65,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
 
       for (const auto& sampler : event->Samplers)
 	{
-	  sa = new SamplerAnalysis(sampler);
+	  sa = new SamplerAnalysis(sampler, debug);
 	  samplerAnalyses.push_back(sa);
 	}
     }
