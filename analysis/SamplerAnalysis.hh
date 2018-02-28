@@ -125,6 +125,11 @@ protected:
   ///     e.g. derivMat[t=2][k=0][i=0]: d(beta)/d<xx> , derivMat[t=0][k=1][i=1]: d(emittance)/d<yy'>
   double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 
+
+  //Prints out the beam correlation matrix at that sampler to the console
+  //The beam correlation matrix gives good idication of the presence and magnitude of all couplings.
+  void printBeamCorrelationMatrix(fourDArray&   centMoms);
+
 private:
   bool debug;
 };

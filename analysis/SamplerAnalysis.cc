@@ -191,6 +191,9 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
       }
   }
 
+  if (debug)
+    {printBeamCorrelationMatrix(cenMoms);}
+
   //optical function calculation  
   for(int i=0;i<3;++i)
   {
@@ -684,4 +687,23 @@ double SamplerAnalysis::centMomToDerivative(fourDArray& centMoms,
       return 0;
       break;
     }
+}
+
+
+void SamplerAnalysis::printBeamCorrelationMatrix(fourDArray&   centMoms)
+{
+  std::cout<<"\nCorrelation matrix for sampler: "<<s->samplerName<<std::endl;
+  double corr = 0.0;
+  for (int i=0; i<6; i++)
+    {
+      for(int j=0; j<6; j++)
+        {
+          corr = centMoms[i][j][1][1]/std::sqrt(centMoms[i][j][2][0]*centMoms[i][j][0][2]);
+          //std::cout<<corr<<" ";
+          std::printf("%- *.6e ", 12, corr);
+        }
+      //std::cout<<std::endl;
+      std::printf("\n");
+    }
+
 }
