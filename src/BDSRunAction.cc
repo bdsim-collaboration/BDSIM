@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
 #include "BDSOutput.hh"
@@ -33,11 +34,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSRunAction::BDSRunAction(BDSOutput* outputIn):
+BDSRunAction::BDSRunAction(BDSOutput* outputIn,
+                           BDSBunch* bunchGeneratorIn):
   output(outputIn),
   starttime(time(nullptr)),
   seedStateAtStart(""),
-  info(nullptr)
+  info(nullptr),
+  bunchGenerator(bunchGeneratorIn)
 {;}
 
 BDSRunAction::~BDSRunAction()
@@ -47,6 +50,9 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
+  // Bunch generator beginning of run action (optional mean subtraction).
+  bunchGenerator->BeginOfRunAction(aRun->GetNumberOfEventToBeProcessed());
+  
   info = new BDSEventInfo();
   
   // save the random engine state

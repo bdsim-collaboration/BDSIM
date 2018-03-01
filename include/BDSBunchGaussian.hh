@@ -53,6 +53,10 @@ public:
   virtual ~BDSBunchGaussian();
   virtual void SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+
+  /// Called at the beginning of a run. Override here to call PreGenerateEvents that
+  /// will generate all coordinates and subtract the sample mean.
+  virtual void BeginOfRunAction(const G4int& numberOfEvents);
   
 protected:
   /// Create multidimensional Gaussian random number generator
@@ -62,7 +66,7 @@ protected:
 					  CLHEP::HepSymMatrix&    sigma);
   
   /// Pregenerate all the particle coordinates and subtract the sample mean.
-  void PreGenerateEvents();
+  void PreGenerateEvents(const G4int& nGenerate);
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
@@ -76,6 +80,9 @@ protected:
   std::vector<G4double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
   /// @}
   G4int iPartIteration; ///< Iterator for reading out pre-calculate coordinates
+
+  /// Convenience vector of vectors for clearing up.
+  std::vector<std::vector<G4double>* > coordinates;
 };
 
 #endif

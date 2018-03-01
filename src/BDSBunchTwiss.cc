@@ -97,9 +97,6 @@ void BDSBunchTwiss::SetOptions(const GMAD::Beam& beam,
   
   delete gaussMultiGen;
   gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
-
-  if (offsetSampleMean)
-    {PreGenerateEvents();}
 }
 
 void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

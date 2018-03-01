@@ -75,9 +75,6 @@ void BDSBunchSigmaMatrix::SetOptions(const GMAD::Beam& beam,
 #endif
   delete gaussMultiGen;
   gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
-
-  if (offsetSampleMean)
-    {PreGenerateEvents();}
 }
 
 void BDSBunchSigmaMatrix::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

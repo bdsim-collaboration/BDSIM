@@ -100,6 +100,9 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   weight = 1.0;
 }
 
+void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
+{;}
+
 void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,
 			      G4double& xp, G4double& yp, G4double& zp) const
 {

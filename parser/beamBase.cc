@@ -99,5 +99,5 @@ BeamBase::BeamBase()
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
 
-  offsetSampleMean = true;
+  offsetSampleMean = false;
 }

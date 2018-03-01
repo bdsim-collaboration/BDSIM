@@ -118,9 +118,10 @@ void BDSBunchPtc::LoadPtcFile()
 
   // set number of available rays in options
   nRays = ptcData.size();
-  
-  if (BDSGlobalConstants::Instance()->MatchDistrFileLength())
-    {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
+
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  if (globals->MatchDistrFileLength())
+    {globals->SetNumberToGenerate(nRays);}
 
   return;
 }

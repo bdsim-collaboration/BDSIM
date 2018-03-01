@@ -106,9 +106,6 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
       SetDistChord(dipole->DistChord());
       return;
     }
-
-  // get beta (v/c)
-  beta = eq->Beta(yIn); // used in OneStep
   
   // calculate new position
   G4ThreeVector localCLPosOut;
@@ -168,6 +165,9 @@ void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
   G4double kyl = ky * h;
 
   G4bool focussing = K1 >= 0; // depends on charge as well (in eqOfM->FCof())
+
+  // get beta (v/c)
+  G4double beta = eq->Beta(momIn);
 
   G4double x0  = posIn.x();
   G4double y0  = posIn.y();
