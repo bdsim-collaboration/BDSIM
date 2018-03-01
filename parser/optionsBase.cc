@@ -98,6 +98,8 @@ OptionsBase::OptionsBase()
   vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
   coilWidthFraction    = -1;
   coilHeightFraction   = -1;
+
+  preprocessGDML = true;
   
   // geometry debugging
   // always split sbends into smaller chunks by default
@@ -175,7 +177,7 @@ OptionsBase::OptionsBase()
   defaultBiasMaterial      = "";
 
   // tracking options
-  integratorSet            = "bdsimtwo";
+  integratorSet            = "bdsimmatrix";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   maximumStepLength        = 20;      // m, quite big

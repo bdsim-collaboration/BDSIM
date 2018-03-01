@@ -100,15 +100,6 @@ std::vector<G4ThreeVector> BDSExtentGlobal::AllBoundaryPointsGlobal() const
   return result;
 }
 
-std::vector<G4ThreeVector> BDSExtentGlobal::AllVerticesGlobal() const
-{
-  std::vector<G4ThreeVector> local = AllBoundaryPoints();
-  std::vector<G4ThreeVector> result;
-  for (const auto& p : local)
-    {result.emplace_back(transform * (HepGeom::Point3D<G4double>)p);}
-  return result;
-}
-
 G4bool BDSExtentGlobal::Overlaps(const BDSExtentGlobal& /*other*/) const
 {
   return false;

@@ -55,6 +55,21 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  G4double lengthFraction = h / thinElementLength;
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  if (lengthFraction < 0.51)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
@@ -99,7 +114,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momy;
 
   // normalise to momentum and charge
-  G4double ratio = eqOfM->FCof() * brho / momMag;
+  G4double ratio = eqOfM->FCof() * std::abs(brho) / momMag;
 
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
@@ -119,19 +134,10 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       kick += result;
     }
 
-  // apply kick
-  xp1 -= kick.real();
-  yp1 += kick.imag();
-  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-  if (std::isnan(zp1))
-    {zp1 = zp;}
-
   // reset n for skewed kicks.
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
-
-  G4ThreeVector momOut = G4ThreeVector(xp1,yp1,zp1);
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
@@ -153,9 +159,14 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
         }
     }
   
-  //apply kick
+  // apply normal kick
+  xp1 -= kick.real();
+  yp1 += kick.imag();
+  
+  //apply skewed kick
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
+
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
   if (std::isnan(zp1))
     {zp1 = zp;}

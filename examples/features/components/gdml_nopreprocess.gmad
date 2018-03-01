@@ -1,0 +1,3 @@
+include gdml.gmad;
+
+option, preprocessGDML=0;

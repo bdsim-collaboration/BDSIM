@@ -109,16 +109,12 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = Yp0 * CLHEP::rad;
 
   //  z0 += (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
-  z0 += 0;
+  z0 = 0;
 
   while(true)
   {
-    G4double dx = 0;
-    dx = xMax  * (1 - 2 * FlatGen->shoot());
-    
-    G4double dy = 0;
-    dy = yMax  * (1 - 2 * FlatGen->shoot());
-    
+    G4double dx  = xMax  * (1 - 2 * FlatGen->shoot());
+    G4double dy  = yMax  * (1 - 2 * FlatGen->shoot());
     G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
     G4double dyp = ypMax * (1 - 2 * FlatGen->shoot());
     

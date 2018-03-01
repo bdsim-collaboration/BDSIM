@@ -231,4 +231,6 @@ void Beam::PublishMembers()
   publish("haloYCutInner",         &Beam::haloYCutInner);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
+
+  publish("offsetSampleMean",      &Beam::offsetSampleMean);
 }

@@ -98,4 +98,6 @@ BeamBase::BeamBase()
   haloYCutInner         = 0.0;
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
+
+  offsetSampleMean = false;
 }

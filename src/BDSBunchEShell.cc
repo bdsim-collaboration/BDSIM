@@ -28,9 +28,6 @@ BDSBunchEShell::BDSBunchEShell():
   BDSBunch(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0),
   shellXWidth(0.0), shellXpWidth(0.0), shellYWidth(0.0), shellYpWidth(0.0) 
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
 }
 
@@ -42,9 +39,6 @@ BDSBunchEShell::~BDSBunchEShell()
 void BDSBunchEShell::SetOptions(const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   BDSBunch::SetOptions(beam, beamlineTransformIn);
   SetShellX (beam.shellX);
   SetShellY (beam.shellY);

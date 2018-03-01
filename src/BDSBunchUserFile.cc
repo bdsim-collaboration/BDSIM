@@ -424,7 +424,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 
       // If energy isn't specified, use the central beam energy (kinetic for Geant4)
       if (!BDS::IsFinite(E))
-	{E = E0;}
+	{E = E0*CLHEP::GeV;}
       
       // compute zp from xp and yp if it hasn't been read from file
       if (!zpdef) zp = CalculateZp(xp,yp,1);

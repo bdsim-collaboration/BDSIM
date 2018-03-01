@@ -25,18 +25,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ctime>
 #include <string>
 
+class BDSBunch;
 class BDSEventInfo;
 class BDSOutput;
 class G4Run;
 
 /**
  * @brief Control over the beginning and end of run actions.
+ *
+ * Unlike the regular Geant4 run action we call a beginning of run
+ * action on the bunch distribution (when we know the number of events
+ * to run).
  */
 
 class BDSRunAction: public G4UserRunAction
 {
 public:
-  explicit BDSRunAction(BDSOutput* outputIn);
+  explicit BDSRunAction(BDSOutput* outputIn,
+			BDSBunch*  bunchGeneratorIn);
   virtual ~BDSRunAction();
   
   virtual void BeginOfRunAction(const G4Run*);
@@ -47,6 +53,7 @@ private:
   time_t        starttime;
   std::string   seedStateAtStart; ///< Seed state at start of the run.
   BDSEventInfo* info;
+  BDSBunch*     bunchGenerator;   ///< Cache of bunch generator.
 };
 
 #endif

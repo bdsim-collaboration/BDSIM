@@ -23,15 +23,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser/beam.h"
 
-BDSBunchComposite::BDSBunchComposite()
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  xBunch = nullptr;
-  yBunch = nullptr;
-  zBunch = nullptr;
-}
+BDSBunchComposite::BDSBunchComposite():
+  xBunch(nullptr),
+  yBunch(nullptr),
+  zBunch(nullptr)
+{;}
 
 BDSBunchComposite::~BDSBunchComposite()
 {
@@ -43,10 +39,6 @@ BDSBunchComposite::~BDSBunchComposite()
 void BDSBunchComposite::SetOptions(const GMAD::Beam& beam,
 				   G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBunch::SetOptions(beam, beamlineTransformIn);
   
   delete xBunch;

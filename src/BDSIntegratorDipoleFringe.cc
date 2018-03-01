@@ -55,8 +55,18 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // do the dipole kick using base class
   BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
 
-  // don't do fringe kick if we're sampling the field  for a long step
-  if (h > 1*CLHEP::cm)
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  G4double lengthFraction = h / thinElementLength;
+
+  // don't do fringe kick if we're sampling the field for a long step
+  // or if it's a half step inside the thin element apply the dipole
+  // motion but not the one-off fringe kick
+  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.51))
     {
       // copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
@@ -85,7 +95,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // calculate new position
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
-  OneStep(localPos, localMom, localMomU, h, localCLPosOut, localCLMomOut);
+  OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
   BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
@@ -110,18 +120,11 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
                                         G4ThreeVector  momIn,
                                         G4ThreeVector  momUIn,
-                                        G4double       h,
                                         G4ThreeVector& posOut,
                                         G4ThreeVector& momOut) const
 {
-  // prevent overkicking - apply kick fractionally if the step length
-  // is less than the element length / 2.
-  G4double fraction = 1;
-  if (h < 0.5*thinElementLength)
-    {fraction = h / thinElementLength;}
-
   // nominal bending radius.
-   G4double momInMag = momIn.mag();
+  G4double momInMag = momIn.mag();
 
   G4double x0  = posIn.x() / CLHEP::m;
   G4double y0  = posIn.y() / CLHEP::m;
@@ -140,13 +143,13 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   G4double X11=0,X12=0,X21=0,X22 = 0;
   G4double Y11=0,Y12=0,Y21=0,Y22 = 0;
 
-  // calculate (fractional) fringe field kick
+  // calculate fringe field kick
   X11 = 1;
-  X21 = fraction * tan(polefaceAngle) / (rho / CLHEP::m);
+  X21 = tan(polefaceAngle) / (rho / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = fraction * -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  Y21 = -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;

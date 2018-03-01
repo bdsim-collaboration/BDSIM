@@ -41,7 +41,7 @@ public:
   std::vector<float>        energy;  ///< Energy deposited in step
   std::vector<float>        S;       ///< Global curvilinear S coordinate
   std::vector<float>        weight;  ///< Weight associated with loss
-  // TODO : These need to be put in as options
+
   std::vector<int>          partID;  ///< ParticleID that create the deposit
   std::vector<int>          trackID; ///< TrackID that created the deposit
   std::vector<int>          parentID;///< ParentID that created the deposit
