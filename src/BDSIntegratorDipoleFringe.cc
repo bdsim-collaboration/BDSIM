@@ -98,7 +98,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
+  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
