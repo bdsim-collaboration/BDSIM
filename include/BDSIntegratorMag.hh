@@ -83,6 +83,10 @@ protected:
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
 
+  /// Whether a magnet has a finite strength or not. Can be set in the constructor for
+  /// zero strength elements and then a drift routine is used before anything else.
+  G4bool zeroStrength;
+
 private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorMag() = delete;

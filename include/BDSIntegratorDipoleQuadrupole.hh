@@ -84,9 +84,6 @@ private:
   /// Cached magnet property, nominal bending radius.
   const G4double 	rho;
 
-  /// Cache of whether input parameters are 0 and therefore whether to kick at all.
-  G4bool        	zeroStrength;
-
   /// Cache magnet strength, required for curvilinear transforms.
   BDSMagnetStrength const* strength;
 };

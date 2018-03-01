@@ -61,10 +61,10 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 					    G4double       yErr[])
 {
   // charge and unit normalisation
-  G4double fCof = eqOfM->FCof();
-
+  const G4double fcof = eqOfM->FCof();
+  
   // Protect against very small steps, neutral particles, and zero field: drift through.
-  if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()) || zeroStrength)
+  if (h < 1e-12 || !BDS::IsFinite(fcof) || zeroStrength)
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       SetDistChord(0);

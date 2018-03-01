@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetStrength.hh"
 #include "BDSPhysicalConstants.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -42,6 +43,7 @@ BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength con
   strength(strengthIn),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
+  zeroStrength = !BDS::IsFinite(bField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
 #endif
@@ -53,8 +55,10 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
 						G4double       yOut[],
 						G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
+  
   // In case of zero field or neutral particles do a linear step:
-  if(bField == 0 || eqOfM->FCof() == 0)
+  if (zeroStrength || !BDS::IsFinite(fcof))
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);

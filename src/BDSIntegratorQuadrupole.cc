@@ -42,6 +42,8 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   // we take |Brho| as it depends on charge and so does the eqOfM->FCof()
   // so they'd both cancel out.
   bPrime = std::abs(brho) * (*strength)["k1"] / CLHEP::m2;
+
+  zeroStrength = !BDS::IsFinite(bPrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -53,6 +55,15 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
+  // In case of zero field or neutral particles do a linear step
+  const G4double fcof = eqOfM->FCof();
+  if (zeroStrength || !BDS::IsFinite(fcof))
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
 

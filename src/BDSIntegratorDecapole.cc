@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDecapole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
@@ -37,6 +38,7 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
   bQuadruplePrime = brho * (*strength)["k4"] / (CLHEP::m3*CLHEP::m2);
+  zeroStrength = !BDS::IsFinite(bQuadruplePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;
 #endif

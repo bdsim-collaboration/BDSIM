@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
@@ -36,6 +37,14 @@ void BDSIntegratorEulerOld::Stepper(const G4double yIn[],
 				    G4double       yOut[],
 				    G4double       yErr[])
 {
+  // neutral particles do a linear step:
+  if (!BDS::IsFinite(eqOfM->FCof()) || zeroStrength)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4double yTemp[7];
 
   G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);

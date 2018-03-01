@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSIntegratorEuler.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
@@ -33,6 +35,14 @@ void BDSIntegratorEuler::Stepper(const G4double yIn[],
 				 G4double       yOut[],
 				 G4double       yErr[])
 {
+  // In case of zero field or neutral particles do a linear step:
+  if (zeroStrength || !BDS::IsFinite(eqOfM->FCof()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   const G4ThreeVector a_start = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
   if (a_start.mag2() < 1e-60)
     {// no potential as no magnetic field - use drift routine

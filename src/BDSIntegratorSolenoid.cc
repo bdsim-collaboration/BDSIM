@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
 #include "G4Mag_EqRhs.hh"
@@ -34,6 +35,7 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
   BDSIntegratorMag(eqOfMIn, 6)
 {
   bField = brho * (*strength)["ks"];
+  zeroStrength = !BDS::IsFinite(bField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << bField << G4endl;
 #endif
@@ -45,6 +47,15 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
+  // In case of zero field or neutral particles do a linear step
+  if (zeroStrength || !BDS::IsFinite(fcof))
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
