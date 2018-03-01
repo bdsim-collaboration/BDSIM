@@ -58,12 +58,13 @@ protected:
   /// Calculate a single step in curvilinear coordinates using dipole quadrupole matrix.
   /// Unit momentum is provided as an argument becuase it is already calculated in the
   /// Stepper method.
-  void OneStep(G4ThreeVector  posIn,
-	       G4ThreeVector  momIn,
-	       G4ThreeVector  momUIn, // assumed unit momentum of momIn
-	       G4double       h,
-	       G4ThreeVector& posOut,
-	       G4ThreeVector& momOut) const;
+  void OneStep(const G4ThreeVector& posIn,
+	       const G4ThreeVector& momIn,
+	       const G4ThreeVector& momUIn, // assumed unit momentum of momIn
+	       const G4double&      h,
+	       const G4double&      fcof,
+	       G4ThreeVector&       posOut,
+	       G4ThreeVector&       momOut) const;
 
 private:
   /// Private default constructor to enforce use of supplied constructor

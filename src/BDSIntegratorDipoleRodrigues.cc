@@ -68,7 +68,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   // Construct variables
   G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4double charge   = (eqOfM->FCof())/CLHEP::c_light;
+  G4double charge   = fcof/CLHEP::c_light;
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 

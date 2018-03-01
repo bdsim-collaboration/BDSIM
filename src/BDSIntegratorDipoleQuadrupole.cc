@@ -110,7 +110,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // calculate new position
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
-  OneStep(localCLPos, localCLMom, localCLMomU, h, localCLPosOut, localCLMomOut);
+  OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
@@ -132,15 +132,14 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
     }
 }
 
-void BDSIntegratorDipoleQuadrupole::OneStep(G4ThreeVector  posIn,
-					    G4ThreeVector  momIn,
-					    G4ThreeVector  momUIn,
-					    G4double       h,
-					    G4ThreeVector& posOut,
-					    G4ThreeVector& momOut) const
+void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
+					    const G4ThreeVector& momIn,
+					    const G4ThreeVector& momUIn,
+					    const G4double&      h,
+					    const G4double&      fcof,
+					    G4ThreeVector&       posOut,
+					    G4ThreeVector&       momOut) const
 {
-  G4double fCof = eqOfM->FCof();
-
   G4double momInMag = momIn.mag();
 
   G4double nomMomentum = std::abs(bRho * fcof);

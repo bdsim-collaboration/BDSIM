@@ -71,7 +71,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   // note bPrime was calculated w.r.t. the nominal rigidity.
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double kappa = eqOfM->FCof()*bPrime/momMag;
+  G4double kappa = fcof*bPrime/momMag;
   
   // Neutral particle or no strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)

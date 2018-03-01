@@ -61,11 +61,11 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - 0.5*eqOfM->FCof()*bField/InitPMag;
+  G4double      kappa      = - 0.5*fcof*bField/InitPMag;
   G4double      h2         = h*h;
   
 #ifdef BDSDEBUG
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
+  G4double charge = (fcof)/CLHEP::c_light;
   G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl
