@@ -98,7 +98,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   G4ThreeVector outputLocalPos = RandRp.first;
   G4ThreeVector outputLocalMomUnit = RandRp.second;
   
-  G4double CosT_ov_2=cos(h/rho/2.0);
+  G4double CosT_ov_2 = std::cos(h/rho/2.0);
   G4double dc = std::abs(rho)*(1.-CosT_ov_2);
   if (std::isnan(dc))
     {SetDistChord(rho);}
@@ -152,8 +152,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipoleRodrigues::UpdatePandR
   G4double Theta = h/rho;
 
   G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2 = cos(Theta/2);
-  SinT_ov_2 = sin(Theta/2);
+  CosT_ov_2 = std::cos(Theta/2);
+  SinT_ov_2 = std::sin(Theta/2);
   
   CosT = (CosT_ov_2*CosT_ov_2) - (SinT_ov_2*SinT_ov_2);
   SinT = 2*CosT_ov_2*SinT_ov_2;

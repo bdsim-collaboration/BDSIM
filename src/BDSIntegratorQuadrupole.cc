@@ -139,27 +139,27 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   
   if (kappa > 0)
     {//focussing
-      X11= cos(rootKh);
-      X12= sin(rootKh)/rootK;
-      X21=-std::abs(kappa)*X12;
-      X22= X11;
+      X11 = std::cos(rootKh);
+      X12 = std::sin(rootKh)/rootK;
+      X21 =-std::abs(kappa)*X12;
+      X22 = X11;
       
-      Y11= cosh(rootKh);
-      Y12= sinh(rootKh)/rootK;
-      Y21= std::abs(kappa)*Y12;
-      Y22= Y11;
+      Y11 = std::cosh(rootKh);
+      Y12 = std::sinh(rootKh)/rootK;
+      Y21 = std::abs(kappa)*Y12;
+      Y22 = Y11;
     }
   else
     {// defocussing
-      X11= cosh(rootKh);
-      X12= sinh(rootKh)/rootK;
-      X21= std::abs(kappa)*X12;
-      X22= X11;
+      X11 = cosh(rootKh);
+      X12 = sinh(rootKh)/rootK;
+      X21 = std::abs(kappa)*X12;
+      X22 = X11;
       
-      Y11= cos(rootKh);
-      Y12= sin(rootKh)/rootK;
-      Y21= -std::abs(kappa)*Y12;
-      Y22= Y11;
+      Y11 = std::cos(rootKh);
+      Y12 = std::sin(rootKh)/rootK;
+      Y21 = -std::abs(kappa)*Y12;
+      Y22 = Y11;
     }
       
   x1  = X11*x0 + X12*xp;    

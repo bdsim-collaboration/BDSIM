@@ -143,10 +143,10 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4ThreeVector positionMove = h * InitMomDir; 
   G4double dz      = positionMove.z();
   G4double wL      = kappa*dz; 
-  G4double cosOL   = cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
+  G4double cosOL   = std::cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
   G4double cosSqOL = cosOL*cosOL;
-  G4double sinOL   = sin(wL);
-  G4double sin2OL  = sin(2.0*wL);
+  G4double sinOL   = std::sin(wL);
+  G4double sin2OL  = std::sin(2.0*wL);
   G4double sinSqOL = sinOL*sinOL;
   
   // calculate thick lens transfer matrix
