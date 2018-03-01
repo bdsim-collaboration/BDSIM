@@ -186,19 +186,19 @@ public:
                 G4double      FCof);
 
   BDSStep GlobalToCurvilinear(G4ThreeVector position,
-                G4ThreeVector unitMomentum,
-                G4double      h,
-                G4bool        useCurvilinearWorld);
+			      G4ThreeVector unitMomentum,
+			      G4double      h,
+			      G4bool        useCurvilinearWorld);
 
   BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
-                G4ThreeVector localMomentum,
-                G4bool        useCurvilinearWorld);
+			      G4ThreeVector localMomentum,
+			      G4bool        useCurvilinearWorld);
 
   BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                G4ThreeVector localPosition,
-                G4ThreeVector localMomentum,
-                G4bool        useCurvilinearWorld,
-                G4double      FCof);
+			      G4ThreeVector localPosition,
+			      G4ThreeVector localMomentum,
+			      G4bool        useCurvilinearWorld,
+			      G4double      FCof);
 
 protected:
   mutable G4AffineTransform globalToLocal;

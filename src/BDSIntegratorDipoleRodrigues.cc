@@ -23,16 +23,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalConstants.hh"
 #include "BDSStep.hh"
 
-#include <utility>
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+#include <cmath>
+#include <utility>
 
 BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength const*  strengthIn,
-					 G4double                  /*brho*/,
-					 G4Mag_EqRhs*              eqOfMIn):
+							   G4double                  /*brho*/,
+							   G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
   cOverGeV(BDS::cOverGeV),
   angle((*strengthIn)["angle"]),
@@ -47,10 +48,10 @@ BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength con
 }
 
 void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
-				       const G4double dydx[],
-				       G4double       h,
-				       G4double       yOut[],
-				       G4double       yErr[])
+						const G4double dydx[],
+						G4double       h,
+						G4double       yOut[],
+						G4double       yErr[])
 {
   // In case of zero field or neutral particles do a linear step:
   if(bField == 0 || eqOfM->FCof() == 0)
