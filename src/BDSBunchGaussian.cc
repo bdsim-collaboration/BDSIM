@@ -171,15 +171,26 @@ void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
       ApplyTransform(x0, y0, z0, xp, yp, zp);
       
       weight = 1.0;
-      
-      x0_a += x0;
-      xp_a += xp;
-      y0_a += y0;
-      yp_a += yp;
-      z0_a += z0;
-      zp_a += zp;
-      E_a  += E;
-      t_a  += t;
+
+      G4double nT = (G4double)iParticle + 1;
+      G4double d = 0;
+      d     = x0 - x0_a;
+      x0_a  = x0_a + (d/nT);
+      d     = xp - xp_a;
+      xp_a  = xp_a + (d/nT);
+      d     = y0 - y0_a;
+      y0_a  = y0_a + (d/nT);
+      d     = yp - yp_a;
+      yp_a  = yp_a + (d/nT);
+      d     = z0 - z0_a;
+      z0_a  = z0_a + (d/nT);
+      d     = zp - zp_a;
+      zp_a  = zp_a + (d/nT);
+      d     = y0 - y0_a;
+      d     = E - E_a;
+      E_a   = E_a + (d/nT);
+      d     = t - t_a;
+      t_a   = t_a + (d/nT);
       
       x0_v.push_back(x0);
       xp_v.push_back(xp);
@@ -193,14 +204,14 @@ void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
     }
 
   // Compute difference between sample mean and specified means
-  x0_a = (x0_a / (G4double)nGenerate) - X0*CLHEP::m;
-  xp_a = (xp_a / (G4double)nGenerate) - Xp0*CLHEP::rad;
-  y0_a = (y0_a / (G4double)nGenerate) - Y0*CLHEP::m;
-  yp_a = (yp_a / (G4double)nGenerate) - Yp0*CLHEP::rad;
-  z0_a = (z0_a / (G4double)nGenerate) - Z0*CLHEP::m;
-  zp_a = (zp_a / (G4double)nGenerate) - Zp0*CLHEP::rad;
-  E_a  = (E_a  / (G4double)nGenerate) - E0*CLHEP::GeV;
-  t_a  = (t_a  / (G4double)nGenerate) - T0*CLHEP::s;
+  x0_a = x0_a - X0*CLHEP::m;
+  xp_a = xp_a - Xp0*CLHEP::rad;
+  y0_a = y0_a - Y0*CLHEP::m;
+  yp_a = yp_a - Yp0*CLHEP::rad;
+  z0_a = z0_a - Z0*CLHEP::m;
+  zp_a = zp_a - Zp0*CLHEP::rad;
+  E_a  = E_a  - E0*CLHEP::GeV;
+  t_a  = t_a  - T0*CLHEP::s;
 
   // Offset with different w.r.t. central value
   for(G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
