@@ -53,7 +53,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   // can be taken resulting in a double kick.
   G4double lengthFraction = h / thinElementLength;
   
-  if (fcof == 0 || zeroStrength || lengthFraction < 0.6)
+  if (!BDS::IsFinite(fcof) || zeroStrength || lengthFraction < 0.51)
     {// neutral particle or zero strength - drift through
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);

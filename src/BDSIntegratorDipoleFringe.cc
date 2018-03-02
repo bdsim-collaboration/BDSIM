@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -41,6 +42,8 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+
+  zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
 }
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
@@ -49,6 +52,16 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
                                         G4double       yOut[],
                                         G4double       yErr[])
 {
+  // charge and unit normalisation
+  const G4double fcof = eqOfM->FCof();
+  
+  // Protect against neutral particles, and zero field: drift through.
+  if (!BDS::IsFinite(fcof) || zeroStrength)
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      FudgeDistChordToZero(); // see doxygen in header for explanation
+      return;
+    }
   // container for dipole step output, used as fringe step input
   G4double yTemp[7];
 
@@ -98,7 +111,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
+  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();

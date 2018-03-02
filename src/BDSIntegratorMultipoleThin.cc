@@ -47,6 +47,13 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
       bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
       nfact.push_back(Factorial(i));
     }
+
+  G4bool finiteStrength = false;
+  for (const auto& nl : bnl)
+    {finiteStrength = finiteStrength || BDS::IsFinite(nl);}
+  for (const auto& sl : bsl)
+    {finiteStrength = finiteStrength || BDS::IsFinite(sl);}
+  zeroStrength = !finiteStrength;
 }
 
 void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
@@ -55,6 +62,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
 
   // only apply the kick if we're taking a step longer than half the length of the item,
@@ -63,7 +71,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
   // prevent more than one step begin taken, but occasionally, a very small initial step
   // can be taken resulting in a double kick.
-  if (lengthFraction < 0.51)
+  if (zeroStrength || lengthFraction < 0.51 || !BDS::IsFinite(fcof))
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
