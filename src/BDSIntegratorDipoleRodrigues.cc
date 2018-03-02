@@ -22,17 +22,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetStrength.hh"
 #include "BDSPhysicalConstants.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
-#include <utility>
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+#include <cmath>
+#include <utility>
 
 BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength const*  strengthIn,
-					 G4double                  /*brho*/,
-					 G4Mag_EqRhs*              eqOfMIn):
+							   G4double                  /*brho*/,
+							   G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorMag(eqOfMIn, 6),
   cOverGeV(BDS::cOverGeV),
   angle((*strengthIn)["angle"]),
@@ -41,19 +43,22 @@ BDSIntegratorDipoleRodrigues::BDSIntegratorDipoleRodrigues(BDSMagnetStrength con
   strength(strengthIn),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
+  zeroStrength = !BDS::IsFinite(bField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
 #endif
 }
 
 void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
-				       const G4double dydx[],
-				       G4double       h,
-				       G4double       yOut[],
-				       G4double       yErr[])
+						const G4double dydx[],
+						G4double       h,
+						G4double       yOut[],
+						G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
+  
   // In case of zero field or neutral particles do a linear step:
-  if(bField == 0 || eqOfM->FCof() == 0)
+  if (zeroStrength || !BDS::IsFinite(fcof))
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
@@ -63,7 +68,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   // Construct variables
   G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4double charge   = (eqOfM->FCof())/CLHEP::c_light;
+  G4double charge   = fcof/CLHEP::c_light;
   G4double momMag   = mom.mag();
   G4double rho = momMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
@@ -97,7 +102,7 @@ void BDSIntegratorDipoleRodrigues::AdvanceHelix(const G4double yIn[],
   G4ThreeVector outputLocalPos = RandRp.first;
   G4ThreeVector outputLocalMomUnit = RandRp.second;
   
-  G4double CosT_ov_2=cos(h/rho/2.0);
+  G4double CosT_ov_2 = std::cos(h/rho/2.0);
   G4double dc = std::abs(rho)*(1.-CosT_ov_2);
   if (std::isnan(dc))
     {SetDistChord(rho);}
@@ -151,8 +156,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipoleRodrigues::UpdatePandR
   G4double Theta = h/rho;
 
   G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2 = cos(Theta/2);
-  SinT_ov_2 = sin(Theta/2);
+  CosT_ov_2 = std::cos(Theta/2);
+  SinT_ov_2 = std::sin(Theta/2);
   
   CosT = (CosT_ov_2*CosT_ov_2) - (SinT_ov_2*SinT_ov_2);
   SinT = 2*CosT_ov_2*SinT_ov_2;

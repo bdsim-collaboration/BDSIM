@@ -32,6 +32,7 @@ BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
   G4MagIntegratorStepper(eqOfMIn, nVariablesIn),
   eqOfM(eqOfMIn),
   nVariables(nVariablesIn),
+  zeroStrength(false),
   distChordPrivate(0)
 {
   backupStepper = new G4ClassicalRK4(eqOfMIn, nVariablesIn);

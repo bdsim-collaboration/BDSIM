@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSextupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
@@ -36,6 +37,7 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime = brho * (*strength)["k2"] / CLHEP::m3;
+  zeroStrength = !BDS::IsFinite(bDoublePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
 #endif
