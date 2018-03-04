@@ -58,6 +58,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   const G4double            arcLength = element->l  * CLHEP::m;
   const G4double                angle = (*st)["angle"];
   G4double              bendingRadius = DBL_MAX; // default for zero angle
+  G4double                       fint = element->fint;
+  G4double                      fintx = element->fintx;
+  G4double                       hgap = element->hgap * CLHEP::m;
   // Avoid bad calculations for zero angle. Here we need bending radius to be in
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
@@ -199,7 +202,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
       (*fringeStIn)["polefaceangle"] = element->e1;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e1, element->fint, element->hgap*CLHEP::m);
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e1, fint, hgap);
       G4String segmentName           = baseName + "_e1_fringe";
       G4double fringeAngleIn         = 0.5*oneFringeAngle - incomingFaceAngle;
       G4double fringeAngleOut        = 0.5*oneFringeAngle + incomingFaceAngle;
@@ -294,7 +297,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st);
       (*fringeStOut)["angle"]         = oneFringeAngle;
       (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e2, element->fintx, element->hgap*CLHEP::m);
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e2, fintx, hgap);
       (*fringeStOut)["length"]        = thinElementArcLength;
       G4double fringeAngleIn          = 0.5*oneFringeAngle + outgoingFaceAngle;
       G4double fringeAngleOut         = 0.5*oneFringeAngle - outgoingFaceAngle;
