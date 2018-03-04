@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
 
@@ -142,11 +143,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   else if (element->type == ElementType::_RBEND)
     {// bend builder will construct it to match - but here we just know it's different
       // match a previous rbend with half the angle
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_RBEND)
+	    {differentFromDefinition = true;}
+	}
       // match the upcoming rbend with half the angle
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_RBEND)
+	    {differentFromDefinition = true;}
+	}
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
     }
   else if (element->type == ElementType::_THINMULT)
     {// thinmultipole only uses one angle - so angleIn
