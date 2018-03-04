@@ -447,15 +447,18 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const BDSIntegratorSetType integratorSetType,
 			     const G4double&         incomingFaceAngle,
 			     const G4double&         outgoingFaceAngle,
-			     const G4bool&           includeFringe)
+			     const G4bool&           buildFringeFields)
 {
   const G4String name = elementName;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
   
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
-  G4bool          buildFringeIncoming = includeFringe;
-  G4bool          buildFringeOutgoing = includeFringe;
+  G4bool          buildFringeIncoming = buildFringeFields;
+  G4bool          buildFringeOutgoing = buildFringeFields;
+  G4double                       fint = element->fint;
+  G4double                      fintx = element->fintx;
+  G4double                       hgap = element->hgap * CLHEP::m;
   
   // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
   const G4double       angle = (*st)["angle"];
@@ -468,29 +471,44 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
-  // don't build the fringe element if there's no face angle in the original element
-  // definition - no physical effect. Here, 'no face angle' really means that the
-  // rbend becomes an sbend. Calculate how far away we are from an sbend.
+  // Here, 'no face angle' really means that the rbend becomes an sbend.
+  // Calculate how far away we are from an sbend.
   G4double incomingFaceAngleWRTSBend = incomingFaceAngle + angle*0.5;
   G4double outgoingFaceangleWRTSBend = outgoingFaceAngle + angle*0.5;
   if (!BDS::IsFinite(incomingFaceAngleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeIncoming = false;}
   if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeOutgoing = false;}
+
+  // however if finite hgap and fint or fintx specified, there is an effect
+  if ((BDS::IsFinite(fint) || BDS::IsFinite(fintx)) && BDS::IsFinite(hgap))
+    {
+      buildFringeIncoming = true;
+      buildFringeOutgoing = true;
+    }
+  if (BDS::IsFinite(fint) && !BDS::IsFinite(fintx))
+    {fintx = fint;} // if no fintx specified, use fint as the same
+  
   // the poleface angles to be used in tracking only.
   G4double trackingPolefaceAngleIn = element->e1;
   G4double trackingPolefaceAngleOut = element->e2;
   if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
-    {
+    {// for this integrator set we track the rbend as an sbend with extra pole face rotation
       trackingPolefaceAngleIn += angle*0.5;
       trackingPolefaceAngleOut += angle*0.5;
     }
 
   G4double e1 = -incomingFaceAngle;
   G4double e2 = -outgoingFaceAngle;
-  
+
   if (prevElement)
     {
+      if (BDS::IsFinite(prevElement->e2) && BDS::IsFinite(element->e1))
+	{
+	  G4cerr << __METHOD_NAME__ << prevElement->name << " has finite e2!" << G4endl;
+	  G4cerr << "Clashes with " << elementName << " with finite e1" << G4endl;
+	  exit(1);
+	}
       if (prevElement->type == ElementType::_RBEND)
 	{
 	  buildFringeIncoming = false;
@@ -499,6 +517,12 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
     }
   if (nextElement)
     {
+      if (BDS::IsFinite(nextElement->e1) && BDS::IsFinite(element->e2))
+	{
+	  G4cerr << __METHOD_NAME__ << nextElement->name << " has finite e1!" << G4endl;
+	  G4cerr << "Clashes with " << elementName << " with finite e2" << G4endl;
+	  exit(1);
+	}
       if (nextElement->type == ElementType::_RBEND)
 	{
 	  buildFringeOutgoing = false;
@@ -572,7 +596,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       (*fringeStIn)["polefaceangle"] = trackingPolefaceAngleIn;
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleIn , element->fint, element->hgap*CLHEP::m);
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleIn , fint, hgap);
       G4String fringeName            = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
@@ -621,7 +645,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       (*fringeStOut)["polefaceangle"] = trackingPolefaceAngleOut;
       (*fringeStOut)["length"]        = thinElementArcLength;
       (*fringeStOut)["angle"]         = oneFringeAngle;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleOut, element->fintx, element->hgap*CLHEP::m);
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, trackingPolefaceAngleOut, fintx, hgap);
       G4String fringeName             = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,

@@ -145,13 +145,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       // match a previous rbend with half the angle
       if (prevElement)
 	{
-	  if (prevElement->type == ElementType::_RBEND)
+	  if (prevElement->type == ElementType::_RBEND) // also if includeFringeFields
 	    {differentFromDefinition = true;}
 	}
       // match the upcoming rbend with half the angle
       if (nextElement)
 	{
-	  if (nextElement->type == ElementType::_RBEND)
+	  if (nextElement->type == ElementType::_RBEND) // also if includeFringeFields
 	    {differentFromDefinition = true;}
 	}
     }
@@ -490,31 +490,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
-
-  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
-    {
-      G4cerr << G4endl << __METHOD_NAME__
-             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
-             << G4endl << G4endl;
-    }
-  if (prevElement)
-    {
-      if (BDS::IsFinite(prevElement->e2) && BDS::IsFinite(element->e1))
-	{
-	  G4cerr << __METHOD_NAME__ << prevElement->name << " has finite e2!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e1" << G4endl;
-	  exit(1);
-	}
-    }
-  if (nextElement)
-    {
-      if (BDS::IsFinite(nextElement->e1) && BDS::IsFinite(element->e2))
-	{
-	  G4cerr << __METHOD_NAME__ << nextElement->name << " has finite e1!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e2" << G4endl;
-	  exit(1);
-	}
-    }
 
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);

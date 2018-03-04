@@ -68,7 +68,7 @@ namespace BDS
 			  const BDSIntegratorSetType integratorSetType,
 			  const G4double&         incomingFaceAngle,
 			  const G4double&         outgoingFaceAngle,
-			  const G4bool&           includeFringe);
+			  const G4bool&           buildFringeFields);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
