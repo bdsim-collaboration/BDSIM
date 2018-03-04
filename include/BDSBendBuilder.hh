@@ -51,7 +51,9 @@ namespace BDS
 					  const BDSIntegratorSet* integratorSet,
 					  const G4double&         incomingFaceAngle,
 					  const G4double&         outgoingFaceAngle,
-					  const G4bool&           includeFringe);
+					  const G4bool&           buildFringeFields,
+					  const GMAD::Element*    prevElement,
+					  const GMAD::Element*    nextElement);
   
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
