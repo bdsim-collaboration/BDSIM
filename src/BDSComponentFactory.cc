@@ -450,23 +450,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
-  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
-    {
-      G4cerr << G4endl << __METHOD_NAME__
-             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
-             << G4endl << G4endl;
-    }
-  if (prevElement)
-    {
-      if (prevElement->type == ElementType::_SBEND && BDS::IsFinite(prevElement->e2 - element->e1))
-	{
-	  G4cerr << __METHOD_NAME__ << prevElement->name << " e2 clashes with "
-		 << elementName  << " e1" << G4endl;
-	  exit(1);
-	}
-
-    }
-
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
@@ -477,7 +460,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
                                        incomingFaceAngle, outgoingFaceAngle,
-				       includeFringeFields);
+				       includeFringeFields, prevElement, nextElement);
   
   return sBendLine;
 }

@@ -48,13 +48,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 					     const BDSIntegratorSet* integratorSet,
 					     const G4double&         incomingFaceAngle,
 					     const G4double&         outgoingFaceAngle,
-					     const G4bool&           includeFringe)
+					     const G4bool&           buildFringeFields,
+					     const GMAD::Element*    prevElement,
+					     const GMAD::Element*    nextElement)
 {
   const G4String             baseName = elementName;
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
-  const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
-  G4bool          buildFringeIncoming = includeFringe;
-  G4bool          buildFringeOutgoing = includeFringe;  
+  const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st); 
   const G4double            arcLength = element->l  * CLHEP::m;
   const G4double                angle = (*st)["angle"];
   G4double              bendingRadius = DBL_MAX; // default for zero angle
@@ -68,12 +68,56 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
-  // don't build the fringe element if there's no face angle - no physical effect
-  if (!BDS::IsFinite(element->e1))
-    {buildFringeIncoming = false;}
-  if (!BDS::IsFinite(element->e2))
-    {buildFringeOutgoing = false;}
+  G4bool buildFringeIncoming = buildFringeFields;
+  G4bool buildFringeOutgoing = buildFringeFields;
 
+  if (buildFringeFields)
+    {
+      // perform series of checks on fringe field parameters
+      // nominally, don't build the fringe element if there's no face angle
+      if (!BDS::IsFinite(element->e1))
+	{buildFringeIncoming = false;} // by default false
+      if (!BDS::IsFinite(element->e2))
+	{buildFringeOutgoing = false;}
+      
+      // however if finite hgap and fint or fintx specified, there is an effect
+      if ((BDS::IsFinite(fint) || BDS::IsFinite(fintx)) && BDS::IsFinite(hgap))
+	{
+	  buildFringeIncoming = true;
+	  buildFringeOutgoing = true;
+	}
+      if (BDS::IsFinite(fint) && !BDS::IsFinite(fintx))
+	{fintx = fint;} // if no fintx specified, use fint as the same
+      
+      // overriding checks - don't build fringe field if we're butt against another
+      // sbend.
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SBEND)
+	    {
+	      buildFringeIncoming = false;
+	      if (BDS::IsFinite(prevElement->e2 - element->e1))
+		{
+		  G4cerr << __METHOD_NAME__ << prevElement->name << " e2 clashes with "
+			 << elementName << " e1" << G4endl;
+		  exit(1);
+		}
+	    }
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SBEND)
+	    {buildFringeOutgoing = false;}
+	  // check above on clashing sbends with e1 e2 will be used for next bend.
+	}
+      
+      if (!BDS::IsFinite(angle))
+	{// no fringe fields if magnet of zero angle, ie strength
+	  buildFringeIncoming = false;
+	  buildFringeOutgoing = false;
+	}
+    }// end of checks
+  
   // Calculate number of sbends to split parent into
   G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, incomingFaceAngle,
 					       outgoingFaceAngle);
