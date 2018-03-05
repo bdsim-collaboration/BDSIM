@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
 
@@ -142,11 +143,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   else if (element->type == ElementType::_RBEND)
     {// bend builder will construct it to match - but here we just know it's different
       // match a previous rbend with half the angle
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_RBEND) // also if includeFringeFields
+	    {differentFromDefinition = true;}
+	}
       // match the upcoming rbend with half the angle
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_RBEND) // also if includeFringeFields
+	    {differentFromDefinition = true;}
+	}
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
     }
   else if (element->type == ElementType::_THINMULT)
     {// thinmultipole only uses one angle - so angleIn
@@ -430,23 +450,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
-  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
-    {
-      G4cerr << G4endl << __METHOD_NAME__
-             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
-             << G4endl << G4endl;
-    }
-  if (prevElement)
-    {
-      if (prevElement->type == ElementType::_SBEND && BDS::IsFinite(prevElement->e2 - element->e1))
-	{
-	  G4cerr << __METHOD_NAME__ << prevElement->name << " e2 clashes with "
-		 << elementName  << " e1" << G4endl;
-	  exit(1);
-	}
-
-    }
-
 #ifdef BDSDEBUG
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
@@ -457,7 +460,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
                                        incomingFaceAngle, outgoingFaceAngle,
-				       includeFringeFields);
+				       includeFringeFields, prevElement, nextElement);
   
   return sBendLine;
 }
@@ -487,31 +490,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
-
-  if ((BDS::IsFinite(element->e1) || BDS::IsFinite(element->e2)) && !includeFringeFields)
-    {
-      G4cerr << G4endl << __METHOD_NAME__
-             << "Finite pole face angle, but fringe fields turned off in options! Tracking will be wrong!"
-             << G4endl << G4endl;
-    }
-  if (prevElement)
-    {
-      if (BDS::IsFinite(prevElement->e2) && BDS::IsFinite(element->e1))
-	{
-	  G4cerr << __METHOD_NAME__ << prevElement->name << " has finite e2!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e1" << G4endl;
-	  exit(1);
-	}
-    }
-  if (nextElement)
-    {
-      if (BDS::IsFinite(nextElement->e1) && BDS::IsFinite(element->e2))
-	{
-	  G4cerr << __METHOD_NAME__ << nextElement->name << " has finite e1!" << G4endl;
-	  G4cerr << "Clashes with " << elementName << " with finite e2" << G4endl;
-	  exit(1);
-	}
-    }
 
   // geometric face angles (can be different from specification depending on integrator set used)
   G4double incomingFaceAngle = IncomingFaceAngle(element);

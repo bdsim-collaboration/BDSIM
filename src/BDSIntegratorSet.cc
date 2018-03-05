@@ -108,9 +108,9 @@ namespace BDS
 			 BDSIntegratorType::dipolematrix,   // dipole
 			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
 			 BDSIntegratorType::quadrupole,     // quadrupole
-			 BDSIntegratorType::sextupole,      // sextupole
-			 BDSIntegratorType::octupole,       // octupole
-			 BDSIntegratorType::decapole,       // decapole
+			 BDSIntegratorType::euler,          // sextupole
+			 BDSIntegratorType::euler,          // octupole
+			 BDSIntegratorType::euler,          // decapole
 			 BDSIntegratorType::g4classicalrk4, // thick multipole
 			 BDSIntegratorType::g4classicalrk4, // muon spoiler
 			 BDSIntegratorType::g4classicalrk4, // rfcavity
