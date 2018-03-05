@@ -83,7 +83,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4ThreeVector pos = G4ThreeVector(yTemp[0], yTemp[1], yTemp[2]);
   G4ThreeVector mom = G4ThreeVector(yTemp[3], yTemp[4], yTemp[5]);
 
-  BDSStep      localPosMom  = ConvertToLocal(pos, mom, h, true, thinElementLength);
+  BDSStep  localPosMom    = GlobalToCurvilinear(pos, mom, h, true);
   G4ThreeVector localPos  = localPosMom.PreStepPoint();
   G4ThreeVector localMom  = localPosMom.PostStepPoint();
   G4ThreeVector localMomU = localMom.unit();
@@ -92,14 +92,14 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   if (localMomU.z() < 0.9)
     {return;}
 
-  // calculate new position
+  // calculate new position and momentum kick
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = BDSAuxiliaryNavigator::CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, eqOfM->FCof());
-  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
+  BDSStep          globalOut = CurvilinearToGlobal(localCLPosOut, localCLMomOut, true);
+  G4ThreeVector    globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 
