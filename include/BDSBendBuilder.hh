@@ -51,7 +51,9 @@ namespace BDS
 					  const BDSIntegratorSet* integratorSet,
 					  const G4double&         incomingFaceAngle,
 					  const G4double&         outgoingFaceAngle,
-					  const G4bool&           includeFringe);
+					  const G4bool&           buildFringeFields,
+					  const GMAD::Element*    prevElement,
+					  const GMAD::Element*    nextElement);
   
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
@@ -66,7 +68,7 @@ namespace BDS
 			  const BDSIntegratorSetType integratorSetType,
 			  const G4double&         incomingFaceAngle,
 			  const G4double&         outgoingFaceAngle,
-			  const G4bool&           includeFringe);
+			  const G4bool&           buildFringeFields);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
