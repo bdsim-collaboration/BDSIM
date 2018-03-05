@@ -45,8 +45,8 @@ void BDSIntegratorDrift::AdvanceDriftMag(const G4double       yIn[],
   for (G4int i = 0; i < 3; i++)
     {
       yOut[i]   = yIn[i] + h * unitMomentum[i]; // update position
-      yOut[i+3] = yIn[i+3];                    // momentum doesn't change
-	  yErr[i]   = 0;
-	  yErr[i+3] = 0;
+      yOut[i+3] = yIn[i+3];                     // momentum doesn't change
+      yErr[i]   = 0;
+      yErr[i+3] = 0;
     }
 }

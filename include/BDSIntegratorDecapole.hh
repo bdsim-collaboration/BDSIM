@@ -46,7 +46,7 @@ protected:
   virtual void AdvanceHelix(const G4double yIn[],
 			    G4double       h,
 			    G4double       yDec[],
-                G4double       yErr[]);
+			    G4double       yErr[]);
   
 private:
   /// Private default constructor to enforce use of supplied constructor

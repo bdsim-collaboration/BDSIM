@@ -42,6 +42,8 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   // we take |Brho| as it depends on charge and so does the eqOfM->FCof()
   // so they'd both cancel out.
   bPrime = std::abs(brho) * (*strength)["k1"] / CLHEP::m2;
+
+  zeroStrength = !BDS::IsFinite(bPrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -53,6 +55,15 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
+  // In case of zero field or neutral particles do a linear step
+  const G4double fcof = eqOfM->FCof();
+  if (zeroStrength || !BDS::IsFinite(fcof))
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
 
@@ -60,7 +71,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   // note bPrime was calculated w.r.t. the nominal rigidity.
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   // as well as charge of the given particle
-  G4double kappa = eqOfM->FCof()*bPrime/momMag;
+  G4double kappa = fcof*bPrime/momMag;
   
   // Neutral particle or no strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)
@@ -139,27 +150,27 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   
   if (kappa > 0)
     {//focussing
-      X11= cos(rootKh);
-      X12= sin(rootKh)/rootK;
-      X21=-std::abs(kappa)*X12;
-      X22= X11;
+      X11 = std::cos(rootKh);
+      X12 = std::sin(rootKh)/rootK;
+      X21 =-std::abs(kappa)*X12;
+      X22 = X11;
       
-      Y11= cosh(rootKh);
-      Y12= sinh(rootKh)/rootK;
-      Y21= std::abs(kappa)*Y12;
-      Y22= Y11;
+      Y11 = std::cosh(rootKh);
+      Y12 = std::sinh(rootKh)/rootK;
+      Y21 = std::abs(kappa)*Y12;
+      Y22 = Y11;
     }
   else
     {// defocussing
-      X11= cosh(rootKh);
-      X12= sinh(rootKh)/rootK;
-      X21= std::abs(kappa)*X12;
-      X22= X11;
+      X11 = cosh(rootKh);
+      X12 = sinh(rootKh)/rootK;
+      X21 = std::abs(kappa)*X12;
+      X22 = X11;
       
-      Y11= cos(rootKh);
-      Y12= sin(rootKh)/rootK;
-      Y21= -std::abs(kappa)*Y12;
-      Y22= Y11;
+      Y11 = std::cos(rootKh);
+      Y12 = std::sin(rootKh)/rootK;
+      Y21 = -std::abs(kappa)*Y12;
+      Y22 = Y11;
     }
       
   x1  = X11*x0 + X12*xp;    

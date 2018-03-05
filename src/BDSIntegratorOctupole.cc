@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorOctupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -36,6 +37,8 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 {
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   bTriplePrime = brho * (*strength)["k3"] / (CLHEP::m3*CLHEP::m);
+
+  zeroStrength = !BDS::IsFinite(bTriplePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;
 #endif
@@ -44,7 +47,7 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
 					 G4double        yOut[],
-                     G4double        yErr[])
+					 G4double        yErr[])
 {
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double momMag   = mom.mag();
