@@ -86,7 +86,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	  buildFringeIncoming = true;
 	  buildFringeOutgoing = true;
 	}
-      if (BDS::IsFinite(fint) && !BDS::IsFinite(fintx))
+      if (fintx == -1)
 	{fintx = fint;} // if no fintx specified, use fint as the same
       
       // overriding checks - don't build fringe field if we're butt against another
