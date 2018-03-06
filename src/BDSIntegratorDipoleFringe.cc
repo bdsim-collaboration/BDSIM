@@ -96,7 +96,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4ThreeVector pos = G4ThreeVector(yTemp[0], yTemp[1], yTemp[2]);
   G4ThreeVector mom = G4ThreeVector(yTemp[3], yTemp[4], yTemp[5]);
 
-  BDSStep      localPosMom  = ConvertToLocal(pos, mom, h, true, thinElementLength);
+  BDSStep  localPosMom    = GlobalToCurvilinear(pos, mom, h, true);
   G4ThreeVector localPos  = localPosMom.PreStepPoint();
   G4ThreeVector localMom  = localPosMom.PostStepPoint();
   G4ThreeVector localMomU = localMom.unit();
@@ -105,7 +105,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   if (localMomU.z() < 0.9)
     {return;}
 
-  // calculate new position
+  // calculate new position and momentum kick
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
@@ -162,7 +162,7 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  Y21 = -tan(polefaceAngle + fringeCorr) / (rho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;

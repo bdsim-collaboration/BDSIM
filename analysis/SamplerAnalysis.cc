@@ -138,6 +138,8 @@ void SamplerAnalysis::Process(bool firstTime)
       {continue;} // select only primary particles
     if (s->turnNumber[i] > 1)
       {continue;} // only use first turn particles
+    if (s->zp[i] <= 0)
+      {continue;} // only forward going particles - sampler can intercept backwards particles
 
     coordinates[0] = s->x[i];
     coordinates[1] = s->xp[i];

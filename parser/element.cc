@@ -331,7 +331,7 @@ void Element::flush()
   e1 = 0;
   e2 = 0;
   fint = 0;
-  fintx = 0;
+  fintx = -1;
   hgap  = 0;
   kick  = 0;
   hkick = 0;
