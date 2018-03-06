@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+#include <regex>
 
 using namespace xercesc;
 
@@ -271,9 +272,19 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
 	}
       else
 	{
-	  std::string value = XMLString::transcode(attr->getNodeValue());
-	  if (find(names.begin(), names.end(), value) != names.end())
-	    {attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));}
+	  std::string expression = XMLString::transcode(attr->getNodeValue());
+	  // Iterate over all the names that have been defined.
+	  for (auto defined_name: names) {
+	    // A regex which matches only the name if its whole
+	    // (i.e. protects against substrings).
+	    std::regex whole_name(std::string("\\b") + defined_name + "\\b");
+	    if (std::regex_search(expression, whole_name)) {
+	      expression = std::regex_replace(expression,
+					      whole_name,
+					      prefix + "_$&");
+	      }
+	  }
+	  attr->setNodeValue(XMLString::transcode((expression).c_str()));
 	}
     }
 }
