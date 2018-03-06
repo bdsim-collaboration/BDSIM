@@ -3,8 +3,8 @@ PYMADX = ./pymadx/
 PYMAD8 = ./pymad8/
 
 all:
-	$(MAKE) -C PYBDSIM
-	$(MAKE) -C PYMADX
-	$(MAKE) -C PYMAD8
+	$(MAKE) develop -C PYBDSIM
+	$(MAKE) develop -C PYMADX
+	$(MAKE) develop -C PYMAD8
 
 .DEFAULT_GOAL := all

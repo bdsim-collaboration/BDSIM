@@ -178,7 +178,7 @@ namespace BDS
   /// it can prove problematic to resolve the outgoing surface - better to give some margin.
   G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
 				 const G4double length,
-				 const G4double fraction = 1.1);
+				 const G4double fraction = 1.6);
 }
 
 #endif
