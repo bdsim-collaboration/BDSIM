@@ -181,7 +181,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4double semiAngle     = centralAngle / (G4double) nSBends;
   G4double semiArcLength = centralArcLength / (G4double) nSBends;
 
-  BDSMagnetStrength* semiStrength = new BDSMagnetStrength(*st);
+  BDSMagnetStrength* semiStrength = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
   (*semiStrength)["angle"]  = semiAngle;
   (*semiStrength)["length"] = semiArcLength;
   
@@ -246,7 +246,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // build incoming fringe field if required
   if (buildFringeIncoming)
     {
-      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
+      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
       (*fringeStIn)["polefaceangle"] = element->e1;
@@ -342,7 +342,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     {
-      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st);
+      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
       (*fringeStOut)["angle"]         = oneFringeAngle;
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, element->e2, fintx, hgap);
@@ -414,7 +414,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 const BDSIntegratorSet*  integratorSet,
 				 const G4bool             yokeOnLeft)
 {
-  BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength);
+  BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength); // the copy is crucial to copy the field strength
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
@@ -600,7 +600,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   if (buildFringeIncoming)
     {
-      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
+      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
       (*fringeStIn)["polefaceangle"] = trackingPolefaceAngleIn;
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
@@ -648,7 +648,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     { 
-      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
+      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(); // the copy is crucial to copy the field strength
       (*fringeStOut)["field"]         = (*st)["field"];
       (*fringeStOut)["polefaceangle"] = trackingPolefaceAngleOut;
       (*fringeStOut)["length"]        = thinElementArcLength;
