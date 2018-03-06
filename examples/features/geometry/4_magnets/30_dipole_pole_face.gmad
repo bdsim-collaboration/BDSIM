@@ -6,8 +6,10 @@ sb2 : sbend, l=2.5*m, angle = 0.0, e1=-0.4, e2=0.4;
 d3  : drift, l=0.5;
 sb3 : sbend, l=2.5*m, angle =-0.1, e1=0.4, e2=0.4;
 d4: drift, l=0.5;
+sb4 : sbend, l=0.4*m, angle=0.23, e1=0.045;
+sb5 : sbend, l=0.3*m, angle=0.209, e2=-0.039;
 
-lat : line = (d1,sb1,d2,sb2,d3,sb3,d4,d1,sb1,sb1);
+lat : line = (d1,sb1,d2,sb2,d3,sb3,d4,d1,sb4,sb5);
 
 use, lat;
 
