@@ -79,15 +79,19 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 	{buildFringeIncoming = false;} // by default false
       if (!BDS::IsFinite(element->e2))
 	{buildFringeOutgoing = false;}
+
+      // fintx = -1 is how madx writes out that fintx should default to fint
+      // it's also our default. If by default fint=0 and fintx=0, no fringes
+      // would be built. If finite fint and -1 for fintx both will be built.
+      // if fint=0 and fintx != -1, only the outgoin will be built
+      if (fintx == -1)
+	{fintx = fint;}
       
       // however if finite hgap and fint or fintx specified, there is an effect
-      if ((BDS::IsFinite(fint) || BDS::IsFinite(fintx)) && BDS::IsFinite(hgap))
-	{
-	  buildFringeIncoming = true;
-	  buildFringeOutgoing = true;
-	}
-      if (fintx == -1)
-	{fintx = fint;} // if no fintx specified, use fint as the same
+      if (BDS::IsFinite(fint) && BDS::IsFinite(hgap))
+	{buildFringeIncoming = true;}
+      if (BDS::IsFinite(fintx) && BDS::IsFinite(hgap))
+	{buildFringeOutgoing = true;}      
       
       // overriding checks - don't build fringe field if we're butt against another
       // sbend.
@@ -480,14 +484,18 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
     {buildFringeOutgoing = false;}
 
+  // fintx = -1 is how madx writes out that fintx should default to fint
+  // it's also our default. If by default fint=0 and fintx=0, no fringes
+  // would be built. If finite fint and -1 for fintx both will be built.
+  // if fint=0 and fintx != -1, only the outgoin will be built
+  if (fintx == -1)
+    {fintx = fint;}
+  
   // however if finite hgap and fint or fintx specified, there is an effect
-  if ((BDS::IsFinite(fint) || BDS::IsFinite(fintx)) && BDS::IsFinite(hgap))
-    {
-      buildFringeIncoming = true;
-      buildFringeOutgoing = true;
-    }
-  if (BDS::IsFinite(fint) && !BDS::IsFinite(fintx))
-    {fintx = fint;} // if no fintx specified, use fint as the same
+  if (BDS::IsFinite(fint) && BDS::IsFinite(hgap))
+    {buildFringeIncoming = true;}
+  if (BDS::IsFinite(fintx) && BDS::IsFinite(hgap))
+    {buildFringeOutgoing = true;} 
   
   // the poleface angles to be used in tracking only.
   G4double trackingPolefaceAngleIn = element->e1;
