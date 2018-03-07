@@ -32,8 +32,8 @@ simple_testing(component-vKicker             "--file=vkicker.gmad"         ${OVE
 
 # ones requiring special options / falgs
 if(USE_GDML)
-  simple_testing(component-GDML              "--file=gdml.gmad"              ${OVERLAP_CHECK})
-  simple_testing(component-GDML-nopreprocess "--file=gdml_nopreprocess.gmad" ${OVERLAP_CHECK})
+  simple_testing(component-gdml              "--file=gdml.gmad"              ${OVERLAP_CHECK})
+  simple_testing(component-gdml-nopreprocess "--file=gdml_nopreprocess.gmad" ${OVERLAP_CHECK})
 endif()
 
 set(TESTING_ARGS --circular)
