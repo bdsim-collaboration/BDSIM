@@ -258,6 +258,10 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::multipoleoutersextupole:
     case BDSFieldType::multipoleouteroctupole:
     case BDSFieldType::multipoleouterdecapole:
+    case BDSFieldType::skewmultipoleouterquadrupole:
+    case BDSFieldType::skewmultipoleoutersextupole:
+    case BDSFieldType::skewmultipoleouteroctupole:
+    case BDSFieldType::skewmultipoleouterdecapole:
       {return multipoleOuter;   break;}
     default:
       {return general;          break;}
