@@ -23,7 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagUsualEqRhs.hh"
 #include "globals.hh"
 
-class BDSIntegratorDipole2;
+class BDSIntegratorDipoleRodrigues2;
 class BDSMagnetStrength;
 class BDSStep;
 class G4Mag_EqRhs;
@@ -58,23 +58,34 @@ protected:
   /// Calculate a single step in curvilinear coordinates using dipole quadrupole matrix.
   /// Unit momentum is provided as an argument becuase it is already calculated in the
   /// Stepper method.
-  void OneStep(G4ThreeVector  posIn,
-	       G4ThreeVector  momIn,
-	       G4ThreeVector  momUIn, // assumed unit momentum of momIn
-	       G4double       h,
-	       G4ThreeVector& posOut,
-	       G4ThreeVector& momOut) const;
+  void OneStep(const G4ThreeVector& posIn,
+	       const G4ThreeVector& momIn,
+	       const G4ThreeVector& momUIn, // assumed unit momentum of momIn
+	       const G4double&      h,
+	       const G4double&      fcof,
+	       G4ThreeVector&       posOut,
+	       G4ThreeVector&       momOut) const;
 
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
 
-  BDSIntegratorDipole2* dipole;
-  BDSMagUsualEqRhs*     eq;
-  G4double              bPrime;
-  G4double 		bRho;
-  G4double 		k1;
-  G4double 		beta;
+  /// Backup integrator
+  BDSIntegratorDipoleRodrigues2* dipole;
+
+  /// BDSIMs eqRhs class to give access to particle properties
+  BDSMagUsualEqRhs* eq;
+
+  /// Cached magnet property, B field gradient for calculating K1
+  const G4double    bPrime;
+
+  /// Cached magnet property, nominal magnetic rigidity
+  const G4double 	bRho;
+
+  /// Cached magnet property, nominal bending radius.
+  const G4double 	rho;
+
+  /// Cache magnet strength, required for curvilinear transforms.
   BDSMagnetStrength const* strength;
 };
 

@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
@@ -57,10 +58,13 @@ BDSSDManager::BDSSDManager()
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
-  
-  eCounter = new BDSEnergyCounterSD("general");
+
+  G4bool stopSecondaries = BDSGlobalConstants::Instance()->StopSecondaries();
+  G4bool verbose         = BDSGlobalConstants::Instance()->Verbose();
+
+  eCounter = new BDSEnergyCounterSD("general", stopSecondaries, verbose);
   SDMan->AddNewDetector(eCounter);
 
-  tunnelECounter = new BDSEnergyCounterSD("tunnel");
+  tunnelECounter = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
   SDMan->AddNewDetector(tunnelECounter);
 }

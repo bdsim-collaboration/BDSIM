@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
+#include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
 
@@ -82,17 +83,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
-  brho(brhoIn)
+  brho(brhoIn),
+  lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
+  thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
+  includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
+  integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
-  lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
-  BDSIntegratorSetType intSetType = BDSGlobalConstants::Instance()->IntegratorSet();
-  integratorSet = BDS::IntegratorSet(intSetType);
-  G4cout << __METHOD_NAME__ << "Using \"" << intSetType << "\" set of integrators" << G4endl;
+  integratorSet = BDS::IntegratorSet(integratorSetType);
+  G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
-  // prepare rf cavity model info from parser
-  PrepareCavityModels();
-  
-  thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
+  PrepareCavityModels(); // prepare rf cavity model info from parser
 }
 
 BDSComponentFactory::~BDSComponentFactory()
@@ -141,13 +141,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
-    {// bend builder will construct it to match - but here we just now it's different
+    {// bend builder will construct it to match - but here we just know it's different
       // match a previous rbend with half the angle
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_RBEND) // also if includeFringeFields
+	    {differentFromDefinition = true;}
+	}
       // match the upcoming rbend with half the angle
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{differentFromDefinition = true;}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_RBEND) // also if includeFringeFields
+	    {differentFromDefinition = true;}
+	}
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SBEND && includeFringeFields)
+	    {differentFromDefinition = true;}
+	}
     }
   else if (element->type == ElementType::_THINMULT)
     {// thinmultipole only uses one angle - so angleIn
@@ -435,8 +454,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Angle (rad) " << (*st)["angle"] / CLHEP::rad   << G4endl;
   G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
 #endif
-  
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
+  // geometric face angles (can be different from specification depending on integrator set used)
+  G4double incomingFaceAngle = IncomingFaceAngle(element);
+  G4double outgoingFaceAngle = OutgoingFaceAngle(element);
+
+  auto sBendLine = BDS::BuildSBendLine(elementName, element, st, brho, integratorSet,
+                                       incomingFaceAngle, outgoingFaceAngle,
+				       includeFringeFields, prevElement, nextElement);
   
   return sBendLine;
 }
@@ -467,12 +491,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
-  BDSLine* rbendline = BDS::BuildRBendLine(element,
-					   prevElement,
-					   nextElement,
-					   brho,
-					   st,
-					   integratorSet);
+  // geometric face angles (can be different from specification depending on integrator set used)
+  G4double incomingFaceAngle = IncomingFaceAngle(element);
+  G4double outgoingFaceAngle = OutgoingFaceAngle(element);
+
+  // the above in / out face angles are not w.r.t. the local coords - subtract angle/2 to convert
+  // this may seem like undoing the += in the functions, but they're used for the beam pipes
+  // and matching.
+  incomingFaceAngle -= 0.5*angle;
+  outgoingFaceAngle -= 0.5*angle;
+
+  BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
+					   brho, st, integratorSet, integratorSetType,
+					   incomingFaceAngle, outgoingFaceAngle,
+					   includeFringeFields);
   return rbendline;
 }
 void BDSComponentFactory::GetKickValue(G4double& hkick,
@@ -510,7 +542,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 	if (BDS::IsFinite(element->kick))
 	  {
 	    G4cout << __METHOD_NAME__ << "Warning: 'kick' defined in element"
-		   << "\"" << element->name << "\" but will be ignored as general kicker"
+		   << "\"" << elementName << "\" but will be ignored as general kicker"
 		   << G4endl;
 	  }
       }
@@ -622,7 +654,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
     {defaultOuterDiameter = globalDefaultOD;}
   
-  auto magOutInf = PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft, defaultOuterDiameter, 1.5, 0.9);
+  auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, yokeOnLeft,
+					  defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -692,10 +725,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+							       -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = integratorSet->multipolethin;
+  BDSIntegratorType intType = integratorSet->multipoleThin;
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
@@ -805,7 +839,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       elementName,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, st),
+		       PrepareMagnetOuterInfo(elementName, element, st),
 		       vacuumField,
 		       0,
 		       outerField);
@@ -909,14 +943,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 					element->angle); 
   if(element->layerThicknesses.size() != element->layerMaterials.size())
     {
-      G4cerr << __METHOD_NAME__ << "Element \"" << element->name << "\" must have the "
+      G4cerr << __METHOD_NAME__ << "Element \"" << elementName << "\" must have the "
 	     << "same number of materials as layers - check 'layerMaterials'" << G4endl;
       exit(1);
     }
 
   if(element->layerThicknesses.size() == 0 )
     {
-      G4cerr << __METHOD_NAME__ << "Element: \"" << element->name
+      G4cerr << __METHOD_NAME__ << "Element: \"" << elementName
 	     << "\" has 0 screen layers" << G4endl;
       exit(1);
     }
@@ -1034,7 +1068,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       elementName,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, st),
+		       PrepareMagnetOuterInfo(elementName, element, st),
 		       vacuumField,
 		       angle);
 }
@@ -1087,7 +1121,8 @@ G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
   return yokeOnLeft;
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
+								const Element* element,
 								const BDSMagnetStrength* st,
 								G4double defaultOuterDiameter,
 								G4double defaultVHRatio,
@@ -1097,24 +1132,26 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   G4bool yokeOnLeft = YokeOnLeft(element,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft, defaultOuterDiameter,
-				defaultVHRatio, defaultCoilWidthFraction, defaultCoilHeightFraction);
+  return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, yokeOnLeft,
+				defaultOuterDiameter, defaultVHRatio, defaultCoilWidthFraction,
+				defaultCoilHeightFraction);
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const G4double angleIn,
-								const G4double angleOut,
-								const G4bool   yokeOnLeft,
-								G4double       defaultOuterDiameter,
-								G4double       defaultVHRatio,
-								G4double       defaultCoilWidthFraction,
-								G4double       defaultCoilHeightFraction)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
+								const Element*  element,
+								const G4double  angleIn,
+								const G4double  angleOut,
+								const G4bool    yokeOnLeft,
+								G4double        defaultOuterDiameter,
+								G4double        defaultVHRatio,
+								G4double        defaultCoilWidthFraction,
+								G4double        defaultCoilHeightFraction)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   // name
-  info->name = element->name;
+  info->name = elementNameIn;
   
   // magnet geometry type
   if (element->magnetGeometryType == "")
@@ -1640,11 +1677,19 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
+      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+	{return outgoingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       outgoingFaceAngle += 0.5 * bendAngle;
     }
-  // for an sbend, the output face or nominally normal to the outgoing
+
+  // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
+  // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
+  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+    {return outgoingFaceAngle;}
+
+  // for an sbend, the output face is nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes
   
@@ -1670,10 +1715,18 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
+      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+	{return incomingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       incomingFaceAngle += 0.5 * bendAngle;
     }
+
+  // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
+  // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
+  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+    {return incomingFaceAngle;}
+
   // for an sbend, the output face or nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes

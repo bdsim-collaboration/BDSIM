@@ -74,12 +74,12 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsBool["calculateoptics"]   = false;
   optionsBool["mergehistograms"]   = true;
   optionsBool["emittanceonthefly"] = false;
-  optionsBool["perEntryBeam"]      = false;
-  optionsBool["perEntryEvent"]     = false;
-  optionsBool["perEntryRun"]       = false;
-  optionsBool["perEntryOption"]    = false;
-  optionsBool["perEntryModel"]     = false;
-  optionsBool["backwardsCompatible"] = false; // ignore file types for old data
+  optionsBool["perentrybeam"]      = false;
+  optionsBool["perentryevent"]     = false;
+  optionsBool["perentryrun"]       = false;
+  optionsBool["perentryoption"]    = false;
+  optionsBool["perentrymodel"]     = false;
+  optionsBool["backwardscompatible"] = false; // ignore file types for old data
 
   optionsString["inputfilepath"]  = "./output.root";
   optionsString["outputfilename"] = "./output_ana.root";
@@ -155,13 +155,13 @@ void Config::ParseInputFile()
     {
       allBranchesActivated = true;
       optionsBool["processsamplers"] = true;
-      optionsBool["perEntryEvent"]   = true;
+      optionsBool["perentryevent"]   = true;
     }
   if (optionsBool.at("mergehistograms"))
     {
       branches["Event."].push_back("Histos");
       branches["Run."].push_back("Histos");
-      optionsBool["perEntryEvent"]   = true;
+      optionsBool["perentryevent"]   = true;
     }
 }
 
@@ -228,14 +228,14 @@ void Config::ParseHistogram(const std::string line, const int nDim)
   ParsePerEntry(results[0], perEntry);
   
   std::string treeName  = results[1];
-  if (InvalidTreeName(treeName))
-    {throw std::string("Invalid tree name \"" + treeName + "\"");}
+  CheckValidTreeName(treeName);
 
   if (perEntry)
     {
       std::string treeNameWithoutPoint = treeName; // make copy to modify
       treeNameWithoutPoint.pop_back();             // delete last character
-      optionsBool["perEntry"+treeNameWithoutPoint] = true;
+      treeNameWithoutPoint = LowerCase(treeNameWithoutPoint);
+      optionsBool["perentry"+treeNameWithoutPoint] = true;
     }
   
   std::string histName  = results[2];
@@ -361,6 +361,22 @@ void Config::SetBranchToBeActivated(const std::string treeName,
   auto& v = branches.at(treeName);
   if (std::find(v.begin(), v.end(), branchName) == v.end())
     {v.push_back(branchName);}
+}
+
+void Config::CheckValidTreeName(std::string& treeName) const
+{
+  // check it has a point at the end (simple mistake)
+  if (strcmp(&treeName.back(), ".") != 0)
+    {treeName += ".";}
+  
+  if (InvalidTreeName(treeName))
+    {
+      std::string err = "Invalid tree name \"" + treeName + "\"\n";
+      err += "Tree names are one of: ";
+      for (const auto& n : treeNames)
+	{err += "\"" + n + "\" ";}
+      throw(err);
+    }
 }
 
 bool Config::InvalidTreeName(const std::string& treeName) const

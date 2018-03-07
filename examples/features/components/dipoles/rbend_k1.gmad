@@ -1,0 +1,10 @@
+sb1: rbend, l=1*m, angle=0.1, k1=0.02;
+
+l1: line = (sb1);
+
+use, l1;
+
+sample, all;
+
+beam, particle="e-",
+      energy=3*GeV;

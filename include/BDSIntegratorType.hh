@@ -45,12 +45,11 @@ struct integratortypes_def
 #if G4VERSION_NUMBER > 1029
 	     // introduced in version 10.3
 	     , g4bogackishampine23, g4bogackishampine45, g4dolomcprirk34,
-	     g4dormandprince745, g4dormandprincerk56, g4dormandprincerk78,
-	     g4tsitourasrk45
+	     g4dormandprince745, g4dormandprincerk56, g4tsitourasrk45
 #endif
 #if G4VERSION_NUMBER > 1039
 	     // introduced in version 10.4
-	     , g4rk547feq1, g4rk547feq2, g4rk547feq3
+	     , g4dormandprincerk78, g4rk547feq1, g4rk547feq2, g4rk547feq3
 #endif
   };
 };

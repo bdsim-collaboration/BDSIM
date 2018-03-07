@@ -4,22 +4,30 @@ V0.994 - 2018 / 02 / ??
 New Features
 ------------
 
-* Support for Geant4.10.4 - however, this version is unsuable as G4ExtrudedSolid is broken and used in BDSIM. We recommend Geant4.10.3.p03.
+* Support for Geant4.10.4 - however, this version is unsuable as G4ExtrudedSolid is
+  broken and used in BDSIM. We recommend Geant4.10.3.p03.
 * H-style dipoles controllable by default or per element with `hStyle` option.
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
-* Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`, `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`, `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
+* Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`,
+  `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`,
+  `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`,
+  `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`,
+  `G4MuonicAtomDecayPhysics`.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
 * Significantly improved analysis documentation.
-* New component: gap.
+* New component: 'gap'. Create a space in the beam line with no geometry.
+* Ability to specify the world volume material with the `worldMaterial` option.
+* Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
+* Ability to limit step size in user-specified fields.
 
 
 Output \& Analysis Changes
 --------------------------
 
 * Output files now have header structure with software versions.
-* "librebdsimlib" has been changed to "librebdsim" to be more consistent for output loading.
+* "**librebdsimlib**" has been changed to "**libRebdsim**" to be more consistent for output loading.
 * Support for logarithmic binning of histograms in rebdsim.
 * "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
@@ -27,28 +35,43 @@ Output \& Analysis Changes
 * New option in rebdsim to turn off histogram merging (for speed).
 * Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
   now "Eloss" in `bdsim/analysis/Event.hh`.
+* Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
+* 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
+* Trajectory momentum is now in GeV.
 
 General
 -------
 
-* Physics list names are now consistently named with '_' between words. Old list names are still supported.
-* `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are recommended by Geant4 for high energy hadronic interactions.
+* Physics list names are now consistently named with '_' between words. Old list
+  names are still supported.
+* `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and
+  `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are
+  recommended by Geant4 for high energy hadronic interactions.
 * "bdsim" integrator set now maps to "bdsimtwo" integrator set.
 * All objects in the parser can now be extended later rather than just elements.
 * Tuned colours of hkicker and vkicker.
-* Relative file paths are no longer padded excessively with slashes when translated to absolute paths.
+* Relative file paths are no longer padded excessively with slashes when translated
+  to absolute paths.
 * More efficient file IO in rebdsim improves analysis speed.
+* The world material is now air instead of G4_Galatic.
 
 Bug Fixes
 ---------
 
 * Fixed magnetic field strength for AWAKE dipole using pure dipole field.
 * User limits are now applied to external geometry.
-* Fixed bug where some visualisation settings wouldn't be applied to all logical volumes in external geometry.
+* Fixed bug where some visualisation settings wouldn't be applied to all logical
+  volumes in external geometry.
 * Fixed bug where some file paths may not be translated to absolute paths correctly.
 * Fixed a bug where recreate mode would fail with the new Beam structure in the output.
 * Prevent segfault when analysing wrong type of file with rebdsim (use 'backwardsCompatible'
   option to analyse old files withou the new header structure).
+* The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
+* `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
+* Fixed bug where world size would be too small with placements of large externally provided
+  geometry with strong rotations.
+* When no energy was specified in the `userfile` bunch distribution, the central beam energy was
+  1000x too low - fixed - missing factory of GeV.
 
 
 V0.993 - 2017 / 12 / 11

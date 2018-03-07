@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSGlobalConstants.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
@@ -81,6 +82,20 @@ void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
 				     G4bool penetrateToDaughterVolumes)
 {
   volume->SetFieldManager(fieldManager, penetrateToDaughterVolumes);
+  if (!info) // may not always exist
+    {return;}
+
+  auto ul = info->UserLimits();
+  if (ul)
+    {
+      volume->SetUserLimits(ul);
+      int nDaughters = volume->GetNoDaughters();
+      for (int i = 0; i < nDaughters; ++i)
+      {
+        auto daughter = volume->GetDaughter(i);
+        daughter->GetLogicalVolume()->SetUserLimits(ul);
+      }
+    }
 }
 
 void BDSFieldObjects::AttachToVolume(std::vector<G4LogicalVolume*> volumes,

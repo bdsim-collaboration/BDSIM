@@ -25,7 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Type definition for field formats - 
  * used for comparison in factory methods.
- * 
+ *
+ * dipole   - a uniform field assumed along local unit Y
  * dipole3d - a uniform field specified by a unit vector and field magnitude
  * 
  * @author Laurie Nevay
@@ -44,7 +45,8 @@ struct fieldtypes_def
 	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf,
-             dipole3d};
+             dipole3d,
+	     multipoleouter};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated

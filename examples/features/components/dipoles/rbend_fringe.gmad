@@ -1,0 +1,19 @@
+!same as sben but with poleface rotation tests
+d1  : drift, l=1.5;
+sb1 : rbend, l=1.5*m, angle = 0.1, e1=0.4, e2=-0.4, hgap=3*cm, fint=0.4, fintx=0.4;
+d2  : drift, l=1.5;
+sb2 : rbend, l=1.5*m, angle = 0.0, e1=-0.4, e2=0.4;
+d3  : drift, l=1.5;
+sb3 : rbend, l=1.5*m, angle =-0.1, e1=0.4, e2=0.4, hgap=5*cm, fint=0.5, fintx=0.5;
+d4: drift, l=0.5;
+sb4 : rbend, l=2.5*m, angle = 0.1, hgap=5*cm, fint=0.3;
+
+lat : line = (d1,sb1,d2,sb2,d3,sb3,d4,d1,sb4,sb4,d1,sb4,d1);
+com : line = (sb1,sb2,sb3);
+
+include optionsTest.gmad;
+
+option, outerDiameter=20*cm,
+	samplerDiameter=20*cm;
+
+option, includeFringeFields=1;

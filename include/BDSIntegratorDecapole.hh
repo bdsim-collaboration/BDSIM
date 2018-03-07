@@ -45,7 +45,8 @@ protected:
   /// Calculate the new particle coordinates.
   virtual void AdvanceHelix(const G4double yIn[],
 			    G4double       h,
-			    G4double       yDec[]);
+			    G4double       yDec[],
+			    G4double       yErr[]);
   
 private:
   /// Private default constructor to enforce use of supplied constructor

@@ -74,6 +74,9 @@ public:
   /// Check whether an accelerator component is already registered by name.
   G4bool IsRegistered(G4String componentName);
 
+  /// Check if a unique component is registered in the allocatedComponents.
+  G4bool IsRegisteredAllocated(const BDSAcceleratorComponent* componentName) const;
+
   /// Access an already constructed component - will return null if no such component found.
   /// This is safe as this registry is primarily used by BDSComponentFactory which can return
   /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.

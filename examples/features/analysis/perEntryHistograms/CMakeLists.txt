@@ -1,3 +1,1 @@
-simple_testing(IO_PERENTRY "--file=io.gmad" "")
-
-_rebdsimAnalTest(ANALYSIS_perEntryHistograms  "analysisConfig.txt")
+rebdsim_test(analysis-per-entry-histograms  "analysisConfig.txt")

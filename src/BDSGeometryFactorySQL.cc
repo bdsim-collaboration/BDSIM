@@ -371,15 +371,9 @@ G4VisAttributes* BDSGeometryFactorySQL::VisAtt()
   return VisAtt;
 }
 
-G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
+G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double maxStepLength)
 {
-  G4UserLimits* UserLimits = new G4UserLimits();
-  UserLimits->SetMaxAllowedStep(var*0.5);
-  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  // note, this is different from all other geometry - TBC
-  if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0)
-    {UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());}
-  return UserLimits;
+  return BDS::CreateUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits(), maxStepLength);
 }
 
 //Set logical volume attributes

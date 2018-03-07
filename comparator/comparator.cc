@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Compare.hh"
 
+#include "analysis/FileMapper.hh"
+
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -38,7 +40,8 @@ enum EXIT_CODE {
   _EXIT_SUCCESS        = 0,
   _EXIT_FAILED         = 1,
   _EXIT_INCORRECT_ARGS = 2,
-  _EXIT_FILE_NOT_FOUND = 3
+  _EXIT_FILE_NOT_FOUND = 3,
+  _EXIT_BAD_FILE       = 4
 };
 
 int main(int argc, char* argv[])
@@ -46,22 +49,21 @@ int main(int argc, char* argv[])
   if(argc != 3)
     { 
       usage();
-      return _EXIT_INCORRECT_ARGS;    
+      return EXIT_CODE::_EXIT_INCORRECT_ARGS;    
     }
 
   // try to open files - check validity
-  TFile *f1 = new TFile(argv[1]);
-  TFile *f2 = new TFile(argv[2]);
-
+  TFile* f1 = new TFile(argv[1]);
+  TFile* f2 = new TFile(argv[2]);
   if(f1->IsZombie())
     {
       std::cout << "error : could not open " << argv[1] << std::endl;    
-      return _EXIT_FILE_NOT_FOUND;
+      return EXIT_CODE::_EXIT_FILE_NOT_FOUND;
     }
   if(f2->IsZombie())
     {
       std::cout << "error : could not open " << argv[2] << std::endl;    
-      return _EXIT_FILE_NOT_FOUND;
+      return EXIT_CODE::_EXIT_FILE_NOT_FOUND;
     }
 
   std::vector<Result*> results = Compare::Files(f1,f2);
@@ -70,10 +72,10 @@ int main(int argc, char* argv[])
   if (!allPassed)
     {
       std::cout << "TESTS_FAILED" << std::endl; // key to look for
-      return _EXIT_FAILED;
+      return EXIT_CODE::_EXIT_FAILED;
     }
   else
-    {return _EXIT_SUCCESS;}
+    {return EXIT_CODE::_EXIT_SUCCESS;}
 }
 
 void usage()

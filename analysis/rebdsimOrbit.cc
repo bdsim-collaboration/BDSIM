@@ -26,7 +26,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "EventAnalysisOrbit.hh"
 
+#include "BDSOutputROOTEventHeader.hh"
+
 #include "TFile.h"
+#include "TTree.h"
 
 void usage()
 { 
@@ -57,6 +60,17 @@ int main(int argc, char* argv[])
       evtAnalysis->ExtractOrbit(index);
       
       TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
+
+      // add header for file type and version details
+      outputFile->cd();
+      BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+      headerOut->Fill(); // updates time stamp
+      headerOut->SetFileType("REBDSIM");
+      TTree* headerTree = new TTree("Header", "REBDSIM Header");
+      headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+      headerTree->Fill();
+      headerTree->Write();
+      
       evtAnalysis->WriteOrbit(outputFile);
       outputFile->Close();
     }

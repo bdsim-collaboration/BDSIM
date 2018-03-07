@@ -43,16 +43,25 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
 				      G4double         yOut[],
 				      G4double         yErr[])
 {
-  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-
   const G4double fcof = eqOfM->FCof();
-  if (fcof == 0 || zeroStrength)
-    {// neutral particle - drift through
-      AdvanceDriftMag(yIn, h, yOut);
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  G4double lengthFraction = h / thinElementLength;
+  
+  if (!BDS::IsFinite(fcof) || zeroStrength || lengthFraction < 0.51)
+    {// neutral particle or zero strength - drift through
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
+
+  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   
   // global to local (thinElementLength is static base class member)
   // purposively control step length as we're dealing with a very short element
@@ -64,7 +73,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   // only use for paraxial momenta, else advance particle as if in a drift
   if (std::abs(localMomUnit.z()) < 0.9)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -86,36 +95,22 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4double px = localMom.x();
   G4double py = localMom.y();
   G4double pz = localMom.z();
-
-  // only apply the kick if we're taking a step longer than half the length of the item,
-  // in which case, apply the full kick. This appears more robust than scaling the kick
-  // by h / thinElementLength as the precise geometrical length depends on the geometry
-  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
-  // prevent more than one step begin taken, but occasionally, a very small initial step
-  // is taken resulting in a double kick.
-  G4double lengthFraction = h / thinElementLength;
   
-  if (lengthFraction > 0.5)
-    {      
-      // Scale the action for the current particle momentum w.r.t.
-      // the design momentum. Even though a thin kicker, it represents
-      // a thin dipole, which would affect different particles differently.
-      G4double localMomMag = localMom.mag();
-      G4double ratio = (fcof * brho ) / localMomMag;    
-      
-      G4double dpx = ratio * hkick * localMomMag * factor;
-      G4double dpy = ratio * vkick * localMomMag * factor;
-      
-      px += dpx;
-      py += dpy;
-      pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
-    }
+  // Scale the action for the current particle momentum w.r.t.
+  // the design momentum. Even though a thin kicker, it represents
+  // a thin dipole, which would affect different particles differently.
+  G4double localMomMag = localMom.mag();
+  G4double ratio = (fcof * brho ) / localMomMag;    
+  
+  G4double dpx = ratio * hkick * localMomMag * factor;
+  G4double dpy = ratio * vkick * localMomMag * factor;
+  
+  px += dpx;
+  py += dpy;
+  pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
   
   G4ThreeVector localPosOut = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomOut = G4ThreeVector(px, py, pz);
   
-  ConvertToGlobal(localPosOut, localMomOut, yOut);
-
-  for (G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
 }

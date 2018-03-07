@@ -186,9 +186,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   yokeLV->SetVisAttributes(outerVisAttr);
 
   // container
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 

@@ -65,7 +65,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
 
       for (const auto& sampler : event->Samplers)
 	{
-	  sa = new SamplerAnalysis(sampler);
+	  sa = new SamplerAnalysis(sampler, debug);
 	  samplerAnalyses.push_back(sa);
 	}
     }
@@ -194,12 +194,12 @@ void EventAnalysis::Write(TFile *outputFile)
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
   std::vector<double> lOpticsPoint;
-  xOpticsPoint.resize(24);
-  yOpticsPoint.resize(24);
-  lOpticsPoint.resize(24);
+  xOpticsPoint.resize(25);
+  yOpticsPoint.resize(25);
+  lOpticsPoint.resize(25);
 
   // write optical functions
-  TTree *opticsTree = new TTree("optics","optics");
+  TTree* opticsTree = new TTree("Optics","Optics");
   opticsTree->Branch("Emitt_x", &(xOpticsPoint[0]), "Emitt_x/D");
   opticsTree->Branch("Emitt_y", &(yOpticsPoint[0]), "Emitt_y/D");
   opticsTree->Branch("Alpha_x", &(xOpticsPoint[1]), "Alpha_x/D");
@@ -253,6 +253,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sigma_Sigma_E", &(lOpticsPoint[20]), "Sigma_Sigma_E/D");
   opticsTree->Branch("Sigma_Sigma_t", &(lOpticsPoint[21]), "Sigma_Sigma_t/D");
 
+  opticsTree->Branch("xyCorrelationCoefficent", &(xOpticsPoint[24]), "xyCorrelationCoefficent/D");
 
   for(const auto entry : opticalFunctions)
     {

@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTEGRATORFRINGEFIELD_H
 #define BDSINTEGRATORFRINGEFIELD_H
 
-#include "BDSIntegratorDipole.hh"
+#include "BDSIntegratorDipoleRodrigues.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -33,7 +33,7 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorFringefield: public BDSIntegratorDipole
+class BDSIntegratorFringefield: public BDSIntegratorDipoleRodrigues
 {
 public:
   BDSIntegratorFringefield(BDSMagnetStrength const* strength,

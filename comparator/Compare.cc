@@ -54,7 +54,7 @@ const double   EVENTTREETOLERANCE = 1e-10;
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
-  std::vector<Result*> results;
+  std::vector<Result*> results; 
   // A TFile inherits TDirectory, so we simply use the TDirectory function.
   Compare::Directories((TDirectory*)f1, (TDirectory*)f2, results);
   return results;
@@ -80,7 +80,7 @@ void Compare::Directories(TDirectory* d1,
       std::string className  = std::string(d1o->ClassName());
 
       // get writePrimaries from options tree.
-      if (objectName == "Options")
+      if (objectName == "Options" && className == "TTree")
         {
           std::vector<const char *> names;
           TTree *options = (TTree *) d1->Get(objectName.c_str());
@@ -182,44 +182,44 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
 void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
- if (!strcmp(t1->GetName() , "optics"))
+  std::vector<std::string> treesToIgnore = {"Header", "Model", "Options", "Run"};
+
+  // skip some trees
+  std::string treeName = t1->GetName();
+  if (std::find(treesToIgnore.begin(), treesToIgnore.end(), treeName) != treesToIgnore.end())
+    {return;}
+  else if (!strcmp(treeName.c_str(), "Optics"))
     {
       Compare::Optics(t1, t2, results);
       return;
     }
- else if (!strcmp(t1->GetName(), "Event"))
-   {
-     // We need the sampler names which are in the Model tree. If we have an
-     // event tree, we must have a Model tree too!
-     TDirectory* dir = t1->GetDirectory();
-     TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
-     if (!modTree)
-       {return;} // shouldnt' really happen, but we can't compare the samplers
-
-     Model* mod = new Model();
-     mod->SetBranchAddress(modTree);
-     modTree->GetEntry(0);
-     std::vector<std::string> names = mod->SamplerNames();
-     delete mod;
-     
-     Compare::EventTree(t1, t2, results, names);
-     return;
-   }
- else if (!strcmp(t1->GetName(), "Options"))  // ignore an Options tree
-   {return;}
- else if (!strcmp(t1->GetName(), "Model"))    // ignore a Model tree
-   {return;}
- else if (!strcmp(t1->GetName(), "Run"))      // ignore a Run tree
-   {return;}
+  else if (!strcmp(treeName.c_str(), "Event"))
+    {
+      // We need the sampler names which are in the Model tree. If we have an
+      // event tree, we must have a Model tree too!
+      TDirectory* dir = t1->GetDirectory();
+      TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
+      if (!modTree)
+	{return;} // shouldnt' really happen, but we can't compare the samplers
+      
+      Model* mod = new Model();
+      mod->SetBranchAddress(modTree);
+      modTree->GetEntry(0);
+      std::vector<std::string> names = mod->SamplerNames();
+      delete mod;
+      
+      Compare::EventTree(t1, t2, results, names);
+      return;
+    }
   
   ResultTree* c = new ResultTree();
-  c->name       = t1->GetName();
+  c->name       = treeName;
   c->objtype    = "TTree";
   c->t1NEntries = (int)t1->GetEntries();
   c->t2NEntries = (int)t2->GetEntries();
 
-  TObjArray *oa1 = t1->GetListOfBranches(); 
-  TObjArray *oa2 = t2->GetListOfBranches();
+  TObjArray* oa1 = t1->GetListOfBranches(); 
+  TObjArray* oa2 = t2->GetListOfBranches();
   
   for(int j = 0; j<oa1->GetSize(); ++j)
     {// loop over branches
@@ -254,7 +254,7 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
   ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
   c->passed     = true; // set default to pass
-  c->objtype    = "TTree(optics)";
+  c->objtype    = "TTree(Optics)";
   c->t1NEntries = (int)t1->GetEntries();
   c->t2NEntries = (int)t2->GetEntries();
 

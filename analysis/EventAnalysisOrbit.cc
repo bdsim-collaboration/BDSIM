@@ -73,7 +73,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
 void EventAnalysisOrbit::WriteOrbit(TFile* f)
 {
   f->cd("/");
-  TTree* orbitTree = new TTree("orbit", "orbit");
+  TTree* orbitTree = new TTree("Orbit", "Orbit");
 
   double dss;
   double dx;

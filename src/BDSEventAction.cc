@@ -78,13 +78,21 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   seedStateAtStart(""),
   eventInfo(nullptr)
 {
-  verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
-  verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
-  isBatch            = BDSGlobalConstants::Instance()->Batch();
-  storeTrajectory    = BDSGlobalConstants::Instance()->StoreTrajectory();
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  verboseEvent              = globals->VerboseEvent();
+  verboseEventNumber        = globals->VerboseEventNumber();
+  isBatch                   = globals->Batch();
+  storeTrajectory           = globals->StoreTrajectory();
+  trajectoryEnergyThreshold = globals->StoreTrajectoryEnergyThreshold();
+  trajectoryCutZ            = globals->TrajCutGTZ();
+  trajectoryCutR            = globals->TrajCutLTR();
+  trajConnect               = globals->TrajConnect();
+  particleToStore           = globals->StoreTrajectoryParticle();
+  particleIDToStore         = globals->StoreTrajectoryParticleID();
+  depth                     = globals->StoreTrajectoryDepth();
 
   if(isBatch)
-    {printModulo = BDSGlobalConstants::Instance()->PrintModulo();}
+    {printModulo = globals->PrintModulo();}
   else
     {printModulo=1;}
 }
@@ -186,10 +194,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   std::vector<BDSTrajectory*> interestingTrajVec;
   if (storeTrajectory && trajCont)
   {
-    G4double trajectoryEnergyThreshold = BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold(); // already in G4 GeV
-    std::map<BDSTrajectory *, bool> interestingTraj;
+    std::map<BDSTrajectory*, bool> interestingTraj;
 
-    TrajectoryVector *trajVec = trajCont->GetVector();
+    TrajectoryVector* trajVec = trajCont->GetVector();
 
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size()
@@ -197,7 +204,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 
     // build trackID map
-    std::map<int, BDSTrajectory *> trackIDMap;
+    std::map<int, BDSTrajectory*> trackIDMap;
     for (auto iT1 : *trajVec)
       {
 	BDSTrajectory *traj = (BDSTrajectory *) iT1;
@@ -205,79 +212,75 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
 
     // build depth map
-    std::map<BDSTrajectory *, int> depthMap;
+    std::map<BDSTrajectory*, int> depthMap;
     for (auto iT1 : *trajVec)
       {
-	BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	if (traj->GetParentID() == 0) 
-	  {depthMap.insert(std::pair<BDSTrajectory *, int>(traj, 0));}
+	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, 0));}
 	else
-	  {depthMap.insert(std::pair<BDSTrajectory *, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
+	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
       }
 
     // loop over trajectories and determine if it should be stored
     for (auto iT1 : *trajVec)
       {
-	BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
 	G4int parentID = traj->GetParentID();
 	
 	// always store primaries
 	if (parentID == 0)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
-	// check on energy (if energy threshold is not negative
+	// check on energy (if energy threshold is not negative)
 	if (trajectoryEnergyThreshold >= 0 &&
 	    traj->GetInitialKineticEnergy() > trajectoryEnergyThreshold)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
 	// check on particle if not empty string
-	G4String particleToStore = BDSGlobalConstants::Instance()->StoreTrajectoryParticle();
-	if (!particleToStore.empty())
+	if (!particleToStore.empty() || !particleIDToStore.empty())
 	  {
-	    G4String particleName = traj->GetParticleName();
-	    std::size_t found = particleToStore.find(particleName);
-	    if (found != std::string::npos)
+	    G4String particleName  = traj->GetParticleName();
+	    G4String particleIDStr = G4String(std::to_string(traj->GetPDGEncoding()));
+	    std::size_t found  = particleToStore.find(particleName);
+	    std::size_t found2 = particleIDToStore.find(particleIDStr);
+	    if (found != std::string::npos || found2 != std::string::npos)
 	      {
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 		continue;
 	      }
 	  }
 	
-	// check on trajectory tree dept (depth = 0 means only primaries)
-	const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
+	// check on trajectory tree depth (depth = 0 means only primaries)
 	if (depthMap[traj] <= depth)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 	
 	// check on coordinates (and TODO momentum)
 	// clear out trajectories that don't reach point TrajCutGTZ or greater than TrajCutLTR
-	BDSTrajectoryPoint *trajEndPoint = (BDSTrajectoryPoint *) traj->GetPoint(traj->GetPointEntries() - 1);
-	G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-	G4bool greaterThanZInteresting =
-	  trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
-	G4double radius = std::hypot(trajEndPointThreeVector.x() / CLHEP::m,
-				     trajEndPointThreeVector.y() / CLHEP::m);
-	G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
+	BDSTrajectoryPoint* trajEndPoint = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(traj->GetPointEntries() - 1));
+	G4bool greaterThanZInteresting = trajEndPoint->GetPosition().z() > trajectoryCutZ;
+	G4bool withinRInteresting      = trajEndPoint->PostPosR() < trajectoryCutR;
 	if (greaterThanZInteresting || withinRInteresting)
 	  {
-	    interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
+	    interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, true));
 	    continue;
 	  }
 
 	// if not interesting store false
-	interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, false));
+	interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, false));
       }
     
     // Connect trajectory graphs
-    if (BDSGlobalConstants::Instance()->TrajConnect() && trackIDMap.size() > 1)
+    if (trajConnect && trackIDMap.size() > 1)
       {
 	for (auto i : interestingTraj)
 	  {connectTraj(trackIDMap, interestingTraj, i.first);}
@@ -298,7 +301,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // Relabel with new track IDS
 
     // make map
-    std::map<BDSTrajectory *, G4int> interestingTrajIndexMap;
+    std::map<BDSTrajectory*, G4int> interestingTrajIndexMap;
     int idx = 0;
     for (auto i : interestingTrajVec)
       {

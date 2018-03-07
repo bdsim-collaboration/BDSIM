@@ -125,7 +125,14 @@ void Beam::PublishMembers()
   publish("distrFileFormat",      &Beam::distrFileFormat);
   publish("matchDistrFileLength", &Beam::matchDistrFileLength);
   publish("nlinesIgnore",         &Beam::nlinesIgnore);
-  
+
+  // aliases
+  publish("distribution",         &Beam::distrType);
+  publish("xDistribution",        &Beam::xDistrType);
+  publish("yDistribution",        &Beam::yDistrType);
+  publish("zDistribution",        &Beam::zDistrType);
+
+  // centra values
   publish("X0",    &Beam::X0);
   publish("Y0",    &Beam::Y0);
   publish("Z0",    &Beam::Z0);
@@ -135,9 +142,8 @@ void Beam::PublishMembers()
   publish("Zp0",   &Beam::Zp0);
   publish("T0",    &Beam::T0);
   publish("E0",    &Beam::E0);
-  publish("sigmaT",&Beam::sigmaT);
-  publish("sigmaE",&Beam::sigmaE);
-  
+
+  // for gausstwiss
   publish("betx",  &Beam::betx);
   publish("bety",  &Beam::bety);
   publish("alfx",  &Beam::alfx);
@@ -148,12 +154,26 @@ void Beam::PublishMembers()
   publish("dispy", &Beam::dispy);
   publish("dispxp",&Beam::dispxp);
   publish("dispyp",&Beam::dispyp);
+
+  // aliases
+  publish("betaX",  &Beam::betx);
+  publish("betaY",  &Beam::bety);
+  publish("alphaX", &Beam::alfx);
+  publish("alphaY", &Beam::alfy);
+  publish("emitX",  &Beam::emitx);
+  publish("emitY",  &Beam::emity);
+  publish("dispX",  &Beam::dispx);
+  publish("dispXp", &Beam::dispxp);
+  publish("dispY",  &Beam::dispy);
+  publish("dispYp", &Beam::dispyp);
   
   // options for beam distrType="gauss"
   publish("sigmaX", &Beam::sigmaX);
   publish("sigmaXp",&Beam::sigmaXp);
   publish("sigmaY", &Beam::sigmaY);
   publish("sigmaYp",&Beam::sigmaYp);
+  publish("sigmaT",&Beam::sigmaT);
+  publish("sigmaE",&Beam::sigmaE);
 
   // options for beam distrType="square" or distrType="circle"
   publish("envelopeX", &Beam::envelopeX);
@@ -211,4 +231,6 @@ void Beam::PublishMembers()
   publish("haloYCutInner",         &Beam::haloYCutInner);
   publish("haloPSWeightParameter", &Beam::haloPSWeightParameter);
   publish("haloPSWeightFunction",  &Beam::haloPSWeightFunction);
+
+  publish("offsetSampleMean",      &Beam::offsetSampleMean);
 }

@@ -173,9 +173,12 @@ namespace BDS
   /// Create a user limits instance based on a default with a new step length limit
   /// of the length parameter. Check the max step length in the defaultUL and use
   /// the shorter of the two. Note the G4UserLimits instance is not const although
-  /// it could be as the accessors in that class are not const.
+  /// it could be as the accessors in that class are not const. Fraction is the fraction
+  /// of the length that max step will be because if it's exactly the length of an object,
+  /// it can prove problematic to resolve the outgoing surface - better to give some margin.
   G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
-				 const G4double length);
+				 const G4double length,
+				 const G4double fraction = 1.6);
 }
 
 #endif

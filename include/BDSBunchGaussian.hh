@@ -20,48 +20,69 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBUNCHGAUSSIAN_H 
 
 #include "BDSBunch.hh"
-#include "CLHEP/Matrix/Vector.h" 
-#include "CLHEP/Matrix/SymMatrix.h"
 
-namespace CLHEP {
+#include "globals.hh"
+#include "G4Transform3D.hh"
+
+#include "CLHEP/Matrix/SymMatrix.h"
+#include "CLHEP/Matrix/Vector.h"
+
+#include <vector>
+
+namespace CLHEP
+{
+  class HepRandomEngine;
   class RandMultiGauss;
 }
 
+namespace GMAD
+{
+  class Beam;
+}
+
 /**
- * @brief A 6D Gaussian distribution.
+ * @brief Common functionality for a 6D Gaussian distribution.
  * 
  * @author Stewart Boogert
  */
 
 class BDSBunchGaussian: public BDSBunch
-{ 
-protected: 
-  G4double sigmaX;
-  G4double sigmaY;
-  G4double sigmaXp;
-  G4double sigmaYp;
-
-  CLHEP::HepVector    meansGM;
-  CLHEP::HepSymMatrix sigmaGM;
-
-  // Multidimensional Gaussian random number generator
-  CLHEP::RandMultiGauss* GaussMultiGen;
-
+{
 public:
   BDSBunchGaussian();
   virtual ~BDSBunchGaussian();
   virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);  
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+
+  /// Called at the beginning of a run. Override here to call PreGenerateEvents that
+  /// will generate all coordinates and subtract the sample mean.
+  virtual void BeginOfRunAction(const G4int& numberOfEvents);
   
 protected:
-  void SetSigmaX(G4double sigmaXIn) {sigmaX = sigmaXIn;}
-  void SetSigmaY(G4double sigmaYIn) {sigmaY = sigmaYIn;}
-  void SetSigmaXp(G4double sigmaXpIn) {sigmaXp = sigmaXpIn;}
-  void SetSigmaYp(G4double sigmaYpIn) {sigmaYp = sigmaYpIn;}
-  void SetSigma(G4int i, G4int j, G4double sigmaIn) {sigmaGM[i][j] = sigmaIn;}   
+  /// Create multidimensional Gaussian random number generator
+  /// for Twiss and Gauss. Can change sigma matrix to make non-definite.
+  CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
+					  const CLHEP::HepVector& mu,
+					  CLHEP::HepSymMatrix&    sigma);
+  
+  /// Pregenerate all the particle coordinates and subtract the sample mean.
+  void PreGenerateEvents(const G4int& nGenerate);
+
+  CLHEP::HepVector    meansGM;
+  CLHEP::HepSymMatrix sigmaGM;
+
+  /// Randon number generator with sigma matrix and mean.
+  CLHEP::RandMultiGauss* gaussMultiGen;
+  
+  G4bool offsetSampleMean; ///< Whether to offset the sample mean.
+
+  /// @{ Holder for pre-calcalculated coordinates.
+  std::vector<G4double> x0_v, xp_v, y0_v, yp_v, z0_v, zp_v,E_v,t_v,weight_v;
+  /// @}
+  G4int iPartIteration; ///< Iterator for reading out pre-calculate coordinates
+
+  /// Convenience vector of vectors for clearing up.
+  std::vector<std::vector<G4double>* > coordinates;
 };
 
 #endif

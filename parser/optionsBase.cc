@@ -98,11 +98,13 @@ OptionsBase::OptionsBase()
   vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
   coilWidthFraction    = -1;
   coilHeightFraction   = -1;
+
+  preprocessGDML = true;
   
   // geometry debugging
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false;
-  includeFringeFields  = false;
+  includeFringeFields  = true;
 
   includeIronMagFields = false;
   sensitiveBeamlineComponents = true;
@@ -111,14 +113,18 @@ OptionsBase::OptionsBase()
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
   aper1                = 0.025; // also beampipeRadius
-  aper2                = 0.0;
-  aper3                = 0.0;
-  aper4                = 0.0;
+  aper2                = 0.025;
+  aper3                = 0.025;
+  aper4                = 0.025;
   beampipeMaterial     = "StainlessSteel";
   ignoreLocalAperture  = false;
   
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
+  worldMaterial        = "air";
+
+  worldVolumeMargin = 5; //m
+
   vacuumPressure       = 1e-12;
   sensitiveBeamPipe    = true;
 
@@ -158,8 +164,8 @@ OptionsBase::OptionsBase()
   maximumPhotonsPerStep    = -1;  ///< -1 -> no action taken (could want 0)
   maximumBetaChangePerStep = 10;
   maximumTracksPerEvent    = 0;   ///< 0 -> no action taken
-  thresholdCutCharged      = 0.0;
-  thresholdCutPhotons      = 0.0;
+  minimumKineticEnergy     = 0;
+  minimumRange             = 0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
   prodCutElectrons         = 1e-3;
@@ -171,7 +177,7 @@ OptionsBase::OptionsBase()
   defaultBiasMaterial      = "";
 
   // tracking options
-  integratorSet            = "bdsimtwo";
+  integratorSet            = "bdsimmatrix";
   lengthSafety             = 1e-9;   // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   maximumStepLength        = 20;      // m, quite big
@@ -183,7 +189,6 @@ OptionsBase::OptionsBase()
   minimumEpsilonStep       = 5e-25;
   maximumEpsilonStep       = 1e-7;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 1e-6;    // maximum allowed spatial error in position (1um)
-  stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;
   minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
@@ -199,7 +204,8 @@ OptionsBase::OptionsBase()
   storeElossGlobal         = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 0;
-  storeTrajectoryParticle  = "";
+  storeTrajectoryParticle   = "";
+  storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
   writePrimaries           = true;
 

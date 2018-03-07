@@ -1,7 +1,0 @@
-# Object	treeName Histogram Name       # Bins  Binning	       Variable                 Selection
-Histogram1D	Event.	 primaryElectrons 	{50}	{0:1.1}		dq1.energy	dq1.partID==11&&dq1.parentID==0
-Histogram1D	Event.	 secondaryElectrons 	{20}	{0:0.2}		dq1.energy	dq1.partID==11&&dq1.parentID!=0
-#Histogram1D	Event.	 positrons 		{20}	{9.25:10.75}		dq1.energy	dq1.partID==11
-#Histogram1D	Event.	 muonsP 		{20}	{9.25:10.75}		dq1.energy	dq1.partID==13
-#Histogram1D	Event.	 pionsP 		{20}	{9.25:10.75}		dq1.energy	dq1.partID==211
-#Histogram1D	Event.	 kaons 			{20}	{9.25:10.75}		dq1.energy	dq1.partID==321

@@ -20,6 +20,8 @@ The following section describes other 'executable' options that may specify
 various options such as whether to run in 'batch' mode or interactively with a
 visualiser; and where to write output.
 
+.. _executable-options:
+
 Executable Options
 ==================
 
@@ -71,6 +73,10 @@ be used literally.  The following command may be used to dipslay all options::
 |                            | events when using --recreate                 |
 +----------------------------+----------------------------------------------+
 | --survey=<file>            | print survey info to <file>                  |
++----------------------------+----------------------------------------------+
+| --printModuloFraction=N    | how often to print out events as a fraction  |
+|                            | of the total number of events to simulate    |
+|                            | (default 0.05 i.e. 5%). -1 for all.          |
 +----------------------------+----------------------------------------------+
 | --verbose                  | display general parameters before run        |
 +----------------------------+----------------------------------------------+

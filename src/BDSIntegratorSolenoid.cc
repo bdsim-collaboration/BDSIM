@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
 #include "G4Mag_EqRhs.hh"
@@ -34,6 +35,7 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
   BDSIntegratorMag(eqOfMIn, 6)
 {
   bField = brho * (*strength)["ks"];
+  zeroStrength = !BDS::IsFinite(bField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << bField << G4endl;
 #endif
@@ -45,16 +47,25 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
+  // In case of zero field or neutral particles do a linear step
+  if (zeroStrength || !BDS::IsFinite(fcof))
+    {
+      AdvanceDriftMag(yIn,h,yOut,yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - 0.5*eqOfM->FCof()*bField/InitPMag;
+  G4double      kappa      = - 0.5*fcof*bField/InitPMag;
   G4double      h2         = h*h;
   
 #ifdef BDSDEBUG
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
+  G4double charge = (fcof)/CLHEP::c_light;
   G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl
@@ -143,10 +154,10 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4ThreeVector positionMove = h * InitMomDir; 
   G4double dz      = positionMove.z();
   G4double wL      = kappa*dz; 
-  G4double cosOL   = cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
+  G4double cosOL   = std::cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
   G4double cosSqOL = cosOL*cosOL;
-  G4double sinOL   = sin(wL);
-  G4double sin2OL  = sin(2.0*wL);
+  G4double sinOL   = std::sin(wL);
+  G4double sin2OL  = std::sin(2.0*wL);
   G4double sinSqOL = sinOL*sinOL;
   
   // calculate thick lens transfer matrix
@@ -204,10 +215,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	 << G4endl; 
 #endif
 
-  ConvertToGlobal(LocalR, LocalRp, yOut, InitPMag);
-  
-  for(G4int i = 0; i < nVariables; i++)
-    {yErr[i]=0;} //set error to be zero
+  ConvertToGlobal(LocalR, LocalRp, yOut, yErr, InitPMag);
 }
 
 

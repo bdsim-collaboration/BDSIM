@@ -191,12 +191,16 @@ void Options::PublishMembers()
   publish("ignoreLocalAperture",  &Options::ignoreLocalAperture);
   publish("vacuumMaterial",       &Options::vacMaterial);
   publish("emptyMaterial",        &Options::emptyMaterial);
+  publish("worldMaterial",        &Options::worldMaterial);
+  publish("worldVolumeMargin",    &Options::worldVolumeMargin);
   publish("dontSplitSBends",      &Options::dontSplitSBends);
   publish("thinElementLength",    &Options::thinElementLength);
   publish("hStyle",               &Options::hStyle);
   publish("vhRatio",              &Options::vhRatio);
   publish("coilWidthFraction",    &Options::coilWidthFraction);
   publish("coilHeightFraction",   &Options::coilHeightFraction);
+
+  publish("preprocessGDML",       &Options::preprocessGDML);
   
   // tunnel options
   publish("buildTunnel",         &Options::buildTunnel);
@@ -229,13 +233,11 @@ void Options::PublishMembers()
   publish("maximumPhotonsPerStep",       &Options::maximumPhotonsPerStep);
   publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
+  publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
+  publish("minimumRange",                &Options::minimumRange);
   publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
-
-  publish("thresholdCutCharged", &Options::thresholdCutCharged);
-  publish("thresholdCutPhotons", &Options::thresholdCutPhotons);
-
   publish("prodCutPhotons",   &Options::prodCutPhotons);
   publish("prodCutElectrons", &Options::prodCutElectrons);
   publish("prodCutPositrons", &Options::prodCutPositrons);
@@ -250,6 +252,7 @@ void Options::PublishMembers()
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
   publish("maximumStepLength",  &Options::maximumStepLength);
+  publish("maximumStepSize",    &Options::maximumStepLength);
   publish("maximumTrackLength", &Options::maximumTrackLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
@@ -274,6 +277,7 @@ void Options::PublishMembers()
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
   publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
+  publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
   publish("trajConnect",                    &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
@@ -281,7 +285,6 @@ void Options::PublishMembers()
   publish("trajNoTransportation",           &Options::trajNoTransportation);
 
   publish("stopSecondaries",          &Options::stopSecondaries);
-  publish("stopTracks",               &Options::stopTracks);
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",                   &Options::nturns);

@@ -1,10 +1,10 @@
-InputFilePath	    ./output.root
-OutputFileName	    ./output_ana1.root
+InputFilePath	    ../../data/sample1.root
+OutputFileName	    ./ana1.root
 # Object	treeName   Histogram Name       # Bins   Binning	          Variable          Selection
 Histogram1D    	Event.     EnergyLoss           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
-SimpleHistogram1D    	Event.     EnergyLossSimple           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
-SimpleHistogram1D    	Event.     EnergyLossSimple2           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight*(Entry$==0)
 Histogram2D    Event.     Flux			  {30,30}  {-2.5:2.5,-2.5:2.5}  fq1.y:fq1.x       fq1.energy*fq1.weight
 Histogram3D    Event.     Flux3D               {30,30,100} {-2.5:2.5,-2.5:2.5,0:1} fq1.x:fq1.y:fq1.energy  1
-Histogram1D    Run.	   RunDuration	 	  {100}    {0:100}               Info.duration     1
-Histogram1D    Model.     ElementLength         {10}     {0:22}               Model.length       1
+Histogram1D    Run.       RunDuration	          {20}     {0:60}               Info.duration     1
+Histogram3DLinLinLog  Event. SamplerFlux       {20,20,40} {-2:2,-2:2,-5:1}  fq1_1.energy:fq1_1.y:fq1_1.x  fq1_1.energy
+Histogram1D    Model.     ComponentLength      {20}       {0:1.2}           Model.length        1
+Histogram1D    Options.   SamplerDiameter       {10}      {0:6}             Options.GMAD::OptionsBase.samplerDiameter   1

@@ -1,1 +1,1 @@
-simple_testing(AIR_WATER "--file=air.gmad" "")
+simple_testing(example-air-water "--file=air.gmad" "")

@@ -143,8 +143,6 @@ public:
   inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
   inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
   inline G4double SamplerDiameter()          const {return G4double(options.samplerDiameter)*CLHEP::m;}
-  inline G4double ThresholdCutCharged()      const {return G4double(options.thresholdCutCharged)*CLHEP::GeV;}
-  inline G4double ThresholdCutPhotons()      const {return G4double(options.thresholdCutPhotons)*CLHEP::GeV;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}
   inline G4double ProdCutPhotons()           const {return G4double(options.prodCutPhotons)*CLHEP::m;}
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
@@ -184,21 +182,25 @@ public:
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
+  inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
   inline G4bool   TrajNoTransportation()     const {return G4bool  (options.trajNoTransportation);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
-  inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
   inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4int    MaximumPhotonsPerStep()    const {return G4int   (options.maximumPhotonsPerStep);}
   inline G4int    MaximumBetaChangePerStep() const {return G4int   (options.maximumBetaChangePerStep);}
   inline G4long   MaximumTracksPerEvent()    const {return G4long  (options.maximumTracksPerEvent);}
+  inline G4double MinimumKineticEnergy()     const {return G4double(options.minimumKineticEnergy*CLHEP::GeV);}
+  inline G4double MinimumRange()             const {return G4double(options.minimumRange*CLHEP::m);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
+  inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
+  inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
@@ -213,6 +215,7 @@ public:
   inline G4double VHRatio()                  const {return G4double(options.vhRatio);}
   inline G4double CoilWidthFraction()        const {return G4double(options.coilWidthFraction);}
   inline G4double CoilHeightFraction()       const {return G4double(options.coilHeightFraction);}
+  inline G4bool   PreprocessGDML()           const {return G4bool  (options.preprocessGDML);}
   inline G4int    NBinsX()                   const {return G4int   (options.nbinsx);}
   inline G4int    NBinsY()                   const {return G4int   (options.nbinsy);}
   inline G4int    NBinsZ()                   const {return G4int   (options.nbinsz);}

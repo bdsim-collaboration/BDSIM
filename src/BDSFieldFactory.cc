@@ -51,8 +51,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"
-#include "BDSIntegratorDipole.hh"
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorEuler.hh"
@@ -103,10 +103,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4DoLoMcPriRK34.hh"
 #include "G4DormandPrince745.hh"
 #include "G4DormandPrinceRK56.hh"
-#include "G4DormandPrinceRK78.hh"
 #include "G4TsitourasRK45.hh"
 #endif
 #if G4VERSION_NUMBER > 1039
+#include "G4DormandPrinceRK78.hh"
 #include "G4RK547FEq1.hh"
 #include "G4RK547FEq2.hh"
 #include "G4RK547FEq3.hh"
@@ -205,7 +205,19 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       BDSInterpolatorType eleIntType = BDSInterpolatorType::nearest2d;
       if (eleFileSpecified)
 	{eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));}
-      
+
+      G4UserLimits* fieldLimit = nullptr;
+      if (definition.maximumStepLength > 0)
+	{// only assign if specified
+	  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+	  // copy the default and update with the length of the object rather than the default 1m
+	  G4double limit = G4double(definition.maximumStepLength) * CLHEP::m;
+	  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+	  // only specify a user limit object if the step length was specified
+	  if (ul != defaultUL)
+	    {fieldLimit = ul;}
+	}
+
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,
@@ -222,7 +234,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4double(definition.eScaling),
 					    G4double(definition.bScaling),
 					    G4double(definition.t*CLHEP::s),
-					    G4bool(definition.autoScale));
+					    G4bool(definition.autoScale),
+					    fieldLimit);
 
       parserDefinitions[G4String(definition.name)] = info;
     }
@@ -465,9 +478,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolerodrigues:
-      integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDipoleRodrigues(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolerodrigues2:
-      integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleRodrigues2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::dipolematrix:
       integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:
@@ -516,10 +529,10 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::g4dolomcprirk34:
     case BDSIntegratorType::g4dormandprince745:
     case BDSIntegratorType::g4dormandprincerk56:
-    case BDSIntegratorType::g4dormandprincerk78:
     case BDSIntegratorType::g4tsitourasrk45:
 #endif
 #if G4VERSION_NUMBER > 1039
+    case BDSIntegratorType::g4dormandprincerk78:
     case BDSIntegratorType::g4rk547feq1:
     case BDSIntegratorType::g4rk547feq2:
     case BDSIntegratorType::g4rk547feq3:
@@ -562,12 +575,12 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
       {integrator = new G4DormandPrince745(eqOfM, 8); break;}
     case BDSIntegratorType::g4dormandprincerk56:
       {integrator = new G4DormandPrinceRK56(eqOfM, 8); break;}
-    case BDSIntegratorType::g4dormandprincerk78:
-      {integrator = new G4DormandPrinceRK78(eqOfM, 8); break;}
     case BDSIntegratorType::g4tsitourasrk45:
       {integrator = new G4TsitourasRK45(eqOfM, 8); break;}
 #endif
 #if G4VERSION_NUMBER > 1039
+    case BDSIntegratorType::g4dormandprincerk78:
+      {integrator = new G4DormandPrinceRK78(eqOfM, 8); break;}
     case BDSIntegratorType::g4rk547feq1:
       {integrator = new G4RK547FEq1(eqOfM, 8); break;}
     case BDSIntegratorType::g4rk547feq2:
@@ -608,11 +621,11 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& 
 	  BDSIntegratorType::g4dolomcprirk34,
 	  BDSIntegratorType::g4dormandprince745,
 	  BDSIntegratorType::g4dormandprincerk56,
-	  BDSIntegratorType::g4dormandprincerk78,
 	  BDSIntegratorType::g4tsitourasrk45
 #endif
 #if G4VERSION_NUMBER > 1039
 	  ,
+	  BDSIntegratorType::g4dormandprincerk78,
 	  BDSIntegratorType::g4rk547feq1,
 	  BDSIntegratorType::g4rk547feq2,
 	  BDSIntegratorType::g4rk547feq3

@@ -123,6 +123,13 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete samplerPlacementTransform;
 }
 
+BDSExtentGlobal BDSBeamlineElement::GetExtentGlobal() const
+{
+  BDSExtent ext = component->GetExtent();
+  BDSExtentGlobal extG = BDSExtentGlobal(ext, *GetPlacementTransform());
+  return extG;
+}
+
 G4ThreeVector BDSBeamlineElement::InputFaceNormal() const
 {
   G4ThreeVector inputFNLocal = component->InputFaceNormal();

@@ -67,12 +67,13 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::g4dolomcprirk34,      "g4dolomcprirk34"},
       {BDSIntegratorType::g4dormandprince745,   "g4dormandprince745"},
       {BDSIntegratorType::g4dormandprincerk56,  "g4dormandprincerk56"},
-      {BDSIntegratorType::g4dormandprincerk78,  "g4dormandprincerk78"},
       {BDSIntegratorType::g4tsitourasrk45,      "g4tsitourasrk45"}
 #endif
 #if G4VERSION_NUMBER > 1039
       // introduced in version 10.4
+      // g4dormandprincerk78 is broken in 10.3 but fixed in 10.4 - safe to use now
       ,
+      {BDSIntegratorType::g4dormandprincerk78,  "g4dormandprincerk78"},
       {BDSIntegratorType::g4rk547feq1,          "g4rk547feq1"},
       {BDSIntegratorType::g4rk547feq2,          "g4rk547feq2"},
       {BDSIntegratorType::g4rk547feq3,          "g4rk547feq3"}
@@ -118,23 +119,22 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["g4dolomcprirk34"]      = BDSIntegratorType::g4dolomcprirk34;
   types["g4dormandprince745"]   = BDSIntegratorType::g4dormandprince745;
   types["g4dormandprincerk56"]  = BDSIntegratorType::g4dormandprincerk56;
-  types["g4dormandprincerk78"]  = BDSIntegratorType::g4dormandprincerk78;
   types["g4tsitourasrk45"]      = BDSIntegratorType::g4tsitourasrk45;
 #endif
 #if G4VERSION_NUMBER > 1039
   // introduced in version 10.4
+  types["g4dormandprincerk78"]  = BDSIntegratorType::g4dormandprincerk78;
   types["g4rk547feq1"]          = BDSIntegratorType::g4rk547feq1;
   types["g4rk547feq2"]          = BDSIntegratorType::g4rk547feq2;
   types["g4rk547feq3"]          = BDSIntegratorType::g4rk547feq3;
 #endif
 
   integratorType.toLower();
-
   auto result = types.find(integratorType);
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid integrator type" << G4endl;
 
       G4cout << "Available integrator types are:" << G4endl;
       for (auto it : types)

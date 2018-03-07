@@ -64,6 +64,7 @@ protected:
   void ConvertToGlobal(const G4ThreeVector &localPos,
                        const G4ThreeVector &localMom,
                        G4double             yOut[],
+		       G4double             yErr[],
                        const G4double       momScaling = 1.0);
 
   /// Setter for distChord to private member.
@@ -81,6 +82,10 @@ protected:
   /// outside the (transverse) momentum range applicable for the integration scheme
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
+
+  /// Whether a magnet has a finite strength or not. Can be set in the constructor for
+  /// zero strength elements and then a drift routine is used before anything else.
+  G4bool zeroStrength;
 
 private:
   /// Private default constructor to force use of specific constructor

@@ -20,7 +20,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORDIPOLEFRINGE_H
 
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleRodrigues2.hh"
+#include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
 
@@ -33,7 +34,7 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringe: public BDSIntegratorDipole2, public BDSAuxiliaryNavigator
+class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleRodrigues2, public BDSAuxiliaryNavigator
 {
 public:
   BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
@@ -50,7 +51,16 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-  
+
+  /// Calculate a single step using dipole fringe field matrix.
+  /// Unit momentum is provided as an argument because it is already calculated in the
+  /// Stepper method.
+  void OneStep(G4ThreeVector  posIn,
+               G4ThreeVector  momIn,
+               G4ThreeVector  momUIn, // assumed unit momentum of momIn
+               G4ThreeVector& posOut,
+               G4ThreeVector& momOut) const;
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;
@@ -59,9 +69,15 @@ private:
   const G4double polefaceAngle;
   /// Fringe field correction term
   const G4double fringeCorr;
-  /// Brho for momentum normalisation
-  const G4double brho;
+  /// Nominal magnet bending radius
+  const G4double rho;
 
+  BDSMagnetStrength const* strength;
+
+  /// Whether a magnet has a finite strength or not. Can be set in the constructor for
+  /// zero strength elements and then a drift routine is used before anything else.
+  G4bool zeroStrength;
+  
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;

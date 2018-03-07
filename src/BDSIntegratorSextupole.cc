@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSextupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
@@ -36,6 +37,7 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime = brho * (*strength)["k2"] / CLHEP::m3;
+  zeroStrength = !BDS::IsFinite(bDoublePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
 #endif
@@ -43,7 +45,8 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
 
 void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 					  G4double        h,
-					  G4double        yOut[])
+					  G4double        yOut[],
+                      G4double        yErr[])
 {
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double momUnit = mom.mag();
@@ -51,7 +54,7 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 
   if (std::abs(kappa) < 1e-12)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -85,5 +88,5 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
   localA *= kappa / 2; // 2 is actually a 2! factor.
   
   AdvanceChord(h,localPos,localMomUnit,localA);
-  ConvertToGlobal(localPos, localMomUnit, yOut, momUnit);
+  ConvertToGlobal(localPos, localMomUnit, yOut, yErr, momUnit);
 }

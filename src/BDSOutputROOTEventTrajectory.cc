@@ -103,7 +103,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
       preWeight.push_back(point->GetPreWeight());
       postWeight.push_back(point->GetPostWeight());
       energy.push_back(point->GetEnergy());
-      G4ThreeVector mom = point->GetPreMomentum();
+      G4ThreeVector mom = point->GetPreMomentum() / CLHEP::GeV;
       momentum.push_back(TVector3(mom.getX(),
                                   mom.getY(),
                                   mom.getZ()));
@@ -242,9 +242,9 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
   }
    */
 
-  int                ti = trackID_trackIndex.at(trackid);  // get track index
+  int ti = trackID_trackIndex.at(trackid);  // get track index
 
-  std::vector<BDSOutputROOTEventTrajectoryPoint> tpv;      // trajectory point vector
+  std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
 
   int nstep = trajectories[ti].size();
   for(int i = 0;i<nstep; ++i)

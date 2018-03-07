@@ -20,8 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBENDBUILDER_H
 
 #include "globals.hh" // geant4 globals / types
+#include "G4String.hh"
+#include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 
+class BDSAcceleratorComponent;
 class BDSIntegratorSet;
 class BDSLine;
 class BDSMagnet;
@@ -41,28 +44,38 @@ namespace BDS
   /// poleface, the faces of each wedge fade in/out from the poleface to the cental
   /// wedge in the middle. Thin fringefield elements are placed at the beginning and
   /// end of the beamline if required.
-
-  BDSAcceleratorComponent* BuildSBendLine(const GMAD::Element*    element,
+  BDSAcceleratorComponent* BuildSBendLine(const G4String&         elementName,
+					  const GMAD::Element*    element,
 					  BDSMagnetStrength*      st,
 					  const G4double          brho,
-					  const BDSIntegratorSet* integratorSet);
+					  const BDSIntegratorSet* integratorSet,
+					  const G4double&         incomingFaceAngle,
+					  const G4double&         outgoingFaceAngle,
+					  const G4bool&           buildFringeFields,
+					  const GMAD::Element*    prevElement,
+					  const GMAD::Element*    nextElement);
   
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.
-  BDSLine* BuildRBendLine(const GMAD::Element*    element,
+  BDSLine* BuildRBendLine(const G4String&         elementName,
+			  const GMAD::Element*    element,
 			  const GMAD::Element*    prevElement,
 			  const GMAD::Element*    nextElement,
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
-			  const BDSIntegratorSet* integratorSet);
+			  const BDSIntegratorSet* integratorSet,
+			  const BDSIntegratorSetType integratorSetType,
+			  const G4double&         incomingFaceAngle,
+			  const G4double&         outgoingFaceAngle,
+			  const G4bool&           buildFringeFields);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(const G4double length,
-				const G4double angle,
-				const G4double e1 = 0,
-				const G4double e2 = 0,
+  G4int CalculateNSBendSegments(const G4double& length,
+				const G4double& angle,
+				const G4double incomingFaceAngle = 0,
+				const G4double outgoingFaceAngle = 0,
 				const G4double aperturePrecision = 1.0);
 
   /// Thin magnet for dipole fringe field.
@@ -96,8 +109,8 @@ namespace BDS
   void UpdateSegmentAngles(const G4int    index,
 			   const G4int    nSBends,
 			   const G4double semiAngle,
-			   const G4double e1,
-			   const G4double e2,
+			   const G4double incomingFaceAngle,
+			   const G4double outgoingFaceAngle,
 			   G4double&      segmentAngleIn,
 			   G4double&      segmentAngleOut);
 

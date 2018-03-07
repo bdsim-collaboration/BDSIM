@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh" 
 #include "BDSFieldInfo.hh"
 #include "BDSFieldBuilder.hh"
+#include "BDSFieldType.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 #include "BDSSampler.hh"
@@ -45,52 +46,54 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 //============================================================
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
-                                            G4double magnetOffsetX,
+                                            G4double magnetOffsetXIn,
 					    G4double length=2.7*CLHEP::m,
 					    BDSFieldInfo* fieldInfoIn = nullptr,
-					    G4double poleStartZ=62.733*CLHEP::cm,
-					    G4String material="lanex",
-					    G4double thickness = 0.3 * CLHEP::mm,
-					    G4double screenPSize=25*CLHEP::um,
-					    G4double windowScreenGap=0,
+					    G4double poleStartZIn=62.733*CLHEP::cm,
+					    G4String materialIn="lanex",
+					    G4double thicknessIn = 0.3 * CLHEP::mm,
+					    G4double screenPSizeIn=25*CLHEP::um,
+					    G4double windowScreenGapIn=0,
 					    G4double angleIn = -45*CLHEP::pi/180.0,
-					    G4double windowThickness=0,
-					    G4String windowMaterial="G4_Al",
-					    G4double mountThickness=0, 
-					    G4String mountMaterial="G4_BAKELITE",
-					    G4double screenEndZ = (258-62.733)*CLHEP::cm,
-					    G4String spec="",
-					    G4double screenWidth=1*CLHEP::m):
+					    G4double windowThicknessIn=0,
+					    G4String windowMaterialIn="G4_Al",
+					    G4double mountThicknessIn=0,
+					    G4String mountMaterialIn="G4_BAKELITE",
+					    G4double screenEndZIn = (258-62.733)*CLHEP::cm,
+					    G4String specIn="",
+					    G4double screenWidthIn=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
   _fieldInfo(fieldInfoIn),
-  _magnetOffsetX(magnetOffsetX),
-  _screenWidth(screenWidth),
+  _magnetOffsetX(magnetOffsetXIn),
+  _totalThickness(0.507*CLHEP::mm),
+  _screenWidth(screenWidthIn),
+  _frame_x_dim(0),
   _mlScreen(nullptr),
   _camera(nullptr),
-  _material(material),
-  _thickness(thickness),
-  _screenPSize(screenPSize),
-  _windowScreenGap(windowScreenGap),
+  _material(materialIn),
+  _thickness(thicknessIn),
+  _screenPSize(screenPSizeIn),
+  _windowScreenGap(windowScreenGapIn),
   _screenAngle(angleIn),
-  _windowThickness(windowThickness),
-  _windowMaterial(windowMaterial),
-  _mountThickness(mountThickness), 
-  _mountMaterial(mountMaterial),
-  _screenEndZ(screenEndZ),
-  _poleStartZ(poleStartZ)
+  _windowThickness(windowThicknessIn),
+  _windowMaterial(windowMaterialIn),
+  _mountThickness(mountThicknessIn),
+  _mountMaterial(mountMaterialIn),
+  _screenEndZ(screenEndZIn),
+  _poleStartZ(poleStartZIn)
 {
   //Change sign of angle
   _screenAngle*=-1;
 
   try{
-    _vacuumChamberType=BDS::GetParameterValueInt(spec,"vacuumChamberType");
+    _vacuumChamberType=BDS::GetParameterValueInt(specIn,"vacuumChamberType");
   } catch(std::invalid_argument&){
     //If the cast fails, set vacuum chamber type to 1
     _vacuumChamberType=1;
   }
 
   try{
-    _magnetGeometryType=BDS::GetParameterValueInt(spec,"magnetGeometryType");
+    _magnetGeometryType=BDS::GetParameterValueInt(specIn,"magnetGeometryType");
   } catch(std::invalid_argument&){
     //If the cast fails, set magnet geometry type to 1
     _magnetGeometryType=1;
@@ -103,33 +106,34 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     _vacHeight=_vacInnerHeight+2*_vacThickness;
 
     try{
-        _windowOffsetX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
+        _windowOffsetX=BDS::GetParameterValueDouble(specIn,"windowOffsetX");
     } catch(std::invalid_argument&){
         _windowOffsetX=59.564*CLHEP::mm; //Total offset of front of flange from beam axis
     }
 	  _windowOffsetXFromVCEdge=_windowOffsetX -_vacInnerWidth/2.0-_vacThickness; //Distance to outer edge of beam pipe
 
     try{
-        _strutSizeX=BDS::GetParameterValueDouble(spec,"strutSizeX");
+        _strutSizeX=BDS::GetParameterValueDouble(specIn,"strutSizeX");
     } catch(std::invalid_argument&){
         _strutSizeX=0;
     }
 
   try{
-    _strutSizeZ=BDS::GetParameterValueDouble(spec,"strutSizeZ");
+    _strutSizeZ=BDS::GetParameterValueDouble(specIn,"strutSizeZ");
   } catch(std::invalid_argument&){
     _strutSizeZ=0;
   }
 
   try{
-    _strutMaterial=BDS::GetParameterValueString(spec,"strutMaterial");
+    _strutMaterial=BDS::GetParameterValueString(specIn,"strutMaterial");
   } catch(std::invalid_argument&){
     _strutMaterial="G4_STAINLESS-STEEL";
   }
 
   //Screen width 1m by default.
-  if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
-    _screenHeight=64*CLHEP::mm;
+  if(_screenWidth<=0)
+  {_screenWidth = 1*CLHEP::m;}
+  _screenHeight=64*CLHEP::mm;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -340,9 +344,24 @@ void BDSAwakeSpectrometer::BuildField()
     G4cout << __METHOD_NAME__ << itsBmapXOffset << " " << itsBmapZOffset << G4endl;
     _fieldInfo->Translate(poleTranslation);
 
-  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
-							    containerLogicalVolume,
-							    true);
+  if (_fieldInfo->FieldType() == BDSFieldType::dipole)
+  {// pure dipole field
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerBoxLogVol2(),
+                                                              true);
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerTrapLogVol(),
+                                                              true);
+  }
+  else
+  {// field map
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              containerLogicalVolume,
+                                                              true);
+  }
+
+
+
 }
 
 void BDSAwakeSpectrometer::BuildMagnet(){
@@ -471,6 +490,8 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 
 
 void BDSAwakeSpectrometer::PlaceVacuumChamber(){
+  // 2018 02 - LN - this first bit seems redundant as BuildVacuumChamber() is called in Build()
+  // before this method...
   if(_vacuumChamberType!=0){
     if(!_vacChamb){
       BuildVacuumChamber();
@@ -881,14 +902,15 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
 			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2/2,
 			    chordLength/2.0); //z half length 
 
-  containerLogicalVolume=new G4LogicalVolume
-    (containerSolid, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     name+"_marker_log");
+  containerLogicalVolume=new G4LogicalVolume(containerSolid, 
+					     BDSMaterials::Instance()->GetMaterial("vacuum"),
+					     name+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
+
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
   _logVols.push_back(containerLogicalVolume);
 
 }

@@ -3,9 +3,6 @@ option, beampipeRadius = 4 * cm,
         outerDiameter = 0.6 * m,
         tunnelRadius= 2.0 * m,
         beampipeThickness = 0.5 * cm,
-        thresholdCutCharged = 10 * GeV,
-        thresholdCutPhotons = 10 * GeV,
-	stopTracks=1,
 	nturns=2,
 	magnetGeometryType="cylindrical";
 

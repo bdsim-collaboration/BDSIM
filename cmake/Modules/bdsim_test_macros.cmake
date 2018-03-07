@@ -82,3 +82,20 @@ macro(tracking_test test_name args)
   add_test(NAME ${test_name} COMMAND ./run_bdsimMadx.py ${args})
 endmacro()
 
+
+# long generation, analysis and comparison test
+macro(generate_analyse_compare_long testName fileName analysisConfig)
+  # generate
+  set(TESTING_ARGS --outfile=${testName}_data)
+  simple_testing_long(${testName}-LONG "--file=${fileName}" "")
+
+  # analyse
+  rebdsim_test_manual(${testName}-analysis-LONG ${analysisConfig} ${testName}_data.root ${testName}_ana.root)
+  set_tests_properties(${testName}-analysis-LONG PROPERTIES DEPENDS ${testName}-LONG)
+  set_tests_properties(${testName}-analysis-LONG PROPERTIES LABELS LONG)
+
+  # compare to reference
+  comparator_test(${testName}-comparison-LONG ${testName}_ana.root ${testName}_ref.root)
+  set_tests_properties(${testName}-comparison-LONG PROPERTIES DEPENDS ${testName}-analysis)
+  set_tests_properties(${testName}-comparison-LONG PROPERTIES LABELS LONG)
+endmacro()

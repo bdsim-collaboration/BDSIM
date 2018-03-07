@@ -25,7 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Track.hh"
 #include "G4Transform3D.hh"
+#include "G4UserLimits.hh"
 
 #include <ostream>
 
@@ -46,7 +48,8 @@ BDSFieldInfo::BDSFieldInfo():
   eScaling(1.0),
   bScaling(1.0),
   timeOffset(0),
-  autoScale(false)
+  autoScale(false),
+  stepLimit(nullptr)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -65,7 +68,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 eScalingIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
-			   G4bool                   autoScaleIn):
+			   G4bool                   autoScaleIn,
+			   G4UserLimits*            stepLimitIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -82,12 +86,14 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   eScaling(eScalingIn),
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
-  autoScale(autoScaleIn)
+  autoScale(autoScaleIn),
+  stepLimit(stepLimitIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
+  delete stepLimit;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
@@ -112,6 +118,11 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
   else
     {magnetStrength = nullptr;} // also nullptr
+
+  if (other.stepLimit)
+    {stepLimit = new G4UserLimits(*other.stepLimit);}
+  else
+    {stepLimit = nullptr;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
@@ -133,6 +144,12 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "auto scale         " << info.autoScale                << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
+  if (info.stepLimit)
+    {
+      G4Track t = G4Track(); // dummy track
+      G4double maxStep = info.stepLimit->GetMaxAllowedStep(t);
+      out << "Step limit:        " << maxStep << G4endl;
+    }
   return out;
 }
 

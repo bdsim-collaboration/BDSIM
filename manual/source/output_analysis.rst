@@ -7,7 +7,7 @@ Output Analysis
 This describes how to load and view data from the recommend output **rootevent**
 format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM (root event BDSIM) that provides
+BDSIM is accompanied by an analysis tool called REBDSIM ("root event BDSIM") that provides
 the ability to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
@@ -15,6 +15,9 @@ REBDSIM is based on a set of analysis classes that are compiled into a library. 
 may be used through REBDSIM, but also through the ROOT interpreter and in users'
 ROOT macros or compiled code. They may also be used through Python if the user has
 ROOT available through Python.
+
+See :ref:`basic-data-inspection` for how to view the data and make the most basic
+histograms.
 
 Setup
 -----
@@ -53,17 +56,11 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 The absolute path is not necessary as the above environmental variables are used by ROOT
 to find the library.
 
-Usage
------
-
-rebdsim can be used either as a `standalone executable`_ or `interactively in ROOT`_
-or `interactively in Python`_.
-
-Standalone Executable
-=====================
+REBDSIM Usage
+-------------
 
 rebdsim is executed with one argument which is the path to an analysis configuration text
-file.  This is a simple text file that describes what histrograms to make from the data.
+file. This is a simple text file that describes what histrograms to make from the data.
 Optionally, a second argument of a data file to operate on will override the one specified
 in the analysis configuration file. This allows the same analysis configuration to be used
 to analyse many different data files. A third optional argument (must have second argument
@@ -75,112 +72,6 @@ Examples::
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
 
-See `Preparing an Analysis Configuration File`_ for details on the analysis configuration.
-
-Interactively in Python
-=======================
-
-This is the preferred method. ROOT must have been installed or compiled with Python support.
-You can test this by starting Python and trying to import ROOT - there should be no errors:
-
-   >>> import ROOT
-
-The library containing the analysis classes may be then loaded:
-
-   >>> import ROOT
-   >>> ROOT.gSystem.Load("librebdsimLib")
-
-The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
-
-  
-Interactively in ROOT
-=====================
-
-When using ROOT's interpreter, you can use the functionality of the BDSIM classes
-dynamically. First you must load the shared library (if not done so in your root logon
-macro) to provide the classes::
-
-  root> gSystem->Load("librebdsimLib");
-
-Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
-are familiar with ROOT, you may use the ROOT file as you would any other given the
-classes provided by the library::
-
-  root> TFile* f = new TFile("output.root", "READ");
-  root> TTree* eventTree = (TTree*)f->Get("Event");
-  root> BDSOutputROOTEventLoss* elosslocal = new BDSOutputROOTEventLoss();
-  root> eventTree->SetBranchAddress("Eloss.", &elosslocal);
-  root> eventTree->GetEntry(0);
-  root> cout << elosslocal->n << endl;
-        345
-  root>
-
-The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
-of each class.
-
-This would of course be fairly tedious to load all the structures in the output. Therefore,
-a data loader class is provided that constructs local instances of all the objects and
-sets the branch address on them (links them to the open file). For example::
-
-  root> gSystem->Load("librebdsimLib");
-  root> DataLoader* dl = new DataLoader("output.root");
-  root> Event* evt = dl->GetEvent();
-  root> TTree* evtTree = dl->GetEventTree();
-
-Here, a file is loaded and by default all data is loaded in the file. We get access to
-the local event object and the event tree (here, a chain of all files). We can then load
-a particular entry in the tree, which for the Event tree is an individual event::
-  
-  root> evtTree->GetEntry(10);
-
-The event object now contains the data loaded from the file.::
-
-  root> evt->Eloss.n
-  (int_t) 430
-
-For our example, the file has 430 entries of energy loss for event \#10. The analysis loading
-classes are designed to have the same structure as the output file. Look at
-`bdsim/analysis/Event.hh` to see what objects the class has.
-
-One may manually loop over the events in a macro::
-
-  void DoLoop()
-  {
-    gSystem->Load("librebdsimLib");
-    DataLoader* dl = new DataLoader("output.root");
-    Event* evt = dl->GetEvent();
-    TTree* evtTree = dl->GetEventTree()
-    int nentries = (int)evtTree->GetEntries();
-    for (int i = 0; i < nentries; ++i)
-      {
-        evtTree->GetEntry(i)
-	std::cout << evt->Eloss.n >> std::endl;
-      }
-  }
-
-  root> .L myMacro.C
-  root> DoLoop()
-  
-
-This would loop over all entries and print the number of energy deposition hits per
-event.
-
-Samplers are dynamically added to the output based on the names the user decides in
-their input accelerator model. The names of the samplers can be accessed from the
-DataLoader class::
-
-  std::vector<std::string> samplerNames = dl->GetSamplerNames();
-
-
-The following classes are used for data loading and can be found in `bdsim/analysis`:
-
-* DataLoader.hh
-* Beam.hh
-* Event.hh
-* Model.hh
-* Options.hh
-* Run.hh
-  
 
 Preparing an Analysis Configuration File
 ----------------------------------------
@@ -188,6 +79,10 @@ Preparing an Analysis Configuration File
 The analysis configuration file is a simple text file. This can be prepared by copying
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
+
+We strongly recommend browsing the data in a TBrowser beforehand and double clicking
+the variables. This gives you idea of the range of the data. See :ref:`basic-data-inspection`
+for more details.
 
 There are three types of histograms that rebdsim can produce:
 
@@ -265,14 +160,20 @@ Examples can be found in:
 * For a 2D or 3D histogram, x vs. y variables are specified by :code:`samplername.y:samplername.x`. See warning below for order of variables.
 * Variables must contain the full 'address' of a variable inside a Tree.
 * Variables can also contain a value manipulation, e.g. :code:`1000*(Primary.energy-0.938)` (to get the kinetic energy of proton primaries in MeV).
-* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
-* True or False as well as 1 or 0 may be used for Boolean options.
+* Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
+* Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
+* If a Boolean and a weight is desired, multiply both with the Boolean in brackets e.g.
+  :code:`Eloss.energy*(Eloss.S>145.3)`.
+* True or False as well as 1 or 0 may be used for Boolean options at the top.
 
 .. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
 	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
 	  useful for per-event analysis on the Event tree.
+
+A full explanation on the combination of selection parameters is given in the ROOT TTree class:
+`<https://root.cern.ch/doc/master/classTTree.html>`_.  See the "Draw" method and "selection".
 
 Logarithmic Binning
 ===================
@@ -394,16 +295,42 @@ Scaling Up - Parallelising Analysis
 
 For high statistics studies, it's common to run multiple instances of BDSIM with different
 seeds (different seeds ensures different results) on a high throughput computer cluster.
-In this situation, each instance of BDSIM provides an output file. Rebdsim can analyse
-all of these files together by specifying `"*.root"` in the input analysis configuration
-(i.e. analysisConfig.txt) but for large numbers of events, this can take some time.
+There are two possible strategies to efficiently scale the statistics and analysis. Both
+produce numerically identical output but make different use of computing resources. The
+more data stored per event in the outpu files, the longer it takes to load it from disk and
+the longer the anlaysis. Similarly, the more events simulated, the longer the analysis will
+take. Of course either strategy can be used.
+
+Low Data Volume
+===============
+
+If the overall output data volume is relatively low, we recommend analysing all of the
+output files at once with rebdsim. In the `Analysis Configuration File`_ file,
+the `InputFilePath` should be specified as `"*.root"` to match all the root files
+in the current directory.
+
+.. note:: For `"*.root"` all files should be from the same simulation and only BDSIM
+	  output files (i.e. not rebdsim output files).
+
+rebdsim will 'chain' the files together to behave as one big file with all of the events.
+This is shown schematically in the figure below.
+
+.. figure:: figures/multiple_outputs_rebdsim.pdf
+	    :width: 100%
+	    :align: center
+
+This strategy works best for a relatively low number of events and data volume (example
+numbers might be < 10000 events and < 10 GB of data). 
+		    
+High Data Volume
+================
 
 In this case, it is better to analyse each output file with rebdsim separately and then
 combine the results. In the case of per-event histograms, rebdsim provides the mean
 per event along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`
-is provided that can combine these rebdsim output files correctly to provide the
-overall mean and error on the mean as if all events had been analysed in one execution
-of rebdsim.
+is provided that can combine these rebdsim output files correctly (i.e. the mean of the
+mean histograms) to provide the overall mean and error on the mean as if all events had
+been analysed in one execution of rebdsim.
 
 The combination of the histograms from the rebdsim output files is very quick in comparison
 to the analysis. `rebdsimCombine` is used as follows: ::
@@ -418,8 +345,121 @@ are input files to be merged. This workflow is shown schematically in the figure
 	    :align: center
 
 
-Converting ROOT trees as numpy arrays
--------------------------------------
+Further Analysis
+----------------
+
+The class used to store and load data in BDSIM are packaged into a library. This library
+can be used interactively in Python and ROOT to load the data manually. This is useful
+to prepare a more involved analysis.
+
+Interactively in Python
+=======================
+
+This is the preferred method. ROOT must have been installed or compiled with Python support.
+You can test this by starting Python and trying to import ROOT - there should be no errors:
+
+   >>> import ROOT
+
+The library containing the analysis classes may be then loaded:
+
+   >>> import ROOT
+   >>> ROOT.gSystem.Load("librebdsimLib")
+
+The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
+
+  
+Interactively in ROOT
+=====================
+
+When using ROOT's interpreter, you can use the functionality of the BDSIM classes
+dynamically. First you must load the shared library (if not done so in your root logon
+macro) to provide the classes::
+
+  root> gSystem->Load("librebdsimLib");
+
+Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
+are familiar with ROOT, you may use the ROOT file as you would any other given the
+classes provided by the library::
+
+  root> TFile* f = new TFile("output.root", "READ");
+  root> TTree* eventTree = (TTree*)f->Get("Event");
+  root> BDSOutputROOTEventLoss* elosslocal = new BDSOutputROOTEventLoss();
+  root> eventTree->SetBranchAddress("Eloss.", &elosslocal);
+  root> eventTree->GetEntry(0);
+  root> cout << elosslocal->n << endl;
+        345
+  root>
+
+The header (".hh") files in :code:`<bdsim>/analysis` provide the contents and abilities
+of each class.
+
+This would of course be fairly tedious to load all the structures in the output. Therefore,
+a data loader class is provided that constructs local instances of all the objects and
+sets the branch address on them (links them to the open file). For example::
+
+  root> gSystem->Load("librebdsimLib");
+  root> DataLoader* dl = new DataLoader("output.root");
+  root> Event* evt = dl->GetEvent();
+  root> TTree* evtTree = dl->GetEventTree();
+
+Here, a file is loaded and by default all data is loaded in the file. We get access to
+the local event object and the event tree (here, a chain of all files). We can then load
+a particular entry in the tree, which for the Event tree is an individual event::
+  
+  root> evtTree->GetEntry(10);
+
+The event object now contains the data loaded from the file.::
+
+  root> evt->Eloss.n
+  (int_t) 430
+
+For our example, the file has 430 entries of energy loss for event \#10. The analysis loading
+classes are designed to have the same structure as the output file. Look at
+`bdsim/analysis/Event.hh` to see what objects the class has.
+
+One may manually loop over the events in a macro::
+
+  void DoLoop()
+  {
+    gSystem->Load("librebdsimLib");
+    DataLoader* dl = new DataLoader("output.root");
+    Event* evt = dl->GetEvent();
+    TTree* evtTree = dl->GetEventTree()
+    int nentries = (int)evtTree->GetEntries();
+    for (int i = 0; i < nentries; ++i)
+      {
+        evtTree->GetEntry(i)
+	std::cout << evt->Eloss.n >> std::endl;
+      }
+  }
+
+  root> .L myMacro.C
+  root> DoLoop()
+  
+
+This would loop over all entries and print the number of energy deposition hits per
+event.
+
+Samplers are dynamically added to the output based on the names the user decides in
+their input accelerator model. The names of the samplers can be accessed from the
+DataLoader class::
+
+  std::vector<std::string> samplerNames = dl->GetSamplerNames();
+
+
+The following classes are used for data loading and can be found in `bdsim/analysis`:
+
+* DataLoader.hh
+* Beam.hh
+* Event.hh
+* Header.hh
+* Model.hh
+* Options.hh
+* Run.hh
+
+
+ROOT trees as Numpy Arrays
+--------------------------
 
 A useful interface is root_numpy that allows root data to be loaded as a numpy array.
 
@@ -440,8 +480,10 @@ Installing root_numpy from PIP
 
 To install using the python package manager PIP::
 
-   sudo port install py27-pip
-   sudo pip-2.7 install root_numpy 
+  pip install root_numpy
+
+.. warning:: Your system may have multiple versions of Python with their respective PIP. Make
+	     sure you use the same version you use for ROOT.
 
 Extracting data from ROOT file ::
 

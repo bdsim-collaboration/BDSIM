@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
 
+#include "BDSOutputROOTEventHeader.hh"
+
 #include "TFile.h"
 #include "TChain.h"
 
@@ -40,7 +42,11 @@ void usage()
 int main(int argc, char* argv[])
 {
   if (argc != 3)
-    {usage(); exit(1);}
+    {
+      std::cout << "Incorrect number of arguments." << std::endl;
+      usage();
+      exit(1);
+    }
 
   std::string inputFileName  = std::string(argv[1]);
   std::string outputFileName = std::string(argv[2]);
@@ -50,6 +56,15 @@ int main(int argc, char* argv[])
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");
+
+  // add header for file type and version details
+  outputFile->cd();
+  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+  headerOut->Fill(); // updates time stamp
+  headerOut->SetFileType("REBDSIM");
+  TTree* headerTree = new TTree("Header", "REBDSIM Header");
+  headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  headerTree->Fill();
 
   auto modelTree = dl.GetModelTree();
   modelTree->CloneTree(-1, "fast");

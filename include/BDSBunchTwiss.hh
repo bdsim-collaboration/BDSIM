@@ -19,12 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCHTWISS_H
 #define BDSBUNCHTWISS_H 
 
-#include "BDSBunch.hh"
-#include "CLHEP/Matrix/Vector.h" 
-#include "CLHEP/Matrix/SymMatrix.h"
+#include "BDSBunchGaussian.hh"
 
-namespace CLHEP {
-  class RandMultiGauss;
+#include "G4Transform3D.hh"
+
+namespace GMAD
+{
+  class Beam;
 }
 
 /**
@@ -33,9 +34,20 @@ namespace CLHEP {
  * @author Stewart Boogert
  */
 
-class BDSBunchTwiss: public BDSBunch
+class BDSBunchTwiss: public BDSBunchGaussian
 {
-private: 
+public: 
+  BDSBunchTwiss();
+  virtual ~BDSBunchTwiss(){;}
+  
+  virtual void SetOptions(const GMAD::Beam& beam,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
+  
+  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+		       G4double& xp, G4double& yp, G4double& zp,
+		       G4double& t , G4double&  E, G4double& weight);
+  
+private:
   /// @{ Twiss parameters
   G4double betaX;
   G4double betaY;
@@ -49,38 +61,6 @@ private:
   G4double dispY;
   G4double dispXP;
   G4double dispYP;
-  /// @}
-  
-  /// Random number generators 
-  CLHEP::RandMultiGauss* GaussMultiGen;  
-
-  /// Gaussian generator
-  CLHEP::HepVector    meansGM;
-  CLHEP::HepSymMatrix sigmaGM;
-
-public: 
-  BDSBunchTwiss();
-  virtual ~BDSBunchTwiss();
-  
-  virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity); 
-  void CommonConstruction();
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);
-
-private:
-  /// @{ Setter
-  void SetBetaX(double newBetaX)   {betaX  = newBetaX;}
-  void SetBetaY(double newBetaY)   {betaY  = newBetaY;}
-  void SetAlphaX(double newAlphaX) {alphaX = newAlphaX;}
-  void SetAlphaY(double newAlphaY) {alphaY = newAlphaY;}
-  void SetEmitX(double newEmitX)   {emitX  = newEmitX;}
-  void SetEmitY(double newEmitY)   {emitY  = newEmitY;}
-  void SetDispX(double newDispX)   {dispX  = newDispX;}
-  void SetDispY(double newDispY)   {dispY  = newDispY;}
-  void SetDispXP(double newDispXP) {dispXP = newDispXP;}
-  void SetDispYP(double newDispYP) {dispXP = newDispYP;}
   /// @}
 };
 

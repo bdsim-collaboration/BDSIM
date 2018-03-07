@@ -53,7 +53,8 @@ protected:
   /// for given input coordinates along step length h.
   virtual void AdvanceHelix(const G4double yIn[],
 			    G4double       h,
-			    G4double       yOut[]) = 0;
+			    G4double       yOut[],
+			    G4double       yErr[]) = 0;
 
   /// Advance chord by quadratic approximation. Can throw a std::out_of_range exception
   /// for inappropriate use of paraxial approximation.

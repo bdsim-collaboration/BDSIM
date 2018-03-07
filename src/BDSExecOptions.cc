@@ -47,9 +47,10 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
-
+  
   if (options.recreate)
     {
+      bool runBatch = options.batch;
       BDSOutputLoader loader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
       GMAD::Beam    recreateBeam    = loader.Beam();
@@ -57,6 +58,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
       recreateOptions.Amalgamate(options, true);
       recreateBeam.Amalgamate(beam, true, options.startFromEvent);
       options = recreateOptions; // Now replace member.
+      options.batch = runBatch; // override batch flag to allow control
       beam    = recreateBeam;
     }
 }
@@ -90,6 +92,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
+					{ "printModuloFraction", 1, 0, 0},
 					{ "exportGeometryTo", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ "ignoresigint", 0, 0, 0},
@@ -222,6 +225,12 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("ngenerate", result);
 	  beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
 	}
+      else if ( !strcmp(optionName, "printModuloFraction") )
+	{
+	  double result = 1;
+	  conversion = BDS::IsNumber(optarg, result);
+	  options.set_value("printModuloFraction", result);
+	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
       else if( !strcmp(optionName, "ignoresigint") )
@@ -300,6 +309,7 @@ void BDSExecOptions::Usage() const
 	<<"--seedStateFileName=<file>: use this ASCII file seed state to run an event" << G4endl
 	<<"--startFromEvent=N        : event offset to start from when recreating events" << G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
+	<<"--printModuloFraction=N   : fraction of events to print out (default 0.05) - [0-1]"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
 	<<"--verbose_event_num=N     : display tracking information for event number N"<<G4endl
@@ -329,6 +339,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(24) << "seedstate: "           << std::setw(15) << std::left << options.seedStateFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(24) << "survey: "              << std::setw(15) << std::left << options.survey              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(24) << "surveyFileName: "      << std::setw(15) << std::left << options.surveyFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(24) << "printModuloFraction: " << std::setw(15) << std::left << options.printModuloFraction << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(24) << "verbose: "             << std::setw(15) << std::left << options.verbose             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(24) << "verboseEvent: "        << std::setw(15) << std::left << options.verboseEvent        << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(24) << "verboseStep: "         << std::setw(15) << std::left << options.verboseStep         << G4endl;  

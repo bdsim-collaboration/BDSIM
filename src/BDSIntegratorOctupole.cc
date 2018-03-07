@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorOctupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -36,6 +37,8 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 {
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   bTriplePrime = brho * (*strength)["k3"] / (CLHEP::m3*CLHEP::m);
+
+  zeroStrength = !BDS::IsFinite(bTriplePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;
 #endif
@@ -43,7 +46,8 @@ BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 
 void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
-					 G4double        yOut[])
+					 G4double        yOut[],
+					 G4double        yErr[])
 {
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double momMag   = mom.mag();
@@ -51,7 +55,7 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
   
   if(std::abs(kappa) < 1e-20)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -86,5 +90,5 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
   localA *= kappa / 6; // 6 is actually a 3! factor.;
   
   AdvanceChord(h,localPos,localMomUnit,localA);
-  ConvertToGlobal(localPos, localMomUnit, yOut, momMag);
+  ConvertToGlobal(localPos, localMomUnit, yOut, yErr, momMag);
 }

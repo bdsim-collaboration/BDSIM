@@ -111,11 +111,11 @@ public:
   inline double PrintModuloFraction() const       {return optionsNumber.at("printmodulofraction");}
   /// @}
   /// @{ Whether per entry loading is needed. Alternative is only TTree->Draw().
-  inline bool   PerEntryBeam()   const {return optionsBool.at("perEntryBeam");}
-  inline bool   PerEntryEvent()  const {return optionsBool.at("perEntryEvent");}
-  inline bool   PerEntryRun()    const {return optionsBool.at("perEntryRun");}
-  inline bool   PerEntryOption() const {return optionsBool.at("perEntryOption");}
-  inline bool   PerEntryModel()  const {return optionsBool.at("perEntryModel");}
+  inline bool   PerEntryBeam()   const {return optionsBool.at("perentrybeam");}
+  inline bool   PerEntryEvent()  const {return optionsBool.at("perentryevent");}
+  inline bool   PerEntryRun()    const {return optionsBool.at("perentryrun");}
+  inline bool   PerEntryOption() const {return optionsBool.at("perentryoption");}
+  inline bool   PerEntryModel()  const {return optionsBool.at("perentrymodel");}
   /// @}
   
  protected:
@@ -160,6 +160,10 @@ public:
   /// Check if the supplied tree name is one of the static member vector of
   /// allowed tree names.
   bool InvalidTreeName(const std::string& treeName) const;
+
+  /// Check whether the tree name ends in a '.' or not and fix it (simple mistake.
+  /// Then apply InvalidTreeName and throw std::string error if it's a problem.
+  void CheckValidTreeName(std::string& treeName) const;
 
   /// Parse the bin substring and check it has the right number of dimensions.
   /// Writes out via reference to pre-existing variables.

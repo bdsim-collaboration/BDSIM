@@ -54,6 +54,13 @@ void BDSOutputROOT::NewFile()
   G4String newFileName = GetNextFileName();
   
   theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
+
+  if (theRootOutputFile->IsZombie())
+    {
+      G4cerr << __METHOD_NAME__ << "Unable to open output file: \"" << newFileName << "\"" << G4endl;
+      exit(1);
+    }
+  
   // root file - note this sets the current 'directory' to this file!
   theRootOutputFile->cd();
 

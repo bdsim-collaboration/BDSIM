@@ -111,6 +111,9 @@ namespace GMAD
     double      coilWidthFraction;
     double      coilHeightFraction;
 
+    /// geometry control
+    bool preprocessGDML;
+
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
     
@@ -130,10 +133,11 @@ namespace GMAD
     bool        ignoreLocalAperture;
     ///@}
     
-    /// vacuum material
-    std::string vacMaterial;
-    /// world volume
-    std::string emptyMaterial;
+    std::string vacMaterial;   ///< vacuum material
+    std::string emptyMaterial; ///< material in container volumes
+    std::string worldMaterial;
+
+    double    worldVolumeMargin; ///< Padding margin for world volume size.
 
     double    vacuumPressure;
     bool      sensitiveBeamPipe;
@@ -178,8 +182,8 @@ namespace GMAD
     int      maximumPhotonsPerStep;
     int      maximumBetaChangePerStep;
     long     maximumTracksPerEvent;
-    double   thresholdCutCharged;
-    double   thresholdCutPhotons;
+    double   minimumKineticEnergy;
+    double   minimumRange;
     double   defaultRangeCut;
     double   prodCutPhotons;
     double   prodCutElectrons;
@@ -194,15 +198,14 @@ namespace GMAD
     /// Tracking related parameters
     std::string integratorSet;
     double   lengthSafety;
-    double   maximumTrackingTime; ///< maximum tracking time per track [s]
-    double   maximumStepLength;   ///< maximum permitted step length in any volume
+    double   maximumTrackingTime; ///< Maximum tracking time per track [s].
+    double   maximumStepLength;   ///< Maximum permitted step length in any volume.
     double   maximumTrackLength;  ///< Maximum permitted track length [m].
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;
     double   deltaOneStep;
-    bool     stopTracks;    
     bool     stopSecondaries;
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
@@ -216,6 +219,7 @@ namespace GMAD
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
+    std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
 
     double      trajCutGTZ;

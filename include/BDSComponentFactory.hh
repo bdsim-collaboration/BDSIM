@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSFieldType.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -123,7 +124,8 @@ public:
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
   /// between input and output faces.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&          elementNameIn,
+						    const GMAD::Element*     el,
 						    const BDSMagnetStrength* st,
 						    G4double defaultOuterDiameter      = -1,
 						    G4double defaultVHRatio            = 1.0,
@@ -133,7 +135,8 @@ public:
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
   /// to a chord for a straight section of outer magnet geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&      elementNameIn,
+						    const GMAD::Element* el,
 						    const G4double angleIn,
 						    const G4double angleOut,
 						    const G4bool   yokeOnLeft                = false,
@@ -156,13 +159,15 @@ public:
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
-  
-  /// length safety from global constants
-  G4double lengthSafety;
-  /// rigidity in T*m for beam particles
+
+  /// Rigidity in T*m (G4units) for beam particles.
   G4double brho;
-  /// length of a thin element
+  /// Length safety from global constants.
+  G4double lengthSafety;
+  /// Length of a thin element.
   G4double thinElementLength;
+  /// Cache of whether to include fringe fields.
+  G4bool includeFringeFields;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -252,6 +257,9 @@ private:
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
+
+  /// Local copy of enum of the integrator set, i.e. which one it is specifically.
+  const BDSIntegratorSetType integratorSetType;
 
   /// Calculate the field from a given angle through a length of field - uses member
   /// rigidity and charge. Length & angle in g4 m / rad units.

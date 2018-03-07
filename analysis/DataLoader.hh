@@ -49,17 +49,17 @@ public:
 	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,
 	     const RBDS::BranchMap* branchesToTurnOn = nullptr,
-	     bool        backwardsCommpatible = true);
+	     bool        backwardsCompatible = true);
   virtual ~DataLoader();
 
   /// Create an instance of each class in the file to be overlaid by loading
   /// the ROOT file.
   void CommonCtor(std::string fileName,
-		  bool backwardsCommpatible);
+		  bool backwardsCompatible);
 
   /// Build up the input file list.
   void BuildInputFileList(std::string inputPath,
-			  bool backwardsCommpatible);
+			  bool backwardsCompatible);
 
   /// Open the first file in the file list and map the trees in it.
   void BuildTreeNameList();

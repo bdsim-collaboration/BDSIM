@@ -120,6 +120,8 @@ void Element::PublishMembers()
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
   publish("fieldAll",    &Element::fieldAll);
+  publish("bmap",        &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
   publish("waveLength",&Element::waveLength);
 
   // screen
@@ -146,9 +148,10 @@ void Element::PublishMembers()
   publish("materialThickness",&Element::materialThickness);
   publish("degraderOffset",&Element::degraderOffset);
 
-  publish("geometry",&Element::geometryFile);
-  publish("bmap",    &Element::fieldAll);
-  alternativeNames["bmap"] = "fieldAll";
+  publish("geometryFile",&Element::geometryFile);
+  publish("geometry",    &Element::geometryFile);
+  alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
+ 
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
@@ -328,7 +331,7 @@ void Element::flush()
   e1 = 0;
   e2 = 0;
   fint = 0;
-  fintx = 0;
+  fintx = -1;
   hgap  = 0;
   kick  = 0;
   hkick = 0;
