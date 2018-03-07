@@ -69,6 +69,8 @@ private:
   G4bool            useInnerField; ///< Whether to use it or not.
   G4double          poleTipRadius; ///< Radius of transition between inner and outer fields.
   G4double          transitionLengthScale; ///< Length scale over which to fade between fields.
+
+  G4double angleOffset;
 };
 
 #endif

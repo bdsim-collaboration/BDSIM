@@ -44,6 +44,7 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              or
   transitionLengthScale(1)
 {
   G4double angle = CLHEP::pi/(2.*order);
+  angleOffset = angle;
 
   if (order > 1)
     {// don't do for dipole
@@ -115,12 +116,14 @@ G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
 
   // calculate angle in 2D polar coordinates from y axis vertical clockwise
   G4double angle = std::atan2(r.x(),r.y());
+  //angle += angleOffset;
+  //angle *= factor;
   if (angle < 0)
     {angle = CLHEP::twopi + angle;}
 
   // the point to query in the nominal dipole equation
   G4TwoVector query(0,rmag);
-  query.rotate(-factor*angle);
+  query.rotate(-factor*angle + CLHEP::halfpi - 2*angleOffset);
 
   // calculate the field according to a magnetic dipole m at position r.
   G4TwoVector b = 3*query*(m.dot(query))/std::pow(rmag,5) - m/std::pow(rmag,3);
