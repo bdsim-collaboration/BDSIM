@@ -37,7 +37,8 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr((*strengthIn)["fringecorr"]),
-  rho(brhoIn / (*strengthIn)["field"]),
+  rho(std::abs(brhoIn)/(*strengthIn)["field"]),
+  bRho(brhoIn),
   strength(strengthIn)
 {
   if (thinElementLength < 0)
@@ -108,7 +109,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // calculate new position and momentum kick
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
-  OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut);
+  OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, fcof);
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
@@ -134,7 +135,8 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
                                         G4ThreeVector  momIn,
                                         G4ThreeVector  momUIn,
                                         G4ThreeVector& posOut,
-                                        G4ThreeVector& momOut) const
+                                        G4ThreeVector& momOut,
+                                        G4double       fCof) const
 {
   // nominal bending radius.
   G4double momInMag = momIn.mag();
@@ -156,13 +158,17 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   G4double X11=0,X12=0,X21=0,X22 = 0;
   G4double Y11=0,Y12=0,Y21=0,Y22 = 0;
 
+  // normalise to particle charge
+  G4double charge = fCof / std::abs(fCof);
+  G4double bendingRad = rho * charge;
+
   // calculate fringe field kick
   X11 = 1;
-  X21 = tan(polefaceAngle) / (rho / CLHEP::m);
+  X21 = tan(polefaceAngle) / (bendingRad / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - (fringeCorr / rho)) / (rho / CLHEP::m);
+  Y21 = -tan(polefaceAngle - (fringeCorr / bendingRad)) / (bendingRad / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;

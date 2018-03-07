@@ -53,13 +53,14 @@ public:
 		       G4double       yErr[]);
 
   /// Calculate a single step using dipole fringe field matrix.
-  /// Unit momentum is provided as an argument because it is already calculated in the
+  /// Unit momentum and particle charge are provided as arguments because they already calculated in the
   /// Stepper method.
   void OneStep(G4ThreeVector  posIn,
                G4ThreeVector  momIn,
                G4ThreeVector  momUIn, // assumed unit momentum of momIn
                G4ThreeVector& posOut,
-               G4ThreeVector& momOut) const;
+               G4ThreeVector& momOut,
+               G4double       fCof) const;
 
 private:
   /// Private default constructor to enforce use of supplied constructor
@@ -71,6 +72,8 @@ private:
   const G4double fringeCorr;
   /// Nominal magnet bending radius
   const G4double rho;
+  /// Nominal magnetic rigidity
+  const G4double bRho;
 
   BDSMagnetStrength const* strength;
 
