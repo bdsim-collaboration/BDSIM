@@ -162,7 +162,7 @@ void BDSIntegratorDipoleFringe::OneStep(G4ThreeVector  posIn,
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - fringeCorr) / (rho / CLHEP::m);
+  Y21 = -tan(polefaceAngle - (fringeCorr / rho)) / (rho / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
