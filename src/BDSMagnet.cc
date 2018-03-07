@@ -143,7 +143,7 @@ void BDSMagnet::BuildBeampipe()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-							    chordLength - 2*lengthSafety,
+							    chordLength - lengthSafety,
 							    beamPipeInfo);
 
   beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();

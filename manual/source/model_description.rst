@@ -282,47 +282,65 @@ The faces of the magnet are normal to the chord of the
 input and output point. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`angle`           angle [rad]                  0           yes, or `B`
-`B`               magnetic field [T]           0           yes
-`e1`              input poleface angle [rad]   0           no
-`e2`              output poleface angle [rad]  0           no
-`material`        magnet outer material        Iron        no
-`yokeOnInside`    yoke on inside of bend       0           no
-`hStyle`          H style poled geometry       0           no
-================  ===========================  ==========  ===========
++-----------------+-----------------------------------+-----------+-------------+
+| Parameter       | Description                       | Default   | Required    |
++=================+===================================+===========+=============+
+| `l`             | length [m]                        | 0         | yes         |
++-----------------+-----------------------------------+-----------+-------------+
+| `angle`         | angle [rad]                       | 0         | yes, or `B` |
++-----------------+-----------------------------------+-----------+-------------+
+| `B`             | magnetic field [T]                | 0         | yes         |
++-----------------+-----------------------------------+-----------+-------------+
+| `e1`            | input poleface angle [rad]        | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `e2`            | output poleface angle [rad]       | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `material`      | magnet outer material             | Iron      | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `hStyle`        | H style poled geometry            | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `k1`            | quadrupole coefficient for        | 0         | no          |
+|                 | function magnet.                  |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `fint`          | fringe field integral for the     | 0         | no          |
+|                 | entrance face of the rbend.       |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `fintx`         | fringe field integrato for the    | -1        | no          |
+|                 | exit face of the rbend. -1 means  |           |             |
+|                 | default to the same as fint. 0    |           |             |
+|                 | there will be no effect.          |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `hgap`          | the half gap of the poles for     | 0         | no          |
+|                 | **fringe field purposes only**    |           |             |
++-----------------+-----------------------------------+-----------+-------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-
-.. note:: For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
-	  is represented by a straight (chord) section and even nominal energy particles
-	  may hit the aperture depending on the degree of tracking accuracy specified. In this
-	  case, consider splitting the `rbend` into multiple ones.
-
-.. note:: As of v0.64 a combined quadrupole component is not possible, but is under
-	  development
 
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+A few points about rbends:
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
-	  element must be longer than the projected length from the rotation, given by
-	  :math:`2 \tan(\mathrm{eX})`.
-
-.. note:: If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the
-      fringefield element can be set by the option `thinElementLength` (see `options`_).
-
-	  
+1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
+   is represented by a straight (chord) section and even nominal energy particles
+   may hit the aperture depending on the degree of tracking accuracy specified. In this
+   case, consider splitting the `rbend` into multiple ones.
+2) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+3) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+   element must be longer than the projected length from the rotation, given by
+   :math:`2 \tan(\mathrm{eX})`.
+4) If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+   specified (on by default, see `options`_), then a thin fringefield magnet (1 micron thick by default)
+   is included at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend.
+   The length of the fringefield element can be set by the option `thinElementLength` (see `options`_).
+5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+   if `e1` and `e2` have 0 angle.
 
 Examples::
 
@@ -347,46 +365,61 @@ typically split into several co-joined `sbend` magnets, the number depending on 
 length and bending angle. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  ====================================  ==========  ===========
-parameter         description                           default     required
-`l`               length [m]                            0           yes
-`angle`           angle [rad]                           0           yes, or `B`
-`B`               magnetic field [T]                    0           yes
-`e1`              input poleface angle [rad]            0           no
-`e2`              output poleface angle [rad]           0           no
-`material`        magnet outer material                 Iron        no
-`fint`            fringe field integral for exit face   0           no
-`fintx`           fringe field integral for entrance    0           no
-`hgap`            vertical gap for fringe field [m]     0           no
-`yokeOnInside`    yoke on inside of bend                0           no
-`hStyle`          H style poled geometry                0           no
-================  ====================================  ==========  ===========
++-----------------+-----------------------------------+-----------+-------------+
+| Parameter       | Description                       | Default   | Required    |
++=================+===================================+===========+=============+
+| `l`             | length [m]                        | 0         | yes         |
++-----------------+-----------------------------------+-----------+-------------+
+| `angle`         | angle [rad]                       | 0         | yes, or `B` |
++-----------------+-----------------------------------+-----------+-------------+
+| `B`             | magnetic field [T]                | 0         | yes         |
++-----------------+-----------------------------------+-----------+-------------+
+| `e1`            | input poleface angle [rad]        | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `e2`            | output poleface angle [rad]       | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `material`      | magnet outer material             | Iron      | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `hStyle`        | H style poled geometry            | 0         | no          |
++-----------------+-----------------------------------+-----------+-------------+
+| `k1`            | quadrupole coefficient for        | 0         | no          |
+|                 | function magnet.                  |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `fint`          | fringe field integral for the     | 0         | no          |
+|                 | entrance face of the rbend.       |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `fintx`         | fringe field integrato for the    | -1        | no          |
+|                 | exit face of the rbend. -1 means  |           |             |
+|                 | default to the same as fint. 0    |           |             |
+|                 | there will be no effect.          |           |             |
++-----------------+-----------------------------------+-----------+-------------+
+| `hgap`          | the half gap of the poles for     | 0         | no          |
+|                 | **fringe field purposes only**    |           |             |
++-----------------+-----------------------------------+-----------+-------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-
-.. note:: As of v0.64 a combined quadrupole component is not possible, but is under
-	  development
 
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+A few points about sbends:
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
-	  element must be longer than the projected length from the rotation, given by
-	  :math:`2 \tan(\mathrm{eX})`.
-
-.. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-	  specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-	  at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-	  fringefield element can be set by the option `thinElementLength` (see `options`_).
-
-.. note:: Unlike MADX, `fint` is used exclusively for the input face fringe field integral and `fintx` for
-	  the exit face.  
+1) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+2) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+   element must be longer than the projected length from the rotation, given by
+   :math:`2 \tan(\mathrm{eX})`.
+3) If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+   specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+   at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+   fringefield element can be set by the option `thinElementLength` (see `options`_).
+4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+   if `e1` and `e2` have 0 angle.
 
 Examples::
 
@@ -825,13 +858,12 @@ solenoid
 ^^^^^^^^
 
 .. figure:: figures/solenoid.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
 hard edge field profile so it is not equivalent to split a single solenoid into multiple
-smaller ones. **This is currently under development**. The strength parameter `ks` is
-defined as :math:`ks =`.
+smaller ones. **This is currently under development**.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
