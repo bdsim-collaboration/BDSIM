@@ -108,9 +108,11 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     try{
         _windowOffsetX=BDS::GetParameterValueDouble(specIn,"windowOffsetX");
     } catch(std::invalid_argument&){
-        _windowOffsetX=59.564*CLHEP::mm; //Total offset of front of flange from beam axis
+        _windowOffsetX=64.8*CLHEP::mm; //Total offset of front of flange from beam axis
     }
 	  _windowOffsetXFromVCEdge=_windowOffsetX -_vacInnerWidth/2.0-_vacThickness; //Distance to outer edge of beam pipe
+	
+   G4cout << "Window Offset from VC Edge is " << _windowOffsetXFromVCEdge << G4endl;
 
     try{
         _strutSizeX=BDS::GetParameterValueDouble(specIn,"strutSizeX");
@@ -725,11 +727,11 @@ void BDSAwakeSpectrometer::Build()
   BuildScreen();
   BuildCamera();	
   CalculateLengths();
-    BuildFrame();
+  //  BuildFrame();
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
   //      BuildCameraScoringPlane();
-    PlaceFrame();
+  //  PlaceFrame();
    PlaceScreen();
   //      PlaceCamera();
   //      }
@@ -854,15 +856,15 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 //Screen position
   //G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
-	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + 0.5*_screenThickness/std::cos(_screenAngle) - std::tan(_screenAngle)*_windowOffsetXFromVCEdge;
-	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge;
+	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0; 
+	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _windowOffsetXFromVCEdge;
 	//Offset the screen due to the _windowOffsetX
 
     //Frame position
-    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0 + _frameThicknessZ*std::cos(_screenAngle);
+    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0; 
     _frameCentreX = _frame_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
 
-
+    G4cout << "Screen position at: " << _screenCentreX << " in x and " << _screenCentreZ << " in z. " << G4endl;
   
   /*
   itsXLength = itsYLength = BDSGlobalConstants::Instance()->ComponentBoxSize()/2;
