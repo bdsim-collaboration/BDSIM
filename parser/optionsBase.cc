@@ -106,7 +106,7 @@ OptionsBase::OptionsBase()
   dontSplitSBends      = false;
   includeFringeFields  = true;
 
-  includeIronMagFields = false;
+  yokeFields           = true;
   sensitiveBeamlineComponents = true;
 
   // beam pipe / aperture

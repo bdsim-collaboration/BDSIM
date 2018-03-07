@@ -201,8 +201,7 @@ public:
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
-  //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
-  inline G4bool   IncludeIronMagFields()     const {return false;}
+  inline G4bool   YokeFields()               const {return G4bool  (options.yokeFields);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}

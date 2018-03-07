@@ -87,6 +87,7 @@ BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
+  yokeFields(BDSGlobalConstants::Instance()->YokeFields()),
   integratorSetType(BDSGlobalConstants::Instance()->IntegratorSet())
 {
   integratorSet = BDS::IntegratorSet(integratorSetType);
@@ -1066,7 +1067,9 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 					       fieldTrans);
 
   BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st);
-  BDSFieldInfo* outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);
+  BDSFieldInfo* outerField = nullptr;
+  if (yokeFields)
+    {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
 
   return new BDSMagnet(magnetType,
 		       elementName,

@@ -175,6 +175,8 @@ private:
   G4double thinElementLength;
   /// Cache of whether to include fringe fields.
   G4bool includeFringeFields;
+  /// Cache of whether to include yoke magnetic fields.
+  G4bool yokeFields;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;

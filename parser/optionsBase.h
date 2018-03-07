@@ -116,8 +116,8 @@ namespace GMAD
 
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
-    
-    bool      includeIronMagFields;
+
+    bool      yokeFields;
     bool      sensitiveBeamlineComponents;
 
     bool        includeFringeFields;

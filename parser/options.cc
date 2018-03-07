@@ -178,7 +178,8 @@ void Options::PublishMembers()
   publish("outerMaterial",        &Options::outerMaterialName);
   publish("outerDiameter",        &Options::outerDiameter);
   publish("boxSize",              &Options::outerDiameter); // for backwards compatability
-  publish("includeIronMagFields", &Options::includeIronMagFields);
+  publish("yokeFields",           &Options::yokeFields);
+  publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("beampipeRadius",       &Options::aper1);
   publish("beampipeThickness",    &Options::beampipeThickness);
