@@ -299,7 +299,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
   const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
   G4double poleTipRadius      = info.PoleTipRadius();
-  G4double beamPipeRadius     = info.BeamPipeRadius();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
     {
@@ -359,58 +358,71 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       {
 	G4ThreeVector unitDirection = G4ThreeVector(0,1,0);
 	BDSFieldMag* innerField = new BDSFieldMagDipole(strength, brho, unitDirection);
-	field = new BDSFieldMagMultipoleOuter(1, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["field"] > 0;
+	field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
 	break;
       }
     case BDSFieldType::multipoleouterquadrupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
-	field = new BDSFieldMagMultipoleOuter(2, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k1"] > 0;
+	field = new BDSFieldMagMultipoleOuter(2, poleTipRadius, innerField, positiveField);
 	break;
       }
     case BDSFieldType::multipoleoutersextupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
-	field = new BDSFieldMagMultipoleOuter(3, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k2"] > 0;
+	field = new BDSFieldMagMultipoleOuter(3, poleTipRadius, innerField, positiveField);
 	break;
       }
     case BDSFieldType::multipoleouteroctupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
-	field = new BDSFieldMagMultipoleOuter(4, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k3"] > 0;
+	field = new BDSFieldMagMultipoleOuter(4, poleTipRadius, innerField, positiveField);
 	break;
       }
     case BDSFieldType::multipoleouterdecapole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
-	field = new BDSFieldMagMultipoleOuter(5, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k4"] > 0;
+	field = new BDSFieldMagMultipoleOuter(5, poleTipRadius, innerField, positiveField);
 	break;
       }
     case BDSFieldType::skewmultipoleouterquadrupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagQuadrupole(strength, brho);
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(2, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k1"] > 0;
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(2, poleTipRadius,
+								 innerField, positiveField);
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/4.);
 	break;
       }
     case BDSFieldType::skewmultipoleoutersextupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagSextupole(strength, brho);
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(3, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k2"] > 0;
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(3, poleTipRadius,
+								 innerField, positiveField);
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/6.);
 	break;
       }
     case BDSFieldType::skewmultipoleouteroctupole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagOctupole(strength, brho);
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(4, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k3"] > 0;
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(4, poleTipRadius,
+								 innerField, positiveField);
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/8.);
 	break;
       }
     case BDSFieldType::skewmultipoleouterdecapole:
       {
 	BDSFieldMag* innerField = new BDSFieldMagDecapole(strength, brho);
-	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(5, strength, poleTipRadius, innerField, beamPipeRadius);
+	G4bool positiveField = (*strength)["k4"] > 0;
+	BDSFieldMag* normalField = new BDSFieldMagMultipoleOuter(5, poleTipRadius,
+								 innerField, positiveField);
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
 	break;
       }

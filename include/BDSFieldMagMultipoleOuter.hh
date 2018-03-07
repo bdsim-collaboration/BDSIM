@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
+#include <vector>
+
 class BDSMagnetStrength;
 
 /**
@@ -45,32 +47,23 @@ class BDSMagnetStrength;
 class BDSFieldMagMultipoleOuter: public BDSFieldMag
 {
 public:
-  BDSFieldMagMultipoleOuter(const G4int              orderIn,
-			    const BDSMagnetStrength* stIn,
-			    const G4double&          poleTipRadius,
-			    BDSFieldMag*             innerFieldIn,
-			    const G4double&          beamPipeRadius = 0);
+  BDSFieldMagMultipoleOuter(const G4int     orderIn,
+			    const G4double& poleTipRadius,
+			    BDSFieldMag*    innerFieldIn,
+			    const G4bool&   kPositive);
 
-  virtual ~BDSFieldMagMultipoleOuter();
+  virtual ~BDSFieldMagMultipoleOuter(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+  virtual G4ThreeVector GetField(const G4ThreeVector& position,
 				 const double         t = 0) const;
 
 private:
-  const G4int       order;         ///< N-poles / 2.
-  G4double          normalisation; ///< Storage of the overal normalisation factor.
-  G4RotationMatrix* rotation;      ///< Rotation into frame of magnetic dipole.
-  G4RotationMatrix* antiRotation;  ///< Corresponding anti-rotation.
-  G4double          factor;        ///< Scale factor for angle to query in dipole to get n-pole.
-  G4bool            negativeField; ///< Sign of magnetic field.
-  const G4TwoVector m;             ///< Magnetic dipole vector.
-  BDSFieldMag*      innerField;    ///< Field for inside pole tips.
-  G4bool            useInnerField; ///< Whether to use it or not.
-  G4double          poleTipRadius; ///< Radius of transition between inner and outer fields.
-  G4double          transitionLengthScale; ///< Length scale over which to fade between fields.
-
-  G4double angleOffset;
+  const G4int       order;           ///< N-poles / 2.
+  G4double          normalisation;   ///< Storage of the overal normalisation factor.
+  G4bool            positiveField;   ///< Sign of magnetic field.
+  G4double          poleTipRadius;   ///< Radius of transition between inner and outer fields.
+  std::vector<G4TwoVector> currents; ///< Locations of inifite wire current sources.
 };
 
 #endif

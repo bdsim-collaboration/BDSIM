@@ -16,10 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSFieldMag.hh"
 #include "BDSFieldMagMultipoleOuter.hh"
-#include "BDSMagnetStrength.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -29,129 +26,93 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <cmath>
+#include <vector>
 
 BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              orderIn,
-						     const BDSMagnetStrength* stIn,
-						     const G4double&          poleTipRadiusIn,						     
+						     const G4double&          poleTipRadiusIn,
 						     BDSFieldMag*             innerFieldIn,
-						     const G4double&          beamPipeRadius):
+						     const G4bool&            kPositive):
   order(orderIn),
   normalisation(1),
-  m(G4TwoVector(0,1)),
-  innerField(innerFieldIn),
-  useInnerField(false),
-  poleTipRadius(poleTipRadiusIn),
-  transitionLengthScale(1)
+  positiveField(kPositive),
+  poleTipRadius(poleTipRadiusIn)
 {
-  G4double angle = CLHEP::pi/(2.*order);
-  angleOffset = angle;
+  G4int nPoles = 2*order;
 
-  if (order > 1)
-    {// don't do for dipole
-      rotation = new G4RotationMatrix();
-      antiRotation = new G4RotationMatrix();
-      rotation->rotateZ(angle);
-      antiRotation->rotateZ(-angle);
+  // prepare vector of infinite wire current sources
+  G4TwoVector firstCurrent(poleTipRadius, 0);
+  for (G4int i = 0; i < nPoles; ++i)
+    {
+      G4TwoVector c = firstCurrent; // copy it
+      c.rotate((G4double)i*CLHEP::twopi / nPoles); // rotate copy
+      currents.push_back(c);
     }
-  factor = (order + 1)/2.;
-  negativeField = (*stIn)["k1"] < 0;
-  
-  // query inner field
+
+  // query inner field - at point just outside pole tip
   G4ThreeVector poleTipPoint = G4ThreeVector(0, poleTipRadius, 0);
-  poleTipPoint.rotateZ(angle); // rotate from 0,1 to the pole position (different for each magnet).
-  G4ThreeVector fieldAtPoleTip = innerField->GetField(poleTipPoint,/*t=*/0);
+  G4double angleOffset = CLHEP::twopi/(G4double)nPoles;
+  poleTipPoint.rotateZ(0.5*angleOffset); // rotate from 0,1 to the pole position (different for each magnet).
+  G4ThreeVector fieldAtPoleTip = innerFieldIn->GetField(poleTipPoint,/*t=*/0);
   G4double fieldAtPoleTipMag = fieldAtPoleTip.mag();
-  
-  // query outer field
+
   // we query this field object but with the normalisation initialised to 1 so it won't
-  // affect the result desipte using the same code
+  // affect the result despite using the same code
   // the inner field is by default OFF just now so won't affect this
-  G4ThreeVector rawOuterlFieldAtPoleTip = GetField(poleTipPoint,/*t=*/0);
+  G4ThreeVector rawOuterlFieldAtPoleTip = GetField(poleTipPoint);
   G4double rawOuterlFieldAtPoleTipMag = rawOuterlFieldAtPoleTip.mag();
   
   // normalisation
   normalisation = fieldAtPoleTipMag / rawOuterlFieldAtPoleTipMag;
 
-  if (BDS::IsFinite(beamPipeRadius))
-    {
-      useInnerField = true; // must be after normalisation calculation
-      // fade between inner and outer field over 10% of distance between
-      // beam pipe and pole tip.
-      transitionLengthScale = 0.3*(poleTipRadius - beamPipeRadius);
-    }
-  else
-    {
-      useInnerField = false;
-      delete innerField;
-    }      
-}
-
-BDSFieldMagMultipoleOuter::~BDSFieldMagMultipoleOuter()
-{
-  delete rotation;
-  delete antiRotation;
-  delete innerField;
+  delete innerFieldIn; // no longer required
 }
 
 G4ThreeVector BDSFieldMagMultipoleOuter::GetField(const G4ThreeVector& position,
-						  const G4double       t) const
+						  const G4double       /*t*/) const
 {
-  // rotate from dipole frame to npole frame
-  G4ThreeVector rotatedPosition(position);
-  if (rotation)
-    {rotatedPosition = rotatedPosition.transform(*rotation);}
+  G4TwoVector pos(position.x(), position.y());
 
-  // construct 2D vector of position
-  G4TwoVector r(rotatedPosition.x(), rotatedPosition.y());
-  G4double rmag = r.mag(); // calculate magnitude
+  // temporary variables
+  G4TwoVector result;
+  G4TwoVector cToPos;
+  G4double cToPosMag  = 0;
+  G4double reciprocal = 0;
+  G4TwoVector cToPosPerp;
 
-  // we can't deal with positions smaller than r of 1mm as the magnetic dipole is defined
-  // with (0,1). set limit to 2mm and query as if further out
-  if (rmag <= 2)
+  // loop over linear sum from all inifinite wire sources
+  G4int pole = 1; // counter
+  const G4double spatialLimit = 6; // mm
+  G4bool closeToPole = false;
+  for (const auto& c : currents)
     {
-      G4double scale = 2./rmag;
-      rmag = 2;
-      r*= scale;
+      cToPos    = pos - c; // distance to this wire
+      cToPosMag = cToPos.mag();
+      if (cToPosMag < spatialLimit)
+	{// we're close to a pole
+	  // for the contribution from this pole, resample at spatial limit r
+	  // from the current point - will give same direction
+	  pos += cToPos.unit() * spatialLimit;
+	  cToPos      = pos - c;
+	  cToPosMag   = cToPos.mag();
+	  closeToPole = true;
+	}
+      
+      reciprocal = 1/cToPosMag;
+      cToPosPerp = G4TwoVector(-cToPos.y(), cToPos.x());
+      result += std::pow(-1, pole+1)*cToPosPerp.unit() * reciprocal;
+      pole++;
     }
 
-  // calculate angle in 2D polar coordinates from y axis vertical clockwise
-  G4double angle = std::atan2(r.x(),r.y());
-  //angle += angleOffset;
-  //angle *= factor;
-  if (angle < 0)
-    {angle = CLHEP::twopi + angle;}
+  // limit to pole tip maximum - 0.1 empircal factor to match
+  if (closeToPole)
+    {result = result.unit()*0.1;}
 
-  // the point to query in the nominal dipole equation
-  G4TwoVector query(0,rmag);
-  query.rotate(-factor*angle + CLHEP::halfpi - 2*angleOffset);
+  // get sign right to match convention
+  if (positiveField)
+    {result *= -1;}
 
-  // calculate the field according to a magnetic dipole m at position r.
-  G4TwoVector b = 3*query*(m.dot(query))/std::pow(rmag,5) - m/std::pow(rmag,3);
+  // normalisation
+  result *= normalisation;
 
-  // package in 3-vector
-  G4ThreeVector result = G4ThreeVector(b.x(), b.y(), 0);
-
-  // rotate back to n-pole frame
-  G4ThreeVector rotatedResult(result);
-  if (antiRotation)
-    {rotatedResult = (*antiRotation)*result;}
-  rotatedResult *= normalisation;
-
-  rotatedResult *= negativeField ? -1. : 1.;
-
-  if (useInnerField)
-    {
-      G4ThreeVector innerB = innerField->GetField(position, t);
-      // normalise with tanh (sigmoid-type function) between -3 and 3 in x and 0,1 in y.
-      // scaled spatially in r across the transition length scale
-      // tanh(x) goes from -1 to 1 -> change to 0,1 via +1 and /2
-      G4double weight = (std::tanh(3*(rmag - std::abs(poleTipRadius))/(transitionLengthScale)) + 1) / 2.0;
-      //if (poleTipRadius < 0)
-      //{weight = 1-weight;} // rmag is +ve so the subtraction doesn't work for both sides
-      if (std::abs(weight) > 0.99 || std::abs(weight) < 0.01)
-	{weight = std::round(weight);} // tanh is asymptotic - snap to 1.0 when beyond 0.99
-      rotatedResult = weight*rotatedResult + (1-weight)*innerB; // weighted sum of two components
-    }
-  
-  return rotatedResult;
+  return G4ThreeVector(result.x(), result.y(), 0);
 }
