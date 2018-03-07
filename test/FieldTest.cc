@@ -34,23 +34,23 @@ int main(int /*argc*/, char** /*argv*/)
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = 1.3*CLHEP::tesla;   // T
   (*st)["angle"] = 0.014; // mrad
-  (*st)["k1"] = 0.12;
-  (*st)["k2"] = 0.02;
-  (*st)["k3"] = 0.003;
-  (*st)["k4"] = 0.0004;
-  (*st)["k5"] = 0.00005;
+  (*st)["k1"] = 0.34;
+  (*st)["k2"] = 3.91;
+  (*st)["k3"] = 12.56;
+  (*st)["k4"] = 45567.32;
+  (*st)["k5"] = 3535.2;
 
   BDSMagnetStrength* st2 = new BDSMagnetStrength();
-  (*st2)["k1"] = 0.12;
-  (*st2)["k2"] = 0.02;
-  (*st2)["k3"] = -0.003;
-  (*st2)["k4"] = 0.0004;
-  (*st2)["k5"] = -0.00005;
+  (*st2)["k1"] = 3.4;
+  (*st2)["k2"] = 123.4;
+  (*st2)["k3"] = 1234.5;
+  (*st2)["k4"] = 12345.6;
+  (*st2)["k5"] = 123456.7;
 
   BDSMagnetStrength* st3 = new BDSMagnetStrength();
   (*st3)["k1"] = -0.532;
 
-  const G4double brho = 0.3456;
+  const G4double brho = 4.333; // around 1GeV electron
 
   std::vector<std::string> names = {"dipole", "quadrupole", "sextupole", "octupole", "decapole",
 				    "skewqaudrupole", "skewsextupole", "skewoctupole",
