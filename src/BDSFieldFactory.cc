@@ -34,15 +34,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldMagDecapole.hh"
+#include "BDSFieldMagDipole.hh"
+#include "BDSFieldMagDipoleOuter.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagInterpolated.hh"
 #include "BDSFieldMagMultipole.hh"
+#include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
-#include "BDSFieldMagMultipoleOuter.hh"
 #include "BDSFieldMagQuadrupole.hh"
-#include "BDSFieldMagDipole.hh"
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkewOwn.hh"
 #include "BDSFieldMagSolenoid.hh"
@@ -419,6 +420,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
 	field = new BDSFieldMagSkewOwn(normalField, CLHEP::pi/10.);
 	break;
       }
+    case BDSFieldType::multipoleouterdipole3d:
+      {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius); break;}
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
