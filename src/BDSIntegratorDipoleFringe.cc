@@ -66,7 +66,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4double yTemp[7];
 
   // do the dipole kick using base class
-  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
+  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr); // yErr is correct output variable
 
   // only apply the kick if we're taking a step longer than half the length of the item,
   // in which case, apply the full kick. This appears more robust than scaling the kick
@@ -86,8 +86,6 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
         {
           yOut[i]     = yTemp[i];
           yOut[i + 3] = yTemp[i + 3];
-          yErr[i]     = 1e-20;
-          yErr[i + 3] = 1e-20;
         }
       return;
     }
@@ -108,8 +106,6 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 	{
 	  yOut[i]     = yTemp[i];
 	  yOut[i + 3] = yTemp[i + 3];
-	  yErr[i]     = 1e-20;
-	  yErr[i + 3] = 1e-20;
 	}
       return;
     }
