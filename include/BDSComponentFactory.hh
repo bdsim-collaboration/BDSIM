@@ -134,6 +134,7 @@ public:
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&          elementNameIn,
 						    const GMAD::Element*     el,
 						    const BDSMagnetStrength* st,
+						    const BDSBeamPipeInfo*   beamPipe,
 						    G4double defaultOuterDiameter      = -1,
 						    G4double defaultVHRatio            = 1.0,
 						    G4double defaultCoilWidthFraction  = -1,
@@ -142,10 +143,11 @@ public:
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
   /// to a chord for a straight section of outer magnet geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&      elementNameIn,
-						    const GMAD::Element* el,
-						    const G4double angleIn,
-						    const G4double angleOut,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&        elementNameIn,
+						    const GMAD::Element*   el,
+						    const G4double         angleIn,
+						    const G4double         angleOut,
+						    const BDSBeamPipeInfo* beamPipe,
 						    const G4bool   yokeOnLeft                = false,
 						    G4double       defaultOuterDiameter      = -1,
 						    G4double       defaultVHRatio            = -1,
@@ -216,10 +218,11 @@ private:
 #endif
 
   /// Helper method for common magnet construction
-  BDSMagnet* CreateMagnet(BDSMagnetStrength* st,
-			  BDSFieldType fieldType,
+  BDSMagnet* CreateMagnet(const GMAD::Element* el,
+			  BDSMagnetStrength* st,
+			  BDSFieldType  fieldType,
 			  BDSMagnetType magnetType,
-			  G4double angle = 0.0) const;
+			  G4double      angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
