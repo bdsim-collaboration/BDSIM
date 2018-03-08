@@ -31,15 +31,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSMagnetStrength;
 
 /**
- * @brief A simple parameterisation of N-Pole outer yoke magnetic field.
+ * @brief A perfect magetic dipole in 3D, normal field inside 1/2 poleTipRadius.
  *
- * Field that roughly approximates the field in a yoke of an n-pole magnet.
- * The field for a magnetic dipole is used and mapped to higher orders.
- * This field only varies with x,y and not z - assumed x,y are transverse.
- * The order is the number of poles / 2 -> for a quadrupole this is 2. The
- * field is normalised to the regular magnetic field according to the strength
- * in the supplied BDSMagnetStrength instance along with a the pole tip radius.
- * The normal n-pole field is sampled at this radius.
+ * Field for the far field of a pure magnetic dipole. Inside 0.5*poleTipRadius,
+ * the nominal uniform field is returned and tanh is used as a sigmoid function
+ * to smoothly vary between the two on a length scale of transitionLengthScale, 
+ * which is 1cm by default.
  *
  * @author Laurie Nevay
  */
