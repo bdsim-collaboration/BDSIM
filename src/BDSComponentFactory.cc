@@ -1077,7 +1077,11 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
   BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
   BDSFieldInfo* outerField = nullptr;
-  if (yokeFields)
+
+  // only make a default multipolar field if the yokeFields flag is on and
+  // there isn't an 'outerField' specified for the element
+  G4bool externalOuterField = !(el->fieldOuter.empty());
+  if (yokeFields && !externalOuterField)
     {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
 
   return new BDSMagnet(magnetType,
