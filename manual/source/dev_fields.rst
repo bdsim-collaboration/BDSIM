@@ -81,11 +81,11 @@ is :math:`(0,1,0)` - unit y.
    \mathbf{B} = \hat{\mathbf{b}} \cdot |B|
 
 
-.. figure:: dev_figures/sectorbend_radial.pdf
+.. figure:: dev_figures/dipole_radial.pdf
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a dipole with :math:`\mathbf{B} = 1.3~\mathrm{T}`, and :math:`B\rho = 0.3456`.
+	    Example field map of a dipole with :math:`\mathbf{B} = 1.3~\mathrm{T}`, and :math:`B\rho = 4.333`.
 
 
 Quadrupole
@@ -110,7 +110,7 @@ The field is described by
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a quadrupole with :math:`k_1 = 0.12`, and :math:`B\rho = 0.3456`.
+	    Example field map of a quadrupole with :math:`k_1 = 0.34`, and :math:`B\rho = 4.333`.
 
 Sextupole
 ---------
@@ -134,7 +134,7 @@ The field is described by
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a sextupole with :math:`k_2 = 0.02`, and :math:`B\rho = 0.3456`.
+	    Example field map of a sextupole with :math:`k_2 = 3.91`, and :math:`B\rho = 4.333`.
 
 
 Octupole
@@ -159,7 +159,7 @@ The field is described by
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a octupole with :math:`k_3 = 0.003`, and :math:`B\rho = 0.3456`.
+	    Example field map of a octupole with :math:`k_3 = 12.56`, and :math:`B\rho = 4.333`.
 
 
 Decapole
@@ -184,7 +184,7 @@ The field is described by
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a decapole with :math:`k_4 = 0.004`, and :math:`B\rho = 0.3456`.
+	    Example field map of a decapole with :math:`k_4 = 45567.32`, and :math:`B\rho = 4.333`.
 
 
 Skewed Versions
@@ -235,40 +235,40 @@ Example field maps are shown below.
 Skew Quadrupole
 ---------------
 
-.. figure:: dev_figures/skew_quadrupole_radial.pdf
+.. figure:: dev_figures/skewquadrupole_radial.pdf
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a skew quadrupole with :math:`k_1 = 0.12`, and :math:`B\rho = 0.3456`.
+	    Example field map of a skew quadrupole with :math:`k_1 = 0.34`, and :math:`B\rho = 4.333`.
 
 Skew Sextupole
 --------------
 
-.. figure:: dev_figures/skew_sextupole_radial.pdf
+.. figure:: dev_figures/skewsextupole_radial.pdf
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a skew sextupole with :math:`k_2 = 0.02`, and :math:`B\rho = 0.3456`.
+	    Example field map of a skew sextupole with :math:`k_2 = 3.92`, and :math:`B\rho = 4.333`.
 
 
 Skew Octupole
 -------------
 
-.. figure:: dev_figures/skew_octupole_radial.pdf
+.. figure:: dev_figures/skewoctupole_radial.pdf
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a skew octupole with :math:`k_3 = 0.003`, and :math:`B\rho = 0.3456`.
+	    Example field map of a skew octupole with :math:`k_3 = 12.56`, and :math:`B\rho = 4.333`.
 
 
 Skew Decapole
 -------------
 
-.. figure:: dev_figures/skew_decapole_radial.pdf
+.. figure:: dev_figures/skewdecapole_radial.pdf
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a skew decapole with :math:`k_4 = 0.004`, and :math:`B\rho = 0.3456`.
+	    Example field map of a skew decapole with :math:`k_4 = 45567.32`, and :math:`B\rho = 4.333`.
 
 
 
@@ -300,7 +300,7 @@ the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a
 	    :align: center
 
 	    Example field map of a multipole with :math:`\{k_1, k_2, k_3, k_4, k_5\} = \{0.12,0.02,-0.003,0.0004,-0.00005\}`,
-	    and :math:`B\rho = 0.3456`.
+	    and :math:`B\rho = 4.333`.
 
 
 Muon Spoiler
@@ -318,7 +318,7 @@ according to
    B_z & = 0
 
 
-.. figure:: dev_figures/muon_spoiler_radial2.pdf
+.. figure:: dev_figures/muonspoiler_radial.pdf
 	    :width: 70%
 	    :align: center
 

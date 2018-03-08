@@ -58,11 +58,18 @@ int main(int /*argc*/, char** /*argv*/)
   (*st4)["by"]    = ff.y();
   (*st4)["bz"]    = ff.z();
   (*st4)["field"] = ff.mag();
+
+  BDSMagnetStrength* st5 = new BDSMagnetStrength();
+  (*st5)["k1"] = 0.12;
+  (*st5)["k2"] = 0.02;
+  (*st5)["k3"] = -0.003;
+  (*st5)["k4"] = 0.0004;
+  (*st5)["k5"] = -0.00005;
   
   const G4double brho = 4.333; // around 1GeV electron
 
   std::vector<std::string> names = {"dipole", "quadrupole", "sextupole", "octupole", "decapole",
-				    "skewqaudrupole", "skewsextupole", "skewoctupole",
+				    "skewquadrupole", "skewsextupole", "skewoctupole",
 				    "skewdecapole", "muonspoiler", "multipole"};
   std::vector<BDSFieldMag*> fields;
   
@@ -76,7 +83,7 @@ int main(int /*argc*/, char** /*argv*/)
   fields.push_back(new BDSFieldMagSkewOwn(new BDSFieldMagOctupole(st, brho), CLHEP::pi/8.));
   fields.push_back(new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(st, brho), CLHEP::pi/10.));
   fields.push_back(new BDSFieldMagMuonSpoiler(st, brho));
-  fields.push_back(new BDSFieldMagMultipole(st2, brho));
+  fields.push_back(new BDSFieldMagMultipole(st5, brho));
 
   G4double poleTipRadius = 40;
   G4bool   positiveField = true;
