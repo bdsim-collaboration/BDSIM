@@ -280,7 +280,10 @@ rbend
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
 input and output point. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown in the above image.
+and output faces of the magnet, based upon the reference system shown figure below.
+
+A pure dipole field is provided in the beam pipe and a more general dipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 +-----------------+-----------------------------------+-----------+-------------+
 | Parameter       | Description                       | Default   | Required    |
@@ -363,7 +366,10 @@ system. `sbend` magnets are made of a series of straight segments. If the specif
 split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
 typically split into several co-joined `sbend` magnets, the number depending on the magnet
 length and bending angle. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown in the above image.
+and output faces of the magnet, based upon the reference system shown in the figure below.
+
+A pure dipole field is provided in the beam pipe and a more general dipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 +-----------------+-----------------------------------+-----------+-------------+
 | Parameter       | Description                       | Default   | Required    |
@@ -447,6 +453,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    q1: quadrupole, l=0.3*m, k1=45.23;
@@ -472,6 +481,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure sextupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+  
 Examples::
 
    sx1: sextupole, l=0.5*m, k2=4.678;
@@ -497,6 +509,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure octupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
@@ -516,6 +531,9 @@ parameter         description                  default     required
 `k4`              decapole coefficient         0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
+
+A pure decapolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -545,6 +563,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* No yoke field is provided.
   
 Examples::
 
@@ -593,6 +612,9 @@ The dipole field strength is then calculated with respect to the chord length:
 * The `aperture parameters`_ may also be specified.
 * For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+A pure dipole field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    KX15v: vkicker, vkick=1.3e-5;
@@ -620,6 +642,9 @@ will change.
 
 * The `aperture parameters`_ may also be specified.
 * For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
+
+A pure dipole field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 Examples::
 
@@ -874,6 +899,7 @@ parameter         description                   default     required
 ================  ============================  ==========  ===========
 
 * See `Magnet Strength Polarity`_ for polarity notes.
+* No yoke field is provided.
 
 Examples::
 
@@ -2623,6 +2649,10 @@ described in `Tunnel Geometry`_.
 +----------------------------------+-------------------------------------------------------+
 | worldMaterial                    | the default material surrounding the model. This is   |
 |                                  | by default air.                                       |
++----------------------------------+-------------------------------------------------------+
+| yokeFields                       | whether to include a general multipolar field for     |
+|                                  | the yoke of each magnet (using a 4th order            |
+|                                  | Runge-Kutta integrator). Default true.                |
 +----------------------------------+-------------------------------------------------------+
 
 Tracking Options

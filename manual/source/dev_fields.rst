@@ -365,6 +365,8 @@ An example is shown below for :math:`\mathbf{B} = (0.23,0.56,0)\,\mathrm{T}` and
 	    :width: 70%
 	    :align: center
 
+.. _yoke-multipole-field:
+		    
 General Yoke Multipole
 ----------------------
 
