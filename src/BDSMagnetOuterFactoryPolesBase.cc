@@ -346,6 +346,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, magnetColour, outerMaterial);
+  SetUserLimits();
   CreateMagnetContainerComponent();
   if (buildPole && buildEndPiece)
     {CreateEndPiece(name);}
@@ -673,6 +674,10 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
       coilLeftLV->SetVisAttributes(coilVisAttr);
       coilRightLV->SetVisAttributes(coilVisAttr);
       allVisAttributes.push_back(coilVisAttr);
+
+      auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      coilLeftLV->SetUserLimits(ul);
+      coilRightLV->SetUserLimits(ul);
     }
 }
 
@@ -877,7 +882,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
   // user limits - don't register as using global one
-  endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  endPieceCoilLV->SetUserLimits(ul);
+  endPieceContainerLV->SetUserLimits(ul);
 
   // package it all up
   endPiece = new BDSSimpleComponent(name + "_end_piece",
@@ -1670,6 +1677,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 	  allLogicalVolumes.push_back(coilLV);
 	}
     }
+  // user limits
+  SetUserLimits();
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  for (auto& lv : coilLVs)
+    {lv->SetUserLimits(ul);}
+  if (coilLV)
+    {coilLV->SetUserLimits(ul);}
   
   // placement
   // place yoke+pole (one solid) together

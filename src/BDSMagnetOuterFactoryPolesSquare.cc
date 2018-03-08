@@ -192,9 +192,22 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 				    name + "_container_lv");
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
+  magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
+					  worldMaterial,
+					  name + "_container_lv");
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+
   // user limits
-  for (auto lv : poleLVs)
-    {lv->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());}
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  yokeLV->SetUserLimits(ul);
+  containerLV->SetUserLimits(ul);
+  magnetContainerLV->SetUserLimits(ul);
+  for (auto& lv : poleLVs)
+    {
+      G4cout << lv->GetName() << G4endl;
+      lv->SetUserLimits(ul);}
+  for (auto& lv : allLogicalVolumes)
+    {lv->SetUserLimits(ul);}
 
   // create logical volumes for the coils using base class method
   CreateLogicalVolumesCoil(name);

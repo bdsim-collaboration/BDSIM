@@ -206,6 +206,9 @@ protected:
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 
+  /// Attach default user limits to all logical volumes
+  virtual void SetUserLimits();
+
   /// Utility function to make cylindrical magnetContainerSolid in the case
   /// of one with angled faces
   void BuildMagnetContainerSolidAngled(G4String      name,
