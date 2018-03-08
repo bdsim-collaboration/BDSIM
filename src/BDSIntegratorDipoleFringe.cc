@@ -79,7 +79,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // don't do fringe kick if we're sampling the field for a long step
   // or if it's a half step inside the thin element apply the dipole
   // motion but not the one-off fringe kick
-  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.51))
+  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.501))
     {
       // copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
