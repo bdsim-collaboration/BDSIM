@@ -103,8 +103,17 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 
   // check for forward going paraxial particles - only
   if (localMomU.z() < 0.9)
-    {return;}
-
+    {// copy output from dipole kick output
+      for (G4int i = 0; i < 3; i++)
+	{
+	  yOut[i]     = yTemp[i];
+	  yOut[i + 3] = yTemp[i + 3];
+	  yErr[i]     = 1e-20;
+	  yErr[i + 3] = 1e-20;
+	}
+      return;
+    }
+  
   // calculate new position and momentum kick
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
