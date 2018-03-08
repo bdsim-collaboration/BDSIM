@@ -203,9 +203,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV->SetUserLimits(ul);
   magnetContainerLV->SetUserLimits(ul);
   for (auto& lv : poleLVs)
-    {
-      G4cout << lv->GetName() << G4endl;
-      lv->SetUserLimits(ul);}
+    {lv->SetUserLimits(ul);}
   for (auto& lv : allLogicalVolumes)
     {lv->SetUserLimits(ul);}
 
