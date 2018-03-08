@@ -66,7 +66,7 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   G4double yTemp[7];
 
   // do the dipole kick using base class
-  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr);
+  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr); // yErr is correct output variable
 
   // only apply the kick if we're taking a step longer than half the length of the item,
   // in which case, apply the full kick. This appears more robust than scaling the kick
@@ -79,15 +79,13 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // don't do fringe kick if we're sampling the field for a long step
   // or if it's a half step inside the thin element apply the dipole
   // motion but not the one-off fringe kick
-  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.51))
+  if ((h > 1*CLHEP::cm) || (lengthFraction < 0.501))
     {
       // copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
         {
           yOut[i]     = yTemp[i];
           yOut[i + 3] = yTemp[i + 3];
-          yErr[i]     = 1e-20;
-          yErr[i + 3] = 1e-20;
         }
       return;
     }
@@ -103,8 +101,15 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
 
   // check for forward going paraxial particles - only
   if (localMomU.z() < 0.9)
-    {return;}
-
+    {// copy output from dipole kick output
+      for (G4int i = 0; i < 3; i++)
+	{
+	  yOut[i]     = yTemp[i];
+	  yOut[i + 3] = yTemp[i + 3];
+	}
+      return;
+    }
+  
   // calculate new position and momentum kick
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
