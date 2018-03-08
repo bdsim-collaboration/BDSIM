@@ -657,7 +657,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
     {defaultOuterDiameter = globalDefaultOD;}
   
-  auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, yokeOnLeft,
+  auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
 					  defaultOuterDiameter, 1.5, 0.9);
   
   return new BDSMagnet(t,
