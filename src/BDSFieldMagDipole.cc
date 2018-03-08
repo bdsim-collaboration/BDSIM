@@ -19,23 +19,38 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
-
-BDSFieldMagDipole::BDSFieldMagDipole(BDSMagnetStrength const* strength,
-				   G4double          const  /*brho*/,
-				   G4ThreeVector            unitDirection)
+BDSFieldMagDipole::BDSFieldMagDipole(const G4ThreeVector& field):
+  localField(field)
 {
-  localField  = unitDirection.unit() * (*strength)["field"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
+#endif
+}
+
+BDSFieldMagDipole::BDSFieldMagDipole(const BDSMagnetStrength* strength)
+{
+  G4double field = (*strength)["field"];
+  G4double bx    = (*strength)["bx"];
+  G4double by    = (*strength)["by"];
+  G4double bz    = (*strength)["bz"];
+  
+  if (!BDS::IsFinite(bx) && !BDS::IsFinite(by) && !BDS::IsFinite(bz) && BDS::IsFinite(field))
+    {localField = G4ThreeVector(0,1,0) * field;}
+  else
+    {localField = G4ThreeVector(bx,by,bz);}
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif
 }
 
 G4ThreeVector BDSFieldMagDipole::GetField(const G4ThreeVector& /*position*/,
-					 const G4double       /*t*/) const
+					  const G4double       /*t*/) const
 {
   return localField;
 }

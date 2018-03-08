@@ -445,6 +445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   CalculateAngleAndFieldSBend(element, angle, field);
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
+  (*st)["by"]     = field;
   (*st)["length"] = element->l * CLHEP::m; // arc length
 
   // Quadrupole component
@@ -482,6 +483,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
+  (*st)["by"]     = field;
   (*st)["length"] = arcLength;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
@@ -774,11 +776,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->B * CLHEP::tesla;
+      (*st)["bz"]    = (*st)["field"];
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->ks / CLHEP::m) * brho;
+      (*st)["bz"]    = (*st)["field"];
       (*st)["ks"]    = element->ks;
     }
 
@@ -1000,6 +1004,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
       (*awakeStrength)["field"] = element->B * CLHEP::tesla;
+      (*awakeStrength)["by"]    = (*awakeStrength)["field"];
 
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,

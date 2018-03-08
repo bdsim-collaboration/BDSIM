@@ -39,9 +39,13 @@ class BDSMagnetStrength;
 class BDSFieldMagDipole: public BDSFieldMag
 {
 public:
-  BDSFieldMagDipole(BDSMagnetStrength const* strength,
-		   G4double          const  brho,
-		   G4ThreeVector unitDirection = G4ThreeVector(0,1,0));
+  /// Initialise with field of correct magnitude and direction.
+  BDSFieldMagDipole(const G4ThreeVector& field);
+
+  /// This constructor uses bx, by and bz from the strength to form a unit vector,
+  /// however if these are all 0 and 'field' is finite (in strength), then a field
+  /// along unit y with strength 'field' is provided.
+  BDSFieldMagDipole(const BDSMagnetStrength* strength);
 
   virtual ~BDSFieldMagDipole(){;}
 

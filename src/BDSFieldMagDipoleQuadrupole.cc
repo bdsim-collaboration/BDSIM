@@ -28,7 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSFieldMagDipoleQuadrupole::BDSFieldMagDipoleQuadrupole(BDSMagnetStrength const* strength,
 							 G4double          const  brho):
   quad(new BDSFieldMagQuadrupole(strength, brho)),
-  dipole(new BDSFieldMagDipole(strength, brho))
+  dipole(new BDSFieldMagDipole(strength))
 {;}
 
 BDSFieldMagDipoleQuadrupole::~BDSFieldMagDipoleQuadrupole()

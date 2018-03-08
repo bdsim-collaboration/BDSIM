@@ -318,18 +318,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-      {
-	G4ThreeVector unitDirection = G4ThreeVector(0,1,0);
-	field = new BDSFieldMagDipole(strength, brho, unitDirection);
-	break;
-      }
+      {field = new BDSFieldMagDipole(strength); break;} // assumed along (0,1,0) with magnitude (*st)["field"]
     case BDSFieldType::dipole3d:
       {
-	G4ThreeVector unitDirection = G4ThreeVector((*strength)["bx"],
+	field = new BDSFieldMagDipole(G4ThreeVector((*strength)["bx"],
 						    (*strength)["by"],
-						    (*strength)["bz"]);
-	unitDirection = unitDirection.unit(); // ensure unit vector
-	field = new BDSFieldMagDipole(strength, brho, unitDirection);
+						    (*strength)["bz"]));
 	break;
       }
     case BDSFieldType::quadrupole:
@@ -355,9 +349,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::skewdecapole:
       {field = new BDSFieldMagSkewOwn(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
     case BDSFieldType::multipoleouterdipole:
-      {
-	G4ThreeVector unitDirection = G4ThreeVector(0,1,0);
-	BDSFieldMag* innerField = new BDSFieldMagDipole(strength, brho, unitDirection);
+      {// suitable only for querying transversely in x,y - no 3d nature
+	BDSFieldMag* innerField = new BDSFieldMagDipole(strength);
 	G4bool positiveField = (*strength)["field"] > 0;
 	field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
 	break;

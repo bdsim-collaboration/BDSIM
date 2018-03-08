@@ -63,9 +63,7 @@ int main(int /*argc*/, char** /*argv*/)
   
   std::vector<BDSFieldMag*> fields;
   
-  G4ThreeVector unitDirection = G4ThreeVector(0,(*st)["field"],0);
-  unitDirection = unitDirection.unit(); // ensure unit vector
-  fields.push_back(new BDSFieldMagDipole(st, brho, unitDirection));
+  fields.push_back(new BDSFieldMagDipole(st));
   fields.push_back(new BDSFieldMagQuadrupole(st, brho));
   fields.push_back(new BDSFieldMagSextupole(st, brho));
   fields.push_back(new BDSFieldMagOctupole(st, brho));
@@ -84,7 +82,7 @@ int main(int /*argc*/, char** /*argv*/)
 
 
   // outer dipole
-  innerField = new BDSFieldMagDipole(st, brho, unitDirection);
+  innerField = new BDSFieldMagDipole(st);
   positiveField = (*st)["field"] > 0;
   field = new BDSFieldMagMultipoleOuter(1, poleTipRadius, innerField, positiveField);
   fields.push_back(field);
