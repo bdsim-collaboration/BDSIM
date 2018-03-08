@@ -1173,7 +1173,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 
   BDSMagnetStrength* stCopy = new BDSMagnetStrength(*vacuumSt);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
-  BDSFieldInfo* outerField  = new BDSFieldInfo(fieldType,
+  BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brho,
 					       intType,
                                                stCopy,
