@@ -149,7 +149,7 @@ namespace BDS
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4classicalrk4);// multipole outer
 
-#if G4VERSION_NUMBER > 1029
+#if G4VERSION_NUMBER > 1039
   const BDSIntegratorSet* integratorsGeant4DP =
     new BDSIntegratorSet(BDSIntegratorType::g4dormandprince745, // solenoid
 			 BDSIntegratorType::g4dormandprince745, // dipole
