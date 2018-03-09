@@ -184,7 +184,7 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
     {
     case BDSIntegratorSetType::geant4:
       {return BDS::integratorsGeant4; break;}
-#if G4VERSION_NUMBER > 1029
+#if G4VERSION_NUMBER > 1039
     case BDSIntegratorSetType::geant4dp:
       {return BDS::integratorsGeant4DP; break;}
 #endif
