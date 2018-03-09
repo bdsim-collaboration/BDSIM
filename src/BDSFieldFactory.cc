@@ -723,7 +723,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  BDSFieldObjects* completeField      = new BDSFieldObjects(nullptr, bGlobalField,
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
 							    bEqOfMotion, integrator);
   return completeField;
 }
