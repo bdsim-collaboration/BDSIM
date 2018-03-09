@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+#include <regex>
 
 using namespace xercesc;
 
@@ -263,18 +264,23 @@ void BDSGDMLPreprocessor::ProcessAttributes(DOMNamedNodeMap* attributeMap,
       auto search = std::find(ignoreAttrs.begin(), ignoreAttrs.end(), name);
       if (search != ignoreAttrs.end())
         {continue;} // ignore this attribute
-      
-      if (XMLString::compareIString(attr->getNodeName(), XMLString::transcode("name")) == 0)
-	{
-	  std::string newName = prefix + "_" + name;
-	  attr->setNodeValue(XMLString::transcode(newName.c_str()));
-	}
-      else
-	{
-	  std::string value = XMLString::transcode(attr->getNodeValue());
-	  if (find(names.begin(), names.end(), value) != names.end())
-	    {attr->setNodeValue(XMLString::transcode((prefix + "_" + value).c_str()));}
-	}
-    }
+
+      if (XMLString::compareIString(attr->getNodeName(),
+                                    XMLString::transcode("name")) == 0) {
+        std::string newName = prefix + "_" + name;
+        attr->setNodeValue(XMLString::transcode(newName.c_str()));
+      } else {
+        std::string expression = XMLString::transcode(attr->getNodeValue());
+        // Iterate over all the names that have been defined.
+        for (auto defined_name : names) {
+	  // Check if whole name is found (don't match substrings).
+          // \\b = word boundary.  $& = the matched string.
+          std::regex whole_name(std::string("\\b") + defined_name + "\\b");
+          expression =
+              std::regex_replace(expression, whole_name, prefix + "_$&");
+        }
+        attr->setNodeValue(XMLString::transcode((expression).c_str()));
+      }
+  }
 }
 #endif

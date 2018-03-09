@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define>
+    <variable name="BOXSIZE" value="25.0"/>
+    <variable name="BOXOFFSET" value="200.0"/>
+    <variable name="ZERO" value="0.0"/>
+    <position name="boxPosition1" unit="mm" x="-BOXOFFSET" y="-BOXOFFSET" z="ZERO"/>
+    <position name="boxPosition2" unit="mm" x="-BOXOFFSET" y="ZERO" z="ZERO"/>
+    <position name="boxPosition3" unit="mm" x="-BOXOFFSET" y="BOXOFFSET" z="ZERO"/>
+    <position name="boxPosition4" unit="mm" x="ZERO" y="-BOXOFFSET" z="ZERO"/>
+    <variable name="GDML_Size_position_x" value="325.0"/>
+    <variable name="GDML_Size_position_y" value="525.0"/>
+    <variable name="GDML_Size_position_z" value="150.0"/>
+    <position name="GDML_Size" unit="mm" x="GDML_Size_position_x" y="GDML_Size_position_y" z="GDML_Size_position_z"/>
+    <variable name="GDML_Centre_position_x" value="-87.5"/>
+    <variable name="GDML_Centre_position_y" value="12.5"/>
+    <variable name="GDML_Centre_position_z" value="0.0"/>
+    <position name="GDML_Centre" unit="mm" x="GDML_Centre_position_x" y="GDML_Centre_position_y" z="GDML_Centre_position_z"/>
+    <position name="boxPhysical1_position" unit="mm" x="-BOXOFFSET-GDML_Centre_position_x" y="-BOXOFFSET-GDML_Centre_position_y" z="ZERO-GDML_Centre_position_z"/>
+    <position name="boxPhysical2_position" unit="mm" x="-BOXOFFSET-GDML_Centre_position_x" y="ZERO-GDML_Centre_position_y" z="ZERO-GDML_Centre_position_z"/>
+    <position name="boxPhysical3_position" unit="mm" x="-BOXOFFSET-GDML_Centre_position_x" y="BOXOFFSET-GDML_Centre_position_y" z="ZERO-GDML_Centre_position_z"/>
+    <position name="boxPhysical4_position" unit="mm" x="ZERO-GDML_Centre_position_x" y="-BOXOFFSET-GDML_Centre_position_y" z="ZERO-GDML_Centre_position_z"/>
+  </define>
+  <materials/>
+  <solids>
+    <box lunit="mm" name="PREPEND_worldBox" x="2*GDML_Size_position_x/2.0" y="2*GDML_Size_position_y/2.0" z="2*GDML_Size_position_z/2.0"/>
+    <box lunit="mm" name="PREPEND_box1" x="2*2*BOXSIZE" y="2*2*BOXSIZE" z="2*2*BOXSIZE"/>
+    <box lunit="mm" name="PREPEND_box2" x="2*BOXSIZE" y="2*BOXSIZE" z="2*3*BOXSIZE"/>
+    <box lunit="mm" name="PREPEND_box3" x="2*BOXSIZE" y="2*3*BOXSIZE" z="2*BOXSIZE"/>
+    <box lunit="mm" name="PREPEND_box4" x="2*3*BOXSIZE" y="2*BOXSIZE" z="2*BOXSIZE"/>
+  </solids>
+  <structure>
+    <volume name="PREPEND_boxLogical1_lv">
+      <materialref ref="G4_Cu"/>
+      <solidref ref="PREPEND_box1"/>
+    </volume>
+    <volume name="PREPEND_boxLogical2_lv">
+      <materialref ref="G4_Cu"/>
+      <solidref ref="PREPEND_box2"/>
+    </volume>
+    <volume name="PREPEND_boxLogical3_lv">
+      <materialref ref="G4_Cu"/>
+      <solidref ref="PREPEND_box3"/>
+    </volume>
+    <volume name="PREPEND_boxLogical4_lv">
+      <materialref ref="G4_Cu"/>
+      <solidref ref="PREPEND_box4"/>
+    </volume>
+    <volume name="PREPEND_worldLogical_lv">
+      <materialref ref="G4_Galactic"/>
+      <solidref ref="PREPEND_worldBox"/>
+      <physvol name="PREPEND_boxPhysical1_pv">
+	<volumeref ref="PREPEND_boxLogical1_lv"/>
+	<positionref ref="boxPhysical1_position"/>
+	<rotation name="PREPEND_boxPhysical1_rot" x="0" y="0" z="0"/>
+	<scale name="PREPEND_boxPhysical1_sca" x="1" y="1" z="1"/>
+      </physvol>
+      <physvol name="PREPEND_boxPhysical2_pv">
+	<volumeref ref="PREPEND_boxLogical2_lv"/>
+	<positionref ref="boxPhysical2_position"/>
+	<rotation name="PREPEND_boxPhysical2_rot" x="0" y="0" z="0"/>
+	<scale name="PREPEND_boxPhysical2_sca" x="1" y="1" z="1"/>
+      </physvol>
+      <physvol name="PREPEND_boxPhysical3_pv">
+	<volumeref ref="PREPEND_boxLogical3_lv"/>
+	<positionref ref="boxPhysical3_position"/>
+	<rotation name="PREPEND_boxPhysical3_rot" x="0" y="0" z="0"/>
+	<scale name="PREPEND_boxPhysical3_sca" x="1" y="1" z="1"/>
+      </physvol>
+      <physvol name="PREPEND_boxPhysical4_pv">
+	<volumeref ref="PREPEND_boxLogical4_lv"/>
+	<positionref ref="boxPhysical4_position"/>
+	<rotation name="PREPEND_boxPhysical4_rot" x="0" y="0" z="0"/>
+	<scale name="PREPEND_boxPhysical4_sca" x="1" y="1" z="1"/>
+      </physvol>
+    </volume>
+  </structure>
+  <setup name="Default" version="1.0">
+    <world ref="PREPEND_worldLogical_lv"/>
+  </setup>
+</gdml>
