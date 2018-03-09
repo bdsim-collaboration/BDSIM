@@ -51,7 +51,8 @@ BDSFieldInfo::BDSFieldInfo():
   autoScale(false),
   stepLimit(nullptr),
   poleTipRadius(1),
-  beamPipeRadius(0)
+  beamPipeRadius(0),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -93,7 +94,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   autoScale(autoScaleIn),
   stepLimit(stepLimitIn),
   poleTipRadius(poleTipRadiusIn),
-  beamPipeRadius(beamPipeRadiusIn)
+  beamPipeRadius(beamPipeRadiusIn),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -120,7 +122,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   timeOffset(other.timeOffset),
   autoScale(other.autoScale),
   poleTipRadius(other.poleTipRadius),
-  beamPipeRadius(other.beamPipeRadius)
+  beamPipeRadius(other.beamPipeRadius),
+  chordStepMinimum(other.chordStepMinimum)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}

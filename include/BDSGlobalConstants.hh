@@ -155,6 +155,7 @@ public:
 
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
+  inline G4double ChordStepMinimumYoke()     const {return G4double(options.chordStepMinimumYoke)*CLHEP::m;}
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}

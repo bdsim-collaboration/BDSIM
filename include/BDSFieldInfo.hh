@@ -105,6 +105,7 @@ public:
   inline G4UserLimits*       UserLimits()               const {return stepLimit;}
   inline G4double            PoleTipRadius()            const {return poleTipRadius;}
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
+  inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -115,6 +116,7 @@ public:
   inline void SetAutoScale(const G4bool& autoScaleIn) {autoScale = autoScaleIn;}
   inline void SetScalingRadius(const G4double& poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
   inline void SetBeamPipeRadius(const G4double& beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
+  inline void SetChordStepMinimum(const G4double& chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
@@ -148,6 +150,7 @@ private:
   G4UserLimits*            stepLimit;
   G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
+  G4double                 chordStepMinimum;
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

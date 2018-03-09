@@ -55,13 +55,18 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn)
 {
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  magIntDriver = new G4MagInt_Driver(globals->ChordStepMinimum(),
+  G4double chordStepMinimum = info->ChordStepMinimum();
+  if (chordStepMinimum <= 0)
+    {chordStepMinimum = BDSGlobalConstants::Instance()->ChordStepMinimum();}
+  
+  magIntDriver = new G4MagInt_Driver(chordStepMinimum,
 				     magIntegratorStepper,
 				     magIntegratorStepper->GetNumberOfVariables());
 
   chordFinder  = new G4ChordFinder(magIntDriver);
   fieldManager = new G4FieldManager(field, chordFinder);
+
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
   fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
   fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());

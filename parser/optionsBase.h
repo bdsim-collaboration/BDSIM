@@ -202,6 +202,7 @@ namespace GMAD
     double   maximumStepLength;   ///< Maximum permitted step length in any volume.
     double   maximumTrackLength;  ///< Maximum permitted track length [m].
     double   chordStepMinimum;
+    double   chordStepMinimumYoke;
     double   deltaIntersection;
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;

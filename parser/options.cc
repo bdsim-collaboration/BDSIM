@@ -256,6 +256,7 @@ void Options::PublishMembers()
   publish("maximumStepSize",    &Options::maximumStepLength);
   publish("maximumTrackLength", &Options::maximumTrackLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
+  publish("chordStepMinimumYoke", &Options::chordStepMinimumYoke);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
   publish("maximumEpsilonStep", &Options::maximumEpsilonStep);

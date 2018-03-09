@@ -1183,7 +1183,8 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
                                                stCopy,
 					       true,
 					       fieldTransform);
-  
+
+  outerField->SetChordStepMinimum(BDSGlobalConstants::Instance()->ChordStepMinimumYoke());
   if (outerInfo)
     {outerField->SetScalingRadius(outerInfo->innerRadius);}
   if (bpInfo)

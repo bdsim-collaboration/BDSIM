@@ -183,6 +183,7 @@ OptionsBase::OptionsBase()
   maximumStepLength        = 20;      // m, quite big
   maximumTrackLength       = 1e90;    // m, no limit but smaller than DBL_MAX for safe *CLHEP::m
   chordStepMinimum         = 1e-9;    // m // minimum step in a field for an integrator
+  chordStepMinimumYoke     = 1e-6;
   deltaIntersection        = 1e-8;    // m - should be greater than lengthSafety!
 
   // default value in Geant4, old value 0 - error must be greater than this
