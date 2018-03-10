@@ -65,14 +65,21 @@ public:
 			   G4double       stepLength,
 			   G4double       yOut[6]);
 
+  /// Perform a single step. Useful for other integrators that want to use this
+  /// one to estimate the radius of curvature in the field, in which case, no need
+  /// for usual two step calculation, nor error calculation.
+  void SingleStep(const G4double  yIn[6],
+		  const G4double& h,
+		  G4double        yOut[6]);
+
   /// Calculate output coordinates.  Decide if particle is spiralling or not.
   /// Nominally calculate two half steps and compare to one full step for error
   /// estimation.
-  virtual void Stepper(const G4double yInput[],  ///< Input coordinates x,y,z,px,py,pz,t
-		       const G4double dydyx[],   ///< Partial differentials at yInput
-		       G4double       stepLength,///< Length of trajectory to calculate
-		       G4double       yOut[],    ///< Output array
-		       G4double       yErr[]);   ///< Output error array
+  virtual void Stepper(const G4double  yIn[6],   ///< Input coordinates x,y,z,px,py,pz,t
+		       const G4double  dydx[],   ///< Partial differentials at yInput
+		       G4double        h,        ///< Length of trajectory to calculate
+		       G4double        yOut[6],  ///< Output array
+		       G4double        yErr[6]); ///< Output error array
 
   virtual G4int IntegratorOrder() const {return 1;}
 

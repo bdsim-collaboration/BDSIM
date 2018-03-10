@@ -42,11 +42,23 @@ void BDSIntegratorDipoleRodrigues2::DumbStepper(const G4double yIn[6],
   AdvanceHelix(yIn, field, stepLength, yOut);
 }
 
-void BDSIntegratorDipoleRodrigues2::Stepper(const G4double yIn[],
-				   const G4double[] /*dydx*/,
-				   G4double       h,
-				   G4double       yOut[],
-				   G4double       yErr[])
+void BDSIntegratorDipoleRodrigues2::SingleStep(const G4double  yIn[6],
+					       const G4double& h,
+					       G4double        yOut[6])
+{
+  G4double bO[6]; // original location field value - must be 6 long
+  eqOfM->GetFieldValue(yIn, bO);
+  G4ThreeVector bOriginal = G4ThreeVector(bO[0],bO[1],bO[2]);
+
+  // Do a full step using G4MagHelicalStepper
+  AdvanceHelix(yIn, bOriginal, h, yOut);
+}
+
+void BDSIntegratorDipoleRodrigues2::Stepper(const G4double   yIn[6],
+					    const G4double[] /*dydx*/,
+					    G4double         h,
+					    G4double         yOut[6],
+					    G4double         yErr[6])
 {
   // Protect against very small steps or neutral particles drift through.
   if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()))
