@@ -54,6 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   beamParticleDefinition(nullptr),
   turnsTaken(0)
 {
+  ResetTurnNumber();
   outputType = BDS::DetermineOutputType(options.outputFormat);
 
   particleName = G4String(beam.particleName);

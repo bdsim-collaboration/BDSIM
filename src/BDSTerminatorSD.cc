@@ -73,7 +73,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	  // save flags since G4cout flags are changed
 	  std::ios_base::fmtflags ff = G4cout.flags();
 	  G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
-		 << turnstaken+1 << " / " << std::left
+		 << turnstaken << " / " << std::left
 		 << BDSGlobalConstants::Instance()->TurnsToTake() << G4endl;
 	  // reset flags
 	  G4cout.flags(ff);

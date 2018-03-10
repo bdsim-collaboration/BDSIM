@@ -248,7 +248,7 @@ public:
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
-  inline void ResetTurnNumber()      {turnsTaken = 0;}
+  inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
   /// @}
 
