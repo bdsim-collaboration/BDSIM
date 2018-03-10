@@ -124,8 +124,15 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
 
   // error along direction of travel really
   G4ThreeVector globalMomOutU = globalMomOut.unit();
-  globalMomOutU *= 1e-8;
-
+  globalMomOutU *= 1e-10;
+  
+  // chord distance (simple quadratic approx)
+  G4double dc = h*h/(8*radiusOfCurvature);
+  if (std::isnan(dc))
+    {SetDistChord(0);}
+  else
+    {SetDistChord(dc);}
+  
   // write out values and errors
   for (G4int i = 0; i < 3; i++)
     {
