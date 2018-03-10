@@ -172,9 +172,10 @@ void BDSIntegratorDipoleRodrigues2::AdvanceHelixForSpiralling(const G4double    
 
   // set error to be low - required
   for(G4int i = 0; i < 3; i++)
-    {yErr[i] = 1e-20;}
-  for(G4int i = 3; i < 6; i++)
-    {yErr[i] = 1e-40;}
+    {
+      yErr[i]   = 1e-20;
+      yErr[i+3] = 1e-40;
+    }
 }
 
 void BDSIntegratorDipoleRodrigues2::FudgeDistChordToZero()
