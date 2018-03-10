@@ -28,16 +28,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 BDSIntegratorDipoleRodrigues2::BDSIntegratorDipoleRodrigues2(G4Mag_EqRhs* eqOfMIn,
-					   G4double     minimumRadiusOfCurvatureIn):
+							     G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
   eqOfM(eqOfMIn),
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
 {;}
 
-void BDSIntegratorDipoleRodrigues2::DumbStepper(const G4double yIn[],
-				       G4ThreeVector  field,
-				       G4double       stepLength,
-				       G4double       yOut[])
+void BDSIntegratorDipoleRodrigues2::DumbStepper(const G4double yIn[6],
+						G4ThreeVector  field,
+						G4double       stepLength,
+						G4double       yOut[6])
 {
   AdvanceHelix(yIn, field, stepLength, yOut);
 }
@@ -126,11 +126,11 @@ void BDSIntegratorDipoleRodrigues2::Stepper(const G4double yIn[],
   SetRadHelix(rad);
 }
 
-void BDSIntegratorDipoleRodrigues2::AdvanceHelixForSpiralling(const G4double yIn[],
-						     G4ThreeVector  field,
-						     G4double       h,
-						     G4double       yOut[],
-						     G4double       yErr[])
+void BDSIntegratorDipoleRodrigues2::AdvanceHelixForSpiralling(const G4double        yIn[6],
+							      const G4ThreeVector&  field,
+							      const G4double&       h,
+							      G4double              yOut[6],
+							      G4double              yErr[6])
 {
   G4ThreeVector fieldUnit = field.unit();
 
