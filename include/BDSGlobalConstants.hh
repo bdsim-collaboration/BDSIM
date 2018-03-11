@@ -127,8 +127,10 @@ public:
   inline G4String ExportFileName()         const {return G4String(options.exportFileName);}  
 
   // regular options from here on
-  G4int PrintModulo()                        const;
-  inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
+  G4int PrintModuloEvents()                  const;
+  G4int PrintModuloTurns()                   const;
+  inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
+  inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
   inline G4bool   IgnoreLocalAperture()      const {return G4bool  (options.ignoreLocalAperture);}
@@ -248,7 +250,7 @@ public:
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
-  inline void ResetTurnNumber()      {turnsTaken = 0;}
+  inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
   /// @}
 

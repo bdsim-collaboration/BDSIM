@@ -290,7 +290,9 @@ void Options::PublishMembers()
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",                   &Options::nturns);
-  publish("printModuloFraction",      &Options::printModuloFraction);
+  publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
+  publish("printFractionEvents",      &Options::printFractionEvents);
+  publish("printFractionTurns",       &Options::printFractionTurns);
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
   publish("writePrimaries",           &Options::writePrimaries);
 

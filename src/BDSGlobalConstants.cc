@@ -54,6 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   beamParticleDefinition(nullptr),
   turnsTaken(0)
 {
+  ResetTurnNumber();
   outputType = BDS::DetermineOutputType(options.outputFormat);
 
   particleName = G4String(beam.particleName);
@@ -166,13 +167,29 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   defaultUserLimits->SetUserMinRange(MinimumRange());
 }
 
-G4int BDSGlobalConstants::PrintModulo()const
+G4int BDSGlobalConstants::PrintModuloEvents() const
 {
   G4int nGenerate = NGenerate();
-  G4double fraction = PrintModuloFraction();
+  G4double fraction = PrintFractionEvents();
   G4int printModulo = (G4int)ceil(nGenerate * fraction);
   if (printModulo < 0)
     {printModulo = 1;}
+
+  if (!Batch())
+    {printModulo = 1;} // interative -> print every event
+  return printModulo;
+}
+
+G4int BDSGlobalConstants::PrintModuloTurns() const
+{
+  G4int nTurns = TurnsToTake();
+  G4double fraction = PrintFractionTurns();
+  G4int printModulo = (G4int)ceil(nTurns * fraction);
+  if (printModulo < 0)
+    {printModulo = 1;}
+
+  if (!Batch())
+    {printModulo = 1;} // interative -> print every turn
   return printModulo;
 }
 

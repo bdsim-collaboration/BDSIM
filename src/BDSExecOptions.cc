@@ -92,7 +92,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
-					{ "printModuloFraction", 1, 0, 0},
+					{ "printFractionEvents", 1, 0, 0},
+					{ "printFractionTurns", 1, 0, 0},
 					{ "exportGeometryTo", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ "ignoresigint", 0, 0, 0},
@@ -225,11 +226,17 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("ngenerate", result);
 	  beam.set_value("matchDistrFileLength", false); // ngenerate overrides.
 	}
-      else if ( !strcmp(optionName, "printModuloFraction") )
+      else if ( !strcmp(optionName, "printFractionEvents") )
 	{
 	  double result = 1;
 	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("printModuloFraction", result);
+	  options.set_value("printFractionEvents", result);
+	}
+      else if ( !strcmp(optionName, "printFractionTurns") )
+	{
+	  double result = 1;
+	  conversion = BDS::IsNumber(optarg, result);
+	  options.set_value("printFractionTurns", result);
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
@@ -290,66 +297,68 @@ void BDSExecOptions::Usage() const
   G4cout<<"Usage: bdsim [options]"<<G4endl;
   G4cout<<"Note options are case sensitive."<<G4endl;
   G4cout<<"Options:"<<G4endl;
-  G4cout<<"--file=<filename>         : specify the lattice and options file "<<G4endl
-	<<"--batch                   : batch mode - no graphics"<<G4endl
-	<<"--circular                : assume circular machine - turn control"<<G4endl
-	<<"--distrFile=<file>        : specify which file to use for the bunch distribution" << G4endl
-	<<"--exportGeometryTo=<file> : export the geometry to a file - extension determines format"<<G4endl
-	<<"                            where possible extensions are (\"gdml\")"<<G4endl
-	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
-	<<"--help                    : display this message"<<G4endl
-	<<"--materials               : list materials included in bdsim by default"<<G4endl
-	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
-	<<"                            option in the input gmad file" << G4endl
-	<<"--output=<fmt>            : output format (rootevent|none), default rootevent"<<G4endl
-	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
-        <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
-        <<"--seed=N                  : the seed to use for the random number generator" << G4endl
-    	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
-	<<"--seedStateFileName=<file>: use this ASCII file seed state to run an event" << G4endl
-	<<"--startFromEvent=N        : event offset to start from when recreating events" << G4endl
-	<<"--survey=<file>           : print survey info to <file>"<<G4endl
-	<<"--printModuloFraction=N   : fraction of events to print out (default 0.05) - [0-1]"<<G4endl
-	<<"--verbose                 : display general parameters before run"<<G4endl
-	<<"--verbose_event           : display information for every event "<<G4endl
-	<<"--verbose_event_num=N     : display tracking information for event number N"<<G4endl
-	<<"--verbose_step            : display tracking information after each step"<<G4endl
-	<<"--verbose_G4event=N       : set Geant4 Event manager verbosity level"<<G4endl
-	<<"--verbose_G4run=N         : set Geant4 verbosity level (see Geant4 manual for details)"<<G4endl
-	<<"--verbose_G4stepping=N    : set Geant4 Stepping manager verbosity level"<<G4endl
-	<<"--verbose_G4tracking=N    : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
-	<<"--vis_debug               : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))" << G4endl
-	<<"--writeseedstate          : write an ASCII file seed state for each event" << G4endl;
+  G4cout<<"--file=<filename>            : specify the lattice and options file "<<G4endl
+	<<"--batch                      : batch mode - no graphics"<<G4endl
+	<<"--circular                   : assume circular machine - turn control"<<G4endl
+	<<"--distrFile=<file>           : specify which file to use for the bunch distribution" << G4endl
+	<<"--exportGeometryTo=<file>    : export the geometry to a file - extension determines format"<<G4endl
+	<<"                               where possible extensions are (\"gdml\")"<<G4endl
+	<<"--generatePrimariesOnly      : generate N primary particle coordinates without simulation then quit"<<G4endl
+	<<"--help                       : display this message"<<G4endl
+	<<"--materials                  : list materials included in bdsim by default"<<G4endl
+	<<"--ngenerate=N                : the number of primary events to simulate - overrides the ngenerate " << G4endl
+	<<"                               option in the input gmad file" << G4endl
+	<<"--output=<fmt>               : output format (rootevent|none), default rootevent"<<G4endl
+	<<"--outfile=<file>             : output file name. Will be appended with _N"<<G4endl
+        <<"                               where N = 0, 1, 2, 3... etc."<<G4endl
+        <<"--seed=N                     : the seed to use for the random number generator" << G4endl
+    	<<"--recreate=<file>            : the rootevent file to recreate events from" << G4endl
+	<<"--seedStateFileName=<file>   : use this ASCII file seed state to run an event" << G4endl
+	<<"--startFromEvent=N           : event offset to start from when recreating events" << G4endl
+	<<"--survey=<file>              : print survey info to <file>"<<G4endl
+	<<"--printFractionEvents=N      : fraction of events to print out (default 0.1) - [0-1]"<<G4endl
+    	<<"--printFractionTurns=N       : fraction of events to print out (default 0.2) - [0-1]"<<G4endl
+	<<"--verbose                    : display general parameters before run"<<G4endl
+	<<"--verbose_event              : display information for every event "<<G4endl
+	<<"--verbose_event_num=N        : display tracking information for event number N"<<G4endl
+	<<"--verbose_step               : display tracking information after each step"<<G4endl
+	<<"--verbose_G4event=N          : set Geant4 Event manager verbosity level"<<G4endl
+	<<"--verbose_G4run=N            : set Geant4 verbosity level (see Geant4 manual for details)"<<G4endl
+	<<"--verbose_G4stepping=N       : set Geant4 Stepping manager verbosity level"<<G4endl
+	<<"--verbose_G4tracking=N       : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
+	<<"--vis_debug                  : display all volumes in visualiser"<<G4endl
+	<<"--vis_mac=<file>             : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))" << G4endl
+	<<"--writeseedstate             : write an ASCII file seed state for each event" << G4endl;
 }
 
 void BDSExecOptions::Print() const
 {
   G4cout << std::boolalpha << std::left; // print textual representation of bool
-  G4cout << __METHOD_NAME__ << std::setw(24) << "inputFileName: "       << std::setw(15) << std::left << options.inputFileName       << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "batch: "               << std::setw(15) << std::left << options.batch               << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "circular: "            << std::setw(15) << std::left << options.circular            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "distrFile: "           << std::setw(15) << std::left << beam.distrFile              << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "exportgeometryto "     << std::setw(15) << std::left << options.exportFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "generatePrimariesOnly "<< std::setw(15) << std::left << options.generatePrimariesOnly << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "ngenerate: "           << std::setw(15) << std::left << options.nGenerate           << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "outputFileName: "      << std::setw(15) << std::left << options.outputFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "outputFormat: "        << std::setw(15) << std::left << options.outputFormat        << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "seed: "                << std::setw(15) << std::left << options.seed                << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "seedstate: "           << std::setw(15) << std::left << options.seedStateFileName   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "survey: "              << std::setw(15) << std::left << options.survey              << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "surveyFileName: "      << std::setw(15) << std::left << options.surveyFileName      << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "printModuloFraction: " << std::setw(15) << std::left << options.printModuloFraction << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verbose: "             << std::setw(15) << std::left << options.verbose             << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseEvent: "        << std::setw(15) << std::left << options.verboseEvent        << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseStep: "         << std::setw(15) << std::left << options.verboseStep         << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseRunLevel: "     << std::setw(15) << std::left << options.verboseRunLevel     << G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseEventLevel: "   << std::setw(15) << std::left << options.verboseEventLevel   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseTrackingLevel: "<< std::setw(15) << std::left << options.verboseTrackingLevel<< G4endl;  
-  G4cout << __METHOD_NAME__ << std::setw(24) << "verboseSteppingLevel: "<< std::setw(15) << std::left << options.verboseSteppingLevel<< G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "visMacroFileName: "    << std::setw(15) << std::left << options.visMacroFileName    << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "visDebug: "            << std::setw(15) << std::left << options.visDebug            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(24) << "ignoreSIGINT: "        << std::setw(15) << std::left << ignoreSIGINT                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "inputFileName: "            << std::setw(15) << std::left << options.inputFileName         << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "batch: "                    << std::setw(15) << std::left << options.batch                 << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "circular: "                 << std::setw(15) << std::left << options.circular              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "distrFile: "                << std::setw(15) << std::left << beam.distrFile                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "exportgeometryto "          << std::setw(15) << std::left << options.exportFileName        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "generatePrimariesOnly "     << std::setw(15) << std::left << options.generatePrimariesOnly << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "ngenerate: "                << std::setw(15) << std::left << options.nGenerate             << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "outputFileName: "           << std::setw(15) << std::left << options.outputFileName        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "outputFormat: "             << std::setw(15) << std::left << options.outputFormat          << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "seed: "                     << std::setw(15) << std::left << options.seed                  << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "seedstate: "                << std::setw(15) << std::left << options.seedStateFileName     << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "survey: "                   << std::setw(15) << std::left << options.survey                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "surveyFileName: "           << std::setw(15) << std::left << options.surveyFileName        << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "printFractionEvents: "      << std::setw(15) << std::left << options.printFractionEvents   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "printFractionTurns: "       << std::setw(15) << std::left << options.printFractionTurns    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verbose: "                  << std::setw(15) << std::left << options.verbose               << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseEvent: "             << std::setw(15) << std::left << options.verboseEvent          << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseStep: "              << std::setw(15) << std::left << options.verboseStep           << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseRunLevel: "          << std::setw(15) << std::left << options.verboseRunLevel       << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseEventLevel: "        << std::setw(15) << std::left << options.verboseEventLevel     << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseTrackingLevel: "     << std::setw(15) << std::left << options.verboseTrackingLevel  << G4endl;  
+  G4cout << __METHOD_NAME__ << std::setw(27) << "verboseSteppingLevel: "     << std::setw(15) << std::left << options.verboseSteppingLevel  << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "visMacroFileName: "         << std::setw(15) << std::left << options.visMacroFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "visDebug: "                 << std::setw(15) << std::left << options.visDebug              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(27) << "ignoreSIGINT: "             << std::setw(15) << std::left << ignoreSIGINT                  << G4endl;
   G4cout << std::noboolalpha; // reset to default printing
 }
 

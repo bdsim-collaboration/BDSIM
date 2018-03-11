@@ -127,7 +127,7 @@ int main(int argc,char** argv)
       bdsOutput->NewFile();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
-      const G4int printModulo = globalConstants->PrintModulo();
+      const G4int printModulo = globalConstants->PrintModuloEvents();
       for (G4int i = 0; i < nToGenerate; i++)
       {
 	if (i%printModulo == 0)

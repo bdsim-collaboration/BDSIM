@@ -74,9 +74,15 @@ be used literally.  The following command may be used to dipslay all options::
 +----------------------------+----------------------------------------------+
 | --survey=<file>            | print survey info to <file>                  |
 +----------------------------+----------------------------------------------+
-| --printModuloFraction=N    | how often to print out events as a fraction  |
+| --printFractionEvents=N    | how often to print out events as a fraction  |
 |                            | of the total number of events to simulate    |
-|                            | (default 0.05 i.e. 5%). -1 for all.          |
+|                            | (default 0.1 i.e. 10%). -1 for all.          |
++----------------------------+----------------------------------------------+
+| --printFractionTurns=N     | how often to print out turns as a fraction   |
+|                            | of the total number of turns to simulate     |
+|                            | (default 0.2 i.e. 20%). -1 for all. Will     |
+|                            | only print out on an event that will print   |
+|                            | out as well.                                 |
 +----------------------------+----------------------------------------------+
 | --verbose                  | display general parameters before run        |
 +----------------------------+----------------------------------------------+

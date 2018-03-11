@@ -28,14 +28,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip>
 
+G4int BDSTerminatorSD::eventNumber = 0;
+
 
 BDSTerminatorSD::BDSTerminatorSD(G4String name)
   :G4VSensitiveDetector(name)
 {
+  moduloEvents = BDSGlobalConstants::Instance()->PrintModuloEvents();
+  moduloTurns  = BDSGlobalConstants::Instance()->PrintModuloTurns();
 }
 
 BDSTerminatorSD::~BDSTerminatorSD()
-{;}
+{
+  eventNumber = 0;
+}
 
 void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 {
@@ -56,27 +62,26 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {
       // parentID == 0 -> primary particle - should only increment turn number for primaries
       // trackLength > 1000 (mm) -> not due to initial coordinate offset (at least 1 turn)
-      // pre step point status is on a geometry boundary -> particle just entering volume and not starting in middle
+      // pre step point status is on a geometry boundary -> particle just entering volume
+      // and not starting in middle
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Incrementing turn number " << G4endl;
       G4cout << __METHOD_NAME__ << "Primary particle - incrementing turn number" << G4endl;
       G4cout << __METHOD_NAME__ << "Track length is : " << trackLength << " m" << G4endl;
       G4cout << __METHOD_NAME__ << "Turn number is  : " << BDSGlobalConstants::Instance()->TurnsTaken() << G4endl;
 #endif
-      G4int turnsToTake = BDSGlobalConstants::Instance()->TurnsToTake();
-      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
-      G4int printModulo = (G4int)ceil(turnsToTake * fraction);
-
-      G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
-      if (turnstaken%printModulo == 0)
-	{
-	  // save flags since G4cout flags are changed
-	  std::ios_base::fmtflags ff = G4cout.flags();
-	  G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
-		 << turnstaken+1 << " / " << std::left
-		 << BDSGlobalConstants::Instance()->TurnsToTake() << G4endl;
-	  // reset flags
-	  G4cout.flags(ff);
+      if (eventNumber % moduloEvents == 0)
+	{// feedback on this event
+	  G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
+	  if (turnstaken % moduloTurns == 0)
+	    {
+	      std::ios_base::fmtflags ff = G4cout.flags();// save flags since they are changed
+	      G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
+		     << turnstaken << " / " << std::left
+		     << BDSGlobalConstants::Instance()->TurnsToTake() << G4endl;
+	      
+	      G4cout.flags(ff);// reset flags
+	    }
 	}
       
       BDSGlobalConstants::Instance()->IncrementTurnNumber();
