@@ -394,8 +394,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* stre
   G4double theta = CLPosition.z() / radiusOfCurvature;
 
   G4double partToCentreDist  = CLPosition.x() + radiusOfCurvature;
-  G4double localZ = partToCentreDist * sin(theta);
-  G4double localX = (partToCentreDist * cos(theta)) - radiusAtChord;
+  G4double localZ = partToCentreDist * std::sin(theta);
+  G4double localX = (partToCentreDist * std::cos(theta)) - radiusAtChord;
 
   // normalise momentum rotation to particle charge
   G4double charge = 0;

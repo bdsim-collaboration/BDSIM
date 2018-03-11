@@ -196,13 +196,13 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // calculate extent along z due poleface rotation at half the outer diameter.
   G4double outerDiameter = BDSComponentFactory::PrepareOuterDiameter(element);
   if (incomingFaceAngle > 0)
-    {zExtentIn = 0.5*outerDiameter*tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
+    {zExtentIn = 0.5*outerDiameter*std::tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
   else if (incomingFaceAngle < 0)
-    {zExtentIn = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + incomingFaceAngle);}
+    {zExtentIn = 0.5*outerDiameter*std::tan(0.5*std::abs(semiAngle) + incomingFaceAngle);}
   if (outgoingFaceAngle > 0)
-    {zExtentOut = 0.5*outerDiameter*tan(outgoingFaceAngle - 0.5*std::abs(semiAngle));}
+    {zExtentOut = 0.5*outerDiameter*std::tan(outgoingFaceAngle - 0.5*std::abs(semiAngle));}
   else if (outgoingFaceAngle < 0)
-    {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
+    {zExtentOut = 0.5*outerDiameter*std::tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
   
   //decide if segment angles fade or not depending on the extents
   if (std::abs(zExtentIn) < semiArcLength/4.0)
@@ -733,7 +733,7 @@ G4double BDS::CalculateFringeFieldCorrection(G4double rho,
 					     G4double hgap)
 {
   G4double gOverRho = 2 * hgap / rho;
-  G4double corrValue = fint * gOverRho * (1.0 + std::pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
+  G4double corrValue = fint * gOverRho * (1.0 + std::pow(std::sin(polefaceAngle),2)) / std::cos(polefaceAngle);
   return corrValue;
 }
 

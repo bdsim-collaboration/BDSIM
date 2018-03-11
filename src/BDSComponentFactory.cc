@@ -576,8 +576,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       G4double          hkick = 0;
       G4double          vkick = 0;
       GetKickValue(hkick, vkick, type);
-      G4double         angleX = asin(hkick);
-      G4double         angleY = asin(vkick);
+      G4double         angleX = std::asin(hkick);
+      G4double         angleY = std::asin(vkick);
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
@@ -588,7 +588,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 	{// with comments
 	  // calculate the chord length of the arc through the field from the straight
 	  // ahead length for this element which here is 'chordLength'.
-	  G4double fieldChordLengthX = chordLength / cos(0.5*angleX);
+	  G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
 
 	  // now calculate the bending radius
 	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
@@ -602,7 +602,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 
       if (BDS::IsFinite(angleY))
 	{// same as x, no need for comments
-	  G4double fieldChordLengthY = chordLength / cos(0.5*angleY);
+	  G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
 	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
 	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
 	  fieldY = FieldFromAngle(angleY,  arcLengthY);
@@ -884,10 +884,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
       G4double wedgeBasewidth = (element->l*CLHEP::m /element->numberWedges) - lengthSafety;
       
       //Angle between hypotenuse and height (in the triangular wedge face)
-      G4double theta = atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
+      G4double theta = std::atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
       
       //Overlap distance of wedges
-      G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (sin(CLHEP::pi/2.0 - theta) / sin(theta));
+      G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (std::sin(CLHEP::halfpi - theta) / std::sin(theta));
       
       degraderOffset = overlap * -0.5;
     }
@@ -1626,7 +1626,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
     {// only B field - calculate angle
       field = el->B * CLHEP::tesla;
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-      angle = 2.0*asin(chordLength*0.5 / bendingRadius);
+      angle = 2.0*std::asin(chordLength*0.5 / bendingRadius);
       arcLengthLocal = bendingRadius * angle;
     }
   else
@@ -1637,7 +1637,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* el,
 	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
 	  // this is the inverse equation of that in BDSAcceleratorComponent to calculate
 	  // the chord length from the arclength and angle.
-	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
+	  G4double bendingRadius = chordLength * 0.5 / std::sin(std::abs(angle) * 0.5);
 	  arcLengthLocal = bendingRadius * angle;
 	  field = brho * angle / std::abs(arcLengthLocal);
         }
