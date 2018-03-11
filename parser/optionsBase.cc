@@ -212,7 +212,8 @@ OptionsBase::OptionsBase()
   // circular options
   nturns                   = 1;
 
-  printModuloFraction      = 0.1;
+  printFractionEvents = 0.1;
+  printFractionTurns  = 0.2;
 
   // visualisation
   nSegmentsPerCircle       = 50;

@@ -232,7 +232,8 @@ namespace GMAD
     /// Ring parameters
     int      nturns;
 
-    double   printModuloFraction;
+    double   printFractionEvents;
+    double   printFractionTurns;
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
