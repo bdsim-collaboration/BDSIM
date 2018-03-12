@@ -95,7 +95,7 @@ const G4double& magnetContainerRadiusIn)
 						  CLHEP::twopi,                    // sweep angle
 						  numberOfSides,                   // number of sides
 						  2,                               // number of z planes
-						  zPlanes,                         // z plane z coordinates
+						  zPlanesCont,                     // z plane z coordinates
 						  contInnerRadii,
 						  contOuterRadii);
 
