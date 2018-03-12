@@ -35,7 +35,7 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &nameIn,
 				     G4double sizeXIn,
 				     G4double sizeYIn,
 				     G4double thicknessIn,
-				     G4double windowOffsetXIn=5*CLHEP::cm,
+				     G4double windowOffsetXIn=0.68*CLHEP::cm,
 				     G4double strutSizeXIn=0,
                      G4double strutSizeZIn=0,
                      G4String strutMaterialIn="G4_STAINLESS-STEEL"):

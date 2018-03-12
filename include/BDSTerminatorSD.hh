@@ -36,6 +36,13 @@ public:
   virtual void   Initialize (G4HCofThisEvent* HCE);
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
   virtual void   EndOfEvent (G4HCofThisEvent* HCE);
+
+  /// Externally accessible counter for event number. Set in BeginOfEventAction.
+  static G4int eventNumber;
+
+private:
+  G4int moduloEvents; ///< Cache of print turn number on these events.
+  G4int moduloTurns;  ///< Cache of print turn number on these turns.
 };
 
 #endif

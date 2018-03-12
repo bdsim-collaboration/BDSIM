@@ -73,9 +73,9 @@ void BDSBeamPipeFactoryRaceTrack::GeneratePoints(G4double aper1,
   G4double bpInner2 = aper2 + lengthSafety;
   G4double bpInner3 = aper3 + lengthSafety;
   GenerateRaceTrack(beamPipeInnerEdge, bpInner1, bpInner2, bpInner3, pointsPerTwoPi);
-  G4double bpOuter1 = aper1 + beamPipeThickness;
-  G4double bpOuter2 = aper2 + beamPipeThickness;
-  G4double bpOuter3 = aper3 + beamPipeThickness;
+  G4double bpOuter1 = bpInner1 + beamPipeThickness;
+  G4double bpOuter2 = bpInner2 + beamPipeThickness;
+  G4double bpOuter3 = bpInner3 + beamPipeThickness;
   GenerateRaceTrack(beamPipeOuterEdge, bpOuter1, bpOuter2, bpOuter3, pointsPerTwoPi);
   G4double cont1 = bpOuter1 + lengthSafetyLarge;
   G4double cont2 = bpOuter2 + lengthSafetyLarge;
@@ -85,6 +85,9 @@ void BDSBeamPipeFactoryRaceTrack::GeneratePoints(G4double aper1,
   G4double contSub2 = cont2 + lengthSafetyLarge;
   G4double contSub3 = cont3 + lengthSafetyLarge;
   GenerateRaceTrack(containerSubtractionEdge, contSub1, contSub2, contSub3, pointsPerTwoPi);
+
+  extentX = contSub1 + contSub3;
+  extentY = contSub2 + contSub3;
 }
 
 G4double BDSBeamPipeFactoryRaceTrack::CalculateIntersectionRadius(G4double aper1,

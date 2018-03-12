@@ -300,7 +300,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* contCylSolid = new G4CutTubs(nameIn + "_vacuum_cylinder", // name
 					 0,                           // inner radius
 					 aper3In + beamPipeThicknessIn + lengthSafety, // outer radius
-					 lengthIn*0.5, // half length
+					 lengthIn*0.5,                // half length
 					 0,                           // rotation start angle
 					 CLHEP::twopi,                // rotation finish angle
 					 inputfaceIn,                 // input face normal

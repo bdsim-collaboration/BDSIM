@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
 #include "BDSOutput.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -167,9 +168,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 
   // if it's not a transform3d instance, continue as normal
   // interrogate the item
-  G4double      length   = component->GetChordLength();
+  G4double chordLength   = component->GetChordLength();
   G4double      angle    = component->GetAngle();
-  G4bool hasFiniteLength = BDS::IsFinite(length);
+  G4bool hasFiniteLength = BDS::IsFinite(chordLength);
   G4bool hasFiniteAngle  = BDS::IsFinite(angle);
   G4bool hasFiniteTilt, hasFiniteOffset;
   G4ThreeVector offset;
@@ -192,7 +193,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4ThreeVector oFNormal = component->InputFaceNormal();
   
 #ifdef BDSDEBUG
-  G4cout << "chord length                " << length      << " mm"         << G4endl;
+  G4cout << "chord length                " << chordLength << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
   if (tiltOffset)
     {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
@@ -327,8 +328,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
     {
       previousReferencePositionEnd = back()->GetReferencePositionEnd();
       // leave a small gap for unambiguous geometry navigation. Transform that length
-      // to a unit z vector along the direction of the beam line before this component
-      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      // to a unit z vector along the direction of the beam line before this component.
+      // increase it by sampler length if we're placing a sampler there.
+      G4ThreeVector pad = G4ThreeVector(0,0,paddingLength);
+      if (samplerType != BDSSamplerType::none)
+	{pad += G4ThreeVector(0,0,BDSSamplerPlane::ChordLength());}
+      auto previousReferenceRotationEnd2 = back()->GetReferenceRotationEnd();
+      G4ThreeVector componentGap = pad.transform(*previousReferenceRotationEnd2);
       previousReferencePositionEnd += componentGap;
     }
   
@@ -338,12 +344,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       referencePositionStart = previousReferencePositionEnd;
       
       // calculate delta to mid point
-      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
+      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * chordLength);
       md.transform(*referenceRotationMiddle);
       referencePositionMiddle = referencePositionStart + md;
       // remember the end position is the chord length along the half angle, not the full angle
       // the particle achieves the full angle though by the end position.
-      G4ThreeVector delta = G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
+      G4ThreeVector delta = G4ThreeVector(0, 0, chordLength).transform(*referenceRotationMiddle);
       referencePositionEnd = referencePositionStart + delta;
     }
   else
@@ -385,9 +391,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // if not the first element in the beamline, get the s position at the end of the previous element
   if (!empty())
     {previousSPositionEnd = back()->GetSPositionEnd();}
-  
+
+  // chord length set earlier
   G4double arcLength   = component->GetArcLength();
-  G4double chordLength = component->GetChordLength();
 
   // integrate lengths
   totalChordLength += chordLength;

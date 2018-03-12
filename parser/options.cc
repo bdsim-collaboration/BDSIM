@@ -178,7 +178,8 @@ void Options::PublishMembers()
   publish("outerMaterial",        &Options::outerMaterialName);
   publish("outerDiameter",        &Options::outerDiameter);
   publish("boxSize",              &Options::outerDiameter); // for backwards compatability
-  publish("includeIronMagFields", &Options::includeIronMagFields);
+  publish("yokeFields",           &Options::yokeFields);
+  publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
   publish("beampipeRadius",       &Options::aper1);
   publish("beampipeThickness",    &Options::beampipeThickness);
@@ -255,6 +256,7 @@ void Options::PublishMembers()
   publish("maximumStepSize",    &Options::maximumStepLength);
   publish("maximumTrackLength", &Options::maximumTrackLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
+  publish("chordStepMinimumYoke", &Options::chordStepMinimumYoke);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
   publish("maximumEpsilonStep", &Options::maximumEpsilonStep);
@@ -288,7 +290,9 @@ void Options::PublishMembers()
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",                   &Options::nturns);
-  publish("printModuloFraction",      &Options::printModuloFraction);
+  publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
+  publish("printFractionEvents",      &Options::printFractionEvents);
+  publish("printFractionTurns",       &Options::printFractionTurns);
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
   publish("writePrimaries",           &Options::writePrimaries);
 

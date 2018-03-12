@@ -152,7 +152,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
       angle = accumulatedAngle;
       if (BDS::IsFinite(angle))
 	{
-	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*std::abs(angle));
+	  G4double meanBendingRadius = 0.5 * chordLength / std::sin(0.5*std::abs(angle));
 	  arcLength                  = meanBendingRadius * std::abs(angle);
 	}
     }

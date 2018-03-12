@@ -87,6 +87,9 @@ public:
   /// as the one returned by the beam pipe factory (for simplicity).
   BDSExtent IndicativeExtent() const;
 
+  /// Return an indicative extent of the beam pipe - typically the maximum of x or y extent.
+  G4double IndicativeRadius() const;
+
   ///@{ Public member for direct access
   BDSBeamPipeType beamPipeType;
   G4double        aper1;

@@ -65,9 +65,12 @@ private:
   /// Get the appropriate derived factory for the required magnet style.
   BDSMagnetOuterFactoryBase* GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn);
 
-  BDSMagnetOuter* CreateExternal(G4String            name,
+  /// Create the magnet yoke from externally provided geometry and create a
+  /// suitable magnet container solid.
+  BDSMagnetOuter* CreateExternal(const G4String&     name,
 				 BDSMagnetOuterInfo* info,
-				 G4double            length,
+				 const G4double&     length,
+				 const G4double&     magnetContainerLength,
 				 BDSBeamPipe*        beampipe);
 
   /// Create a container based on an external geometry component. Exists here as the

@@ -125,7 +125,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
-      outer = CreateExternal(name, outerInfo, outerLength, beamPipe);
+      outer = CreateExternal(name, outerInfo, outerLength, containerLength, beamPipe);
       G4double loadedLength = outer->GetExtent().DZ();
       if (loadedLength > outerLength)
 	{
@@ -234,9 +234,10 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   return outer;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
+BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(const G4String&     name,
 						      BDSMagnetOuterInfo* info,
-						      G4double            length,
+						      const G4double&     /*length*/,
+                                                      const G4double&     magnetContainerLength,
 						      BDSBeamPipe*        beampipe)
 {
   std::map<G4String, G4Colour*> defaultMap = {
@@ -267,7 +268,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
       exit(1);
     }
     
-  BDSGeometryComponent* container = CreateContainerForExternal(name, length, geom, beampipe);
+  BDSGeometryComponent* container = CreateContainerForExternal(name, magnetContainerLength, geom, beampipe);
   
   BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
   return outer;

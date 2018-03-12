@@ -78,7 +78,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width
 				     aper2In,                // y half width
-				     lengthIn); // z full width (long for unambiguous intersection)
+				     4*lengthIn); // z full width (long for unambiguous intersection)
   allSolids.push_back(vacCylSolid);
   allSolids.push_back(vacRectSolid);
   //intersection of both of these gives the desired shape
@@ -225,7 +225,7 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* vacCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid",// name
 					       aper3In,                     // horizontal semi-axis
 					       aper4In,                     // vertical semi-axis
-					       lengthIn); // z full width (long for unambiguous intersection)
+					       1.5*lengthIn); // z full width (long for unambiguous intersection)
   //vacuum box solid (rectangular cross-section)
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width

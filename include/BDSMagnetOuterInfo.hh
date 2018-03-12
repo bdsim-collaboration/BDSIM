@@ -48,6 +48,7 @@ public:
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
 		     G4Material*           outerMaterialIn,
+		     G4double              innerRadiusIn,
 		     G4double              vhRatioIn             = 1,
 		     G4double              angleInIn             = 0,
 		     G4double              angleOutIn            = 0,
@@ -62,6 +63,7 @@ public:
   BDSMagnetGeometryType geometryType;
   G4double              outerDiameter;
   G4Material*           outerMaterial;
+  G4double              innerRadius;
   G4double              vhRatio;
   G4double              angleIn;
   G4double              angleOut;
@@ -74,7 +76,6 @@ public:
 
   /// Output stream operator implementation.
   friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
-
 };
 
 #endif

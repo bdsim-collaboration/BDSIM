@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  *
  * dipole   - a uniform field assumed along local unit Y
  * dipole3d - a uniform field specified by a unit vector and field magnitude
+ * multipoleouterdipole3d - orientates itself to follow dipole3d
  * 
  * @author Laurie Nevay
  */
@@ -46,7 +47,12 @@ struct fieldtypes_def
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf,
              dipole3d,
-	     multipoleouter};
+	     multipoleouterdipole, multipoleouterquadrupole,
+	     multipoleoutersextupole, multipoleouteroctupole,
+	     multipoleouterdecapole,
+	     skewmultipoleouterquadrupole, skewmultipoleoutersextupole,
+	     skewmultipoleouteroctupole, skewmultipoleouterdecapole,
+	     multipoleouterdipole3d};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated

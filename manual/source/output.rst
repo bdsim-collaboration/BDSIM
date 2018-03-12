@@ -4,8 +4,34 @@
 Output
 ======
 
-This section describes the output from BDSIM. This
-section only describes the structure. Loading and analysis instructions can be found
+Output Information
+------------------
+
+The following information can be recorded from a BDSIM simulation:
+
+- particle coordinates at a plane after each element - 'sampler' information.
+- energy deposition 'hits' from any component.
+- trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
+- a single 3D histogram of any hits in the simualtion (optional - see :ref:`scoring-map-description`).
+
+Samplers are 'attached' to a beam line element by using the sample command::
+
+  sample, range=<element_name>;
+
+See :ref:`sampler-output` for more details.
+
+All components are sensitive to energy deposition by default. Any energy deposition
+will therefore be recorded in the output as well as stored in pre-made energy deposition
+histograms per event.
+
+Trajectories are vectors of trajectory points that record the information about a particle
+at each step in the simulation. This records information such as all coordinates, particle
+type, state and the physics process that determined that step.
+
+Output Files
+------------
+
+This section only describes the structure. Loading and analysis instructions can be found
 in :ref:`output-analysis-section`.
 
 The output format 'rootevent' is written to a ROOT file. This format
@@ -26,14 +52,15 @@ and cannot be usably stored.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
 	     
-+----------------------+-----------------------------+----------------------------------------------------------------------------+
-| Format               | Syntax                      | Description                                                                |
-+======================+=============================+============================================================================+
-| None                 | --output=none               | No output is written                                                       |
-+----------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT Event (Default) | --output=rootevent          | A ROOT file with details of the model built, options used, seed states,    |
-|                      |                             | and event by event information (default and recommended).                  |
-+----------------------+-----------------------------+----------------------------------------------------------------------------+
++----------------------+----------------------+-----------------------------------------------+
+| Format               | Syntax               | Description                                   |
++======================+======================+===============================================+
+| None                 | --output=none        | No output is written                          |
++----------------------+----------------------+-----------------------------------------------+
+| ROOT Event (Default) | --output=rootevent   | A ROOT file with details of the model built,  |
+|                      |                      | options used, seed states, and event by event |
+|                      |                      | information (default and recommended).        |
++----------------------+----------------------+-----------------------------------------------+
 
 As a general guideline, the following naming conventions are used:
 
