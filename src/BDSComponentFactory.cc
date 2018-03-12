@@ -445,7 +445,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   CalculateAngleAndFieldSBend(element, angle, field);
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
-  (*st)["by"]     = field;
+  (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
 
   // Quadrupole component
@@ -483,7 +483,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
-  (*st)["by"]     = field;
+  (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
@@ -1006,7 +1006,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
       (*awakeStrength)["field"] = element->B * CLHEP::tesla;
-      (*awakeStrength)["by"]    = (*awakeStrength)["field"];
+      (*awakeStrength)["by"]    = 1; // bx,by,bz is unit field direction, so (0,1,0) here
 
       G4Transform3D fieldTrans = CreateFieldTransform(element);
       awakeField = new BDSFieldInfo(BDSFieldType::dipole,

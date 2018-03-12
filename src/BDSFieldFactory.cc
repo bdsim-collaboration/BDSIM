@@ -319,14 +319,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-      {field = new BDSFieldMagDipole(strength); break;} // assumed along (0,1,0) with magnitude (*st)["field"]
     case BDSFieldType::dipole3d:
-      {
-	field = new BDSFieldMagDipole(G4ThreeVector((*strength)["bx"],
-						    (*strength)["by"],
-						    (*strength)["bz"]));
-	break;
-      }
+      {field = new BDSFieldMagDipole(strength); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::dipolequadrupole:
