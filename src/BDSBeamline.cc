@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
 #include "BDSOutput.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -327,8 +328,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
     {
       previousReferencePositionEnd = back()->GetReferencePositionEnd();
       // leave a small gap for unambiguous geometry navigation. Transform that length
-      // to a unit z vector along the direction of the beam line before this component
-      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      // to a unit z vector along the direction of the beam line before this component.
+      // increase it by sampler length if we're placing a sampler there.
+      G4ThreeVector pad = G4ThreeVector(0,0,paddingLength);
+      if (samplerType != BDSSamplerType::none)
+	{pad += G4ThreeVector(0,0,BDSSamplerPlane::ChordLength());}
+      auto previousReferenceRotationEnd2 = back()->GetReferenceRotationEnd();
+      G4ThreeVector componentGap = pad.transform(*previousReferenceRotationEnd2);
       previousReferencePositionEnd += componentGap;
     }
   
