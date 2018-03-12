@@ -62,6 +62,7 @@ const G4double& magnetContainerRadiusIn)
   G4double zeroRadii[2]    = {0,0};
   G4double poleEnd         = yokeStartRadius - lengthSafetyLarge;
   G4double poleEndRadii[2] = {poleEnd,          poleEnd};
+  G4int numberOfSides      = (G4int)factor*2*order;
   
   CalculateStartAngles();
   
@@ -70,7 +71,7 @@ const G4double& magnetContainerRadiusIn)
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
 			      polyStartAngle,          // start angle
 			      CLHEP::twopi,            // sweep angle
-			      factor*2*order,          // number of sides
+			      numberOfSides,           // number of sides
 			      2,                       // number of z planes
 			      zPlanes,                 // z plane z coordinates
 			      innerRadii,
@@ -80,7 +81,7 @@ const G4double& magnetContainerRadiusIn)
   poleIntersectionSolid = new G4Polyhedra(name + "_yoke_intersection_solid", // name
 					  poleIntersectionStartAngle,        // start angle
 					  CLHEP::twopi,                      // sweep angle
-					  factor*2*order,                    // number of sides
+					  numberOfSides,                     // number of sides
 					  2,                                 // number of z planes
 					  zPlanesLong,                       // z plane z coordinates
 					  zeroRadii,
@@ -92,7 +93,7 @@ const G4double& magnetContainerRadiusIn)
   G4VSolid* containerOuterSolid = new G4Polyhedra(name + "_container_outer_solid", // name
 						  polyStartAngle,                  // start angle
 						  CLHEP::twopi,                    // sweep angle
-						  factor*2*order,                  // number of sides
+						  numberOfSides,                   // number of sides
 						  2,                               // number of z planes
 						  zPlanes,                         // z plane z coordinates
 						  contInnerRadii,
@@ -116,7 +117,7 @@ const G4double& magnetContainerRadiusIn)
   magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
 					 polyStartAngle,            // start angle
 					 CLHEP::twopi,              // sweep angle
-					 factor*2*order,            // number of sides
+					 numberOfSides,             // number of sides
 					 2,                         // number of z planes
 					 zPlanesMagCont,            // z plane z coordinates
 					 contInnerRadii,
