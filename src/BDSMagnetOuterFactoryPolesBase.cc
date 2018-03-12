@@ -341,11 +341,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
       CreatePoleSolid(name, length, order);
       CreateCoilSolids(name, length);
     }
-  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);
+  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength, magnetContainerRadius);
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, magnetColour, outerMaterial);
+  SetUserLimits();
   CreateMagnetContainerComponent();
   if (buildPole && buildEndPiece)
     {CreateEndPiece(name);}
@@ -450,7 +451,7 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
   
   // calculate the width (2*b) of the ellipse given its height - at the centre of the
   // ellipsoid, go out by the pole angle and that's the half width, x2.
-  G4double ellipsoidWidth  = 2 * ellipsoidCentreY * tan(poleAngle*0.5);
+  G4double ellipsoidWidth  = 2 * ellipsoidCentreY * std::tan(poleAngle*0.5);
   // don't allow the pole to be wider than it is long - silly proportions - stop the scaling
   ellipsoidWidth = std::min(ellipsoidWidth, poleLength); 
 
@@ -462,7 +463,7 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
   // ensure pole doesn't get narrower than ellipsoid tip part
   poleSquareWidth = std::max(poleSquareWidth, ellipsoidWidth);
   // but ensure the square section can't protrude outside the angular segment for a single pole
-  G4double maxPoleSquareWidth = 2 * poleSquareStartRadius * tan(0.5*poleAngle);
+  G4double maxPoleSquareWidth = 2 * poleSquareStartRadius * std::tan(0.5*poleAngle);
   poleSquareWidth = std::min(maxPoleSquareWidth, poleSquareWidth);
 
   // points that define extruded polygon
@@ -478,8 +479,8 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
   const G4double iterant = CLHEP::halfpi/(G4double)numAngPoints;
   for (G4double angle = 0; angle < CLHEP::halfpi; angle += iterant)
     {
-      xEllipse.push_back(0.5*ellipsoidWidth*sin(angle));
-      yEllipse.push_back(0.5*ellipsoidHeight*cos(angle));
+      xEllipse.push_back(0.5*ellipsoidWidth*std::sin(angle));
+      yEllipse.push_back(0.5*ellipsoidHeight*std::cos(angle));
     }
 
   // add bottom left quadrant - miss out first point so don't reach apex.
@@ -583,21 +584,22 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
       G4double x = outerX + endPieceLength * (cos(angle) - 1.0);
-      G4double y = endPieceLength * sin(angle);
+      G4double y = endPieceLength * std::sin(angle);
       endPiecePoints.emplace_back(x,y);
     }
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
-      G4double x = -outerX - endPieceLength * (sin(angle) - 1.0);
-      G4double y = endPieceLength * cos(angle);
+      G4double x = -outerX - endPieceLength * (std::sin(angle) - 1.0);
+      G4double y = endPieceLength * std::cos(angle);
       endPiecePoints.emplace_back(x,y);
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
-								 G4double length,
-								 G4int    /*order*/,
-								 G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(const G4String& name,
+								 const G4double& length,
+								 const G4int&    /*order*/,
+								 const G4double& magnetContainerLength,
+								 const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -632,7 +634,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 
   // magnet container radius calculated when poles are calculated and assigned to
   // BDSMagnetOuterFactoryBase::magnetContainerRadius
-  BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius); 
+  BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadiusIn);
 }
 
 void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
@@ -673,6 +675,10 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
       coilLeftLV->SetVisAttributes(coilVisAttr);
       coilRightLV->SetVisAttributes(coilVisAttr);
       allVisAttributes.push_back(coilVisAttr);
+
+      auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+      coilLeftLV->SetUserLimits(ul);
+      coilRightLV->SetUserLimits(ul);
     }
 }
 
@@ -877,7 +883,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
   // user limits - don't register as using global one
-  endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  endPieceCoilLV->SetUserLimits(ul);
+  endPieceContainerLV->SetUserLimits(ul);
 
   // package it all up
   endPiece = new BDSSimpleComponent(name + "_end_piece",
@@ -1043,8 +1051,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
       // faces this doesn't work. Calculate extent along z for each angled face. This
       // is called the 'safe' length -> sLength
       G4double hypotenuse = std::hypot(yokeWidth, yokeHalfHeight);
-      G4double dzIn  = tan(std::abs(angleIn))  * 1.2*hypotenuse; // 20% over estimation for safety
-      G4double dzOut = tan(std::abs(angleOut)) * 1.2*hypotenuse;
+      G4double dzIn  = std::tan(std::abs(angleIn))  * 1.2*hypotenuse; // 20% over estimation for safety
+      G4double dzOut = std::tan(std::abs(angleOut)) * 1.2*hypotenuse;
       // take the longest of different estimations (2x and 1.5x + dZs)
       sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
       containerSLength = sLength;
@@ -1670,6 +1678,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 	  allLogicalVolumes.push_back(coilLV);
 	}
     }
+  // user limits
+  SetUserLimits();
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  for (auto& lv : coilLVs)
+    {lv->SetUserLimits(ul);}
+  if (coilLV)
+    {coilLV->SetUserLimits(ul);}
   
   // placement
   // place yoke+pole (one solid) together
@@ -1767,15 +1782,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double increment = CLHEP::halfpi/nSegments;
   for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += increment)
     { // left side
-      G4double x = -inXO + coilWidth*cos(t);
-      G4double y = coilWidth*sin(t);
+      G4double x = -inXO + coilWidth*std::cos(t);
+      G4double y = coilWidth*std::sin(t);
       inEPPoints.emplace_back(x,y);
     }
   
   for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += increment)
     { // right side
-      G4double x = inXO + coilWidth*cos(t);
-      G4double y = coilWidth*sin(t);
+      G4double x = inXO + coilWidth*std::cos(t);
+      G4double y = coilWidth*std::sin(t);
       inEPPoints.emplace_back(x,y);
     }
 
@@ -1786,11 +1801,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // copy the points, flip in y and shear for output angle
   for (const auto point : inEPPoints) // copying this time
     {
-      G4double outy = -1*(point.x()*tan(-angleOut) + point.y());
+      G4double outy = -1*(point.x()*std::tan(-angleOut) + point.y());
       outEPPoints.emplace_back(point.x(),outy);
     }
   for (auto& point : inEPPoints)  // modify in place for shearing original points
-    {point.setY(point.x()*tan(-angleIn) + point.y());}
+    {point.setY(point.x()*std::tan(-angleIn) + point.y());}
 
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
@@ -1838,7 +1853,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double ePInLengthZ = ePInLength; // copy that will be final length of object
   if (BDS::IsFinite(angleIn))
     {
-      G4double dzIn = tan(std::abs(angleIn)) * outerDiameter;
+      G4double dzIn = std::tan(std::abs(angleIn)) * outerDiameter;
       ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
     }
 
@@ -1859,7 +1874,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
   if (BDS::IsFinite(angleOut))
     {
-      G4double dzOut = tan(std::abs(angleOut)) * outerDiameter;
+      G4double dzOut = std::tan(std::abs(angleOut)) * outerDiameter;
       ePOutLength    = std::max(2*ePOutLength, 2*dzOut); // 2x as long for intersection
     }
 

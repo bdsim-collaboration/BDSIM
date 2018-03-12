@@ -44,21 +44,25 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CalculateStartAngles()
   poleIntersectionStartAngle = -segmentAngle*0.5 - CLHEP::halfpi;
 }
 
-void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String name,
-									G4double length,
-									G4int    order,
-									G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(const G4String& name,
+									const G4double& length,
+									const G4int&    order,
+									const G4double& magnetContainerLength,
+const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4double zPlanes[2]      = {-length*0.5,      length*0.5};
+  G4double zPlanesMagCont[2] = {-magnetContainerLength*0.5, magnetContainerLength*0.5};
+  G4double zPlanesCont[2]  = {-length*0.5,      length*0.5};
+  G4double zPlanes[2]      = {-length*0.5+lengthSafety, length*0.5-lengthSafety};
   G4double zPlanesLong[2]  = {-length,          length}; // for intersections
   G4double innerRadii[2]   = {yokeStartRadius,  yokeStartRadius};
   G4double outerRadii[2]   = {yokeFinishRadius, yokeFinishRadius};
   G4double zeroRadii[2]    = {0,0};
   G4double poleEnd         = yokeStartRadius - lengthSafetyLarge;
   G4double poleEndRadii[2] = {poleEnd,          poleEnd};
+  G4int numberOfSides      = (G4int)factor*2*order;
   
   CalculateStartAngles();
   
@@ -67,7 +71,7 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
 			      polyStartAngle,          // start angle
 			      CLHEP::twopi,            // sweep angle
-			      factor*2*order,          // number of sides
+			      numberOfSides,           // number of sides
 			      2,                       // number of z planes
 			      zPlanes,                 // z plane z coordinates
 			      innerRadii,
@@ -77,7 +81,7 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
   poleIntersectionSolid = new G4Polyhedra(name + "_yoke_intersection_solid", // name
 					  poleIntersectionStartAngle,        // start angle
 					  CLHEP::twopi,                      // sweep angle
-					  factor*2*order,                    // number of sides
+					  numberOfSides,                     // number of sides
 					  2,                                 // number of z planes
 					  zPlanesLong,                       // z plane z coordinates
 					  zeroRadii,
@@ -89,9 +93,9 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
   G4VSolid* containerOuterSolid = new G4Polyhedra(name + "_container_outer_solid", // name
 						  polyStartAngle,                  // start angle
 						  CLHEP::twopi,                    // sweep angle
-						  factor*2*order,                  // number of sides
+						  numberOfSides,                   // number of sides
 						  2,                               // number of z planes
-						  zPlanes,                         // z plane z coordinates
+						  zPlanesCont,                     // z plane z coordinates
 						  contInnerRadii,
 						  contOuterRadii);
 
@@ -109,16 +113,18 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
 					  containerOuterSolid,       // this
 					  containerInnerSolid);      // minus this with no translation or rotation
   
-  G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
+  G4double magContOuterRadii[2] = {magnetContainerRadiusIn, magnetContainerRadiusIn};
   magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
 					 polyStartAngle,            // start angle
 					 CLHEP::twopi,              // sweep angle
-					 factor*2*order,            // number of sides
+					 numberOfSides,             // number of sides
 					 2,                         // number of z planes
-					 zPlanes,                   // z plane z coordinates
+					 zPlanesMagCont,            // z plane z coordinates
 					 contInnerRadii,
 					 magContOuterRadii);
 
 
-  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadiusIn,
+			    magnetContainerRadiusIn,
+			    magnetContainerLength*0.5);
 }

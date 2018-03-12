@@ -117,7 +117,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   allVisAttributes.push_back(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   // container
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }

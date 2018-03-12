@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
+#include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
 
 #include "globals.hh"                  // geant4 types / globals
@@ -91,10 +92,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   particleIDToStore         = globals->StoreTrajectoryParticleID();
   depth                     = globals->StoreTrajectoryDepth();
 
-  if(isBatch)
-    {printModulo = globals->PrintModulo();}
-  else
-    {printModulo=1;}
+  printModulo = globals->PrintModuloEvents();
 }
 
 BDSEventAction::~BDSEventAction()
@@ -111,6 +109,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   // number feedback
   G4int event_number = evt->GetEventID();
+  BDSTerminatorSD::eventNumber = event_number; // update static member of terminator
   eventInfo->SetIndex(event_number);
   if (event_number%printModulo == 0)
     {G4cout << "---> Begin of event: " << event_number << G4endl;}

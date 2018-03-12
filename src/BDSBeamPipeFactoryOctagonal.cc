@@ -72,10 +72,10 @@ void BDSBeamPipeFactoryOctagonal::GeneratePoints(G4double aper1,
   G4double bpInner3 = aper3 + lengthSafety;
   G4double bpInner4 = aper4 + lengthSafety;
   GenerateOctagonal(beamPipeInnerEdge, bpInner1, bpInner2, bpInner3, bpInner4);
-  G4double bpOuter1 = aper1 + beamPipeThickness;
-  G4double bpOuter2 = aper2 + beamPipeThickness;
-  G4double bpOuter3 = aper3 + beamPipeThickness;
-  G4double bpOuter4 = aper4 + beamPipeThickness;
+  G4double bpOuter1 = bpInner1 + beamPipeThickness;
+  G4double bpOuter2 = bpInner2 + beamPipeThickness;
+  G4double bpOuter3 = bpInner3 + beamPipeThickness;
+  G4double bpOuter4 = bpInner4 + beamPipeThickness;
   GenerateOctagonal(beamPipeOuterEdge, bpOuter1, bpOuter2, bpOuter3, bpOuter4);
   G4double cont1 = bpOuter1 + lengthSafetyLarge;
   G4double cont2 = bpOuter2 + lengthSafetyLarge;
@@ -87,6 +87,9 @@ void BDSBeamPipeFactoryOctagonal::GeneratePoints(G4double aper1,
   G4double contSub3 = cont3 + lengthSafetyLarge;
   G4double contSub4 = cont4 + lengthSafetyLarge;
   GenerateOctagonal(containerSubtractionEdge, contSub1, contSub2, contSub3, contSub4);
+
+  extentX = contSub1;
+  extentY = contSub2;
 }
 
 G4double BDSBeamPipeFactoryOctagonal::CalculateIntersectionRadius(G4double aper1,

@@ -44,9 +44,9 @@ void BDSComptonEngine::PerformCompton()
   // Generate compton event; using method described in
   // H.Burkardt, SL/Note 93-73
   
-  G4double phi=CLHEP::twopi * G4UniformRand() ;
-  G4double sinphi=sin(phi);
-  G4double cosphi=cos(phi);
+  G4double phi    = CLHEP::twopi * G4UniformRand();
+  G4double sinphi = std::sin(phi);
+  G4double cosphi = std::cos(phi);
   
 
   G4int ntry=0;

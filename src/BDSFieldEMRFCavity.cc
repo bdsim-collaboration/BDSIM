@@ -60,7 +60,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
                                                                      const G4double       t) const
 {
   // Converting from Local Cartesian to Local Cylindrical
-  G4double phi = atan2(position.y(),position.x());
+  G4double phi = std::atan2(position.y(),position.x());
   G4double r   = std::hypot(position.x(),position.y());
 
   G4double rNormalised = normalisedCavityRadius * r;
@@ -80,12 +80,12 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double Bmax = hMax * CLHEP::mu0;
 
   // Calculating field components.  Frequency in rad/s or /s?
-  G4double Ez   = eFieldMax * J0r * cos(angularFrequency*t + phase);
-  G4double Bphi = Bmax * J1r * sin(angularFrequency*t + phase);
+  G4double Ez   = eFieldMax * J0r * std::cos(angularFrequency*t + phase);
+  G4double Bphi = Bmax * J1r * std::sin(angularFrequency*t + phase);
 
   // Converting Bphi into cartesian coordinates:
-  G4double Bx = Bphi*sin(phi);
-  G4double By = Bphi*cos(phi);
+  G4double Bx = Bphi*std::sin(phi);
+  G4double By = Bphi*std::cos(phi);
 
   // Local B and E fields:
   G4ThreeVector LocalB = G4ThreeVector(Bx, By, 0);

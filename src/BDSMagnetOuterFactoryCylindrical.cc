@@ -472,6 +472,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CreateLogicalVolumes(name, colour, outerMaterial);
+  SetUserLimits();
   CreateMagnetContainerComponent();
 
   // PLACEMENT

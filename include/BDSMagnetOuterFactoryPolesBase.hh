@@ -276,10 +276,11 @@ protected:
   /// Create yoke that connects poles and container to put them in. Also create the
   /// poleIntersectionSolid that will be used to chop the extended pole in
   /// IntersectPoleWithYoke().
-  virtual void CreateYokeAndContainerSolid(G4String      name,
-					   G4double      length,
-					   G4int         order,
-					   G4double      magnetContainerRadius);
+  virtual void CreateYokeAndContainerSolid(const G4String& name,
+					   const G4double& length,
+					   const G4int&    order,
+					   const G4double& magnetContainerLength,
+					   const G4double& magnetContainerRadiusIn); // so as not to clash with member name
 
   /// Chop off the top of the pole to match the appropriate yoke geometry.
   virtual void IntersectPoleWithYoke(G4String name,

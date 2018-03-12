@@ -76,14 +76,14 @@ G4double BDSCavityFactoryElliptical::CreateSolids(G4String             name,
   G4double re = equatorRadius - equatorRSemiAxis; // r coord of equator ellipse centre.
   // gradient of line connecting the ellipses.
   // Add a pi/2 because angle is defined from the vertical, clockwise.
-  G4double m = tan(tangentAngle + 0.5*CLHEP::pi); 
+  G4double m = std::tan(tangentAngle + CLHEP::halfpi); 
    
   // Gradient from tangentAngle. Find the derivative of ellipses. Equate
   // and solve for the parameter.
   // atan finds solution in the first quadrant.
-  G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));
+  G4double equatorParameterTangentPoint = std::atan(-equatorRSemiAxis/(m*equatorZSemiAxis));
   // Add pi to get desired solution (third quadrant)
-  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; 
+  G4double irisParameterTangentPoint = std::atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; 
  
   // Rounding down to a multiple of 4. This is so that number of points are
   // share equally and consistently between the constituent ellipses.
@@ -138,31 +138,31 @@ G4double BDSCavityFactoryElliptical::CreateSolids(G4String             name,
       if (i == 0) 
 	{
 	  //-10mm so boundaries don't lay upon each other when using boolean operation
-	  zInnerCoord.push_back(- zi + irisZSemiAxis * cos(irisParameter[i]) - 10*CLHEP::mm); 
-	  rInnerCoord.push_back(ri + irisRSemiAxis * sin(irisParameter[i]));
+	  zInnerCoord.push_back(- zi + irisZSemiAxis * std::cos(irisParameter[i]) - 10*CLHEP::mm); 
+	  rInnerCoord.push_back(ri + irisRSemiAxis * std::sin(irisParameter[i]));
 	}
-      zInnerCoord.push_back(- zi + irisZSemiAxis * cos(irisParameter[i]));
-      rInnerCoord.push_back(ri + irisRSemiAxis * sin(irisParameter[i]));
+      zInnerCoord.push_back(- zi + irisZSemiAxis * std::cos(irisParameter[i]));
+      rInnerCoord.push_back(ri + irisRSemiAxis * std::sin(irisParameter[i]));
     }
   
   //equator ellipse (middle):
   for (unsigned int i = 0; i < noPoints/2; i++)  //central ellipse is allocated half the total points.  
     {
-      zInnerCoord.push_back(ze + equatorZSemiAxis * cos(equatorParameter[i]));
-      rInnerCoord.push_back(re + equatorRSemiAxis * sin(equatorParameter[i]));
+      zInnerCoord.push_back(ze + equatorZSemiAxis * std::cos(equatorParameter[i]));
+      rInnerCoord.push_back(re + equatorRSemiAxis * std::sin(equatorParameter[i]));
     };
   
   //+z iris ellipse:
   for (unsigned int i = 0; i < noPoints/4; i++)  //the +z iris ellipse is allocated noPoints/4.
     {
-      zInnerCoord.push_back(zi + irisZSemiAxis * cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
-      rInnerCoord.push_back(ri + irisRSemiAxis * sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));	 
+      zInnerCoord.push_back(zi + irisZSemiAxis * std::cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
+      rInnerCoord.push_back(ri + irisRSemiAxis * std::sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));	 
       //If last point, add an extra point purely for unambigious boolean subtraction later.
       if (i == (noPoints/4 - 1))
 	{
 	  //+10mm so boundaries don't lay upon each other
-	  zInnerCoord.push_back(zi + irisZSemiAxis * cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]) + 10*CLHEP::mm); 
-	  rInnerCoord.push_back(ri + irisRSemiAxis * sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
+	  zInnerCoord.push_back(zi + irisZSemiAxis * std::cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]) + 10*CLHEP::mm); 
+	  rInnerCoord.push_back(ri + irisRSemiAxis * std::sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
 	}
     }  
   

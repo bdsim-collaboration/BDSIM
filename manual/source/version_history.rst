@@ -21,6 +21,8 @@ New Features
 * Ability to specify the world volume material with the `worldMaterial` option.
 * Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
 * Ability to limit step size in user-specified fields.
+* Ability to control turn number print out with `printFractionTurns`.
+* Magnet yokes now have a general multipolar field.
 
 
 Output \& Analysis Changes
@@ -54,6 +56,8 @@ General
   to absolute paths.
 * More efficient file IO in rebdsim improves analysis speed.
 * The world material is now air instead of G4_Galatic.
+* `printModuloFraction` is now `printFractionEvents`.
+* `includeIronMagFields` option is now `yokeFields`.
 
 Bug Fixes
 ---------
@@ -72,6 +76,8 @@ Bug Fixes
   geometry with strong rotations.
 * When no energy was specified in the `userfile` bunch distribution, the central beam energy was
   1000x too low - fixed - missing factory of GeV.
+* Number of turns simulated is now number desired and not number+1.
+* Limits to control maximum step length and tracking time were not attached to magnet yoke geometry.
 
 
 V0.993 - 2017 / 12 / 11

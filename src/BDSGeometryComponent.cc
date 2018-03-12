@@ -59,15 +59,8 @@ BDSGeometryComponent::~BDSGeometryComponent()
   for (auto daughter : allDaughters)
     {delete daughter;}
 
-  for (auto solid : allSolids)
-    {delete solid;}
-
-  for (auto lv : allLogicalVolumes)
-    {delete lv;}
-
-  for (auto pv : allPhysicalVolumes)
-    {delete pv;}
-
+  // we let Geant4 handle the deletion of physical volumes, logical volumes and solids
+  
   for (auto rm : allRotationMatrices)
     {delete rm;}
 
@@ -76,7 +69,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
 
   for (auto ul : allUserLimits)
     {delete ul;}
-
+  
   delete placementRotation;
 }
 

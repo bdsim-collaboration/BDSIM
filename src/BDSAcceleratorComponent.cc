@@ -88,7 +88,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
-    {chordLength = 2.0 * arcLengthIn * sin(0.5*angleIn) / angleIn;}
+    {chordLength = 2.0 * arcLengthIn * std::sin(0.5*angleIn) / angleIn;}
   else
     {chordLength = arcLengthIn;}
 #ifdef BDSDEBUG
