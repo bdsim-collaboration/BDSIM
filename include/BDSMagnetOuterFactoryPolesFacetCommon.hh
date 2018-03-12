@@ -61,11 +61,12 @@ private:
   BDSMagnetOuterFactoryPolesFacetCommon();
   
   /// Create yoke that connects poles and container to put them in
-  virtual void CreateYokeAndContainerSolid(G4String name,
-					   G4double length,
-					   G4int    order,
-					   G4double magnetContainerRadius);
-
+  virtual void CreateYokeAndContainerSolid(const G4String& name,
+					   const G4double& length,
+					   const G4int&    order,
+                                           const G4double& magnetContainerLength,
+					   const G4double& magnetContainerRadiusIn);
+  
   /// Factor by which number of polyhedra vertices is multiplied by.
   G4double factor;
 };

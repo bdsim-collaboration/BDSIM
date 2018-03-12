@@ -48,7 +48,7 @@ BDSFieldESinusoid::BDSFieldESinusoid(G4double eFieldAmplitudeIn,
 G4ThreeVector BDSFieldESinusoid::GetField(const G4ThreeVector& /*position*/,
 					  const G4double       t) const
 {
-  G4double eZ = eField*sin(angularFrequency*t + phase);
+  G4double eZ = eField*std::sin(angularFrequency*t + phase);
   G4ThreeVector field = G4ThreeVector(0, 0, eZ);
   return field;
 }

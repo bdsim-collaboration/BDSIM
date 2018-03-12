@@ -74,11 +74,11 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
     {
       // Here we add to so order represents kn properly
       G4double o = (G4double)i+2; // the current order
-      br   += normalComponents[i] * std::pow(r, o - 1) * sin(o * phi) / ffact; //normal
-      br   -= skewComponents[i]   * std::pow(r, o - 1) * cos(o * phi) / ffact; //skewed
+      br   += normalComponents[i] * std::pow(r, o - 1) * std::sin(o * phi) / ffact; //normal
+      br   -= skewComponents[i]   * std::pow(r, o - 1) * std::cos(o * phi) / ffact; //skewed
 
-      bphi += normalComponents[i] * std::pow(r, o - 1) * cos(o * phi) / ffact; //normal
-      bphi += skewComponents[i]   * std::pow(r, o - 1) * sin(o * phi) / ffact; //skewed
+      bphi += normalComponents[i] * std::pow(r, o - 1) * std::cos(o * phi) / ffact; //normal
+      bphi += skewComponents[i]   * std::pow(r, o - 1) * std::sin(o * phi) / ffact; //skewed
 
       // Ignore dipole component for now!
       //if(o==1) // for the angle convention
@@ -88,9 +88,9 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
     }
 
   G4ThreeVector cartesianField;
-  cartesianField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
-  cartesianField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
-  cartesianField[2] = 0;                                 // B_z
+  cartesianField[0] = (br * std::cos(phi) - bphi * std::sin(phi)); // B_x
+  cartesianField[1] = (br * std::sin(phi) + bphi * std::cos(phi)); // B_y
+  cartesianField[2] = 0;                                           // B_z
 
   return cartesianField;
 }

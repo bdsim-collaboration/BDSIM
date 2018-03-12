@@ -66,10 +66,11 @@ void BDSMagnetOuterFactoryPolesSquare::CleanUp()
   order = 0;
 }
 
-void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name,
-								   G4double length,
-								   G4int    /*order*/,
-								   G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(const G4String& name,
+								   const G4double& length,
+								   const G4int&    /*order*/,
+								   const G4double& magnetContainerLength,
+								   const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -124,11 +125,11 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
 					  containerInner);
 
   magnetContainerSolid = new G4Box(name + "_container_solid", // name
-				   magnetContainerRadius,     // x half length
-				   magnetContainerRadius,     // y half length
+				   magnetContainerRadiusIn,     // x half length
+				   magnetContainerRadiusIn,     // y half length
 				   magnetContainerLength*0.5);// z half length
 
-  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadiusIn, magnetContainerRadiusIn, magnetContainerLength*0.5);
 }
 
 void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
