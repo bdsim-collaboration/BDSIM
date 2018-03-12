@@ -132,8 +132,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  allSolids.push_back(vacuumSolid);
-  allSolids.push_back(beamPipeSolid);
   // prepare a longer container subtraction solid
   // doesn't have to be angled as it's only used for transverse subtraction
   containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
