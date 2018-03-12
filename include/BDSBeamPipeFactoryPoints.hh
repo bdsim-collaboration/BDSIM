@@ -77,6 +77,7 @@ public:
 protected:
   /// Function to generate transverse points.  Should set member variables vacuumEdge,
   /// beamPipeInnerEdge, beamPipeOuterEdge, containerEdge and containerSubtractionEdge.
+  /// This *must* also set extentX and extentY member varibles for +ve symmetric extents.
   virtual void GeneratePoints(G4double aper1,
 			      G4double aper2,
 			      G4double aper3,
@@ -124,7 +125,11 @@ protected:
 
   /// Vector of x,y coordinates for the container subtraction volume.
   std::vector<G4TwoVector> containerSubtractionEdge;
-
+  
+  ///@{ Extents prepared by GeneratePoints function as only it knows the extents
+  G4double extentX;
+  G4double extentY;
+  ///@}
 
 private:
   /// Radius of intersection cylinder for angled faced beam pipe pieces. Should
@@ -133,11 +138,6 @@ private:
   /// overlapping z planes errors might occur with short pieces of beam pipe with
   /// large angled faces.
   G4double intersectionRadius;
-
-  ///@{ Extents prepared by GeneratePoints function as only it knows the extents
-  G4double extentX;
-  G4double extentY;
-  ///@}
   
   /// Solid for innter surface of beam pipe.
   G4VSolid* beamPipeInnerSolid;
