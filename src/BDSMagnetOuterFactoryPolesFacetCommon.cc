@@ -44,10 +44,11 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CalculateStartAngles()
   poleIntersectionStartAngle = -segmentAngle*0.5 - CLHEP::halfpi;
 }
 
-void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String name,
-									G4double length,
-									G4int    order,
-									G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(const G4String& name,
+									const G4double& length,
+									const G4int&    order,
+									const G4double& magnetContainerLength,
+const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -109,7 +110,7 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
 					  containerOuterSolid,       // this
 					  containerInnerSolid);      // minus this with no translation or rotation
   
-  G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
+  G4double magContOuterRadii[2] = {magnetContainerRadiusIn, magnetContainerRadiusIn};
   magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
 					 polyStartAngle,            // start angle
 					 CLHEP::twopi,              // sweep angle
@@ -120,5 +121,7 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
 					 magContOuterRadii);
 
 
-  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadiusIn,
+			    magnetContainerRadiusIn,
+			    magnetContainerLength*0.5);
 }

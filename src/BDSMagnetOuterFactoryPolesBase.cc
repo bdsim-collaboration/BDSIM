@@ -341,7 +341,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
       CreatePoleSolid(name, length, order);
       CreateCoilSolids(name, length);
     }
-  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);
+  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength, magnetContainerRadius);
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
@@ -594,10 +594,11 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
-								 G4double length,
-								 G4int    /*order*/,
-								 G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(const G4String& name,
+								 const G4double& length,
+								 const G4int&    /*order*/,
+								 const G4double& magnetContainerLength,
+								 const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -632,7 +633,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 
   // magnet container radius calculated when poles are calculated and assigned to
   // BDSMagnetOuterFactoryBase::magnetContainerRadius
-  BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius); 
+  BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadiusIn);
 }
 
 void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
