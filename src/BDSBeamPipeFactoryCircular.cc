@@ -84,7 +84,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
   containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 			      0,                            // inner radius
 			      containerRadius,              // outer radius
-			      (lengthIn*0.5)-lengthSafety,  // half length - must fit within magnet / outer geometry
+			      lengthIn*0.5,                 // half length
 			      0,                            // rotation start angle
 			      CLHEP::twopi);                // rotation finish angle
   
