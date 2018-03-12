@@ -69,18 +69,18 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
   vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
 			     0,                             // inner radius
 			     aper1In,                       // outer radius
-			     lengthIn*0.5-2*lengthSafety,   // half length
+			     lengthIn*0.5 - 2*lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
   beamPipeSolid = new G4Tubs(nameIn + "_pipe_solid",        // name
 			     aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
-			     aper1In + beamPipeThicknessIn, // outer radius
-			     (lengthIn*0.5)-2*lengthSafety, // half length
+			     aper1In + lengthSafety + beamPipeThicknessIn, // outer radius
+			     lengthIn*0.5 - 2*lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
-  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
+  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety + lengthSafetyLarge;
   containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 			      0,                            // inner radius
 			      containerRadius,              // outer radius
