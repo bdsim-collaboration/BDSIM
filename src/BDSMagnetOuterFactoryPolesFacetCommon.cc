@@ -53,7 +53,9 @@ const G4double& magnetContainerRadiusIn)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4double zPlanes[2]      = {-length*0.5,      length*0.5};
+  G4double zPlanesMagCont[2] = {-magnetContainerLength*0.5, magnetContainerLength*0.5};
+  G4double zPlanesCont[2]  = {-length*0.5,      length*0.5};
+  G4double zPlanes[2]      = {-length*0.5+lengthSafety, length*0.5-lengthSafety};
   G4double zPlanesLong[2]  = {-length,          length}; // for intersections
   G4double innerRadii[2]   = {yokeStartRadius,  yokeStartRadius};
   G4double outerRadii[2]   = {yokeFinishRadius, yokeFinishRadius};
@@ -116,7 +118,7 @@ const G4double& magnetContainerRadiusIn)
 					 CLHEP::twopi,              // sweep angle
 					 factor*2*order,            // number of sides
 					 2,                         // number of z planes
-					 zPlanes,                   // z plane z coordinates
+					 zPlanesMagCont,            // z plane z coordinates
 					 contInnerRadii,
 					 magContOuterRadii);
 
