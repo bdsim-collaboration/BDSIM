@@ -63,11 +63,11 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
   multipoleThin(multipoleThinIn),
   multipoleOuter(multipoleOuterIn)
 {
-  isMatrixIntegrator = false; //default
+  isMatrix = false; //default
   // use dipolematrix integrator to check if matrix style as it is the
   // only integrator exclusive to matrix style integrator sets
   if (dipoleIn == BDSIntegratorType::dipolematrix)
-    {isMatrixIntegrator = true;}
+    {isMatrix = true;}
 }
 
 namespace BDS

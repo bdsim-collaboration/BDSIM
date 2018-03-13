@@ -65,7 +65,6 @@ namespace BDS
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
 			  const BDSIntegratorSet* integratorSet,
-			  const BDSIntegratorSetType integratorSetType,
 			  const G4double&         incomingFaceAngle,
 			  const G4double&         outgoingFaceAngle,
 			  const G4bool&           buildFringeFields);
@@ -88,7 +87,7 @@ namespace BDS
 			       G4double                 brho,
 			       const BDSIntegratorSet*  integratorSet);
 
-  /// Function to return a single secotr bend section.
+  /// Function to return a single sector bend section.
   BDSMagnet* BuildSingleSBend(const GMAD::Element*     element,
 			      const G4String           name,
 			      const G4double           arcLength,

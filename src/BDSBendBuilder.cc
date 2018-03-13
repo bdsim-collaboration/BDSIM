@@ -453,7 +453,6 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
 			     const BDSIntegratorSet* integratorSet,
-			     const BDSIntegratorSetType integratorSetType,
 			     const G4double&         incomingFaceAngle,
 			     const G4double&         outgoingFaceAngle,
 			     const G4bool&           buildFringeFields)
@@ -653,8 +652,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     { 
-      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(); // the copy is crucial to copy the field strength
-      (*fringeStOut)["field"]         = (*st)["field"];
+      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
       (*fringeStOut)["polefaceangle"] = trackingPolefaceAngleOut;
       (*fringeStOut)["length"]        = thinElementArcLength;
       (*fringeStOut)["angle"]         = oneFringeAngle;
