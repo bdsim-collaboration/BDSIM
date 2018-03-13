@@ -30,7 +30,8 @@ std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
       {BDSIntegratorSetType::geant4,   "geant4"},
       {BDSIntegratorSetType::bdsimone, "bdsimone"},
       {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"},
-      {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"}
+      {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"},
+      {BDSIntegratorSetType::bdsimmatrixfringescaling, "bdsimmatrixfringescaling"}
 #if G4VERSION_NUMBER > 1029
       ,
       {BDSIntegratorSetType::geant4dp, "geant4dp"}
@@ -44,6 +45,7 @@ BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
   types["bdsimone"]    = BDSIntegratorSetType::bdsimone;
   types["bdsimtwo"]    = BDSIntegratorSetType::bdsimtwo;
   types["bdsimmatrix"] = BDSIntegratorSetType::bdsimmatrix;
+  types["bdsimmatrixfringescaling"] = BDSIntegratorSetType::bdsimmatrixfringescaling;
   types["geant4"]      = BDSIntegratorSetType::geant4;
 #if G4VERSION_NUMBER > 1029
   types["geant4dp"]    = BDSIntegratorSetType::geant4dp;

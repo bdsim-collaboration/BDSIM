@@ -95,6 +95,7 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["decapole"]             = BDSIntegratorType::decapole;
   types["multipolethin"]        = BDSIntegratorType::multipole;
   types["dipolefringe"]         = BDSIntegratorType::dipolefringe;
+  types["dipolefringescaling"]  = BDSIntegratorType::dipolefringescaling;
   types["euler"]                = BDSIntegratorType::euler;
   types["kickerthin"]           = BDSIntegratorType::kickerthin;
   types["g4cashkarprkf45"]      = BDSIntegratorType::g4cashkarprkf45;
