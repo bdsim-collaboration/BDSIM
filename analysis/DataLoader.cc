@@ -197,13 +197,12 @@ void DataLoader::BuildEventBranchNameList()
   delete modTemporary;
 
   if(debug)
-  {
-    for(auto i = this->branchNames.begin(); i != this->branchNames.end(); ++i)
-      {std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;}
-
-    for(auto i = this->samplerNames.begin(); i != this->samplerNames.end(); ++i)
-      {std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " <<  *i << std::endl;}
-  }
+    {
+      for (const auto& n : branchNames)
+	{std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " << n << std::endl;}
+      for (const auto& n : samplerNames)
+	{std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " << n << std::endl;}
+    }
 }
 
 void DataLoader::ChainTrees()
