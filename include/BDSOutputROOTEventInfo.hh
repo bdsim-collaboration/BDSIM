@@ -43,6 +43,7 @@ public:
   float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
   std::string seedStateAtStart; ///< Seed state at the start of the event.
   int    index;     ///< Number of this event or run.
+  bool   aborted;   ///< Whether the event was aborted or not.
 
   ClassDef(BDSOutputROOTEventInfo,1);
 };

@@ -67,6 +67,9 @@ public:
   BDSDetectorConstruction();
   virtual ~BDSDetectorConstruction();
 
+  /// Loop over beam line and work out maximum tolerable sampler radius.
+  void UpdateSamplerDiameter();
+
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.
   virtual G4VPhysicalVolume* Construct();

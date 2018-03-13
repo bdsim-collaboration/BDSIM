@@ -144,6 +144,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(verboseEvent || verboseEventNumber == event_number)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   eventInfo->SetIndex(event_number);
+
+  // Record if event was aborted - ie whether it's useable for analyses.
+  eventInfo->SetAborted(evt->IsAborted());
   
   // Get the current time
   stopTime = time(nullptr);

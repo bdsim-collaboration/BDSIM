@@ -141,17 +141,16 @@ void EventAnalysis::Process()
       if(debug)
 	{
 	  std::cout << __METHOD_NAME__ << i << std::endl;
-        if (processSamplers)
-        {
-            std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-            std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
-            std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
-            //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
-        }
+	  if (processSamplers)
+	    {
+	      std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+	      std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
+	    }
 	}
       
       if(processSamplers)

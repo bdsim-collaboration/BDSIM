@@ -66,9 +66,12 @@ BDSMessenger::~BDSMessenger()
 
 void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
 {
-  if(     command == beamlineListCmd)       {this->BeamLineList();}
-  else if(command == samplerListCmd)        {this->SamplerList();}
-  else if(command == elementNameSearchCmd)  {this->ElementNameSearch(newValue);}
+  if(     command == beamlineListCmd)
+    {BeamLineList();}
+  else if(command == samplerListCmd)
+    {SamplerList();}
+  else if(command == elementNameSearchCmd)
+    {ElementNameSearch(newValue);}
 }
 
 void BDSMessenger::BeamLineList()
@@ -82,9 +85,8 @@ void BDSMessenger::BeamLineList()
          << std::setw(20) << " placement name"
          << std::setw(20) << " type"
          << std::setw(20) << " S-middle" << G4endl;
-  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j) {
-    G4cout << this->BDSBeamlineElementToString(j) << G4endl;
-  }
+  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
+    {G4cout << BDSBeamlineElementToString(j) << G4endl;}
 }
 
 std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement)
@@ -109,27 +111,19 @@ void BDSMessenger::ElementNameSearch(std::string name)
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   int j=0;
   for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
-  {
-    if((*i)->GetName().contains(name))
-	  {
-	    G4cout << (*i)->GetName() << G4endl;
-	  }
-  }
+    {
+      if((*i)->GetName().contains(name))
+	{G4cout << (*i)->GetName() << G4endl;}
+    }
 }
 
 void BDSMessenger::ElementTypeSearch(std::string /*type*/)
-{
-
-}
+{;}
 
 void BDSMessenger::SamplerList()
 {
-  int j=0;
-  for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-  {
-    G4cout << this->BDSSamplerToString(j) << G4endl;
-    ++j;
-  }
+  for (const auto& name : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {G4cout << name << G4endl;}
 }
 
 std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
@@ -137,7 +131,8 @@ std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
   return std::string();
 }
 
-std::string BDSMessenger::BDSSamplerToString(int iSampler) {
+std::string BDSMessenger::BDSSamplerToString(int iSampler)
+{
   std::stringstream ss;
 
   BDSSamplerInfo sInfo = BDSSamplerRegistry::Instance()->GetInfo(iSampler);

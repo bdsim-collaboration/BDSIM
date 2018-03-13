@@ -50,6 +50,7 @@ public:
   inline void SetDuration(G4float durationIn)  {info->duration  = (float)durationIn;}
   inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
   inline void SetIndex(G4int indexIn)          {info->index     = (int)indexIn;}
+  inline void SetAborted(G4bool abortedIn)     {info->aborted   = (bool)abortedIn;}
   /// @}
 
   /// Accessor.
