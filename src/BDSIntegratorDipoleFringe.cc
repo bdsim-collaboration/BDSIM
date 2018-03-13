@@ -38,7 +38,6 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr((*strengthIn)["fringecorr"]),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
-  bRho(brhoIn),
   strength(strengthIn)
 {
   if (thinElementLength < 0)

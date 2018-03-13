@@ -72,8 +72,7 @@ private:
   const G4double fringeCorr;
   /// Nominal magnet bending radius
   const G4double rho;
-  /// Nominal magnetic rigidity
-  const G4double bRho;
+
 
   BDSMagnetStrength const* strength;
 
