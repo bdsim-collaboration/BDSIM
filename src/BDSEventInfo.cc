@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 BDSEventInfo::BDSEventInfo():
-info(new BDSOutputROOTEventInfo())
+  info(new BDSOutputROOTEventInfo())
 {;}
 
 BDSEventInfo::~BDSEventInfo()

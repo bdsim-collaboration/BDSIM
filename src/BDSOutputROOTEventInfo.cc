@@ -23,7 +23,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(BDSOutputROOTEventInfo)
 
 BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
-  startTime(time_t()), stopTime(time_t()), duration(0), seedStateAtStart("")
+  startTime(time_t()),
+  stopTime(time_t()),
+  duration(0),
+  seedStateAtStart(""),
+  aborted(false)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -35,4 +39,5 @@ void BDSOutputROOTEventInfo::Flush()
   stopTime         = time_t();
   duration         = 0;
   seedStateAtStart = "";
+  aborted          = false;
 }

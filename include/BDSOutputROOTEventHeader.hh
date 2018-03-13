@@ -41,6 +41,8 @@ public:
   std::string clhepVersion;
   std::string timeStamp;
   std::string fileType;
+  int         dataVersion;           ///< Our data format version.
+  bool        doublePrecisionOutput; ///< Whether using double precision output - assumed float if not
 
   /// Update the file type.
   void SetFileType(std::string fileTypeIn) {fileType = fileTypeIn;}
