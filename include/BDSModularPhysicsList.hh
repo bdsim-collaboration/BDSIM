@@ -192,6 +192,7 @@ private:
   void QGSPBERTHP();
   void QGSPBIC();
   void QGSPBICHP();
+  void Shielding();
   void SynchRad();
 #if G4VERSION_NUMBER > 1019
   void EmGS();
