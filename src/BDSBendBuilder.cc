@@ -484,9 +484,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // Calculate how far away we are from an sbend.
   G4double incomingFaceAngleWRTSBend = incomingFaceAngle + angle*0.5;
   G4double outgoingFaceangleWRTSBend = outgoingFaceAngle + angle*0.5;
-  if (!BDS::IsFinite(incomingFaceAngleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
+  if (!BDS::IsFinite(incomingFaceAngleWRTSBend) && (!integratorSet->IsMatrixIntegratorSet()))
     {buildFringeIncoming = false;}
-  if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (integratorSetType != BDSIntegratorSetType::bdsimmatrix))
+  if (!BDS::IsFinite(outgoingFaceangleWRTSBend) && (!integratorSet->IsMatrixIntegratorSet()))
     {buildFringeOutgoing = false;}
 
   // fintx = -1 is how madx writes out that fintx should default to fint
@@ -505,7 +505,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // the poleface angles to be used in tracking only.
   G4double trackingPolefaceAngleIn = element->e1;
   G4double trackingPolefaceAngleOut = element->e2;
-  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+  if (integratorSet->IsMatrixIntegratorSet())
     {// for this integrator set we track the rbend as an sbend with extra pole face rotation
       trackingPolefaceAngleIn += angle*0.5;
       trackingPolefaceAngleOut += angle*0.5;

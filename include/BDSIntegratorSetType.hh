@@ -38,6 +38,7 @@ struct integratorsettype_def
 	     geant4dp
 #endif
   };
+  G4bool isMatrixIntegrator;
 };
 
 typedef BDSTypeSafeEnum<integratorsettype_def, int> BDSIntegratorSetType;

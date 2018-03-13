@@ -62,7 +62,13 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
   dipoleFringe(dipoleFringeIn),
   multipoleThin(multipoleThinIn),
   multipoleOuter(multipoleOuterIn)
-{;}
+{
+  isMatrixIntegrator = false; //default
+  // use dipolematrix integrator to check if matrix style as it is the
+  // only integrator exclusive to matrix style integrator sets
+  if (dipoleIn == BDSIntegratorType::dipolematrix)
+    {isMatrixIntegrator = true;}
+}
 
 namespace BDS
 {  
@@ -291,3 +297,6 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return general;          break;}
     }
 }
+
+G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
+  {return isMatrix;}
