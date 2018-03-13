@@ -2329,6 +2329,9 @@ Physics Lists In BDSIM
 | qgsp_bic_hp                 | Similar to `QGSP_BIC` but with the high precision neutron package.     |
 |                             | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
 +-----------------------------+------------------------------------------------------------------------+
+| shielding                   | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
+|                             | shielding applications.                                                |
++-----------------------------+------------------------------------------------------------------------+
 | synch_rad                   | Provides synchrotron radiation for all charged particles. Provided by  |
 |                             | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
 |                             | `G4SynchrotronRadiation`.                                              |
