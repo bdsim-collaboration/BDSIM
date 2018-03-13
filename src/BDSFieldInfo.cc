@@ -49,7 +49,10 @@ BDSFieldInfo::BDSFieldInfo():
   bScaling(1.0),
   timeOffset(0),
   autoScale(false),
-  stepLimit(nullptr)
+  stepLimit(nullptr),
+  poleTipRadius(1),
+  beamPipeRadius(0),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -69,7 +72,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
 			   G4bool                   autoScaleIn,
-			   G4UserLimits*            stepLimitIn):
+			   G4UserLimits*            stepLimitIn,
+			   G4double                 poleTipRadiusIn,
+			   G4double                 beamPipeRadiusIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -87,7 +92,10 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
   autoScale(autoScaleIn),
-  stepLimit(stepLimitIn)
+  stepLimit(stepLimitIn),
+  poleTipRadius(poleTipRadiusIn),
+  beamPipeRadius(beamPipeRadiusIn),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -112,7 +120,10 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   eScaling(other.eScaling),
   bScaling(other.bScaling),
   timeOffset(other.timeOffset),
-  autoScale(other.autoScale)
+  autoScale(other.autoScale),
+  poleTipRadius(other.poleTipRadius),
+  beamPipeRadius(other.beamPipeRadius),
+  chordStepMinimum(other.chordStepMinimum)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -141,7 +152,9 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E Scaling:         " << info.eScaling                 << G4endl;
   out << "B Scaling:         " << info.bScaling                 << G4endl;
   out << "t offset           " << info.timeOffset               << G4endl;
-  out << "auto scale         " << info.autoScale                << G4endl;
+  out << "Auto scale         " << info.autoScale                << G4endl;
+  out << "Pole tip radius:   " << info.poleTipRadius            << G4endl;
+  out << "Beam pipe radius:  " << info.beamPipeRadius           << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)

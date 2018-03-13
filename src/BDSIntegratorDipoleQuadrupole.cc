@@ -54,11 +54,11 @@ BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
   delete dipole;
 }
 
-void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
+void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
 					    const G4double dydx[],
 					    const G4double h,
-					    G4double       yOut[],
-					    G4double       yErr[])
+					    G4double       yOut[6],
+					    G4double       yErr[6])
 {
   // charge and unit normalisation
   const G4double fcof = eqOfM->FCof();
@@ -71,23 +71,31 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
       return;
     }
 
-  // try out a dipole step first
-  dipole->Stepper(yIn, dydx, h, yOut, yErr);
+  // try out a simple dipole step first - dumb stepper has no error but is 2x as fast as normal step
+  dipole->SingleStep(yIn, h, yOut);
 
-  // return just dipole kick for small step size
-  if (h < 1e-10)
-    {return;}
-
-  // If the particle might spiral, we return and just use the dipole only component
-  // Aimed at particles of much lower momentum than the design energy.
-  G4double dipoleDC          = dipole->DistChord();
-  G4double radiusOfCurvature = dipole->RadiusOfHelix();
-  if (dipoleDC > 0.3*radiusOfCurvature)
-    {return;}
-
+  G4double dipoleDC = dipole->DistChord();
   // We assume that the major effect is the dipole component and the quadrupole
   // component is low. Therefore, we can safely set distchord from the dipole.
   SetDistChord(dipoleDC);
+
+  // return just dipole kick for small step size
+  if (h < 1e-4) // 1e-4mm
+    {
+      dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
+      SetDistChord(dipole->DistChord());
+      return;
+    }
+
+  // If the particle might spiral, we return and just use the dipole only component
+  // Aimed at particles of much lower momentum than the design energy.
+  G4double radiusOfCurvature = dipole->RadiusOfHelix();
+  if (dipoleDC > 0.3*radiusOfCurvature)
+    {
+      dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
+      SetDistChord(dipole->DistChord());
+      return;
+    }
   
   // not going to spiral so proceed
   // convert to true curvilinear
@@ -102,7 +110,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
   // judged by forward momentum > 0.9 and |transverse| < 0.1
   if (localCLMomU.z() < 0.9 || std::abs(localCLMomU.x()) > 0.1 || std::abs(localCLMomU.y()) > 0.1)
     {
-      dipole->Stepper(yIn, dydx, h, yOut, yErr);
+      dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
       SetDistChord(dipole->DistChord());
       return;
     }
@@ -120,8 +128,15 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[],
 
   // error along direction of travel really
   G4ThreeVector globalMomOutU = globalMomOut.unit();
-  globalMomOutU *= 1e-8;
-
+  globalMomOutU *= 1e-10;
+  
+  // chord distance (simple quadratic approx)
+  G4double dc = h*h/(8*radiusOfCurvature);
+  if (std::isnan(dc))
+    {SetDistChord(0);}
+  else
+    {SetDistChord(dc);}
+  
   // write out values and errors
   for (G4int i = 0; i < 3; i++)
     {

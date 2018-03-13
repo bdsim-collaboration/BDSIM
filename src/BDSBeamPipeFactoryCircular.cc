@@ -69,22 +69,22 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
   vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
 			     0,                             // inner radius
 			     aper1In,                       // outer radius
-			     lengthIn*0.5-2*lengthSafety,   // half length
+			     lengthIn*0.5 - 2*lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
   beamPipeSolid = new G4Tubs(nameIn + "_pipe_solid",        // name
 			     aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
-			     aper1In + beamPipeThicknessIn, // outer radius
-			     (lengthIn*0.5)-2*lengthSafety, // half length
+			     aper1In + lengthSafety + beamPipeThicknessIn, // outer radius
+			     lengthIn*0.5 - 2*lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
-  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
+  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety + lengthSafetyLarge;
   containerSolid = new G4Tubs(nameIn + "_container_solid",  // name
 			      0,                            // inner radius
 			      containerRadius,              // outer radius
-			      (lengthIn*0.5)-lengthSafety,  // half length - must fit within magnet / outer geometry
+			      lengthIn*0.5,                 // half length
 			      0,                            // rotation start angle
 			      CLHEP::twopi);                // rotation finish angle
   
@@ -111,9 +111,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String      nameIn,
   CleanUp();
   inputFaceNormal  = inputFaceNormalIn;
   outputFaceNormal = outputFaceNormalIn;
-
-  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
+  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety + lengthSafetyLarge;
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn,
 			    inputFaceNormal, outputFaceNormal);
   
@@ -132,8 +131,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  allSolids.push_back(vacuumSolid);
-  allSolids.push_back(beamPipeSolid);
   // prepare a longer container subtraction solid
   // doesn't have to be angled as it's only used for transverse subtraction
   containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
@@ -165,41 +162,44 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   vacuumSolid   = new G4CutTubs(nameIn + "_vacuum_solid",      // name
 				0,                             // inner radius
 				aper1In,                       // outer radius
-				lengthIn*0.5-2*lengthSafety,   // half length
+				lengthIn*0.5 - 2*lengthSafety, // half length
 				0,                             // rotation start angle
 				CLHEP::twopi,                  // rotation finish angle
 				inputfaceIn,                   // input face normal
 				outputfaceIn );                // output face normal
   
-  // beampipesolid created as subtraction since direct G4CutTubs creation created scattering in sector bends. not really understood
-  
-  G4VSolid* inside = new G4CutTubs(nameIn + "_pipe_inner_solid", // name
-				   0,                               // inner radius + length safety to avoid overlaps
-				   aper1In + lengthSafety,          // outer radius
-				   lengthIn,                        // half length
-				   0,                               // rotation start angle
-				   CLHEP::twopi,                    // rotation finish angle
-				   inputfaceIn,                     // input face normal
-				   outputfaceIn );
-  G4VSolid* outer  = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
-				   0,                               // inner radius + length safety to avoid overlaps
-				   aper1In + beamPipeThicknessIn,   // outer radius
-				   lengthIn*0.5 - lengthSafety,     // half length
-				   0,                               // rotation start angle
-				   CLHEP::twopi,                    // rotation finish angle
-				   inputfaceIn,                     // input face normal
-				   outputfaceIn);
-  allSolids.push_back(inside);
+  // beampipesolid created as subtraction since direct G4CutTubs creation
+  // created scattering in sector bends. not really understood but likely
+  // fault in G4CutTubs
+  G4VSolid* inner = new G4CutTubs(nameIn + "_pipe_inner_solid",  // name
+				  0,                             // inner radius
+				  aper1In + lengthSafety,        // outer radius
+				  lengthIn,                      // half length - long!
+				  0,                             // rotation start angle
+				  CLHEP::twopi,                  // rotation finish angle
+				  inputfaceIn,                   // input face normal
+				  outputfaceIn);                 // output face normal
+
+  G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
+				  0,                             // inner radius + length safety to avoid overlaps
+				  aper1In + lengthSafety + beamPipeThicknessIn,   // outer radius
+				  lengthIn*0.5 - 2*lengthSafety, // half length
+				  0,                             // rotation start angle
+				  CLHEP::twopi,                  // rotation finish angle
+				  inputfaceIn,                   // input face normal
+				  outputfaceIn);                 // output face normal
+  allSolids.push_back(inner);
   allSolids.push_back(outer);
   
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 outer,
-					 inside);
-
+					 inner);
+  
+  G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety + lengthSafetyLarge;
   containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
 				 0,                            // inner radius
-				 aper1In + beamPipeThicknessIn + lengthSafety,  // outer radius
-				 lengthIn*0.5-lengthSafety,    // half length
+				 containerRadius,              // outer radius
+				 lengthIn*0.5,                 // half length - no -length safety!
 				 0,                            // rotation start angle
 				 CLHEP::twopi,                 // rotation finish angle
 				 inputfaceIn,                  // input face normal

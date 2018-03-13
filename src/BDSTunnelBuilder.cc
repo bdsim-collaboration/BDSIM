@@ -380,7 +380,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
       G4double angle    = (*startElement)->GetAcceleratorComponent()->GetAngle();
       cumulativeLength += length;
       cumulativeAngle  += angle;
-      cumulativeDisplacementX += sin(angle) * length;
+      cumulativeDisplacementX += std::sin(angle) * length;
       //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
       //would still use angle, but would need to involve tilt and rotation axes
       cumulativeNItems += 1;

@@ -166,6 +166,12 @@ BDSExtent BDSBeamPipeInfo::IndicativeExtent() const
   return result;
 }
 
+G4double BDSBeamPipeInfo::IndicativeRadius() const
+{
+  BDSExtent ext = IndicativeExtent();
+  return ext.MaximumAbsTransverse();
+}
+
 void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,
 						 G4bool setAper2,
 						 G4bool setAper3,

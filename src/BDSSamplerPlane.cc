@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSGlobalConstants.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
@@ -24,8 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
-// geometry tolerance is 1e-12 and dz of the box must be greater than this
-const G4double BDSSamplerPlane::chordLength = 0.01*CLHEP::nm;
+G4double BDSSamplerPlane::chordLength = -1;
 
 BDSSamplerPlane::BDSSamplerPlane(G4String nameIn,
 				 G4double boxHalfWidth):

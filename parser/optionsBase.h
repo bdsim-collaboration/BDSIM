@@ -116,8 +116,8 @@ namespace GMAD
 
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
-    
-    bool      includeIronMagFields;
+
+    bool      yokeFields;
     bool      sensitiveBeamlineComponents;
 
     bool        includeFringeFields;
@@ -202,6 +202,7 @@ namespace GMAD
     double   maximumStepLength;   ///< Maximum permitted step length in any volume.
     double   maximumTrackLength;  ///< Maximum permitted track length [m].
     double   chordStepMinimum;
+    double   chordStepMinimumYoke;
     double   deltaIntersection;
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;
@@ -232,7 +233,8 @@ namespace GMAD
     /// Ring parameters
     int      nturns;
 
-    double   printModuloFraction;
+    double   printFractionEvents;
+    double   printFractionTurns;
 
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation

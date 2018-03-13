@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
@@ -93,17 +94,11 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   // calculate sampler central position slightly away from end position of element.
   if (samplerType == BDSSamplerType::plane)
     {
-      G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      // offset from end face as overlapping faces produce weird results - no hits etc
-      // 1um seemed ok, but then ~20 / 10k would appear wrong - last step in world volume
-      // instead of correct place - should be impossible.  Also had nullptr for
-      // track->GetVolume(). empirically found good results with 2um (at least 1.5um)
-      // however, this is too far for optical accuracy. Since tolerance was fixed at 1pm,
-      // the sampler itself can be smaller and we no long need to back off so much.
-      G4double lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() - 3*lengthSafety;
+      G4ThreeVector dZLocal = G4ThreeVector(0,0,1);
+      // if we have a sampler, add on the thickness of the sampler to the padding
+      dZLocal *= (BDSBeamline::PaddingLength() + BDSSamplerPlane::ChordLength())*0.5;
       dZLocal.transform(*referenceRotationEnd);
-      G4ThreeVector samplerPosition = referencePositionEnd - dZLocal;
+      G4ThreeVector samplerPosition = referencePositionEnd + dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, samplerPosition);
     }
   else if (samplerType == BDSSamplerType::cylinder)

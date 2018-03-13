@@ -67,7 +67,8 @@ public:
 		   BDSIntegratorType skewOctupoleIn,
 		   BDSIntegratorType skewDecapoleIn,
 		   BDSIntegratorType dipoleFringeIn,
-		   BDSIntegratorType multipoleThinIn);
+		   BDSIntegratorType multipoleThinIn,
+		   BDSIntegratorType multipoleOuterIn);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
@@ -90,6 +91,7 @@ public:
   BDSIntegratorType skewDecapole;
   BDSIntegratorType dipoleFringe;
   BDSIntegratorType multipoleThin;
+  BDSIntegratorType multipoleOuter;
 };
 
 #endif

@@ -127,8 +127,10 @@ public:
   inline G4String ExportFileName()         const {return G4String(options.exportFileName);}  
 
   // regular options from here on
-  G4int PrintModulo()                        const;
-  inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
+  G4int PrintModuloEvents()                  const;
+  G4int PrintModuloTurns()                   const;
+  inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
+  inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
   inline G4bool   IgnoreLocalAperture()      const {return G4bool  (options.ignoreLocalAperture);}
@@ -155,6 +157,7 @@ public:
 
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
+  inline G4double ChordStepMinimumYoke()     const {return G4double(options.chordStepMinimumYoke)*CLHEP::m;}
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
@@ -201,8 +204,7 @@ public:
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4String WorldMaterial()            const {return G4String(options.worldMaterial);}
   inline G4double WorldVolumeMargin()        const {return G4double(options.worldVolumeMargin*CLHEP::m);}
-  //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
-  inline G4bool   IncludeIronMagFields()     const {return false;}
+  inline G4bool   YokeFields()               const {return G4bool  (options.yokeFields);}
   inline G4bool   TurnOnOpticalAbsorption()  const {return G4bool  (options.turnOnOpticalAbsorption);}
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}
@@ -248,7 +250,7 @@ public:
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
-  inline void ResetTurnNumber()      {turnsTaken = 0;}
+  inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
   /// @}
 

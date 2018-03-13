@@ -61,7 +61,16 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::rfcavity,         "rfcavity"},
       {BDSFieldType::rf,               "rf"},
       {BDSFieldType::dipole3d,         "dipole3d"},
-      {BDSFieldType::multipoleouter,   "multipoleouter"}
+      {BDSFieldType::multipoleouterdipole,     "multipoleouterdipole"},
+      {BDSFieldType::multipoleouterquadrupole, "multipoleouterquadrupole"},
+      {BDSFieldType::multipoleoutersextupole,  "multipoleoutersextupole"},
+      {BDSFieldType::multipoleouteroctupole,   "multipoleouteroctupole"},
+      {BDSFieldType::multipoleouterdecapole,   "multipoleouterdecapole"},
+      {BDSFieldType::skewmultipoleouterquadrupole, "skewmultipoleouterquadrupole"},
+      {BDSFieldType::skewmultipoleoutersextupole,  "skewmultipoleoutersextupole"},
+      {BDSFieldType::skewmultipoleouteroctupole,   "skewmultipoleouteroctupole"},
+      {BDSFieldType::skewmultipoleouterdecapole,   "skewmultipoleouterdecapole"},
+      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -101,7 +110,16 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["rfcavity"]         = BDSFieldType::rfcavity;
   types["rf"]               = BDSFieldType::rf;
   types["dipole3d"]         = BDSFieldType::dipole3d;
-  types["multipoleouter"]   = BDSFieldType::multipoleouter;
+  types["multipoleouterdipole"]     = BDSFieldType::multipoleouterdipole;
+  types["multipoleouterquadrupole"] = BDSFieldType::multipoleouterquadrupole;
+  types["multipoleoutersextupole"]  = BDSFieldType::multipoleoutersextupole;
+  types["multipoleouteroctupole"]   = BDSFieldType::multipoleouteroctupole;
+  types["multipoleouterdecapole"]   = BDSFieldType::multipoleouterdecapole;
+  types["skewmultipoleouterquadrupole"] = BDSFieldType::skewmultipoleouterquadrupole;
+  types["skewmultipoleoutersextupole"]  = BDSFieldType::skewmultipoleoutersextupole;
+  types["skewmultipoleouteroctupole"]   = BDSFieldType::skewmultipoleouteroctupole;
+  types["skewmultipoleouterdecapole"]   = BDSFieldType::skewmultipoleouterdecapole;
+  types["multipoleouterdipole3d"]       = BDSFieldType::multipoleouterdipole3d;
   
   bType.toLower();
 

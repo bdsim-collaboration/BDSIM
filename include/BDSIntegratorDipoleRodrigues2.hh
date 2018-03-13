@@ -43,6 +43,9 @@ class G4Mag_EqRhs;
  *
  * For low momentum particles (|p| < 40 MeV) we use the G4ClassicalRK4 integrator
  * instead of the one for the pure magnetic field as it is more robust.
+ *
+ * Note, some things that could be passed by reference are not purely for
+ * correct overload of Geant4 function.
  * 
  * @author Laurie Nevay
  */
@@ -51,35 +54,42 @@ class BDSIntegratorDipoleRodrigues2: public G4MagHelicalStepper, public BDSInteg
 {
 public:
   BDSIntegratorDipoleRodrigues2(G4Mag_EqRhs* eqOfMIn,
-		       G4double     minimumRadiusOfCurvature);
+				G4double     minimumRadiusOfCurvature);
 
   virtual ~BDSIntegratorDipoleRodrigues2(){;}
 
   /// Required to be provided by base class, but apparently should never be
   /// called by the driver.  Simply calls AdvanceHelix.
-  virtual void DumbStepper(const G4double yIn[],
+  virtual void DumbStepper(const G4double yIn[6],
 			   G4ThreeVector  field,
 			   G4double       stepLength,
-			   G4double       yOut[]);
+			   G4double       yOut[6]);
+
+  /// Perform a single step. Useful for other integrators that want to use this
+  /// one to estimate the radius of curvature in the field, in which case, no need
+  /// for usual two step calculation, nor error calculation.
+  void SingleStep(const G4double  yIn[6],
+		  const G4double& h,
+		  G4double        yOut[6]);
 
   /// Calculate output coordinates.  Decide if particle is spiralling or not.
   /// Nominally calculate two half steps and compare to one full step for error
   /// estimation.
-  virtual void Stepper(const G4double yInput[],  ///< Input coordinates x,y,z,px,py,pz,t
-		       const G4double dydyx[],   ///< Partial differentials at yInput
-		       G4double       stepLength,///< Length of trajectory to calculate
-		       G4double       yOut[],    ///< Output array
-		       G4double       yErr[]);   ///< Output error array
+  virtual void Stepper(const G4double  yIn[6],   ///< Input coordinates x,y,z,px,py,pz,t
+		       const G4double  dydx[],   ///< Partial differentials at yInput
+		       G4double        h,        ///< Length of trajectory to calculate
+		       G4double        yOut[6],  ///< Output array
+		       G4double        yErr[6]); ///< Output error array
 
   virtual G4int IntegratorOrder() const {return 1;}
 
   /// Variation of AdvanceHelix specifically to deal with particles that are likely to
   /// be spiralling in the magnetic field.
-  void AdvanceHelixForSpiralling(const G4double yIn[],
-				 G4ThreeVector  field,
-				 G4double       stepLength,
-				 G4double       yOut[],
-				 G4double       yErr[]);
+  void AdvanceHelixForSpiralling(const G4double       yIn[6],
+				 const G4ThreeVector& field,
+				 const G4double&      h,
+				 G4double             yOut[6],
+				 G4double             yErr[6]);
 
   /// Public accessor for protected variable in base class.
   inline G4double RadiusOfHelix() const {return GetRadHelix();}
