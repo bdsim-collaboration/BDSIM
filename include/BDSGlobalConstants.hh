@@ -144,7 +144,6 @@ public:
   inline G4double BeamTotalEnergy()          const {return G4double(beam.beamEnergy)*CLHEP::GeV;}
   inline G4double BlmRad()                   const {return G4double(options.blmRad)*CLHEP::m;}
   inline G4double BlmLength()                const {return G4double(options.blmLength)*CLHEP::m;}
-  inline G4double SamplerDiameter()          const {return G4double(options.samplerDiameter)*CLHEP::m;}
   inline G4double DefaultRangeCut()          const {return G4double(options.defaultRangeCut)*CLHEP::m;}
   inline G4double ProdCutPhotons()           const {return G4double(options.prodCutPhotons)*CLHEP::m;}
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
@@ -234,6 +233,7 @@ public:
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4String              ParticleName()            const {return beam.particleName;}
+  inline G4double              SamplerDiameter()         const {return samplerDiameter;}
   inline BDSParticleDefinition* BeamParticleDefinition() const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
@@ -247,6 +247,7 @@ public:
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
 
   /// @{ Setter
+  inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
@@ -272,6 +273,9 @@ private:
   
   /// Number of particles to generate can be set from outside (by e.g. BDSBunchPtc)
   G4int numberToGenerate;
+
+  /// Cache of sampler diameter in this class so it can be updated.
+  G4double samplerDiameter;
 
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;

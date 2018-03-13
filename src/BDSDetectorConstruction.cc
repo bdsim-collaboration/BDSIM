@@ -87,6 +87,33 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
+
+  UpdateSamplerDiameter();
+}
+
+void BDSDetectorConstruction::UpdateSamplerDiameter()
+{
+  auto beamline = BDSParser::Instance()->GetBeamline(); // main beam line
+  G4double maxBendingRatio = 1e-9;
+  for (auto elementIt = beamline.begin(); elementIt != beamline.end(); ++elementIt)
+    {
+      G4double length = elementIt->l;
+      G4double angle  = elementIt->angle;
+      if (!BDS::IsFinite(length))
+	{continue;} // avoid divide by 0
+      G4double ratio  = angle / length;
+      maxBendingRatio = std::max(maxBendingRatio, ratio);
+    }
+  
+  G4double curvilinearRadius = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
+  if (maxBendingRatio > 0.4) // max ratio for a 2.5m sampler diameter
+    {
+      curvilinearRadius = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
+      G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
+	     << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
+	     << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
+      BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
+    }
 }
 
 G4VPhysicalVolume* BDSDetectorConstruction::Construct()
@@ -317,7 +344,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 	    }
 	}
     }
-
+  
   if (BDSGlobalConstants::Instance()->Survey())
     {
       BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
