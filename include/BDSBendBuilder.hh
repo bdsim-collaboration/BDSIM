@@ -99,11 +99,6 @@ namespace BDS
 			      const BDSIntegratorSet*  integratorSet,
 			      const G4bool             yokeOnLeft);
   
-  /// Function to calculate the value of the fringe field correction term.
-  G4double CalculateFringeFieldCorrection(G4double polefaceAngle,
-					  G4double fint,
-  					  G4double hgap);
-
   void UpdateSegmentAngles(const G4int    index,
 			   const G4int    nSBends,
 			   const G4double semiAngle,

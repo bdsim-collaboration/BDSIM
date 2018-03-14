@@ -36,7 +36,8 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
                              G4double                 minimumRadiusOfCurvatureIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
-  fringeCorr((*strengthIn)["fringecorr"]),
+  fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
+  secondFringeCorr(BDS::SecondFringeFieldCorrection(strengthIn)),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   strength(strengthIn)
 {
@@ -168,13 +169,16 @@ void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
   G4double X11=0,X12=0,X21=0,X22 = 0;
   G4double Y11=0,Y12=0,Y21=0,Y22 = 0;
 
+  // fringe field correction using normalised rho
+  G4double fringeFieldCorrection = (fringeCorr/bendingRadius) * (1.0 - secondFringeCorr/bendingRadius);
+
   // calculate fringe field kick
   X11 = 1;
   X21 = tan(polefaceAngle) / (bendingRadius / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - (fringeCorr / bendingRadius)) / (bendingRadius / CLHEP::m);
+  Y21 = -tan(polefaceAngle - fringeFieldCorrection) / (bendingRadius / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
@@ -192,4 +196,31 @@ void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
   momOut = momOutUnit * momInMag;
 
   posOut = G4ThreeVector(x1, y1, s1);
+}
+
+
+// fringe field correction terms are BDS namespace methods instead of class methods
+// as the functions are called during BDSIntegratorDipoleFringeBase construction.
+// The fringe field correction terms should be cached at construction rather than
+// calculated every time the integrator is called.
+
+G4double BDS::FringeFieldCorrection(BDSMagnetStrength const* strength)
+{
+  G4double hgap    = (*strength)["hgap"];
+  G4double fint    = (*strength)["fringeint"];
+  G4double pfAngle = (*strength)["polefaceangle"];
+  G4double vertGap = 2 * hgap;
+  G4double corrValue = fint * vertGap * (1.0 + std::pow(sin(pfAngle),2)) / cos(pfAngle);
+  return corrValue;
+}
+
+G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength)
+{
+  G4double hgap    = (*strength)["hgap"];
+  G4double fint    = (*strength)["fringeint"];
+  G4double fintK2  = (*strength)["fringeintK2"];
+  G4double pfAngle = (*strength)["polefaceangle"];
+  G4double vertGap = 2 * hgap;
+  G4double corrValue = fint * fintK2 * vertGap * tan(pfAngle);
+  return corrValue;
 }

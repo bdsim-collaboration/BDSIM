@@ -44,6 +44,8 @@ Parameters::Parameters()
   setMap["e2"]    = false;
   setMap["fint"]  = false;
   setMap["fintx"] = false;
+  setMap["fintK2"]  = false;
+  setMap["fintxK2"] = false;
   setMap["hgap"]  = false;
   setMap["kick"]  = false;
   setMap["hkick"] = false;

@@ -64,6 +64,8 @@ void Element::PublishMembers()
   publish("e2",   &Element::e2);
   publish("fint", &Element::fint);
   publish("fintx",&Element::fintx);
+  publish("fintK2", &Element::fintK2);
+  publish("fintxK2",&Element::fintxK2);
   publish("hgap", &Element::hgap);
   publish("kick", &Element::kick);
   publish("hkick",&Element::hkick);
@@ -332,6 +334,8 @@ void Element::flush()
   e2 = 0;
   fint = 0;
   fintx = -1;
+  fintK2 = 0;
+  fintxK2 = 0;
   hgap  = 0;
   kick  = 0;
   hkick = 0;

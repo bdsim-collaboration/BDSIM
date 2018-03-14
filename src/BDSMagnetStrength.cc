@@ -30,7 +30,9 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
-  "fringecorr",      // fringe field correction term
+  "fringeint",       // fringe field integral value (one variable for FINT or FINTX)
+  "fringeintK2",     // second fringe field integral value (one variable for FINTK2 or FINTXK2)
+  "hgap",            // fringe field vertical half-gap
   "hkick", "vkick",  // fractional horizontal and vertical dPx (w.r.t. rigidity)
   "ks",              // not in G4 units
   "k1", "k1s",
