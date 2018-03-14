@@ -435,7 +435,7 @@ then be installed ::
 
 Note, if you've specified the directory to install, you will not need the ``sudo``
 command, however, if you've left the settings as default, it'll be installed
-in a colder that requires ``sudo`` permissions such as ``/usr/local/``.
+in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM as this is required for the physics models of Geant4.  This can be done using ::
