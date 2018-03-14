@@ -33,7 +33,8 @@ Documentation
 =============
 
 In the following sections is individual documentatino for each python package.
-These are also available when using ipython by typing ? after any module or class.
+These are also available when using ipython by typing ? after any module, class
+or function.
 
    * `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
