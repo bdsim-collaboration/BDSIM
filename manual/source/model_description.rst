@@ -279,45 +279,59 @@ rbend
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
-input and output point. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown figure below.
+input and output point. Can be specifeid using:
 
-A pure dipole field is provided in the beam pipe and a more general dipole (as
-described by :ref:`yoke-multipole-field`) is provided for the yoke.
+1) `angle` only - `B` calculated from angle and beam design rigidity.
+2) `B` only - the angle is calculated from the beam design rigidity.
+3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
 
-+-----------------+-----------------------------------+-----------+-------------+
-| Parameter       | Description                       | Default   | Required    |
-+=================+===================================+===========+=============+
-| `l`             | length [m]                        | 0         | yes         |
-+-----------------+-----------------------------------+-----------+-------------+
-| `angle`         | angle [rad]                       | 0         | yes, or `B` |
-+-----------------+-----------------------------------+-----------+-------------+
-| `B`             | magnetic field [T]                | 0         | yes         |
-+-----------------+-----------------------------------+-----------+-------------+
-| `e1`            | input poleface angle [rad]        | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `e2`            | output poleface angle [rad]       | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `material`      | magnet outer material             | Iron      | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `yokeOnInside`  | yoke on inside of bend            | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `hStyle`        | H style poled geometry            | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `k1`            | quadrupole coefficient for        | 0         | no          |
-|                 | function magnet.                  |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `fint`          | fringe field integral for the     | 0         | no          |
-|                 | entrance face of the rbend.       |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `fintx`         | fringe field integrato for the    | -1        | no          |
-|                 | exit face of the rbend. -1 means  |           |             |
-|                 | default to the same as fint. 0    |           |             |
-|                 | there will be no effect.          |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `hgap`          | the half gap of the poles for     | 0         | no          |
-|                 | **fringe field purposes only**    |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
+Pole face rotations can be applied to both the input and output faces of the
+magnet, based upon the reference system shown figure below. A pure dipole
+field is provided in the beam pipe and a more general dipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke. A
+quadrupolar component can be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
+
++-----------------+-----------------------------------+-----------+-----------------+
+| Parameter       | Description                       | Default   | Required        |
++=================+===================================+===========+=================+
+| `l`             | length [m]                        | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
++-----------------+-----------------------------------+-----------+-----------------+
+| `B`             | magnetic field [T]                | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e1`            | input poleface angle [rad]        | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e2`            | output poleface angle [rad]       | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `material`      | magnet outer material             | Iron      | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hStyle`        | H style poled geometry            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `k1`            | quadrupole coefficient for        | 0         | no              |
+|                 | function magnet.                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fint`          | fringe field integral for the     | 0         | no              |
+|                 | entrance face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintx`         | fringe field integrato for the    | -1        | no              |
+|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | default to the same as fint. 0    |           |                 |
+|                 | there will be no effect.          |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hgap`          | the half gap of the poles for     | 0         | no              |
+|                 | **fringe field purposes only**    |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -361,49 +375,65 @@ sbend
 
 `sbend` defines a sector bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the curvilinear coordinate
-system. `sbend` magnets are made of a series of straight segments. If the specified
-(or calculated from `B` field) bending angle is large, the `sbend` is automatically
-split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
-typically split into several co-joined `sbend` magnets, the number depending on the magnet
-length and bending angle. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown in the figure below.
+system. `sbend` magnets are made of a series of straight segments. Can be specified using:
 
-A pure dipole field is provided in the beam pipe and a more general dipole (as
-described by :ref:`yoke-multipole-field`) is provided for the yoke.
+1) `angle` only - `B` calculated from angle and beam design rigidity.
+2) `B` only - the angle is calculated from the beam design rigidity.
+3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
 
-+-----------------+-----------------------------------+-----------+-------------+
-| Parameter       | Description                       | Default   | Required    |
-+=================+===================================+===========+=============+
-| `l`             | length [m]                        | 0         | yes         |
-+-----------------+-----------------------------------+-----------+-------------+
-| `angle`         | angle [rad]                       | 0         | yes, or `B` |
-+-----------------+-----------------------------------+-----------+-------------+
-| `B`             | magnetic field [T]                | 0         | yes         |
-+-----------------+-----------------------------------+-----------+-------------+
-| `e1`            | input poleface angle [rad]        | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `e2`            | output poleface angle [rad]       | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `material`      | magnet outer material             | Iron      | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `yokeOnInside`  | yoke on inside of bend            | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `hStyle`        | H style poled geometry            | 0         | no          |
-+-----------------+-----------------------------------+-----------+-------------+
-| `k1`            | quadrupole coefficient for        | 0         | no          |
-|                 | function magnet.                  |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `fint`          | fringe field integral for the     | 0         | no          |
-|                 | entrance face of the rbend.       |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `fintx`         | fringe field integrato for the    | -1        | no          |
-|                 | exit face of the rbend. -1 means  |           |             |
-|                 | default to the same as fint. 0    |           |             |
-|                 | there will be no effect.          |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
-| `hgap`          | the half gap of the poles for     | 0         | no          |
-|                 | **fringe field purposes only**    |           |             |
-+-----------------+-----------------------------------+-----------+-------------+
+Pole face rotations can be applied to both the input and output faces of the magnet,
+based upon the reference system shown in the figure below. A pure dipole field is
+provided in the beam pipe and a more general dipole (as described by
+:ref:`yoke-multipole-field`) is provided for the yoke. A quadrupolar component can
+be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
+
+The `sbend` geometry is constructed as many small straight sections with angled faces. This
+makes no effect on tracking, but allows a much higher variety of apertures and magnet
+geometry to be used given the Geant4 geometry. The number of segments is computed such
+that the maximum tangential error in the aperture is 1 mm. 
+
+
++-----------------+-----------------------------------+-----------+-----------------+
+| Parameter       | Description                       | Default   | Required        |
++=================+===================================+===========+=================+
+| `l`             | length [m]                        | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
++-----------------+-----------------------------------+-----------+-----------------+
+| `B`             | magnetic field [T]                | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e1`            | input poleface angle [rad]        | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e2`            | output poleface angle [rad]       | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `material`      | magnet outer material             | Iron      | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hStyle`        | H style poled geometry            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `k1`            | quadrupole coefficient for        | 0         | no              |
+|                 | function magnet.                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fint`          | fringe field integral for the     | 0         | no              |
+|                 | entrance face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintx`         | fringe field integrato for the    | -1        | no              |
+|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | default to the same as fint. 0    |           |                 |
+|                 | there will be no effect.          |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hgap`          | the half gap of the poles for     | 0         | no              |
+|                 | **fringe field purposes only**    |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -416,10 +446,10 @@ A few points about sbends:
 
 1) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 2) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
-   element must be longer than the projected length from the rotation, given by
-   :math:`2 \tan(\mathrm{eX})`.
+   the rotated magnet face must either be a drift or an sbend with the opposite rotation
+   (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
+   :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
+   the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
 3) If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
    specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
    at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
@@ -439,8 +469,11 @@ quadrupole
 .. figure:: figures/quadrupole.png
 	    :width: 30%
 
-`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k1` is defined as
-:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
+`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k_1` is defined as
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -467,8 +500,11 @@ sextupole
 .. figure:: figures/sextupole.png
 	    :width: 30%
 
-`sextupole` defines a sextupole magnet. The strength parameter :math:`k2` is defined as
-:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
+`sextupole` defines a sextupole magnet. The strength parameter :math:`k_2` is defined as
+
+.. math::
+   
+   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -495,8 +531,11 @@ octupole
 .. figure:: figures/octupole.png
 	    :width: 30%
 
-`octupole` defines an octupole magnet. The strength parameter :math:`k3` is defined as
-:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
+`octupole` defines an octupole magnet. The strength parameter :math:`k_3` is defined as
+
+.. math::
+   
+   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -522,8 +561,11 @@ decapole
 .. figure:: figures/decapole.png
 	    :width: 30%
 
-`decapole` defines a decapole magnet. The strength parameter :math:`k4` is defined as
-:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
+`decapole` defines a decapole magnet. The strength parameter :math:`k_4` is defined as
+
+.. math::
+   
+   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -548,9 +590,13 @@ multipole
 
 `multipole` defines a general multipole magnet. The strength parameter
 :math:`knl` is a list defined as
-:math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
-starting with the quadrupole component.
-The skew strength parameter :math:`ksl` is a list representing the skew coefficients.  
+      
+.. math::
+
+   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+
+starting with the quadrupole component. The skew strength parameter :math:`ksl`
+is a list representing the skew coefficients.  
    
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -2328,6 +2374,9 @@ Physics Lists In BDSIM
 +-----------------------------+------------------------------------------------------------------------+
 | qgsp_bic_hp                 | Similar to `QGSP_BIC` but with the high precision neutron package.     |
 |                             | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++-----------------------------+------------------------------------------------------------------------+
+| shielding                   | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
+|                             | shielding applications.                                                |
 +-----------------------------+------------------------------------------------------------------------+
 | synch_rad                   | Provides synchrotron radiation for all charged particles. Provided by  |
 |                             | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
