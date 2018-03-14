@@ -1,4 +1,4 @@
-V0.994 - 2018 / 02 / ??
+V0.994 - 2018 / 03 / ??
 =======================
 
 New Features
@@ -11,11 +11,11 @@ New Features
   `coilWidthFraction` and `coilHeightFraction`.
 * Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`,
   `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`,
-  `G4HadronHElasticPhysics`, `G4IonElasticPhysics`, `G4IonQMDPhysics`,
-  `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`, `G4HadronElasticPhysicsPHP`,
-  `G4MuonicAtomDecayPhysics`.
+  `G4HadronHElasticPhysics`, `G4HadronPhysicsShielding`, `G4IonElasticPhysics`,
+  `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`,
+  `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
-* New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.3 or higher required).
+* New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
 * Significantly improved analysis documentation.
 * New component: 'gap'. Create a space in the beam line with no geometry.
 * Ability to specify the world volume material with the `worldMaterial` option.
@@ -23,13 +23,18 @@ New Features
 * Ability to limit step size in user-specified fields.
 * Ability to control turn number print out with `printFractionTurns`.
 * Magnet yokes now have a general multipolar field.
+* Sampler diameter is automatically reduced when high angle bends are used to prevent overlaps.
+* New CMake option to disable event display for installation with ROOT EVE problems.
+* Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
+  analysis with scaling. New tool `rebdsimCombine` for this purpose.
+* Full support for dipole fringe fields.
 
 
 Output \& Analysis Changes
 --------------------------
 
 * Output files now have header structure with software versions.
-* "**librebdsimlib**" has been changed to "**libRebdsim**" to be more consistent for output loading.
+* "**librebdsimlib**" has been changed to "**librebdsim**" to be more consistent for output loading.
 * Support for logarithmic binning of histograms in rebdsim.
 * "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
@@ -58,6 +63,8 @@ General
 * The world material is now air instead of G4_Galatic.
 * `printModuloFraction` is now `printFractionEvents`.
 * `includeIronMagFields` option is now `yokeFields`.
+* Vacuum volumes now visible in `--vis_debug` mode.
+* Only forwards going particles are now considered for the optical function calculation.
 
 Bug Fixes
 ---------
@@ -78,6 +85,15 @@ Bug Fixes
   1000x too low - fixed - missing factory of GeV.
 * Number of turns simulated is now number desired and not number+1.
 * Limits to control maximum step length and tracking time were not attached to magnet yoke geometry.
+* Fixed crash when using octagonal or racetrack apertures in a magnet with pole geometry.
+* Fixed issue where ~10% of particles may appear offset in samplers in large ringe models.
+* Fixed some very small overlaps not reported by Geant4 in magnet yoke geometry.
+* Fixed issue where drift in magnet was always 1pm shorter than expected.
+* Fringe fields are no longer built in between two dipoles against each other.
+* Fixed gauss twiss bunch generator for finite dispersion in `x`, `xp`, `y`, `yp`.
+* Fixed bug where overlapping dipole end pieces would be produced.
+* Fixed GDML preprocessing for parameterised variables.
+* Tracking limits are now attached to magnet yokes.
 
 
 V0.993 - 2017 / 12 / 11
