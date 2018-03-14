@@ -38,12 +38,8 @@ or function.
 
    * `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pymadx/>`_
+   * `<http://www.pp.rhul.ac.uk/bdsim/pymad8/>`_
    * `<http://www.pp.rhul.ac.uk/bdsim/pytransport/>`_
-
-.. toctree::
-   :maxdepth: 2
-   
-   pymad8
 
 
 
