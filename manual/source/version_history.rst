@@ -64,6 +64,7 @@ General
 * `printModuloFraction` is now `printFractionEvents`.
 * `includeIronMagFields` option is now `yokeFields`.
 * Vacuum volumes now visible in `--vis_debug` mode.
+* Only forwards going particles are now considered for the optical function calculation.
 
 Bug Fixes
 ---------
