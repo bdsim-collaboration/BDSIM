@@ -16,33 +16,35 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSINTEGRATORDIPOLEFRINGE_H
-#define BDSINTEGRATORDIPOLEFRINGE_H
+#ifndef BDSINTEGRATORDIPOLEFRINGESCALING_H
+#define BDSINTEGRATORDIPOLEFRINGESCALING_H
 
 #include "BDSIntegratorDipoleFringeBase.hh"
-#include "BDSIntegratorDipoleFringe.hh"
+#include "BDSIntegratorDipoleFringeScaling.hh"
+
 #include "globals.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**
- * @brief Derived fringe field integrator that does not normalise to momentum.
+ * @brief Derived fringe field integrator that does normalise to momentum.
  *
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleFringeBase
+class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringeBase
 {
 public:
-  BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
+  BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strength,
                 G4double                 brhoIn,
 			    G4Mag_EqRhs*             eqOfMIn,
 			    G4double                 minimumRadiusOfCurvature);
   
-  virtual ~BDSIntegratorDipoleFringe(){;}
+  virtual ~BDSIntegratorDipoleFringeScaling(){;}
 
-  /// The stepper for integration. Calls base class stepper.
+  /// The stepper for integration. Calculates momentum scaling factor
+  /// then calls base class stepper.
   virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
@@ -51,8 +53,10 @@ public:
 
 private:
   /// Private default constructor to enforce use of supplied constructor
-  BDSIntegratorDipoleFringe() = delete;
-  
+  BDSIntegratorDipoleFringeScaling() = delete;
+
+  /// Nominal magnetic rigidity
+  const G4double bRho;
 };
 
 #endif

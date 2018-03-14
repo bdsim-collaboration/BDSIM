@@ -166,9 +166,4 @@ void BDSOutputROOTEventHistograms::Flush()
 #endif
 
 void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms * /*rhs*/)
-{
-//   for(auto h : rhs->histograms1D )
-//   {
-// //    this->
-//   }
-}
+{;}

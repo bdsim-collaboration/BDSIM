@@ -98,14 +98,14 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // update particle definition if special case of an ion - can only be done here
   // do this before call the bunch as it may use particle definition in globals
   if (ionPrimary && !ionCached)
-  {
-    G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
-    G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
-                                                            ionDefinition->A(),
-                                                            ionDefinition->ExcitationEnergy());
-    beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
-    ionCached = true;
-  }
+    {
+      G4IonTable* ionTable = G4ParticleTable::GetParticleTable()->GetIonTable();
+      G4ParticleDefinition* ionParticleDef = ionTable->GetIon(ionDefinition->Z(),
+							      ionDefinition->A(),
+							      ionDefinition->ExcitationEnergy());
+      beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
+      ionCached = true;
+    }
   
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
   // continue generating particles until positive finite kinetic energy.

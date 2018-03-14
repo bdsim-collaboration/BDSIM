@@ -129,10 +129,10 @@ void SamplerAnalysis::Process(bool firstTime)
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
-  this->S = this->s->S;
+  S = s->S;
   
   // loop over all entries
-  for(int i=0;i<this->s->n;++i)
+  for(int i=0;i<s->n;++i)
   {
     if (s->parentID[i] != 0)
       {continue;} // select only primary particles
@@ -173,7 +173,7 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
 					       bool useEmittanceFromFirstSampler)
 {
   if(debug)
-    {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
+    {std::cout << " " << __METHOD_NAME__ << s->modelID << " " << npart << std::flush;}
 
   //determine whether the input emittance is non-zero
   bool nonZeroEmittanceIn = !std::all_of(emittance.begin(), emittance.end(), [](double l) { return l==0; });
@@ -251,7 +251,7 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                              // beta
     optical[i][3]  = (1+std::pow(optical[i][1],2))/optical[i][2];                                // gamma
 
-    optical[i][10] = this->S;
+    optical[i][10] = S;
     optical[i][11] = npart;
   }
 

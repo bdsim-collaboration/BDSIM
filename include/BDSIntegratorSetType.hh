@@ -32,12 +32,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 struct integratorsettype_def
 {
-  enum type {geant4, bdsimone, bdsimtwo, bdsimmatrix
+  enum type {geant4, bdsimone, bdsimtwo, bdsimmatrix, bdsimmatrixfringescaling
 #if G4VERSION_NUMBER > 1029
 	     ,
 	     geant4dp
 #endif
   };
+  G4bool isMatrixIntegrator;
 };
 
 typedef BDSTypeSafeEnum<integratorsettype_def, int> BDSIntegratorSetType;

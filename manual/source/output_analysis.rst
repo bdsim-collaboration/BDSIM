@@ -4,16 +4,17 @@
 Output Analysis
 ===============
 
-This describes how to load and view data from the recommend output **rootevent**
+This section describes how to load and view data from the recommend output **rootevent**
 format.
 
-BDSIM is accompanied by an analysis tool called REBDSIM ("root event BDSIM") that provides
+BDSIM is accompanied by an analysis tool called REBDSIM (that stands for "root event BDSIM")
+that provides
 the ability to use simple text input files to specify histograms and process data. It also
 provides the ability to calculate optical functions from the sampler data.
 
 REBDSIM is based on a set of analysis classes that are compiled into a library. These
-may be used through REBDSIM, but also through the ROOT interpreter and in users'
-ROOT macros or compiled code. They may also be used through Python if the user has
+may be used through REBDSIM, but also through the ROOT interpreter and in a user's
+ROOT macro or compiled code. They may also be used through Python if the user has
 ROOT available through Python.
 
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
@@ -27,9 +28,8 @@ Setup
 3) A ROOT logon macro may be written for convenience.
 
 Once BDSIM has been installed the following environmental variables must be updated to
-allow the analysis tool, 'rebdsim' (root event BDSIM), to function.  These can be set
-manually or added to your :code:`.profile` or
-:code:`.bashrc` file::
+allow `rebdsim`, to function.  These can be set manually or added to your
+:code:`.profile` or :code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
    export PATH=$PATH:$BDSIM/bin
@@ -50,6 +50,7 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 
   cout << "Loading rebdsim libraries" << endl;
   gSystem->Load("librebdsimLib");
+  gSystem->Load("libbdsimRootEvent");
 
 .. note:: The file extension is omitted on purpose.
 
@@ -297,7 +298,7 @@ For high statistics studies, it's common to run multiple instances of BDSIM with
 seeds (different seeds ensures different results) on a high throughput computer cluster.
 There are two possible strategies to efficiently scale the statistics and analysis. Both
 produce numerically identical output but make different use of computing resources. The
-more data stored per event in the outpu files, the longer it takes to load it from disk and
+more data stored per event in the output files, the longer it takes to load it from disk and
 the longer the anlaysis. Similarly, the more events simulated, the longer the analysis will
 take. Of course either strategy can be used.
 
@@ -558,7 +559,7 @@ The mean is calculated as:
 .. math::
 
    \bar{x}_{i = 0} &= 0\\
-   \delta &= \bar{x}_{i+1} - \bar{x}_{i}\\
+   \delta &= x_{i+1} - \bar{x}_{i}\\
    \bar{x}_{i+1} &= \bar{x}_{i} + n_{i+1}\frac{\delta}{n_{i} + n_{i+1}}
 
 

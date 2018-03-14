@@ -67,7 +67,7 @@ void BDSParallelWorldSampler::Construct()
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
-  const G4double samplerR     = 0.5* BDSGlobalConstants::Instance()->SamplerDiameter();
+  const G4double samplerR     = 0.5*BDSGlobalConstants::Instance()->SamplerDiameter();
   const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   const G4bool checkOverlaps  = BDSGlobalConstants::Instance()->CheckOverlaps();
 

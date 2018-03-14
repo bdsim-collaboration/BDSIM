@@ -77,10 +77,10 @@ EventDisplay::EventDisplay(TString geoFileNameIn,
   model      = dataLoader->GetModel();
   modelTree  = dataLoader->GetModelTree();
 
-  this->LoadGeometry();
-  this->LoadOptions(0);
-  this->LoadModel(0);
-  this->LoadData(0);
+  LoadGeometry();
+  LoadOptions(0);
+  LoadModel(0);
+  LoadData(0);
 }
 
 EventDisplay::~EventDisplay()
@@ -94,8 +94,8 @@ void EventDisplay::LoadGeometry()
 {
   std::cout << "EventDisplay::LoadGeometry>" << std::endl;
   TFile::SetCacheFileDir(".");
-  std::cout << this->geoFileName.Data() << std::endl;
-  gGeoManager = gEve->GetGeometry(this->geoFileName.Data());
+  std::cout << geoFileName.Data() << std::endl;
+  gGeoManager = gEve->GetGeometry(geoFileName.Data());
   gGeoManager->DefaultColors();
 
   TEveGeoTopNode* tn = new TEveGeoTopNode(gGeoManager, gGeoManager->GetTopNode());
@@ -129,11 +129,11 @@ void EventDisplay::ClearEvent()
 
 void EventDisplay::Draw()
 {
-  this->DrawModel();
-  this->DrawElossHits();
-  this->DrawTunnelHits();
-  this->DrawSamplers();
-  this->DrawTrajectories();
+  DrawModel();
+  DrawElossHits();
+  DrawTunnelHits();
+  DrawSamplers();
+  DrawTrajectories();
 }
 
 void EventDisplay::DrawModel()

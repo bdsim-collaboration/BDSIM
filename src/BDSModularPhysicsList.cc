@@ -67,6 +67,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4HadronPhysicsShielding.hh"
 #include "G4IonBinaryCascadePhysics.hh"
 #include "G4IonElasticPhysics.hh"
 #include "G4IonINCLXXPhysics.hh"
@@ -173,6 +174,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("qgsp_bert_hp",           &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("qgsp_bic",               &BDSModularPhysicsList::QGSPBIC));
   physicsConstructors.insert(std::make_pair("qgsp_bic_hp",            &BDSModularPhysicsList::QGSPBICHP));
+  physicsConstructors.insert(std::make_pair("shielding",              &BDSModularPhysicsList::Shielding));
   physicsConstructors.insert(std::make_pair("synch_rad",              &BDSModularPhysicsList::SynchRad));
 #if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",                  &BDSModularPhysicsList::EmGS));
@@ -915,6 +917,15 @@ void BDSModularPhysicsList::QGSPBICHP()
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
       physicsActivated["qgsp_bic_hp"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Shielding()
+{
+  if(!physicsActivated["shielding"])
+    {
+      constructors.push_back(new G4HadronPhysicsShielding());
+      physicsActivated["shielding"] = true;
     }
 }
 
