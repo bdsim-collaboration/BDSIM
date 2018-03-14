@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSDebug.hh"
 #include "BDSLine.hh"
@@ -27,7 +45,7 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   for (auto ac : allocatedComponents)
     {delete ac;}
   for (auto ac : curvilinearComponents)
-  {delete ac;}
+    {delete ac;}
   
   instance = nullptr;
 }
@@ -40,41 +58,29 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
   // management, but not in the registry
   if (isModified)
     {
+      if (IsRegisteredAllocated(component))
+	{return;}
+
+      
       allocatedComponents.push_back(component);
-      // if line then also add constituents
       if (BDSLine* line = dynamic_cast<BDSLine*>(component))
-	{
+	{// if line then also add constituents
 	  for (const auto element : *line)
-	    {allocatedComponents.push_back(element);}
+	    {RegisterComponent(element, true);}
 	}
       return;
     }
   
-  if (IsRegistered(component->GetName()))
-    {// don't register something that's already registered
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "already registered - not registering again" << G4endl;
-#endif
-      return;
-    } 
+  if (IsRegistered(component))
+    {return;} // don't register something that's already registered
 
+  // in both cases we register the BDSLine* object as it doesn't own its constituents
+  registry[component->GetName()] = component;
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "component is a line - registering the line and its contents" << G4endl;
-#endif
-      // register the line object itself
-      registry[component->GetName()] = component;
-      // now add all the components of the line individually using this very function
       for (const auto element : *line)
 	{RegisterComponent(element, false);}
     }
-  else
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "registering component \"" << component->GetName() << "\"" << G4endl;
-#endif
-      registry[component->GetName()] = component;}
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "size of registry " << registry.size() << G4endl;
 #endif
@@ -86,6 +92,11 @@ G4bool BDSAcceleratorComponentRegistry::IsRegistered(BDSAcceleratorComponent* co
   G4cout << __METHOD_NAME__ << "(BDSAcceleratorComponent*)" << G4endl;
 #endif
   return IsRegistered(component->GetName());
+}
+
+G4bool BDSAcceleratorComponentRegistry::IsRegisteredAllocated(const BDSAcceleratorComponent* component) const
+{
+  return std::find(allocatedComponents.begin(), allocatedComponents.end(), component) != allocatedComponents.end();
 }
 
 G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)

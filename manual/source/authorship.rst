@@ -3,23 +3,20 @@ Authorship
 ===========
 
 BDSIM was originally started G.A. Blair in around 2001 and has since been
-developed and maintained by a large group, largely based at Royal Holloway,
-University of London.
+developed and maintained a group based at Royal Holloway, University of London.
 
 Current Authors
 ---------------
 
 * Laurie Nevay (*RHUL, lead developer*)
 * Stewart Boogert (*RHUL, lead developer*)
-* Jochem Snuverink (*RHUL, PSI, lead developer*)
-
 * Andrey Abramov (*RHUL*)
 * Lawrence Deacon (*RHUL, CERN, UCL*)
+* Hector Garcia Morales (*RHUL, CERN*)
 * Stephen Gibson (*RHUL*)
-* Hector Morales (*RHUL, CERN*)
 * William Shields (*RHUL*)
+* Jochem Snuverink (*RHUL, PSI*)
 * Stuart Walker (*RHUL*)
-
 
 
 Past Authors

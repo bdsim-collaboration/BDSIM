@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSEVENTINFO_H
 #define BDSEVENTINFO_H
 
@@ -29,12 +47,16 @@ public:
   /// @{ Setters
   inline void SetStartTime(time_t startTimeIn) {info->startTime = startTimeIn;}
   inline void SetStopTime(time_t stopTimeIn)   {info->stopTime  = stopTimeIn;}
-  inline void SetDuration(G4double durationIn) {info->duration  = durationIn;}
-  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = seedStateAtStartIn;}
+  inline void SetDuration(G4float durationIn)  {info->duration  = (float)durationIn;}
+  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
+  inline void SetIndex(G4int indexIn)          {info->index     = (int)indexIn;}
+  inline void SetAborted(G4bool abortedIn)     {info->aborted   = (bool)abortedIn;}
   /// @}
 
   /// Accessor.
   inline const BDSOutputROOTEventInfo* GetInfo() const {return info;}
+
+  inline void Flush() {info->Flush();}
 
 private:
   /// Instance of info.

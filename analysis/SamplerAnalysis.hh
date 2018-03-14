@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef SAMPLERANALYSIS_H
 #define SAMPLERANALYSIS_H
 
@@ -106,6 +124,11 @@ protected:
   ///     int i: central moment to diffrentiate w.r.t, i=0: <uu>, i=1: <u'u'>, i=2: <uu'>
   ///     e.g. derivMat[t=2][k=0][i=0]: d(beta)/d<xx> , derivMat[t=0][k=1][i=1]: d(emittance)/d<yy'>
   double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
+
+
+  //Prints out the beam correlation matrix at that sampler to the console
+  //The beam correlation matrix gives good idication of the presence and magnitude of all couplings.
+  void printBeamCorrelationMatrix(fourDArray&   centMoms);
 
 private:
   bool debug;

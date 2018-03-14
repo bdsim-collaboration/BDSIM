@@ -2,10 +2,12 @@
 #define PARSER_H
 
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "atom.h"
+#include "beam.h"
 #include "cavitymodel.h"
 #include "element.h"
 #include "elementtype.h"
@@ -78,8 +80,21 @@ namespace GMAD
     void quit();
     /// Method that transfers parameters to element properties
     void write_table(std::string* name, ElementType type, bool isLine=false);
-    /// Remove sublines from beamline, expand all into one LINE
+
+    /// Expand a sequence by name from start to end into the target list. This
+    /// removes sublines from the beamline into one LINE.
+    void expand_line(FastList<Element>& target,
+                     const std::string& name,
+                     std::string        start = "",
+                     std::string        end   = "");
+
+    /// Expand the main beamline as defined by the use command.
     void expand_line(const std::string& name, std::string start, std::string end);
+
+    /// Find the sequence defined in the parser and expand it if not already
+    /// done so. Cache result in map of fastlists.
+    const FastList<Element>& get_sequence(const std::string& name);
+    
     /// insert a sampler into beamline_list
     void add_sampler(const std::string& name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
@@ -127,8 +142,12 @@ namespace GMAD
     template <class C>
       double GetValue(std::string property);
 
-    /// Overwrite element with current parameters
-    void OverwriteElement(const std::string& elementName);
+    /// Add value to be extended to object
+    template <typename T>
+        void ExtendValue(std::string property, T value);
+
+    /// Overwrite object with current values
+    void Overwrite(const std::string& objectName);
     /// Add variable memory to variable list for memory management
     void AddVariable(std::string* name);
     ///@{ Print methods
@@ -157,50 +176,15 @@ namespace GMAD
     /// Add reserved variable to parser
     void add_var(std::string name, double value, int is_reserved = 0);
 
-    // *****************
-    // Private members *
-    // *****************
-    /// maximum number of nested lines
-    const int MAX_EXPAND_ITERATIONS = 50;
-
-    ///@{ temporary list for reading of arrays in parser
-    std::list<double> tmparray;
-    std::list<std::string> tmpstring;
-    ///@}
-    /// vector of defined lines for memory management
-    std::vector<std::list<Element>*> allocated_lines;
+    /// Expand all sequences define with 'line' into FastLists.
+    void expand_sequences();
 
     // protected implementation (for inheritance to BDSParser - hackish)
   protected:
-    /// Parameters to copy to Element
-    Parameters params;
+    /// Beam instance;
+    Beam beam;
     /// General options
     Options options;
-    /// Atom instance;
-    Atom atom;
-    /// Field instance;
-    Field field;
-    /// Material instance;
-    Material material;
-    /// PhysicsBiasing instance 
-    PhysicsBiasing xsecbias;
-    /// Placement instance
-    Placement placement;
-    /// Query instance
-    Query query;
-    /// Region instance;
-    Region region;
-    /// Tunnel instance
-    Tunnel tunnel;
-    /// RF Cavity model instance
-    CavityModel cavitymodel;
-    
-    /// List of all encountered elements
-    FastList<Element> element_list;
-    
-    /// Temporary list
-    std::list<Element> tmp_list;
-    
     /// Beamline
     FastList<Element>   beamline_list;
     /// List of parser defined atoms
@@ -221,7 +205,68 @@ namespace GMAD
     std::vector<Placement> placement_list;
     /// List of parser defined rf cavity models
     std::vector<CavityModel> cavitymodel_list;
+
+  private:
+    // *****************
+    // Private members *
+    // *****************
+    /// maximum number of nested lines
+    const int MAX_EXPAND_ITERATIONS = 50;
+
+    ///@{ temporary list for reading of arrays in parser
+    std::list<double> tmparray;
+    std::list<std::string> tmpstring;
+    ///@}
+    /// vector of defined lines for memory management
+    std::vector<std::list<Element>*> allocated_lines;
+
+    /// Parameters to copy to Element
+    Parameters params;
+    /// Atom instance;
+    Atom atom;
+    /// Field instance;
+    Field field;
+    /// Material instance;
+    Material material;
+    /// PhysicsBiasing instance 
+    PhysicsBiasing xsecbias;
+    /// Placement instance
+    Placement placement;
+    /// Query instance
+    Query query;
+    /// Region instance;
+    Region region;
+    /// Tunnel instance
+    Tunnel tunnel;
+    /// RF Cavity model instance
+    CavityModel cavitymodel;
     
+    /// Find object by name in list
+    template <class C>
+      bool FindAndExtend(const std::string& objectName);
+    /// Extend object with maps
+    template <class C>
+      void ExtendObject(C& object);
+
+    /// Map for options of type double for extending objects
+    std::map<std::string, double> extendedNumbers;
+    /// Map for options of type string for extending objects
+    std::map<std::string, std::string> extendedStrings;
+    /// Map for options of type vector for extending objects
+    std::map<std::string, Array*> extendedVectors;
+
+    /// List of all encountered elements
+    FastList<Element> element_list;
+    
+    /// Temporary list
+    std::list<Element> tmp_list;
+    
+    /// Names of all defined sequences in the parser with 'line'.
+    std::vector<std::string> sequences;
+
+    /// Cached copy of expanded sequences.
+    std::map<std::string, FastList<Element>*> expandedSequences;
+
     /// Parser symbol map
     SymbolMap symtab_map;
     /// Variable vector for memory storage

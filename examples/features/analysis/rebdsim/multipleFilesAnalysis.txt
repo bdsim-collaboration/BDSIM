@@ -1,0 +1,6 @@
+InputFilePath	    ../../data/sample*
+OutputFileName	    ./ana-multipleFiles.root
+# Object	treeName   Histogram Name       # Bins   Binning	          Variable          Selection
+Histogram1D    	Event.     EnergyLoss           {22}     {0:22}                Eloss.S           Eloss.energy*Eloss.weight
+Histogram2D    Event.     Flux			  {30,30}  {-2.5:2.5,-2.5:2.5}  fq1.y:fq1.x       fq1.energy*fq1.weight
+Histogram3D    Event.     Flux3D               {30,30,100} {-2.5:2.5,-2.5:2.5,0:1} fq1.x:fq1.y:fq1.energy  1

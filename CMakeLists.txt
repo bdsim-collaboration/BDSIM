@@ -4,7 +4,7 @@ project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 9 )
+set( BDSIM_MINOR_VERSION 993 )
 set( BDSIM_PATCH_LEVEL develop)
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -162,6 +162,7 @@ set(bdsimRootEventSources ${root_dicts} ${root_files})
 
 # Add parser options
 list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/beamBase.cc)
 if($ENV{VERBOSE})
   message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
 endif()
@@ -177,11 +178,7 @@ add_dependencies(bdsim bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-  set(libraries bdsim bdsimRootEvent)
-else()
-  set(libraries bdsim)
-endif()
+set(libraries bdsim bdsimRootEvent)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})

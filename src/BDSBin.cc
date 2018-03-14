@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBin.hh"
 
 #include "globals.hh"
@@ -7,15 +25,7 @@
 
 BDSBin::BDSBin(G4double xMinIn, G4double xMaxIn):
   xmin(xMinIn), xmax(xMaxIn), total(0.0), sumWeightsSquared(0.0)
-{
-  /* // this creates a lot of output!
-#ifdef BDSDEBUG
-  G4cout << "New bin -> xmin: " << std::setw(7) << xmin 
-	 << " m, xmax:  "       << std::setw(7) << xmax 
-	 << " m" << G4endl;
-#endif
-  */
-}
+{;}
 
 BDSBin BDSBin::operator+= (const G4double& weight)
 {

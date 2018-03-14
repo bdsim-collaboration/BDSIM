@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <iostream>
 #include <ostream>
 #include <iomanip>
@@ -48,13 +66,17 @@ BDSMessenger::~BDSMessenger()
 
 void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
 {
-  if(     command == beamlineListCmd)       {this->BeamLineList();}
-  else if(command == samplerListCmd)        {this->SamplerList();}
-  else if(command == elementNameSearchCmd)  {this->ElementNameSearch(newValue);}
+  if(     command == beamlineListCmd)
+    {BeamLineList();}
+  else if(command == samplerListCmd)
+    {SamplerList();}
+  else if(command == elementNameSearchCmd)
+    {ElementNameSearch(newValue);}
 }
 
-void BDSMessenger::BeamLineList() {
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+void BDSMessenger::BeamLineList()
+{
+  const BDSBeamline *beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
 
   int j = 0;
   G4cout << std::right
@@ -63,16 +85,16 @@ void BDSMessenger::BeamLineList() {
          << std::setw(20) << " placement name"
          << std::setw(20) << " type"
          << std::setw(20) << " S-middle" << G4endl;
-  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j) {
-    G4cout << this->BDSBeamlineElementToString(j) << G4endl;
-  }
+  for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
+    {G4cout << BDSBeamlineElementToString(j) << G4endl;}
 }
 
-std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement) {
+std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement)
+{
   std::stringstream ss;
 
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  const BDSBeamlineElement *e = beamline->at(iElement);
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  const BDSBeamlineElement* e = beamline->at(iElement);
 
   ss << std::setfill('0') << std::right << std::setw(4)  << iElement << " " << std::setfill(' ')
      << std::setw(20) << e->GetName() << " "
@@ -86,30 +108,22 @@ std::string BDSMessenger::BDSBeamlineElementToString(G4int iElement) {
 
 void BDSMessenger::ElementNameSearch(std::string name)
 {
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
   int j=0;
   for (auto i = beamline->begin(); i != beamline->end(); ++i, ++j)
-  {
-    if((*i)->GetName().contains(name))
-	  {
-	    G4cout << (*i)->GetName() << G4endl;
-	  }
-  }
+    {
+      if((*i)->GetName().contains(name))
+	{G4cout << (*i)->GetName() << G4endl;}
+    }
 }
 
 void BDSMessenger::ElementTypeSearch(std::string /*type*/)
-{
-
-}
+{;}
 
 void BDSMessenger::SamplerList()
 {
-  int j=0;
-  for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-  {
-    G4cout << this->BDSSamplerToString(j) << G4endl;
-    ++j;
-  }
+  for (const auto& name : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {G4cout << name << G4endl;}
 }
 
 std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
@@ -117,7 +131,8 @@ std::string BDSMessenger::BDSSamplerToString(std::string /*samplerName*/)
   return std::string();
 }
 
-std::string BDSMessenger::BDSSamplerToString(int iSampler) {
+std::string BDSMessenger::BDSSamplerToString(int iSampler)
+{
   std::stringstream ss;
 
   BDSSamplerInfo sInfo = BDSSamplerRegistry::Instance()->GetInfo(iSampler);

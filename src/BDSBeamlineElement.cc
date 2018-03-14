@@ -1,11 +1,32 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamline.hh"
 #include "BDSDebug.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSTiltOffset.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -67,23 +88,17 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 #endif
 
   // create the placement transform from supplied rotation matrices and vector
-  placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
-  readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
+  placementTransform   = new G4Transform3D(*rotationMiddle, positionMiddle);
+  placementTransformCL = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
 
   // calculate sampler central position slightly away from end position of element.
   if (samplerType == BDSSamplerType::plane)
     {
-      G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      // offset from end face as overlapping faces produce weird results - no hits etc
-      // 1um seemed ok, but then ~20 / 10k would appear wrong - last step in world volume
-      // instead of correct place - should be impossible.  Also had nullptr for
-      // track->GetVolume(). empirically found good results with 2um (at least 1.5um)
-      // however, this is too far for optical accuracy. Since tolerance was fixed at 1pm,
-      // the sampler itself can be smaller and we no long need to back off so much.
-      G4double lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() - 3*lengthSafety;
+      G4ThreeVector dZLocal = G4ThreeVector(0,0,1);
+      // if we have a sampler, add on the thickness of the sampler to the padding
+      dZLocal *= (BDSBeamline::PaddingLength() + BDSSamplerPlane::ChordLength())*0.5;
       dZLocal.transform(*referenceRotationEnd);
-      G4ThreeVector samplerPosition = referencePositionEnd - dZLocal;
+      G4ThreeVector samplerPosition = referencePositionEnd + dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, samplerPosition);
     }
   else if (samplerType == BDSSamplerType::cylinder)
@@ -99,8 +114,15 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationMiddle;
   delete referenceRotationEnd;
   delete placementTransform;
-  delete readOutPlacementTransform;
+  delete placementTransformCL;
   delete samplerPlacementTransform;
+}
+
+BDSExtentGlobal BDSBeamlineElement::GetExtentGlobal() const
+{
+  BDSExtent ext = component->GetExtent();
+  BDSExtentGlobal extG = BDSExtentGlobal(ext, *GetPlacementTransform());
+  return extG;
 }
 
 G4ThreeVector BDSBeamlineElement::InputFaceNormal() const
@@ -139,3 +161,15 @@ std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
 
   return out;
 }
+
+G4bool BDSBeamlineElement::Overlaps(const BDSBeamlineElement* otherElement) const
+{
+  BDSExtentGlobal thisGlobal  = BDSExtentGlobal(component->GetExtent(),
+						*(GetPlacementTransform()));
+  BDSExtentGlobal otherGlobal = BDSExtentGlobal(otherElement->GetAcceleratorComponent()->GetExtent(),
+						*(otherElement->GetPlacementTransform()));
+
+  return thisGlobal.Overlaps(otherGlobal);
+}
+
+

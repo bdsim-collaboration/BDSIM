@@ -1,9 +1,28 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSGEOMETRYFACTORYBASE_H
 #define BDSGEOMETRYFACTORYBASE_H
 
 #include "BDSExtent.hh"
 
 #include "globals.hh"
+#include "G4RotationMatrix.hh"
 #include "G4String.hh"
 
 #include <map>
@@ -11,7 +30,10 @@
 
 class G4Colour;
 class G4LogicalVolume;
+class G4UserLimits;
 class G4VisAttributes;
+class G4VPhysicalVolume;
+class G4VSolid;
 class BDSGeometryExternal;
 
 /**
@@ -42,6 +64,10 @@ public:
   /// precidence order.
   virtual std::vector<G4VisAttributes*> ApplyColourMapping(std::vector<G4LogicalVolume*>& lvs,
 							   std::map<G4String, G4Colour*>* mapping);
+
+  /// Attach a set of user limits to every logical volume supplied.
+  virtual void ApplyUserLimits(const std::vector<G4LogicalVolume*>& lvsIn,
+			       G4UserLimits* userLimits);
 
 protected:
 

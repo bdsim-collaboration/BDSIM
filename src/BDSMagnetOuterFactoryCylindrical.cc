@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSMagnetOuterFactoryCylindrical.hh"
 
 #include "BDSBeamPipe.hh"
@@ -49,8 +67,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     angleIn,
 								   G4double     angleOut,
 								   G4bool       /*yokeOnLeft*/,
+								   G4bool       /*hStyle*/,
 								   G4Material*  outerMaterial,
-								   G4bool       /*buildEndPiece*/)
+								   G4bool       /*buildEndPiece*/,
+								   G4double     /*vhRatio*/,
+								   G4double     /*coilWidthFraction*/,
+								   G4double     /*coilHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -93,8 +115,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     angleIn,
 									G4double     angleOut,
 									G4bool       /*yokeOnLeft*/,
+									G4bool       /*hStyle*/,
 									G4Material*  outerMaterial,
-									G4bool       /*buildEndPiece*/)
+									G4bool       /*buildEndPiece*/,
+									G4double     /*vhRatio*/,
+									G4double     /*coilWidthFraction*/,
+									G4double     /*coilHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -264,7 +290,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 							       G4double     containerLength,
 							       G4bool       /*vertical*/,
 							       G4Material*  outerMaterial,
-							       G4bool       /*buildEndPiece*/)
+							       G4bool       /*buildEndPiece*/,
+							       G4bool       /*hStyle*/,
+							       G4double     /*vhRatio*/,
+							       G4double     /*coilWidthFraction*/,
+							       G4double     /*coilHeightFraction*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -442,6 +472,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CreateLogicalVolumes(name, colour, outerMaterial);
+  SetUserLimits();
   CreateMagnetContainerComponent();
 
   // PLACEMENT

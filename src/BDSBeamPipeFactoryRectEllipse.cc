@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryRectEllipse.hh"
 #include "BDSBeamPipe.hh"
@@ -60,7 +78,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width
 				     aper2In,                // y half width
-				     lengthIn); // z full width (long for unambiguous intersection)
+				     4*lengthIn); // z full width (long for unambiguous intersection)
   allSolids.push_back(vacCylSolid);
   allSolids.push_back(vacRectSolid);
   //intersection of both of these gives the desired shape
@@ -207,7 +225,7 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* vacCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid",// name
 					       aper3In,                     // horizontal semi-axis
 					       aper4In,                     // vertical semi-axis
-					       lengthIn); // z full width (long for unambiguous intersection)
+					       1.5*lengthIn); // z full width (long for unambiguous intersection)
   //vacuum box solid (rectangular cross-section)
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width

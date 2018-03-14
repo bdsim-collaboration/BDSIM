@@ -1,4 +1,0 @@
-include ../../geometry/4_magnets/one_of_each_base.gmad;
-
-! add iron magnetic fields
-option, includeIronMagFields=1;

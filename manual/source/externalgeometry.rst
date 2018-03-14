@@ -14,14 +14,41 @@ GDML
 
 GDML (Geometry Description Markup Language) is an XML schema for detector description.
 To use Geant4 and BDSIM needs to be built with GDML usage on (default true). For more
-information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
+information please refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
 `manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
 
 This format is widely supported and other geometry software may be able to export
 geometry in GDML format.
 
+The Geant4 GDML parser will not reload a volume if one by the same name is already
+loaded and will instead use that volume.  In the case of multiple GDML files being
+used in BDSIM this would result in incorrect geometry. BDSIM includes a preprocessor
+using the xercesc library that will make a temporary copy of any GDML files loaded and
+prepend all names with the name of the element or placement being used. The user will
+not normally notice this and the temporary files are deleted after use.
+
+The BDSIM GDML preprocessor has some limitations. We cannot support variables in values.
+In this case, the user should load a GDML file with Geant4 and re-export it. This will
+'flatten' / resolve any variables. e.g. ::
+
+  <variable name="offsetX" value="3"/>
+  <position x="offsetX+3" y="0" z="-3|/>
+
+would not work as the *variable* "offsetX" is referred to in the *value* "x" in the position tag.
+
+.. warning:: The Geant4 GDML parser typically requires internet access for the schema.
+	     To overcome this deficiency we provide a copy of the latest GDML schema
+	     in BDSIM, which it uses. If the user specifies a path on the file system
+	     in the GDML tag (presumably to their own modified schema) this will be used.
+
 * A BDSIM provided python tool is also under development to allow simple programmatic
   construction of GDML geometry as well as visualisation and overlap checking.
+
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
 
 ggmad
 -----

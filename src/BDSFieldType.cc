@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSFieldType.hh"
 #include "BDSDebug.hh"
 #include "globals.hh"
@@ -42,7 +60,17 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewdecapole,     "skewdecapole"},
       {BDSFieldType::rfcavity,         "rfcavity"},
       {BDSFieldType::rf,               "rf"},
-      {BDSFieldType::dipole3d,         "dipole3d"}
+      {BDSFieldType::dipole3d,         "dipole3d"},
+      {BDSFieldType::multipoleouterdipole,     "multipoleouterdipole"},
+      {BDSFieldType::multipoleouterquadrupole, "multipoleouterquadrupole"},
+      {BDSFieldType::multipoleoutersextupole,  "multipoleoutersextupole"},
+      {BDSFieldType::multipoleouteroctupole,   "multipoleouteroctupole"},
+      {BDSFieldType::multipoleouterdecapole,   "multipoleouterdecapole"},
+      {BDSFieldType::skewmultipoleouterquadrupole, "skewmultipoleouterquadrupole"},
+      {BDSFieldType::skewmultipoleoutersextupole,  "skewmultipoleoutersextupole"},
+      {BDSFieldType::skewmultipoleouteroctupole,   "skewmultipoleouteroctupole"},
+      {BDSFieldType::skewmultipoleouterdecapole,   "skewmultipoleouterdecapole"},
+      {BDSFieldType::multipoleouterdipole3d,       "multipoleouterdipole3d"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -82,6 +110,16 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["rfcavity"]         = BDSFieldType::rfcavity;
   types["rf"]               = BDSFieldType::rf;
   types["dipole3d"]         = BDSFieldType::dipole3d;
+  types["multipoleouterdipole"]     = BDSFieldType::multipoleouterdipole;
+  types["multipoleouterquadrupole"] = BDSFieldType::multipoleouterquadrupole;
+  types["multipoleoutersextupole"]  = BDSFieldType::multipoleoutersextupole;
+  types["multipoleouteroctupole"]   = BDSFieldType::multipoleouteroctupole;
+  types["multipoleouterdecapole"]   = BDSFieldType::multipoleouterdecapole;
+  types["skewmultipoleouterquadrupole"] = BDSFieldType::skewmultipoleouterquadrupole;
+  types["skewmultipoleoutersextupole"]  = BDSFieldType::skewmultipoleoutersextupole;
+  types["skewmultipoleouteroctupole"]   = BDSFieldType::skewmultipoleouteroctupole;
+  types["skewmultipoleouterdecapole"]   = BDSFieldType::skewmultipoleouterdecapole;
+  types["multipoleouterdipole3d"]       = BDSFieldType::multipoleouterdipole3d;
   
   bType.toLower();
 

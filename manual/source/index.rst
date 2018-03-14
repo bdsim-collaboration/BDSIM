@@ -1,8 +1,3 @@
-.. BDSIM documentation master file, created by
-   sphinx-quickstart on Tue Mar  3 17:14:19 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 #################################
 Welcome to BDSIM's documentation!
 #################################
@@ -22,7 +17,7 @@ Contents:
    model_preparation
    output
    output_analysis
-   python_modules
+   python_utilities
    visualisation
    examples/examples
    support
@@ -32,25 +27,8 @@ Contents:
    
    history
 
-#######################
-Developer Documentation
-#######################
-   
-.. toctree::
-   :maxdepth: 2
-   
-   dev_introduction
-   dev_styleguide
-   dev_release
-   dev_programlayout
-   dev_buildsystem
-   dev_parser
-   dev_geantusage
-   dev_geometry
-   dev_tracking
-   dev_fields
-   dev_analysisoutput
-   dev_analysissuite
+   developer
+
 
 Indices and tables
 ==================

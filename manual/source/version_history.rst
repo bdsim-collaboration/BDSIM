@@ -1,4 +1,155 @@
-V0.992 - 2017 / 07 / ??
+V0.994 - 2018 / 03 / ??
+=======================
+
+New Features
+------------
+
+* Support for Geant4.10.4 - however, this version is unsuable as G4ExtrudedSolid is
+  broken and used in BDSIM. We recommend Geant4.10.3.p03.
+* H-style dipoles controllable by default or per element with `hStyle` option.
+* Control over dipole proportions with global and per element options `vhRatio`,
+  `coilWidthFraction` and `coilHeightFraction`.
+* Support for extra Geant4 physics lists: `G4ChargeExchangePhysics`, `G4HadronDElasticPhysics`,
+  `G4HadronElasticPhysicsHP`, `G4HadronElasticPhysicsLEND`, `G4HadronElasticPhysicsXS`,
+  `G4HadronHElasticPhysics`, `G4HadronPhysicsShielding`, `G4IonElasticPhysics`,
+  `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`,
+  `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`.
+* Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
+* New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
+* Significantly improved analysis documentation.
+* New component: 'gap'. Create a space in the beam line with no geometry.
+* Ability to specify the world volume material with the `worldMaterial` option.
+* Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
+* Ability to limit step size in user-specified fields.
+* Ability to control turn number print out with `printFractionTurns`.
+* Magnet yokes now have a general multipolar field.
+* Sampler diameter is automatically reduced when high angle bends are used to prevent overlaps.
+* New CMake option to disable event display for installation with ROOT EVE problems.
+* Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
+  analysis with scaling. New tool `rebdsimCombine` for this purpose.
+* Full support for dipole fringe fields.
+
+
+Output \& Analysis Changes
+--------------------------
+
+* Output files now have header structure with software versions.
+* "**librebdsimlib**" has been changed to "**librebdsim**" to be more consistent for output loading.
+* Support for logarithmic binning of histograms in rebdsim.
+* "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
+  ability to create per-event histograms in analysis that were not previously possible. Older
+  style histograms that are a sum across all events are now made with "SimpleHistogramND".
+* New option in rebdsim to turn off histogram merging (for speed).
+* Analysis classes have member names changed to match those in the output files, i.e. "eloss" is
+  now "Eloss" in `bdsim/analysis/Event.hh`.
+* Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
+* 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
+* Trajectory momentum is now in GeV.
+
+General
+-------
+
+* Physics list names are now consistently named with '_' between words. Old list
+  names are still supported.
+* `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and
+  `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are
+  recommended by Geant4 for high energy hadronic interactions.
+* "bdsim" integrator set now maps to "bdsimtwo" integrator set.
+* All objects in the parser can now be extended later rather than just elements.
+* Tuned colours of hkicker and vkicker.
+* Relative file paths are no longer padded excessively with slashes when translated
+  to absolute paths.
+* More efficient file IO in rebdsim improves analysis speed.
+* The world material is now air instead of G4_Galatic.
+* `printModuloFraction` is now `printFractionEvents`.
+* `includeIronMagFields` option is now `yokeFields`.
+* Vacuum volumes now visible in `--vis_debug` mode.
+* Only forwards going particles are now considered for the optical function calculation.
+
+Bug Fixes
+---------
+
+* Fixed magnetic field strength for AWAKE dipole using pure dipole field.
+* User limits are now applied to external geometry.
+* Fixed bug where some visualisation settings wouldn't be applied to all logical
+  volumes in external geometry.
+* Fixed bug where some file paths may not be translated to absolute paths correctly.
+* Fixed a bug where recreate mode would fail with the new Beam structure in the output.
+* Prevent segfault when analysing wrong type of file with rebdsim (use 'backwardsCompatible'
+  option to analyse old files withou the new header structure).
+* The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
+* `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
+* Fixed bug where world size would be too small with placements of large externally provided
+  geometry with strong rotations.
+* When no energy was specified in the `userfile` bunch distribution, the central beam energy was
+  1000x too low - fixed - missing factory of GeV.
+* Number of turns simulated is now number desired and not number+1.
+* Limits to control maximum step length and tracking time were not attached to magnet yoke geometry.
+* Fixed crash when using octagonal or racetrack apertures in a magnet with pole geometry.
+* Fixed issue where ~10% of particles may appear offset in samplers in large ringe models.
+* Fixed some very small overlaps not reported by Geant4 in magnet yoke geometry.
+* Fixed issue where drift in magnet was always 1pm shorter than expected.
+* Fringe fields are no longer built in between two dipoles against each other.
+* Fixed gauss twiss bunch generator for finite dispersion in `x`, `xp`, `y`, `yp`.
+* Fixed bug where overlapping dipole end pieces would be produced.
+* Fixed GDML preprocessing for parameterised variables.
+* Tracking limits are now attached to magnet yokes.
+
+
+V0.993 - 2017 / 12 / 11
+=======================
+
+New Features
+------------
+
+* Executable option --writeseedstate is now --writeSeedState.
+* Executable option --exportgeometryto is now --exportGeometryTo
+* Executable option --distrfile is now --distrFile.
+* Redefined simpler syntax for halo distribution. Please see manual for new parameters.
+* Support for all EM physics lists included with Geant4.10.3.p03.
+* Support for an ion as the primary beam particle.
+* Support for ion physics lists.
+* Ability to load two GDML files with degenerate object names correctly compensating for
+  definiciency in Geant4 GDML parser.
+* Local copy of GDML schema included. No longer require internet access to load GDML files. Custom
+  local schema still supported.
+* Support for Geant4.10.4 - however we don't recommend using this until p01 is used as there
+  is a fault with G4ExtrudedSolid that is used for all poled magnet geometry.
+  
+Bug Fixes
+---------
+
+* Compilation fixes for compilers with XCode 9.
+* Fix compiler dependent possible tracking bug where particle would get stuck in dipole.
+* Cherenkov radiation in water fixed with specification of optical refractive index.
+* Fix ATF2 example input syntax and update model.
+* Remove temporary files created in current working directory.
+
+Output Changes
+--------------
+
+* Options split into options and beam - beam contains all information related to beam definition.
+* Associated output classes and analysis classes added for Beam in output.
+* Remove older output format.
+  
+General
+-------
+
+* Updated automatic Geant4 from AFS to version 10.3.p01 (latest available).
+* Updated automatic ROOT from AFS to version 6.06.08.
+* Remove support for ROOT v5 and require v6 onwards.
+
+Utilities
+---------
+
+* Python utilities now use a setup.py compatable with PIP.
+* pybdsim v1.3
+* pymadx v1.0
+* pymad8 v0.8
+* pytransport v0.1 (new)
+
+
+V0.992 - 2017 / 07 / 26
 =======================
 
 New Features
@@ -6,7 +157,11 @@ New Features
 
 * Preparsing for GDML for pygeometry generated geometry - overcomes Geant4's GDML parser
   deficiency of only allowing one GDML file to be loaded in the whole program.
-
+* Visualisation of multiple beam lines.
+* Option to use first sampler emittance as assumed emittance throughout lattice in optical
+  function calculation.
+* Additional materials for LHC tunnel and geometry.
+  
 Bug Fixes
 ---------
 
@@ -16,6 +171,10 @@ Bug Fixes
 * Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
 * Fixed rf E and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
 * Fix for crash when particle was at exactly 0 in a quadrupole.
+* Fix compiler warnings for Clang 8.1.
+* Fixed all variable shadowing throughout codebase and reintroduced compiler warning if present.
+* Fix field transform for tilted and offset magnets. This fixes incorrect tracking for tilted
+  magnets when using the "bdsimtwo" integrator set for dipoles.
 
 General
 -------
@@ -24,6 +183,14 @@ General
 * Revised implementation of rf cavity construction for greater flexibility.
 * RF cavity phase now automatically calculated based on location in lattice.
 * Removal of old ROOT analysis scripts for very old data format.
+* Revised construction to allow construction of multiple beam lines dynamically.
+
+Utilities
+---------
+
+* pymadx v0.9
+* pybdsim v1.2
+* pymad8 v0.7
 
 
 V0.991 - 2017 / 07 / 04

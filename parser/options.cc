@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "options.h"
 
 #include <algorithm>
@@ -48,7 +66,10 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
       for (auto const key : optionsIn.setKeys)
 	{
 	  try
-	    {set(this, &optionsIn, key);}
+	    {
+          set(this, &optionsIn, key);
+          setKeys.push_back(key);
+        }
 	  catch (std::runtime_error)
 	    {
 	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
@@ -65,7 +86,10 @@ void Options::Amalgamate(const Options& optionsIn, bool override)
 	  if (result == ok.end())
 	    {//it wasn't found so ok to copy
 	      try
-		{set(this, &optionsIn, key);}
+		{
+          set(this, &optionsIn, key);
+          setKeys.push_back(key);
+        }
 	      catch (std::runtime_error)
 		{
 		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
@@ -121,18 +145,7 @@ void Options::PublishMembers()
   
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
-
-  // options for the "beam" command
-  publish("particle",&Options::particleName);
-
-  publish("distrType", &Options::distribType);
-  publish("xDistrType",&Options::xDistribType);
-  publish("yDistrType",&Options::yDistribType);
-  publish("zDistrType",&Options::zDistribType);
-  publish("distrFile", &Options::distribFile);
-  publish("distrFileFormat",   &Options::distribFileFormat);
-  publish("matchDistribFileLength", &Options::matchDistribFileLength);
-  publish("nlinesIgnore",      &Options::nlinesIgnore);
+  
   publish("eventOffset",       &Options::eventOffset);
   publish("recreateSeedState", &Options::recreateSeedState);
 
@@ -140,8 +153,6 @@ void Options::PublishMembers()
   publish("defaultRangeCut",&Options::defaultRangeCut);
   publish("ffact",&Options::ffact);
   publish("bv",   &Options::ffact); // MadX naming
-
-  publish("energy",&Options::beamEnergy);
 
   publish("beamlineX",         &Options::beamlineX);
   publish("beamlineY",         &Options::beamlineY);
@@ -154,170 +165,85 @@ void Options::PublishMembers()
   publish("beamlineAxisZ",     &Options::beamlineAxisZ);
   publish("beamlineAngle",     &Options::beamlineAngle);
   publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
+
+  publish("checkOverlaps",     &Options::checkOverlaps);
+  publish("nperfile",          &Options::numberOfEventsPerNtuple);
+  publish("eventNumberOffset", &Options::eventNumberOffset);
+  publish("vacuumPressure",    &Options::vacuumPressure);
+  publish("xsize",             &Options::xsize);
+  publish("ysize",             &Options::ysize);
   
-  publish("X0",&Options::X0);
-  publish("Y0",&Options::Y0);
-  publish("Z0",&Options::Z0);
-  publish("S0",&Options::S0);
-  publish("Xp0",&Options::Xp0);
-  publish("Yp0",&Options::Yp0);
-  publish("Zp0",&Options::Zp0);
-  publish("T0",&Options::T0);
-  publish("E0",&Options::E0);
-  publish("sigmaT",&Options::sigmaT);
-  publish("betx",&Options::betx);
-  publish("bety",&Options::bety);
-  publish("alfx",&Options::alfx);
-  publish("alfy",&Options::alfy);
-  publish("emitx",&Options::emitx);
-  publish("emity",&Options::emity);
-  publish("dispx",&Options::dispx);
-  publish("dispy",&Options::dispy);
-  publish("dispxp",&Options::dispxp);
-  publish("dispyp",&Options::dispyp);
-  
-  // options for beam distrType="gauss"
-  publish("sigmaX",&Options::sigmaX);
-  publish("sigmaXp",&Options::sigmaXp);
-  publish("sigmaY",&Options::sigmaY);
-  publish("sigmaYp",&Options::sigmaYp);
-
-  // options for beam distrType="square" or distrType="circle"
-  publish("envelopeX",&Options::envelopeX);
-  publish("envelopeXp",&Options::envelopeXp);
-  publish("envelopeY",&Options::envelopeY);
-  publish("envelopeYp",&Options::envelopeYp);
-  publish("envelopeT",&Options::envelopeT);
-  publish("envelopeE",&Options::envelopeE);
-  publish("envelopeR",&Options::envelopeR);
-  publish("envelopeRp",&Options::envelopeRp);
-
-  // options for beam distrType="gaussmatrix"
-  publish("sigma11",&Options::sigma11);
-  publish("sigma12",&Options::sigma12);
-  publish("sigma13",&Options::sigma13);
-  publish("sigma14",&Options::sigma14);
-  publish("sigma15",&Options::sigma15);
-  publish("sigma16",&Options::sigma16);
-  publish("sigma22",&Options::sigma22);
-  publish("sigma23",&Options::sigma23);
-  publish("sigma24",&Options::sigma24);
-  publish("sigma25",&Options::sigma25);
-  publish("sigma26",&Options::sigma26);
-  publish("sigma33",&Options::sigma33);
-  publish("sigma34",&Options::sigma34);
-  publish("sigma35",&Options::sigma35);
-  publish("sigma36",&Options::sigma36);
-  publish("sigma44",&Options::sigma44);
-  publish("sigma45",&Options::sigma45);
-  publish("sigma46",&Options::sigma46);
-  publish("sigma55",&Options::sigma55);
-  publish("sigma56",&Options::sigma56);
-  publish("sigma66",&Options::sigma66);
-
-  // options for beam distrType="eshell"
-  publish("shellX",&Options::shellX);
-  publish("shellXp",&Options::shellXp);
-  publish("shellY",&Options::shellY);
-  publish("shellYp",&Options::shellYp);
-  publish("shellXWidth",&Options::shellXWidth);
-  publish("shellXpWidth",&Options::shellXpWidth);
-  publish("shellYWidth",&Options::shellYWidth);
-  publish("shellYpWidth",&Options::shellYpWidth);
-
-  // options for beam distrType="ring"
-  publish("Rmin",&Options::Rmin);
-  publish("Rmax",&Options::Rmax);
-
-  // options for beam distrType="halo"
-  publish("haloEmitX",             &Options::haloEmitX);
-  publish("haloEmitY",             &Options::haloEmitY);
-  publish("haloEnvelopeEmitX",     &Options::haloEnvelopeEmitX);
-  publish("haloEnvelopeEmitY",     &Options::haloEnvelopeEmitY);
-  publish("haloEnvelopeCollMinX",  &Options::haloEnvelopeCollMinX);
-  publish("haloEnvelopeCollMaxX",  &Options::haloEnvelopeCollMaxX);
-  publish("haloEnvelopeCollMinXp", &Options::haloEnvelopeCollMinXp);
-  publish("haloEnvelopeCollMaxXp", &Options::haloEnvelopeCollMaxXp);
-  publish("haloEnvelopeCollMinY",  &Options::haloEnvelopeCollMinY);
-  publish("haloEnvelopeCollMaxY",  &Options::haloEnvelopeCollMaxY);
-  publish("haloEnvelopeCollMinYp", &Options::haloEnvelopeCollMinYp);
-  publish("haloEnvelopeCollMaxYp", &Options::haloEnvelopeCollMaxYp);
-  publish("haloPSWeightParameter", &Options::haloPSWeightParameter);
-  publish("haloPSWeightFunction",  &Options::haloPSWeightFunction);
-
-  publish("sigmaE",&Options::sigmaE);
-
-  publish("checkOverlaps",&Options::checkOverlaps);
-  publish("nperfile",&Options::numberOfEventsPerNtuple);
-  publish("eventNumberOffset",&Options::eventNumberOffset);
-  publish("vacuumPressure",&Options::vacuumPressure);
-  publish("xsize",&Options::xsize);
-  publish("ysize",&Options::ysize);
   // options which influence the geometry
-  publish("magnetGeometryType",&Options::magnetGeometryType);
-  publish("outerMaterial",&Options::outerMaterialName);
-  publish("outerDiameter",&Options::outerDiameter);
-  publish("boxSize",      &Options::outerDiameter); // for backwards compatability
-  publish("includeIronMagFields",&Options::includeIronMagFields);
-  publish("includeFringeFields",&Options::includeFringeFields);
-  publish("beampipeRadius",&Options::aper1);
-  publish("beampipeThickness",&Options::beampipeThickness);
-  publish("apertureType",&Options::apertureType);
-  publish("aper1",&Options::aper1);
-  publish("aper2",&Options::aper2);
-  publish("aper3",&Options::aper3);
-  publish("aper4",&Options::aper4);
-  publish("beampipeMaterial",&Options::beampipeMaterial);
-  publish("ignoreLocalAperture", &Options::ignoreLocalAperture);
-  publish("vacuumMaterial",&Options::vacMaterial);
-  publish("emptyMaterial",&Options::emptyMaterial);
-  publish("dontSplitSBends", &Options::dontSplitSBends);
-  publish("thinElementLength", &Options::thinElementLength);
+  publish("magnetGeometryType",   &Options::magnetGeometryType);
+  publish("outerMaterial",        &Options::outerMaterialName);
+  publish("outerDiameter",        &Options::outerDiameter);
+  publish("boxSize",              &Options::outerDiameter); // for backwards compatability
+  publish("yokeFields",           &Options::yokeFields);
+  publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
+  publish("includeFringeFields",  &Options::includeFringeFields);
+  publish("beampipeRadius",       &Options::aper1);
+  publish("beampipeThickness",    &Options::beampipeThickness);
+  publish("apertureType",         &Options::apertureType);
+  publish("aper1",                &Options::aper1);
+  publish("aper2",                &Options::aper2);
+  publish("aper3",                &Options::aper3);
+  publish("aper4",                &Options::aper4);
+  publish("beampipeMaterial",     &Options::beampipeMaterial);
+  publish("ignoreLocalAperture",  &Options::ignoreLocalAperture);
+  publish("vacuumMaterial",       &Options::vacMaterial);
+  publish("emptyMaterial",        &Options::emptyMaterial);
+  publish("worldMaterial",        &Options::worldMaterial);
+  publish("worldVolumeMargin",    &Options::worldVolumeMargin);
+  publish("dontSplitSBends",      &Options::dontSplitSBends);
+  publish("thinElementLength",    &Options::thinElementLength);
+  publish("hStyle",               &Options::hStyle);
+  publish("vhRatio",              &Options::vhRatio);
+  publish("coilWidthFraction",    &Options::coilWidthFraction);
+  publish("coilHeightFraction",   &Options::coilHeightFraction);
 
-  // tunnel options
-  publish("buildTunnel",&Options::buildTunnel);
-  publish("buildTunnelStraight",&Options::buildTunnelStraight);
-  publish("tunnelType",&Options::tunnelType);
-  publish("tunnelThickness",&Options::tunnelThickness);
-  publish("tunnelSoilThickness",&Options::tunnelSoilThickness);
-  publish("tunnelMaterial",&Options::tunnelMaterial);
-  publish("soilMaterial",&Options::soilMaterial);
-  publish("buildTunnelFloor",&Options::buildTunnelFloor);
-  publish("tunnelFloorOffset",&Options::tunnelFloorOffset);
-  publish("tunnelAper1", &Options::tunnelAper1);
-  publish("tunnelAper2", &Options::tunnelAper2);
-  publish("tunnelRadius",&Options::tunnelAper1); // for backwards compatability
-  publish("tunnelSensitive",&Options::tunnelSensitive);
-  publish("tunnelVisible",&Options::tunnelVisible);
-  publish("showTunnel",&Options::tunnelVisible); // for backwards compatability
+  publish("preprocessGDML",       &Options::preprocessGDML);
   
-  publish("tunnelOffsetX",&Options::tunnelOffsetX);
-  publish("tunnelOffsetY",&Options::tunnelOffsetY);
+  // tunnel options
+  publish("buildTunnel",         &Options::buildTunnel);
+  publish("buildTunnelStraight", &Options::buildTunnelStraight);
+  publish("tunnelType",          &Options::tunnelType);
+  publish("tunnelThickness",     &Options::tunnelThickness);
+  publish("tunnelSoilThickness", &Options::tunnelSoilThickness);
+  publish("tunnelMaterial",      &Options::tunnelMaterial);
+  publish("soilMaterial",        &Options::soilMaterial);
+  publish("buildTunnelFloor",    &Options::buildTunnelFloor);
+  publish("tunnelFloorOffset",   &Options::tunnelFloorOffset);
+  publish("tunnelAper1",         &Options::tunnelAper1);
+  publish("tunnelAper2",         &Options::tunnelAper2);
+  publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatability
+  publish("tunnelSensitive",     &Options::tunnelSensitive);
+  publish("tunnelVisible",       &Options::tunnelVisible);
+  publish("showTunnel",          &Options::tunnelVisible); // for backwards compatability
+  publish("tunnelOffsetX",       &Options::tunnelOffsetX);
+  publish("tunnelOffsetY",       &Options::tunnelOffsetY);
 
   publish("removeTemporaryFiles", &Options::removeTemporaryFiles);
 
   publish("samplerDiameter",&Options::samplerDiameter);
   
   // options for beam loss monitor geometry
-  publish("blmRad",&Options::blmRad);
-  publish("blmLength",&Options::blmLength);
+  publish("blmRad",    &Options::blmRad);
+  publish("blmLength", &Options::blmLength);
   
-  publish("scintYieldFactor",&Options::scintYieldFactor);
-  publish("maximumPhotonsPerStep", &Options::maximumPhotonsPerStep);
-  publish("maximumBetaChangePerStep", &Options::maximumBetaChangePerStep);
-  publish("maximumTracksPerEvent", &Options::maximumTracksPerEvent);
-  publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
-  publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
-  publish("sensitiveBLMs",&Options::sensitiveBLMs);
-
-  publish("thresholdCutCharged",&Options::thresholdCutCharged);
-  publish("thresholdCutPhotons",&Options::thresholdCutPhotons);
-
-  publish("prodCutPhotons",&Options::prodCutPhotons);
-  publish("prodCutElectrons",&Options::prodCutElectrons);
-  publish("prodCutPositrons",&Options::prodCutPositrons);
-  publish("prodCutProtons",&Options::prodCutProtons);
-  publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
+  publish("scintYieldFactor",            &Options::scintYieldFactor);
+  publish("maximumPhotonsPerStep",       &Options::maximumPhotonsPerStep);
+  publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
+  publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
+  publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
+  publish("minimumRange",                &Options::minimumRange);
+  publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
+  publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
+  publish("sensitiveBLMs",               &Options::sensitiveBLMs);
+  publish("prodCutPhotons",   &Options::prodCutPhotons);
+  publish("prodCutElectrons", &Options::prodCutElectrons);
+  publish("prodCutPositrons", &Options::prodCutPositrons);
+  publish("prodCutProtons",   &Options::prodCutProtons);
+  publish("prodCutHadrons",   &Options::prodCutProtons); // backwards compatability
 
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
@@ -327,44 +253,48 @@ void Options::PublishMembers()
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
   publish("maximumStepLength",  &Options::maximumStepLength);
+  publish("maximumStepSize",    &Options::maximumStepLength);
   publish("maximumTrackLength", &Options::maximumTrackLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
+  publish("chordStepMinimumYoke", &Options::chordStepMinimumYoke);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
   publish("maximumEpsilonStep", &Options::maximumEpsilonStep);
   publish("deltaOneStep",       &Options::deltaOneStep);
 
   // physics processes
-  publish("turnOnOpticalAbsorption",&Options::turnOnOpticalAbsorption);
-  publish("turnOnMieScattering",&Options::turnOnMieScattering);
-  publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
-  publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
+  publish("turnOnOpticalAbsorption",  &Options::turnOnOpticalAbsorption);
+  publish("turnOnMieScattering",      &Options::turnOnMieScattering);
+  publish("turnOnRayleighScattering", &Options::turnOnRayleighScattering);
+  publish("turnOnOpticalSurface",     &Options::turnOnOpticalSurface);
 
-  publish("lengthSafety",&Options::lengthSafety);
+  publish("lengthSafety", &Options::lengthSafety);
 
-  publish("storeElossLinks", &Options::storeElossLinks);
+  publish("storeElossLinks",  &Options::storeElossLinks);
   publish("storeElossLocal",  &Options::storeElossLocal);
   publish("storeElossGlobal", &Options::storeElossGlobal);
 
   // trajectory storage
-  publish("storeTrajectory",&Options::storeTrajectory);
-  publish("storeTrajectories",&Options::storeTrajectory);
-  publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
-  publish("storeTrajectoryParticle",&Options::storeTrajectoryParticle);
-  publish("storeTrajectoryEnergyThreshold",&Options::storeTrajectoryEnergyThreshold);
-  publish("trajConnect",&Options::trajConnect);
-  publish("trajCutGTZ",&Options::trajCutGTZ);
-  publish("trajCutLTR",&Options::trajCutLTR);
-  publish("trajNoTransportation", &Options::trajNoTransportation);
+  publish("storeTrajectory",                &Options::storeTrajectory);
+  publish("storeTrajectories",              &Options::storeTrajectory);
+  publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
+  publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
+  publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
+  publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
+  publish("trajConnect",                    &Options::trajConnect);
+  publish("trajCutGTZ",                     &Options::trajCutGTZ);
+  publish("trajCutLTR",                     &Options::trajCutLTR);
+  publish("trajNoTransportation",           &Options::trajNoTransportation);
 
-  publish("stopSecondaries",&Options::stopSecondaries);
-  publish("stopTracks",     &Options::stopTracks);
-  publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("stopSecondaries",          &Options::stopSecondaries);
+  publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
-  publish("nturns",         &Options::nturns);
-  publish("printModuloFraction",&Options::printModuloFraction);
-  publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
-  publish("writePrimaries", &Options::writePrimaries);
+  publish("nturns",                   &Options::nturns);
+  publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
+  publish("printFractionEvents",      &Options::printFractionEvents);
+  publish("printFractionTurns",       &Options::printFractionTurns);
+  publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
+  publish("writePrimaries",           &Options::writePrimaries);
 
   // scoring map
   publish("nbinsx", &Options::nbinsx);

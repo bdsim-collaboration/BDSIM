@@ -1,5 +1,28 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
+
+#include "globals.hh"
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <ostream>
 
@@ -17,6 +40,14 @@ std::ostream& operator<< (std::ostream& out, BDSTiltOffset const &to)
 {
   out << to.tilt << " " << to.dx << " " << to.dy;
   return out;
+}
+
+G4Transform3D BDSTiltOffset::Transform3D() const
+{
+  G4ThreeVector off = GetOffset();
+  G4RotationMatrix rm = G4RotationMatrix();
+  rm.rotateZ(-tilt);
+  return G4Transform3D(rm, off);
 }
 
 G4bool BDSTiltOffset::HasFiniteOffset() const

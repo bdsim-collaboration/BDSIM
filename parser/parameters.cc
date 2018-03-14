@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "parameters.h"
 
 #include <cstdio>
@@ -26,6 +44,8 @@ Parameters::Parameters()
   setMap["e2"]    = false;
   setMap["fint"]  = false;
   setMap["fintx"] = false;
+  setMap["fintK2"]  = false;
+  setMap["fintxK2"] = false;
   setMap["hgap"]  = false;
   setMap["kick"]  = false;
   setMap["hkick"] = false;
@@ -50,6 +70,10 @@ Parameters::Parameters()
   setMap["outerMaterial"] = false;
   setMap["outerDiameter"] = false;
   setMap["yokeOnInside"]  = false;
+  setMap["hStyle"]        = false;
+  setMap["vhRatio"]       = false;
+  setMap["coilWidthFraction"]  = false;
+  setMap["coilHeightFraction"] = false;
   setMap["tilt"] = false;
   setMap["xsize"] = false;
   setMap["ysize"] = false;
@@ -80,7 +104,9 @@ Parameters::Parameters()
   setMap["theta"] = false;
   setMap["psi"] = false;
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
-  setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
+  setMap["bias"]         = false;
+  setMap["biasMaterial"] = false;
+  setMap["biasVacuum"]   = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
   setMap["samplerRadius"] = false;
@@ -89,7 +115,7 @@ Parameters::Parameters()
   setMap["fieldVacuum"] = false;
   setMap["fieldAll"]    = false;
 
-  setMap["geometry"] = false; // for geometryFile
+  setMap["geometryFile"] = false;
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;

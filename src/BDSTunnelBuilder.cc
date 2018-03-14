@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSTunnelBuilder.hh"
 
 #include "BDSBeamline.hh"
@@ -82,7 +100,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
   return result;
 }
 
-BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
+BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamline)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -105,13 +123,13 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished
-  BDSBeamline::iterator previousEndElement = flatBeamline->begin();
+  BDSBeamline::const_iterator previousEndElement = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will begin
-  BDSBeamline::iterator startElement       = flatBeamline->begin();
+  BDSBeamline::const_iterator startElement       = flatBeamline->begin();
 
   // iterator to the BDSBeamlineElement where the current tunnel section will end
-  BDSBeamline::iterator endElement         = flatBeamline->begin();
+  BDSBeamline::const_iterator endElement         = flatBeamline->begin();
 
   // if a straight tunnel, just build one long segment, add it to beam line and return
   if (BDSGlobalConstants::Instance()->BuildTunnelStraight())
@@ -135,19 +153,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
       return tunnelLine;
     } 
 
-  BDSBeamline::iterator it = flatBeamline->begin();
-
-  // skip the first item if it's a sampler - so algorithm doesn't try to make null section before it
-  if(IsASampler(it))
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "skipping very first item as it's a sampler" << G4endl;
-#endif
-      ++previousEndElement;
-      ++startElement;
-      ++endElement;
-      ++it;
-    }
+  BDSBeamline::const_iterator it = flatBeamline->begin();
   
   // iterate over beam line and build tunnel segments
   for (; it != flatBeamline->end(); ++it)
@@ -374,7 +380,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
       G4double angle    = (*startElement)->GetAcceleratorComponent()->GetAngle();
       cumulativeLength += length;
       cumulativeAngle  += angle;
-      cumulativeDisplacementX += sin(angle) * length;
+      cumulativeDisplacementX += std::sin(angle) * length;
       //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
       //would still use angle, but would need to involve tilt and rotation axes
       cumulativeNItems += 1;
@@ -386,16 +392,4 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #endif
     } // for loop scope end
   return tunnelLine;
-}
-
-G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::iterator& /*iterator*/)
-{
-  //BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
-  /*BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);
-  if (sampler)
-    {return true;}
-  else
-    {return false;}
-  */
-  return false;
 }

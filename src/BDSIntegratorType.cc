@@ -1,7 +1,26 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSIntegratorType.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -13,8 +32,9 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::none,                 "none"},
       {BDSIntegratorType::teleporter,           "teleporter"},
       {BDSIntegratorType::solenoid,             "solenoid"},
-      {BDSIntegratorType::dipole,               "dipole"},
-      {BDSIntegratorType::dipole2,              "dipole2"},
+      {BDSIntegratorType::dipolerodrigues,      "dipolerodrigues"},
+      {BDSIntegratorType::dipolerodrigues2,     "dipolerodrigues2"},
+      {BDSIntegratorType::dipolematrix,         "dipolematrix"},
       {BDSIntegratorType::quadrupole,           "quadrupole"},
       {BDSIntegratorType::sextupole,            "sextupole"},
       {BDSIntegratorType::octupole,             "octupole"},
@@ -39,6 +59,25 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::g4helixsimplerunge,   "g4helixsimplerunge"},
       {BDSIntegratorType::g4nystromrk4,         "g4nystromrk4"},
       {BDSIntegratorType::g4rkg3stepper,        "g4rkg3stepper"}
+#if G4VERSION_NUMBER > 1029
+      // introduced in version 10.3
+      ,
+      {BDSIntegratorType::g4bogackishampine23,  "g4bogackishampine23"},
+      {BDSIntegratorType::g4bogackishampine45,  "g4bogackishampine45"},
+      {BDSIntegratorType::g4dolomcprirk34,      "g4dolomcprirk34"},
+      {BDSIntegratorType::g4dormandprince745,   "g4dormandprince745"},
+      {BDSIntegratorType::g4dormandprincerk56,  "g4dormandprincerk56"},
+      {BDSIntegratorType::g4tsitourasrk45,      "g4tsitourasrk45"}
+#endif
+#if G4VERSION_NUMBER > 1039
+      // introduced in version 10.4
+      // g4dormandprincerk78 is broken in 10.3 but fixed in 10.4 - safe to use now
+      ,
+      {BDSIntegratorType::g4dormandprincerk78,  "g4dormandprincerk78"},
+      {BDSIntegratorType::g4rk547feq1,          "g4rk547feq1"},
+      {BDSIntegratorType::g4rk547feq2,          "g4rk547feq2"},
+      {BDSIntegratorType::g4rk547feq3,          "g4rk547feq3"}
+#endif
     });
 
 BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
@@ -47,14 +86,16 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["none"]                 = BDSIntegratorType::none;
   types["teleporter"]           = BDSIntegratorType::teleporter;
   types["solenoid"]             = BDSIntegratorType::solenoid;
-  types["dipole"]               = BDSIntegratorType::dipole;
-  types["dipole2"]              = BDSIntegratorType::dipole2;
+  types["dipolerodrigues"]      = BDSIntegratorType::dipolerodrigues;
+  types["dipolerodrigues2"]     = BDSIntegratorType::dipolerodrigues2;
+  types["dipolematrix"]         = BDSIntegratorType::dipolematrix;
   types["quadrupole"]           = BDSIntegratorType::quadrupole;
   types["sextupole"]            = BDSIntegratorType::sextupole;
   types["octupole"]             = BDSIntegratorType::octupole;
   types["decapole"]             = BDSIntegratorType::decapole;
   types["multipolethin"]        = BDSIntegratorType::multipole;
   types["dipolefringe"]         = BDSIntegratorType::dipolefringe;
+  types["dipolefringescaling"]  = BDSIntegratorType::dipolefringescaling;
   types["euler"]                = BDSIntegratorType::euler;
   types["kickerthin"]           = BDSIntegratorType::kickerthin;
   types["g4cashkarprkf45"]      = BDSIntegratorType::g4cashkarprkf45;
@@ -72,14 +113,29 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["g4helixsimplerunge"]   = BDSIntegratorType::g4helixsimplerunge;
   types["g4nystromrk4"]         = BDSIntegratorType::g4nystromrk4;
   types["g4rkg3stepper"]        = BDSIntegratorType::g4rkg3stepper;
+#if G4VERSION_NUMBER > 1029
+  // introduced in version 10.3
+  types["g4bogackishampine23"]  = BDSIntegratorType::g4bogackishampine23;
+  types["g4bogackishampine45"]  = BDSIntegratorType::g4bogackishampine45;
+  types["g4dolomcprirk34"]      = BDSIntegratorType::g4dolomcprirk34;
+  types["g4dormandprince745"]   = BDSIntegratorType::g4dormandprince745;
+  types["g4dormandprincerk56"]  = BDSIntegratorType::g4dormandprincerk56;
+  types["g4tsitourasrk45"]      = BDSIntegratorType::g4tsitourasrk45;
+#endif
+#if G4VERSION_NUMBER > 1039
+  // introduced in version 10.4
+  types["g4dormandprincerk78"]  = BDSIntegratorType::g4dormandprincerk78;
+  types["g4rk547feq1"]          = BDSIntegratorType::g4rk547feq1;
+  types["g4rk547feq2"]          = BDSIntegratorType::g4rk547feq2;
+  types["g4rk547feq3"]          = BDSIntegratorType::g4rk547feq3;
+#endif
 
   integratorType.toLower();
-
   auto result = types.find(integratorType);
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << integratorType << " is not a valid integrator type" << G4endl;
 
       G4cout << "Available integrator types are:" << G4endl;
       for (auto it : types)

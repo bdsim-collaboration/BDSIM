@@ -15,24 +15,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_bdsimMadx.py.in ${CMAKE_CURRENT_B
 if (MADX_FOUND AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND PY_PYMADX)
   message(STATUS "Tracking tests enabled")
   message(STATUS "Found MadX: ${MADX_EXECUTABLE}")
-  # add tests
-  # 1_fodo
-  tracking_test(1_TrackingTest_FODO --filepath=1_fodo/FODO.madx)
-  # 2_drift
-  tracking_test(2_TrackingTest_DRIFT --filepath=2_drift/DRIFT.madx)
-  # 3_quadrupole
-  tracking_test(3_TrackingTest_QUADRUPOLE --filepath=3_quadrupole/QUAD.madx)
-  # 4_sextupole
-  tracking_test(4_TrackingTest_SEXTUPOLE --filepath=4_sextupole/SEXT.madx)
-  # 5_dba
-  tracking_test(5_TrackingTest_DBA --filepath=5_dba/DBA.madx)
-  # 6_rbend
-  tracking_test(6_TrackingTest_RBEND --filepath=6_rbend/RBEND.madx)
-  # 7_sbend
-  tracking_test(7_TrackingTest_SBEND --filepath=7_sbend/SBEND.madx)
-  # 9_octupole
-  tracking_test(9_TrackingTest_OCTUPOLE --filepath=9_octupole/OCT.madx)
-  # 10_hkicker
-  tracking_test(10_TrackingTest_HKICKER --filepath=10_hkicker/hkicker.madx)
+  tracking_test(tracking-fodo       --filepath=1_fodo/FODO.madx)
+  tracking_test(tracking-drift      --filepath=2_drift/DRIFT.madx)
+  tracking_test(tracking-quadrupole --filepath=3_quadrupole/QUAD.madx)
+  tracking_test(tracking-sextupole  --filepath=4_sextupole/SEXT.madx)
+  tracking_test(tracking-dba        --filepath=5_dba/DBA.madx)
+  tracking_test(tracking-rbend      --filepath=6_rbend/RBEND.madx)
+  tracking_test(tracking-sbend      --filepath=7_sbend/SBEND.madx)
+  tracking_test(tracking-octupole   --filepath=9_octupole/OCT.madx)
+  tracking_test(tracking-hkicker    --filepath=10_hkicker/hkicker.madx)
 endif()
 

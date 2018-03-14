@@ -1,7 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
+
+#include "parser/beam.h"
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
@@ -98,28 +118,29 @@ void BDSBunchPtc::LoadPtcFile()
 
   // set number of available rays in options
   nRays = ptcData.size();
-  
-  if (BDSGlobalConstants::Instance()->MatchDistribFileLength())
-    {BDSGlobalConstants::Instance()->SetNumberToGenerate(nRays);}
+
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  if (globals->MatchDistrFileLength())
+    {globals->SetNumberToGenerate(nRays);}
 
   return;
 }
 
-void BDSBunchPtc::SetOptions(const GMAD::Options& opt,
+void BDSBunchPtc::SetOptions(const GMAD::Beam& beam,
 			     G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
+  G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetDistribFile((G4String)opt.distribFile); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();
 }
 
-void BDSBunchPtc::SetDistribFile(G4String distribFileName)
+void BDSBunchPtc::SetDistrFile(G4String distrFileName)
 {
-  fileName = BDS::GetFullPath(distribFileName);
+  fileName = BDS::GetFullPath(distrFileName);
 }
 
 void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

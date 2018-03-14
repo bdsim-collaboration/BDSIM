@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* BDSIM code.   
 A scintillator screen.
 Work in progress.  
@@ -22,13 +40,8 @@ class BDSFieldInfo;
 class BDSSpectrVacChamb;
 class G4MagIntegratorStepper;
 
-class BDSAwakeSpectrometer :public BDSAcceleratorComponent
+class BDSAwakeSpectrometer: public BDSAcceleratorComponent
 {
-
-
-
-  
-
 public:
   BDSAwakeSpectrometer(G4String aName, 
                        G4double magnetOffsetX,
@@ -42,8 +55,8 @@ public:
 		       G4double angle,
 		       G4double windowThickness,
 		       G4String windowMaterial,
-	           G4double mountThickness,
-	           G4String mountMaterial,
+		       G4double mountThickness,
+		       G4String mountMaterial,
 		       G4double screenEnd,
 		       G4String spec,
 		       G4double screenWidth);
@@ -243,15 +256,15 @@ private:
   //  BDS3DMagField* _magField;
   //Y component of the B field.
 
-    G4double _windowOffsetX;
-		G4double _windowOffsetXFromVCEdge;
+  G4double _windowOffsetX;
+  G4double _windowOffsetXFromVCEdge;
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
 
-    //Containter to hold pointers to all the logical volumes in the class
-    std::vector<G4LogicalVolume*> _logVols;
-    void SetUserLimits();
+  //Containter to hold pointers to all the logical volumes in the class
+  std::vector<G4LogicalVolume*> _logVols;
+  void SetUserLimits();
 };
 
 #endif

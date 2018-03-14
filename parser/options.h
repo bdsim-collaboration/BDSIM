@@ -14,7 +14,7 @@ namespace GMAD
   /**
    * @brief Options class
    * 
-   * Options passed with option and beam command. This inherits
+   * Options passed with option command. This inherits
    * the OptionsBase class which contains all the members and 
    * provides templated filling functions. This separation allows
    * the OptionsBase class to be more easily written out to ROOT files
@@ -62,14 +62,14 @@ namespace GMAD
     // member method can throw runtime_error, catch and exit gracefully
     try
       {
-	set(this, name, value);
-	setKeys.push_back(name);
+        set(this, name, value);
+        setKeys.push_back(name);
       }
     catch (std::runtime_error)
-    {
-      std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
-      exit(1);
-    }
+      {
+        std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
+        exit(1);
+      }
   }
 }
 

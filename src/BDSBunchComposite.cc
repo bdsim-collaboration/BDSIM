@@ -1,18 +1,33 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBunchComposite.hh"
 #include "BDSBunchFactory.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
-#include "parser/options.h"
 
-BDSBunchComposite::BDSBunchComposite()
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  xBunch = nullptr;
-  yBunch = nullptr;
-  zBunch = nullptr;
-}
+#include "parser/beam.h"
+
+BDSBunchComposite::BDSBunchComposite():
+  xBunch(nullptr),
+  yBunch(nullptr),
+  zBunch(nullptr)
+{;}
 
 BDSBunchComposite::~BDSBunchComposite()
 {
@@ -21,22 +36,18 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
+void BDSBunchComposite::SetOptions(const GMAD::Beam& beam,
 				   G4Transform3D beamlineTransformIn)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;
   delete zBunch;
 
-  BDSBunchType xType = BDS::DetermineBunchType(opt.xDistribType);
-  BDSBunchType yType = BDS::DetermineBunchType(opt.yDistribType);
-  BDSBunchType zType = BDS::DetermineBunchType(opt.zDistribType);
+  BDSBunchType xType = BDS::DetermineBunchType(beam.xDistrType);
+  BDSBunchType yType = BDS::DetermineBunchType(beam.yDistrType);
+  BDSBunchType zType = BDS::DetermineBunchType(beam.zDistrType);
 
   if (xType == BDSBunchType::composite ||
       yType == BDSBunchType::composite ||
@@ -46,9 +57,9 @@ void BDSBunchComposite::SetOptions(const GMAD::Options& opt,
       exit(1);
     }
   
-  xBunch = BDSBunchFactory::CreateBunch(xType, opt, beamlineTransformIn);
-  yBunch = BDSBunchFactory::CreateBunch(yType, opt, beamlineTransformIn);
-  zBunch = BDSBunchFactory::CreateBunch(zType, opt, beamlineTransformIn);
+  xBunch = BDSBunchFactory::CreateBunch(xType, beam, beamlineTransformIn);
+  yBunch = BDSBunchFactory::CreateBunch(yType, beam, beamlineTransformIn);
+  zBunch = BDSBunchFactory::CreateBunch(zType, beam, beamlineTransformIn);
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

@@ -58,9 +58,9 @@ Requirements
 ============
 
 1) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher.)
-3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
-4) `ROOT`_ framework for output analysis (version 6 recommended)
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher).
+3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_.
+4) `ROOT`_ 6.0 or higher, for output & analysis.
 5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
 6) Flex 2.5.37 or higher
 7) Bison 2.3 or higher
@@ -370,6 +370,8 @@ It is useful to change a few options with Geant4 for practical purposes.
 	    :width: 90%
 	    :align: center
 
+.. tabularcolumns:: |p{7cm}|p{8cm}|
+	       
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
@@ -433,7 +435,7 @@ then be installed ::
 
 Note, if you've specified the directory to install, you will not need the ``sudo``
 command, however, if you've left the settings as default, it'll be installed
-in a colder that requires ``sudo`` permissions such as ``/usr/local/``.
+in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM as this is required for the physics models of Geant4.  This can be done using ::

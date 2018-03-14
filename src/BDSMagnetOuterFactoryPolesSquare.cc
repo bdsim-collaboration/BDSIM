@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
 #include "BDSExtent.hh"
@@ -48,10 +66,11 @@ void BDSMagnetOuterFactoryPolesSquare::CleanUp()
   order = 0;
 }
 
-void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name,
-								   G4double length,
-								   G4int    /*order*/,
-								   G4double magnetContainerLength)
+void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(const G4String& name,
+								   const G4double& length,
+								   const G4int&    /*order*/,
+								   const G4double& magnetContainerLength,
+								   const G4double& magnetContainerRadiusIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -106,11 +125,11 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
 					  containerInner);
 
   magnetContainerSolid = new G4Box(name + "_container_solid", // name
-				   magnetContainerRadius,     // x half length
-				   magnetContainerRadius,     // y half length
+				   magnetContainerRadiusIn,     // x half length
+				   magnetContainerRadiusIn,     // y half length
 				   magnetContainerLength*0.5);// z half length
 
-  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadiusIn, magnetContainerRadiusIn, magnetContainerLength*0.5);
 }
 
 void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
@@ -168,21 +187,32 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   yokeLV->SetVisAttributes(outerVisAttr);
 
   // container
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+
+  magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
+					  worldMaterial,
+					  name + "_container_lv");
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   // user limits
-  for (auto lv : poleLVs)
-    {lv->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());}
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  yokeLV->SetUserLimits(ul);
+  containerLV->SetUserLimits(ul);
+  magnetContainerLV->SetUserLimits(ul);
+  for (auto& lv : poleLVs)
+    {lv->SetUserLimits(ul);}
+  for (auto& lv : allLogicalVolumes)
+    {lv->SetUserLimits(ul);}
 
   // create logical volumes for the coils using base class method
   CreateLogicalVolumesCoil(name);
 }
 
-void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
+void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(const G4String& name,
 						       G4int    orderIn)
 {
 #ifdef BDSDEBUG
@@ -215,7 +245,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
       G4String pvName = name + "_pole_" + std::to_string(n) + "_pv";
       // only need to test the end of one iterator as both should be the same length
       aPlacement = new G4PVPlacement(rm,                 // rotation
-				     (G4ThreeVector)0,   // position
+				     G4ThreeVector(),    // position
 				     poleLVs[n],         // logical volume
 				     pvName,             // name      
 				     containerLV,        // mother lv to be placed in

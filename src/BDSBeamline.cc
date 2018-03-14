@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
@@ -9,7 +27,8 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
-#include "BDSOutputBase.hh"
+#include "BDSOutput.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -87,7 +106,7 @@ void BDSBeamline::PrintMemoryConsumption() const
 
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
-  out << "BDSBeamline with "    << bl.size()           << " elements" << G4endl;
+  out << "Beamline with "       << bl.size()           << " elements" << G4endl;
   out << "Total arc length:   " << bl.totalArcLength   << " mm"       << G4endl;
   out << "Total chord length: " << bl.totalChordLength << " mm"       << G4endl;
 
@@ -103,10 +122,10 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
   // check the sampler name is allowed in the output
-  if (BDSOutputBase::InvalidSamplerName(samplerName))
+  if (BDSOutput::InvalidSamplerName(samplerName))
     {
       G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
-      BDSOutputBase::PrintProtectedNames(G4cerr);
+      BDSOutput::PrintProtectedNames(G4cerr);
       exit(1);
     }
   
@@ -149,9 +168,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 
   // if it's not a transform3d instance, continue as normal
   // interrogate the item
-  G4double      length   = component->GetChordLength();
+  G4double chordLength   = component->GetChordLength();
   G4double      angle    = component->GetAngle();
-  G4bool hasFiniteLength = BDS::IsFinite(length);
+  G4bool hasFiniteLength = BDS::IsFinite(chordLength);
   G4bool hasFiniteAngle  = BDS::IsFinite(angle);
   G4bool hasFiniteTilt, hasFiniteOffset;
   G4ThreeVector offset;
@@ -174,7 +193,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4ThreeVector oFNormal = component->InputFaceNormal();
   
 #ifdef BDSDEBUG
-  G4cout << "chord length                " << length      << " mm"         << G4endl;
+  G4cout << "chord length                " << chordLength << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
   if (tiltOffset)
     {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
@@ -198,7 +217,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
       G4double zSeparation = 0;
-      BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
+      const BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
       // find previous non drift output face.
       G4ThreeVector iFNormal;
       G4String clasherName = "Unknown";
@@ -309,8 +328,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
     {
       previousReferencePositionEnd = back()->GetReferencePositionEnd();
       // leave a small gap for unambiguous geometry navigation. Transform that length
-      // to a unit z vector along the direction of the beam line before this component
-      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      // to a unit z vector along the direction of the beam line before this component.
+      // increase it by sampler length if we're placing a sampler there.
+      G4ThreeVector pad = G4ThreeVector(0,0,paddingLength);
+      if (samplerType != BDSSamplerType::none)
+	{pad += G4ThreeVector(0,0,BDSSamplerPlane::ChordLength());}
+      auto previousReferenceRotationEnd2 = back()->GetReferenceRotationEnd();
+      G4ThreeVector componentGap = pad.transform(*previousReferenceRotationEnd2);
       previousReferencePositionEnd += componentGap;
     }
   
@@ -320,12 +344,12 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       referencePositionStart = previousReferencePositionEnd;
       
       // calculate delta to mid point
-      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
+      G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * chordLength);
       md.transform(*referenceRotationMiddle);
       referencePositionMiddle = referencePositionStart + md;
       // remember the end position is the chord length along the half angle, not the full angle
       // the particle achieves the full angle though by the end position.
-      G4ThreeVector delta = G4ThreeVector(0, 0, length).transform(*referenceRotationMiddle);
+      G4ThreeVector delta = G4ThreeVector(0, 0, chordLength).transform(*referenceRotationMiddle);
       referencePositionEnd = referencePositionStart + delta;
     }
   else
@@ -367,22 +391,18 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // if not the first element in the beamline, get the s position at the end of the previous element
   if (!empty())
     {previousSPositionEnd = back()->GetSPositionEnd();}
-  
+
+  // chord length set earlier
   G4double arcLength   = component->GetArcLength();
-  G4double chordLength = component->GetChordLength();
 
   // integrate lengths
   totalChordLength += chordLength;
   totalArcLength   += arcLength;
 
   // advance s coordinate
-  G4double sPositionStart, sPositionMiddle, sPositionEnd;
-  sPositionStart  = previousSPositionEnd;
-  sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
-  sPositionEnd    = previousSPositionEnd + arcLength;
-
-  // update the global constants
-  BDSGlobalConstants::Instance()->SetSMax(sPositionEnd);
+  G4double sPositionStart  = previousSPositionEnd;
+  G4double sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
+  G4double sPositionEnd    = previousSPositionEnd + arcLength;
 
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
@@ -554,7 +574,7 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y)
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y) const
 {
   // check if s is in the range of the beamline
   if (s > totalArcLength)
@@ -568,7 +588,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   // find element that s position belongs to
   auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
   G4int index = lower - sEnd.begin(); // subtract iterators to get index
-  BDSBeamlineElement* element = beamline[index];
+  const BDSBeamlineElement* element = beamline.at(index);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "S position requested: " << s     << G4endl;
@@ -582,7 +602,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   // difference from centre of element to point in local coords)
   // difference in s from centre, normalised to arcLengh and scaled to chordLength
   // as s is really arc length but we must place effectively in chord length coordinates
-  BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
+  const BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
   G4double arcLength   = component->GetArcLength();
   G4double chordLength = component->GetChordLength();
   G4double dS          = s - element->GetSPositionMiddle();
@@ -623,7 +643,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   return result;
 }
 
-BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
+const BDSBeamlineElement* BDSBeamline::GetPrevious(const BDSBeamlineElement* element) const
 {
   // search for element
   auto result = find(beamline.begin(), beamline.end(), element);
@@ -635,7 +655,7 @@ BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
     {return nullptr;}
 }
 
-BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
+const BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index) const
 {
   if (index < 1 || index > (G4int)(beamline.size()-1))
     {return nullptr;} // invalid index - inc beginning or end
@@ -643,7 +663,7 @@ BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
     {return beamline[index-1];}
 }
 
-BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
+const BDSBeamlineElement* BDSBeamline::GetNext(const BDSBeamlineElement* element) const
 {
   // search for element
   auto result = find(beamline.begin(), beamline.end(), element);
@@ -655,7 +675,7 @@ BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
     {return nullptr;}
 }
 
-BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
+const BDSBeamlineElement* BDSBeamline::GetNext(G4int index) const
 {
   if (index < 0 || index > (G4int)(beamline.size()-2))
     {return nullptr;} // invalid index - inc beginning or end
@@ -668,82 +688,56 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
   // check if base name already registered (can be single component placed multiple times)
   std::map<G4String, BDSBeamlineElement*>::iterator search = components.find(element->GetName());
   if (search == components.end())
-    {
-      // not registered
-      components[element->GetName()] = element;
+    {// not registered
+      components[element->GetPlacementName()] = element;
     }
 }
 
-BDSBeamlineElement* BDSBeamline::GetElement(G4String name) const
+BDSBeamlineElement* BDSBeamline::GetElement(G4String acceleratorComponentName,
+					    G4int    i) const
 {
-  std::map<G4String, BDSBeamlineElement*>::const_iterator search = components.find(name);
+  // build placement name based on acc component name and ith placement
+  // matches construction in BDSBeamlineElement
+  G4String placementName = acceleratorComponentName + "_" + std::to_string(i);
+  const auto search = components.find(placementName);
   if (search == components.end())
-    {//wasn't found
-      return nullptr;
-    }
+    {return nullptr;} //wasn't found
   else
     {return search->second;}
+}
+
+G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentName,
+						  G4int    i) const
+{
+  BDSBeamlineElement* result = GetElement(acceleratorComponentName, i);
+  if (!result)
+    {
+      G4cerr << __METHOD_NAME__ << "No element named \""
+	     << acceleratorComponentName << "\" found for placement number "
+	     << i << G4endl;
+      exit(1);
+    }
+  else
+    {return G4Transform3D(*(result->GetRotationMiddle()), result->GetPositionMiddle());}
 }
 
 void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 {
   // calculate extents for world size determination
-  // project size in global coordinates
-  G4ThreeVector     referencePositionStart = element->GetReferencePositionStart();
-  G4RotationMatrix* referenceRotationStart = element->GetReferenceRotationStart();
-  G4ThreeVector     referencePositionEnd   = element->GetReferencePositionEnd();
-  G4RotationMatrix* referenceRotationEnd   = element->GetReferenceRotationEnd();
-  BDSAcceleratorComponent* component       = element->GetAcceleratorComponent();
-  G4ThreeVector eP                         = component->GetExtentPositive();
-  eP.setZ(0); // we get the z position from the start point, so only need the transverse bits
-  G4ThreeVector eN                         = component->GetExtentNegative();
-  eN.setZ(0); // we get the z position from the start point, so only need the transverse bits
-  G4ThreeVector ePStart                    = G4ThreeVector(eP).transform(*referenceRotationStart);
-  G4ThreeVector eNStart                    = G4ThreeVector(eN).transform(*referenceRotationStart);
-  G4ThreeVector ePEnd                      = G4ThreeVector(eP).transform(*referenceRotationEnd);
-  G4ThreeVector eNEnd                      = G4ThreeVector(eN).transform(*referenceRotationEnd);
-  G4ThreeVector extentposStart             = referencePositionStart + ePStart;
-  G4ThreeVector extentnegStart             = referencePositionStart + eNStart;
-  G4ThreeVector extentposEnd               = referencePositionEnd   + ePEnd;
-  G4ThreeVector extentnegEnd               = referencePositionEnd   + eNEnd;
- 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "start position (global):       " << referencePositionStart << G4endl;
-  G4cout << "end position (global):         " << referencePositionEnd   << G4endl;
-  G4cout << "local extent +ve:              " << eP                     << G4endl;
-  G4cout << "local extent -ve:              " << eN                     << G4endl;
-  G4cout << "extent +ve at start in global: " << ePStart                << G4endl;
-  G4cout << "extent -ve at start in global: " << eNStart                << G4endl;
-  G4cout << "extent +ve at end in global:   " << ePEnd                  << G4endl;
-  G4cout << "extent -ve at end in global:   " << eNEnd                  << G4endl;
-  G4cout << "current global extent +ve:     " << maximumExtentPositive  << G4endl;
-  G4cout << "current global extent -ve:     " << maximumExtentNegative  << G4endl;
-#endif
-  
-  // loop over each size and compare to cumulative extent
-  // do this at the start and end to be sure for long components
-  // start
-  for (int i=0; i<3; i++)
+  // get the boundary points in global coordinates.
+  BDSExtentGlobal extG = element->GetExtentGlobal();
+  const auto boundaryPoints = extG.AllBoundaryPointsGlobal();
+
+  // expand maximums based on the boundary points.
+  for (const auto& point : boundaryPoints)
     {
-      if (extentposStart[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentposStart[i];}
-      if (extentnegStart[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentnegStart[i];}
-    }
-  // end
-  for (int i=0; i<3; i++)
-    {
-      if (extentposEnd[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentposEnd[i];}
-      if (extentnegEnd[i] < maximumExtentNegative[i])
-	{maximumExtentNegative[i] = extentnegEnd[i];}
-    }
-  // end comparing negative extents with positive world just in case
-  for (int i=0; i<3; i++)
-    {
-      if (extentnegEnd[i] > maximumExtentPositive[i])
-	{maximumExtentPositive[i] = extentnegEnd[i];}
+      for (int i = 0; i < 3; ++i)
+	{
+	  if (point[i] > maximumExtentPositive[i])
+	    {maximumExtentPositive[i] = point[i];}
+	  if (point[i] < maximumExtentNegative[i])
+	    {maximumExtentNegative[i] = point[i];}
+	}
     }
 #ifdef BDSDEBUG
   G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;

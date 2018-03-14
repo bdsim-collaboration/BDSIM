@@ -1,11 +1,8 @@
 option, beampipeRadius = 10 * cm,
-        boxSize = 1.9 * m,
+	outerDiameter = 1.9 * m,
         tunnelRadius= 2.0 * m,
         beampipeThickness   = 0.5 * cm,
-        thresholdCutCharged = 0.001 * GeV,
-        thresholdCutPhotons = 0.001 * GeV,
         samplerDiameter = 4.0*m,
         elossHistoBinWidth  = 0.1,
-        stopTracks = 1,
 	physicsList="em",
 	ngenerate=1;

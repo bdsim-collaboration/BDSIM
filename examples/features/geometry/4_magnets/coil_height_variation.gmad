@@ -1,0 +1,40 @@
+! This example is designed to test the vertical to horizontal ratio scaling
+! of the poled geometry.
+
+! This should be included in a contcrete example and define a basic element
+! called 'el'.
+
+! control beam pipe radius
+option, beampipeRadius=4*cm,
+	beampipeThickness = 1.5*mm;
+
+! too small - should coerce
+m1: el, l=0.5*m, coilHeightFraction=0.01;
+
+! small
+m2: m1, coilHeightFraction=0.1;
+
+! small but sensible
+m3: m1, coilHeightFraction=0.3;
+
+! another step up
+m4: m1, coilHeightFraction=0.6;
+
+! reaonable size
+m5: m1, coilHeightFraction=0.9;
+
+! too big - should coerce
+m6: m1, coilHeightFraction=1.1;
+
+d1: drift, l=0.5*m;
+
+l1: line = (d1,m1,d1,m2,d1,m3,d1,m4,d1,m5,d1,m6,d1);
+
+use, l1;
+
+option, checkOverlaps=1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, samplerDiameter=1.5*m;

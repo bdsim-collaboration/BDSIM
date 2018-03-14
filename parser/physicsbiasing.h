@@ -41,11 +41,11 @@ namespace GMAD
     void print()const;
 
     /// set methods by property name, numeric values
-    void set_value(std::string property, double value);
+    void set_value(const std::string& property, double value);
     /// set methods by property name, list of numeric values
-    void set_value(std::string property, Array* value);
+    void set_value(const std::string& property, Array* value);
     /// set methods by property name, string values
-    void set_value(std::string property, std::string value);
+    void set_value(const std::string& property, std::string value);
   };
 
 }

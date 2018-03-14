@@ -47,6 +47,8 @@ namespace GMAD
     /// option to check for unique element name (exits in case name is not unique), false by default
     void push_back(const T& el, bool unique=false);
 
+    inline bool empty() const {return itsList.empty();} ///< Whether the list is empty.
+    
     /// size of list
     int size()const;
     /// empty lists
@@ -117,8 +119,8 @@ namespace GMAD
     std::vector<FastListIterator> listIterators;
     for (FastMapIterator it = itPair.first; it != itPair.second; ++it)
       {
-	FastListIterator listIt = itsList.insert(it->second,val);
-	listIterators.push_back(listIt);
+        FastListIterator listIt = itsList.insert(it->second,val);
+        listIterators.push_back(listIt);
       }
     for (FastListIterator it : listIterators) {
       itsMap.insert(std::pair<std::string,FastListIterator>(val.name,it));

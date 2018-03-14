@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSFieldClassType.hh"
 
@@ -41,6 +59,16 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::skewsextupole:
     case BDSFieldType::skewoctupole:
     case BDSFieldType::skewdecapole:
+    case BDSFieldType::multipoleouterdipole:
+    case BDSFieldType::multipoleouterquadrupole:
+    case BDSFieldType::multipoleoutersextupole:
+    case BDSFieldType::multipoleouteroctupole:
+    case BDSFieldType::multipoleouterdecapole:
+    case BDSFieldType::skewmultipoleouterquadrupole:
+    case BDSFieldType::skewmultipoleoutersextupole:
+    case BDSFieldType::skewmultipoleouteroctupole:
+    case BDSFieldType::skewmultipoleouterdecapole:
+    case BDSFieldType::multipoleouterdipole3d:
       {return BDSFieldClassType::magnetic;}
     case BDSFieldType::ezero:
     case BDSFieldType::emap1d:

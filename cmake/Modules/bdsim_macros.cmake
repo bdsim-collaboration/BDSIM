@@ -63,6 +63,17 @@ MACRO(COPY_EXAMPLES)
   ENDFOREACH(file)
 ENDMACRO(COPY_EXAMPLES)
 
+macro(copy_gdml_to_build)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} ls-files --full-name ${CMAKE_SOURCE_DIR}/src-external/gdml/schema
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE git_file_list)
+  separate_arguments(in_file_list UNIX_COMMAND "${git_file_list}")
+  FOREACH(file ${in_file_list})
+    configure_file(${CMAKE_SOURCE_DIR}/${file} ${CMAKE_BINARY_DIR}/${file} COPYONLY)
+  ENDFOREACH(file)
+ENDMACRO(copy_gdml_to_build)
+
 # basic copy routine for examples in case we have no git support
 MACRO(COPY_EXAMPLES_NO_GIT)
   message(STATUS "Copying example directory")

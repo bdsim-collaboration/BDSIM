@@ -1,0 +1,5 @@
+if (USE_GZSTREAM)
+  simple_testing(field-poisson-quad   "--file=1_quad_field.gmad" "")
+  simple_testing(field-poisson-dipole "--file=2_dipole_reflected.gmad" "")
+  simple_testing(field-autoscale      "--file=3_autoscale.gmad" "")
+endif()

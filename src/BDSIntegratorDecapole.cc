@@ -1,7 +1,26 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSIntegratorDecapole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
@@ -19,6 +38,7 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
   bQuadruplePrime = brho * (*strength)["k4"] / (CLHEP::m3*CLHEP::m2);
+  zeroStrength = !BDS::IsFinite(bQuadruplePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;
 #endif
@@ -26,7 +46,8 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 
 void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 					 G4double        h,
-					 G4double        yOut[])
+					 G4double        yOut[],
+                     G4double        yErr[])
 {
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double momMag   = mom.mag();
@@ -34,7 +55,7 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 
   if(std::abs(kappa)<1.e-20)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -72,5 +93,5 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
   localA *= kappa / 24; // 24 is actually a 4! factor.;
   
   AdvanceChord(h,localPos,localMomUnit,localA);
-  ConvertToGlobal(localPos, localMomUnit, yOut, momMag);
+  ConvertToGlobal(localPos, localMomUnit, yOut, yErr, momMag);
 }

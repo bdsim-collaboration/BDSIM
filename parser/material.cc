@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "material.h"
 
 #include "array.h"
@@ -56,7 +74,7 @@ void Material::print()const
 }
 
 // template specialisation for Array pointers, to be merged into templated function
-void Material::set_value(std::string property, Array* value)
+void Material::set_value(const std::string& property, Array* value)
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;

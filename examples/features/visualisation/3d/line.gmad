@@ -4,9 +4,7 @@
 option, beampipeRadius = 15 * cm,
         boxSize = 1.0 * m,
         tunnelRadius= 1.0 * m,
-        beampipeThickness = 0.1 * cm,
-        thresholdCutCharged = 1 * MeV,
-        thresholdCutPhotons = 10 * KeV;
+        beampipeThickness = 0.1 * cm;
 
 ! beamline definiton
 

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
@@ -140,9 +158,9 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 					       G4Material* tunnelSoilMaterial)
 {  
   // build logical volumes
-  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
   
   tunnelLV    = new G4LogicalVolume(tunnelSolid,
@@ -197,7 +215,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container & read out
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
 void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
@@ -250,7 +268,7 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
 
 void BDSTunnelFactoryBase::SetUserLimits()
 {
-  auto tunnelUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto tunnelUserLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
   if (soilLV)

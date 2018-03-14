@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSMAGNETOUTERFACTORY_H
 #define BDSMAGNETOUTERFACTORY_H
 
@@ -47,9 +65,12 @@ private:
   /// Get the appropriate derived factory for the required magnet style.
   BDSMagnetOuterFactoryBase* GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn);
 
-  BDSMagnetOuter* CreateExternal(G4String            name,
+  /// Create the magnet yoke from externally provided geometry and create a
+  /// suitable magnet container solid.
+  BDSMagnetOuter* CreateExternal(const G4String&     name,
 				 BDSMagnetOuterInfo* info,
-				 G4double            length,
+				 const G4double&     length,
+				 const G4double&     magnetContainerLength,
 				 BDSBeamPipe*        beampipe);
 
   /// Create a container based on an external geometry component. Exists here as the

@@ -1,7 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSBEAMLINEELEMENT_H
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSExtent.hh"
+#include "BDSExtentGlobal.hh"
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -71,6 +91,7 @@ public:
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
   inline G4double          GetAngle()                     const {return component->GetAngle();}
   inline BDSBeamPipeInfo*  GetBeamPipeInfo()              const {return component->GetBeamPipeInfo();}
+  inline BDSExtent         GetExtent()                    const {return component->GetExtent();}
   inline G4String          GetPlacementName()             const {return placementName;}
   inline G4int             GetCopyNo()                    const {return copyNumber;}
   inline G4LogicalVolume*  GetContainerLogicalVolume()    const {return component->GetContainerLogicalVolume();}
@@ -91,12 +112,15 @@ public:
   inline G4double          GetSPositionEnd()              const {return sPositionEnd;}
   inline BDSTiltOffset*    GetTiltOffset()                const {return tiltOffset;}
   inline G4Transform3D*    GetPlacementTransform()        const {return placementTransform;}
-  inline G4Transform3D*    GetReadOutPlacementTransform() const {return readOutPlacementTransform;}
+  inline G4Transform3D*    GetPlacementTransformCL()      const {return placementTransformCL;}
   inline BDSSamplerType    GetSamplerType()               const {return samplerType;}
   inline G4String          GetSamplerName()               const {return samplerName;}
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
   inline G4int             GetIndex()                     const {return index;}
   ///@}
+
+  /// Create a global extent object from the extent of the component.
+  BDSExtentGlobal GetExtentGlobal() const;
 
   /// @{ Return face normal accounting for placement tilt of this component.
   G4ThreeVector InputFaceNormal()  const;
@@ -116,15 +140,18 @@ public:
   inline void SetReferenceRotationEnd(G4RotationMatrix* newReferenceRotatonEnd);
   ///@}
 
-  /// output stream
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &element);
+
+  /// Whether this beam line element will oerlaps in 3D Cartesian coordinates with another.
+  G4bool Overlaps(const BDSBeamlineElement* otherElement) const;
   
 private:
   /// Private default constructor to force use of provided constructor
   BDSBeamlineElement() = delete;
   BDSBeamlineElement(const BDSBeamlineElement&) = delete;
   BDSBeamlineElement& operator=(const BDSBeamlineElement&) = delete;
-
+    
   /// The accelerator component
   BDSAcceleratorComponent* component;
 
@@ -177,10 +204,10 @@ private:
   G4Transform3D*    placementTransform;
 
   /// Transform made from the referencePositionMiddle and referenceRottationMiddle.
-  /// The read out geometry should always align with the reference trajectory and
-  /// not the possibly offset position of the mass geometry, hence have a separate
-  /// transform for it.
-  G4Transform3D*    readOutPlacementTransform;
+  /// The read out (curvilinear) geometry should always align with the reference
+  /// trajectory and not the possibly offset position of the mass geometry, hence
+  /// have a separate transform for it.
+  G4Transform3D*    placementTransformCL;
 
   /// The type of sampler to attach to this element - could be none as well.
   const BDSSamplerType samplerType;

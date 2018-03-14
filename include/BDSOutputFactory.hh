@@ -1,9 +1,27 @@
-#ifndef BDSBunchFactory_h
-#define BDSBunchFactory_h
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
 
-#include "BDSOutputFormat.hh"
+This file is part of BDSIM.
 
-class BDSOutputBase;
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#ifndef BDSOUTPUTFACTORY_H
+#define BDSOUTPUTFACTORY_H
+
+#include "BDSOutputType.hh"
+
+class BDSOutput;
 
 /**
  * @brief factory class for BDSOutput
@@ -11,11 +29,13 @@ class BDSOutputBase;
  * @author Jochem Snuverink
  */
 
-class BDSOutputFactory {
-
+class BDSOutputFactory
+{
 public:
   /// factory method
-  static BDSOutputBase* CreateOutput(BDSOutputFormat format);
+  static BDSOutput* CreateOutput(BDSOutputType format,
+				 G4String      fileName,
+				 G4int         fileNumberOffset = -1);
 };
 
 #endif

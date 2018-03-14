@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSOUTPUTROOTEVENTTRAJECTORY_H
 #define BDSOUTPUTROOTEVENTTRAJECTORY_H
 
@@ -126,8 +144,8 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(std::vector<BDSTrajectory*> &trajVec);
-  void Fill(BDSEnergyCounterHitsCollection *phc);
+  void Fill(const std::vector<BDSTrajectory*> &trajVec);
+  void Fill(const BDSEnergyCounterHitsCollection* phc);
 #endif
 
   /// Required to find beamline index careful including in streamer.
@@ -167,7 +185,7 @@ public:
   BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);
   std::vector<BDSOutputROOTEventTrajectoryPoint> processHistory(int trackID);
 
-  void print(int trackID);
+  void printTrajectoryInfo(int trackID);
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 

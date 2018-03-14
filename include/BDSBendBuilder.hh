@@ -1,8 +1,30 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSBENDBUILDER_H
 #define BDSBENDBUILDER_H
 
 #include "globals.hh" // geant4 globals / types
+#include "G4String.hh"
+#include "BDSIntegratorSetType.hh"
+#include "BDSIntegratorType.hh"
 
+class BDSAcceleratorComponent;
 class BDSIntegratorSet;
 class BDSLine;
 class BDSMagnet;
@@ -22,28 +44,37 @@ namespace BDS
   /// poleface, the faces of each wedge fade in/out from the poleface to the cental
   /// wedge in the middle. Thin fringefield elements are placed at the beginning and
   /// end of the beamline if required.
-
-  BDSAcceleratorComponent* BuildSBendLine(const GMAD::Element*    element,
+  BDSAcceleratorComponent* BuildSBendLine(const G4String&         elementName,
+					  const GMAD::Element*    element,
 					  BDSMagnetStrength*      st,
 					  const G4double          brho,
-					  const BDSIntegratorSet* integratorSet);
+					  const BDSIntegratorSet* integratorSet,
+					  const G4double&         incomingFaceAngle,
+					  const G4double&         outgoingFaceAngle,
+					  const G4bool&           buildFringeFields,
+					  const GMAD::Element*    prevElement,
+					  const GMAD::Element*    nextElement);
   
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.
-  BDSLine* BuildRBendLine(const GMAD::Element*    element,
+  BDSLine* BuildRBendLine(const G4String&         elementName,
+			  const GMAD::Element*    element,
 			  const GMAD::Element*    prevElement,
 			  const GMAD::Element*    nextElement,
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
-			  const BDSIntegratorSet* integratorSet);
+			  const BDSIntegratorSet* integratorSet,
+			  const G4double&         incomingFaceAngle,
+			  const G4double&         outgoingFaceAngle,
+			  const G4bool&           buildFringeFields);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(const G4double length,
-				const G4double angle,
-				const G4double e1 = 0,
-				const G4double e2 = 0,
+  G4int CalculateNSBendSegments(const G4double& length,
+				const G4double& angle,
+				const G4double incomingFaceAngle = 0,
+				const G4double outgoingFaceAngle = 0,
 				const G4double aperturePrecision = 1.0);
 
   /// Thin magnet for dipole fringe field.
@@ -56,7 +87,7 @@ namespace BDS
 			       G4double                 brho,
 			       const BDSIntegratorSet*  integratorSet);
 
-  /// Function to return a single secotr bend section.
+  /// Function to return a single sector bend section.
   BDSMagnet* BuildSingleSBend(const GMAD::Element*     element,
 			      const G4String           name,
 			      const G4double           arcLength,
@@ -68,19 +99,18 @@ namespace BDS
 			      const BDSIntegratorSet*  integratorSet,
 			      const G4bool             yokeOnLeft);
   
-  /// Function to calculate the value of the fringe field correction term.
-  G4double CalculateFringeFieldCorrection(G4double rho,
-					  G4double polefaceAngle,
-					  G4double fint,
-  					  G4double hgap);
-
   void UpdateSegmentAngles(const G4int    index,
 			   const G4int    nSBends,
 			   const G4double semiAngle,
-			   const G4double e1,
-			   const G4double e2,
+			   const G4double incomingFaceAngle,
+			   const G4double outgoingFaceAngle,
 			   G4double&      segmentAngleIn,
 			   G4double&      segmentAngleOut);
+
+  /// Function to get the integrator type. Test for finite K1 and returns
+  /// dipole or dipolequadrupole integrator as appropriate.
+  BDSIntegratorType GetDipoleIntegratorType(const BDSIntegratorSet* integratorSet,
+									        const GMAD::Element*          element);
 }
 
 #endif

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
@@ -11,13 +29,13 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
-BDSStackingAction::BDSStackingAction():
-  maxTracksPerEvent(BDSGlobalConstants::Instance()->MaximumTracksPerEvent())
+BDSStackingAction::BDSStackingAction(const BDSGlobalConstants* globals)
 {
-  auto globals = BDSGlobalConstants::Instance();
   killNeutrinos     = globals->KillNeutrinos();
   stopSecondaries   = globals->StopSecondaries();
-  stopTracks        = globals->StopTracks();
+  maxTracksPerEvent = globals->MaximumTracksPerEvent();
+  if (maxTracksPerEvent == 0) // 0 is default -> no action - set maximum possible number
+    {maxTracksPerEvent = LONG_MAX;}
 }
 
 BDSStackingAction::~BDSStackingAction()
@@ -41,8 +59,8 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
     BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
 #endif
 
-  // '0' is default -> no action
-  if (maxTracksPerEvent > 0 && (aTrack->GetTrackID() > maxTracksPerEvent))
+  // default -> no action
+  if (aTrack->GetTrackID() > maxTracksPerEvent)
     {return fKill;}
 
   // Kill all neutrinos
@@ -54,32 +72,9 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
     }
 
   // kill secondaries
-  if(stopSecondaries && (aTrack->GetParentID() > 0) )
+  if(stopSecondaries && (aTrack->GetParentID() > 0))
     {return fKill;}
-  
-  if(stopTracks) // if tracks killed after interaction
-    {
-      G4int parentID = aTrack->GetParentID();
-      // note this definition getter will be deprecated in G4 soon.
-      G4ParticleDefinition* definition = aTrack->GetDefinition();
-      // kill secondary electrons      
-      if( (parentID > 0) && (definition == G4Electron::ElectronDefinition() ) )
-	{return fKill;}
-      
-      // kill secondary photons      
-      if( (parentID > 0) && (definition == G4Gamma::GammaDefinition()))
-	{return fKill;}
-      
-      // kill secondary positrons
-      if((parentID > 0) && (definition == G4Positron::PositronDefinition()))
-	{return fKill;}
-
-      // kill secondary protons/antiprotons
-      if( (parentID > 0) && 
-	  ( (definition == G4Proton::ProtonDefinition() ) ||
-	    (definition == G4AntiProton::AntiProtonDefinition()) ) )
-	{return fKill;}
-    }
+    
   return classification;
 }
 

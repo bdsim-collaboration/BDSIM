@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAwakeMultilayerScreen.hh"
 
 #include <cmath>
@@ -12,27 +30,27 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
-						   G4double thickness,
-						   G4double windowScreenGap,
-						   G4double dgrain,
-						   G4double windowThickness,
-						   G4String windowMaterial,
-						   G4double mountThickness,
-						   G4String mountMaterial,
-						   G4double width,
-                                                   G4double height):
-  BDSMultilayerScreen(G4TwoVector(width, height), "AwakeMultilayerScreen"),
-  _material(material),
-  _thickness(thickness),
-  _windowScreenGap(windowScreenGap),
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String materialIn,
+						   G4double thicknessIn,
+						   G4double windowScreenGapIn,
+						   G4double dgrainIn,
+						   G4double windowThicknessIn,
+						   G4String windowMaterialIn,
+						   G4double mountThicknessIn,
+						   G4String mountMaterialIn,
+						   G4double widthIn,
+                                                   G4double heightIn):
+  BDSMultilayerScreen(G4TwoVector(widthIn, heightIn), "AwakeMultilayerScreen"),
+  _material(materialIn),
+  _thickness(thicknessIn),
+  _windowScreenGap(windowScreenGapIn),
   _gapWidth(0),
   _gapSpacing(0),
-  _dgrain(dgrain),
-  _windowThickness(windowThickness),
-  _windowMaterial(windowMaterial),
-  _mountThickness(mountThickness),
-  _mountMaterial(mountMaterial),
+  _dgrain(dgrainIn),
+  _windowThickness(windowThicknessIn),
+  _windowMaterial(windowMaterialIn),
+  _mountThickness(mountThicknessIn),
+  _mountMaterial(mountMaterialIn),
   _layerThickness(0),
   _binderLayerThickness(0)
 {

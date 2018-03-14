@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "element.h"
 #include "elementtype.h"
 #include "parameters.h"
@@ -46,6 +64,8 @@ void Element::PublishMembers()
   publish("e2",   &Element::e2);
   publish("fint", &Element::fint);
   publish("fintx",&Element::fintx);
+  publish("fintK2", &Element::fintK2);
+  publish("fintxK2",&Element::fintxK2);
   publish("hgap", &Element::hgap);
   publish("kick", &Element::kick);
   publish("hkick",&Element::hkick);
@@ -59,13 +79,15 @@ void Element::PublishMembers()
   publish("tOffset",   &Element::tOffset);
   
   publish("beampipeThickness",&Element::beampipeThickness);
-  publish("aper",&Element::aper1);
+  publish("aper1",    &Element::aper1);
+  publish("aper",     &Element::aper1);
   alternativeNames["aper"] = "aper1";
   publish("aperture", &Element::aper1);
   alternativeNames["aperture"] = "aper1";
-  publish("aper1",    &Element::aper1);
   publish("aperture1",&Element::aper1);
   alternativeNames["aperture1"] = "aper1";
+  publish("beampipeRadius",&Element::aper1);
+  alternativeNames["beampipeRadius"] = "aper1";
   publish("aper2",    &Element::aper2);
   publish("aperture2",&Element::aper2);
   alternativeNames["aperture2"] = "aper2";
@@ -100,6 +122,8 @@ void Element::PublishMembers()
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
   publish("fieldAll",    &Element::fieldAll);
+  publish("bmap",        &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
   publish("waveLength",&Element::waveLength);
 
   // screen
@@ -126,12 +150,17 @@ void Element::PublishMembers()
   publish("materialThickness",&Element::materialThickness);
   publish("degraderOffset",&Element::degraderOffset);
 
-  publish("geometry",&Element::geometryFile);
-  publish("bmap",    &Element::fieldAll);
-  alternativeNames["bmap"] = "fieldAll";
+  publish("geometryFile",&Element::geometryFile);
+  publish("geometry",    &Element::geometryFile);
+  alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
+ 
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
+  publish("hStyle",       &Element::hStyle);
+  publish("vhRatio",      &Element::vhRatio);
+  publish("coilWidthFraction",  &Element::coilWidthFraction);
+  publish("coilHeightFraction", &Element::coilHeightFraction);
   publish("apertureType",&Element::apertureType);
   publish("magnetGeometryType",&Element::magnetGeometryType);
   publish("beampipeMaterial",&Element::beampipeMaterial);
@@ -304,7 +333,9 @@ void Element::flush()
   e1 = 0;
   e2 = 0;
   fint = 0;
-  fintx = 0;
+  fintx = -1;
+  fintK2 = 0;
+  fintxK2 = 0;
   hgap  = 0;
   kick  = 0;
   hkick = 0;
@@ -339,6 +370,10 @@ void Element::flush()
   outerMaterial = "";
   outerDiameter = 0;
   yokeOnInside  = true;
+  hStyle             = -1;
+  vhRatio            = -1;
+  coilWidthFraction  = -1;
+  coilHeightFraction = -1; // signifies use default in factory
   
   tilt = 0;
   xsize = 0;

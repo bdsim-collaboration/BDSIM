@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSUTILITIES_H
 #define BDSUTILITIES_H
 
@@ -51,6 +69,9 @@ namespace BDS
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
 
+  /// Check if directory exists.
+  G4bool DirectoryExists(G4String path);
+
   /// Get the current dir the program was executed from.
   std::string GetCurrentDir();
   
@@ -65,6 +86,17 @@ namespace BDS
   /// getFullPath(filename,true) + filename 
   /// will return the absolute filename path
   G4String GetFullPath(G4String filename, bool excludeNameFromPath=false);
+
+  /// Split a full file path into the path and file components. The path
+  /// ends with '/'.
+  void SplitPathAndFileName(const G4String& filePath,
+			    G4String& path,
+			    G4String& filename);
+
+  /// Split a filename.ext into filename and extension. Extension includes '.'.
+  void SplitFileAndExtention(const G4String& fileName,
+			     G4String&       file,
+			     G4String&       extension);
 
   /// Try to catch abort signals. This is not guaranteed to work.
   /// Main goal is to close output stream / files.
@@ -91,6 +123,11 @@ namespace BDS
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
+
+  /// Check if the optional G4PARTICLEHPDATA exists in the environment for ions.
+  /// Will print out error and exit if no variable found. Physics list argument
+  /// used for feedback purposes.
+  void CheckLowEnergyDataExists(G4String physicsListName);
     
   ///@{ Get parameter value from the specification ('spec') string
   G4double GetParameterValueDouble(G4String spec, G4String name);
@@ -136,9 +173,12 @@ namespace BDS
   /// Create a user limits instance based on a default with a new step length limit
   /// of the length parameter. Check the max step length in the defaultUL and use
   /// the shorter of the two. Note the G4UserLimits instance is not const although
-  /// it could be as the accessors in that class are not const.
+  /// it could be as the accessors in that class are not const. Fraction is the fraction
+  /// of the length that max step will be because if it's exactly the length of an object,
+  /// it can prove problematic to resolve the outgoing surface - better to give some margin.
   G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
-				 const G4double length);
+				 const G4double length,
+				 const G4double fraction = 1.6);
 }
 
 #endif

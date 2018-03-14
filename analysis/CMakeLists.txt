@@ -1,17 +1,19 @@
+# option to turn event display, and therefore dependency on ROOT EVE libraries off or on.
+option( USE_EVENTDISPLAY "Use event display - requires ROOT EVE libraries." ON )
+
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
 # Remove mains from dictionary
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/edbdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOptics.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimOrbit.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsimCombine.cc)
 
-file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
-
-# For ROOT 5 there is no event display.
-if (${ROOT_MAJOR_VERSION} STREQUAL "5")
-   list(REMOVE_ITEM rebdsimLibSources  ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
-   list(REMOVE_ITEM rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)
+if (NOT USE_EVENTDISPLAY)
+  list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
+  list(REMOVE_ITEM rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
 endif()
 
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -33,78 +35,63 @@ foreach(header ${rebdsimLibLinkDefs})
     MATH(EXPR beginpos "${dir}+1")
     MATH(EXPR length "${pos}-${beginpos}")
     string(SUBSTRING ${header} ${beginpos} ${length} className)
-    if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-        # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
-        # root6 .pcm file needs to be at library level
-        # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
-        add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-                COMMAND ${ROOTCINT_EXECUTABLE}
-                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths -inlineInputHeader
-                ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include
-                -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                COMMENT "Generate ROOT Dictionary for ${className}"
-        )
-        # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
-        set_property(
-                SOURCE ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
-        )
 
-        # keep list of ROOT pcms
-        set(rebdsim_pcms ${rebdsim_pcms} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm)
-    else()
-        # ROOT 5
-        add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.h
-                COMMAND ${ROOTCINT_EXECUTABLE}
-                ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -c -p
-                ${PREPROCESSOR_DEFS}
-		-I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_SOURCE_DIR}
-                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
-                COMMENT "Generate ROOT Dictionary for ${className}"
-        )
-    endif()
+    # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
+    # root6 .pcm file needs to be at library level
+    # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+            COMMAND ${ROOTCINT_EXECUTABLE}
+            ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc -noIncludePaths -inlineInputHeader
+            ${PREPROCESSOR_DEFS} -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/include
+            -I${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+            IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+            COMMENT "Generate ROOT Dictionary for ${className}"
+    )
+    # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
+    set_property(
+            SOURCE ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
+            APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+    )
+     # keep list of ROOT pcms
+    set(rebdsim_pcms ${rebdsim_pcms} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm)
+
     set(rebdsimLibSources ${rebdsimLibSources} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc)
 endforeach()
 
 
-add_library(rebdsimLib SHARED ${rebdsimLibSources})
-target_link_libraries(rebdsimLib bdsimRootEvent)
+add_library(rebdsim SHARED ${rebdsimLibSources})
+target_link_libraries(rebdsim bdsimRootEvent)
 
-add_executable(rebdsim rebdsim.cc)
-set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
+add_executable(rebdsimexec rebdsim.cc)
+set_target_properties(rebdsimexec PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimexec rebdsim bdsimRootEvent)
+
+add_executable(rebdsimCombineExec rebdsimCombine.cc)
+set_target_properties(rebdsimCombineExec PROPERTIES OUTPUT_NAME "rebdsimCombine" VERSION ${BDSIM_VERSION})
+target_link_libraries(rebdsimCombineExec rebdsim bdsimRootEvent)
+bdsim_install_targets(rebdsimCombineExec)
 
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOptics rebdsimLib bdsimRootEvent)
+target_link_libraries(rebdsimOptics rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimOptics)
 
 add_executable(rebdsimOrbit rebdsimOrbit.cc)
 set_target_properties(rebdsimOrbit PROPERTIES OUTPUT_NAME "rebdsimOrbit" VERSION ${BDSIM_VERSION})
-target_link_libraries(rebdsimOrbit rebdsimLib bdsimRootEvent)
+target_link_libraries(rebdsimOrbit rebdsim bdsimRootEvent)
 bdsim_install_targets(rebdsimOrbit)
 
-if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-	add_executable(edbdsim edbdsim.cc)
-	set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-	target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
-	target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
-	#message(STATUS ${ROOT_EVELIBRARIES})
-	# Installation
-	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+if (USE_EVENTDISPLAY)
+  add_executable(edbdsim edbdsim.cc)
+  set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+  target_link_libraries(edbdsim rebdsim ${ROOT_EVELIBRARIES})
+  target_link_libraries(rebdsim ${ROOT_EVELIBRARIES})
+  # Installation
+  bdsim_install_targets(rebdsimexec edbdsim rebdsim)
 else()
-	# ROOT 5 - EVE parts are not compatible with ROOT5 - turn off.
-	message(STATUS "ebdsim is not compatible with ROOT V5 - not compiling")
-	
-	# Installation
-	bdsim_install_targets(rebdsim rebdsimLib)
+  bdsim_install_targets(rebdsimexec rebdsim)
 endif()
 
 # Install pcms
@@ -119,6 +106,10 @@ file(GLOB rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
 foreach(header ${rebdsimLibLinkDefs})
   list(REMOVE_ITEM rebdsimHeaders ${header})
 endforeach()
+if (NOT USE_EVENTDISPLAY)
+  list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.hh)
+  list(REMOVE_ITEM rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)	
+endif()
 bdsim_install_analysis_headers(${rebdsimHeaders})
 #message(STATUS "rebdsimHeaders ${rebdsimHeaders}")
 

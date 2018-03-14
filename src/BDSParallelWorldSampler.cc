@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
@@ -22,8 +40,9 @@
 #include <vector>
 
 
-BDSParallelWorldSampler::BDSParallelWorldSampler():
-  G4VUserParallelWorld("SamplerWorld"),
+BDSParallelWorldSampler::BDSParallelWorldSampler(G4String name):
+  G4VUserParallelWorld("SamplerWorld_" + name),
+  suffix(name),
   samplerWorldVis(nullptr)
 {;}
 
@@ -44,13 +63,13 @@ void BDSParallelWorldSampler::Construct()
   G4VPhysicalVolume* samplerWorld   = GetWorld();
   G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
 
-  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->VisibleDebugVisAttr()));
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
-  const G4double samplerR    = 0.5* BDSGlobalConstants::Instance()->SamplerDiameter();
-  BDSBeamline* beamline      = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  const G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+  const G4double samplerR     = 0.5*BDSGlobalConstants::Instance()->SamplerDiameter();
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+  const G4bool checkOverlaps  = BDSGlobalConstants::Instance()->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
   BDSSamplerPlane* generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);

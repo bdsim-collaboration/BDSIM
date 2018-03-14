@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSFIELDMAGDIPOLE_H
 #define BDSFIELDMAGDIPOLE_H
 
@@ -21,9 +39,13 @@ class BDSMagnetStrength;
 class BDSFieldMagDipole: public BDSFieldMag
 {
 public:
-  BDSFieldMagDipole(BDSMagnetStrength const* strength,
-		   G4double          const  brho,
-		   G4ThreeVector unitDirection = G4ThreeVector(0,1,0));
+  /// Initialise with field of correct magnitude and direction.
+  BDSFieldMagDipole(const G4ThreeVector& field);
+
+  /// This constructor uses bx, by and bz from the strength to form a unit vector,
+  /// however if these are all 0 and 'field' is finite (in strength), then a field
+  /// along unit y with strength 'field' is provided.
+  BDSFieldMagDipole(const BDSMagnetStrength* strength);
 
   virtual ~BDSFieldMagDipole(){;}
 

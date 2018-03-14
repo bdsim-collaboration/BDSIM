@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "parser.h"
 
 #include <cmath>
@@ -119,13 +137,12 @@ void Parser::ParseFile(FILE *f)
     {
       yyparse();
     }
-
+  
+  expand_sequences();
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> finished to parsing file" << std::endl;
 #endif
-
   // clear temporary stuff
-
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
@@ -211,10 +228,6 @@ void Parser::quit()
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
-#ifdef BDSDEBUG 
-  std::cout << "k1=" << params.k1 << ", k2=" << params.k2 << ", k3=" << params.k3 << ",type=" << typestr(type) << std::endl;
-#endif
-
   Element e;
   e.set(params,*name,type);
   if (isLine)
@@ -223,13 +236,32 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       allocated_lines.push_back(e.lst);
       // clean list
       tmp_list.clear();
+      sequences.push_back(*name); // append to all sequence definitions
     }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
 }
 
+void Parser::expand_sequences()
+{
+  for (const auto& name : sequences)
+    {
+      FastList<Element>* newLine = new FastList<Element>();
+      expand_line(*newLine, name);
+      expandedSequences[name] = newLine;
+    }
+}
+
 void Parser::expand_line(const std::string& name, std::string start, std::string end)
+{
+  expand_line(beamline_list, name, start, end);
+}
+
+void Parser::expand_line(FastList<Element>& target,
+                         const std::string& name,
+                         std::string        start,
+                         std::string        end)
 {
   const Element& line = find_element(name);
   if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
@@ -237,19 +269,17 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
     exit(1);
   }
 
-  // delete the previous beamline
-  
-  beamline_list.clear();
+  // delete the previous beamline  
+  target.clear();
   
   // expand the desired beamline
-  
   Element e;
   e.type = line.type;
   e.name = name;
   e.l = 0;
   e.lst = nullptr;
   
-  beamline_list.push_back(e);
+  target.push_back(e);
 
 #ifdef BDSDEBUG 
   std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
@@ -263,13 +293,13 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
   // copy the list into the resulting list
   switch(line.type){
   case ElementType::_LINE:
-    beamline_list.insert(beamline_list.end(),sit,eit);
+    target.insert(target.end(),sit,eit);
     break;
   case ElementType::_REV_LINE:
-    beamline_list.insert(beamline_list.end(),line.lst->rbegin(),line.lst->rend());
+    target.insert(target.end(),line.lst->rbegin(),line.lst->rend());
     break;
   default:
-    beamline_list.insert(beamline_list.end(),sit,eit);
+    target.insert(target.end(),sit,eit);
   }
   // bool to check if beamline is fully expanded
   bool is_expanded = false;
@@ -280,69 +310,69 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
     {
       is_expanded = true;
       // start at second element
-      std::list<Element>::iterator it = ++beamline_list.begin();
-      for(;it!=beamline_list.end();++it)
-	{
-	  Element& element = *it; // alias
-	  const ElementType& type = element.type;
+      std::list<Element>::iterator it = ++target.begin();
+      for(;it!=target.end();++it)
+        {
+          Element& element = *it; // alias
+          const ElementType& type = element.type;
 #ifdef BDSDEBUG 
-	  std::cout << element.name << " , " << type << std::endl;
+          std::cout << element.name << " , " << type << std::endl;
 #endif
-	  // if list - expand further
-	  if(type != ElementType::_LINE && type != ElementType::_REV_LINE)
-	    {continue;}
-	  is_expanded = false;
-	  // lookup the line in main list
-	  std::list<Element>::const_iterator tmpit = element_list.find(element.name);
-	  std::list<Element>::const_iterator iterEnd = element_list.end();
-	  if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
-	    const Element& list = *tmpit; // alias
+          // if list - expand further
+          if(type != ElementType::_LINE && type != ElementType::_REV_LINE)
+            {continue;}
+          is_expanded = false;
+          // lookup the line in main list
+          std::list<Element>::const_iterator tmpit = element_list.find(element.name);
+          std::list<Element>::const_iterator iterEnd = element_list.end();
+          if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
+            const Element& list = *tmpit; // alias
 #ifdef BDSDEBUG
-	    std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
+            std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
 #endif
-	    if(type == ElementType::_LINE)
-	      beamline_list.insert(it,list.lst->begin(),list.lst->end());
-	    else if(type == ElementType::_REV_LINE){
-	      //iterate over list and invert any sublines contained within. SPM
-	      std::list<Element> tmpList;
-	      tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
-	      for(std::list<Element>::iterator itLineInverter = tmpList.begin();
-		  itLineInverter != tmpList.end(); ++itLineInverter){
-		if((*itLineInverter).type == ElementType::_LINE)
-		  (*itLineInverter).type = ElementType::_REV_LINE;
-		else if ((*itLineInverter).type == ElementType::_REV_LINE)
-		  (*itLineInverter).type = ElementType::_LINE;
-	      }
-	      beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
-	    }
+            if(type == ElementType::_LINE)
+              target.insert(it,list.lst->begin(),list.lst->end());
+            else if(type == ElementType::_REV_LINE){
+              //iterate over list and invert any sublines contained within. SPM
+              std::list<Element> tmpList;
+              tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
+              for(std::list<Element>::iterator itLineInverter = tmpList.begin();
+                  itLineInverter != tmpList.end(); ++itLineInverter){
+                if((*itLineInverter).type == ElementType::_LINE)
+                  (*itLineInverter).type = ElementType::_REV_LINE;
+                else if ((*itLineInverter).type == ElementType::_REV_LINE)
+                  (*itLineInverter).type = ElementType::_LINE;
+              }
+              target.insert(it,tmpList.rbegin(),tmpList.rend());
+            }
 #ifdef BDSDEBUG
-	    std::cout << "inserted" << std::endl;
+            std::cout << "inserted" << std::endl;
 #endif
-	    // delete the list pointer
-	    beamline_list.erase(it--);
-	  } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
-	    //transfer properties from the main list
+            // delete the list pointer
+            target.erase(it--);
+          } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
+            //transfer properties from the main list
 #ifdef BDSDEBUG 
-	    std::cout << "keeping element..." << element.name << std::endl;
+            std::cout << "keeping element..." << element.name << std::endl;
 #endif
-	    // copy properties
-	    element = (*tmpit);
+            // copy properties
+            element = (*tmpit);
 
 #ifdef BDSDEBUG 
-	    std::cout << "done" << std::endl;
+            std::cout << "done" << std::endl;
 #endif
-	  } else { // element of undefined type
-	    std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
-	    exit(1);
-	  }
-	}
+          } else { // element of undefined type
+            std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
+            exit(1);
+          }
+        }
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
-	{
-	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
-		    << "possible recursive line definition, quitting" << std::endl;
-	  exit(1);
-	}
+        {
+          std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
+                    << "possible recursive line definition, quitting" << std::endl;
+          exit(1);
+        }
     }// while
   
   // leave only the desired range
@@ -351,29 +381,35 @@ void Parser::expand_line(const std::string& name, std::string start, std::string
   
   if( !start.empty()) // determine the start element
     {
-      std::list<Element>::const_iterator startIt = beamline_list.find(std::string(start));
+      std::list<Element>::const_iterator startIt = target.find(std::string(start));
       
-      if(startIt!=beamline_list.end())
-	{
-	  beamline_list.erase(beamline_list.begin(),startIt);
-	}
+      if(startIt!=target.end())
+        {target.erase(target.begin(),startIt);}
     }
   
   if( !end.empty()) // determine the end element
     {
-      std::list<Element>::const_iterator endIt = beamline_list.find(std::string(end));
+      std::list<Element>::const_iterator endIt = target.find(std::string(end));
       
-      if(endIt!=beamline_list.end())
-	{
-	  beamline_list.erase(++endIt,beamline_list.end());
-	}
+      if(endIt!=target.end())
+        {target.erase(++endIt,target.end());}
     }
   
   // insert the tunnel if present
   
   std::list<Element>::iterator itTunnel = element_list.find("tunnel");
   if(itTunnel!=element_list.end())
-    beamline_list.push_back(*itTunnel);
+    {target.push_back(*itTunnel);}
+}
+
+const FastList<Element>& Parser::get_sequence(const std::string& name)
+{
+  // search for previously queried beamlines
+  const auto search = expandedSequences.find(name);
+  if (search != expandedSequences.end())
+    {return *(search->second);}
+  else
+    {std::cerr << "parser> no such sequence \"" << name << "\"" << std::endl; exit(1);} 
 }
 
 void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)
@@ -404,24 +440,24 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
 	exit(1);
       }
       for (auto it = itPair.first; it!= itPair.second; ++it) {
-	// if sampler is attached to a marker, really attach it to the previous element with the name of marker
-	auto elementIt = (it->second);
-	std::string samplerName = elementIt->name;
-	if ((*elementIt).type == ElementType::_MARKER) {
-	  // need to find real element before
-	  // but careful not to go beyond first element also!
-	  while ((*elementIt).isSpecial()) {
-	    elementIt--;
-	    // have to break first before continue since in while loop
-	    if (elementIt==beamline_list.begin()) break;
-	  }
+        // if sampler is attached to a marker, really attach it to the previous element with the name of marker
+        auto elementIt = (it->second);
+        std::string samplerName = elementIt->name;
+        if ((*elementIt).type == ElementType::_MARKER) {
+          // need to find real element before
+          // but careful not to go beyond first element also!
+          while ((*elementIt).isSpecial()) {
+            elementIt--;
+            // have to break first before continue since in while loop
+            if (elementIt==beamline_list.begin()) break;
+          }
 	  
-	  if (elementIt==beamline_list.begin()) {
-	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
-	    continue;
-	  }
-	}
-	(*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
+          if (elementIt==beamline_list.begin()) {
+            std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+            continue;
+          }
+        }
+        (*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
       }
     }
   else
@@ -434,15 +470,15 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
       // if sampler is attached to a marker, really attach it to the previous element with the name of marker
       std::string samplerName = (*it).name;
       if ((*it).type == ElementType::_MARKER) {
-	  // need to find real element before
-	  // but careful not to go beyond first element also!
-	while ((*it).isSpecial()) {
-	  it--;
-	  if (it==beamline_list.begin()) {
-	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
-	    return;
-	  }
-	}
+        // need to find real element before
+        // but careful not to go beyond first element also!
+        while ((*it).isSpecial()) {
+          it--;
+          if (it==beamline_list.begin()) {
+            std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+            return;
+          }
+        }
       }
       (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
     }
@@ -587,12 +623,69 @@ void Parser::ClearParams()
   params.flush();
 }
 
-void Parser::OverwriteElement(const std::string& elementName)
+void Parser::Overwrite(const std::string& objectName)
 {
-  Element& element = find_element(elementName);
-  // add and overwrite properties if set
-  element.set(params);
-  ClearParams();
+  // find object and set values
+
+  // possible object types are:
+  // element, atom, field, material, physicsbiasing, placement, query, region, tunnel, cavitymodel
+  bool extended = false;
+  auto element_it = element_list.find(objectName);
+  if (element_it != element_list.end()) {
+    ExtendObject(*element_it);
+    extended = true;
+  } else {
+    auto it = xsecbias_list.find(objectName);
+    if (it != xsecbias_list.end() ) {
+      ExtendObject(*it);
+      extended = true;
+    }
+  }
+  // vectors
+  if (extended == false) {
+    if (      (extended = FindAndExtend<Atom>       (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Field>      (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Material>   (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Placement>  (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Query>      (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Region>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<Tunnel>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<CavityModel>(objectName)) ) {}
+  }
+
+  if (extended==false) {
+    std::cerr << "parser.h> Error: object \"" << objectName << "\" has not been defined and can't be extended." << std::endl;
+    exit(1);
+  }
+
+  // clear maps
+  extendedNumbers.clear();
+  extendedStrings.clear();
+  extendedVectors.clear();
+}
+
+template <class C>
+bool Parser::FindAndExtend(const std::string& objectName)
+{
+  auto vec = GetList<C>();
+  for (auto it = vec.begin(); it!=vec.end(); ++it) {
+    if ((*it).name == objectName) {
+      ExtendObject(*it);
+      return true;
+    }
+  }
+  return false;
+}
+
+template<class C>
+void Parser::ExtendObject(C& object)
+{
+  for (auto option : extendedNumbers)
+    {object.set_value(option.first, option.second);}
+  for (auto option : extendedStrings)
+    {object.set_value(option.first, option.second);}
+  for (auto option : extendedVectors)
+    {object.set_value(option.first, option.second);}
 }
 
 void Parser::AddVariable(std::string* name)
@@ -623,6 +716,9 @@ const FastList<Element>& Parser::GetBeamline()const
 //template specialisation
 // put explicitly in namespace since g++ complains
 namespace GMAD {
+  template<>
+  Beam& Parser::GetGlobal(){return beam;}
+  
   template<>
   Parameters& Parser::GetGlobal(){return params;}
 
@@ -681,5 +777,17 @@ namespace GMAD {
   PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
 
   template<>
-  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
+  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing, FastList<PhysicsBiasing>>(){return xsecbias_list;}
+
+  template<>
+  void Parser::ExtendValue(std::string property, double value)
+  {extendedNumbers[property]=value;}
+
+  template<>
+  void Parser::ExtendValue(std::string property, std::string value)
+  {extendedStrings[property]=value;}
+
+  template<>
+  void Parser::ExtendValue(std::string property, Array* value)
+  {extendedVectors[property]=value;}
 }

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSFIELDTYPE_H
 #define BDSFIELDTYPE_H
 
@@ -7,8 +25,10 @@
 /**
  * @brief Type definition for field formats - 
  * used for comparison in factory methods.
- * 
+ *
+ * dipole   - a uniform field assumed along local unit Y
  * dipole3d - a uniform field specified by a unit vector and field magnitude
+ * multipoleouterdipole3d - orientates itself to follow dipole3d
  * 
  * @author Laurie Nevay
  */
@@ -26,7 +46,13 @@ struct fieldtypes_def
 	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf,
-             dipole3d};
+             dipole3d,
+	     multipoleouterdipole, multipoleouterquadrupole,
+	     multipoleoutersextupole, multipoleouteroctupole,
+	     multipoleouterdecapole,
+	     skewmultipoleouterquadrupole, skewmultipoleoutersextupole,
+	     skewmultipoleouteroctupole, skewmultipoleouterdecapole,
+	     multipoleouterdipole3d};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /* BDSIM code.    
 A scintillator screen.
 Work in progress.  
@@ -23,25 +41,24 @@ Work in progress.
 //#include "UltraFresnelLensParameterisation.hh"
 
 #include "G4Trap.hh"
-//#include "BDSOutputBase.hh"
 
 //============================================================
 BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,
-							G4String material,
-							G4double thickness = 0.3 * CLHEP::mm,
-							G4double windowScreenGap = 0,
+							G4String materialIn,
+							G4double thicknessIn = 0.3 * CLHEP::mm,
+							G4double windowScreenGapIn = 0,
 							G4double angleIn = -45*CLHEP::pi/180.0,
-							G4double windowThickness=0,
-							G4String windowMaterial=""):
+							G4double windowThicknessIn=0,
+							G4String windowMaterialIn=""):
   BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"),
   _mlScreen(nullptr),
   _camera(nullptr),
-  _material(material),
-  _thickness(thickness),
-  _windowScreenGap(windowScreenGap),
+  _material(materialIn),
+  _thickness(thicknessIn),
+  _windowScreenGap(windowScreenGapIn),
   _screenAngle(angleIn),
-  _windowThickness(windowThickness),
-  _windowMaterial(windowMaterial)
+  _windowThickness(windowThicknessIn),
+  _windowMaterial(windowMaterialIn)
 {
   _vacChambType=2;
 
@@ -222,7 +239,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 //void BDSAwakeScintillatorScreen::BuildFresnelLens(){
@@ -298,7 +315,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   
-  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::Build()
@@ -427,7 +444,7 @@ void BDSAwakeScintillatorScreen::BuildContainerLogicalVolume()
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
-  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){

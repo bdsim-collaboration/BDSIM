@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSINTEGRATORKICKERTHIN_H
 #define BDSINTEGRATORKICKERTHIN_H
 
@@ -39,9 +57,6 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorKickerThin() = delete;
 
-  /// Cache of equation of motion. This class does not own it.
-  G4Mag_EqRhs* eqOfM;
-
   /// @{ Cache of variable.
   const G4double hkick;
   const G4double vkick;
@@ -50,10 +65,6 @@ private:
 
   /// Cache of whether input parameters are 0 and therefore whether to kick at all.
   G4bool zeroStrength;
-
-  /// Cache of thin element length from global constants. Initialised via check
-  /// on unphysical -1 value as global constants doesn't exist at compile time.
-  static G4double thinElementLength;
 };
 
 #endif

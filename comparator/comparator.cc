@@ -1,8 +1,28 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /**
  * @file comparator.cc
  */
 
 #include "Compare.hh"
+
+#include "analysis/FileMapper.hh"
 
 #include <cmath>
 #include <iostream>
@@ -20,7 +40,8 @@ enum EXIT_CODE {
   _EXIT_SUCCESS        = 0,
   _EXIT_FAILED         = 1,
   _EXIT_INCORRECT_ARGS = 2,
-  _EXIT_FILE_NOT_FOUND = 3
+  _EXIT_FILE_NOT_FOUND = 3,
+  _EXIT_BAD_FILE       = 4
 };
 
 int main(int argc, char* argv[])
@@ -28,22 +49,21 @@ int main(int argc, char* argv[])
   if(argc != 3)
     { 
       usage();
-      return _EXIT_INCORRECT_ARGS;    
+      return EXIT_CODE::_EXIT_INCORRECT_ARGS;    
     }
 
   // try to open files - check validity
-  TFile *f1 = new TFile(argv[1]);
-  TFile *f2 = new TFile(argv[2]);
-
+  TFile* f1 = new TFile(argv[1]);
+  TFile* f2 = new TFile(argv[2]);
   if(f1->IsZombie())
     {
       std::cout << "error : could not open " << argv[1] << std::endl;    
-      return _EXIT_FILE_NOT_FOUND;
+      return EXIT_CODE::_EXIT_FILE_NOT_FOUND;
     }
   if(f2->IsZombie())
     {
       std::cout << "error : could not open " << argv[2] << std::endl;    
-      return _EXIT_FILE_NOT_FOUND;
+      return EXIT_CODE::_EXIT_FILE_NOT_FOUND;
     }
 
   std::vector<Result*> results = Compare::Files(f1,f2);
@@ -52,10 +72,10 @@ int main(int argc, char* argv[])
   if (!allPassed)
     {
       std::cout << "TESTS_FAILED" << std::endl; // key to look for
-      return _EXIT_FAILED;
+      return EXIT_CODE::_EXIT_FAILED;
     }
   else
-    {return _EXIT_SUCCESS;}
+    {return EXIT_CODE::_EXIT_SUCCESS;}
 }
 
 void usage()

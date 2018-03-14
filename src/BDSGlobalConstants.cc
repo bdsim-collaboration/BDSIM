@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <cstdlib>
 
 #include "BDSGlobalConstants.hh"
@@ -5,20 +23,18 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSIntegratorSetType.hh"
-#include "BDSOutputFormat.hh"
+#include "BDSOutputType.hh"
 #include "BDSParser.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
-#include "G4FieldManager.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
-#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-#include "CLHEP/Units/PhysicalConstants.h"
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "CLHEP/Vector/EulerAngles.h"
 
@@ -27,26 +43,26 @@ BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(instance == nullptr)
-    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions(),
+				       BDSParser::Instance()->GetBeam());}
   return instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
+				       GMAD::Beam&          beamIn):
   options(opt),
+  beam(beamIn),
   beamParticleDefinition(nullptr),
-  beamMomentum(0.0),
-  beamKineticEnergy(0.0),
-  particleMomentum(0.0),
-  particleKineticEnergy(0.0),
-  brho(0.0),
-  sMax(0.0),
   turnsTaken(0)
 {
-  outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
+  ResetTurnNumber();
+  outputType = BDS::DetermineOutputType(options.outputFormat);
 
-  particleName = G4String(options.particleName);
+  particleName = G4String(beam.particleName);
 
   numberToGenerate = G4int(options.nGenerate);
+
+  samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
 
   //beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
@@ -87,16 +103,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsLaserwireDir = G4ThreeVector(1,0,0);
   itsLaserwireTrackPhotons = true;
   itsLaserwireTrackElectrons = true;
-  
-  zeroMagField = new G4UniformMagField(G4ThreeVector());
-  zeroFieldManager=new G4FieldManager();
-  zeroFieldManager->SetDetectorField(zeroMagField);
-  zeroFieldManager->CreateChordFinder(zeroMagField);
 
-  cOverGeV = CLHEP::c_light /CLHEP::GeV;
-
-  CalculateHistogramParameters();
-  
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
@@ -105,6 +112,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
+  
+  BDSSamplerPlane::chordLength = LengthSafety();
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
@@ -134,15 +143,6 @@ void BDSGlobalConstants::InitialiseBeamlineTransform()
   beamlineTransform = G4Transform3D(rm, offset);
 }
 
-void BDSGlobalConstants::CalculateHistogramParameters()
-{
-  // rounding up so last bin definitely covers smax
-  // (max - min) / bin width -> min = 0 here.
-  const G4double binWidth = ElossHistoBinWidth();
-  nBins = (int) ceil(SMax() / binWidth); 
-  sMaxHistograms = nBins * binWidth; // round up to integer # of bins
-}
-
 void BDSGlobalConstants::InitVisAttributes()
 {
   //for vacuum volumes
@@ -163,30 +163,44 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   const G4double maxTime = MaxTime();
   if (maxTime > 0)
     {
-#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Setting maximum tracking time to " << maxTime << " ns" << G4endl;
-#endif
       defaultUserLimits->SetUserMaxTime(maxTime);
     }
   defaultUserLimits->SetMaxAllowedStep(MaxStepLength());
   defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
+  defaultUserLimits->SetUserMinEkine(MinimumKineticEnergy());
+  defaultUserLimits->SetUserMinRange(MinimumRange());
 }
 
-G4int BDSGlobalConstants::PrintModulo()const
+G4int BDSGlobalConstants::PrintModuloEvents() const
 {
   G4int nGenerate = NGenerate();
-  G4double fraction = PrintModuloFraction();
+  G4double fraction = PrintFractionEvents();
   G4int printModulo = (G4int)ceil(nGenerate * fraction);
   if (printModulo < 0)
     {printModulo = 1;}
+
+  if (!Batch())
+    {printModulo = 1;} // interative -> print every event
+  return printModulo;
+}
+
+G4int BDSGlobalConstants::PrintModuloTurns() const
+{
+  G4int nTurns = TurnsToTake();
+  G4double fraction = PrintFractionTurns();
+  G4int printModulo = (G4int)ceil(nTurns * fraction);
+  if (printModulo < 0)
+    {printModulo = 1;}
+
+  if (!Batch())
+    {printModulo = 1;} // interative -> print every turn
   return printModulo;
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete defaultBeamPipeModel;
-  delete zeroFieldManager;
-  delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
   delete invisibleVisAttr;

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef COMPCOMPARE_H
 #define COMPCOMPARE_H
 
@@ -73,7 +91,7 @@ namespace Compare
   /// Loop over results and print any failed ones. Returns true if all passed.
   bool Summarise(std::vector<Result*> results);
 
-  /// Check wether a string is prefixed with another string.
+  /// Check whether a string is prefixed with another string.
   bool StringStartsWith(std::string aString, std::string prefix);
 
   bool IsInVector(std::string key, const std::vector<std::string>& vec);

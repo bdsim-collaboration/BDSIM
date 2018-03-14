@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSMagnetOuterFactoryLHC.hh"
 
 #include "BDSBeamPipe.hh"
@@ -47,8 +65,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      angleIn,
 							   G4double      angleOut,
 							   G4bool        /*yokeOnLeft*/,
+							   G4bool        /*hStyle*/,
 							   G4Material*   outerMaterial,
-							   G4bool        /*buildEndPiece*/)
+							   G4bool        /*buildEndPiece*/,
+							   G4double      /*vhRatio*/,
+							   G4double      /*coilWidthFraction*/,
+							   G4double      /*coilHeightFraction*/)
 
 {
 #ifdef BDSDEBUG
@@ -218,13 +240,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_outer_container_lv");
     
   // coil solids
@@ -842,7 +864,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
@@ -872,11 +894,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
     {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
@@ -923,8 +945,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      angleIn,
 								G4double      angleOut,
 								G4bool        yokeOnLeft,
+								G4bool        hStyle,
 								G4Material*   outerMaterial,
-								G4bool        buildEndPiece)
+								G4bool        buildEndPiece,
+								G4double      vhRatio,
+								G4double      coilWidthFraction,
+								G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -937,8 +963,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     angleIn,
 									     angleOut,
 									     yokeOnLeft,
+									     hStyle,
 									     outerMaterial,
-									     buildEndPiece);
+									     buildEndPiece,
+									     vhRatio,
+									     coilWidthFraction,
+									     coilHeightFraction);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
@@ -1080,13 +1110,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_container_lv");
   
   // coil solids
@@ -1457,7 +1487,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->DefaultBeamPipeModel();
   G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
@@ -1485,11 +1515,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
     {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
@@ -1638,13 +1668,19 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 						       G4double      containerLength,
 						       G4bool        vertical,
 						       G4Material*   outerMaterial,
-						       G4bool        buildEndPiece)
+						       G4bool        buildEndPiece,
+						       G4bool        hStyle,
+						       G4double      vhRatio,
+						       G4double      coilWidthFraction,
+						       G4double      coilHeightFraction)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,outerDiameter,
-								    containerLength,vertical,outerMaterial,buildEndPiece);
+								    containerLength,vertical,outerMaterial,
+								    buildEndPiece, hStyle, vhRatio,
+								    coilWidthFraction, coilHeightFraction);
 }
 
 /// functions below here are private to this particular factory

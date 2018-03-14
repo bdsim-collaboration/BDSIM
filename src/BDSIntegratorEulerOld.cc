@@ -1,8 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSIntegratorEulerOld.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
@@ -18,6 +37,14 @@ void BDSIntegratorEulerOld::Stepper(const G4double yIn[],
 				    G4double       yOut[],
 				    G4double       yErr[])
 {
+  // neutral particles do a linear step:
+  if (!BDS::IsFinite(eqOfM->FCof()) || zeroStrength)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4double yTemp[7];
 
   G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -38,11 +65,12 @@ void BDSIntegratorEulerOld::Stepper(const G4double yIn[],
   try
     {
       // do two half steps
-      AdvanceHelix(yIn,   0.5*h, yTemp);
-      AdvanceHelix(yTemp, 0.5*h, yOut); 
+      G4double tempErr[7];
+      AdvanceHelix(yIn,   0.5*h, yTemp, tempErr);
+      AdvanceHelix(yTemp, 0.5*h, yOut, tempErr);
       
       // do a full step
-      AdvanceHelix(yIn, h, yTemp);
+      AdvanceHelix(yIn, h, yTemp, tempErr);
 
       // Error is difference between two half steps and full step
       for(G4int i = 0; i < nVariables; i++)

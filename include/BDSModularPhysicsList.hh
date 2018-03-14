@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSMODULARPHYSICSLIST_H
 #define BDSMODULARPHYSICSLIST_H
 
@@ -9,6 +27,7 @@
 
 class BDSGlobalConstants;
 class BDSModularPhysicsList;
+class BDSParticleDefinition;
 class G4OpticalPhysics;
 class G4VPhysicsConstructor;
 
@@ -46,6 +65,13 @@ public:
   /// but also set cuts and print physics table.
   virtual void ConstructProcess();
 
+  /// Construct beam particle definition. Ensure that particle is instantiated
+  /// from a Geant4 point of view.  'ffact' is typically 1 or -1 used to flip
+  /// the sign of the rigidity for difference between convention and what's required.
+  BDSParticleDefinition* ConstructBeamParticle(G4String particleName,
+					       G4double totalEnergy,
+					       G4double ffact = 1) const;
+  
   /// Print out which physics lists are activated.
   void Print();
 
@@ -65,18 +91,10 @@ public:
 private:
   /// Private default constructor to force use of supplied one.
   BDSModularPhysicsList();
+
+  /// Ensure required beam particle has been constructed for Geant4 purposes.
+  void ConstructBeamParticleG4(G4String name) const;
   
-  G4bool verbose;
-#ifdef BDSDEBUG 
-  bool debug = true;
-#else 
-  bool debug = false;
-#endif
-
-  /// Update variables in global constants with all information about the primary particle
-  /// momenta etc.
-  void SetParticleDefinition();
-
   /// Construct the minimum particle set required (gamma, electron, positron,
   /// proton and anti-proton.
   void ConstructMinimumParticleSet();
@@ -86,7 +104,7 @@ private:
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();
 
-  ///  Construct resonances and quarks - sometimes required explicitly.
+  /// Construct resonances and quarks - sometimes required explicitly.
   void ConstructAllShortLived();
 
   /// Construct mesons.
@@ -123,6 +141,9 @@ private:
   /// of which ones have been activated and if the required ones haven't,
   /// activate them. This is also constructed from the physicsConstructors map.
   std::map<G4String, G4bool> physicsActivated;
+
+  /// Map of possible aliases for a given physics list.
+  std::map<G4String, G4String> aliasToOriginal;
   
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
@@ -134,24 +155,57 @@ private:
   G4bool emWillBeUsed;
 
   /// @{Physics constructor loader.
+  void ChargeExchange();
   void Cherenkov();
   void CutsAndLimits();
+  void Decay();
+  void DecayRadioactive();
   void Em();
   void EmExtra();
-  void EmLow();
+  void EmLivermore();
+  void EmLivermorePolarised();
+  void EmLowEP();
+  void EmPenelope();
+  void EmSS();
+  void EmWVI();
+  void Em1();
+  void Em2();
+  void Em3();
+  void Em4();
+  void FTFPBERT();
+  void FTFPBERTHP();
   void HadronicElastic();
-  void SynchRad();
-  void Muon();					
+  void HadronicElasticD();
+  void HadronicElasticH();
+  void HadronicElasticHP();
+  void HadronicElasticLEND();
+  void HadronicElasticXS();
+  void Ion();
+  void IonBinary();
+  void IonElastic();
+  void IonElasticQMD();
+  void IonINCLXX();
+  void LaserWire();
+  void Muon();
   void Optical();
-  void Decay();
-  void SpinDecay();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();
   void QGSPBICHP();
-  void FTFPBERT();
-  void FTFPBERTHP();
-  void LaserWire();
+  void Shielding();
+  void SynchRad();
+#if G4VERSION_NUMBER > 1019
+  void EmGS();
+#endif
+#if G4VERSION_NUMBER > 1020
+  void DecaySpin();
+#endif
+#if G4VERSION_NUMBER > 1022
+  void IonPHP();
+#endif
+#if G4VERSION_NUMBER > 1029
+  void DecayMuonicAtom();
+#endif
   /// @}
 };
 

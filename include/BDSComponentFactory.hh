@@ -1,11 +1,32 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
 #include "BDSFieldType.hh"
 #include "BDSMagnetType.hh"
+#include "BDSIntegratorSetType.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <map>
@@ -19,6 +40,7 @@ namespace GMAD
 class BDSAcceleratorComponent;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
+class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
@@ -47,7 +69,7 @@ class BDSTiltOffset;
 class BDSComponentFactory
 {
 public:
-  BDSComponentFactory();
+  explicit BDSComponentFactory(G4double brhoIn);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -69,7 +91,14 @@ public:
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* el) const;
+  static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
+
+  /// Create a transform from a tilt offset.  If nullptr, returns identity transform.
+  static G4Transform3D CreateFieldTransform(const BDSTiltOffset* tiltOffset);
+
+  /// Create a transform for the field for a given element to account for the difference
+  /// from the curvilinear coordinates for the tilt and offset of the magnet.
+  static G4Transform3D CreateFieldTransform(GMAD::Element const* el);
 
   /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
   /// SBendBuilder.
@@ -90,21 +119,40 @@ public:
 
   /// Prepare the element outer diameter in Geant4 units - if not set, use the global
   /// default.
-  static G4double PrepareOuterDiameter(GMAD::Element const* el);
+  static G4double PrepareOuterDiameter(GMAD::Element const* el,
+				       G4double defaultOuterDiameter = -1);
+
+  BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
+                                            const BDSFieldType&       fieldType,
+					    const BDSBeamPipeInfo*    bpInfo,
+                                            const BDSMagnetOuterInfo* outerInfo,
+					    const G4Transform3D&      fieldTransform) const;
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
   /// between input and output faces.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
-						    const BDSMagnetStrength* st);
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&          elementNameIn,
+						    const GMAD::Element*     el,
+						    const BDSMagnetStrength* st,
+						    const BDSBeamPipeInfo*   beamPipe,
+						    G4double defaultOuterDiameter      = -1,
+						    G4double defaultVHRatio            = 1.0,
+						    G4double defaultCoilWidthFraction  = -1,
+						    G4double defaultCoilHeightFraction = -1);
 
   /// Prepare the recipe for magnet outer geometry with full control of the angled faces
   /// and which side the yoke is on. The angle in and out are the face angles relative
   /// to a chord for a straight section of outer magnet geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* el,
-						    const G4double angleIn,
-						    const G4double angleOut,
-						    const G4bool   yokeOnLeft = false);
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const G4String&        elementNameIn,
+						    const GMAD::Element*   el,
+						    const G4double         angleIn,
+						    const G4double         angleOut,
+						    const BDSBeamPipeInfo* beamPipe,
+						    const G4bool   yokeOnLeft                = false,
+						    G4double       defaultOuterDiameter      = -1,
+						    G4double       defaultVHRatio            = -1,
+						    G4double       defaultCoilWidthFraction  = -1,
+						    G4double       defaultCoilHeightFraction = -1);
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
@@ -118,12 +166,19 @@ public:
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
-  /// length safety from global constants
-  G4double lengthSafety;
-  /// rigidity in T*m for beam particles
+  /// No default constructor
+  BDSComponentFactory() = delete;
+
+  /// Rigidity in T*m (G4units) for beam particles.
   G4double brho;
-  /// length of a thin element
+  /// Length safety from global constants.
+  G4double lengthSafety;
+  /// Length of a thin element.
   G4double thinElementLength;
+  /// Cache of whether to include fringe fields.
+  G4bool includeFringeFields;
+  /// Cache of whether to include yoke magnetic fields.
+  G4bool yokeFields;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -153,6 +208,7 @@ private:
   BDSAcceleratorComponent* CreateMuSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
+  BDSAcceleratorComponent* CreateGap();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
@@ -162,10 +218,11 @@ private:
 #endif
 
   /// Helper method for common magnet construction
-  BDSMagnet* CreateMagnet(BDSMagnetStrength* st,
-			  BDSFieldType fieldType,
+  BDSMagnet* CreateMagnet(const GMAD::Element* el,
+			  BDSMagnetStrength* st,
+			  BDSFieldType  fieldType,
 			  BDSMagnetType magnetType,
-			  G4double angle = 0.0) const;
+			  G4double      angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
@@ -212,6 +269,9 @@ private:
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
+
+  /// Local copy of enum of the integrator set, i.e. which one it is specifically.
+  const BDSIntegratorSetType integratorSetType;
 
   /// Calculate the field from a given angle through a length of field - uses member
   /// rigidity and charge. Length & angle in g4 m / rad units.

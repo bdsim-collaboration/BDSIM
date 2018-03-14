@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -12,7 +30,9 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
-  "fringecorr",      // fringe field correction term
+  "fringeint",       // fringe field integral value (one variable for FINT or FINTX)
+  "fringeintK2",     // second fringe field integral value (one variable for FINTK2 or FINTXK2)
+  "hgap",            // fringe field vertical half-gap
   "hkick", "vkick",  // fractional horizontal and vertical dPx (w.r.t. rigidity)
   "ks",              // not in G4 units
   "k1", "k1s",

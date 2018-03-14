@@ -47,6 +47,9 @@ namespace GMAD
     bool   axisAngle; ///< Flag to use the axis angle construction of rotation.
 
     bool   autoScale; ///< Scale the field to the magnet it's attached to.
+
+    /// Maximum permitted step length in the volumes the field is attached to.
+    double maximumStepLength;
     
     /// Constructor
     Field();
@@ -71,11 +74,11 @@ namespace GMAD
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
-	set(this,property,value);
+        set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: field> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
+        std::cerr << "Error: field> unknown option \"" << property << "\" with value " << value  << std::endl;
+        exit(1);
       }
     }
 }

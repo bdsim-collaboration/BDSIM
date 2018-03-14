@@ -1,11 +1,29 @@
-#include "BDSDebug.hh"
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
-#include "HistogramMerge.hh"
+#include "HistogramMeanFromFile.hh"
 #include "SamplerAnalysis.hh"
+#include "rebdsim.hh"
 
 #include "TROOT.h"
 #include "TChain.h"
@@ -29,11 +47,12 @@ EventAnalysis::EventAnalysis():
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
 			     TChain* chainIn,
+			     bool    perEntryAnalysis,
 			     bool    processSamplersIn,
 			     bool    debugIn,
 			     double  printModuloFraction,
 			     bool    emittanceOnTheFlyIn):
-  Analysis("Event.", chainIn, "EventHistogramsMerged", debugIn),
+  Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   processSamplers(processSamplersIn),
   emittanceOnTheFly(emittanceOnTheFlyIn)
@@ -43,22 +62,39 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
       // Analyse the primary sampler in the optics too.
       SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
       samplerAnalyses.push_back(sa);
-      
-      for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
+
+      for (const auto& sampler : event->Samplers)
 	{
-	  sa = new SamplerAnalysis(*i);
-	  this->samplerAnalyses.push_back(sa);
+	  sa = new SamplerAnalysis(sampler, debug);
+	  samplerAnalyses.push_back(sa);
 	}
     }
   
   SetPrintModuloFraction(printModuloFraction);
 }
 
+void EventAnalysis::Execute()
+{
+  std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
+  if (perEntry || processSamplers)
+  {
+    // ensure new histograms are added to file
+    // crucial for draw command to work as it identifies the histograms by name
+    TH1::AddDirectory(kTRUE);
+    TH2::AddDirectory(kTRUE);
+    TH3::AddDirectory(kTRUE);
+    PreparePerEntryHistograms();
+    Process();
+  }
+  SimpleHistograms();
+  Terminate();
+  std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
+}
+
 void EventAnalysis::SetPrintModuloFraction(double fraction)
 {
-  int    nEntries = chain->GetEntries();
-  printModulo = (int)ceil(nEntries * fraction);
-  if (printModulo < 0)
+  printModulo = (int)ceil(entries * fraction);
+  if (printModulo <= 0)
     {printModulo = 1;}
 }
 
@@ -78,10 +114,9 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  const int entries = chain->GetEntries();
-  for(int i=0; i<entries; ++i)
+  for(int i = 0; i < entries; ++i)
     {
-      this->chain->GetEntry(i);
+      chain->GetEntry(i);
       // event analysis feedback
       if (i % printModulo == 0)
 	{
@@ -91,28 +126,31 @@ void EventAnalysis::Process()
 	  else
 	    {std::cout << std::endl;}
 	}
-      
+
+      // merge histograms stored per event in the output
       if(i==0)
-	{histoSum = new HistogramMerge(event->histos, debug);}
+	{histoSum = new HistogramMeanFromFile(event->Histos);}
       else
-	{histoSum->Add(event->histos);}
+	{histoSum->Accumulate(event->Histos);}
+
+      // per event histograms
+      AccumulatePerEntryHistograms(i);
 
       UserProcess();
 
       if(debug)
 	{
 	  std::cout << __METHOD_NAME__ << i << std::endl;
-        if (processSamplers)
-        {
-            std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-            std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
-            std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
-            std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
-            //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
-        }
+	  if (processSamplers)
+	    {
+	      std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+	      std::cout << __METHOD_NAME__ << "primaries=" << event->Primary->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "eloss="     << event->Eloss->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "nprimary="  << event->PrimaryFirstHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "nlast="     << event->PrimaryLastHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "ntunnel="   << event->TunnelHit->n << std::endl;
+	      std::cout << __METHOD_NAME__ << "ntrajectory=" << event->Trajectory->n << std::endl;
+	    }
 	}
       
       if(processSamplers)
@@ -155,12 +193,12 @@ void EventAnalysis::Write(TFile *outputFile)
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
   std::vector<double> lOpticsPoint;
-  xOpticsPoint.resize(24);
-  yOpticsPoint.resize(24);
-  lOpticsPoint.resize(24);
+  xOpticsPoint.resize(25);
+  yOpticsPoint.resize(25);
+  lOpticsPoint.resize(25);
 
   // write optical functions
-  TTree *opticsTree = new TTree("optics","optics");
+  TTree* opticsTree = new TTree("Optics","Optics");
   opticsTree->Branch("Emitt_x", &(xOpticsPoint[0]), "Emitt_x/D");
   opticsTree->Branch("Emitt_y", &(yOpticsPoint[0]), "Emitt_y/D");
   opticsTree->Branch("Alpha_x", &(xOpticsPoint[1]), "Alpha_x/D");
@@ -214,6 +252,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sigma_Sigma_E", &(lOpticsPoint[20]), "Sigma_Sigma_E/D");
   opticsTree->Branch("Sigma_Sigma_t", &(lOpticsPoint[21]), "Sigma_Sigma_t/D");
 
+  opticsTree->Branch("xyCorrelationCoefficent", &(xOpticsPoint[24]), "xyCorrelationCoefficent/D");
 
   for(const auto entry : opticalFunctions)
     {

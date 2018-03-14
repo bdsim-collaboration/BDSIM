@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
@@ -5,6 +23,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Colour.hh"
 
+#include <iomanip>
 #include <map>
 #include <sstream>
 
@@ -48,7 +67,7 @@ BDSColours::BDSColours()
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["quadrupole"]       = new G4Colour(0.82,  0,     0);     // red
+  colours["quadrupole"]       = new G4Colour(0.82,  0.1,   0.1);   // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
   colours["decapole"]         = new G4Colour(0.3,   0.2,   0.7);   // purple
@@ -58,8 +77,8 @@ BDSColours::BDSColours()
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
   colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
-  colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
+  colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
   
@@ -85,6 +104,25 @@ BDSColours::BDSColours()
   colours["cyan"]    = new G4Colour(G4Colour::Cyan());
   colours["magenta"] = new G4Colour(G4Colour::Magenta());
   colours["yellow"]  = new G4Colour(G4Colour::Yellow());
+
+#ifdef BDSDEBUG
+  // auto-generate the manual coolour table in rst syntax
+  G4cout << __METHOD_NAME__ << "Colour Table" << G4endl;
+  G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+  G4cout << "| Name            |  R  |  G  |  B  |" << G4endl;
+  G4cout << "+=================+=====+=====+=====+" << G4endl;
+  for (const auto& col : colours)
+    {
+      int r = (int)(col.second->GetRed() * 255);
+      int g = (int)(col.second->GetGreen() * 255);
+      int b = (int)(col.second->GetBlue() * 255);
+      G4cout << "| " << std::setw(16) << col.first << "| "
+	     << std::setw(3) << r << " | "
+	     << std::setw(3) << g << " | "
+	     << std::setw(3) << b << " |" << G4endl;
+      G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+    }
+#endif
 }
 
 G4Colour* BDSColours::GetColour(G4String type)
@@ -95,6 +133,12 @@ G4Colour* BDSColours::GetColour(G4String type)
     {
       colourName = type.substr(0, type.find(":"));
       canDefine  = true;
+      if (colours.find(colourName) != colours.end())
+	{
+	  G4cerr << "Colour \"" << colourName
+		 << "\" is already defined - clashing definitions" << G4endl;
+	  exit(1);
+	}
     }
     
   auto it = colours.find(colourName);

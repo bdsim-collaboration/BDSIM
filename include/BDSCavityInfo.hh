@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSCAVITYINFO_H
 #define BDSCAVITYINFO_H
 
@@ -38,7 +56,8 @@ public:
 		G4double      halfCellLengthIn,
 		G4int         numberOfPointsIn         = 24,
 		G4int         numberOfCellsIn          = 1,
-		G4double      equatorEllipseSemiAxisIn = 42*CLHEP::mm,
+		G4double      equatorHorizontalAxisIn  = 42*CLHEP::mm,
+		G4double      equatorVerticalAxisIn    = 42*CLHEP::mm,
 		G4double      irisHorizontalAxisIn     = 12*CLHEP::mm,
 		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
 		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
@@ -68,13 +87,16 @@ public:
   /// Number of cells per cavity.
   G4int numberOfCells;
 
-  /// Equator ellipse semi axis.
-  G4double equatorEllipseSemiAxis;
+  /// Equator ellipse horizontal semi-axis.
+  G4double equatorHorizontalAxis;
 
-  /// Iris horizontal axis.
+  /// Equator ellipse vertical semi-axis.
+  G4double equatorVerticalAxis;
+
+  /// Iris ellipse horizontal semi-axis.
   G4double irisHorizontalAxis;
 
-  /// Iris vertical axis.
+  /// Iris ellipse vertical semi-axis.
   G4double irisVerticalAxis;
 
   /// Tangent angle.

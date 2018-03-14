@@ -1,0 +1,76 @@
+#ifndef BEAM_H
+#define BEAM_H
+
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include "published.h"
+#include "beamBase.h"
+
+namespace GMAD
+{
+  /**
+   * @brief Beam class
+   * 
+   * Beam passed with beam command. This inherits
+   * the BeamBase class which contains all the members and 
+   * provides templated filling functions. This separation allows
+   * the BeamBase class to be more easily written out to ROOT files
+   * or other formats for strong reproducibility in a BDSIM run.
+   *
+   * @author I. Agapov, J. Snuverink
+   */
+  class Beam: public Published<BeamBase>, public BeamBase
+  {
+  public:
+    Beam();
+    explicit Beam(const GMAD::BeamBase& options);
+    
+    /// set methods by property name
+    template<typename T>
+    void set_value(std::string name, T value);
+    
+    /// get method (only for doubles)
+    double get_value(std::string name) const;
+
+    /// Take another instance of options and copy the values that have
+    /// been set (through setKeys, which although private each instance
+    /// has access to as C++ treats encapsulation at the class level).
+    /// If override is true, the input option will override the existing
+    /// one in this instance.
+    void Amalgamate(const Beam& optionsIn, bool override, int startFromEvent = 0);
+
+    /// Whether a parameter has been set using the set_value method or not.
+    bool HasBeenSet(std::string name) const;
+    
+  private:
+    /// publish members so these can be looked up from parser
+    void PublishMembers();
+
+    /// A list of all the keys that have been set in this instance.
+    std::vector<std::string> setKeys;
+  };
+
+  template<typename T>
+  void Beam::set_value(std::string name, T value)
+  {
+#ifdef BDSDEBUG
+    std::cout << "beam> setting value " << std::setw(25) << std::left << name << value << std::endl;
+#endif
+    // member method can throw runtime_error, catch and exit gracefully
+    try
+      {
+        set(this, name, value);
+        setKeys.push_back(name);
+      }
+    catch (std::runtime_error)
+      {
+        std::cerr << "Error: beam> unknown beam option \"" << name << "\" with value " << value << std::endl;
+        exit(1);
+      }
+  }
+}
+
+#endif

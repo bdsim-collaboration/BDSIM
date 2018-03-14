@@ -2,12 +2,10 @@
 
 option, beampipeRadius = 50 * cm,
         beampipeThickness = 0.5 * mm,
-        outerDiameter = 1.5 *m,
-        thresholdCutCharged = 15 * GeV,
-        thresholdCutPhotons = 15 * GeV;
+        outerDiameter = 1.5 *m;
 
 !option,physicsList="FTFP_BERT";
-option,physicsList="hadronic";
+option,physicsList="qgsp_bert";
 option,ngenerate=10;
 
 !option, gammaToMuFe=1e4, annihiToMuFe=1e4;

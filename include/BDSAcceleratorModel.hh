@@ -1,5 +1,25 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSACCELERATORMODEL_H
 #define BDSACCELERATORMODEL_H
+
+#include "BDSBeamlineSet.hh"
 
 #include "globals.hh"         // geant4 globals / types
 
@@ -44,49 +64,33 @@ public:
   /// @}
   
   /// Access the physical volume of the world
-  inline G4VPhysicalVolume* GetWorldPV() const {return worldPV;}
+  inline G4VPhysicalVolume* WorldPV() const {return worldPV;}
 
-  /// Register the flat beam line - flat means that each element in the beamline represents
-  /// one element in the accelerator lattice
-  inline void RegisterFlatBeamline(BDSBeamline* beamlineIn) {flatBeamline = beamlineIn;}
+  /// Register the main beam line set.
+  inline void RegisterBeamlineSetMain(const BDSBeamlineSet& setIn) {mainBeamlineSet = setIn;}
 
-  /// Access flat beam line
-  inline BDSBeamline* GetFlatBeamline() const {return flatBeamline;}
-
-  /// Register the curvilinear geometry beam line.
-  inline void RegisterCurvilinearBeamline(BDSBeamline* beamlineIn)
-  {curvilinearBeamline = beamlineIn;}
-
-  /// Register the curvilinear bridging geometry beam line.
-  inline void RegisterCurvilinearBridgeBeamline(BDSBeamline* beamlineIn)
-  {curvilinearBridgeBeamline = beamlineIn;}
-
-  /// @{ Accessor.
-  inline BDSBeamline* GetCurvilinearBeamline() const {return curvilinearBeamline;}
-  inline BDSBeamline* GetCurvilinearBridgeBeamline() const {return curvilinearBridgeBeamline;}
-  /// @}
+  /// Register a set of beam lines to be managed and cleared up at the end of the simulation.
+  void RegisterBeamlineSetExtra(G4String              name,
+				const BDSBeamlineSet& setIn);
   
-  /// Register the beam line containing all the magnet supports
-  inline void RegisterSupportsBeamline(BDSBeamline* beamlineIn) {supportsBeamline = beamlineIn;}
+  /// @{ Accessor.
+  inline const BDSBeamlineSet& BeamlineSetMain() const {return mainBeamlineSet;}
+  const BDSBeamlineSet& BeamlineSet(G4String name) const;
+  inline const std::map<G4String, BDSBeamlineSet>& ExtraBeamlines() const {return extraBeamlines;}
+  const BDSBeamline* BeamlineMain() const {return mainBeamlineSet.massWorld;}
+  /// @}
 
-  /// Access the beam line containing all the magnet supports
-  inline BDSBeamline* GetSupportsBeamline() const {return supportsBeamline;}
+  /// Register the  beam line of arbitrary placements.
+  inline void RegisterPlacementBeamline(BDSBeamline* placementBLIn) {placementBeamline = placementBLIn;}
 
+  /// Access the beam line of arbitrary placements.
+  inline BDSBeamline* PlacementBeamline() const {return placementBeamline;}
+  
   /// Register the beam line containing all the tunnel segments
   inline void RegisterTunnelBeamline(BDSBeamline* beamlineIn) {tunnelBeamline = beamlineIn;}
 
   /// Access the beam line containing all the tunnel segments
-  inline BDSBeamline* GetTunnelBeamline() const {return tunnelBeamline;}
-
-  /// Register the beam line of end pieces.
-  inline void RegisterEndPieceBeamline(BDSBeamline* beamlineIn) {endPieceBeamline = beamlineIn;}
-
-  /// Access the beam line of end pieces.
-  inline BDSBeamline* GetEndPieceBeamline() const {return endPieceBeamline;}
-
-  inline void RegisterPlacementBeamline(BDSBeamline* beamlineIn) {placementBeamline = beamlineIn;}
-
-  inline BDSBeamline* GetPlacementBeamline() const {return placementBeamline;}
+  inline BDSBeamline* TunnelBeamline() const {return tunnelBeamline;}
   
   /// Register all field objects
   inline void RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn){fields = fieldsIn;}
@@ -95,12 +99,9 @@ public:
   /// it - note, no checking for double registration.
   void RegisterRegion(G4Region* region, G4ProductionCuts* cut);
 
-  /// Register a temporary file for possible deletion at the deletion of the accelerator model
-  /// based on the option from BDSGlobalConstants.
-  void RegisterTemporaryFile(G4String fileName);
-
   /// Access region information. Will exit if not found.
   G4Region*         Region(G4String name) const;
+
   /// Simpler accessor for production cuts vs regions.
   G4ProductionCuts* ProductionCuts(G4String name) {return cuts.at(name);}
 
@@ -109,24 +110,19 @@ private:
 
   static BDSAcceleratorModel* instance;
 
-  G4bool removeTemporaryFiles;
-
   G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
   G4LogicalVolume*   worldLV;
   G4VSolid*          worldSolid;
 
-  BDSBeamline* flatBeamline;              ///< Flat beam line.
-  BDSBeamline* curvilinearBeamline;       ///< Curvilinear geometry beamline.
-  BDSBeamline* curvilinearBridgeBeamline; ///< Curvilinear bridging volumes beamline.
-  BDSBeamline* supportsBeamline;          ///< Element supports beam line.
-  BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
-  BDSBeamline* endPieceBeamline;          ///< End Pieces beam line.
-  BDSBeamline* placementBeamline;         ///< Placement geometry beam line.
+  BDSBeamlineSet mainBeamlineSet;
+  std::map<G4String, BDSBeamlineSet> extraBeamlines; ///< Extra beamlines.
 
+  BDSBeamline* tunnelBeamline;            ///< Tunnel segments beam line.
+  BDSBeamline* placementBeamline;         ///< Placement beam line
+  
   std::vector<BDSFieldObjects*> fields;       ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
   std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.
-  std::vector<G4String> temporaryFiles;       ///< All temporary file paths.
 };
 
 #endif

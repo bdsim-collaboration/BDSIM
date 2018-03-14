@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSFIELDINFO_H
 #define BDSFIELDINFO_H
 
@@ -12,8 +30,8 @@
 
 #include <ostream>
 
-class BDSCavityInfo;
 class BDSMagnetStrength;
+class G4UserLimits;
 
 /**
  * @brief All info required to build complete field of any type.
@@ -26,6 +44,10 @@ class BDSMagnetStrength;
  *
  * Owns G4ThreeVector for unitDirection. It's a pointer to save memory
  * on average.
+ *
+ * Pole tip radius is used for normalisation purposes for outer yoke fields. 
+ * Beam pipe radius is used to decide whether there's a gap between the pole
+ * and the beam pipe and therefore to use a normal inner field for that part.
  *
  * @author Laurie Nevay
  */
@@ -41,7 +63,6 @@ public:
 	       const BDSMagnetStrength* magnetStrengthIn           = nullptr,
 	       G4bool                   provideGlobalTransformIn   = true,
 	       G4Transform3D            transformIn                = G4Transform3D(),
-	       const BDSCavityInfo*     cavityInfoIn               = nullptr,
 	       G4String                 magneticFieldFilePathIn    = "",
 	       BDSFieldFormat           magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
 	       BDSInterpolatorType      magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
@@ -52,7 +73,10 @@ public:
 	       G4double                 eScalingIn                 = 1.0,
 	       G4double                 bScalingIn                 = 1.0,
 	       G4double                 timeOffsetIn               = 0,
-	       G4bool                   autoScaleIn                = false);
+	       G4bool                   autoScaleIn                = false,
+	       G4UserLimits*            stepLimitIn                = nullptr,
+	       G4double                 poleTipRadiusIn            = 1,
+	       G4double                 beamPipeRadiusIn           = 0);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -66,7 +90,6 @@ public:
   inline BDSIntegratorType   IntegratorType()           const {return integratorType;}
   inline G4Transform3D       Transform()                const {return transform;}
   inline const BDSMagnetStrength*  MagnetStrength()     const {return magnetStrength;}
-  inline const BDSCavityInfo*      CavityInfo()         const {return cavityInfo;}
   inline G4bool              ProvideGlobal()            const {return provideGlobalTransform;}
   inline G4String            MagneticFile()             const {return magneticFieldFilePath;}
   inline BDSFieldFormat      MagneticFormat()           const {return magneticFieldFormat;}
@@ -79,21 +102,28 @@ public:
   inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
   inline G4bool              AutoScale()                const {return autoScale;}
+  inline G4UserLimits*       UserLimits()               const {return stepLimit;}
+  inline G4double            PoleTipRadius()            const {return poleTipRadius;}
+  inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
+  inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
-  inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
+  inline void SetTransform(const G4Transform3D& transformIn) {transform = transformIn;}
 
   inline void SetMagneticInterpolatorType(BDSInterpolatorType typeIn) {magneticInterpolatorType = typeIn;}
-  inline void SetBScaling(G4double bScalingIn) {bScaling  = bScalingIn;}
-  inline void SetAutoScale(G4bool autoScaleIn) {autoScale = autoScaleIn;}
+  inline void SetBScaling(const G4double& bScalingIn) {bScaling  = bScalingIn;}
+  inline void SetAutoScale(const G4bool& autoScaleIn) {autoScale = autoScaleIn;}
+  inline void SetScalingRadius(const G4double& poleTipRadiusIn) {poleTipRadius = poleTipRadiusIn;}
+  inline void SetBeamPipeRadius(const G4double& beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
+  inline void SetChordStepMinimum(const G4double& chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
 
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
   void Translate(G4ThreeVector translationIn);
 
   /// Turn on or off transform caching.
-  inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
+  inline void CacheTransforms(const G4bool& cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
@@ -106,7 +136,6 @@ private:
   const BDSMagnetStrength* magnetStrength;
   G4bool                   provideGlobalTransform;
   G4Transform3D            transform;  ///< Transform w.r.t. solid field will be attached to
-  const BDSCavityInfo*     cavityInfo;
   G4String                 magneticFieldFilePath;
   BDSFieldFormat           magneticFieldFormat;
   BDSInterpolatorType      magneticInterpolatorType;
@@ -118,6 +147,10 @@ private:
   G4double                 bScaling;
   G4double                 timeOffset;
   G4bool                   autoScale;
+  G4UserLimits*            stepLimit;
+  G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
+  G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
+  G4double                 chordStepMinimum;
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

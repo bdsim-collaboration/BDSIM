@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
@@ -70,13 +88,13 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 			       outerMaterial,
 			       name + "_yoke_lv");
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4Material* worldMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->WorldMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
-				    emptyMaterial,
+				    worldMaterial,
 				    name + "_outer_container_lv");
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-					  emptyMaterial,
+					  worldMaterial,
 					  name + "_container_lv");
   
   // VISUAL ATTRIBUTES
@@ -88,16 +106,22 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+}
 
-  // USER LIMITS
-  auto outerUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+void BDSMagnetOuterFactoryBase::SetUserLimits()
+{
+  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
+
   if (poleLV)
-    {poleLV->SetUserLimits(outerUserLimits);}
-  yokeLV->SetUserLimits(outerUserLimits);
-  containerLV->SetUserLimits(outerUserLimits);
-  magnetContainerLV->SetUserLimits(outerUserLimits);
+    {poleLV->SetUserLimits(ul);}
+  yokeLV->SetUserLimits(ul);
+  containerLV->SetUserLimits(ul);
+  magnetContainerLV->SetUserLimits(ul);
+
+  for (auto& lv : allLogicalVolumes)
+    {lv->SetUserLimits(ul);}
 }
 
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      name,

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSEVENTACTION_H
 #define BDSEVENTACTION_H
 
@@ -8,6 +26,7 @@
 #include <string>
 
 class BDSEventInfo;
+class BDSOutput;
 class G4Event;
 class G4PrimaryVertex;
 
@@ -18,18 +37,16 @@ class G4PrimaryVertex;
 class BDSEventAction: public G4UserEventAction
 {
 public:
-  BDSEventAction();
+  explicit BDSEventAction(BDSOutput* outputIn);
   virtual ~BDSEventAction();
   
-public:
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
-  void         WritePrimaryVertex(G4int                  eventID,
-				  const G4PrimaryVertex* primaryVertexIn);
 
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
     
 private:
+  BDSOutput* output;         ///< Cache of output instance. Not owned by this class.
   G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
   G4int  verboseEventNumber; ///< Copy of BDSGlobalConstants::VerboseEventNumber()
   G4bool isBatch;
@@ -46,6 +63,16 @@ private:
 
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
+
+  /// @{ Cache of variable from global constants.
+  G4double trajectoryEnergyThreshold;
+  G4double trajectoryCutZ;
+  G4double trajectoryCutR;
+  G4bool   trajConnect;
+  G4String particleToStore;
+  G4String particleIDToStore;
+  G4int    depth;
+  /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
 

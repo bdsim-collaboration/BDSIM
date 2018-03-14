@@ -1,5 +1,25 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSIntegratorSetType.hh"
+
+#include "G4Version.hh"
 
 #include <map>
 #include <string>
@@ -9,16 +29,27 @@ std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
   new std::map<BDSIntegratorSetType, std::string> ({
       {BDSIntegratorSetType::geant4,   "geant4"},
       {BDSIntegratorSetType::bdsimone, "bdsimone"},
-      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"}
+      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"},
+      {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"},
+      {BDSIntegratorSetType::bdsimmatrixfringescaling, "bdsimmatrixfringescaling"}
+#if G4VERSION_NUMBER > 1029
+      ,
+      {BDSIntegratorSetType::geant4dp, "geant4dp"}
+#endif
     });
 
 BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
 {
   std::map<G4String, BDSIntegratorSetType> types;
-  types["geant4"]   = BDSIntegratorSetType::geant4;
-  types["bdsim"]    = BDSIntegratorSetType::bdsimone; // alias for bdsim one
-  types["bdsimone"] = BDSIntegratorSetType::bdsimone;
-  types["bdsimtwo"] = BDSIntegratorSetType::bdsimtwo;
+  types["bdsim"]       = BDSIntegratorSetType::bdsimtwo; // alias for bdsim two the default
+  types["bdsimone"]    = BDSIntegratorSetType::bdsimone;
+  types["bdsimtwo"]    = BDSIntegratorSetType::bdsimtwo;
+  types["bdsimmatrix"] = BDSIntegratorSetType::bdsimmatrix;
+  types["bdsimmatrixfringescaling"] = BDSIntegratorSetType::bdsimmatrixfringescaling;
+  types["geant4"]      = BDSIntegratorSetType::geant4;
+#if G4VERSION_NUMBER > 1029
+  types["geant4dp"]    = BDSIntegratorSetType::geant4dp;
+#endif
 
   integratorSet.toLower();
 

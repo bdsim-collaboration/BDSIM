@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSINTEGRATORSET_H
 #define BDSINTEGRATORSET_H
 
@@ -34,13 +52,13 @@ class BDSIntegratorSet
 public:
   BDSIntegratorSet(BDSIntegratorType solenoidIn,
 		   BDSIntegratorType dipoleIn,
-		   BDSIntegratorType dipole3dIn,
+		   BDSIntegratorType dipoleQuadrupoleIn,
 		   BDSIntegratorType quadrupoleIn,
 		   BDSIntegratorType sextupoleIn,
 		   BDSIntegratorType octupoleIn,
 		   BDSIntegratorType decapoleIn,
-		   BDSIntegratorType multipoleIn,
-		   BDSIntegratorType muonspoilerIn,
+		   BDSIntegratorType multipoleThickIn,
+		   BDSIntegratorType muonSpoilerIn,
 		   BDSIntegratorType rfcavityIn,
 		   BDSIntegratorType rfIn,
 		   BDSIntegratorType generalIn,
@@ -48,21 +66,22 @@ public:
 		   BDSIntegratorType skewSextupoleIn,
 		   BDSIntegratorType skewOctupoleIn,
 		   BDSIntegratorType skewDecapoleIn,
-		   BDSIntegratorType dipolefringeIn,
-		   BDSIntegratorType multipolethinIn);
+		   BDSIntegratorType dipoleFringeIn,
+		   BDSIntegratorType multipoleThinIn,
+		   BDSIntegratorType multipoleOuterIn);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
 
   BDSIntegratorType solenoid;
   BDSIntegratorType dipole;
-  BDSIntegratorType dipole3d;
+  BDSIntegratorType dipoleQuadrupole;
   BDSIntegratorType quadrupole;
   BDSIntegratorType sextupole;
   BDSIntegratorType octupole;
   BDSIntegratorType decapole;
-  BDSIntegratorType multipole;
-  BDSIntegratorType muonspoiler;
+  BDSIntegratorType multipoleThick;
+  BDSIntegratorType muonSpoiler;
   BDSIntegratorType rfcavity;
   BDSIntegratorType rf;
   BDSIntegratorType general;
@@ -70,8 +89,15 @@ public:
   BDSIntegratorType skewSextupole;
   BDSIntegratorType skewOctupole;
   BDSIntegratorType skewDecapole;
-  BDSIntegratorType dipolefringe;
-  BDSIntegratorType multipolethin;
+  BDSIntegratorType dipoleFringe;
+  BDSIntegratorType multipoleThin;
+  BDSIntegratorType multipoleOuter;
+
+  /// Accessor for bool of is the integrator set matrix style.
+  G4bool IsMatrixIntegratorSet() const;
+
+private:
+  G4bool isMatrix;
 };
 
 #endif

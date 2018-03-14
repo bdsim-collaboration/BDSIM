@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipe.hh"
@@ -79,7 +97,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
   containerSolid = new G4Box(nameIn  + "_container_solid",  // name
 			     containerXHalfWidth,           // x half width
 			     containerYHalfWidth,           // y half width
-			     (lengthIn*0.5)-lengthSafety);  // half length
+			     lengthIn*0.5);                 // half length
 					
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
 }
@@ -131,7 +149,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CommonFinalConstruction(G4String    
   containerSubtractionSolid = new G4Box(nameIn  + "_container_solid", // name
 					containerXHalfWidth,          // x half width
 					containerYHalfWidth,          // y half width
-					lengthIn);                    // full length for unambiguous subtraction
+					4*lengthIn);                  // full length for unambiguous subtraction
 
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
 					     beamPipeMaterialIn, lengthIn);
@@ -201,7 +219,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   beamPipeSolidInner = new G4Box(nameIn + "_pipe_solid_inner",   // name
 				 aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
 				 aper2In + lengthSafety,         // y half width
-				 2*lengthIn);                    // 2*length - full length for unambiguous subtraction
+				 4*lengthIn);                    // 2x full length for unambiguous subtraction
   // beamPipeSolidOuter will be the outer edge of the metal beampipe
   // therefore it has to be the width of the aperture + beampipeThickness
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
@@ -228,7 +246,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   angledFaceSolidContainer = new G4CutTubs(nameIn + "_angled_face_container",// name
 					   0,                                // inner radius
 					   angledFaceRadius,                 // outer radius
-					   (lengthIn*0.5)-lengthSafety,      // half length - must fit within magnet
+					   (lengthIn*0.5),                   // half length
 					   0,                                // rotation start angle
 					   CLHEP::twopi,                     // rotation finish angle
 					   inputfaceIn,                      // input face normal

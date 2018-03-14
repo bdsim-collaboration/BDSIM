@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamPipeFactoryBase.hh"
 
 #include "BDSColours.hh"
@@ -99,14 +117,14 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   allVisAttributes.push_back(pipeVisAttr);
   beamPipeLV->SetVisAttributes(pipeVisAttr);
   // vacuum
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   // container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }
 
 void BDSBeamPipeFactoryBase::SetUserLimits(G4double length)
 {
-  auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
   G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
 

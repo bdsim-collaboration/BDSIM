@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSACCELERATORCOMPONENT_H
 #define BDSACCELERATORCOMPONENT_H
 
@@ -162,9 +180,11 @@ public:
   BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
   BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
 
-  void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
-  void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
-
+  /// @{ Allow updating of face normals. Virtual so derived class may apply it to daughters.
+  virtual void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
+  virtual void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
+  /// @}
+  
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
@@ -208,6 +228,7 @@ protected:
   /// Useful variables often used in construction
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
+  static G4Material* worldMaterial;
   static G4bool      checkOverlaps;
 
   /// The logical volume in this component that is the volume the beam passes through that

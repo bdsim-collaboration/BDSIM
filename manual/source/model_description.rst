@@ -39,7 +39,7 @@ While GMAD is very similar to MADX, not all MADX commands are supported.
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
-* boolean operators <, >, <=, >=, <> (not equal), == are valid
+* Boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
 * !comments start with an exclamation mark "!"
@@ -192,6 +192,7 @@ The following elements may be defined
 * `shield`_
 * `solenoid`_
 * `laser`_
+* `gap`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -211,7 +212,11 @@ This defines a drift element with name `d1` and a length of 5 metres. The defini
 
   d1: l=3*m, aper=0.1*m;
 
-Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres.
+
+.. Warning:: This only works for beam line elements and not other objects in GMAD syntax (such as a placement).
+
+An element can also be defined by copying an existing element::
 
   d2: d1, l=2*m;
 
@@ -253,6 +258,7 @@ parameter         description          default     required
 		  defined
 ================  ===================  ==========  =========
 
+
 * The `aperture parameters`_ may also be specified.
 
 Examples::
@@ -264,7 +270,7 @@ rbend
 ^^^^^
 
 .. figure:: figures/rbend.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 
 .. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
@@ -273,49 +279,85 @@ rbend
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
-input and output point. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown in the above image.
+input and output point. Can be specifeid using:
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`angle`           angle [rad]                  0           yes, or `B`
-`B`               magnetic field [T]           0           yes
-`e1`              input poleface angle [rad]   0           no
-`e2`              output poleface angle [rad]  0           no
-`material`        magnet outer material        Iron        no
-================  ===========================  ==========  ===========
+1) `angle` only - `B` calculated from angle and beam design rigidity.
+2) `B` only - the angle is calculated from the beam design rigidity.
+3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
+
+Pole face rotations can be applied to both the input and output faces of the
+magnet, based upon the reference system shown figure below. A pure dipole
+field is provided in the beam pipe and a more general dipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke. A
+quadrupolar component can be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
+
++-----------------+-----------------------------------+-----------+-----------------+
+| Parameter       | Description                       | Default   | Required        |
++=================+===================================+===========+=================+
+| `l`             | length [m]                        | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
++-----------------+-----------------------------------+-----------+-----------------+
+| `B`             | magnetic field [T]                | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e1`            | input poleface angle [rad]        | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e2`            | output poleface angle [rad]       | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `material`      | magnet outer material             | Iron      | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hStyle`        | H style poled geometry            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `k1`            | quadrupole coefficient for        | 0         | no              |
+|                 | function magnet.                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fint`          | fringe field integral for the     | 0         | no              |
+|                 | entrance face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintx`         | fringe field integrato for the    | -1        | no              |
+|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | default to the same as fint. 0    |           |                 |
+|                 | there will be no effect.          |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hgap`          | the half gap of the poles for     | 0         | no              |
+|                 | **fringe field purposes only**    |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
-
-.. note:: For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
-	  is represented by a straight (chord) section and even nominal energy particles
-	  may hit the aperture depending on the degree of tracking accuracy specified. In this
-	  case, consider splitting the `rbend` into multiple ones.
-
-.. note:: As of v0.64 a combined quadrupole component is not possible, but is under
-	  development
 
 .. figure:: figures/poleface_notation_rbend.pdf
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+A few points about rbends:
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
-	  element must be longer than the projected length from the rotation, given by
-	  :math:`2 \tan(\mathrm{eX})`.
-
-.. note:: If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the
-      fringefield element can be set by the option `thinElementLength` (see `options`_).
-
-	  
+1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
+   is represented by a straight (chord) section and even nominal energy particles
+   may hit the aperture depending on the degree of tracking accuracy specified. In this
+   case, consider splitting the `rbend` into multiple ones.
+2) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+3) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+   element must be longer than the projected length from the rotation, given by
+   :math:`2 \tan(\mathrm{eX})`.
+4) If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+   specified (on by default, see `options`_), then a thin fringefield magnet (1 micron thick by default)
+   is included at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend.
+   The length of the fringefield element can be set by the option `thinElementLength` (see `options`_).
+5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+   if `e1` and `e2` have 0 angle.
 
 Examples::
 
@@ -327,58 +369,93 @@ sbend
 ^^^^^
 
 .. figure:: figures/sbend.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 	    
 
 `sbend` defines a sector bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the curvilinear coordinate
-system. `sbend` magnets are made of a series of straight segments. If the specified
-(or calculated from `B` field) bending angle is large, the `sbend` is automatically
-split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
-typically split into several co-joined `sbend` magnets, the number depending on the magnet
-length and bending angle. Pole face rotations can be applied to both the input
-and output faces of the magnet, based upon the reference system shown in the above image.
+system. `sbend` magnets are made of a series of straight segments. Can be specified using:
 
-================  ====================================  ==========  ===========
-parameter         description                           default     required
-`l`               length [m]                            0           yes
-`angle`           angle [rad]                           0           yes, or `B`
-`B`               magnetic field [T]                    0           yes
-`e1`              input poleface angle [rad]            0           no
-`e2`              output poleface angle [rad]           0           no
-`material`        magnet outer material                 Iron        no
-`fint`            fringe field integral for exit face   0           no
-`fintx`           fringe field integral for entrance    0           no
-`hgap`            vertical gap for fringe field [m]     0           no
-================  ====================================  ==========  ===========
+1) `angle` only - `B` calculated from angle and beam design rigidity.
+2) `B` only - the angle is calculated from the beam design rigidity.
+3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
+
+Pole face rotations can be applied to both the input and output faces of the magnet,
+based upon the reference system shown in the figure below. A pure dipole field is
+provided in the beam pipe and a more general dipole (as described by
+:ref:`yoke-multipole-field`) is provided for the yoke. A quadrupolar component can
+be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
+
+The `sbend` geometry is constructed as many small straight sections with angled faces. This
+makes no effect on tracking, but allows a much higher variety of apertures and magnet
+geometry to be used given the Geant4 geometry. The number of segments is computed such
+that the maximum tangential error in the aperture is 1 mm. 
+
+
++-----------------+-----------------------------------+-----------+-----------------+
+| Parameter       | Description                       | Default   | Required        |
++=================+===================================+===========+=================+
+| `l`             | length [m]                        | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
++-----------------+-----------------------------------+-----------+-----------------+
+| `B`             | magnetic field [T]                | 0         | yes             |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e1`            | input poleface angle [rad]        | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `e2`            | output poleface angle [rad]       | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `material`      | magnet outer material             | Iron      | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hStyle`        | H style poled geometry            | 0         | no              |
++-----------------+-----------------------------------+-----------+-----------------+
+| `k1`            | quadrupole coefficient for        | 0         | no              |
+|                 | function magnet.                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fint`          | fringe field integral for the     | 0         | no              |
+|                 | entrance face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintx`         | fringe field integrato for the    | -1        | no              |
+|                 | exit face of the rbend. -1 means  |           |                 |
+|                 | default to the same as fint. 0    |           |                 |
+|                 | there will be no effect.          |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `hgap`          | the half gap of the poles for     | 0         | no              |
+|                 | **fringe field purposes only**    |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
-* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
-
-.. note:: As of v0.64 a combined quadrupole component is not possible, but is under
-	  development
 
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+A few points about sbends:
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
-	  element must be longer than the projected length from the rotation, given by
-	  :math:`2 \tan(\mathrm{eX})`.
-
-.. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-	  specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-	  at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-	  fringefield element can be set by the option `thinElementLength` (see `options`_).
-
-.. note:: Unlike MADX, `fint` is used exclusively for the input face fringe field integral and `fintx` for
-	  the exit face.  
+1) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
+2) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+   the rotated magnet face must either be a drift or an sbend with the opposite rotation
+   (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
+   :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
+   the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
+3) If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+   specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+   at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+   fringefield element can be set by the option `thinElementLength` (see `options`_).
+4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+   if `e1` and `e2` have 0 angle.
 
 Examples::
 
@@ -391,10 +468,12 @@ quadrupole
 
 .. figure:: figures/quadrupole.png
 	    :width: 30%
-	    :align: right
 
-`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k1` is defined as
-:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
+`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k_1` is defined as
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -407,6 +486,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure quadrupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    q1: quadrupole, l=0.3*m, k1=45.23;
@@ -417,10 +499,12 @@ sextupole
 
 .. figure:: figures/sextupole.png
 	    :width: 30%
-	    :align: right
 
-`sextupole` defines a sextupole magnet. The strength parameter :math:`k2` is defined as
-:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
+`sextupole` defines a sextupole magnet. The strength parameter :math:`k_2` is defined as
+
+.. math::
+   
+   k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -433,6 +517,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure sextupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+  
 Examples::
 
    sx1: sextupole, l=0.5*m, k2=4.678;
@@ -443,10 +530,12 @@ octupole
 
 .. figure:: figures/octupole.png
 	    :width: 30%
-	    :align: right
 
-`octupole` defines an octupole magnet. The strength parameter :math:`k3` is defined as
-:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
+`octupole` defines an octupole magnet. The strength parameter :math:`k_3` is defined as
+
+.. math::
+   
+   k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -459,6 +548,9 @@ parameter         description                  default     required
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
 
+A pure octupolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
@@ -466,10 +558,14 @@ Examples::
 decapole
 ^^^^^^^^
 
-.. TODO: add picture
+.. figure:: figures/decapole.png
+	    :width: 30%
 
-`decapole` defines a decapole magnet. The strength parameter :math:`k4` is defined as
-:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
+`decapole` defines a decapole magnet. The strength parameter :math:`k_4` is defined as
+
+.. math::
+   
+   k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -477,6 +573,9 @@ parameter         description                  default     required
 `k4`              decapole coefficient         0           yes
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
+
+A pure decapolar field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -491,9 +590,13 @@ multipole
 
 `multipole` defines a general multipole magnet. The strength parameter
 :math:`knl` is a list defined as
-:math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
-starting with the quadrupole component.
-The skew strength parameter :math:`ksl` is a list representing the skew coefficients.  
+      
+.. math::
+
+   knl[n] = \frac{1}{B \rho} \frac{dB^{n}_{y}}{dx^{n}}\,[m^{-(n+1)}]
+
+starting with the quadrupole component. The skew strength parameter :math:`ksl`
+is a list representing the skew coefficients.  
    
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -506,6 +609,7 @@ parameter         description                  default     required
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
 * See `Magnet Strength Polarity`_ for polarity notes.
+* No yoke field is provided.
   
 Examples::
 
@@ -535,7 +639,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 In the case of a thick kicker, the resulting bending angle is calculated as:
@@ -554,6 +658,9 @@ The dipole field strength is then calculated with respect to the chord length:
 * The `aperture parameters`_ may also be specified.
 * For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+A pure dipole field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
+
 Examples::
 
    KX15v: vkicker, vkick=1.3e-5;
@@ -571,7 +678,7 @@ visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`hkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
-case of the thin kicker the position is not affect, whereas with the thick kicker, the position
+case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle
@@ -581,6 +688,9 @@ will change.
 
 * The `aperture parameters`_ may also be specified.
 * For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
+
+A pure dipole field is provided in the beam pipe and a more general multipole (as
+described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
 Examples::
 
@@ -746,6 +856,8 @@ degrader
 
 `degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
 
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
 ===================    =======================================  ==========  ===========
 parameter              description                              default     required
 `l`                    length [m]                               0           yes
@@ -769,7 +881,7 @@ parameter              description                              default     requ
 Examples::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
-    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm;
 
 
 muspoiler
@@ -817,13 +929,12 @@ solenoid
 ^^^^^^^^
 
 .. figure:: figures/solenoid.png
-	    :width: 30%
+	    :width: 40%
 	    :align: right
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
 hard edge field profile so it is not equivalent to split a single solenoid into multiple
-smaller ones. **This is currently under development**. The strength parameter `ks` is
-defined as :math:`ks =`.
+smaller ones. **This is currently under development**.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
@@ -834,6 +945,7 @@ parameter         description                   default     required
 ================  ============================  ==========  ===========
 
 * See `Magnet Strength Polarity`_ for polarity notes.
+* No yoke field is provided.
 
 Examples::
 
@@ -856,6 +968,25 @@ parameter         description                                        default    
 Examples::
 
    laserwire: laser, l=1*um, x=1, y=0, z=0, wavelength=532*nm;
+
+
+gap
+^^^
+
+`gap` defines a gap where no physical geometry is placed. It will be a region of the world,
+composed of the same material as the world volume.
+
+.. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
+
+===================    =======================================  ==========  ===========
+parameter              description                              default     required
+`l`                    length [m]                               0           yes
+`angle`                angle [rad]                              0           no
+===================    =======================================  ==========  ===========
+
+Examples::
+
+    GAP1: gap, l=0.25*m, angle=0.01*rad;
 
 
 transform3d
@@ -888,20 +1019,25 @@ Examples::
 element
 ^^^^^^^
 
-`element` defines an arbitrary element that's defined by external geometry and magnetic field
-maps. Several geometry formats are supported. The user must supply the length (accurately) as
-well as a diameter such that the geometry will be contained in a box that has horizontal and
-vertical size of diameter.
+`element` defines an arbitrary element that's defined by externally provided geometry. It includes
+the possibility of overlaying a field as well. Several geometry formats are supported. The user
+must supply the length (accurately) as well as a diameter such that the geometry will be
+contained in a box that has horizontal and vertical size of diameter.
+
+The geometry is simply placed in the beam line. There is no placement offset other than the
+offset \& tilt of the element in the beam line, therefore, the user must prepare geometry
+with the placement as required. An alternative strategy is to use the `gap`_ beam line element
+and make a placement at the appropriate point in global coordinates.
 
 ================  ===============================  ==========  ===========
 parameter         description                      default     required
-`geometry`        filename of geometry             NA          yes
+`geometryFile`    filename of geometry             NA          yes
 `l`               length                           NA          yes
 `outerDiameter`   diameter of component [m]        NA          yes
 `fieldAll`        name of field object to use      NA          no
 ================  ===============================  ==========  ===========
 
-`geometry` should be of the format `format:filename`, where `format` is the geometry
+`geometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
 file. See :ref:`externally-provided-geometry` for more details.
 
@@ -916,7 +1052,7 @@ gmad file. The syntax for this is described in :ref:`field-maps`.
 
 Simple example::
 
-  detector: element, geometry="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
+  detector: element, geometryFile="gdml:atlasreduced.gdml", outerDiameter=10*m,l=44*m;
 
 Example with field::
 
@@ -929,14 +1065,19 @@ Example with field::
 		    electricFile = "poisson2d:/Another/File.TX",
 		    electricInterpolator = "linear2D";
   
-   detec: element, geometry="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
+   detec: element, geometryFile="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
 
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
 
 
 marker
 ^^^^^^
 `marker` defines a point in the lattice. This element has no physical length and is only
-used as a reference. For example, a `sampler` (see `samplers - output`_ )
+used as a reference. For example, a `sampler` (see :ref:`sampler-output`)
 is used to record particle passage at the
 front of a component but how would you record particles exiting a particular component?
 The intended method is to use a `marker` and place it in the sequence after that element
@@ -954,13 +1095,111 @@ A few items allow you to define a custom colour for them to aid in visualisation
 only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
 where the RGB values are space delimited and given from 0 to 255. Once the colour name has
 been defined it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined.
+colour may not be redefined. The syntax is::
+
+  color="NAME: R G B";
+
+where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
+colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
 
 Examples::
 
   col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
   col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
-   
+
+* Colour names are case-sensitive.
+* Note the colon `:` in the syntax is crucial.
+  
+If a colour is already defined, that will be used. In the case a colour is already defined in
+BDSIM, that colour will be used. The user should therefore choose a different name if they
+wish to use their colour. The predefined colours in BDSIM are:
+
++-----------------+-----+-----+-----+
+| Name            |  R  |  G  |  B  |
++=================+=====+=====+=====+
+| LHCcoil         | 229 | 191 | 0   |
++-----------------+-----+-----+-----+
+| LHCcollar       | 229 | 229 | 229 |
++-----------------+-----+-----+-----+
+| LHCcopperskin   | 184 | 133 | 10  |
++-----------------+-----+-----+-----+
+| LHCyoke         | 0   | 127 | 255 |
++-----------------+-----+-----+-----+
+| LHCyokered      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| beampipe        | 102 | 102 | 102 |
++-----------------+-----+-----+-----+
+| black           | 0   | 0   | 0   |
++-----------------+-----+-----+-----+
+| blue            | 0   | 0   | 255 |
++-----------------+-----+-----+-----+
+| brown           | 114 | 63  | 0   |
++-----------------+-----+-----+-----+
+| coil            | 184 | 115 | 51  |
++-----------------+-----+-----+-----+
+| collimator      | 76  | 102 | 51  |
++-----------------+-----+-----+-----+
+| cyan            | 0   | 255 | 255 |
++-----------------+-----+-----+-----+
+| decapole        | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| default         | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| degrader        | 159 | 159 | 159 |
++-----------------+-----+-----+-----+
+| gdml            | 102 | 51  | 0   |
++-----------------+-----+-----+-----+
+| gray            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| green           | 0   | 255 | 0   |
++-----------------+-----+-----+-----+
+| grey            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| hkicker         | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| magenta         | 255 | 0   | 255 |
++-----------------+-----+-----+-----+
+| multipole       | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| muspoiler       | 0   | 205 | 208 |
++-----------------+-----+-----+-----+
+| octupole        | 0   | 153 | 76  |
++-----------------+-----+-----+-----+
+| quadrupole      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| rectangularbend | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| red             | 255 | 0   | 0   |
++-----------------+-----+-----+-----+
+| rfcavity        | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| screenframe     | 178 | 178 | 178 |
++-----------------+-----+-----+-----+
+| sectorbend      | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| sextupole       | 255 | 204 | 0   |
++-----------------+-----+-----+-----+
+| shield          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| soil            | 138 | 90  | 0   |
++-----------------+-----+-----+-----+
+| solenoid        | 255 | 139 | 0   |
++-----------------+-----+-----+-----+
+| srfcavity       | 175 | 196 | 222 |
++-----------------+-----+-----+-----+
+| tunnel          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| tunnelfloor     | 127 | 127 | 114 |
++-----------------+-----+-----+-----+
+| vkicker         | 186 | 84  | 211 |
++-----------------+-----+-----+-----+
+| warning         | 255 | 19  | 146 |
++-----------------+-----+-----+-----+
+| white           | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| yellow          | 255 | 255 | 0   |
++-----------------+-----+-----+-----+
+  
 
 Aperture Parameters
 -------------------
@@ -1053,8 +1292,30 @@ The magnet geometry is controlled by the following parameters.
 |                       | | bend and if false, it's on the outside. Applicable only    |               |           |
 |                       | | to dipoles.                                                |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `hStyle`              | | Whether a dipole (only a dipole) will be an H style one    | 0             | no        |
+|                       | | or a C style one (c style by default. True ('1') or False  |               |           |
+|                       | | ('0').                                                     |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | no        |
+|                       | | will always be the `outerDiameter` and the height will     |               |           |
+|                       | | scale according to this ratio. In the case of a vertical   |               |           |
+|                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
+|                       | | the geometry is simple rotated). Ranges from 0.1 to 10.    |               |           |
+|                       | | This currently only applies to dipoles with poled          |               |           |
+|                       | | geometry.                                                  |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | no        |
+|                       | | pole and the yoke for dipole geometry that the coil will   |               |           |
+|                       | | occupy. This currently only applies to dipoles with poled  |               |           |
+|                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `coilHeightFraction`  | | Fraction of the available vertical space between the pole  | 0.9           | no        |
+|                       | | tip and the yoke for dipole geometry that the coil will    |               |           |
+|                       | | occupy. This currently only applies to dipoles with poled  |               |           |
+|                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
 
-Example::
+Examples::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
@@ -1239,35 +1500,39 @@ A more detailed rf cavity geometry may be described by constructing a 'cavity' o
 in gmad and attaching it by name to an element.  The following parameters may be added
 to a cavity object:
 
-+--------------------------+-----------------+------------------------------------------------------+
-| **Parameter**            | **Required**    | **Description**                                      |
-+==========================+=================+======================================================+
-| `name`                   | yes             | Name of the object                                   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `type`                   | yes             | (elliptical | rectangular | pillbox)                 |
-+--------------------------+-----------------+------------------------------------------------------+
-| `material`               | yes             | The material for the cavity.                         |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisRadius`             | no              | The radius of the narrowest part.                    |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorRadius`          | no              | The radius of the widest part.                       |
-+--------------------------+-----------------+------------------------------------------------------+
-| `halfCellLength`         | no              | Half length along a cell.                            |
-+--------------------------+-----------------+------------------------------------------------------+
-| `equatorEllipseSemiAxis` | Elliptical only | Semi-axis of the ellipse at the cavity equator.      |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.     |
-+--------------------------+-----------------+------------------------------------------------------+
-| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris        |
-+--------------------------+-----------------+------------------------------------------------------+
-| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.  |
-+--------------------------+-----------------+------------------------------------------------------+
-| `thickness`              | no              | Thickness of material.                               |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.   |
-+--------------------------+-----------------+------------------------------------------------------+
-| `numberOfCells`          | no              | Number of cells to construct.                        |
-+--------------------------+-----------------+------------------------------------------------------+
+.. tabularcolumns:: |p{3cm}|p{2cm}|p{5cm}|
+
++--------------------------+-----------------+-----------------------------------------------------------------+
+| **Parameter**            | **Required**    | **Description**                                                 |
++==========================+=================+=================================================================+
+| `name`                   | yes             | Name of the object                                              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `type`                   | yes             | (elliptical | rectangular | pillbox)                            |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `material`               | yes             | The material for the cavity.                                    |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisRadius`             | no              | The radius of the narrowest part.                               |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorRadius`          | no              | The radius of the widest part.                                  |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `halfCellLength`         | no              | Half length along a cell.                                       |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorHorizontalAxis`  | Elliptical only | Horizontal semi-axis of the ellipse at the cavity equator.      |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `equatorVerticalAxis`    | Elliptical only | Vertical semi-axis of the ellipse at the cavity equator.        |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisHorizontalAxis`     | Elliptical only | Horizontal semi-axis of the ellipse at the iris.                |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `irisVerticalAxis`       | Elliptical only | Vertical semi-axis of the ellipse at the iris                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.             |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `thickness`              | no              | Thickness of material.                                          |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.              |
++--------------------------+-----------------+-----------------------------------------------------------------+
+| `numberOfCells`          | no              | Number of cells to construct.                                   |
++--------------------------+-----------------+-----------------------------------------------------------------+
 
 Example::
 
@@ -1275,13 +1540,42 @@ Example::
                        irisRadius = 35*mm,
 	               equatorRadius = 103.3*mm,
 	               halfCellLength = 57.7*mm,
-	               equatorEllipseSemiAxis = 42*mm,
+		       equatorHorizontalAxis = 40*mm,
+		       equatorVerticalAxis = 42*mm,
 	               irisHorizontalAxis = 12*mm,
 	               irisVerticalAxis = 19*mm,
 	               tangentLineAngle = 13.3*pi/180,
 	               thickness = 1*mm,
 	               numberOfPoints = 24,
 	               numberOfCells = 1;
+
+.. figure:: figures/elliptical-cavity.pdf
+	   :width: 40%
+	   :align: center
+
+The parametrisation used to define elliptical cavities in BDSIM.
+The symbols used in the figure map to the cavity options according to the table below.
+
++-----------------------+-----------------------------+
+| **Symbol**            | **BDSIM Cavity Parameter**  |
++=======================+=============================+
+| :math:`R`             | equatorRadius               |
++-----------------------+-----------------------------+
+| :math:`r`             | irisRadius                  |
++-----------------------+-----------------------------+
+| :math:`A`             | equatorHorizontalAxis       |
++-----------------------+-----------------------------+
+| :math:`B`             | equatorVerticalAxis         |
++-----------------------+-----------------------------+
+| :math:`a`             | irisHorizontalAxis          |
++-----------------------+-----------------------------+
+| :math:`b`             | irisVerticalAxis            |
++-----------------------+-----------------------------+
+| :math:`\alpha`        | tangentLineAngle            |
++-----------------------+-----------------------------+
+| :math:`L`             | halfCellLength              |
++-----------------------+-----------------------------+
+
 
 .. _field-maps:
 
@@ -1325,6 +1619,8 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 
   
 When defining a field, the following parameters can be specified.
+
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
@@ -1373,6 +1669,14 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | angle                | angle (rad) of defining axis / angle rotation.                  |
 +----------------------+-----------------------------------------------------------------+
+| autoScale            | This automatically calculates the field graident at the origin  |
+|                      | and the field magnitude will be automatically scaled according  |
+|                      | to the normalised `k` strength (such as `k1` for a quadrupole)  |
+|                      | for the magnet it's attached to. Only applicable for when       |
+|                      | attached to magnets.                                            |
++----------------------+-----------------------------------------------------------------+
+| maximumStepLength    | The maximum permitted step length through the field. (m)        |
++----------------------+-----------------------------------------------------------------+
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps is attached to and the coordinates
@@ -1385,6 +1689,8 @@ Field Types
 
 * These are not case sensitive.
 
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
+  
 +------------------+----------------------------------+
 | **Type String**  | **Description**                  |
 +==================+==================================+
@@ -1416,6 +1722,8 @@ Field Types
 
 Formats
 ^^^^^^^
+
+.. tabularcolumns:: |p{0.40\textwidth}|p{0.60\textwidth}|
 
 +------------------+--------------------------------------------+
 | **Format**       | **Description**                            |
@@ -1454,48 +1762,78 @@ Integrators
 
 The following integrators are provided.  The majority are interfaces to Geant4 ones.
 *g4classicalrk4* is typically the recommended default and is very robust.
-*g4cakskarprkf45* is similar but slightly less CPU-intensive.
+*g4cakskarprkf45* is similar but slightly less CPU-intensive. For version Geant4.10.4
+onwards, *g4dormandprince745* is the default recommended by Geant4 (although not the
+BDSIM default currently). Note, any integrator capable of operating on EM fields
+will work on solely B or E fields.
 
-+----------------------+----------+------------------+
-|  **String**          | **B/EM** | **Time Varying** |
-+======================+==========+==================+
-| g4cashkarprkf45      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4classicalrk4       | EM       | Y                |
-+----------------------+----------+------------------+
-| g4constrk4           | B        | N                |
-+----------------------+----------+------------------+
-| g4expliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4impliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simpleheum         | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simplerunge        | EM       | Y                |
-+----------------------+----------+------------------+
-| g4exacthelixstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixexpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixheum          | B        | N                |
-+----------------------+----------+------------------+
-| g4heliximpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixmixedstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixsimplerunge   | B        | N                |
-+----------------------+----------+------------------+
-| g4nystromrk4         | B        | N                |
-+----------------------+----------+------------------+
-| g4rkg3stepper        | B        | N                |
-+----------------------+----------+------------------+
+We recommend looking at the source .hh files in the geant4 source code for an
+explanation of each as this is where they are documented. The source files can
+be found in `<geant4-source-dir>/source/geometry/magneticfield/include`.
+
++----------------------+----------+------------------+-----------------------------+
+|  **String**          | **B/EM** | **Time Varying** | Required Geant4 Version (>) |
++======================+==========+==================+=============================+
+| g4cashkarprkf45      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4classicalrk4       | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4constrk4           | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4expliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4impliciteuler      | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simpleheum         | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4simplerunge        | EM       | Y                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4exacthelixstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixexpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixheum          | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4heliximpliciteuler | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixmixedstepper  | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4helixsimplerunge   | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4nystromrk4         | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rkg3stepper        | B        | N                | 10.0                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine23  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4bogackishampine45  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dolomcprik34       | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprince745   | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk56  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4dormandprincerk78  | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4tsitourasrk45      | EM       | Y                | 10.3                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq1          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq2          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+| g4rk547feq3          | EM       | Y                | 10.4                        |
++----------------------+----------+------------------+-----------------------------+
+
 
 Interpolators
 ^^^^^^^^^^^^^
 
-There are many algorithms which one can use to interpolate the field map data. The field
-may be queried at any point inside the volume, so an interpolator is required. A
-mathematical description as well as example plots are shown in :ref:`field-interpolators`.
+The field may be queried at any point inside the volume so an interpolator is required
+to provide a value of the field in between specified points in the field map.
+There are many algorithms that can be use to interpolate the field map data. A
+mathematical description of the ones provided in BDSIM as well as example plots
+are shown in :ref:`field-interpolators`.
 
 * This string is case-insensitive.
 
@@ -1540,96 +1878,8 @@ geometry can be used in three ways:
 2) Wrapped around the beam pipe in a BDSIM magnet element.
 3) As a general element in the beam line where the geometry constitutes the whole object.
 
-These are discussed in order.
-
-Placements
-^^^^^^^^^^
-
-Geometry provided in an external file, may be placed in 3D geometry at any location with
-any rotation, however the user is responsible for ensuring that the geometry does not
-overlap with any other geometry.
-
-.. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
-	  incorrect results and there may not always be warnings provided. For this reason
-	  BDSIM will **always** use the Geant4 overlap checker when placing external geometry
-	  into the world volume. This only ensures the container doesn't overlap with BDSIM
-	  geometry, not that the internal geometry is valid.
-
-The following parameters may be specified.
-
-+----------------+--------------------------------------------------------------------+
-| **Parameter**  |  **Description**                                                   |
-+----------------+--------------------------------------------------------------------+
-| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
-+----------------+--------------------------------------------------------------------+
-| x              | Offset in global x.                                                |
-+----------------+--------------------------------------------------------------------+
-| y              | Offset in global y.                                                |
-+----------------+--------------------------------------------------------------------+
-| z              | Offset in global z.                                                |
-+----------------+--------------------------------------------------------------------+
-| phi            | Euler angle phi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| theta          | Euler angle theta for rotation.                                    |
-+----------------+--------------------------------------------------------------------+
-| psi            | Euler angle psi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| axisX          | Axis angle rotation x component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisY          | Axis angle rotation x component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisZ          | Axis angle rotation x component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| angle          | Axis angle angle to rotate about unit vector.                      |
-+----------------+--------------------------------------------------------------------+
-| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
-+----------------+--------------------------------------------------------------------+
-| sensitive      | Whether the geometry records energy deposition (default true).     |
-+----------------+--------------------------------------------------------------------+
-
-* The file path provided in :code:`geometryFile` should either be relative to where bdsim
-  is executed from or an absolute path.
-
-Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
-rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
-rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
-directly, which is also the same as a :code:`CLHEP::HepRotation`.
-
-.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
-	  the default units for offsets and angles in BDSIM.
-
-The following is an example syntax is used to place a piece of geometry::
-
-  leadblock: placement, x = 10*m,
-                        y = 3*cm,
-			z = 12*m,
-			geometryFile="gdml:mygeometry/detector.gdml;
-
-
-
-External Magnet Geometry
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
-will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
-yoke geometry will be loaded from the file provided. The external geometry must have a cut out
-in its container volume for the beam pipe to fit. Ie, both the beam pipe and the yoke exist
-at the same level in the geometry hierarchy (both are placed in one container for the magnet).
-The beam pipe is not placed 'inside' the yoke.
-
-This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
-
-Example::
-
-  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
-
-
-Element
-^^^^^^^
-
-A general piece of geometry may be placed in the beam line along with any externally provided
-field map using the `element` beam line element.  See `element`_.
+These are discussed in order in :ref:`placements`, :ref:`external-magnet-geometry` and
+:ref:`element-external-geometry`.
 
 .. _geometry-formats:
 
@@ -1652,7 +1902,126 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 | mokka                | | An SQL style description of geometry.                             |
 +----------------------+---------------------------------------------------------------------+
 
-.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+.. note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
+.. note:: For GDML geometry, we preprocess the input file prepending all names with the name
+	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
+	  not handle unique file names. However, in the case of very large files with many many
+	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
+	  should be turned off. The loading will only work with one file in this case.
+
+.. warning:: If a geometry file path is defined relative to the location of the GMAD file and that
+	     GMAD file is included in a parent file in a different location, the file will not be
+	     correctly located. i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
+	     geometry in "../a/relative/path/geometryfile.gdml", the file will not be found. If all
+	     GMAD files are located in the same directory, this will not be a problem. It is overall
+	     better / cleaner to use multiple GMAD input files and include them.
+
+
+.. _placements:
+
+Placements
+^^^^^^^^^^
+
+Geometry provided in an external file, may be placed in 3D geometry at any location with
+any rotation. This is intended to place geometry alongside the beamline and **not** inside
+or as part of it.  The user is responsible for ensuring that the geometry does not
+overlap with any other geometry including the beamline.
+
+.. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
+	     incorrect results and there may not always be warnings provided. For this reason
+	     BDSIM will **always** use the Geant4 overlap checker when placing external geometry
+	     into the world volume. This only ensures the container doesn't overlap with BDSIM
+	     geometry, not that the internal geometry is valid.
+
+.. warning:: You cannot place external geometry 'inside' an accelerator component with a
+	     placement. Although it may appear ok in the visualiser, the hierarchy of the
+	     geometry will be wrong and the tracking will not work as expected. Avoid this.
+
+The following parameters may be specified.
+
++----------------+--------------------------------------------------------------------+
+| **Parameter**  |  **Description**                                                   |
++----------------+--------------------------------------------------------------------+
+| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
++----------------+--------------------------------------------------------------------+
+| x              | Offset in global x.                                                |
++----------------+--------------------------------------------------------------------+
+| y              | Offset in global y.                                                |
++----------------+--------------------------------------------------------------------+
+| z              | Offset in global z.                                                |
++----------------+--------------------------------------------------------------------+
+| phi            | Euler angle phi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| theta          | Euler angle theta for rotation.                                    |
++----------------+--------------------------------------------------------------------+
+| psi            | Euler angle psi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| axisX          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisY          | Axis angle rotation y component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisZ          | Axis angle rotation z component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| angle          | Axis angle angle to rotate about unit vector.                      |
++----------------+--------------------------------------------------------------------+
+| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
++----------------+--------------------------------------------------------------------+
+| sensitive      | Whether the geometry records energy deposition (default true).     |
++----------------+--------------------------------------------------------------------+
+
+* The file path provided in :code:`geometryFile` should either be relative to where bdsim
+  is executed from or an absolute path.
+* The transform is relative to the world coordinate system and not the beginning of the
+  beam line. The main beam line begins at (0,0,0) by default but may be offset.  See
+  :ref:`beamline-offset` for more details.
+
+  
+Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
+rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
+directly, which is also the same as a :code:`CLHEP::HepRotation`.
+
+.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
+	  the default units for offsets and angles in BDSIM.
+
+The following is an example syntax is used to place a piece of geometry::
+
+  leadblock: placement, x = 10*m,
+                        y = 3*cm,
+			z = 12*m,
+			geometryFile="gdml:mygeometry/detector.gdml";
+
+.. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
+	     were declared again here, the first definition would be updated with parameters
+	     from the second leading to possibly unexpected geometry.
+
+.. _external-magnet-geometry:
+
+External Magnet Geometry
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
+will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
+yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+in its container volume for the beam pipe to fit. Ie, both the beam pipe and the yoke exist
+at the same level in the geometry hierarchy (both are placed in one container for the magnet).
+The beam pipe is not placed 'inside' the yoke.
+
+This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
+
+Example::
+
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+.. _element-external-geometry:
+
+Element
+^^^^^^^
+
+A general piece of geometry may be placed in the beam line along with any externally provided
+field map using the `element` beam line element.  See `element`_.
 
 
 .. _offsets-and-tilts:
@@ -1744,11 +2113,19 @@ Examples::
    fodo: line=(d1,q1,d1,q2,d1);
    use, period=fodo;
 
+The beam line is placed in the world volume (the outermost coordinate system) starting
+at position (0,0,0) with direction (0,0,1) - i.e. pointing in positive `z`. The user
+may specify an initial offset and rotation for the baem line with respect to the world
+volume using the options described in :ref:`beamline-offset`.
+
+Multiple beam lines may also be visualised - but only visualised (not suitable for
+simulations currently).  Details are provided in :ref:`multiple-beamlines`.
+
 
 .. _sampler-output:
    
-Samplers - Output
------------------
+Output After An Element - Samplers
+----------------------------------
 
 BDSIM provides a `sampler` as a means to observe the particle distribution at a
 point in the lattice. A sampler is 'attached' to an already defined element
@@ -1847,114 +2224,197 @@ are a predetermined set of physics processes suitable for a certain applications
 the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
 Geant4 ones.
 
-Note, using extra physics processes that are not required will slow the simulation and produce
-many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
-only use the minimal set of physics processes required.
-
 The physics list can be selected with the following syntax (delimited by a space)::
 
   option, physicsList = "physicslistname anotherphysicslistname";
 
   option, physicsList = "em optical";
 
-For general high energy physics we recommend::
+For general high energy hadron physics we recommend::
 
   option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra"
 
+.. note:: Using extra physics processes that are not required will slow the simulation and produce
+	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
+	  only use the minimal set of physics processes required.
+  
 .. note:: The strings for the physics list are case-insensitive.
 
 .. versionadded:: 0.92
-
-   Note, the physics lists changed from BDSIM produced physics lists to using the Geant4
-   modular physics lists in version 0.92. This also introduced the space-delimited syntax
-   slight changes to the physics list names.
+		  The physics lists changed from BDSIM produced physics lists to using the Geant4
+		  modular physics lists in version 0.92. This also introduced the space-delimited syntax
+		  slight changes to the physics list names.
 
   
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
 
-More details can be found in the Geant4 documentation:
+BDSIM uses the Geant4 physics lists directly and more details can be found in the Geant4 documentation:
+
+   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
+   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
+   * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
 
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
 
-   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
-   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
-
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+---------------------------+------------------------------------------------------------------------+
-| **String to use**         | **Description**                                                        |
-+---------------------------+------------------------------------------------------------------------+
-|                           | Transportation of primary particles only - no scattering in material.  |
-+---------------------------+------------------------------------------------------------------------+
-| cherenkov                 | Provides Cherenkov radiation for all charged particles. Provided by    |
-|                           | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
-|                           | `G4CherenkovProcess`.                                                  |
-+---------------------------+------------------------------------------------------------------------+
-| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
-+---------------------------+------------------------------------------------------------------------+
-| em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
-|                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
-+---------------------------+------------------------------------------------------------------------+
-| em_extra                  | This provides extra electromagnetic models including, muon nuclear     |
-|                           | processes, bertini electro-nuclear model and synchrotron radiation     |
-|                           | (not in material). Provided by `G4EmPhysicsExtra`.                     |
-+---------------------------+------------------------------------------------------------------------+
-| em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
-|                           | `G4EmPenelopePhysics`.                                                 |
-+---------------------------+------------------------------------------------------------------------+
-| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
-|                           | is based on the FRITIOF description of string excitation and           |
-|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
-+---------------------------+------------------------------------------------------------------------+
-| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
-|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
-|                           | `G4HadronElasticPhysics.`                                              |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic                  | A shortcut for `QGSP_BERT`.                                            |
-+---------------------------+------------------------------------------------------------------------+
-| hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
-+---------------------------+------------------------------------------------------------------------+
-| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
-|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
-|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                           | builder (a la Geant4) `BDSPhysicsMuon`.                                |
-+---------------------------+------------------------------------------------------------------------+
-| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
-|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
-|                           | This uses `G4OpticalPhysics` class.                                    |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
-|                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
-|                           | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                           | (>10 GeV).                                                             |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
-|                           | precision neutron models to transport neutrons below 20 MeV down to    |
-|                           | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
-|                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
-|                           | model for protons and neutrons In comparison to the LEP model, Binary  |
-|                           | cascade better describes production of secondary particles produced in |
-|                           | interactions of protons and neutrons with nuclei. This is provided by  |
-|                           | `G4HadronPhysicsQGSP_BIC`.                                             |
-+---------------------------+------------------------------------------------------------------------+
-| qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
-|                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
-+---------------------------+------------------------------------------------------------------------+
-| spindecay                 | Decay physics but with spin correctly implemented. Note, only the      |
-|                           | Geant4 tracking integrators track spin correctly.                      |
-+---------------------------+------------------------------------------------------------------------+
-| synchrad                  | Provides synchrotron radiation for all charged particles. Provided by  |
-|                           | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
-|                           | `G4SynchrotronRadiation`.                                              |
-+---------------------------+------------------------------------------------------------------------+
++-----------------------------+------------------------------------------------------------------------+
+| **String to use**           | **Description**                                                        |
++=============================+========================================================================+
+|                             | Transportation of primary particles only - no scattering in material.  |
++-----------------------------+------------------------------------------------------------------------+
+| charge_exchange             | `G4ChargeExchangePhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| cherenkov                   | Provides Cherenkov radiation for all charged particles. Provided by    |
+|                             | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
+|                             | `G4CherenkovProcess`.                                                  |
++-----------------------------+------------------------------------------------------------------------+
+| decay                       | Provides radioactive decay processes using `G4DecayPhysics`. Crucial   |
+|                             | for pion decay for example.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| decay_radioactive           | Radioactive decay of long lived nuclei.                                |
++-----------------------------+------------------------------------------------------------------------+
+| decay_spin                  | Decay physics but with spin correctly implemented. Note, only the      |
+|                             | Geant4 tracking integrators track spin correctly.                      |
++-----------------------------+------------------------------------------------------------------------+
+| em                          | Transportation of primary particles, ionisation, bremsstrahlung,       |
+|                             | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++-----------------------------+------------------------------------------------------------------------+
+| em_extra                    | This provides extra electromagnetic models including, muon nuclear     |
+|                             | processes, bertini electro-nuclear model and synchrotron radiation     |
+|                             | (not in material). Provided by `G4EmPhysicsExtra`.                     |
++-----------------------------+------------------------------------------------------------------------+
+| em_gs                       | `G4EmStandardPhysicsGS`.                                               |
++-----------------------------+------------------------------------------------------------------------+
+| em_livermore                | `G4EmLivermorePhysics`.                                                |
++-----------------------------+------------------------------------------------------------------------+
+| em_livermore_polarised      | `G4EmLivermorePolarizedPhysics`.                                       |
++-----------------------------+------------------------------------------------------------------------+
+| em_low_ep                   | `G4EmLowEPPhysics`.                                                    |
++-----------------------------+------------------------------------------------------------------------+
+| em_penelope                 | The same as `em` but using low energy electromagnetic models. Uses     |
+|                             | `G4EmPenelopePhysics`.                                                 |
++-----------------------------+------------------------------------------------------------------------+
+| em_ss                       | `G4EmStandardPhysicsSS`.                                               |
++-----------------------------+------------------------------------------------------------------------+
+| em_wvi                      | `G4EmStandardPhysicsWVI`.                                              |
++-----------------------------+------------------------------------------------------------------------+
+| em_1                        | `G4EmStandardPhysics_option1`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_2                        | `G4EmStandardPhysics_option2`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_3                        | `G4EmStandardPhysics_option3`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| em_4                        | `G4EmStandardPhysics_option4`.                                         |
++-----------------------------+------------------------------------------------------------------------+
+| ftfp_bert                   | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                             | is based on the FRITIOF description of string excitation and           |
+|                             | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                             | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
++-----------------------------+------------------------------------------------------------------------+
+| ftfp_bert_hp                | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                             | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic            | Elastic hadronic processes. This is provided by                        |
+|                             | `G4HadronElasticPhysics.`                                              |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_d          | `G4HadronDElasticPhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_h          | `G4HadronHElasticPhysics`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_hp         | `G4HadronElasticPhysicsHP`.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_lend (`*`) | `G4HadronElasticPhysicsLEND`.                                          |
++-----------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_xs         | `G4HadronElasticPhysicsXS`.                                            |
++-----------------------------+------------------------------------------------------------------------+
+| ion                         | `G4IonPhysics`.                                                        |
++-----------------------------+------------------------------------------------------------------------+
+| ion_binary (`*`)            | `G4IonBinaryCascadePhysics`.                                           |
++-----------------------------+------------------------------------------------------------------------+
+| ion_elastic                 | `G4IonElasticPhysics`.                                                 |
++-----------------------------+------------------------------------------------------------------------+
+| ion_elastic_qmd             | `G4IonQMDPhysics`.                                                     |
++-----------------------------+------------------------------------------------------------------------+
+| ion_inclxx (`*`)            | `G4IonINCLXXPhysics`.                                                  |
++-----------------------------+------------------------------------------------------------------------+
+| ion_php (`*`)               | `G4IonPhysicsPHP`.                                                     |
++-----------------------------+------------------------------------------------------------------------+
+| lw                          | Laserwire photon producing process as if the laserwire had scattered   |
+|                             | photons from the beam. Not actively developed, but will register       |
+|                             | process.                                                               |
++-----------------------------+------------------------------------------------------------------------+
+| muon                        | Provides muon production and scattering processes. Gamma to muons,     |
+|                             | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                             | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                             | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                             | builder (a la Geant4) `BDSPhysicsMuon`.                                |
++-----------------------------+------------------------------------------------------------------------+
+| optical                     | Optical physics processes including absorption, Rayleigh scattering,   |
+|                             | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                             | This uses `G4OpticalPhysics` class.                                    |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bert                   | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
+|                             | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
+|                             | hadronic elastic and inelastic processes. Suitable for high energy     |
+|                             | (>10 GeV).                                                             |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bert_hp                | Similar to `QGSP_BERT` but with the addition of data driven high       |
+|                             | precision neutron models to transport neutrons below 20 MeV down to    |
+|                             | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bic                    | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
+|                             | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
+|                             | model for protons and neutrons In comparison to the LEP model, Binary  |
+|                             | cascade better describes production of secondary particles produced in |
+|                             | interactions of protons and neutrons with nuclei. This is provided by  |
+|                             | `G4HadronPhysicsQGSP_BIC`.                                             |
++-----------------------------+------------------------------------------------------------------------+
+| qgsp_bic_hp                 | Similar to `QGSP_BIC` but with the high precision neutron package.     |
+|                             | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++-----------------------------+------------------------------------------------------------------------+
+| shielding                   | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
+|                             | shielding applications.                                                |
++-----------------------------+------------------------------------------------------------------------+
+| synch_rad                   | Provides synchrotron radiation for all charged particles. Provided by  |
+|                             | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
+|                             | `G4SynchrotronRadiation`.                                              |
++-----------------------------+------------------------------------------------------------------------+
+
+The following are also accepted as aliases to current physics lists. These are typically previously
+used names.
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|
+
++---------------------------+--------------------------+
+| **Physics List**          | **Alias To**             |
++===========================+==========================+
+| cerenkov                  | cherenkov                |
++---------------------------+--------------------------+
+| em_low                    | em_penelope              |
++---------------------------+--------------------------+
+| hadronic                  | ftfp_bert                |
++---------------------------+--------------------------+
+| hadronic_hp               | ftfp_bert_hp             |
++---------------------------+--------------------------+
+| ionbinary                 | ion_binary               |
++---------------------------+--------------------------+
+| ioninclxx                 | ion_inclxx               |
++---------------------------+--------------------------+
+| ionphp                    | ion_php                  |
++---------------------------+--------------------------+
+| spindecay                 | decay_spin               |
++---------------------------+--------------------------+
+| synchrad                  | synch_rad                |
++---------------------------+--------------------------+
+
+
+.. warning:: (*) These physics lists require the optional low energy data from Geant4. The user should
+	     download this data from the Geant4 website and install it (for example: extract to
+	     <install-dir>/share/Geant4-10.3.3/data/ beside the other data) and export the environmental
+	     variable `G4PARTICLEHPDATA` to point to this directory.
 
 
 Physics Biasing
@@ -2006,195 +2466,551 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius as these will have a large impact on the outcome of the simulation.
 
-Options in BDSIM
-^^^^^^^^^^^^^^^^ 
-
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
 as their value.
+
+Please also see :ref:`executable-options` for options that are used on the command line when
+executing BDSIM.
+
+Common options are duplicated below for convenience as these are the most common and useful
+options but all options are described in the following sub-sections:
+
+* `General Run Options`_
+* `Geometry Options`_
+* `Tracking Options`_
+* :ref:`physics-process-options`
+* `Visualisation`_
+* `Output Options`_
+* `Offset for Main Beam Line`_
+* `Scoring Map`_
+* `Developer Options`_
+  
+
+Common Options
+^^^^^^^^^^^^^^
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Function                                              |
 +==================================+=======================================================+
-| **Common Parameters**            |                                                       |
+| beampipeRadius                   | Default beam pipe inner radius [m].                   |
 +----------------------------------+-------------------------------------------------------+
-| beampipeRadius                   | default beam pipe inner radius [m]                    |
+| beampipeThickness                | Default beam pipe thickness [m].                      |
 +----------------------------------+-------------------------------------------------------+
-| beampipeThickness                | default beam pipe thickness [m]                       |
+| beampipeMaterial                 | Default beam pipe material.                           |
 +----------------------------------+-------------------------------------------------------+
-| beampipeMaterial                 | default beam pipe material                            |
+| elossHistoBinWidth               | The width of the histogram bins [m].                  |
 +----------------------------------+-------------------------------------------------------+
-| circular                         | whether the accelerator is circular or not            |
+| eventNumberOffset                | Event the recreation should start from.               |
 +----------------------------------+-------------------------------------------------------+
-| elossHistoBinWidth               | the width of the histogram bins [m]                   |
+| hStyle                           | Whether default dipole style is H style vs. C style   |
+|                                  | (default false).                                      |
 +----------------------------------+-------------------------------------------------------+
-| eventNumberOffset                | event the recreation should start from                |
+| ngenerate                        | Number of primary particles to simulate.              |
 +----------------------------------+-------------------------------------------------------+
-| killNeutrinos                    | whether to always stop tracking neutrinos for         |
-|                                  | increased efficiency (default = true)                 |
-+----------------------------------+-------------------------------------------------------+
-| ngenerate                        | number of primary particles to simulate               |
-+----------------------------------+-------------------------------------------------------+
-| nturns                           | the number of revolutions particles are allowed to    |
+| nturns                           | The number of revolutions particles are allowed to    |
 |                                  | complete in a circular accelerator - requires         |
-|                                  | --circular executable option to work                  |
+|                                  | --circular executable option to work.                 |
 +----------------------------------+-------------------------------------------------------+
-| outerDiameter                    | default accelerator component full width [m]          |
+| outerDiameter                    | Default accelerator component full width [m].         |
 +----------------------------------+-------------------------------------------------------+
-| physicsList                      | the physics list to use                               |
+| physicsList                      | The physics list to use.                              |
 +----------------------------------+-------------------------------------------------------+
-| printModuloFraction              | the fraction of events to print out (default 0.1)     |
+| printFractionEvents              | How often to print out the event number as a fraction |
+|                                  | of the total number of events to simulation (default  |
+|                                  | is 0.1 i.e. 10%.  Varies from 0 to 1. -1 for all.     |
 +----------------------------------+-------------------------------------------------------+
-| recreate                         | whether to run in recreation mode (default 0)         |
+| printFractionTurns               | How often to print out the turn number as a fraction  |
+|                                  | of the total number of turns to simulation (default   |
+|                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
+|                                  | Will only print out in an event that also prints out. |
 +----------------------------------+-------------------------------------------------------+
-| recreateFileName                 | which file to recreate events from                    |
+| prodCutPhotons                   | Standard overall production cuts for photons          |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| startFromEvent                   | event number offset to start from when recreating     |
+| prodCutElectrons                 | Standard overall production cuts for electrons        |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| seed                             | the integer seed value for the random number          |
+| prodCutPositrons                 | Standard overall production cuts for positrons        |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | Standard overall production cuts for protons          |
+|                                  | (default 1e-3) [m].                                   |
++----------------------------------+-------------------------------------------------------+
+| removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
+|                                  | when BDSIM exits. Default true.                       |
++----------------------------------+-------------------------------------------------------+
+| seed                             | The integer seed value for the random number          |
+|                                  | generator.                                            |
++----------------------------------+-------------------------------------------------------+
+| stopSecondaries                  | Whether to stop secondaries or not (default = false). |
++----------------------------------+-------------------------------------------------------+
+| worldMaterial                    | The default material surrounding the model. This is   |
+|                                  | by default air.                                       |
++----------------------------------+-------------------------------------------------------+
+
+General Run Options
+^^^^^^^^^^^^^^^^^^^
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Function                                              |
++==================================+=======================================================+
+| ngenerate                        | Number of primary particles to simulate.              |
++----------------------------------+-------------------------------------------------------+
+| nturns                           | The number of revolutions particles are allowed to    |
+|                                  | complete in a circular accelerator - requires         |
+|                                  | --circular executable option to work.                 |
++----------------------------------+-------------------------------------------------------+
+| printFractionEvents              | How often to print out the event number as a fraction |
+|                                  | of the total number of events to simulation (default  |
+|                                  | is 0.1 i.e. 10%.  Varies from 0 to 1. -1 for all.     |
++----------------------------------+-------------------------------------------------------+
+| printFractionTurns               | How often to print out the turn number as a fraction  |
+|                                  | of the total number of turns to simulation (default   |
+|                                  | is 0.2 i.e. 20%.  Varies from 0 to 1. -1 for all.     |
+|                                  | Will only print out in an event that also prints out. |
++----------------------------------+-------------------------------------------------------+
+| removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
+|                                  | when BDSIM exits. Default true.                       |
++----------------------------------+-------------------------------------------------------+
+| seed                             | The integer seed value for the random number          |
 |                                  | generator                                             |
 +----------------------------------+-------------------------------------------------------+
-| seedStateFileName                | path to ASCII seed state to load - must be used with  |
-|                                  | :code:`useASCIISeedState` to be effective             |
+| writeSeedState                   | Write the seed state of the last event start in       |
+|                                  | ASCII.                                                |
 +----------------------------------+-------------------------------------------------------+
-| stopSecondaries                  | whether to stop secondaries or not (default = false)  |
+
+Geometry Options
+^^^^^^^^^^^^^^^^
+
+These affect the construction of the 3D model in BDSIM. Tunnel parameters are also
+described in `Tunnel Geometry`_.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +----------------------------------+-------------------------------------------------------+
-| stopTracks                       | whether to stop tracks after                          |
-|                                  | interaction (default = false)                         |
+| Option                           | Function                                              |
++==================================+=======================================================+
+| aper1                            | Default aper1 parameter.                              |
 +----------------------------------+-------------------------------------------------------+
-| useASCIISeedState                | whether to load an ASCII seed state file using        |
-|                                  | :code:`seedStateFileName`                             |
+| aper2                            | Default aper2 parameter.                              |
 +----------------------------------+-------------------------------------------------------+
-| writeSeedState                   | write the seed state of the last event start in ASCII |
+| aper3                            | Default aper3 parameter.                              |
 +----------------------------------+-------------------------------------------------------+
-| **Geometry Parameters**          |                                                       |
+| aper4                            | Default aper4 parameter.                              |
 +----------------------------------+-------------------------------------------------------+
-| aper1                            | default aper1 parameter                               |
+| beampipeRadius                   | Default beam pipe inner radius - alisas to aper1 [m]. |
 +----------------------------------+-------------------------------------------------------+
-| aper2                            | default aper2 parameter                               |
+| beampipeThickness                | Default beam pipe thickness [m].                      |
 +----------------------------------+-------------------------------------------------------+
-| aper3                            | default aper3 parameter                               |
+| beampipeMaterial                 | Default beam pipe material.                           |
 +----------------------------------+-------------------------------------------------------+
-| aper4                            | default aper4 parameter                               |
+| buildTunnel                      | Whether to build a tunnel (default = 0).              |
++----------------------------------+-------------------------------------------------------+
+| buildTunnelStraight              | Whether to build a tunnel ignoring the beamline and   |
+|                                  | just in a straight line (default = 0).                |
++----------------------------------+-------------------------------------------------------+
+| builTunnelFloor                  | Whether to add a floor to the tunnel.                 |
++----------------------------------+-------------------------------------------------------+
+| coilWidthFraction                | 0.05 - 0.98 - fraction of available horizontal space  |
+|                                  | between pole and yoke that coil will occupy.          |
++----------------------------------+-------------------------------------------------------+
+| coilHeightFraction               | 0.05 - 0.98 - fraction of available vertical space    |
+|                                  | between pole tip and yoke that coil will occupy.      |
++----------------------------------+-------------------------------------------------------+
+| dontSplitSBends                  | If true, do not split sbends into multiple segments   |
+|                                  | (default = false).                                    |
++----------------------------------+-------------------------------------------------------+
+| emptyMaterial                    | This is 'vacuum' material where no material is        |
+|                                  | required. Note, this is not 'vacuum' in the beam pipe |
+|                                  | but the lowest density material (G4_GALACTIC) Geant4  |
+|                                  | can muster as all materials must have a finite        |
+|                                  | density. This is used for the gap between             |
+|                                  | tight-fitting container volumes and objects.          |
 +----------------------------------+-------------------------------------------------------+
 | ignoreLocalAperture              | If this is true (1), any per-element aperture         |
 |                                  | definitions will be ignored and the ones specified    |
 |                                  | in options will be used.                              |
 +----------------------------------+-------------------------------------------------------+
 | checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
-|                                  | during geometry construction (slower)                 |
+|                                  | during geometry construction (slower).                |
 +----------------------------------+-------------------------------------------------------+
-| includeIronMagFields             | whether to include magnetic fields in the magnet      |
-|                                  | poles                                                 |
+| hStyle                           | Whether default dipole style is H style vs. C style   |
+|                                  | (default false).                                      |
 +----------------------------------+-------------------------------------------------------+
-| magnetGeometryType               | the default magnet geometry style to use              |
+| includeIronMagFields             | Whether to include magnetic fields in the magnet      |
+|                                  | poles.                                                |
 +----------------------------------+-------------------------------------------------------+
-| outerDiameter                    | the default full width of a magnet                    |
+| magnetGeometryType               | The default magnet geometry style to use.             |
 +----------------------------------+-------------------------------------------------------+
-| outerMaterial                    | the default material to use for the yoke of magnet    |
+| outerDiameter                    | The default full width of a magnet.                   |
++----------------------------------+-------------------------------------------------------+
+| outerMaterial                    | The default material to use for the yoke of magnet    |
 |                                  | geometry.                                             |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
+| preprocessGDML                   | Whether to prepend the element name at the front of   |
+|                                  | every tag in a temporary copy of the GDML file.       |
+|                                  | loaded. This is to compensate for the Geant4 GDML     |
+|                                  | loader that cannot load multiple files correctly. On  |
+|                                  | by default.                                           |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveBeamlineComponents      | whether all beam line components record energy loss   |
+| samplerDiameter                  | Diameter of samplers (default 5 m) [m] This is also   |
+|                                  | the diameter of the curvilinear world volumes used    |
+|                                  | curvilinear transforms. In the case of lower energy   |
+|                                  | machines with strong bending angles (10s of degrees)  |
+|                                  | this should be reduced to prevent overlaps between    |
+|                                  | curvilinear volumes along the beam line.              |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveBeamPipe                | whether the beam pipe records energy loss             |
+| sensitiveBeamlineComponents      | Whether all beam line components record energy loss.  |
 +----------------------------------+-------------------------------------------------------+
-| vacuumMaterial                   | the material to use for the beam pipe vacuum          |
+| sensitiveBeamPipe                | whether the beam pipe records energy loss.            |
 +----------------------------------+-------------------------------------------------------+
-| vacuumPressure                   | the pressure of the vacuum gas [bar]                  |
+| soilMaterial                     | Material for soil outside tunnel wall.                |
 +----------------------------------+-------------------------------------------------------+
-| thinElementLength                | the length of all thinmultipoles and dipole           |
-|                                  | fringefields in a lattice (default 1e-6) [m]          |
+| thinElementLength                | The length of all thinmultipoles and dipole           |
+|                                  | fringefields in a lattice (default 1e-6) [m].         |
 +----------------------------------+-------------------------------------------------------+
-| **Tracking Parameters**          |                                                       |
+| tunnelType                       | Which style of tunnel to use - one of:                |
+|                                  | `circular`, `elliptical`, `square`, `rectangular`     |
+|                                  | (more to come in v0.9).                               |
 +----------------------------------+-------------------------------------------------------+
-| deltaChord                       | chord finder precision                                |
+| tunnelAper1                      | Tunnel aperture parameter #1 - typically              |
+|                                  | horizontal [m].                                       |
 +----------------------------------+-------------------------------------------------------+
-| deltaIntersection                | boundary intersection precision                       |
+| tunnelAper2                      | Tunnel aperture parameter #2 - typically              |
+|                                  | vertical [m].                                         |
 +----------------------------------+-------------------------------------------------------+
-| chordStepMinimum                 | minimum step size                                     |
+| tunnelFloorOffset                | The offset of the tunnel floor from the centre of the |
+|                                  | tunnel (**not** the beam line).                       |
 +----------------------------------+-------------------------------------------------------+
-| includeFringeFields              | place thin fringefield elements on the end of bending |
-|                                  | magnets with finite poleface angles. The length of the|
-|                                  | total element is conserved. (default = false)         |
+| tunnelMaterial                   | Material for tunnel wall.                             |
 +----------------------------------+-------------------------------------------------------+
-| integratorSet                    | set of tracking routines to use ("bdsim" or           |
-|                                  | "bdsimtwo" or "geant4")                               |
+| tunnelOffsetX                    | Horizontal offset of the tunnel with respect to the   |
+|                                  | beam line reference trajectory.                       |
 +----------------------------------+-------------------------------------------------------+
-| lengthSafety                     | element overlap safety (caution!)                     |
+| tunnelOffsetY                    | Vertical offset of the tunnel with respect to the     |
+|                                  | beam line reference trajectory.                       |
 +----------------------------------+-------------------------------------------------------+
-| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
+| tunnelSoilThickness              | Soil thickness outside tunnel wall [m].               |
 +----------------------------------+-------------------------------------------------------+
-| maximumStepLength                | maximum step length (default = 20 m)                  |
+| tunnelThickness                  | Thickness of tunnel wall [m].                         |
 +----------------------------------+-------------------------------------------------------+
-| maximumTrackingTime              | the maximum time of flight allowed for any particle   |
-|                                  | before it is killed                                   |
+| vacuumMaterial                   | The material to use for the beam pipe vacuum.         |
 +----------------------------------+-------------------------------------------------------+
-| maximumTrackLength               | the maximum length in metres of any track passing     |
+| vacuumPressure                   | The pressure of the vacuum gas [bar].                 |
++----------------------------------+-------------------------------------------------------+
+| vhRatio                          | Default vertical to horizontal ratio for dipoles.     |
++----------------------------------+-------------------------------------------------------+
+| worldVolumeMargin                | The margin added in all directions to the world       |
+|                                  | volume [m]. Default 5m, minimum 2m.                   |
++----------------------------------+-------------------------------------------------------+
+| worldMaterial                    | The default material surrounding the model. This is   |
+|                                  | by default air.                                       |
++----------------------------------+-------------------------------------------------------+
+| yokeFields                       | whether to include a general multipolar field for     |
+|                                  | the yoke of each magnet (using a 4th order            |
+|                                  | Runge-Kutta integrator). Default true.                |
++----------------------------------+-------------------------------------------------------+
+
+Tracking Options
+^^^^^^^^^^^^^^^^
+
+These control over the tracking routines used as well as roughly the speed of the simulation
+with various options.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Function                                              |
++==================================+=======================================================+
+| includeFringeFields              | Place thin fringefield elements on the end of bending |
+|                                  | magnets with finite poleface angles. The length of    |
+|                                  | the total element is conserved. (default = false).    |
++----------------------------------+-------------------------------------------------------+
+| integratorSet                    | Set of tracking routines to use ("bdsimmatrix",       |
+|                                  | "bdsimtwo", or "geant4").                             |
++----------------------------------+-------------------------------------------------------+
+| killNeutrinos                    | Whether to always stop tracking neutrinos for         |
+|                                  | increased efficiency (default = true).                |
++----------------------------------+-------------------------------------------------------+
+| maximumStepLength                | Maximum step length [m] (default = 20 m).             |
++----------------------------------+-------------------------------------------------------+
+| maximumTrackingTime              | The maximum time of flight allowed for any particle   |
+|                                  | before it is killed [s].                              |
++----------------------------------+-------------------------------------------------------+
+| maximumTrackLength               | The maximum length in metres of any track passing     |
 |                                  | through any geometry in the model (not including the  |
 |                                  | world volume).                                        |
 +----------------------------------+-------------------------------------------------------+
-| minimumEpsilonStep               | minimum relative error acceptable in stepping         |
-+----------------------------------+-------------------------------------------------------+
-| minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |
+| minimumRadiusOfCurvature         | Minimum tolerable radius of curvature of a particle   |
 |                                  | below which, the energy will be decreased by 2% on    |
 |                                  | each use of the integrator to prevent infinite        |
 |                                  | loops - should be just greater than width of beam     |
-|                                  | pipe.                                                 |
+|                                  | pipe. [m]                                             |
 +----------------------------------+-------------------------------------------------------+
-| deltaOneStep                     | set position error acceptable in an integration step  |
+| stopSecondaries                  | Whether to stop secondaries or not (default = false). |
 +----------------------------------+-------------------------------------------------------+
-| **Physics Processes Parameters** |                                                       |
+
+.. _physics-process-options:
+
+Physics Processes
+^^^^^^^^^^^^^^^^^
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +----------------------------------+-------------------------------------------------------+
-| defaultBiasVacuum                | name of bias object to be attached to vacuum volumes  |
-|                                  | by default                                            |
+| Option                           | Function                                              |
++==================================+=======================================================+
+| defaultBiasVacuum                | Name of bias object to be attached to vacuum volumes  |
+|                                  | by default.                                           |
 +----------------------------------+-------------------------------------------------------+
-| defaultBiasMaterial              | name of bias object to be attached to general         |
-|                                  | material of components outside the vacuum by default  |
+| defaultBiasMaterial              | Name of bias object to be attached to general         |
+|                                  | material of components outside the vacuum by default. |
 +----------------------------------+-------------------------------------------------------+
-| synchRadOn                       | whether to use synchrotron radiation processes        |
+| defaultRangeCut                  | The default predicted range at which a particle is    |
+|                                  | cut. Overwrites other production cuts unless these    |
+|                                  | are explicitly set (default 1e-3) [m].                |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPhotons                   | standard overall production cuts for photons          |
+| minimumKineticEnergy             | A particle below this energy will be killed and the   |
+|                                  | energy deposition recorded at that location. [GeV].   |
 +----------------------------------+-------------------------------------------------------+
-| prodCutElectrons                 | standard overall production cuts for electrons        |
+| minimumRange                     | A particle that would not travel this range           |
+|                                  | (a distance) in the current material will be cut. [m] |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPositrons                 | standard overall production cuts for positrons        |
+| physicsList                      | Which physics lists to use - default tracking only.   |
 +----------------------------------+-------------------------------------------------------+
-| prodCutProtons                   | standard overall production cuts for protons          |
+| prodCutPhotons                   | Standard overall production cuts for photons          |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| turnOnCerenkov                   | whether to produce cerenkov radiation                 |
+| prodCutElectrons                 | Standard overall production cuts for electrons        |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 1e-3) [m]                                |
+| prodCutPositrons                 | Standard overall production cuts for positrons        |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| **Output Parameters**            |                                                       |
+| prodCutProtons                   | Standard overall production cuts for protons          |
+|                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
-| storeTrajectories                | whether to store trajectories in the output           |
+| stopSecondaries                  | Whether to stop secondaries or not (default = false). |
 +----------------------------------+-------------------------------------------------------+
-| storeTrajectoryDepth             | maximum depth (secondaries) of stored trajectories    |
+| synchRadOn                       | Whether to use synchrotron radiation processes.       |
 +----------------------------------+-------------------------------------------------------+
-| storeTrajectoryEnergyThreshold   | minimum energy of stored trajectories                 |
+| turnOnCerenkov                   | Whether to produce cerenkov radiation.                |
 +----------------------------------+-------------------------------------------------------+
-| storeTrajectoryParticle          | store trajectories of these particles                 |
+
+
+Visualisation
+^^^^^^^^^^^^^
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +----------------------------------+-------------------------------------------------------+
-| trajCutGTZ                       | global z position cut (minimum) for storing           |
-|                                  | trajectories                                          |
-+----------------------------------+-------------------------------------------------------+
-| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
-+----------------------------------+-------------------------------------------------------+
-| nperfile                         | number of events to record per output file            |
-+----------------------------------+-------------------------------------------------------+
-| **Visualisation Parameters**     |                                                       |
-+----------------------------------+-------------------------------------------------------+
+| Option                           | Function                                              |
++==================================+=======================================================+
 | nSegmentsPerCircle               | the number of facets per 2 :math:`\pi` in the         |
 |                                  | visualiser. Note, this does not affect the accuracy   |
 |                                  | of the geometry - only the visualisation (default =   |
-|                                  | 50)                                                   |
+|                                  | 50).                                                  |
 +----------------------------------+-------------------------------------------------------+
 
-* For **Tunnel** parameters, see, `Tunnel Geometry`_.
+.. _bdsim-options-output:
+  
+Output Options
+^^^^^^^^^^^^^^
+
+The particle physics simulation in BDSIM can produce an impressive quantity of output
+information. The data describing a full record of every particle and their interaction
+would prove to difficult to manage or analyse sensibly. BDSIM records the most useful
+information, but provides options to record even more data. This is controlled with the
+following options. These options may increase the output file size by a large amount.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++-----------------------------------+--------------------------------------------------------------------+
+| Option                            | Description                                                        |
++===================================+====================================================================+
+| elossHistoBinWidth                | The width of the histogram bins [m].                               |
++-----------------------------------+--------------------------------------------------------------------+
+| nperfile                          | Number of events to record per output file.                        |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossLinks                   | For each energy deposition hit the particle ID, track ID, parent   |
+|                                   | ID and beam line index will be stored - this is intended to help   |
+|                                   | 'link' the energy deposition back to other information.            |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
+|                                   | stored. This must be turned on to store any trajectories at all.   |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectories                 | An alias to `storeTrajectory`.                                     |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryDepth              | The depth of the particle tree to store the trajectories to. 0 is  |
+|                                   | the primary, 1 is the first generation of secondaries, etc.        |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticle           | The Geant4 name of particle(s) to only store trajectories for.     |
+|                                   | This is case sensitive. Multiple partilce names can be used with   |
+|                                   | a space them. e.g. "proton pi-".                                   |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryParticleID         | The PDG ID of the particle(s) to only store trajectories for.      |
+|                                   | Multiple particle IDs can be supplied with a space between them.   |
+|                                   | e.g. "11 12 22 13".                                                |
++-----------------------------------+--------------------------------------------------------------------+
+| storeTrajectoryEnergyThreshHold   | The threshold energy for storing trajectories. Trajectories for    |
+|                                   | any particles with energy less than this amount (in GeV) will not  |
+|                                   | be stored.                                                         |
++-----------------------------------+--------------------------------------------------------------------+
+| trajConnect                       | Store all the trajectories that connect a trajectory that will be  |
+|                                   | stored all the way to the primary particle. For exapmle, if the    |
+|                                   | filters from other trajectory options are to store only muons      |
+|                                   | with an energy greater than 10 GeV, the few trajectories stored    |
+|                                   | would appear unrelated. This option forces the storage of only     |
+|                                   | the trajectories of any particles (irrespective of filters) that   |
+|                                   | lead to the muon in question.                                      |
++-----------------------------------+--------------------------------------------------------------------+
+| trajNoTransportation              | Suppress trajectory points generated by transportation. When a     |
+|                                   | particle hits a volume boundary, two trajectories would be created |
+|                                   | for before and afterwards even if it didn't interact or change.    |
+|                                   | This option removes these points.                                  |
++-----------------------------------+--------------------------------------------------------------------+
+| trajCutGTZ                        | Only store trajectories whose *global* z coordinate is greater     |
+|                                   | than this value. In metres.                                        |
++-----------------------------------+--------------------------------------------------------------------+
+| trajCutLTR                        | Only store trajectories whose *global* radius from the start       |
+|                                   | position (sqrt(x^2, y^2)).                                         |
++-----------------------------------+--------------------------------------------------------------------+
+
+.. _beamline-offset:
+
+Offset for Main Beam Line
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following options may be used to offset the main beam line with respect to the world
+volume, which is the outermost coordinate system.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++----------------------+--------------------------------------------------------------------+
+| Option               | Description                                                        |
++======================+====================================================================+
+| beamlineX            | Offset in x.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlineY            | Offset in y.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlineZ            | Offset in z.                                                       |
++----------------------+--------------------------------------------------------------------+
+| beamlinePhi          | Euler angle phi for rotation.                                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineTheta        | Euler angle theta for rotation.                                    |
++----------------------+--------------------------------------------------------------------+
+| beamlinePsi          | Euler angle psi for rotation.                                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisX        | Axis angle rotation x component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisY        | Axis angle rotation y component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisZ        | Axis angle rotation z component of unit vector.                    |
++----------------------+--------------------------------------------------------------------+
+| beamlineAngle        | Axis angle angle to rotate about unit vector.                      |
++----------------------+--------------------------------------------------------------------+
+| beamlineAxisAngle    | Boolean whether to use axis angle rotation scheme (default false). |
++----------------------+--------------------------------------------------------------------+
+
+Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
+rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
+directly, which is also the same as a :code:`CLHEP::HepRotation`.
+
+.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
+	  the default units for offsets and angles in BDSIM.
+
+Example::
+
+  option, beamlineX = 3*m,
+          beamlineY = 20*cm,
+	  beamlineZ = -30*m,
+	  beamlineAxisAngle = 1,
+	  beamlineAxisY = 1,
+	  beamlineAngle = 0.2;
+
+This offsets the beam line by (3,0.2,-30) m and rotated about the unit vector (0,1,0) (ie in the
+horizontal plane - x,z) by 0.2 rad.
+
+.. _scoring-map-description:
+
+Scoring Map
+^^^^^^^^^^^
+
+BDSIM provides the capability to create one 3D histogram of energy deposition hits irrespective
+of the geometry. The hits are only created though where the geometry exists and are sensitive.
+The histogram is independent of the geometry though.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Function                                              |
++==================================+=======================================================+
+| useScoringMap                    | Whether to create a scoring map.                      |
++----------------------------------+-------------------------------------------------------+
+| nbinsx                           | Number of bins in global X.                           |
++----------------------------------+-------------------------------------------------------+
+| nbinsy                           | Number of bins in global Y.                           |
++----------------------------------+-------------------------------------------------------+
+| nbinsz                           | Number of bins in global Z.                           |
++----------------------------------+-------------------------------------------------------+
+| xmin                             | Lower global X limit.                                 |
++----------------------------------+-------------------------------------------------------+
+| xmax                             | Upper global X limit.                                 |
++----------------------------------+-------------------------------------------------------+
+| ymin                             | Lower global Y limit.                                 |
++----------------------------------+-------------------------------------------------------+
+| ymax                             | Upper global Y limit.                                 |
++----------------------------------+-------------------------------------------------------+
+| zmin                             | Lower global Z limit.                                 |
++----------------------------------+-------------------------------------------------------+
+| zmax                             | Upper global Z limit.                                 |
++----------------------------------+-------------------------------------------------------+
+
+.. _developer-options:
+
+Developer Options
+^^^^^^^^^^^^^^^^^
+
+These are documented here but use with caution as they lead to undesirable behaviour and
+should only be used with understanding.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
++-----------------------------------+--------------------------------------------------------------------+
+| Option                            | Description                                                        |
++===================================+====================================================================+
+| chordStepMinimum                  | Minimum step size.                                                 |
++-----------------------------------+--------------------------------------------------------------------+
+| deltaChord                        | Chord finder precision.                                            |
++-----------------------------------+--------------------------------------------------------------------+
+| deltaIntersection                 | Boundary intersection precision.                                   |
++-----------------------------------+--------------------------------------------------------------------+
+| deltaOneStep                      | Set position error acceptable in an integration step.              |
++-----------------------------------+--------------------------------------------------------------------+
+| lengthSafety                      | Element overlap safety (caution!).                                 |
++-----------------------------------+--------------------------------------------------------------------+
+| maximumEpsilonStep                | Maximum relative error acceptable in stepping.                     |
++-----------------------------------+--------------------------------------------------------------------+
+| minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
++-----------------------------------+--------------------------------------------------------------------+
+| beeam, offsetSampleMean=1         | Default false. If true, this will remove the sample mean from the  |
+|                                   | bunch distribution to match the central values. This is useful for |
+|                                   | optical function calculation. BDSIM is not currently able to       |
+|                                   | reproduce results when this option is used and coordinates will    |
+|                                   | be different for each run or even when using --recreate.  Only     |
+|                                   | suitable for large (>100) numbers of particles. Note, this isn't   |
+|                                   | an option, but part of the beam command.                           |
++-----------------------------------+--------------------------------------------------------------------+
+
 
 .. _beam-parameters:
   
@@ -2202,13 +3018,17 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
+used. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
-the momentum of the reference particle and therefore the magnetic field of dipole magnets
-if only the `angle` parameter has been specified.
+the momentum of the reference particle and therefore the magnetic rigidity that magnetic
+field strengths are calculated with respect to. For example, the field of dipole magnets
+is calculated using this if only the `angle` parameter has been specified.
 
-.. note:: A design energy can be specified and in addition, the central energy, of say
-	  a bunch with a Gaussian distribution, can be specified with `E0`.
+.. note:: The design energy is required to be specified, but the central energy, of say
+	  a bunch with a Gaussian distribution, can be also be specified with `E0`.
+
+.. note:: `energy` here is the **total energy** of the particle. This must be greater than
+	  the rest mass of the particle.
 
 The user **must** specify at least `energy` and the `particle` type. In this case the
 `reference`_ distribution will be used as well as default parameters. The minimum
@@ -2226,17 +3046,26 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is in `GeV` by default. The particle is typically one of the following:
+Energy is the total energy in `GeV`. The beam particle may be one of the following:
 
-* `e-`
-* `e+`
-* `proton`
+* `e-` or `e+`
+* `proton` or `antiproton`
 * `gamma`
-* `mu-`
-* `mu+`
+* `neutron`
+* `mu-` or `mu+`
+* `pi-` or `pi+`
 
-However, many particles can be used and are taken from the Geant4 particle table directly
-and therefore the Geant4 naming scheme should be used.
+The user may also specify any ion with the following syntax::
+
+  beam, particle="ion A Z";
+
+or::
+  
+  beam, particle="ion A Z Q";
+
+where `A`, `Z` and `Q` should be replaced by the the atomic number, the number of protons
+in the nucleus and the charge. The charge is optional and by default is Z (i.e. a fully
+ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
@@ -2256,7 +3085,12 @@ The following beam distributions are available in BDSIM
 - `halo`_
 - `composite`_ 
 - `userfile`_
-- `ptc`_ 
+- `ptc`_
+
+.. note:: For `gauss`_, `gaussmatrix`_ and `gausstwiss`_, the beam option `beam, offsetSampleMean=1`
+	  documented in :ref:`developer-options` can be used to pre-generate all particle coordinates and
+	  subtract the sample mean from these effictively removing any small systematic offset in
+	  the bunch at the beginning of the line. This is used only for optical comparisons currently.
 
 
 reference
@@ -2350,42 +3184,60 @@ correlations between phase space coordinates, so
 
 * All parameters from `reference`_ distribution as used as centroids.
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `sigmaX`                         | Horizontal gaussian sigma [m]                         |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaY`                         | Vertical gaussian sigma [m]                           |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaXp`                        | Sigma of the horizontal canonical momentum            |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaYp`                        | Sigma of the vertical canonical momentum              |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaE`                         | Relative energy spread                                |
-+----------------------------------+-------------------------------------------------------+
-| `sigmaT`                         | Sigma of the temporal distribution [s]                |
-+----------------------------------+-------------------------------------------------------+
++----------------------------------+-------------------------------------------------------------------------------------+
+| Option                           | Description                                                                         |
++==================================+=====================================================================================+
+| `sigmaX`                         | Horizontal gaussian sigma [m]                                                       |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaY`                         | Vertical gaussian sigma [m]                                                         |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaXp`                        | Sigma of the horizontal canonical momentum                                          |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaYp`                        | Sigma of the vertical canonical momentum                                            |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaE`                         | Relative energy spread :math:`\sigma_{E}/E`                                         |
++----------------------------------+-------------------------------------------------------------------------------------+
+| `sigmaT`                         | Sigma of the temporal distribution [s]                                              |
++----------------------------------+-------------------------------------------------------------------------------------+
 
 
 gausstwiss
 ^^^^^^^^^^
 
-The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
-the usual beam :math:`\sigma`-matrix is calculated, using the following equations 
+The beam parameters are defined by the usual Twiss parameters :math:`\alpha`, :math:`\beta` and
+:math:`\gamma` plus dsipersion :math:`\eta` from which the beam :math:`\sigma` -matrix
+is calculated, using the following equations:
 
 .. math:: 
-   \sigma_{11} & =  \epsilon_x \beta_x  \\
-   \sigma_{12} & = -\epsilon_x \alpha_x \\  
-   \sigma_{21} & = -\epsilon_x \alpha_x \\
-   \sigma_{22} & =  \epsilon_x \gamma_x \\
-   \sigma_{33} & =  \epsilon_y \beta_y \\
-   \sigma_{34} & = -\epsilon_y \alpha_y \\ 
-   \sigma_{43} & = -\epsilon_y \alpha_y \\
-   \sigma_{44} & =  \epsilon_y \gamma_y \\    
+   \sigma_{11} & =  \epsilon_x \beta_x + \eta_{x}^{2}\sigma_{E}^{2} \\
+   \sigma_{12} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\  
+   \sigma_{21} & = -\epsilon_x \alpha_x + \eta_{x}\eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{22} & =  \epsilon_x \gamma_x + \eta_{xp}^{2}\sigma_{E}^{2}\\
+   \sigma_{33} & =  \epsilon_y \beta_y + \eta_{y}^{2}\sigma_{E}^{2}\\
+   \sigma_{34} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\ 
+   \sigma_{43} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{44} & =  \epsilon_y \gamma_y + \eta_{yp}^{2}\sigma_{E}^{2}\\
+   \sigma_{02} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{20} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{12} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{21} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{03} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{30} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{50} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{05} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{51} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{15} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{25} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{52} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{35} & = \eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{53} & = \eta_{x}\sigma_{E}^{2}\\
    \sigma_{55} & =  \sigma_{T}^2 \\  
    \sigma_{66} & =  \sigma_{E}^2  
 
 * All parameters from `reference`_ distribution as used as centroids.
+* Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
    
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -2402,6 +3254,15 @@ the usual beam :math:`\sigma`-matrix is calculated, using the following equation
 +----------------------------------+-------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                               |
 +----------------------------------+-------------------------------------------------------+
+| `dispx`                          | Horizontal dispersion function [m]                    |
++----------------------------------+-------------------------------------------------------+
+| `dispy`                          | Vertical dispersion function [m]                      |
++----------------------------------+-------------------------------------------------------+
+| `dispxp`                         | Horizontal angular dispersion function                |
++----------------------------------+-------------------------------------------------------+
+| `dispyp`                         | Vertical angular dispersion function                  |
++----------------------------------+-------------------------------------------------------+
+
 
 circle
 ^^^^^^
@@ -2540,17 +3401,21 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                                                     |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeX`                      | Horizontal position maximum [m]                                             |
+| `haloNSigmaXInner`               | Inner radius of halo in x (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeY`                      | Vertical position maximum [m]                                               |
+| `haloNSigmaXOuter`               | Outer radius of halo in x (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeXp`                     | Horizontal angle maximum [m]                                                |
+| `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeYp`                     | Vertical angle maximum [m]                                                  |
+| `haloeNSigmaYOuter`              | Outer radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightFunction`           | Phase space weight function [string]                                        |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightParameter`          | Phase space weight function parameters []                                   |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloXCutInner`                  | X position cut in halo (multiples of sigma)                                 |
++----------------------------------+-----------------------------------------------------------------------------+
+| `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
 
 composite
@@ -2605,8 +3470,16 @@ Examples::
 userFile
 ^^^^^^^^
 
-The `userFile` distribution allows the user to supply an ASCII text file with particle coordinates
-that are tab-delimited. The column names and the units are specified in an input string.
+The `userFile` distribution allows the user to supply an ASCII text file with particle
+coordinates that are tab-delimited. The column names and the units are specified in an
+input string.
+
+The file may also be compressed using tar and gz. Any file with the extentsion `.tar.gz`
+will be automatically decompressed during the run without any temporary files. This is
+recommended as compressed ASCII is significantly smaller in size.
+
+.. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
+	  by default on.
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
@@ -2726,8 +3599,8 @@ the larger of the horizontal and vertical tunnel dimensions.
 	  certain elements in the beamline, but for now such situations must be avoided.
 
 
-Material and Atoms
-------------------
+Materials and Atoms
+-------------------
 
 Materials and atoms can be added via the parser, just like lattice elements.
 
@@ -2819,5 +3692,200 @@ the user may define additional regions and attach them to the objects desired.  
 
 .. rubric:: Footnotes
 
-.. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
-		      The distinction is kept for clarity, and this might be changed in the future.
+
+Controlling Simulation Speed
+----------------------------
+
+The particle showers created in high energy particle interactions with matter can lead to a
+very large number of particles being produced in an event. These in turn each take time to
+track through the model and the computational time per event increases. When simulating a
+very high energy scale, the user may not be interested in very low energy particles, however
+these may dominate the simulation time.
+
+To improve efficiency, there are several options the user can adjust. These however may reduce
+the accuracy of the results obtained and must be used cautiously and only where required.
+
+Range Cuts
+^^^^^^^^^^
+
+The production range cuts are the recommended method from Geant4, who stronly advocate
+these over energy based tracking cuts. These produce the most accurate results while
+reducing simulation time. Approximately, these are the length a secondary must travel
+before interacting. If the secondary would not travel further than this (depending on
+the secondary species, physics lists, material and energy), the secondary will not
+be produced. These can be set globally or for a *region* (see `Regions`_) that is attached
+to individual volumes through the "region" parameter for that accelerator element. In
+fact a range cut always exists in Geant4 (to prevent infrared divergence) and is by
+default 0.7 mm.
+::
+
+   rangecut=3*cm;
+   prodCutPhotons   = rangecut,
+   prodCutElectrons = rangecut,
+   prodCutPositrons = rangecut,
+   defaultRangeCut  = rangecut;
+
+.. warning:: The range cut should **not** be longer than the typical dimension of obects.
+	     i.e. a range cut of 1 km is likely to produce rough energy deposition
+	     around boundaries.
+
+Minimum Kinetic Energy
+^^^^^^^^^^^^^^^^^^^^^^
+
+The user may specify a minimum kinetic energy, below which any particle will be killed.
+This may break conservation of energy if used aggressively. The default is 0 eV as all
+particle are tracked to 0 energy (allowing for the above range cuts).::
+  
+   option, minimumKineticEnergy=10*MeV;
+
+.. warning:: This will affect the location of energy deposition - i.e. the curve of
+	     energy deposition of a particle showering in a material will be different.
+
+Minimum Range
+^^^^^^^^^^^^^
+
+The user may specify a minimum range for a particle to travel. Any particles with step
+sizes proposed below this will be killed. Again, this can break energy conservation
+if used agressively.::
+
+  option, minimumRange=2*cm;
+
+.. warning:: This will affect the location of energy deposition - i.e. the curve of
+	     energy deposition of a particle showering in a material will be different.
+		      
+.. _multiple-beamlines:
+
+Multiple Beam Lines
+-------------------
+
+BDSIM has the ability to use multiple beam lines.  This feature is still in development and
+is currently only for visualisation purposes. Secondary beam lines are placed either with
+respect to the world coordinate system or with respect to a particular element in the main
+beam line. A few caveats:
+
+* Only for visualisation purposes.
+* Beam lines cannot be placed with respect to an element in another secondary beam line.
+* Secondary beam lines are not suitable for tracking.
+* Secondary beam lines are not sensitive to energy deposition nor produce output.
+* The user is entirely responsible for overlapping geometry. The visualiser will render
+  the geometry but of course it will not be suitable for simulations as overlaps lead
+  to volume navigation problems and incorrect tracking.
+
+The user may use any sequence defined in the parser before the `use` command. The secondary
+beam line is produced by declaring a placement. The placement definition (see
+:ref:`placements`) is augmented with the following parameters:
+
+     
+
++------------------------+---------------------------------------------------------------+
+| **Parameter**          |  **Description**                                              |
++------------------------+---------------------------------------------------------------+
+| sequence               | Name of the sequence (with `line`) to use for the secondary   |
+|                        | beam line.                                                    |
++------------------------+---------------------------------------------------------------+
+| referemeceElement      | The element in the sequence with respect to which the beam    |
+|                        | line will be placed.                                          |
++------------------------+---------------------------------------------------------------+
+| referenceElementNumber | The *i* th instance of the element in the sequence (zero      |
+|                        | counting).  i.e. 2 -> the 3rd instance of `referenceElement`  |
+|                        | in the `sequence`.                                            |
++------------------------+---------------------------------------------------------------+
+
+Examples
+^^^^^^^^
+
+This example is shown in bdsim/examples/features/geometry/10_multiple_beamlines.  It defines
+a simple beam line and two other sequences that are placed along side it. Further explanation
+is given below the example.
+
+::
+
+   d1: drift, l=1*m;
+   d2: drift, l=3*m;
+   d3: drift, l=5*m;
+   sb1: sbend, l=1*m, angle=0.5;
+   sb2: sbend, l=1*m, angle=-0.5;
+   q1: quadrupole, l=0.2*m, k1=4.166666;
+   q2: quadrupole, l=0.2*m, k1=-4.166666;
+
+   fodo: line=(d1,q1,d1,q2);
+   mainLine: line=(d2,sb1,d2,sb2,d2,fodo,fodo);
+
+   auxLine1: line=(d3,sb1,d1,sb2,d1,fodo,d1);
+   auxLine2: line=(d1,sb1,d1,sb2,d1,fodo,d1);
+   auxLine3: line=(fodo);
+
+   use, mainLine;
+
+   beam, particle="e-",
+         energy=3*GeV;
+
+   auxLine1Place: placement, sequence = "auxLine1",
+                             referenceElement = "d2" ,
+			     referenceElementNumber = 2,
+			     x = -5*cm,
+			     z = -1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = -0.2;
+   
+   auxLine2Place: placement, sequence = "auxLine2",
+                             referenceElement = "d2",
+			     referenceElementNumber = 2,
+			     x = -10*cm,
+			     z = -1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = -0.5;
+
+   auxLine3Place: placement, sequence = "auxLine3",
+                             x = 1*m,
+			     axisAngle = 1,
+			     axisY = 1,
+			     angle = 0.2;
+
+Firstly a series of simple elements are defined (drifts, quadrupoles and bends). A simple
+sequence called `fodo` is defined and also the main beam line called `mainLine`. After this
+extra sequences are defined that we will use for secondary beam lines.  The `use` command
+selects which beam line the simulation will be based on.::
+
+  use, mainLine;
+
+After this, the beam is defined (required for any simualtion for rigidity calculations) and
+then the placement of secondary beam lines.
+
+The first placement `auxLine1Place` is a placement that will place the sequence named
+`auxLine1` with respect to the 3rd instance of the element `d2` in the primary sequence
+(`mainLine`).::
+
+  auxLine1Place: placement, sequence="auxLine1",
+                            referenceElement="d2" ,
+			    referenceElementNumber=2,
+
+The placement is generally with respect to the centre of the element described in the primary
+beam line and along the direction it's pointing. Without any displacement, the geometry
+would therefore overlap.  Here, an offset and rotation are specified for this placement.
+An offset in `x` of -5 cm and -1 m in `z` is specified. The coordinate sytem is right-handed
+with positive z pointing along the direction of travel in the beam line. A negative x
+displacement is therefore to the right looking along the direction or travel and 1 m in
+`z` is towards the beginning of the element from the centre.  Rotations are described
+in :ref:`placements`. Here, an axis angle rotation is used. The beam line is rotated about
+unit Y axis (local to that element) by -0.2 rad.
+
+The second placement uses a different sequence, but in a similar fashion.
+
+The third placement doesn't specify a `referenceElement`, so the placement is with respect
+to the beginning of the beam line.
+
+The model is shown below.
+
+.. figure:: figures/multiple_beamlines.png
+	    :width: 90%
+	    :align: center
+
+The drift segments do not of course connect but are merely placed close to each other.
+In future, continuous vacuum points will be provided.
+
+.. figure:: figures/multiple_beamlines_junction.png
+	    :width: 90%
+	    :align: center

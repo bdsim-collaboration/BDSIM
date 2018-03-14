@@ -3,9 +3,7 @@
 ! beamline parameters
 option, beampipeRadius = 15 * cm,
         outerDiameter = 1.0 * m,
-        beampipeThickness = 0.1 * cm,
-	thresholdCutCharged = 100*MeV,
-	thresholdCutPhotons = 100*MeV;
+        beampipeThickness = 0.1 * cm;
 
 ! beamline definiton
 

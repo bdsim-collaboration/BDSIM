@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
@@ -36,6 +54,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <list>
 #include <map>
 #include <string>
@@ -43,6 +62,8 @@
 #include <vector>
 
 BDSGeometryFactorySQL* BDSGeometryFactorySQL::instance = nullptr;
+
+G4double BDSGeometryFactorySQL::defaultRigidity = std::numeric_limits<double>::max();
 
 BDSGeometryFactorySQL::BDSGeometryFactorySQL()
 {
@@ -350,15 +371,9 @@ G4VisAttributes* BDSGeometryFactorySQL::VisAtt()
   return VisAtt;
 }
 
-G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
+G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double maxStepLength)
 {
-  G4UserLimits* UserLimits = new G4UserLimits();
-  UserLimits->SetMaxAllowedStep(var*0.5);
-  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  // note, this is different from all other geometry - TBC
-  if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0)
-    {UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());}
-  return UserLimits;
+  return BDS::CreateUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits(), maxStepLength);
 }
 
 //Set logical volume attributes
@@ -777,7 +792,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G
   aperYUp = 50.*CLHEP::mm;
   aperYDown = 200.*CLHEP::mm;
   aperDy = 0.*CLHEP::mm;
-  thickness = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->beamPipeThickness;
+  thickness = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->beamPipeThickness;
   length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=nullptr)
@@ -930,7 +945,7 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       /// Offset extent of individual solid and expand it.
       G4VSolid* solid = volume->GetSolid();
       BDSExtent ext = unShiftedExtents[solid];
-      BDSExtent extShifted = ext.Offset(PlacementPoint);
+      BDSExtent extShifted = ext.Translate(PlacementPoint);
       ExpandExtent(extShifted);
       
       G4VPhysicalVolume* PhysiComp = 
@@ -967,7 +982,7 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	}
 
       // magnetic rigidity brho
-      G4double brho = BDSGlobalConstants::Instance()->BRho();
+      G4double brho = defaultRigidity;
 
       if(MagType.compareTo("QUAD",cmpmode)==0)
 	{

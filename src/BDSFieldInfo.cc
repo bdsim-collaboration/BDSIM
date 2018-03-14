@@ -1,4 +1,21 @@
-#include "BDSCavityInfo.hh"
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
 #include "BDSIntegratorType.hh"
@@ -8,7 +25,9 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Track.hh"
 #include "G4Transform3D.hh"
+#include "G4UserLimits.hh"
 
 #include <ostream>
 
@@ -19,7 +38,6 @@ BDSFieldInfo::BDSFieldInfo():
   magnetStrength(nullptr),
   provideGlobalTransform(false),
   transform(G4Transform3D()),
-  cavityInfo(nullptr),
   magneticFieldFilePath(""),
   magneticFieldFormat(BDSFieldFormat::none),
   magneticInterpolatorType(BDSInterpolatorType::nearest3d),
@@ -30,7 +48,11 @@ BDSFieldInfo::BDSFieldInfo():
   eScaling(1.0),
   bScaling(1.0),
   timeOffset(0),
-  autoScale(false)
+  autoScale(false),
+  stepLimit(nullptr),
+  poleTipRadius(1),
+  beamPipeRadius(0),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -39,7 +61,6 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   const BDSMagnetStrength* magnetStrengthIn,
 			   G4bool                   provideGlobalTransformIn,
 			   G4Transform3D            transformIn,
-			   const BDSCavityInfo*     cavityInfoIn,
 			   G4String                 magneticFieldFilePathIn,
 			   BDSFieldFormat           magneticFieldFormatIn,
 			   BDSInterpolatorType      magneticInterpolatorTypeIn,
@@ -50,14 +71,16 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
 			   G4double                 eScalingIn,
 			   G4double                 bScalingIn,
 			   G4double                 timeOffsetIn,
-			   G4bool                   autoScaleIn):
+			   G4bool                   autoScaleIn,
+			   G4UserLimits*            stepLimitIn,
+			   G4double                 poleTipRadiusIn,
+			   G4double                 beamPipeRadiusIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
   magnetStrength(magnetStrengthIn),
   provideGlobalTransform(provideGlobalTransformIn),
   transform(transformIn),
-  cavityInfo(cavityInfoIn),
   magneticFieldFilePath(magneticFieldFilePathIn),
   magneticFieldFormat(magneticFieldFormatIn),
   magneticInterpolatorType(magneticInterpolatorTypeIn),
@@ -68,13 +91,17 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   eScaling(eScalingIn),
   bScaling(bScalingIn),
   timeOffset(timeOffsetIn),
-  autoScale(autoScaleIn)
+  autoScale(autoScaleIn),
+  stepLimit(stepLimitIn),
+  poleTipRadius(poleTipRadiusIn),
+  beamPipeRadius(beamPipeRadiusIn),
+  chordStepMinimum(-1)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
-  delete cavityInfo;
+  delete stepLimit;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
@@ -93,16 +120,20 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   eScaling(other.eScaling),
   bScaling(other.bScaling),
   timeOffset(other.timeOffset),
-  autoScale(other.autoScale)
+  autoScale(other.autoScale),
+  poleTipRadius(other.poleTipRadius),
+  beamPipeRadius(other.beamPipeRadius),
+  chordStepMinimum(other.chordStepMinimum)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
   else
     {magnetStrength = nullptr;} // also nullptr
-  if (other.cavityInfo)
-    {cavityInfo = new BDSCavityInfo(*other.cavityInfo);}
+
+  if (other.stepLimit)
+    {stepLimit = new G4UserLimits(*other.stepLimit);}
   else
-    {cavityInfo = nullptr;}
+    {stepLimit = nullptr;}
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
@@ -121,9 +152,17 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E Scaling:         " << info.eScaling                 << G4endl;
   out << "B Scaling:         " << info.bScaling                 << G4endl;
   out << "t offset           " << info.timeOffset               << G4endl;
-  out << "auto scale         " << info.autoScale                << G4endl;
+  out << "Auto scale         " << info.autoScale                << G4endl;
+  out << "Pole tip radius:   " << info.poleTipRadius            << G4endl;
+  out << "Beam pipe radius:  " << info.beamPipeRadius           << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
+  if (info.stepLimit)
+    {
+      G4Track t = G4Track(); // dummy track
+      G4double maxStep = info.stepLimit->GetMaxAllowedStep(t);
+      out << "Step limit:        " << maxStep << G4endl;
+    }
   return out;
 }
 

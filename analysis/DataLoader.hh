@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef DATALOADER_H
 #define DATALOADER_H
 
@@ -9,7 +27,9 @@
 #include <string>
 #include <vector>
 
+class Beam;
 class Event;
+class Header;
 class Options;
 class Model;
 class Run;
@@ -26,17 +46,20 @@ class DataLoader
 public:
   DataLoader(std::string fileName,
 	     bool        debugIn           = false,
-	     bool        processSamplersIn = false,
+	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,
-	     const RBDS::BranchMap* branchesToTurnOn = nullptr);
+	     const RBDS::BranchMap* branchesToTurnOn = nullptr,
+	     bool        backwardsCompatible = true);
   virtual ~DataLoader();
 
   /// Create an instance of each class in the file to be overlaid by loading
   /// the ROOT file.
-  void CommonCtor(std::string fileName);
+  void CommonCtor(std::string fileName,
+		  bool backwardsCompatible);
 
   /// Build up the input file list.
-  void BuildInputFileList(std::string inputPath);
+  void BuildInputFileList(std::string inputPath,
+			  bool backwardsCompatible);
 
   /// Open the first file in the file list and map the trees in it.
   void BuildTreeNameList();
@@ -56,10 +79,14 @@ public:
   std::vector<std::string>   GetTreeNames()    {return treeNames;};
   std::vector<std::string>   GetBranchNames()  {return branchNames;}
   std::vector<std::string>   GetSamplerNames() {return samplerNames;}
+  Header*                    GetHeader()       {return hea;}
+  Beam*                      GetBeam()         {return bea;}
   Options*                   GetOptions()      {return opt;}
   Model*                     GetModel()        {return mod;}
   Event*                     GetEvent()        {return evt;}
-  Run*                       GetRun()          {return run;};
+  Run*                       GetRun()          {return run;}
+  TChain*                    GetHeaderTree()   {return heaChain;}
+  TChain*                    GetBeamTree()     {return beaChain;}
   TChain*                    GetOptionsTree()  {return optChain;}
   TChain*                    GetModelTree()    {return modChain;}
   TChain*                    GetEventTree()    {return evtChain;}
@@ -73,24 +100,27 @@ private:
   bool processSamplers;
   bool allBranchesOn;
   const RBDS::BranchMap* branchesToTurnOn;
-  
-  Options                      *opt;
-  Model                        *mod;
-  Event                        *evt;
-  Run                          *run;
 
-  std::vector<std::string>      fileNames;
-  std::vector<std::string>      safeFileNames;
+  Header*  hea;
+  Beam*    bea;
+  Options* opt;
+  Model*   mod;
+  Event*   evt;
+  Run*     run;
 
-  std::vector<std::string>      treeNames;
-  std::vector<std::string>      branchNames;  // non-sampler branch names
-  std::vector<std::string>      samplerNames; // sampler branch names
-  std::map<std::string, int>    samplerNameMap;
+  std::vector<std::string>    fileNames;
+  std::vector<std::string>    safeFileNames;
+  std::vector<std::string>    treeNames;
+  std::vector<std::string>    branchNames;  // non-sampler branch names
+  std::vector<std::string>    samplerNames; // sampler branch names
+  std::map<std::string, int>  samplerNameMap;
 
-  TChain *optChain;
-  TChain *modChain;
-  TChain *evtChain;
-  TChain *runChain;
+  TChain* heaChain;
+  TChain* beaChain;
+  TChain* optChain;
+  TChain* modChain;
+  TChain* evtChain;
+  TChain* runChain;
 
   ClassDef(DataLoader,1);
 };

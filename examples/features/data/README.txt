@@ -1,0 +1,12 @@
+# Sample Data
+Based on bdsim/examples/simpleCollimation/sc.gmad
+2 files of 10 events with seeds 123 and 321
+sample1.root - seed=123
+sample2.root - seed=321
+
+analysisConfigt.txt was used with rebdsim to generate the analysis output files
+
+ana1.root - analysis of sample1.root
+ana2.root - anlaysis of sample2.root
+
+output.seedstate.txt - example ascii seed state information

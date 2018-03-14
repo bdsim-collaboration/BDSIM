@@ -1,52 +1,71 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBunchFactory.hh"
 
 #include "BDSBunchCircle.hh"
 #include "BDSBunchComposite.hh"
 #include "BDSBunchEShell.hh"
-#include "BDSBunchGaussian.hh"
+
 #include "BDSBunch.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchUserFile.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchPtc.hh"
-#include "BDSBunchSixTrack.hh"
 #include "BDSBunchHalo.hh"
+#include "BDSBunchPtc.hh"
+#include "BDSBunchRing.hh"
+#include "BDSBunchSigmaMatrix.hh"
+#include "BDSBunchSixTrack.hh"
+#include "BDSBunchSquare.hh"
+#include "BDSBunchTwiss.hh"
 #include "BDSBunchType.hh"
+#include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #ifdef USE_GZSTREAM
 #include "gzstream.h"
 #endif
 
-BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Options& options,
+BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)  
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
-  G4String distribName = G4String(options.distribType);
+  G4String distrName = G4String(beam.distrType);
 
   // This will exit if no correct bunch type found.
-  BDSBunchType distribType = BDS::DetermineBunchType(distribName);
+  BDSBunchType distrType = BDS::DetermineBunchType(distrName);
 
-  return CreateBunch(distribType, options, beamlineTransform);
+  return CreateBunch(distrType, beam, beamlineTransform);
 }
 
-BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
-				       const GMAD::Options& options,
+BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType      distrType,
+				       const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)
 { 
   BDSBunch* bdsBunch = nullptr;
 
-  switch (distribType.underlying())
+  switch (distrType.underlying())
     {
     case BDSBunchType::reference:
       {bdsBunch = new BDSBunch(); break;}
     case BDSBunchType::gaussian:
-      {bdsBunch = new BDSBunchGaussian(); break;}
+      {bdsBunch = new BDSBunchSigmaMatrix(); break;}
     case BDSBunchType::square:
       {bdsBunch = new BDSBunchSquare(); break;}
     case BDSBunchType::circle:
@@ -63,12 +82,18 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
       {bdsBunch = new BDSBunchHalo(); break;}
     case BDSBunchType::userfile:
       {
+	G4String distrFile = G4String(beam.distrFile);
+	if(distrFile.rfind("gz") != std::string::npos)	  
 #ifdef USE_GZSTREAM
-	G4String distribFile = G4String(options.distribFile);
-	if(distribFile.rfind("gz") != std::string::npos)
 	  {bdsBunch = new BDSBunchUserFile<igzstream>();}
-	else
+#else
+	{
+	  G4cerr << __METHOD_NAME__ << beam.distrFile << " is a compressed file "
+		 << "but BDSIM is compiled without GZIP." << G4endl;
+	  exit(1);
+	}
 #endif
+	else
 	  {bdsBunch = new BDSBunchUserFile<std::ifstream>();}
 	break;
       }
@@ -78,13 +103,13 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType distribType,
       {bdsBunch = new BDSBunchPtc(); break;}
     default:
       {
-	G4cerr << "distribType \"" << distribType << "\" not found" << G4endl;
+	G4cerr << "distrType \"" << distrType << "\" not found" << G4endl;
 	exit(1);
 	break;
       }
     }
 
-  bdsBunch->SetOptions(options, beamlineTransform);
+  bdsBunch->SetOptions(beam, beamlineTransform);
   
   return bdsBunch;
 }

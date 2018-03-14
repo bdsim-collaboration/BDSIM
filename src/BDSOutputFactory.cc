@@ -1,55 +1,45 @@
-#include "BDSOutputFactory.hh"
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
 
-#include "BDSOutputFormat.hh"
-#include "BDSOutputBase.hh"
-#include "BDSOutputASCII.hh"
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "BDSDebug.hh"
+#include "BDSOutputFactory.hh"
+#include "BDSOutputType.hh"
+#include "BDSOutput.hh"
 #include "BDSOutputNone.hh"
 #include "BDSOutputROOT.hh"
-#include "BDSOutputROOTDetailed.hh"
-#include "BDSOutputROOTEvent.hh"
-#include "BDSOutputVector.hh"
 
-#include "BDSDebug.hh"
 
-BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
+BDSOutput* BDSOutputFactory::CreateOutput(BDSOutputType format,
+					  G4String      fileName,
+					  G4int         fileNumberOffset)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
 #endif
+  BDSOutput* result = nullptr;
   switch (format.underlying())
     {
-    case BDSOutputFormat::none:
-      {return new BDSOutputNone(); break;}
-    case BDSOutputFormat::rootcombined:
-      {
-	BDSOutputVector* combinedOutput = new BDSOutputVector();
-	combinedOutput->Add(new BDSOutputROOT<float>());
-	combinedOutput->Add(new BDSOutputROOTEvent());
-	return combinedOutput;
-	break;
-      }
-    case BDSOutputFormat::combined:
-      {
-	BDSOutputVector* combinedOutput = new BDSOutputVector();
-	combinedOutput->Add(new BDSOutputASCII());
-	combinedOutput->Add(new BDSOutputROOT<float>());
-	combinedOutput->Add(new BDSOutputROOTEvent());
-	return combinedOutput;
-	break;
-      }
-    case BDSOutputFormat::ascii:
-      {return new BDSOutputASCII(); break;}
-    case BDSOutputFormat::root:
-      {return new BDSOutputROOT<float>(); break;}
-    case BDSOutputFormat::rootdouble:
-      {return new BDSOutputROOT<double>(); break;}
-    case BDSOutputFormat::rootdetailed:
-      {return new BDSOutputROOTDetailed<float>(); break;}
-    case BDSOutputFormat::rootdetaileddouble:
-      {return new BDSOutputROOTDetailed<double>(); break;}
-    case BDSOutputFormat::rootevent:
-      {return new BDSOutputROOTEvent(); break;}
+    case BDSOutputType::none:
+      {result = new BDSOutputNone(); break;}
+    case BDSOutputType::rootevent:
+      {result = new BDSOutputROOT(fileName, fileNumberOffset); break;}
     default:
-      {return new BDSOutputNone(); break;} // absolute default - should not reach this
+      {result = new BDSOutputNone(); break;} // absolute default - should not reach this
     }
+  return result;
 }

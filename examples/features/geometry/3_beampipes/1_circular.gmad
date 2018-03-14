@@ -1,12 +1,14 @@
 d1: drift, l=0.2*m;
-sb1: sbend, l=0.3*m, angle=0.1;
+sb1: sbend, l=0.3*m, e1=0.1, angle=0.1;
 
-endoftheline: marker;
-
-l1: line = (d1, sb1, d1, endoftheline);
+! first d1 is plane without angles
+! second is made to match sbend
+! third d1 should be same as first
+! aperture used inside magnet with two angled faces
+l1: line = (d1, d1, sb1, d1);
 
 use, period = l1;
 
-sample, range=endoftheline;
+sample, all;
 
 include options.gmad

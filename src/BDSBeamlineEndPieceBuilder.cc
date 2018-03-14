@@ -1,5 +1,22 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorComponent.hh"
-#include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
@@ -11,13 +28,13 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
+BDSBeamline* BDS::BuildEndPieceBeamline(const BDSBeamline* beamline,
+					const G4bool circularMachine)
 {
   // the beamline of end pieces to be placed.
   BDSBeamline* endPieces = new BDSBeamline();
-
-  // the main beam line
-  auto beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  if (beamline->empty())
+    {return endPieces;}
 
   // references to first and last item for checking
   const BDSBeamlineElement* firstItem = beamline->GetFirstItem();
@@ -58,7 +75,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if there's then
 	  // available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
@@ -69,8 +86,9 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	      inspectedElement = beamline->GetPrevious(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
-		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {
+		  G4String inspectedElementType = inspectedElement->GetType();
+		  if (inspectedElementType == "drift" || inspectedElementType == "dipolefringe")
+		    {// leave keepGoing true here to keep going
 		      // check extents first
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();
@@ -133,6 +151,19 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	      G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	      if (willIntersect)
 		{placeBefore = false;}
+
+	      /*
+	      // 3d check
+	      auto thisEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
+								   currentIndex);
+
+	      G4bool willIntersect3D = endPieces->back()->Overlaps(thisEl);
+	      if (willIntersect3D)
+		{
+		  placeBefore = false;
+		  delete thisEl;
+		}
+	      */
 	    }
 	  if (placeBefore)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
@@ -149,7 +180,7 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	  // if it has an end piece and take that length out of the available space. if
 	  // there's then available space for this end piece we place it.
 	  G4bool keepGoing = true;
-	  BDSBeamlineElement* inspectedElement = element; // start with current element
+	  const BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double       nextNonDriftEndPieceL = 0;
 	  G4bool               driftIsLastItem = false;
@@ -160,8 +191,9 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	      inspectedElement = beamline->GetNext(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
-		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {
+		  G4String inspectedElementType = inspectedElement->GetType();
+		  if (inspectedElementType == "drift" || inspectedElementType == "dipolefringe")
+		    {// leave keepGoing true here to keep going
 		      // check extents first
 		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
 		      G4double  tiltPipe = inspectedElement->GetTilt();
@@ -214,5 +246,6 @@ void BDS::BuildEndPieceBeamline(const G4bool circularMachine)
 	}
       currentIndex++; // increment iterator index on beamline
     }
-  BDSAcceleratorModel::Instance()->RegisterEndPieceBeamline(endPieces);
+
+  return endPieces;
 }

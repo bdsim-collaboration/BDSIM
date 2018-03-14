@@ -722,7 +722,6 @@ option, prodCutElectronsP=0.511*MeV;
 option, prodCutPositronsP=0.511*MeV;
 
 option, ngenerate=200, physicsList="em", nperfile=10000;
-option, stopTracks=1;
 
 !option, storeNeutronTrajectory=1;
 

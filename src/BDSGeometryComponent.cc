@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
@@ -41,15 +59,8 @@ BDSGeometryComponent::~BDSGeometryComponent()
   for (auto daughter : allDaughters)
     {delete daughter;}
 
-  for (auto solid : allSolids)
-    {delete solid;}
-
-  for (auto lv : allLogicalVolumes)
-    {delete lv;}
-
-  for (auto pv : allPhysicalVolumes)
-    {delete pv;}
-
+  // we let Geant4 handle the deletion of physical volumes, logical volumes and solids
+  
   for (auto rm : allRotationMatrices)
     {delete rm;}
 
@@ -58,7 +69,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
 
   for (auto ul : allUserLimits)
     {delete ul;}
-
+  
   delete placementRotation;
 }
 

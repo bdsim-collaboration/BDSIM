@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -51,8 +69,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
 {
   outerDiameter   = magnetOuterInfoIn->outerDiameter;
   containerRadius = 0.5*outerDiameter;
-  inputface       = G4ThreeVector(0,0,-1);
-  outputface      = G4ThreeVector(0,0, 1);
   
   beampipe = nullptr;
   outer    = nullptr;
@@ -91,6 +107,18 @@ G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
     };
 
   return result;
+}
+
+void BDSMagnet::SetInputFaceNormal(const G4ThreeVector& input)
+{
+  if (outer)
+    {outer->SetInputFaceNormal(input);}
+}
+
+void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
+{
+  if (outer)
+    {outer->SetOutputFaceNormal(output);}
 }
 
 void BDSMagnet::Build()
@@ -221,13 +249,13 @@ void BDSMagnet::BuildContainerLogicalVolume()
 						   name + "_container_lv");
 
       // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
       //copy the default and update with the length of the object rather than the default 1m
       G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
       if (ul != defaultUL) // if it's not the default register it
         {RegisterUserLimits(ul);}
       containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
       
       placeBeamPipe = true;
     }

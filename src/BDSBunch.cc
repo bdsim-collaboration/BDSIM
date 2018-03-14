@@ -1,65 +1,77 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
-#include "parser/options.h"
+#include "parser/beam.h"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
-#include "CLHEP/Matrix/Vector.h" 
-#include "CLHEP/Matrix/SymMatrix.h"
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
 #include "CLHEP/Geometry/Point3D.h"
 
-/// helper method
-namespace {
-  /// check if matrix is positive definite
-  bool isPositiveDefinite(CLHEP::HepSymMatrix& S)
-  {
-    CLHEP::HepSymMatrix temp (S); // Since diagonalize does not take a const s
-                                  // we have to copy S.
-    CLHEP::HepMatrix U = diagonalize ( &temp ); // S = U Sdiag U.T()
-    CLHEP::HepSymMatrix D = S.similarityT(U);   // D = U.T() S U = Sdiag
-    for (G4int i = 1; i <= S.num_row(); i++) {
-      G4double s2 = D(i,i);
-      if ( s2 <= 0 )
-	{return false;}
-    }
-    return true;
-  }
-}
 
 BDSBunch::BDSBunch():
   X0(0.0), Y0(0.0), Z0(0.0), S0(0.0), T0(0.0), 
   Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), sigmaT(0.0), sigmaE(0.0),
   useCurvilinear(false),
-  beamlineTransform(G4Transform3D()), nonZeroTransform(false),
+  particleCanBeDifferent(false),
+  particleDefinition(nullptr),
+  finiteSigmaE(true),
+  finiteSigmaT(true),
+  beamlineTransform(G4Transform3D()),
+  nonZeroTransform(false),
   beamline(nullptr)
 {;}
 
-BDSBunch::~BDSBunch()
-{;}
-
-void BDSBunch::SetOptions(const GMAD::Options& opt,
+void BDSBunch::SetOptions(const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn)
 {
   beamlineTransform = beamlineTransformIn;
   nonZeroTransform  = beamlineTransform != G4Transform3D::Identity;
   
-  X0 = opt.X0;
-  Y0 = opt.Y0;
-  Z0 = opt.Z0;
-  S0 = opt.S0;
-  T0 = opt.T0;
-  Xp0 = opt.Xp0;
-  Yp0 = opt.Yp0;
-  E0  = opt.E0;
-  sigmaE = opt.sigmaE;
-  sigmaT = opt.sigmaT;
+  X0     = beam.X0;
+  Y0     = beam.Y0;
+  Z0     = beam.Z0;
+  S0     = beam.S0;
+  T0     = beam.T0;
+  Xp0    = beam.Xp0;
+  Yp0    = beam.Yp0;
+  E0     = beam.E0;
+  sigmaE = beam.sigmaE;
+  sigmaT = beam.sigmaT;
 
-  Zp0 = CalculateZp(Xp0,Yp0,opt.Zp0);
+  if (!BDS::IsFinite(sigmaE))
+    {
+      finiteSigmaE = false;
+      sigmaE = 1e-50; // finite but small
+    }
+  if (!BDS::IsFinite(sigmaT))
+    {
+      finiteSigmaT = false;
+      sigmaT = 1e-50;
+    }
+
+  Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
   if (S0 > 0)
     {
@@ -83,11 +95,13 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
-  t  = 0.0; 
+  t = 0.0;
   E = E0 * CLHEP::GeV;
   weight = 1.0;
-  return;
 }
+
+void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
+{;}
 
 void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,
 			      G4double& xp, G4double& yp, G4double& zp) const
@@ -119,7 +133,7 @@ void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "initialising beam line reference" << G4endl;
 #endif
-      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+      beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
       if (!beamline)
 	{
 	  G4cout << __METHOD_NAME__ << "ERROR no beamline constructed! " << G4endl;
@@ -144,54 +158,6 @@ void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z
   G4cout << "x0: " << x0 << " y0: " << y0 << " z0: " << z0 << G4endl;
   G4cout << "xp: " << xp << " yp: " << yp << " zp: " << zp << G4endl;
 #endif
-}
-
-CLHEP::RandMultiGauss* BDSBunch::CreateMultiGauss(CLHEP::HepRandomEngine & anEngine,
-							   const CLHEP::HepVector & mu,
-							   CLHEP::HepSymMatrix & sigma)
-{
-  /// check if sigma matrix is positive definite
-  /// if not add small offset and cout warning
-  
-  if (!isPositiveDefinite(sigma)) {
-    G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is not positive definite" << G4endl;
-    G4cout << sigma << G4endl;
-    G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
-
-    // very small number especially for time, since the sigma goes with the square
-    G4double small_error = 1e-50;
-    
-    for (G4int i=0; i<6; i++) {
-      if (sigma[i][i]==0)
-	{sigma[i][i] += small_error;}
-    }
-    
-    if (!isPositiveDefinite(sigma)) {
-      G4cout << __METHOD_NAME__ << "WARNING bunch generator sigma matrix is still not positive definite" << G4endl;
-      G4cout << sigma << G4endl;
-      G4cout << __METHOD_NAME__ << "adding a small error to all elements" << G4endl;
-      for (G4int i=0; i<6; i++) {
-	for (G4int j=0; j<6; j++) {
-	  if (sigma[i][j]==0)
-	    {sigma[i][j] += small_error;}
-	}
-      }
-      if (!isPositiveDefinite(sigma)) {
-	G4cout << __METHOD_NAME__ << "ERROR bunch generator sigma matrix is still not positive definite, giving up" << G4endl;
-	G4cout << sigma << G4endl;
-	exit(1);
-      }
-    }
-  }
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "mean "  << G4endl
-	 << mu    << G4endl
-	 << __METHOD_NAME__ << "sigma " << G4endl
-	 << sigma << G4endl;
-#endif
-  
-  return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
 G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)const

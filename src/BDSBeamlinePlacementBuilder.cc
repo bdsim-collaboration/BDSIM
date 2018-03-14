@@ -1,18 +1,34 @@
-#include "BDSAcceleratorModel.hh"
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
+#include "BDSDetectorConstruction.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
-#include "BDSParser.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/placement.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
-#include "CLHEP/Vector/EulerAngles.h"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -21,17 +37,20 @@
 #include <vector>
 
 
-void BDS::BuildPlacementGeometry()
+BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements)
 {
-  auto placements = BDSParser::Instance()->GetPlacements();
-
   if (placements.empty())
-    {return;} // don't do anything - no placements
+    {return nullptr;} // don't do anything - no placements
   
   BDSBeamline* placementBL = new BDSBeamline();
 
   for (const auto& placement : placements)
     {
+      // if a sequence is specified, it's a beam line and will be constructed
+      // elsewhere - skip it!
+      if (!placement.sequence.empty())
+	{continue;}
+	
       auto geom = BDSGeometryFactory::Instance()->BuildGeometry(placement.name,
 								placement.geometryFile,
 								nullptr,
@@ -43,39 +62,16 @@ void BDS::BuildPlacementGeometry()
 							geom,
 							length);
 
-      G4ThreeVector midPos = G4ThreeVector(placement.x*CLHEP::m,
-					   placement.y*CLHEP::m,
-					   placement.z*CLHEP::m);
-
-      G4RotationMatrix* rm = nullptr;
-      if (placement.axisAngle)
-	{
-	  G4ThreeVector axis = G4ThreeVector(placement.axisX,
-					     placement.axisY,
-					     placement.axisZ);
-	  rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
-	}
-      else
-	{
-	  if (BDS::IsFinite(placement.phi)   ||
-	      BDS::IsFinite(placement.theta) ||
-	      BDS::IsFinite(placement.psi))
-	    {// only build if finite
-	      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
-								placement.theta*CLHEP::rad,
-								placement.psi*CLHEP::rad);
-	      rm = new G4RotationMatrix(ang);
-	    }
-	  else
-	    {rm = new G4RotationMatrix();}
-	}
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(placement);
       
       /// Here we're assuming the length is along z which may not be true, but
       /// close enough for this purpose as we rely only on the centre position.
       G4ThreeVector halfLengthBeg = G4ThreeVector(0,0,-length*0.5);
       G4ThreeVector halfLengthEnd = G4ThreeVector(0,0, length*0.5);
-      G4ThreeVector startPos = midPos + halfLengthBeg.transform(*rm);
-      G4ThreeVector endPos   = midPos + halfLengthEnd.transform(*rm);
+      G4ThreeVector midPos        = transform.getTranslation();
+      G4ThreeVector startPos = midPos + transform * (HepGeom::Point3D<G4double>)halfLengthBeg;
+      G4ThreeVector endPos   = midPos + transform * (HepGeom::Point3D<G4double>)halfLengthEnd;
+      G4RotationMatrix* rm   = new G4RotationMatrix(transform.getRotation());
       
       BDSBeamlineElement* el = new BDSBeamlineElement(comp,
 						      startPos,
@@ -95,5 +91,5 @@ void BDS::BuildPlacementGeometry()
       placementBL->AddBeamlineElement(el);
     }
 
-  BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL);
+  return placementBL;
 }

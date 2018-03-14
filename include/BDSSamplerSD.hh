@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSSAMPLERSD_H
 #define BDSSAMPLERSD_H
 
@@ -38,7 +56,7 @@ public:
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH);
 
 private:
-  /// The hits collection for this sensitive detector class that's owned
+  /// The hits collection for this sensitive detector class that's owned by each instance.
   BDSSamplerHitsCollection* SamplerCollection;
 
   /// The name of the hits collection that's created and registered.

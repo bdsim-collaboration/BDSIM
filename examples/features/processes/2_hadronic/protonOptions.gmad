@@ -9,6 +9,6 @@ option, defaultRangeCut=1*m,
 	prodCutPositrons=0.2*m,
 	prodCutProtons=0.2*m;
 
-option, physicsList="em hadronic muon";
+option, physicsList="em ftfp_bert muon";
 
 option, ngenerate=100;

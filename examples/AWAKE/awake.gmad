@@ -1,4 +1,10 @@
-option,physicsList="hadronic optical";
+option,physicsList="ftfp_bert em";
+
+option, stopSecondaries=1;
+
+! turn off optical phyiscs for quick simulation
+!optical";
+
 !option,physicsList="";
 !option,physicsList="em";
 include options.gmad;
@@ -184,7 +190,7 @@ mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2,
 				   screenEndZ=sez,
 				   spec="vacuumChamberType=1&magnetGeometryType=1",
 				   screenPSize=25*um,
-				   B=0.5*0.00154;
+				   B=0.5*1.54;
 				   
 !&strutSizeX=4&strutSizeZ=25&strutMaterial=G4_Ti",
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_320A_3.bmap";

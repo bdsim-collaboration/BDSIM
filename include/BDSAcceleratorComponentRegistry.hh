@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSACCELERATORCOMPONENTREGISTRY_H
 #define BDSACCELERATORCOMPONENTREGISTRY_H
 
@@ -55,6 +73,9 @@ public:
 
   /// Check whether an accelerator component is already registered by name.
   G4bool IsRegistered(G4String componentName);
+
+  /// Check if a unique component is registered in the allocatedComponents.
+  G4bool IsRegisteredAllocated(const BDSAcceleratorComponent* componentName) const;
 
   /// Access an already constructed component - will return null if no such component found.
   /// This is safe as this registry is primarily used by BDSComponentFactory which can return

@@ -1,13 +1,31 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSINTEGRATORQUADRUPOLE_H
 #define BDSINTEGRATORQUADRUPOLE_H
 
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
+class BDSStep;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
@@ -39,7 +57,7 @@ public:
 		       const G4double h,
 		       G4double       yOut[],
 		       G4double       yErr[]);
-  
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorQuadrupole();

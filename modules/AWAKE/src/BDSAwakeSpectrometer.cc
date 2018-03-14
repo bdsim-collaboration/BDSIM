@@ -1,8 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAwakeSpectrometer.hh"
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSFieldInfo.hh"
 #include "BDSFieldBuilder.hh"
+#include "BDSFieldType.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 #include "BDSSampler.hh"
@@ -27,52 +46,54 @@
 
 //============================================================
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
-                                            G4double magnetOffsetX,
+                                            G4double magnetOffsetXIn,
 					    G4double length=2.7*CLHEP::m,
 					    BDSFieldInfo* fieldInfoIn = nullptr,
-					    G4double poleStartZ=62.733*CLHEP::cm,
-					    G4String material="lanex",
-					    G4double thickness = 0.3 * CLHEP::mm,
-					    G4double screenPSize=25*CLHEP::um,
-					    G4double windowScreenGap=0,
+					    G4double poleStartZIn=62.733*CLHEP::cm,
+					    G4String materialIn="lanex",
+					    G4double thicknessIn = 0.3 * CLHEP::mm,
+					    G4double screenPSizeIn=25*CLHEP::um,
+					    G4double windowScreenGapIn=0,
 					    G4double angleIn = -45*CLHEP::pi/180.0,
-					    G4double windowThickness=0,
-					    G4String windowMaterial="G4_Al",
-					    G4double mountThickness=0, 
-					    G4String mountMaterial="G4_BAKELITE",
-					    G4double screenEndZ = (258-62.733)*CLHEP::cm,
-					    G4String spec="",
-					    G4double screenWidth=1*CLHEP::m):
+					    G4double windowThicknessIn=0,
+					    G4String windowMaterialIn="G4_Al",
+					    G4double mountThicknessIn=0,
+					    G4String mountMaterialIn="G4_BAKELITE",
+					    G4double screenEndZIn = (258-62.733)*CLHEP::cm,
+					    G4String specIn="",
+					    G4double screenWidthIn=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
   _fieldInfo(fieldInfoIn),
-  _magnetOffsetX(magnetOffsetX),
-  _screenWidth(screenWidth),
+  _magnetOffsetX(magnetOffsetXIn),
+  _totalThickness(0.507*CLHEP::mm),
+  _screenWidth(screenWidthIn),
+  _frame_x_dim(0),
   _mlScreen(nullptr),
   _camera(nullptr),
-  _material(material),
-  _thickness(thickness),
-  _screenPSize(screenPSize),
-  _windowScreenGap(windowScreenGap),
+  _material(materialIn),
+  _thickness(thicknessIn),
+  _screenPSize(screenPSizeIn),
+  _windowScreenGap(windowScreenGapIn),
   _screenAngle(angleIn),
-  _windowThickness(windowThickness),
-  _windowMaterial(windowMaterial),
-  _mountThickness(mountThickness), 
-  _mountMaterial(mountMaterial),
-  _screenEndZ(screenEndZ),
-  _poleStartZ(poleStartZ)
+  _windowThickness(windowThicknessIn),
+  _windowMaterial(windowMaterialIn),
+  _mountThickness(mountThicknessIn),
+  _mountMaterial(mountMaterialIn),
+  _screenEndZ(screenEndZIn),
+  _poleStartZ(poleStartZIn)
 {
   //Change sign of angle
   _screenAngle*=-1;
 
   try{
-    _vacuumChamberType=BDS::GetParameterValueInt(spec,"vacuumChamberType");
+    _vacuumChamberType=BDS::GetParameterValueInt(specIn,"vacuumChamberType");
   } catch(std::invalid_argument&){
     //If the cast fails, set vacuum chamber type to 1
     _vacuumChamberType=1;
   }
 
   try{
-    _magnetGeometryType=BDS::GetParameterValueInt(spec,"magnetGeometryType");
+    _magnetGeometryType=BDS::GetParameterValueInt(specIn,"magnetGeometryType");
   } catch(std::invalid_argument&){
     //If the cast fails, set magnet geometry type to 1
     _magnetGeometryType=1;
@@ -85,33 +106,36 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
     _vacHeight=_vacInnerHeight+2*_vacThickness;
 
     try{
-        _windowOffsetX=BDS::GetParameterValueDouble(spec,"windowOffsetX");
+        _windowOffsetX=BDS::GetParameterValueDouble(specIn,"windowOffsetX");
     } catch(std::invalid_argument&){
-        _windowOffsetX=59.564*CLHEP::mm; //Total offset of front of flange from beam axis
+        _windowOffsetX=64.8*CLHEP::mm; //Total offset of front of flange from beam axis
     }
 	  _windowOffsetXFromVCEdge=_windowOffsetX -_vacInnerWidth/2.0-_vacThickness; //Distance to outer edge of beam pipe
+	
+   G4cout << "Window Offset from VC Edge is " << _windowOffsetXFromVCEdge << G4endl;
 
     try{
-        _strutSizeX=BDS::GetParameterValueDouble(spec,"strutSizeX");
+        _strutSizeX=BDS::GetParameterValueDouble(specIn,"strutSizeX");
     } catch(std::invalid_argument&){
         _strutSizeX=0;
     }
 
   try{
-    _strutSizeZ=BDS::GetParameterValueDouble(spec,"strutSizeZ");
+    _strutSizeZ=BDS::GetParameterValueDouble(specIn,"strutSizeZ");
   } catch(std::invalid_argument&){
     _strutSizeZ=0;
   }
 
   try{
-    _strutMaterial=BDS::GetParameterValueString(spec,"strutMaterial");
+    _strutMaterial=BDS::GetParameterValueString(specIn,"strutMaterial");
   } catch(std::invalid_argument&){
     _strutMaterial="G4_STAINLESS-STEEL";
   }
 
   //Screen width 1m by default.
-  if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
-    _screenHeight=64*CLHEP::mm;
+  if(_screenWidth<=0)
+  {_screenWidth = 1*CLHEP::m;}
+  _screenHeight=64*CLHEP::mm;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -322,9 +346,24 @@ void BDSAwakeSpectrometer::BuildField()
     G4cout << __METHOD_NAME__ << itsBmapXOffset << " " << itsBmapZOffset << G4endl;
     _fieldInfo->Translate(poleTranslation);
 
-  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
-							    containerLogicalVolume,
-							    true);
+  if (_fieldInfo->FieldType() == BDSFieldType::dipole)
+  {// pure dipole field
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerBoxLogVol2(),
+                                                              true);
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              _vacChamb->InnerTrapLogVol(),
+                                                              true);
+  }
+  else
+  {// field map
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+                                                              containerLogicalVolume,
+                                                              true);
+  }
+
+
+
 }
 
 void BDSAwakeSpectrometer::BuildMagnet(){
@@ -428,6 +467,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
   switch(_vacuumChamberType){
   case 0:
     _vacChamb=nullptr;
+    break;
   case 1:
     _vacChamb = new BDSSpectrVacChamb(name + "_vacChamb",
 				      chordLength,
@@ -452,6 +492,8 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 
 
 void BDSAwakeSpectrometer::PlaceVacuumChamber(){
+  // 2018 02 - LN - this first bit seems redundant as BuildVacuumChamber() is called in Build()
+  // before this method...
   if(_vacuumChamberType!=0){
     if(!_vacChamb){
       BuildVacuumChamber();
@@ -606,7 +648,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 //void BDSAwakeSpectrometer::BuildFresnelLens(){
@@ -676,7 +718,7 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 }
 
 void BDSAwakeSpectrometer::Build()
@@ -685,11 +727,11 @@ void BDSAwakeSpectrometer::Build()
   BuildScreen();
   BuildCamera();	
   CalculateLengths();
-    BuildFrame();
+  //  BuildFrame();
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
   //      BuildCameraScoringPlane();
-    PlaceFrame();
+  //  PlaceFrame();
    PlaceScreen();
   //      PlaceCamera();
   //      }
@@ -814,15 +856,15 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 //Screen position
   //G4double lenSaf = BDSGlobalConstants::Instance()->LengthSafety();
-	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + 0.5*_screenThickness/std::cos(_screenAngle) - std::tan(_screenAngle)*_windowOffsetXFromVCEdge;
-	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + _windowOffsetXFromVCEdge;
+	  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0; 
+	  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _windowOffsetXFromVCEdge;
 	//Offset the screen due to the _windowOffsetX
 
     //Frame position
-    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0 + _frameThicknessZ*std::cos(_screenAngle);
+    _frameCentreZ = _screenEndZ -_frame_z_dim/2.0; 
     _frameCentreX = _frame_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
 
-
+    G4cout << "Screen position at: " << _screenCentreX << " in x and " << _screenCentreZ << " in z. " << G4endl;
   
   /*
   itsXLength = itsYLength = BDSGlobalConstants::Instance()->ComponentBoxSize()/2;
@@ -862,21 +904,22 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
 			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2/2,
 			    chordLength/2.0); //z half length 
 
-  containerLogicalVolume=new G4LogicalVolume
-    (containerSolid, 
-     BDSMaterials::Instance()->GetMaterial("vacuum"),
-     name+"_marker_log");
+  containerLogicalVolume=new G4LogicalVolume(containerSolid, 
+					     BDSMaterials::Instance()->GetMaterial("vacuum"),
+					     name+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
+
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
   _logVols.push_back(containerLogicalVolume);
 
 }
 
 void BDSAwakeSpectrometer::SetUserLimits()
 {
-    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
     for(unsigned long i=0; i<_logVols.size(); i++) {
         _logVols.at(i)->SetUserLimits(userLimits);
     }

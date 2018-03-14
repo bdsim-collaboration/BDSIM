@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSBEAMPIPEFACTORYPOINTS_H
 #define BDSBEAMPIPEFACTORYPOINTS_H
 
@@ -59,6 +77,7 @@ public:
 protected:
   /// Function to generate transverse points.  Should set member variables vacuumEdge,
   /// beamPipeInnerEdge, beamPipeOuterEdge, containerEdge and containerSubtractionEdge.
+  /// This *must* also set extentX and extentY member varibles for +ve symmetric extents.
   virtual void GeneratePoints(G4double aper1,
 			      G4double aper2,
 			      G4double aper3,
@@ -106,7 +125,11 @@ protected:
 
   /// Vector of x,y coordinates for the container subtraction volume.
   std::vector<G4TwoVector> containerSubtractionEdge;
-
+  
+  ///@{ Extents prepared by GeneratePoints function as only it knows the extents
+  G4double extentX;
+  G4double extentY;
+  ///@}
 
 private:
   /// Radius of intersection cylinder for angled faced beam pipe pieces. Should
@@ -115,11 +138,6 @@ private:
   /// overlapping z planes errors might occur with short pieces of beam pipe with
   /// large angled faces.
   G4double intersectionRadius;
-
-  ///@{ Extents prepared by GeneratePoints function as only it knows the extents
-  G4double extentX;
-  G4double extentY;
-  ///@}
   
   /// Solid for innter surface of beam pipe.
   G4VSolid* beamPipeInnerSolid;

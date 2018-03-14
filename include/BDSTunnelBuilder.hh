@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSTUNNELBUILDER_H
 #define BDSTUNNELBUILDER_H
 
@@ -24,7 +42,7 @@ public:
   /// of tunnel around the flat beamline (of accelerator components).
   /// Tunnel segments are placed in order in a new beamline instance,
   /// which is returned.
-  BDSBeamline* BuildTunnelSections(BDSBeamline* flatBeamLine);
+  BDSBeamline* BuildTunnelSections(const BDSBeamline* flatBeamLine);
 
 private:
   /// Decide whether this is a good point to break the tunnel based on various cumulative
@@ -34,9 +52,6 @@ private:
 		     G4int    cumulativeNItems,
 		     G4double cumulativeOffsetX,
 		     G4double cumulativeOffsetY);
-
-  /// Test if the current element is a sampler instance
-  G4bool IsASampler(const BDSBeamline::iterator& iterator);
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.

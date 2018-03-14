@@ -55,7 +55,7 @@ def main() :
         f.write(str(energy)+" "+str(nElastic)+" "+str(nInelastic)+"\n");
         f.flush()
                 
-        _os.system("rm -rf output_event.root")
+        _os.system("rm -rf output.root")
     f.close();
 
 def makeRunFiles(modelString, energy, collength,target, ngenerate) :

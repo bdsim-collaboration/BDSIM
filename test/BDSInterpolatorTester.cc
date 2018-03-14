@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSArray2DCoords.hh"
 #include "BDSArray2DCoordsRQuad.hh"
 #include "BDSArray4D.hh"
@@ -76,7 +94,6 @@ int main(int /*argc*/, char** /*argv*/)
 						 nullptr,
 						 false,
 						 G4Transform3D(),
-						 nullptr,
 						 "square120x120_2mm.TXT",
 						 BDSFieldFormat::poisson2dquad,
 						 BDSInterpolatorType::nearest2d);
@@ -90,7 +107,6 @@ int main(int /*argc*/, char** /*argv*/)
 						nullptr,
 						false,
 						G4Transform3D(),
-						nullptr,
 						"square120x120_2mm.TXT",
 						BDSFieldFormat::poisson2dquad,
 						BDSInterpolatorType::linear2d);
@@ -104,7 +120,6 @@ int main(int /*argc*/, char** /*argv*/)
 					       nullptr,
 					       false,
 					       G4Transform3D(),
-					       nullptr,
 					       "square120x120_2mm.TXT",
 					       BDSFieldFormat::poisson2dquad,
 					       BDSInterpolatorType::cubic2d);

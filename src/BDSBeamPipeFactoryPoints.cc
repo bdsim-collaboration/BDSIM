@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
@@ -90,19 +108,19 @@ void BDSBeamPipeFactoryPoints::CreateSolids(G4String name,
   G4double zScale = 1; // the scale at each end of the points = 1
   vacuumSolid = new G4ExtrudedSolid(name + "_vacuum_solid", // name
 				    vacuumEdge,             // vector of TwoVector points
-				    zHalfLength,            // half length for +- planes
+				    zHalfLength - 2*lengthSafety, // half length for +- planes
 				    zOffsets, zScale,       // dx,dy offset for each face, scaling
 				    zOffsets, zScale);      // dx,dy offset for each face, scaling
 
   beamPipeInnerSolid = new G4ExtrudedSolid(name + "_bp_inner_solid",
 					   beamPipeInnerEdge,
-					   zHalfLength * 1.5,
+					   zHalfLength * 4,
 					   zOffsets, zScale,
 					   zOffsets, zScale);
   
   beamPipeOuterSolid = new G4ExtrudedSolid(name + "_bp_outer_solid",
 					   beamPipeOuterEdge,
-					   zHalfLength,
+					   zHalfLength - 4*lengthSafety,
 					   zOffsets, zScale,
 					   zOffsets, zScale);
 
@@ -121,7 +139,7 @@ void BDSBeamPipeFactoryPoints::CreateSolids(G4String name,
 
   containerSubtractionSolid = new G4ExtrudedSolid(name + "_container_subtraction_solid",
 						  containerSubtractionEdge,
-						  zHalfLength*1.5,
+						  zHalfLength*4,
 						  zOffsets, zScale,
 						  zOffsets, zScale);
 }
@@ -139,7 +157,7 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
   CreateSolids(name + "_straight", length, true);
 
   // now intersect them with one G4CutTubs to get the angled faces
-  G4double zHalfLength          = length*0.5 - lengthSafety;
+  G4double zHalfLength          = length*0.5 - 2*lengthSafety;
   G4double zHalfLengthContainer = length*0.5;
   
   G4VSolid* faceSolid = new G4CutTubs(name + "_face_solid", // name
@@ -151,6 +169,7 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
 				      inputFace,            // input face normal
 				      outputFace);          // output face normal
 
+  // different only by container length > length of inner section
   G4VSolid* faceSolidContainer = new G4CutTubs(name + "_cont_face_solid", // name
 					       0,                         // inner radius
 					       intersectionRadius,        // outer radius

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSOUTPUTROOTEVENTLOSS_H
 #define BDSOUTPUTROOTEVENTLOSS_H
 
@@ -23,7 +41,7 @@ public:
   std::vector<float>        energy;  ///< Energy deposited in step
   std::vector<float>        S;       ///< Global curvilinear S coordinate
   std::vector<float>        weight;  ///< Weight associated with loss
-  // TODO : These need to be put in as options
+
   std::vector<int>          partID;  ///< ParticleID that create the deposit
   std::vector<int>          trackID; ///< TrackID that created the deposit
   std::vector<int>          parentID;///< ParentID that created the deposit
@@ -47,8 +65,8 @@ public:
   BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
-  void Fill(BDSTrajectoryPoint* hit);
-  void Fill(BDSEnergyCounterHit* hit);
+  void Fill(const BDSTrajectoryPoint* hit);
+  void Fill(const BDSEnergyCounterHit* hit);
 #endif
   virtual void Flush();
 

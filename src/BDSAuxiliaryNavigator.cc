@@ -1,6 +1,25 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Navigator.hh"
 #include "G4Step.hh"
@@ -58,11 +77,17 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
   // check if we accidentally fell between the gaps and found the world volume
   if (useCurvilinear && selectedVol == curvilinearWorldPV)
     {// try the bridge world next
+#ifdef BDSDEBUGNAV
+      G4cout << "Trying bridge world" << G4endl;
+#endif
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(point, direction,
 							       pRelativeSearch, ignoreDirection);
       // if we find a non-world volume, then good. if we find the world volume even
       // of the bridge world, it must really lie outside the curvilinear volumes
       // eitherway, we return that volume.
+#ifdef BDSDEBUGNAV
+      G4cout << "Found " << selectedVol->GetName() << G4endl;
+#endif
       return selectedVol;
     }
   else if (selectedVol == worldPV)
@@ -105,10 +130,16 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   // check if we accidentally fell between the gaps and found the world volume
   if (useCurvilinear && selectedVol == curvilinearWorldPV)
     {// try the bridge world next
+#ifdef BDSDEBUGNAV
+      G4cout << "Trying bridge world" << G4endl;
+#endif
       selectedVol = auxNavigatorCLB->LocateGlobalPointAndSetup(position, &globalDirUnit);
       // if we find a non-world volume, then good. if we find the world volume even
       // of the bridge world, it must really lie outside the curvilinear volumes
       // eitherway, we return that volume.
+#ifdef BDSDEBUGNAV
+      G4cout << "Found " << selectedVol->GetName() << G4endl;
+#endif
       return selectedVol;
     }
   else if (selectedVol == worldPV)
@@ -157,7 +188,7 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPositio
   if (stepLength > 1*CLHEP::mm) // too long - may go outside typical geometry length
     {point += globalDirUnit * marginLength;}
   else if (stepLength > 0) // must be a shorter length, obey it
-    {point += globalDirection.unit() * (stepLength * 0.5);}
+    {point += globalDirUnit * (stepLength * 0.5);}
   // else pass: point = globalPosition
   
   auto selectedVol = LocateGlobalPointAndSetup(point,
@@ -188,6 +219,12 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalP
 {
   InitialiseTransform(globalPosition);
   return GlobalToLocal(useCurvilinear).TransformPoint(globalPosition);
+}
+
+G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4ThreeVector& globalAxis,
+							const G4bool&        useCurvilinear) const
+{
+  return GlobalToLocal(useCurvilinear).TransformAxis(globalAxis);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4double globalPosition[3],
@@ -248,6 +285,131 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 {
   InitialiseTransform(globalPosition);
   return LocalToGlobal(useCurvilinear).TransformPoint(localPosition);
+}
+
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
+                                              G4ThreeVector unitMomentum,
+                                              G4double      h,
+                                              G4bool        useCurvilinearWorld)
+{
+  return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+}
+
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
+                                              G4ThreeVector position,
+                                              G4ThreeVector unitMomentum,
+                                              G4double      h,
+                                              G4bool        useCurvilinearWorld,
+                                              G4double      FCof)
+{
+  G4double angle             = (*strength)["angle"];
+  G4double arcLength         = (*strength)["length"];
+  G4double radiusOfCurvature = arcLength / angle;
+  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+
+  BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+
+  // Test on finite angle here. If the angle is 0, there is no need for a further transform.
+  if (!BDS::IsFinite(angle))
+    {return local;}
+
+  G4ThreeVector localPos   = local.PreStepPoint();
+  G4ThreeVector localMom   = local.PostStepPoint();
+  G4double      localZ     = localPos.z();
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+
+  // only find angle between particle and radiusAtChord in x-z plane,
+  // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
+  G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
+  G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
+  G4ThreeVector partVectToCentre  = arcCentre - localXZPos;
+  G4double partToCentreDist       = partVectToCentre.mag();
+
+  // angle along reference path, from -angle/2 to +angle/2
+  G4double theta = acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
+
+  // theta should be negative for first 'half' of dipole
+  if (localZ < 0)
+    {theta *= -1;}
+
+  // vector from origin to CL arc centre depends on sign of dipole angle
+  G4double sign = (angle < 0)? -1:1;
+
+  G4double CLXOffset  = sign*partToCentreDist - radiusOfCurvature;
+  G4double distAlongS = theta * sign * radiusOfCurvature;
+
+  // normalise momentum rotation to particle charge
+  G4double charge = 0;
+  charge = (FCof < 0)? -1: 1;
+
+  G4double rotationAngle = theta*charge;
+
+  G4ThreeVector localMomCL = localMom.rotate(rotationAngle, localUnitF);
+  G4ThreeVector localPosCL = G4ThreeVector(CLXOffset, localPos.y(), distAlongS);
+
+/* Lauries algorithm - keep for now
+  // This will range from -angle/2 to +angle/2
+  G4double partialAngle = atan(localZ / radiusAtChord);
+
+  G4ThreeVector localMomCL = localMom.rotate(partialAngle, localUnitF);
+
+  G4ThreeVector unitX      = G4ThreeVector(1,0,0);
+  G4ThreeVector localUnitX = ConvertAxisToLocal(unitX, useCurvilinearWorld);
+  G4double      dx         = radiusOfCurvature * (1 - cos(partialAngle));
+  G4ThreeVector dpos       = localUnitX * dx;
+  G4ThreeVector localPosCL = localPos + dpos;
+*/
+
+  return BDSStep(localPosCL, localMomCL);
+}
+
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
+                                              G4ThreeVector localMomentum,
+                                              G4bool        useCurvilinearWorld)
+{
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
+}
+
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
+                                              G4ThreeVector CLPosition,
+                                              G4ThreeVector CLMomentum,
+                                              G4bool        useCurvilinearWorld,
+                                              G4double      FCof)
+{
+  G4double angle             = (*strength)["angle"];
+  G4double arcLength         = (*strength)["length"];
+  G4double radiusOfCurvature = arcLength / angle;
+  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+
+  // Test on finite angle here. If the angle is 0, return convert to global transform.
+  if (!BDS::IsFinite(angle))
+    {return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);}
+
+  G4double sign = (angle < 0)? 1:-1;
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector arcCentre  = G4ThreeVector(sign*radiusAtChord,0,0);
+
+  G4double theta = CLPosition.z() / radiusOfCurvature;
+
+  G4double partToCentreDist  = CLPosition.x() + radiusOfCurvature;
+  G4double localZ = partToCentreDist * std::sin(theta);
+  G4double localX = (partToCentreDist * std::cos(theta)) - radiusAtChord;
+
+  // normalise momentum rotation to particle charge
+  G4double charge = 0;
+  charge = (FCof < 0)? -1: 1;
+
+  // rotation angle should be negative for second 'half' of dipole
+  G4double rotationAngle = std::abs(theta)*charge;
+  if (localZ > 0)
+    {rotationAngle *= -1;}
+
+  G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
+  G4ThreeVector localMomentum = CLMomentum.rotate(rotationAngle, localUnitF);;
+
+  return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
 
 G4Navigator* BDSAuxiliaryNavigator::Navigator(G4bool curvilinear) const

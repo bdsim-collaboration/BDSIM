@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSDebug.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSMagnetStrength.hh"
@@ -56,11 +74,11 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
     {
       // Here we add to so order represents kn properly
       G4double o = (G4double)i+2; // the current order
-      br   += normalComponents[i] * std::pow(r, o - 1) * sin(o * phi) / ffact; //normal
-      br   -= skewComponents[i]   * std::pow(r, o - 1) * cos(o * phi) / ffact; //skewed
+      br   += normalComponents[i] * std::pow(r, o - 1) * std::sin(o * phi) / ffact; //normal
+      br   -= skewComponents[i]   * std::pow(r, o - 1) * std::cos(o * phi) / ffact; //skewed
 
-      bphi += normalComponents[i] * std::pow(r, o - 1) * cos(o * phi) / ffact; //normal
-      bphi += skewComponents[i]   * std::pow(r, o - 1) * sin(o * phi) / ffact; //skewed
+      bphi += normalComponents[i] * std::pow(r, o - 1) * std::cos(o * phi) / ffact; //normal
+      bphi += skewComponents[i]   * std::pow(r, o - 1) * std::sin(o * phi) / ffact; //skewed
 
       // Ignore dipole component for now!
       //if(o==1) // for the angle convention
@@ -70,9 +88,9 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
     }
 
   G4ThreeVector cartesianField;
-  cartesianField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
-  cartesianField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
-  cartesianField[2] = 0;                                 // B_z
+  cartesianField[0] = (br * std::cos(phi) - bphi * std::sin(phi)); // B_x
+  cartesianField[1] = (br * std::sin(phi) + bphi * std::cos(phi)); // B_y
+  cartesianField[2] = 0;                                           // B_z
 
   return cartesianField;
 }

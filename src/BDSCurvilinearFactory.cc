@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSCurvilinearFactory.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
@@ -112,7 +130,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String    
 					     name + "_lv"); // name
 
   // always debug visualisation for read out geometry - only viewed via explicit commands
-  lv->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
+  lv->SetVisAttributes(BDSGlobalConstants::Instance()->VisibleDebugVisAttr());
 
   // we don't specify the face normals as they are w.r.t the incoming or outoing
   // reference trajectory - to which the curvilinear faces will be perpendicular

@@ -1,8 +1,27 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef BDSINTEGRATORMAG_H
 #define BDSINTEGRATORMAG_H
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDrift.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
@@ -38,13 +57,14 @@ public:
   /// Cache of thin element length to know maximum possible length scale step
   /// for coordinate lookup.
   static G4double thinElementLength;
-  
+
 protected:
   /// Convert final local position and direction to global frame. Allow
     /// scaling of momentum in case localMom is a unit vector
   void ConvertToGlobal(const G4ThreeVector &localPos,
                        const G4ThreeVector &localMom,
                        G4double             yOut[],
+		       G4double             yErr[],
                        const G4double       momScaling = 1.0);
 
   /// Setter for distChord to private member.
@@ -62,6 +82,10 @@ protected:
   /// outside the (transverse) momentum range applicable for the integration scheme
   /// used by the derived integrator.
   G4MagIntegratorStepper* backupStepper;
+
+  /// Whether a magnet has a finite strength or not. Can be set in the constructor for
+  /// zero strength elements and then a drift routine is used before anything else.
+  G4bool zeroStrength;
 
 private:
   /// Private default constructor to force use of specific constructor

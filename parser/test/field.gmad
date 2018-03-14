@@ -10,6 +10,8 @@ uniformfield: field, type="poisson",
 		     theta=0,
 		     psi=pi,
 		     axisX=0, axisY=0, axisZ=0, angle=0,
-		     axisAngle=0;
+		     axisAngle=0,
+		     autoScale=1,
+		     maximumStepLength=1*mm;
 
 d1: drift, l=0.5*m, aper1=4*cm, fieldAll="uniformfield";

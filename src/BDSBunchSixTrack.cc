@@ -1,14 +1,32 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSBunchSixTrack.hh"
 #include "BDSDebug.hh"
-#include "parser/options.h"
+
+#include "parser/beam.h"
+
 #include "CLHEP/Units/SystemOfUnits.h"
+
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+{
   useCurvilinear = true; // need to always convert from curvilinear
   iPart = 0;
   nPart = 0;
@@ -76,15 +94,15 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   infile.close();
 }
 
-void BDSBunchSixTrack::SetOptions(const GMAD::Options& opt,
+void BDSBunchSixTrack::SetOptions(const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;
+  G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(opt, beamlineTransformIn);
-  SetDistribFile(G4String(opt.distribFile)); 
+  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  SetDistrFile(G4String(beam.distrFile)); 
   LoadSixTrackFile();
 }
 

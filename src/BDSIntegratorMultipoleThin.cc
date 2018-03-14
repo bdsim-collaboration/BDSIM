@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSIntegratorMultipoleThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -29,6 +47,13 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
       bsl.push_back((*strength)[*skey] / std::pow(CLHEP::m,i+1));
       nfact.push_back(Factorial(i));
     }
+
+  G4bool finiteStrength = false;
+  for (const auto& nl : bnl)
+    {finiteStrength = finiteStrength || BDS::IsFinite(nl);}
+  for (const auto& sl : bsl)
+    {finiteStrength = finiteStrength || BDS::IsFinite(sl);}
+  zeroStrength = !finiteStrength;
 }
 
 void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
@@ -37,6 +62,22 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
 					 G4double       yOut[],
 					 G4double       yErr[])
 {
+  const G4double fcof = eqOfM->FCof();
+  G4double lengthFraction = h / thinElementLength;
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  if (zeroStrength || lengthFraction < 0.51 || !BDS::IsFinite(fcof))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
@@ -50,7 +91,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   // only use for forward paraxial momenta, else advance particle as if in a drift
   if (localMomUnit.z() < 0.9)
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
@@ -81,7 +122,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momy;
 
   // normalise to momentum and charge
-  G4double ratio = eqOfM->FCof() * brho / momMag;
+  G4double ratio = eqOfM->FCof() * std::abs(brho) / momMag;
 
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
@@ -101,19 +142,10 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       kick += result;
     }
 
-  // apply kick
-  xp1 -= kick.real();
-  yp1 += kick.imag();
-  zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
-  if (std::isnan(zp1))
-    {zp1 = zp;}
-
   // reset n for skewed kicks.
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
-
-  G4ThreeVector momOut = G4ThreeVector(xp1,yp1,zp1);
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
@@ -135,9 +167,14 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
         }
     }
   
-  //apply kick
+  // apply normal kick
+  xp1 -= kick.real();
+  yp1 += kick.imag();
+  
+  //apply skewed kick
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
+
   zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
   if (std::isnan(zp1))
     {zp1 = zp;}
@@ -145,17 +182,14 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
   if (std::isnan(zp1) || (zp1 < 0.9))
     {
-      AdvanceDriftMag(yIn, h, yOut);
+      AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
   
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, momMag);
-
-  for (G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
 }
 
 G4int BDSIntegratorMultipoleThin::Factorial(G4int n)

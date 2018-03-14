@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
@@ -19,6 +37,7 @@
 #include <cmath>
 
 G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
+G4Material* BDSAcceleratorComponent::worldMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
@@ -54,6 +73,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
     {
       const auto globals = BDSGlobalConstants::Instance(); // shortcut
       emptyMaterial      = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());
+      worldMaterial      = BDSMaterials::Instance()->GetMaterial(globals->WorldMaterial());
       lengthSafety       = globals->LengthSafety();
       checkOverlaps      = globals->CheckOverlaps();
     }
@@ -68,7 +88,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
-    {chordLength = 2.0 * arcLengthIn * sin(0.5*angleIn) / angleIn;}
+    {chordLength = 2.0 * arcLengthIn * std::sin(0.5*angleIn) / angleIn;}
   else
     {chordLength = arcLengthIn;}
 #ifdef BDSDEBUG
@@ -116,13 +136,13 @@ void BDSAcceleratorComponent::Build()
   if(containerLogicalVolume)
     {
       // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
       //copy the default and update with the length of the object rather than the default 1m
       G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
       if (ul != defaultUL) // if it's not the default register it
         {RegisterUserLimits(ul);}
       containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
     }
 }
 

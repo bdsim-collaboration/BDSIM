@@ -1,6 +1,26 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "BDSIntegratorEuler.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
@@ -15,6 +35,14 @@ void BDSIntegratorEuler::Stepper(const G4double yIn[],
 				 G4double       yOut[],
 				 G4double       yErr[])
 {
+  // In case of zero field or neutral particles do a linear step:
+  if (zeroStrength || !BDS::IsFinite(eqOfM->FCof()))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+  
   const G4ThreeVector a_start = G4ThreeVector(dydx[3], dydx[4], dydx[5]);
   if (a_start.mag2() < 1e-60)
     {// no potential as no magnetic field - use drift routine
@@ -37,7 +65,8 @@ void BDSIntegratorEuler::Stepper(const G4double yIn[],
   // calculate the mid point if the particle were to drift. Momentum
   // stays the same of course.
   G4double midPointDrift[7];
-  AdvanceDriftMag(yIn, hHalf, midPointDrift);
+  G4double midPointDriftErr[7];
+  AdvanceDriftMag(yIn, hHalf, midPointDrift, midPointDriftErr);
 
   G4double potential[7]; // output array for g4 query
   RightHandSide(midPointDrift, potential); // query field and calculate vector potential
