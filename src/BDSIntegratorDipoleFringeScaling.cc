@@ -18,7 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
-#include "BDSIntegratorDipoleFringe.hh"
+#include "BDSIntegratorDipoleFringeScaling.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
@@ -28,22 +28,31 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
-BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strengthIn,
+BDSIntegratorDipoleFringeScaling::BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strengthIn,
                              G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
                              G4double                 minimumRadiusOfCurvatureIn):
-  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn)
+  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn),
+  bRho(brhoIn)
 {;}
 
-void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
+void BDSIntegratorDipoleFringeScaling::Stepper(const G4double yIn[],
                                         const G4double dydx[],
                                         const G4double h,
                                         G4double       yOut[],
                                         G4double       yErr[])
 {
+  // momentum magnitude for scaling, doesn't matter if global or local as only the magnitude is needed
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4double momInMag = mom.mag();
+
   // unit normalisation
   const G4double fcof = eqOfM->FCof();
 
-  BaseStepper(yIn, dydx, h, yOut, yErr, 1.0, fcof);
+  // normalise to momentum only, charge normalisation in base stepper
+  G4double momScaling = std::abs(fcof * bRho / momInMag);
+
+  BaseStepper(yIn, dydx, h, yOut, yErr, momScaling, fcof);
+
 }
 

@@ -505,7 +505,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   outgoingFaceAngle -= 0.5*angle;
 
   BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
-					   brho, st, integratorSet, integratorSetType,
+					   brho, st, integratorSet,
 					   incomingFaceAngle, outgoingFaceAngle,
 					   includeFringeFields);
   return rbendline;
@@ -1753,7 +1753,7 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
-      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+      if (integratorSet->IsMatrixIntegratorSet())
 	{return outgoingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
@@ -1762,7 +1762,7 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* el) const
 
   // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
   // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
-  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+  if (integratorSet->IsMatrixIntegratorSet() || BDS::IsFinite(el->k1))
     {return outgoingFaceAngle;}
 
   // for an sbend, the output face is nominally normal to the outgoing
@@ -1791,7 +1791,7 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   if (el->type == ElementType::_RBEND)
     {
-      if (integratorSetType == BDSIntegratorSetType::bdsimmatrix)
+      if (integratorSet->IsMatrixIntegratorSet())
 	{return incomingFaceAngle;}
       // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
@@ -1800,7 +1800,7 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* el) const
 
   // if we're using the matrix integrator set, we build the bends flat irrespective of parameters
   // if we have a finite k1 for a bend, we're forced to use the bdsimmatrix integrator set
-  if (integratorSetType == BDSIntegratorSetType::bdsimmatrix || BDS::IsFinite(el->k1))
+  if (integratorSet->IsMatrixIntegratorSet() || BDS::IsFinite(el->k1))
     {return incomingFaceAngle;}
 
   // for an sbend, the output face or nominally normal to the outgoing

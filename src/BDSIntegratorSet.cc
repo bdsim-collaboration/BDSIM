@@ -62,7 +62,13 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
   dipoleFringe(dipoleFringeIn),
   multipoleThin(multipoleThinIn),
   multipoleOuter(multipoleOuterIn)
-{;}
+{
+  isMatrix = false; //default
+  // use dipolematrix integrator to check if matrix style as it is the
+  // only integrator exclusive to matrix style integrator sets
+  if (dipoleIn == BDSIntegratorType::dipolematrix)
+    {isMatrix = true;}
+}
 
 namespace BDS
 {  
@@ -125,6 +131,27 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew octupole
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
+			 BDSIntegratorType::multipolethin,  // thin multipole
+			 BDSIntegratorType::g4nystromrk4);  // multipole outer
+  /// Mad-x style tracking with fringe field momentum scaling.
+  const BDSIntegratorSet*  integratorsBDSIMMatrixFringeScaling =
+	new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
+			 BDSIntegratorType::dipolematrix,   // dipole
+			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
+			 BDSIntegratorType::quadrupole,     // quadrupole
+			 BDSIntegratorType::euler,          // sextupole
+			 BDSIntegratorType::euler,          // octupole
+			 BDSIntegratorType::euler,          // decapole
+			 BDSIntegratorType::g4classicalrk4, // thick multipole
+			 BDSIntegratorType::g4classicalrk4, // muon spoiler
+			 BDSIntegratorType::g4classicalrk4, // rfcavity
+			 BDSIntegratorType::g4classicalrk4, // rf
+			 BDSIntegratorType::g4classicalrk4, // general
+			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
+			 BDSIntegratorType::g4classicalrk4, // skew sextupole
+			 BDSIntegratorType::g4classicalrk4, // skew octupole
+			 BDSIntegratorType::g4classicalrk4, // skew decapole
+			 BDSIntegratorType::dipolefringescaling, // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4nystromrk4);  // multipole outer
   /// All 4th Order Runge Kutte.
@@ -193,7 +220,9 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
     case BDSIntegratorSetType::bdsimtwo:
       {return BDS::integratorsBDSIMTwo;}
     case BDSIntegratorSetType::bdsimmatrix:
-        {return BDS::integratorsBDSIMMatrix;}
+      {return BDS::integratorsBDSIMMatrix;}
+	case BDSIntegratorSetType::bdsimmatrixfringescaling:
+	  {return BDS::integratorsBDSIMMatrixFringeScaling;}
     default:
       {return BDS::integratorsBDSIMOne;  break;}
     }
@@ -268,3 +297,6 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return general;          break;}
     }
 }
+
+G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
+  {return isMatrix;}

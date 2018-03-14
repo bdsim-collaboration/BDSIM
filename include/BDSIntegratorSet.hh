@@ -92,6 +92,12 @@ public:
   BDSIntegratorType dipoleFringe;
   BDSIntegratorType multipoleThin;
   BDSIntegratorType multipoleOuter;
+
+  /// Accessor for bool of is the integrator set matrix style.
+  G4bool IsMatrixIntegratorSet() const;
+
+private:
+  G4bool isMatrix;
 };
 
 #endif
