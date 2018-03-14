@@ -288,7 +288,16 @@ input and output point. Can be specifeid using:
 Pole face rotations can be applied to both the input and output faces of the
 magnet, based upon the reference system shown figure below. A pure dipole
 field is provided in the beam pipe and a more general dipole (as
-described by :ref:`yoke-multipole-field`) is provided for the yoke.
+described by :ref:`yoke-multipole-field`) is provided for the yoke. A
+quadrupolar component can be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -375,7 +384,16 @@ system. `sbend` magnets are made of a series of straight segments. Can be specif
 Pole face rotations can be applied to both the input and output faces of the magnet,
 based upon the reference system shown in the figure below. A pure dipole field is
 provided in the beam pipe and a more general dipole (as described by
-:ref:`yoke-multipole-field`) is provided for the yoke.
+:ref:`yoke-multipole-field`) is provided for the yoke. A quadrupolar component can
+be specified using the `k1` parameter that is
+
+.. math::
+   
+   k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
+
+If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+results in no physical pole face angle being constructed for tracking purposes. The
+tracking still includes the pole face effects.
 
 The `sbend` geometry is constructed as many small straight sections with angled faces. This
 makes no effect on tracking, but allows a much higher variety of apertures and magnet
