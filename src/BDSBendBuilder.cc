@@ -57,14 +57,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st); 
   const G4double            arcLength = element->l  * CLHEP::m;
   const G4double                angle = (*st)["angle"];
-  G4double              bendingRadius = DBL_MAX; // default for zero angle
   G4double                       fint = element->fint;
   G4double                      fintx = element->fintx;
   G4double                       hgap = element->hgap * CLHEP::m;
-  // Avoid bad calculations for zero angle. Here we need bending radius to be in
-  // correct global cartesian convention, hence -ve.
-  if (BDS::IsFinite(angle))
-    {bendingRadius = - brho / (*st)["field"];}
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
@@ -475,11 +470,6 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
   const G4double       angle = (*st)["angle"];
   const G4double   arcLength = (*st)["length"];
-  G4double     bendingRadius = DBL_MAX; // default for zero angle
-  // Avoid bad calculations for zero angle. Here we need bending radius to be in
-  // correct global cartesian convention, hence -ve.
-  if (BDS::IsFinite(angle))
-    {bendingRadius = - brho / (*st)["field"];}
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
