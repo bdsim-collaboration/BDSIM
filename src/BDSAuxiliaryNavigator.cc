@@ -348,19 +348,6 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   G4ThreeVector localMomCL = localMom.rotate(rotationAngle, localUnitF);
   G4ThreeVector localPosCL = G4ThreeVector(CLXOffset, localPos.y(), distAlongS);
 
-/* Lauries algorithm - keep for now
-  // This will range from -angle/2 to +angle/2
-  G4double partialAngle = atan(localZ / radiusAtChord);
-
-  G4ThreeVector localMomCL = localMom.rotate(partialAngle, localUnitF);
-
-  G4ThreeVector unitX      = G4ThreeVector(1,0,0);
-  G4ThreeVector localUnitX = ConvertAxisToLocal(unitX, useCurvilinearWorld);
-  G4double      dx         = radiusOfCurvature * (1 - cos(partialAngle));
-  G4ThreeVector dpos       = localUnitX * dx;
-  G4ThreeVector localPosCL = localPos + dpos;
-*/
-
   return BDSStep(localPosCL, localMomCL);
 }
 
