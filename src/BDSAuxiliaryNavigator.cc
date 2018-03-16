@@ -270,8 +270,8 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& gl
 }
 
 BDSStep BDSAuxiliaryNavigator::ConvertToGlobalStep(const G4ThreeVector& localPosition,
-					       const G4ThreeVector& localDirection,
-					       const G4bool&        useCurvilinear) const
+						   const G4ThreeVector& localDirection,
+						   const G4bool&        useCurvilinear) const
 {
   const G4AffineTransform& aff = LocalToGlobal(useCurvilinear);
   G4ThreeVector globalPos = aff.TransformPoint(localPosition);
@@ -288,19 +288,19 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
-                                              G4ThreeVector unitMomentum,
-                                              G4double      h,
-                                              G4bool        useCurvilinearWorld)
+						   G4ThreeVector unitMomentum,
+						   G4double      h,
+						   G4bool        useCurvilinearWorld)
 {
   return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
-                                              G4ThreeVector position,
-                                              G4ThreeVector unitMomentum,
-                                              G4double      h,
-                                              G4bool        useCurvilinearWorld,
-                                              G4double      FCof)
+						   G4ThreeVector position,
+						   G4ThreeVector unitMomentum,
+						   G4double      h,
+						   G4bool        useCurvilinearWorld,
+						   G4double      FCof)
 {
   G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
@@ -365,17 +365,17 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
 }
 
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
-                                              G4ThreeVector localMomentum,
-                                              G4bool        useCurvilinearWorld)
+						   G4ThreeVector localMomentum,
+						   G4bool        useCurvilinearWorld)
 {
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
 
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                                              G4ThreeVector CLPosition,
-                                              G4ThreeVector CLMomentum,
-                                              G4bool        useCurvilinearWorld,
-                                              G4double      FCof)
+						   G4ThreeVector CLPosition,
+						   G4ThreeVector CLMomentum,
+						   G4bool        useCurvilinearWorld,
+						   G4double      FCof)
 {
   G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
