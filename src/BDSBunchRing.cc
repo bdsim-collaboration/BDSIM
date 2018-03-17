@@ -25,14 +25,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchRing::BDSBunchRing(): 
-  rMin(0), rMax(0)
+  rMin(0),
+  rMax(0)
 {
-  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
 
 BDSBunchRing::~BDSBunchRing()
 {
-  delete FlatGen;
+  delete flatGen;
 }
 
 void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
@@ -40,13 +41,13 @@ void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
 			      G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
-  SetRMin(beam.Rmin);  
-  SetRMax(beam.Rmax);  
+  rMin = beam.Rmin;  
+  rMax = beam.Rmax;  
 }
 
 void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight)
+				   G4double& xp, G4double& yp, G4double& zp,
+				   G4double& t , G4double&  E, G4double& weight)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -64,7 +65,7 @@ void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
   t  = T0 * CLHEP::s;
-  E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));
+  E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * flatGen->shoot()));
   weight = 1.0;
 }
 

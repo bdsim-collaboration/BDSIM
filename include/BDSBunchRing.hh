@@ -33,15 +33,10 @@ namespace CLHEP {
  */
 
 class BDSBunchRing: public BDSBunch
-{ 
-protected : 
-  G4double rMin;
-  G4double rMax;
-  CLHEP::RandFlat  *FlatGen;    
-
+{
 public: 
   BDSBunchRing(); 
-  ~BDSBunchRing(); 
+  virtual ~BDSBunchRing(); 
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
@@ -50,9 +45,9 @@ public:
 			       G4double& t , G4double&  E, G4double& weight);
 
 protected:
-  void SetRMin(G4double rMinIn) { rMin = rMinIn;}
-  void SetRMax(G4double rMaxIn) { rMax = rMaxIn;}
-  
+  G4double rMin;
+  G4double rMax;
+  CLHEP::RandFlat* flatGen;
 };
 
 #endif

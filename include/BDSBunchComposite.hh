@@ -31,12 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 class BDSBunchComposite: public BDSBunch
-{ 
-protected:
-  BDSBunch* xBunch;
-  BDSBunch* yBunch;
-  BDSBunch* zBunch;
-
+{
 public:
   BDSBunchComposite(); 
   virtual ~BDSBunchComposite();
@@ -46,7 +41,11 @@ public:
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);
-  
+
+protected:
+  BDSBunch* xBunch;
+  BDSBunch* yBunch;
+  BDSBunch* zBunch;
 };
 
 #endif

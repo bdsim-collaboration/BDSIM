@@ -34,17 +34,6 @@ namespace CLHEP
 
 class BDSBunchEShell: public BDSBunch
 {
-protected : 
-  G4double shellX;
-  G4double shellXp;
-  G4double shellY; 
-  G4double shellYp;
-  G4double shellXWidth;
-  G4double shellXpWidth;
-  G4double shellYWidth;
-  G4double shellYpWidth;
-
-  CLHEP::RandFlat* FlatGen;    
 
 public: 
   BDSBunchEShell();  
@@ -57,14 +46,16 @@ public:
 			       G4double& t , G4double&  E, G4double& weight);
 
 protected:
-  void SetShellX (G4double shellXIn)            {shellX       = shellXIn;      }
-  void SetShellXp(G4double shellXpIn)           {shellXp      = shellXpIn;     }
-  void SetShellY (G4double shellYIn)            {shellY       = shellYIn;      }
-  void SetShellYp(G4double shellYpIn)           {shellYp      = shellYpIn;     }
-  void SetShellXWidth (G4double shellXWidthIn)  {shellXWidth  = shellXWidthIn; }
-  void SetShellXpWidth(G4double shellXpWidthIn) {shellXpWidth = shellXpWidthIn;}
-  void SetShellYWidth (G4double shellYWidthIn)  {shellYWidth  = shellYWidthIn; }
-  void SetShellYpWidth(G4double shellYpWidthIn) {shellYpWidth = shellYpWidthIn;}
+  G4double shellX;
+  G4double shellXp;
+  G4double shellY; 
+  G4double shellYp;
+  G4double shellXWidth;
+  G4double shellXpWidth;
+  G4double shellYWidth;
+  G4double shellYpWidth;
+
+  CLHEP::RandFlat* flatGen;
 };
 
 #endif

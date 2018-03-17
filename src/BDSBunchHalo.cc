@@ -48,14 +48,13 @@ BDSBunchHalo::BDSBunchHalo():
   emitOuterX(0.0), emitOuterY(0.0),
   xMax(0.0), yMax(0.0),
   xpMax(0.0), ypMax(0.0)
-
 {
-  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
 {
-  delete FlatGen; 
+  delete flatGen; 
 }
 
 void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
@@ -109,15 +108,15 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp = Xp0 * CLHEP::rad;
   yp = Yp0 * CLHEP::rad;
 
-  //  z0 += (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  //  z0 += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
   z0 = 0;
 
   while(true)
   {
-    G4double dx  = xMax  * (1 - 2 * FlatGen->shoot());
-    G4double dy  = yMax  * (1 - 2 * FlatGen->shoot());
-    G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
-    G4double dyp = ypMax * (1 - 2 * FlatGen->shoot());
+    G4double dx  = xMax  * (1 - 2 * flatGen->shoot());
+    G4double dy  = yMax  * (1 - 2 * flatGen->shoot());
+    G4double dxp = xpMax * (1 - 2 * flatGen->shoot());
+    G4double dyp = ypMax * (1 - 2 * flatGen->shoot());
     
     // compute single particle emittance 
     double emitXSp = gammaX * std::pow(std::abs(dx), 2) + (2. * alphaX * dx * dxp) + betaX * std::pow(std::abs(dxp), 2);
@@ -176,7 +175,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
 #endif
 	// reject
-	if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
+	if(flatGen->shoot() > wx && flatGen->shoot() > wy)
 	  {continue;}
 	
 	// add to reference orbit 

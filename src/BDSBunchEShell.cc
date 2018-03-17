@@ -28,12 +28,12 @@ BDSBunchEShell::BDSBunchEShell():
   BDSBunch(), shellX(0.0), shellXp(0.0), shellY(0.0), shellYp(0.0),
   shellXWidth(0.0), shellXpWidth(0.0), shellYWidth(0.0), shellYpWidth(0.0) 
 {
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
+  flatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
 }
 
 BDSBunchEShell::~BDSBunchEShell() 
 {
-  delete FlatGen;
+  delete flatGen;
 }
 
 void BDSBunchEShell::SetOptions(const BDSParticleDefinition* beamParticle,
@@ -41,33 +41,30 @@ void BDSBunchEShell::SetOptions(const BDSParticleDefinition* beamParticle,
 				G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
-  SetShellX (beam.shellX);
-  SetShellY (beam.shellY);
-  SetShellXp(beam.shellXp);
-  SetShellYp(beam.shellYp);
-  SetShellXWidth (beam.shellXWidth );
-  SetShellXpWidth(beam.shellXpWidth);
-  SetShellYWidth (beam.shellYWidth );
-  SetShellYpWidth(beam.shellYpWidth);
+  shellX  = beam.shellX;
+  shellY  = beam.shellY;
+  shellXp = beam.shellXp;
+  shellYp = beam.shellYp;
+  shellXWidth  = beam.shellXWidth;
+  shellXpWidth = beam.shellXpWidth;
+  shellYWidth  = beam.shellYWidth;
+  shellYpWidth = beam.shellYpWidth;
 }
 
 void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				    G4double& xp, G4double& yp, G4double& zp,
 				    G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  G4double phi = 2 * CLHEP::pi * FlatGen->shoot();
-  G4double xamp  = 0.5 - FlatGen->shoot();
-  G4double yamp  = 0.5 - FlatGen->shoot();
-  G4double xpamp = 0.5 - FlatGen->shoot();
-  G4double ypamp = 0.5 - FlatGen->shoot();
+  G4double phi = 2 * CLHEP::pi * flatGen->shoot();
+  G4double xamp  = 0.5 - flatGen->shoot();
+  G4double yamp  = 0.5 - flatGen->shoot();
+  G4double xpamp = 0.5 - flatGen->shoot();
+  G4double ypamp = 0.5 - flatGen->shoot();
   
   x0 = (X0 +  (sin(phi) * shellX)  + xamp * shellXWidth) * CLHEP::m;
   xp = (Xp0 + (cos(phi) * shellXp) + xpamp * shellXpWidth);
   
-  phi = 2 * CLHEP::pi * FlatGen->shoot();
+  phi = 2 * CLHEP::pi * flatGen->shoot();
   
   y0 = (Y0 +  (sin(phi) * shellY)  + yamp * shellYWidth) * CLHEP::m;
   yp = (Yp0 + (cos(phi) * shellYp) + ypamp * shellYpWidth);
@@ -78,7 +75,7 @@ void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   ApplyTransform(x0,y0,z0,xp,yp,zp);
  
   t = T0 * CLHEP::s;
-  E = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));
+  E = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * flatGen->shoot()));
   weight = 1.0;
 
   return;
