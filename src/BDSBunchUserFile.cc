@@ -33,7 +33,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
-  nlinesIgnore(0)
+  distrFile(""),
+  bunchFormat(""),
+  nlinesIgnore(0),
+  particleMass(0)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
 }
@@ -242,6 +245,7 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 				     G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  particleMass = beamParticle->Mass();
   SetDistrFile((G4String)beam.distrFile); 
   SetBunchFormat((G4String)beam.distrFileFormat);
   // Note this will be automatically advanced to the right nlinesIgnore
@@ -327,12 +331,6 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-
-  if (particleMass < 0)
-    {
-      auto particleDef = BDSGlobalConstants::Instance()->BeamParticleDefinition()->ParticleDefinition();
-      particleMass = particleDef->GetPDGMass(); // should always exist at this point
-    }
   
   for(auto it=fields.begin();it!=fields.end();it++)
     {

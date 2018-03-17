@@ -45,12 +45,13 @@ public:
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);
-protected: 
-  G4String distrFile; ///< bunch file
-  G4String bunchFormat; ///< the format of the file
-  G4int nlinesIgnore; ///< number of lines that will be ignored after each particle (default 0)
   
 private:
+  G4String distrFile;    ///< Bunch file.
+  G4String bunchFormat;  ///< Format of the file.
+  G4int nlinesIgnore;    ///< Number of lines that will be ignored after each particle (default 0).
+  G4double particleMass; ///< Cache of nominal beam particle mass.
+  
   void ParseFileFormat();
   void OpenBunchFile();
   void SkipLines();
@@ -70,8 +71,7 @@ private:
   G4double ParseLengthUnit(G4String &fmt);
   G4double ParseAngleUnit(G4String &fmt);
   G4double ParseTimeUnit(G4String &fmt);
-
-  G4double particleMass; ///< PDG mass of nominal beam particle.
+  
   G4double ffact;
 };
 
