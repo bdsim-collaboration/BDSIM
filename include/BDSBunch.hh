@@ -62,7 +62,7 @@ public:
   inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
 
   /// Access the beam particle definition.
-  inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
   
 protected:
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
@@ -102,8 +102,8 @@ protected:
   /// Derived class must change explicitly.
   G4bool particleCanBeDifferent;
 
-  /// Optional particle definition that can be used.
-  BDSParticleDefinition* particleDefinition;
+  /// Optional particle definition that can be used. Does not own.
+  const BDSParticleDefinition* particleDefinition;
 
   /// @{ Flags to ignore random number generator in case of no finite E or T.
   G4bool finiteSigmaE;
