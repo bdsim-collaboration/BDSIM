@@ -94,14 +94,15 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   infile.close();
 }
 
-void BDSBunchSixTrack::SetOptions(const GMAD::Beam& beam,
+void BDSBunchSixTrack::SetOptions(const BDSParticleDefinition* beamParticle,
+				  const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   SetDistrFile(G4String(beam.distrFile)); 
   LoadSixTrackFile();
 }

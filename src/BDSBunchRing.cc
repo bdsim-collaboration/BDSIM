@@ -35,10 +35,11 @@ BDSBunchRing::~BDSBunchRing()
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(const GMAD::Beam& beam,
+void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
+			      const GMAD::Beam& beam,
 			      G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   SetRMin(beam.Rmin);  
   SetRMax(beam.Rmax);  
 }

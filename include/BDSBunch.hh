@@ -43,7 +43,8 @@ public:
   virtual ~BDSBunch(){;}
 
   /// Extract and set the relevant options from the beam definition.
-  virtual void SetOptions(const GMAD::Beam& beam,
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
 
   /// Each derived class can override this default method of reference
@@ -80,6 +81,9 @@ protected:
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
+  /// Convert a momentum to a total energy given the beam particle mass.
+  G4double PtoE(const G4double& pIn) const;
+
   ///@{ Centre of distributions
   G4double X0;
   G4double Y0;
@@ -90,7 +94,9 @@ protected:
   G4double Yp0;
   G4double Zp0;
   G4double E0;
-  G4double sigmaT; 
+  G4double P0;     ///< central momentum
+  G4double sigmaT;
+  G4double sigmaP;
   G4double sigmaE;
   ///@}
   
@@ -116,6 +122,8 @@ private:
 
   /// Whether the transform is finite and should be used.
   G4bool        nonZeroTransform;
+
+  G4double mass2; ///< Cache of mass squared as requried to convert from p to E.
   
   /// A reference to the fully constructed beamline that's lazyily instantiated.
   mutable const BDSBeamline* beamline;

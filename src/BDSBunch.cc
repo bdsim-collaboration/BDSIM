@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/beam.h"
@@ -32,7 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSBunch::BDSBunch():
   X0(0.0), Y0(0.0), Z0(0.0), S0(0.0), T0(0.0), 
-  Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), sigmaT(0.0), sigmaE(0.0),
+  Xp0(0.0), Yp0(0.0), Zp0(0.0), E0(0.0), P0(0.0),
+  sigmaT(0.0), sigmaP(0.0), sigmaE(0.0),
   useCurvilinear(false),
   particleCanBeDifferent(false),
   particleDefinition(nullptr),
@@ -40,14 +42,22 @@ BDSBunch::BDSBunch():
   finiteSigmaT(true),
   beamlineTransform(G4Transform3D()),
   nonZeroTransform(false),
+  mass2(0.0),
   beamline(nullptr)
 {;}
 
-void BDSBunch::SetOptions(const GMAD::Beam& beam,
+G4double BDSBunch::PtoE(const G4double& pIn) const
+{
+  return std::sqrt(std::pow(pIn,2) - mass2);
+}
+
+void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn)
 {
-  beamlineTransform = beamlineTransformIn;
-  nonZeroTransform  = beamlineTransform != G4Transform3D::Identity;
+  particleDefinition = beamParticle;
+  beamlineTransform  = beamlineTransformIn;
+  nonZeroTransform   = beamlineTransform != G4Transform3D::Identity;
   
   X0     = beam.X0;
   Y0     = beam.Y0;
@@ -70,6 +80,17 @@ void BDSBunch::SetOptions(const GMAD::Beam& beam,
       finiteSigmaT = false;
       sigmaT = 1e-50;
     }
+  
+  // calculate momentum - used by some generators
+  G4double mass = beamParticle->Mass();
+  mass2 = std::pow(mass,2);
+  if (E0 <= mass)
+    {
+      G4cerr << __METHOD_NAME__ << "E0 (central total energy) lower than mass of particle!" << G4endl;
+      exit(1);
+    }
+  P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
+  sigmaP = std::pow(beamParticle->Beta(),2) * sigmaE; // dE/E = 1/(beta^2) dP/P
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 

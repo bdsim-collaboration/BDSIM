@@ -64,10 +64,11 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete gaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
+void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
+				  const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
 
   offsetSampleMean  = beam.offsetSampleMean;
   iPartIteration    = 0;

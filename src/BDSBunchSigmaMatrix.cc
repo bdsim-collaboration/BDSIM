@@ -31,11 +31,12 @@ BDSBunchSigmaMatrix::BDSBunchSigmaMatrix():
   BDSBunchGaussian()
 {;}
 
-void BDSBunchSigmaMatrix::SetOptions(const GMAD::Beam& beam,
+void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
+				     const GMAD::Beam& beam,
 				     G4Transform3D beamlineTransformIn)
 {
   // Fill means and class BDSBunch::SetOptions
-  BDSBunchGaussian::SetOptions(beam, beamlineTransformIn);
+  BDSBunchGaussian::SetOptions(beamParticle, beam, beamlineTransformIn);
 
   if(strcmp(beam.distrType.data(),"gaussmatrix") == 0)
     {

@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 
 class BDSBunch;
+class BDSParticleDefinition;
 
 namespace GMAD
 {
@@ -45,10 +46,12 @@ class BDSBunchFactory
 {
 public:
   /// factory method
-  static BDSBunch* CreateBunch(const GMAD::Beam& beam,
+  static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
+			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
 
-  static BDSBunch* CreateBunch(BDSBunchType      distrType,
+  static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
+			       BDSBunchType      distrType,
 			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
 };

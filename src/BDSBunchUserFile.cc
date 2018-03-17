@@ -237,10 +237,11 @@ void BDSBunchUserFile<T>::SkipLines()
 }
 
 template<class T>
-void BDSBunchUserFile<T>::SetOptions(const GMAD::Beam& beam,
+void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
+				     const GMAD::Beam& beam,
 				     G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   SetDistrFile((G4String)beam.distrFile); 
   SetBunchFormat((G4String)beam.distrFileFormat);
   // Note this will be automatically advanced to the right nlinesIgnore
@@ -315,8 +316,8 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 
 template<class T>
 void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight)
+					  G4double& xp, G4double& yp, G4double& zp,
+					  G4double& t , G4double&  E, G4double& weight)
 {
 
   E = x0 = y0 = z0 = xp = yp = zp = t = 0;

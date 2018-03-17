@@ -36,10 +36,11 @@ BDSBunchEShell::~BDSBunchEShell()
   delete FlatGen;
 }
 
-void BDSBunchEShell::SetOptions(const GMAD::Beam& beam,
+void BDSBunchEShell::SetOptions(const BDSParticleDefinition* beamParticle,
+				const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   SetShellX (beam.shellX);
   SetShellY (beam.shellY);
   SetShellXp(beam.shellXp);

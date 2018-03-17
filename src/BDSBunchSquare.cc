@@ -36,10 +36,11 @@ BDSBunchSquare::~BDSBunchSquare()
   delete FlatGen;
 }
 
-void BDSBunchSquare::SetOptions(const GMAD::Beam& beam,
+void BDSBunchSquare::SetOptions(const BDSParticleDefinition* beamParticle,
+				const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   SetEnvelopeX(beam.envelopeX); 
   SetEnvelopeY(beam.envelopeY);
   SetEnvelopeXp(beam.envelopeXp);
