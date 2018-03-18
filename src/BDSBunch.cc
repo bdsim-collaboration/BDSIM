@@ -46,9 +46,9 @@ BDSBunch::BDSBunch():
   beamline(nullptr)
 {;}
 
-G4double BDSBunch::PtoE(const G4double& pIn) const
-{
-  return std::sqrt(std::pow(pIn,2) - mass2);
+G4double BDSBunch::EFromP(const G4double &pIn) const
+{//E2 = p2 + m2
+  return std::sqrt(std::pow(pIn,2) + mass2);
 }
 
 void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,

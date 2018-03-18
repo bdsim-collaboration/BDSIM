@@ -100,29 +100,30 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
 }
 
-void BDSBunchTwiss::GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
-					  G4double& xp, G4double& yp, G4double& zp,
-					  G4double& t , G4double&  E, G4double& weight)
+void BDSBunchTwiss::GetNextParticleCoords(G4double& x0c, G4double& y0c, G4double& z0c,
+					  G4double& xpc, G4double& ypc, G4double& zpc,
+					  G4double& tc , G4double&  Ec, G4double& weightc)
 {
   CLHEP::HepVector v = gaussMultiGen->fire();
-  x0 = v[0] * CLHEP::m;
-  xp = v[1] * CLHEP::rad;
-  y0 = v[2] * CLHEP::m;
-  yp = v[3] * CLHEP::rad;
-  t  = v[4] * CLHEP::s;
-  zp = 0.0  * CLHEP::rad;
-  z0 = Z0 * CLHEP::m + t * CLHEP::c_light;  
+  x0c = v[0] * CLHEP::m;
+  xpc = v[1] * CLHEP::rad;
+  y0c = v[2] * CLHEP::m;
+  ypc = v[3] * CLHEP::rad;
+  tc  = v[4] * CLHEP::s;
+  zpc = 0.0  * CLHEP::rad;
+  z0c = Z0 * CLHEP::m + tc * CLHEP::c_light;
   if (finiteSigmaE)
     {
-      G4double p = P0 *= v[5]; // only if there's a finite energy spread
-      E = PtoE(p) * CLHEP::GeV;
+      G4double p = P0 * v[5]; // only if there's a finite energy spread
+      //Ec = p * CLHEP::GeV;
+      Ec = EFromP(p) * CLHEP::GeV;
     }
   else
-    {E  = E0 * CLHEP::GeV;}
+    {Ec  = E0 * CLHEP::GeV;}
   
-  zp = CalculateZp(xp,yp,Zp0);
+  zpc = CalculateZp(xpc,ypc,Zp0);
   
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  ApplyTransform(x0c,y0c,z0c,xpc,ypc,zpc);
   
-  weight = 1.0;
+  weightc = 1.0;
 }
