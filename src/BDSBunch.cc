@@ -70,16 +70,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
 
-  if (!BDS::IsFinite(sigmaE))
-    {
-      finiteSigmaE = false;
-      sigmaE = 1e-50; // finite but small
-    }
-  if (!BDS::IsFinite(sigmaT))
-    {
-      finiteSigmaT = false;
-      sigmaT = 1e-50;
-    }
+  finiteSigmaE = BDS::IsFinite(sigmaE);
+  finiteSigmaT = BDS::IsFinite(sigmaT);
   
   // calculate momentum - used by some generators
   G4double mass = beamParticle->Mass()/CLHEP::GeV;
@@ -91,6 +83,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
     }
   P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
   sigmaP = std::pow(beamParticle->Beta(),2) * sigmaE; // dE/E = 1/(beta^2) dP/P
+  if (finiteSigmaE)
+    {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 

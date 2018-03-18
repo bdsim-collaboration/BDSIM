@@ -70,6 +70,13 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 {
   BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
 
+  // require sigmaE to be finite for sigma matrix to be positive definite
+  // set to very small value if 0
+  if (!finiteSigmaE) // set in BDSBunch::SetOptions
+    {sigmaE = 1e-50;}
+  if (!finiteSigmaT)
+    {sigmaT = 1e-50;}
+
   offsetSampleMean  = beam.offsetSampleMean;
   iPartIteration    = 0;
   

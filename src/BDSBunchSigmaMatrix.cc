@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSigmaMatrix.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
 
@@ -61,6 +62,10 @@ void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
       sigmaGM[4][4] = beam.sigma55;
       sigmaGM[4][5] = beam.sigma56;  
       sigmaGM[5][5] = beam.sigma66;
+      if (BDS::IsFinite(beam.sigma55))
+	{finiteSigmaT = true;}
+      if (BDS::IsFinite(beam.sigma66))
+	{finiteSigmaE = true;}
     }
   else if (strcmp(beam.distrType.data(),"gauss") == 0) 
     {
