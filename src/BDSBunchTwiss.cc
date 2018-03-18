@@ -83,8 +83,8 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   sigmaGM[1][3] =  dispXP*dispYP*std::pow(sigmaP,2);
 
   //2x2 block in longitudinal
-  sigmaGM[4][4] =  std::pow(sigmaT,2); 
-  sigmaGM[5][5] =  std::pow(sigmaP,2);
+  sigmaGM[4][4] =  std::pow(sigmaT,2);
+  sigmaGM[5][5] =  std::pow(sigmaE,2);
 
   //4 2x2 blocks for longitudinal-transverse coupling
   sigmaGM[0][5] = dispX*std::pow(sigmaP,2);
@@ -98,32 +98,4 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   
   delete gaussMultiGen;
   gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
-}
-
-void BDSBunchTwiss::GetNextParticleCoords(G4double& x0c, G4double& y0c, G4double& z0c,
-					  G4double& xpc, G4double& ypc, G4double& zpc,
-					  G4double& tc , G4double&  Ec, G4double& weightc)
-{
-  CLHEP::HepVector v = gaussMultiGen->fire();
-  x0c = v[0] * CLHEP::m;
-  xpc = v[1] * CLHEP::rad;
-  y0c = v[2] * CLHEP::m;
-  ypc = v[3] * CLHEP::rad;
-  tc  = v[4] * CLHEP::s;
-  zpc = 0.0  * CLHEP::rad;
-  z0c = Z0 * CLHEP::m + tc * CLHEP::c_light;
-  if (finiteSigmaE)
-    {
-      G4double p = P0 * v[5]; // only if there's a finite energy spread
-      //Ec = p * CLHEP::GeV;
-      Ec = EFromP(p) * CLHEP::GeV;
-    }
-  else
-    {Ec  = E0 * CLHEP::GeV;}
-  
-  zpc = CalculateZp(xpc,ypc,Zp0);
-  
-  ApplyTransform(x0c,y0c,z0c,xpc,ypc,zpc);
-  
-  weightc = 1.0;
 }

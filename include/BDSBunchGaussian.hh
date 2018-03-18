@@ -75,10 +75,10 @@ protected:
   /// Pregenerate all the particle coordinates and subtract the sample mean.
   void PreGenerateEvents(const G4int& nGenerate);
 
-  /// Pure virtual function derived class must implement to calculate the coordinates.
+  /// Fire random number generator and get coordinates. Can be overloaded if required.
   virtual void GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
 				     G4double& xp, G4double& yp, G4double& zp,
-				     G4double& t , G4double&  E, G4double& weight) = 0;
+				     G4double& t , G4double&  E, G4double& weight);
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
