@@ -171,8 +171,11 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double energy = eq->TotalEnergy(momIn);
   G4double nomEnergy = std::sqrt(std::pow(nomMomentum,2) + eq->Mass());
 
+  // get beta (v/c)
+  G4double beta = eq->Beta(momIn);
+
   // deltaE/(P0*c) to match literature.
-  G4double deltaEoverPc = (energy - nomEnergy) / nomMomentum ;
+  G4double deltaEoverPc = (energy - nomEnergy) / (beta*nomMomentum) ;
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
@@ -189,9 +192,6 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double kyl = ky * h;
 
   G4bool focussing = K1 >= 0; // depends on charge as well (in eqOfM->FCof())
-
-  // get beta (v/c)
-  G4double beta = eq->Beta(momIn);
 
   G4double x0  = posIn.x();
   G4double y0  = posIn.y();
