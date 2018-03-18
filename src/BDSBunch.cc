@@ -82,7 +82,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
     }
   
   // calculate momentum - used by some generators
-  G4double mass = beamParticle->Mass();
+  G4double mass = beamParticle->Mass()/CLHEP::GeV;
   mass2 = std::pow(mass,2);
   if (E0 <= mass)
     {

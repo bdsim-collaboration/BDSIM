@@ -52,6 +52,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 
   CalculateMomentum();
   CalculateRigidity(ffact);
+  CalculateLorentzFactors();
 }
 
 BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
