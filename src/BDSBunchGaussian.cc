@@ -90,6 +90,8 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 
 void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
 {
+  if (!offsetSampleMean)
+    {return;}
   /// clear previous means
   for (auto& vec : coordinates)
     {vec->clear();}
