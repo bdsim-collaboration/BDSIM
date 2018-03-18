@@ -296,13 +296,13 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
+                           G4double      angle,
 						   G4ThreeVector position,
 						   G4ThreeVector unitMomentum,
 						   G4double      h,
 						   G4bool        useCurvilinearWorld,
 						   G4double      FCof)
 {
-  G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
@@ -359,12 +359,12 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
 }
 
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
+                           G4double      angle,
 						   G4ThreeVector CLPosition,
 						   G4ThreeVector CLMomentum,
 						   G4bool        useCurvilinearWorld,
 						   G4double      FCof)
 {
-  G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
