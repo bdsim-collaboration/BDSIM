@@ -55,10 +55,10 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
       const G4String& particleName = particle->GetParticleName();
 
       int pdgID = static_cast<int>(particle->GetPDGEncoding());
-      
-      BDSOutputROOTParticleInfo info = BDSOutputROOTParticleInfo((std::string)particleName,
-								 (int)particle->GetPDGCharge(),
-								 (double)particle->GetPDGMass());
+
+      BDSOutputROOTGeant4Data::ParticleInfo info = {(std::string)particleName,
+						    (int)particle->GetPDGCharge(),
+						    (double)particle->GetPDGMass()};
       particles[pdgID] = info;
     }
 
@@ -73,11 +73,12 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
       for (const auto& ion : *ionList)
 	{
 	  const G4ParticleDefinition* def = ion.second;
-	  BDSOutputROOTParticleInfoIon ionDef = BDSOutputROOTParticleInfoIon((std::string)def->GetParticleName(),
-									     (int)def->GetPDGCharge(),
-									     (int)def->GetPDGMass(),
-									     (int)def->GetAtomicNumber(),
-									     (int)def->GetAtomicMass());
+
+	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
+						     (int)def->GetPDGCharge(),
+						     (double)def->GetPDGMass(),
+						     (int)def->GetAtomicNumber(),
+						     (int)def->GetAtomicMass()};
 	  ions[ion.first] = ionDef;
 	}
     }

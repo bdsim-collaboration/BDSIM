@@ -19,9 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSOUTPUTROOTGEANT4DATA_H
 #define BDSOUTPUTROOTGEANT4DATA_H
 
-#include "BDSOutputROOTParticleInfo.hh"
-#include "BDSOutputROOTParticleInfoIon.hh"
-
 #include "TObject.h"
 #include "TROOT.h"
 
@@ -45,8 +42,25 @@ public:
   void Fill(const G4bool& fillIons);
 #endif
 
-  std::map<int, BDSOutputROOTParticleInfo>    particles;
-  std::map<int, BDSOutputROOTParticleInfoIon> ions;
+  struct ParticleInfo
+  {
+    std::string name;   ///< Name of particle.
+    int         charge; ///< Charge in units of e.
+    double      mass;   ///< Mass in GeV.
+  };
+
+  struct IonInfo
+  {
+    std::string name;   ///< Name of particle.
+    int         charge; ///< Charge in units of e.
+    double      mass;   ///< Mass in GeV.
+    int a; ///< Mass number - number of nucleons in nucleus.
+    int z; ///< Atomic number - number of protons in nucleus.
+
+  };
+
+  std::map<int, ParticleInfo> particles;
+  std::map<int, IonInfo>      ions;
 
   ClassDef(BDSOutputROOTGeant4Data,1);
 };
