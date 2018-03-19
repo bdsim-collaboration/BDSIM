@@ -36,6 +36,7 @@ class BDSOutputROOTEventOptions;
 class BDSOutputROOTEventRunInfo;
 template<class T> class BDSOutputROOTEventSampler;
 class BDSOutputROOTEventTrajectory;
+class BDSOutputROOTGeant4Data;
 
 /**
  * @brief Holder for output information.
@@ -55,6 +56,9 @@ protected:
 
   /// Construct samplers.
   void InitialiseSamplers();
+
+  /// Clear the local geant4 data structure.
+  void ClearStructuresGeant4Data();
 
   /// Clear the local header structure.
   void ClearStructuresHeader();
@@ -85,10 +89,11 @@ protected:
                          std::vector<double>& edges);
   ///@}
 
-  BDSOutputROOTEventHeader*  headerOutput;  ///< Information about the file.
-  BDSOutputROOTEventBeam*    beamOutput;    ///< Beam output.
-  BDSOutputROOTEventOptions* optionsOutput; ///< Options output.
-  BDSOutputROOTEventModel*   modelOutput;   ///< Model output.
+  BDSOutputROOTGeant4Data*   geant4DataOutput; ///< Geant4 information / particle tables.
+  BDSOutputROOTEventHeader*  headerOutput;     ///< Information about the file.
+  BDSOutputROOTEventBeam*    beamOutput;       ///< Beam output.
+  BDSOutputROOTEventOptions* optionsOutput;    ///< Options output.
+  BDSOutputROOTEventModel*   modelOutput;      ///< Model output.
 
   /// Primary sampler structure.
 #ifdef __ROOTDOUBLE__
@@ -125,8 +130,6 @@ private:
   BDSOutputStructures(const BDSOutputStructures&) = delete;
   BDSOutputStructures& operator=(const BDSOutputStructures&) = delete;
   ///@}
-
-
 };
 
 #endif
