@@ -27,6 +27,9 @@ class BDSOutputROOTParticleInfo: public TObject
 {
 public:
   BDSOutputROOTParticleInfo();
+  BDSOutputROOTParticleInfo(const std::string& nameIn,
+			    const int&         chargeIn,
+			    const double&      massIn);
   virtual ~BDSOutputROOTParticleInfo(){;}
 
   std::string name;   ///< Name of particle.

@@ -17,12 +17,17 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSOUTPUTROOTGEANT4DATA_H
-#define BDSOUTOUTROOTGEANT4DATA_H
+#define BDSOUTPUTROOTGEANT4DATA_H
 
 #include "BDSOutputROOTParticleInfo.hh"
 #include "BDSOutputROOTParticleInfoIon.hh"
 
 #include "TObject.h"
+#include "TROOT.h"
+
+#ifndef __ROOTBUILD__
+#include "globals.hh"
+#endif
 
 #include <map>
 
@@ -37,7 +42,8 @@ public:
   
 #ifndef __ROOTBUILD__
   /// Fill maps of particle information from Geant4.
-  void Fill();
+  void Fill(const G4String& physicsList,
+	    const G4String& beamParticle);
 #endif
 
   std::map<int, BDSOutputROOTParticleInfo>    particles;

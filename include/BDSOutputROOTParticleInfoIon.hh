@@ -30,7 +30,7 @@ public:
 			       const double&      massIn,
 			       const int&         aIn,
 			       const int&         zIn);
-  virtual ~BDSOutputROOTParticleInfo(){;}
+  virtual ~BDSOutputROOTParticleInfoIon(){;}
 
   int a; ///< Mass number - number of nucleons in nucleus.
   int z; ///< Atomic number - number of protons in nucleus.

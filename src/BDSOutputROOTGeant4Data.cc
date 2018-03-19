@@ -43,7 +43,7 @@ void BDSOutputROOTGeant4Data::Flush()
 
 #ifndef __ROOTBUILD__
 void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
-				   const G$String& beamParticle)
+				   const G4String& beamParticle)
 {
   G4ParticleTable* pt = G4ParticleTable::GetParticleTable();
 
@@ -52,10 +52,10 @@ void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
   it->reset();
   while ((*it)() )
     {
-      const G4String particleName = it->key();
       const G4ParticleDefinition* particle = it->value();
+      const G4String particleName = particle->GetParticleName();
 
-      int pdgID = static_cast<int>(particle->GetPDGEncoding();
+      int pdgID = static_cast<int>(particle->GetPDGEncoding());
       
       BDSOutputROOTParticleInfo info = BDSOutputROOTParticleInfo((std::string)particleName,
 								 (int)particle->GetPDGCharge(),
@@ -74,16 +74,16 @@ void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
       // G4IonTable has no iterator - can only query for specific ions
       // G4IonList is type def of std::multimap<G4int, const G4ParticleDefinition*>
       // Thankfully has static public holder of info.
-      G4IonList* ions = ionTable->fIonList;
-      for (const auto& ion : ions)
+      G4IonTable::G4IonList* ionList = ionTable->fIonList;
+      for (const auto& ion : *ionList)
 	{
-	  const G4ParticleDefinition* def = ion->second;
+	  const G4ParticleDefinition* def = ion.second;
 	  BDSOutputROOTParticleInfoIon ionDef = BDSOutputROOTParticleInfoIon((std::string)def->GetParticleName(),
 									     (int)def->GetPDGCharge(),
 									     (int)def->GetPDGMass(),
 									     (int)def->GetAtomicNumber(),
 									     (int)def->GetAtomicMass());
-	  ions[ion->first] = ionDef;
+	  ions[ion.first] = ionDef;
 	}
     }
 
