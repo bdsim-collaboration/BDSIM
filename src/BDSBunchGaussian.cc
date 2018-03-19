@@ -252,9 +252,14 @@ void BDSBunchGaussian::GetNextParticleCoords(G4double& x0, G4double& y0, G4doubl
   xp = v[1] * CLHEP::rad;
   y0 = v[2] * CLHEP::m;
   yp = v[3] * CLHEP::rad;
-  t  = v[4] * CLHEP::s;
+  if (finiteSigmaT)
+    {t = v[4] * CLHEP::s;}
+  else
+    {t = T0 * CLHEP::s;}
   zp = 0.0  * CLHEP::rad;
-  z0 = Z0 * CLHEP::m + t * CLHEP::c_light;
+  z0 = Z0 * CLHEP::m;
+  if (finiteSigmaT)
+    {z0 += t * CLHEP::c_light;}
   
   E  = E0 * CLHEP::GeV;
   if (finiteSigmaE)

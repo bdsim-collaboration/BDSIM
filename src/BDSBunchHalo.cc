@@ -203,6 +203,11 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
 void BDSBunchHalo::CheckParameters()
 {
+  if (!BDS::IsFinite(emitX))
+    {G4cerr << __METHOD_NAME__ << "emittance x must be finite!" << G4endl; exit(1);}
+  if (!BDS::IsFinite(emitY))
+    {G4cerr << __METHOD_NAME__ << "emittance y must be finite!" << G4endl; exit(1);}
+  
   std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
   if (search == weightFunctions.end())
