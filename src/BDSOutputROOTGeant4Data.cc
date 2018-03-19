@@ -42,8 +42,7 @@ void BDSOutputROOTGeant4Data::Flush()
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
-				   const G4String& beamParticle)
+void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 {
   G4ParticleTable* pt = G4ParticleTable::GetParticleTable();
 
@@ -63,11 +62,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
       particles[pdgID] = info;
     }
 
-  // test whether we need to store ion information or not
-  G4bool ionPhysics  = physicsList.find("ion")  != std::string::npos;
-  G4bool ionParticle = beamParticle.find("ion") != std::string::npos;
-
-  if (ionPhysics || ionParticle)
+  if (fillIons)
     {// proceed to fill ion information as it was used in the simulation
       G4IonTable* ionTable = pt->GetIonTable();
 

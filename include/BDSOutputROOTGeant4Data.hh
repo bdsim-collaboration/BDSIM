@@ -42,8 +42,7 @@ public:
   
 #ifndef __ROOTBUILD__
   /// Fill maps of particle information from Geant4.
-  void Fill(const G4String& physicsList,
-	    const G4String& beamParticle);
+  void Fill(const G4bool& fillIons);
 #endif
 
   std::map<int, BDSOutputROOTParticleInfo>    particles;

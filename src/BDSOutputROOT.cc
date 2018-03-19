@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 
 #include "TFile.h"
 #include "TObject.h"
@@ -133,9 +134,7 @@ void BDSOutputROOT::WriteHeader()
 
 void BDSOutputROOT::WriteGeant4Data()
 {
-  //const auto globals = BDSGlobalConstants::Instance();
-  //geant4DataOutput->Fill(globals->PhysicsList
-
+  theRootOutputFile->WriteTObject(geant4DataOutput,"Geant4Data");
 }
 
 void BDSOutputROOT::WriteBeam()

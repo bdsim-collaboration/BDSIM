@@ -88,9 +88,9 @@ void BDSOutput::FillHeader()
   WriteHeader();
 }
 
-void BDSOutput::FillGeant4Data()
+void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
-  geant4DataOutput->Fill("", "");
+  geant4DataOutput->Fill(writeIons);
   WriteGeant4Data();
 }
 
