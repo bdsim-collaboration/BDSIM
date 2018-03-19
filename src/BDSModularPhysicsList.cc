@@ -128,7 +128,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr),
-  emWillBeUsed(false)
+  emWillBeUsed(false),
+  usingIons(false)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -375,6 +376,7 @@ void BDSModularPhysicsList::ConstructAllBaryons()
 
 void BDSModularPhysicsList::ConstructAllIons()
 {
+  usingIons = true; // all physics lists that use ions call this function so put this here
   G4GenericIon::GenericIonDefinition();
   G4IonConstructor iConstructor;
   iConstructor.ConstructParticle();
@@ -457,6 +459,7 @@ BDSParticleDefinition* BDSModularPhysicsList::ConstructBeamParticle(G4String par
   
   if (particleName.contains("ion"))
     {
+      usingIons = true;
       G4GenericIon::GenericIonDefinition(); // construct general ion particle
       auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
 
