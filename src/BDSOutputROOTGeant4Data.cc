@@ -53,7 +53,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4String& physicsList,
   while ((*it)() )
     {
       const G4ParticleDefinition* particle = it->value();
-      const G4String particleName = particle->GetParticleName();
+      const G4String& particleName = particle->GetParticleName();
 
       int pdgID = static_cast<int>(particle->GetPDGEncoding());
       
