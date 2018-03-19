@@ -82,7 +82,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
       exit(1);
     }
   P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
-  sigmaP = std::pow(beamParticle->Beta(),2) * sigmaE; // dE/E = 1/(beta^2) dP/P
+  sigmaP = (1./std::pow(beamParticle->Beta(),2)) * sigmaE; // dE/E = 1/(beta^2) dP/P
   if (finiteSigmaE)
     {G4cout << __METHOD_NAME__ << "sigmaE = " << sigmaE << " -> sigmaP = " << sigmaP << G4endl;}
 
