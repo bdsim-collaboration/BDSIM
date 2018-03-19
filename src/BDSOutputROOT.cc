@@ -53,7 +53,7 @@ void BDSOutputROOT::NewFile()
 #endif
   G4String newFileName = GetNextFileName();
   
-  theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
+  theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
 
   if (theRootOutputFile->IsZombie())
     {
@@ -129,6 +129,13 @@ void BDSOutputROOT::NewFile()
 void BDSOutputROOT::WriteHeader()
 {
   theHeaderOutputTree->Fill();
+}
+
+void BDSOutputROOT::WriteGeant4Data()
+{
+  //const auto globals = BDSGlobalConstants::Instance();
+  //geant4DataOutput->Fill(globals->PhysicsList
+
 }
 
 void BDSOutputROOT::WriteBeam()

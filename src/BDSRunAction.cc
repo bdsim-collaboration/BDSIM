@@ -82,6 +82,9 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 
   // Write model now file open.
   output->FillModel();
+
+  // Write out geant4 data including particle tables.
+  output->FillGeant4Data();
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)

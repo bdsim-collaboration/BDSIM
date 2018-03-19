@@ -48,6 +48,9 @@ public:
 private:
   /// Copy header and write to file.
   virtual void WriteHeader();
+
+  /// Copy geant4 data to file.
+  virtual void WriteGeant4Data();
   
   /// Copy beam and write to file.
   virtual void WriteBeam();

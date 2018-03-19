@@ -69,9 +69,12 @@ public:
   /// as samplers. This is run after the geometry has been constructed and 'closed'.
   /// This also sets up histograms based along S now the beam line is known.
   virtual void InitialiseGeometryDependent();
-
+  
   /// Fill the local structure header with information - updates time stamp.
   void FillHeader();
+
+  /// Fill the local structure geant4 data with information. Also calls WriteGeant4Data().
+  void FillGeant4Data();
 
   /// Fill the local structure beam with the original ones from the parser.
   /// This also calls WriteBeam().
@@ -142,6 +145,9 @@ private:
 
   /// Write the header.
   virtual void WriteHeader() = 0;
+
+  /// Write the geant4 information.
+  virtual void WriteGeant4Data() = 0;
 
   /// Write the beam.
   virtual void WriteBeam() = 0;
