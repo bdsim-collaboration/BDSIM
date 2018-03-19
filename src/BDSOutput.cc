@@ -82,8 +82,8 @@ void BDSOutput::InitialiseGeometryDependent()
 
 void BDSOutput::FillHeader()
 {
-  // Flushing causes the time stampe to be updated. All other information is fixed.
   headerOutput->Flush();
+  headerOutput->Fill(); // updates time stamp
   WriteHeader();
 }
 

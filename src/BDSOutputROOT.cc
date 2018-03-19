@@ -123,12 +123,11 @@ void BDSOutputROOT::NewFile()
                                  samplerTreeLocal,32000,0);
     }
 
-  WriteHeader();
+  FillHeader(); // this fills and then calls WriteHeader() pure virtual implemented here
 }
 
 void BDSOutputROOT::WriteHeader()
 {
-  headerOutput->Fill(); // updates time stamp
   theHeaderOutputTree->Fill();
 }
 

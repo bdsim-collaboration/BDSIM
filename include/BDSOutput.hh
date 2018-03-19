@@ -74,12 +74,15 @@ public:
   void FillHeader();
 
   /// Fill the local structure beam with the original ones from the parser.
+  /// This also calls WriteBeam().
   void FillBeam(const GMAD::BeamBase* beam);
   
   /// Fill the local structure options with the original ones from the parser.
+  /// This also calls WriteOptions().
   void FillOptions(const GMAD::OptionsBase* options);
 
   /// Fill the local structure model from the beam line and sampler registry.
+  /// This also calls WriteModel(). After writing the model it clears the structure.
   void FillModel();
 
   /// Fill the local structure with primary vertex information. A unique interface
