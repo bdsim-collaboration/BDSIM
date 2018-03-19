@@ -18,8 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/beam.h"
+
+#include "globals.hh"
 
 #include "Randomize.hh"
 #include "CLHEP/Matrix/SymMatrix.h"
@@ -52,6 +55,12 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   alphaY = beam.alfy;
   emitX  = beam.emitx;
   emitY  = beam.emity;
+
+  if (!BDS::IsFinite(emitX))
+    {G4cerr << __METHOD_NAME__ << "emittance x must be finite!" << G4endl; exit(1);}
+  if (!BDS::IsFinite(emitY))
+    {G4cerr << __METHOD_NAME__ << "emittance y must be finite!" << G4endl; exit(1);}
+  
   dispX  = beam.dispx;
   dispY  = beam.dispy;
   dispXP = beam.dispxp;
