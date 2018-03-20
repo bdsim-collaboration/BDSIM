@@ -42,8 +42,8 @@ public:
 		G4int    fileNumberOffset);
   virtual ~BDSOutputROOT();
 
-  virtual void NewFile();                     ///< Open a new file.
-  virtual void CloseFile();                   ///< Write contents and close file.
+  virtual void NewFile();    ///< Open a new file.
+  virtual void CloseFile();  ///< Write contents and close file.
 
 private:
   /// Copy header and write to file.
@@ -71,28 +71,15 @@ private:
 
   /// No default constructor.
   BDSOutputROOT() = delete;
-
-  /// Output file.
-  TFile* theRootOutputFile = nullptr;
-
-  /// Header Tree.
-  TTree* theHeaderOutputTree = nullptr;
-
-  /// Beam Tree.
-  TTree* theBeamOutputTree = nullptr;
-
-  /// Options tree.
-  TTree* theOptionsOutputTree = nullptr;
-
-  /// Model tree.
-  TTree* theModelOutputTree = nullptr;
-
-  /// Event tree.
-  TTree* theEventOutputTree = nullptr;
-
-  /// Output histogram tree.
-  TTree* theRunOutputTree  = nullptr;
+  
+  TFile* theRootOutputFile;    ///< Output file.
+  TTree* theHeaderOutputTree;  ///< Header Tree.
+  TTree* theGeant4DataTree;    ///< Geant4 Data Tree.
+  TTree* theBeamOutputTree;    ///< Beam Tree.
+  TTree* theOptionsOutputTree; ///< Options tree.
+  TTree* theModelOutputTree;   ///< Model tree.
+  TTree* theEventOutputTree;   ///< Event tree.
+  TTree* theRunOutputTree;     ///< Output histogram tree.
 };
-
 
 #endif

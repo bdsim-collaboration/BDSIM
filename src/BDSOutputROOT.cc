@@ -38,7 +38,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSOutputROOT::BDSOutputROOT(G4String fileName,
 			     G4int    fileNumberOffset):
-  BDSOutput(fileName, ".root", fileNumberOffset)
+  BDSOutput(fileName, ".root", fileNumberOffset),
+  theRootOutputFile(nullptr),
+  theHeaderOutputTree(nullptr),
+  theGeant4DataTree(nullptr),
+  theBeamOutputTree(nullptr),
+  theOptionsOutputTree(nullptr),
+  theModelOutputTree(nullptr),
+  theEventOutputTree(nullptr),
+  theRunOutputTree(nullptr)
 {;}
 
 BDSOutputROOT::~BDSOutputROOT()
@@ -98,10 +106,10 @@ void BDSOutputROOT::NewFile()
     {theEventOutputTree->Branch("Primary.",     "BDSOutputROOTEventSampler",primary,32000,1);}
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
-  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
-  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
-  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,    4000, 1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,4000, 2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit, 4000, 2);
+  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss", tHit,     4000, 2);
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
