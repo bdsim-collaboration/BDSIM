@@ -39,7 +39,11 @@ public:
 
   int         Charge(const int& pdgID) const;
   double      Mass(const int& pdgID) const;
-  double      Rigidity(const int& pdgID) const;
+
+  /// Calculate rigidity of particle given PDG ID and total energy in GeV.
+  double      Rigidity(const int&    pdgID,
+		       const double& totalEnergy) const;
+  
   std::string Name(const int& pdgID) const;
   int         IonA(const int& pdgID) const;
   int         IonZ(const int& pdgID) const;
