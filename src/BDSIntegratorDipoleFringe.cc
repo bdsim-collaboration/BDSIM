@@ -44,6 +44,6 @@ void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
   // unit normalisation
   const G4double fcof = eqOfM->FCof();
 
-  BaseStepper(yIn, dydx, h, yOut, yErr, 1.0, fcof);
+  BaseStepper(yIn, dydx, h, yOut, yErr, fcof, 1.0);
 }
 
