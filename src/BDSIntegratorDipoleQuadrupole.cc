@@ -175,7 +175,7 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double beta = eq->Beta(momIn);
 
   // deltaE/(P0*c) to match literature.
-  G4double deltaEoverPc = (energy - nomEnergy) / (beta*nomMomentum) ;
+  G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum) ;
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
