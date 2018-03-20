@@ -1,0 +1,22 @@
+beam, particle              = "e-",
+      energy                = 1.0*GeV,
+      distrType             = "halo",
+      betx                  = 0.6,
+      bety                  = 1.2,
+      alfx                  = -0.023,
+      alfy                  = 1.3054,
+      emitx                 = 5e-9,
+      emity                 = 4e-9,
+      haloNSigmaXInner      = -0.1,
+      haloNSigmaXOuter      = 2,
+      haloNSigmaYInner      = 0.1,
+      haloNSigmaYOuter      = 2,
+      haloPSWeightParameter = 1,
+      haloPSWeightFunction  = "oneoverr";
+
+! haloNSigmaXInner < 0 is wrong
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;

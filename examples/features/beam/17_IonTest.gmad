@@ -1,5 +1,0 @@
-include 17_Ion.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=10;
