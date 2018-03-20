@@ -62,14 +62,16 @@ void BDSBunchEShell::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "shellXp <=0 "  << G4endl; exit(1);}
   if (shellYp <= 0)
     {G4cerr << __METHOD_NAME__ << "shellYp <=0 "  << G4endl; exit(1);}
-  if (shellXWidth <= 0)
-    {G4cerr << __METHOD_NAME__ << "shellXWidth <=0 "   << G4endl; exit(1);}
-  if (shellYWidth <= 0)
-    {G4cerr << __METHOD_NAME__ << "shellYWidth <=0 "   << G4endl; exit(1);}
-  if (shellXpWidth <= 0)
-    {G4cerr << __METHOD_NAME__ << "shellXpWidth <=0 "  << G4endl; exit(1);}
-  if (shellYpWidth <= 0)
-    {G4cerr << __METHOD_NAME__ << "shellYpWidth <=0 "  << G4endl; exit(1);}
+
+  // widths can be zero but can't be negative
+  if (shellXWidth <  0)
+    {G4cerr << __METHOD_NAME__ << "shellXWidth < 0 "   << G4endl; exit(1);}
+  if (shellYWidth <  0)
+    {G4cerr << __METHOD_NAME__ << "shellYWidth < 0 "   << G4endl; exit(1);}
+  if (shellXpWidth <  0)
+    {G4cerr << __METHOD_NAME__ << "shellXpWidth < 0 "  << G4endl; exit(1);}
+  if (shellYpWidth <  0)
+    {G4cerr << __METHOD_NAME__ << "shellYpWidth < 0 "  << G4endl; exit(1);}
 }
 
 void BDSBunchEShell::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
