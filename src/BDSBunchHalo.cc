@@ -144,7 +144,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	// determine weight, initialise 1 so always passes
 	double wx = 1.0;
 	double wy = 1.0;
-	if (weightFunction == "flat" || weightFunction == "")
+	if (weightFunction == "flat" || weightFunction == "" || weightFunction == "one")
 	  {
 	    wx = 1.0;
 	    wy = 1.0;
