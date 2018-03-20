@@ -41,6 +41,124 @@ void BDSOutputROOTGeant4Data::Flush()
   ions.clear();
 }
 
+int BDSOutputROOTGeant4Data::Charge(const int& pdgID) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{return result->second.charge;}
+      else
+	{return 0;}
+    }
+  else
+    {
+      auto result = particles.find(pdgID);
+      if (result != particles.end())
+	{return result->second.charge;}
+      else
+	{return 0;}
+    }
+}
+
+double BDSOutputROOTGeant4Data::Mass(const int& pdgID) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{return result->second.mass;}
+      else
+	{return 0;}
+    }
+  else
+    {
+      auto result = particles.find(pdgID);
+      if (result != particles.end())
+	{return result->second.mass;}
+      else
+	{return 0;}
+    }
+}
+
+double BDSOutputROOTGeant4Data::Rigidity(const int& pdgID) const
+{
+  int ch = 0;
+  double mass = 0;
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{
+	  ch = result->second.charge;
+	  mass = result->second.mass;
+	}
+      else
+	{return 0;}
+    }
+  else
+    {
+      auto result = particles.find(pdgID);
+      if (result != particles.end())
+	{
+	  ch = result->second.charge;
+	  mass = result->second.mass;
+	}
+      else
+	{return 0;}
+    }
+
+  return ch*mass;
+}
+
+std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{return result->second.name;}
+      else
+	{return "";}
+    }
+  else
+    {
+      auto result = particles.find(pdgID);
+      if (result != particles.end())
+	{return result->second.name;}
+      else
+	{return "";}
+    }
+}
+
+int BDSOutputROOTGeant4Data::IonA(const int& pdgID) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{return result->second.a;}
+      else
+	{return 0;}
+    }
+  else
+    {return 0;}
+}
+
+int BDSOutputROOTGeant4Data::IonZ(const int& pdgID) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+	{return result->second.z;}
+      else
+	{return 0;}
+    }
+  else
+    {return 0;}
+}
+
 #ifndef __ROOTBUILD__
 void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 {

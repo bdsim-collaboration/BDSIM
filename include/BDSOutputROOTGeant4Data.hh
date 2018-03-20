@@ -36,6 +36,15 @@ public:
 
   /// Clear maps.
   virtual void Flush();
+
+  int         Charge(const int& pdgID) const;
+  double      Mass(const int& pdgID) const;
+  double      Rigidity(const int& pdgID) const;
+  std::string Name(const int& pdgID) const;
+  int         IonA(const int& pdgID) const;
+  int         IonZ(const int& pdgID) const;
+
+  inline bool IsIon(const int& pdgID) const {return pdgID > 1000000000;}
   
 #ifndef __ROOTBUILD__
   /// Fill maps of particle information from Geant4.
