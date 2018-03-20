@@ -203,10 +203,12 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
 void BDSBunchHalo::CheckParameters()
 {
-  if (!BDS::IsFinite(emitX))
-    {G4cerr << __METHOD_NAME__ << "emittance x must be finite!" << G4endl; exit(1);}
-  if (!BDS::IsFinite(emitY))
-    {G4cerr << __METHOD_NAME__ << "emittance y must be finite!" << G4endl; exit(1);}
+  BDSBunch::CheckParameters();
+  
+  if (emitX <= 0)
+    {G4cerr << __METHOD_NAME__ << "emitx must be finite!" << G4endl; exit(1);}
+  if (emitY <= 0)
+    {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
   
   std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
@@ -229,7 +231,5 @@ void BDSBunchHalo::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
   
   if (haloNSigmaYInner > haloNSigmaYOuter)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);}
-  
-  
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);} 
 }

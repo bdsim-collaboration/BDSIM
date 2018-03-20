@@ -78,7 +78,8 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   mass2 = std::pow(mass,2);
   if (E0 <= mass)
     {
-      G4cerr << __METHOD_NAME__ << "E0 (central total energy) lower than mass of particle!" << G4endl;
+      G4cerr << __METHOD_NAME__ << "E0 (central total energy) " << E0
+	     << " GeV lower than mass of particle! " << mass << " GeV" << G4endl;
       exit(1);
     }
   P0 = std::sqrt(std::pow(E0,2) - mass2); // E^2 = p^2 + m^2
@@ -95,6 +96,14 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 #endif
       useCurvilinear = true;
     } 
+}
+
+void BDSBunch::CheckParameters()
+{
+  if (sigmaE < 0)
+    {G4cerr << __METHOD_NAME__ << "sigmaE " << sigmaE << " < 0!" << G4endl; exit(1);}
+  if (sigmaT < 0)
+    {G4cerr << __METHOD_NAME__ << "sigmaT " << sigmaT << " < 0!" << G4endl; exit(1);}
 }
 
 void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,

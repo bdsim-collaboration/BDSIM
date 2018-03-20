@@ -38,11 +38,11 @@ class BDSBunchTwiss: public BDSBunchGaussian
 {
 public: 
   BDSBunchTwiss();
-  virtual ~BDSBunchTwiss(){;}
-  
+  virtual ~BDSBunchTwiss(){;}  
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+  virtual void CheckParameters();
   
 private:
   /// @{ Twiss parameters

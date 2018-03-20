@@ -112,6 +112,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
     }
 
   bdsBunch->SetOptions(beamParticle, beam, beamlineTransform);
+  bdsBunch->CheckParameters();
   
   return bdsBunch;
 }

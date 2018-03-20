@@ -55,12 +55,6 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   alphaY = beam.alfy;
   emitX  = beam.emitx;
   emitY  = beam.emity;
-
-  if (!BDS::IsFinite(emitX))
-    {G4cerr << __METHOD_NAME__ << "emittance x must be finite!" << G4endl; exit(1);}
-  if (!BDS::IsFinite(emitY))
-    {G4cerr << __METHOD_NAME__ << "emittance y must be finite!" << G4endl; exit(1);}
-  
   dispX  = beam.dispx;
   dispY  = beam.dispy;
   dispXP = beam.dispxp;
@@ -104,7 +98,25 @@ void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
   sigmaGM[5][2] = dispY*std::pow(sigmaP,2);
   sigmaGM[3][5] = dispYP*std::pow(sigmaP,2);
   sigmaGM[5][3] = dispYP*std::pow(sigmaP,2);
+
+  // here we force check parameters early (called in factory) so it's before
+  // checking the matrix for +ve definite-ness in CreateMultiGauss to give a
+  // more meaningful error. Also keeps bunch classes overall simpler.
+  CheckParameters();
   
   delete gaussMultiGen;
   gaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
+}
+
+void BDSBunchTwiss::CheckParameters()
+{
+  BDSBunchGaussian::CheckParameters();
+  if (emitX <= 0)
+    {G4cerr << __METHOD_NAME__ << "emitx must be finite!" << G4endl; exit(1);}
+  if (emitY <= 0)
+    {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
+  if (betaX <= 0)
+    {G4cerr << __METHOD_NAME__ << "betx must be finite!" << G4endl; exit(1);}
+  if (betaY <= 0)
+    {G4cerr << __METHOD_NAME__ << "bety must be finite!" << G4endl; exit(1);}
 }

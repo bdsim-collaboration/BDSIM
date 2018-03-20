@@ -50,6 +50,19 @@ void BDSBunchCircle::SetOptions(const BDSParticleDefinition* beamParticle,
   envelopeE  = beam.envelopeE; 
 }
 
+void BDSBunchCircle::CheckParameters()
+{
+  BDSBunch::CheckParameters();
+  if (envelopeR <= 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeR <=0 "  << G4endl; exit(1);}
+  if (envelopeRp <= 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeRp <=0 " << G4endl; exit(1);}
+  if (envelopeT < 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeT < 0 "  << G4endl; exit(1);}
+  if (envelopeE < 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeE < 0 "  << G4endl; exit(1);}
+}
+
 void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				     G4double& xp, G4double& yp, G4double& zp,
 				     G4double& t , G4double&  E, G4double& weight)
