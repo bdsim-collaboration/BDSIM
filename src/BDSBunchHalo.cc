@@ -210,7 +210,7 @@ void BDSBunchHalo::CheckParameters()
   if (emitY <= 0)
     {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
   
-  std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
+  std::vector<G4String> weightFunctions = {"", "one", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
   if (search == weightFunctions.end())
     {
@@ -221,11 +221,11 @@ void BDSBunchHalo::CheckParameters()
       exit(1);
     }
   
-  if (haloNSigmaXInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaXInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner <= 0" << G4endl; exit(1);}
   
-  if (haloNSigmaYInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaYInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner <= 0" << G4endl; exit(1);}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
