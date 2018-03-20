@@ -186,7 +186,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 
       BDSOutputROOTGeant4Data::ParticleInfo info = {(std::string)particleName,
 						    (int)particle->GetPDGCharge(),
-						    (double)particle->GetPDGMass()};
+						    (double)particle->GetPDGMass()/CLHEP::GeV};
       particles[pdgID] = info;
     }
 
@@ -204,7 +204,7 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 
 	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
 						     (int)def->GetPDGCharge(),
-						     (double)def->GetPDGMass(),
+						     (double)def->GetPDGMass()/CLHEP::GeV,
 						     (int)def->GetAtomicNumber(),
 						     (int)def->GetAtomicMass()};
 	  ions[ion.first] = ionDef;
