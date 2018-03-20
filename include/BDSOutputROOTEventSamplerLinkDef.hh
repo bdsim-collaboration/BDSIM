@@ -18,3 +18,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #pragma link C++ class BDSOutputROOTEventSampler<float>+;
 #pragma link C++ class BDSOutputROOTEventSampler<double>+;
+#pragma link C++ function charge;
+#pragma link C++ function mass;
+#pragma link C++ function rigidity;
