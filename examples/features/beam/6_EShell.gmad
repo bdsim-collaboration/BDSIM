@@ -5,6 +5,10 @@ beam,  particle="e-",
        shellY  = 0.002*mm, 
        shellXp = 0.09*0.005,
        shellYp = 0.09*0.005,
+       shellXWidth = 1e-6,
+       shellYWidth = 1e-8,
+       shellXpWidth = 1e-6,
+       shellYpWidth = 1e-6,
        envelopeT  = 1e-9,
        envelopeE  = 1e-5;
 
