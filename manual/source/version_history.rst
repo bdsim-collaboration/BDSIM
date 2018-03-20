@@ -28,6 +28,7 @@ New Features
 * Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
 * Full support for dipole fringe fields.
+* Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
 
 
 Output \& Analysis Changes

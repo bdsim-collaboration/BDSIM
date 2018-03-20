@@ -45,13 +45,21 @@ void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
   rMax = beam.Rmax;  
 }
 
+void BDSBunchRing::CheckParameters()
+{
+  BDSBunch::CheckParameters();
+  if (rMin < 0)
+    {G4cerr << __METHOD_NAME__ << "rMin: " << rMin << " < 0" << G4endl; exit(1);}
+  if (rMax < 0)
+    {G4cerr << __METHOD_NAME__ << "rMax: " << rMin << " < 0" << G4endl; exit(1);}
+  if (rMax <= rMin)
+    {G4cerr << __METHOD_NAME__ << "rMax: " << rMax << " < rMin: " << rMin << G4endl; exit(1);}
+}
+
 void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 				   G4double& xp, G4double& yp, G4double& zp,
 				   G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   double r = ( rMin + (rMax - rMin) *  rand() / RAND_MAX );
   double phi = 2 * CLHEP::pi * rand() / RAND_MAX;
      

@@ -63,6 +63,13 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
   zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);
 }
 
+void BDSBunchComposite::CheckParameters()
+{
+  xBunch->CheckParameters();
+  yBunch->CheckParameters();
+  zBunch->CheckParameters();
+}
+
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 					G4double& xp, G4double& yp, G4double& zp,
 					G4double& t , G4double&  E, G4double& weight)

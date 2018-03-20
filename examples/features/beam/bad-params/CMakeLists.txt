@@ -1,0 +1,17 @@
+# badly specified parameters - should fail
+# not all can easily go bad - only test ones that are sensitive
+
+simple_fail(bunch-circle-bad-params           "--file=circle-bad.gmad"              "")
+simple_fail(bunch-composite-bad-params        "--file=composite-bad.gmad"           "")	
+simple_fail(bunch-eshell-bad-params           "--file=eshell-bad.gmad"              "")
+simple_fail(bunch-eshell-width-bad-parms      "--file=eshell-width-bad.gmad"        "")
+simple_fail(bunch-gausstwiss-bad-parms        "--file=gausstwiss-bad.gmad"          "")
+simple_fail(bunch-halo-bad-parms              "--file=halo-bad.gmad"                "")
+simple_fail(bunch-halo-cut-bad-parms          "--file=halo-cut-bad.gmad"            "")
+simple_fail(bunch-ion-bad-parms               "--file=ion-bad.gmad"                 "")
+simple_fail(bunch-reference-bad-params        "--file=reference-bad.gmad"           "")
+simple_fail(bunch-ptc-bad-parms               "--file=ptc-bad.gmad"                 "")
+simple_fail(bunch-ring-bad-parms              "--file=ring-bad.gmad"                "")
+simple_fail(bunch-sixtrack-bad-parms          "--file=sixtrack-bad.gmad"            "")
+simple_fail(bunch-square-bad-parms            "--file=square-bad.gmad"              "")
+simple_fail(bunch-userfile-bad-parms          "--file=userfile-bad.gmad"            "")

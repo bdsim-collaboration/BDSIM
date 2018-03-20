@@ -42,14 +42,16 @@ public:
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+  virtual void CheckParameters();
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);
   
 private:
-  G4String distrFile;    ///< Bunch file.
-  G4String bunchFormat;  ///< Format of the file.
-  G4int nlinesIgnore;    ///< Number of lines that will be ignored after each particle (default 0).
+  G4String distrFile;     ///< Bunch file.
+  G4String distrFilePath; ///< Bunch file including absolute path.
+  G4String bunchFormat;   ///< Format of the file.
+  G4int nlinesIgnore;     ///< Number of lines that will be ignored after each particle (default 0).
   G4double particleMass; ///< Cache of nominal beam particle mass.
   
   void ParseFileFormat();

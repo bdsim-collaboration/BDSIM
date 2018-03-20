@@ -34,11 +34,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
   distrFile(""),
+  distrFilePath(""),
   bunchFormat(""),
   nlinesIgnore(0),
   particleMass(0)
 {
   ffact = BDSGlobalConstants::Instance()->FFact();
+}
+
+template<class T>
+void BDSBunchUserFile<T>::CheckParameters()
+{
+  BDSBunch::CheckParameters();
+  if (distrFile.empty())
+    {G4cerr << __METHOD_NAME__ << "No input file specified for distribution" << G4endl; exit(1);}
 }
 
 template<class T>
@@ -53,10 +62,10 @@ void BDSBunchUserFile<T>::OpenBunchFile()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  InputBunchFile.open(distrFile);
-  if(!InputBunchFile.good())
+  InputBunchFile.open(distrFilePath);
+  if (!InputBunchFile.good())
     { 
-      G4cerr<<"Cannot open bunch file "<< distrFile <<G4endl; 
+      G4cerr << "Cannot open bunch file " << distrFilePath <<G4endl; 
       exit(1); 
     }
 }
@@ -228,7 +237,8 @@ void BDSBunchUserFile<T>::skip(G4int nvalues){
 template<class T>
 void BDSBunchUserFile<T>::SetDistrFile(G4String filename)
 {
-  distrFile = BDS::GetFullPath(filename);
+  distrFile     = filename;
+  distrFilePath = BDS::GetFullPath(filename);
 }
 
 template<class T>

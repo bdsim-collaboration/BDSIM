@@ -144,7 +144,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	// determine weight, initialise 1 so always passes
 	double wx = 1.0;
 	double wy = 1.0;
-	if (weightFunction == "flat" || weightFunction == "")
+	if (weightFunction == "flat" || weightFunction == "" || weightFunction == "one")
 	  {
 	    wx = 1.0;
 	    wy = 1.0;
@@ -203,12 +203,14 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
 void BDSBunchHalo::CheckParameters()
 {
-  if (!BDS::IsFinite(emitX))
-    {G4cerr << __METHOD_NAME__ << "emittance x must be finite!" << G4endl; exit(1);}
-  if (!BDS::IsFinite(emitY))
-    {G4cerr << __METHOD_NAME__ << "emittance y must be finite!" << G4endl; exit(1);}
+  BDSBunch::CheckParameters();
   
-  std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
+  if (emitX <= 0)
+    {G4cerr << __METHOD_NAME__ << "emitx must be finite!" << G4endl; exit(1);}
+  if (emitY <= 0)
+    {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
+  
+  std::vector<G4String> weightFunctions = {"", "one", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
   if (search == weightFunctions.end())
     {
@@ -219,17 +221,15 @@ void BDSBunchHalo::CheckParameters()
       exit(1);
     }
   
-  if (haloNSigmaXInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaXInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner <= 0" << G4endl; exit(1);}
   
-  if (haloNSigmaYInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaYInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner <= 0" << G4endl; exit(1);}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
   
   if (haloNSigmaYInner > haloNSigmaYOuter)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);}
-  
-  
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);} 
 }

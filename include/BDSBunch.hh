@@ -47,6 +47,11 @@ public:
 			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
 
+  
+  /// Check the parameters for the given bunch distribution and exit if they're
+  /// problematic or unphysical.
+  virtual void CheckParameters();
+
   /// Each derived class can override this default method of reference
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
   /// z0 will be treated as S and the global z0 be calculated.
@@ -122,7 +127,7 @@ private:
 
   /// Whether the transform is finite and should be used.
   G4bool        nonZeroTransform;
-
+  
   G4double mass2; ///< Cache of mass squared as requried to convert from p to E.
   
   /// A reference to the fully constructed beamline that's lazyily instantiated.
