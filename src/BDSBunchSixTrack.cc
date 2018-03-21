@@ -38,14 +38,47 @@ BDSBunchSixTrack::~BDSBunchSixTrack()
     {delete i;}
 }
 
+void BDSBunchSixTrack::SetOptions(const BDSParticleDefinition* beamParticle,
+				  const GMAD::Beam& beam,
+				  G4Transform3D beamlineTransformIn)
+{
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  fileName = G4String(beam.distrFile); 
+  LoadSixTrackFile();
+}
+
+void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+				       G4double& xp, G4double& yp, G4double& zp,
+				       G4double& t , G4double&  E, G4double& weight)
+{
+  z0 = sixtrackData[iPart][2] * CLHEP::m;
+  x0 = sixtrackData[iPart][3] * CLHEP::mm; 
+  xp = sixtrackData[iPart][4] * CLHEP::mrad;
+  y0 = sixtrackData[iPart][5] * CLHEP::mm;
+  yp = sixtrackData[iPart][6] * CLHEP::mrad;
+  G4double beamenergy = E0 * CLHEP::GeV;
+  E  = beamenergy + sixtrackData[iPart][7] * beamenergy;
+  weight = 1.;
+  t      = 0.;
+  zp     = CalculateZp(xp,yp,1.);
+
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+
+  iPart++;
+
+  // if all particles are read, start at 0 again
+  if (iPart == nPart)
+    {
+      iPart=0;
+      G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+    }
+  return;
+}
+
 void BDSBunchSixTrack::LoadSixTrackFile()
 { 
   // SixTrack file is always LPI file
   // header LPI : 1=sixtrackParticleID, 2=turn, 3=s [m], 4=x[mm], 5=xp[mrad], 6=y[mm], 7=yp[mrad], 8=dE/E, 9=type, 10=turns in machine after first hits on collimators
-
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
 
   // open file and read line by line and extract values
   std::ifstream infile(fileName.c_str());
@@ -92,49 +125,5 @@ void BDSBunchSixTrack::LoadSixTrackFile()
 
   nPart = sixtrackData.size();
   infile.close();
-}
-
-void BDSBunchSixTrack::SetOptions(const GMAD::Beam& beam,
-				  G4Transform3D beamlineTransformIn)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
-#endif
-
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
-  SetDistrFile(G4String(beam.distrFile)); 
-  LoadSixTrackFile();
-}
-
-void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  z0 = sixtrackData[iPart][2] * CLHEP::m;
-  x0 = sixtrackData[iPart][3] * CLHEP::mm; 
-  xp = sixtrackData[iPart][4] * CLHEP::mrad;
-  y0 = sixtrackData[iPart][5] * CLHEP::mm;
-  yp = sixtrackData[iPart][6] * CLHEP::mrad;
-  G4double beamenergy = E0 * CLHEP::GeV;
-  E  = beamenergy + sixtrackData[iPart][7] * beamenergy;
-  weight = 1.;
-  t      = 0.;
-  zp     = CalculateZp(xp,yp,1.);
-
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-
-  iPart++;
-
-  // if all particles are read, start at 0 again
-  if (iPart == nPart)
-    {
-      iPart=0;
-      G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
-    }
-  return;
 }
 

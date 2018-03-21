@@ -25,31 +25,41 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchRing::BDSBunchRing(): 
-  rMin(0), rMax(0)
+  rMin(0),
+  rMax(0)
 {
-  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
+  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
 
 BDSBunchRing::~BDSBunchRing()
 {
-  delete FlatGen;
+  delete flatGen;
 }
 
-void BDSBunchRing::SetOptions(const GMAD::Beam& beam,
+void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
+			      const GMAD::Beam& beam,
 			      G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
-  SetRMin(beam.Rmin);  
-  SetRMax(beam.Rmax);  
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  rMin = beam.Rmin;  
+  rMax = beam.Rmax;  
+}
+
+void BDSBunchRing::CheckParameters()
+{
+  BDSBunch::CheckParameters();
+  if (rMin < 0)
+    {G4cerr << __METHOD_NAME__ << "rMin: " << rMin << " < 0" << G4endl; exit(1);}
+  if (rMax < 0)
+    {G4cerr << __METHOD_NAME__ << "rMax: " << rMin << " < 0" << G4endl; exit(1);}
+  if (rMax <= rMin)
+    {G4cerr << __METHOD_NAME__ << "rMax: " << rMax << " < rMin: " << rMin << G4endl; exit(1);}
 }
 
 void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight)
+				   G4double& xp, G4double& yp, G4double& zp,
+				   G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   double r = ( rMin + (rMax - rMin) *  rand() / RAND_MAX );
   double phi = 2 * CLHEP::pi * rand() / RAND_MAX;
      
@@ -63,7 +73,7 @@ void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
   t  = T0 * CLHEP::s;
-  E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));
+  E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * flatGen->shoot()));
   weight = 1.0;
 }
 

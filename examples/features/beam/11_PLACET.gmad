@@ -1,7 +1,0 @@
-beam,  particle="e-",
-       energy = 1*GeV,
-       distrType  = "userfile",
-       distrFile  = "11_PLACET_halo_loss.dat",
-       distrFileFormat = "E[GeV]:x[mum]:y[mum]:z[mum]:xp[murad]:yp[murad]:-:-:w:-";
-
-nlinesIgnore = 0;

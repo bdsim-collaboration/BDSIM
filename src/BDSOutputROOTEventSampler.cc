@@ -17,8 +17,11 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 
 #include "TTree.h"
+
+class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__ 
 #include "CLHEP/Units/SystemOfUnits.h"
@@ -26,6 +29,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 templateClassImp(BDSOutputROOTEventSampler)
+
+template <class T>
+BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<T>::particleTable = nullptr;
 
 template <class T>
 BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler():samplerName("sampler")
@@ -146,6 +152,43 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   turnNumber.clear();
   S = 0.0;
   modelID = -1;
+}
+
+template <class T>
+std::vector<int> BDSOutputROOTEventSampler<T>::charge()
+{
+  std::vector<int> result;
+  result.reserve(n);
+  if (!particleTable)
+    {return result;}
+  for (const auto& pid : partID)
+    {result.push_back(particleTable->Charge(pid));}
+  return result;
+}
+
+template <class T>
+std::vector<double> BDSOutputROOTEventSampler<T>::mass()
+{
+  std::vector<double> result;
+  result.reserve(n);
+  if (!particleTable)
+    {return result;}
+  for (const auto& pid : partID)
+    {result.push_back(particleTable->Mass(pid));}
+  return result;
+}
+
+template <class T>
+std::vector<double> BDSOutputROOTEventSampler<T>::rigidity()
+{
+  std::vector<double> result;
+  result.reserve(n);
+  if (!particleTable)
+    {return result;}
+  
+  for (int i = 0; i < n; ++i)
+    {result.push_back(particleTable->Rigidity(partID[i], energy[i]));}
+  return result;
 }
 
 template class BDSOutputROOTEventSampler<float>;

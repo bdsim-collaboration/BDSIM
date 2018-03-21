@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "Beam.hh"
 #include "Event.hh"
 #include "FileMapper.hh"
+#include "Geant4Data.hh"
 #include "Header.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -41,13 +42,14 @@ DataLoader::DataLoader(std::string fileName,
 		       bool        processSamplersIn,
 		       bool        allBranchesOnIn,
 		       const RBDS::BranchMap* branchesToTurnOnIn,
-		       bool        backwardsCompatible):
+		       bool        backwardsCompatibleIn):
   debug(debugIn),
   processSamplers(processSamplersIn),
   allBranchesOn(allBranchesOnIn),
-  branchesToTurnOn(branchesToTurnOnIn)
+  branchesToTurnOn(branchesToTurnOnIn),
+  backwardsCompatible(backwardsCompatibleIn)
 {
-  CommonCtor(fileName, backwardsCompatible);
+  CommonCtor(fileName);
 }
 
 DataLoader::~DataLoader()
@@ -67,33 +69,44 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName,
-			    bool backwardsCompatible)
+void DataLoader::CommonCtor(std::string fileName)
 {
-  BuildInputFileList(fileName, backwardsCompatible);
+  BuildInputFileList(fileName);
 
   hea = new Header(debug);
+  g4d = new Geant4Data(debug);
   bea = new Beam(debug);
   opt = new Options(debug);
   mod = new Model(debug);
   evt = new Event(debug, processSamplers);
   run = new Run(debug);
-
-  heaChain = new TChain("Header",  "Header");
-  beaChain = new TChain("Beam",    "Beam");
-  optChain = new TChain("Options", "Options");
-  modChain = new TChain("Model",   "Model");
-  evtChain = new TChain("Event",   "Event");
-  runChain = new TChain("Run",     "Run");
+  
+  heaChain = new TChain("Header",      "Header");
+  if (!backwardsCompatible)
+    {g4dChain = new TChain("Geant4Data", "Geant4Data");}
+  beaChain = new TChain("Beam",       "Beam");
+  optChain = new TChain("Options",    "Options");
+  modChain = new TChain("Model",      "Model");
+  evtChain = new TChain("Event",      "Event");
+  runChain = new TChain("Run",        "Run");
 
   BuildTreeNameList();
   BuildEventBranchNameList();
   ChainTrees();
   SetBranchAddress(allBranchesOn, branchesToTurnOn);
+
+  if (!backwardsCompatible)
+    {
+      g4dChain->GetEntry(0); // load particle data
+#ifdef __ROOTDOUBLE__
+      BDSOutputROOTEventSampler<double>::particleTable = g4d->geant4Data;
+#else
+      BDSOutputROOTEventSampler<float>::particleTable = g4d->geant4Data;
+#endif
+    }
 }
 
-void DataLoader::BuildInputFileList(std::string inputPath,
-				    bool backwardsCompatible)
+void DataLoader::BuildInputFileList(std::string inputPath)
 {
   if(inputPath == "")
     {throw std::string("DataLoader::BuildInputFileList> no file specified");}
@@ -208,6 +221,8 @@ void DataLoader::BuildEventBranchNameList()
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
+  if (!backwardsCompatible)
+    {g4dChain->Add(fileNames[0].c_str());} // only require 1 copy
   for (auto filename : fileNames)
     {
       heaChain->Add(filename.c_str());
@@ -222,6 +237,8 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
+  if (!backwardsCompatible)
+    {g4d->SetBranchAddress(g4dChain);}
   hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches

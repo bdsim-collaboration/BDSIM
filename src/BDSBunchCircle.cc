@@ -25,24 +25,42 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchCircle::BDSBunchCircle():
-  BDSBunch(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
+  BDSBunch(),
+  envelopeR(0.0),
+  envelopeRp(0.0),
+  envelopeT(0.0),
+  envelopeE(0.0)
 {
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchCircle::~BDSBunchCircle() 
 {
-  delete FlatGen;
+  delete flatGen;
 }
 
-void BDSBunchCircle::SetOptions(const GMAD::Beam& beam,
+void BDSBunchCircle::SetOptions(const BDSParticleDefinition* beamParticle,
+				const GMAD::Beam& beam,
 				G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
-  SetEnvelopeR(beam.envelopeR); 
-  SetEnvelopeRp(beam.envelopeRp);
-  SetEnvelopeT(beam.envelopeT);
-  SetEnvelopeE(beam.envelopeE); 
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  envelopeR  = beam.envelopeR; 
+  envelopeRp = beam.envelopeRp;
+  envelopeT  = beam.envelopeT;
+  envelopeE  = beam.envelopeE; 
+}
+
+void BDSBunchCircle::CheckParameters()
+{
+  BDSBunch::CheckParameters();
+  if (envelopeR <= 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeR <=0 "  << G4endl; exit(1);}
+  if (envelopeRp <= 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeRp <=0 " << G4endl; exit(1);}
+  if (envelopeT < 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeT < 0 "  << G4endl; exit(1);}
+  if (envelopeE < 0)
+    {G4cerr << __METHOD_NAME__ << "envelopeE < 0 "  << G4endl; exit(1);}
 }
 
 void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -57,12 +75,12 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   z0 = Z0 * CLHEP::m;
   xp = Xp0 * CLHEP::rad;
   yp = Yp0 * CLHEP::rad;
-  z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  z0 = Z0 * CLHEP::m + (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
 
-  G4double phiR  = FlatGen->shoot()*2*CLHEP::pi;
-  G4double phiRp = FlatGen->shoot()*2*CLHEP::pi;
-  G4double r     = FlatGen->shoot()*envelopeR;
-  G4double rp    = FlatGen->shoot()*envelopeRp; 
+  G4double phiR  = flatGen->shoot()*2*CLHEP::pi;
+  G4double phiRp = flatGen->shoot()*2*CLHEP::pi;
+  G4double r     = flatGen->shoot()*envelopeR;
+  G4double rp    = flatGen->shoot()*envelopeRp; 
 
   x0 += cos(phiR) * r * CLHEP::m;
   y0 += sin(phiR) * r * CLHEP::m;
@@ -74,7 +92,7 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
   t = 0.0;
-  E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*FlatGen->shoot()));
+  E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*flatGen->shoot()));
 
   weight = 1.0; 
 }

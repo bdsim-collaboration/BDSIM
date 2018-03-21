@@ -1,0 +1,11 @@
+beam,  particle="e-",
+       energy = 1*GeV,
+       distrType  = "ptc",
+       distrFile  = "lalalalalala";
+
+! wrong file name
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;

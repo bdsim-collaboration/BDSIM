@@ -42,7 +42,8 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   bRho(brhoIn),
-  rho(brhoIn / (*strengthIn)["field"]),
+  rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
+  fieldRatio((*strengthIn)["field"] / (bRho/rho)),
   strength(strengthIn)
 {
   eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
@@ -101,7 +102,16 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   // convert to true curvilinear
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  BDSStep       localCL     = GlobalToCurvilinear(strength, globalPos, globalMom, h, false, fcof);
+
+  // calculate effective dipole angle for the given field
+  G4double angle = (*strength)["angle"];
+  if (fieldRatio != 1)
+    {// update angle used by CL transforms - transform to the CL trajectory
+     // corresponding to the dipole angle for the supplied field
+      angle *= fieldRatio;
+    }
+
+  BDSStep       localCL     = GlobalToCurvilinear(strength, angle, globalPos, globalMom, h, true, fcof);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -121,7 +131,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
+  BDSStep globalOut = CurvilinearToGlobal(strength, angle, localCLPosOut, localCLMomOut, true, fcof);
 
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
@@ -161,8 +171,11 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double energy = eq->TotalEnergy(momIn);
   G4double nomEnergy = std::sqrt(std::pow(nomMomentum,2) + eq->Mass());
 
+  // get beta (v/c)
+  G4double beta = eq->Beta(momIn);
+
   // deltaE/(P0*c) to match literature.
-  G4double deltaEoverPc = (energy - nomEnergy) / nomMomentum ;
+  G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum) ;
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
@@ -179,9 +192,6 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double kyl = ky * h;
 
   G4bool focussing = K1 >= 0; // depends on charge as well (in eqOfM->FCof())
-
-  // get beta (v/c)
-  G4double beta = eq->Beta(momIn);
 
   G4double x0  = posIn.x();
   G4double y0  = posIn.y();

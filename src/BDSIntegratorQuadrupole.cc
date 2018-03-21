@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
+#include <limits>
 
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
@@ -112,7 +113,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   localA *= kappa;
   // determine effective curvature 
   G4double localAMag         = localA.mag();
-  G4double radiusOfCurvature = DBL_MAX;
+  G4double radiusOfCurvature = std::numeric_limits<double>::max();
   if (BDS::IsFinite(localAMag))
     {radiusOfCurvature = 1./localAMag;} // avoid division by 0
 

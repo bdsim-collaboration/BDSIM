@@ -52,6 +52,7 @@ BDSParticleDefinition::BDSParticleDefinition(G4ParticleDefinition* particleIn,
 
   CalculateMomentum();
   CalculateRigidity(ffact);
+  CalculateLorentzFactors();
 }
 
 BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
@@ -66,12 +67,15 @@ BDSParticleDefinition::BDSParticleDefinition(G4String          nameIn,
   mass(massIn),
   charge(chargeIn),
   totalEnergy(totalEnergyIn),
+  gamma(1.0),
+  beta(1.0),
   brho(std::numeric_limits<double>::max())// if zero charge infinite magnetic rigidity
 {
   kineticEnergy = totalEnergy - mass;
 
   CalculateMomentum();
   CalculateRigidity(ffact);
+  CalculateLorentzFactors();
 }
 
 BDSParticleDefinition::~BDSParticleDefinition()
@@ -87,6 +91,8 @@ std::ostream& operator<<(std::ostream& out, const BDSParticleDefinition& def)
   out << "Total Energy:    " << def.totalEnergy/CLHEP::GeV       << " GeV" << G4endl;
   out << "Kinetic Energy:  " << def.kineticEnergy/CLHEP::GeV     << " GeV" << G4endl;
   out << "Momentum:        " << def.momentum/CLHEP::GeV          << " GeV" << G4endl;
+  out << "Gamma:           " << def.gamma                                  << G4endl;
+  out << "Beta:            " << def.beta                                   << G4endl;
   out << "Rigidity (Brho): " << def.brho/(CLHEP::tesla*CLHEP::m) << " T*m" << G4endl;
   return out;
 }
@@ -112,4 +118,11 @@ void BDSParticleDefinition::CalculateRigidity(const G4double& ffact)
       brho = ffact * momentum / CLHEP::GeV / BDS::cOverGeV / charge;
       brho *= CLHEP::tesla*CLHEP::m; // rigidity (in Geant4 units)
     }
+}
+
+void BDSParticleDefinition::CalculateLorentzFactors()
+{
+  gamma = totalEnergy / mass;
+
+  beta = std::sqrt(1 - (1./std::pow(gamma,2)) );
 }

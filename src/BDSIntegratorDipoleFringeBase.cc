@@ -126,7 +126,7 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, bendingRad);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, localCLPosOut, localCLMomOut, false, fcof);
+  BDSStep globalOut = CurvilinearToGlobal(strength, (*strength)["angle"], localCLPosOut, localCLMomOut, false, fcof);
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();

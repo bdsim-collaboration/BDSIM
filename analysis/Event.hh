@@ -61,6 +61,16 @@ public:
   BDSOutputROOTEventTrajectory*      GetTrajectory()       {return Trajectory;}
   BDSOutputROOTEventHistograms*      GetHistograms()       {return Histos;}
   BDSOutputROOTEventInfo*            GetInfo()             {return Info;}
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* GetSampler(const std::string& name);
+#else
+  BDSOutputROOTEventSampler<float>* GetSampler(const std::string& name);
+#endif
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>* GetSampler(const int& index);
+#else
+  BDSOutputROOTEventSampler<float>* GetSampler(const int& index);
+#endif
   /// @}
 
   /// Set the branch addresses to address the contents of the file. The vector
@@ -89,6 +99,13 @@ public:
   BDSOutputROOTEventHistograms* Histos;
   BDSOutputROOTEventInfo*       Info;
   /// @}
+
+  std::vector<std::string> samplerNames;
+#ifdef __ROOTDOUBLE__
+  std::map<std::string, BDSOutputROOTEventSampler<double>* > samplerMap;
+#else
+  std::map<std::string, BDSOutputROOTEventSampler<float>* >  samplerMap;
+#endif
 
 private:
   ClassDef(Event,1);

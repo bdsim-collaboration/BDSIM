@@ -64,10 +64,18 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete gaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
+void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
+				  const GMAD::Beam& beam,
 				  G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+
+  // require sigmaE to be finite for sigma matrix to be positive definite
+  // set to very small value if 0
+  if (!finiteSigmaE) // set in BDSBunch::SetOptions
+    {sigmaE = 1e-50;}
+  if (!finiteSigmaT)
+    {sigmaT = 1e-50;}
 
   offsetSampleMean  = beam.offsetSampleMean;
   iPartIteration    = 0;
@@ -82,6 +90,8 @@ void BDSBunchGaussian::SetOptions(const GMAD::Beam& beam,
 
 void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
 {
+  if (!offsetSampleMean)
+    {return;}
   /// clear previous means
   for (auto& vec : coordinates)
     {vec->clear();}
@@ -152,25 +162,7 @@ void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
 
   for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
-      CLHEP::HepVector v = gaussMultiGen->fire();
-      x0 = v[0] * CLHEP::m;
-      xp = v[1] * CLHEP::rad;
-      y0 = v[2] * CLHEP::m;
-      yp = v[3] * CLHEP::rad;
-      t = v[4] * CLHEP::s;
-      zp = 0.0 * CLHEP::rad;
-      z0 = Z0 * CLHEP::m;
-      if (finiteSigmaT)
-	{z0 += t * CLHEP::c_light;}
-      E = E0 * CLHEP::GeV;
-      if (finiteSigmaE)
-	{E *= v[5];}
-      
-      zp = CalculateZp(xp, yp, Zp0);
-      
-      ApplyTransform(x0, y0, z0, xp, yp, zp);
-      
-      weight = 1.0;
+      GetNextParticleCoords(x0, y0, z0, xp, yp, zp, t, E, weight);
 
       G4double nT = (G4double)iParticle + 1;
       G4double d = 0;
@@ -225,4 +217,57 @@ void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
       E_v[iParticle]  -= E_a;
       t_v[iParticle]  -= t_a;
     }
+}
+  
+void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+				       G4double& xp, G4double& yp, G4double& zp,
+				       G4double& t , G4double&  E, G4double& weight)
+{
+  if (offsetSampleMean)
+    {
+      // iPartIteration should never exceed the size of each vector.
+      x0     = x0_v[iPartIteration];
+      xp     = xp_v[iPartIteration];
+      y0     = y0_v[iPartIteration];
+      yp     = yp_v[iPartIteration];
+      z0     = z0_v[iPartIteration];
+      zp     = zp_v[iPartIteration];
+      t      = t_v[iPartIteration];
+      E      = E_v[iPartIteration];
+      weight = weight_v[iPartIteration];
+      
+      iPartIteration++;
+    }
+  else
+    {GetNextParticleCoords(x0, y0, z0, xp, yp, zp, t, E, weight);}
+}
+
+
+void BDSBunchGaussian::GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
+					     G4double& xp, G4double& yp, G4double& zp,
+					     G4double& t , G4double&  E, G4double& weight)
+{
+  CLHEP::HepVector v = gaussMultiGen->fire();
+  x0 = v[0] * CLHEP::m;
+  xp = v[1] * CLHEP::rad;
+  y0 = v[2] * CLHEP::m;
+  yp = v[3] * CLHEP::rad;
+  if (finiteSigmaT)
+    {t = v[4] * CLHEP::s;}
+  else
+    {t = T0 * CLHEP::s;}
+  zp = 0.0  * CLHEP::rad;
+  z0 = Z0 * CLHEP::m;
+  if (finiteSigmaT)
+    {z0 += t * CLHEP::c_light;}
+  
+  E  = E0 * CLHEP::GeV;
+  if (finiteSigmaE)
+    {E *= v[5];} // only if there's a finite energy spread
+  
+  zp = CalculateZp(xp,yp,Zp0);
+  
+  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  
+  weight = 1.0;
 }

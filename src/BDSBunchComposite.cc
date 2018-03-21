@@ -37,10 +37,11 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(const GMAD::Beam& beam,
+void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
+				   const GMAD::Beam& beam,
 				   G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;
@@ -58,9 +59,16 @@ void BDSBunchComposite::SetOptions(const GMAD::Beam& beam,
       exit(1);
     }
   
-  xBunch = BDSBunchFactory::CreateBunch(xType, beam, beamlineTransformIn);
-  yBunch = BDSBunchFactory::CreateBunch(yType, beam, beamlineTransformIn);
-  zBunch = BDSBunchFactory::CreateBunch(zType, beam, beamlineTransformIn);
+  xBunch = BDSBunchFactory::CreateBunch(beamParticle, xType, beam, beamlineTransformIn);
+  yBunch = BDSBunchFactory::CreateBunch(beamParticle, yType, beam, beamlineTransformIn);
+  zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);
+}
+
+void BDSBunchComposite::CheckParameters()
+{
+  xBunch->CheckParameters();
+  yBunch->CheckParameters();
+  zBunch->CheckParameters();
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

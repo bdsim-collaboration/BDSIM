@@ -57,7 +57,7 @@ BDSParser::~BDSParser()
 
 BDSParser::BDSParser(std::string name):GMAD::Parser(name)
 {
-  std::cout << __METHOD_NAME__ << "Using input file : "<< name << std::endl;
+  std::cout << __METHOD_NAME__ << "Using input file: "<< name << std::endl;
 }
 
 void BDSParser::AmalgamateBeam(const GMAD::Beam& execBeamIn,

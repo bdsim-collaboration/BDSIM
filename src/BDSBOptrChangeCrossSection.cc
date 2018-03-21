@@ -33,6 +33,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
 
+#include <limits>
+
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 						       G4String name):
   G4VBiasingOperator(name), fSetup(true), particleName(particleNameIn)
@@ -140,7 +142,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // length. Nothing is done in this case (ie, let analog process to deal with the case)
 
   G4double analogInteractionLength =  callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
-  if (analogInteractionLength > DBL_MAX/10.)
+  if (analogInteractionLength > std::numeric_limits<double>::max()/10.)
     {return nullptr;}
 
   // protect against negative interaction lengths

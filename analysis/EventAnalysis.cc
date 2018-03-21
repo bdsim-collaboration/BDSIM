@@ -62,12 +62,16 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
       // Analyse the primary sampler in the optics too.
       SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
       samplerAnalyses.push_back(sa);
+      SamplerAnalysis* pa = sa;
 
       for (const auto& sampler : event->Samplers)
 	{
 	  sa = new SamplerAnalysis(sampler, debug);
 	  samplerAnalyses.push_back(sa);
 	}
+
+      chain->GetEntry(0);
+      SamplerAnalysis::UpdateMass(pa);
     }
   
   SetPrintModuloFraction(printModuloFraction);

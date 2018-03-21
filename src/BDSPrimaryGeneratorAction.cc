@@ -124,7 +124,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4ParticleDefinition* particleDef = beamParticle->ParticleDefinition();
   if (bunch->ParticleCanBeDifferentFromBeam())
     {
-      BDSParticleDefinition* particleToUse = bunch->ParticleDefinition();
+      const BDSParticleDefinition* particleToUse = bunch->ParticleDefinition();
       if (particleToUse->IsAnIon())
 	{
 	  BDSIonDefinition* id = particleToUse->IonDefinition();

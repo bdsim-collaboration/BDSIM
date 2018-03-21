@@ -40,7 +40,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "gzstream.h"
 #endif
 
-BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Beam& beam,
+BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
+				       const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)  
 {
 #ifdef BDSDEBUG 
@@ -51,10 +52,11 @@ BDSBunch* BDSBunchFactory::CreateBunch(const GMAD::Beam& beam,
   // This will exit if no correct bunch type found.
   BDSBunchType distrType = BDS::DetermineBunchType(distrName);
 
-  return CreateBunch(distrType, beam, beamlineTransform);
+  return CreateBunch(beamParticle, distrType, beam, beamlineTransform);
 }
 
-BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType      distrType,
+BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle,
+				       BDSBunchType      distrType,
 				       const GMAD::Beam& beam,
 				       G4Transform3D beamlineTransform)
 { 
@@ -109,7 +111,8 @@ BDSBunch* BDSBunchFactory::CreateBunch(BDSBunchType      distrType,
       }
     }
 
-  bdsBunch->SetOptions(beam, beamlineTransform);
+  bdsBunch->SetOptions(beamParticle, beam, beamlineTransform);
+  bdsBunch->CheckParameters();
   
   return bdsBunch;
 }

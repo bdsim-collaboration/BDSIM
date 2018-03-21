@@ -42,7 +42,8 @@ class BDSRunAction: public G4UserRunAction
 {
 public:
   explicit BDSRunAction(BDSOutput* outputIn,
-			BDSBunch*  bunchGeneratorIn);
+			BDSBunch*  bunchGeneratorIn,
+			const G4bool& usingIonsIn);
   virtual ~BDSRunAction();
   
   virtual void BeginOfRunAction(const G4Run*);
@@ -54,6 +55,7 @@ private:
   std::string   seedStateAtStart; ///< Seed state at start of the run.
   BDSEventInfo* info;
   BDSBunch*     bunchGenerator;   ///< Cache of bunch generator.
+  const G4bool  usingIons;        ///< Cache of whether ions are being used (for particle table writing out).
 };
 
 #endif
