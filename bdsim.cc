@@ -109,37 +109,13 @@ int main(int argc,char** argv)
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options
-  
-  /// Instantiate the specific type of bunch distribution.
-  BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(parser->GetBeam(),
-						    globalConstants->BeamlineTransform());
 
   /// Construct output
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-  /// Optionally generate primaries only and exit
   BDSOutput* bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat(),
                                                         globalConstants->OutputFileName());
-  if (globalConstants->GeneratePrimariesOnly())
-    {
-      // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput->NewFile();
-      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
-      const G4int nToGenerate = globalConstants->NGenerate();
-      const G4int printModulo = globalConstants->PrintModuloEvents();
-      for (G4int i = 0; i < nToGenerate; i++)
-      {
-	if (i%printModulo == 0)
-	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
-      }
-      bdsOutput->CloseFile();
-      delete bdsBunch;
-      delete bdsOutput;
-      return 0;
-    }
 
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
@@ -188,6 +164,36 @@ int main(int argc,char** argv)
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
   physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
   runManager->SetUserInitialization(physList);
+
+  /// Instantiate the specific type of bunch distribution.
+  BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
+						    parser->GetBeam(),
+						    globalConstants->BeamlineTransform());
+
+  /// Optionally generate primaries only and exit
+  /// Unfortunately, this has to be here as we can't query the geant4 particle table
+  /// until after the physics list has been constructed and attached a run manager.
+  if (globalConstants->GeneratePrimariesOnly())
+    {
+      // output creation is duplicated below but with this if loop, we exit so ok.
+      bdsOutput->NewFile();
+      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
+      const G4int nToGenerate = globalConstants->NGenerate();
+      const G4int printModulo = globalConstants->PrintModuloEvents();
+      bdsBunch->BeginOfRunAction(nToGenerate);
+      for (G4int i = 0; i < nToGenerate; i++)
+      {
+	if (i%printModulo == 0)
+	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
+        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
+        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+      }
+      bdsOutput->CloseFile();
+      delete bdsBunch;
+      delete bdsOutput;
+      delete runManager;
+      return 0;
+    }
   
   /// Print the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
@@ -200,7 +206,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch));
+  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, physList->UsingIons()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;

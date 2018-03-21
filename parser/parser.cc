@@ -188,6 +188,7 @@ void Parser::Initialise()
   add_var("MV",1e+6,reserved);
 
   add_var("Tesla",1.0,reserved);
+  add_var("T",    1.0,reserved);
 
   add_var("km" ,1e3 ,reserved);
   add_var("m"  ,1.0 ,reserved);

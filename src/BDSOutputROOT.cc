@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 
 #include "TFile.h"
 #include "TObject.h"
@@ -37,7 +38,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSOutputROOT::BDSOutputROOT(G4String fileName,
 			     G4int    fileNumberOffset):
-  BDSOutput(fileName, ".root", fileNumberOffset)
+  BDSOutput(fileName, ".root", fileNumberOffset),
+  theRootOutputFile(nullptr),
+  theHeaderOutputTree(nullptr),
+  theGeant4DataTree(nullptr),
+  theBeamOutputTree(nullptr),
+  theOptionsOutputTree(nullptr),
+  theModelOutputTree(nullptr),
+  theEventOutputTree(nullptr),
+  theRunOutputTree(nullptr)
 {;}
 
 BDSOutputROOT::~BDSOutputROOT()
@@ -53,7 +62,7 @@ void BDSOutputROOT::NewFile()
 #endif
   G4String newFileName = GetNextFileName();
   
-  theRootOutputFile      = new TFile(newFileName,"RECREATE", "BDS output file");
+  theRootOutputFile = new TFile(newFileName,"RECREATE", "BDS output file");
 
   if (theRootOutputFile->IsZombie())
     {
@@ -66,6 +75,8 @@ void BDSOutputROOT::NewFile()
 
   // header
   theHeaderOutputTree    = new TTree("Header", "BDSIM Header");
+  // geant4 data
+  theGeant4DataTree      = new TTree("Geant4Data", "BDSIM Geant4 Data");
   // beam data tree
   theBeamOutputTree      = new TTree("Beam", "BDSIM beam");
   // options data tree
@@ -77,22 +88,16 @@ void BDSOutputROOT::NewFile()
   // event data tree
   theEventOutputTree     = new TTree("Event","BDSIM event");
 
-  // Build header and write structure
-  theHeaderOutputTree->Branch("Header.",        "BDSOutputROOTEventHeader", headerOutput);
-  
-  // Build beam and write structure
-  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",beamOutput,32000,2);
-  
-  // Build options and write structure
-  theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",optionsOutput,32000,2);
-  
-  // Build model and write structure
-  theModelOutputTree->Branch("Model.",          "BDSOutputROOTEventModel",modelOutput,32000);
+  // Build branches for each object
+  theHeaderOutputTree->Branch("Header.",        "BDSOutputROOTEventHeader",    headerOutput,     32000, 1);
+  theGeant4DataTree->Branch("Geant4Data.",      "BDSOutputROOTGeant4Data",     geant4DataOutput, 32000, 1);
+  theBeamOutputTree->Branch("Beam.",            "BDSOutputROOTEventBeam",      beamOutput,       32000, 2);
+  theOptionsOutputTree->Branch("Options.",      "BDSOutputROOTEventOptions",   optionsOutput,    32000, 2);
+  theModelOutputTree->Branch("Model.",          "BDSOutputROOTEventModel",     modelOutput,      32000, 1);
+  theRunOutputTree->Branch("Histos.",           "BDSOutputROOTEventHistograms",runHistos,        32000, 1);
+  theRunOutputTree->Branch("Info.",             "BDSOutputROOTEventRunInfo",   runInfo,          32000, 1);
 
-  // Build run data tree
-  theRunOutputTree->Branch("Histos.",           "BDSOutputROOTEventHistograms",runHistos,32000,1);
-  theRunOutputTree->Branch("Info.",             "BDSOutputROOTEventRunInfo",runInfo,32000,1);
-
+  // Branches for event...
   // Event info output
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
@@ -101,10 +106,10 @@ void BDSOutputROOT::NewFile()
     {theEventOutputTree->Branch("Primary.",     "BDSOutputROOTEventSampler",primary,32000,1);}
 
   // Build loss and hit structures
-  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
-  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
-  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
-  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,    4000, 1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss", pFirstHit,4000, 2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss", pLastHit, 4000, 2);
+  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss", tHit,     4000, 2);
 
   // Build trajectory structures
   theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
@@ -123,13 +128,17 @@ void BDSOutputROOT::NewFile()
                                  samplerTreeLocal,32000,0);
     }
 
-  WriteHeader();
+  FillHeader(); // this fills and then calls WriteHeader() pure virtual implemented here
 }
 
 void BDSOutputROOT::WriteHeader()
 {
-  headerOutput->Fill(); // updates time stamp
   theHeaderOutputTree->Fill();
+}
+
+void BDSOutputROOT::WriteGeant4Data()
+{
+  theGeant4DataTree->Fill();
 }
 
 void BDSOutputROOT::WriteBeam()

@@ -1,5 +1,0 @@
-include 3_GaussMatrix.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=1000;

@@ -131,6 +131,7 @@ V           1
 kV          :math:`10^{3}`
 MV          :math:`10^{6}`
 Tesla       1
+T           1
 rad         1
 mrad        :math:`10^{-3}`
 urad        :math:`10^{-6}`

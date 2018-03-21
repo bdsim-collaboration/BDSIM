@@ -48,20 +48,20 @@ BDSBunchHalo::BDSBunchHalo():
   emitOuterX(0.0), emitOuterY(0.0),
   xMax(0.0), yMax(0.0),
   xpMax(0.0), ypMax(0.0)
-
 {
-  FlatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
+  flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
 BDSBunchHalo::~BDSBunchHalo() 
 {
-  delete FlatGen; 
+  delete flatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(const GMAD::Beam& beam,
+void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
+			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
   alphaX                = G4double(beam.alfx);
   alphaY                = G4double(beam.alfy);
   betaX                 = G4double(beam.betx);
@@ -108,15 +108,15 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   xp = Xp0 * CLHEP::rad;
   yp = Yp0 * CLHEP::rad;
 
-  //  z0 += (T0 - envelopeT * (1.-2.*FlatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  //  z0 += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
   z0 = 0;
 
   while(true)
   {
-    G4double dx  = xMax  * (1 - 2 * FlatGen->shoot());
-    G4double dy  = yMax  * (1 - 2 * FlatGen->shoot());
-    G4double dxp = xpMax * (1 - 2 * FlatGen->shoot());
-    G4double dyp = ypMax * (1 - 2 * FlatGen->shoot());
+    G4double dx  = xMax  * (1 - 2 * flatGen->shoot());
+    G4double dy  = yMax  * (1 - 2 * flatGen->shoot());
+    G4double dxp = xpMax * (1 - 2 * flatGen->shoot());
+    G4double dyp = ypMax * (1 - 2 * flatGen->shoot());
     
     // compute single particle emittance 
     double emitXSp = gammaX * std::pow(std::abs(dx), 2) + (2. * alphaX * dx * dxp) + betaX * std::pow(std::abs(dxp), 2);
@@ -144,7 +144,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	// determine weight, initialise 1 so always passes
 	double wx = 1.0;
 	double wy = 1.0;
-	if (weightFunction == "flat" || weightFunction == "")
+	if (weightFunction == "flat" || weightFunction == "" || weightFunction == "one")
 	  {
 	    wx = 1.0;
 	    wy = 1.0;
@@ -175,7 +175,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
 #endif
 	// reject
-	if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
+	if(flatGen->shoot() > wx && flatGen->shoot() > wy)
 	  {continue;}
 	
 	// add to reference orbit 
@@ -203,7 +203,14 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
 void BDSBunchHalo::CheckParameters()
 {
-  std::vector<G4String> weightFunctions = {"", "flat","oneoverr", "oneoverrsqrd", "exp"};
+  BDSBunch::CheckParameters();
+  
+  if (emitX <= 0)
+    {G4cerr << __METHOD_NAME__ << "emitx must be finite!" << G4endl; exit(1);}
+  if (emitY <= 0)
+    {G4cerr << __METHOD_NAME__ << "emity must be finite!" << G4endl; exit(1);}
+  
+  std::vector<G4String> weightFunctions = {"", "one", "flat","oneoverr", "oneoverrsqrd", "exp"};
   auto search = std::find(weightFunctions.begin(), weightFunctions.end(), weightFunction);
   if (search == weightFunctions.end())
     {
@@ -214,17 +221,15 @@ void BDSBunchHalo::CheckParameters()
       exit(1);
     }
   
-  if (haloNSigmaXInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaXInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner <= 0" << G4endl; exit(1);}
   
-  if (haloNSigmaYInner == 0)
-    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner cannot be zero" << G4endl; exit(1);}
+  if (haloNSigmaYInner <= 0)
+    {G4cerr << __METHOD_NAME__ << "haloYSigmaXInner <= 0" << G4endl; exit(1);}
   
   if (haloNSigmaXInner > haloNSigmaXOuter)
     {G4cerr << __METHOD_NAME__ << "haloNSigmaXInner cannot be less than haloNSigmaXOuter" << G4endl; exit(1);}
   
   if (haloNSigmaYInner > haloNSigmaYOuter)
-    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);}
-  
-  
+    {G4cerr << __METHOD_NAME__ << "haloNSigmaYInner cannot be less than haloNSigmaYOuter" << G4endl; exit(1);} 
 }

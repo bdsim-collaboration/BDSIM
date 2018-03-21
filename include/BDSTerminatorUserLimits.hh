@@ -22,6 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4UserLimits.hh"
 #include "globals.hh"  // geant4 basic stl types
 
+#include <limits>
+
 /**
  * @brief Dynamic user limits for a volume that changed based
  * on the parameter turnstaken in BDSGlobalConstants().
@@ -39,16 +41,16 @@ public:
   /// Basic inheritance - just use everything normally from G4UserLimits but 
   /// replace one function in inherited class. Default values are defined
   /// in G4UserLimits so all particles continue.
-  BDSTerminatorUserLimits(G4double ustepMax = DBL_MAX,
-			  G4double utrakMax = DBL_MAX,
-			  G4double utimeMax = DBL_MAX,
+  BDSTerminatorUserLimits(G4double ustepMax = std::numeric_limits<double>::max(),
+			  G4double utrakMax = std::numeric_limits<double>::max(),
+			  G4double utimeMax = std::numeric_limits<double>::max(),
 			  G4double uekinMin = 0.,     
 			  G4double urangMin = 0.);    
   
   BDSTerminatorUserLimits(const G4String& type,
-			  G4double ustepMax = DBL_MAX,
-			  G4double utrakMax = DBL_MAX,
-			  G4double utimeMax = DBL_MAX,
+			  G4double ustepMax = std::numeric_limits<double>::max(),
+			  G4double utrakMax = std::numeric_limits<double>::max(),
+			  G4double utimeMax = std::numeric_limits<double>::max(),
 			  G4double uekinMin = 0.,
 			  G4double urangMin = 0.);
   

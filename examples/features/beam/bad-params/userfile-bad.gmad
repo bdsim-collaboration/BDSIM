@@ -1,0 +1,13 @@
+beam,  particle="e-",
+       energy = 1*GeV,
+       distrType  = "userfile",
+       distrFileFormat = "badformat";
+
+! no file name and bad format
+
+nlinesIgnore = 0;
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;

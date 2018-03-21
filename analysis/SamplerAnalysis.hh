@@ -57,6 +57,8 @@ public:
   /// Accessor for optical functions
   std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
+  static void UpdateMass(SamplerAnalysis* s);
+
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
 #else 
@@ -64,6 +66,9 @@ public:
   BDSOutputROOTEventSampler<double> *p;
 #endif
 protected:
+
+  static double particleMass;
+  
   // sums - initialised to zero as that's what they start at
   long long int npart;
   double S;

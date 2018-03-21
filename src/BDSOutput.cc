@@ -34,6 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -82,9 +83,20 @@ void BDSOutput::InitialiseGeometryDependent()
 
 void BDSOutput::FillHeader()
 {
-  // Flushing causes the time stampe to be updated. All other information is fixed.
   headerOutput->Flush();
+  headerOutput->Fill(); // updates time stamp
   WriteHeader();
+}
+
+void BDSOutput::FillGeant4Data(const G4bool& writeIons)
+{
+  geant4DataOutput->Fill(writeIons);
+  WriteGeant4Data();
+#ifndef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
+#else
+  BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
+#endif
 }
 
 void BDSOutput::FillBeam(const GMAD::BeamBase* beam)

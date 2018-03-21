@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
+#include <limits>
+
 BDSTerminator::BDSTerminator():
   BDSAcceleratorComponent("terminator", BDSSamplerPlane::ChordLength(), 0, "terminator")
 {;}
@@ -58,7 +60,10 @@ void BDSTerminator::BuildContainerLogicalVolume()
   // The numerical values are the default G4UserLimit values so everything will
   // normally be tracked. BDSTerminatorUserLimits has the logic inside it to
   // respond to turn number.
-  BDSTerminatorUserLimits* userLimits = new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.);
+  BDSTerminatorUserLimits* userLimits = new BDSTerminatorUserLimits(std::numeric_limits<double>::max(),
+								    std::numeric_limits<double>::max(),
+								    std::numeric_limits<double>::max(),
+								    0.,0.);
   RegisterUserLimits(userLimits);
   containerLogicalVolume->SetUserLimits(userLimits);
 

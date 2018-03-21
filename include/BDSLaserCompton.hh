@@ -25,6 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Positron.hh"
 #include "BDSMaterials.hh"
 
+#include <limits>
+
 class BDSComptonEngine;
 class BDSGlobalConstants;
 
@@ -103,7 +105,7 @@ inline G4double BDSLaserCompton::GetMeanFreePath(const G4Track& track,
   if ( track.GetMaterial() == BDSMaterials::Instance()->GetMaterial("LaserVac") &&
       FireLaserCompton )
     {*ForceCondition = Forced;}
-  return DBL_MAX;
+  return std::numeric_limits<double>::max();
 }
 
 inline void BDSLaserCompton::SetLaserDirection(G4ThreeVector laserDirectionIn)

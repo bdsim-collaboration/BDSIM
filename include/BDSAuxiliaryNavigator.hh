@@ -177,8 +177,10 @@ public:
 				const G4ThreeVector& localPosition,
 				const G4bool&        useCurvilinear = true) const;
 
-  /// Convert to curvilinear coordinates.
+  /// Convert to curvilinear coordinates. Angle supplied separately in case
+  /// of over/underpowered magnets.
   BDSStep GlobalToCurvilinear(BDSMagnetStrength const* strength,
+				G4double 	  angle,
                 G4ThreeVector position,
                 G4ThreeVector unitMomentum,
                 G4double      h,
@@ -195,6 +197,7 @@ public:
 			      G4bool        useCurvilinearWorld);
 
   BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
+				  G4double      angle,
 			      G4ThreeVector localPosition,
 			      G4ThreeVector localMomentum,
 			      G4bool        useCurvilinearWorld,
