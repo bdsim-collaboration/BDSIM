@@ -54,7 +54,7 @@ def Main():
     parser.add_option('-c','--clean',     action='store_true',default=False,help=Clean.__doc__)
     parser.add_option('-f','--filepath',  action='store',     dest="filepath",  type="string", default="None")
     parser.add_option('-n','--nparticles',action='store',     dest="nparticles",type="int",    default=1000)
-    parser.add_option('-g','--integratorset',  action='store',     dest="integratorset",  type="string", default="bdsim")
+    parser.add_option('-g','--integratorset',  action='store',     dest="integratorset",  type="string", default=None)
     parser.add_option('-v','--verbose',   action='store_true',dest="verbose",                  default=False)
 
     options,args = parser.parse_args()
