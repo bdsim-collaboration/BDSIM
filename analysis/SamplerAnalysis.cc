@@ -53,15 +53,15 @@ void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
     {
     case 11:
       {
-	std::cout << "e-!" << std::endl;
+	std::cout << "Primary particle: e-" << std::endl;
 	particleMass = 0.000510999; break;}
     case 2212:
       {
-	std::cout << "proton!" << std::endl;
+	std::cout << "Primary particle: proton" << std::endl;
 	particleMass = 0.938272; break;}
     default:
       {
-	std::cout << "m=0" << std::endl;
+	std::cout << "Primary particle: unknown -> m=0" << std::endl;
 	particleMass = 0; break;}
     }
 }
