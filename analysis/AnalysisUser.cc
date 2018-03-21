@@ -27,7 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 
-void StringToCharArray(std::string const component_name, char * vertexmodel){
+void StringToCharArray(std::string const component_name,
+		       char * vertexmodel)
+{
   std::vector< char > tempvec(component_name.begin(),component_name.end());
 
   //for(int i = 0; i < tempvec.size(); ++i){
@@ -76,7 +78,7 @@ AnalysisUser::AnalysisUser(std::string const filename)
   }
 }
 
-AnalysisUser::AnalysisUser(std::vector<std::string> filenames){}
+AnalysisUser::AnalysisUser(std::vector<std::string> /*filenames*/){}
 
 //AnalysisUser::~AnalysisUser(){}
 
@@ -99,7 +101,7 @@ AnalysisUser::~AnalysisUser()
 void AnalysisUser::SetBranchAddresses(TTree* optionsTreeIn,
 				      TTree* modelTreeIn,
 				      TTree* runTreeIn,
-				      TTree* eventTreeIn)
+				      TTree* /*eventTreeIn*/)
 {
   options->SetBranchAddress(optionsTreeIn);
   model->SetBranchAddress(modelTreeIn);
@@ -130,7 +132,7 @@ void AnalysisUser::MakeBranches(TTree* outputTree)
 unsigned int AnalysisUser::GetNumSamplers()
 {
   eventTree->GetEntry(0);
-  return this->event->samplers.size();
+  return this->event->Samplers.size();
 }
 
 void AnalysisUser::GetEntry(int iEntry)
@@ -145,12 +147,12 @@ void AnalysisUser::Analysis()
     this->GetEntry(i);                                              // Get entry
     for(size_t s = 0; s < number_samplers; ++s)                      // Loop over samplers
     {
-      for(int j = 0; j < this->event->samplers[s]->n; ++j)            // Loop over sampler hits in sampler 0
+      for(int j = 0; j < this->event->Samplers[s]->n; ++j)            // Loop over sampler hits in sampler 0
       {
-        int trackid = this->event->samplers[s]->trackID[j];         // track ID for sampler info
+        int trackid = this->event->Samplers[s]->trackID[j];         // track ID for sampler info
         if(trackid != 1) {                                          // does not work for the primary
           BDSOutputROOTEventTrajectoryPoint point =
-            event->trajectory->primaryProcessPoint(trackid);        // get initial process point
+            event->Trajectory->primaryProcessPoint(trackid);        // get initial process point
           //std::cout << "Point model is " << point.model << std::endl;
           //std::cout << "This is a vector componmentname of size " << model->model->componentName.size() << std::endl;
           //std::cout << "The vector contains: " << std::endl;
@@ -179,8 +181,8 @@ void AnalysisUser::Analysis()
           vertexsubprocess = -1;
         }
         trackID = trackid;
-        PDG = event->samplers[s]->partID[j]; 
-        parentID = event->samplers[s]->parentID[j]; 
+        PDG = event->Samplers[s]->partID[j]; 
+        parentID = event->Samplers[s]->parentID[j]; 
         outputTree_Samplers.at(s)->Fill();
       }      
     }//End of samplers loop
