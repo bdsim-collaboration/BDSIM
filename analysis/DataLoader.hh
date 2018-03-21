@@ -50,17 +50,15 @@ public:
 	     bool        processSamplersIn = true,
 	     bool        allBranchesOn     = true,
 	     const RBDS::BranchMap* branchesToTurnOn = nullptr,
-	     bool        backwardsCompatible = true);
+	     bool        backwardsCompatibleIn = true);
   virtual ~DataLoader();
 
   /// Create an instance of each class in the file to be overlaid by loading
   /// the ROOT file.
-  void CommonCtor(std::string fileName,
-		  bool backwardsCompatible);
+  void CommonCtor(std::string fileName);
 
   /// Build up the input file list.
-  void BuildInputFileList(std::string inputPath,
-			  bool backwardsCompatible);
+  void BuildInputFileList(std::string inputPath);
 
   /// Open the first file in the file list and map the trees in it.
   void BuildTreeNameList();
@@ -103,6 +101,7 @@ private:
   bool processSamplers;
   bool allBranchesOn;
   const RBDS::BranchMap* branchesToTurnOn;
+  bool backwardsCompatible;
 
   Header*     hea;
   Geant4Data* g4d;

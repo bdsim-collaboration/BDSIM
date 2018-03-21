@@ -42,13 +42,14 @@ DataLoader::DataLoader(std::string fileName,
 		       bool        processSamplersIn,
 		       bool        allBranchesOnIn,
 		       const RBDS::BranchMap* branchesToTurnOnIn,
-		       bool        backwardsCompatible):
+		       bool        backwardsCompatibleIn):
   debug(debugIn),
   processSamplers(processSamplersIn),
   allBranchesOn(allBranchesOnIn),
-  branchesToTurnOn(branchesToTurnOnIn)
+  branchesToTurnOn(branchesToTurnOnIn),
+  backwardsCompatible(backwardsCompatibleIn)
 {
-  CommonCtor(fileName, backwardsCompatible);
+  CommonCtor(fileName);
 }
 
 DataLoader::~DataLoader()
@@ -68,10 +69,9 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor(std::string fileName,
-			    bool backwardsCompatible)
+void DataLoader::CommonCtor(std::string fileName)
 {
-  BuildInputFileList(fileName, backwardsCompatible);
+  BuildInputFileList(fileName);
 
   hea = new Header(debug);
   g4d = new Geant4Data(debug);
@@ -80,9 +80,10 @@ void DataLoader::CommonCtor(std::string fileName,
   mod = new Model(debug);
   evt = new Event(debug, processSamplers);
   run = new Run(debug);
-
+  
   heaChain = new TChain("Header",      "Header");
-  g4dChain = new TChain("Geant4Data", "Geant4Data");
+  if (!backwardsCompatible)
+    {g4dChain = new TChain("Geant4Data", "Geant4Data");}
   beaChain = new TChain("Beam",       "Beam");
   optChain = new TChain("Options",    "Options");
   modChain = new TChain("Model",      "Model");
@@ -94,16 +95,18 @@ void DataLoader::CommonCtor(std::string fileName,
   ChainTrees();
   SetBranchAddress(allBranchesOn, branchesToTurnOn);
 
-  g4dChain->GetEntry(0); // load particle data
+  if (!backwardsCompatible)
+    {
+      g4dChain->GetEntry(0); // load particle data
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>::particleTable = g4d->geant4Data;
+      BDSOutputROOTEventSampler<double>::particleTable = g4d->geant4Data;
 #else
-  BDSOutputROOTEventSampler<float>::particleTable = g4d->geant4Data;
+      BDSOutputROOTEventSampler<float>::particleTable = g4d->geant4Data;
 #endif
+    }
 }
 
-void DataLoader::BuildInputFileList(std::string inputPath,
-				    bool backwardsCompatible)
+void DataLoader::BuildInputFileList(std::string inputPath)
 {
   if(inputPath == "")
     {throw std::string("DataLoader::BuildInputFileList> no file specified");}
@@ -218,7 +221,8 @@ void DataLoader::BuildEventBranchNameList()
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
-  g4dChain->Add(fileNames[0].c_str()); // only require 1 copy
+  if (!backwardsCompatible)
+    {g4dChain->Add(fileNames[0].c_str());} // only require 1 copy
   for (auto filename : fileNames)
     {
       heaChain->Add(filename.c_str());
@@ -233,7 +237,8 @@ void DataLoader::ChainTrees()
 void DataLoader::SetBranchAddress(bool allOn,
 				  const RBDS::BranchMap* bToTurnOn)
 {
-  g4d->SetBranchAddress(g4dChain);
+  if (!backwardsCompatible)
+    {g4d->SetBranchAddress(g4dChain);}
   hea->SetBranchAddress(heaChain);
   bea->SetBranchAddress(beaChain, true); // true = always turn on all branches
   mod->SetBranchAddress(modChain, true); // true = always turn on all branches
