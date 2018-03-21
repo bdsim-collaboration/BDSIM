@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "rebdsim.hh"
 
 #include <cmath>
+#include <vector>
 
 double SamplerAnalysis::particleMass = 0;
 
