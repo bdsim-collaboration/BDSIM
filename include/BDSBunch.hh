@@ -43,8 +43,14 @@ public:
   virtual ~BDSBunch(){;}
 
   /// Extract and set the relevant options from the beam definition.
-  virtual void SetOptions(const GMAD::Beam& beam,
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+
+  
+  /// Check the parameters for the given bunch distribution and exit if they're
+  /// problematic or unphysical.
+  virtual void CheckParameters();
 
   /// Each derived class can override this default method of reference
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
@@ -62,7 +68,7 @@ public:
   inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
 
   /// Access the beam particle definition.
-  inline BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+  inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
   
 protected:
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
@@ -80,6 +86,9 @@ protected:
   /// Calculate zp safely based on other components.
   G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
+  /// Convert a momentum to a total energy given the beam particle mass.
+  G4double EFromP(const G4double &pIn) const;
+
   ///@{ Centre of distributions
   G4double X0;
   G4double Y0;
@@ -90,7 +99,9 @@ protected:
   G4double Yp0;
   G4double Zp0;
   G4double E0;
-  G4double sigmaT; 
+  G4double P0;     ///< central momentum
+  G4double sigmaT;
+  G4double sigmaP;
   G4double sigmaE;
   ///@}
   
@@ -102,8 +113,8 @@ protected:
   /// Derived class must change explicitly.
   G4bool particleCanBeDifferent;
 
-  /// Optional particle definition that can be used.
-  BDSParticleDefinition* particleDefinition;
+  /// Optional particle definition that can be used. Does not own.
+  const BDSParticleDefinition* particleDefinition;
 
   /// @{ Flags to ignore random number generator in case of no finite E or T.
   G4bool finiteSigmaE;
@@ -116,6 +127,8 @@ private:
 
   /// Whether the transform is finite and should be used.
   G4bool        nonZeroTransform;
+  
+  G4double mass2; ///< Cache of mass squared as requried to convert from p to E.
   
   /// A reference to the fully constructed beamline that's lazyily instantiated.
   mutable const BDSBeamline* beamline;

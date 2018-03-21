@@ -51,12 +51,19 @@ class BDSBunchGaussian: public BDSBunch
 public:
   BDSBunchGaussian();
   virtual ~BDSBunchGaussian();
-  virtual void SetOptions(const GMAD::Beam& beam,
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
 
   /// Called at the beginning of a run. Override here to call PreGenerateEvents that
   /// will generate all coordinates and subtract the sample mean.
   virtual void BeginOfRunAction(const G4int& numberOfEvents);
+
+  /// Either draw from the vector of already created points or fire fresh
+  /// from the matrix.
+  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+			       G4double& xp, G4double& yp, G4double& zp,
+			       G4double& t , G4double&  E, G4double& weight);
   
 protected:
   /// Create multidimensional Gaussian random number generator
@@ -67,6 +74,11 @@ protected:
   
   /// Pregenerate all the particle coordinates and subtract the sample mean.
   void PreGenerateEvents(const G4int& nGenerate);
+
+  /// Fire random number generator and get coordinates. Can be overloaded if required.
+  virtual void GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
+				     G4double& xp, G4double& yp, G4double& zp,
+				     G4double& t , G4double&  E, G4double& weight);
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;

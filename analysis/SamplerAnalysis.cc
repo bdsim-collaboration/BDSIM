@@ -20,6 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "rebdsim.hh"
 
 #include <cmath>
+#include <vector>
+
+double SamplerAnalysis::particleMass = 0;
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
@@ -41,6 +44,26 @@ SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
   debug(debugIn)
 {
   CommonCtor();
+}
+
+void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
+{
+  int id = s->s->partID[0];
+  switch (std::abs(id))
+    {
+    case 11:
+      {
+	std::cout << "e-!" << std::endl;
+	particleMass = 0.000510999; break;}
+    case 2212:
+      {
+	std::cout << "proton!" << std::endl;
+	particleMass = 0.938272; break;}
+    default:
+      {
+	std::cout << "m=0" << std::endl;
+	particleMass = 0; break;}
+    }
 }
 
 void SamplerAnalysis::CommonCtor()
@@ -130,6 +153,8 @@ void SamplerAnalysis::Process(bool firstTime)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
   S = s->S;
+
+  double m2 = std::pow(particleMass,2);
   
   // loop over all entries
   for(int i=0;i<s->n;++i)
@@ -145,7 +170,7 @@ void SamplerAnalysis::Process(bool firstTime)
     coordinates[1] = s->xp[i];
     coordinates[2] = s->y[i];
     coordinates[3] = s->yp[i];
-    coordinates[4] = s->energy[i];
+    coordinates[4] = std::sqrt(std::pow(s->energy[i],2) - m2); // p = sqrt(E^2 - M^2)
     coordinates[5] = s->t[i];
 
     if (firstTime)
@@ -225,22 +250,19 @@ std::vector<double> SamplerAnalysis::Terminate(std::vector<double> emittance,
     if (!std::isfinite(optical[i][5]))
       {optical[i][5] = 0;}
 
-    // temp variables to store dispersion corrected moments
+    // temp variables to store dispersion corrected moments, aka moments without dispersion contribution
     double corrCentMom_2_0 = 0.0, corrCentMom_1_1 = 0.0;
     double corrCentMom_0_2 = 0.0;
 
-    corrCentMom_2_0 = cenMoms[j][j+1][2][0]
-      + (std::pow(optical[i][4],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-      - 2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
-    
-    corrCentMom_0_2 = cenMoms[j][j+1][0][2]
-      + (std::pow(optical[i][5],2)*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-      - 2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
-    
-    corrCentMom_1_1 = cenMoms[j][j+1][1][1]
-      + (optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/std::pow(cenMoms[4][4][1][0],2)
-      - (optical[i][5]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0]
-      - (optical[i][4]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
+    //Correction example: var[x]_corrected = var[x] - eta_x^2*sigma[dE/E]^2
+    corrCentMom_2_0 =
+      cenMoms[j][j+1][2][0] - std::pow(optical[i][4],2)*cenMoms[4][4][2][0]/std::pow(cenMoms[4][4][1][0],2);
+
+    corrCentMom_0_2 =
+      cenMoms[j][j+1][0][2] - std::pow(optical[i][5],2)*cenMoms[4][4][2][0]/std::pow(cenMoms[4][4][1][0],2);
+
+    corrCentMom_1_1 =
+      cenMoms[j][j+1][1][1] - (optical[i][4]*optical[i][5])*cenMoms[4][4][2][0]/std::pow(cenMoms[4][4][1][0],2);
 
     if(useEmittanceFromFirstSampler && nonZeroEmittanceIn)
       {optical[i][0]  = emittance[i];}

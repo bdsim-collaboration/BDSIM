@@ -76,8 +76,33 @@ void Event::CommonCtor()
   Info            = new BDSOutputROOTEventInfo();
 }
 
+#ifdef __ROOTDOUBLE__
+BDSOutputROOTEventSampler<double>* Event::GetSampler(const std::string& name)
+#else
+BDSOutputROOTEventSampler<float>* Event::GetSampler(const std::string& name)
+#endif
+{
+  auto found = samplerMap.find(name);
+  if (found != samplerMap.end())
+    {return found->second;}
+  else
+    {return nullptr;}
+}
+
+#ifdef __ROOTDOUBLE__
+BDSOutputROOTEventSampler<double>* Event::GetSampler(const int& index)
+#else
+BDSOutputROOTEventSampler<float>* Event::GetSampler(const int& index)
+#endif
+{
+  if (index > (int) Samplers.size())
+    {return nullptr;}
+  else
+    {return Samplers[index];}
+}
+
 void Event::SetBranchAddress(TTree *t,
-			     const RBDS::VectorString* samplerNames,
+			     const RBDS::VectorString* samplerNamesIn,
 			     bool                      allBranchesOn,
 			     const RBDS::VectorString* branchesToTurnOn)
 {
@@ -149,22 +174,25 @@ void Event::SetBranchAddress(TTree *t,
       std::cout << "Event::SetBranchAddress> Info.            " << Info            << std::endl;
     }
 
-  if (processSamplers && samplerNames)
+  if (processSamplers && samplerNamesIn)
     {
-      unsigned int nrSamplers = samplerNames->size();
+      unsigned int nrSamplers = samplerNamesIn->size();
       Samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
       for (unsigned int i=0; i < nrSamplers; ++i)
 	{
-	  const auto sampName = (*samplerNames)[i];
+	  const auto sampName = (*samplerNamesIn)[i];
 #ifdef __ROOTDOUBLE__
 	  Samplers[i] = new BDSOutputROOTEventSampler<double>(sampName);
 #else
 	  Samplers[i] = new BDSOutputROOTEventSampler<float>(sampName);
 #endif
+	  samplerNames.push_back(sampName);  // cache the name in a vector
+	  samplerMap[sampName] = Samplers[i];// cache the sampler in a map
+	    
 	  t->SetBranchAddress(sampName.c_str(), &Samplers[i]);
 	  t->SetBranchStatus((sampName+"*").c_str(), 1);
 	  if(debug)
-	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << Samplers[i] << std::endl;}
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerNamesIn)[i] << " " << Samplers[i] << std::endl;}
 	}
     }
 }

@@ -28,13 +28,24 @@ namespace CLHEP {
 /**
  * @brief A halo distribution based on both twiss parameters and sigmas.
  *
- * @author Stewart Boogert
+ * @author Stewart Boogert, Simon Williams
  */
 
 class BDSBunchHalo: public BDSBunch
 {
+public:
+  BDSBunchHalo();
+  virtual ~BDSBunchHalo();
+  virtual void SetOptions(const BDSParticleDefinition* beamParticle,
+			  const GMAD::Beam& beam,
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+  virtual void CheckParameters();
+  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+			       G4double& xp, G4double& yp, G4double& zp,
+			       G4double& t , G4double&  E, G4double& weight);  
+  
 private: 
-  /* Twiss parameters */
+  /// @{ Twiss parameter
   G4double alphaX;
   G4double alphaY;
   G4double betaX;
@@ -45,6 +56,7 @@ private:
   G4double gammaY;
   G4double sigmaX;
   G4double sigmaY;
+  /// @}
 
   G4double haloNSigmaXInner;
   G4double haloNSigmaXOuter;
@@ -54,11 +66,9 @@ private:
   G4double haloYCutInner;
   G4double haloPSWeightParameter;
   G4String weightFunction;
-
   
   G4double haloNSigmaXpOuter;
   G4double haloNSigmaYpOuter;
-
 
   G4double emitInnerX;
   G4double emitInnerY;
@@ -70,20 +80,7 @@ private:
   G4double xpMax;
   G4double ypMax;
 
-  CLHEP::RandFlat* FlatGen;
-
-
-public: 
-  BDSBunchHalo();
-  virtual ~BDSBunchHalo();
-  virtual void SetOptions(const GMAD::Beam& beam,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
-  void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		       G4double& xp, G4double& yp, G4double& zp,
-		       G4double& t , G4double&  E, G4double& weight);  
-
-protected:
-  void CheckParameters();
+  CLHEP::RandFlat* flatGen;
 };
 
 #endif

@@ -14,9 +14,9 @@ p=1e-7; ! UHV pressure
 !p=1e5; !Atmospheric pressure
 mu=1.6605e-27;
 mass=14.0;
-T=300;
+Temp=300;
 k=1.38e-23;
-rho = p*mass*mu/(k*T)*1e3/1e6;
+rho = p*mass*mu/(k*Temp)*1e3/1e6;
 print, rho;
 
 bpgas : matdef, Z=7, A=14.00674, T=300, density=rho, state="gas"; 

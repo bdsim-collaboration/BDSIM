@@ -74,6 +74,8 @@ public:
   inline G4double TotalEnergy()   const {return totalEnergy;}
   inline G4double KineticEnergy() const {return kineticEnergy;}
   inline G4double Momentum()      const {return momentum;}
+  inline G4double Gamma()         const {return gamma;}
+  inline G4double Beta()          const {return beta;}
   inline G4double BRho()          const {return brho;}
   inline G4bool   IsAnIon()       const {return ionDefinition != nullptr;}
   /// @}
@@ -90,6 +92,9 @@ private:
 
   /// Calculate and set rigidity based on charge and momentum.
   void CalculateRigidity(const G4double& ffact);
+
+  /// Calculate and set lorentz factors.
+  void CalculateLorentzFactors();
   
   G4ParticleDefinition* particle;      ///< Does not own.
   BDSIonDefinition*     ionDefinition; ///< Optional ion definition. Does own.
@@ -100,6 +105,8 @@ private:
   G4double totalEnergy;    ///< Particle total energy.
   G4double kineticEnergy;  ///< Particle kinetic energy.
   G4double momentum;       ///< Particle momentum.
+  G4double gamma;          ///< Relativistic gamma.
+  G4double beta;           ///< Relativistic beta.
   G4double brho;           ///< Particle rigidity.
 };
 

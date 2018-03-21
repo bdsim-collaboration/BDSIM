@@ -88,6 +88,8 @@ public:
 
   void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
+  inline G4bool UsingIons() const {return usingIons;}
+
 private:
   /// Private default constructor to force use of supplied one.
   BDSModularPhysicsList();
@@ -153,6 +155,9 @@ private:
 
   /// Flag as to whether em will be used - avoids duplicate processes being registered.
   G4bool emWillBeUsed;
+
+  /// Flag telling whether ions are being used either in physics list or in beam particle.
+  mutable G4bool usingIons;
 
   /// @{Physics constructor loader.
   void ChargeExchange();

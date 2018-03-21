@@ -1,5 +1,0 @@
-include 2_Gauss.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=1000;

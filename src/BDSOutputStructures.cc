@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventRunInfo.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -49,6 +50,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeLocal  = globals->StoreELossLocal();
   G4bool storeGlobal = globals->StoreELossGlobal();
 
+  geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
@@ -75,6 +77,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
 BDSOutputStructures::~BDSOutputStructures()
 {
+  delete geant4DataOutput;
   delete headerOutput;
   delete beamOutput;
   delete optionsOutput;
@@ -121,6 +124,11 @@ void BDSOutputStructures::InitialiseSamplers()
 	  samplerNames.push_back(samplerName);
         }
     }
+}
+
+void BDSOutputStructures::ClearStructuresGeant4Data()
+{
+  geant4DataOutput->Flush();
 }
 
 void BDSOutputStructures::ClearStructuresHeader()

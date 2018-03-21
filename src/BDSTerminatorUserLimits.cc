@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4UserLimits.hh"
 
+#include <limits>
+
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double utrakMax,
 						 G4double utimeMax,
@@ -34,7 +36,7 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX),
+  stoprunningEK(std::numeric_limits<double>::max()),
   turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {}
 
@@ -51,7 +53,7 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX),
+  stoprunningEK(std::numeric_limits<double>::max()),
   turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {}
 

@@ -21,6 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TROOT.h"
 #include <vector>
+
+class BDSOutputROOTGeant4Data;
+
 #ifndef __ROOTBUILD__ 
 #include "globals.hh"
 class BDSSamplerHit;
@@ -59,6 +62,10 @@ public:
   
   T                  S;   // Will not need this when have global transforms
 
+  std::vector<int>     charge();
+  std::vector<double>  mass();
+  std::vector<double>  rigidity();
+
   BDSOutputROOTEventSampler();
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
@@ -67,13 +74,18 @@ public:
             G4double x0, G4double y0, G4double z0,
             G4double xp, G4double yp, G4double zp,
             G4double t,
-            G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
+            G4double weight,
+	    G4int    PDGType,
+	    G4int    nEvent,
+	    G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(const BDSSamplerHit* hit);
 #endif
   void SetBranchAddress(TTree *);
   /// Clean Sampler
   void Flush();
+
+  static BDSOutputROOTGeant4Data* particleTable;
 
   ClassDef(BDSOutputROOTEventSampler,1);
 };

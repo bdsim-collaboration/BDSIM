@@ -270,8 +270,8 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& gl
 }
 
 BDSStep BDSAuxiliaryNavigator::ConvertToGlobalStep(const G4ThreeVector& localPosition,
-					       const G4ThreeVector& localDirection,
-					       const G4bool&        useCurvilinear) const
+						   const G4ThreeVector& localDirection,
+						   const G4bool&        useCurvilinear) const
 {
   const G4AffineTransform& aff = LocalToGlobal(useCurvilinear);
   G4ThreeVector globalPos = aff.TransformPoint(localPosition);
@@ -288,21 +288,21 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
-                                              G4ThreeVector unitMomentum,
-                                              G4double      h,
-                                              G4bool        useCurvilinearWorld)
+						   G4ThreeVector unitMomentum,
+						   G4double      h,
+						   G4bool        useCurvilinearWorld)
 {
   return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
-                                              G4ThreeVector position,
-                                              G4ThreeVector unitMomentum,
-                                              G4double      h,
-                                              G4bool        useCurvilinearWorld,
-                                              G4double      FCof)
+                           G4double      angle,
+						   G4ThreeVector position,
+						   G4ThreeVector unitMomentum,
+						   G4double      h,
+						   G4bool        useCurvilinearWorld,
+						   G4double      FCof)
 {
-  G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
@@ -348,36 +348,23 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   G4ThreeVector localMomCL = localMom.rotate(rotationAngle, localUnitF);
   G4ThreeVector localPosCL = G4ThreeVector(CLXOffset, localPos.y(), distAlongS);
 
-/* Lauries algorithm - keep for now
-  // This will range from -angle/2 to +angle/2
-  G4double partialAngle = atan(localZ / radiusAtChord);
-
-  G4ThreeVector localMomCL = localMom.rotate(partialAngle, localUnitF);
-
-  G4ThreeVector unitX      = G4ThreeVector(1,0,0);
-  G4ThreeVector localUnitX = ConvertAxisToLocal(unitX, useCurvilinearWorld);
-  G4double      dx         = radiusOfCurvature * (1 - cos(partialAngle));
-  G4ThreeVector dpos       = localUnitX * dx;
-  G4ThreeVector localPosCL = localPos + dpos;
-*/
-
   return BDSStep(localPosCL, localMomCL);
 }
 
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
-                                              G4ThreeVector localMomentum,
-                                              G4bool        useCurvilinearWorld)
+						   G4ThreeVector localMomentum,
+						   G4bool        useCurvilinearWorld)
 {
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
 
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                                              G4ThreeVector CLPosition,
-                                              G4ThreeVector CLMomentum,
-                                              G4bool        useCurvilinearWorld,
-                                              G4double      FCof)
+                           G4double      angle,
+						   G4ThreeVector CLPosition,
+						   G4ThreeVector CLMomentum,
+						   G4bool        useCurvilinearWorld,
+						   G4double      FCof)
 {
-  G4double angle             = (*strength)["angle"];
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);

@@ -1,5 +1,0 @@
-include 1_Reference.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=10;
