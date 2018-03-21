@@ -67,7 +67,8 @@ private:
   std::vector <TRKParticle> bunch;
 
   /// populate particles using options and random number generator
-  void Populate(const GMAD::Beam& beam);
+  void Populate(const GMAD::Beam& beam,
+		BDSParticleDefinition* particle);
   
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 

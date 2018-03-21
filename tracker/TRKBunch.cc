@@ -49,7 +49,7 @@ TRKBunch::TRKBunch(const GMAD::Beam& beam,
   kineticEnergy = particle->KineticEnergy();
   
   //populate particles using options & random number generator
-  Populate(beam);
+  Populate(beam, particle);
 }
 
 TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
@@ -60,7 +60,8 @@ TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
 TRKBunch::~TRKBunch()
 {;}
 
-void TRKBunch::Populate(const GMAD::Beam& beam)
+void TRKBunch::Populate(const GMAD::Beam& beam,
+			BDSParticleDefinition* particle)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Generating particles" << std::endl;
@@ -72,7 +73,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam)
   //basis, which would save around 20% memory on each particle...
 
   // Initialise bunch
-  BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(beam);
+  BDSBunch* bdsbunch = BDSBunchFactory::CreateBunch(particle, beam);
 
   // Update population according to changes in bunch type
   population = BDSGlobalConstants::Instance()->NGenerate();
