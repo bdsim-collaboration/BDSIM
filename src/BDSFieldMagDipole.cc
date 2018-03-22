@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSFieldMagDipole::BDSFieldMagDipole(const G4ThreeVector& field):
   localField(field)
 {
+  finiteStrength = BDS::IsFinite(localField.mag());
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif
@@ -44,6 +45,7 @@ BDSFieldMagDipole::BDSFieldMagDipole(const BDSMagnetStrength* strength)
   else
     {localField = G4ThreeVector(bx,by,bz) * field;}
 
+  finiteStrength = BDS::IsFinite(localField.mag());
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif

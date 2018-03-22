@@ -34,8 +34,7 @@ G4double BDSFieldMagDipoleOuter::transitionLengthScale = 1*CLHEP::cm;
 BDSFieldMagDipoleOuter::BDSFieldMagDipoleOuter(const BDSMagnetStrength* strength,
 					       const G4double&          poleTipRadiusIn):
   poleTipRadius(poleTipRadiusIn),
-  normalisation(1),
-  finiteStrength(true)
+  normalisation(1)
 {
   BDSFieldMagDipole* innerField = new BDSFieldMagDipole(strength); // encapsulates logic about field parameters
   // store copy of nominal field strength in vector form
