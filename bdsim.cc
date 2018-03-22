@@ -158,6 +158,7 @@ int main(int argc,char** argv)
 						 globalConstants->FFact());
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
+  realWorld->SetBeta0ForConstruction(beamParticle->Beta());
   BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   

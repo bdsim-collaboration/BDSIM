@@ -53,6 +53,7 @@ energy when calculating the particle trajectory ('symplecticity') as well as bei
 competitive computationally. The routine provided is a 2nd order Euler integration
 algorithm.  More will be added in future.
 
+.. _integrator-sets:
 
 Integrator Sets
 ===============
@@ -60,27 +61,125 @@ Integrator Sets
 When using BDSIM, the user can select a *set* of integrators (ie tracking routines)
 with the following syntax::
 
-  option, integratorSet="geant4";
+  option, integratorSet="bdsimtwo";
 
 This choice affects the computation time and accuracy of the simulation but each set
 may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
 more sets can be added that mix and match routines as required.
 
-.. note:: "bdsimtwo" is the default.
+* "bdsimmatrix" is the default and recommended.
+* "bdsimtwo" is acceptable if no fringe dipole pole faces are present.
 
-.. note:: Prior to v0.96, the set described by "bdsimold" was the default, although
-	  in v0.95 it was labelled "bdsimone".
+All sets apart from "geant4" make use of custom BDSIM integrators for accelerator tracking.
+These integrators ignore the supplied field and use a strength parameter (such as `k1`
+for a quadrupole) instead. The field is always present and should a backwards, or
+non-paraxial particle be used, these BDSIM integrators resort to a G4ClassicalRK4
+algorithm. This allows all particles to be tracking in all directions over all momentum
+ranges but with the accuracy and speed of accelerator tracking for paraxial particles.
 
 The specific details are described in _`Integrator Algorithms`.
 
 The integrator set may be one of the following (case-insensitive):
 
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++-------------+-------------------------+--------------------------------+
+| **Set**     | **Magnetic Field Type** | **Integrator**                 |
++=============+=========================+================================+
+| bdsimmatrix | Solenoid                | BDSIM Dipole Rodrigues 2       |
+|             +-------------------------+--------------------------------+
+|             | Dipole                  | BDSIM Dipole Matrix            |
+|             +-------------------------+--------------------------------+
+|             | Dipole with K1          | BDSIM Dipole Matrix            |
+|             +-------------------------+--------------------------------+
+|             | Quadrupole              | BDSIM Quadrupole               |
+|             +-------------------------+--------------------------------+
+|             | Sextupole               | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Octupole                | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Decapole                | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Thick Multipole         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Muon Spoiler            | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | RF Cavity (EM)          | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | RF (E only)             | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | General Default         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Quadrupole         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Sextupole          | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Octupole           | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Decapole           | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Dipole Fringe           | BDSIM Dipole Fringe            |
+|             +-------------------------+--------------------------------+
+|             | Thin Multipole          | BDSIM Thin Multipole           |
+|             +-------------------------+--------------------------------+
+|             | Multipole Outer         | G4NystromRK4                   |
++-------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{6cm}|p{5cm}|p{6cm}|
+		    
++---------------------------+-------------------------+--------------------------------+
+| **Set**                   | **Magnetic Field Type** | **Integrator**                 |
++===========================+=========================+================================+
+| bdsimmatrixfringescaling  | Solenoid                | BDSIM Dipole Rodrigues 2       |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole                  | BDSIM Dipole Rodrigues 2       |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole with K1          | BDSIM Dipole Matrix            |
+|                           +-------------------------+--------------------------------+
+|                           | Quadrupole              | BDSIM Quadrupole               |
+|                           +-------------------------+--------------------------------+
+|                           | Sextupole               | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Octupole                | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Decapole                | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Thick Multipole         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Muon Spoiler            | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | RF Cavity (EM)          | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | RF (E only)             | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | General Default         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Quadrupole         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Sextupole          | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Octupole           | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Decapole           | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole Fringe           | BDSIM Dipole Fringe Scaling    |
+|                           +-------------------------+--------------------------------+
+|                           | Thin Multipole          | BDSIM Thin Multipole           |
+|                           +-------------------------+--------------------------------+
+|                           | Multipole Outer         | G4NystromRK4                   |
++---------------------------+-------------------------+--------------------------------+
+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
-| bdsimtwo   | Solenoid                | BDSIM Dipole2                  |
+| bdsimtwo   | Solenoid                | BDSIM Dipole Rodrigues 2       |
 |            +-------------------------+--------------------------------+
-|            | Dipole                  | BDSIM Dipole2                  |
+|            | Dipole                  | BDSIM Dipole Rodrigues 2       |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | BDSIM Dipole Matrix            |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
@@ -111,10 +210,18 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | bdsim      | Solenoid                | BDSIM Solenoid                 |
 |            +-------------------------+--------------------------------+
-|            | Dipole                  | BDSIM Dipole                   |
+|            | Dipole                  | BDSIM Dipole Rodrigues         |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
@@ -145,10 +252,20 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | geant4     | Solenoid                | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
@@ -179,10 +296,20 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | geant4dp*  | Solenoid                | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
@@ -213,14 +340,19 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
 
 .. Note:: `*` "geant4dp" is only available when BDSIM is compiled against
-	  Geant 4.10.3 or higher.
+	  Geant 4.10.4 or higher.
  
 .. Note:: Both dipole fringe and thin multipole fields are *thin* elements
 	  and have no *thick* equivalent and therefore have no field that
 	  Geant4 can use. Therefore, they only use the BDSIM integrators.
+
+
+.. _integrator_algorithms_section:
 
 Integrator Algorithms
 =====================

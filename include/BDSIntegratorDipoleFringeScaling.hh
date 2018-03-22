@@ -37,9 +37,9 @@ class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringeBase
 {
 public:
   BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strength,
-                G4double                 brhoIn,
-			    G4Mag_EqRhs*             eqOfMIn,
-			    G4double                 minimumRadiusOfCurvature);
+				   G4double                 brhoIn,
+				   G4Mag_EqRhs*             eqOfMIn,
+				   G4double                 minimumRadiusOfCurvature);
   
   virtual ~BDSIntegratorDipoleFringeScaling(){;}
 

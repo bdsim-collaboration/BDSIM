@@ -80,7 +80,10 @@ private:
   const G4double    bPrime;
 
   /// Cached magnet property, nominal magnetic rigidity
-  const G4double 	bRho;
+  const G4double    bRho;
+
+  /// Cached nominal relativistic beta of the nominal beam particle.
+  const G4double    beta0;
 
   /// Cached magnet property, nominal bending radius.
   const G4double 	rho;
