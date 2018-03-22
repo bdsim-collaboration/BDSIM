@@ -30,7 +30,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @brief Override G4Mag_UsualEqRhs, provides BDSIM integrators access to particle attributes.
  *
- *
  * @author William Shields
  */
 
@@ -39,13 +38,13 @@ class BDSMagUsualEqRhs: public G4Mag_UsualEqRhs
 public:
   BDSMagUsualEqRhs(G4MagneticField* MagField);
 
-  virtual ~BDSMagUsualEqRhs();
+  virtual ~BDSMagUsualEqRhs(){;}
 
   /// Accessor to variable for normalising to charge
-  inline G4double FCof() const;
+  inline G4double FCof() const {return fCof_val;}
 
   /// Accessor to particle mass
-  inline G4double Mass() const;
+  inline G4double Mass() const {return fMassCof;}
 
   /// Calculate particle velocity W.R.T speed of light
   G4double Beta(const G4double y[]);

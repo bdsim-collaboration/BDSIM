@@ -29,16 +29,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PhysicalConstants.hh"
 #include "BDSGlobalConstants.hh"
 
-BDSMagUsualEqRhs::BDSMagUsualEqRhs(G4MagneticField* MagField) : G4Mag_UsualEqRhs(MagField),
-                                                                fMassCof(0.),
-                                                                fCof_val(0.)
-{}
-
-BDSMagUsualEqRhs::~BDSMagUsualEqRhs() {}
+BDSMagUsualEqRhs::BDSMagUsualEqRhs(G4MagneticField* MagField):
+  G4Mag_UsualEqRhs(MagField),
+  fMassCof(0.),
+  fCof_val(0.)
+{;}
 
 void BDSMagUsualEqRhs::SetChargeMomentumMass( G4ChargeState particleCharge,
-                       G4double MomentumXc,
-                       G4double particleMass)
+					      G4double MomentumXc,
+					      G4double particleMass)
 {
   G4Mag_EqRhs::SetChargeMomentumMass(particleCharge, MomentumXc, particleMass);
   G4double pcharge = particleCharge.GetCharge();
