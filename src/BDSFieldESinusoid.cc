@@ -43,7 +43,9 @@ BDSFieldESinusoid::BDSFieldESinusoid(G4double eFieldAmplitudeIn,
   eField(eFieldAmplitudeIn),
   angularFrequency(CLHEP::twopi*frequencyIn),
   phase(phaseOffsetIn)
-{;}
+{
+  finiteStrength = BDS::IsFinite(eField);
+}
 
 G4ThreeVector BDSFieldESinusoid::GetField(const G4ThreeVector& /*position*/,
 					  const G4double       t) const

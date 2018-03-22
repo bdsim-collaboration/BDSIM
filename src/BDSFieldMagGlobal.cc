@@ -25,7 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldMagGlobal::BDSFieldMagGlobal(BDSFieldMag* fieldIn):
   field(fieldIn)
-{;}
+{
+  finiteStrength = field->FiniteStrength();
+}
 
 BDSFieldMagGlobal::~BDSFieldMagGlobal()
 {

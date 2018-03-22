@@ -64,8 +64,13 @@ public:
   /// the coordinate system of the geometry.  Ie an offset aperture.  This is
   /// a public interface to allow the transform to be set after construction so
   /// that derived classes don't need modified constructors.
-  virtual void SetTransform(const G4Transform3D& transformIn)
-  {transform = transformIn.inverse();}
+  virtual void SetTransform(const G4Transform3D& transformIn) {transform = transformIn.inverse();}
+
+  /// Accessor.
+  inline G4bool FiniteStrength() const {return finiteStrength;}
+  
+protected:
+  G4bool finiteStrength; ///< Flag to cache whether finite nor not.
 
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.

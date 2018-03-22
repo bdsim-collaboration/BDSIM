@@ -233,7 +233,8 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
 						   cuInnerCylSolid,            // solid 1
 						   cuInnerRectSolid);          // solid 2
 
-  //screen outer edge for subtraction (actually just like vacuum + lengthSafety)
+  // screen outer edge for subtraction (actually just like vacuum + lengthSafety)
+  // halfLength is vacLength - 1um
   G4VSolid* cuOuterCylSolid = new G4Tubs(name + "_cu_outer_cylinder",    // name
 					 0,                                // inner radius (0 for unambiguous subtraction)
 					 cuOuterRadius,                    // outer radius
@@ -326,6 +327,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
 			     CLHEP::twopi);                      // rotation finish angle
   
   //container cylindrical solid (circular cross-section)
+  // 'length' is correct full length of object
   containerSolid = new G4Tubs(name + "_container_cylinder", // name
 			      0,                              // inner radius
 			      containerRadius,                // outer radius
@@ -682,6 +684,7 @@ G4double BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      
 				outputface);              // output face normal
 
   //container cylindrical solid (circular cross-section)
+  // 'length' is correct full length of object
   containerSolid = new G4CutTubs(name + "_container_cylinder", // name
 				 0,                            // inner radius
 				 containerRadius,              // outer radius

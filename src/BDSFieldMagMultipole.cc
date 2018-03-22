@@ -36,9 +36,15 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
 {
   // multiple by brho to get field coefficients
   for (auto kn : normalComponents)
-    {kn *= brho;}
+    {
+      finiteStrength = BDS::IsFinite(kn) || finiteStrength;
+      kn *= brho;
+    }
   for (auto ksn : skewComponents)
-    {ksn *= brho;}
+    {
+      finiteStrength = BDS::IsFinite(ksn) || finiteStrength;
+      ksn *= brho;
+    }
   
   // safety check - ensure we're not going to a higher order than the strength
   // class supports.

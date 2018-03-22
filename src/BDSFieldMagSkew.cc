@@ -29,6 +29,8 @@ BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
   antiRotation = new G4RotationMatrix();
   rotation->rotateZ(angle);
   antiRotation->rotateZ(-angle);
+
+  finiteStrength = field->FiniteStrength();
 }
 
 BDSFieldMagSkew::~BDSFieldMagSkew()

@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -30,6 +31,7 @@ BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(BDSMagnetStrength const* strength,
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   bPrime = brho * (*strength)["k1"] / CLHEP::m2;
+  finiteStrength = BDS::IsFinite(bPrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
