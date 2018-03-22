@@ -47,16 +47,16 @@ public:
   inline G4double Mass() const {return fMassCof;}
 
   /// Calculate particle velocity W.R.T speed of light
-  G4double Beta(const G4double y[]);
+  G4double Beta(const G4double y[6]);
 
   /// Calculate particle velocity W.R.T speed of light
-  G4double Beta(const G4ThreeVector mom);
+  G4double Beta(const G4ThreeVector& mom);
 
   /// Calculate total particle energy
   G4double TotalEnergy(const G4double y[]);
 
   /// Calculate total particle energy
-  G4double TotalEnergy(const G4ThreeVector mom);
+  G4double TotalEnergy(const G4ThreeVector& mom);
 
   /// Copy of class method from G4Mag_UsualEqRhs
   virtual void SetChargeMomentumMass(G4ChargeState particleCharge,
@@ -74,15 +74,5 @@ protected:
   G4double fCof_val;
 
 };
-
-inline G4double BDSMagUsualEqRhs::FCof() const
-  {
-    return fCof_val;
-  }
-
-inline G4double BDSMagUsualEqRhs::Mass() const
-{
-  return fMassCof;
-}
 
 #endif

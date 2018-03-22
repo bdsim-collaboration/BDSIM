@@ -46,14 +46,14 @@ void BDSMagUsualEqRhs::SetChargeMomentumMass( G4ChargeState particleCharge,
   fMassCof = particleMass*particleMass;
 }
 
-G4double BDSMagUsualEqRhs::Beta(const G4double y[])
+G4double BDSMagUsualEqRhs::Beta(const G4double y[6])
 {
   G4ThreeVector mom = G4ThreeVector(y[3], y[4], y[5]);
   G4double beta = Beta(mom);
   return beta;
 }
 
-G4double BDSMagUsualEqRhs::Beta(const G4ThreeVector mom)
+G4double BDSMagUsualEqRhs::Beta(const G4ThreeVector& mom)
 {
   G4double momentum_mag_square = mom.mag2();
   G4double Energy = std::sqrt(momentum_mag_square + fMassCof);
@@ -68,7 +68,7 @@ G4double BDSMagUsualEqRhs::TotalEnergy(const G4double y[])
   return Energy;
 }
 
-G4double BDSMagUsualEqRhs::TotalEnergy(const G4ThreeVector mom)
+G4double BDSMagUsualEqRhs::TotalEnergy(const G4ThreeVector& mom)
 {
   G4double momentum_mag_square = mom.mag2();
   G4double Energy = std::sqrt(momentum_mag_square + fMassCof);
