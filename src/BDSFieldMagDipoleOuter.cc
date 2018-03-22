@@ -34,7 +34,8 @@ G4double BDSFieldMagDipoleOuter::transitionLengthScale = 1*CLHEP::cm;
 BDSFieldMagDipoleOuter::BDSFieldMagDipoleOuter(const BDSMagnetStrength* strength,
 					       const G4double&          poleTipRadiusIn):
   poleTipRadius(poleTipRadiusIn),
-  normalisation(1)
+  normalisation(1),
+  finiteStrength(true)
 {
   BDSFieldMagDipole* innerField = new BDSFieldMagDipole(strength); // encapsulates logic about field parameters
   // store copy of nominal field strength in vector form
@@ -46,6 +47,11 @@ BDSFieldMagDipoleOuter::BDSFieldMagDipoleOuter(const BDSMagnetStrength* strength
   G4ThreeVector outerFieldValue = GetField(normalisationPoint);
   
   normalisation = innerFieldValue.mag() / outerFieldValue.mag();
+  if (std::isnan(normalisation))
+    {
+      normalisation = 0; // possible for 0 strength -> b inner = 0 / b outer = 0;
+      finiteStrength = false;
+    }
 
   delete innerField;
 }
@@ -53,6 +59,8 @@ BDSFieldMagDipoleOuter::BDSFieldMagDipoleOuter(const BDSMagnetStrength* strength
 G4ThreeVector BDSFieldMagDipoleOuter::GetField(const G4ThreeVector& position,
 					       const G4double       /*t*/) const
 {
+  if (!finiteStrength)
+    {return G4ThreeVector();} // 0,0,0
   G4double rmag = position.mag();
 
   if (rmag < 1) // closer than 1mm from dipole
@@ -70,6 +78,6 @@ G4ThreeVector BDSFieldMagDipoleOuter::GetField(const G4ThreeVector& position,
   if (std::abs(weight) > 0.99 || std::abs(weight) < 0.01)
     {weight = std::round(weight);} // tanh is asymptotic - snap to 1.0 when beyond 0.99
   b = weight*b + (1-weight)*localField; // weighted sum of two components
-
+  
   return b;
 }
