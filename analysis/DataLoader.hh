@@ -112,11 +112,9 @@ private:
   Run*        run;
 
   std::vector<std::string>    fileNames;
-  std::vector<std::string>    safeFileNames;
   std::vector<std::string>    treeNames;
   std::vector<std::string>    branchNames;  // non-sampler branch names
   std::vector<std::string>    samplerNames; // sampler branch names
-  std::map<std::string, int>  samplerNameMap;
 
   TChain* heaChain;
   TChain* g4dChain;
