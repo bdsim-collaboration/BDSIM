@@ -42,6 +42,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   bRho(brhoIn),
+  beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   fieldRatio((*strengthIn)["field"] / (bRho/rho)),
   strength(strengthIn)
@@ -172,7 +173,7 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
   G4double nomEnergy = std::sqrt(std::pow(nomMomentum,2) + eq->Mass());
 
   // get beta (v/c)
-  G4double beta = eq->Beta(momIn);
+  //G4double beta = eq->Beta(momIn);
 
   // deltaE/(P0*c) to match literature.
   G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum) ;
@@ -216,8 +217,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
-      X26 = (1.0/beta) * (1.0/rho) * X12;
+      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
+      X26 = (1.0/beta0) * (1.0/rho) * X12;
 
       Y11= std::cosh(kyl);
       Y12= std::sinh(kyl)/ky;
@@ -232,8 +233,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
-      X26 = (1.0/beta) * (1.0/rho) * X12;
+      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
+      X26 = (1.0/beta0) * (1.0/rho) * X12;
       
       Y11= std::cos(kyl);
       Y12= std::sin(kyl)/ky;
