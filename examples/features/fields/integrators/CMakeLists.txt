@@ -1,6 +1,7 @@
 simple_testing(integrators-bdsimone     "--file=bdsimone.gmad"          "")
 simple_testing(integrators-bdsimtwo     "--file=one_of_each_base.gmad"  "")
 simple_testing(integrators-bdsimmatrix  "--file=bdsimmatrix.gmad"       "")
+simple_testing(integrators-bdsimmatrixfringescaling "--file=bdsimmatrixfringescaling.gmad" "")
 
 if (USE_GZSTREAM)
   simple_testing(integrators-g4classicalrk4      "--file=g4classicalrk4.gmad" "")
