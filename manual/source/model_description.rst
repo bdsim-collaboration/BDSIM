@@ -2722,6 +2722,9 @@ Tracking Options
 These control over the tracking routines used as well as roughly the speed of the simulation
 with various options.
 
+Tracking integrator sets are described in detail in :ref:`integrator-sets` and
+:ref:`integrator_algorithms_section`.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
@@ -2732,7 +2735,8 @@ with various options.
 |                                  | the total element is conserved. (default = false).    |
 +----------------------------------+-------------------------------------------------------+
 | integratorSet                    | Set of tracking routines to use ("bdsimmatrix",       |
-|                                  | "bdsimtwo", or "geant4").                             |
+|                                  | "bdsimtwo", "bdsimmatrixfringescaling", "geant4", or  |
+|                                  | "geant4dp").                                          |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | Whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true).                |
