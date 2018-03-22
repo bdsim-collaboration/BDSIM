@@ -37,7 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldEMZero: public BDSFieldEM
 {
 public:
-  BDSFieldEMZero(){;}
+  BDSFieldEMZero(){finiteStrength = false;}
   
   virtual ~BDSFieldEMZero(){;}
 

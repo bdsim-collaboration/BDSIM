@@ -56,7 +56,6 @@ public:
 private:
   G4double      poleTipRadius;  ///< Used as radial limit for returning normal field.
   G4double      normalisation;  ///< Storage of the overal normalisation factor.
-  G4bool        finiteStrength; ///< Flag to avoid complex computation for no field.
   G4ThreeVector localField;     ///< Nominal dipole field.
   G4ThreeVector m;              ///< Dipole moment as unit vector of field direction.
 
