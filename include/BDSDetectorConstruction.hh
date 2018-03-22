@@ -81,7 +81,7 @@ public:
   void BuildPhysicsBias();
 
   /// Update member brho (rigidity) for use in constructing accelerator elements.
-  void SetRigidityForConstruction(G4double brhoIn) {brho = brhoIn;}
+  inline void SetRigidityForConstruction(const G4double& brhoIn) {brho = brhoIn;}
 
   /// Public access to the world extent.
   BDSExtent WorldExtent() const {return worldExtent;}
