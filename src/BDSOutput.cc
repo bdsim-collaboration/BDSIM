@@ -90,6 +90,7 @@ void BDSOutput::FillHeader()
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
+  geant4DataOutput->Flush();
   geant4DataOutput->Fill(writeIons);
   WriteGeant4Data();
 #ifndef __ROOTDOUBLE__
