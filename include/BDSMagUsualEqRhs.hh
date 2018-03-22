@@ -63,14 +63,8 @@ public:
                                      G4double MomentumXc,
                                      G4double particleMass);
 
-  /// Copy of class method from G4Mag_UsualEqRhs
-  void EvaluateRhsGivenB(const G4double y[],
-                         const G4double B[3],
-                         G4double dydx[]) const;
-
 protected:
-
-  G4double fMassCof;  // particle mass squared
+  G4double fMassCof;  ///< Particle mass squared.
   G4double fCof_val;
 
 };
