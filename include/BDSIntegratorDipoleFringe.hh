@@ -36,7 +36,7 @@ class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleFringeBase
 {
 public:
   BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
-                G4double                 brhoIn,
+			    G4double                 brhoIn,
 			    G4Mag_EqRhs*             eqOfMIn,
 			    G4double                 minimumRadiusOfCurvature);
   
@@ -52,7 +52,6 @@ public:
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;
-  
 };
 
 #endif

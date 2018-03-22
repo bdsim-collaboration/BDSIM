@@ -47,9 +47,9 @@ class BDSIntegratorDipoleFringeBase: public BDSIntegratorDipoleRodrigues2, publi
 {
 public:
   BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strength,
-                G4double                 brhoIn,
-			    G4Mag_EqRhs*             eqOfMIn,
-			    G4double                 minimumRadiusOfCurvature);
+				G4double                 brhoIn,
+				G4Mag_EqRhs*             eqOfMIn,
+				G4double                 minimumRadiusOfCurvature);
   
   virtual ~BDSIntegratorDipoleFringeBase(){;}
 
@@ -85,7 +85,6 @@ protected:
   /// Nominal magnet bending radius
   const G4double rho;
 
-
   BDSMagnetStrength const* strength;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
@@ -97,9 +96,8 @@ protected:
   static G4double thinElementLength;
 
 private:
-    /// Private default constructor to enforce use of supplied constructor
-    BDSIntegratorDipoleFringeBase() = delete;
-
+  /// Private default constructor to enforce use of supplied constructor
+  BDSIntegratorDipoleFringeBase() = delete;
 };
 
 #endif
