@@ -1170,7 +1170,9 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     case BDSFieldType::skewdecapole:
       {outerType = BDSFieldType::skewmultipoleouterdecapole;   break;}
     case BDSFieldType::dipole3d:
-      {outerType = BDSFieldType::multipoleouterdipole3d;   break;}
+      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+    case BDSFieldType::solenoid:
+      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
