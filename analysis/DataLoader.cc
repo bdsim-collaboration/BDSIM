@@ -108,7 +108,7 @@ void DataLoader::CommonCtor(std::string fileName)
 
 void DataLoader::BuildInputFileList(std::string inputPath)
 {
-  if(inputPath == "")
+  if(inputPath.empty())
     {throw std::string("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
@@ -151,7 +151,7 @@ void DataLoader::BuildInputFileList(std::string inputPath)
 	{std::cout << fn << " is not a BDSIM output file - skipping!" << std::endl;}
     }
   
-  if (fileNames.size() == 0) // exit if no valid files.
+  if (fileNames.empty()) // exit if no valid files.
     {
       std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
       exit(1);
@@ -223,7 +223,7 @@ void DataLoader::ChainTrees()
   // loop over files and chain trees
   if (!backwardsCompatible)
     {g4dChain->Add(fileNames[0].c_str());} // only require 1 copy
-  for (auto filename : fileNames)
+  for (const auto& filename : fileNames)
     {
       heaChain->Add(filename.c_str());
       beaChain->Add(filename.c_str());
