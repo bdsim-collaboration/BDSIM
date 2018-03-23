@@ -23,11 +23,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Transform3D.hh"
 
 BDSFieldE::BDSFieldE():
+  finiteStrength(true),
   transform(G4Transform3D::Identity),
   inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldE::BDSFieldE(G4Transform3D transformIn):
+  finiteStrength(true),
   transform(transformIn),
   inverseTransform(transformIn.inverse())
 {;}
@@ -35,7 +37,9 @@ BDSFieldE::BDSFieldE(G4Transform3D transformIn):
 G4ThreeVector BDSFieldE::GetFieldTransformed(const G4ThreeVector& position,
 					     const G4double       t) const
 {
-  if (transform != G4Transform3D::Identity)
+  if (!finiteStrength)
+    {return G4ThreeVector();} // quicker than query
+  else if (transform != G4Transform3D::Identity)
     {
       G4ThreeVector transformedPosition = inverseTransform * (HepGeom::Point3D<G4double>)position;
       G4ThreeVector field = GetField(transformedPosition, t);

@@ -38,7 +38,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSFieldMagZero: public BDSFieldMag
 {
 public:
-  BDSFieldMagZero(){;}
+  BDSFieldMagZero(){finiteStrength = false;}
   
   virtual ~BDSFieldMagZero(){;}
 

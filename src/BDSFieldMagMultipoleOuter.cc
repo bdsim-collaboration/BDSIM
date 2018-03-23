@@ -63,6 +63,11 @@ BDSFieldMagMultipoleOuter::BDSFieldMagMultipoleOuter(const G4int              or
   
   // normalisation
   normalisation = fieldAtPoleTipMag / rawOuterlFieldAtPoleTipMag;
+  if (std::isnan(normalisation))
+    {
+      normalisation = 0;
+      finiteStrength = false;
+    }
 
   delete innerFieldIn; // no longer required
 }

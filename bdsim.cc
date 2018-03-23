@@ -158,6 +158,7 @@ int main(int argc,char** argv)
 						 globalConstants->FFact());
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
+  realWorld->SetBeta0ForConstruction(beamParticle->Beta());
   BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
@@ -206,7 +207,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch));
+  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, physList->UsingIons()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;

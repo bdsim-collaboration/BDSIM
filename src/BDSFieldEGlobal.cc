@@ -25,7 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldEGlobal::BDSFieldEGlobal(BDSFieldE* fieldIn):
   field(fieldIn)
-{;}
+{
+  finiteStrength = field->FiniteStrength();
+}
 
 BDSFieldEGlobal::~BDSFieldEGlobal()
 {

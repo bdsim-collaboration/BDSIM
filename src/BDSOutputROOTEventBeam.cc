@@ -20,10 +20,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 ClassImp(BDSOutputROOTEventBeam)
 
-BDSOutputROOTEventBeam::BDSOutputROOTEventBeam() : BeamBase()
+BDSOutputROOTEventBeam::BDSOutputROOTEventBeam()
 {;}
 
-BDSOutputROOTEventBeam::BDSOutputROOTEventBeam(const GMAD::BeamBase* ob): BeamBase(*ob)
+BDSOutputROOTEventBeam::BDSOutputROOTEventBeam(const GMAD::BeamBase* ob):
+  BeamBase(*ob)
 {;}
 
 BDSOutputROOTEventBeam::~BDSOutputROOTEventBeam()

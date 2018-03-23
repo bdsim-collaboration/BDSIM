@@ -82,8 +82,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 using namespace GMAD;
 
-BDSComponentFactory::BDSComponentFactory(G4double brhoIn):
+BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
+					 const G4double& beta0In):
   brho(brhoIn),
+  beta0(beta0In),
   lengthSafety(BDSGlobalConstants::Instance()->LengthSafety()),
   thinElementLength(BDSGlobalConstants::Instance()->ThinElementLength()),
   includeFringeFields(BDSGlobalConstants::Instance()->IncludeFringeFields()),
@@ -440,6 +442,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   G4double angle = 0;
   G4double field = 0;
   CalculateAngleAndFieldSBend(element, angle, field);
@@ -478,7 +481,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // don't check here on whether the possibly next / previous sbend will clash with
   // pole face angles - let that be checked after element construction in the beamline
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();  
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   G4double arcLength = 0, chordLength = 0, field = 0, angle = 0;
   CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
@@ -559,6 +563,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 {
   BDSMagnetStrength* st         = new BDSMagnetStrength();
+  SetBeta0(st);
   BDSFieldType       fieldType  = BDSFieldType::dipole3d;
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
@@ -676,6 +681,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   (*st)["k1"] = element->k1;
 
   return CreateMagnet(element, st, BDSFieldType::quadrupole, BDSMagnetType::quadrupole);
@@ -687,6 +693,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   (*st)["k2"] = element->k2;
 
   return CreateMagnet(element, st, BDSFieldType::sextupole, BDSMagnetType::sextupole);
@@ -698,6 +705,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   (*st)["k3"] = element->k3;
 
   return CreateMagnet(element, st, BDSFieldType::octupole, BDSMagnetType::octupole);
@@ -709,6 +717,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   (*st)["k4"] = element->k4;
   
   return CreateMagnet(element, st, BDSFieldType::decapole, BDSMagnetType::decapole);
@@ -775,6 +784,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->B * CLHEP::tesla;
@@ -1006,7 +1016,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   BDSFieldInfo* awakeField = nullptr;
   if (element->fieldAll.empty())
     {
-      BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
+      BDSMagnetStrength* awakeStrength = new BDSMagnetStrength();
+      SetBeta0(awakeStrength);
       (*awakeStrength)["field"] = element->B * CLHEP::tesla;
       (*awakeStrength)["by"]    = 1; // bx,by,bz is unit field direction, so (0,1,0) here
 
@@ -1172,7 +1183,9 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
     case BDSFieldType::skewdecapole:
       {outerType = BDSFieldType::skewmultipoleouterdecapole;   break;}
     case BDSFieldType::dipole3d:
-      {outerType = BDSFieldType::multipoleouterdipole3d;   break;}
+      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+    case BDSFieldType::solenoid:
+      {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
@@ -1516,7 +1529,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
 							      G4double currentArcLength) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
-
+  SetBeta0(st);
   G4double chordLength = el->l * CLHEP::m;
   
   if (BDS::IsFinite(el->gradient))
@@ -1610,6 +1623,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Element const* el) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
   G4double length = el->l;
   // component strength is only normalised by length for thick multipoles
   if (el->type == ElementType::_THINMULT)

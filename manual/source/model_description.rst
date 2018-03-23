@@ -2722,6 +2722,9 @@ Tracking Options
 These control over the tracking routines used as well as roughly the speed of the simulation
 with various options.
 
+Tracking integrator sets are described in detail in :ref:`integrator-sets` and
+:ref:`integrator_algorithms_section`.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
@@ -2732,7 +2735,8 @@ with various options.
 |                                  | the total element is conserved. (default = false).    |
 +----------------------------------+-------------------------------------------------------+
 | integratorSet                    | Set of tracking routines to use ("bdsimmatrix",       |
-|                                  | "bdsimtwo", or "geant4").                             |
+|                                  | "bdsimtwo", "bdsimmatrixfringescaling", "geant4", or  |
+|                                  | "geant4dp").                                          |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | Whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true).                |
@@ -3102,7 +3106,10 @@ not likely to be useful to generate a large number of repeated events with this 
 
 These parameters also act as **central** parameters for all other distributions. For example, a Gaussian
 distribution may defined with the `gauss`_ parameters but `X0` set to offset the centroid of the
-Gaussian with respect to the reference trajectory.
+Gaussian with respect to the reference trajectory. Note, **energy** is **total energy** of the particle
+including the rest mass.
+
+  .. tabularcolumns:: |p{5cm}|p{6cm}|p{2cm}|
 
 +----------------------------------+-------------------------------------------------------+----------+
 | Option                           | Description                                           | Default  |
@@ -3119,7 +3126,7 @@ Gaussian with respect to the reference trajectory.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Yp0`                            | Vertical canonical momentum                           | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
-| `E0`                             | Central energy of bunch distribution (GeV)            | 'energy' |
+| `E0`                             | Central total energy of bunch distribution (GeV)      | 'energy' |
 +----------------------------------+-------------------------------------------------------+----------+
 
 Examples::
@@ -3147,11 +3154,18 @@ is initialised by a :math:`6\times1` means vector and :math:`6\times 6` sigma ma
 
 * All parameters from `reference`_ distribution as used as centroids.
 
-+----------------------------------+-------------------------------------------------------+
-| Option                           | Description                                           |
-+==================================+=======================================================+
-| `sigmaNM`                        | Sigma matrix element (N,M)                            |
-+----------------------------------+-------------------------------------------------------+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+		      
++------------------+-----------------------------------+
+| Option           | Description                       |
++==================+===================================+
+| `sigmaNM`        | Sigma matrix element (N,M)        |
++------------------+-----------------------------------+
+
+* The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
+
+The user should take care to ensure they specify a positive definite matrix. BDSIM will
+emit and error and stop running if this is not the case.
 
 Examples::
 
@@ -3167,6 +3181,9 @@ Examples::
 	 sigma12 = 1e-2,
 	 sigma34 = 1.4e-3;
 
+.. note:: One should take care in defining, say, sigma16 as this is the covariance of `x` position
+	  and energy, however this may be proportional to momentum and not total energy. For such
+	  a *correlation* between `x` and `E`, other off-diagonal terms would be finite also.
 
 gauss
 ^^^^^
@@ -3183,23 +3200,26 @@ correlations between phase space coordinates, so
    \sigma_{55} & =  \sigma_{T}^2 \\  
    \sigma_{66} & =  \sigma_{E}^2.
 
+* The coordinates are in order 1:`x` (m), 2:`xp`, 3:`y` (m), 4:`yp`, 5:`t` (s), 6:`E` (GeV).
 * All parameters from `reference`_ distribution as used as centroids.
 
-+----------------------------------+-------------------------------------------------------------------------------------+
-| Option                           | Description                                                                         |
-+==================================+=====================================================================================+
-| `sigmaX`                         | Horizontal gaussian sigma [m]                                                       |
-+----------------------------------+-------------------------------------------------------------------------------------+
-| `sigmaY`                         | Vertical gaussian sigma [m]                                                         |
-+----------------------------------+-------------------------------------------------------------------------------------+
-| `sigmaXp`                        | Sigma of the horizontal canonical momentum                                          |
-+----------------------------------+-------------------------------------------------------------------------------------+
-| `sigmaYp`                        | Sigma of the vertical canonical momentum                                            |
-+----------------------------------+-------------------------------------------------------------------------------------+
-| `sigmaE`                         | Relative energy spread :math:`\sigma_{E}/E`                                         |
-+----------------------------------+-------------------------------------------------------------------------------------+
-| `sigmaT`                         | Sigma of the temporal distribution [s]                                              |
-+----------------------------------+-------------------------------------------------------------------------------------+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+  
++------------------+----------------------------------------------------+
+| Option           | Description                                        |
++==================+====================================================+
+| `sigmaX`         | Horizontal gaussian sigma [m]                      |
++------------------+----------------------------------------------------+
+| `sigmaY`         | Vertical gaussian sigma [m]                        |
++------------------+----------------------------------------------------+
+| `sigmaXp`        | Sigma of the horizontal canonical momentum         |
++------------------+----------------------------------------------------+
+| `sigmaYp`        | Sigma of the vertical canonical momentum           |
++------------------+----------------------------------------------------+
+| `sigmaE`         | Relative energy spread :math:`\sigma_{E}/E`        |
++------------------+----------------------------------------------------+
+| `sigmaT`         | Sigma of the temporal distribution [s]             |
++------------------+----------------------------------------------------+
 
 
 gausstwiss
@@ -3239,7 +3259,10 @@ is calculated, using the following equations:
 
 * All parameters from `reference`_ distribution as used as centroids.
 * Longitudinal parameters :math:`\sigma_{E}` and :math:`\sigma_{T}` used as defined in `gauss`_ .
-   
+
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+		      
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3275,6 +3298,8 @@ range from `-envelopeX` to `envelopeX` for example.
 
 * All parameters from `reference`_ distribution as used as centroids.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+  
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3296,6 +3321,8 @@ exception that the particles are randomly uniformly distributed within a square.
 
 * All parameters from `reference`_ distribution as used as centroids.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+  
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3321,6 +3348,8 @@ all other parameters, the `reference`_ coordinates are used - ie `xp`, `yp` etc.
 
 * All parameters from `reference`_ distribution as used as centroids.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+  
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3336,6 +3365,8 @@ eshell
 Defines an elliptical annulus in phase space in each dimension that's uncorrelated.
 
 * All parameters from `reference`_ distribution as used as centroids.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
   
 +----------------------------------+--------------------------------------------------------------------+
 | Option                           | Description                                                        |
@@ -3386,6 +3417,8 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
    f_{\rm haloWeight}(\epsilon_{\rm SP}) & = \exp\left(-\frac{\epsilon_{SP}-\epsilon_{\rm core}}{p \epsilon_{\rm core}}\right)
 
 * All parameters from `reference`_ distribution as used as centroids.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
   
 +----------------------------------+-----------------------------------------------------------------------------+
 | Option                           | Description                                                                 |
@@ -3428,6 +3461,8 @@ appropriate parameters need to be defined for each individual distribution.
 
 * All parameters from `reference`_ distribution as used as centroids.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+  
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3482,6 +3517,8 @@ recommended as compressed ASCII is significantly smaller in size.
 .. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
 	  by default on.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+	  
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3521,6 +3558,8 @@ ptc
 
 Output from MAD-X PTC used as input for BDSIM. 
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Description                                           |
 +==================================+=======================================================+
@@ -3545,6 +3584,8 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 
 Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
 and are described in :ref:`tunnel-examples`. 
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | **Tunnel Parameters**            |                                                       |
@@ -3776,7 +3817,7 @@ The user may use any sequence defined in the parser before the `use` command. Th
 beam line is produced by declaring a placement. The placement definition (see
 :ref:`placements`) is augmented with the following parameters:
 
-     
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +------------------------+---------------------------------------------------------------+
 | **Parameter**          |  **Description**                                              |

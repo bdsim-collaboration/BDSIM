@@ -16,35 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSFIELDEMZERO_H
-#define BDSFIELDEMZERO_H
+#ifndef ANALYSISGEANT4DATA_H
+#define ANALYSISGEANT4DATA_H
 
-#include "BDSFieldEM.hh"
+#include "TROOT.h"
 
-#include "globals.hh" // geant4 types / globals
-#include "G4ThreeVector.hh"
+#include "BDSOutputROOTGeant4Data.hh"
 
-#include <utility>
+class TTree;
 
 /**
- * @brief Null EM field - for special cases where we need a valid object.
- * 
- * Simply returns 0,0,0,0,0,0 for all field components.
+ * @brief Geant4 Data loader.
  *
  * @author Laurie Nevay.
  */
 
-class BDSFieldEMZero: public BDSFieldEM
+class Geant4Data
 {
 public:
-  BDSFieldEMZero(){finiteStrength = false;}
-  
-  virtual ~BDSFieldEMZero(){;}
+  Geant4Data();
+  Geant4Data(bool debugIn);
+  virtual ~Geant4Data();
 
-  /// Access the field value.
-  virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector& /*position*/,
-				 const G4double       /*t*/ = 0) const
-  {return std::make_pair(G4ThreeVector(0,0,0),G4ThreeVector(0,0,0));}
+  /// Set the branch addresses to address the contents of the file.
+  void SetBranchAddress(TTree* t);
+
+  /// Member that ROOT can map file data to locally.
+  BDSOutputROOTGeant4Data* geant4Data;
+
+private:
+  bool debug;
+  
+  ClassDef(Geant4Data,1);
 };
 
 #endif
