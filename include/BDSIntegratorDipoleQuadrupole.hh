@@ -88,6 +88,9 @@ private:
   /// Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
   const G4double    fieldRatio;
 
+  /// Nominal beam energy
+  const	G4double 	nominalEnergy;
+
   /// Cache magnet strength, required for curvilinear transforms.
   BDSMagnetStrength const* strength;
 };
