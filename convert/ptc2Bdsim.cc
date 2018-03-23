@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @file ptc2Bdsim.cc
  */
 
+#include "Particles.hh"
 #include "TfsFile.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
@@ -49,36 +50,20 @@ int main(int argc, char *argv[])
   std::string outputFileName = std::string(argv[2]);
   std::string particleName   = std::string(argv[3]);
 
-  struct particleInfo
-  {
-    int    pdgID;
-    double mass; // in GeV
-  };
-
-  std::map<std::string, particleInfo> particles =
-    {
-      {"proton", {2212, 0.938272}},
-      {"e-",     {11,   0.000510999}},
-      {"e+",     {11,   0.000510999}}
-    };
-
   double mass  = 0;
   int    pdgID = 0;
-  auto pInfo = particles.find(particleName);
-  if (pInfo == particles.end())
+  try
     {
-      std::cerr << "Invalid particle name: \"" << particleName
-		<< "\". Available particles are:" << std::endl;
-      for (const auto& part : particles)
-	{std::cout << "\"" << part.first << "\"" << std::endl;}
+      auto pInfo = BDSC::GetParticleInfo(particleName);
+      mass  = pInfo.mass;
+      pdgID = pInfo.pdgID;
+    }
+  catch (std::string& error)
+    {
+      std::cout << error << std::endl;
       exit(1);
     }
-  else
-    {
-      mass  = pInfo->second.mass;
-      pdgID = pInfo->second.pdgID;
-    }
-
+  
   // load ptc file
   PTC::TfsFile* input = new PTC::TfsFile(inputFileName);
 
@@ -101,7 +86,7 @@ int main(int argc, char *argv[])
 			      outputSampler,32000,0);
       localSamplers.push_back(outputSampler);
     }
-
+  
   // we can only loose particles so the number of entries in the first
   // is the number of 'events' or entries we'll use
   int nEntries  = (int)input->segments[0].size();
