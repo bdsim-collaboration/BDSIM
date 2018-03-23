@@ -69,7 +69,13 @@ int main(int argc, char *argv[])
   
   // load ptc file
   PTC::TfsFile* input = new PTC::TfsFile(inputFileName);
-  input->Load();    
+  try
+    {input->Load();}
+  catch (std::string& error)
+    {
+      std::cout << error << std::endl;
+      exit(1);
+    }
 
   TFile* outputFile = new TFile(outputFileName.c_str(),"RECREATE");
   outputFile->cd();
