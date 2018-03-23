@@ -37,19 +37,22 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 int main(int argc, char *argv[])
 {
   // check input
-  if (argc != 4 )
+  if (argc != 5 )
     {
-      std::cout << "usage: ptc2BDSIM ptcOutput outputFile particleName" << std::endl;
+      std::cout << "usage: ptc2BDSIM ptcOutput outputFile particleName nominalMomentum" << std::endl;
       std::cout << " <ptcOutput>    - output file of PTC (Tfs format)" << std::endl;
       std::cout << " <outputFile>   - desired output file name for BDSIM format file" << std::endl;
       std::cout << " <particleName> - one of e- e+ proton" << std::endl;
+      std::cout << " <nominalMomentum> - nominal momentum of the beam in GeV" << std::endl;
       exit(1);
     }
   
   std::string inputFileName  = std::string(argv[1]);
   std::string outputFileName = std::string(argv[2]);
   std::string particleName   = std::string(argv[3]);
+  std::string nomMom         = std::string(argv[4]);
 
+  double nominalMomentum = std::stod(nomMom);
   double mass  = 0;
   int    pdgID = 0;
   try
@@ -103,17 +106,19 @@ int main(int argc, char *argv[])
 
 	  auto lSampler = localSamplers[samplerIndex];
 	  lSampler->n = 1;
-	  
-	  lSampler->energy.push_back(0);
+
+	  double p = nominalMomentum*(1. + data.pt);
+	  double E = std::sqrt(std::pow(p,2) + std::pow(mass,2));
+	  lSampler->energy.push_back(E);
 	  
 	  lSampler->x.push_back(data.x);
 	  lSampler->y.push_back(data.y);
 	  lSampler->z = 0;                   // local z always 0
 
-	  lSampler->xp.push_back(0);
-	  lSampler->yp.push_back(0);
-	  lSampler->zp.push_back(0);
-	  lSampler->t.push_back(0);
+	  lSampler->xp.push_back(data.px);
+	  lSampler->yp.push_back(data.py);
+	  lSampler->zp.push_back(std::sqrt(1 - std::pow(data.px,2) - std::pow(data.py,2)));
+	  lSampler->t.push_back(data.t);
 	  
 	  lSampler->weight.push_back(1);
 	  lSampler->partID.push_back(pdgID);
