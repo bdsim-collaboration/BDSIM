@@ -76,6 +76,17 @@ public:
   std::map<std::string, std::string> header;
   std::vector<std::string>           columnNames;
   std::vector<PTC::segment>          segments;
+
+private:
+
+  void ParseHeaderLine(const std::string& line);
+  void ParseColumns(const std::string& line);
+  void ParseSegment(const std::string& line);
+  void ParseData(const std::string& line);
+
+  std::vector<std::string> BreakOnWhiteSpace(const std::string& line) const;
+
+  int currentSegmentNumber;
 };
 }
 

@@ -19,18 +19,115 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TfsFile.hh"
 
-#include <exception>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <map>
+#include <regex>
 #include <string>
+#include <sstream>
 #include <vector>
 
 
 PTC::TfsFile::TfsFile(const std::string& fileNameIn):
-  fileName(fileNameIn)
+  fileName(fileNameIn),
+  currentSegmentNumber(0)
 {;}
 
 void PTC::TfsFile::Load()
-{;}
+{
+  std::ifstream f(fileName.c_str());
+  if (!f)
+    {throw std::string("Could not open file");}
+
+  std::string line;
+  std::regex headerrx("^\\@.*");
+  std::regex columnTypesrx("\\$.*");
+  std::regex columnsrx("\\*.*");
+  std::regex segmentrx("^\\#.*");
+  int i = 0;
+  while (std::getline(f, line))
+    {
+      std::cout << "\r " << std::setw(6) << i;
+      std::cout.flush();
+      i++;
+      if (std::all_of(line.begin(), line.end(), isspace))
+	{continue;} // skip empty lines
+      else if (std::regex_search(line, headerrx))
+	{ParseHeaderLine(line);}
+      else if (std::regex_search(line, columnTypesrx))
+	{continue;} // skip column type line
+      else if (std::regex_search(line, columnsrx))
+	{ParseColumns(line);}
+      else if (std::regex_search(line, segmentrx))
+	{ParseSegment(line);}
+      else
+	{ParseData(line);}
+    }
+  f.close();
+}
+
+void PTC::TfsFile::ParseHeaderLine(const std::string& line)
+{
+  std::vector<std::string> words = BreakOnWhiteSpace(line);
+  header[words[1]] = words.back();
+}
+
+void PTC::TfsFile::ParseColumns(const std::string& line)
+{
+  std::vector<std::string> words = BreakOnWhiteSpace(line);
+  columnNames.resize(words.size()-1);
+  std::copy(words.begin()+1, words.end(), columnNames.begin());
+}  
+
+void PTC::TfsFile::ParseSegment(const std::string& line)
+{
+  std::vector<std::string> words = BreakOnWhiteSpace(line);
+  currentSegmentNumber = std::stoi(words[1]);
+
+  PTC::segment nextSegment;
+  nextSegment.name = words.back();
+  segments.push_back(nextSegment);
+}
+
+void PTC::TfsFile::ParseData(const std::string& line)
+{
+  std::vector<std::string> words = BreakOnWhiteSpace(line);
+
+  std::vector<double> numbers;
+  double num = 0;
+  std::stringstream ss(line);
+  while (ss >> num)
+  {numbers.push_back(num);}
+  //for (auto const& word : words)
+  //  {numbers.push_back(std::stod(word));}
+
+  PTC::observation obs = {static_cast<int>(numbers[0]), // observation index - particle number
+			  numbers[2], // x
+			  numbers[3], // px
+			  numbers[4], // y
+			  numbers[5], // py
+			  numbers[6], // t
+			  numbers[7], // pt
+			  numbers[8], // S
+			  numbers[9]};// E
+  segments.back().observations.emplace_back(obs);
+}
+
+std::vector<std::string> PTC::TfsFile::BreakOnWhiteSpace(const std::string& line) const
+{
+  std::vector<std::string> results;
+  std::regex wspace("\\s+"); // any whitepsace
+  // -1 here makes it point to the suffix, ie the word rather than the wspace
+  std::sregex_token_iterator iter(line.begin(), line.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  return results;
+}
 
 std::string PTC::TfsFile::HeaderValue(const std::string& key) const
 {

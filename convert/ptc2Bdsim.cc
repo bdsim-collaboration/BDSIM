@@ -103,6 +103,11 @@ int main(int argc, char *argv[])
   int nSamplers = (int)input->size(); // we know our localSamplers has the same size
   for (int entry = 0; entry < nEntries; ++entry)
     {
+      std::cout << "\rEvent #" << std::setw(6) << entry << " of " << nEntries;
+      std::cout.flush();
+      // clear local sampler of any previous data
+      for (auto s : localSamplers)
+        {s->Flush();}
       for (int samplerIndex = 0; samplerIndex < nSamplers; ++samplerIndex)
 	{
 	  const auto& inputSampler = input->segments[samplerIndex];
@@ -137,6 +142,7 @@ int main(int argc, char *argv[])
       outputFile->cd();
       eventOutputTree->Fill();
     }
+  std::cout << std::endl;
 
   // add header for file type and version details
   outputFile->cd();
