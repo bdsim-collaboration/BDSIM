@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
   
   // load ptc file
   PTC::TfsFile* input = new PTC::TfsFile(inputFileName);
+  input->Load();    
 
   TFile* outputFile = new TFile(outputFileName.c_str(),"RECREATE");
   outputFile->cd();

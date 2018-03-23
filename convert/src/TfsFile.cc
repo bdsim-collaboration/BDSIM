@@ -27,9 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 PTC::TfsFile::TfsFile(const std::string& fileNameIn):
   fileName(fileNameIn)
-{
-  Load();
-}
+{;}
 
 void PTC::TfsFile::Load()
 {;}

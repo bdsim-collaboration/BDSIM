@@ -54,6 +54,8 @@ public:
   TfsFile(const std::string& fileNameIn);
   ~TfsFile(){;}
 
+  void Load();
+
   std::string HeaderValue(const std::string& key) const;
 
   PTC::segment Segment(const int& index) const;
@@ -74,9 +76,6 @@ public:
   std::map<std::string, std::string> header;
   std::vector<std::string>           columnNames;
   std::vector<PTC::segment>          segments;
-  
-private:
-  void Load();
 };
 }
 
