@@ -50,7 +50,8 @@ endif()
 simple_fail(physics-invalid          "--file=gibberish.gmad"        ${OVERLAP_CHECK})
 
 # these require the optional G4PARTICLEHPDATA set from the Geant4 website
-if($ENV{G4PARTICLEHPDATA})
+if(DEFINED "$ENV{G4PARTICLEHPDATA}")
+  message(STATUS "Tests will use G$PARTICLEHPDATA")
   simple_testing(physics-hadronic-elastic-lend  "--file=hadronic_elastic_lend.gmad" ${OVERLAP_CHECK})
   if (G4_MINOR_VERSION GREATER 2 OR (G4_MINOR_VERSION EQUAL 2 AND G4_PATCH_LEVEL GREATER 2))
     simple_testing(physics-ion-php                "--file=ion_php.gmad"               ${OVERLAP_CHECK})
