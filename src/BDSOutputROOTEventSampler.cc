@@ -137,14 +137,6 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   yp.clear();
   zp.clear();
   t.clear();
-
-  // X.clear();
-  // Y.clear();
-  // Z = 0.0;      
-  // Xp.clear();
-  // Yp.clear();
-  // Zp.clear();
-
   weight.clear();
   partID.clear();
   parentID.clear();
