@@ -58,7 +58,11 @@ void PTC::TfsFile::Load()
   std::regex headerrx("^\\@.*");
   std::regex columnTypesrx("\\$.*");
   std::regex columnsrx("\\*.*");
-  std::regex segmentrx("^\\#.*");
+
+  // lambda for checking if line starts with a string
+  auto startsWith = [] (const std::string& a, const std::string& b){return a.compare(0, b.length(), b) == 0;};
+
+  bool intoData = false;
   int i = 0;
   while (std::getline(f, line))
     {
@@ -69,18 +73,28 @@ void PTC::TfsFile::Load()
 	}
       i++;
       if (std::all_of(line.begin(), line.end(), isspace))
-	{continue;} // skip empty lines
-      else if (std::regex_search(line, headerrx))
-	{ParseHeaderLine(line);}
-      else if (std::regex_search(line, columnTypesrx))
-	{continue;} // skip column type line
-      else if (std::regex_search(line, columnsrx))
-	{ParseColumns(line);}
-      else if (std::regex_search(line, segmentrx))
-	{ParseSegment(line);}
+        {continue;} // skip empty lines
+      else if (intoData) // next option (for efficiency) into data only two choices
+	{
+	  if (startsWith(line, "#segment"))
+	    {ParseSegment(line);}
+	  else
+	    {ParseData(line);}
+	}
       else
-	{ParseData(line);}
+	{
+	  if (std::regex_search(line, headerrx))
+	    {ParseHeaderLine(line);}
+	  else if (std::regex_search(line, columnTypesrx))
+	    {
+	      intoData = true;
+	      continue; // skip column type line
+	    }
+	  else if (std::regex_search(line, columnsrx))
+	    {ParseColumns(line);}
+	}
     }
+  std::cout << std::endl;
   f.close();
 }
 
