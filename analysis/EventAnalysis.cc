@@ -60,16 +60,23 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   if (processSamplers)
     {// Create sampler analyses if needed
       // Analyse the primary sampler in the optics too.
-      SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
-      samplerAnalyses.push_back(sa);
-      SamplerAnalysis* pa = sa;
-
+      SamplerAnalysis* sa = nullptr;
+      SamplerAnalysis* pa = nullptr;
+      if (event->UsePrimaries())
+	{
+	  sa = new SamplerAnalysis(event->GetPrimaries());
+	  samplerAnalyses.push_back(sa);
+	  pa = sa;
+	}
+      
       for (const auto& sampler : event->Samplers)
 	{
 	  sa = new SamplerAnalysis(sampler, debug);
 	  samplerAnalyses.push_back(sa);
 	}
-
+      if (!event->UsePrimaries())
+	{pa = samplerAnalyses[0];}
+      
       chain->GetEntry(0);
       SamplerAnalysis::UpdateMass(pa);
     }

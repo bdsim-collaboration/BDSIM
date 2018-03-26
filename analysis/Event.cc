@@ -33,7 +33,8 @@ ClassImp(Event)
 
 Event::Event():
   debug(false),
-  processSamplers(false)
+  processSamplers(false),
+  usePrimaries(false)
 {
   CommonCtor();
 }
@@ -118,6 +119,7 @@ void Event::SetBranchAddress(TTree *t,
   // the primary is optionally stored (e.g. not stored for tracking comparison files)
   if (((*t).GetListOfBranches()->FindObject("Primary.")) != nullptr)
     {
+      usePrimaries = true;
       t->SetBranchStatus("Primary*",  1);
       t->SetBranchAddress("Primary.", &Primary);
     }
