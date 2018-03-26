@@ -87,6 +87,8 @@ private:
   std::vector<std::string> BreakOnWhiteSpace(const std::string& line) const;
 
   int currentSegmentNumber;
+  int observationCounter;
+  int nObservationsThisSegment;
 };
 }
 

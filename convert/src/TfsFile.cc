@@ -31,7 +31,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 PTC::TfsFile::TfsFile(const std::string& fileNameIn):
   fileName(fileNameIn),
-  currentSegmentNumber(0)
+  currentSegmentNumber(0),
+  observationCounter(1),
+  nObservationsThisSegment(0)
 {;}
 
 void PTC::TfsFile::Load()
@@ -51,16 +53,13 @@ void PTC::TfsFile::Load()
   f.seekg(0, std::ios::beg);
 
   // calculate print out rate
-  int perLinePrintOut = 0.05*n;
+  int perLinePrintOut = 0.02*n; // 2% print out
 
   // temporary variables and regexes
   std::string line;
   std::regex headerrx("^\\@.*");
   std::regex columnTypesrx("\\$.*");
   std::regex columnsrx("\\*.*");
-
-  // lambda for checking if line starts with a string
-  auto startsWith = [] (const std::string& a, const std::string& b){return a.compare(0, b.length(), b) == 0;};
 
   bool intoData = false;
   int i = 0;
@@ -76,10 +75,15 @@ void PTC::TfsFile::Load()
         {continue;} // skip empty lines
       else if (intoData) // next option (for efficiency) into data only two choices
 	{
-	  if (startsWith(line, "#segment"))
-	    {ParseSegment(line);}
+	  // this will start first time through in data as observationCounter always
+	  // initialise to 1, which is > 0=nObservationsThisSegment so far
+	  if (observationCounter > nObservationsThisSegment)
+	    {ParseSegment(line);} // we must be on to a new segment - parse its definition line
 	  else
-	    {ParseData(line);}
+	    {
+	      ParseData(line);
+	      observationCounter++;
+	    }
 	}
       else
 	{
@@ -115,10 +119,11 @@ void PTC::TfsFile::ParseSegment(const std::string& line)
 {
   std::vector<std::string> words = BreakOnWhiteSpace(line);
   currentSegmentNumber = std::stoi(words[1]);
-  int nObservations = std::stoi(words[3]);
+  nObservationsThisSegment = std::stoi(words[3]);
+  observationCounter = 1;
 
   PTC::segment nextSegment;
-  nextSegment.observations.reserve(nObservations);
+  nextSegment.observations.reserve(nObservationsThisSegment);
   nextSegment.name = words.back();
   segments.push_back(nextSegment);
 }
