@@ -178,7 +178,7 @@ void EventAnalysis::Terminate()
     {
       //vector of emittance values and errors: emitt_x, emitt_y, err_emitt_x, err_emitt_y
       std::vector<double> emittance = {0,0,0,0};
-      for (auto samplerAnalysis : samplerAnalyses)
+      for (auto& samplerAnalysis : samplerAnalyses)
 	{
 	  emittance = samplerAnalysis->Terminate(emittance, !emittanceOnTheFly);
 	  opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
