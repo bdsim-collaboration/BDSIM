@@ -154,10 +154,10 @@ int main(int argc, char *argv[])
   headerTree->Fill();
   outputFile->Write(0,TObject::kOverwrite);
 
-  outputFile->Close();
+  //outputFile->Close();
 
   delete outputFile;
-  delete eventOutputTree;
+  //delete eventOutputTree;
   for (auto& s : localSamplers)
     {delete s;}
   delete input;
