@@ -173,6 +173,7 @@ OptionsBase::OptionsBase()
   prodCutProtons           = 1e-3;
   neutronTimeLimit         = 1e-6;
   neutronKineticEnergyLimit = 0;
+  useLENDGammaNuclear      = false;
   
   // biasing options
   defaultBiasVacuum        = "";

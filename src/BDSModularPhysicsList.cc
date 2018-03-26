@@ -894,8 +894,12 @@ void BDSModularPhysicsList::NeutronTrackingCut()
   if(!physicsActivated["neutron_tracking_cut"])
     {
       auto ntc = new G4NeutronTrackingCut();
-      ntc->SetTimeLimit(BDSGlobalConstants::Instance()->NeutronTimeLimit());
-      ntc->SetKineticEnergyLimit(BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit());
+      G4double timeLimit = BDSGlobalConstants::Instance()->NeutronTimeLimit();
+      G4double eKinLimit = BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit();
+      G4cout << __METHOD_NAME__ << "Neutron time limit: " << timeLimit / CLHEP::s << " s" << G4endl;
+      G4cout << __METHOD_NAME__ << "Neutron kinetic energy limit: " << eKinLimit / CLHEP::MeV << G4endl;
+      ntc->SetTimeLimit(timeLimit);
+      ntc->SetKineticEnergyLimit(eKinLimit);
       constructors.push_back(ntc);
       physicsActivated["neutron_tracking_cut"] = true;
     }
