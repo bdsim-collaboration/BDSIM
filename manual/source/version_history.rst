@@ -64,7 +64,7 @@ General
 * The world material is now air instead of G4_Galatic.
 * `printModuloFraction` is now `printFractionEvents`.
 * `includeIronMagFields` option is now `yokeFields`.
-* Vacuum volumes now visible in `--vis_debug` mode.
+* Vacuum volumes now visible in `-\\-vis_debug` mode.
 * Only forwards going particles are now considered for the optical function calculation.
 
 Bug Fixes
@@ -103,9 +103,9 @@ V0.993 - 2017 / 12 / 11
 New Features
 ------------
 
-* Executable option --writeseedstate is now --writeSeedState.
-* Executable option --exportgeometryto is now --exportGeometryTo
-* Executable option --distrfile is now --distrFile.
+* Executable option `-\\-writeseedstate` is now `-\\-writeSeedState`.
+* Executable option `-\\-exportgeometryto` is now `-\\-exportGeometryTo`.
+* Executable option `-\\-distrfile` is now `-\\-distrFile`.
 * Redefined simpler syntax for halo distribution. Please see manual for new parameters.
 * Support for all EM physics lists included with Geant4.10.3.p03.
 * Support for an ion as the primary beam particle.
