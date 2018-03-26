@@ -394,20 +394,12 @@ void BDSModularPhysicsList::ConstructAllIons()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   if(opticalPhysics)
     {ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
@@ -424,10 +416,6 @@ void BDSModularPhysicsList::ConfigureOptical()
 
 void BDSModularPhysicsList::SetCuts()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
   // set default value
   SetDefaultCutValue(globals->DefaultRangeCut());
 
