@@ -185,9 +185,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
                                             process,
                                             beamlineIndex);
   
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << *smpHit;
-#endif
   SamplerCollection->insert(smpHit);
 
   return true;    //The hit was stored
