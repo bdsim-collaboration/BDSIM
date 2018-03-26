@@ -101,8 +101,10 @@ void PTC::TfsFile::ParseSegment(const std::string& line)
 {
   std::vector<std::string> words = BreakOnWhiteSpace(line);
   currentSegmentNumber = std::stoi(words[1]);
+  int nObservations = std::stoi(words[3]);
 
   PTC::segment nextSegment;
+  nextSegment.observations.reserve(nObservations);
   nextSegment.name = words.back();
   segments.push_back(nextSegment);
 }
