@@ -145,20 +145,22 @@ int main(int argc, char *argv[])
   std::cout << "Writing to BDSIM file event by event" << std::endl;
   // we can only loose particles so the number of entries in the first
   // is the number of 'events' or entries we'll use
-  int nEntries  = (int)input->segments[0].size();
+  int nEvents   = (int)input->segments[0].size();
   int nSamplers = (int)input->size(); // we know our localSamplers has the same size
-  for (int entry = 0; entry < nEntries; ++entry)
+
+  // loop over events and fill for all samplers
+  for (int eventIndex = 0; eventIndex < nEvents; ++eventIndex)
     {
-      std::cout << "\rEvent #" << std::setw(6) << entry << " of " << nEntries;
+      std::cout << "\rEvent #" << std::setw(6) << eventIndex+1 << " of " << nEvents;
       std::cout.flush();
       for (int samplerIndex = 0; samplerIndex < nSamplers; ++samplerIndex)
 	{
 	  const auto& inputSampler = input->segments[samplerIndex];
-	  if (entry > (int)inputSampler.size())
+	  if (eventIndex+1 > (int)inputSampler.size())
 	    {continue;} // no hit on this sampler
-	  const auto& data = inputSampler.observations[entry];
+	  const auto& data = inputSampler.observations[eventIndex];
 
-	  auto lSampler = localSamplers[samplerIndex];
+	  auto& lSampler = localSamplers[samplerIndex];
 	  lSampler->n = 1;
 
 	  double p = nominalMomentum*(1. + data.pt);
