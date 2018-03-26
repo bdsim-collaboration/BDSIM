@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonINCLXXPhysics.hh"
 #include "G4IonPhysics.hh"
 #include "G4IonQMDPhysics.hh"
+#include "G4NeutronTrackingCut.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #include "G4RadioactiveDecayPhysics.hh"
@@ -98,6 +99,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #if G4VERSION_NUMBER > 1029
 #include "G4MuonicAtomDecayPhysics.hh"
+#endif
+
+#if G4VERSION_NUMBER > 1039
+#include "G4HadronPhysicsShieldingLEND.hh"
 #endif
 
 // particles
@@ -170,12 +175,14 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("ion_inclxx",             &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("lw",                     &BDSModularPhysicsList::LaserWire));
   physicsConstructors.insert(std::make_pair("muon",                   &BDSModularPhysicsList::Muon));
+  physicsConstructors.insert(std::make_pair("neutron_tracking_cut",   &BDSModularPhysicsList::NeutronTrackingCut));
   physicsConstructors.insert(std::make_pair("optical",                &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("qgsp_bert",              &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("qgsp_bert_hp",           &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("qgsp_bic",               &BDSModularPhysicsList::QGSPBIC));
   physicsConstructors.insert(std::make_pair("qgsp_bic_hp",            &BDSModularPhysicsList::QGSPBICHP));
   physicsConstructors.insert(std::make_pair("shielding",              &BDSModularPhysicsList::Shielding));
+  physicsConstructors.insert(std::make_pair("stopping",               &BDSModularPhysicsList::Stopping));
   physicsConstructors.insert(std::make_pair("synch_rad",              &BDSModularPhysicsList::SynchRad));
 #if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",                  &BDSModularPhysicsList::EmGS));
@@ -188,6 +195,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #endif
 #if G4VERSION_NUMBER > 1029
   physicsConstructors.insert(std::make_pair("decay_muonic_atom",      &BDSModularPhysicsList::DecayMuonicAtom));
+#endif
+#if G4VERSION_NUMBER > 1039
+  physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
   // old names and aliases
@@ -871,7 +881,19 @@ void BDSModularPhysicsList::Muon()
       constructors.push_back(new BDSPhysicsMuon(emWillBeUsed));
       physicsActivated["muon"] = true;
     }
-}							  
+}
+
+void BDSModularPhysicsList::NeutronTrackingCut()
+{
+  if(!physicsActivated["neutron_tracking_cut"])
+    {
+      auto ntc = new G4NeutronTrackingCut();
+      ntc->SetTimeLimit(BDSGlobalConstants::Instance()->NeutronTimeLimit());
+      ntc->SetKineticEnergyLimit(BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit());
+      constructors.push_back(ntc);
+      physicsActivated["neutron_tracking_cut"] = true;
+    }
+}
 							  
 void BDSModularPhysicsList::Optical()
 {
@@ -929,6 +951,15 @@ void BDSModularPhysicsList::Shielding()
     {
       constructors.push_back(new G4HadronPhysicsShielding());
       physicsActivated["shielding"] = true;
+    }
+}
+
+void BDSModularPhysicsList::Stopping()
+{
+  if(!physicsActivated["stopping"])
+    {
+      constructors.push_back(new G4StoppingPhysics());
+      physicsActivated["stopping"] = true;
     }
 }
 
@@ -990,6 +1021,17 @@ void BDSModularPhysicsList::DecayMuonicAtom()
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());
       physicsActivated["decay_muonic_atom"] = true;
+    }
+}
+#endif
+
+#if G4VERSION_NUMBER > 1039
+void BDSModularPhysicsList::ShieldingLEND()
+{
+  if(!physicsActivated["shielding_lend"])
+    {
+      constructors.push_back(new G4HadronPhysicsShieldingLEND());
+      physicsActivated["shielding_lend"] = true;
     }
 }
 #endif
