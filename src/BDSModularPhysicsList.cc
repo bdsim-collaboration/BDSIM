@@ -956,6 +956,8 @@ void BDSModularPhysicsList::Shielding()
 
 void BDSModularPhysicsList::Stopping()
 {
+  ConstructAllShortLived();
+  ConstructAllIons();
   if(!physicsActivated["stopping"])
     {
       constructors.push_back(new G4StoppingPhysics());
@@ -1028,6 +1030,7 @@ void BDSModularPhysicsList::DecayMuonicAtom()
 #if G4VERSION_NUMBER > 1039
 void BDSModularPhysicsList::ShieldingLEND()
 {
+  BDS::CheckLowEnergyDataExists("shielding_lend");
   if(!physicsActivated["shielding_lend"])
     {
       constructors.push_back(new G4HadronPhysicsShieldingLEND());
