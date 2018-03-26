@@ -87,11 +87,12 @@ int main(int argc, char *argv[])
 
   // add header for file type and version details
   BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(); // updates time stamp
-  headerOut->SetFileType("REBDSIM");
-  TTree* headerTree = new TTree("Header", "REBDSIM Header");
+  TTree* headerTree = new TTree("Header", "BDSIM Header");
   headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  headerOut->Fill(); // updates time stamp
+  headerOut->SetFileType("BDSIM");
   headerTree->Fill();
+  headerOut->Flush();
 
   TTree* modelTree = new TTree("Model","BDSIM model");
   BDSOutputROOTEventModel* model = new BDSOutputROOTEventModel();
@@ -101,8 +102,7 @@ int main(int argc, char *argv[])
     {samplerNamesUnique.push_back(sampler.name + ".");}
   model->samplerNamesUnique = samplerNamesUnique;
   modelTree->Fill();
-
-  outputFile->Write();
+  model->Flush();
   
   TTree* eventOutputTree = new TTree("Event","BDSIM event");
   
@@ -151,9 +151,6 @@ int main(int argc, char *argv[])
     {
       std::cout << "\rEvent #" << std::setw(6) << entry << " of " << nEntries;
       std::cout.flush();
-      // clear local sampler of any previous data
-      for (auto s : localSamplers)
-        {s->Flush();}
       for (int samplerIndex = 0; samplerIndex < nSamplers; ++samplerIndex)
 	{
 	  const auto& inputSampler = input->segments[samplerIndex];
@@ -187,11 +184,13 @@ int main(int argc, char *argv[])
 	}
       outputFile->cd();
       eventOutputTree->Fill();
+      // clear local sampler of any previous data
+      for (auto& s : localSamplers)
+        {s->Flush();}
     }
   std::cout << std::endl;
   outputFile->Write(0,TObject::kOverwrite);
   delete outputFile;
-  //delete eventOutputTree;
   for (auto& s : localSamplers)
     {delete s;}
   delete input;
