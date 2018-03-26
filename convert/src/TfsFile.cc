@@ -40,6 +40,20 @@ void PTC::TfsFile::Load()
   if (!f)
     {throw std::string("Could not open file");}
 
+  // count lines in file by looping over it
+  int n = 0;
+  std::string s;
+  while(getline(f, s))
+    {n++;}
+
+  // reset file to beginning
+  f.clear();
+  f.seekg(0, std::ios::beg);
+
+  // calculate print out rate
+  int perLinePrintOut = 0.05*n;
+
+  // temporary variables and regexes
   std::string line;
   std::regex headerrx("^\\@.*");
   std::regex columnTypesrx("\\$.*");
@@ -48,8 +62,11 @@ void PTC::TfsFile::Load()
   int i = 0;
   while (std::getline(f, line))
     {
-      std::cout << "\r " << std::setw(6) << i;
-      std::cout.flush();
+      if (i % perLinePrintOut == 0)
+	{
+	  std::cout << "\r Reading line # " << std::setw(6) << i;
+	  std::cout.flush();
+	}
       i++;
       if (std::all_of(line.begin(), line.end(), isspace))
 	{continue;} // skip empty lines
