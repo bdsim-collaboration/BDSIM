@@ -1019,6 +1019,7 @@ void BDSModularPhysicsList::IonPHP()
 #if G4VERSION_NUMBER > 1029
 void BDSModularPhysicsList::DecayMuonicAtom()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["decay_muonic_atom"])
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());
