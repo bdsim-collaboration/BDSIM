@@ -152,13 +152,13 @@ void SamplerAnalysis::Process(bool firstTime)
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
-  S = s->S;
-
   double m2 = std::pow(particleMass,2);
   
   // loop over all entries
   for(int i=0;i<s->n;++i)
   {
+    if (i == 0)
+      {S = s->S;} // update sampler on first round - do here so not to load default data
     if (s->parentID[i] != 0)
       {continue;} // select only primary particles
     if (s->turnNumber[i] > 1)
