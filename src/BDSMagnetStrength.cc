@@ -50,7 +50,8 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k12", "k12s",
   "frequency",       // frequency for time varying field (presumably em)
   "phase",           // phase for time varying field
-  "equatorRadius"    // radius from axis at which field goes to 0
+  "equatorRadius",   // radius from axis at which field goes to 0
+  "nominalEnergy"    // nominal beam energy needed by some integrators
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
