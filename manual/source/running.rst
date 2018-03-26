@@ -33,73 +33,78 @@ be used literally.  The following command may be used to dipslay all options::
 
 .. tabularcolumns:: |p{6cm}|p{9cm}|
 
-+----------------------------+----------------------------------------------+
-| --file=<file>              | specify the input gmad file                  |
-+----------------------------+----------------------------------------------+
-| --batch                    | batch mode - no graphics                     |
-+----------------------------+----------------------------------------------+
-| --circular                 | assume circular machine - turn control       |
-+----------------------------+----------------------------------------------+
-| --distrFile=<file>         | which file to use for the bunch distribution |
-+----------------------------+----------------------------------------------+
-| --exportGeometryTo=<file>  | export the geometry to a file                |
-|                            | extension determines format                  |
-|                            | where possible extensions are ("gdml")       |
-+----------------------------+----------------------------------------------+
-| --generatePrimariesOnly    | generate primary particle coordinates only   |
-|                            | then exit without simulating anything        |
-+----------------------------+----------------------------------------------+
-| --help                     | display this message.                        |
-+----------------------------+----------------------------------------------+
-| --materials                | list materials included in BDSIM by default  |
-+----------------------------+----------------------------------------------+
-| --ngenerate=N              | the number of primary events to simulate     |
-|                            | overrides the ngenerate option in input file |
-+----------------------------+----------------------------------------------+
-| --output=<fmt>             | output format "rootevent" (default) or "none"|
-+----------------------------+----------------------------------------------+
-| --outfile=<file>           | output file name. Will be appended with _N   |
-|                            | where N = 0, 1, 2, 3...                      |
-+----------------------------+----------------------------------------------+
-| --recreate=<file>          | the rootevent output file to recreate events |
-|                            | from                                         |
-+----------------------------+----------------------------------------------+
-| --seed=<N>                 | seed for the random number generator         |
-+----------------------------+----------------------------------------------+
-| --seedStateFileName=<file> | file containing CLHEP::Random seed state     |
-|                            | NB \- this overrides other seed value        |
-+----------------------------+----------------------------------------------+
-| --startFromEvent=N         | event offset to start from when recreating   |
-|                            | events when using --recreate                 |
-+----------------------------+----------------------------------------------+
-| --survey=<file>            | print survey info to <file>                  |
-+----------------------------+----------------------------------------------+
-| --printFractionEvents=N    | how often to print out events as a fraction  |
-|                            | of the total number of events to simulate    |
-|                            | (default 0.1 i.e. 10%). -1 for all.          |
-+----------------------------+----------------------------------------------+
-| --printFractionTurns=N     | how often to print out turns as a fraction   |
-|                            | of the total number of turns to simulate     |
-|                            | (default 0.2 i.e. 20%). -1 for all. Will     |
-|                            | only print out on an event that will print   |
-|                            | out as well.                                 |
-+----------------------------+----------------------------------------------+
-| --verbose                  | display general parameters before run        |
-+----------------------------+----------------------------------------------+
-| --verbose\_event           | display information for every event          |
-+----------------------------+----------------------------------------------+
-| --verbose\_step            | display tracking information after each step |
-+----------------------------+----------------------------------------------+
-| --verbose\_event\_num=<N>  | display tracking information for event N     |
-+----------------------------+----------------------------------------------+
-| --vis_debug                | display all volumes in visualiser            |
-+----------------------------+----------------------------------------------+
-| --vis_mac=<file>           | file with the visualisation macro script,    |
-|                            | default provided by BDSIM: openGL (OGLSQt))  |
-+----------------------------+----------------------------------------------+
-| --writeSeedState           | write an ASCII file seed state for each      |
-|                            | event                                        |
-+----------------------------+----------------------------------------------+
++------------------------------+------------------------------------------------+
+| -\\-file=<file>              | Specify the input gmad file.                   |
++------------------------------+------------------------------------------------+
+| -\\-batch                    | Batch mode - no graphics.                      |
++------------------------------+------------------------------------------------+
+| -\\-circular                 | Assume circular machine - turn control. See    |
+|                              | note below.                                    |
++------------------------------+------------------------------------------------+
+| -\\-distrFile=<file>         | Which file to use for the bunch                |
+|                              | distribution.                                  |
++------------------------------+------------------------------------------------+
+| -\\-exportGeometryTo=<file>  | Export the geometry to a file                  |
+|                              | extension determines format                    |
+|                              | where possible extensions are ("gdml").        |
++------------------------------+------------------------------------------------+
+| -\\-generatePrimariesOnly    | Generate primary particle coordinates only     |
+|                              | then exit without simulating anything.         |
++------------------------------+------------------------------------------------+
+| -\\-help                     | List all executable commands.                  |
++------------------------------+------------------------------------------------+
+| -\\-materials                | List materials included in BDSIM by default.   |
++------------------------------+------------------------------------------------+
+| -\\-ngenerate=N              | The number of primary events to simulate       |
+|                              | overrides the ngenerate option in input        |
+|                              | file.                                          |
++------------------------------+------------------------------------------------+
+| -\\-output=<fmt>             | Output format "rootevent" (default) or         |
+|                              | "none".                                        |
++------------------------------+------------------------------------------------+
+| -\\-outfile=<file>           | Output file name. Will be appended with _N     |
+|                              | where N = 0, 1, 2, 3...                        |
++------------------------------+------------------------------------------------+
+| -\\-recreate=<file>          | The rootevent output file to recreate events   |
+|                              | from.                                          |
++------------------------------+------------------------------------------------+
+| -\\-seed=<N>                 | Seed for the random number generator.          |
++------------------------------+------------------------------------------------+
+| -\\-seedStateFileName=<file> | File containing CLHEP::Random seed state       |
+|                              | NB \- this overrides other seed value.         |
++------------------------------+------------------------------------------------+
+| -\\-startFromEvent=N         | Event offset to start from when recreating     |
+|                              | events when using `-\\-recreate`.              |
++------------------------------+------------------------------------------------+
+| -\\-survey=<file>            | Print survey info to <file>.                   |
++------------------------------+------------------------------------------------+
+| -\\-printFractionEvents=N    | How often to print out events as a fraction    |
+|                              | of the total number of events to simulate      |
+|                              | (default 0.1 i.e. 10%). -1 for all.            |
++------------------------------+------------------------------------------------+
+| -\\-printFractionTurns=N     | How often to print out turns as a fraction     |
+|                              | of the total number of turns to simulate       |
+|                              | (default 0.2 i.e. 20%). -1 for all. Will       |
+|                              | only print out on an event that will print     |
+|                              | out as well.                                   |
++------------------------------+------------------------------------------------+
+| -\\-verbose                  | Display general parameters before run          |
++------------------------------+------------------------------------------------+
+| -\\-verbose\_event           | Display information for every event            |
++------------------------------+------------------------------------------------+
+| -\\-verbose\_step            | Display tracking information after each        |
+|                              | step.                                          |
++------------------------------+------------------------------------------------+
+| -\\-verbose\_event\_num=<N>  | Display tracking information for event N.      |
++------------------------------+------------------------------------------------+
+| -\\-vis_debug                | Display all volumes in the visualiser.         |
++------------------------------+------------------------------------------------+
+| -\\-vis_mac=<file>           | File with the visualisation macro script,      |
+|                              | default provided by BDSIM: openGL (OGLSQt)).   |
++------------------------------+------------------------------------------------+
+| -\\-writeSeedState           | Write an ASCII file seed state for each        |
+|                              | event.                                         |
++------------------------------+------------------------------------------------+
 
 BDSIM can be run in one of two ways, `interactively`_, or `in batch mode`_, which
 are described in the following sections.
@@ -111,6 +116,9 @@ is used and the specified number of primary events is simulated and feedback pri
 to the terminal. Batch mode is typically much faster than the interactive mode, but
 the interactive mode is very useful for understanding the model and a typical event
 in the simulation - ie where a particle hits.
+
+.. note:: For more information on `-\\-circular` option and using BDSIM with circular machines,
+	  see :ref:`circular-machines`.
 
 Interactively
 =============
@@ -124,8 +132,8 @@ Features:
 * typically slower than batch mode
 * no events run without user input
 
-To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` command.
-The user can also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
+To execute BDSIM in interactive mode, the user must simply not use the :code:`-\\-batch` command.
+The user can also specify a macro file using the :code:`-\\-vis_mac` option above otherwise, BDSIM
 will look for "vis.mac" in the current working directory. If not found, BDSIM will use its own
 default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
 executed a window such as this will appear (depending on the visualiser you use).
@@ -160,7 +168,7 @@ Features:
 * no user input
 * typical use for a "job" on a farm
 
-To execute BDSIM in batch mode, simply use the :code:`--batch` execution option.
+To execute BDSIM in batch mode, simply use the :code:`-\\-batch` execution option.
 
 Examples
 ========

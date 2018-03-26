@@ -158,6 +158,53 @@ GHz         :math:`10^{9}`
 For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
 and both are equivalent.
 
+.. _circular-machines:
+
+Circular Machines
+-----------------
+
+To simulate circular machines, BDSIM should be executed with the `-\\-circular` executable option
+(see :ref:`executable-options` for all executable options). This installs special beam line
+elements called the `teleporter` and `terminator` at the end of the lattice that are decribed
+below.
+
+.. note:: There must be a minimum :math:`0.2 \mu m` gap between the last element and the beginning
+	  of the sequence to accomodate these elements. This has a minimal impact on tracking.
+
+Both the terminator and teleporter and invisible and very thin elements that are not normally
+shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
+executable option.
+
+Terminator
+^^^^^^^^^^
+
+In a Geant4 / BDSIM model, all particles are tracked down to 0 energy or until they leave the world
+volume. In the case of a circular accelerator, the particles may circulate indefinitely as they loose
+no energy traversing the magnetic fields. To control this behaviour and limit the number of turns
+taken in the circular machine, the teriminator is inserted. This is a very thin disk that has
+dynamic limits attached to it. It is normally transparent to all particles and composed of vacuum.
+After the desired number of turns of the primary particle have elapsed, it switches to being
+an infinite absorber. It achieves this by setting limits (G4UserLimits) with a maximum allowed energy
+of 0eV.
+
+The user should set the option `nturns` (default 1) (see :ref:`options-common`).::
+
+  option, nturns=56;
+
+
+Teleporter
+^^^^^^^^^^
+
+Not all optical models close perfectly in Cartesian coordinates, i.e. the ends don't perfectly
+align. Some small offsets may be tolerable as most tracking codes use curvilinear coordinates.
+To account for this, the teleporter is a small disk volume inserted to make up the space
+and shift particles transversely as if the ends matched up perfectly. This is automatically
+calculated and constructed when useing the `-\\-circular` executable option.
+
+Although the teleporter may not be required in a well formed model that closes, the minimum
+gap of :math:`0.2 \mu m` is required for the terminator.
+
+  
 .. _lattice-elements:
 
 Lattice Elements
@@ -2486,7 +2533,8 @@ options but all options are described in the following sub-sections:
 * `Scoring Map`_
 * `Developer Options`_
   
-
+.. _options-common:
+  
 Common Options
 ^^^^^^^^^^^^^^
 
