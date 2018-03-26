@@ -153,6 +153,9 @@ public:
   inline G4bool   ProdCutElectronsSet()      const {return G4bool  (options.HasBeenSet("prodCutElectrons"));}
   inline G4bool   ProdCutPositronsSet()      const {return G4bool  (options.HasBeenSet("prodCutPositrons"));}
   inline G4bool   ProdCutProtonsSet()        const {return G4bool  (options.HasBeenSet("prodCutProtons"));}
+  inline G4double NeutronTimeLimit()         const {return G4double(options.neutronTimeLimit)*CLHEP::s;}
+  inline G4double NeutronKineticEnergyLimit() const {return G4double(options.neutronKineticEnergyLimit)*CLHEP::GeV;}
+  inline G4bool   UseLENDGammaNuclear()      const {return G4bool  (options.useLENDGammaNuclear);}
 
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}

@@ -239,12 +239,15 @@ void Options::PublishMembers()
   publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
-  publish("prodCutPhotons",   &Options::prodCutPhotons);
-  publish("prodCutElectrons", &Options::prodCutElectrons);
-  publish("prodCutPositrons", &Options::prodCutPositrons);
-  publish("prodCutProtons",   &Options::prodCutProtons);
-  publish("prodCutHadrons",   &Options::prodCutProtons); // backwards compatability
-
+  publish("prodCutPhotons",              &Options::prodCutPhotons);
+  publish("prodCutElectrons",            &Options::prodCutElectrons);
+  publish("prodCutPositrons",            &Options::prodCutPositrons);
+  publish("prodCutProtons",              &Options::prodCutProtons);
+  publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatability
+  publish("neutronTimeLimit",            &Options::neutronTimeLimit);
+  publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
+  publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
+  
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);

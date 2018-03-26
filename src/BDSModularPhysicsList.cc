@@ -73,6 +73,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4IonINCLXXPhysics.hh"
 #include "G4IonPhysics.hh"
 #include "G4IonQMDPhysics.hh"
+#include "G4NeutronTrackingCut.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
 #include "G4RadioactiveDecayPhysics.hh"
@@ -98,6 +99,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #if G4VERSION_NUMBER > 1029
 #include "G4MuonicAtomDecayPhysics.hh"
+#endif
+
+#if G4VERSION_NUMBER > 1039
+#include "G4HadronPhysicsShieldingLEND.hh"
 #endif
 
 // particles
@@ -170,12 +175,14 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("ion_inclxx",             &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("lw",                     &BDSModularPhysicsList::LaserWire));
   physicsConstructors.insert(std::make_pair("muon",                   &BDSModularPhysicsList::Muon));
+  physicsConstructors.insert(std::make_pair("neutron_tracking_cut",   &BDSModularPhysicsList::NeutronTrackingCut));
   physicsConstructors.insert(std::make_pair("optical",                &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("qgsp_bert",              &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("qgsp_bert_hp",           &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("qgsp_bic",               &BDSModularPhysicsList::QGSPBIC));
   physicsConstructors.insert(std::make_pair("qgsp_bic_hp",            &BDSModularPhysicsList::QGSPBICHP));
   physicsConstructors.insert(std::make_pair("shielding",              &BDSModularPhysicsList::Shielding));
+  physicsConstructors.insert(std::make_pair("stopping",               &BDSModularPhysicsList::Stopping));
   physicsConstructors.insert(std::make_pair("synch_rad",              &BDSModularPhysicsList::SynchRad));
 #if G4VERSION_NUMBER > 1019
   physicsConstructors.insert(std::make_pair("em_gs",                  &BDSModularPhysicsList::EmGS));
@@ -188,6 +195,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #endif
 #if G4VERSION_NUMBER > 1029
   physicsConstructors.insert(std::make_pair("decay_muonic_atom",      &BDSModularPhysicsList::DecayMuonicAtom));
+#endif
+#if G4VERSION_NUMBER > 1039
+  physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
   // old names and aliases
@@ -384,20 +394,12 @@ void BDSModularPhysicsList::ConstructAllIons()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   if(opticalPhysics)
     {ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
@@ -414,10 +416,6 @@ void BDSModularPhysicsList::ConfigureOptical()
 
 void BDSModularPhysicsList::SetCuts()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
   // set default value
   SetDefaultCutValue(globals->DefaultRangeCut());
 
@@ -588,6 +586,12 @@ void BDSModularPhysicsList::EmExtra()
 #if G4VERSION_NUMBER > 1012
       constructor->Synch(true); // introduced geant version 10.1
 #endif
+      G4bool useLENDGammaNuclear = BDSGlobalConstants::Instance()->UseLENDGammaNuclear();
+      if (useLENDGammaNuclear)
+	{
+	  BDS::CheckLowEnergyNeutronDataExists("em_extra");
+	  constructor->LENDGammaNuclear(true);
+	}
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
@@ -757,7 +761,7 @@ void BDSModularPhysicsList::HadronicElasticHP()
 
 void BDSModularPhysicsList::HadronicElasticLEND()
 {
-  BDS::CheckLowEnergyDataExists("hadronic_elastic_lend");
+  BDS::CheckLowEnergyNeutronDataExists("hadronic_elastic_lend");
   ConstructAllLeptons();
   if (!physicsActivated["hadronic_elastic_lend"])
     {
@@ -793,7 +797,7 @@ void BDSModularPhysicsList::Ion()
 
 void BDSModularPhysicsList::IonBinary()
 {
-  BDS::CheckLowEnergyDataExists("ion_binary");
+  BDS::CheckHighPrecisionDataExists("ion_binary");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -841,7 +845,7 @@ void BDSModularPhysicsList::IonElasticQMD()
 
 void BDSModularPhysicsList::IonINCLXX()
 {
-  BDS::CheckLowEnergyDataExists("ion_inclxx");
+  BDS::CheckHighPrecisionDataExists("ion_inclxx");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -871,7 +875,23 @@ void BDSModularPhysicsList::Muon()
       constructors.push_back(new BDSPhysicsMuon(emWillBeUsed));
       physicsActivated["muon"] = true;
     }
-}							  
+}
+
+void BDSModularPhysicsList::NeutronTrackingCut()
+{
+  if(!physicsActivated["neutron_tracking_cut"])
+    {
+      auto ntc = new G4NeutronTrackingCut();
+      G4double timeLimit = BDSGlobalConstants::Instance()->NeutronTimeLimit();
+      G4double eKinLimit = BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit();
+      G4cout << __METHOD_NAME__ << "Neutron time limit: " << timeLimit / CLHEP::s << " s" << G4endl;
+      G4cout << __METHOD_NAME__ << "Neutron kinetic energy limit: " << eKinLimit / CLHEP::MeV << G4endl;
+      ntc->SetTimeLimit(timeLimit);
+      ntc->SetKineticEnergyLimit(eKinLimit);
+      constructors.push_back(ntc);
+      physicsActivated["neutron_tracking_cut"] = true;
+    }
+}
 							  
 void BDSModularPhysicsList::Optical()
 {
@@ -932,6 +952,17 @@ void BDSModularPhysicsList::Shielding()
     }
 }
 
+void BDSModularPhysicsList::Stopping()
+{
+  ConstructAllShortLived();
+  ConstructAllIons();
+  if(!physicsActivated["stopping"])
+    {
+      constructors.push_back(new G4StoppingPhysics());
+      physicsActivated["stopping"] = true;
+    }
+}
+
 void BDSModularPhysicsList::SynchRad()
 {
   ConstructAllLeptons();
@@ -968,7 +999,7 @@ void BDSModularPhysicsList::DecaySpin()
 #if G4VERSION_NUMBER > 1022
 void BDSModularPhysicsList::IonPHP()
 {
-  BDS::CheckLowEnergyDataExists("ion_php");
+  BDS::CheckHighPrecisionDataExists("ion_php");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -986,10 +1017,23 @@ void BDSModularPhysicsList::IonPHP()
 #if G4VERSION_NUMBER > 1029
 void BDSModularPhysicsList::DecayMuonicAtom()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["decay_muonic_atom"])
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());
       physicsActivated["decay_muonic_atom"] = true;
+    }
+}
+#endif
+
+#if G4VERSION_NUMBER > 1039
+void BDSModularPhysicsList::ShieldingLEND()
+{
+  BDS::CheckLowEnergyNeutronDataExists("shielding_lend");
+  if(!physicsActivated["shielding_lend"])
+    {
+      constructors.push_back(new G4HadronPhysicsShieldingLEND());
+      physicsActivated["shielding_lend"] = true;
     }
 }
 #endif

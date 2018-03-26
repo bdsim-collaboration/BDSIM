@@ -1,0 +1,16 @@
+c1: rcol, l=20*m, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="em_extra";
+
+! this option only applies to em_extra physics and requires
+! the low energy neutron data set to be present.
+option, useLENDGammaNuclear = 1;
+
+option, checkOverlaps=1;
+
+beam, particle="e-",
+      energy=30*GeV;

@@ -325,7 +325,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 	{// should protect against -ve length teleporter
 	  G4cout << G4endl << "Insufficient space between the first and last elements "
 		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
-		 << "- these will not be built." << G4endl << G4endl;
+		 << "- these will not be built." << G4endl;
+	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is " << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
 	}
       else
 	{ 
