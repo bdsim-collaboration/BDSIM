@@ -24,7 +24,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TfsFile.hh"
 
 #include "BDSOutputROOTEventHeader.hh"
+#include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
 
 #include <iostream>
 #include <map>
@@ -79,10 +84,50 @@ int main(int argc, char *argv[])
 
   TFile* outputFile = new TFile(outputFileName.c_str(),"RECREATE");
   outputFile->cd();
-  TTree* eventOutputTree = new TTree("Event","BDSIM event");
 
+  // add header for file type and version details
+  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
+  headerOut->Fill(); // updates time stamp
+  headerOut->SetFileType("REBDSIM");
+  TTree* headerTree = new TTree("Header", "REBDSIM Header");
+  headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
+  headerTree->Fill();
+
+  TTree* modelTree = new TTree("Model","BDSIM model");
+  BDSOutputROOTEventModel* model = new BDSOutputROOTEventModel();
+  modelTree->Branch("Model.", "BDSOutputROOTEventModel", model, 32000, 1);
+  std::vector<std::string> samplerNamesUnique;
+  for (const auto& sampler : *input)
+    {samplerNamesUnique.push_back(sampler.name + ".");}
+  model->samplerNamesUnique = samplerNamesUnique;
+  modelTree->Fill();
+
+  outputFile->Write();
+  
+  TTree* eventOutputTree = new TTree("Event","BDSIM event");
+  
+  // we have to put a few things in the file so the analysis DataLoader will work.
+  auto infoLocal   = new BDSOutputROOTEventInfo();
+  auto eLossLocal  = new BDSOutputROOTEventLoss();
+  auto primaryFHit = new BDSOutputROOTEventLoss();
+  auto primaryLHit = new BDSOutputROOTEventLoss();
+  auto tunnelLocal = new BDSOutputROOTEventLoss();
+  auto trajLocal   = new BDSOutputROOTEventTrajectory();
+  auto histsLocal  = new BDSOutputROOTEventHistograms();
+  eventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",      infoLocal,   32000, 1);
+  eventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",      eLossLocal,  4000,  1);
+  eventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",      primaryFHit, 4000,  2);
+  eventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",      primaryLHit, 4000,  2);
+  eventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",      tunnelLocal, 4000,  2);
+  eventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",trajLocal,   4000,  2);
+  eventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",histsLocal,  32000, 1);
+  
   // shortcut for handiness
+#ifndef __ROOTDOUBLE__
+  typedef BDSOutputROOTEventSampler<float> samplerd;
+#else
   typedef BDSOutputROOTEventSampler<double> samplerd;
+#endif
 
   // setup local objects, branches and link to output file
   std::vector<samplerd*> localSamplers;
@@ -96,7 +141,8 @@ int main(int argc, char *argv[])
 			      outputSampler,32000,0);
       localSamplers.push_back(outputSampler);
     }
-  
+
+  std::cout << "Writing to BDSIM file event by event" << std::endl;
   // we can only loose particles so the number of entries in the first
   // is the number of 'events' or entries we'll use
   int nEntries  = (int)input->segments[0].size();
@@ -143,19 +189,7 @@ int main(int argc, char *argv[])
       eventOutputTree->Fill();
     }
   std::cout << std::endl;
-
-  // add header for file type and version details
-  outputFile->cd();
-  BDSOutputROOTEventHeader* headerOut = new BDSOutputROOTEventHeader();
-  headerOut->Fill(); // updates time stamp
-  headerOut->SetFileType("REBDSIM");
-  TTree* headerTree = new TTree("Header", "REBDSIM Header");
-  headerTree->Branch("Header.", "BDSOutputROOTEventHeader", headerOut);
-  headerTree->Fill();
   outputFile->Write(0,TObject::kOverwrite);
-
-  //outputFile->Close();
-
   delete outputFile;
   //delete eventOutputTree;
   for (auto& s : localSamplers)
