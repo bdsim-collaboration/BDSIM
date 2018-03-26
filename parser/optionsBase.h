@@ -191,6 +191,7 @@ namespace GMAD
     double   prodCutProtons;
     double   neutronTimeLimit;
     double   neutronKineticEnergyLimit;
+    bool     useLENDGammaNuclear;
     ///@}
 
     /// Biasing options

@@ -246,6 +246,7 @@ void Options::PublishMembers()
   publish("prodCutHadrons",              &Options::prodCutProtons); // backwards compatability
   publish("neutronTimeLimit",            &Options::neutronTimeLimit);
   publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
+  publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

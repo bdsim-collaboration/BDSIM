@@ -394,20 +394,12 @@ void BDSModularPhysicsList::ConstructAllIons()
 
 void BDSModularPhysicsList::ConfigurePhysics()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   if(opticalPhysics)
     {ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   // cherenkov turned on with optical even if it's not on as separate list
   opticalPhysics->Configure(G4OpticalProcessIndex::kCerenkov, true);
   opticalPhysics->Configure(G4OpticalProcessIndex::kScintillation, true);                                ///< Scintillation process index
@@ -424,10 +416,6 @@ void BDSModularPhysicsList::ConfigureOptical()
 
 void BDSModularPhysicsList::SetCuts()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
   // set default value
   SetDefaultCutValue(globals->DefaultRangeCut());
 
@@ -598,6 +586,12 @@ void BDSModularPhysicsList::EmExtra()
 #if G4VERSION_NUMBER > 1012
       constructor->Synch(true); // introduced geant version 10.1
 #endif
+      G4bool useLENDGammaNuclear = BDSGlobalConstants::Instance()->UseLENDGammaNuclear();
+      if (useLENDGammaNuclear)
+	{
+	  BDS::CheckLowEnergyNeutronDataExists("em_extra");
+	  constructor->LENDGammaNuclear(true);
+	}
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
@@ -767,7 +761,7 @@ void BDSModularPhysicsList::HadronicElasticHP()
 
 void BDSModularPhysicsList::HadronicElasticLEND()
 {
-  BDS::CheckLowEnergyDataExists("hadronic_elastic_lend");
+  BDS::CheckLowEnergyNeutronDataExists("hadronic_elastic_lend");
   ConstructAllLeptons();
   if (!physicsActivated["hadronic_elastic_lend"])
     {
@@ -803,7 +797,7 @@ void BDSModularPhysicsList::Ion()
 
 void BDSModularPhysicsList::IonBinary()
 {
-  BDS::CheckLowEnergyDataExists("ion_binary");
+  BDS::CheckHighPrecisionDataExists("ion_binary");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -851,7 +845,7 @@ void BDSModularPhysicsList::IonElasticQMD()
 
 void BDSModularPhysicsList::IonINCLXX()
 {
-  BDS::CheckLowEnergyDataExists("ion_inclxx");
+  BDS::CheckHighPrecisionDataExists("ion_inclxx");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -888,8 +882,12 @@ void BDSModularPhysicsList::NeutronTrackingCut()
   if(!physicsActivated["neutron_tracking_cut"])
     {
       auto ntc = new G4NeutronTrackingCut();
-      ntc->SetTimeLimit(BDSGlobalConstants::Instance()->NeutronTimeLimit());
-      ntc->SetKineticEnergyLimit(BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit());
+      G4double timeLimit = BDSGlobalConstants::Instance()->NeutronTimeLimit();
+      G4double eKinLimit = BDSGlobalConstants::Instance()->NeutronKineticEnergyLimit();
+      G4cout << __METHOD_NAME__ << "Neutron time limit: " << timeLimit / CLHEP::s << " s" << G4endl;
+      G4cout << __METHOD_NAME__ << "Neutron kinetic energy limit: " << eKinLimit / CLHEP::MeV << G4endl;
+      ntc->SetTimeLimit(timeLimit);
+      ntc->SetKineticEnergyLimit(eKinLimit);
       constructors.push_back(ntc);
       physicsActivated["neutron_tracking_cut"] = true;
     }
@@ -1001,7 +999,7 @@ void BDSModularPhysicsList::DecaySpin()
 #if G4VERSION_NUMBER > 1022
 void BDSModularPhysicsList::IonPHP()
 {
-  BDS::CheckLowEnergyDataExists("ion_php");
+  BDS::CheckHighPrecisionDataExists("ion_php");
   ConstructAllBaryons();
   ConstructAllIons();
   ConstructAllLeptons();
@@ -1019,6 +1017,7 @@ void BDSModularPhysicsList::IonPHP()
 #if G4VERSION_NUMBER > 1029
 void BDSModularPhysicsList::DecayMuonicAtom()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["decay_muonic_atom"])
     {
       constructors.push_back(new G4MuonicAtomDecayPhysics());
@@ -1030,7 +1029,7 @@ void BDSModularPhysicsList::DecayMuonicAtom()
 #if G4VERSION_NUMBER > 1039
 void BDSModularPhysicsList::ShieldingLEND()
 {
-  BDS::CheckLowEnergyDataExists("shielding_lend");
+  BDS::CheckLowEnergyNeutronDataExists("shielding_lend");
   if(!physicsActivated["shielding_lend"])
     {
       constructors.push_back(new G4HadronPhysicsShieldingLEND());

@@ -2288,11 +2288,9 @@ For general high energy hadron physics we recommend::
   
 .. note:: The strings for the physics list are case-insensitive.
 
-.. versionadded:: 0.92
-		  The physics lists changed from BDSIM produced physics lists to using the Geant4
-		  modular physics lists in version 0.92. This also introduced the space-delimited syntax
-		  slight changes to the physics list names.
-
+Some physics lists are only available in later versions of Geant4. These are filtered at compile
+time for BDSIM and it will not recognise a physics list that requires a later version of Geant4
+than BDSIM was compiled with respect to.
   
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
@@ -2308,128 +2306,145 @@ Physics Lists In BDSIM
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+-----------------------------+------------------------------------------------------------------------+
-| **String to use**           | **Description**                                                        |
-+=============================+========================================================================+
-|                             | Transportation of primary particles only - no scattering in material.  |
-+-----------------------------+------------------------------------------------------------------------+
-| charge_exchange             | `G4ChargeExchangePhysics`.                                             |
-+-----------------------------+------------------------------------------------------------------------+
-| cherenkov                   | Provides Cherenkov radiation for all charged particles. Provided by    |
-|                             | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
-|                             | `G4CherenkovProcess`.                                                  |
-+-----------------------------+------------------------------------------------------------------------+
-| decay                       | Provides radioactive decay processes using `G4DecayPhysics`. Crucial   |
-|                             | for pion decay for example.                                            |
-+-----------------------------+------------------------------------------------------------------------+
-| decay_radioactive           | Radioactive decay of long lived nuclei.                                |
-+-----------------------------+------------------------------------------------------------------------+
-| decay_spin                  | Decay physics but with spin correctly implemented. Note, only the      |
-|                             | Geant4 tracking integrators track spin correctly.                      |
-+-----------------------------+------------------------------------------------------------------------+
-| em                          | Transportation of primary particles, ionisation, bremsstrahlung,       |
-|                             | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
-+-----------------------------+------------------------------------------------------------------------+
-| em_extra                    | This provides extra electromagnetic models including, muon nuclear     |
-|                             | processes, bertini electro-nuclear model and synchrotron radiation     |
-|                             | (not in material). Provided by `G4EmPhysicsExtra`.                     |
-+-----------------------------+------------------------------------------------------------------------+
-| em_gs                       | `G4EmStandardPhysicsGS`.                                               |
-+-----------------------------+------------------------------------------------------------------------+
-| em_livermore                | `G4EmLivermorePhysics`.                                                |
-+-----------------------------+------------------------------------------------------------------------+
-| em_livermore_polarised      | `G4EmLivermorePolarizedPhysics`.                                       |
-+-----------------------------+------------------------------------------------------------------------+
-| em_low_ep                   | `G4EmLowEPPhysics`.                                                    |
-+-----------------------------+------------------------------------------------------------------------+
-| em_penelope                 | The same as `em` but using low energy electromagnetic models. Uses     |
-|                             | `G4EmPenelopePhysics`.                                                 |
-+-----------------------------+------------------------------------------------------------------------+
-| em_ss                       | `G4EmStandardPhysicsSS`.                                               |
-+-----------------------------+------------------------------------------------------------------------+
-| em_wvi                      | `G4EmStandardPhysicsWVI`.                                              |
-+-----------------------------+------------------------------------------------------------------------+
-| em_1                        | `G4EmStandardPhysics_option1`.                                         |
-+-----------------------------+------------------------------------------------------------------------+
-| em_2                        | `G4EmStandardPhysics_option2`.                                         |
-+-----------------------------+------------------------------------------------------------------------+
-| em_3                        | `G4EmStandardPhysics_option3`.                                         |
-+-----------------------------+------------------------------------------------------------------------+
-| em_4                        | `G4EmStandardPhysics_option4`.                                         |
-+-----------------------------+------------------------------------------------------------------------+
-| ftfp_bert                   | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
-|                             | is based on the FRITIOF description of string excitation and           |
-|                             | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                             | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
-+-----------------------------+------------------------------------------------------------------------+
-| ftfp_bert_hp                | Similar to `FTFP_BERT` but with the high precision neutron package.    |
-|                             | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic            | Elastic hadronic processes. This is provided by                        |
-|                             | `G4HadronElasticPhysics.`                                              |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic_d          | `G4HadronDElasticPhysics`.                                             |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic_h          | `G4HadronHElasticPhysics`.                                             |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic_hp         | `G4HadronElasticPhysicsHP`.                                            |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic_lend (`*`) | `G4HadronElasticPhysicsLEND`.                                          |
-+-----------------------------+------------------------------------------------------------------------+
-| hadronic_elastic_xs         | `G4HadronElasticPhysicsXS`.                                            |
-+-----------------------------+------------------------------------------------------------------------+
-| ion                         | `G4IonPhysics`.                                                        |
-+-----------------------------+------------------------------------------------------------------------+
-| ion_binary (`*`)            | `G4IonBinaryCascadePhysics`.                                           |
-+-----------------------------+------------------------------------------------------------------------+
-| ion_elastic                 | `G4IonElasticPhysics`.                                                 |
-+-----------------------------+------------------------------------------------------------------------+
-| ion_elastic_qmd             | `G4IonQMDPhysics`.                                                     |
-+-----------------------------+------------------------------------------------------------------------+
-| ion_inclxx (`*`)            | `G4IonINCLXXPhysics`.                                                  |
-+-----------------------------+------------------------------------------------------------------------+
-| ion_php (`*`)               | `G4IonPhysicsPHP`.                                                     |
-+-----------------------------+------------------------------------------------------------------------+
-| lw                          | Laserwire photon producing process as if the laserwire had scattered   |
-|                             | photons from the beam. Not actively developed, but will register       |
-|                             | process.                                                               |
-+-----------------------------+------------------------------------------------------------------------+
-| muon                        | Provides muon production and scattering processes. Gamma to muons,     |
-|                             | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                             | multiple scattering for muons, muon bremsstrahlung, pair production    |
-|                             | and Cherenkov light are all provided. Provided by BDSIM physics        |
-|                             | builder (a la Geant4) `BDSPhysicsMuon`.                                |
-+-----------------------------+------------------------------------------------------------------------+
-| optical                     | Optical physics processes including absorption, Rayleigh scattering,   |
-|                             | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
-|                             | This uses `G4OpticalPhysics` class.                                    |
-+-----------------------------+------------------------------------------------------------------------+
-| qgsp_bert                   | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
-|                             | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
-|                             | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                             | (>10 GeV).                                                             |
-+-----------------------------+------------------------------------------------------------------------+
-| qgsp_bert_hp                | Similar to `QGSP_BERT` but with the addition of data driven high       |
-|                             | precision neutron models to transport neutrons below 20 MeV down to    |
-|                             | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
-+-----------------------------+------------------------------------------------------------------------+
-| qgsp_bic                    | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
-|                             | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
-|                             | model for protons and neutrons In comparison to the LEP model, Binary  |
-|                             | cascade better describes production of secondary particles produced in |
-|                             | interactions of protons and neutrons with nuclei. This is provided by  |
-|                             | `G4HadronPhysicsQGSP_BIC`.                                             |
-+-----------------------------+------------------------------------------------------------------------+
-| qgsp_bic_hp                 | Similar to `QGSP_BIC` but with the high precision neutron package.     |
-|                             | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
-+-----------------------------+------------------------------------------------------------------------+
-| shielding                   | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
-|                             | shielding applications.                                                |
-+-----------------------------+------------------------------------------------------------------------+
-| synch_rad                   | Provides synchrotron radiation for all charged particles. Provided by  |
-|                             | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
-|                             | `G4SynchrotronRadiation`.                                              |
-+-----------------------------+------------------------------------------------------------------------+
++-----------------------------+-------------------------------------------------------------------------+
+| **String to use**           | **Description**                                                         |
++=============================+=========================================================================+
+|                             | Transportation of primary particles only - no scattering in material.   |
++------------------------------+------------------------------------------------------------------------+
+| charge_exchange              | `G4ChargeExchangePhysics`.                                             |
++------------------------------+------------------------------------------------------------------------+
+| cherenkov                    | Provides Cherenkov radiation for all charged particles. Provided by    |
+|                              | BDSIM physics builder `BDSPhysicsCherenkov` that provides the process  |
+|                              | `G4CherenkovProcess`.                                                  |
++------------------------------+------------------------------------------------------------------------+
+| decay                        | Provides radioactive decay processes using `G4DecayPhysics`. Crucial   |
+|                              | for pion decay for example.                                            |
++------------------------------+------------------------------------------------------------------------+
+| decay_radioactive            | Radioactive decay of long lived nuclei. Uses                           |
+|                              | `G4RadioactiveDecayPhysics`.                                           |
++------------------------------+------------------------------------------------------------------------+
+| decay_muonic_atom            | `G4MuonicAtomDecayPhysics`. Available from Geant4.10.3 onwards.        |
++------------------------------+------------------------------------------------------------------------+
+| decay_spin                   | Decay physics but with spin correctly implemented. Note, only the      |
+|                              | Geant4 tracking integrators track spin correctly. Uses                 |
+|                              | `G4SpinDecayPhysics`. Available from Geant4.10.2.p01 onwards.          |
++------------------------------+------------------------------------------------------------------------+
+| em                           | Transportation of primary particles, ionisation, bremsstrahlung,       |
+|                              | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++------------------------------+------------------------------------------------------------------------+
+| em_extra                     | This provides extra electromagnetic models including, muon nuclear     |
+|                              | processes, bertini electro-nuclear model and synchrotron radiation     |
+|                              | (not in material). Provided by `G4EmPhysicsExtra`. Responds to the     |
+|                              | option `useLENDGammaNuclear` that requires `G4LENDDATA` environmental  |
+|                              | variable to be set for the optional LEND data set (see ** below).      |
++------------------------------+------------------------------------------------------------------------+
+| em_gs                        | `G4EmStandardPhysicsGS`. Available form Geant4.10.2 onwards.           |
++------------------------------+------------------------------------------------------------------------+
+| em_livermore                 | `G4EmLivermorePhysics`.                                                |
++------------------------------+------------------------------------------------------------------------+
+| em_livermore_polarised       | `G4EmLivermorePolarizedPhysics`.                                       |
++------------------------------+------------------------------------------------------------------------+
+| em_low_ep                    | `G4EmLowEPPhysics`.                                                    |
++------------------------------+------------------------------------------------------------------------+
+| em_penelope                  | The same as `em` but using low energy electromagnetic models. Uses     |
+|                              | `G4EmPenelopePhysics`.                                                 |
++------------------------------+------------------------------------------------------------------------+
+| em_ss                        | `G4EmStandardPhysicsSS`.                                               |
++------------------------------+------------------------------------------------------------------------+
+| em_wvi                       | `G4EmStandardPhysicsWVI`.                                              |
++------------------------------+------------------------------------------------------------------------+
+| em_1                         | `G4EmStandardPhysics_option1`.                                         |
++------------------------------+------------------------------------------------------------------------+
+| em_2                         | `G4EmStandardPhysics_option2`.                                         |
++------------------------------+------------------------------------------------------------------------+
+| em_3                         | `G4EmStandardPhysics_option3`.                                         |
++------------------------------+------------------------------------------------------------------------+
+| em_4                         | `G4EmStandardPhysics_option4`.                                         |
++------------------------------+------------------------------------------------------------------------+
+| ftfp_bert                    | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                              | is based on the FRITIOF description of string excitation and           |
+|                              | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                              | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
++------------------------------+------------------------------------------------------------------------+
+| ftfp_bert_hp                 | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                              | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic             | Elastic hadronic processes. This is provided by                        |
+|                              | `G4HadronElasticPhysics.`                                              |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_d           | `G4HadronDElasticPhysics`.                                             |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_h           | `G4HadronHElasticPhysics`.                                             |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_hp          | `G4HadronElasticPhysicsHP`.                                            |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_lend (`**`) | `G4HadronElasticPhysicsLEND`.                                          |
++------------------------------+------------------------------------------------------------------------+
+| hadronic_elastic_xs          | `G4HadronElasticPhysicsXS`.                                            |
++------------------------------+------------------------------------------------------------------------+
+| ion                          | `G4IonPhysics`.                                                        |
++------------------------------+------------------------------------------------------------------------+
+| ion_binary (`*`)             | `G4IonBinaryCascadePhysics`.                                           |
++------------------------------+------------------------------------------------------------------------+
+| ion_elastic                  | `G4IonElasticPhysics`.                                                 |
++------------------------------+------------------------------------------------------------------------+
+| ion_elastic_qmd              | `G4IonQMDPhysics`.                                                     |
++------------------------------+------------------------------------------------------------------------+
+| ion_inclxx (`*`)             | `G4IonINCLXXPhysics`.                                                  |
++------------------------------+------------------------------------------------------------------------+
+| ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |
++------------------------------+------------------------------------------------------------------------+
+| lw                           | Laserwire photon producing process as if the laserwire had scattered   |
+|                              | photons from the beam. Not actively developed, but will register       |
+|                              | process.                                                               |
++------------------------------+------------------------------------------------------------------------+
+| muon                         | Provides muon production and scattering processes. Gamma to muons,     |
+|                              | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                              | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                              | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                              | builder (a la Geant4) `BDSPhysicsMuon`.                                |
++------------------------------+------------------------------------------------------------------------+
+| neutron_tracking_cut         | `G4NeutronTrackingCut` allows neutrons to be killed via their tracking |
+|                              | time (i.e. time of flight) and minimum kinetic energy. These options   |
+|                              | are set via the option command and `neutronTimeLimit` (s) and          |
+|                              | `neutronKineticEnergyLimit` (GeV).                                     |
++------------------------------+------------------------------------------------------------------------+
+| optical                      | Optical physics processes including absorption, Rayleigh scattering,   |
+|                              | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                              | This uses `G4OpticalPhysics` class.                                    |
++------------------------------+------------------------------------------------------------------------+
+| qgsp_bert                    | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
+|                              | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
+|                              | hadronic elastic and inelastic processes. Suitable for high energy     |
+|                              | (>10 GeV).                                                             |
++------------------------------+------------------------------------------------------------------------+
+| qgsp_bert_hp                 | Similar to `QGSP_BERT` but with the addition of data driven high       |
+|                              | precision neutron models to transport neutrons below 20 MeV down to    |
+|                              | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
++------------------------------+------------------------------------------------------------------------+
+| qgsp_bic                     | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
+|                              | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
+|                              | model for protons and neutrons In comparison to the LEP model, Binary  |
+|                              | cascade better describes production of secondary particles produced in |
+|                              | interactions of protons and neutrons with nuclei. This is provided by  |
+|                              | `G4HadronPhysicsQGSP_BIC`.                                             |
++------------------------------+------------------------------------------------------------------------+
+| qgsp_bic_hp                  | Similar to `QGSP_BIC` but with the high precision neutron package.     |
+|                              | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++------------------------------+------------------------------------------------------------------------+
+| shielding                    | `G4HadronPhysicsShielding`. Inelastic hadron physics suitable for      |
+|                              | shielding applications.                                                |
++------------------------------+------------------------------------------------------------------------+
+| shielding_lend  (`**`)       | `G4HadronPhysicsShieldingLEND`. Similar to `shielding` but requires    |
+|                              | LEND data set for low energy neutrons. Available from Geant4.10.4      |
+|                              | onwards.                                                               |
++------------------------------+------------------------------------------------------------------------+
+| stopping                     | `G4StoppingPhysics`. Hadronic physics for stopping particles.          |
++------------------------------+------------------------------------------------------------------------+
+| synch_rad                    | Provides synchrotron radiation for all charged particles. Provided by  |
+|                              | BDSIM physics builder `BDSPhysicsSynchRad` that provides the process   |
+|                              | `G4SynchrotronRadiation`.                                              |
++------------------------------+------------------------------------------------------------------------+
 
 The following are also accepted as aliases to current physics lists. These are typically previously
 used names.
@@ -2459,10 +2474,14 @@ used names.
 +---------------------------+--------------------------+
 
 
-.. warning:: (*) These physics lists require the optional low energy data from Geant4. The user should
+.. warning:: (*) These physics lists require the optional high precision data from Geant4. The user should
 	     download this data from the Geant4 website and install it (for example: extract to
 	     <install-dir>/share/Geant4-10.3.3/data/ beside the other data) and export the environmental
 	     variable `G4PARTICLEHPDATA` to point to this directory.
+
+.. warning:: (**) These physics lists require the optional LEND data set that can be downloaded
+	     from the Geant4 website. It should be extracted and the environmental variable
+	     `G4LENDDATA` set to the directory containing it.
 
 
 Physics Biasing
@@ -2833,6 +2852,12 @@ Physics Processes
 | minimumRange                     | A particle that would not travel this range           |
 |                                  | (a distance) in the current material will be cut. [m] |
 +----------------------------------+-------------------------------------------------------+
+| neutronTimeLimit                 | Maximum allowed tracking time for a neutron when      |
+|                                  | using the `neutron_tracking_cut` physics list [s].    |
++----------------------------------+-------------------------------------------------------+
+| neutronKineticEnergyLimit        | Minimum allowed energy for neutrons when using the    |
+|                                  | `neutron_tracking_cut` physics list [GeV].            |
++----------------------------------+-------------------------------------------------------+
 | physicsList                      | Which physics lists to use - default tracking only.   |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
@@ -2852,6 +2877,10 @@ Physics Processes
 | synchRadOn                       | Whether to use synchrotron radiation processes.       |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | Whether to produce cerenkov radiation.                |
++----------------------------------+-------------------------------------------------------+
+| useLENDGammaNuclear              | Use the low energy neutron data set as provided by    |
+|                                  | the environmental variable `G4LENDDATA` when using    |
+|                                  | the `em_extra` physics list. Boolean.                 |
 +----------------------------------+-------------------------------------------------------+
 
 
