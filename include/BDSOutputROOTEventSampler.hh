@@ -62,10 +62,25 @@ public:
   
   T                  S;   // Will not need this when have global transforms
 
-  std::vector<int>     charge();
-  std::vector<double>  mass();
-  std::vector<double>  rigidity();
+  /// @{ These are not filled by default.
+  std::vector<int>     charge;
+  std::vector<T>       mass;
+  std::vector<T>       rigidity;
+  std::vector<bool>    isIon;
+  std::vector<int>     ionA;
+  std::vector<int>     ionZ;
+  /// @}
 
+  /// @{ Function to calculate on the fly the parameters.
+  std::vector<int>     getCharge();
+  std::vector<T>       getMass();
+  std::vector<T>       getRigidity();
+  std::vector<bool>    getIsIon();
+  std::vector<int>     getIonA();
+  std::vector<int>     getIonZ();
+  /// @}
+  
+  
   BDSOutputROOTEventSampler();
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
@@ -81,9 +96,19 @@ public:
             G4int beamlineIndex);
   void Fill(const BDSSamplerHit* hit);
 #endif
+
+  /// @{ Calculate and fill calculated variables.
+  inline void FillCharge()   {charge   = getCharge();}
+  inline void FillMass()     {mass     = getMass();}
+  inline void FillRigidity() {rigidity = getRigidity();}
+  inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
+  /// @}
+  
+  void FillCMR();  ///< Calculate and fill charge, mass and rigidity.
+  void FillCMRI(); ///< Calculate and fill charge, mass, rigidity and ion properties.
+  
   void SetBranchAddress(TTree *);
-  /// Clean Sampler
-  void Flush();
+  void Flush();  ///< Clean Sampler
 
   static BDSOutputROOTGeant4Data* particleTable;
 
