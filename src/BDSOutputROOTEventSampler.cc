@@ -251,6 +251,9 @@ void BDSOutputROOTEventSampler<T>::FillCMRI()
 	  charge.push_back(pInfo.charge);
 	  mass.push_back(pInfo.mass);
 	  rigidity.push_back(pInfo.rigidity(energy[i]));
+	  isIon.push_back(false);
+	  ionA.push_back(0);
+	  ionZ.push_back(0);
 	}
     }
 }
