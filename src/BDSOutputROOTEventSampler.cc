@@ -104,19 +104,11 @@ void BDSOutputROOTEventSampler<T>::Fill(const BDSSamplerHit* hit)
   t.push_back((T &&) (hit->GetT() / CLHEP::ns));
   modelID = hit->GetBeamlineIndex();
 
-  // X.push_back(hit->GetGlobalX()           / CLHEP::m);
-  // Y.push_back(hit->GetGlobalY()           / CLHEP::m);
-  // Z = hit->GetGlobalZ()                   / CLHEP::m;  
-  // Xp.push_back(hit->GetGlobalXPrime()     / CLHEP::radian);
-  // Yp.push_back(hit->GetGlobalYPrime()     / CLHEP::radian);
-  // Zp.push_back(hit->GetGlobalZPrime()     / CLHEP::radian);
-
   weight.push_back((T &&) hit->GetWeight());
   partID.push_back(hit->GetPDGtype());
   parentID.push_back(hit->GetParentID());
   trackID.push_back(hit->GetTrackID());
   turnNumber.push_back(hit->GetTurnsTaken());
-
 }
 //#else
 //void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
