@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 #include "G4IonTable.hh"
+#include "G4NuclideTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "globals.hh"
@@ -192,22 +193,30 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 
   if (fillIons)
     {// proceed to fill ion information as it was used in the simulation
+      // A frankly ridiculous interface to get all possible ions with pdg encoding and mass.
+      // G4IonTable uses G4NuclideTable that loads file data with Geant4. We then iterate
+      // over the nuclide table and query the ion table, which in turn creates the definitions
+      // of the ions required as we query them and can then calcualte and provide the mass
+      // and pdg encoding. Normally, the ion table would only provide just a few light ions.
       G4IonTable* ionTable = pt->GetIonTable();
-
-      // G4IonTable has no iterator - can only query for specific ions
-      // G4IonList is type def of std::multimap<G4int, const G4ParticleDefinition*>
-      // Thankfully has static public holder of info.
-      G4IonTable::G4IonList* ionList = ionTable->fIonList;
-      for (const auto& ion : *ionList)
+      G4NuclideTable* table = G4NuclideTable::GetInstance();
+      unsigned int number = (unsigned int)table->GetSizeOfIsotopeList();
+      for (unsigned int i = 0; i < number; i++)
 	{
-	  const G4ParticleDefinition* def = ion.second;
+	  G4IsotopeProperty* iso = table->GetIsotopeByIndex(i);
+	  int atmass = iso->GetAtomicMass();
+	  int atnum  = iso->GetAtomicNumber();
+	  double eng = iso->GetEnergy();
+	  // using the excited energy always works. using the (int)lvl doesn't
+	  G4ParticleDefinition* def = ionTable->GetIon(atnum, atmass,eng);
 
+	  // package the information we need
 	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
 						     (int)def->GetPDGCharge(),
 						     (double)def->GetPDGMass()/CLHEP::GeV,
 						     (int)def->GetAtomicNumber(),
 						     (int)def->GetAtomicMass()};
-	  ions[ion.first] = ionDef;
+	  ions[def->GetPDGEncoding()] = ionDef;
 	}
     }
 
