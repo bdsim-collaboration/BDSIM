@@ -42,6 +42,24 @@ void BDSOutputROOTGeant4Data::Flush()
   ions.clear();
 }
 
+const BDSOutputROOTGeant4Data::ParticleInfo BDSOutputROOTGeant4Data::GetParticleInfo(const int& pdgID) const
+{
+  auto result = particles.find(pdgID);
+  if (result != particles.end())
+    {return result->second;}
+  else
+    {return ParticleInfo();}
+}
+
+const BDSOutputROOTGeant4Data::IonInfo BDSOutputROOTGeant4Data::GetIonInfo(const int& pdgID) const
+{
+  auto result = ions.find(pdgID);
+  if (result != ions.end())
+    {return result->second;}
+  else
+    {return IonInfo();}
+}
+
 int BDSOutputROOTGeant4Data::Charge(const int& pdgID) const
 {
   if (IsIon(pdgID))

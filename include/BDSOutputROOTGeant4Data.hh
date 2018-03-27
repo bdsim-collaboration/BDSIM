@@ -80,6 +80,8 @@ public:
   /// Clear maps.
   virtual void Flush();
 
+  const ParticleInfo GetParticleInfo(const int& pdgID) const;
+  const IonInfo      GetIonInfo(const int& pdgID) const;
   int         Charge(const int& pdgID) const;
   double      Mass(const int& pdgID) const;
 
