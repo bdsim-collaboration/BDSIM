@@ -38,10 +38,10 @@ namespace BDSC
     {"proton", {2212, 0.938272}},
     {"e-",     {11,   0.000510999}},
     {"e+",     {11,   0.000510999}}
-  };;
+  };
 
   /// Access the simple particle information.
-  ParticleInfo GetParticleInfo(const std::string& particleName);  
+  ParticleInfo GetParticleInfo(const std::string& particleName); 
 }
 
 #endif
