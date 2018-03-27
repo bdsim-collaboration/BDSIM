@@ -154,10 +154,10 @@ namespace BDS
   /// Checking for "cutted crossed Z planes" for a cylinder with angled faces. This
   /// utility only works in one dimension unlike the other one with the same name and
   /// vector arguments.
-  G4bool WillIntersect(const G4double angleIn,
-		       const G4double angleOut,
-		       const G4double outerDiameter,
-		       const G4double length);
+  G4bool WillIntersect(const G4double& angleIn,
+		       const G4double& angleOut,
+		       const G4double& outerDiameter,
+		       const G4double& length);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to
   /// lie on the plane defined by the supplied normal vector - assumes plane
