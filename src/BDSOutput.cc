@@ -93,7 +93,7 @@ void BDSOutput::FillGeant4Data(const G4bool& writeIons)
   geant4DataOutput->Flush();
   geant4DataOutput->Fill(writeIons);
   WriteGeant4Data();
-#ifndef __ROOTDOUBLE__
+#ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
 #else
   BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
