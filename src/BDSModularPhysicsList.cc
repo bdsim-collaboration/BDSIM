@@ -586,12 +586,14 @@ void BDSModularPhysicsList::EmExtra()
 #if G4VERSION_NUMBER > 1012
       constructor->Synch(true); // introduced geant version 10.1
 #endif
+#if G4VERSION_NUMBER > 1039
       G4bool useLENDGammaNuclear = BDSGlobalConstants::Instance()->UseLENDGammaNuclear();
       if (useLENDGammaNuclear)
 	{
 	  BDS::CheckLowEnergyNeutronDataExists("em_extra");
 	  constructor->LENDGammaNuclear(true);
 	}
+#endif
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }

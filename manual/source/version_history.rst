@@ -14,7 +14,7 @@ New Features
   `G4HadronHElasticPhysics`, `G4HadronPhysicsShielding`, `G4HadronPhysicsShieldingLEND`,
   `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`,
   `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`, `G4NeutronTrackingCut`.
-* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear` physics options.
+* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear` (Geant4.10.4 onwards) physics options.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
 * Significantly improved analysis documentation.

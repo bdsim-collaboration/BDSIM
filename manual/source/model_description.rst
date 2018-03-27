@@ -2880,7 +2880,8 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | useLENDGammaNuclear              | Use the low energy neutron data set as provided by    |
 |                                  | the environmental variable `G4LENDDATA` when using    |
-|                                  | the `em_extra` physics list. Boolean.                 |
+|                                  | the `em_extra` physics list. Boolean. Available in    |
+|                                  | Geant4.10.4 onwards.                                  |
 +----------------------------------+-------------------------------------------------------+
 
 
