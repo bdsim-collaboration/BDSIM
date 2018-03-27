@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventTrajectory.hh"
 
 #include <iostream>
+#include <iomanip>
 #include <map>
 #include <string>
 #include <vector>
