@@ -85,16 +85,11 @@ double BDSOutputROOTGeant4Data::Mass(const int& pdgID) const
 double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
 					 const double& totalEnergy) const
 {
-  int ch = 0;
-  double mass = 0;
   if (IsIon(pdgID))
     {
       auto result = ions.find(pdgID);
       if (result != ions.end())
-	{
-	  ch = result->second.charge;
-	  mass = result->second.mass;
-	}
+	{return result->second.rigidity(totalEnergy);}
       else
 	{return 0;}
     }
@@ -102,24 +97,10 @@ double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
     {
       auto result = particles.find(pdgID);
       if (result != particles.end())
-	{
-	  ch = result->second.charge;
-	  mass = result->second.mass;
-	}
+	{return result->second.rigidity(totalEnergy);}
       else
 	{return 0;}
     }
-
-  if (!(std::abs(ch) > std::numeric_limits<double>::epsilon()))
-    {return 0;} // not finite charge, so rigidity 0
-  if (totalEnergy <= mass)
-    {return 0;} // invalid - just return 0
-  
-  // sqrt(E_t*2 - E_rest*2) in GeV
-  double numerator   = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));
-  double denominator = ch * 2.99792458e8;
-  double brho = numerator / denominator;
-  return brho;
 }
 
 std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
