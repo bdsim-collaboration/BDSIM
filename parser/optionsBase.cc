@@ -211,6 +211,10 @@ OptionsBase::OptionsBase()
   storeTrajectoryParticle   = "";
   storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  storeSamplerCharge       = false;
+  storeSamplerMass         = false;
+  storeSamplerRigidity     = false;
+  storeSamplerIon          = false;
   writePrimaries           = true;
 
   // circular options
