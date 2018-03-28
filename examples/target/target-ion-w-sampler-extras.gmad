@@ -1,0 +1,6 @@
+include target-ion-w.gmad;
+
+option, storeSamplerCharge=1,
+	storeSamplerMass=1,
+	storeSamplerRigidity=1,
+	storeSamplerIon=1;

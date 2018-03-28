@@ -73,6 +73,9 @@ public:
 #endif
   /// @}
 
+  /// Whether there is primary data in the output file.
+  inline bool UsePrimaries() const {return usePrimaries;}
+
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
   void SetBranchAddress(TTree* t,
@@ -112,6 +115,7 @@ private:
 
   bool debug           = false;
   bool processSamplers = false;
+  bool usePrimaries    = false;
 };
 
 #endif

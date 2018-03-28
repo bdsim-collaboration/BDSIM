@@ -284,6 +284,10 @@ void Options::PublishMembers()
   publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
+  publish("storeSamplerCharge",             &Options::storeSamplerCharge);
+  publish("storeSamplerMass",               &Options::storeSamplerMass);
+  publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);
+  publish("storeSamplerIon",                &Options::storeSamplerIon);
   publish("trajConnect",                    &Options::trajConnect);
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);

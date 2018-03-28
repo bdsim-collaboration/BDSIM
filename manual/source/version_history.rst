@@ -14,7 +14,7 @@ New Features
   `G4HadronHElasticPhysics`, `G4HadronPhysicsShielding`, `G4HadronPhysicsShieldingLEND`,
   `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`,
   `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`, `G4NeutronTrackingCut`.
-* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear` physics options.
+* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear` (Geant4.10.4 onwards) physics options.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
 * Significantly improved analysis documentation.
@@ -28,7 +28,7 @@ New Features
 * New CMake option to disable event display for installation with ROOT EVE problems.
 * Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
-* Full support for dipole fringe fields.
+* Full support for dipole fringe fields and pole face in tracking.
 * Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
 
 
@@ -36,6 +36,8 @@ Output \& Analysis Changes
 --------------------------
 
 * Output files now have header structure with software versions.
+* Output files now have 'geant4 data' that includes particle masses used in the simulation.
+* Samplers now have optional charge, mass, rigidity and ion A and Z (see :ref:`bdsim-options-output` for details). Classes in library can calcualte on-the-fly for user analysis.
 * "**librebdsimlib**" has been changed to "**librebdsim**" to be more consistent for output loading.
 * Support for logarithmic binning of histograms in rebdsim.
 * "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the

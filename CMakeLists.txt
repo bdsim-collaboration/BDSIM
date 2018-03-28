@@ -232,6 +232,9 @@ add_subdirectory(analysis)
 # Include directory for comparator
 add_subdirectory(comparator)
 
+# Include directory for conversion utilities
+add_subdirectory(convert)
+
 # Include directory for interpolator
 add_subdirectory(interpolator)
 

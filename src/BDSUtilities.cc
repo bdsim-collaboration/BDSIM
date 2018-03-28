@@ -445,10 +445,10 @@ G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
     {return false;}
 }
 
-G4bool BDS::WillIntersect(const G4double angleIn,
-			  const G4double angleOut,
-			  const G4double outerDiameter,
-			  const G4double length)
+G4bool BDS::WillIntersect(const G4double& angleIn,
+			  const G4double& angleOut,
+			  const G4double& outerDiameter,
+			  const G4double& length)
 {
   // Calculate the z component of triangle with each angle and
   // axis along length.

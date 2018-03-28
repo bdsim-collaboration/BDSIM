@@ -189,6 +189,10 @@ public:
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
+  inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
+  inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
+  inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
