@@ -2390,6 +2390,9 @@ Physics Lists In BDSIM
 +------------------------------+------------------------------------------------------------------------+
 | ion_elastic_qmd              | `G4IonQMDPhysics`.                                                     |
 +------------------------------+------------------------------------------------------------------------+
+| ion_em_dissocation           | Electromagnetic dissociation for ions. Uses `G4EMDissociation`. May    |
+|                              | produce warnings. Experimental.                                        |
++------------------------------+------------------------------------------------------------------------+
 | ion_inclxx (`*`)             | `G4IonINCLXXPhysics`.                                                  |
 +------------------------------+------------------------------------------------------------------------+
 | ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |

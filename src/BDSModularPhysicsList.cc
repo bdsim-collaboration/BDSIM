@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicalConstants.hh"
 #include "BDSPhysicsCherenkov.hh"
 #include "BDSPhysicsCutsAndLimits.hh"
+#include "BDSPhysicsEMDissociation.hh"
 #include "BDSPhysicsLaserWire.hh"
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
@@ -172,6 +173,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("ion_binary",             &BDSModularPhysicsList::IonBinary));
   physicsConstructors.insert(std::make_pair("ion_elastic",            &BDSModularPhysicsList::IonElastic));
   physicsConstructors.insert(std::make_pair("ion_elastic_qmd",        &BDSModularPhysicsList::IonElasticQMD));
+  physicsConstructors.insert(std::make_pair("ion_em_dissociation",    &BDSModularPhysicsList::IonEMDissociation));
   physicsConstructors.insert(std::make_pair("ion_inclxx",             &BDSModularPhysicsList::IonINCLXX));
   physicsConstructors.insert(std::make_pair("lw",                     &BDSModularPhysicsList::LaserWire));
   physicsConstructors.insert(std::make_pair("muon",                   &BDSModularPhysicsList::Muon));
@@ -842,6 +844,20 @@ void BDSModularPhysicsList::IonElasticQMD()
     {
       constructors.push_back(new G4IonQMDPhysics());
       physicsActivated["ion_elastic_qmd"] = true;
+    }
+}
+
+void BDSModularPhysicsList::IonEMDissociation()
+{
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllLeptons();
+  ConstructAllMesons();
+  ConstructAllShortLived();
+  if (!physicsActivated["ion_em_dissociation"])
+    {
+      constructors.push_back(new BDSPhysicsEMDissociation());
+      physicsActivated["ion_em_dissociation"] = true;
     }
 }
 
