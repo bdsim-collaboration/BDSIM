@@ -135,22 +135,27 @@ BDSOutputROOTEventHeader
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.20\textwidth}|p{0.4\textwidth}|
 
-+--------------------+----------------+---------------------------------------+
-| **Variable Name**  | **Type**       | **Description**                       |
-+====================+================+=======================================+
-| bdsimVersion       | std::string    | Version of BDSIM used.                |
-+--------------------+----------------+---------------------------------------+
-| geant4Version      | std::string    | Version of Geant4 used.               |
-+--------------------+----------------+---------------------------------------+
-| rootVersion        | std::string    | Version of ROOT used.                 |
-+--------------------+----------------+---------------------------------------+
-| clhepVersion       | std::string    | Version of CLHEP used.                |
-+--------------------+----------------+---------------------------------------+
-| timeStamp          | std::string    | Time and date file was created.       |
-+--------------------+----------------+---------------------------------------+
-| fileType           | std::string    | String describing what stage of       |
-|                    |                | simulation the file came from.        |
-+--------------------+----------------+---------------------------------------+
++------------------------+----------------+---------------------------------------+
+| **Variable Name**      | **Type**       | **Description**                       |
++========================+================+=======================================+
+| bdsimVersion           | std::string    | Version of BDSIM used.                |
++------------------------+----------------+---------------------------------------+
+| geant4Version          | std::string    | Version of Geant4 used.               |
++------------------------+----------------+---------------------------------------+
+| rootVersion            | std::string    | Version of ROOT used.                 |
++------------------------+----------------+---------------------------------------+
+| clhepVersion           | std::string    | Version of CLHEP used.                |
++------------------------+----------------+---------------------------------------+
+| timeStamp              | std::string    | Time and date file was created.       |
++------------------------+----------------+---------------------------------------+
+| fileType               | std::string    | String describing what stage of       |
+|                        |                | simulation the file came from.        |
++------------------------+----------------+---------------------------------------+
+| dataVersion            | int            | BDSIM data format version.            |
++------------------------+----------------+---------------------------------------+
+| doublePrecisionOutput  | bool           | Wether BDSIM was compiled with        |
+|                        |                | double precision for output.          |
++------------------------+----------------+---------------------------------------+
 
 Beam Tree
 ^^^^^^^^^
@@ -534,7 +539,22 @@ increases the output file size by 2x.
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | S               | T                 | S position of the sampler (m).                                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
+| charge (*)      | std::vector<int>  | Vector of the PDG charge of the particle for each hit.                   |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| mass (*)        | std::vector<T>    | Vector of the PDG mass of the particle for each hit (GeV).               |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| rigidity (*)    | std::vector<T>    | Vector of the rigidity of the particle for each hit (Tm).                |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| isIon (*)       | std::vector<bool> | Vector of whether the particle is an ion or not.                         |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| ionA (*)        | std::vector<int>  | Vector of the atomic mass number. 0 for non-nuclei.                      |
++-----------------+-------------------+--------------------------------------------------------------------------+
+| ionZ (*)        | std::vector<int>  | Vector of the atomic number. 0 for non-nuclei.                           |
++-----------------+-------------------+--------------------------------------------------------------------------+
 
+.. note:: (*) These are not stored by default (i.e. the vectors exist but are empty). If these
+	  parameters are desired, please use the appropriate options to turn their storage on.
+	  See :ref:`bdsim-options-output` for more details.
 
 .. warning:: A common issue is apparently half of the particles missing in the first sampler in
 	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch

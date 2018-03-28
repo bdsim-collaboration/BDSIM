@@ -2929,6 +2929,15 @@ following options. These options may increase the output file size by a large am
 |                                   | ID and beam line index will be stored - this is intended to help   |
 |                                   | 'link' the energy deposition back to other information.            |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerCharge                | Store corresponding charge of particle for every entry in sampler. |
++-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerMass                  | Store corresponding mass (in GeV) of particle for every entry in   |
+|                                   | the sampler.                                                       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerRigidity              | Store the rigidity (in Tm) of particle for every entry in sampler. |
++-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerIon                   | Store A, Z and Boolean whether the entry is an ion or not.         |
++-----------------------------------+--------------------------------------------------------------------+
 | storeTrajectory                   | Whether to store trajectories. If turned on, all trajectories are  |
 |                                   | stored. This must be turned on to store any trajectories at all.   |
 +-----------------------------------+--------------------------------------------------------------------+
