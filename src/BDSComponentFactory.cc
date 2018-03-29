@@ -1533,9 +1533,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double chordLength = el->l * CLHEP::m;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = (el->gradient * CLHEP::MeV) / chordLength;}
+    {(*st)["eField"] = (el->gradient * CLHEP::MeV / CLHEP::m);}
   else
-    {(*st)["eField"] = el->E * CLHEP::volt;}
+    {(*st)["eField"] = el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
