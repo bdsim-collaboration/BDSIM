@@ -143,9 +143,11 @@ void Options::PublishMembers()
   publish("exportFileName",        &Options::exportFileName);
   publish("bdsimPath",             &Options::bdsimPath);
   
-  // options which influence the tracking
-  publish("physicsList",&Options::physicsList);
-  
+  // physics
+  publish("physicsList",       &Options::physicsList);
+  publish("physicsVerbose",    &Options::physicsVerbose);
+
+  // reproducibility
   publish("eventOffset",       &Options::eventOffset);
   publish("recreateSeedState", &Options::recreateSeedState);
 

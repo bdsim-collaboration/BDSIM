@@ -10,7 +10,8 @@ Beam Delivery Simulation (BDSIM) is a C++ program that utilises the Geant4
 toolkit to simulate both the transport of particles in an accelerator and
 their interaction with the accelerator material. BDSIM is capable of
 simulating a wide variety of accelerator components and magnets with Geant4
-geometry dynamically built based on a text input file.
+geometry dynamically built based on a text input file. Thick lens accelerator
+tracking routines are provided for fast accurate tracking in vacuum.
 
 What BDSIM is suitable for
 --------------------------
@@ -30,20 +31,40 @@ What BDSIM is not intended for
 Example Applications
 --------------------
 
-* Detector background from the accelerator
-* LHC beam loss and energy deposition simulations
-* CLIC muon backgrounds studies
-* Laserwire detector signal to background ratio
+* Detector background from the accelerator.
+* Beam transport in air.
+* Beam interaction with vacuum gas.
+* Losses in extraction kick.
+* LHC beam loss and energy deposition.
+* CLIC muon background from accelerator.
+* Laserwire detector signal to background ratio.
 * ILC collimator efficiency study and detector backgrounds
+
+Capabilities
+============
+
+* BDSIM uses **ASCII** text input with a syntax designed to be very similar to
+  **MAD8** / **MADX**.
+* Convert MADX / MAD8 / TRANSPORT model to a 3D model in minutes.
+* Generate beam distribution according to Twiss parameters of a beam.
+* Track beam distribution and record particle distribution after each component.
+* Simulate energy deposition in all components along beam line.
+* Calculate beam distribution and Twiss optical functions from particle distribution.
+* Use the full set of physics processes available in Geant4.
+* Adjust cross-sections of processes of interest.
+* Use externally provided geometry and field maps for a fully customised model.
+* Interactively visualise model in 3D as well as particle tracks.
+* Analyse history and origin of radiation produced in accelerator with analysis suite.
+* Strong reproducibility - recreate any event again exactly.
   
 
-General Simulation Procedure
-============================
+Simulation Procedure
+====================
 
 1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file or writing your own.
 2) Run BDSIM with core beam distribution for validation of optics and therefore model preparation.
 3) Run BDSIM with desired input distribution and physics processes with low statistics to verify desired application.
-4) Repeat 3) with greater statistics either as a single instance or on a farm.
+4) Repeat 3) with greater statistics either as a single instance or on a computing cluster.
 5) Analyse output data as desired.
 
 How BDSIM Works
@@ -52,71 +73,92 @@ How BDSIM Works
  * BDSIM builds a complete Geant4 model and runs it as a Geant4 model.
  * BDSIM does not link to another particle tracking code.
  * BDSIM does not pass information back and forth between two codes.
- * BDSIM provides transforms between Cartesian and Curvilinear coordinate systems.
  * Thick lens tracking routines are used in place of normal 4th order Runge-Kutta integrators.
+ * BDSIM provides the required transforms between Cartesian and Curvilinear coordinate systems for accelerator tracking routines.
 
 In a Geant4 program, code is written in C++ to construct a 3D model of the object
-to be simulated. Fields may be specified through a developer-provided class that returns
+to be simulated. A Geant4 example is shown below being interactively visualised.
+
+
+.. figure:: figures/geant4_application.png
+	    :width: 90%
+	    :align: center
+
+
+This is labour intensitve and inflexible for different accelerator models or optics. As
+accelerators typically consist of a standard set of components these can be made
+reasonably generic. BDSIM provides a library of geometry and fields that allow
+simple optical descriptions to be made into 3D models. Example screen shots are shown
+below.
+
+.. figure:: figures/example-simpleCollimation.png
+	    :width: 90%
+	    :align: center
+
+"simpleCollimation" example of four quadrupoles in a small tunnel section.
+
+.. figure:: figures/example-atf2.png
+	    :width: 90%
+	    :align: center
+
+Accelerator Test Facility 2 in KEK, Japan with tunnel model.
+
+.. figure:: figures/example-atf2-2.png
+	    :width: 90%
+	    :align: center
+
+Accelerator Test Facility 2 in KEK, Japan with tunnel model.
+
+		    
+Apart from the 3D geometry, a crucial component of a model are the electro-magnetic
+fields. Fields in Geant4 may be specified through a developer-provided C++ class that returns
 the field vector as a function of global Cartesian `x`, `y`, `z` and `t`. BDSIM provides
-classes to describe the magnetic fields found for each type of accelerator magnet.
+classes to describe the magnetic fields found for each type of accelerator magnet as well
+as the transforms so that they can be described *locally* with respect to a particular magnet.
 
-Aside from the field, Geant4 uses a numerical integrator to calculate the motion of a
-charged particle through the field. Geant4 is designed to accurately simulate detectors
-so the presumed field description is a sampled field map with a non-uniform field. In this
-case, a numerical integrator is the best solution. In a detector, particles typically
-do not travel a great distance.
-
-In an accelerator however, the fields are mostly of a known form with only minor imperfections
-and the particle may traverse many different fields many different times. For these fields,
-there are exact or preferred solutions that provide greater physical accuracy and
-numerical stability. BDSIM provides these tracking routines for thick lens tracking.
+To calculate the motion of charged particle in a field, Geant4 uses a numerical integrator
+such as a 4th Order Runge-Kutta algorithm. This are the most general solution for a varying
+field but in an accelerator the specific fields have specific analytical solutions that
+can be used for improved accuracy and computational efficiency. BDSIM provides these tracking
+routines for "thick lens" tracking.
 
 These 'integrators' are typically constructed with a strength that represents the field
 (such as `k1` for a quadrupole) and the field vector :math:`\vec{B}` is ignored. Of course,
 in a full radiation transport simulation, there can be many different types of particles
 in all directions (even backwards). The thick lens tracking routines do not work for
 particles travelling backwards or perpendicular, so we resort back to a numerical
-integrator (typically 4th order Runge-Kutta) in these cases. The thick lense particles
+integrator (typically 4th order Runge-Kutta) in these cases. The thick lens routines
 are used for paraxial particle only.
 
-Thick lens tracking routines typically work in a curvilinear coordinate system
+Thick lens tracking routines typically work in a **curvilinear coordinate system**
 that follows the reference trajectory, whereas Geant4 must work in global Cartesian
 coordinates. BDSIM bridges these two systems with an automatically created parallel
 geometry of simple cylinders that follow the beam line. Transforms between coordinate
 systems are created by using the coordinate system of this parallel geometry.
 
-A Little More Detail
-====================
 
-BDSIM uses **ASCII** text input with a syntax designed to be very similar to
-**MAD8** / **MADX**. The user prepares a representation of the
-accelerator lattice they wish
-to simulate by defining magnets or various accelerator components and the sequence
-they should appear in. This can usually be achieved automatically using provided converters from
-MADX or MAD8 optics output files.  Additionally, the user may set options describing, for
-example, energy tracking cuts, which physics processes are of importance and at which
-locations to record output.
+.. _tracking-introduction:
 
-BDSIM can then use the input file to simulate the passage of the desired number of
-particles and how they interact with the accelerator components themselves.
-Should a particle hit the beampipe, the physics processes of Geant4 will be used
-to calculate the interaction with the beampipe and secondary particles that may
-be produced. Particles are recorded at user specified 'sampling' planes and energy
-deposition throughout the accelerator is recorded in both discrete 'hits' and a
-histogram as a function of distance along the accelerator.
+Tracking
+========
 
-One may generally write their own C++ program to simulate the setup of geometry
-and magnetic fields they like, however, in the case of an accelerator the
-typical geometry is highly repetitive and usually consists of either a beampipe
-or a beampipe with a magnet surrounding it. BDSIM generates Geant4 geometry
-automatically and provides integrators for linear magnetic fields in place
-of the normal Runge-Kutta integrators used by Geant4. Equations of motion describing
-particle motion in magnetic fields such as that of a quadrupole or sector-bend have 
-analytical solutions that can be used in place of numerical integration. BDSIM
-uses these to provide fast and accurate thick lens tracking in vacuum.
+There are a variety of particle tracking routines and BDSIM provides several sets. The one
+provided *out-of-the-box* called "bdsimmatrix" uses thick lens tracking and provides
+agreement with MADX and PTC tracking codes.
 
-BDSIM provides a library of fairly generic magnet geometry styles that will cover
-most cases. Should a more detailed geometry be required, the user may supply
-this in various formats as well as magnetic field maps. Alternatively, if the user
-wishes to write their own Geant4 geometry for a particular component this can be
-integrated into BDSIM relatively easily.
+A second set of routines called "bdsimtwo" is similar but differs in the way dipoles magnets
+are treated. In this cases, a constant pure dipole field is used to calcule the motion
+of the particle (using a Rodrigues rotation in global Cartesian coordinates). The field
+is a 'hard-edge' field - it exists inside the volume at the same strength everywhere and is
+zero outside. Whilst the tracking algorithm is accurate, such a model does not agree with
+MADX or PTC when the dipoles have angled pole faces. This integrator set is computationally
+more efficient than the "bdsimmatrix" set as no transforms between Cartesian and curvilinear
+coordinate systems are required for dipoles. In the case of a high energy accelerator with
+no pole face angles or low angle bends, "bdsimtwo" may safely be used for accurate results
+and increased performance.
+
+.. note:: With the "bdsimmatrix" routines, the tracking associated with the pole face angle is
+	  handled not by the physical shape of the magnet but by the thick lens matrix. Therefore,
+	  no pole face angles are physically constructed. The tracking however does represent the
+	  pole faces. Developments underway will allow both correct tracking with the thick lens
+	  matrix and the physical angled pole face.

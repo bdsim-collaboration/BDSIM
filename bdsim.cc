@@ -248,14 +248,11 @@ int main(int argc,char** argv)
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
-#ifdef BDSDEBUG
-  auto physics = runManager->GetUserPhysicsList();
-  if (const BDSModularPhysicsList* modPhysics = dynamic_cast<const BDSModularPhysicsList*>(physics))
+  if (BDSGlobalConstants::Instance()->PhysicsVerbose())
     {
-      modPhysics->PrintPrimaryParticleProcesses();
-      modPhysics->PrintDefinedParticles();
+      physList->PrintPrimaryParticleProcesses();
+      physList->PrintDefinedParticles();
     }
-#endif
 
   /// Set verbosity levels
   runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
