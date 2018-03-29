@@ -2863,6 +2863,9 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | Which physics lists to use - default tracking only.   |
 +----------------------------------+-------------------------------------------------------+
+| physicsVerbose                   | Print out all processes linked to primary particle    |
+|                                  | and all physics processes registered in general.      |
++----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
