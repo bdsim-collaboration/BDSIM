@@ -2959,7 +2959,7 @@ following options. These options may increase the output file size by a large am
 |                                   | Multiple particle IDs can be supplied with a space between them.   |
 |                                   | e.g. "11 12 22 13".                                                |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryEnergyThreshHold   | The threshold energy for storing trajectories. Trajectories for    |
+| storeTrajectoryEnergyThreshold    | The threshold energy for storing trajectories. Trajectories for    |
 |                                   | any particles with energy less than this amount (in GeV) will not  |
 |                                   | be stored.                                                         |
 +-----------------------------------+--------------------------------------------------------------------+
