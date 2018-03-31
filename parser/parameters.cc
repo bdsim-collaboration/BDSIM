@@ -32,26 +32,27 @@ Parameters::Parameters()
 {
   // fill setMap, needs to match published member names
   // usually same but some exceptions, those are commented
-  setMap["l"]     = false;
-  setMap["ks"]    = false;
-  setMap["k1"]    = false;
-  setMap["k2"]    = false;
-  setMap["k3"]    = false;
-  setMap["k4"]    = false;
-  setMap["angle"] = false;
-  setMap["B"]     = false;
-  setMap["e1"]    = false;
-  setMap["e2"]    = false;
-  setMap["fint"]  = false;
-  setMap["fintx"] = false;
-  setMap["fintK2"]  = false;
-  setMap["fintxK2"] = false;
-  setMap["hgap"]  = false;
-  setMap["kick"]  = false;
-  setMap["hkick"] = false;
-  setMap["vkick"] = false;
-  setMap["knl"]   = false;
-  setMap["ksl"]   = false;
+  setMap["l"]         = false;
+  setMap["scaling"]   = false;
+  setMap["ks"]        = false;
+  setMap["k1"]        = false;
+  setMap["k2"]        = false;
+  setMap["k3"]        = false;
+  setMap["k4"]        = false;
+  setMap["angle"]     = false;
+  setMap["B"]         = false;
+  setMap["e1"]        = false;
+  setMap["e2"]        = false;
+  setMap["fint"]      = false;
+  setMap["fintx"]     = false;
+  setMap["fintK2"]    = false;
+  setMap["fintxK2"]   = false;
+  setMap["hgap"]      = false;
+  setMap["kick"]      = false;
+  setMap["hkick"]     = false;
+  setMap["vkick"]     = false;
+  setMap["knl"]       = false;
+  setMap["ksl"]       = false;
   setMap["gradient"]  = false;
   setMap["E"]         = false;
   setMap["frequency"] = false;

@@ -52,26 +52,27 @@ Element::Element():
 
 void Element::PublishMembers()
 {
-  publish("l",    &Element::l);
-  publish("ks",   &Element::ks);
-  publish("k1",   &Element::k1);
-  publish("k2",   &Element::k2);
-  publish("k3",   &Element::k3);
-  publish("k4",   &Element::k4);
-  publish("angle",&Element::angle);
-  publish("B",    &Element::B);
-  publish("e1",   &Element::e1);
-  publish("e2",   &Element::e2);
-  publish("fint", &Element::fint);
-  publish("fintx",&Element::fintx);
-  publish("fintK2", &Element::fintK2);
-  publish("fintxK2",&Element::fintxK2);
-  publish("hgap", &Element::hgap);
-  publish("kick", &Element::kick);
-  publish("hkick",&Element::hkick);
-  publish("vkick",&Element::vkick);
-  publish("knl",  &Element::knl);
-  publish("ksl",  &Element::ksl);
+  publish("l",         &Element::l);
+  publish("scaling",   &Element::scaling);
+  publish("ks",        &Element::ks);
+  publish("k1",        &Element::k1);
+  publish("k2",        &Element::k2);
+  publish("k3",        &Element::k3);
+  publish("k4",        &Element::k4);
+  publish("angle",     &Element::angle);
+  publish("B",         &Element::B);
+  publish("e1",        &Element::e1);
+  publish("e2",        &Element::e2);
+  publish("fint",      &Element::fint);
+  publish("fintx",     &Element::fintx);
+  publish("fintK2",    &Element::fintK2);
+  publish("fintxK2",   &Element::fintxK2);
+  publish("hgap",      &Element::hgap);
+  publish("kick",      &Element::kick);
+  publish("hkick",     &Element::hkick);
+  publish("vkick",     &Element::vkick);
+  publish("knl",       &Element::knl);
+  publish("ksl",       &Element::ksl);
   publish("gradient",  &Element::gradient);
   publish("E",         &Element::E);
   publish("frequency", &Element::frequency);
@@ -216,6 +217,7 @@ void Element::print(int ident)const{
     {std::cout << "l     = " << l << "m" << std::endl;}
   if (samplerType != "none")
     {std::cout << "samplerType = " << samplerType << std::endl;}
+  std::cout << "Scaling = " << scaling << std::endl;
 
   switch(type) {
   case ElementType::_DRIFT:
@@ -323,6 +325,7 @@ void Element::flush()
   type = ElementType::_NONE;
   name = "";
   l = 0;
+  scaling = 1;
   ks = 0;
   k1 = 0;
   k2 = 0;
