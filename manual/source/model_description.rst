@@ -776,9 +776,9 @@ rf
 `rf` or `rfcavity` defines an RF cavity with a time varying electric or electro-magnetic field.
 There are several geometry and field options as well as ways to specify the strength.
 The default field is a uniform (in space) electric-only field that is time varying
-according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
-cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
-the motion of particles in both cases.
+according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electro-magnetic
+field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
+numerical integrator is used to calculate the motion of particles in both cases.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -845,7 +845,6 @@ Pill-Box field example::
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
 'cavity' object in the parser.  This cavity object can then be attached to an `rf`
 object by name. Details can be found in :ref:`cavity-geometry-parameters`.
-
 
 
 rcol

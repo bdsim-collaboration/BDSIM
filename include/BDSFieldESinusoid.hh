@@ -28,7 +28,9 @@ class BDSCavityInfo;
 class BDSMagnetStrength;
 
 /**
- * @brief A sinusoidal electric (only) field that doesn't vary with position.
+ * @brief A sinusoidal electric (only) field that doesn't vary with position. Uses cosine.
+ * 
+ * The default phase is 0 so cosine is used to give acceleration by default.
  * 
  * @author Laurie Nevay
  */
