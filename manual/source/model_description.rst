@@ -289,6 +289,44 @@ Magnet Strength Polarity
 		  to MADX.
 		  
 
+Component Strength Scaling
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the case of acceleration or energy degredation, the central energy of the beam may
+change. However, BDSIM constructs all fields with respect to the rigidity calculated
+from the particle species and the `energy` parameter in the beam definition (not `E0`,
+but `energy`). To easily scale the strengths, every beam line element has the parameter
+`scaling` that allows its strength to be directly scaled.
+
+In the case of a dipole, this scales the field but not the angle (the field may be calculated
+from the angle if none is specified). For example::
+
+  beam, particle="e-",
+        energy=10*GeV;
+  
+  sb1: sbend, l=2.5*m, angle=0.1;
+  d1: drift, l=1*m;
+  cav1: rf, l=1*m, gradient=50, frequency=0;
+  sb2: sbend, l=2.5*m, angle=0.1, scaling=1.005;
+
+  l1: line=(sb1,d1,cav1,d1,sb2,d1);
+
+In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MeV / m for 1 m).
+The particle passes through one bend, the cavity and then another. As the second bend is
+scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at 0,0 with
+perfect energy will appear at 0,0 after this lattice.
+
+In the case of a quadrupole or other magnet, the scaling is internally applied to the `k1`
+or approprate parameter that is used along with the design rigidity to calculate a field
+gradient.
+
+An example is included in `examples/features/components/scaling.gmad`.
+
+.. note:: The user should take care to use this linear scaling parameter wisely, particularly
+	  in sub-relativistic regimes. The fields should typically be scaled with momentum and
+	  not total energy of the particle.
+
+		  
 drift
 ^^^^^
 

@@ -30,6 +30,7 @@ New Features
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
 * Full support for dipole fringe fields and pole face in tracking.
 * Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
+* `scaling` parameter for each element allowing simple scaling of strengths.
 
 
 Output \& Analysis Changes
