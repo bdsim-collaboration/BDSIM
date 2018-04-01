@@ -1,0 +1,14 @@
+c1: rcol, l=20*cm, outerDiameter=20*cm, material="carbon";
+
+l1: line = (c1);
+
+use, l1;
+
+sample, all;
+
+option, physicsList="ion_em_dissociation";
+
+option, checkOverlaps=1;
+
+beam, particle="ion 131 54",
+      energy=1*TeV;

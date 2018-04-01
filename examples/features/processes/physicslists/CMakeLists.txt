@@ -24,6 +24,7 @@ simple_testing(physics-hadronic-elastic-xs    "--file=hadronic_elastic_xs.gmad" 
 simple_testing(physics-ion                    "--file=ion.gmad"                    ${OVERLAP_CHECK})
 simple_testing(physics-ion-elastic            "--file=ion_elastic.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics-ion-elastic-qmd        "--file=ion_elastic_qmd.gmad"        ${OVERLAP_CHECK})
+simple_testing(physics-ion-em-dissociation    "--file=ion_em_dissociation.gmad"    ${OVERLAP_CHECK})
 simple_testing(physics-muon                   "--file=muon.gmad"                   ${OVERLAP_CHECK})
 simple_testing(physics-neutron-tracking-cut   "--file=neutron_tracking_cut.gmad"   ${OVERLAP_CHECK})
 simple_testing(physics-optical                "--file=optical.gmad"                ${OVERLAP_CHECK})

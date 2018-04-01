@@ -63,6 +63,7 @@ OptionsBase::OptionsBase()
   
   // very important options
   physicsList           = ""; //default - only transportation
+  physicsVerbose        = 0;
   
   eventOffset           = 0;
   recreateSeedState     = true;

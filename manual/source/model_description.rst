@@ -289,6 +289,44 @@ Magnet Strength Polarity
 		  to MADX.
 		  
 
+Component Strength Scaling
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the case of acceleration or energy degredation, the central energy of the beam may
+change. However, BDSIM constructs all fields with respect to the rigidity calculated
+from the particle species and the `energy` parameter in the beam definition (not `E0`,
+but `energy`). To easily scale the strengths, every beam line element has the parameter
+`scaling` that allows its strength to be directly scaled.
+
+In the case of a dipole, this scales the field but not the angle (the field may be calculated
+from the angle if none is specified). For example::
+
+  beam, particle="e-",
+        energy=10*GeV;
+  
+  sb1: sbend, l=2.5*m, angle=0.1;
+  d1: drift, l=1*m;
+  cav1: rf, l=1*m, gradient=50, frequency=0;
+  sb2: sbend, l=2.5*m, angle=0.1, scaling=1.005;
+
+  l1: line=(sb1,d1,cav1,d1,sb2,d1);
+
+In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MeV / m for 1 m).
+The particle passes through one bend, the cavity and then another. As the second bend is
+scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at 0,0 with
+perfect energy will appear at 0,0 after this lattice.
+
+In the case of a quadrupole or other magnet, the scaling is internally applied to the `k1`
+or approprate parameter that is used along with the design rigidity to calculate a field
+gradient.
+
+An example is included in `examples/features/components/scaling.gmad`.
+
+.. note:: The user should take care to use this linear scaling parameter wisely, particularly
+	  in sub-relativistic regimes. The fields should typically be scaled with momentum and
+	  not total energy of the particle.
+
+		  
 drift
 ^^^^^
 
@@ -776,9 +814,9 @@ rf
 `rf` or `rfcavity` defines an RF cavity with a time varying electric or electro-magnetic field.
 There are several geometry and field options as well as ways to specify the strength.
 The default field is a uniform (in space) electric-only field that is time varying
-according to a simple sinusoid.  Optionally, the electro-magnetic field for a pill-box
-cavity may be used. The `G4ClassicalRK4` numerical integrator is used to calculate
-the motion of particles in both cases.
+according to a cosine (see :ref:`field-sinusoid-efield`).  Optionally, the electro-magnetic
+field for a pill-box cavity may be used (see :ref:`field-pill-box`). The `G4ClassicalRK4`
+numerical integrator is used to calculate the motion of particles in both cases.
 
 
 +----------------+-------------------------------+--------------+---------------------+
@@ -845,7 +883,6 @@ Pill-Box field example::
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
 'cavity' object in the parser.  This cavity object can then be attached to an `rf`
 object by name. Details can be found in :ref:`cavity-geometry-parameters`.
-
 
 
 rcol
@@ -2390,6 +2427,9 @@ Physics Lists In BDSIM
 +------------------------------+------------------------------------------------------------------------+
 | ion_elastic_qmd              | `G4IonQMDPhysics`.                                                     |
 +------------------------------+------------------------------------------------------------------------+
+| ion_em_dissocation           | Electromagnetic dissociation for ions. Uses `G4EMDissociation`. May    |
+|                              | produce warnings. Experimental.                                        |
++------------------------------+------------------------------------------------------------------------+
 | ion_inclxx (`*`)             | `G4IonINCLXXPhysics`.                                                  |
 +------------------------------+------------------------------------------------------------------------+
 | ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onwards.                 |
@@ -2860,6 +2900,9 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | physicsList                      | Which physics lists to use - default tracking only.   |
 +----------------------------------+-------------------------------------------------------+
+| physicsVerbose                   | Print out all processes linked to primary particle    |
+|                                  | and all physics processes registered in general.      |
++----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | Standard overall production cuts for photons          |
 |                                  | (default 1e-3) [m].                                   |
 +----------------------------------+-------------------------------------------------------+
@@ -2954,7 +2997,7 @@ following options. These options may increase the output file size by a large am
 |                                   | Multiple particle IDs can be supplied with a space between them.   |
 |                                   | e.g. "11 12 22 13".                                                |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeTrajectoryEnergyThreshHold   | The threshold energy for storing trajectories. Trajectories for    |
+| storeTrajectoryEnergyThreshold    | The threshold energy for storing trajectories. Trajectories for    |
 |                                   | any particles with energy less than this amount (in GeV) will not  |
 |                                   | be stored.                                                         |
 +-----------------------------------+--------------------------------------------------------------------+
