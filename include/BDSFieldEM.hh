@@ -72,6 +72,12 @@ public:
 
   /// Required overload by Geant4.
   virtual G4bool DoesFieldChangeEnergy() const {return true;}
+
+  /// Accessor.
+  inline G4bool FiniteStrength() const {return finiteStrength;}
+  
+protected:
+  G4bool finiteStrength; ///< Flag to cache whether finite nor not.
   
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.

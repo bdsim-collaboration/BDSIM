@@ -1,11 +1,6 @@
 find_package(BISON 2.4 REQUIRED)
 find_package(FLEX REQUIRED)
 
-# Suppress policy CMP0042 warning (as of cmake 3.0.0)
-if (${CMAKE_MAJOR_VERSION} GREATER 2)
-  cmake_policy(SET CMP0042 OLD)
-endif()
-
 # suppress warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-value")
 # disable clang warnings on bison/flex generated code

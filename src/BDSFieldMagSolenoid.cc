@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldMagSolenoid.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -28,6 +29,7 @@ BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength const* strength,
 					 G4double          const  brho)
 {
   localField = G4ThreeVector(0,0,brho * (*strength)["ks"] / CLHEP::m);
+  finiteStrength = BDS::IsFinite(localField.mag());
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif

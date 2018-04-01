@@ -53,15 +53,15 @@ void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
     {
     case 11:
       {
-	std::cout << "e-!" << std::endl;
+	std::cout << "Primary particle: e-" << std::endl;
 	particleMass = 0.000510999; break;}
     case 2212:
       {
-	std::cout << "proton!" << std::endl;
+	std::cout << "Primary particle: proton" << std::endl;
 	particleMass = 0.938272; break;}
     default:
       {
-	std::cout << "m=0" << std::endl;
+	std::cout << "Primary particle: unknown -> m=0" << std::endl;
 	particleMass = 0; break;}
     }
 }
@@ -152,13 +152,13 @@ void SamplerAnalysis::Process(bool firstTime)
   if(debug)
     {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
-  S = s->S;
-
   double m2 = std::pow(particleMass,2);
   
   // loop over all entries
   for(int i=0;i<s->n;++i)
   {
+    if (i == 0)
+      {S = s->S;} // update sampler on first round - do here so not to load default data
     if (s->parentID[i] != 0)
       {continue;} // select only primary particles
     if (s->turnNumber[i] > 1)

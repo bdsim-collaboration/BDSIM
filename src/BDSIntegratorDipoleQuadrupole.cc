@@ -42,8 +42,10 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   bRho(brhoIn),
+  beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   fieldRatio((*strengthIn)["field"] / (bRho/rho)),
+  nominalEnergy((*strengthIn)["nominalEnergy"]),
   strength(strengthIn)
 {
   eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
@@ -166,16 +168,14 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
 					    G4ThreeVector&       momOut) const
 {
   G4double momInMag = momIn.mag();
-
-  G4double nomMomentum = std::abs(bRho * fcof);
+  G4double nomMomentum = std::abs(bRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
   G4double energy = eq->TotalEnergy(momIn);
-  G4double nomEnergy = std::sqrt(std::pow(nomMomentum,2) + eq->Mass());
 
   // get beta (v/c)
-  G4double beta = eq->Beta(momIn);
+  //G4double beta = eq->Beta(momIn);
 
-  // deltaE/(P0*c) to match literature.
-  G4double deltaEoverPc = (energy - nomEnergy) / (nomMomentum) ;
+  // deltaE/P0 to match literature.
+  G4double deltaEoverP = (energy - nominalEnergy) / (nomMomentum);
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
@@ -216,8 +216,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
-      X26 = (1.0/beta) * (1.0/rho) * X12;
+      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
+      X26 = (1.0/beta0) * (1.0/rho) * X12;
 
       Y11= std::cosh(kyl);
       Y12= std::sinh(kyl)/ky;
@@ -232,8 +232,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
-      X26 = (1.0/beta) * (1.0/rho) * X12;
+      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
+      X26 = (1.0/beta0) * (1.0/rho) * X12;
       
       Y11= std::cos(kyl);
       Y12= std::sin(kyl)/ky;
@@ -242,9 +242,9 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       Y21= -std::abs(ky2)*Y12;
       Y22= Y11;
     }
-      
-  x1  = X11*x0 + X12*xp + X16*deltaEoverPc;
-  xp1 = X21*x0 + X22*xp + X26*deltaEoverPc;
+
+  x1  = X11*x0 + X12*xp + X16*deltaEoverP;
+  xp1 = X21*x0 + X22*xp + X26*deltaEoverP;
   
   y1  = Y11*y0 + Y12*yp;    
   yp1 = Y21*y0 + Y22*yp;
@@ -261,34 +261,5 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
 
   posOut = G4ThreeVector(x1, y1, s1);
 
-  /*
-  G4double cosTheta  = cos(theta);
-  G4double sinTheta  = sin(theta);
-  G4double coshTheta = cosh(theta);
-  G4double sinhTheta = sinh(theta);
-  G4double m00 = cosTheta;
-  G4double m01 = - sqrtKappa * sinTheta;
-  G4double m10 = sinTheta / sqrtKappa;
-  G4double m11 = cosTheta;
-  G4double m05 = (1 - cosTheta) / sqrtKappa;
-  G4double m15 = sinTheta;
-  G4double m22 = coshTheta;
-  G4double m23 = sinhTheta / sqrtKappa;
-  G4double m32 = sqrtKappa * sinhTheta;
-  G4double m33 = coshTheta;
-
-  G4double x1  = m00*x0 + m10*xp0 + m05*delta;
-  G4double xp1 = m01*x0 + m11*xp0 + m15*delta;
-  G4double y1  = m22*y0 + m23*yp0;
-  G4double yp1 = m32*y0 + m33*yp0;
-  G4double s1  = s0 + h;
-
-  posOut[0] = x1;
-  posOut[1] = y1;
-  posOut[2] = s1;
-  momOut[0] = xp1;
-  momOut[1] = yp1;
-  momOut[2] = momIn[2];
-  */
 }
 

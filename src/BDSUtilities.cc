@@ -332,7 +332,7 @@ G4bool BDS::Geant4EnvironmentIsSet()
   return result;
 }
 
-void BDS::CheckLowEnergyDataExists(G4String physicsListName)
+void BDS::CheckHighPrecisionDataExists(const G4String& physicsListName)
 {
   const char* envHPData = std::getenv("G4PARTICLEHPDATA");
   if (!envHPData)
@@ -347,13 +347,27 @@ void BDS::CheckLowEnergyDataExists(G4String physicsListName)
     }
 }
 
+void BDS::CheckLowEnergyNeutronDataExists(const G4String& physicsListName)
+{
+  const char* envHPData = std::getenv("G4LENDDATA");
+  if (!envHPData)
+    {
+      G4cerr << "The Low Energy Neutron Data ('LEND') is not available!" << G4endl;
+      G4cout << "Data is required through the environmental variable "
+	     << "\"G4LENDDATA\"" << G4endl;
+      G4cout << "This is required for the \"" << physicsListName << "\" physics list." << G4endl;
+      G4cout << "This data is an optional download from the Geant4 website. Please "
+	     << "download from the Geant4 website and export the environmental variable." << G4endl;
+      exit(1);
+    }
+}
+
 G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
 {
-  try{
-    return (G4double)std::stol(GetParameterValueString(spec,name).c_str());
-  }catch(std::invalid_argument& e){
-    throw;
-  }
+  try
+    {return (G4double)std::stol(GetParameterValueString(spec,name).c_str());}
+  catch(std::invalid_argument& e)
+    {throw;}
 }
 
 G4int BDS::GetParameterValueInt(G4String spec, G4String name)
@@ -431,10 +445,10 @@ G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
     {return false;}
 }
 
-G4bool BDS::WillIntersect(const G4double angleIn,
-			  const G4double angleOut,
-			  const G4double outerDiameter,
-			  const G4double length)
+G4bool BDS::WillIntersect(const G4double& angleIn,
+			  const G4double& angleOut,
+			  const G4double& outerDiameter,
+			  const G4double& length)
 {
   // Calculate the z component of triangle with each angle and
   // axis along length.

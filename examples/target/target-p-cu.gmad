@@ -1,0 +1,18 @@
+c1: rcol, l=5*cm, material="copper";
+
+l1: line=(c1);
+
+use, l1;
+
+sample, all;
+
+beam, particle="proton",
+      energy=6.5*TeV;
+
+option, physicsList="em em_extra ftfp_bert decay muon",
+	prodCutProtons=3*cm,
+	prodCutPhotons=3*cm,
+	prodCutElectrons=3*cm,
+	prodCutPositrons=3*cm;
+
+option, ngenerate=5;

@@ -63,6 +63,7 @@ OptionsBase::OptionsBase()
   
   // very important options
   physicsList           = ""; //default - only transportation
+  physicsVerbose        = 0;
   
   eventOffset           = 0;
   recreateSeedState     = true;
@@ -171,7 +172,10 @@ OptionsBase::OptionsBase()
   prodCutElectrons         = 1e-3;
   prodCutPositrons         = 1e-3;
   prodCutProtons           = 1e-3;
-
+  neutronTimeLimit         = 1e-6;
+  neutronKineticEnergyLimit = 0;
+  useLENDGammaNuclear      = false;
+  
   // biasing options
   defaultBiasVacuum        = "";
   defaultBiasMaterial      = "";
@@ -208,6 +212,10 @@ OptionsBase::OptionsBase()
   storeTrajectoryParticle   = "";
   storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
+  storeSamplerCharge       = false;
+  storeSamplerMass         = false;
+  storeSamplerRigidity     = false;
+  storeSamplerIon          = false;
   writePrimaries           = true;
 
   // circular options

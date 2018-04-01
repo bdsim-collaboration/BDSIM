@@ -189,15 +189,18 @@ private:
   void IonBinary();
   void IonElastic();
   void IonElasticQMD();
+  void IonEMDissociation();
   void IonINCLXX();
   void LaserWire();
   void Muon();
+  void NeutronTrackingCut();
   void Optical();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();
   void QGSPBICHP();
   void Shielding();
+  void Stopping();
   void SynchRad();
 #if G4VERSION_NUMBER > 1019
   void EmGS();
@@ -210,6 +213,9 @@ private:
 #endif
 #if G4VERSION_NUMBER > 1029
   void DecayMuonicAtom();
+#endif
+#if G4VERSION_NUMBER > 1039
+  void ShieldingLEND();
 #endif
   /// @}
 };

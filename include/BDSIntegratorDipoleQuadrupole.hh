@@ -80,13 +80,19 @@ private:
   const G4double    bPrime;
 
   /// Cached magnet property, nominal magnetic rigidity
-  const G4double 	bRho;
+  const G4double    bRho;
+
+  /// Cached nominal relativistic beta of the nominal beam particle.
+  const G4double    beta0;
 
   /// Cached magnet property, nominal bending radius.
   const G4double 	rho;
 
   /// Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
   const G4double    fieldRatio;
+
+  /// Nominal beam energy
+  const	G4double 	nominalEnergy;
 
   /// Cache magnet strength, required for curvilinear transforms.
   BDSMagnetStrength const* strength;

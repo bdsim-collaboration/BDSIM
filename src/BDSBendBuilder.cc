@@ -66,6 +66,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4bool buildFringeIncoming = buildFringeFields;
   G4bool buildFringeOutgoing = buildFringeFields;
 
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+
   if (buildFringeFields)
     {
       // perform series of checks on fringe field parameters
@@ -128,7 +131,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   if (!BDS::IsFinite(angle))
     {      
       BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-      BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+      BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 						   brho,
 						   intType,
 						   st,
@@ -209,7 +212,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // field recipe for one segment of the sbend
   G4String centralName = baseName + "_even_ang";
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* semiVacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* semiVacuumField = new BDSFieldInfo(dipoleFieldType,
 						   brho,
 						   intType,
 						   semiStrength,
@@ -426,8 +429,10 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
+  G4bool finiteK1 = BDS::IsFinite((*strength)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       strengthCopy,
@@ -472,6 +477,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   const G4double   arcLength = (*st)["length"];
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
+
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
 
   // Here, 'no face angle' really means that the rbend becomes an sbend.
   // Calculate how far away we are from an sbend.
@@ -620,7 +628,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   (*st)["angle"]  = centralAngle;
 
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       st,
@@ -685,8 +693,11 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+  
   BDSIntegratorType intType = integratorSet->dipoleFringe;
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       st,

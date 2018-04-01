@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSUtilities.hh"
 
 #include "G4ThreeVector.hh"
 
@@ -31,7 +32,8 @@ BDSFieldMagOctupole::BDSFieldMagOctupole(BDSMagnetStrength const* strength,
 {
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   bTriplePrime = brho * (*strength)["k3"]  / (CLHEP::m3*CLHEP::m);
-  bTPNormed    = bTriplePrime / 6.; 
+  bTPNormed    = bTriplePrime / 6.;
+  finiteStrength = BDS::IsFinite(bTriplePrime);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;
 #endif

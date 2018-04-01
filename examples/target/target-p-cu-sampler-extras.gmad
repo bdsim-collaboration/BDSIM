@@ -1,0 +1,6 @@
+include target-p-cu.gmad;
+
+! store extra information
+option, storeSamplerCharge=1,
+	storeSamplerMass=1,
+	storeSamplerRigidity=1;

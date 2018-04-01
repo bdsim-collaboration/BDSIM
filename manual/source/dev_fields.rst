@@ -458,6 +458,32 @@ Multipole Yoke - Skew Quadrupole
    :width: 70%
    :align: center
 
+Electric Fields From Equations
+==============================
+
+.. _field-sinusoid-efield:
+
+Sinusoidal Electric Field
+-------------------------
+
+This field provides an electric field along local `z` direcetion with an amplitude
+`E` that does not vary with position (`x`, `y`, `z`) but only varies sinusoidally
+with time (`t`). A cosine is used so when the default phase of 0, a maximum acceleration
+is provided. Aside from the field amplitude `E`, the frequency `f` (Hz) along with
+the phase :math:`\phi` are used.
+
+.. math::
+
+   E_z = E\,\cos(2\,\pi\,f\,t + \phi)
+
+The 3D Cartesian field vectors are therefore:
+
+.. math::
+
+   \mathbf{B} & = (0, \,0, \,0) \\
+   \mathbf{E} & = (0, \,0, \,E_z)
+
+
 Electro-Magnetic Fields From Equations
 ======================================
 
@@ -504,9 +530,10 @@ The 3D Cartesian field vectors are therefore:
 
 .. math::
 
-   \mathbf{B} & = (B_{\phi}\,\cos(\phi),\, B_{\phi}\,\sin(\phi), \,0) \\
+   \mathbf{B} & = (B_{\phi}\cos(\phi),\, B_{\phi}\sin(\phi), \,0) \\
    \mathbf{E} & = (0, \,0, \,E_z)
    
+Where :math:`phi` is the polar coordinate.
 
 .. _field-map-formats:
 

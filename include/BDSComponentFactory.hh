@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSCOMPONENTFACTORY_H
 
 #include "BDSFieldType.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSIntegratorSetType.hh"
 
@@ -44,7 +45,6 @@ class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
-class BDSMagnetStrength;
 class BDSTiltOffset;
 
 /**
@@ -69,7 +69,8 @@ class BDSTiltOffset;
 class BDSComponentFactory
 {
 public:
-  explicit BDSComponentFactory(G4double brhoIn);
+  explicit BDSComponentFactory(const G4double& brhoIn,
+			       const G4double& beta0In);
   ~BDSComponentFactory();
 
   /// Create component from parser Element pointers to next and previous Element
@@ -168,17 +169,16 @@ public:
 private:
   /// No default constructor
   BDSComponentFactory() = delete;
+  
+  G4double brho;              ///< Rigidity in T*m (G4units) for beam particles.
+  G4double beta0;             ///< Cache of relativisitic beta for primary particle.
+  G4double lengthSafety;      ///< Length safety from global constants.
+  G4double thinElementLength; ///< Length of a thin element.
+  G4bool includeFringeFields; ///< Cache of whether to include fringe fields.
+  G4bool yokeFields;          ///< Cache of whether to include yoke magnetic fields.
 
-  /// Rigidity in T*m (G4units) for beam particles.
-  G4double brho;
-  /// Length safety from global constants.
-  G4double lengthSafety;
-  /// Length of a thin element.
-  G4double thinElementLength;
-  /// Cache of whether to include fringe fields.
-  G4bool includeFringeFields;
-  /// Cache of whether to include yoke magnetic fields.
-  G4bool yokeFields;
+  /// Simple setter used to add Beta0 to a strength instance.
+  inline void SetBeta0(BDSMagnetStrength* stIn) const {(*stIn)["beta0"] = beta0;} 
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;

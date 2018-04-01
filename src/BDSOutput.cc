@@ -73,6 +73,16 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   numberEventPerFile = g->NumberOfEventsPerNtuple();
   writePrimaries     = g->WritePrimaries();
   useScoringMap      = g->UseScoringMap();
+
+  storeSamplerCharge   = g->StoreSamplerCharge();
+  storeSamplerMass     = g->StoreSamplerMass();
+  storeSamplerRigidity = g->StoreSamplerRigidity();
+  storeSamplerIon      = g->StoreSamplerIon();
+
+  // charge + mass + rigidity - particle stuff
+  storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
+  // everything
+  storeOption2 = storeOption1 && storeSamplerIon;
 }
 
 void BDSOutput::InitialiseGeometryDependent()
@@ -90,9 +100,10 @@ void BDSOutput::FillHeader()
 
 void BDSOutput::FillGeant4Data(const G4bool& writeIons)
 {
+  geant4DataOutput->Flush();
   geant4DataOutput->Fill(writeIons);
   WriteGeant4Data();
-#ifndef __ROOTDOUBLE__
+#ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double>::particleTable = geant4DataOutput;
 #else
   BDSOutputROOTEventSampler<float>::particleTable = geant4DataOutput;
@@ -359,12 +370,40 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
   // TBC - cylinder output will have all the same z and S, which is wrong!
   if (!(hits->entries() > 0))
     {return;}
-  for (int i=0; i<hits->entries(); i++)
+  for (int i = 0; i < hits->entries(); i++)
     {
       G4int samplerID = (*hits)[i]->GetSamplerID();
       if (WritePrimaries())
-        {samplerID += 1;} // offset index by one
+	{samplerID += 1;} // offset index by one
       samplerTrees[samplerID]->Fill((*hits)[i]);
+    }
+  
+  // extra information
+  // choose by a few strategies for optimisation (reduced PDGid searching)
+  // op2 partially degenerate with op1 - check first
+  if (storeOption2) // everything
+    {
+      for (auto &sampler : samplerTrees)
+      {sampler->FillCMRI();}
+    }
+  else if (storeOption1) // also applies for 2
+    {
+      for (auto &sampler : samplerTrees)
+        {sampler->FillCMR();}
+    }
+  else
+    {// treat individually
+      for (auto& sampler : samplerTrees)
+        {
+          if (storeSamplerCharge)
+	    {sampler->FillCharge();}
+          if (storeSamplerMass)
+	    {sampler->FillMass();}
+          if (storeSamplerRigidity)
+	    {sampler->FillRigidity();}
+          if (storeSamplerIon)
+	    {sampler->FillIon();}
+        }
     }
 }
 

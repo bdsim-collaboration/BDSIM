@@ -71,6 +71,7 @@ namespace GMAD
     
     /// list of physics processes
     std::string physicsList;
+    bool        physicsVerbose;
     
     int eventOffset;  ///< Event number to start from when recreating from a root file.
     bool recreateSeedState; ///< Load seed state when recreating events.
@@ -189,6 +190,9 @@ namespace GMAD
     double   prodCutElectrons;
     double   prodCutPositrons;
     double   prodCutProtons;
+    double   neutronTimeLimit;
+    double   neutronKineticEnergyLimit;
+    bool     useLENDGammaNuclear;
     ///@}
 
     /// Biasing options
@@ -222,6 +226,11 @@ namespace GMAD
     std::string storeTrajectoryParticle;
     std::string storeTrajectoryParticleID;
     double      storeTrajectoryEnergyThreshold;
+
+    bool        storeSamplerCharge;
+    bool        storeSamplerMass;
+    bool        storeSamplerRigidity;
+    bool        storeSamplerIon;
 
     double      trajCutGTZ;
     double      trajCutLTR;

@@ -1,0 +1,17 @@
+c1: rcol, l=1*m, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="neutron_tracking_cut";
+
+! neutron tracking cut options
+
+option, neutronTimeLimit=1*us; ! default is 10us
+option, neutronKineticEnergyLimit = 100*keV; ! default is 0eV
+
+option, checkOverlaps=1;
+
+beam, particle="proton",
+      energy=10*GeV;

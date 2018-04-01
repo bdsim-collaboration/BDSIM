@@ -26,6 +26,7 @@ namespace GMAD
     std::string name;
 
     double l; ///< length in metres
+    double scaling; ///< Overall scaling of field strength.
     double ks; ///< solenoid
     // double k0; // for dipole field B or angle is used
     double k1; ///< quadrupole

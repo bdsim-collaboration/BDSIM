@@ -242,6 +242,15 @@ private:
 
   /// Number of bins for each histogram required.
   G4int nbins;
+
+  /// @{ Sampler storage option.
+  G4bool storeSamplerCharge;
+  G4bool storeSamplerMass;
+  G4bool storeSamplerRigidity;
+  G4bool storeSamplerIon;
+  G4bool storeOption1;
+  G4bool storeOption2;
+  /// @}
 };
 
 #endif
