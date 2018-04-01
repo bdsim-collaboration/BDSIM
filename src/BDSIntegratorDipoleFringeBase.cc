@@ -31,9 +31,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4double BDSIntegratorDipoleFringeBase::thinElementLength = -1; // unphysical
 
 BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strengthIn,
-                             G4double                 brhoIn,
-						     G4Mag_EqRhs*             eqOfMIn,
-                             G4double                 minimumRadiusOfCurvatureIn):
+							     G4double                 brhoIn,
+							     G4Mag_EqRhs*             eqOfMIn,
+							     G4double                 minimumRadiusOfCurvatureIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
