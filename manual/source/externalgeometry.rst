@@ -74,7 +74,7 @@ be used for specifying more or less simple geometries like collimators. Example:
 A file can contain several objects which will be placed sequentially into the volume.
 
 .. note:: The user has to make sure that there is no overlap between them.
-  
+
 Available shapes are:
 
 Box
@@ -238,7 +238,7 @@ The following is a list of table parameters that are common to all solid types e
 * | PARENTNAME
   | Variable type: VARCHAR(32)
   | Optional parameter
-  | If supplied, then the volume will be placed as a daughter volume to the object with ID equal to PARENTNAME. The default parent is set to be the Component Volume. Note that if PARENTID is set to the Component Volume then POSZ will be defined with respect to the start of the object. Else POSZ will be defined with respect to the center of the parent object.
+  | If supplied, then the volume will be placed as a daughter volume to the object with ID equal to PARENTNAME. The default parent is set to be the Component Volume. Note that if PARENTID is set to the Component Volume then POSZ will be defined with respect to the start of the object. Else POSZ will be defined with respect to the centre of the parent object.
 * | INHERITSTYLE
   | Variable type: VARCHAR(32)
   | Optional parameter to be used with PARENTNAME.
@@ -274,7 +274,7 @@ The following is a list of table parameters that are common to all solid types e
 * | POSX, POSY, POSZ
   | Variable type: DOUBLE(10,3)
   | Required parameters
-  | They are form the position in mm used to place the object in the component volume. POSX and POSY are defined with respect to the center of the component volume and with respect to the component volume’s rotation. POSZ is defined with respect to the start of the component volume. Note that if the object is being placed inside another volume using PARENTNAME then the position will refers to the center of the parent object.
+  | They are form the position in mm used to place the object in the component volume. POSX and POSY are defined with respect to the centre of the component volume and with respect to the component volume’s rotation. POSZ is defined with respect to the start of the component volume. Note that if the object is being placed inside another volume using PARENTNAME then the position will refers to the centre of the parent object.
 * | ROTPSI, ROTTHETA, ROTPHI
   | Variable type: DOUBLE(10,3)
   | Optional parameters
@@ -383,7 +383,7 @@ parameters are specific to the torus solid:
 * | RSWEPT
   | Variable type: DOUBLE(10,3)
   | Required parameter
-  | This value will be used to specify the swept radius of the torus. It is defined as being the distance from the center of the torus ring to the center of the torus tube. For this reason this value should not be set to less than ROUTER.
+  | This value will be used to specify the swept radius of the torus. It is defined as being the distance from the centre of the torus ring to the centre of the torus tube. For this reason this value should not be set to less than ROUTER.
 * | STARTPHI
   | Variable type: DOUBLE(10,3)
   | Optional parameter
@@ -455,7 +455,7 @@ equations (in the usual Geant4 way)::
   Z = u
 
 .. include:: <isogrk1.txt>
-  
+
 where v is between 0 and 2 * |pgr| and u between 0 and h respectively.
 
 Creating a geometry list

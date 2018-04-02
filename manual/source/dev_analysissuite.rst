@@ -41,13 +41,13 @@ The user must load both libraries to fully inspect the data.
 Dynamic Loading
 ---------------
 
-Laoding all of the data at once results in slow performance and is often unecessary. For
+Loading all of the data at once results in slow performance and is often unnecessary. For
 the event tree where the majority of the data is stored, it is advantageous to only
 load the 'branches' required for a particular analysis. Turning off branches means that
 when `GetEntry(n)` is called on the tree, nothing is copied out of the file onto the local
 objects. We therefore turn 'on' the branches we need for a particular analysis.
 
-The anlysis tool `rebdsim` works out the branches required when parsing histogram definitions
+The analysis tool `rebdsim` works out the branches required when parsing histogram definitions
 and these are stored in a map of branch names for each tree. The `DataLoader` class takes
 this as an optional argument and turns on the appropriate branches.
 
@@ -59,5 +59,5 @@ loading interactively.
 Interactive Usage
 -----------------
 
-The code used for anlysis must be maintained in such a way that is both useful for the
+The code used for analysis must be maintained in such a way that is both useful for the
 compiled analysis tools but also simple to use interactively.
