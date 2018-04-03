@@ -278,6 +278,7 @@ void Options::PublishMembers()
   publish("storeElossLinks",  &Options::storeElossLinks);
   publish("storeElossLocal",  &Options::storeElossLocal);
   publish("storeElossGlobal", &Options::storeElossGlobal);
+  publish("storeElossTime",   &Options::storeElossTime);
 
   // trajectory storage
   publish("storeTrajectory",                &Options::storeTrajectory);
