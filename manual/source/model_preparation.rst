@@ -17,7 +17,7 @@ an accelerator lattice of your own design, which is described in
 `Python Builder`_.
 
 Manual Preparation
-------------------
+==================
 
 An input gmad (text) file can be prepared manually in your favourite
 text editor easily by defining (in order):
@@ -32,7 +32,7 @@ Please see :ref:`model-description` for a description of the
 input syntax.
 
 MADX Conversion
----------------
+===============
 
 A MADX lattice can be easily converted to a BDSIM gmad input file using the supplied
 python utilities. This is achieved by
@@ -64,7 +64,7 @@ be found in the utils directory in the BDSIM source directory.
 
 
 MAD8 Conversion
----------------
+===============
 
 This can be prepared in a similar fashion to a MADX model. The user must have our
 pymad8 and pybdsim packages (see :ref:`python-utilities`).
@@ -73,7 +73,7 @@ This is described in more detail in the dedicated pybdsim documentation
 `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/convert.html>`_.
 
 Python Builder
---------------
+==============
 
 Using the classes in the pybdsim package that are used in the conversion process,
 the user may create a BDSIM model programmatically, i.e. the user can write a Python
@@ -84,3 +84,19 @@ This is described in more detail in the dedicated pybdsim documentation
 
 The pymadx package also has a similar functionality and is documented in its
 dedicated documentation `<http://www.pp.rhul.ac.uk/bdsim/pymadx/moduledocs.html#module-pymadx.Builder>`_.
+
+Optical Validation
+==================
+
+Once a model has been prepared or converted, it is often useful to compare the optical functions
+of the accelerator to a known reference. This ensures that the model has been prepared correctly.
+If for example a drift between magnets was too short or magnetic strengths were wrong, the
+optical functions would disagree and this would clearly indicate where the problem lies. This
+is an important validation step before physics studies begin, where such errors may not be so
+clear.
+
+Optical functions are validated by simulating the passage of several thousand particles
+with a distribution according to the core Gaussian distribution. Samplers are attached to
+all elements to record the particle distribution after each element. A provided optical
+analysis is used to claculate optical functions and moments of the particle coordinates
+that can then be compared to a reference.
