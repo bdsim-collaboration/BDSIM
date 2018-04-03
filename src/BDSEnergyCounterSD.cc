@@ -135,11 +135,11 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   // Just as the energy deposition is attributed to a uniformly random
   // point between the preStep and the postStep positions, attribute the
-  // deposition to a uniformly random time between preStep and postStep times.
-  G4double randTime = G4UniformRand();
+  // deposition to random time between preStep and postStep times,
+  // using the same random number as for the position.
   G4double preGlobalTime = aStep->GetPreStepPoint()->GetGlobalTime();
   G4double postGlobalTime = aStep->GetPostStepPoint()->GetGlobalTime();
-  globalTime = preGlobalTime + randTime * (postGlobalTime - preGlobalTime);
+  globalTime = preGlobalTime + randDist * (postGlobalTime - preGlobalTime);
 
   // get the s coordinate (central s + local z)
   // volume is from curvilinear coordinate parallel geometry
