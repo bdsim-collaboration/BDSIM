@@ -432,7 +432,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  }
 	case BDSOutput::LossType::tunnel:
 	  {
-	    tHit->Fill(hit);
+	    tunnelHit->Fill(hit);
 	    runHistos->Fill1DHistogram(6, sHit, eW);
 	    evtHistos->Fill1DHistogram(6, sHit, eW);
 	    runHistos->Fill1DHistogram(7, sHit, eW);

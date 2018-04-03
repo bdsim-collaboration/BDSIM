@@ -59,7 +59,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   eLoss     = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal);
   pFirstHit = new BDSOutputROOTEventLoss(true      ,       true,       false);
   pLastHit  = new BDSOutputROOTEventLoss(true      ,       true,       false);
-  tHit      = new BDSOutputROOTEventLoss(false     ,      false,       true);
+  tunnelHit = new BDSOutputROOTEventLoss(false     ,      false,       true);
   traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
@@ -86,7 +86,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete eLoss;
   delete pFirstHit;
   delete pLastHit;
-  delete tHit;
+  delete tunnelHit;
   delete traj;
   delete evtHistos;
   delete evtInfo;
@@ -159,7 +159,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
-  tHit->Flush();
+  tunnelHit->Flush();
   traj->Flush();
   evtHistos->Flush();
 }
