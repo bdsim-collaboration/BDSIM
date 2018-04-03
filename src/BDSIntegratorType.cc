@@ -42,6 +42,7 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::multipolethin,        "multipolethin"},
       {BDSIntegratorType::decapole,             "decapole"},
       {BDSIntegratorType::dipolefringe,         "dipolefringe"},
+      {BDSIntegratorType::dipolefringescaling,  "dipolefringescaling"},
       {BDSIntegratorType::euler,                "euler"},
       {BDSIntegratorType::kickerthin,           "kickerthin"},
       {BDSIntegratorType::g4cashkarprkf45,      "g4cashkarprkf45"},
