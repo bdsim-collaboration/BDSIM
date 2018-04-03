@@ -108,11 +108,6 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 	      postProcessType != 10 /* parallel world */) )
 	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));}
 	}
-      /*
-      else
-	{
-	  fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
-	  }*/
     }
   else
     {
@@ -122,10 +117,6 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   if(!secondTrajectory)
     {return;}
   
