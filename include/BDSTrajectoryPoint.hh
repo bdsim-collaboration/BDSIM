@@ -41,9 +41,9 @@ class BDSTrajectoryPoint: public G4TrajectoryPoint
 public:
   /// Default constructor.
   BDSTrajectoryPoint();
-
-  /// This constructor is used to start a trajectory from a track. After
-  /// This, points may be constructed from steps.
+  
+  /// This constructor is used to construct a point from a step intdended to
+  /// be appended to a trajectory. It uses the post step point as the main position.
   explicit BDSTrajectoryPoint(const G4Step* step);
   
   /// This constructor is required for the beginning of each track
