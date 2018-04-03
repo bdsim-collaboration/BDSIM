@@ -6,7 +6,7 @@ Run Time Requirements
 =====================
 
 If BDSIM is compiled with GDML support on and GDML is required, the user is required
-to be connected to the internet to access the GDML schema. This is a requriement
+to be connected to the internet to access the GDML schema. This is a requirement
 of the Geant4 GDML parser. In future, this need will be eliminated.
 
 Basic Operation
@@ -27,7 +27,7 @@ Executable Options
 
 BDSIM can be executed in a terminal with extra arguments to specify various inputs.
 The angular brackets here are to indicate a user specified value and should not
-be used literally.  The following command may be used to dipslay all options::
+be used literally.  The following command may be used to display all options::
 
   bdsim --help
 
@@ -115,7 +115,7 @@ without user input. Alternatively, BDSIM can be run in batch mode, where no visu
 is used and the specified number of primary events is simulated and feedback printed
 to the terminal. Batch mode is typically much faster than the interactive mode, but
 the interactive mode is very useful for understanding the model and a typical event
-in the simulation - ie where a particle hits.
+in the simulation, i.e. where a particle hits.
 
 .. note:: For more information on `-\\-circular` option and using BDSIM with circular machines,
 	  see :ref:`circular-machines`.
@@ -185,10 +185,8 @@ mode with a seed value of 123. The simulation runs the number of events specifie
 This executes BDSIM for the simpleMachine example with ROOT output to a file named
 "run2". The program is run interactively and the window in Figure appears. From here, the
 user types::
-  
+
   /run/beamOn 1
   exit
 
 In the visualiser terminal to run one event and visualise it.
-
-

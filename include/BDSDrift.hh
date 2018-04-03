@@ -44,11 +44,15 @@ public:
   virtual ~BDSDrift();
 
 protected:
-  void Build();
+  /// Construct geometry.
+  virtual void Build();
 
 private:
+  /// No default constructor.
+  BDSDrift() = delete;
+  
   /// Void function to fulfill BDSAcceleratorComponent requirements.
-  void BuildContainerLogicalVolume(){;}; 
+  virtual void BuildContainerLogicalVolume(){;}; 
 };
 
 #endif

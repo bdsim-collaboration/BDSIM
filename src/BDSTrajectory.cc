@@ -48,7 +48,9 @@ BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 }
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
-  G4Trajectory(aTrack), interactive(interactiveIn)
+  G4Trajectory(aTrack),
+  interactive(interactiveIn),
+  trajNoTransportation(BDSGlobalConstants::Instance()->TrajNoTransportation())
 {
   const G4VProcess *proc = aTrack->GetCreatorProcess();
   if(proc)
@@ -85,8 +87,8 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
   // which we prevent access to be overrideing GetPoint
 
   // TODO filter transportation steps if storing trajectory and batch
-
-  if(BDSGlobalConstants::Instance()->TrajNoTransportation() && !interactive )
+  // here, we're storing all trajectories and then filtering post event.
+  if(trajNoTransportation && !interactive )
     {
       // decode aStep and if on storage.
       auto preStepPoint  = aStep->GetPreStepPoint();
@@ -106,11 +108,6 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 	      postProcessType != 10 /* parallel world */) )
 	    {fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));}
 	}
-      /*
-      else
-	{
-	  fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
-	  }*/
     }
   else
     {
@@ -120,10 +117,6 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   if(!secondTrajectory)
     {return;}
   

@@ -12,7 +12,7 @@ The following information can be recorded from a BDSIM simulation:
 - particle coordinates at a plane after each element - 'sampler' information.
 - energy deposition 'hits' from any component.
 - trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
-- a single 3D histogram of any hits in the simualtion (optional - see :ref:`scoring-map-description`).
+- a single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
 
 Samplers are 'attached' to a beam line element by using the sample command::
 
@@ -51,7 +51,7 @@ produced in the simulation of every particle and the steps taken is tremendous
 and cannot be usably stored.
 
 .. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
-	     
+
 +----------------------+----------------------+-----------------------------------------------+
 | Format               | Syntax               | Description                                   |
 +======================+======================+===============================================+
@@ -102,7 +102,7 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
 +=============+=====================================================================+
-| Header      | Details about the file type and sofware versions.                   |
+| Header      | Details about the file type and software versions.                  |
 +-------------+---------------------------------------------------------------------+
 | Beam        | A record of all options associated with the beam definition.        |
 +-------------+---------------------------------------------------------------------+
@@ -153,7 +153,7 @@ BDSOutputROOTEventHeader
 +------------------------+----------------+---------------------------------------+
 | dataVersion            | int            | BDSIM data format version.            |
 +------------------------+----------------+---------------------------------------+
-| doublePrecisionOutput  | bool           | Wether BDSIM was compiled with        |
+| doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
 |                        |                | double precision for output.          |
 +------------------------+----------------+---------------------------------------+
 
@@ -167,7 +167,7 @@ Beam Tree
 The beam tree contains a single branch called "Beam." (note the "."). This branch
 represents an instance of :code:`parser/BeamBase.hh`. The tree typically contains one
 entry as only one definition of the beam was used per execution of BDSIM.
-		   
+
 Options Tree
 ^^^^^^^^^^^^
 
@@ -211,11 +211,11 @@ BDSOutputROOTEventModel
 +--------------------+--------------------------+--------------------------------------------------------------+
 | length             | std::vector<float>       | Component length (metres).                                   |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staPos             | std::vector<TVector3>    | Global coordindates of start of beamline element (metres).   |
+| staPos             | std::vector<TVector3>    | Global coordinates of start of beamline element (metres).    |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midPos             | std::vector<TVector3>    | Global coordindates of middle of beamline element (metres).  |
+| midPos             | std::vector<TVector3>    | Global coordinates of middle of beamline element (metres).   |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endPos             | std::vector<TVector3>    | Global coordindates of end of beamline element (metres).     |
+| endPos             | std::vector<TVector3>    | Global coordinates of end of beamline element (metres).      |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | staRot             | std::vector<TRotation>   | Global rotation for the start of this beamline element.      |
 +--------------------+--------------------------+--------------------------------------------------------------+
@@ -301,7 +301,7 @@ different value per event run in BDSIM.
 +-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
 |                 |                                  | the process associated with the primary step is  |
-|                 |                                  | not tracking - ie the first interaction.         |
+|                 |                                  | not tracking, i.e. the first interaction.        |
 +-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryLastHit  | BDSOutputROOTEventLoss           | Similar to PrimaryFirstHit, but the last point   |
 |                 |                                  | of this type on the primary trajectory.          |
@@ -355,7 +355,7 @@ Extra information can be recorded but this typically dominates the output file s
 +-----------------+-----------------------+-------------------------------------------------------------------+
 |  **Variable**   | **Type**              |  **Description**                                                  |
 +=================+=======================+===================================================================+
-| n               | int                   | The number of enery deposition hits for this event.               |
+| n               | int                   | The number of energy deposition hits for this event.              |
 +-----------------+-----------------------+-------------------------------------------------------------------+
 | energy          | std::vector<float>    | Vector of energy of each piece of energy deposition.              |
 +-----------------+-----------------------+-------------------------------------------------------------------+
@@ -367,11 +367,11 @@ Extra information can be recorded but this typically dominates the output file s
 +-----------------+-----------------------+-------------------------------------------------------------------+
 | trackID         | std::vector<int>      | (optional) Track ID of particle that caused energy deposition.    |
 +-----------------+-----------------------+-------------------------------------------------------------------+
-| parentID        | std::vector<int>      | (optional) Track ID of the parent partcle.                        |
+| parentID        | std::vector<int>      | (optional) Track ID of the parent particle.                       |
 +-----------------+-----------------------+-------------------------------------------------------------------+
-| modelID         | std::vector<int>      | (optional) Index in model tree for where deposition occured.      |
+| modelID         | std::vector<int>      | (optional) Index in model tree for where deposition occurred.     |
 +-----------------+-----------------------+-------------------------------------------------------------------+
-| turn            | std::vector<int>      | (optional) Turn in circular machine on which hit occured.         |
+| turn            | std::vector<int>      | (optional) Turn in circular machine on which hit occurred.        |
 +-----------------+-----------------------+-------------------------------------------------------------------+
 | x               | std::vector<float>    | (optional) Local X of energy deposition (m).                      |
 +-----------------+-----------------------+-------------------------------------------------------------------+
@@ -434,7 +434,7 @@ the start and end of that step.
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preWeights               | std::vector<std::vector<double>>    | Weighting associated with pre-step point.               |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| postWeights              | std::vector<std::vector<double>>    | Weightint associated with post-step point.              |
+| postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point.              |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step.    |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -458,7 +458,7 @@ In addition, some maps are stored to link the entries together conceptually.
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | trackIndex_trackProcess  | std::map<int, std::pair<int,int>>   | A map from the index in this class to track process.    |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trackIndex_modelIndex    | std::map<int, int>                  | A map from the index in this calss to the model index.  |
+| trackIndex_modelIndex    | std::map<int, int>                  | A map from the index in this class to the model index.  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | modelIndex_trackIndex    | std::map<int, std::vector<int>>     | A map from the model index to the index in this class.  |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
@@ -606,7 +606,7 @@ and energy loss per tunnel element are also constructed.
 +-------------+-----------------------------------------+-----------------------+
 | 7           | Energy loss (GeV) in tunnel.            | `histograms1D[6]`     |
 +-------------+-----------------------------------------+-----------------------+
-| 8           | Energy loss (GeV) in tunnel per element | `histograms1D[5]`     |  
+| 8           | Energy loss (GeV) in tunnel per element | `histograms1D[5]`     |
 |             | binning.                                |                       |
 +-------------+-----------------------------------------+-----------------------+
 
@@ -637,7 +637,7 @@ While in the ROOT interpreter, enter the following command to 'construct' a TBro
 
 Double click the file and then the 'Trees' (small folders with green leaf on them)
 to explore the hierarchy of the file. Eventually, individual variables can be double-clicked-on
-to give a preview histogram on-the-fly that is a histogram of all entries in the Tree (ie
+to give a preview histogram on-the-fly that is a histogram of all entries in the Tree (i.e.
 all events in the Event Tree). If the variable is a vector each item in the vector is
 entered ('filled') into the histogram.
 
