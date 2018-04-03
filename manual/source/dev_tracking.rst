@@ -419,7 +419,7 @@ There are other factors in the code for units that aren't shown here.
 
 
 Coordinate Convention
---------------------
+---------------------
 
 * Units are not explicitly mentioned here. In code there are factors to convert to Geant4 units.
 * :math:`\mathbf{q}` is used to represent a 3-vector for spatial coordinates (:math:`x,y,z`).

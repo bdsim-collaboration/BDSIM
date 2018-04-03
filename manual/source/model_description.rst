@@ -2360,11 +2360,11 @@ Physics Lists In BDSIM
 | decay_radioactive            | Radioactive decay of long lived nuclei. Uses                           |
 |                              | `G4RadioactiveDecayPhysics`.                                           |
 +------------------------------+------------------------------------------------------------------------+
-| decay_muonic_atom            | `G4MuonicAtomDecayPhysics`. Available from Geant4.10.3 onward.        |
+| decay_muonic_atom            | `G4MuonicAtomDecayPhysics`. Available from Geant4.10.3 onward.         |
 +------------------------------+------------------------------------------------------------------------+
 | decay_spin                   | Decay physics but with spin correctly implemented. Note, only the      |
 |                              | Geant4 tracking integrators track spin correctly. Uses                 |
-|                              | `G4SpinDecayPhysics`. Available from Geant4.10.2.p01 onward.          |
+|                              | `G4SpinDecayPhysics`. Available from Geant4.10.2.p01 onward.           |
 +------------------------------+------------------------------------------------------------------------+
 | em                           | Transportation of primary particles, ionisation, bremsstrahlung,       |
 |                              | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
@@ -2375,7 +2375,7 @@ Physics Lists In BDSIM
 |                              | option `useLENDGammaNuclear` that requires `G4LENDDATA` environmental  |
 |                              | variable to be set for the optional LEND data set (see ** below).      |
 +------------------------------+------------------------------------------------------------------------+
-| em_gs                        | `G4EmStandardPhysicsGS`. Available form Geant4.10.2 onward.           |
+| em_gs                        | `G4EmStandardPhysicsGS`. Available form Geant4.10.2 onward.            |
 +------------------------------+------------------------------------------------------------------------+
 | em_livermore                 | `G4EmLivermorePhysics`.                                                |
 +------------------------------+------------------------------------------------------------------------+
@@ -2432,7 +2432,7 @@ Physics Lists In BDSIM
 +------------------------------+------------------------------------------------------------------------+
 | ion_inclxx (`*`)             | `G4IonINCLXXPhysics`.                                                  |
 +------------------------------+------------------------------------------------------------------------+
-| ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onward.                 |
+| ion_php (`*`)                | `G4IonPhysicsPHP`. Available from Geant4.10.3 onward.                  |
 +------------------------------+------------------------------------------------------------------------+
 | lw                           | Laserwire photon producing process as if the laserwire had scattered   |
 |                              | photons from the beam. Not actively developed, but will register       |
@@ -2477,7 +2477,7 @@ Physics Lists In BDSIM
 +------------------------------+------------------------------------------------------------------------+
 | shielding_lend  (`**`)       | `G4HadronPhysicsShieldingLEND`. Similar to `shielding` but requires    |
 |                              | LEND data set for low energy neutrons. Available from Geant4.10.4      |
-|                              | onward.                                                               |
+|                              | onward.                                                                |
 +------------------------------+------------------------------------------------------------------------+
 | stopping                     | `G4StoppingPhysics`. Hadronic physics for stopping particles.          |
 +------------------------------+------------------------------------------------------------------------+
@@ -2925,7 +2925,7 @@ Physics Processes
 | useLENDGammaNuclear              | Use the low energy neutron data set as provided by    |
 |                                  | the environmental variable `G4LENDDATA` when using    |
 |                                  | the `em_extra` physics list. Boolean. Available in    |
-|                                  | Geant4.10.4 onward.                                  |
+|                                  | Geant4.10.4 onward.                                   |
 +----------------------------------+-------------------------------------------------------+
 
 

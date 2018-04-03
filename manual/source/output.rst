@@ -102,7 +102,7 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
 +=============+=====================================================================+
-| Header      | Details about the file type and software versions.                   |
+| Header      | Details about the file type and software versions.                  |
 +-------------+---------------------------------------------------------------------+
 | Beam        | A record of all options associated with the beam definition.        |
 +-------------+---------------------------------------------------------------------+
