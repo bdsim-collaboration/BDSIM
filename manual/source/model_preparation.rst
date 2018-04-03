@@ -12,7 +12,7 @@ or 'flat' output description of each element in the accelerator from
 whatever optics program you use to design the accelerator, and then
 converting this using our Python utility pybdsim - see :ref:`python-utilities`.
 
-Additionally, the python tools can be used to programatically create
+Additionally, the python tools can be used to programmatically create
 an accelerator lattice of your own design, which is described in
 `Python Builder`_.
 
@@ -37,13 +37,13 @@ MADX Conversion
 A MADX lattice can be easily converted to a BDSIM gmad input file using the supplied
 python utilities. This is achieved by
 
-1. preparing a tfs file with madx containing all twiss table information
-2. converting the tfs file to gmad using pybdsim
+1. preparing a TFS file with madx containing all Twiss table information
+2. converting the TFS file to gmad using pybdsim
 
-The twiss file can be prepared by appending the following MADX syntax to the
+The Twiss file can be prepared by appending the following MADX syntax to the
 end of your MADX script::
 
-  select,flag=twiss, clear; 
+  select,flag=twiss, clear;
   twiss,sequence=SEQUENCENAME, file=twiss.tfs;
 
 where `SEQUENCENAME` is the name of the sequence in madx. By not specifying the output
@@ -57,7 +57,7 @@ This is described in more detail in the dedicated pybdsim documentation
 .. note:: The python utilities require "`.tfs`" suffix as the file type to work properly.
 
 To convert the tfs file, pybdsim should be used.  pybdsim along with other utilities can
-be found in the utils directory in the bdsim source directory.
+be found in the utils directory in the BDSIM source directory.
 
 .. note:: If these folders are empty, please update the submodules as described in
 	  :ref:`from-git-repository`.

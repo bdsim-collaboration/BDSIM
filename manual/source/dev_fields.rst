@@ -16,7 +16,7 @@ Coordinate System
 
 The accelerator is modelled, following convention, in curvilinear coordinates
 that follow the beam line. However, in practice, Geant4 requires that the fields
-and coordinates be supplied and calculated in global carteasian coordinates.
+and coordinates be supplied and calculated in global Cartesian coordinates.
 The simplest solution
 in Geant4 is to get the transformation from the global coordinates to the local
 coordinates of the volume being queried for the field and tracking.  However, if
@@ -56,10 +56,10 @@ Important Points
 * Field classes don't use BDSAuxiliary navigator and therefore don't require a full Geant4 run.
 * The fields constructed for the BDSIM model are wrapped in an instance of BDSFieldMagGlobal
   that provides the necessary local to global transforms.
-* Using BDSAuxiliaryNavigator requires an accelerator to be built - ie, it requires a world
+* Using BDSAuxiliaryNavigator requires an accelerator to be built, i.e. it requires a world
   volume, and read out world, contents in both, the geometry to be 'closed' by Geant4 and
   a valid run manager instantiated. One may generally use the field classes, but without the
-  auxilliary navigator in this case.
+  auxiliary navigator in this case.
 
 Notes About Plots
 -----------------
@@ -113,8 +113,8 @@ The field is described by
    B_x & = \frac{\partial B_y}{\partial x} y \\
    B_y & = \frac{\partial B_y}{\partial x} x \\
    B_z & = 0
-   
-   
+
+
 .. figure:: dev_figures/quadrupole_radial.pdf
 	    :width: 70%
 	    :align: center
@@ -137,7 +137,7 @@ The field is described by
    B_x & = \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \,2xy \\
    B_y & = \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \, (x^2 - y^2) \\
    B_z & = 0
-   
+
 
 .. figure:: dev_figures/sextupole_radial.pdf
 	    :width: 70%
@@ -185,7 +185,7 @@ The field is described by
 
 .. math::
    B_x & = \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, 4xy(x^2 - y^2) \\
-   B_y & = \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, (x^4 - 6x^2y^2 + y^4) \\ 
+   B_y & = \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, (x^4 - 6x^2y^2 + y^4) \\
    B_z & = 0
 
 
@@ -214,7 +214,7 @@ location.
    \mathbf{B}_{skew}(x,y) = R(-\theta) \mathbf{B}(x',y')
 
 .. math::
-   
+
    \begin{bmatrix}
    x' \\
    y' \\
@@ -285,14 +285,14 @@ Multipole
 ---------
 
 A general multipole field is also provided. The field is calculated in cylindrical coordinates, then converted
-to carteasian. The field is calculated using an array of strength parameters :math:`k_1,k_2,\dotsc k_{12}` and
-the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a nominal rigidity :math:`B\rho`.
+to Cartesian. The field is calculated using an array of strength parameters :math:`k_1,k_2,\dotsc k_{12}` and
+the skewed strength parameters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a nominal rigidity :math:`B\rho`.
 
 .. note:: Currently the dipole component is not implemented. :math:`k_1` is the quadrupole strength,
 	  :math:`k_2` is the sextupole strength, *etc*.
 
 .. math::
-   
+
    r                          & = \sqrt{x^2 + y^2} \\
    B_r      (\mathrm{normal}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \,r^i \sin(i \phi) \\
    B_{\phi} (\mathrm{normal}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \, r^i \cos(i \phi) \\
@@ -303,7 +303,7 @@ the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a
    B_x & = B_r \cos \phi - B_{\phi} \sin \phi \\
    B_y & = B_r \sin \phi + B_{\phi} \cos \phi \\
 
-      
+
 .. figure:: dev_figures/multipole_radial.pdf
 	    :width: 70%
 	    :align: center
@@ -320,7 +320,7 @@ A muon spoiler field is provided that gives a constant toroidal field. It is con
 according to
 
 .. math::
-   
+
    r   & = \sqrt{x^2 + y^2} \\
    B_x & = \frac{y}{r} B \\
    B_y & = \frac{-x}{r} B \\
@@ -366,7 +366,7 @@ An example is shown below for :math:`\mathbf{B} = (0.23,0.56,0)\,\mathrm{T}` and
 	    :align: center
 
 .. _yoke-multipole-field:
-		    
+
 General Yoke Multipole
 ----------------------
 
@@ -383,7 +383,7 @@ Wire locations:
 
 .. math::
 
-   \mathbf{c}_i = 
+   \mathbf{c}_i =
    \begin{bmatrix}
    x \\
    y \\
@@ -406,7 +406,7 @@ Wire locations:
 The field value as a function of position :math:`\mathbf{r} = (x,y)` is
 
 .. math::
-   
+
    \mathbf{B}(\mathbf{r}) = \sum_{i = 1}^{i = n_{\mathrm{poles}}} (-1)^{i} \, \frac{(\mathbf{r} - \mathbf{c}_i)_{\perp}}{\|\mathbf{r} - \mathbf{c}_i\|}
 
 These are provided for dipole through to decapole including their skew counterparts. A few examples are presented below.
@@ -466,7 +466,7 @@ Electric Fields From Equations
 Sinusoidal Electric Field
 -------------------------
 
-This field provides an electric field along local `z` direcetion with an amplitude
+This field provides an electric field along local `z` direction with an amplitude
 `E` that does not vary with position (`x`, `y`, `z`) but only varies sinusoidally
 with time (`t`). A cosine is used so when the default phase of 0, a maximum acceleration
 is provided. Aside from the field amplitude `E`, the frequency `f` (Hz) along with
@@ -484,7 +484,7 @@ The 3D Cartesian field vectors are therefore:
    \mathbf{E} & = (0, \,0, \,E_z)
 
 
-Electro-Magnetic Fields From Equations
+Electromagnetic Fields From Equations
 ======================================
 
 .. _field-pill-box:
@@ -506,7 +506,7 @@ a normalised radius :math:`r_n` with respect to the first 0 of the 0th Bessel:
 The electric field is calculated as:
 
 .. math::
-   
+
    E_z      & = E \, J_{0}(r) \cos(2\,\pi\,f\,t + \psi) \\
 
 The B field amplitude is calculated from the E field amplitude.
@@ -522,7 +522,7 @@ and therefore only the vacuum permeability is used to calculate B from H.
 The radial magnetic field in the pill-box field is:
 
 .. math::
-   
+
    B_{\phi} = \frac{E \, \mu_0 } { Z_0 } J_{1}(r) \sin(2\,\pi\,f\,t + \psi)
 
 
@@ -532,7 +532,7 @@ The 3D Cartesian field vectors are therefore:
 
    \mathbf{B} & = (B_{\phi}\cos(\phi),\, B_{\phi}\sin(\phi), \,0) \\
    \mathbf{E} & = (0, \,0, \,E_z)
-   
+
 Where :math:`phi` is the polar coordinate.
 
 .. _field-map-formats:
@@ -571,7 +571,7 @@ Generally:
  * :code:`loopOrder > zyxt` may optionally be defined the header to indicate to the
    loader the order of looping of variables in the file. The default is xyzt.
 
-.. Note:: The units are :math:`cm` for spatial coodinates and :math:`s` for temporal.
+.. Note:: The units are :math:`cm` for spatial coordinates and :math:`s` for temporal.
 
 There are python scripts in :code:`bdsim/examples/features/fields/4_bdsimformat` called
 :code:`Generate1D.py` etc., that were used to create the example data sets there that
@@ -608,12 +608,12 @@ field is specified here: ::
    1.50000000E+01	1.44943102E+00	1.99498997E+00	1.43827662E+00
    2.25000000E+01	-9.08808379E-01	1.55614639E+00	1.81555922E+00
 
-   
+
 BDSIM Field Format 2D
 ---------------------
 
 All of the 1D parameters, plus:
-   
+
 +--------------------+---------------------------------------------------------------------------+
 | **Parameter**      | **Description**                                                           |
 +--------------------+---------------------------------------------------------------------------+
@@ -666,7 +666,7 @@ BDSIM Field Format 3D
 ---------------------
 
 All of the 1D & 2D parameters, plus:
-   
+
 +--------------------+---------------------------------------------------------------------------+
 | **Parameter**      | **Description**                                                           |
 +--------------------+---------------------------------------------------------------------------+
@@ -758,7 +758,7 @@ BDSIM Field Format 4D
 ---------------------
 
 All of the 1D, 2D & 3D parameters, plus:
-   
+
 +--------------------+---------------------------------------------------------------------------+
 | **Parameter**      | **Description**                                                           |
 +--------------------+---------------------------------------------------------------------------+
@@ -770,7 +770,7 @@ All of the 1D, 2D & 3D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 
 There is an example in :code:`bdsim/examples/features/fields/4_bdsimformat/tdexample.tar.gz`.
-      
+
 
 .. _field-map-file-preparation:
 
@@ -804,7 +804,7 @@ sinusoids shown below.
 
 	    Example 2D field value components.
 
-Nearest Neightbour
+Nearest Neighbour
 ------------------
 
 The nearest neighbour algorithm returns the field value of the closest defined point in
@@ -841,8 +841,8 @@ is given by
 Here, :math:`xd` will lie in the range :math:`[0,1]`. This is of course a 1D equation and
 version of linear interpolation. See _`Linear & Cubic Higher Dimension Interpolation` for
 further details for 2,3 & 4D interpolation.
-   
-   
+
+
 .. figure:: dev_figures/field_linear.pdf
 	    :width: 80%
 	    :align: center
@@ -863,7 +863,7 @@ to give a small section of a cubic polynomial.  For a given point :math:`x_i`, t
 point which is on the lower valued side is here called :math:`m_1` (m for map), and the
 closest point which is on the higher valued side is called :math:`m_2`. Points further
 outside these (in a 1D case) are called :math:`m_0` and :math:`m_3` respectively. (On a
-linear number scale from low to hight they would be :math:`m_0, m_1, m_2, m_3`.) The
+linear number scale from low to high they would be :math:`m_0, m_1, m_2, m_3`.) The
 field value :math:`f(x_i)` is given by
 
 .. math::
@@ -887,7 +887,7 @@ and is not prohibitively slow.
 
 	    Example 1D field value components with cubic interpolation.
 
-	    
+
 .. figure:: dev_figures/field_cubic2d.png
 	    :width: 70%
 	    :align: center
@@ -897,7 +897,7 @@ and is not prohibitively slow.
 
 
 .. Note:: Although the :math:`x,y,z` components are shown individually, they are in fact part of
-	  a 3-vector class that is used for interpolation.  Ie, the components are not interpolated
+	  a 3-vector class that is used for interpolation, i.e. the components are not interpolated
 	  individually.
 
 
@@ -919,7 +919,7 @@ approximately in the centre of the cube, but it could lie anywhere inside the 8 
 
 	    Field map value coordinates for 3D interpolation. [#f1]_.
 
-.. [#f1] `Marmelad Cubic Diagram Wikipedia <https://commons.wikimedia.org/wiki/File:3D_interpolation2.svg>`_. 
+.. [#f1] `Marmelad Cubic Diagram Wikipedia <https://commons.wikimedia.org/wiki/File:3D_interpolation2.svg>`_.
 
 
 :math:`C_{00}` can be found by interpolating between :math:`C_{000}` and :math:`C_{100}`.
@@ -931,13 +931,13 @@ interpolating between :math:`C_0` and :math:`C_1` giving the desired value.
 One may interpolate the dimensions in any order and arrive at the same result. By doing
 it in such a way, the 2D interpolator can use the 1D interpolator; the 3D interpolator
 can use the 2D interpolator etc. By ensuring the 1D case is correct, there is a much
-lower likelihood of implementation faults occuring for higher dimensional interpolators.
+lower likelihood of implementation faults occurring for higher dimensional interpolators.
 
 Implementation Specifics
 ------------------------
 
 To implement this iterative algorithm, *C* arrays are used, as sub-arrays can be easily
-passed arround due to their underlying pointer nature in *C*. A small section of
+passed around due to their underlying pointer nature in *C*. A small section of
 code from :code:`bdsim/src/BDSInterpolatorRoutines.cc` is shown below:
 
 .. figure:: dev_figures/interpolation_code_snippet.png

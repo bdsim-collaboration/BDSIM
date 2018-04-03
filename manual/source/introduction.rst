@@ -56,12 +56,12 @@ Capabilities
 * Interactively visualise model in 3D as well as particle tracks.
 * Analyse history and origin of radiation produced in accelerator with analysis suite.
 * Strong reproducibility - recreate any event again exactly.
-  
+
 
 Simulation Procedure
 ====================
 
-1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file or writing your own.
+1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** Twiss file or writing your own.
 2) Run BDSIM with core beam distribution for validation of optics and therefore model preparation.
 3) Run BDSIM with desired input distribution and physics processes with low statistics to verify desired application.
 4) Repeat 3) with greater statistics either as a single instance or on a computing cluster.
@@ -85,7 +85,7 @@ to be simulated. A Geant4 example is shown below being interactively visualised.
 	    :align: center
 
 
-This is labour intensitve and inflexible for different accelerator models or optics. As
+This is labour intensive and inflexible for different accelerator models or optics. As
 accelerators typically consist of a standard set of components these can be made
 reasonably generic. BDSIM provides a library of geometry and fields that allow
 simple optical descriptions to be made into 3D models. Example screen shots are shown
@@ -109,8 +109,8 @@ Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
 Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
-		    
-Apart from the 3D geometry, a crucial component of a model are the electro-magnetic
+
+Apart from the 3D geometry, a crucial component of a model are the electromagnetic
 fields. Fields in Geant4 may be specified through a developer-provided C++ class that returns
 the field vector as a function of global Cartesian `x`, `y`, `z` and `t`. BDSIM provides
 classes to describe the magnetic fields found for each type of accelerator magnet as well
@@ -147,7 +147,7 @@ provided *out-of-the-box* called "bdsimmatrix" uses thick lens tracking and prov
 agreement with MADX and PTC tracking codes.
 
 A second set of routines called "bdsimtwo" is similar but differs in the way dipoles magnets
-are treated. In this cases, a constant pure dipole field is used to calcule the motion
+are treated. In this cases, a constant pure dipole field is used to calculate the motion
 of the particle (using a Rodrigues rotation in global Cartesian coordinates). The field
 is a 'hard-edge' field - it exists inside the volume at the same strength everywhere and is
 zero outside. Whilst the tracking algorithm is accurate, such a model does not agree with

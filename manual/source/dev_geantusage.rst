@@ -26,7 +26,7 @@ This is not used as BDSIM does not define its own Run object and uses the G4Run 
 BDSRunAction::BeginOfRunAction
 ------------------------------
 
-* This histrograms for the simulation (Run) are prepared and registered with the :code:`BDSAnalysisManager`
+* This histograms for the simulation (Run) are prepared and registered with the :code:`BDSAnalysisManager`
 * The start time is printed out
 
 
@@ -41,7 +41,7 @@ BDSRunAction::EndOfRunAction
 G4UserEventAction
 =================
 
-.. warning:: Note, the Primargy Generator action is called before this method at the start of each event!
+.. warning:: Note, the Primary Generator action is called before this method at the start of each event!
 
 BDSEventAction::BeginOfEventAction
 ----------------------------------
@@ -69,7 +69,7 @@ BDSStackingAction::ClassifyNewTrack
 * If specified in :code:`GMAD::Options` stop tracks, the following secondary particles are killed
 
   * electrons, photons, positrons and protons/antiprotons
-  
+
 * If stop secondaries is specified, all secondaries are killed.
 * Photons are counted
 
