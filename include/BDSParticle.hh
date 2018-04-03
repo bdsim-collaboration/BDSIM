@@ -44,17 +44,17 @@ public:
 	      G4double yp,
 	      G4double zp,
 	      G4double totalEnergyIn,
-	      G4double tIn        = 0.0,
-	      G4double weightIn   = 1.,
-	      G4int    trackIDIn  = -1,
-	      G4int    parentIDIn = -1);
+	      G4double globalTimeIn = 0.0,
+	      G4double weightIn     = 1.,
+	      G4int    trackIDIn    = -1,
+	      G4int    parentIDIn   = -1);
   BDSParticle(G4ThreeVector pos,
 	      G4ThreeVector mom,
 	      G4double      totalEnergyIn,
-	      G4double      tIn        = 0.0,
-	      G4double      weightIn   = 1.,
-	      G4int         trackIDIn  = -1,
-	      G4int         parentIDIn = -1);
+	      G4double      globalTimeIn = 0.0,
+	      G4double      weightIn     = 1.,
+	      G4int         trackIDIn    = -1,
+	      G4int         parentIDIn   = -1);
 
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticle const& p);
@@ -68,10 +68,10 @@ private:
   
   /// energy
   G4double totalEnergy;
-  
-  /// time since the particle was created
-  G4double t;
-  
+
+  /// time since event began (global time)
+  G4double T;
+
   // optional
   /// weight
   G4double weight;
@@ -91,7 +91,7 @@ public:
   G4double GetZp()const {return momentum.z();}
 
   G4double GetTotalEnergy() const {return totalEnergy;}
-  G4double GetTime()        const {return t;}
+  G4double GetT()        const {return T;}
   G4double GetWeight()      const {return weight;}
   G4int    GetTrackID()     const {return trackID;}
   G4int    GetParentID()    const {return parentID;}

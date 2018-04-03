@@ -117,7 +117,7 @@ public:
   inline G4double GetInitZPrime() const
   {return itsInit.GetZp();}
   inline G4double GetInitT() const
-  {return itsInit.GetTime();}
+  {return itsInit.GetT();}
   inline BDSParticle GetProd() const
   {return itsProd;}
   inline G4double GetProdTotalEnergy() const
@@ -135,7 +135,7 @@ public:
   inline G4double GetProdZPrime() const
   {return itsProd.GetZp();}
   inline G4double GetProdT() const
-  {return itsProd.GetTime();}
+  {return itsProd.GetT();}
   inline BDSParticle GetLastScat() const
   {return itsLastScat;}
   inline G4double GetLastScatTotalEnergy() const
@@ -153,7 +153,7 @@ public:
   inline G4double GetLastScatZPrime() const
   {return itsLastScat.GetZp();}
   inline G4double GetLastScatT() const
-  {return itsLastScat.GetTime();}
+  {return itsLastScat.GetT();}
   inline BDSParticle GetLocal() const
   {return itsLocal;}
   inline G4double GetTotalEnergy() const
@@ -185,7 +185,7 @@ public:
   inline G4double GetGlobalZPrime() const
   {return itsGlobal.GetZp();}
   inline G4double GetT() const
-  {return itsLocal.GetTime();}
+  {return itsLocal.GetT();}
   inline G4double GetS() const
   {return itsS;}
   inline G4double GetWeight() const

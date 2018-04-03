@@ -60,11 +60,8 @@ public:
   std::vector<float>        Y;
   std::vector<float>        Z;
   /// @}
-  
 
-  std::vector<float>        t; ///< global time (time since beginning
-			       ///of event)
-
+  std::vector<float>        T; ///< global time (time since beginning of event)
 
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal,

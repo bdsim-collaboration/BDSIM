@@ -77,7 +77,7 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
     }
   if (storeTime)
     {
-      t.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
+      T.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
     }
 }
 void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
@@ -112,7 +112,7 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
     }
   if (storeTime)
     {
-      t.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
+      T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
     }
 }
 
@@ -135,5 +135,5 @@ void BDSOutputROOTEventLoss::Flush()
   X.clear();
   Y.clear();
   Z.clear();
-  t.clear();
+  T.clear();
 }
