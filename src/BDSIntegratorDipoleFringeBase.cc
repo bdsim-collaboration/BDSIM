@@ -50,7 +50,7 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   antiTiltOffset(tiltOffset.inverse())
 {
   if (thinElementLength < 0)
-  {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
