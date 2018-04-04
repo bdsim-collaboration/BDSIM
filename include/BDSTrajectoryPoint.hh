@@ -74,6 +74,8 @@ public:
   inline G4ThreeVector GetPostMomentum()       const {return postMomentum;}
   inline G4double GetPreS()                    const {return preS;}
   inline G4double GetPostS()                   const {return postS;}
+  inline G4double GetPreGlobalTime()           const {return preGlobalTime;}
+  inline G4double GetPostGlobalTime()          const {return postGlobalTime;}
   inline G4int    GetBeamLineIndex()           const {return beamlineIndex;}
   inline G4int    GetTurnsTaken()              const {return turnstaken;}
   inline G4ThreeVector GetPrePosLocal()        const {return prePosLocal;}
@@ -107,6 +109,8 @@ private:
   G4double energy;                ///< Total energy deposited during step
   G4double preS;                  ///< Global curvilinear S coordinate of pre-step point
   G4double postS;                 ///< Global curvilinear S coordinate of post step point
+  G4double preGlobalTime;         ///< Time since event started of pre-step point.
+  G4double postGlobalTime;        ///< Time since event started of post-step point.
   G4int    beamlineIndex;         ///< Index to beam line element
   G4int    turnstaken;            ///< Number of turns taken
   G4ThreeVector prePosLocal;      ///< Local coordinates of pre-step point

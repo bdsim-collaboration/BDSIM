@@ -83,7 +83,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4Track* track    = aStep->GetTrack();
   G4int TrackID     = track->GetTrackID();           // unique ID of track
   G4int ParentID    = track->GetParentID();          // unique ID of track's mother
-  G4double t        = track->GetGlobalTime();        // time since beginning of event
+  G4double T        = track->GetGlobalTime();        // time since beginning of event
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
@@ -132,8 +132,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
 
-  BDSParticle local(localPosition,localDirection,energy,t);
-  
+  BDSParticle local(localPosition,localDirection,energy,T);
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local coordinates: " << local << G4endl;
 #endif
@@ -161,8 +161,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   // store production/scatter point
   BDSParticle lastScatter(posLastScatter,momDirLastScatter,energyLastScatter,timeLastScatter);
   BDSParticle production(vtx,dir,vertexEnergy,vertexTime); //production point
-  BDSParticle global(pos,mom,energy,t); // global point
- 
+  BDSParticle global(pos,mom,energy,T); // global point
+
   // process that creating the particle
   G4String process = "";
   if(track->GetCreatorProcess()) 

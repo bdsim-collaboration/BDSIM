@@ -33,7 +33,7 @@ namespace PTC
     double px;
     double y;
     double py;
-    double t;
+    double T;
     double pt;
     double s;
     double energy;

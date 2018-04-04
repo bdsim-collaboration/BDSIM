@@ -171,7 +171,7 @@ void SamplerAnalysis::Process(bool firstTime)
     coordinates[2] = s->y[i];
     coordinates[3] = s->yp[i];
     coordinates[4] = std::sqrt(std::pow(s->energy[i],2) - m2); // p = sqrt(E^2 - M^2)
-    coordinates[5] = s->t[i];
+    coordinates[5] = s->T[i];
 
     if (firstTime)
       {offsets = coordinates;}
