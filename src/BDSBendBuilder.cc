@@ -60,7 +60,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4double                       fint = element->fint;
   G4double                      fintx = element->fintx;
   G4double                       hgap = element->hgap * CLHEP::m;
-  
+
+  // Note for tilted dipoles, the geometry is tilted but the curvilinear world isn't,
+  // therefore we tilt the field to match the geometry.
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   G4bool buildFringeIncoming = buildFringeFields;
