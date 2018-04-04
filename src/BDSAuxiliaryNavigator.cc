@@ -287,26 +287,25 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
   return LocalToGlobal(useCurvilinear).TransformPoint(localPosition);
 }
 
-BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
-						   G4ThreeVector unitMomentum,
-						   G4double      h,
-						   G4bool        useCurvilinearWorld)
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4ThreeVector& position,
+						   const G4ThreeVector& unitMomentum,
+						   const G4double&      h,
+						   const G4bool&        useCurvilinearWorld)
 {
   return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 }
 
-BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
-						   G4double      angle,
-						   G4ThreeVector position,
-						   G4ThreeVector unitMomentum,
-						   G4double      h,
-						   G4bool        useCurvilinearWorld,
-						   G4double      FCof)
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArcLength,
+						   const G4ThreeVector& unitField,
+						   const G4double&      angle,
+						   const G4ThreeVector& position,
+						   const G4ThreeVector& unitMomentum,
+						   const G4double&      h,
+						   const G4bool&        useCurvilinearWorld,
+						   const G4double&      FCof)
 {
-  G4double arcLength         = (*strength)["length"];
-  G4double radiusOfCurvature = arcLength / angle;
+  G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
-  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
   BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 
@@ -351,9 +350,9 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   return BDSStep(localPosCL, localMomCL);
 }
 
-BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
-						   G4ThreeVector localMomentum,
-						   G4bool        useCurvilinearWorld)
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4ThreeVector& localPosition,
+						   const G4ThreeVector& localMomentum,
+						   const G4bool&        useCurvilinearWorld)
 {
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
@@ -361,8 +360,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArcLength,
 						   const G4ThreeVector& unitField,
 						   const G4double&      angle,
-						   G4ThreeVector        CLPosition,
-						   G4ThreeVector        CLMomentum,
+						   const G4ThreeVector& CLPosition,
+						   const G4ThreeVector& CLMomentum,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof)
 {
@@ -393,7 +392,7 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
     {rotationAngle *= -1;}
 
   G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
-  G4ThreeVector localMomentum = CLMomentum.rotate(rotationAngle, localUnitF);;
+  G4ThreeVector localMomentum = G4ThreeVector(CLMomentum).rotate(rotationAngle, localUnitF);;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
