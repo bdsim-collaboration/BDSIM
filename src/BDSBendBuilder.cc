@@ -67,7 +67,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4bool buildFringeOutgoing = buildFringeFields;
 
   G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
-  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
 
   if (buildFringeFields)
     {
@@ -430,7 +430,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   G4bool finiteK1 = BDS::IsFinite((*strength)["k1"]);
-  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
@@ -479,7 +479,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
-  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
 
   // Here, 'no face angle' really means that the rbend becomes an sbend.
   // Calculate how far away we are from an sbend.
@@ -694,7 +694,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
-  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipole : BDSFieldType::dipolequadrupole;
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
   
   BDSIntegratorType intType = integratorSet->dipoleFringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
