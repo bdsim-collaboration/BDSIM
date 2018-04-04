@@ -53,13 +53,13 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   delete dipoleField;
 }
 
-void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
-                                                const G4double dydx[],
-                                                const G4double h,
-                                                G4double       yOut[],
-                                                G4double       yErr[],
-                                                G4double       fcof,
-                                                G4double       momScaling)
+void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
+                                                const G4double  dydx[6],
+                                                const G4double& h,
+                                                G4double        yOut[6],
+                                                G4double        yErr[6],
+                                                const G4double& fcof,
+                                                const G4double& momScaling)
 {
   // Protect against neutral particles, and zero field: drift through.
   if (!BDS::IsFinite(fcof) || zeroStrength)
@@ -151,12 +151,12 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   }
 }
 
-void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
-                                            G4ThreeVector  momIn,
-                                            G4ThreeVector  momUIn,
-                                            G4ThreeVector& posOut,
-                                            G4ThreeVector& momOut,
-                                            G4double       bendingRadius) const
+void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
+                                            const G4ThreeVector& momIn,
+                                            const G4ThreeVector& momUIn,
+                                            G4ThreeVector&       posOut,
+                                            G4ThreeVector&       momOut,
+                                            const G4double&      bendingRadius) const
 {
   G4double x0  = posIn.x() / CLHEP::m;
   G4double y0  = posIn.y() / CLHEP::m;

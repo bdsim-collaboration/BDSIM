@@ -56,24 +56,24 @@ public:
   /// The stepper for integration. Particle charge and momentum scaling are provided as arguments
   /// as they are calculated in the derived classes. Uses BDSIntegratorDipole2::Stepper and then adds
   /// a kick in yp in curvilinear coordinates.
-  void BaseStepper(const G4double yIn[],
-                   const G4double dydx[],
-                   const G4double h,
-                   G4double       yOut[],
-                   G4double       yErr[],
-                   G4double       fcof,
-                   G4double       momScaling);
+  void BaseStepper(const G4double  yIn[6],
+                   const G4double  dydx[6],
+                   const G4double& h,
+                   G4double        yOut[6],
+                   G4double        yErr[6],
+                   const G4double& fcof,
+                   const G4double& momScaling);
 
 
   /// Calculate a single step using dipole fringe field matrix.
   /// Unit momentum, momentum magnitude, and normalised bending radius are provided
   /// as arguments because they already calculated in the BaseStepper method.
-  void OneStep(G4ThreeVector  posIn,
-               G4ThreeVector  momIn,
-               G4ThreeVector  momUIn, // assumed unit momentum of momIn
-               G4ThreeVector& posOut,
-               G4ThreeVector& momOut,
-               G4double       bendingRadius) const;
+  void OneStep(const G4ThreeVector& posIn,
+               const G4ThreeVector& momIn,
+               const G4ThreeVector& momUIn, // assumed unit momentum of momIn
+               G4ThreeVector&       posOut,
+               G4ThreeVector&       momOut,
+               const G4double&      bendingRadius) const;
 
 protected:
   /// Poleface rotation angle
