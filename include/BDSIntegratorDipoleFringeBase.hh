@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
+#include "G4Transform3D.hh"
 
 namespace BDS
 {
@@ -49,7 +50,8 @@ public:
   BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strength,
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
-				G4double                 minimumRadiusOfCurvature);
+				G4double                 minimumRadiusOfCurvature,
+				const G4Transform3D&     tiltOffsetIn = G4Transform3D::Identity);
   
   virtual ~BDSIntegratorDipoleFringeBase(){;}
 
@@ -89,7 +91,8 @@ protected:
   const G4double fieldArcLength; ///< Cache of the field arc length.
   const G4double fieldAngle;     ///< Cache of the field angle.
 
-  BDSMagnetStrength const* strength;
+  G4Transform3D tiltOffset;
+  G4Transform3D antiTiltOffset;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.

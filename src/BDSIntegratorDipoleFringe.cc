@@ -31,8 +31,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strengthIn,
 						     G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
-						     G4double                 minimumRadiusOfCurvatureIn):
-  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn)
+						     G4double                 minimumRadiusOfCurvatureIn,
+						     const G4Transform3D&     tiltOffsetIn):
+  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltOffsetIn)
 {;}
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],
