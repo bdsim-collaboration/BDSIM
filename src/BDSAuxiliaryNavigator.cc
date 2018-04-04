@@ -302,12 +302,23 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
 						   const G4ThreeVector& unitMomentum,
 						   const G4double&      h,
 						   const G4bool&        useCurvilinearWorld,
-						   const G4double&      FCof)
+						   const G4double&      FCof,
+						   const G4Transform3D& tiltOffset)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
-  BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
+  G4ThreeVector positionTransformed(position);
+  G4ThreeVector unitMomentumTransformed(unitMomentum);
+  G4ThreeVector unitFieldTransformed(unitField);
+  if (tiltOffset != G4Transform3D::Identity)
+  {
+    auto rot = tiltOffset.getRotation();
+    positionTransformed.transform(rot);
+    unitMomentumTransformed.transform(rot);
+    unitFieldTransformed.transform(rot);
+  }
+  BDSStep local = ConvertToLocal(positionTransformed, unitMomentumTransformed, h, useCurvilinearWorld);
 
   // Test on finite angle here. If the angle is 0, there is no need for a further transform.
   if (!BDS::IsFinite(angle))
@@ -316,7 +327,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   G4ThreeVector localPos   = local.PreStepPoint();
   G4ThreeVector localMom   = local.PostStepPoint();
   G4double      localZ     = localPos.z();
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitFieldTransformed, useCurvilinearWorld);
 
   // only find angle between particle and radiusAtChord in x-z plane,
   // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
@@ -363,7 +374,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
 						   const G4ThreeVector& CLPosition,
 						   const G4ThreeVector& CLMomentum,
 						   const G4bool&        useCurvilinearWorld,
-						   const G4double&      FCof)
+						   const G4double&      FCof,
+						   const G4Transform3D& /*tiltOffset*/)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);

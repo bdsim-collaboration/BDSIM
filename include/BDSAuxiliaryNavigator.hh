@@ -19,11 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
+#include "BDSMagnetStrength.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
-#include "BDSMagnetStrength.hh"
+#include "G4Transform3D.hh"
 
 class BDSStep;
 class G4Step;
@@ -186,7 +188,8 @@ public:
 			      const G4ThreeVector& unitMomentum,
 			      const G4double&      h,
 			      const G4bool&        useCurvilinearWorld,
-			      const G4double&      FCof);
+			      const G4double&      FCof,
+			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
 
   BDSStep GlobalToCurvilinear(const G4ThreeVector& position,
 			      const G4ThreeVector& unitMomentum,
@@ -203,7 +206,8 @@ public:
 			      const G4ThreeVector& CLPosition,
 			      const G4ThreeVector& CLMomentum,
 			      const G4bool&        useCurvilinearWorld,
-			      const G4double&      FCof);
+			      const G4double&      FCof,
+			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
 
 protected:
   mutable G4AffineTransform globalToLocal;
