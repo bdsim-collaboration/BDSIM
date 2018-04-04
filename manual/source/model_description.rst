@@ -2973,6 +2973,9 @@ following options. These options may increase the output file size by a large am
 |                                   | ID and beam line index will be stored - this is intended to help   |
 |                                   | 'link' the energy deposition back to other information.            |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossTime                    | The time since the start of the event will be stored for each      |
+|                                   | energy deposition and trajectory point.                            |
++-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Store corresponding charge of particle for every entry in sampler. |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerMass                  | Store corresponding mass (in GeV) of particle for every entry in   |

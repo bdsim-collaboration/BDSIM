@@ -29,17 +29,20 @@ ClassImp(BDSOutputROOTEventLoss)
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   storeLinks(false),
   storeLocal(false),
-  storeGlobal(false)
+  storeGlobal(false),
+  storeTime(false)
 {
   Flush();
 }
 
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeLinksIn,
 					       bool storeLocalIn,
-					       bool storeGlobalIn):
+					       bool storeGlobalIn,
+					       bool storeTimeIn):
   storeLinks(storeLinksIn),
   storeLocal(storeLocalIn),
-  storeGlobal(storeGlobalIn)
+  storeGlobal(storeGlobalIn),
+  storeTime(storeTimeIn)
 {
   Flush();
 }
@@ -72,6 +75,10 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
       Y.push_back( (float &&) pos.y());
       Z.push_back( (float &&) pos.z());
     }
+  if (storeTime)
+    {
+      T.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
+    }
 }
 void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
 {
@@ -103,6 +110,10 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
       Y.push_back( (float &&) (hit->GetY() / CLHEP::m));
       Z.push_back( (float &&) (hit->GetZ() / CLHEP::m));
     }
+  if (storeTime)
+    {
+      T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
+    }
 }
 
 #endif
@@ -124,4 +135,5 @@ void BDSOutputROOTEventLoss::Flush()
   X.clear();
   Y.clear();
   Z.clear();
+  T.clear();
 }

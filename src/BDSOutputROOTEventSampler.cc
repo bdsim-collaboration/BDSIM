@@ -30,36 +30,36 @@ class BDSOutputROOTGeant4Data;
 
 templateClassImp(BDSOutputROOTEventSampler)
 
-template <class T>
-BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<T>::particleTable = nullptr;
+template <class U>
+BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
-template <class T>
-BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler():samplerName("sampler")
+template <class U>
+BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():samplerName("sampler")
 {
   Flush();
 }
 
-template <class T>
-BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler(std::string samplerNameIn):
+template <class U>
+BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler(std::string samplerNameIn):
   samplerName(samplerNameIn)
 {
   Flush();
 }
 
 template
-<class T> BDSOutputROOTEventSampler<T>::~BDSOutputROOTEventSampler()
+<class U> BDSOutputROOTEventSampler<U>::~BDSOutputROOTEventSampler()
 {;}
 
-#ifndef __ROOTBUILD__ 
-template <class T>
-void BDSOutputROOTEventSampler<T>::Fill(G4double E,
+#ifndef __ROOTBUILD__
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(G4double E,
 					G4double xIn,
 					G4double yIn,
 					G4double zIn,
 					G4double xpIn,
 					G4double ypIn,
 					G4double zpIn,
-					G4double tIn,
+					G4double globalTimeIn,
 					G4double weightIn,
 					G4int    partIDIn,
 					G4int    /*nEvent*/,
@@ -67,44 +67,44 @@ void BDSOutputROOTEventSampler<T>::Fill(G4double E,
 					G4int    beamlineIndex)
 {
   n++;
-  z = (T) (zIn / CLHEP::m);
-  S = (T) (0 / CLHEP::m);
+  z = (U) (zIn / CLHEP::m);
+  S = (U) (0 / CLHEP::m);
 
-  energy.push_back((T &&) (E / CLHEP::GeV));
-  x.push_back((T &&) (xIn / CLHEP::m));
-  y.push_back((T &&) (yIn / CLHEP::m));
+  energy.push_back((U &&) (E / CLHEP::GeV));
+  x.push_back((U &&) (xIn / CLHEP::m));
+  y.push_back((U &&) (yIn / CLHEP::m));
 
-  xp.push_back((T &&) (xpIn / CLHEP::radian));
-  yp.push_back((T &&) (ypIn / CLHEP::radian));
-  zp.push_back((T &&) (zpIn / CLHEP::radian));
-  t.push_back((T &&) (tIn / CLHEP::ns));
-  weight.push_back((const T &) weightIn);
+  xp.push_back((U &&) (xpIn / CLHEP::radian));
+  yp.push_back((U &&) (ypIn / CLHEP::radian));
+  zp.push_back((U &&) (zpIn / CLHEP::radian));
+  T.push_back((U &&) (globalTimeIn / CLHEP::ns));
+  weight.push_back((const U &) weightIn);
   partID.push_back(partIDIn);
   parentID.push_back(0);
   turnNumber.push_back(TurnsTaken);
   modelID = beamlineIndex;
 }
 
-template <class T>
-void BDSOutputROOTEventSampler<T>::Fill(const BDSSamplerHit* hit)
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
 {
   // get single values
   n++;
-  z = (T) (hit->GetZ() / CLHEP::m);
-  S = (T) (hit->GetS() / CLHEP::m);
+  z = (U) (hit->GetZ() / CLHEP::m);
+  S = (U) (hit->GetS() / CLHEP::m);
 
-  energy.push_back((T &&) (hit->GetTotalEnergy() / CLHEP::GeV));
-  x.push_back((T &&) (hit->GetX() / CLHEP::m));
-  y.push_back((T &&) (hit->GetY() / CLHEP::m));
+  energy.push_back((U &&) (hit->GetTotalEnergy() / CLHEP::GeV));
+  x.push_back((U &&) (hit->GetX() / CLHEP::m));
+  y.push_back((U &&) (hit->GetY() / CLHEP::m));
 
-  xp.push_back((T &&) (hit->GetXPrime() / CLHEP::radian));
-  yp.push_back((T &&) (hit->GetYPrime() / CLHEP::radian));
-  zp.push_back((T &&) (hit->GetZPrime() / CLHEP::radian));
+  xp.push_back((U &&) (hit->GetXPrime() / CLHEP::radian));
+  yp.push_back((U &&) (hit->GetYPrime() / CLHEP::radian));
+  zp.push_back((U &&) (hit->GetZPrime() / CLHEP::radian));
 
-  t.push_back((T &&) (hit->GetT() / CLHEP::ns));
+  T.push_back((U &&) (hit->GetT() / CLHEP::ns));
   modelID = hit->GetBeamlineIndex();
 
-  weight.push_back((T &&) hit->GetWeight());
+  weight.push_back((U &&) hit->GetWeight());
   partID.push_back(hit->GetPDGtype());
   parentID.push_back(hit->GetParentID());
   trackID.push_back(hit->GetTrackID());
@@ -115,10 +115,10 @@ void BDSOutputROOTEventSampler<T>::Fill(const BDSSamplerHit* hit)
 //{}
 #endif
 
-template <class T> void BDSOutputROOTEventSampler<T>::SetBranchAddress(TTree *)
+template <class U> void BDSOutputROOTEventSampler<U>::SetBranchAddress(TTree *)
 {;}
 
-template <class T> void BDSOutputROOTEventSampler<T>::Flush()
+template <class U> void BDSOutputROOTEventSampler<U>::Flush()
 {
   n = 0;
   energy.clear();
@@ -128,7 +128,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   xp.clear();
   yp.clear();
   zp.clear();
-  t.clear();
+  T.clear();
   weight.clear();
   partID.clear();
   parentID.clear();
@@ -145,8 +145,8 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   ionZ.clear();
 }
 
-template <class T>
-std::vector<int> BDSOutputROOTEventSampler<T>::getCharge()
+template <class U>
+std::vector<int> BDSOutputROOTEventSampler<U>::getCharge()
 {
   std::vector<int> result;
   result.reserve(n);
@@ -157,30 +157,30 @@ std::vector<int> BDSOutputROOTEventSampler<T>::getCharge()
   return result;
 }
 #include "globals.hh"
-template <class T>
-std::vector<T> BDSOutputROOTEventSampler<T>::getMass()
+template <class U>
+std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
 {
-  std::vector<T> result(n);
+  std::vector<U> result(n);
   if (!particleTable)
     {return result;}
   for (const auto& pid : partID)
-    {result.push_back((T)particleTable->Mass(pid));}
+    {result.push_back((U)particleTable->Mass(pid));}
   return result;
 }
 
-template <class T>
-std::vector<T> BDSOutputROOTEventSampler<T>::getRigidity()
+template <class U>
+std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 {
-  std::vector<T> result(n);
+  std::vector<U> result(n);
   if (!particleTable)
-    {return result;} 
+    {return result;}
   for (int i = 0; i < n; ++i)
-    {result.push_back((T)particleTable->Rigidity(partID[i], energy[i]));}
+    {result.push_back((U)particleTable->Rigidity(partID[i], energy[i]));}
   return result;
 }
 
-template <class T>
-std::vector<bool> BDSOutputROOTEventSampler<T>::getIsIon()
+template <class U>
+std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
 {
   std::vector<bool> result(n);
   if (!particleTable)
@@ -190,8 +190,8 @@ std::vector<bool> BDSOutputROOTEventSampler<T>::getIsIon()
   return result;
 }
 
-template <class T>
-std::vector<int> BDSOutputROOTEventSampler<T>::getIonA()
+template <class U>
+std::vector<int> BDSOutputROOTEventSampler<U>::getIonA()
 {
   std::vector<int> result(n);
   if (!particleTable)
@@ -201,8 +201,8 @@ std::vector<int> BDSOutputROOTEventSampler<T>::getIonA()
   return result;
 }
 
-template <class T>
-std::vector<int> BDSOutputROOTEventSampler<T>::getIonZ()
+template <class U>
+std::vector<int> BDSOutputROOTEventSampler<U>::getIonZ()
 {
   std::vector<int> result(n);
   if (!particleTable)
@@ -212,8 +212,8 @@ std::vector<int> BDSOutputROOTEventSampler<T>::getIonZ()
   return result;
 }
 
-template <class T>
-void BDSOutputROOTEventSampler<T>::FillCMR()
+template <class U>
+void BDSOutputROOTEventSampler<U>::FillCMR()
 {
   if (!particleTable)
     {return;}
@@ -227,8 +227,8 @@ void BDSOutputROOTEventSampler<T>::FillCMR()
     }
 }
 
-template <class T>
-void BDSOutputROOTEventSampler<T>::FillCMRI()
+template <class U>
+void BDSOutputROOTEventSampler<U>::FillCMRI()
 {
   if (!particleTable)
     {return;}
