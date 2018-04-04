@@ -65,7 +65,7 @@ BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
 }
 
 void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
-					    const G4double dydx[],
+					    const G4double dydx[6],
 					    const G4double h,
 					    G4double       yOut[6],
 					    G4double       yErr[6])

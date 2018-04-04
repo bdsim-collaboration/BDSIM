@@ -47,11 +47,11 @@ public:
   /// Check if the quadrupole has finite strength and use drift if not. If finite strength,
   /// convert to local curvilinear coordiantes and check for paraxial approximation. If paraxial,
   /// use thick quadrupole matrix for transport, else use the G4ClassicalRK4 backup stepper.
-  virtual void Stepper(const G4double y[],
-		       const G4double dydx[],
+  virtual void Stepper(const G4double y[6],
+		       const G4double dydx[6],
 		       const G4double h,
-		       G4double       yOut[],
-		       G4double       yErr[]);
+		       G4double       yOut[6],
+		       G4double       yErr[6]);
 
 protected:
 
