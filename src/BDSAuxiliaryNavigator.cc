@@ -296,7 +296,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
 }
 
 BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
-                           G4double      angle,
+						   G4double      angle,
 						   G4ThreeVector position,
 						   G4ThreeVector unitMomentum,
 						   G4double      h,
@@ -358,17 +358,16 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
 
-BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                           G4double      angle,
-						   G4ThreeVector CLPosition,
-						   G4ThreeVector CLMomentum,
-						   G4bool        useCurvilinearWorld,
-						   G4double      FCof)
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArcLength,
+						   const G4ThreeVector& unitField,
+						   const G4double&      angle,
+						   G4ThreeVector        CLPosition,
+						   G4ThreeVector        CLMomentum,
+						   const G4bool&        useCurvilinearWorld,
+						   const G4double&      FCof)
 {
-  G4double arcLength         = (*strength)["length"];
-  G4double radiusOfCurvature = arcLength / angle;
+  G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
-  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
   // Test on finite angle here. If the angle is 0, return convert to global transform.
   if (!BDS::IsFinite(angle))

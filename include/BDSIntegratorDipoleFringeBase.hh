@@ -85,6 +85,10 @@ protected:
   /// Nominal magnet bending radius
   const G4double rho;
 
+  G4ThreeVector unitField;       ///< Cache of the unit field direction.
+  const G4double fieldArcLength; ///< Cache of the field arc length.
+  const G4double fieldAngle;     ///< Cache of the field angle.
+
   BDSMagnetStrength const* strength;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for

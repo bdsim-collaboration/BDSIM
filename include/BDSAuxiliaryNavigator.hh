@@ -196,12 +196,13 @@ public:
 			      G4ThreeVector localMomentum,
 			      G4bool        useCurvilinearWorld);
 
-  BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
-				  G4double      angle,
-			      G4ThreeVector localPosition,
-			      G4ThreeVector localMomentum,
-			      G4bool        useCurvilinearWorld,
-			      G4double      FCof);
+  BDSStep CurvilinearToGlobal(const G4double&      fieldArcLength,
+			      const G4ThreeVector& unifField,
+			      const G4double&      angle,
+			      G4ThreeVector        CLPosition,
+			      G4ThreeVector        CLMomentum,
+			      const G4bool&        useCurvilinearWorld,
+			      const G4double&      FCof);
 
 protected:
   mutable G4AffineTransform globalToLocal;

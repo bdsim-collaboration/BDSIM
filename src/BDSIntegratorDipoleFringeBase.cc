@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
+#include "BDSFieldMagDipole.hh"
 #include "BDSIntegratorDipoleFringeBase.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -39,12 +40,17 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
   secondFringeCorr(BDS::SecondFringeFieldCorrection(strengthIn)),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
+  fieldArcLength((*strengthIn)["length"]),
+  fieldAngle((*strengthIn)["angle"]),
   strength(strengthIn)
 {
   if (thinElementLength < 0)
   {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
+  BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
+  unitField = (dipoleField->FieldValue()).unit();
+  delete dipoleField;
 }
 
 void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
@@ -126,7 +132,7 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, bendingRad);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, (*strength)["angle"], localCLPosOut, localCLMomOut, false, fcof);
+  BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, fieldAngle, localCLPosOut, localCLMomOut, false, fcof);
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();

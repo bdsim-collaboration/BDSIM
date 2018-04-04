@@ -66,6 +66,11 @@ protected:
 	       G4ThreeVector&       posOut,
 	       G4ThreeVector&       momOut) const;
 
+  G4ThreeVector unitField;       ///< Cache of the unit field direction.
+  const G4double fieldArcLength; ///< Cache of the field arc length.
+  const G4double fieldAngle;     ///< Cache of the field angle.
+  G4double       angleForCL;     ///  Angle used for curvilinear transforms.
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
