@@ -21,7 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSIntegratorMag.hh"
 #include "BDSMagUsualEqRhs.hh"
+
 #include "globals.hh"
+#include "G4Transform3D.hh"
 
 class BDSIntegratorDipoleRodrigues2;
 class BDSMagnetStrength;
@@ -40,7 +42,8 @@ public:
   BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strength,
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
-				G4double minimumRadiusOfCurvatureIn);
+				G4double minimumRadiusOfCurvatureIn,
+				const G4Transform3D&     tiltOffsetIn);
   
   virtual ~BDSIntegratorDipoleQuadrupole();
 
@@ -66,41 +69,26 @@ protected:
 	       G4ThreeVector&       posOut,
 	       G4ThreeVector&       momOut) const;
 
-  G4ThreeVector unitField;       ///< Cache of the unit field direction.
-  const G4double fieldArcLength; ///< Cache of the field arc length.
-  const G4double fieldAngle;     ///< Cache of the field angle.
-  G4double       angleForCL;     ///  Angle used for curvilinear transforms.
+
 
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
+  
+  const G4double    bRho;  ///< Cached magnet property, nominal magnetic rigidity
+  BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
+  const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
+  const G4double    beta0; ///< Cached nominal relativistic beta of the nominal beam particle.
+  const G4double 	rho;   ///< Cached magnet property, nominal bending radius.
+  const G4double    fieldRatio;///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
+  const	G4double 	nominalEnergy;  ///< Nominal beam energy
+  G4ThreeVector     unitField;      ///< Cache of the unit field direction.
+  const G4double    fieldArcLength; ///< Cache of the field arc length.
+  const G4double    fieldAngle;     ///< Cache of the field angle.
+  G4double          angleForCL;     ///< Angle used for curvilinear transforms.
+  G4Transform3D     tiltOffset;     ///< Tilt offset transform for field.
 
-  /// Backup integrator
-  BDSIntegratorDipoleRodrigues2* dipole;
-
-  /// BDSIMs eqRhs class to give access to particle properties
-  BDSMagUsualEqRhs* eq;
-
-  /// Cached magnet property, B field gradient for calculating K1
-  const G4double    bPrime;
-
-  /// Cached magnet property, nominal magnetic rigidity
-  const G4double    bRho;
-
-  /// Cached nominal relativistic beta of the nominal beam particle.
-  const G4double    beta0;
-
-  /// Cached magnet property, nominal bending radius.
-  const G4double 	rho;
-
-  /// Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
-  const G4double    fieldRatio;
-
-  /// Nominal beam energy
-  const	G4double 	nominalEnergy;
-
-  /// Cache magnet strength, required for curvilinear transforms.
-  BDSMagnetStrength const* strength;
+  BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
 
 #endif

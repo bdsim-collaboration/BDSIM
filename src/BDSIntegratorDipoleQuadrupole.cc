@@ -30,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -38,20 +39,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strengthIn,
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
-							     G4double minimumRadiusOfCurvatureIn):
+							     G4double minimumRadiusOfCurvatureIn,
+							     const G4Transform3D&     tiltOffsetIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  fieldArcLength((*strengthIn)["length"]),
-  fieldAngle((*strengthIn)["angle"]),
-  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
-  bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   bRho(brhoIn),
+  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
+  bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   fieldRatio((*strengthIn)["field"] / (bRho/rho)),
   nominalEnergy((*strengthIn)["nominalEnergy"]),
-  strength(strengthIn)
+  fieldArcLength((*strengthIn)["length"]),
+  fieldAngle((*strengthIn)["angle"]),
+  tiltOffset(tiltOffsetIn),
+  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
-  eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
@@ -112,7 +114,8 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
-  BDSStep       localCL     = GlobalToCurvilinear(strength, angleForCL, globalPos, globalMom, h, true, fcof);
+  BDSStep       localCL     = GlobalToCurvilinear(fieldArcLength, unitField, angleForCL,
+						  globalPos, globalMom, h, true, fcof);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
