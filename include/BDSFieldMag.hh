@@ -58,8 +58,8 @@ public:
 			     G4double* field) const;
   
   /// Get the field value after applying transform for local offset.
-  G4ThreeVector GetFieldTransformed(const G4ThreeVector& position,
-				    const G4double       t) const;
+  virtual G4ThreeVector GetFieldTransformed(const G4ThreeVector& position,
+					    const G4double       t) const;
 
   /// Set the transform applied before evaluating the field. This can be used
   /// to account for any difference between the field coordinate system and

@@ -424,13 +424,16 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     }
   
-  // Optionally provide local to global transform using curvilinear coordinate system.
+
   BDSFieldMag* resultantField = field;
+  // Set transform for local geometry offset
+  // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
+  // has it and not the global wrapper.
+  resultantField->SetTransform(info.Transform());
+
+  // Optionally provide local to global transform using curvilinear coordinate system.
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldMagGlobal(field);}
-
-  // Set transform for local geometry offset
-  resultantField->SetTransform(info.Transform());
 
   // Always this equation of motion for magnetic (only) fields
   BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
