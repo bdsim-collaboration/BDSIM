@@ -312,12 +312,12 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   G4ThreeVector unitMomentumTransformed(unitMomentum);
   G4ThreeVector unitFieldTransformed(unitField);
   if (tiltOffset != G4Transform3D::Identity)
-  {
-    auto rot = tiltOffset.getRotation();
-    positionTransformed.transform(rot);
-    unitMomentumTransformed.transform(rot);
-    unitFieldTransformed.transform(rot);
-  }
+    {
+      auto rot = tiltOffset.getRotation();
+      positionTransformed.transform(rot);
+      unitMomentumTransformed.transform(rot);
+      unitFieldTransformed.transform(rot);
+    }
   BDSStep local = ConvertToLocal(positionTransformed, unitMomentumTransformed, h, useCurvilinearWorld);
 
   // Test on finite angle here. If the angle is 0, there is no need for a further transform.
@@ -375,22 +375,33 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
 						   const G4ThreeVector& CLMomentum,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& /*tiltOffset*/)
+						   const G4Transform3D& antiTiltOffset)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
+  G4ThreeVector CLPositionTransformed(CLPosition);
+  G4ThreeVector CLMomentumTransformed(CLMomentum);
+  G4ThreeVector unitFieldTransformed(unitField);
+  if (antiTiltOffset != G4Transform3D::Identity)
+    {
+      auto rot = antiTiltOffset.getRotation();
+      CLPositionTransformed.transform(rot);
+      CLMomentumTransformed.transform(rot);
+      unitFieldTransformed.transform(rot);
+    }
+  
   // Test on finite angle here. If the angle is 0, return convert to global transform.
   if (!BDS::IsFinite(angle))
-    {return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);}
+    {return ConvertToGlobalStep(CLPositionTransformed, CLMomentumTransformed, useCurvilinearWorld);}
 
   G4double sign = (angle < 0)? 1:-1;
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitFieldTransformed, useCurvilinearWorld);
   G4ThreeVector arcCentre  = G4ThreeVector(sign*radiusAtChord,0,0);
 
-  G4double theta = CLPosition.z() / radiusOfCurvature;
+  G4double theta = CLPositionTransformed.z() / radiusOfCurvature;
 
-  G4double partToCentreDist  = CLPosition.x() + radiusOfCurvature;
+  G4double partToCentreDist = CLPositionTransformed.x() + radiusOfCurvature;
   G4double localZ = partToCentreDist * std::sin(theta);
   G4double localX = (partToCentreDist * std::cos(theta)) - radiusAtChord;
 
@@ -403,8 +414,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
   if (localZ > 0)
     {rotationAngle *= -1;}
 
-  G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
-  G4ThreeVector localMomentum = G4ThreeVector(CLMomentum).rotate(rotationAngle, localUnitF);;
+  G4ThreeVector localPosition = G4ThreeVector(localX, CLPositionTransformed.y(), localZ);
+  G4ThreeVector localMomentum = G4ThreeVector(CLMomentumTransformed).rotate(rotationAngle, localUnitF);;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
