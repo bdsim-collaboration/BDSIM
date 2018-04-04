@@ -16,9 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipole.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDipoleFringeBase.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -28,6 +28,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+
+#include <cmath>
 
 G4double BDSIntegratorDipoleFringeBase::thinElementLength = -1; // unphysical
 
