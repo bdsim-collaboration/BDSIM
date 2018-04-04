@@ -182,11 +182,11 @@ void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
 
   // calculate fringe field kick
   X11 = 1;
-  X21 = tan(polefaceAngle) / (bendingRadius / CLHEP::m);
+  X21 = std::tan(polefaceAngle) / (bendingRadius / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - fringeFieldCorrection) / (bendingRadius / CLHEP::m);
+  Y21 = -std::tan(polefaceAngle - fringeFieldCorrection) / (bendingRadius / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
