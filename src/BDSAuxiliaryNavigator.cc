@@ -305,7 +305,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
 {
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
-  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
   G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
   BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
@@ -327,7 +327,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
-  G4double theta = acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
+  G4double theta = std::acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
 
   // theta should be negative for first 'half' of dipole
   if (localZ < 0)
@@ -367,7 +367,7 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* stre
 {
   G4double arcLength         = (*strength)["length"];
   G4double radiusOfCurvature = arcLength / angle;
-  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
+  G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
   G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
 
   // Test on finite angle here. If the angle is 0, return convert to global transform.
