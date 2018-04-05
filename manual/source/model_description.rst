@@ -72,6 +72,7 @@ Other Commands
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
 * :code:`if () {} else {};` if-else construct
+* :code:`include ../some/other/file.gmad;` include another file to be parsed, note that the path provided must be relative, not absolute.
 
 Examples
 ^^^^^^^^
