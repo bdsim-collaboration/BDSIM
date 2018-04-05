@@ -248,6 +248,7 @@ included with BDSIM (excluding long running tests)::
 
   > ctest -LE LONG
 
+.. _configuring-bdsim:
 
 Configuring the BDSIM Build with CMake
 --------------------------------------
