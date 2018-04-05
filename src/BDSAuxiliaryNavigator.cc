@@ -303,22 +303,12 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
 						   const G4double&      h,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& tiltOffset)
+						   const G4Transform3D& /*tiltOffset*/)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
-  G4ThreeVector positionTransformed(position);
-  G4ThreeVector unitMomentumTransformed(unitMomentum);
-  G4ThreeVector unitFieldTransformed(unitField);
-  if (tiltOffset != G4Transform3D::Identity)
-    {
-      auto rot = tiltOffset.getRotation();
-      positionTransformed.transform(rot);
-      unitMomentumTransformed.transform(rot);
-      unitFieldTransformed.transform(rot);
-    }
-  BDSStep local = ConvertToLocal(positionTransformed, unitMomentumTransformed, h, useCurvilinearWorld);
+  BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 
   // Test on finite angle here. If the angle is 0, there is no need for a further transform.
   if (!BDS::IsFinite(angle))
@@ -327,7 +317,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   G4ThreeVector localPos   = local.PreStepPoint();
   G4ThreeVector localMom   = local.PostStepPoint();
   G4double      localZ     = localPos.z();
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitFieldTransformed, useCurvilinearWorld);
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
 
   // only find angle between particle and radiusAtChord in x-z plane,
   // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
@@ -335,15 +325,19 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   // defined by the unit field vector as a normal on the origin. We take the projection
   // onto the normal of the plane (here the field field unit vector in local solid coordinates)
   // - the 'rejection', and then take the point - that projection to get the projection on the plane.
-  //G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
-  G4ThreeVector localPosProjOnBendPlane = localPos - localPos.project(localUnitF);
+  //G4ThreeVector localPosProjOnBendPlane = localPos - localPos.project(localUnitF);
   // we want a vector pointing from the origin of the solid to the point of bending.
   // the direction of the bending radius is given by the cross product of the field
   // (unit) with local unit Z - giving a unit direction. Multiplied by radius length.
-  G4ThreeVector arcCentre = unitField.cross(G4ThreeVector(0,0,1))*-radiusAtChord;
-  //G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
+  //G4ThreeVector arcCentre = unitField.cross(G4ThreeVector(0,0,1))*-radiusAtChord;
+  //G4ThreeVector partVectToCentre  = arcCentre - localPosProjOnBendPlane;
+  //G4double partToCentreDist       = partVectToCentre.mag();
   
-  G4ThreeVector partVectToCentre  = arcCentre - localPosProjOnBendPlane;
+  // only find angle between particle and radiusAtChord in x-z plane,
+  // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
+  G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
+  G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
+  G4ThreeVector partVectToCentre  = arcCentre - localXZPos;
   G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
@@ -385,33 +379,22 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
 						   const G4ThreeVector& CLMomentum,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& antiTiltOffset)
+						   const G4Transform3D& /*antiTiltOffset*/)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
-  G4ThreeVector CLPositionTransformed(CLPosition);
-  G4ThreeVector CLMomentumTransformed(CLMomentum);
-  G4ThreeVector unitFieldTransformed(unitField);
-  if (antiTiltOffset != G4Transform3D::Identity)
-    {
-      auto rot = antiTiltOffset.getRotation();
-      CLPositionTransformed.transform(rot);
-      CLMomentumTransformed.transform(rot);
-      unitFieldTransformed.transform(rot);
-    }
-  
   // Test on finite angle here. If the angle is 0, return convert to global transform.
   if (!BDS::IsFinite(angle))
-    {return ConvertToGlobalStep(CLPositionTransformed, CLMomentumTransformed, useCurvilinearWorld);}
+    {return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);}
 
   G4double sign = (angle < 0)? 1:-1;
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitFieldTransformed, useCurvilinearWorld);
+  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
   G4ThreeVector arcCentre  = G4ThreeVector(sign*radiusAtChord,0,0);
 
-  G4double theta = CLPositionTransformed.z() / radiusOfCurvature;
+  G4double theta = CLPosition.z() / radiusOfCurvature;
 
-  G4double partToCentreDist = CLPositionTransformed.x() + radiusOfCurvature;
+  G4double partToCentreDist = CLPosition.x() + radiusOfCurvature;
   G4double localZ = partToCentreDist * std::sin(theta);
   G4double localX = (partToCentreDist * std::cos(theta)) - radiusAtChord;
 
@@ -424,8 +407,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
   if (localZ > 0)
     {rotationAngle *= -1;}
 
-  G4ThreeVector localPosition = G4ThreeVector(localX, CLPositionTransformed.y(), localZ);
-  G4ThreeVector localMomentum = G4ThreeVector(CLMomentumTransformed).rotate(rotationAngle, localUnitF);;
+  G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
+  G4ThreeVector localMomentum = G4ThreeVector(CLMomentum).rotate(rotationAngle, localUnitF);;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
