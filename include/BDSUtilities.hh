@@ -124,10 +124,14 @@ namespace BDS
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
 
-  /// Check if the optional G4PARTICLEHPDATA exists in the environment for ions.
+  /// Check if the optional G4PARTICLEHPDATA exists in the environment.
   /// Will print out error and exit if no variable found. Physics list argument
   /// used for feedback purposes.
-  void CheckLowEnergyDataExists(G4String physicsListName);
+  void CheckHighPrecisionDataExists(const G4String& physicsListName);
+
+  /// Check if the optional Low Energy Neutron Data set exists via the environmental
+  /// variable G4LENDDATA. Physics list argument used for feedback purposes.
+  void CheckLowEnergyNeutronDataExists(const G4String& phhysicsListName);
     
   ///@{ Get parameter value from the specification ('spec') string
   G4double GetParameterValueDouble(G4String spec, G4String name);
@@ -150,10 +154,10 @@ namespace BDS
   /// Checking for "cutted crossed Z planes" for a cylinder with angled faces. This
   /// utility only works in one dimension unlike the other one with the same name and
   /// vector arguments.
-  G4bool WillIntersect(const G4double angleIn,
-		       const G4double angleOut,
-		       const G4double outerDiameter,
-		       const G4double length);
+  G4bool WillIntersect(const G4double& angleIn,
+		       const G4double& angleOut,
+		       const G4double& outerDiameter,
+		       const G4double& length);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to
   /// lie on the plane defined by the supplied normal vector - assumes plane

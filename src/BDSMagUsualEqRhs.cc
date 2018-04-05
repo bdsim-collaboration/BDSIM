@@ -29,16 +29,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PhysicalConstants.hh"
 #include "BDSGlobalConstants.hh"
 
-BDSMagUsualEqRhs::BDSMagUsualEqRhs(G4MagneticField* MagField) : G4Mag_UsualEqRhs(MagField),
-                                                                fMassCof(0.),
-                                                                fCof_val(0.)
-{}
-
-BDSMagUsualEqRhs::~BDSMagUsualEqRhs() {}
+BDSMagUsualEqRhs::BDSMagUsualEqRhs(G4MagneticField* MagField):
+  G4Mag_UsualEqRhs(MagField),
+  fMassCof(0.),
+  fCof_val(0.)
+{;}
 
 void BDSMagUsualEqRhs::SetChargeMomentumMass( G4ChargeState particleCharge,
-                       G4double MomentumXc,
-                       G4double particleMass)
+					      G4double MomentumXc,
+					      G4double particleMass)
 {
   G4Mag_EqRhs::SetChargeMomentumMass(particleCharge, MomentumXc, particleMass);
   G4double pcharge = particleCharge.GetCharge();
@@ -47,14 +46,14 @@ void BDSMagUsualEqRhs::SetChargeMomentumMass( G4ChargeState particleCharge,
   fMassCof = particleMass*particleMass;
 }
 
-G4double BDSMagUsualEqRhs::Beta(const G4double y[])
+G4double BDSMagUsualEqRhs::Beta(const G4double y[6])
 {
   G4ThreeVector mom = G4ThreeVector(y[3], y[4], y[5]);
   G4double beta = Beta(mom);
   return beta;
 }
 
-G4double BDSMagUsualEqRhs::Beta(const G4ThreeVector mom)
+G4double BDSMagUsualEqRhs::Beta(const G4ThreeVector& mom)
 {
   G4double momentum_mag_square = mom.mag2();
   G4double Energy = std::sqrt(momentum_mag_square + fMassCof);
@@ -69,29 +68,9 @@ G4double BDSMagUsualEqRhs::TotalEnergy(const G4double y[])
   return Energy;
 }
 
-G4double BDSMagUsualEqRhs::TotalEnergy(const G4ThreeVector mom)
+G4double BDSMagUsualEqRhs::TotalEnergy(const G4ThreeVector& mom)
 {
   G4double momentum_mag_square = mom.mag2();
   G4double Energy = std::sqrt(momentum_mag_square + fMassCof);
   return Energy;
-}
-
-void BDSMagUsualEqRhs::EvaluateRhsGivenB(const G4double y[],
-                                         const G4double B[3],
-                                         G4double dydx[]) const
-{
-  G4double momentum_mag_square = y[3]*y[3] + y[4]*y[4] + y[5]*y[5];
-  G4double inv_momentum_magnitude = 1.0 / std::sqrt( momentum_mag_square );
-
-  G4double cof = FCof()*inv_momentum_magnitude;
-
-  dydx[0] = y[3]*inv_momentum_magnitude;       //  (d/ds)x = Vx/V
-  dydx[1] = y[4]*inv_momentum_magnitude;       //  (d/ds)y = Vy/V
-  dydx[2] = y[5]*inv_momentum_magnitude;       //  (d/ds)z = Vz/V
-
-  dydx[3] = cof*(y[4]*B[2] - y[5]*B[1]) ;   // Ax = a*(Vy*Bz - Vz*By)
-  dydx[4] = cof*(y[5]*B[0] - y[3]*B[2]) ;   // Ay = a*(Vz*Bx - Vx*Bz)
-  dydx[5] = cof*(y[3]*B[1] - y[4]*B[0]) ;   // Az = a*(Vx*By - Vy*Bx)
-
-  return ;
 }

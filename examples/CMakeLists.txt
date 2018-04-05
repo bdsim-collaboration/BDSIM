@@ -17,7 +17,10 @@ if(USE_AWAKE)
   add_subdirectory(AWAKE)
 endif()
 
+add_subdirectory(features)
+add_subdirectory(fodoRing)
 add_subdirectory(simpleMachine)
 add_subdirectory(simpleCollimation)
-add_subdirectory(fodoRing)
-add_subdirectory(features)
+add_subdirectory(target)
+
+

@@ -158,6 +158,7 @@ int main(int argc,char** argv)
 						 globalConstants->FFact());
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
+  realWorld->SetBeta0ForConstruction(beamParticle->Beta());
   BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
@@ -247,14 +248,11 @@ int main(int argc,char** argv)
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   realWorld->BuildPhysicsBias();
 
-#ifdef BDSDEBUG
-  auto physics = runManager->GetUserPhysicsList();
-  if (const BDSModularPhysicsList* modPhysics = dynamic_cast<const BDSModularPhysicsList*>(physics))
+  if (BDSGlobalConstants::Instance()->PhysicsVerbose())
     {
-      modPhysics->PrintPrimaryParticleProcesses();
-      modPhysics->PrintDefinedParticles();
+      physList->PrintPrimaryParticleProcesses();
+      physList->PrintDefinedParticles();
     }
-#endif
 
   /// Set verbosity levels
   runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());

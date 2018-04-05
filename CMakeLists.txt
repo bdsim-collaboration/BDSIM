@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 2.8.12)
+cmake_policy(SET CMP0042 NEW)
+if (CMAKE_VERSION VERSION_LESS 3.9.0)
+  cmake_policy(SET CMP0042 OLD)
+endif()
 
 project(bdsim)
 
@@ -87,6 +91,9 @@ include(comparator_test_macros)
 include(interpolator_test_macros)
 include(rebdsim_test_macros)
 include(root_test_macros)
+
+# rpath for libraries to work from installation correctly
+set(CMAKE_INSTALL_RPATH "${Geant4_LIBRARY_DIR};${CMAKE_INSTALL_PREFIX}/lib")
 
 # This module sets up installation:
 include(bdsim_install)
@@ -231,6 +238,9 @@ add_subdirectory(analysis)
 
 # Include directory for comparator
 add_subdirectory(comparator)
+
+# Include directory for conversion utilities
+add_subdirectory(convert)
 
 # Include directory for interpolator
 add_subdirectory(interpolator)

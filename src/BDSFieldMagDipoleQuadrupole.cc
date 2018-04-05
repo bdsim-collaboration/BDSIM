@@ -29,7 +29,9 @@ BDSFieldMagDipoleQuadrupole::BDSFieldMagDipoleQuadrupole(BDSMagnetStrength const
 							 G4double          const  brho):
   quad(new BDSFieldMagQuadrupole(strength, brho)),
   dipole(new BDSFieldMagDipole(strength))
-{;}
+{
+  finiteStrength = quad->FiniteStrength() || dipole->FiniteStrength();
+}
 
 BDSFieldMagDipoleQuadrupole::~BDSFieldMagDipoleQuadrupole()
 {

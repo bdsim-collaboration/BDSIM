@@ -54,4 +54,4 @@ order.
 3. Construct parser and parser input
 4. Construct required Geant4 materials as they're required by :code:`BDSGlobalConstants`
 5. Force instantiation of :code:`BDSGlobalConstants` singleton based on :code:`GMAD::Options`
-6. Initialise the psuedo-random number generator engine
+6. Initialise the pseudo-random number generator engine

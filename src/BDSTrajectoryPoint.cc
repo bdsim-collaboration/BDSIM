@@ -69,6 +69,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   postEnergy   = preEnergy;
   preMomentum  = track->GetMomentum();
   postMomentum = preMomentum;
+  preGlobalTime = track->GetGlobalTime();
+  postGlobalTime = preGlobalTime;
 
   // s position for pre and post step point
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(track->GetPosition());
@@ -120,6 +122,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postEnergy   = postPoint->GetKineticEnergy();
   preMomentum  = prePoint->GetMomentum();
   postMomentum = postPoint->GetMomentum();
+  preGlobalTime = prePoint->GetGlobalTime();
+  postGlobalTime = postPoint->GetGlobalTime();
 
   // s position for pre and post step point
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);

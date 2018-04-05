@@ -55,6 +55,10 @@ if (Geant4_FOUND)
       	 message(FATAL_ERROR "BDSIM requires Geant4 to be compiled using the system CLHEP so it's the same as BDSIM for strong reproducibility - please reconfigure and reinstall Geant4")
       endif()
 
+      execute_process(COMMAND ${GEANT4_CONFIG} --prefix  OUTPUT_VARIABLE _TMP2)
+      string(REGEX REPLACE "\n$" "" _TMP2 "${_TMP2}")
+      set(Geant4_LIBRARY_DIR ${_TMP2}/lib)
+
       # We don't support multithreading for now
       if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
 	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")

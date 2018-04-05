@@ -149,7 +149,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   G4double X11=0,X12=0,X21=0,X22=0;
   G4double Y11=0,Y12=0,Y21=0,Y22=0;
   
-  if (kappa > 0)
+  if (kappa >= 0)
     {//focussing
       X11 = std::cos(rootKh);
       X12 = std::sin(rootKh)/rootK;

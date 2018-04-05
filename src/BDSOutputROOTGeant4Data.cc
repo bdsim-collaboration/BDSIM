@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef __ROOTBUILD__
 #include "G4IonTable.hh"
+#include "G4NuclideTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "globals.hh"
@@ -39,6 +40,24 @@ void BDSOutputROOTGeant4Data::Flush()
 {
   particles.clear();
   ions.clear();
+}
+
+const BDSOutputROOTGeant4Data::ParticleInfo BDSOutputROOTGeant4Data::GetParticleInfo(const int& pdgID) const
+{
+  auto result = particles.find(pdgID);
+  if (result != particles.end())
+    {return result->second;}
+  else
+    {return ParticleInfo();}
+}
+
+const BDSOutputROOTGeant4Data::IonInfo BDSOutputROOTGeant4Data::GetIonInfo(const int& pdgID) const
+{
+  auto result = ions.find(pdgID);
+  if (result != ions.end())
+    {return result->second;}
+  else
+    {return IonInfo();}
 }
 
 int BDSOutputROOTGeant4Data::Charge(const int& pdgID) const
@@ -84,16 +103,11 @@ double BDSOutputROOTGeant4Data::Mass(const int& pdgID) const
 double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
 					 const double& totalEnergy) const
 {
-  int ch = 0;
-  double mass = 0;
   if (IsIon(pdgID))
     {
       auto result = ions.find(pdgID);
       if (result != ions.end())
-	{
-	  ch = result->second.charge;
-	  mass = result->second.mass;
-	}
+	{return result->second.rigidity(totalEnergy);}
       else
 	{return 0;}
     }
@@ -101,24 +115,10 @@ double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
     {
       auto result = particles.find(pdgID);
       if (result != particles.end())
-	{
-	  ch = result->second.charge;
-	  mass = result->second.mass;
-	}
+	{return result->second.rigidity(totalEnergy);}
       else
 	{return 0;}
     }
-
-  if (!(std::abs(ch) > std::numeric_limits<double>::epsilon()))
-    {return 0;} // not finite charge, so rigidity 0
-  if (totalEnergy <= mass)
-    {return 0;} // invalid - just return 0
-  
-  // sqrt(E_t*2 - E_rest*2) in GeV
-  double numerator   = std::sqrt(std::pow(totalEnergy,2) - std::pow(mass,2));
-  double denominator = ch * 2.99792458e8;
-  double brho = numerator / denominator;
-  return brho;
 }
 
 std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
@@ -192,22 +192,30 @@ void BDSOutputROOTGeant4Data::Fill(const G4bool& fillIons)
 
   if (fillIons)
     {// proceed to fill ion information as it was used in the simulation
+      // A frankly ridiculous interface to get all possible ions with pdg encoding and mass.
+      // G4IonTable uses G4NuclideTable that loads file data with Geant4. We then iterate
+      // over the nuclide table and query the ion table, which in turn creates the definitions
+      // of the ions required as we query them and can then calcualte and provide the mass
+      // and pdg encoding. Normally, the ion table would only provide just a few light ions.
       G4IonTable* ionTable = pt->GetIonTable();
-
-      // G4IonTable has no iterator - can only query for specific ions
-      // G4IonList is type def of std::multimap<G4int, const G4ParticleDefinition*>
-      // Thankfully has static public holder of info.
-      G4IonTable::G4IonList* ionList = ionTable->fIonList;
-      for (const auto& ion : *ionList)
+      G4NuclideTable* table = G4NuclideTable::GetInstance();
+      unsigned int number = (unsigned int)table->GetSizeOfIsotopeList();
+      for (unsigned int i = 0; i < number; i++)
 	{
-	  const G4ParticleDefinition* def = ion.second;
+	  G4IsotopeProperty* iso = table->GetIsotopeByIndex(i);
+	  int atmass = iso->GetAtomicMass();
+	  int atnum  = iso->GetAtomicNumber();
+	  double eng = iso->GetEnergy();
+	  // using the excited energy always works. using the (int)lvl doesn't
+	  G4ParticleDefinition* def = ionTable->GetIon(atnum, atmass,eng);
 
+	  // package the information we need
 	  BDSOutputROOTGeant4Data::IonInfo ionDef = {(std::string)def->GetParticleName(),
 						     (int)def->GetPDGCharge(),
 						     (double)def->GetPDGMass()/CLHEP::GeV,
 						     (int)def->GetAtomicNumber(),
 						     (int)def->GetAtomicMass()};
-	  ions[ion.first] = ionDef;
+	  ions[def->GetPDGEncoding()] = ionDef;
 	}
     }
 

@@ -34,7 +34,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4double xIn,
 					 G4double yIn,
 					 G4double zIn,
-					 G4String nameIn, 
+					 G4double globalTimeIn,
+					 G4String nameIn,
 					 G4int    partIDIn,
 					 G4int    trackIDIn,
 					 G4int    parentIDIn,
@@ -55,6 +56,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   x(xIn),
   y(yIn),
   z(zIn),
+  globalTime(globalTimeIn),
   name(nameIn),
   partID(partIDIn),
   trackID(trackIDIn),
@@ -69,44 +71,3 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
-
-/*
-BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* hc)
-{
-  G4double sposMin = 1e20; //stupidly large number - spos will always be less than
-  G4double spos = 0;
-  G4int indexofHit = -1;
-  for (G4int i = 0; i < hc->entries(); ++i)
-    {
-      spos = (*hc)[i]->GetSBefore();
-      if (spos < sposMin) {
-	      sposMin = spos; //keep for testing
-	      indexofHit = i; //record which hit it was
-      }
-    }
-  if (indexofHit != -1)
-    {return (*hc)[indexofHit];}
-  else
-    {return nullptr;}
-}
-
-
-BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* hc)
-{
-  G4double sposMax = -1e10; //negative number - spos will always be greater than
-  G4double spos = 0;
-  G4int indexofHit = -1;
-  for (G4int i = 0; i < hc->entries(); ++i)
-    {
-      spos = (*hc)[i]->GetSAfter();
-      if (spos > sposMax) {
-	      sposMax = spos; //keep for testing
-	      indexofHit = i; //record which hit it was
-      }
-    }
-  if (indexofHit != -1)
-    {return (*hc)[indexofHit];}
-  else
-    {return nullptr;}
-}
-*/

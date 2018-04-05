@@ -52,26 +52,27 @@ Element::Element():
 
 void Element::PublishMembers()
 {
-  publish("l",    &Element::l);
-  publish("ks",   &Element::ks);
-  publish("k1",   &Element::k1);
-  publish("k2",   &Element::k2);
-  publish("k3",   &Element::k3);
-  publish("k4",   &Element::k4);
-  publish("angle",&Element::angle);
-  publish("B",    &Element::B);
-  publish("e1",   &Element::e1);
-  publish("e2",   &Element::e2);
-  publish("fint", &Element::fint);
-  publish("fintx",&Element::fintx);
-  publish("fintK2", &Element::fintK2);
-  publish("fintxK2",&Element::fintxK2);
-  publish("hgap", &Element::hgap);
-  publish("kick", &Element::kick);
-  publish("hkick",&Element::hkick);
-  publish("vkick",&Element::vkick);
-  publish("knl",  &Element::knl);
-  publish("ksl",  &Element::ksl);
+  publish("l",         &Element::l);
+  publish("scaling",   &Element::scaling);
+  publish("ks",        &Element::ks);
+  publish("k1",        &Element::k1);
+  publish("k2",        &Element::k2);
+  publish("k3",        &Element::k3);
+  publish("k4",        &Element::k4);
+  publish("angle",     &Element::angle);
+  publish("B",         &Element::B);
+  publish("e1",        &Element::e1);
+  publish("e2",        &Element::e2);
+  publish("fint",      &Element::fint);
+  publish("fintx",     &Element::fintx);
+  publish("fintK2",    &Element::fintK2);
+  publish("fintxK2",   &Element::fintxK2);
+  publish("hgap",      &Element::hgap);
+  publish("kick",      &Element::kick);
+  publish("hkick",     &Element::hkick);
+  publish("vkick",     &Element::vkick);
+  publish("knl",       &Element::knl);
+  publish("ksl",       &Element::ksl);
   publish("gradient",  &Element::gradient);
   publish("E",         &Element::E);
   publish("frequency", &Element::frequency);
@@ -79,107 +80,107 @@ void Element::PublishMembers()
   publish("tOffset",   &Element::tOffset);
   
   publish("beampipeThickness",&Element::beampipeThickness);
-  publish("aper1",    &Element::aper1);
-  publish("aper",     &Element::aper1);
+  publish("aper1",            &Element::aper1);
+  publish("aper",             &Element::aper1);
   alternativeNames["aper"] = "aper1";
-  publish("aperture", &Element::aper1);
+  publish("aperture",         &Element::aper1);
   alternativeNames["aperture"] = "aper1";
-  publish("aperture1",&Element::aper1);
+  publish("aperture1",        &Element::aper1);
   alternativeNames["aperture1"] = "aper1";
-  publish("beampipeRadius",&Element::aper1);
+  publish("beampipeRadius",   &Element::aper1);
   alternativeNames["beampipeRadius"] = "aper1";
-  publish("aper2",    &Element::aper2);
-  publish("aperture2",&Element::aper2);
+  publish("aper2",            &Element::aper2);
+  publish("aperture2",        &Element::aper2);
   alternativeNames["aperture2"] = "aper2";
-  publish("aper3",    &Element::aper3);
-  publish("aperture3",&Element::aper3);
+  publish("aper3",            &Element::aper3);
+  publish("aperture3",        &Element::aper3);
   alternativeNames["aperture3"] = "aper3";
-  publish("aper4",    &Element::aper4);
-  publish("aperture4",&Element::aper4);
+  publish("aper4",            &Element::aper4);
+  publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
-  publish("outerDiameter",&Element::outerDiameter);
-  publish("xsize",&Element::xsize);
-  publish("ysize",&Element::ysize);
-  publish("xsizeOut",&Element::xsizeOut);
-  publish("ysizeOut",&Element::ysizeOut);
-  publish("tilt",&Element::tilt);
+  publish("outerDiameter",    &Element::outerDiameter);
+  publish("xsize",            &Element::xsize);
+  publish("ysize",            &Element::ysize);
+  publish("xsizeOut",         &Element::xsizeOut);
+  publish("ysizeOut",         &Element::ysizeOut);
+  publish("tilt",             &Element::tilt);
 
-  publish("offsetX",&Element::offsetX);
-  publish("offsetY",&Element::offsetY);
-  publish("x",&Element::xdir);
+  publish("offsetX",     &Element::offsetX);
+  publish("offsetY",     &Element::offsetY);
+  publish("x",           &Element::xdir);
   alternativeNames["x"] = "xdir";
-  publish("y",&Element::ydir);
+  publish("y",           &Element::ydir);
   alternativeNames["y"] = "ydir";
-  publish("z",&Element::zdir);
+  publish("z",           &Element::zdir);
   alternativeNames["z"] = "zdir";
-  publish("xdir",&Element::xdir);
-  publish("ydir",&Element::ydir);
-  publish("zdir",&Element::zdir);
-  publish("phi",&Element::phi);
-  publish("theta",&Element::theta);
-  publish("psi",&Element::psi);
-  publish("region",&Element::region);
+  publish("xdir",        &Element::xdir);
+  publish("ydir",        &Element::ydir);
+  publish("zdir",        &Element::zdir);
+  publish("phi",         &Element::phi);
+  publish("theta",       &Element::theta);
+  publish("psi",         &Element::psi);
+  publish("region",      &Element::region);
   publish("fieldOuter",  &Element::fieldOuter);
   publish("fieldVacuum", &Element::fieldVacuum);
   publish("fieldAll",    &Element::fieldAll);
   publish("bmap",        &Element::fieldAll);
   alternativeNames["bmap"] = "fieldAll";
-  publish("waveLength",&Element::waveLength);
+  publish("waveLength",  &Element::waveLength);
 
   // screen
-  publish("tscint",&Element::tscint);
-  publish("twindow",&Element::twindow);
-  publish("tmount",&Element::tmount);
-  publish("windowScreenGap",&Element::windowScreenGap);
-  publish("screenXSize",&Element::screenXSize);
-  publish("screenYSize",&Element::screenYSize);
+  publish("tscint",          &Element::tscint);
+  publish("twindow",         &Element::twindow);
+  publish("tmount",          &Element::tmount);
+  publish("windowScreenGap", &Element::windowScreenGap);
+  publish("screenXSize",     &Element::screenXSize);
+  publish("screenYSize",     &Element::screenYSize);
   publish("layerThicknesses",&Element::layerThicknesses);
-  publish("layerMaterials",&Element::layerMaterials);
-  publish("layerIsSampler",&Element::layerIsSampler);
+  publish("layerMaterials",  &Element::layerMaterials);
+  publish("layerIsSampler",  &Element::layerIsSampler);
 
   // for AWAKE spectrometer
-  publish("screenPSize",&Element::screenPSize);
-  publish("screenEndZ",&Element::screenEndZ);
-  publish("poleStartZ",&Element::poleStartZ);
-  publish("screenWidth",&Element::screenWidth);
+  publish("screenPSize",        &Element::screenPSize);
+  publish("screenEndZ",         &Element::screenEndZ);
+  publish("poleStartZ",         &Element::poleStartZ);
+  publish("screenWidth",        &Element::screenWidth);
   publish("awakeMagnetOffsetX", &Element::awakeMagnetOffsetX);
   
-  publish("numberWedges",&Element::numberWedges);
-  publish("wedgeLength",&Element::wedgeLength);
-  publish("degraderHeight",&Element::degraderHeight);
-  publish("materialThickness",&Element::materialThickness);
-  publish("degraderOffset",&Element::degraderOffset);
+  publish("numberWedges",      &Element::numberWedges);
+  publish("wedgeLength",       &Element::wedgeLength);
+  publish("degraderHeight",    &Element::degraderHeight);
+  publish("materialThickness", &Element::materialThickness);
+  publish("degraderOffset",    &Element::degraderOffset);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
  
-  publish("outerMaterial",&Element::outerMaterial);
-  publish("material",&Element::material);
-  publish("yokeOnInside", &Element::yokeOnInside);
-  publish("hStyle",       &Element::hStyle);
-  publish("vhRatio",      &Element::vhRatio);
-  publish("coilWidthFraction",  &Element::coilWidthFraction);
-  publish("coilHeightFraction", &Element::coilHeightFraction);
-  publish("apertureType",&Element::apertureType);
-  publish("magnetGeometryType",&Element::magnetGeometryType);
-  publish("beampipeMaterial",&Element::beampipeMaterial);
-  publish("vacuumMaterial",&Element::vacuumMaterial);
-  publish("scintmaterial",&Element::scintmaterial);
-  publish("windowmaterial",&Element::windowmaterial);
-  publish("mountmaterial",&Element::mountmaterial);
-  publish("spec",&Element::spec);
-  publish("cavityModel",&Element::cavityModel);
-  publish("bias",&Element::bias);
-  publish("biasMaterial",&Element::biasMaterial);
-  publish("biasVacuum",&Element::biasVacuum);
-  publish("samplerName",&Element::samplerName);
-  publish("samplerType",&Element::samplerType);
-  publish("r",&Element::samplerRadius); // historic
-  publish("samplerRadius",&Element::samplerRadius);
+  publish("outerMaterial",       &Element::outerMaterial);
+  publish("material",            &Element::material);
+  publish("yokeOnInside",        &Element::yokeOnInside);
+  publish("hStyle",              &Element::hStyle);
+  publish("vhRatio",             &Element::vhRatio);
+  publish("coilWidthFraction",   &Element::coilWidthFraction);
+  publish("coilHeightFraction",  &Element::coilHeightFraction);
+  publish("apertureType",        &Element::apertureType);
+  publish("magnetGeometryType",  &Element::magnetGeometryType);
+  publish("beampipeMaterial",    &Element::beampipeMaterial);
+  publish("vacuumMaterial",      &Element::vacuumMaterial);
+  publish("scintmaterial",       &Element::scintmaterial);
+  publish("windowmaterial",      &Element::windowmaterial);
+  publish("mountmaterial",       &Element::mountmaterial);
+  publish("spec",                &Element::spec);
+  publish("cavityModel",         &Element::cavityModel);
+  publish("bias",                &Element::bias);
+  publish("biasMaterial",        &Element::biasMaterial);
+  publish("biasVacuum",          &Element::biasVacuum);
+  publish("samplerName",         &Element::samplerName);
+  publish("samplerType",         &Element::samplerType);
+  publish("r",                   &Element::samplerRadius); // historic
+  publish("samplerRadius",       &Element::samplerRadius);
   alternativeNames["r"] ="samplerRadius";
   
-  publish("blmLocZ",&Element::blmLocZ);
+  publish("blmLocZ",    &Element::blmLocZ);
   publish("blmLocTheta",&Element::blmLocTheta);
 
   publish("colour", &Element::colour);
@@ -216,6 +217,7 @@ void Element::print(int ident)const{
     {std::cout << "l     = " << l << "m" << std::endl;}
   if (samplerType != "none")
     {std::cout << "samplerType = " << samplerType << std::endl;}
+  std::cout << "Scaling = " << scaling << std::endl;
 
   switch(type) {
   case ElementType::_DRIFT:
@@ -323,6 +325,7 @@ void Element::flush()
   type = ElementType::_NONE;
   name = "";
   l = 0;
+  scaling = 1;
   ks = 0;
   k1 = 0;
   k2 = 0;

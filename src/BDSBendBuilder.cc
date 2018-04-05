@@ -60,11 +60,16 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   G4double                       fint = element->fint;
   G4double                      fintx = element->fintx;
   G4double                       hgap = element->hgap * CLHEP::m;
-  
+
+  // Note for tilted dipoles, the geometry is tilted but the curvilinear world isn't,
+  // therefore we tilt the field to match the geometry.
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
   G4bool buildFringeIncoming = buildFringeFields;
   G4bool buildFringeOutgoing = buildFringeFields;
+
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
 
   if (buildFringeFields)
     {
@@ -128,7 +133,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   if (!BDS::IsFinite(angle))
     {      
       BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-      BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+      BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 						   brho,
 						   intType,
 						   st,
@@ -209,7 +214,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // field recipe for one segment of the sbend
   G4String centralName = baseName + "_even_ang";
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* semiVacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* semiVacuumField = new BDSFieldInfo(dipoleFieldType,
 						   brho,
 						   intType,
 						   semiStrength,
@@ -426,8 +431,10 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
+  G4bool finiteK1 = BDS::IsFinite((*strength)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       strengthCopy,
@@ -472,6 +479,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   const G4double   arcLength = (*st)["length"];
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
+
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
 
   // Here, 'no face angle' really means that the rbend becomes an sbend.
   // Calculate how far away we are from an sbend.
@@ -620,7 +630,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   (*st)["angle"]  = centralAngle;
 
   BDSIntegratorType intType = BDS::GetDipoleIntegratorType(integratorSet, element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       st,
@@ -685,8 +695,11 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
+  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
+  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
+  
   BDSIntegratorType intType = integratorSet->dipoleFringe;
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
 					       brho,
 					       intType,
 					       st,
@@ -737,6 +750,9 @@ BDSIntegratorType BDS::GetDipoleIntegratorType(const BDSIntegratorSet* integrato
   // check for finite k1 and change integrator type if needed
   if (BDS::IsFinite(element->k1))
     {intType = integratorSet->Integrator(BDSFieldType::dipolequadrupole);}
+
+  if (BDS::IsFinite(element->tilt))
+    {intType = BDSIntegratorType::dipolerodrigues2;}
 
   return intType;
 }

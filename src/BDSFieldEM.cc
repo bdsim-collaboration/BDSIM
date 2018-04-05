@@ -25,11 +25,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 BDSFieldEM::BDSFieldEM():
+  finiteStrength(true),
   transform(G4Transform3D::Identity),
   inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldEM::BDSFieldEM(G4Transform3D transformIn):
+  finiteStrength(true),
   transform(transformIn),
   inverseTransform(transformIn.inverse())
 {;}
@@ -37,7 +39,9 @@ BDSFieldEM::BDSFieldEM(G4Transform3D transformIn):
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEM::GetFieldTransformed(const G4ThreeVector& position,
 								       const G4double       t) const
 {
-  if (transform != G4Transform3D::Identity)
+  if (!finiteStrength)
+    {return std::make_pair(G4ThreeVector(), G4ThreeVector());} // quicker than query
+  else if (transform != G4Transform3D::Identity)
     {
       G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
       auto field = GetField(transformedPosition, t);

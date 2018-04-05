@@ -79,7 +79,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   placementBL(nullptr),
-  brho(std::numeric_limits<double>::max())
+  brho(std::numeric_limits<double>::max()),
+  beta0(1)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -236,7 +237,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 						      const G4Transform3D& initialTransform,
 						      G4bool               beamlineIsCircular)
 {
-  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho);
+  BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho, beta0);
   BDSBeamline* massWorld = new BDSBeamline(initialTransform);
     
   if (beamlineIsCircular)
@@ -324,7 +325,8 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 	{// should protect against -ve length teleporter
 	  G4cout << G4endl << "Insufficient space between the first and last elements "
 		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
-		 << "- these will not be built." << G4endl << G4endl;
+		 << "- these will not be built." << G4endl;
+	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is " << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
 	}
       else
 	{ 

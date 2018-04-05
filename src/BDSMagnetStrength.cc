@@ -25,8 +25,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
-  "field",           // constant field in G4units
-  "eField",          // electric field in G4units
+  "beta0",           // relativistic beta for the primary particle - used in some integrators
+  "field",           // constant field in G4units - magnitude of field only - use bx,by,bz to get direction
+  "eField",          // electric field in G4units - magnitude of field only
   "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
@@ -49,7 +50,8 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k12", "k12s",
   "frequency",       // frequency for time varying field (presumably em)
   "phase",           // phase for time varying field
-  "equatorRadius"    // radius from axis at which field goes to 0
+  "equatorRadius",   // radius from axis at which field goes to 0
+  "nominalEnergy"    // nominal beam energy needed by some integrators
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {

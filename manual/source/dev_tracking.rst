@@ -8,12 +8,12 @@ Background On How Geant4 Tracking Works
 
 Geant4 provides the ability track a variety of particles through space in the 3D
 geometry model. Importantly, it provides the ability to track the motion of
-particles in electro-magnetic fields.  As Geant4 provides a large library of
+particles in electromagnetic fields.  As Geant4 provides a large library of
 particle types, the tracking software must be capable of tracking particles
 of different masses and charges.
 
 This is achieved by factorising certain functionality into different sets of C++
-classes.  The user must provide a function that will return the electic
+classes.  The user must provide a function that will return the electric
 and magnetic field vectors for a given set of :math:`(x,y,z,t)` coordinates.
 Specifically, this is a class that inherits :code:`G4Field` and provides an implementation
 of the pure virtual method :code:`GetFieldValue(position)` where position is :math:`x,y,z,t`.
@@ -53,34 +53,133 @@ energy when calculating the particle trajectory ('symplecticity') as well as bei
 competitive computationally. The routine provided is a 2nd order Euler integration
 algorithm.  More will be added in future.
 
+.. _integrator-sets:
 
 Integrator Sets
 ===============
 
-When using BDSIM, the user can select a *set* of integrators (ie tracking routines)
+When using BDSIM, the user can select a *set* of integrators (i.e. tracking routines)
 with the following syntax::
 
-  option, integratorSet="geant4";
+  option, integratorSet="bdsimtwo";
 
 This choice affects the computation time and accuracy of the simulation but each set
 may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
 more sets can be added that mix and match routines as required.
 
-.. note:: "bdsimtwo" is the default.
+* "bdsimmatrix" is the default and recommended.
+* "bdsimtwo" is acceptable if no fringe dipole pole faces are present.
 
-.. note:: Prior to v0.96, the set described by "bdsimold" was the default, although
-	  in v0.95 it was labelled "bdsimone".
+All sets apart from "geant4" make use of custom BDSIM integrators for accelerator tracking.
+These integrators ignore the supplied field and use a strength parameter (such as `k1`
+for a quadrupole) instead. The field is always present and should a backwards, or
+non-paraxial particle be used, these BDSIM integrators resort to a G4ClassicalRK4
+algorithm. This allows all particles to be tracking in all directions over all momentum
+ranges but with the accuracy and speed of accelerator tracking for paraxial particles.
 
 The specific details are described in _`Integrator Algorithms`.
 
 The integrator set may be one of the following (case-insensitive):
 
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++-------------+-------------------------+--------------------------------+
+| **Set**     | **Magnetic Field Type** | **Integrator**                 |
++=============+=========================+================================+
+| bdsimmatrix | Solenoid                | BDSIM Dipole Rodrigues 2       |
+|             +-------------------------+--------------------------------+
+|             | Dipole                  | BDSIM Dipole Matrix            |
+|             +-------------------------+--------------------------------+
+|             | Dipole with K1          | BDSIM Dipole Matrix            |
+|             +-------------------------+--------------------------------+
+|             | Quadrupole              | BDSIM Quadrupole               |
+|             +-------------------------+--------------------------------+
+|             | Sextupole               | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Octupole                | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Decapole                | BDSIM Euler                    |
+|             +-------------------------+--------------------------------+
+|             | Thick Multipole         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Muon Spoiler            | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | RF Cavity (EM)          | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | RF (E only)             | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | General Default         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Quadrupole         | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Sextupole          | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Octupole           | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Skew Decapole           | G4ClassicalRK4                 |
+|             +-------------------------+--------------------------------+
+|             | Dipole Fringe           | BDSIM Dipole Fringe            |
+|             +-------------------------+--------------------------------+
+|             | Thin Multipole          | BDSIM Thin Multipole           |
+|             +-------------------------+--------------------------------+
+|             | Multipole Outer         | G4NystromRK4                   |
++-------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{6cm}|p{5cm}|p{6cm}|
+
++---------------------------+-------------------------+--------------------------------+
+| **Set**                   | **Magnetic Field Type** | **Integrator**                 |
++===========================+=========================+================================+
+| bdsimmatrixfringescaling  | Solenoid                | BDSIM Dipole Rodrigues 2       |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole                  | BDSIM Dipole Rodrigues 2       |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole with K1          | BDSIM Dipole Matrix            |
+|                           +-------------------------+--------------------------------+
+|                           | Quadrupole              | BDSIM Quadrupole               |
+|                           +-------------------------+--------------------------------+
+|                           | Sextupole               | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Octupole                | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Decapole                | BDSIM Euler                    |
+|                           +-------------------------+--------------------------------+
+|                           | Thick Multipole         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Muon Spoiler            | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | RF Cavity (EM)          | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | RF (E only)             | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | General Default         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Quadrupole         | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Sextupole          | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Octupole           | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Skew Decapole           | G4ClassicalRK4                 |
+|                           +-------------------------+--------------------------------+
+|                           | Dipole Fringe           | BDSIM Dipole Fringe Scaling    |
+|                           +-------------------------+--------------------------------+
+|                           | Thin Multipole          | BDSIM Thin Multipole           |
+|                           +-------------------------+--------------------------------+
+|                           | Multipole Outer         | G4NystromRK4                   |
++---------------------------+-------------------------+--------------------------------+
+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
-| bdsimtwo   | Solenoid                | BDSIM Dipole2                  |
+| bdsimtwo   | Solenoid                | BDSIM Dipole Rodrigues 2       |
 |            +-------------------------+--------------------------------+
-|            | Dipole                  | BDSIM Dipole2                  |
+|            | Dipole                  | BDSIM Dipole Rodrigues 2       |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | BDSIM Dipole Matrix            |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
@@ -111,10 +210,18 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | bdsim      | Solenoid                | BDSIM Solenoid                 |
 |            +-------------------------+--------------------------------+
-|            | Dipole                  | BDSIM Dipole                   |
+|            | Dipole                  | BDSIM Dipole Rodrigues         |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | BDSIM Quadrupole               |
 |            +-------------------------+--------------------------------+
@@ -145,10 +252,20 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | geant4     | Solenoid                | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | G4ClassicalRK4                 |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | G4ClassicalRK4                 |
 |            +-------------------------+--------------------------------+
@@ -179,10 +296,20 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
+
+.. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
+
++------------+-------------------------+--------------------------------+
+| **Set**    | **Magnetic Field Type** | **Integrator**                 |
++============+=========================+================================+
 | geant4dp*  | Solenoid                | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | G4DormandPrince745             |
+|            +-------------------------+--------------------------------+
+|            | Dipole with K1          | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
 |            | Quadrupole              | G4DormandPrince745             |
 |            +-------------------------+--------------------------------+
@@ -213,20 +340,25 @@ The integrator set may be one of the following (case-insensitive):
 |            | Dipole Fringe           | BDSIM Dipole Fringe            |
 |            +-------------------------+--------------------------------+
 |            | Thin Multipole          | BDSIM Thin Multipole           |
+|            +-------------------------+--------------------------------+
+|            | Multipole Outer         | G4NystromRK4                   |
 +------------+-------------------------+--------------------------------+
 
 .. Note:: `*` "geant4dp" is only available when BDSIM is compiled against
-	  Geant 4.10.3 or higher.
- 
+	  Geant 4.10.4 or higher.
+
 .. Note:: Both dipole fringe and thin multipole fields are *thin* elements
 	  and have no *thick* equivalent and therefore have no field that
 	  Geant4 can use. Therefore, they only use the BDSIM integrators.
+
+
+.. _integrator_algorithms_section:
 
 Integrator Algorithms
 =====================
 
 BDSIM currently only provides integrators for magnetic fields, i.e. not electric
-or electro-magnetic fields.  For these types of fields, Geant4 integrators are used.
+or electromagnetic fields.  For these types of fields, Geant4 integrators are used.
 
 Common Magnetic Field Interface From Geant4
 -------------------------------------------
@@ -248,7 +380,7 @@ An integrator derived from :code:`G4MagIntegratorStepper` must implement a metho
                                             G4double yerr[]  ) = 0;
 
 
-This is reposnsible for calculating the coordinates of a trajectory given the input
+This is responsible for calculating the coordinates of a trajectory given the input
 point :code:`y[]` (which is [:math:`x,y,z,p_x,p_y,p_z,t`]) for a step length of :math:`h`.
 The output coordinates are written to :code:`yout[]` (also [:math:`x,y,z,p_x,p_y,p_z,t`])
 along with the associated absolute uncertainty for each parameter to :code:`yerr[]`.
@@ -258,7 +390,7 @@ in :code:`G4Mag_UsualEqRhs.cc` as follows:
 .. math::
 
    \mathbf{A} = ~ \frac{charge \cdot c}{ \|\mathbf{p}\| } (\mathbf{p} \times \mathbf{B})
-   
+
 
 .. math::
 
@@ -277,7 +409,7 @@ There are other factors in the code for units that aren't shown here.
 	  :math:`\mathbf{A}`. Getting the field value is generally conidered an *expensive*
 	  operation as may often involve geometry lookup for transforms, applying transforms
 	  or indexing a large array along with interpolation.  In the case of BDSIM, the
-	  majority of fields requie a geometry lookup and transform but are simple equations.
+	  majority of fields require a geometry lookup and transform but are simple equations.
 
 .. note:: **Time**: Geant4 magnetic integrators do not integrate time and
 	  therefore copy the initial
@@ -286,8 +418,8 @@ There are other factors in the code for units that aren't shown here.
 	  specified to be only integrating over 6 variables.
 
 
-Coordinate Convetion
---------------------
+Coordinate Convention
+---------------------
 
 * Units are not explicitly mentioned here. In code there are factors to convert to Geant4 units.
 * :math:`\mathbf{q}` is used to represent a 3-vector for spatial coordinates (:math:`x,y,z`).
@@ -300,7 +432,7 @@ Coordinate Convetion
 BDSIM Drift
 -----------
 
-This algorithm tranports a particle through free space with no external force acting on it.
+This algorithm transports a particle through free space with no external force acting on it.
 This is provided here although provided generally by Geant4 as it is required by other
 BDSIM integrators under various circumstances. It exists in the
 :code:`BDSIntegratorBase::AdvanceDrift`
@@ -314,7 +446,7 @@ base class for the majority of BDSIM integrators.
 .. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
 	  algorithm. The tracking is handled by Geant4.
 
-	  
+
 BDSIM Dipole
 ------------
 
@@ -335,7 +467,7 @@ Otherwise continue as follows:
 
    \rho~=~ \frac{\|\mathbf{p}_{in}\|} {\mathbf{B} \cdot charge}
 
-* Convert coorindates from global to local (curvilinear) frame of reference.
+* Convert coordinates from global to local (curvilinear) frame of reference.
 * Calculate local change of coordinates.
 
 .. math::
@@ -359,7 +491,7 @@ This was the original dipole algorithm included with BDSIM until v0.96, however 
 is limited to dipole fields aligned with :math:`\hat{y}` only and often caused tracking
 warnings with very low momenta particles in strong magnetic fields. A more flexible integrator
 that works in 3D was written to improve upon this and is described in _`BDSIM Dipole2`.
-   
+
 BDSIM Dipole2
 -------------
 
@@ -391,10 +523,10 @@ and not dominate tracking time. The minimum radius of curvature is chosen to be 
 the radius of the typical aperture throughout the model (specified in the options). As the
 magnetic field does no work, a spiralling particle could spiral for a very long time and cause
 an event to run almost indefinitely. Given most dipoles in accelerators induce only a few
-miliradians of deflection, such a particle must be of a much lower momentum than the
+milliradians of deflection, such a particle must be of a much lower momentum than the
 design momentum of the dipole and would in reality not progress far from the magnet.
 
-This artifical behaviour terminates particles in the approximate location by moving them
+This artificial behaviour terminates particles in the approximate location by moving them
 more quickly to a boundary.
 
 The routine provided by Geant4 in G4MagHelicalStepper is as follows:
@@ -405,7 +537,7 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
    \mathbf{p}_{\perp} ~ &= ~ \mathbf{\hat{p}}_{in} - \mathbf{p}_{\|}\\
 
 .. math::
-   
+
    R ~ &= ~ \frac{-\|B\| ~ charge} {\mathbf{p}_{in}}\\
    \theta ~ &= ~ \frac{h}{R}
 
@@ -415,22 +547,22 @@ The routine provided by Geant4 in G4MagHelicalStepper is as follows:
 
    \mathrm{ST} ~ &= ~ \sin\theta\\
    \mathrm{CT} ~ &= ~ \cos\theta
-   
+
 * Else:
 
 .. math::
-   
+
    \mathrm{ST} ~ &= ~ \theta - \frac{1}{6}~\theta^{3}\\
    \mathrm{CT} ~ &= ~ 1 - \frac{1}{2}~\theta^{2} + \frac{1}{24}~\theta^{4}
 
 The final coordinates are calculated as:
-   
+
 .. math::
 
    \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in} + R ~ \Big[ \mathrm{ST}~\mathbf{p}_{\perp} + (1-\mathrm{CT})~(\mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}) \Big] + h~\mathbf{p}_{\|}
 
 .. math::
-   
+
    \mathbf{p}_{out} ~ = ~ \mathbf{\hat{p}}_{in} ~ \Big[ \mathrm{CT}~\mathbf{p}_{\perp} + \mathrm{ST}\,(\mathbf{\hat{B}} \times \mathbf{\hat{p}}_{in}) \Big] + \mathbf{p}_{\|}
 
 The distance from the chord and arc of the true path are also calculated by Geant4 and
@@ -447,7 +579,7 @@ the algorithm is as follows.
 .. math::
 
    \Delta_{chord} ~ = ~ R ~\Bigg[1+\cos\Big(\frac{2\pi-\theta}{2}\Big) \Bigg]
-   
+
 * Else:
 
 .. math::
@@ -487,7 +619,7 @@ transportation.  In this case, the following factors are calculated:
    rk  = ~\sqrt{\|\kappa\|~p_{z}} \\
    rkh = h~p_{z}~rk
 
-For :math:`\kappa > 0`, the focussing thick matrix is used (in the local curvilinear frame):
+For :math:`\kappa > 0`, the focusing thick matrix is used (in the local curvilinear frame):
 
 .. math::
    \mathbf{M_{quad, +\kappa}}~=~
@@ -498,7 +630,7 @@ For :math:`\kappa > 0`, the focussing thick matrix is used (in the local curvili
    0 & 0 & -\|\kappa\|~\frac{1}{rk}\sinh(rkh)  & \cosh(rkh)              \\
    \end{pmatrix}
 
-and for :math:`\kappa < 0`, the defocussing thick matrix is used (again, in the local
+and for :math:`\kappa < 0`, the defocusing thick matrix is used (again, in the local
 curvilinear frame):
 
 .. math::
@@ -538,7 +670,7 @@ These are used as follows (again in the local curvilinear frame):
 
 .. math::
 
-   q_{z,out} ~ = ~ \sqrt{\Big[ h^2\,(1 - \frac{h^2}{12\,R^2}) - (\mathrm{d}q_{x}^2 + \mathrm{d}q_{y}^2) \Big]} 
+   q_{z,out} ~ = ~ \sqrt{\Big[ h^2\,(1 - \frac{h^2}{12\,R^2}) - (\mathrm{d}q_{x}^2 + \mathrm{d}q_{y}^2) \Big]}
 
 where :math:`\mathrm{d}q_{x,y}` are the changes in local :math:`x` and :math:`y` respectively.
 :math:`R` is:
@@ -584,7 +716,7 @@ BDSIM Euler
 
    \mathbf{q}_{out} ~ &= ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ h + \mathbf{A}~\frac{h^{2}}{2~\|\mathbf{p}_{in}\|} \\
    \mathbf{p}_{out} ~ &= ~ \mathbf{p}_{in} + \mathbf{A}~h
-  
+
 
 BDSIM Sextupole
 ---------------
@@ -593,7 +725,7 @@ BDSIM Sextupole
 
 This integrator is constructed with :math:`k_2` (originally calculated *w.r.t.* the nominal
 beam rigidity higher up in BDSIM). It uses this to give a notion of a sextupolar field
-whilst calcualting the magnetic vector potential in the local curvilinear coordinate frame.
+whilst calculating the magnetic vector potential in the local curvilinear coordinate frame.
 The input coordinates must therefore be converted to local curvilinear ones.
 
 In comparison to the _`BDSIM Euler` integrator, this has one extra transform for the coordinates
@@ -605,7 +737,7 @@ but one fewer for the field and so has roughly the same performance. The algorit
 * A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
-  
+
 .. math::
 
    \mathbf{A} = \frac{k_2}{2!} ~
@@ -617,7 +749,7 @@ but one fewer for the field and so has roughly the same performance. The algorit
 
 .. note:: This can viewed as the cross product between the unit momentum vector and the
 	  sextupolar field, whilst assuming that the :math:`B_z` component is always zero
-	  and so some terms of the cross product can be ommitted.
+	  and so some terms of the cross product can be omitted.
 
 * The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
 
@@ -635,7 +767,7 @@ beam rigidity higher up in BDSIM).
 * A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
-  
+
 .. math::
 
    \mathbf{A} = \frac{k_3}{3!} ~
@@ -647,7 +779,7 @@ beam rigidity higher up in BDSIM).
 
 .. note:: This can viewed as the cross product between the unit momentum vector and the
 	  octupolar field, whilst assuming that the :math:`B_z` component is always zero
-	  and so some terms of the cross product can be ommitted.
+	  and so some terms of the cross product can be omitted.
 
 * The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
 
@@ -666,7 +798,7 @@ beam rigidity higher up in BDSIM).
 * A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
-  
+
 .. math::
 
    \mathbf{A} = \frac{k_4}{4!} ~
@@ -679,13 +811,13 @@ beam rigidity higher up in BDSIM).
 
 .. note:: This can viewed as the cross product between the unit momentum vector and the
 	  decapolar field, whilst assuming that the :math:`B_z` component is always zero
-	  and so some terms of the cross product can be ommitted.
+	  and so some terms of the cross product can be omitted.
 
 * The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
 
-  
+
 .. _communal-euler:
-  
+
 BDSIM Old Euler Common
 ----------------------
 
@@ -705,12 +837,12 @@ is as follows:
    q_{y,out} ~ = ~ q_{y,in} + p_{y,in}~h + \frac{A_{y}~h^2}{2}\\
 
 The output z coordinate is calculated as:
-   
+
 .. math::
 
    q_{z,out} ~ = ~ q_{z,in} + \sqrt{\Bigg[ h^2 ~ \big(1 - \frac{h^2~\|\mathbf{A}\|^2}{12} \big) - \delta_{x}^2 - \delta_{y}^2 \Bigg]} \\
 
-The momentum is calcualted as:
+The momentum is calculated as:
 
 .. math::
 
@@ -719,7 +851,7 @@ The momentum is calcualted as:
 The delta chord intersection is calculated as:
 
 .. math::
-   
+
    \Delta_{chord} ~ = ~ \frac{h^2 \|\mathbf{A}\|}{8}
 
 The error is not calculated here.
@@ -741,7 +873,7 @@ for the dipole component of the motion. After that, the small change in momentum
 
 * If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
   is applied.
-  
+
 The momentum change in the local curvilinear frame is calculated as:
 
 .. math::
@@ -785,8 +917,8 @@ The output momentum (from the dipole integrator) is adjusted as:
 .. math::
 
    \mathbf{p}_{out} ~ = ~ \mathbf{p}_{in} + d\mathbf{p}
-  
-   
+
+
 
 BDSIM Thin Multipole
 --------------------
@@ -815,14 +947,14 @@ The output position remains the same.
    \mathbf{q}_{out} ~ = ~ \mathbf{q}_{in}
 
 The momentum is modified as:
-   
+
 
 .. math::
-   
+
    qc = q_{x,in} + i~q_{y,in}
 
 .. math::
-   
+
    dp_{n} ~ = ~ \sum_{j=1}^{12} ~ \frac{k_{n,j}}{j!}~qc^j \\
    dp_{s} ~ = ~ \sum_{j=1}^{12} ~ \frac{k_{s,j}}{j!}~qc^j
 
@@ -846,7 +978,7 @@ normal and skew multipole components respectively.  The output momentum is there
    p_{z,out}
    \end{pmatrix}
 
-   
+
 
 Combined Dipole-Quadrupole
 --------------------------

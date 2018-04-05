@@ -53,6 +53,8 @@ public:
   virtual G4ThreeVector GetField(const G4ThreeVector &position,
 				 const G4double       t = 0) const;
 
+  inline G4ThreeVector FieldValue() {return localField;}
+
 private:
   /// Private default constructor to ensure use of supplied constructor
   BDSFieldMagDipole();

@@ -23,6 +23,7 @@ simple_testing(component-rcol-Tapered        "--file=rcol_tapered.gmad"    ${OVE
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})
 simple_testing(component-rf-cavity           "--file=rfcavity.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-sampler             "--file=sampler.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-scaling             "--file=scaling.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-screen              "--file=screen.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-sextupole           "--file=sextupole.gmad"       ${OVERLAP_CHECK})
 simple_testing(component-shield              "--file=shield.gmad"          ${OVERLAP_CHECK})

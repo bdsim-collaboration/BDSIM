@@ -29,10 +29,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 BDSIntegratorDipoleFringeScaling::BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strengthIn,
-                             G4double                 brhoIn,
-						     G4Mag_EqRhs*             eqOfMIn,
-                             G4double                 minimumRadiusOfCurvatureIn):
-  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn),
+								   G4double                 brhoIn,
+								   G4Mag_EqRhs*             eqOfMIn,
+								   G4double                 minimumRadiusOfCurvatureIn,
+								   const G4Transform3D&     tiltOffsetIn):
+  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltOffsetIn),
   bRho(brhoIn)
 {;}
 
@@ -53,6 +54,5 @@ void BDSIntegratorDipoleFringeScaling::Stepper(const G4double yIn[],
   G4double momScaling = std::abs(fcof * bRho / momInMag);
 
   BaseStepper(yIn, dydx, h, yOut, yErr, momScaling, fcof);
-
 }
 

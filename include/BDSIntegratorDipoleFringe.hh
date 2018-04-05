@@ -21,7 +21,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSIntegratorDipoleFringeBase.hh"
 #include "BDSIntegratorDipoleFringe.hh"
+
 #include "globals.hh"
+#include "G4Transform3D.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
@@ -36,9 +38,10 @@ class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleFringeBase
 {
 public:
   BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
-                G4double                 brhoIn,
+			    G4double                 brhoIn,
 			    G4Mag_EqRhs*             eqOfMIn,
-			    G4double                 minimumRadiusOfCurvature);
+			    G4double                 minimumRadiusOfCurvature,
+			    const G4Transform3D&     tiltOffsetIn = G4Transform3D::Identity);
   
   virtual ~BDSIntegratorDipoleFringe(){;}
 
@@ -52,7 +55,6 @@ public:
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleFringe() = delete;
-  
 };
 
 #endif
