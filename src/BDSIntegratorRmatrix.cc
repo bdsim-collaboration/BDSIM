@@ -18,26 +18,24 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "BDSDebug.hh"
-#include "BDSIntegratorParallelTransport.hh"
+#include "BDSIntegratorRMatrix.hh"
 
-BDSIntegratorParallelTransport::BDSIntegratorParallelTransport(G4Mag_EqRhs* eqOfMIn) :
+BDSIntegratorRMatrix::BDSIntegratorRMatrix(G4Mag_EqRhs* eqOfMIn) :
         BDSIntegratorMag(eqOfMIn, 6)
 {}
 
-void BDSIntegratorParallelTransport::Stepper(const G4double yIn[],
-                                             const G4double unitMomentum[],
-                                             const G4double h,
-                                             G4double       yOut[],
-                                             G4double       yErr[]) {
+void BDSIntegratorRMatrix::Stepper(const G4double yIn[],
+                                   const G4double unitMomentum[],
+                                   const G4double h,
+                                   G4double       yOut[],
+                                   G4double       yErr[]) {
     for (G4int i = 0; i < 3; i++)
     {
-        yOut[i]   = yIn[i];                       // position does not change
+        yOut[i]   = yIn[i] + h * unitMomentum[i]; // update position
         yOut[i+3] = yIn[i+3];                     // momentum doesn't change
         yErr[i]   = 0;
         yErr[i+3] = 0;
     }
-
-    yOut[2] += h;                                 // just advance by h along the beam axis
 
     return;
 }

@@ -78,7 +78,28 @@ void Element::PublishMembers()
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
-  
+
+  publish("kick1",     &Element::kick1);
+  publish("kick2",     &Element::kick2);
+  publish("kick3",     &Element::kick3);
+  publish("kick4",     &Element::kick4);
+  publish("rmat11",     &Element::rmat11);
+  publish("rmat12",     &Element::rmat12);
+  publish("rmat13",     &Element::rmat13);
+  publish("rmat14",     &Element::rmat14);
+  publish("rmat21",     &Element::rmat21);
+  publish("rmat22",     &Element::rmat22);
+  publish("rmat23",     &Element::rmat23);
+  publish("rmat24",     &Element::rmat24);
+  publish("rmat31",     &Element::rmat31);
+  publish("rmat32",     &Element::rmat32);
+  publish("rmat33",     &Element::rmat33);
+  publish("rmat44",     &Element::rmat34);
+  publish("rmat41",     &Element::rmat41);
+  publish("rmat42",     &Element::rmat42);
+  publish("rmat43",     &Element::rmat43);
+  publish("rmat44",     &Element::rmat44);
+
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper1",            &Element::aper1);
   publish("aper",             &Element::aper1);

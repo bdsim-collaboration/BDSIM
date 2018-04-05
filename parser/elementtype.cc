@@ -89,6 +89,8 @@ std::string GMAD::typestr(ElementType type) {
     return "degrader";
   case ElementType::_GAP :
     return "gap";
+  case ElementType::_RMATRIX :
+    return "rmatrix";
   default:
     return "none";
   }

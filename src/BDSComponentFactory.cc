@@ -283,6 +283,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
+  case ElementType::_RMATRIX:
+    component = CreateThinRMatrix(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -1074,6 +1076,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   return new BDSTerminator();
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix()
+{
+
+  return (BDSAcceleratorComponent*)NULL;
+}
+
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
@@ -1189,6 +1197,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }

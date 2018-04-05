@@ -17,14 +17,17 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BDSINTEGRATORPARALLELTRANSPORT_HH
-#define BDSINTEGRATORPARALLELTRANSPORT_HH
+#ifndef BDSINTEGRATORRMATRIX_HH
+#define BDSINTEGRATORRMATRIX_HH
+
+#endif // BDSINTEGRATORRMATRIX_HH
 
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
 
 class G4Mag_EqRhs;
+class BDSMagnetStrength;
 
 /**
  * @brief Integrator that just moves the particle parallel to the s axis
@@ -34,12 +37,12 @@ class G4Mag_EqRhs;
  *
  */
 
-class BDSIntegratorParallelTransport: public BDSIntegratorMag
+class BDSIntegratorRMatrix: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorParallelTransport(G4Mag_EqRhs* eqOfMIn);
+  BDSIntegratorRMatrix(G4Mag_EqRhs* eqOfMIn);
 
-  virtual ~BDSIntegratorParallelTransport(){;}
+  virtual ~BDSIntegratorRMatrix(){;}
 
   virtual void Stepper(const G4double y[],
                        const G4double unitMomentum[],
@@ -48,8 +51,6 @@ public:
                        G4double       yErr[]);
 
 private:
-  BDSIntegratorParallelTransport();
+  BDSIntegratorRMatrix();
 
 };
-
-#endif //BDSINTEGRATORPARALLELTRANSPORT_HH

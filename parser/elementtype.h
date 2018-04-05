@@ -27,7 +27,7 @@ namespace GMAD
     _LASER       = 15,
     _MATERIAL    = 16,
     _RBEND       = 17,
-    // = 18,
+    _RMATRIX     = 18,
     // = 19,
     _ELEMENT     = 20,
     _SCREEN      = 21,
