@@ -37,7 +37,7 @@ void usage()
   std::cout << " <datafile>   - root file to operate on ie run1.root"            << std::endl;
   std::cout << " <outputfile> - name of output file ie optics.dat"               << std::endl;
   std::cout << " --emittanceOnFly - calculate emittance per sampler (optional)"  << std::endl;
-  std::cout << "This only works on a single file - no wildcards."                << std::endl;
+  std::cout << "Quotes should be used if * is used in the input file name."      << std::endl;
 }
 
 int main(int argc, char* argv[])
