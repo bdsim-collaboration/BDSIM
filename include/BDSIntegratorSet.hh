@@ -68,7 +68,8 @@ public:
 		   BDSIntegratorType skewDecapoleIn,
 		   BDSIntegratorType dipoleFringeIn,
 		   BDSIntegratorType multipoleThinIn,
-		   BDSIntegratorType multipoleOuterIn);
+		   BDSIntegratorType multipoleOuterIn,
+			 BDSIntegratorType rmatrixThinIn);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
@@ -92,6 +93,7 @@ public:
   BDSIntegratorType dipoleFringe;
   BDSIntegratorType multipoleThin;
   BDSIntegratorType multipoleOuter;
+	BDSIntegratorType rmatrixThin;
 
   /// Accessor for bool of is the integrator set matrix style.
   G4bool IsMatrixIntegratorSet() const;
