@@ -61,7 +61,7 @@ REBDSIM Usage
 -------------
 
 rebdsim is executed with one argument which is the path to an analysis configuration text
-file. This is a simple text file that describes what histrograms to make from the data.
+file. This is a simple text file that describes what histograms to make from the data.
 Optionally, a second argument of a data file to operate on will override the one specified
 in the analysis configuration file. This allows the same analysis configuration to be used
 to analyse many different data files. A third optional argument (must have second argument
@@ -103,12 +103,12 @@ as a function of curvilinear `S` position along the accelerator. In fact, the `S
 is binned with the weight of the energy. In each event, a single primary particle can lead
 to the creation of thousands of secondaries that can each create many energy deposition hits.
 In the case of a simple histogram, all energy deposition hits across all events are binned.
-This gives us a total for the simulation performed and the bin error (uncertaintly associated
+This gives us a total for the simulation performed and the bin error (uncertainty associated
 with a given histogram bin) is proportional to :math:`1/sqrt(N)` where :math:`N` is the
 number of entries in that bin. This however, doesn't represent correctly the variation seen
 from event to event. Using the per event histograms, a single simple 1D histogram of energy
 deposition is created and these are averaged. The resultant histogram has the mean per event
-(note the normalisation here verus the simple histograms) and the error on the bin is the
+(note the normalisation here versus the simple histograms) and the error on the bin is the
 standard error on the beam, i.e.
 
 .. math::
@@ -119,6 +119,8 @@ where :math:`\sigma` is the standard deviation of the values in that bin for all
 .. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
 
+.. _output-analysis-configuration-file:
+	  
 Analysis Configuration File
 ===========================
 
@@ -129,9 +131,9 @@ Examples can be found in:
 * `<bdsim>/examples/features/io/1_rootevent/analysisConfig.txt`
 * `<bdsim>/examples/features/analysis/simpleHistograms/analysisConfig.txt`
 * `<bdsim>/examples/features/analysis/perEntryHistograms/analysisConfig.txt`
-  
+
 ::
-   
+
   Debug                                   True
   InputFilePath                           ./output.root
   OutputFileName                          ./ana_1.root
@@ -196,7 +198,7 @@ a 1D histogram with 30 logarithmically spaced bins from 1e-3 to 1e3, the followi
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
-  
+
 .. warning:: The variable for plotting is really a simple interface to CERN ROOT's TTree Draw
 	     method.  This has some inconsistency.  If 1D, there is just `x`.  If 2D, it's
 	     `y` : `x`. If 3D, it's `x` : `y` : `z`.  This *only* applies to the variable and
@@ -226,9 +228,9 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | optical functions output.                            |
 +----------------------------+------------------------------------------------------+
 | EmittanceOnTheFly          | Whether to calculate the emittance freshly at each   |
-|                            | sampler or simply use the emittance calcualted from  |
-|                            | the first sampler (ie the primaries). The default is |
-|                            | false and therefore to calculate the emittance at    |
+|                            | sampler or simply use the emittance calculated from  |
+|                            | the first sampler (i.e. the primaries). The default  |
+|                            | is false and therefore to calculate the emittance at |
 |                            | each sampler.                                        |
 +----------------------------+------------------------------------------------------+
 | PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
@@ -299,7 +301,7 @@ seeds (different seeds ensures different results) on a high throughput computer 
 There are two possible strategies to efficiently scale the statistics and analysis. Both
 produce numerically identical output but make different use of computing resources. The
 more data stored per event in the output files, the longer it takes to load it from disk and
-the longer the anlaysis. Similarly, the more events simulated, the longer the analysis will
+the longer the analysis. Similarly, the more events simulated, the longer the analysis will
 take. Of course either strategy can be used.
 
 Low Data Volume
@@ -321,8 +323,8 @@ This is shown schematically in the figure below.
 	    :align: center
 
 This strategy works best for a relatively low number of events and data volume (example
-numbers might be < 10000 events and < 10 GB of data). 
-		    
+numbers might be < 10000 events and < 10 GB of data).
+
 High Data Volume
 ================
 
@@ -368,7 +370,7 @@ The library containing the analysis classes may be then loaded:
 
 The classes in :code:`bdsim/analysis` will now be available inside ROOT in Python.
 
-  
+
 Interactively in ROOT
 =====================
 
@@ -406,7 +408,7 @@ sets the branch address on them (links them to the open file). For example::
 Here, a file is loaded and by default all data is loaded in the file. We get access to
 the local event object and the event tree (here, a chain of all files). We can then load
 a particular entry in the tree, which for the Event tree is an individual event::
-  
+
   root> evtTree->GetEntry(10);
 
 The event object now contains the data loaded from the file.::
@@ -436,7 +438,7 @@ One may manually loop over the events in a macro::
 
   root> .L myMacro.C
   root> DoLoop()
-  
+
 
 This would loop over all entries and print the number of energy deposition hits per
 event.
@@ -472,7 +474,7 @@ To install from source::
    wget https://pypi.python.org/packages/source/r/root_numpy/root_numpy-4.3.0.tar.gz
    tar -zxf root_numpy-4.3.0.tar.gz
    cd root_numpy-4.3.0
-   python2.7 setup.py build 
+   python2.7 setup.py build
    sudo python2.7 setup.py install
 
 
@@ -489,8 +491,8 @@ To install using the python package manager PIP::
 Extracting data from ROOT file ::
 
    > pylab
-   In [1]: import ROOT 
-   In [2]: import root_numpy 
+   In [1]: import ROOT
+   In [2]: import root_numpy
    In [3]: f = ROOT.TFile("analysis.root")
    In [4]: t = f.Get("Sampler1")
    In [5]: a = root_numpy.tree2rec(t)
@@ -507,12 +509,12 @@ To calculate the mean in the per-entry histograms as well as the associated erro
    \bar{x} &= \sum_{i = 0}^{n} x_{i}\\
    \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
 
-These equations are however problematic to implement computationally. The forumula above
+These equations are however problematic to implement computationally. The formula above
 for the variance requires two passes through the data to first calculate the mean and
 then the variance using that mean. The above equation can rearranged to provide the same
 calculation with a single pass through the data, however such algorithms are typically
 numerically unstable, i.e. they rely on a small difference between two very large numbers.
-With the finite precision of a number represented in a C++ double type (~15 significan
+With the finite precision of a number represented in a C++ double type (~15 significant
 digits), the instability may lead to unphysical results (negative variances) and generally
 incorrect results.
 

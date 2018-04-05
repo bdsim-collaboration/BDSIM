@@ -19,11 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
+#include "BDSMagnetStrength.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
-#include "BDSMagnetStrength.hh"
+#include "G4Transform3D.hh"
 
 class BDSStep;
 class G4Step;
@@ -179,29 +181,33 @@ public:
 
   /// Convert to curvilinear coordinates. Angle supplied separately in case
   /// of over/underpowered magnets.
-  BDSStep GlobalToCurvilinear(BDSMagnetStrength const* strength,
-				G4double 	  angle,
-                G4ThreeVector position,
-                G4ThreeVector unitMomentum,
-                G4double      h,
-                G4bool        useCurvilinearWorld,
-                G4double      FCof);
+  BDSStep GlobalToCurvilinear(const G4double&      fieldArcLength,
+			      const G4ThreeVector& unitField,
+			      const G4double& 	   angle,
+			      const G4ThreeVector& position,
+			      const G4ThreeVector& unitMomentum,
+			      const G4double&      h,
+			      const G4bool&        useCurvilinearWorld,
+			      const G4double&      FCof,
+			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
 
-  BDSStep GlobalToCurvilinear(G4ThreeVector position,
-			      G4ThreeVector unitMomentum,
-			      G4double      h,
-			      G4bool        useCurvilinearWorld);
+  BDSStep GlobalToCurvilinear(const G4ThreeVector& position,
+			      const G4ThreeVector& unitMomentum,
+			      const G4double&      h,
+			      const G4bool&        useCurvilinearWorld);
 
-  BDSStep CurvilinearToGlobal(G4ThreeVector localPosition,
-			      G4ThreeVector localMomentum,
-			      G4bool        useCurvilinearWorld);
+  BDSStep CurvilinearToGlobal(const G4ThreeVector& localPosition,
+			      const G4ThreeVector& localMomentum,
+			      const G4bool&        useCurvilinearWorld);
 
-  BDSStep CurvilinearToGlobal(BDSMagnetStrength const* strength,
-				  G4double      angle,
-			      G4ThreeVector localPosition,
-			      G4ThreeVector localMomentum,
-			      G4bool        useCurvilinearWorld,
-			      G4double      FCof);
+  BDSStep CurvilinearToGlobal(const G4double&      fieldArcLength,
+			      const G4ThreeVector& unifField,
+			      const G4double&      angle,
+			      const G4ThreeVector& CLPosition,
+			      const G4ThreeVector& CLMomentum,
+			      const G4bool&        useCurvilinearWorld,
+			      const G4double&      FCof,
+			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
 
 protected:
   mutable G4AffineTransform globalToLocal;

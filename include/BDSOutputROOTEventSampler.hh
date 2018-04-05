@@ -38,34 +38,34 @@ class BDSSamplerHit;
  * @author Stewart Boogert
  */
 
-template<class T> class BDSOutputROOTEventSampler: public TObject
-{  
+template<class U> class BDSOutputROOTEventSampler: public TObject
+{
 public:
   std::string samplerName; //|| Don't split the header
   
   int                n;
-  std::vector<T>     energy;
-  std::vector<T>     x;
-  std::vector<T>     y;
-  T                  z;
-  std::vector<T>     xp;
-  std::vector<T>     yp;
-  std::vector<T>     zp;
-  std::vector<T>     t;
+  std::vector<U>     energy;
+  std::vector<U>     x;
+  std::vector<U>     y;
+  U                  z;
+  std::vector<U>     xp;
+  std::vector<U>     yp;
+  std::vector<U>     zp;
+  std::vector<U>     T;
 
-  std::vector<T>     weight;
+  std::vector<U>     weight;
   std::vector<int>   partID;
   std::vector<int>   parentID;
   std::vector<int>   trackID;
   int                modelID;
   std::vector<int>   turnNumber;
-  
-  T                  S;   // Will not need this when have global transforms
+
+  U                  S;   // Will not need this when have global transforms
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
-  std::vector<T>       mass;
-  std::vector<T>       rigidity;
+  std::vector<U>       mass;
+  std::vector<U>       rigidity;
   std::vector<bool>    isIon;
   std::vector<int>     ionA;
   std::vector<int>     ionZ;
@@ -73,8 +73,8 @@ public:
 
   /// @{ Function to calculate on the fly the parameters.
   std::vector<int>     getCharge();
-  std::vector<T>       getMass();
-  std::vector<T>       getRigidity();
+  std::vector<U>       getMass();
+  std::vector<U>       getRigidity();
   std::vector<bool>    getIsIon();
   std::vector<int>     getIonA();
   std::vector<int>     getIonZ();

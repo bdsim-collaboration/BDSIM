@@ -93,6 +93,7 @@ protected:
   G4int          creatorProcessSubType;
   G4double       weight;
   G4bool         interactive;
+  const G4bool   trajNoTransportation; ///< Cache of option from global constants.
   G4int          fParentIndex;
 
   /// Container of all points. This is really a vector so all memory is dynamically

@@ -33,26 +33,39 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 void usage()
 { 
-  std::cout << "usage: rebdsimOptics <dataFile> <outputfile>"         << std::endl;
-  std::cout << " <datafile>   - root file to operate on ie run1.root" << std::endl;
-  std::cout << " <outputfile> - name of output file ie optics.dat"    << std::endl;
-  std::cout << "This only works on a single file - no wildcards."     << std::endl;
+  std::cout << "usage: rebdsimOptics <dataFile> <outputfile> <--emittanceOnFly>" << std::endl;
+  std::cout << " <datafile>   - root file to operate on ie run1.root"            << std::endl;
+  std::cout << " <outputfile> - name of output file ie optics.dat"               << std::endl;
+  std::cout << " --emittanceOnFly - calculate emittance per sampler (optional)"  << std::endl;
+  std::cout << "Quotes should be used if * is used in the input file name."      << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  if (argc < 3 || argc > 4)
     {
       std::cout << "Incorrect number of arguments." << std::endl;
       usage();
       exit(1);
     }
 
-  std::string inputFileName  = std::string(argv[1]);
-  std::string outputFileName = std::string(argv[2]);
+  std::string inputFileName   = std::string(argv[1]);
+  std::string outputFileName  = std::string(argv[2]);
+
+  bool emittanceOnFly = false;
+  if (argc == 4)
+    {
+      std::string emittanceOnFlyS = std::string(argv[3]);
+      if (emittanceOnFlyS == "--emittanceOnFly")
+	{
+	  emittanceOnFly = true;
+	  std::cout << "Calculating emittance per sampler" << std::endl;
+	}
+    }
 
   DataLoader dl = DataLoader(inputFileName, false, true);
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(), false, true);
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree(),
+						 false, true, false, -1, emittanceOnFly);
   evtAnalysis->Execute();
 
   TFile* outputFile = new TFile(outputFileName.c_str(), "RECREATE");

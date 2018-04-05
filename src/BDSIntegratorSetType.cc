@@ -27,9 +27,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 template<>
 std::map<BDSIntegratorSetType, std::string>* BDSIntegratorSetType::dictionary =
   new std::map<BDSIntegratorSetType, std::string> ({
-      {BDSIntegratorSetType::geant4,   "geant4"},
-      {BDSIntegratorSetType::bdsimone, "bdsimone"},
-      {BDSIntegratorSetType::bdsimtwo, "bdsimtwo"},
+      {BDSIntegratorSetType::geant4,      "geant4"},
+      {BDSIntegratorSetType::bdsimone,    "bdsimone"},
+      {BDSIntegratorSetType::bdsimtwo,    "bdsimtwo"},
       {BDSIntegratorSetType::bdsimmatrix, "bdsimmatrix"},
       {BDSIntegratorSetType::bdsimmatrixfringescaling, "bdsimmatrixfringescaling"}
 #if G4VERSION_NUMBER > 1029
@@ -42,11 +42,11 @@ BDSIntegratorSetType BDS::DetermineIntegratorSetType(G4String integratorSet)
 {
   std::map<G4String, BDSIntegratorSetType> types;
   types["bdsim"]       = BDSIntegratorSetType::bdsimtwo; // alias for bdsim two the default
+  types["geant4"]      = BDSIntegratorSetType::geant4;
   types["bdsimone"]    = BDSIntegratorSetType::bdsimone;
   types["bdsimtwo"]    = BDSIntegratorSetType::bdsimtwo;
   types["bdsimmatrix"] = BDSIntegratorSetType::bdsimmatrix;
   types["bdsimmatrixfringescaling"] = BDSIntegratorSetType::bdsimmatrixfringescaling;
-  types["geant4"]      = BDSIntegratorSetType::geant4;
 #if G4VERSION_NUMBER > 1029
   types["geant4dp"]    = BDSIntegratorSetType::geant4dp;
 #endif

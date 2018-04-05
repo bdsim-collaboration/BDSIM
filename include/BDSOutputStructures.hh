@@ -114,7 +114,7 @@ protected:
   BDSOutputROOTEventLoss*       eLoss;     ///< General energy deposition.
   BDSOutputROOTEventLoss*       pFirstHit; ///< Primary hit point.
   BDSOutputROOTEventLoss*       pLastHit;  ///< Primary loss point.
-  BDSOutputROOTEventLoss*       tHit;      ///< Tunnel energy deposition.
+  BDSOutputROOTEventLoss*       tunnelHit; ///< Tunnel energy deposition.
   BDSOutputROOTEventTrajectory* traj;      ///< Trajectories.
   BDSOutputROOTEventHistograms* evtHistos; ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;   ///< Event information.

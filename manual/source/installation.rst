@@ -36,29 +36,29 @@ https://bitbucket.org/jairhul/bdsim/downloads/?tab=tags
 From Precompiled Sources
 ------------------------
 
-BDSIM may also be downloaded from pre-compiled sources. These are available
+BDSIM may also be downloaded from precompiled sources. These are available
 on: http://www.pp.rhul.ac.uk/bdsim/download
 
 .. AFS
    ---
 
    With AFS connection you can get the latest released BDSIM version from::
-   
+
    /afs/cern.ch/user/j/jsnuveri/public/bdsim
-   
+
    The latest develop version (updated daily) is available under::
-   
+
    /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
-   
+
    As usual the Geant4 environment script needs to be loaded::
-   
+
    source /afs/cern.ch/user/j/jsnuveri/public/geant4.10.2-setup.sh
 
 Requirements
 ============
 
-1) A recent compiler with full C++11 support. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onwards require `CMake`_ 3.3 or higher).
+1) A recent compiler with full C++11 support. Proven compiler versions are GCC 4.9 or higher, or clang 6 or higher.
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 onward requires `CMake`_ 3.3 or higher).
 3) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_.
 4) `ROOT`_ 6.0 or higher, for output & analysis.
 5) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher (latest patch of that release). See `Geant4 Installation Guide`_
@@ -71,10 +71,10 @@ Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
 
   > echo $G4 <tab>
-  $G4ABLADATA         $G4NEUTRONHPDATA    $G4RADIOACTIVEDATA  
-  $G4LEDATA           $G4NEUTRONXSDATA    $G4REALSURFACEDATA  
+  $G4ABLADATA         $G4NEUTRONHPDATA    $G4RADIOACTIVEDATA
+  $G4LEDATA           $G4NEUTRONXSDATA    $G4REALSURFACEDATA
   $G4LEVELGAMMADATA   $G4PIIDATA          $G4SAIDXSDATA
-     
+
 If these do not exists, please source the Geant4 environmental script
 before installing BDSIM and each time before using BDSIM. It is common
 to add this to your ``.bashrc`` or profile so that it's loaded automatically
@@ -92,7 +92,7 @@ The following sections detail the setup process for different operating systems.
 - `Linux`_
 
 .. - `Linux with AFS Access`_
-   
+
 Mac OSX
 -------
 
@@ -109,9 +109,9 @@ Install the `required packages`_ preferably with a
 package manager.
 
 Older version of Geant4 can be downloaded from their
-`archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
+`archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ .
 For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
-Note, the required compiler version (gcc 4.9) is more modern than the default one (gcc 4.4) on SL6. You
+Note, the required compiler version (GCC 4.9) is more modern than the default one (GCC 4.4) on SL6. You
 can check the compiler version with::
 
   gcc --version
@@ -124,36 +124,36 @@ After this, `Building`_ can be started.
 
 .. Linux with AFS Access
    ---------------------
-   
+
    When the machine has AFS connection, the latest stable release binary is available::
-   
+
    /afs/cern.ch/user/j/jsnuveri/public/bdsim
-   
-   Before using the binary you must source the geant4 setup::
-   
+
+   Before using the binary you must source the Geant4 setup::
+
    source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-   
+
    When compiling BDSIM from source, the dependent packages like Geant4 can
    be taken from AFS and don't need to be compiled and installed locally. The same
    compiler version needs to be used for BDSIM as the one that was used for Geant4.
-   The following scripts must be sourced before using CMake.  
-   
-   For the versions 0.61 and onwards::
-   
+   The following scripts must be sourced before using CMake.
+
+   For the versions 0.61 and onward::
+
    source /afs/cern.ch/user/j/jsnuveri/public/gcc49-setup.sh
    source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-   
+
    For version 0.6 and older::
-   
+
    source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
    source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
-   
+
    If compiling independently, GCC 4.9 can be found with::
-   
+
    source /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
-   
+
    but this must be sourced before using the software once compiled.
-   
+
    After this, `Building`_ can be started.
 
 Building
@@ -199,24 +199,24 @@ This typically produces the following output, which is slightly different on eac
   -- Found CLHEP 2.3.4.4 in /opt/local/lib/CLHEP-2.3.4.4/../../include
   -- Use ROOTSYS from environment: /Users/nevay/physics/packages/root-6.06.06-install
   -- Looking for ROOT...
-  -- Found ROOT 6.06/06 in /Users/nevay/physics/packages/root-6.06.06-install 
+  -- Found ROOT 6.06/06 in /Users/nevay/physics/packages/root-6.06.06-install
   -- GDML support ON
   -- Found CLHEP Version 2.3.4.4
-  -- Found CLHEP: /opt/local/lib/libCLHEP.dylib (Required is at least version "2.3.4.4") 
+  -- Found CLHEP: /opt/local/lib/libCLHEP.dylib (Required is at least version "2.3.4.4")
   -- Geant4 Use File: /Users/nevay/physics/packages/geant4.10.02.p03-install/lib/Geant4-10.2.3/UseGeant4.cmake
   -- Geant4 Definitions: -DG4_STORE_TRAJECTORY;-DG4VERBOSE;-DG4UI_USE;-DG4VIS_USE;-DG4UI_USE_TCSH;
      -DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;-DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;
      -DG4UI_USE_XM;-DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
   -- G4_VERSION: 10.2.3
-  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.13") 
-  -- Found BISON: /opt/local/bin/bison (found suitable version "3.0.4", minimum required is "2.4") 
-  -- Found FLEX: /opt/local/bin/flex (found version "2.6.1") 
+  -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.13")
+  -- Found BISON: /opt/local/bin/bison (found suitable version "3.0.4", minimum required is "2.4")
+  -- Found FLEX: /opt/local/bin/flex (found version "2.6.1")
   -- Looking for zlib
   -- Using Geant4 built in zlib
   -- Robdsim disabled by default - please move to rebdsim
   -- Copying example directory
-  -- Found Sphinx: /opt/local/bin/sphinx-build  
-  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx_rtd_theme  
+  -- Found Sphinx: /opt/local/bin/sphinx-build
+  -- Found PY_sphinx_rtd_theme: /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/sphinx_rtd_theme
   -- Configuring done
   -- Generating done
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-test-build
@@ -232,7 +232,7 @@ You can then compile BDSIM with::
   > make
 
 BDSIM can then be installed (default directory /usr/local) for access from anywhere on the system with::
-  
+
   > sudo make install
 
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
@@ -248,6 +248,7 @@ included with BDSIM (excluding long running tests)::
 
   > ctest -LE LONG
 
+.. _configuring-bdsim:
 
 Configuring the BDSIM Build with CMake
 --------------------------------------
@@ -333,14 +334,14 @@ Adapt parameters if needed with::
    > ccmake .
 
 Make and install::
-   
+
    > make
    > sudo make install
 
 Geant4 Installation Guide
 -------------------------
 
-As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.10 onwards).
+As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.10 onward).
 If not built with **MacPorts** then download the 4.10.2 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
@@ -349,7 +350,7 @@ Geant archive. Move and unpack to a suitable place ::
   geant4.10.2
 
 Make a build and installation directory **outside** that directory ::
-  
+
   > mkdir geant4.10.2-build
   > mkdir geant4.10.2-install
 
@@ -371,7 +372,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 	    :align: center
 
 .. tabularcolumns:: |p{7cm}|p{8cm}|
-	       
+
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
@@ -399,7 +400,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 |                                 | library and therefore, there's only one random number       |
 |                                 | generator and simulations have strong reproducibility.      |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the geant4 internal version.         |
+| **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the Geant4 internal version.         |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
 |                                 | not interactive. Useful for promotional materials.          |
@@ -412,7 +413,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 
 .. note:: The CLHEP option is required.  The GDML and QT options are strongly recommended. Others
 	  are as the user prefers.
-	     
+
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. If ``g`` is not an
 available option, then continue to press ``c`` until it becomes available. This
@@ -456,10 +457,10 @@ please contact us (see :ref:`support-section`).
 1) Visualisation does not work::
 
      "parameter value is not listed in the candidate List."
-   
+
    Check which graphics systems BDSIM has available, this is shown in the terminal when
    you run BDSIM ::
-     
+
      You have successfully registered the following graphics systems.
      Current available graphics systems are:
      ASCIITree (ATree)
@@ -477,13 +478,13 @@ please contact us (see :ref:`support-section`).
      VRML1FILE (VRML1FILE)
      VRML2FILE (VRML2FILE)
      gMocrenFile (gMocrenFile)
-   
+
    If your favourite is not there check that Geant4 is correctly compiled with that graphics system.
    You will have to reconfigure Geant4 and install any necessary libraries (such as Qt or XMotif), then
    recompile Geant4, then recompile bdsim.
 
 2) Error from OpenGL::
-     
+
      G4OpenGLImmediateX::CreateViewer: error flagged by negative view id in
      G4OpenGLImmediateXViewer creation.
 
@@ -493,11 +494,11 @@ please contact us (see :ref:`support-section`).
      fglrxinfo
 
    If fglrx is installed and working well you should see an output similar to::
-     
+
      > fglrxinfo
      display: :0  screen: 0
      OpenGL vendor string: Advanced Micro Devices, Inc.
-     OpenGL renderer string: ATI Radeon HD 4300/4500 Series       
+     OpenGL renderer string: ATI Radeon HD 4300/4500 Series
      OpenGL version string: 3.3.11399 Compatibility Profile Context
 
    For more info see https://help.ubuntu.com/community/BinaryDriverHowto/AMD
@@ -508,7 +509,7 @@ please contact us (see :ref:`support-section`).
      /afs/cern.ch/sw/lcg/external/geant4/9.6.p02/x86_64-slc6-gcc46-opt
      /lib64/libG4analysis.so: undefined reference to
      'std::__detail::_List_node_base::_M_unhook()@GLIBCXX_3.4.15'
-   
+
    This means compiler version for BDSIM is different from the one used to compile Geant4.
    Make sure it is the same compiler version. Remember to start from a clean build
    directory otherwise CMake does **NOT** update the compiler version.
@@ -526,7 +527,7 @@ please contact us (see :ref:`support-section`).
 		 as there is no compatible version of Geant4 available on AFS.
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of
-		 cores with the ``make -jN`` command. Ie a computer has 4 cores and supports
+		 cores with the ``make -jN`` command, i.e. a computer has 4 cores and supports
 		 hyper-threading, can support up to ``make -j8``.  Exceeding this number will
 		 result in slower than normal compilation.
 

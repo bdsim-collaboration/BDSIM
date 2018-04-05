@@ -11,12 +11,12 @@ General
 -------
 
 * All variables shall be namespaced and not global
-* The asterix is attached to the object not the variable name
+* The asterisk is attached to the object not the variable name
 
 ::
 
    BDSClassName* anInstance;
-   
+
 
 Naming
 ------
@@ -29,7 +29,7 @@ Naming
 * Member variables have no prefix (such as :code:`_variable` or :code:`m_variable`)
 * Member variables use lowerCamelCase
 
-  
+
 Indentation & Spacing
 ---------------------
 
@@ -67,15 +67,15 @@ Braces
      G4cout << a << G4endl;
      G4cout << "This is a test" << G4endl;
      }
-   
-  
+
+
 
 In-Code Documentation
 ---------------------
 
 * Every single class should have doxygen documentation in the header
 * Obviously comments are strongly encouraged, as well as notes in this documentation
-* Avoid documenting the purpose of functions (ie outside the function) in the source code - document the header
+* Avoid documenting the purpose of functions (i.e. outside the function) in the source code - document the header
 
 
 Python

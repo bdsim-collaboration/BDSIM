@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSFieldMagDipole.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
@@ -29,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -37,19 +39,27 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength const* strengthIn,
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
-							     G4double minimumRadiusOfCurvatureIn):
+							     G4double minimumRadiusOfCurvatureIn,
+							     const G4Transform3D&     tiltOffsetIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
-  bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   bRho(brhoIn),
+  eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
+  bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   fieldRatio((*strengthIn)["field"] / (bRho/rho)),
   nominalEnergy((*strengthIn)["nominalEnergy"]),
-  strength(strengthIn)
+  fieldArcLength((*strengthIn)["length"]),
+  fieldAngle((*strengthIn)["angle"]),
+  tiltOffset(tiltOffsetIn),
+  antiTiltOffset(tiltOffsetIn.inverse()),
+  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
-  eq = static_cast<BDSMagUsualEqRhs*>(eqOfM);
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
+  BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
+  unitField = (dipoleField->FieldValue()).unit();
+  delete dipoleField;
+  angleForCL = fieldRatio != 1 ? fieldAngle * fieldRatio : fieldAngle;
 }
 
 BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
@@ -58,7 +68,7 @@ BDSIntegratorDipoleQuadrupole::~BDSIntegratorDipoleQuadrupole()
 }
 
 void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
-					    const G4double dydx[],
+					    const G4double dydx[6],
 					    const G4double h,
 					    G4double       yOut[6],
 					    G4double       yErr[6])
@@ -105,15 +115,9 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
-  // calculate effective dipole angle for the given field
-  G4double angle = (*strength)["angle"];
-  if (fieldRatio != 1)
-    {// update angle used by CL transforms - transform to the CL trajectory
-     // corresponding to the dipole angle for the supplied field
-      angle *= fieldRatio;
-    }
-
-  BDSStep       localCL     = GlobalToCurvilinear(strength, angle, globalPos, globalMom, h, true, fcof);
+  BDSStep       localCL     = GlobalToCurvilinear(fieldArcLength, unitField, angleForCL,
+						  globalPos, globalMom, h, true, fcof,
+						  tiltOffset);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -133,7 +137,9 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, angle, localCLPosOut, localCLMomOut, true, fcof);
+  BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, angleForCL,
+					  localCLPosOut, localCLMomOut, true, fcof,
+					  antiTiltOffset);
 
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();

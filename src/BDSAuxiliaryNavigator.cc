@@ -287,26 +287,26 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
   return LocalToGlobal(useCurvilinear).TransformPoint(localPosition);
 }
 
-BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(G4ThreeVector position,
-						   G4ThreeVector unitMomentum,
-						   G4double      h,
-						   G4bool        useCurvilinearWorld)
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4ThreeVector& position,
+						   const G4ThreeVector& unitMomentum,
+						   const G4double&      h,
+						   const G4bool&        useCurvilinearWorld)
 {
   return ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 }
 
-BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* strength,
-                           G4double      angle,
-						   G4ThreeVector position,
-						   G4ThreeVector unitMomentum,
-						   G4double      h,
-						   G4bool        useCurvilinearWorld,
-						   G4double      FCof)
+BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArcLength,
+						   const G4ThreeVector& unitField,
+						   const G4double&      angle,
+						   const G4ThreeVector& position,
+						   const G4ThreeVector& unitMomentum,
+						   const G4double&      h,
+						   const G4bool&        useCurvilinearWorld,
+						   const G4double&      FCof,
+						   const G4Transform3D& /*tiltOffset*/)
 {
-  G4double arcLength         = (*strength)["length"];
-  G4double radiusOfCurvature = arcLength / angle;
-  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
-  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+  G4double radiusOfCurvature = fieldArcLength / angle;
+  G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
   BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 
@@ -321,13 +321,27 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
 
   // only find angle between particle and radiusAtChord in x-z plane,
   // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
+  // generalise to 3D - take projection of local position (in frame of solid) onto plane
+  // defined by the unit field vector as a normal on the origin. We take the projection
+  // onto the normal of the plane (here the field field unit vector in local solid coordinates)
+  // - the 'rejection', and then take the point - that projection to get the projection on the plane.
+  //G4ThreeVector localPosProjOnBendPlane = localPos - localPos.project(localUnitF);
+  // we want a vector pointing from the origin of the solid to the point of bending.
+  // the direction of the bending radius is given by the cross product of the field
+  // (unit) with local unit Z - giving a unit direction. Multiplied by radius length.
+  //G4ThreeVector arcCentre = unitField.cross(G4ThreeVector(0,0,1))*-radiusAtChord;
+  //G4ThreeVector partVectToCentre  = arcCentre - localPosProjOnBendPlane;
+  //G4double partToCentreDist       = partVectToCentre.mag();
+  
+  // only find angle between particle and radiusAtChord in x-z plane,
+  // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
   G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
   G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
   G4ThreeVector partVectToCentre  = arcCentre - localXZPos;
   G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
-  G4double theta = acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
+  G4double theta = std::acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partToCentreDist));
 
   // theta should be negative for first 'half' of dipole
   if (localZ < 0)
@@ -351,24 +365,24 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(BDSMagnetStrength const* stre
   return BDSStep(localPosCL, localMomCL);
 }
 
-BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(G4ThreeVector localPosition,
-						   G4ThreeVector localMomentum,
-						   G4bool        useCurvilinearWorld)
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4ThreeVector& localPosition,
+						   const G4ThreeVector& localMomentum,
+						   const G4bool&        useCurvilinearWorld)
 {
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }
 
-BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* strength,
-                           G4double      angle,
-						   G4ThreeVector CLPosition,
-						   G4ThreeVector CLMomentum,
-						   G4bool        useCurvilinearWorld,
-						   G4double      FCof)
+BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArcLength,
+						   const G4ThreeVector& unitField,
+						   const G4double&      angle,
+						   const G4ThreeVector& CLPosition,
+						   const G4ThreeVector& CLMomentum,
+						   const G4bool&        useCurvilinearWorld,
+						   const G4double&      FCof,
+						   const G4Transform3D& /*antiTiltOffset*/)
 {
-  G4double arcLength         = (*strength)["length"];
-  G4double radiusOfCurvature = arcLength / angle;
-  G4double radiusAtChord     = radiusOfCurvature * cos(angle*0.5);
-  G4ThreeVector unitField    = G4ThreeVector(0,(*strength)["field"],0).unit();
+  G4double radiusOfCurvature = fieldArcLength / angle;
+  G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
   // Test on finite angle here. If the angle is 0, return convert to global transform.
   if (!BDS::IsFinite(angle))
@@ -380,7 +394,7 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* stre
 
   G4double theta = CLPosition.z() / radiusOfCurvature;
 
-  G4double partToCentreDist  = CLPosition.x() + radiusOfCurvature;
+  G4double partToCentreDist = CLPosition.x() + radiusOfCurvature;
   G4double localZ = partToCentreDist * std::sin(theta);
   G4double localX = (partToCentreDist * std::cos(theta)) - radiusAtChord;
 
@@ -394,7 +408,7 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(BDSMagnetStrength const* stre
     {rotationAngle *= -1;}
 
   G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
-  G4ThreeVector localMomentum = CLMomentum.rotate(rotationAngle, localUnitF);;
+  G4ThreeVector localMomentum = G4ThreeVector(CLMomentum).rotate(rotationAngle, localUnitF);;
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }

@@ -58,6 +58,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name,
   x(0.0),
   y(0.0),
   z(0.0),
+  globalTime(0.0),
   stepLength(0.0),
   ptype(0),
   trackID(-1),
@@ -131,7 +132,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   x = eDepPosLocal.x();
   y = eDepPosLocal.y();
   z = eDepPosLocal.z();
-  
+
+  // Just as the energy deposition is attributed to a uniformly random
+  // point between the preStep and the postStep positions, attribute the
+  // deposition to random time between preStep and postStep times,
+  // using the same random number as for the position.
+  G4double preGlobalTime = aStep->GetPreStepPoint()->GetGlobalTime();
+  G4double postGlobalTime = aStep->GetPostStepPoint()->GetGlobalTime();
+  globalTime = preGlobalTime + randDist * (postGlobalTime - preGlobalTime);
+
   // get the s coordinate (central s + local z)
   // volume is from curvilinear coordinate parallel geometry
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
@@ -206,6 +215,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
                                                        sAfter,
                                                        sHit,
                                                        x, y, z,
+						       globalTime,
                                                        volName,
                                                        ptype,
                                                        trackID,

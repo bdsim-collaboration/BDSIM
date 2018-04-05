@@ -49,18 +49,20 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeLinks  = globals->StoreELossLinks();
   G4bool storeLocal  = globals->StoreELossLocal();
   G4bool storeGlobal = globals->StoreELossGlobal();
+  G4bool storeTime   = globals->StoreElossTime();
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
   beamOutput    = new BDSOutputROOTEventBeam();
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
-  
-  eLoss     = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal);
-  pFirstHit = new BDSOutputROOTEventLoss(true      ,       true,       false);
-  pLastHit  = new BDSOutputROOTEventLoss(true      ,       true,       false);
-  tHit      = new BDSOutputROOTEventLoss(false     ,      false,       true);
-  traj      = new BDSOutputROOTEventTrajectory();
+
+  eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
+                                     storeTime);
+  pFirstHit = new BDSOutputROOTEventLoss(true, true, false, true);
+  pLastHit = new BDSOutputROOTEventLoss(true, true, false, true);
+  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false);
+  traj = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
   runHistos = new BDSOutputROOTEventHistograms();
@@ -86,7 +88,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete eLoss;
   delete pFirstHit;
   delete pLastHit;
-  delete tHit;
+  delete tunnelHit;
   delete traj;
   delete evtHistos;
   delete evtInfo;
@@ -159,7 +161,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
-  tHit->Flush();
+  tunnelHit->Flush();
   traj->Flush();
   evtHistos->Flush();
 }

@@ -66,9 +66,9 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
   BDSBeamline* result = new BDSBeamline();
 
   //prepend small sections to machine when non-circular
-  G4bool bonusSections = (circular == false && beamline->empty() == false);
+  G4bool bonusSections = (!circular && !beamline->empty());
 
-  if (bonusSections == true)
+  if (bonusSections)
     {//prepend small section to machine
       BDSBeamlineElement* bonusBit = CreateBonusSectionStart(beamline);
       result->AddBeamlineElement(bonusBit);
@@ -84,7 +84,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
 	{result->AddBeamlineElement(temp);}
     }
 
-  if (bonusSections == true)
+  if (bonusSections)
     {// append small section to machine
       BDSBeamlineElement* bonusBit = CreateBonusSectionEnd(beamline);
       if (bonusBit)

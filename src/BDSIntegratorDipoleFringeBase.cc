@@ -16,8 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <include/BDSGlobalConstants.hh>
 #include "BDSDebug.hh"
+#include "BDSFieldMagDipole.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDipoleFringeBase.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -27,33 +28,43 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
+#include <cmath>
 
 G4double BDSIntegratorDipoleFringeBase::thinElementLength = -1; // unphysical
 
 BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strengthIn,
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
-							     G4double                 minimumRadiusOfCurvatureIn):
+							     G4double                 minimumRadiusOfCurvatureIn,
+							     const G4Transform3D&     tiltOffsetIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
   secondFringeCorr(BDS::SecondFringeFieldCorrection(strengthIn)),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
-  strength(strengthIn)
+  fieldArcLength((*strengthIn)["length"]),
+  fieldAngle((*strengthIn)["angle"]),
+  tiltOffset(tiltOffsetIn),
+  antiTiltOffset(tiltOffset.inverse())
 {
   if (thinElementLength < 0)
-  {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+    {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
+  BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
+  unitField = (dipoleField->FieldValue()).unit();
+  delete dipoleField;
 }
 
-void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
-                                                const G4double dydx[],
-                                                const G4double h,
-                                                G4double       yOut[],
-                                                G4double       yErr[],
-                                                G4double       fcof,
-                                                G4double       momScaling)
+void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
+                                                const G4double  dydx[6],
+                                                const G4double& h,
+                                                G4double        yOut[6],
+                                                G4double        yErr[6],
+                                                const G4double& fcof,
+                                                const G4double& momScaling)
 {
   // Protect against neutral particles, and zero field: drift through.
   if (!BDS::IsFinite(fcof) || zeroStrength)
@@ -104,10 +115,10 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   if (localMomU.z() < 0.9)
     {// copy output from dipole kick output
       for (G4int i = 0; i < 3; i++)
-    {
-      yOut[i]     = yTemp[i];
-      yOut[i + 3] = yTemp[i + 3];
-    }
+	{
+	  yOut[i]     = yTemp[i];
+	  yOut[i + 3] = yTemp[i + 3];
+	}
       return;
     }
 
@@ -126,7 +137,9 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, bendingRad);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(strength, (*strength)["angle"], localCLPosOut, localCLMomOut, false, fcof);
+  BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, fieldAngle,
+					  localCLPosOut, localCLMomOut, false, fcof,
+					  tiltOffset);
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
@@ -145,23 +158,31 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double yIn[],
   }
 }
 
-void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
-                                            G4ThreeVector  momIn,
-                                            G4ThreeVector  momUIn,
-                                            G4ThreeVector& posOut,
-                                            G4ThreeVector& momOut,
-                                            G4double       bendingRadius) const
+void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
+                                            const G4ThreeVector& momIn,
+                                            const G4ThreeVector& momUIn,
+                                            G4ThreeVector&       posOut,
+                                            G4ThreeVector&       momOut,
+                                            const G4double&      bendingRadius) const
 {
-  G4double x0  = posIn.x() / CLHEP::m;
-  G4double y0  = posIn.y() / CLHEP::m;
-  G4double s0  = posIn.z();
-  G4double xp  = momUIn.x();
-  G4double yp  = momUIn.y();
-  G4double zp  = momUIn.z();
+  G4ThreeVector posTransformed(posIn);
+  G4ThreeVector momUTransformed(momUIn);
+  if (tiltOffset != G4Transform3D::Identity)
+    {
+      auto rot = tiltOffset.getRotation();
+      posTransformed.transform(rot);
+      momUTransformed.transform(rot);
+    }
+  G4double x0 = posTransformed.x() / CLHEP::m;
+  G4double y0 = posTransformed.y() / CLHEP::m;
+  G4double s0 = posTransformed.z();
+  G4double xp = momUTransformed.x();
+  G4double yp = momUTransformed.y();
+  G4double zp = momUTransformed.z();
 
-  G4double x1  = x0;
-  G4double y1  = y0;
-  G4double s1  = s0;
+  G4double x1 = x0;
+  G4double y1 = y0;
+  G4double s1 = s0;
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
@@ -174,11 +195,11 @@ void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
 
   // calculate fringe field kick
   X11 = 1;
-  X21 = tan(polefaceAngle) / (bendingRadius / CLHEP::m);
+  X21 = std::tan(polefaceAngle) / (bendingRadius / CLHEP::m);
   X22 = 1;
 
   Y11 = 1;
-  Y21 = -tan(polefaceAngle - fringeFieldCorrection) / (bendingRadius / CLHEP::m);
+  Y21 = -std::tan(polefaceAngle - fringeFieldCorrection) / (bendingRadius / CLHEP::m);
   Y22 = 1;
 
   x1  = X11*x0 + X12*xp;
@@ -196,6 +217,13 @@ void BDSIntegratorDipoleFringeBase::OneStep(G4ThreeVector  posIn,
   momOut = momOutUnit * momInMag;
 
   posOut = G4ThreeVector(x1, y1, s1);
+
+  if (tiltOffset != G4Transform3D::Identity)
+    {
+      auto rot = antiTiltOffset.getRotation();
+      momOut.transform(rot);
+      posOut.transform(rot);
+    }
 }
 
 

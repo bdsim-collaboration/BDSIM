@@ -23,8 +23,8 @@ As well as being a vector of the beam line elements, when each :code:`BDSAcceler
 is added to the beam line, the coordinates that it should be placed in the world that represent
 that element's position in the beam line are calculated. The rotation matrices and positions for
 the beginning, middle and end are stored along with the :code:`BDSAcceleratorComponent` instance
-in a :code:`BDSBeamlineElement` instance. A further subtelty is that any one element can be offset or
-tilted with respect to the accelerator curvlinear reference ('design') trajectory, so the originals
+in a :code:`BDSBeamlineElement` instance. A further subtlety is that any one element can be offset or
+tilted with respect to the accelerator curvilinear reference ('design') trajectory, so the originals
 are stored under the name 'reference' and the final positions (incorporating tilts and offsets)
 are recorded without name.
 
@@ -40,7 +40,7 @@ any one component affects the reference ('design') trajectory.
   assumed to be a single smooth change.
 * Any offset in the reference trajectory at the end of a :code:`BDSAcceleratorComponent` is due
   to the change in angle through the component.
-* It is not possible for the outgoing trajectory to be offset but with zero angle - ie
+* It is not possible for the outgoing trajectory to be offset but with zero angle, i.e.
   a slalom or S shape.
 
 **A Few Important Points**
@@ -48,7 +48,7 @@ any one component affects the reference ('design') trajectory.
 * Geant4 uses the right handed coordinate system.
 * Euler angles are used to rotate frames of reference and offsets are applied first.
 * :math:`l` is not used for length in the code - only :code:`chordLength` or :code:`arcLength` to be explicit.
-* The chord length and arclength are supplied or calculated in :code:`BDSAcceleratorComponent`.
+* The chord length and arc length are supplied or calculated in :code:`BDSAcceleratorComponent`.
 
 A schematic of the chord and arc length for a :code:`BDSAcceleratorComponent` with a finite bend
 angle is shown below.
@@ -59,7 +59,7 @@ angle is shown below.
 
 	   Schematic of chord and arc length as well as reference points and planes for
 	   a :code:`BDSAcceleratorComponent` that bends by finite angle :math:`\alpha`.
-	  
+
 
 Component Factory
 =================
@@ -118,11 +118,11 @@ segments, the result would be similar to the sequence shown in the figure below.
 
 	   An example sequence of rbend magnets (without pole face angles).
 
-	  
+
 To split an rbend into multiple segments to create a straight final magnet would require an indefinite look ahead
 (beyond the current one element look ahead), to determine the total length and angle. This would then be followed
 by a rotation of each segment, and a lateral offset to form the line. The current implementation would become more
-prominant for a larger total angle (especially if the magnet length was short), however, given the rarity of this,
+prominent for a larger total angle (especially if the magnet length was short), however, given the rarity of this,
 the current method can suffice for now.
 
 Angles of Sector Bend Faces
@@ -131,7 +131,7 @@ Angles of Sector Bend Faces
 Sbends can be easily broken up by the user into smaller consecutive sbends if needed. If multiple sbends are defined
 as such, the input pole face angle (e1) for an sbend must be -1 times the output pole face angle (e2) of the previous
 sbend, this is purely to avoid overlaps between elements. This doesn't apply to the input angle and output angle of
-the first and last sbends respectively, these are effectivley the pole face rotation for the whole sequence.
+the first and last sbends respectively, these are effectively the pole face rotation for the whole sequence.
 
 Irrespective of any splitting from the user, all sbends are split into an odd number of segments. This is calculated in
 :code:`CalculateNSBendSegments`. Each segment has the equal length along the reference trajectory, and the number of segment it
@@ -151,9 +151,9 @@ When there is no pole face angle specified, each sbend segment will have the sam
 total bending angle, divided by the number of sbends. With a finite pole face angle(s), the input and output face angle of
 each segment increases or decreases as appropriate from the first wedge (with the user specified e1) until the central wedge
 is reached. (This is why the number of sbend segments must always be odd, as the angle algorithm always works towards/away
-from a cental wedge). This central wedge has the face angles equal to that if no pole face angles were supplied. From the
+from a central wedge). This central wedge has the face angles equal to that if no pole face angles were supplied. From the
 middle wedge, the face angles are then increased/decreased as appropriate until the final wedge is created with the users
-specifed e2.
+specified e2.
 
 There are multiple reasons for this implementation. Without the change in face angle for each segment, if a large e1 is
 specified when the length of each segment is short, the projected length of the first segment would overlap with the next

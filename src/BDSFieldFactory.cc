@@ -424,13 +424,16 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     }
   
-  // Optionally provide local to global transform using curvilinear coordinate system.
+
   BDSFieldMag* resultantField = field;
+  // Set transform for local geometry offset
+  // Do this before wrapping in global converter BDSFieldMagGlobal so that the sub-field
+  // has it and not the global wrapper.
+  resultantField->SetTransform(info.Transform());
+
+  // Optionally provide local to global transform using curvilinear coordinate system.
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldMagGlobal(field);}
-
-  // Set transform for local geometry offset
-  resultantField->SetTransform(info.Transform());
 
   // Always this equation of motion for magnetic (only) fields
   BDSMagUsualEqRhs* eqOfM = new BDSMagUsualEqRhs(resultantField);
@@ -547,7 +550,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::dipolerodrigues2:
       integrator = new BDSIntegratorDipoleRodrigues2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::dipolematrix:
-      integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Transform()); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::sextupole:
@@ -559,9 +562,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::multipolethin:
       integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
-      integrator = new BDSIntegratorDipoleFringe(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleFringe(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Transform()); break;
     case BDSIntegratorType::dipolefringescaling:
-      integrator = new BDSIntegratorDipoleFringeScaling(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
+      integrator = new BDSIntegratorDipoleFringeScaling(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Transform()); break;
     case BDSIntegratorType::euler:
       integrator = new BDSIntegratorEuler(eqOfM); break;
     case BDSIntegratorType::kickerthin:
