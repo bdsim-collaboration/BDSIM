@@ -337,7 +337,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
-  G4double theta = std::acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partVectToCentre.mag()));
+  G4double theta = std::acos(partVectToCentre.dot(arcCentre) / (arcCentre.mag() * partToCentreDist));
 
   // theta should be negative for first 'half' of dipole
   if (localZ < 0)
