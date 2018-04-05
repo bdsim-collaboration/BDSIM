@@ -60,9 +60,12 @@ public:
   std::vector<float>        Y;
   std::vector<float>        Z;
   /// @}
-  
+
+  std::vector<float>        T; ///< global time (time since beginning of event)
+
   BDSOutputROOTEventLoss();
-  BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal);
+  BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal,
+                         bool storeTime);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(const BDSTrajectoryPoint* hit);
@@ -73,7 +76,7 @@ public:
   bool storeLinks  = false; // Store links between Eloss and model and trajectors
   bool storeLocal  = false; // Store local coordinates
   bool storeGlobal = false; // Store global coordinates
-  
+  bool storeTime   = false; // Store global time
   ClassDef(BDSOutputROOTEventLoss,1);
 };
 

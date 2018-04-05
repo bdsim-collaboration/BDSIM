@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
+#include "G4Transform3D.hh"
 
 namespace BDS
 {
@@ -49,31 +50,32 @@ public:
   BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strength,
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
-				G4double                 minimumRadiusOfCurvature);
+				G4double                 minimumRadiusOfCurvature,
+				const G4Transform3D&     tiltOffsetIn = G4Transform3D::Identity);
   
   virtual ~BDSIntegratorDipoleFringeBase(){;}
 
   /// The stepper for integration. Particle charge and momentum scaling are provided as arguments
   /// as they are calculated in the derived classes. Uses BDSIntegratorDipole2::Stepper and then adds
   /// a kick in yp in curvilinear coordinates.
-  void BaseStepper(const G4double yIn[],
-                   const G4double dydx[],
-                   const G4double h,
-                   G4double       yOut[],
-                   G4double       yErr[],
-                   G4double       fcof,
-                   G4double       momScaling);
+  void BaseStepper(const G4double  yIn[6],
+                   const G4double  dydx[6],
+                   const G4double& h,
+                   G4double        yOut[6],
+                   G4double        yErr[6],
+                   const G4double& fcof,
+                   const G4double& momScaling);
 
 
   /// Calculate a single step using dipole fringe field matrix.
   /// Unit momentum, momentum magnitude, and normalised bending radius are provided
   /// as arguments because they already calculated in the BaseStepper method.
-  void OneStep(G4ThreeVector  posIn,
-               G4ThreeVector  momIn,
-               G4ThreeVector  momUIn, // assumed unit momentum of momIn
-               G4ThreeVector& posOut,
-               G4ThreeVector& momOut,
-               G4double       bendingRadius) const;
+  void OneStep(const G4ThreeVector& posIn,
+               const G4ThreeVector& momIn,
+               const G4ThreeVector& momUIn, // assumed unit momentum of momIn
+               G4ThreeVector&       posOut,
+               G4ThreeVector&       momOut,
+               const G4double&      bendingRadius) const;
 
 protected:
   /// Poleface rotation angle
@@ -85,7 +87,12 @@ protected:
   /// Nominal magnet bending radius
   const G4double rho;
 
-  BDSMagnetStrength const* strength;
+  G4ThreeVector unitField;       ///< Cache of the unit field direction.
+  const G4double fieldArcLength; ///< Cache of the field arc length.
+  const G4double fieldAngle;     ///< Cache of the field angle.
+
+  G4Transform3D tiltOffset;
+  G4Transform3D antiTiltOffset;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.

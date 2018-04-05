@@ -145,7 +145,7 @@ void PTC::TfsFile::ParseData(const std::string& line)
 			  numbers[3], // px
 			  numbers[4], // y
 			  numbers[5], // py
-			  numbers[6], // t
+			  numbers[6], // T
 			  numbers[7], // pt
 			  numbers[8], // S
 			  numbers[9]};// E

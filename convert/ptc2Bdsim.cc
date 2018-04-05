@@ -175,8 +175,8 @@ int main(int argc, char *argv[])
 	  lSampler->xp.push_back(data.px);
 	  lSampler->yp.push_back(data.py);
 	  lSampler->zp.push_back(std::sqrt(1 - std::pow(data.px,2) - std::pow(data.py,2)));
-	  lSampler->t.push_back(data.t);
-	  
+	  lSampler->T.push_back(data.T);
+
 	  lSampler->weight.push_back(1);
 	  lSampler->partID.push_back(pdgID);
 	  lSampler->parentID.push_back(0);

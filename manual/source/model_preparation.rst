@@ -100,3 +100,143 @@ with a distribution according to the core Gaussian distribution. Samplers are at
 all elements to record the particle distribution after each element. A provided optical
 analysis is used to claculate optical functions and moments of the particle coordinates
 that can then be compared to a reference.
+
+Recommended Options for Generating Optics
+-----------------------------------------
+
+Options in gmad::
+  
+  option, physicsList="em",
+          stopSecondaries=1,
+	  aper1=5*cm;
+
+  sample, all;
+
+* If no physics is present particles will not interact with material and will not stop if lost.
+* Stop secondaries will kill any secondary particles - faster and doesn't pollute data.
+* A large aperture size should be use throughout to avoid clipping the beam.
+* Samplers should be attached to all elements to record the beam distribution after each element.
+
+.. note:: Attaching samplers to all elements vastly increases the output data file size and the
+	  use should generally only attach samplers to points of specific interest.
+
+A Gaussian beam according to the Twiss parameters at the start of the beam line should be used. An
+emittance should be chosen that is used in the source of optics (ie in the MADX model and therefore
+appears in the header of the TFS Twiss output), but an emittance that ensures the beam size is small
+enough throughout the machine to avoid particles clipping.
+
+A target number of particles is 1000 for linear optics with no energy spread and approximately 10000
+for a beam with energy spread. The optical analysis calculates the statistical uncertainty associated
+with estimating each parameter given there is a finite number of particles. With approximately 1000
+particles, it is very unlikely to have any particles beyond 3:math:`\sigma` for a Gaussian distribution,
+therefore as long as most apertures are above this, no particles should be lost.
+
+Generating Optics Data
+----------------------
+
+BDSIM should be executed in batch mode running between 1000 and 10000 particles (for example).::
+
+  bdsim --file=mymodel.gmad --outfile=op1 --batch --ngenerate=2000
+
+Analysing Optics Data
+---------------------
+
+The output file can then be analysed with `rebdsimOptics`. `rebdsimOptics` is a simple interface to
+`rebdsim` to calculate optical functions only. It is possible to run `rebdsim` with an analysis
+configuration text file specifying `CalculateOpticalFunctions` (see :ref:`output-analysis-configuration-file`).
+Rebdsim takes arguments the input file(s) and the desired output file name for the optical functions.
+The optical functions are written to a separate ROOT format file only containing the optical functions.::
+
+  rebdsimOptics op1.root op1_optics.root
+
+To calculate the optical functions, the emittance is calculated from the distribution at each sampler.
+In this case, only linear optics should be used as non-linear optical elements such as sextupoles
+and higher order magnets couple the emittance in horizontal and vertical and the calculation is invalid
+for Twiss parameters. The default option in `rebdsimOptics` is to calculate the emittance only once
+for the first sampler and assume this for all subsequent samplers. In the case of acceleration, or
+where the geometrical emittance is expected to change, the emittance can be calculated at each sampler
+freshly. The executable option `--emittanceOnFly` should be used.::
+
+  rebdsimOptics op1.root op1_optics.root --emittanceOnFly
+
+.. note:: When using rebdsimOptics to analyse multiple files for optics, the input file name should
+	  be surrounded with inverted commas - i.e. :code:`rebdsimOptics "*.root" optics.root`.
+
+Loading Optical Data
+--------------------
+
+After calculating the optical functions, the data file can be loaded in ROOT manually or
+using the provided `pybdsim` utility in Python using ROOT.::
+
+  > python
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("op1_optics.root")
+  >>> d.optics
+
+This provides arrays of all the optical functions in a dictionary.
+  
+Comparison of Optics
+--------------------
+
+For each of the formats BDSIM supports for converting models, there is a comparison plotting script
+in `pybdsim` to allow easy comparison. For MADX conversion for example, the Twiss output in a TFS
+file can be used.::
+
+  > python
+  >>> import pybdsim
+  >>> pybdsim.Compare.MadxVsBDSIM('madxtwiss.tfs', 'op1_optics.root')
+
+This will create a series of plots with both the optical functions from MADX and those calcualted by
+`rebdsimOptics` on the same plot with a colour machine diagram on top. A few example plots are shown
+below.
+
+All plots are also written by default to a single pdf file whose name is by default based on the
+the `rebdsimOptics` output file name given to the comparison. In this case, it would be `op1_optics.pdf`.
+
+
+.. figure:: figures/optics/mean.pdf
+	    :width: 100%
+	    :align: center
+
+.. figure:: figures/optics/sigma.pdf
+	    :width: 100%
+	    :align: center
+
+.. figure:: figures/optics/sigmap.pdf
+	    :width: 100%
+	    :align: center
+
+.. figure:: figures/optics/beta.pdf
+	    :width: 100%
+	    :align: center
+	       
+.. figure:: figures/optics/alpha.pdf
+	    :width: 100%
+	    :align: center
+
+
+Comparison Notes
+----------------
+
+It is worth noting that we are drawing a sample of particle coordinates from a probability distribution
+and then calculating moments of the sample distribution to estimate the original parameters of the
+probability distribution. With a higher number of samples, the estimate improves but it still an estimate.
+The optical comparison is useful to validate the model preparation and extremely small differences in
+optical functions should not be taken as poor tracking.
+
+Advanced Comparison
+-------------------
+
+For very precise comparison, there are two further possible options that can be used.
+
+1) BDSIM can be compiled with double precision output as opposed to the default floating-point
+   precision. This is a CMake option (see :ref:`configuring-bdsim`). The option `ROOT_DOUBLE_OUTPUT`
+   should be turned on and BDSIM recompiled and installed.
+
+2) :code:`beam, offsetSampleMean=1` should be used in the input gmad. This precalculates all coordinates
+   of the particles and subtracts the small sample mean from each coordinate removing any small systematic
+   offset at the beginning that typically propagates throughout the beam line. This will not work in the
+   visualiser and breaks the strong-reproducibility in BDSIM - use with caution.
+
+
+

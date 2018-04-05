@@ -220,6 +220,7 @@ namespace GMAD
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
+    bool        storeElossTime;
 
     bool        storeTrajectory;
     int         storeTrajectoryDepth;

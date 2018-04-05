@@ -56,6 +56,7 @@ public:
 		      G4double xIn               = 0,    // local x
 		      G4double yIn               = 0,    // local y
 		      G4double zIn               = 0,    // local z
+		      G4double globalTimeIn      = 0,    // global time
 		      G4String nameIn            = "",   // volume name
 		      G4int    partIDIn          = 0,    // PDG id - particle type
 		      G4int    trackID           = -1,   // Track ID
@@ -84,6 +85,7 @@ public:
   inline G4double Getx()               const {return x;} 
   inline G4double Gety()               const {return y;}
   inline G4double Getz()               const {return z;} 
+  inline G4double GetGlobalTime()      const {return globalTime;}
   inline G4String GetName()            const {return name;}
   inline G4int    GetPartID()          const {return partID;}
   inline G4int    GetTrackID()         const {return trackID;}
@@ -124,7 +126,9 @@ private:
   G4double y;
   G4double z;
   /// @}
-  
+
+  G4double globalTime; ///< Time since start of event
+
   G4String name;
   G4int    partID;
   G4int    trackID;

@@ -207,6 +207,7 @@ OptionsBase::OptionsBase()
   storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;
+  storeElossTime           = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 0;
   storeTrajectoryParticle   = "";

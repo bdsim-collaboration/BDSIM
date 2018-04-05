@@ -119,6 +119,8 @@ where :math:`\sigma` is the standard deviation of the values in that bin for all
 .. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
 
+.. _output-analysis-configuration-file:
+	  
 Analysis Configuration File
 ===========================
 
