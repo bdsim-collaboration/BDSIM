@@ -20,7 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSIntegratorRMatrix.hh"
 
-BDSIntegratorRMatrix::BDSIntegratorRMatrix(G4Mag_EqRhs* eqOfMIn) :
+BDSIntegratorRMatrix::BDSIntegratorRMatrix(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn) :
         BDSIntegratorMag(eqOfMIn, 6)
 {}
 

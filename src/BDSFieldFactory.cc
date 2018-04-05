@@ -67,6 +67,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSIntegratorRmatrix.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
@@ -569,7 +570,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
       integrator = new BDSIntegratorEuler(eqOfM); break;
     case BDSIntegratorType::kickerthin:
       integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
-    case BDSIntegratorType::g4constrk4:
+    case BDSIntegratorType::rmatrixthin:
+      integrator = new BDSIntegratorRMatrix(strength,eqOfM); break;
+      case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
       integrator = new G4ExactHelixStepper(eqOfM); break;

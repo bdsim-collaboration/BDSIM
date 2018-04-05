@@ -1102,8 +1102,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
                                           vacuumField);
 
   thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
-                                     beamPipeInfo->aper1,
-                                     thinElementLength*0.5));
+                                   beamPipeInfo->aper1,
+                                   thinElementLength*0.5));
 
   return thinRMatrix;
 }

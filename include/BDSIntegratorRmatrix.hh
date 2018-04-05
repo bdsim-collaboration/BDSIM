@@ -40,7 +40,7 @@ class BDSMagnetStrength;
 class BDSIntegratorRMatrix: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorRMatrix(G4Mag_EqRhs* eqOfMIn);
+  BDSIntegratorRMatrix(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn);
 
   virtual ~BDSIntegratorRMatrix(){;}
 
