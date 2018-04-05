@@ -331,9 +331,19 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
 
   // only find angle between particle and radiusAtChord in x-z plane,
   // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
-  G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
-  G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
-  G4ThreeVector partVectToCentre  = arcCentre - localXZPos;
+  // generalise to 3D - take projection of local position (in frame of solid) onto plane
+  // defined by the unit field vector as a normal on the origin. We take the projection
+  // onto the normal of the plane (here the field field unit vector in local solid coordinates)
+  // - the 'rejection', and then take the point - that projection to get the projection on the plane.
+  //G4ThreeVector localXZPos        = G4ThreeVector(localPos.x(), 0, localPos.z());
+  G4ThreeVector localPosProjOnBendPlane = localPos - localPos.project(localUnitF);
+  // we want a vector pointing from the origin of the solid to the point of bending.
+  // the direction of the bending radius is given by the cross product of the field
+  // (unit) with local unit Z - giving a unit direction. Multiplied by radius length.
+  G4ThreeVector arcCentre = unitField.cross(G4ThreeVector(0,0,1))*-radiusAtChord;
+  //G4ThreeVector arcCentre         = G4ThreeVector(-1*radiusAtChord,0,0);
+  
+  G4ThreeVector partVectToCentre  = arcCentre - localPosProjOnBendPlane;
   G4double partToCentreDist       = partVectToCentre.mag();
 
   // angle along reference path, from -angle/2 to +angle/2
