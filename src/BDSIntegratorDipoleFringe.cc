@@ -25,8 +25,8 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 brhoIn,
 						     G4Mag_EqRhs*             eqOfMIn,
 						     G4double                 minimumRadiusOfCurvatureIn,
-						     const G4Transform3D&     tiltOffsetIn):
-  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltOffsetIn)
+						     const G4double&          tiltIn):
+  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltIn)
 {;}
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[],

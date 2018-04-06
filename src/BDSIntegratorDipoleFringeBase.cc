@@ -35,7 +35,7 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double                 minimumRadiusOfCurvatureIn,
-							     const G4Transform3D&     tiltOffsetIn):
+							     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
@@ -43,7 +43,7 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
-  tilt(tiltOffsetIn.getRotation().thetaX())
+  tilt(tiltIn)
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}

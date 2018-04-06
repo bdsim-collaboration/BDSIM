@@ -24,7 +24,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDipoleQuadrupole.hh"
 
 #include "globals.hh"
-#include "G4Transform3D.hh"
 
 namespace BDS
 {
@@ -51,7 +50,7 @@ public:
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
 				G4double                 minimumRadiusOfCurvature,
-				const G4Transform3D&     tiltOffsetIn = G4Transform3D::Identity);
+				const G4double&          tiltIn = 0);
   
   virtual ~BDSIntegratorDipoleFringeBase(){;}
 
