@@ -130,7 +130,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
 	  yOut[i]     = yTemp[i];
 	  yOut[i + 3] = yTemp[i + 3];
 	}
-      return;
+      return; // note distchord comes from inherited BDSIntegratorDipoleRodrigues2
     }
 
   // calculate new position and momentum kick
