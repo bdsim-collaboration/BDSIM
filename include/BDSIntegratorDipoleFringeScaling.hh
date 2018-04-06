@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTEGRATORDIPOLEFRINGESCALING_H
 #define BDSINTEGRATORDIPOLEFRINGESCALING_H
 
-#include "BDSIntegratorDipoleFringeBase.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 
 #include "globals.hh"
 
@@ -32,7 +32,7 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringeBase
+class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringe
 {
 public:
   BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strength,

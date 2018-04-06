@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipole.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSIntegratorDipoleFringeBase.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
@@ -29,13 +29,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-G4double BDSIntegratorDipoleFringeBase::thinElementLength = -1; // unphysical
+G4double BDSIntegratorDipoleFringe::thinElementLength = -1; // unphysical
 
-BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strengthIn,
-							     G4double                 brhoIn,
-							     G4Mag_EqRhs*             eqOfMIn,
-							     G4double                 minimumRadiusOfCurvatureIn,
-							     const G4double&          tiltIn):
+BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* strengthIn,
+						     G4double                 brhoIn,
+						     G4Mag_EqRhs*             eqOfMIn,
+						     G4double                 minimumRadiusOfCurvatureIn,
+						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
@@ -55,11 +55,11 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   delete dipoleField;
 }
 
-void BDSIntegratorDipoleFringeBase::Stepper(const G4double yIn[6],
-					    const G4double dydx[6],
-					    const G4double h,
-					    G4double       yOut[6],
-					    G4double       yErr[6])
+void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[6],
+					const G4double dydx[6],
+					const G4double h,
+					G4double       yOut[6],
+					G4double       yErr[6])
 {
   // unit normalisation
   const G4double fcof = eqOfM->FCof();
@@ -67,13 +67,13 @@ void BDSIntegratorDipoleFringeBase::Stepper(const G4double yIn[6],
   BaseStepper(yIn, dydx, h, yOut, yErr, fcof, 1.0);
 }
 
-void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
-                                                const G4double  dydx[6],
-                                                const G4double& h,
-                                                G4double        yOut[6],
-                                                G4double        yErr[6],
-                                                const G4double& fcof,
-                                                const G4double& momScaling)
+void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
+					    const G4double  dydx[6],
+					    const G4double& h,
+					    G4double        yOut[6],
+					    G4double        yErr[6],
+					    const G4double& fcof,
+					    const G4double& momScaling)
 {
   // Protect against neutral particles, and zero field: drift through.
   if (!BDS::IsFinite(fcof) || zeroStrength)
@@ -169,12 +169,12 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
   }
 }
 
-void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
-                                            const G4ThreeVector& momIn,
-                                            const G4ThreeVector& momUIn,
-                                            G4ThreeVector&       posOut,
-                                            G4ThreeVector&       momOut,
-                                            const G4double&      bendingRadius) const
+void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
+					const G4ThreeVector& momIn,
+					const G4ThreeVector& momUIn,
+					G4ThreeVector&       posOut,
+					G4ThreeVector&       momOut,
+					const G4double&      bendingRadius) const
 {
   G4double x0 = posIn.x() / CLHEP::m;
   G4double y0 = posIn.y() / CLHEP::m;
@@ -224,7 +224,7 @@ void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
 
 
 // fringe field correction terms are BDS namespace methods instead of class methods
-// as the functions are called during BDSIntegratorDipoleFringeBase construction.
+// as the functions are called during BDSIntegratorDipoleFringe construction.
 // The fringe field correction terms should be cached at construction rather than
 // calculated every time the integrator is called.
 

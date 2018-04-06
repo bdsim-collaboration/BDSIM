@@ -26,7 +26,7 @@ BDSIntegratorDipoleFringeScaling::BDSIntegratorDipoleFringeScaling(BDSMagnetStre
 								   G4Mag_EqRhs*             eqOfMIn,
 								   G4double                 minimumRadiusOfCurvatureIn,
 								   const G4double&          tiltIn):
-  BDSIntegratorDipoleFringeBase(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltIn),
+  BDSIntegratorDipoleFringe(strengthIn, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, tiltIn),
   bRho(brhoIn)
 {;}
 

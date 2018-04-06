@@ -43,16 +43,16 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringeBase: public BDSIntegratorDipoleRodrigues2, public BDSAuxiliaryNavigator
+class BDSIntegratorDipoleFringe: public BDSIntegratorDipoleRodrigues2, public BDSAuxiliaryNavigator
 {
 public:
-  BDSIntegratorDipoleFringeBase(BDSMagnetStrength const* strength,
-				G4double                 brhoIn,
-				G4Mag_EqRhs*             eqOfMIn,
-				G4double                 minimumRadiusOfCurvature,
-				const G4double&          tiltIn = 0);
+  BDSIntegratorDipoleFringe(BDSMagnetStrength const* strength,
+			    G4double                 brhoIn,
+			    G4Mag_EqRhs*             eqOfMIn,
+			    G4double                 minimumRadiusOfCurvature,
+			    const G4double&          tiltIn = 0);
   
-  virtual ~BDSIntegratorDipoleFringeBase(){;}
+  virtual ~BDSIntegratorDipoleFringe(){;}
 
   /// The stepper for integration. Calls base class stepper.
   virtual void Stepper(const G4double yIn[6],
@@ -110,7 +110,7 @@ protected:
 
 private:
   /// Private default constructor to enforce use of supplied constructor
-  BDSIntegratorDipoleFringeBase() = delete;
+  BDSIntegratorDipoleFringe() = delete;
 };
 
 #endif
