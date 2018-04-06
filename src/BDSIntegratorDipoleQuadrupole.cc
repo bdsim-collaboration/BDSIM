@@ -40,7 +40,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4double                 brhoIn,
 							     G4Mag_EqRhs*             eqOfMIn,
 							     G4double minimumRadiusOfCurvatureIn,
-							     const G4Transform3D&     tiltOffsetIn):
+							     const G4double&          tiltIn):
   BDSIntegratorMag(eqOfMIn, 6),
   bRho(brhoIn),
   eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
@@ -51,7 +51,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   nominalEnergy((*strengthIn)["nominalEnergy"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
-  tilt(tiltOffsetIn.getRotation().thetaX()),
+  tilt(tiltIn),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
