@@ -55,6 +55,18 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   delete dipoleField;
 }
 
+void BDSIntegratorDipoleFringeBase::Stepper(const G4double yIn[6],
+					    const G4double dydx[6],
+					    const G4double h,
+					    G4double       yOut[6],
+					    G4double       yErr[6])
+{
+  // unit normalisation
+  const G4double fcof = eqOfM->FCof();
+
+  BaseStepper(yIn, dydx, h, yOut, yErr, fcof, 1.0);
+}
+
 void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
                                                 const G4double  dydx[6],
                                                 const G4double& h,

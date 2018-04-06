@@ -55,7 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipoleRodrigues.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
-#include "BDSIntegratorDipoleFringe.hh"
+#include "BDSIntegratorDipoleFringeBase.hh"
 #include "BDSIntegratorDipoleFringeScaling.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorEuler.hh"
@@ -562,7 +562,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::multipolethin:
       integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
-      integrator = new BDSIntegratorDipoleFringe(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Tilt()); break;
+      integrator = new BDSIntegratorDipoleFringeBase(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Tilt()); break;
     case BDSIntegratorType::dipolefringescaling:
       integrator = new BDSIntegratorDipoleFringeScaling(strength, brho, eqOfM, minimumRadiusOfCurvature, info.Tilt()); break;
     case BDSIntegratorType::euler:

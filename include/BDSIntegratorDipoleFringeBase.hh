@@ -54,6 +54,13 @@ public:
   
   virtual ~BDSIntegratorDipoleFringeBase(){;}
 
+  /// The stepper for integration. Calls base class stepper.
+  virtual void Stepper(const G4double yIn[6],
+		       const G4double dydx[6],
+		       const G4double h,
+		       G4double       yOut[6],
+		       G4double       yErr[6]);
+
   /// The stepper for integration. Particle charge and momentum scaling are provided as arguments
   /// as they are calculated in the derived classes. Uses BDSIntegratorDipole2::Stepper and then adds
   /// a kick in yp in curvilinear coordinates.
