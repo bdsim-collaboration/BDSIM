@@ -161,20 +161,12 @@ void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
                                             G4ThreeVector&       momOut,
                                             const G4double&      bendingRadius) const
 {
-  G4ThreeVector posTransformed(posIn);
-  G4ThreeVector momUTransformed(momUIn);
-  if (tiltOffset != G4Transform3D::Identity)
-    {
-      auto rot = tiltOffset.getRotation();
-      posTransformed.transform(rot);
-      momUTransformed.transform(rot);
-    }
-  G4double x0 = posTransformed.x() / CLHEP::m;
-  G4double y0 = posTransformed.y() / CLHEP::m;
-  G4double s0 = posTransformed.z();
-  G4double xp = momUTransformed.x();
-  G4double yp = momUTransformed.y();
-  G4double zp = momUTransformed.z();
+  G4double x0 = posIn.x() / CLHEP::m;
+  G4double y0 = posIn.y() / CLHEP::m;
+  G4double s0 = posIn.z();
+  G4double xp = momUIn.x();
+  G4double yp = momUIn.y();
+  G4double zp = momUIn.z();
 
   G4double x1 = x0;
   G4double y1 = y0;
@@ -213,13 +205,6 @@ void BDSIntegratorDipoleFringeBase::OneStep(const G4ThreeVector& posIn,
   momOut = momOutUnit * momInMag;
 
   posOut = G4ThreeVector(x1, y1, s1);
-
-  if (tiltOffset != G4Transform3D::Identity)
-    {
-      auto rot = antiTiltOffset.getRotation();
-      momOut.transform(rot);
-      posOut.transform(rot);
-    }
 }
 
 
