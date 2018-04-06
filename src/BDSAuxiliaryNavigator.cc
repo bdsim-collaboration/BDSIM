@@ -60,6 +60,13 @@ BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
   numberOfInstances--;
 }
 
+void BDSAuxiliaryNavigator::ResetNavigatorStates()
+{
+  auxNavigator->ResetStackAndState();
+  auxNavigatorCL->ResetStackAndState();
+  auxNavigatorCLB->ResetStackAndState();
+}
+
 G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4ThreeVector& point,
 								    const G4ThreeVector* direction,
 								    const G4bool pRelativeSearch,
