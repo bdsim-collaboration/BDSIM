@@ -79,6 +79,8 @@ public:
   static void RegisterCurvilinearBridgeWorld(G4VPhysicalVolume* curvilinearBridgeWorldPVIn)
   {auxNavigatorCLB->SetWorldVolume(curvilinearBridgeWorldPVIn); curvilinearBridgeWorldPV = curvilinearBridgeWorldPVIn;}
 
+  static void ResetNavigatorStates();
+
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
 					       const G4ThreeVector* direction = nullptr,
