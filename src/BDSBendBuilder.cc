@@ -751,8 +751,8 @@ BDSIntegratorType BDS::GetDipoleIntegratorType(const BDSIntegratorSet* integrato
   if (BDS::IsFinite(element->k1))
     {intType = integratorSet->Integrator(BDSFieldType::dipolequadrupole);}
 
-  if (BDS::IsFinite(element->tilt))
-    {intType = BDSIntegratorType::dipolerodrigues2;}
+  //if (BDS::IsFinite(element->tilt))
+  //  {intType = BDSIntegratorType::dipolerodrigues2;}
 
   return intType;
 }

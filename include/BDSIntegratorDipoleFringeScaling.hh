@@ -19,11 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTEGRATORDIPOLEFRINGESCALING_H
 #define BDSINTEGRATORDIPOLEFRINGESCALING_H
 
-#include "BDSIntegratorDipoleFringeBase.hh"
-#include "BDSIntegratorDipoleFringeScaling.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 
 #include "globals.hh"
-#include "G4Transform3D.hh"
 
 class G4Mag_EqRhs;
 class BDSMagnetStrength;
@@ -34,14 +32,14 @@ class BDSMagnetStrength;
  * @author Will Shields 
  */
 
-class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringeBase
+class BDSIntegratorDipoleFringeScaling: public BDSIntegratorDipoleFringe
 {
 public:
   BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strength,
 				   G4double                 brhoIn,
 				   G4Mag_EqRhs*             eqOfMIn,
 				   G4double                 minimumRadiusOfCurvature,
-				   const G4Transform3D&     tiltOffsetIn = G4Transform3D::Identity);
+				   const G4double&          tiltIn = 0);
   
   virtual ~BDSIntegratorDipoleFringeScaling(){;}
 

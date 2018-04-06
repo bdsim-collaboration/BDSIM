@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -103,6 +104,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+  // reset navigators to ensure no mis-navigating
+  BDSAuxiliaryNavigator::ResetNavigatorStates();
   
   // update reference to event info
   eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());

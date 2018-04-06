@@ -49,6 +49,9 @@ public:
   inline void SetPostStepPoint(G4ThreeVector postIn) {postStepPoint = postIn;}
   inline void SetVolumeForTransform(G4VPhysicalVolume* volIn) {volumeForTransform = volIn;}
   /// @}
+
+  /// Mirror function to G4ThreeVector::rotateZ(). Returns copy that's rotated.
+  BDSStep rotateZ(const G4double& angle);
   
 private:
   G4ThreeVector preStepPoint;

@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagUsualEqRhs.hh"
 
 #include "globals.hh"
-#include "G4Transform3D.hh"
 
 class BDSIntegratorDipoleRodrigues2;
 class BDSMagnetStrength;
@@ -43,7 +42,7 @@ public:
 				G4double                 brhoIn,
 				G4Mag_EqRhs*             eqOfMIn,
 				G4double minimumRadiusOfCurvatureIn,
-				const G4Transform3D&     tiltOffsetIn);
+				const G4double&     tiltIn);
   
   virtual ~BDSIntegratorDipoleQuadrupole();
 
@@ -86,8 +85,7 @@ private:
   const G4double    fieldArcLength; ///< Cache of the field arc length.
   const G4double    fieldAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
-  G4Transform3D     tiltOffset;     ///< Tilt offset transform for field.
-  G4Transform3D antiTiltOffset;     ///< Opposite tilt offset transform for field.
+  G4double          tilt;           ///< Tilt offset transform for field.
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };

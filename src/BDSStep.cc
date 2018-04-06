@@ -35,3 +35,10 @@ BDSStep::BDSStep(G4ThreeVector preStepPointIn,
 
 BDSStep::~BDSStep()
 {;}
+
+BDSStep BDSStep::rotateZ(const G4double& angle)
+{
+  G4ThreeVector preR = preStepPoint.rotateZ(angle);
+  G4ThreeVector posR = postStepPoint.rotateZ(angle);
+  return BDSStep(preR, posR, volumeForTransform);
+}
