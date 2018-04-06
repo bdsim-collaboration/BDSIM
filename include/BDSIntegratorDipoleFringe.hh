@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORDIPOLEFRINGE_H
 
 #include "BDSIntegratorDipoleFringeBase.hh"
-#include "BDSIntegratorDipoleFringe.hh"
 
 #include "globals.hh"
 #include "G4Transform3D.hh"
