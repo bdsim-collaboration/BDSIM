@@ -106,6 +106,7 @@ public:
   inline G4double            PoleTipRadius()            const {return poleTipRadius;}
   inline G4double            BeamPipeRadius()           const {return beamPipeRadius;}
   inline G4double            ChordStepMinimum()         const {return chordStepMinimum;}
+  inline G4double            Tilt()                     const {return tilt;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -151,6 +152,7 @@ private:
   G4double                 poleTipRadius;  ///< Radius at which point the field will be scaled to.
   G4double                 beamPipeRadius; ///< Optional radius of beam pipe.
   G4double                 chordStepMinimum;
+  G4double                 tilt;           ///< Cache of tilt of field.
 
   // We need a default to pass back if none is specified.
   const static G4ThreeVector defaultUnitDirection;

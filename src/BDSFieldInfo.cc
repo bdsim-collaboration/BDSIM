@@ -52,7 +52,8 @@ BDSFieldInfo::BDSFieldInfo():
   stepLimit(nullptr),
   poleTipRadius(1),
   beamPipeRadius(0),
-  chordStepMinimum(-1)
+  chordStepMinimum(-1),
+  tilt(0)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
@@ -96,7 +97,12 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType             fieldTypeIn,
   poleTipRadius(poleTipRadiusIn),
   beamPipeRadius(beamPipeRadiusIn),
   chordStepMinimum(-1)
-{;}
+{
+  // back calculate tilt angle from field transform
+  G4ThreeVector unitY(0,1,0);
+  G4ThreeVector unitYR = unitY.transform(transformIn.getRotation());
+  tilt = CLHEP::halfpi - unitYR.getPhi(); // halfpi offset for which axis we choose by convention
+}
 
 BDSFieldInfo::~BDSFieldInfo()
 {
@@ -123,7 +129,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   autoScale(other.autoScale),
   poleTipRadius(other.poleTipRadius),
   beamPipeRadius(other.beamPipeRadius),
-  chordStepMinimum(other.chordStepMinimum)
+  chordStepMinimum(other.chordStepMinimum),
+  tilt(other.tilt)
 {
   if (other.magnetStrength)
     {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
@@ -155,6 +162,8 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Auto scale         " << info.autoScale                << G4endl;
   out << "Pole tip radius:   " << info.poleTipRadius            << G4endl;
   out << "Beam pipe radius:  " << info.beamPipeRadius           << G4endl;
+  out << "Chord Step Min:    " << info.chordStepMinimum         << G4endl;
+  out << "Tilt:              " << info.tilt                     << G4endl;
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   if (info.stepLimit)
