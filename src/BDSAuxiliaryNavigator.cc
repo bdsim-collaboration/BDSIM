@@ -413,7 +413,8 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
     }
   
   G4double sign = (angle < 0)? 1:-1;
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  //G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector localUnitF = unitField;
   G4ThreeVector arcCentre  = G4ThreeVector(sign*radiusAtChord,0,0);
 
   G4double theta = CLPosition.z() / radiusOfCurvature;
