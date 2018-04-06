@@ -220,7 +220,7 @@ void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
   G4double momInMag = momIn.mag();
   momOut = momOutUnit * momInMag;
 
-  posOut = G4ThreeVector(x1, y1, s1);
+  posOut = G4ThreeVector(x1*CLHEP::m, y1*CLHEP::m, s1);
 }
 
 
