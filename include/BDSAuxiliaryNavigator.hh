@@ -79,6 +79,8 @@ public:
   static void RegisterCurvilinearBridgeWorld(G4VPhysicalVolume* curvilinearBridgeWorldPVIn)
   {auxNavigatorCLB->SetWorldVolume(curvilinearBridgeWorldPVIn); curvilinearBridgeWorldPV = curvilinearBridgeWorldPVIn;}
 
+  static void ResetNavigatorStates();
+
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
 					       const G4ThreeVector* direction = nullptr,
@@ -189,7 +191,7 @@ public:
 			      const G4double&      h,
 			      const G4bool&        useCurvilinearWorld,
 			      const G4double&      FCof,
-			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
+			      const G4double&      tilt = 0);
 
   BDSStep GlobalToCurvilinear(const G4ThreeVector& position,
 			      const G4ThreeVector& unitMomentum,
@@ -207,7 +209,7 @@ public:
 			      const G4ThreeVector& CLMomentum,
 			      const G4bool&        useCurvilinearWorld,
 			      const G4double&      FCof,
-			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
+			      const G4double&      tilt = 0);
 
 protected:
   mutable G4AffineTransform globalToLocal;

@@ -60,6 +60,13 @@ BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
   numberOfInstances--;
 }
 
+void BDSAuxiliaryNavigator::ResetNavigatorStates()
+{
+  auxNavigator->ResetStackAndState();
+  auxNavigatorCL->ResetStackAndState();
+  auxNavigatorCLB->ResetStackAndState();
+}
+
 G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4ThreeVector& point,
 								    const G4ThreeVector* direction,
 								    const G4bool pRelativeSearch,
@@ -303,13 +310,16 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
 						   const G4double&      h,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& /*tiltOffset*/)
+						   const G4double&      tilt)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
   BDSStep local = ConvertToLocal(position, unitMomentum, h, useCurvilinearWorld);
 
+  if (BDS::IsFinite(tilt))
+    {local = local.rotateZ(-tilt);}
+  
   // Test on finite angle here. If the angle is 0, there is no need for a further transform.
   if (!BDS::IsFinite(angle))
     {return local;}
@@ -317,8 +327,11 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
   G4ThreeVector localPos   = local.PreStepPoint();
   G4ThreeVector localMom   = local.PostStepPoint();
   G4double      localZ     = localPos.z();
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
 
+  // Here we always assume the field is along local unit Y.
+  //G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector localUnitF = unitField;
+  
   // only find angle between particle and radiusAtChord in x-z plane,
   // conversion to CL shouldn't affect y co-ordinate but finite y co-ord would affect angle
   // generalise to 3D - take projection of local position (in frame of solid) onto plane
@@ -375,21 +388,33 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4ThreeVector& localPos
 BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArcLength,
 						   const G4ThreeVector& unitField,
 						   const G4double&      angle,
-						   const G4ThreeVector& CLPosition,
-						   const G4ThreeVector& CLMomentum,
+						   const G4ThreeVector& CLPositionIn,
+						   const G4ThreeVector& CLMomentumIn,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& /*antiTiltOffset*/)
+						   const G4double&      tilt)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
 
+  // copy inputs so they can be rotated if tilted
+  G4ThreeVector CLPosition = CLPositionIn;
+  G4ThreeVector CLMomentum = CLMomentumIn;
+
   // Test on finite angle here. If the angle is 0, return convert to global transform.
   if (!BDS::IsFinite(angle))
-    {return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);}
-
+    {
+      if (BDS::IsFinite(tilt))
+	{
+	  CLPosition = CLPosition.rotateZ(tilt);
+	  CLMomentum = CLMomentum.rotateZ(tilt);
+	}
+      return ConvertToGlobalStep(CLPosition, CLMomentum, useCurvilinearWorld);
+    }
+  
   G4double sign = (angle < 0)? 1:-1;
-  G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  //G4ThreeVector localUnitF = ConvertAxisToLocal(unitField, useCurvilinearWorld);
+  G4ThreeVector localUnitF = unitField;
   G4ThreeVector arcCentre  = G4ThreeVector(sign*radiusAtChord,0,0);
 
   G4double theta = CLPosition.z() / radiusOfCurvature;
@@ -409,6 +434,12 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
 
   G4ThreeVector localPosition = G4ThreeVector(localX, CLPosition.y(), localZ);
   G4ThreeVector localMomentum = G4ThreeVector(CLMomentum).rotate(rotationAngle, localUnitF);;
+
+  if (BDS::IsFinite(tilt))
+    {
+      localPosition = localPosition.rotateZ(tilt);
+      localMomentum = localMomentum.rotateZ(tilt);
+    }
 
   return ConvertToGlobalStep(localPosition, localMomentum, useCurvilinearWorld);
 }

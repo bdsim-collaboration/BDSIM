@@ -27,6 +27,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <cmath>
+
 BDSIntegratorDipoleRodrigues2::BDSIntegratorDipoleRodrigues2(G4Mag_EqRhs* eqOfMIn,
 							     G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
@@ -60,6 +62,9 @@ void BDSIntegratorDipoleRodrigues2::Stepper(const G4double   yIn[6],
 					    G4double         yOut[6],
 					    G4double         yErr[6])
 {
+  // overwrite any previous rad and helix to avoid contaminating this step
+  FudgeDistChordToZero();
+  
   // Protect against very small steps or neutral particles drift through.
   if (h < 1e-12 || !BDS::IsFinite(eqOfM->FCof()))
     {
@@ -87,15 +92,25 @@ void BDSIntegratorDipoleRodrigues2::Stepper(const G4double   yIn[6],
   // directly as the G4MagHelicalStepper class doesn't make DistChord() virtual.
   G4double ang = GetAngCurve();
   G4double rad = GetRadHelix();
-
+  // the G4MagHelicalStepper can sometimes produce nans for rad helix! These
+  // go into distchord and then ruin the tracking across events.
+  if (std::isnan(rad))
+    {
+      rad = h / ang;
+      SetRadHelix(rad);
+    }
+  
   // Now we have the radius of curvature to check on.
   // If it's smaller than limit, we artificially advance the particle
   // along its helix axis (parallel to the field) so it'll hit something
   // and finish in a timely manner.
-  const G4double radiusOfCurvature = GetRadHelix();
+  const G4double radiusOfCurvature = rad;
   if (std::abs(radiusOfCurvature) < minimumRadiusOfCurvature)
     {
       AdvanceHelixForSpiralling(yIn, bOriginal, h, yOut, yErr);
+      // Update parameters that distchord will be calcualted from from full step info.
+      SetAngCurve(ang);
+      SetRadHelix(rad);
       return;
     }
 
