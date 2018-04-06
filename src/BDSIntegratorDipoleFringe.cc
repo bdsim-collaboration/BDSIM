@@ -150,7 +150,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   // convert to global coordinates for output
   if (finiteTilt)
     {
-      localCLPosOut = localCLPosOut.rotateZ(tilt);
+      //localCLPosOut = localCLPosOut.rotateZ(tilt); // we only need the momentum - ignore
       localCLMomOut = localCLMomOut.rotateZ(tilt);
     }
   
