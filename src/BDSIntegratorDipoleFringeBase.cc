@@ -24,11 +24,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include <cmath>
 

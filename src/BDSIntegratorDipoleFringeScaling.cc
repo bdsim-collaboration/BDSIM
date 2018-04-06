@@ -16,16 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <include/BDSGlobalConstants.hh>
-#include "BDSDebug.hh"
 #include "BDSIntegratorDipoleFringeScaling.hh"
-#include "BDSMagnetStrength.hh"
-#include "BDSStep.hh"
-#include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 BDSIntegratorDipoleFringeScaling::BDSIntegratorDipoleFringeScaling(BDSMagnetStrength const* strengthIn,
