@@ -117,7 +117,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
 
   BDSStep  localPosMom    = GlobalToCurvilinear(pos, mom, h, true);
   if (finiteTilt)
-    {localPosMom = localPosMom.rotateZ(tilt);}
+    {localPosMom = localPosMom.rotateZ(-tilt);}
   G4ThreeVector localPos  = localPosMom.PreStepPoint();
   G4ThreeVector localMom  = localPosMom.PostStepPoint();
   G4ThreeVector localMomU = localMom.unit();
@@ -148,25 +148,26 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, bendingRad);
 
   // convert to global coordinates for output
-  BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, fieldAngle,
-					  localCLPosOut, localCLMomOut, false, fcof,
-					  tilt);
-  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true); // TBC TBC!!!
-  G4ThreeVector globalPosOut = globalOut.PreStepPoint();
-  G4ThreeVector globalMomOut = globalOut.PostStepPoint();
+  if (finiteTilt)
+    {
+      localCLPosOut = localCLPosOut.rotateZ(tilt);
+      localCLMomOut = localCLMomOut.rotateZ(tilt);
+    }
+  
+  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
 
   // error along direction of travel really
-  G4ThreeVector globalMomOutU = globalMomOut.unit();
-  globalMomOutU *= 1e-8;
+  G4ThreeVector globalMomU = globalMom.unit();
+  globalMomU *= 1e-8;
 
   // write out values and errors
   for (G4int i = 0; i < 3; i++)
     {
       yOut[i]     = pos[i];
       yOut[i + 3] = globalMom[i];
-      yErr[i]     = globalMomOutU[i];
+      yErr[i]     = globalMomU[i];
       yErr[i + 3] = 1e-40;
-  }
+    }
 }
 
 void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
