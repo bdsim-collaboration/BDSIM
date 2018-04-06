@@ -91,8 +91,7 @@ protected:
   const G4double fieldArcLength; ///< Cache of the field arc length.
   const G4double fieldAngle;     ///< Cache of the field angle.
 
-  G4Transform3D tiltOffset;
-  G4Transform3D antiTiltOffset;
+  G4double tilt;
 
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.

@@ -310,7 +310,7 @@ BDSStep BDSAuxiliaryNavigator::GlobalToCurvilinear(const G4double&      fieldArc
 						   const G4double&      h,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& /*tiltOffset*/)
+						   const G4double&      tilt)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);
@@ -386,7 +386,7 @@ BDSStep BDSAuxiliaryNavigator::CurvilinearToGlobal(const G4double&      fieldArc
 						   const G4ThreeVector& CLMomentum,
 						   const G4bool&        useCurvilinearWorld,
 						   const G4double&      FCof,
-						   const G4Transform3D& /*antiTiltOffset*/)
+						   const G4double&      tilt)
 {
   G4double radiusOfCurvature = fieldArcLength / angle;
   G4double radiusAtChord     = radiusOfCurvature * std::cos(angle*0.5);

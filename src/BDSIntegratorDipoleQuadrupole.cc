@@ -51,8 +51,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   nominalEnergy((*strengthIn)["nominalEnergy"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
-  tiltOffset(tiltOffsetIn),
-  antiTiltOffset(tiltOffsetIn.inverse()),
+  tilt(tiltOffsetIn.getRotation().thetaX()),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
@@ -116,8 +115,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
   BDSStep       localCL     = GlobalToCurvilinear(fieldArcLength, unitField, angleForCL,
-						  globalPos, globalMom, h, true, fcof,
-						  tiltOffset);
+						  globalPos, globalMom, h, true, fcof, tilt);
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -138,8 +136,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, angleForCL,
-					  localCLPosOut, localCLMomOut, true, fcof,
-					  antiTiltOffset);
+					  localCLPosOut, localCLMomOut, true, fcof, tilt);
 
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();

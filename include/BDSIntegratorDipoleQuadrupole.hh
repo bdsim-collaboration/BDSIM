@@ -86,8 +86,7 @@ private:
   const G4double    fieldArcLength; ///< Cache of the field arc length.
   const G4double    fieldAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
-  G4Transform3D     tiltOffset;     ///< Tilt offset transform for field.
-  G4Transform3D antiTiltOffset;     ///< Opposite tilt offset transform for field.
+  G4double          tilt;           ///< Tilt offset transform for field.
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };

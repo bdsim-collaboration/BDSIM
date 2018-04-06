@@ -46,8 +46,7 @@ BDSIntegratorDipoleFringeBase::BDSIntegratorDipoleFringeBase(BDSMagnetStrength c
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
-  tiltOffset(tiltOffsetIn),
-  antiTiltOffset(tiltOffset.inverse())
+  tilt(tiltOffsetIn.getRotation().thetaX())
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
@@ -139,8 +138,8 @@ void BDSIntegratorDipoleFringeBase::BaseStepper(const G4double  yIn[6],
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, fieldAngle,
 					  localCLPosOut, localCLMomOut, false, fcof,
-					  tiltOffset);
-  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
+					  tilt);
+  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true); // TBC TBC!!!
   G4ThreeVector globalPosOut = globalOut.PreStepPoint();
   G4ThreeVector globalMomOut = globalOut.PostStepPoint();
 

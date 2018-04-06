@@ -191,7 +191,7 @@ public:
 			      const G4double&      h,
 			      const G4bool&        useCurvilinearWorld,
 			      const G4double&      FCof,
-			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
+			      const G4double&      tilt = 0);
 
   BDSStep GlobalToCurvilinear(const G4ThreeVector& position,
 			      const G4ThreeVector& unitMomentum,
@@ -209,7 +209,7 @@ public:
 			      const G4ThreeVector& CLMomentum,
 			      const G4bool&        useCurvilinearWorld,
 			      const G4double&      FCof,
-			      const G4Transform3D& tiltOffset = G4Transform3D::Identity);
+			      const G4double&      tilt = 0);
 
 protected:
   mutable G4AffineTransform globalToLocal;
