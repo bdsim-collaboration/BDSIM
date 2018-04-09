@@ -59,6 +59,9 @@ public:
   /// will generate all coordinates and subtract the sample mean.
   virtual void BeginOfRunAction(const G4int& numberOfEvents);
 
+  /// Clear the pregenerated bunch coordinates and reset the member iterator.
+  virtual void EndOfRunAction();
+
   /// Either draw from the vector of already created points or fire fresh
   /// from the matrix.
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

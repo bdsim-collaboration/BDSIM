@@ -386,6 +386,8 @@ If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. 
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
@@ -416,6 +418,12 @@ tracking still includes the pole face effects.
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `fintK2`        | second fringe field integral for  | 0         | no              |
+|                 | the entrance face of the rbend.   |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintxK2`       | second fringe field integral for  | 0         | no              |
+|                 | the exit face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | the half gap of the poles for     | 0         | no              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -427,6 +435,8 @@ tracking still includes the pole face effects.
 	    :width: 75%
 	    :align: center
 
+	    Pole face notation for an rbend.
+
 A few points about rbends:
 
 1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
@@ -435,16 +445,21 @@ A few points about rbends:
    case, consider splitting the `rbend` into multiple ones.
 2) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 3) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an rbend with
+   :math:`e2 = 0.1` can be followed by an rbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
-4) If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-   specified (on by default, see `options`_), then a thin fringefield magnet (1 micron thick by default)
-   is included at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend.
-   The length of the fringefield element can be set by the option `thinElementLength` (see `options`_).
-5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
+   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   set by the option `thinElementLength` (see `options`_).
+5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
+6) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
+   enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
+   of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
+   explicitly specified as non-zero.
+7) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+   the option `includeFringeFields=0` (see `options`_).
 
 Examples::
 
@@ -487,6 +502,7 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -518,6 +534,12 @@ that the maximum tangential error in the aperture is 1 mm.
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `fintK2`        | second fringe field integral for  | 0         | no              |
+|                 | the entrance face of the rbend.   |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintxK2`       | second fringe field integral for  | 0         | no              |
+|                 | the exit face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | the half gap of the poles for     | 0         | no              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -529,6 +551,8 @@ that the maximum tangential error in the aperture is 1 mm.
 	    :width: 75%
 	    :align: center
 
+	    Pole face notation for an sbend.
+
 A few points about sbends:
 
 1) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
@@ -537,13 +561,17 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-   specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-   at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-   fringefield element can be set by the option `thinElementLength` (see `options`_).
-4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+3) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
+   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   set by the option `thinElementLength` (see `options`_).
+4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
-
+5) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
+   enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
+   of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
+   explicitly specified as non-zero.
+6) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+   the option `includeFringeFields=0` (see `options`_).
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
@@ -1172,120 +1200,6 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
-
-
-Colours
--------
-
-A few items allow you to define a custom colour for them to aid in visualisation. Currently,
-only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
-where the RGB values are space delimited and given from 0 to 255. Once the colour name has
-been defined it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined. The syntax is::
-
-  color="NAME: R G B";
-
-where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
-colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
-
-Examples::
-
-  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
-  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
-
-* Colour names are case-sensitive.
-* Note the colon `:` in the syntax is crucial.
-
-If a colour is already defined, that will be used. In the case a colour is already defined in
-BDSIM, that colour will be used. The user should therefore choose a different name if they
-wish to use their colour. The predefined colours in BDSIM are:
-
-+-----------------+-----+-----+-----+
-| Name            |  R  |  G  |  B  |
-+=================+=====+=====+=====+
-| LHCcoil         | 229 | 191 | 0   |
-+-----------------+-----+-----+-----+
-| LHCcollar       | 229 | 229 | 229 |
-+-----------------+-----+-----+-----+
-| LHCcopperskin   | 184 | 133 | 10  |
-+-----------------+-----+-----+-----+
-| LHCyoke         | 0   | 127 | 255 |
-+-----------------+-----+-----+-----+
-| LHCyokered      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| beampipe        | 102 | 102 | 102 |
-+-----------------+-----+-----+-----+
-| black           | 0   | 0   | 0   |
-+-----------------+-----+-----+-----+
-| blue            | 0   | 0   | 255 |
-+-----------------+-----+-----+-----+
-| brown           | 114 | 63  | 0   |
-+-----------------+-----+-----+-----+
-| coil            | 184 | 115 | 51  |
-+-----------------+-----+-----+-----+
-| collimator      | 76  | 102 | 51  |
-+-----------------+-----+-----+-----+
-| cyan            | 0   | 255 | 255 |
-+-----------------+-----+-----+-----+
-| decapole        | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| default         | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| degrader        | 159 | 159 | 159 |
-+-----------------+-----+-----+-----+
-| gdml            | 102 | 51  | 0   |
-+-----------------+-----+-----+-----+
-| gray            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| green           | 0   | 255 | 0   |
-+-----------------+-----+-----+-----+
-| grey            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| hkicker         | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| magenta         | 255 | 0   | 255 |
-+-----------------+-----+-----+-----+
-| multipole       | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| muspoiler       | 0   | 205 | 208 |
-+-----------------+-----+-----+-----+
-| octupole        | 0   | 153 | 76  |
-+-----------------+-----+-----+-----+
-| quadrupole      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| rectangularbend | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| red             | 255 | 0   | 0   |
-+-----------------+-----+-----+-----+
-| rfcavity        | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| screenframe     | 178 | 178 | 178 |
-+-----------------+-----+-----+-----+
-| sectorbend      | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| sextupole       | 255 | 204 | 0   |
-+-----------------+-----+-----+-----+
-| shield          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| soil            | 138 | 90  | 0   |
-+-----------------+-----+-----+-----+
-| solenoid        | 255 | 139 | 0   |
-+-----------------+-----+-----+-----+
-| srfcavity       | 175 | 196 | 222 |
-+-----------------+-----+-----+-----+
-| tunnel          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| tunnelfloor     | 127 | 127 | 114 |
-+-----------------+-----+-----+-----+
-| vkicker         | 186 | 84  | 211 |
-+-----------------+-----+-----+-----+
-| warning         | 255 | 19  | 146 |
-+-----------------+-----+-----+-----+
-| white           | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| yellow          | 255 | 255 | 0   |
-+-----------------+-----+-----+-----+
-
 
 Aperture Parameters
 -------------------
@@ -2270,6 +2184,8 @@ e.g.::
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
 
+.. _sampler-dimensions:
+	  
 Sampler Dimensions
 ^^^^^^^^^^^^^^^^^^
 
@@ -2342,12 +2258,18 @@ BDSIM uses the Geant4 physics lists directly and more details can be found in th
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. warning:: Geant4 recently provides its own physics 'lists' - for example in
+	     "geant4.10.04.p01/source/physics_lists/lists/include". BDSIM does not currently
+	     support these but in future it will. For example, note that `ftfp_bert` in BDISM
+	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
+	     physics list in Geant4.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+-----------------------------+-------------------------------------------------------------------------+
-| **String to use**           | **Description**                                                         |
-+=============================+=========================================================================+
-|                             | Transportation of primary particles only - no scattering in material.   |
++------------------------------+------------------------------------------------------------------------+
+| **String to use**            | **Description**                                                        |
++==============================+========================================================================+
+|                              | Transportation of primary particles only - no scattering in material.  |
 +------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`.                                             |
 +------------------------------+------------------------------------------------------------------------+
@@ -2691,6 +2613,8 @@ General Run Options
 | writeSeedState                   | Write the seed state of the last event start in       |
 |                                  | ASCII.                                                |
 +----------------------------------+-------------------------------------------------------+
+
+.. _options-geometry:
 
 Geometry Options
 ^^^^^^^^^^^^^^^^
@@ -3146,9 +3070,10 @@ should only be used with understanding.
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
-|                                   | be different for each run or even when using --recreate.  Only     |
+|                                   | be different for each run or even when using -\\-recreate.  Only   |
 |                                   | suitable for large (>100) numbers of particles. Note, this isn't   |
-|                                   | an option, but part of the beam command.                           |
+|                                   | an option, but part of the beam command. This cannot be used with  |
+|                                   | the visualiser.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 
 
@@ -3311,7 +3236,7 @@ Examples::
 	 sigma22 = 3*um,
 	 sigma33 = 50*um,
 	 sigma44 = 1.4*um,
-	 sigma55 = 1e-12,
+	 sigma55 = 1e-12
 	 sigma66 = 1e-4,
 	 sigma12 = 1e-2,
 	 sigma34 = 1.4e-3;
@@ -3665,16 +3590,60 @@ recommended as compressed ASCII is significantly smaller in size.
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
 
+Acceptable tokens for the columns are:
+
++------------+------------------------+
+| **Token**  |  **Description**       |
++============+========================+
+| "E"        | Total energy.          |
++------------+------------------------+
+| "Ek"       | Kinetic energy.        |
++------------+------------------------+
+| "P"        | Momentum.              |
++------------+------------------------+
+| "t"        | Time.                  |
++------------+------------------------+
+| "x"        | Horizontal position.   |
++------------+------------------------+
+| "y"        | Vertical position.     |
++------------+------------------------+
+| "z"        | Longitudinal position. |
++------------+------------------------+
+| "xp"       | Horizontal angle.      |
++------------+------------------------+
+| "yp"       | Verticla angle.        |
++------------+------------------------+
+| "zp"       | Longitudinal.          |
++------------+------------------------+
+| "pt"       | PDG particle ID.       |
++------------+------------------------+
+| "w"        | Weight                 |
++------------+------------------------+
+| "-"        | Skip this column.      |
++------------+------------------------+
+
+**Energy Units**
+"eV", "KeV", "MeV", "GeV", "TeV"
+
+**Length Units**
+"m, "cm", "mm", "mum", "um", "nm"
+
+**Angle Units**
+"rad", "mrad", "murad", "urad"
+
+**Time Units**
+"s", "ms", "mus", "us", "ns", "mm/c", "nm/c"
+
 Examples::
 
   beam, particle = "e-",
         energy = 1*GeV,
         distrType  = "userfile",
-        distrFile  = "9_UserFile.dat",
+        distrFile  = "Userbeamdata.dat",
         distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 
-The corresponding `9_UserFile.dat` file looks like::
+The corresponding `userbeamdata.dat` file looks like::
 
   0 1 2 1 0 1000
   0 1 0 1 0 1002
@@ -3685,7 +3654,6 @@ The corresponding `9_UserFile.dat` file looks like::
   0 0 0 3 0 1010
   0 0 0 4 0 1020
   0 0 0 2 0 1000
-
 
 
 ptc
@@ -3868,6 +3836,186 @@ the user may define additional regions and attach them to the objects desired.  
 
 
 .. rubric:: Footnotes
+
+.. _bend-tracking-behaviour:
+	    
+Bends
+-----
+
+Fringe Field Integral Behaviour
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fringe fields can be specified for dipole magnets through the parameters `hgap`, `fint` and `fintx`.
+`fint` is the fringe field integral as described in :ref:`dipole-fringe-integrator` for the entrance
+face of the dipole. `fintx` is for the same but for the exit face. Even when there is no pole face
+rotation, there is still a small fringe field effect.
+
+If `fint` is specified but `fintx` is not, `fintx` will default to the same value as `fint`. If
+however, `fintx` is set to 0 it will in face be 0 and will not take the value of `fint`. This is
+the same default behaviour as MADX. MADX will write out a value of `fintx` as -1 in this case in
+any output. BDSIM will write out the value used, even if it's 0.
+
+Pole Face Rotations
+^^^^^^^^^^^^^^^^^^^
+
+The `bdsimtwo` integrator set (see :ref:`integrator-sets`) provides tracking through a uniform
+magnetic field in a dipole. The field exists whereever the magnet exists so in the case of pole
+face rotations on the end of a dipole, the magnet is constructed with the appropriate angled face.
+The field therefore also has a hard edge with exactly no field immediately outside the magnet volume.
+
+The tracking routine for dipoles in the `bdsimtwo` integrator set (see :ref:`bdsim-dipole-rodrigues2`)
+tracks the particle using the analytical helical solution in a pure magnetic field in Cartesian
+coordinates. This however, does not agree with the tracking provided by MADX. We therefore provide
+an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provided
+by the fringe field is the same in both cases.
+
+The difference between the two is negligible for small pole face angles - for example, the LHC lattice
+shows no difference between the integrator sets (~14mrad bending angle and very low pole face angles).
+However, with higher angle bends and stronger pole face angles (maximum is up to 45 degrees), the
+difference is non-negligible.
+
+The integrator for dipoles in `bdsimtwo` is computationally faster and should be used for lattices
+like the LHC where speed matters and the pole faces are not a strong feature.
+
+.. note:: To provide equivalent tracking to MADX with the `bdsimmatrix` integrator set, the
+	  magnet geometry is constructed with flat ends (i.e. always an sbend). Rbends are constructed
+	  as sbends with additional poleface rotation angles equal to half the bend angle. Instead of
+	  constructing the poleface geometry, the effect of a poleface rotation is applied in a thin
+	  fringefield magnet (1 micron thick by default) at the beginning (for non-zero e1) or at the
+	  end (for non-zero e2) of the dipole. In future, this will be decoupled to allow both the
+	  physical angled faces in the model as well as accurate tracking using the MADX style matrix
+	  integrators.
+
+Large Angle Bends
+^^^^^^^^^^^^^^^^^
+For a model that includes large angle bends (for example > 0.1rad), the user should consider reducing
+the sampler diameter (see :ref:`sampler-dimensions` and :ref:`options-geometry`). This is because
+the default 5m width of a sampler may cause overlaps between samplers or each sampler may record
+particles from multiple positions in the beam line.
+
+One other point is that the parallel geometry used for curvilinear transforms (the "curvilinear world")
+may overlap with other curvilinear elements earlier in the beam line. The size of the curvilinear
+world cylinders is based on the samplerDiameter and reducing the samplerDiameter will reduce their size.
+There is some automatic provision for this in BDSIM where the sampler diameter is automatically reudced
+when large angle bends are present in the lattice but this is based on a heuristic rather than direct
+overlap checks.
+
+In short, we recommend running with :code:`option, checkOverlaps=1;` once to verify there are no
+problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
+to the typical full width of a magnet.
+
+
+Colours
+-------
+
+A few items allow you to define a custom colour for them to aid in visualisation. Currently,
+only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
+where the RGB values are space delimited and given from 0 to 255. Once the colour name has
+been defined it may be used again without having to redefine the components. Once defined, a
+colour may not be redefined. The syntax is::
+
+  color="NAME: R G B";
+
+where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
+colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
+
+Examples::
+
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
+  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
+
+* Colour names are case-sensitive.
+* Note the colon `:` in the syntax is crucial.
+
+If a colour is already defined, that will be used. In the case a colour is already defined in
+BDSIM, that colour will be used. The user should therefore choose a different name if they
+wish to use their colour. The predefined colours in BDSIM are:
+
++-----------------+-----+-----+-----+
+| Name            |  R  |  G  |  B  |
++=================+=====+=====+=====+
+| LHCcoil         | 229 | 191 | 0   |
++-----------------+-----+-----+-----+
+| LHCcollar       | 229 | 229 | 229 |
++-----------------+-----+-----+-----+
+| LHCcopperskin   | 184 | 133 | 10  |
++-----------------+-----+-----+-----+
+| LHCyoke         | 0   | 127 | 255 |
++-----------------+-----+-----+-----+
+| LHCyokered      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| beampipe        | 102 | 102 | 102 |
++-----------------+-----+-----+-----+
+| black           | 0   | 0   | 0   |
++-----------------+-----+-----+-----+
+| blue            | 0   | 0   | 255 |
++-----------------+-----+-----+-----+
+| brown           | 114 | 63  | 0   |
++-----------------+-----+-----+-----+
+| coil            | 184 | 115 | 51  |
++-----------------+-----+-----+-----+
+| collimator      | 76  | 102 | 51  |
++-----------------+-----+-----+-----+
+| cyan            | 0   | 255 | 255 |
++-----------------+-----+-----+-----+
+| decapole        | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| default         | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| degrader        | 159 | 159 | 159 |
++-----------------+-----+-----+-----+
+| gdml            | 102 | 51  | 0   |
++-----------------+-----+-----+-----+
+| gray            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| green           | 0   | 255 | 0   |
++-----------------+-----+-----+-----+
+| grey            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| hkicker         | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| magenta         | 255 | 0   | 255 |
++-----------------+-----+-----+-----+
+| multipole       | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| muspoiler       | 0   | 205 | 208 |
++-----------------+-----+-----+-----+
+| octupole        | 0   | 153 | 76  |
++-----------------+-----+-----+-----+
+| quadrupole      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| rectangularbend | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| red             | 255 | 0   | 0   |
++-----------------+-----+-----+-----+
+| rfcavity        | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| screenframe     | 178 | 178 | 178 |
++-----------------+-----+-----+-----+
+| sectorbend      | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| sextupole       | 255 | 204 | 0   |
++-----------------+-----+-----+-----+
+| shield          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| soil            | 138 | 90  | 0   |
++-----------------+-----+-----+-----+
+| solenoid        | 255 | 139 | 0   |
++-----------------+-----+-----+-----+
+| srfcavity       | 175 | 196 | 222 |
++-----------------+-----+-----+-----+
+| tunnel          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| tunnelfloor     | 127 | 127 | 114 |
++-----------------+-----+-----+-----+
+| vkicker         | 186 | 84  | 211 |
++-----------------+-----+-----+-----+
+| warning         | 255 | 19  | 146 |
++-----------------+-----+-----+-----+
+| white           | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| yellow          | 255 | 255 | 0   |
++-----------------+-----+-----+-----+
 
 
 Controlling Simulation Speed

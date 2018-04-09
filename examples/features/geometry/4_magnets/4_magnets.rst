@@ -108,6 +108,9 @@ LHC cyrogenic magnet for dipoles and quadrupoles.  Given the two beam nature
 of the LHC, the magnet is either offset to the right or two the left dictating
 the 'active' beam pipe.
 
+.. figure:: 7_lhcleft.png
+	    :width: 70%
+
 8_none.gmad
 -----------
 
