@@ -10,8 +10,8 @@ set(TESTING_PERM_ARGS --batch)
 set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --ignoresigint)
 
 add_subdirectory(airwatertarget)
-add_subdirectory(ATF2)
-add_subdirectory(LHC)
+add_subdirectory(atf2)
+add_subdirectory(lhc)
 
 add_subdirectory(diamond)
 add_subdirectory(features)
