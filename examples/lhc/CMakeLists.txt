@@ -1,0 +1,1 @@
+simple_testing(example-lhc "--file=linsige.gmad --circular" "")
