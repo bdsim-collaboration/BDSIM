@@ -445,7 +445,7 @@ A few points about rbends:
    specified (on by default, see `options`_), then a thin fringefield magnet (1 micron thick by default)
    is included at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend.
    The length of the fringefield element can be set by the option `thinElementLength` (see `options`_).
-5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
 
 Examples::
@@ -544,7 +544,7 @@ A few points about sbends:
    specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
    at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
    fringefield element can be set by the option `thinElementLength` (see `options`_).
-4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
 
 Examples::
