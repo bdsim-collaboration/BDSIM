@@ -447,8 +447,8 @@ base class for the majority of BDSIM integrators.
 	  algorithm. The tracking is handled by Geant4.
 
 
-BDSIM Dipole
-------------
+BDSIM Dipole Rodrigues
+----------------------
 
 * Class name: :code:`BDSIntegratorDipoleRodrigues`
 
@@ -492,8 +492,10 @@ is limited to dipole fields aligned with :math:`\hat{y}` only and often caused t
 warnings with very low momenta particles in strong magnetic fields. A more flexible integrator
 that works in 3D was written to improve upon this and is described in _`BDSIM Dipole2`.
 
-BDSIM Dipole2
--------------
+.. _bdsim-dipole-rodrigues2:
+
+BDSIM Dipole Rodrigues 2
+------------------------
 
 * Class name: :code:`BDSIntegratorDipoleRodrigues2`
 
@@ -856,6 +858,7 @@ The delta chord intersection is calculated as:
 
 The error is not calculated here.
 
+.. _dipole-fringe-integrator:
 
 BDSIM Dipole Fringe
 -------------------

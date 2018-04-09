@@ -386,6 +386,8 @@ If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. 
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
+See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
@@ -487,6 +489,7 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
+See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -1172,120 +1175,6 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
-
-
-Colours
--------
-
-A few items allow you to define a custom colour for them to aid in visualisation. Currently,
-only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
-where the RGB values are space delimited and given from 0 to 255. Once the colour name has
-been defined it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined. The syntax is::
-
-  color="NAME: R G B";
-
-where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
-colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
-
-Examples::
-
-  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
-  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
-
-* Colour names are case-sensitive.
-* Note the colon `:` in the syntax is crucial.
-
-If a colour is already defined, that will be used. In the case a colour is already defined in
-BDSIM, that colour will be used. The user should therefore choose a different name if they
-wish to use their colour. The predefined colours in BDSIM are:
-
-+-----------------+-----+-----+-----+
-| Name            |  R  |  G  |  B  |
-+=================+=====+=====+=====+
-| LHCcoil         | 229 | 191 | 0   |
-+-----------------+-----+-----+-----+
-| LHCcollar       | 229 | 229 | 229 |
-+-----------------+-----+-----+-----+
-| LHCcopperskin   | 184 | 133 | 10  |
-+-----------------+-----+-----+-----+
-| LHCyoke         | 0   | 127 | 255 |
-+-----------------+-----+-----+-----+
-| LHCyokered      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| beampipe        | 102 | 102 | 102 |
-+-----------------+-----+-----+-----+
-| black           | 0   | 0   | 0   |
-+-----------------+-----+-----+-----+
-| blue            | 0   | 0   | 255 |
-+-----------------+-----+-----+-----+
-| brown           | 114 | 63  | 0   |
-+-----------------+-----+-----+-----+
-| coil            | 184 | 115 | 51  |
-+-----------------+-----+-----+-----+
-| collimator      | 76  | 102 | 51  |
-+-----------------+-----+-----+-----+
-| cyan            | 0   | 255 | 255 |
-+-----------------+-----+-----+-----+
-| decapole        | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| default         | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| degrader        | 159 | 159 | 159 |
-+-----------------+-----+-----+-----+
-| gdml            | 102 | 51  | 0   |
-+-----------------+-----+-----+-----+
-| gray            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| green           | 0   | 255 | 0   |
-+-----------------+-----+-----+-----+
-| grey            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| hkicker         | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| magenta         | 255 | 0   | 255 |
-+-----------------+-----+-----+-----+
-| multipole       | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| muspoiler       | 0   | 205 | 208 |
-+-----------------+-----+-----+-----+
-| octupole        | 0   | 153 | 76  |
-+-----------------+-----+-----+-----+
-| quadrupole      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| rectangularbend | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| red             | 255 | 0   | 0   |
-+-----------------+-----+-----+-----+
-| rfcavity        | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| screenframe     | 178 | 178 | 178 |
-+-----------------+-----+-----+-----+
-| sectorbend      | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| sextupole       | 255 | 204 | 0   |
-+-----------------+-----+-----+-----+
-| shield          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| soil            | 138 | 90  | 0   |
-+-----------------+-----+-----+-----+
-| solenoid        | 255 | 139 | 0   |
-+-----------------+-----+-----+-----+
-| srfcavity       | 175 | 196 | 222 |
-+-----------------+-----+-----+-----+
-| tunnel          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| tunnelfloor     | 127 | 127 | 114 |
-+-----------------+-----+-----+-----+
-| vkicker         | 186 | 84  | 211 |
-+-----------------+-----+-----+-----+
-| warning         | 255 | 19  | 146 |
-+-----------------+-----+-----+-----+
-| white           | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| yellow          | 255 | 255 | 0   |
-+-----------------+-----+-----+-----+
-
 
 Aperture Parameters
 -------------------
@@ -3868,6 +3757,164 @@ the user may define additional regions and attach them to the objects desired.  
 
 
 .. rubric:: Footnotes
+
+.. _bend-tracking-behaviour:
+	    
+Bends
+-----
+
+Fringe Field Integral Behaviour
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fringe fields can be specified for dipole magnets through the parameters `hgap`, `fint` and `fintx`.
+`fint` is the fringe field integral as described in :ref:`dipole-fringe-integrator` for the entrance
+face of the dipole. `fintx` is for the same but for the exit face. Even when there is no pole face
+roation, there is still a small fringe field effect.
+
+If `fint` is specified but `fintx` is not, `fintx` will default to the same value as `fint`. If
+however, `fintx` is set to 0 it will in face be 0 and will not take the value of `fint`. This is
+the same default behaviour as MADX. MADX will write out a value of `fintx` as -1 in this case in
+any output. BDSIM will write out the value used, even if it's 0.
+
+Pole Face Rotations
+^^^^^^^^^^^^^^^^^^^
+
+The `bdsimtwo` integrator set (see :ref:`integrator-sets`) provides tracking through a uniform
+magnetic field in a dipole. The field exists whereever the magnet exists so in the case of pole
+face rotations on the end of a dipole, the magnet is constructed with the appropriate angled face.
+The field therefore also has a hard edge with exactly no field immediately outside the magnet volume.
+
+The tracking routine for dipoles in the `bdsimtwo` integrator set (see :ref:`bdsim-dipole-rodrigues2`)
+tracks the particle using the analytical helical solution in a pure magnetic field in Cartesian
+coordinates. This however, does not agree with the tracking provided by MADX. We therefore provide
+an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provdied
+by the fringe field is the same in both cases.
+
+The difference between the two is negligible for small pole face angles - for example, the LHC lattice
+shows no difference between the integrator sets (~14mrad bending angle and very low pole face angles).
+However, with higher angle bends and stronger pole face angles (maximum is up to 45 degrees), the
+difference is non-negligible.
+
+The integrator for dipoles in `bdsimtwo` is compuatationally faster and should be used for lattices
+like the LHC where speed matters and the pole faces are not a strong feature.
+
+.. note:: To provide equivalent tracking to MADX with the `bdsimmatrix` integrator set, the
+	  magnet geometry is constructed with flat ends (i.e. always an sbend). In future,
+	  this will be decoupled to allow both the physical angled faces in the model as
+	  well as accurate tracking using the MADX style matrix integrators.
+
+
+Colours
+-------
+
+A few items allow you to define a custom colour for them to aid in visualisation. Currently,
+only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
+where the RGB values are space delimited and given from 0 to 255. Once the colour name has
+been defined it may be used again without having to redefine the components. Once defined, a
+colour may not be redefined. The syntax is::
+
+  color="NAME: R G B";
+
+where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
+colour, `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
+
+Examples::
+
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
+  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
+
+* Colour names are case-sensitive.
+* Note the colon `:` in the syntax is crucial.
+
+If a colour is already defined, that will be used. In the case a colour is already defined in
+BDSIM, that colour will be used. The user should therefore choose a different name if they
+wish to use their colour. The predefined colours in BDSIM are:
+
++-----------------+-----+-----+-----+
+| Name            |  R  |  G  |  B  |
++=================+=====+=====+=====+
+| LHCcoil         | 229 | 191 | 0   |
++-----------------+-----+-----+-----+
+| LHCcollar       | 229 | 229 | 229 |
++-----------------+-----+-----+-----+
+| LHCcopperskin   | 184 | 133 | 10  |
++-----------------+-----+-----+-----+
+| LHCyoke         | 0   | 127 | 255 |
++-----------------+-----+-----+-----+
+| LHCyokered      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| beampipe        | 102 | 102 | 102 |
++-----------------+-----+-----+-----+
+| black           | 0   | 0   | 0   |
++-----------------+-----+-----+-----+
+| blue            | 0   | 0   | 255 |
++-----------------+-----+-----+-----+
+| brown           | 114 | 63  | 0   |
++-----------------+-----+-----+-----+
+| coil            | 184 | 115 | 51  |
++-----------------+-----+-----+-----+
+| collimator      | 76  | 102 | 51  |
++-----------------+-----+-----+-----+
+| cyan            | 0   | 255 | 255 |
++-----------------+-----+-----+-----+
+| decapole        | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| default         | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| degrader        | 159 | 159 | 159 |
++-----------------+-----+-----+-----+
+| gdml            | 102 | 51  | 0   |
++-----------------+-----+-----+-----+
+| gray            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| green           | 0   | 255 | 0   |
++-----------------+-----+-----+-----+
+| grey            | 127 | 127 | 127 |
++-----------------+-----+-----+-----+
+| hkicker         | 76  | 51  | 178 |
++-----------------+-----+-----+-----+
+| magenta         | 255 | 0   | 255 |
++-----------------+-----+-----+-----+
+| multipole       | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| muspoiler       | 0   | 205 | 208 |
++-----------------+-----+-----+-----+
+| octupole        | 0   | 153 | 76  |
++-----------------+-----+-----+-----+
+| quadrupole      | 209 | 25  | 25  |
++-----------------+-----+-----+-----+
+| rectangularbend | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| red             | 255 | 0   | 0   |
++-----------------+-----+-----+-----+
+| rfcavity        | 118 | 135 | 153 |
++-----------------+-----+-----+-----+
+| screenframe     | 178 | 178 | 178 |
++-----------------+-----+-----+-----+
+| sectorbend      | 0   | 102 | 204 |
++-----------------+-----+-----+-----+
+| sextupole       | 255 | 204 | 0   |
++-----------------+-----+-----+-----+
+| shield          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| soil            | 138 | 90  | 0   |
++-----------------+-----+-----+-----+
+| solenoid        | 255 | 139 | 0   |
++-----------------+-----+-----+-----+
+| srfcavity       | 175 | 196 | 222 |
++-----------------+-----+-----+-----+
+| tunnel          | 138 | 135 | 119 |
++-----------------+-----+-----+-----+
+| tunnelfloor     | 127 | 127 | 114 |
++-----------------+-----+-----+-----+
+| vkicker         | 186 | 84  | 211 |
++-----------------+-----+-----+-----+
+| warning         | 255 | 19  | 146 |
++-----------------+-----+-----+-----+
+| white           | 255 | 255 | 255 |
++-----------------+-----+-----+-----+
+| yellow          | 255 | 255 | 0   |
++-----------------+-----+-----+-----+
 
 
 Controlling Simulation Speed
