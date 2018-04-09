@@ -10,3 +10,5 @@ include nlsige_options.gmad;
 
 
 sample, all;
+
+option, ngenerate=100;
