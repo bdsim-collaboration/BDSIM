@@ -1,0 +1,1 @@
+simple_testing(example-atf2-nlsige "--file=nlsige.gmad" "")

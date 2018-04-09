@@ -1,0 +1,14 @@
+! Fri, 02 Mar 2018 14:16:59 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 11781
+! total length       = 26658.8831865 m
+
+include lhc2017_components.gmad;
+include lhc2017_sequence.gmad;
+include lhc2017_beam.gmad;
+include lhc2017_options.gmad;
+
+
+sample, all;
+
+option, ngenerate=5;

@@ -1,6 +1,0 @@
-beam, particle="proton",
-      energy=4000*GeV,
-      distrType="reference",
-      X0=0.10,
-      Xp0=0.0001,
-      Y0=0.0;

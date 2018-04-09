@@ -4,6 +4,27 @@
 Output
 ======
 
+BDSIM by default writes an output file with a summary of the model created, the particle coordinates
+generated, the options used, and basic energy deposition histograms. This can be turned off by
+executing BDSIM with::
+
+  bdsim --output=none
+
+The output file name can be specified with::
+
+  bdsim --outfile="mydesiredname"
+
+with no extension.
+
+File Writing Policy
+-------------------
+
+* The default file name is "output".
+* If no output file name is run and there is already a file called "output", a suffix with an integer will
+  be added, i.e. "output-1".
+* However, BDSIM will overwrite an output file if `-\\-outfile` is supplied with the same name again.
+* The behaviour is the same in both visualiser mode and batch mode.
+  
 Output Information
 ------------------
 
@@ -94,6 +115,8 @@ and process the data. A BDSIM ROOT event file has the following structure.
 	    :width: 40%
 	    :align: center
 
+	    Contents of a BDSIM ROOT Event format file.
+		    
 The file consists of four ROOT 'trees' each with 'branches' that represent instances
 of the BDSIM classes.  The trees are:
 

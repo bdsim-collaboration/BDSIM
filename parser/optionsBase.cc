@@ -63,12 +63,12 @@ OptionsBase::OptionsBase()
   
   // very important options
   physicsList           = ""; //default - only transportation
-  physicsVerbose        = 0;
+  physicsVerbose        = false;
   
   eventOffset           = 0;
   recreateSeedState     = true;
 
-  elossHistoBinWidth      = 1.0; // m
+  elossHistoBinWidth    = 1.0; // m
   
   ffact                 = 1.0;
 

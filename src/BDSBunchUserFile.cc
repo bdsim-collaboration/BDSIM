@@ -271,7 +271,8 @@ template<class T>
 G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
 {
   G4double unit=1.;
-  if(fmt=="GeV") unit=1;
+  if (fmt=="TeV") unit=1.e3;
+  else if(fmt=="GeV") unit=1;
   else if(fmt=="MeV") unit=1.e-3;
   else if(fmt=="KeV") unit=1.e-6;
   else if(fmt=="eV") unit=1.e-9;
@@ -305,6 +306,7 @@ G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
   if(fmt=="rad") unit=1;
   else if(fmt=="mrad") unit=1.e-3;
   else if(fmt=="murad" || fmt=="urad") unit=1.e-6;
+  else if(fmt=="nrad") unit=1.e-9;
   else {
     G4cout << __METHOD_NAME__ << "Unrecognised angle unit! " << fmt << G4endl;
     exit(1);

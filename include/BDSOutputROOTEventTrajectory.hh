@@ -128,7 +128,7 @@ public :
   TVector3 momentum;
   int model;
 
-  ClassDef(BDSOutputROOTEventTrajectoryPoint,1);
+  ClassDef(BDSOutputROOTEventTrajectoryPoint,2);
 };
 
 
@@ -189,7 +189,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
-  ClassDef(BDSOutputROOTEventTrajectory,1);
+  ClassDef(BDSOutputROOTEventTrajectory,2);
 };
 
 

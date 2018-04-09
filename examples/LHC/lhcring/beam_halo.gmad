@@ -1,9 +1,0 @@
-beam,  particle="proton",
-       energy=4000 * GeV,
-       distrType="eshell",
-       shellX=0.0015,
-       shellXp=0.0014,
-       shellY=0.0015,
-       shellYp=0.0014,
-       sigmaE=0.00008836;
-

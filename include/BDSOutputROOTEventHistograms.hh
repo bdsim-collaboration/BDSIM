@@ -85,7 +85,7 @@ private:
   std::vector<TH2D*> histograms2D;
   std::vector<TH3D*> histograms3D;
 
-  ClassDef(BDSOutputROOTEventHistograms,1);
+  ClassDef(BDSOutputROOTEventHistograms,2);
 };
 
 #endif

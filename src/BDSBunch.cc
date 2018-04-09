@@ -119,12 +119,15 @@ void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 
   ApplyTransform(x0,y0,z0,xp,yp,zp);
   
-  t = 0.0;
+  t = T0 * CLHEP::s;
   E = E0 * CLHEP::GeV;
   weight = 1.0;
 }
 
 void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
+{;}
+
+void BDSBunch::EndOfRunAction()
 {;}
 
 void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,

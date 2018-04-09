@@ -796,7 +796,10 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
   G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
   G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
   if (flip)
-    {elRotEnd->rotateY(CLHEP::pi);}
+    {// rotate about local unit Y direction
+      G4ThreeVector localUnitY = G4ThreeVector(0,1,0).transform(*elRotEnd);
+      elRotEnd->rotate(CLHEP::pi, localUnitY);
+    }
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSTiltOffset*   forEndPiece = nullptr;
