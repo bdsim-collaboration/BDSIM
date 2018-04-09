@@ -2231,12 +2231,18 @@ BDSIM uses the Geant4 physics lists directly and more details can be found in th
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
 
+.. warning:: Geant4 recently provides its own physics 'lists' - for example in
+	     "geant4.10.04.p01/source/physics_lists/lists/include". BDSIM does not currently
+	     support these but in future it will. For example, note that `ftfp_bert` in BDISM
+	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
+	     physics list in Geant4.
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
-+-----------------------------+-------------------------------------------------------------------------+
-| **String to use**           | **Description**                                                         |
-+=============================+=========================================================================+
-|                             | Transportation of primary particles only - no scattering in material.   |
++------------------------------+------------------------------------------------------------------------+
+| **String to use**            | **Description**                                                        |
++==============================+========================================================================+
+|                              | Transportation of primary particles only - no scattering in material.  |
 +------------------------------+------------------------------------------------------------------------+
 | charge_exchange              | `G4ChargeExchangePhysics`.                                             |
 +------------------------------+------------------------------------------------------------------------+
@@ -3035,9 +3041,10 @@ should only be used with understanding.
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
-|                                   | be different for each run or even when using --recreate.  Only     |
+|                                   | be different for each run or even when using -\\-recreate.  Only   |
 |                                   | suitable for large (>100) numbers of particles. Note, this isn't   |
-|                                   | an option, but part of the beam command.                           |
+|                                   | an option, but part of the beam command. This cannot be used with  |
+|                                   | the visualiser.                                                    |
 +-----------------------------------+--------------------------------------------------------------------+
 
 
