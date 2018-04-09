@@ -78,7 +78,7 @@ public:
   virtual void Fill();
 #endif
 
-  ClassDef(BDSOutputROOTEventModel,1);
+  ClassDef(BDSOutputROOTEventModel,2);
 };
 
 #endif

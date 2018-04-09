@@ -45,7 +45,7 @@ public:
   int    index;     ///< Number of this event or run.
   bool   aborted;   ///< Whether the event was aborted or not.
 
-  ClassDef(BDSOutputROOTEventInfo,1);
+  ClassDef(BDSOutputROOTEventInfo,2);
 };
 
 #endif

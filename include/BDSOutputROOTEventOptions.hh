@@ -40,7 +40,7 @@ public:
 #ifndef __ROOTBUILD__   
   void Fill();
 #endif
-  ClassDef(BDSOutputROOTEventOptions,1);
+  ClassDef(BDSOutputROOTEventOptions,2);
 };
 
 #endif

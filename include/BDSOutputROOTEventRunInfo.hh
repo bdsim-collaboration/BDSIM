@@ -45,7 +45,7 @@ public:
   double duration;
   std::string seedStateAtStart; ///< Seed state at the start of the event.
   
-  ClassDef(BDSOutputROOTEventRunInfo,1);
+  ClassDef(BDSOutputROOTEventRunInfo,2);
 };
 
 #endif

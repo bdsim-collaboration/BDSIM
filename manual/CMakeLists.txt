@@ -37,7 +37,7 @@ if(SPHINX_FOUND AND PY_SPHINX_RTD_THEME)
     # Make directory for examples
     COMMAND ${CMAKE_COMMAND} -E make_directory ${BINARY_BUILD_DIR}/source/examples
     # Copy .rst and .png files from examples
-    COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \;
+    COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png -o -iname *.pdf \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \;
     COMMENT "Copying manual files to build directory"
     VERBATIM
   )

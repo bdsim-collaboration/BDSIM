@@ -53,7 +53,7 @@ public:
   /// file, we break that convention.
   void Fill();
 
-  ClassDef(BDSOutputROOTEventHeader,1);
+  ClassDef(BDSOutputROOTEventHeader,2);
 };
 
 #endif
