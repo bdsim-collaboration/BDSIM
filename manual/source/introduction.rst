@@ -84,6 +84,7 @@ to be simulated. A Geant4 example is shown below being interactively visualised.
 	    :width: 90%
 	    :align: center
 
+	    Example Geant4 program being visualised with events displayed.
 
 This is labour intensive and inflexible for different accelerator models or optics. As
 accelerators typically consist of a standard set of components these can be made
@@ -95,19 +96,19 @@ below.
 	    :width: 90%
 	    :align: center
 
-"simpleCollimation" example of four quadrupoles in a small tunnel section.
+	    "simpleCollimation" example of four quadrupoles in a small tunnel section.
 
 .. figure:: figures/example-atf2.png
 	    :width: 90%
 	    :align: center
 
-Accelerator Test Facility 2 in KEK, Japan with tunnel model.
+	    Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
 .. figure:: figures/example-atf2-2.png
 	    :width: 90%
 	    :align: center
 
-Accelerator Test Facility 2 in KEK, Japan with tunnel model.
+	    Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
 
 Apart from the 3D geometry, a crucial component of a model are the electromagnetic

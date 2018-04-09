@@ -429,6 +429,8 @@ tracking still includes the pole face effects.
 	    :width: 75%
 	    :align: center
 
+	    Pole face notation for an rbend.
+
 A few points about rbends:
 
 1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
@@ -531,6 +533,8 @@ that the maximum tangential error in the aperture is 1 mm.
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
+
+	    Pole face notation for an sbend.
 
 A few points about sbends:
 
