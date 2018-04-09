@@ -418,6 +418,12 @@ See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `fintK2`        | second fringe field integral for  | 0         | no              |
+|                 | the entrance face of the rbend.   |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintxK2`       | second fringe field integral for  | 0         | no              |
+|                 | the exit face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | the half gap of the poles for     | 0         | no              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -441,12 +447,17 @@ A few points about rbends:
    :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
-4) If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-   specified (on by default, see `options`_), then a thin fringefield magnet (1 micron thick by default)
-   is included at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend.
-   The length of the fringefield element can be set by the option `thinElementLength` (see `options`_).
-5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
+   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   set by the option `thinElementLength` (see `options`_).
+5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
+6) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
+   enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
+   of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
+   explicitly specified as non-zero.
+7) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+   the option `includeFringeFields=0` (see `options`_).
 
 Examples::
 
@@ -521,6 +532,12 @@ See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `fintK2`        | second fringe field integral for  | 0         | no              |
+|                 | the entrance face of the rbend.   |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `fintxK2`       | second fringe field integral for  | 0         | no              |
+|                 | the exit face of the rbend.       |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 | `hgap`          | the half gap of the poles for     | 0         | no              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
@@ -540,13 +557,17 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-   specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-   at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-   fringefield element can be set by the option `thinElementLength` (see `options`_).
-4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used event
+3) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
+   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   set by the option `thinElementLength` (see `options`_).
+4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
-
+5) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
+   enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
+   of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
+   explicitly specified as non-zero.
+6) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+   the option `includeFringeFields=0` (see `options`_).
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
@@ -3819,7 +3840,7 @@ Fringe Field Integral Behaviour
 Fringe fields can be specified for dipole magnets through the parameters `hgap`, `fint` and `fintx`.
 `fint` is the fringe field integral as described in :ref:`dipole-fringe-integrator` for the entrance
 face of the dipole. `fintx` is for the same but for the exit face. Even when there is no pole face
-roation, there is still a small fringe field effect.
+rotation, there is still a small fringe field effect.
 
 If `fint` is specified but `fintx` is not, `fintx` will default to the same value as `fint`. If
 however, `fintx` is set to 0 it will in face be 0 and will not take the value of `fint`. This is
@@ -3837,7 +3858,7 @@ The field therefore also has a hard edge with exactly no field immediately outsi
 The tracking routine for dipoles in the `bdsimtwo` integrator set (see :ref:`bdsim-dipole-rodrigues2`)
 tracks the particle using the analytical helical solution in a pure magnetic field in Cartesian
 coordinates. This however, does not agree with the tracking provided by MADX. We therefore provide
-an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provdied
+an equivalent to MADX in `bdsimmatrix` integrator set (the default). The vertical focussing provided
 by the fringe field is the same in both cases.
 
 The difference between the two is negligible for small pole face angles - for example, the LHC lattice
@@ -3845,13 +3866,17 @@ shows no difference between the integrator sets (~14mrad bending angle and very 
 However, with higher angle bends and stronger pole face angles (maximum is up to 45 degrees), the
 difference is non-negligible.
 
-The integrator for dipoles in `bdsimtwo` is compuatationally faster and should be used for lattices
+The integrator for dipoles in `bdsimtwo` is computationally faster and should be used for lattices
 like the LHC where speed matters and the pole faces are not a strong feature.
 
 .. note:: To provide equivalent tracking to MADX with the `bdsimmatrix` integrator set, the
-	  magnet geometry is constructed with flat ends (i.e. always an sbend). In future,
-	  this will be decoupled to allow both the physical angled faces in the model as
-	  well as accurate tracking using the MADX style matrix integrators.
+	  magnet geometry is constructed with flat ends (i.e. always an sbend). Rbends are constructed
+	  as sbends with additional poleface rotation angles equal to half the bend angle. Instead of
+	  constructing the poleface geometry, the effect of a poleface rotation is applied in a thin
+	  fringefield magnet (1 micron thick by default) at the beginning (for non-zero e1) or at the
+	  end (for non-zero e2) of the dipole. In future, this will be decoupled to allow both the
+	  physical angled faces in the model as well as accurate tracking using the MADX style matrix
+	  integrators.
 
 
 Colours
