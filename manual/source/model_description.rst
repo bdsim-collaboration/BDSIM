@@ -3207,7 +3207,7 @@ Examples::
 	 sigma22 = 3*um,
 	 sigma33 = 50*um,
 	 sigma44 = 1.4*um,
-	 sigma55 = 1e-12,
+	 sigma55 = 1e-12
 	 sigma66 = 1e-4,
 	 sigma12 = 1e-2,
 	 sigma34 = 1.4e-3;
