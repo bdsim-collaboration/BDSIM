@@ -115,6 +115,8 @@ and process the data. A BDSIM ROOT event file has the following structure.
 	    :width: 40%
 	    :align: center
 
+	    Contents of a BDSIM ROOT Event format file.
+		    
 The file consists of four ROOT 'trees' each with 'branches' that represent instances
 of the BDSIM classes.  The trees are:
 
