@@ -11,11 +11,10 @@ set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --ignoresigint)
 
 add_subdirectory(airwatertarget)
 add_subdirectory(atf2)
-add_subdirectory(lhc)
-
 add_subdirectory(diamond)
 add_subdirectory(features)
 add_subdirectory(fodoRing)
+add_subdirectory(lhc)
 add_subdirectory(simpleMachine)
 add_subdirectory(simpleCollimation)
 add_subdirectory(target)
