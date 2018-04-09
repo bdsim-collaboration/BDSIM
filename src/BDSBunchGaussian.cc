@@ -99,6 +99,16 @@ void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
   PreGenerateEvents(numberOfEvents);
 }
 
+void BDSBunchGaussian::EndOfRunAction()
+{
+  if (!offsetSampleMean)
+    {return;}
+  /// clear previous means
+  for (auto& vec : coordinates)
+    {vec->clear();}
+  iPartIteration = 0;
+}
+
 CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine& anEngine,
 							  const CLHEP::HepVector& mu,
 							  CLHEP::HepSymMatrix& sigma)
@@ -226,6 +236,7 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   if (offsetSampleMean)
     {
       // iPartIteration should never exceed the size of each vector.
+      // the units are already correct in the vector of stored coordinates
       x0     = x0_v[iPartIteration];
       xp     = xp_v[iPartIteration];
       y0     = y0_v[iPartIteration];

@@ -1,0 +1,14 @@
+! Sun, 08 Apr 2018 13:15:54 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 318
+! total length       = 96.4558630243 m
+
+include linsige0_components.gmad;
+include linsige0_sequence.gmad;
+include linsige0_beam.gmad;
+include linsige0_options.gmad;
+
+
+sample, all;
+
+option, ngenerate=100;

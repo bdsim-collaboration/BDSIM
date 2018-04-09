@@ -1,0 +1,22 @@
+! Fri, 02 Mar 2018 14:16:59 +0000
+! pybdsim.Builder 
+! BEAM DEFINITION 
+
+beam,	X0=-3.35651771071e-10*m,
+	Xp0=-1.27264244607e-11, 
+	Y0=-1.46458583209e-10*m, 
+	Yp0=-5.20724033584e-12, 
+	alfx=0.545504487863, 
+	alfy=-2.33826023873, 
+	betx=33.9989847133*m, 
+	bety=169.47097918*m, 
+	dispx=1.16910119347*m, 
+	dispxp=-0.00900252684775, 
+	dispy=-0.314719243121*m, 
+	dispyp=-0.00489512551442, 
+	distrType="gausstwiss", 
+	emitx=3.60873863846e-10*m, 
+	emity=3.60873863846e-10*m, 
+	energy=6500.0*GeV, 
+	particle="proton", 
+	sigmaE=0.001;

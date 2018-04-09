@@ -322,6 +322,10 @@ This is shown schematically in the figure below.
 	    :width: 100%
 	    :align: center
 
+	    Schematic of strategy for a low volume of data produced from a computationally
+	    intense simulation. Multiple instances of BDSIM are executed each producing their
+	    own output file. These are analysed all at once with `rebdsim`.
+
 This strategy works best for a relatively low number of events and data volume (example
 numbers might be < 10000 events and < 10 GB of data).
 
@@ -346,6 +350,12 @@ are input files to be merged. This workflow is shown schematically in the figure
 .. figure:: figures/multiple_analyses.pdf
 	    :width: 100%
 	    :align: center
+
+	    Schematic of strategy for a high data volume analysis. Multiple instances of
+	    BDSIM are executed in a script that then executes `rebdsim` with a suitable
+	    analysis configuration. Only the output files from `rebdsim` are then combined
+	    into a final output identical to what would have been produced from analysing
+	    all data at once, but in vastly reduced time.
 
 
 Further Analysis

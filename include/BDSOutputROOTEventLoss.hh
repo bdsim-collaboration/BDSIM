@@ -61,7 +61,7 @@ public:
   std::vector<float>        Z;
   /// @}
 
-  std::vector<float>        T; ///< global time (time since beginning of event)
+  std::vector<float>        T; ///< Global time (time since beginning of event).
 
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal,
@@ -77,7 +77,7 @@ public:
   bool storeLocal  = false; // Store local coordinates
   bool storeGlobal = false; // Store global coordinates
   bool storeTime   = false; // Store global time
-  ClassDef(BDSOutputROOTEventLoss,1);
+  ClassDef(BDSOutputROOTEventLoss,2);
 };
 
 

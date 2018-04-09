@@ -64,6 +64,9 @@ public:
   /// calculate sample mean offsets in some derived classes.
   virtual void BeginOfRunAction(const G4int& numberOfEvents);
 
+  /// An action that is called at the end of a run. By default, does nothing.
+  virtual void EndOfRunAction();
+
   /// Access whether the particle generated may be different from the design particle.
   inline G4bool ParticleCanBeDifferentFromBeam() const {return particleCanBeDifferent;}
 
