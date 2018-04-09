@@ -386,7 +386,7 @@ If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. 
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
-See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -489,7 +489,7 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
-See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
