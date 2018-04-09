@@ -386,7 +386,7 @@ If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. 
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
-See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -435,6 +435,8 @@ See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 	    :width: 75%
 	    :align: center
 
+	    Pole face notation for an rbend.
+
 A few points about rbends:
 
 1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
@@ -443,8 +445,8 @@ A few points about rbends:
    case, consider splitting the `rbend` into multiple ones.
 2) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 3) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
-   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
-   :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+   the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an rbend with
+   :math:`e2 = 0.1` can be followed by an rbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
 4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
@@ -500,7 +502,7 @@ makes no effect on tracking, but allows a much higher variety of apertures and m
 geometry to be used given the Geant4 geometry. The number of segments is computed such
 that the maximum tangential error in the aperture is 1 mm.
 
-See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
+.. note:: See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
@@ -548,6 +550,8 @@ See :ref:`bend-tracking-behaviour` for important notes about dipole tracking.
 .. figure:: figures/poleface_notation_sbend.pdf
 	    :width: 75%
 	    :align: center
+
+	    Pole face notation for an sbend.
 
 A few points about sbends:
 
@@ -2180,6 +2184,8 @@ e.g.::
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
 
+.. _sampler-dimensions:
+	  
 Sampler Dimensions
 ^^^^^^^^^^^^^^^^^^
 
@@ -2607,6 +2613,8 @@ General Run Options
 | writeSeedState                   | Write the seed state of the last event start in       |
 |                                  | ASCII.                                                |
 +----------------------------------+-------------------------------------------------------+
+
+.. _options-geometry:
 
 Geometry Options
 ^^^^^^^^^^^^^^^^
@@ -3228,7 +3236,7 @@ Examples::
 	 sigma22 = 3*um,
 	 sigma33 = 50*um,
 	 sigma44 = 1.4*um,
-	 sigma55 = 1e-12,
+	 sigma55 = 1e-12
 	 sigma66 = 1e-4,
 	 sigma12 = 1e-2,
 	 sigma34 = 1.4e-3;
@@ -3877,6 +3885,24 @@ like the LHC where speed matters and the pole faces are not a strong feature.
 	  end (for non-zero e2) of the dipole. In future, this will be decoupled to allow both the
 	  physical angled faces in the model as well as accurate tracking using the MADX style matrix
 	  integrators.
+
+Large Angle Bends
+^^^^^^^^^^^^^^^^^
+For a model that includes large angle bends (for example > 0.1rad), the user should consider reducing
+the sampler diameter (see :ref:`sampler-dimensions` and :ref:`options-geometry`). This is because
+the default 5m width of a sampler may cause overlaps between samplers or each sampler may record
+particles from multiple positions in the beam line.
+
+One other point is that the parallel geometry used for curvilinear transforms (the "curvilinear world")
+may overlap with other curvilinear elements earlier in the beam line. The size of the curvilinear
+world cylinders is based on the samplerDiameter and reducing the samplerDiameter will reduce their size.
+There is some automatic provision for this in BDSIM where the sampler diameter is automatically reudced
+when large angle bends are present in the lattice but this is based on a heuristic rather than direct
+overlap checks.
+
+In short, we recommend running with :code:`option, checkOverlaps=1;` once to verify there are no
+problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
+to the typical full width of a magnet.
 
 
 Colours

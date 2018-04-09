@@ -198,21 +198,31 @@ the `rebdsimOptics` output file name given to the comparison. In this case, it w
 	    :width: 100%
 	    :align: center
 
+	    Example comparison of beam centroids for ATF2.
+
 .. figure:: figures/optics/sigma.pdf
 	    :width: 100%
 	    :align: center
+
+	    Example comparison of beam size for ATF2.
 
 .. figure:: figures/optics/sigmap.pdf
 	    :width: 100%
 	    :align: center
 
+	    Example comparison of :math:`\sigma_{xp, yp}` for ATF2.
+
 .. figure:: figures/optics/beta.pdf
 	    :width: 100%
 	    :align: center
+
+	    Example comparison of Twiss :math:`\beta` functions.
 	       
 .. figure:: figures/optics/alpha.pdf
 	    :width: 100%
 	    :align: center
+
+	    Example comparison of Twiss :math:`\alpha` functions.
 
 
 Comparison Notes
