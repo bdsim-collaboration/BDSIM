@@ -271,7 +271,7 @@ template<class T>
 G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
 {
   G4double unit=1.;
-  if (fmt=="TeV") units=1.e3;
+  if (fmt=="TeV") unit=1.e3;
   else if(fmt=="GeV") unit=1;
   else if(fmt=="MeV") unit=1.e-3;
   else if(fmt=="KeV") unit=1.e-6;
