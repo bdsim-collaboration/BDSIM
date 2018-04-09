@@ -10,8 +10,10 @@ documentation and in the .rst files beside the each example.
    :maxdepth: 3
 
    features
-   atf2
-   ilc
-   lhc
    simpleMachine
    airwatertarget
+   atf2
+   diamond
+   lhc
+   ilc
+

@@ -13,14 +13,15 @@ add_subdirectory(airwatertarget)
 add_subdirectory(ATF2)
 add_subdirectory(LHC)
 
-if(USE_AWAKE)
-  add_subdirectory(AWAKE)
-endif()
-
+add_subdirectory(diamond)
 add_subdirectory(features)
 add_subdirectory(fodoRing)
 add_subdirectory(simpleMachine)
 add_subdirectory(simpleCollimation)
 add_subdirectory(target)
 
+
+if(USE_AWAKE)
+  add_subdirectory(AWAKE)
+endif()
 
