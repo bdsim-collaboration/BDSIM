@@ -3561,16 +3561,60 @@ recommended as compressed ASCII is significantly smaller in size.
 |                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
 
+Acceptable tokens for the columns are:
+
++------------+------------------------+
+| **Token**  |  **Description**       |
++============+========================+
+| "E"        | Total energy.          |
++------------+------------------------+
+| "Ek"       | Kinetic energy.        |
++------------+------------------------+
+| "P"        | Momentum.              |
++------------+------------------------+
+| "t"        | Time.                  |
++------------+------------------------+
+| "x"        | Horizontal position.   |
++------------+------------------------+
+| "y"        | Vertical position.     |
++------------+------------------------+
+| "z"        | Longitudinal position. |
++------------+------------------------+
+| "xp"       | Horizontal angle.      |
++------------+------------------------+
+| "yp"       | Verticla angle.        |
++------------+------------------------+
+| "zp"       | Longitudinal.          |
++------------+------------------------+
+| "pt"       | PDG particle ID.       |
++------------+------------------------+
+| "w"        | Weight                 |
++------------+------------------------+
+| "-"        | Skip this column.      |
++------------+------------------------+
+
+**Energy Units**
+"eV", "KeV", "MeV", "GeV", "TeV"
+
+**Length Units**
+"m, "cm", "mm", "mum", "um", "nm"
+
+**Angle Units**
+"rad", "mrad", "murad", "urad"
+
+**Time Units**
+"s", "ms", "mus", "us", "ns", "mm/c", "nm/c"
+
 Examples::
 
   beam, particle = "e-",
         energy = 1*GeV,
         distrType  = "userfile",
-        distrFile  = "9_UserFile.dat",
+        distrFile  = "Userbeamdata.dat",
         distrFileFormat = "x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]";
 
 
-The corresponding `9_UserFile.dat` file looks like::
+The corresponding `userbeamdata.dat` file looks like::
 
   0 1 2 1 0 1000
   0 1 0 1 0 1002
@@ -3581,7 +3625,6 @@ The corresponding `9_UserFile.dat` file looks like::
   0 0 0 3 0 1010
   0 0 0 4 0 1020
   0 0 0 2 0 1000
-
 
 
 ptc
