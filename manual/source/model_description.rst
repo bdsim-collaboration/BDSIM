@@ -2159,6 +2159,8 @@ e.g.::
 	  finite extent in *z* or *t*, particles may start beyond this first sampler and
 	  never pass through it.
 
+.. _sampler-dimensions:
+	  
 Sampler Dimensions
 ^^^^^^^^^^^^^^^^^^
 
@@ -2586,6 +2588,8 @@ General Run Options
 | writeSeedState                   | Write the seed state of the last event start in       |
 |                                  | ASCII.                                                |
 +----------------------------------+-------------------------------------------------------+
+
+.. _options-geometry:
 
 Geometry Options
 ^^^^^^^^^^^^^^^^
@@ -3852,6 +3856,24 @@ like the LHC where speed matters and the pole faces are not a strong feature.
 	  magnet geometry is constructed with flat ends (i.e. always an sbend). In future,
 	  this will be decoupled to allow both the physical angled faces in the model as
 	  well as accurate tracking using the MADX style matrix integrators.
+
+Large Angle Bends
+^^^^^^^^^^^^^^^^^
+For a model that includes large angle bends (for example > 0.1rad), the user should consider reducing
+the sampler diameter (see :ref:`sampler-dimensions` and :ref:`options-geometry`). This is because
+the default 5m width of a sampler may cause overlaps between samplers or each sampler may record
+particles from multiple positions in the beam line.
+
+One other point is that the parallel geometry used for curvilinear transforms (the "curvilinear world")
+may overlap with other curvilinear elements earlier in the beam line. The size of the curvilinear
+world cylinders is based on the samplerDiameter and reducing the samplerDiameter will reduce their size.
+There is some automatic provision for this in BDSIM where the sampler diameter is automatically reudced
+when large angle bends are present in the lattice but this is based on a heuristic rather than direct
+overlap checks.
+
+In short, we recommend running with :code:`option, checkOverlaps=1;` once to verify there are no
+problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
+to the typical full width of a magnet.
 
 
 Colours
