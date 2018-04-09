@@ -9,4 +9,5 @@ How to run::
   bdsim --file=sm.gmad
 
 .. figure:: simpleMachine.png
-	    :width: 50%
+	    :width: 100%
+	    :align: center

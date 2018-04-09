@@ -25,14 +25,26 @@ visualisations and the beam size and dispersion as calculated using
 	    :width: 100%
 	    :align: center
 
+The full machine as visualised with BDSIM.
+		    
 .. figure:: diamond2.png
 	    :width: 100%
 	    :align: center
 
+Part of the machine visualised with perspective.
+		    
 .. figure:: diamond-sigma.pdf
 	    :width: 100%
 	    :align: center
 
+The beam size in horizontal and vertical throughout a single turn of the
+ring with 5000 particles. Particles tracked in BDSIM, sizes calculated
+with `rebdsimOptics` and comparison with `pybdsim`.
+
 .. figure:: diamond-dispersion.pdf
 	    :width: 100%
 	    :align: center
+
+The dispersion in both horizontal and dispersion throughout a single turn
+of the ring with 5000 particles. Particles tracked in BDSIM, sizes calcualted
+with `rebdsimOptics` and comparison with `pybdsim`.

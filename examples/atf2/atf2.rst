@@ -25,10 +25,23 @@ How to run::
 	    :width: 100%
 	    :align: center
 
+The full machine as visualised by default in BDSIM.
+
 .. figure:: atf22.png
 	    :width: 100%
 	    :align: center
 
+The full machine looking from the beginning to the end.
+
 .. figure:: atf23.png
 	    :width: 100%
 	    :align: center
+
+The full machine looking from the end to the beginning with perspective.
+
+.. figure:: atf2-sigma.pdf
+	    :width: 100%
+	    :align: center
+
+Comparison of beam size as calculated by `rebdsimOptics` from tracking
+1000 particles through the full machine.

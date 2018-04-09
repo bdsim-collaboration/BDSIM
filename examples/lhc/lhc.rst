@@ -30,3 +30,24 @@ It is possible to visualise, but the visualisation takes ~10mins and
 the visualiser commands should be used to move directly to a point of interest
 in global coordinates. The slowness is due to the Geant4 visualisation
 system.
+
+Here, we show an examle optical comparison, In all cases, `rebdsimOptics` was
+used to calculate the beam properties and `pybdsim` used to make the comparison plots.
+
+.. figure:: lhc2017-mean.png
+	    :width: 100%
+	    :align: center
+
+Beam mean position (i.e. 'orbit') from 500 particles tracked for 1 turn.
+		    
+.. figure:: lhc2017-sigma.png
+	    :width: 100%
+	    :align: center
+
+Beam size from 500 particles tracked for 1 turn.
+		    
+.. figure:: lhc2017-dispersion.png
+	    :width: 100%
+	    :align: center
+
+Dispersion from 500 particles tracked for 1 turn.
