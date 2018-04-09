@@ -162,3 +162,28 @@ and increased performance.
 	  no pole face angles are physically constructed. The tracking however does represent the
 	  pole faces. Developments underway will allow both correct tracking with the thick lens
 	  matrix and the physical angled pole face.
+
+
+Limits
+======
+
+Energy
+------
+
+The user must understand the validity of the Geant4 models used and the applicability of the
+physics processes / models at their energy regime. Most Geant4 high eneryg processes will not
+work above (an including) 50 TeV for a single particle.
+
+Model Physical Size
+-------------------
+
+BDSIM uses a small padding distance between all surfaces and in addition, Geant4 treats the
+intersection with every surface of every solid with a certain tolerance. Specifying a tolerance
+like this avoids infinte recursion (or at least costly recursion) to ascertain the intersection
+of a curved track with a surface. This tolerance is by default :math:`1e^-9` mm. BDSIM and Geant4
+use double floating point precision throughout providing approximately 15 to 16 significant figures.
+Therefore, a maximum size of a model while still maintaining tracking precision is :math:`10^7` mm.
+This leads us to conclude that a model of order the size of the LHC is a practical maximum.
+Developments are underway to dynamically adjust this tolerance so as to increase this size. Please
+contact us for advice (see :ref:`feature-request`). However, Geant4 and CLHEP are not fully templated
+(yet) to allow the use of higher precision numbers.

@@ -1,11 +1,11 @@
-V0.994 - 2018 / 03 / ??
-=======================
+V1.0 - 2018 / 04 / 10
+=====================
 
 New Features
 ------------
 
 * Support for Geant4.10.4 - however, this version is unusable as G4ExtrudedSolid is
-  broken and used in BDSIM. We recommend Geant4.10.3.p03.
+  broken and used in BDSIM. We recommend Geant4.10.4.p01.
 * H-style dipoles controllable by default or per element with `hStyle` option.
 * Control over dipole proportions with global and per element options `vhRatio`,
   `coilWidthFraction` and `coilHeightFraction`.
@@ -28,20 +28,28 @@ New Features
 * New CMake option to disable event display for installation with ROOT EVE problems.
 * Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
-* Full support for dipole fringe fields and pole face in tracking.
+* Full support for dipole fringe fields and pole faces in tracking.
 * Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
 * `scaling` parameter for each element allowing simple scaling of strengths.
+* New program to convert PTC output in a TFS file to BDSIM output format (`ptc2bdsim`).
 
+Output Changes
+--------------
 
-Output \& Analysis Changes
---------------------------
-
+* The ROOT class definition has been incremented to "2" from "1".
 * Output files now have header structure with software versions.
 * Output files now have 'geant4 data' that includes particle masses used in the simulation.
-* Samplers now have optional charge, mass, rigidity and ion A and Z (see :ref:`bdsim-options-output` for details). Classes in library can calculate on-the-fly for user analysis.
+* "t" is now "T" in samplers and trajectory output to be consistent with naming convention of global and local coordinates.
+* Samplers now have optional charge, mass, rigidity and ion A and Z (see :ref:`bdsim-options-output` for details).
+  Classes in library can calculate on-the-fly for user analysis.
+* Trajectory momentum is now in GeV.
+
+Analysis Changes
+----------------
+
 * "**librebdsimlib**" has been changed to "**librebdsim**" to be more consistent for output loading.
 * Support for logarithmic binning of histograms in rebdsim.
-* "HistogramND" in rebdsim now creates per-entry histograms on the tree. This introduces the
+* "HistogramND" in rebdsim now creates **per-entry** histograms on the tree. This introduces the
   ability to create per-event histograms in analysis that were not previously possible. Older
   style histograms that are a sum across all events are now made with "SimpleHistogramND".
 * New option in rebdsim to turn off histogram merging (for speed).
@@ -49,7 +57,8 @@ Output \& Analysis Changes
   now "Eloss" in `bdsim/analysis/Event.hh`.
 * Rebdsim is now tolerant of a missing '.' on the end of the Tree name (a ROOT subtlety).
 * 'orbit' and 'optics' are now 'Orbit' and 'Optics' in the output.
-* Trajectory momentum is now in GeV.
+* New executable option for `rebdsimOptics` :code:`--emittanceOnFly` to calculate emittance
+  at each sampler.
 
 General
 -------
@@ -70,6 +79,7 @@ General
 * `includeIronMagFields` option is now `yokeFields`.
 * Vacuum volumes now visible in `-\\-vis_debug` mode.
 * Only forwards going particles are now considered for the optical function calculation.
+* Updated examples for ATF2, LHC. New Diamond machine example.
 
 Bug Fixes
 ---------
@@ -99,6 +109,8 @@ Bug Fixes
 * Fixed bug where overlapping dipole end pieces would be produced.
 * Fixed GDML preprocessing for parameterised variables.
 * Tracking limits are now attached to magnet yokes.
+* Fixed central value of `T0` not being set for `circle`, `gauss`, `gausstwiss`, `gaussmatrix`, `halo` and `square`
+  distributions.
 
 
 V0.993 - 2017 / 12 / 11
