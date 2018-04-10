@@ -19,24 +19,81 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSDebug.hh"
 #include "BDSIntegratorRMatrix.hh"
+#include "BDSStep.hh"
 
 BDSIntegratorRMatrix::BDSIntegratorRMatrix(BDSMagnetStrength const* strength,
                                            G4Mag_EqRhs* eqOfMIn) :
   BDSIntegratorMag(eqOfMIn, 6)
-{}
+{
+  kick1   = (*strength)["kick1"];
+  kick2   = (*strength)["kick2"];
+  kick3   = (*strength)["kick3"];
+  kick4   = (*strength)["kick4"];
+  rmat11  = (*strength)["rmat11"];
+  rmat12  = (*strength)["rmat12"];
+  rmat13  = (*strength)["rmat13"];
+  rmat14  = (*strength)["rmat14"];
+  rmat21  = (*strength)["rmat21"];
+  rmat22  = (*strength)["rmat22"];
+  rmat23  = (*strength)["rmat23"];
+  rmat24  = (*strength)["rmat24"];
+  rmat31  = (*strength)["rmat31"];
+  rmat32  = (*strength)["rmat32"];
+  rmat33  = (*strength)["rmat33"];
+  rmat34  = (*strength)["rmat34"];
+  rmat41  = (*strength)["rmat41"];
+  rmat42  = (*strength)["rmat42"];
+  rmat43  = (*strength)["rmat43"];
+  rmat44  = (*strength)["rmat44"];
+
+#if 0
+  G4cout << "RMatrix " << rmat11 << " " << rmat12 << " " << rmat13 << " " << rmat14 << " " << kick1 << G4endl;
+  G4cout << "RMatrix " << rmat21 << " " << rmat22 << " " << rmat23 << " " << rmat24 << " " << kick2 <<  G4endl;
+  G4cout << "RMatrix " << rmat31 << " " << rmat32 << " " << rmat33 << " " << rmat34 << " " << kick3 <<  G4endl;
+  G4cout << "RMatrix " << rmat41 << " " << rmat42 << " " << rmat43 << " " << rmat44 << " " << kick4 <<  G4endl;
+#endif
+
+}
 
 void BDSIntegratorRMatrix::Stepper(const G4double yIn[],
                                    const G4double unitMomentum[],
                                    const G4double h,
                                    G4double       yOut[],
                                    G4double       yErr[]) {
-    for (G4int i = 0; i < 3; i++)
-    {
-        yOut[i]   = yIn[i] + h * unitMomentum[i]; // update position
-        yOut[i+3] = yIn[i+3];                     // momentum doesn't change
-        yErr[i]   = 0;
-        yErr[i+3] = 0;
-    }
+  for (G4int i = 0; i < 3; i++)
+  {
+    yErr[i]   = 0;
+    yErr[i+3] = 0;
+  }
 
-    return;
+  G4ThreeVector pos = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  G4double      momMag = mom.mag();
+
+  BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
+  G4ThreeVector localPos     = localPosMom.PreStepPoint();
+  G4ThreeVector localMom     = localPosMom.PostStepPoint();
+  G4ThreeVector localMomUnit = localMom.unit();
+
+  G4double x0 = localPos.x();
+  G4double y0 = localPos.y();
+  G4double z0 = localPos.z();
+
+  G4double xp = localMomUnit.x();
+  G4double yp = localMomUnit.y();
+  G4double zp = localMomUnit.z();
+
+  double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
+  double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
+  double y1    = rmat31 * x0 + rmat32 * xp + rmat33 * y0 + rmat34 * yp + kick3;
+  double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
+  double z1    = z0 + h;
+  double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+
+  G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
+  G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
+  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+
+
+  return;
 }

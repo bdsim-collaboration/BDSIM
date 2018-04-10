@@ -94,7 +94,7 @@ void Element::PublishMembers()
   publish("rmat31",     &Element::rmat31);
   publish("rmat32",     &Element::rmat32);
   publish("rmat33",     &Element::rmat33);
-  publish("rmat44",     &Element::rmat34);
+  publish("rmat34",     &Element::rmat34);
   publish("rmat41",     &Element::rmat41);
   publish("rmat42",     &Element::rmat42);
   publish("rmat43",     &Element::rmat43);
@@ -371,7 +371,29 @@ void Element::flush()
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
-  
+
+  // rmatrix
+  kick1 = 0;
+  kick2 = 0;
+  kick3 = 0;
+  kick4 = 0;
+  rmat11= 0;
+  rmat12= 0;
+  rmat13= 0;
+  rmat14= 0;
+  rmat21= 0;
+  rmat22= 0;
+  rmat23= 0;
+  rmat24= 0;
+  rmat31= 0;
+  rmat32= 0;
+  rmat33= 0;
+  rmat34= 0;
+  rmat41= 0;
+  rmat42= 0;
+  rmat43= 0;
+  rmat44= 0;
+
   // degrader
   numberWedges = 1;
   wedgeLength = 0;

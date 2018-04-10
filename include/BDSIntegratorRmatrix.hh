@@ -20,8 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTEGRATORRMATRIX_HH
 #define BDSINTEGRATORRMATRIX_HH
 
-#endif // BDSINTEGRATORRMATRIX_HH
-
 #include "BDSIntegratorMag.hh"
 
 #include "globals.hh"
@@ -53,4 +51,26 @@ public:
 private:
   BDSIntegratorRMatrix();
 
+  double kick1;
+  double kick2;
+  double kick3;
+  double kick4;
+  double rmat11;
+  double rmat12;
+  double rmat13;
+  double rmat14;
+  double rmat21;
+  double rmat22;
+  double rmat23;
+  double rmat24;
+  double rmat31;
+  double rmat32;
+  double rmat33;
+  double rmat34;
+  double rmat41;
+  double rmat42;
+  double rmat43;
+  double rmat44;
 };
+
+#endif // BDSINTEGRATORRMATRIX_HH

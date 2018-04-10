@@ -1078,6 +1078,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
 {
+
+  G4cout << "BDSComponentFactory::CreateThinRMatrix" << G4endl;
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -1087,7 +1089,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
 
   BDSIntegratorType intType = integratorSet->rmatrixThin;
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::none,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rmatrix,
                                                brho,
                                                intType,
                                                st,

@@ -30,6 +30,7 @@ simple_testing(component-shield              "--file=shield.gmad"          ${OVE
 simple_testing(component-solenoid            "--file=solenoid.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-tunnel              "--file=tunnel.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-vKicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-rmatrix             "--file=rmatrix.gmad"         ${OVERLAP_CHECK})
 
 # ones requiring special options / falgs
 if(USE_GDML)

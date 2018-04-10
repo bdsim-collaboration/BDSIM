@@ -66,6 +66,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
+#include "BDSIntegratorRmatrix.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSIntegratorRmatrix.hh"
 #include "BDSMagnetStrength.hh"
@@ -528,6 +529,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
     {
     case BDSFieldType::teleporter:
       {result = CreateTeleporter(info); break;}
+      case BDSFieldType::rmatrix:
+    {result = CreateRmatrix(info); break;}
     default:
       {break;}
     }
@@ -572,7 +575,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
       integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::rmatrixthin:
       integrator = new BDSIntegratorRMatrix(strength,eqOfM); break;
-      case BDSIntegratorType::g4constrk4:
+    case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
       integrator = new G4ExactHelixStepper(eqOfM); break;
@@ -728,5 +731,15 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
 							    bEqOfMotion, integrator);
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateRmatrix(const BDSFieldInfo& info)
+{
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrix(info.MagnetStrength(),bEqOfMotion);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
+                                                            bEqOfMotion, integrator);
   return completeField;
 }

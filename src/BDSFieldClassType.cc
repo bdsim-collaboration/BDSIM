@@ -86,6 +86,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::rfcavity:
       {return BDSFieldClassType::electromagnetic;}
     case BDSFieldType::teleporter:
+    case BDSFieldType::rmatrix:
       {return BDSFieldClassType::irregular;}
     default:
       {return BDSFieldClassType::electromagnetic;}

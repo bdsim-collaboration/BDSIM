@@ -60,6 +60,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::skewdecapole,     "skewdecapole"},
       {BDSFieldType::rfcavity,         "rfcavity"},
       {BDSFieldType::rf,               "rf"},
+      {BDSFieldType::rmatrix,          "rmatrix"},
       {BDSFieldType::dipole3d,         "dipole3d"},
       {BDSFieldType::multipoleouterdipole,     "multipoleouterdipole"},
       {BDSFieldType::multipoleouterquadrupole, "multipoleouterquadrupole"},
@@ -109,6 +110,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["skewdecapole"]     = BDSFieldType::skewdecapole;
   types["rfcavity"]         = BDSFieldType::rfcavity;
   types["rf"]               = BDSFieldType::rf;
+  types["rmatrix"]          = BDSFieldType::rmatrix;
   types["dipole3d"]         = BDSFieldType::dipole3d;
   types["multipoleouterdipole"]     = BDSFieldType::multipoleouterdipole;
   types["multipoleouterquadrupole"] = BDSFieldType::multipoleouterquadrupole;
