@@ -979,7 +979,7 @@ normal and skew multipole components respectively.  The output momentum is there
 
    p_{x,out} ~ = ~ p_{x,in} - \mathrm{Re}(dp_{n}) - \mathrm{Im}(dp_{s}) \\
    p_{y,out} ~ = ~ p_{y,in} + \mathrm{Im}(dp_{n}) + \mathrm{Im}(dp_{s}) \\
-   p_{z,out} ~ = ~ \sqrt{\big[1 - p_{x,out}^2 - p_{x,out}^2 \big] }
+   p_{z,out} ~ = ~ \sqrt{\big[1 - p_{x,out}^2 - p_{y,out}^2 \big] }
 
 
 .. math::
