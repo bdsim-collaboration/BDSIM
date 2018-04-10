@@ -323,9 +323,9 @@ The input gmad file prepared is supplied in :code:`bdsim/examples/atf2/nlsige/at
 We first run a small sample to guage the length of the simulation and that the results
 are very roughly what we expect or want to see (before running a large number of particles).::
 
-  bdsim --file=atf2-halo.gmad --outfile=t1 --batch --ngenerate=100
+  > bdsim --file=atf2-halo.gmad --outfile=t1 --batch --ngenerate=100
 
-This took approximately 10s to simualte and produced an output file "t1.root". We perform
+This took approximately 10s to simulate and produced an output file "t1.root". We perform
 a very quick and simple analysis now to investigate what happened in the simulation.
 
 
@@ -333,4 +333,40 @@ Analysis
 --------
 
 The first simple analysis step is make a histogram of the mean energy deposition per event.
-BDSIM by default records a histogram of energy deposition per event.
+BDSIM by default records a histogram of energy deposition per event. One could run the
+analysis tool `rebdsim` with an input *analysisConfig.txt* specifying histograms. This would
+also merge (take the average of) the premade per event histograms. A utility is provided for
+merging only the histograms.::
+
+  > rebdsimHistoMerge t1.root t1_ana.root
+
+This loops over all events in the file and combines the per event histograms and writes them
+to a file called "t1_ana.root" here. To inpsect this file, we load it in ROOT and browse it
+using a *TBrowser*.::
+
+  > root -l t1_ana.root
+  > $> TBrowser tb;
+
+This produces the following browser. We double click on the "t1_ana.root" file and then the
+folders inside. There is a folder for each Tree in the output and then per entry simple and
+merged histograms. We look inside and double click on the histogram to view it.
+
+.. figure:: figures/worked_example_atf2/atf2-tbrowser.png
+	    :width: 100%
+	    :align: center
+
+	    TBrowser in ROOT showing file structure from `rebdsim` / `rebdsimHistoMerge`.
+
+.. figure:: figures/worked_example_atf2/atf2-tbrowser-setlog.png
+	    :width: 100%
+	    :align: center
+
+	    Setting log y axis in ROOT.
+
+.. figure:: figures/worked_example_atf2/atf2-tbrowser-log.png
+	    :width: 100%
+	    :align: center
+
+	    Energy depositin for 100 events from halo simulation.
+Spectra at Plane
+----------------
