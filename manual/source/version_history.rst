@@ -1,6 +1,13 @@
 V1.0 - 2018 / 04 / 10
 =====================
 
+Highlights
+----------
+
+* Full support for dipole fringe fields and pole faces in tracking.
+* Full low energy (sub-relativistic) tracking.
+* Validation against PTC for sub-relativistic to high energy.
+
 New Features
 ------------
 
@@ -14,7 +21,8 @@ New Features
   `G4HadronHElasticPhysics`, `G4HadronPhysicsShielding`, `G4HadronPhysicsShieldingLEND`,
   `G4IonElasticPhysics`, `G4IonQMDPhysics`, `G4RadioactiveDecayPhysics`, `G4StoppingPhysics`,
   `G4HadronElasticPhysicsPHP`, `G4MuonicAtomDecayPhysics`, `G4NeutronTrackingCut`.
-* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear` (Geant4.10.4 onward) physics options.
+* New options `neutronTrackingTime`, `neutronKineticEnerygLimit` and `useLENDGammaNuclear`
+  (Geant4.10.4 onward) physics options.
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
 * Significantly improved analysis documentation.
@@ -28,7 +36,6 @@ New Features
 * New CMake option to disable event display for installation with ROOT EVE problems.
 * Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
-* Full support for dipole fringe fields and pole faces in tracking.
 * Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
 * `scaling` parameter for each element allowing simple scaling of strengths.
 * New program to convert PTC output in a TFS file to BDSIM output format (`ptc2bdsim`).
@@ -39,8 +46,10 @@ Output Changes
 * The ROOT class definition has been incremented to "2" from "1".
 * Output files now have header structure with software versions.
 * Output files now have 'geant4 data' that includes particle masses used in the simulation.
-* "t" is now "T" in samplers and trajectory output to be consistent with naming convention of global and local coordinates.
-* Samplers now have optional charge, mass, rigidity and ion A and Z (see :ref:`bdsim-options-output` for details).
+* "t" is now "T" in samplers and trajectory output to be consistent with naming convention
+  of global and local coordinates.
+* Samplers now have optional charge, mass, rigidity and ion A and Z
+  (see :ref:`bdsim-options-output` for details).
   Classes in library can calculate on-the-fly for user analysis.
 * Trajectory momentum is now in GeV.
 
@@ -112,6 +121,13 @@ Bug Fixes
 * Fixed central value of `T0` not being set for `circle`, `gauss`, `gausstwiss`, `gaussmatrix`, `halo` and `square`
   distributions.
 
+Utilities
+---------
+
+* pybdsim v1.4
+* pymadx v1.1
+* pymad8 v1.0
+* pytransport v1.0
 
 V0.993 - 2017 / 12 / 11
 =======================

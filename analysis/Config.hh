@@ -121,6 +121,9 @@ public:
  protected:
   /// Private constructor for singleton pattern.
   Config() = delete;
+  /// Constructor used when mergine only.
+  Config(const std::string& inputFilePathIn,
+	 const std::string& outputFileNameIn);
   /// Desired constructor, also private for singleton pattern.
   Config(std::string fileNameIn,
 	 std::string inputFilePathIn,

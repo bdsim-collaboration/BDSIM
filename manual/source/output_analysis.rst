@@ -20,6 +20,8 @@ ROOT available through Python.
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
 histograms.
 
+.. _output-analysis-setup:
+
 Setup
 -----
 
@@ -73,6 +75,7 @@ Examples::
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
 
+.. _analysis-preparing-analysis-config:
 
 Preparing an Analysis Configuration File
 ----------------------------------------

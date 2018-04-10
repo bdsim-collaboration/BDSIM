@@ -450,7 +450,7 @@ A few points about rbends:
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
 4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
-   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   or at the end of the rbend. The length of the fringefield element can be
    set by the option `thinElementLength` (see `options`_).
 5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
@@ -561,8 +561,8 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
-   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+3) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+   or at the end of the rbend. The length of the fringe field magnet can be
    set by the option `thinElementLength` (see `options`_).
 4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
@@ -572,6 +572,7 @@ A few points about sbends:
    explicitly specified as non-zero.
 6) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
+
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
@@ -1592,6 +1593,7 @@ in the supplied field map.
 
 To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
+* The field may be attached to everything "fieldAll", the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to 4 dimensions.
 
@@ -1617,6 +1619,7 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
+Each beam line element will allow "fieldAll", "fieldVacuum" and "fieldOuter" to be specified.
 
 When defining a field, the following parameters can be specified.
 
@@ -2213,6 +2216,7 @@ visualised them, the following command should be used in the visualiser::
 The samplers will appear in semi-transparent green as well as the curvilinear geometry used
 for coordinate transforms (cylinders).
 
+.. _physics-processes:
 
 Physics Processes
 -----------------
@@ -3135,6 +3139,8 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 Available input distributions and their associated parameters are described in the following
 section.
 
+.. _beam-distributions:
+
 Beam Distributions
 ^^^^^^^^^^^^^^^^^^
 The following beam distributions are available in BDSIM
@@ -3448,7 +3454,7 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
 
-
+.. _beam-halo-distribution:
 
 halo
 ^^^^
@@ -3511,6 +3517,25 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
+
+Example::
+
+  beam, particle              = "e-",
+        energy                = 1.0*GeV,
+        distrType             = "halo",
+        betx                  = 0.6,
+        bety                  = 1.2,
+        alfx                  = -0.023,
+        alfy                  = 1.3054,
+        emitx                 = 5e-9,
+        emity                 = 4e-9,
+        haloNSigmaXInner      = 0.1,
+        haloNSigmaXOuter      = 2,
+        haloNSigmaYInner      = 0.1,
+        haloNSigmaYOuter      = 2,
+        haloPSWeightParameter = 1,
+        haloPSWeightFunction  = "oneoverr";
+
 
 composite
 ^^^^^^^^^

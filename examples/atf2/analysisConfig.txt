@@ -1,0 +1,12 @@
+InputFilePath	    10k.root
+OutputFileName	    10khalo_ana.root
+# Object	treeName   Histogram Name         # Bins   Binning	          Variable          Selection
+Histogram1D    Event.     XFlux                  {40}     {-2:2}               B5FFB.x           1
+Histogram1D    Event.     XFlux-Energy-Weighted  {40}     {-2:2}               B5FFB.x           B5FFB.energy
+Histogram1D    Event.     YFlux                  {40}     {-2:2}               B5FFB.y           1
+Histogram1D    Event.     YFlux-Energy-Weighted  {40}     {-2:2}               B5FFB.y           B5FFB.energy
+Histogram2D    Event.     XYFlux                 {20,20}  {-0.5:0.5,-0.5:0.5}  B5FFB.y:B5FFB.x   1
+Histogram2D    Event.     XYFlux-Energy-Weighted {20,20}  {-0.5:0.5,-0.5:0.5}  B5FFB.y:B5FFB.x   B5FFB.energy
+Histogram1D    Event.     XPhotons               {40}     {-2:2}               B5FFB.x           B5FFB.partID==22
+Histogram1D    Event.     XElectrons             {40}     {-2:2}               B5FFB.x           B5FFB.partID==11
+Histogram1D    Event.     XPositrons             {40}     {-2:2}               B5FFB.x           B5FFB.partID==-11

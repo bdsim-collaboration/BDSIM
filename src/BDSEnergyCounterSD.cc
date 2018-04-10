@@ -175,12 +175,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	    {UpdateParams(theInfo);}
 	  else
 	    {
+#ifdef BDSDEBUG
 	      G4cerr << "No volume info for ";
 	      auto vol = stepLocal.VolumeForTransform();
 	      if (vol)
 		{G4cerr << vol->GetName() << G4endl;}
 	      else
 		{G4cerr << "Unknown" << G4endl;}
+#endif
 	      // unphysical default value to allow easy identification in output
 	      sAfter        = -1000;
 	      sBefore       = -1000;
