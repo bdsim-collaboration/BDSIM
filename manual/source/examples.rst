@@ -30,13 +30,15 @@ Worked Example
 Start to finish examples with explanation.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    worked_example_atf2
 
 
 Specific Machines
 -----------------
+
+Converted examples of specific accelerators around the world.
 
 .. toctree::
    :maxdepth: 3

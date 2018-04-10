@@ -121,6 +121,13 @@ Bug Fixes
 * Fixed central value of `T0` not being set for `circle`, `gauss`, `gausstwiss`, `gaussmatrix`, `halo` and `square`
   distributions.
 
+Utilities
+---------
+
+* pybdsim v1.4
+* pymadx v1.1
+* pymad8 v0.8
+* pytransport v0.1
 
 V0.993 - 2017 / 12 / 11
 =======================

@@ -20,6 +20,8 @@ ROOT available through Python.
 See :ref:`basic-data-inspection` for how to view the data and make the most basic
 histograms.
 
+.. _output-analysis-setup:
+
 Setup
 -----
 
