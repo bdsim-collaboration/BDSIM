@@ -174,7 +174,7 @@ in the original program, MADX.
 
 .. note:: The errors are the statistical uncertainty associated with the calculation. It
 	  is possible depending on the number of particles for the model to agree but
-	  the original lie outside the errorbars.
+	  the original lie outside the error bars.
 
 Adding to Model
 ---------------
@@ -206,8 +206,8 @@ geometry for the first time. Once validated, this can be turned off for speed.
 Geometry can be added for magnet yokes, placed alongside the beam line and placed
 in the beam line. See :ref:`externally-provided-geometry` for more details.
 
-Custom field maps could also be added to the yokes of particlar magnets. A general field map
-for quadrupoles could also be added for example and autoscaling used to scale the field map
+Custom field maps could also be added to the yokes of particular magnets. A general field map
+for quadrupoles could also be added for example and auto-scaling used to scale the field map
 for each quadrupole it's attached to. See :ref:`field-maps` for more details.
 
 One simple change is to specify a default aperture for all components.::
@@ -223,7 +223,7 @@ Changing Beam Distribution
 As the model stands, it is not very interesting. The default aperture of 5cm is much bigger
 than the typical sigma of the beam, which from the optics plots above can seen to be of order
 1mm. To experience even a few hits, would require billions of events to be simulated, which is
-of course not very efficient. We therefore specify a **halo** distribution of partiles that
+of course not very efficient. We therefore specify a **halo** distribution of particles that
 are likely to hit the aperture. The halo distribution is described in :ref:`beam-distributions`
 and specifically in :ref:`beam-halo-distribution`. We define a halo distribution according
 to the normal Twiss parameters at the start of the lattice but with a much greater sigma.
@@ -313,14 +313,14 @@ it out with an exclamation mark.::
   !sample, all;
 
 We have now specified the halo distribution as described above, a default aperture and
-physiscs processes. One final step is to turn off sensitivity to the tunnel geometry as
+physics processes. One final step is to turn off sensitivity to the tunnel geometry as
 this is not required.::
 
   tun : placement, geometryFile="gdml:../atf2_tunnel.gdml", x=-4.5*m, z=49*m, sensitive=0;
 
 The input gmad file prepared is supplied in :code:`bdsim/examples/atf2/nlsige/atf2-halo.gmad`.
 
-We first run a small sample to guage the length of the simulation and that the results
+We first run a small sample to gauge the length of the simulation and that the results
 are very roughly what we expect or want to see (before running a large number of particles).::
 
   > bdsim --file=atf2-halo.gmad --outfile=t1 --batch --ngenerate=100
@@ -335,13 +335,13 @@ Analysis
 The first simple analysis step is make a histogram of the mean energy deposition per event.
 BDSIM by default records a histogram of energy deposition per event. One could run the
 analysis tool `rebdsim` with an input *analysisConfig.txt* specifying histograms. This would
-also merge (take the average of) the premade per event histograms. A utility is provided for
+also merge (take the average of) the pre-made per event histograms. A utility is provided for
 merging only the histograms.::
 
   > rebdsimHistoMerge t1.root t1_ana.root
 
 This loops over all events in the file and combines the per event histograms and writes them
-to a file called "t1_ana.root" here. To inpsect this file, we load it in ROOT and browse it
+to a file called "t1_ana.root" here. To inspect this file, we load it in ROOT and browse it
 using a *TBrowser*.::
 
   > root -l t1_ana.root
