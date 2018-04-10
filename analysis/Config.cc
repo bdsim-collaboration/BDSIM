@@ -36,6 +36,21 @@ Config* Config::instance = nullptr;
 
 std::vector<std::string> Config::treeNames = {"Beam.", "Options.", "Model.", "Run.", "Event."};
 
+Config::Config(const std::string& inputFilePathIn,
+	       const std::string& outputFileNameIn):
+  allBranchesActivated(false)
+{
+  InitialiseOptions("");
+
+  optionsString["inputfilepath"]  = inputFilePathIn;
+  optionsString["outputfilename"] = outputFileNameIn;
+
+  // turn on merging only
+  branches["Event."].push_back("Histos");
+  branches["Run."].push_back("Histos");
+  optionsBool["perentryevent"] = true;
+}
+
 Config::Config(std::string fileNameIn,
 	       std::string inputFilePathIn,
 	       std::string outputFileNameIn):
@@ -103,18 +118,15 @@ Config* Config::Instance(std::string fileName,
 			 std::string outputFileName)
 {
   if(!instance && fileName != "")
-  {
-    std::cout << "Config::Instance> No instance present, construct" << std::endl;
-    instance = new Config(fileName, inputFilePath, outputFileName);
-    //instance->ParseInputFile();
-  }
+    {instance = new Config(fileName, inputFilePath, outputFileName);}
   else if(instance && fileName != "")
-  {
-    std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
-    delete instance;
-    instance = new Config(fileName, inputFilePath, outputFileName);
-    //instance->ParseInputFile();
-  }
+    {
+      std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
+      delete instance;
+      instance = new Config(fileName, inputFilePath, outputFileName);
+    }
+  else if (!instance && fileName == "")
+    {instance = new Config(inputFilePath, outputFileName);}
   // else return current instance (can be nullptr!)
   return instance;
 }
