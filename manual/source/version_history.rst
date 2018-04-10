@@ -126,8 +126,8 @@ Utilities
 
 * pybdsim v1.4
 * pymadx v1.1
-* pymad8 v0.8
-* pytransport v0.1
+* pymad8 v1.0
+* pytransport v1.0
 
 V0.993 - 2017 / 12 / 11
 =======================
