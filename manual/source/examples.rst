@@ -12,7 +12,7 @@ Features
 .. toctree::
    :maxdepth: 3
 
-   features
+   examples/features
 
 Basic Examples
 --------------
@@ -20,9 +20,20 @@ Basic Examples
 .. toctree::
    :maxdepth: 3
 
-   airwatertarget
-   simpleCollimation
-   simpleMachine
+   examples/airwatertarget
+   examples/simpleCollimation
+   examples/simpleMachine
+
+Worked Example
+--------------
+
+Start to finish examples with explanation.
+
+.. toctree::
+   :maxdepth: 3
+
+   worked_example_atf2
+
 
 Specific Machines
 -----------------
@@ -30,8 +41,8 @@ Specific Machines
 .. toctree::
    :maxdepth: 3
    
-   atf2
-   diamond
-   lhc
-   ilc
+   examples/atf2
+   examples/diamond
+   examples/lhc
+   examples/ilc
 
