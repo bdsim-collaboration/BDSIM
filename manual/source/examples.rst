@@ -24,8 +24,8 @@ Basic Examples
    examples/simpleCollimation
    examples/simpleMachine
 
-Worked Example
---------------
+Worked Examples
+---------------
 
 Start to finish examples with explanation.
 
