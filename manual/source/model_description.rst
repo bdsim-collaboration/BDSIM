@@ -450,7 +450,7 @@ A few points about rbends:
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
 4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
-   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+   or at the end of the rbend. The length of the fringefield element can be
    set by the option `thinElementLength` (see `options`_).
 5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
@@ -561,8 +561,8 @@ A few points about sbends:
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
-3) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
-   (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the fringefield element can be
+3) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+   or at the end of the rbend. The length of the fringe field magnet can be
    set by the option `thinElementLength` (see `options`_).
 4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
    if `e1` and `e2` have 0 angle.
@@ -572,6 +572,7 @@ A few points about sbends:
    explicitly specified as non-zero.
 6) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
+
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
