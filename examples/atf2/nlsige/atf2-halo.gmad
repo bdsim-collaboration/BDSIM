@@ -1,0 +1,42 @@
+! Sun, 08 Apr 2018 13:16:29 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 417
+! total length       = 96.4558630243 m
+
+include nlsige_components.gmad;
+include nlsige_sequence.gmad;
+
+! we omit the regular beam definition
+!include nlsige_beam.gmad;
+
+include nlsige_options.gmad;
+
+!sample, all;
+
+sample, range=B5FFB;
+
+option, ngenerate=100;
+
+option, aper1=1.5*cm,
+	beampipeThickness=1.5*mm;
+
+option, physicsList="em decay muon";
+
+tun : placement, geometryFile="gdml:../atf2_tunnel.gdml", x=-4.5*m, z=49*m, sensitive=0;
+
+beam,	alfx=1.108024744, 
+	alfy=-1.907222942, 
+	betx=6.848560987*m, 
+	bety=2.935758992*m, 
+	distrType="halo", 
+	emitx=2e-09*m, 
+	emity=1.195785323e-11*m, 
+	energy=1.282*GeV, 
+	particle="e-", 
+	sigmaE=0.0008,
+	haloNSigmaXInner      = 30,
+	haloNSigmaXOuter      = 80,
+        haloNSigmaYInner      = 100,
+        haloNSigmaYOuter      = 500,
+        haloPSWeightParameter = 1,
+        haloPSWeightFunction  = "oneoverr";

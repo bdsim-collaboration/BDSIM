@@ -19,7 +19,7 @@ Contents:
    output_analysis
    python_utilities
    visualisation
-   examples/examples
+   examples
    support
 
 .. toctree::

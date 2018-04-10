@@ -881,24 +881,34 @@ The momentum change in the local curvilinear frame is calculated as:
 
 .. math::
 
+   dp_{x} ~ = ~ \frac{q_{x,in}}{\rho}~\tan(\theta)\\
    dp_{y} ~ = ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
 
 Where :math:`\theta` is the angle of the pole face and ":math:`corr.`" is the fringe
-field correction term, which is calculated in
-:code:`BDSBendBuilder::CalculateFringeFieldCorrection()`:
+field correction term. The calculation of the fringe field correction term is split
+into two terms, which are calculated separately in two namespace functions
+:code:`BDS::FringeFieldCorrection()` and :code:`BDS::SecondFringeFieldCorrection()`
+upon class instantiation. These functions calculate:
 
 .. math::
 
-   corr. ~ = ~ \frac{f_{int}}{\rho}~ \frac{(1 + \sin^2\theta)}{\cos\theta}
+   corr. ~ = ~ f_{int}~\frac{2~h_{gap}}{\rho}~\frac{(1 + \sin^2\theta)}{\cos\theta} ~ corr_{2}.
 
-Where  :math:`f_{int}` is an input parameter but described by:
+and:
+
+.. math::
+
+   corr_{2}. ~ = ~ 1 - f_{int}~f_{intk2}~\frac{2~h_{gap}}{\rho}~\tan\theta
+
+respectively, where :math:`f_{int}` is an input parameter but described by:
 
 .. math::
 
    f_{int} ~ = ~ \int_{-\infty}^{\infty} \frac{B_y(s)~\big(B_0 - B_y(s)\big)}{2~h_{gap}~B_0^2} \mathrm{d}s
 
 Here, :math:`h_{gap}` is also an input parameter that specifies the half distance between the dipole
-poles.
+poles. Fintk2 is a second fringe parameter with a default of zero, meaning the :math:`corr_{2}` term equals
+1 by default.
 
 * The correction term .
 
@@ -908,7 +918,7 @@ The change in momentum:
 
    d\mathbf{p} ~ = ~
    \begin{pmatrix}
-   0        \\
+   + dp_{x} \\
    - dp_{y} \\
    0
    \end{pmatrix}
@@ -969,7 +979,7 @@ normal and skew multipole components respectively.  The output momentum is there
 
    p_{x,out} ~ = ~ p_{x,in} - \mathrm{Re}(dp_{n}) - \mathrm{Im}(dp_{s}) \\
    p_{y,out} ~ = ~ p_{y,in} + \mathrm{Im}(dp_{n}) + \mathrm{Im}(dp_{s}) \\
-   p_{z,out} ~ = ~ \sqrt{\big[1 - p_{x,out}^2 - p_{x,out}^2 \big] }
+   p_{z,out} ~ = ~ \sqrt{\big[1 - p_{x,out}^2 - p_{y,out}^2 \big] }
 
 
 .. math::

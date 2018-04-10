@@ -22,7 +22,7 @@ How to run::
 2_rotation_with_bends.gmad
 --------------------------
 
-A pair of sector bends but rotated to bend vertically, followed by a collimator.
+A small machine with some bends, quadrupoles, a sextupole and collimator.
 This is used to demonstrate the rotation of coordinates that :code:`transform3d`
 has on the beam line and demonstrates a method to create vertical bends.
 

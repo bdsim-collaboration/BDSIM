@@ -1,0 +1,16 @@
+! Sun, 08 Apr 2018 13:16:29 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 417
+! total length       = 96.4558630243 m
+
+include nlsige_components.gmad;
+include nlsige_sequence.gmad;
+include nlsige_beam.gmad;
+include nlsige_options.gmad;
+
+
+sample, all;
+
+option, ngenerate=100;
+
+tun : placement, geometryFile="gdml:../atf2_tunnel.gdml", x=-4.5*m, z=49*m;
