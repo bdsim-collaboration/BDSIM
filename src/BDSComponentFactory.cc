@@ -283,7 +283,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
-  case ElementType::_RMATRIX:
+  case ElementType::_THINRMATRIX:
     component = CreateThinRMatrix(angleIn); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE

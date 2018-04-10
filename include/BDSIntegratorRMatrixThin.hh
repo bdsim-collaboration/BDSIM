@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BDSINTEGRATORRMATRIX_HH
-#define BDSINTEGRATORRMATRIX_HH
+#ifndef BDSINTEGRATORRMATRIXTHIN_HH
+#define BDSINTEGRATORRMATRIXTHIN_HH
 
 #include "BDSIntegratorMag.hh"
 
@@ -35,12 +35,12 @@ class BDSMagnetStrength;
  *
  */
 
-class BDSIntegratorRMatrix: public BDSIntegratorMag
+class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorRMatrix(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn);
+  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn);
 
-  virtual ~BDSIntegratorRMatrix(){;}
+  virtual ~BDSIntegratorRMatrixThin(){;}
 
   virtual void Stepper(const G4double y[],
                        const G4double unitMomentum[],
@@ -49,7 +49,7 @@ public:
                        G4double       yErr[]);
 
 private:
-  BDSIntegratorRMatrix();
+  BDSIntegratorRMatrixThin();
 
   double kick1;
   double kick2;
@@ -73,4 +73,4 @@ private:
   double rmat44;
 };
 
-#endif // BDSINTEGRATORRMATRIX_HH
+#endif // BDSINTEGRATORRMATRIXTHIN_HH

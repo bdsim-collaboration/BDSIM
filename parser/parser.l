@@ -99,7 +99,7 @@ transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
 gap { return GAP;}
-rmatrix { return RMATRIX;}
+thinrmatrix { return THINRMATRIX;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

@@ -18,11 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "BDSDebug.hh"
-#include "BDSIntegratorRMatrix.hh"
+#include "BDSIntegratorRMatrixThin.hh"
 #include "BDSStep.hh"
 
-BDSIntegratorRMatrix::BDSIntegratorRMatrix(BDSMagnetStrength const* strength,
-                                           G4Mag_EqRhs* eqOfMIn) :
+BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
+                                                   G4Mag_EqRhs* eqOfMIn) :
   BDSIntegratorMag(eqOfMIn, 6)
 {
   kick1   = (*strength)["kick1"];
@@ -55,7 +55,7 @@ BDSIntegratorRMatrix::BDSIntegratorRMatrix(BDSMagnetStrength const* strength,
 
 }
 
-void BDSIntegratorRMatrix::Stepper(const G4double yIn[],
+void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
                                    const G4double unitMomentum[],
                                    const G4double h,
                                    G4double       yOut[],
@@ -81,7 +81,7 @@ void BDSIntegratorRMatrix::Stepper(const G4double yIn[],
 
   G4double xp = localMomUnit.x();
   G4double yp = localMomUnit.y();
-  G4double zp = localMomUnit.z();
+  // G4double zp = localMomUnit.z();
 
   double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
   double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
@@ -89,6 +89,9 @@ void BDSIntegratorRMatrix::Stepper(const G4double yIn[],
   double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
   double z1    = z0 + h;
   double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+
+  // need to check against aperture before returning
+
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
