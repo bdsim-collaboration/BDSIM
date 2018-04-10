@@ -91,6 +91,8 @@ std::string GMAD::typestr(ElementType type) {
     return "gap";
   case ElementType::_THINRMATRIX :
     return "thinrmatrix";
+  case ElementType::_PARALLELTRANSPORTER :
+    return "paralleltransporter";
   default:
     return "none";
   }

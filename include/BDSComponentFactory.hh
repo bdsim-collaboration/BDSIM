@@ -213,6 +213,7 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
+	BDSAcceleratorComponent* CreateParallelTransport();
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();

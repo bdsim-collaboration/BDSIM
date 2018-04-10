@@ -100,6 +100,7 @@ laser { return LASER; }
 degrader { return DEGRADER;}
 gap { return GAP;}
 thinrmatrix { return THINRMATRIX;}
+paralleltransporter {return PARALLELTRANSPORTER;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
