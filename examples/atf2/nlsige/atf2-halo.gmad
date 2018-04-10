@@ -13,6 +13,8 @@ include nlsige_options.gmad;
 
 !sample, all;
 
+sample, range=B5FFB;
+
 option, ngenerate=100;
 
 option, aper1=1.5*cm,

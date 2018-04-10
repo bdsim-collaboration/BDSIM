@@ -75,6 +75,7 @@ Examples::
   rebdsim analysisConfig.txt output.root
   rebdsim analysisConfig.txt output.root results.root
 
+.. _analysis-preparing-analysis-config:
 
 Preparing an Analysis Configuration File
 ----------------------------------------

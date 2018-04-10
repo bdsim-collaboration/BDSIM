@@ -357,6 +357,14 @@ merged histograms. We look inside and double click on the histogram to view it.
 
 	    TBrowser in ROOT showing file structure from `rebdsim` / `rebdsimHistoMerge`.
 
+The energy deposition is in GeV / event. The horizontal axis is the curvilinear S coordinate in
+metres. The default binning is 1m and can be controlled with the option
+:code:`option, elossHistoBinWidth=1*m;`.
+
+As the level of energy deposition varies by many orders of magnitude, it is useful to
+view the histogram on a logarithmic scale. By right-clicking in the TBrowser close to the
+axis, the option "SetLogy" can be used.
+
 .. figure:: figures/worked_example_atf2/atf2-tbrowser-setlog.png
 	    :width: 100%
 	    :align: center
@@ -367,6 +375,114 @@ merged histograms. We look inside and double click on the histogram to view it.
 	    :width: 100%
 	    :align: center
 
-	    Energy depositin for 100 events from halo simulation.
+	    Energy deposition for 100 events from halo simulation.
+
+We can then repeat this simulation and simple analysis for a greater number of primary particles. The
+file :code:`examples/atf2/10khalo_ana.root` is included from the analysis of 10000 particles. The simulation
+took 976s and produced a 178MB ROOT output file on the developer's computer.
+	    
 Spectra at Plane
 ----------------
+
+To investigate the radiation at a plane at some point in the accelerator we can place a sampler
+on an element of interest. Here, we place a sampler on "B5FFB", which is a dipole at the end of
+the long straight section in the lattice. In reality, cherenkov detectors were placed after this
+dipole in the past for detecting signal from experiments such as the laserwire experiment. The sampler
+is added via the command::
+
+  sample, range=B5FFB;
+
+Sampler record the passage of any particle through them, even if it's backwards or the same particle
+again. They are (by default) a 5m wide square plane that's 1pm thick.
+
+A simple analysis is to make a 2D histogram of the particle flux and the energy weighted particle
+flux at this plane. To do this we use the analysis tool `rebdsim`. This takes an input text file
+defining histograms. The syntax is described in :ref:`analysis-preparing-analysis-config`. The
+analysisConfig.txt used is provided in :code:`examples/atf2/analysisConfig.txt`.
+
+::
+
+   InputFilePath	    10k.root
+   OutputFileName	    10khalo_ana.root
+   # Object       treeName   Histogram Name         # Bins   Binning              Variable          Selection
+   Histogram1D    Event.     XFlux                  {40}     {-2:2}               B5FFB.x           1
+   Histogram1D    Event.     XFlux-Energy-Weighted  {40}     {-2:2}               B5FFB.x           B5FFB.energy
+   Histogram1D    Event.     YFlux                  {40}     {-2:2}               B5FFB.y           1
+   Histogram1D    Event.     YFlux-Energy-Weighted  {40}     {-2:2}               B5FFB.y           B5FFB.energy
+   Histogram2D    Event.     XYFlux                 {20,20}  {-0.5:0.5,-0.5:0.5}  B5FFB.y:B5FFB.x   1
+   Histogram2D    Event.     XYFlux-Energy-Weighted {20,20}  {-0.5:0.5,-0.5:0.5}  B5FFB.y:B5FFB.x   B5FFB.energy
+   Histogram1D    Event.     XPhotons               {40}     {-2:2}               B5FFB.x           B5FFB.partID==22
+   Histogram1D    Event.     XElectrons             {40}     {-2:2}               B5FFB.x           B5FFB.partID==11
+   Histogram1D    Event.     XPositrons             {40}     {-2:2}               B5FFB.x           B5FFB.partID==-11
+
+We can view the histograms as before, but we can also easily load them in Python and
+make our own plots.::
+
+  > python
+  >>> import pybdsim
+  >>> d = pybdsim.Data.Load("10khalo_ana.root")
+  >>> d. <tab>
+  d.ConvertToPybdsimHistograms d.histograms1dpy             d.histograms3dpy             
+  d.filename                   d.histograms2d               d.histogramspy               
+  d.histograms                 d.histograms2dpy             d.ListOfDirectories          
+  d.histograms1d               d.histograms3d               d.ListOfTrees    
+
+The `pybdsim` data loader automatically extracts the root histograms into Python dictionaries
+called "histogramsXd" where "X" is the number of dimensions. All exist in "histograms". These
+are also automatically converted to numpy arrays and held in classes provided by `pybdsim` in
+the same members suffixed with "py" such as "d.histograms1dpy". Calling these dictionaries
+shows the name of the histogram that is the full path inside the file.::
+
+  {'Event/MergedHistograms/ElossHisto': <ROOT.TH1D object ("ElossHisto") at 0x7f83a0cfba20>,
+  'Event/MergedHistograms/ElossPEHisto': <ROOT.TH1D object ("ElossPEHisto") at 0x7f83a1970000>,
+  'Event/MergedHistograms/PhitsHisto': <ROOT.TH1D object ("PhitsHisto") at 0x7f83a0cfa8e0>,
+  'Event/MergedHistograms/PhitsPEHisto': <ROOT.TH1D object ("PhitsPEHisto") at 0x7f83a1a00640>,
+  'Event/MergedHistograms/PlossHisto': <ROOT.TH1D object ("PlossHisto") at 0x7f83a0cfb310>,
+  'Event/MergedHistograms/PlossPEHisto': <ROOT.TH1D object ("PlossPEHisto") at 0x7f83a1a00a30>,
+  'Event/PerEntryHistograms/XElectrons': <ROOT.TH1D object ("XElectrons") at 0x7f83a0cd89b0>,
+  'Event/PerEntryHistograms/XFlux': <ROOT.TH1D object ("XFlux") at 0x7f83a0c94300>,
+  'Event/PerEntryHistograms/XFlux-Energy-Weighted': <ROOT.TH1D object ("XFlux-Energy-Weighted") at 0x7f83a0cd70f0>,
+  'Event/PerEntryHistograms/XPhotons': <ROOT.TH1D object ("XPhotons") at 0x7f83a0cd8320>,
+  'Event/PerEntryHistograms/XPositrons': <ROOT.TH1D object ("XPositrons") at 0x7f83a0cd95a0>,
+  'Event/PerEntryHistograms/XYFlux': <ROOT.TH2D object ("XYFlux") at 0x7f839c5ef200>,
+  'Event/PerEntryHistograms/XYFlux-Energy-Weighted': <ROOT.TH2D object ("XYFlux-Energy-Weighted") at 0x7f839c5eb000>,
+  'Event/PerEntryHistograms/YFlux': <ROOT.TH1D object ("YFlux") at 0x7f83a0cd74e0>,
+  'Event/PerEntryHistograms/YFlux-Energy-Weighted': <ROOT.TH1D object ("YFlux-Energy-Weighted") at 0x7f83a0cd7de0>}
+
+The Python versions can be easily plotted using `pybdsim`.::
+
+  >>> pybdsim.Plot.Histogram1D(d.histograms1dpy['Event/PerEntryHistograms/XElectrons'])
+  >>> pybdsim.Plot.Histogram2D(d.histograms2dpy['Event/PerEntryHistograms/XYFlux'])
+
+These produce the following figures.
+
+.. figure:: figures/worked_example_atf2/atf2-1d-example-plot.pdf
+	    :width: 100%
+	    :align: center
+
+.. figure:: figures/worked_example_atf2/atf2-2d-example-plot.pdf
+	    :width: 60%
+	    :align: center
+
+We leave it to the user to create the plots they desire. However, the primary particle impact, loss
+and associated energy deposition is a useful standard plot that is provided in `pybdsim`. The optional
+survey arguments allow a machine diagram to be added on top of the plot.::
+
+  >>> pybdsim.Plot.LossAndEnergyDeposition('10khalo_ana.root', tfssurvey='../atf2-nominal-twiss-v5.2.tfs.tar.gz')
+
+.. figure:: figures/worked_example_atf2/atf2-losses.pdf
+	    :width: 100%
+	    :align: center
+
+	    Primary particle impact points, losses and energy deposition from the simulation.
+
+
+Just the energy deposition can be plotted.::
+
+  >>> pybdsim.Plot.EnergyDeposition('10khalo_ana.root', tfssurvey='../atf2-nominal-twiss-v5.2.tfs.tar.gz')
+
+.. figure:: figures/worked_example_atf2/atf2-energy-deposition.pdf
+	    :width: 100%
+	    :align: center
+
+	    Primary particle impact points, losses and energy deposition from the simulation.
