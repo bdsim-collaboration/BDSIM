@@ -286,7 +286,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_THINRMATRIX:
     component = CreateThinRMatrix(angleIn); break;
   case ElementType::_PARALLELTRANSPORTER:
-    component = CreateParallelTransport(); break;
+    component = CreateParallelTransporter(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -808,6 +808,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  return CreateMagnet(element, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+}
+
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 {
   if(!HasSufficientMinimumLength(element))
@@ -1111,41 +1117,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
 
   return thinRMatrix;
 }
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransport()
-{
-  G4cout << "BDSComponentFactory::CreateParallelTransport" << G4endl;
-  double elementLength = element->l;
-
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element);
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,0,0, beamPipeInfo);
-  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
-
-  BDSIntegratorType intType = integratorSet->rmatrixThin;
-  G4Transform3D fieldTrans  = CreateFieldTransform(element);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::paralleltransport,
-                                               brho,
-                                               intType,
-                                               st,
-                                               true,
-                                               fieldTrans);
-
-  BDSMagnet* parallelTransporter =  new BDSMagnet(BDSMagnetType::paralleltransport,
-                                                  elementName,
-                                                  elementLength,
-                                                  beamPipeInfo,
-                                                  magnetOuterInfo,
-                                                  vacuumField);
-
-  parallelTransporter->SetExtent(BDSExtent(beamPipeInfo->aper1,
-                                           beamPipeInfo->aper1,
-                                           elementLength*0.5));
-
-  return parallelTransporter;
-}
-
 
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,

@@ -203,6 +203,7 @@ private:
   BDSAcceleratorComponent* CreateThinMultipole(G4double angleIn);
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
+  BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
   BDSAcceleratorComponent* CreateMuSpoiler();
@@ -213,7 +214,6 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
-	BDSAcceleratorComponent* CreateParallelTransport();
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
