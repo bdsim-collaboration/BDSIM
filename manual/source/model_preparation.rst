@@ -134,7 +134,7 @@ therefore as long as most apertures are above this, no particles should be lost.
 Generating Optics Data
 ----------------------
 
-BDSIM should be executed in batch mode running between 1000 and 10000 particles (for example).::
+BDSIM should be executed in batch mode running between 1000 and 10000 particles (for example). ::
 
   bdsim --file=mymodel.gmad --outfile=op1 --batch --ngenerate=2000
 
@@ -145,7 +145,7 @@ The output file can then be analysed with `rebdsimOptics`. `rebdsimOptics` is a 
 `rebdsim` to calculate optical functions only. It is possible to run `rebdsim` with an analysis
 configuration text file specifying `CalculateOpticalFunctions` (see :ref:`output-analysis-configuration-file`).
 Rebdsim takes arguments the input file(s) and the desired output file name for the optical functions.
-The optical functions are written to a separate ROOT format file only containing the optical functions.::
+The optical functions are written to a separate ROOT format file only containing the optical functions. ::
 
   rebdsimOptics op1.root op1_optics.root
 
@@ -155,7 +155,7 @@ and higher order magnets couple the emittance in horizontal and vertical and the
 for Twiss parameters. The default option in `rebdsimOptics` is to calculate the emittance only once
 for the first sampler and assume this for all subsequent samplers. In the case of acceleration, or
 where the geometrical emittance is expected to change, the emittance can be calculated at each sampler
-freshly. The executable option `--emittanceOnFly` should be used.::
+freshly. The executable option `--emittanceOnFly` should be used. ::
 
   rebdsimOptics op1.root op1_optics.root --emittanceOnFly
 
@@ -166,7 +166,7 @@ Loading Optical Data
 --------------------
 
 After calculating the optical functions, the data file can be loaded in ROOT manually or
-using the provided `pybdsim` utility in Python using ROOT.::
+using the provided `pybdsim` utility in Python using ROOT. ::
 
   > python
   >>> import pybdsim
@@ -180,7 +180,7 @@ Comparison of Optics
 
 For each of the formats BDSIM supports for converting models, there is a comparison plotting script
 in `pybdsim` to allow easy comparison. For MADX conversion for example, the Twiss output in a TFS
-file can be used.::
+file can be used. ::
 
   > python
   >>> import pybdsim

@@ -188,7 +188,7 @@ After the desired number of turns of the primary particle have elapsed, it switc
 an infinite absorber. It achieves this by setting limits (G4UserLimits) with a maximum allowed energy
 of 0eV.
 
-The user should set the option `nturns` (default 1) (see :ref:`options-common`).::
+The user should set the option `nturns` (default 1) (see :ref:`options-common`). ::
 
   option, nturns=56;
 
@@ -2176,7 +2176,7 @@ And to attach samplers after all elements of a specific type::
 
   sample, <type>;
 
-e.g.::
+e.g. ::
 
   sample, quadrupole;
 
@@ -2194,7 +2194,7 @@ Sampler Dimensions
 
 The sampler is represented by a cube solid that is 1 pm thin along z and 5m metres wide
 transversely in x and y. If a smaller or larger capture area for the samplers is required,
-the option *samplerDiameter* may be specified in the input gmad.::
+the option *samplerDiameter* may be specified in the input gmad. ::
 
   option, samplerDiameter=3*m;
 
@@ -3201,7 +3201,7 @@ Examples::
         energy = 10*GeV,
 	distrType = "reference";
 
-Generates a beam with all coordinates 0 at the nominal energy.::
+Generates a beam with all coordinates 0 at the nominal energy. ::
 
   beam, particle = "e-",
         energy = 10*GeV,
@@ -4084,7 +4084,7 @@ Minimum Kinetic Energy
 
 The user may specify a minimum kinetic energy, below which any particle will be killed.
 This may break conservation of energy if used aggressively. The default is 0 eV as all
-particle are tracked to 0 energy (allowing for the above range cuts).::
+particle are tracked to 0 energy (allowing for the above range cuts). ::
 
    option, minimumKineticEnergy=10*MeV;
 
@@ -4096,7 +4096,7 @@ Minimum Range
 
 The user may specify a minimum range for a particle to travel. Any particles with step
 sizes proposed below this will be killed. Again, this can break energy conservation
-if used aggressively.::
+if used aggressively. ::
 
   option, minimumRange=2*cm;
 
@@ -4197,7 +4197,7 @@ is given below the example.
 Firstly a series of simple elements are defined (drifts, quadrupoles and bends). A simple
 sequence called `fodo` is defined and also the main beam line called `mainLine`. After this
 extra sequences are defined that we will use for secondary beam lines.  The `use` command
-selects which beam line the simulation will be based on.::
+selects which beam line the simulation will be based on. ::
 
   use, mainLine;
 
@@ -4206,7 +4206,7 @@ then the placement of secondary beam lines.
 
 The first placement `auxLine1Place` is a placement that will place the sequence named
 `auxLine1` with respect to the 3rd instance of the element `d2` in the primary sequence
-(`mainLine`).::
+(`mainLine`). ::
 
   auxLine1Place: placement, sequence="auxLine1",
                             referenceElement="d2" ,

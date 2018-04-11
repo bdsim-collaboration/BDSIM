@@ -20,7 +20,7 @@ To access (import) the supplied packages from anywhere on your system, simply
 run ``make`` from the ``utils`` directory.  For this to work you should have
 the python package installer ``pip`` in your PATH.
 
-This should allow you to import the python utilities::
+This should allow you to import the python utilities ::
 
   cd ~/
   python

@@ -424,7 +424,7 @@ a particular entry in the tree, which for the Event tree is an individual event:
 
   root> evtTree->GetEntry(10);
 
-The event object now contains the data loaded from the file.::
+The event object now contains the data loaded from the file. ::
 
   root> evt->Eloss.n
   (int_t) 430
