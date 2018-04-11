@@ -51,26 +51,26 @@ public:
 private:
   BDSIntegratorRMatrixThin();
 
-  double kick1;
-  double kick2;
-  double kick3;
-  double kick4;
-  double rmat11;
-  double rmat12;
-  double rmat13;
-  double rmat14;
-  double rmat21;
-  double rmat22;
-  double rmat23;
-  double rmat24;
-  double rmat31;
-  double rmat32;
-  double rmat33;
-  double rmat34;
-  double rmat41;
-  double rmat42;
-  double rmat43;
-  double rmat44;
+  G4double kick1;
+  G4double kick2;
+  G4double kick3;
+  G4double kick4;
+  G4double rmat11;
+  G4double rmat12;
+  G4double rmat13;
+  G4double rmat14;
+  G4double rmat21;
+  G4double rmat22;
+  G4double rmat23;
+  G4double rmat24;
+  G4double rmat31;
+  G4double rmat32;
+  G4double rmat33;
+  G4double rmat34;
+  G4double rmat41;
+  G4double rmat42;
+  G4double rmat43;
+  G4double rmat44;
 };
 
 #endif // BDSINTEGRATORRMATRIXTHIN_HH
