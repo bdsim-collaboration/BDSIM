@@ -22,6 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
+#include "G4Mag_EqRhs.hh"
+
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn) :
   BDSIntegratorMag(eqOfMIn, 6)
@@ -67,7 +70,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
     yErr[i+3] = 0;
   }
 
-  //const G4double fcof = eqOfM->FCof();
+  const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
 
   // only apply the kick if we're taking a step longer than half the length of the item,
