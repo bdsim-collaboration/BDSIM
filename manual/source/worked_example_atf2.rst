@@ -32,18 +32,19 @@ As we don't specify any columns, all columns are written out (~250). Whilst this
 overkill, it ensures we don't miss any of the required columns for conversion.
 
 For convenience we compress this to save space. `pybdsim` and `pymadx` both work
-with a compressed TFS file without the need to decompress it.::
+with a compressed TFS file without the need to decompress it. ::
 
   tar -czf atf2-nominal-twiss-v5.2.tfs.tar.gz atf2-nominal-twiss-v5.2.tfs
 
 Input Inspection
 ----------------
 
-We can inspect the model as provided by MADX with pymadx in Python.::
+We can inspect the model as provided by MADX with pymadx in Python. ::
 
   > python
   >>> import pymadx
   >>> a = pymadx.Data.Tfs("atf2-nominal-twiss-v5.2.tfs.tar.gz")
+  >>> a.ReportPopulations()
   Filename > atf2-nominal-twiss-v5.2.tfs.tar.gz
   Total number of items > 1032
   Type........... Population
@@ -57,7 +58,7 @@ We can inspect the model as provided by MADX with pymadx in Python.::
   HKICKER........ 15
   VKICKER........ 14
 
-We can also inspect the strengths of all the sextupoles for example::
+We can also inspect the strengths of all the sextupoles for example ::
 
   >>> sextupoles = a.GetElementsOfType('SEXTUPOLE')
   >>> len(sextupoles)
@@ -76,7 +77,7 @@ This produces the following figure:
 Conversion
 ----------
 
-The model can be converted to BDSIM's GMAD syntax with the converter provided in `pybdsim`.::
+The model can be converted to BDSIM's GMAD syntax with the converter provided in `pybdsim`. ::
 
   > python
   >>> import pybdsim
@@ -124,7 +125,7 @@ This output file can then be analysed to calculate the beam size and optical fun
 
   rebdsimOptics o1.root optics.root
 
-We can now compare the optical functions using `pybdsim`.::
+We can now compare the optical functions using `pybdsim`. ::
 
   > python
   >>> import pybdsim
@@ -185,7 +186,7 @@ designed to have a hollow outermost 'world' volume so that it does not overlap w
 beam line - both exist at the same level in the hierarchy. If the tunnel container were not
 hollow, the beam line would overlap with the tunnel geometry and tracking would be invalid.
 
-In the main GMAD file, we define a placement of the geometry with the appropriate transform.::
+In the main GMAD file, we define a placement of the geometry with the appropriate transform. ::
 
   tun : placement, geometryFile="gdml:atf2_tunnel.gdml", x=-4.5*m, z=49*m;
 
@@ -210,7 +211,7 @@ Custom field maps could also be added to the yokes of particular magnets. A gene
 for quadrupoles could also be added for example and auto-scaling used to scale the field map
 for each quadrupole it's attached to. See :ref:`field-maps` for more details.
 
-One simple change is to specify a default aperture for all components.::
+One simple change is to specify a default aperture for all components. ::
 
   option, aper1=1.5*cm,
           beampipeThickness=1*mm;
@@ -232,7 +233,7 @@ Even if a Gaussian distribution is ultimately required, a common technique is
 to generate a uniform distribution of particles and then weight the events in analysis
 according to the Gaussian.
 
-Here is an example halo distribution::
+Here is an example halo distribution ::
 
   beam,	alfx=1.108024744, 
 	alfy=-1.907222942, 
@@ -254,7 +255,7 @@ Here is an example halo distribution::
 To validate this distribution and visualise it, we can generate only the particles without
 performing the full simulation. We execute BDSIM with the :code:`--generatePrimariesOnly`
 option. As the generation is very quick, we can afford to generate a large number of particles.
-Here 10000 were generated in approximately 10s.::
+Here 10000 were generated in approximately 10s. ::
 
   bdsim --file=atf2-halo.gmad --generatePrimariesOnly --outfile=haloprimaries --batch --ngenerate=10000
 
@@ -287,7 +288,7 @@ The "phase space data" is only the data required to make the above plots. The "s
 including weights, PDG ID, track ID etc.
 
 The object "psd" here contains a member dictionary called "data" that has a numpy array for each
-key inside it.::
+key inside it. ::
 
   >>> psd.data.keys()
   ['energy', 'T', 'yp', 'y', 'x', 'xp', 'z', 'zp']
@@ -302,26 +303,26 @@ hitting the machine will not interact with the matter and pass straight through.
 is useful for efficient tracking and optical validation but not useful for a physics study.
 We therefore specify a physics list. For a 1.3GeV electron, the basic electromagnetic
 physics list from Geant4 as well as the decay physics and some muon specific processes
-are useful. The full set of physics lists are described in :ref:`physics-processes`.::
+are useful. The full set of physics lists are described in :ref:`physics-processes`. ::
 
   option, physicsList="em decay muon";
 
 By default, samplers are attached to everything. Whilst suitable for optical comparison
 this produces a huge amount of data for a physics study. We turn this off by commenting
-it out with an exclamation mark.::
+it out with an exclamation mark. ::
 
   !sample, all;
 
 We have now specified the halo distribution as described above, a default aperture and
 physics processes. One final step is to turn off sensitivity to the tunnel geometry as
-this is not required.::
+this is not required. ::
 
   tun : placement, geometryFile="gdml:../atf2_tunnel.gdml", x=-4.5*m, z=49*m, sensitive=0;
 
 The input gmad file prepared is supplied in :code:`bdsim/examples/atf2/nlsige/atf2-halo.gmad`.
 
 We first run a small sample to gauge the length of the simulation and that the results
-are very roughly what we expect or want to see (before running a large number of particles).::
+are very roughly what we expect or want to see (before running a large number of particles). ::
 
   > bdsim --file=atf2-halo.gmad --outfile=t1 --batch --ngenerate=100
 
@@ -336,13 +337,13 @@ The first simple analysis step is make a histogram of the mean energy deposition
 BDSIM by default records a histogram of energy deposition per event. One could run the
 analysis tool `rebdsim` with an input *analysisConfig.txt* specifying histograms. This would
 also merge (take the average of) the pre-made per event histograms. A utility is provided for
-merging only the histograms.::
+merging only the histograms. ::
 
   > rebdsimHistoMerge t1.root t1_ana.root
 
 This loops over all events in the file and combines the per event histograms and writes them
 to a file called "t1_ana.root" here. To inspect this file, we load it in ROOT and browse it
-using a *TBrowser*.::
+using a *TBrowser*. ::
 
   > root -l t1_ana.root
   > $> TBrowser tb;
@@ -416,7 +417,7 @@ analysisConfig.txt used is provided in :code:`examples/atf2/analysisConfig.txt`.
    Histogram1D    Event.     XPositrons             {40}     {-2:2}               B5FFB.x           B5FFB.partID==-11
 
 We can view the histograms as before, but we can also easily load them in Python and
-make our own plots.::
+make our own plots. ::
 
   > python
   >>> import pybdsim
@@ -431,7 +432,7 @@ The `pybdsim` data loader automatically extracts the root histograms into Python
 called "histogramsXd" where "X" is the number of dimensions. All exist in "histograms". These
 are also automatically converted to numpy arrays and held in classes provided by `pybdsim` in
 the same members suffixed with "py" such as "d.histograms1dpy". Calling these dictionaries
-shows the name of the histogram that is the full path inside the file.::
+shows the name of the histogram that is the full path inside the file. ::
 
   {'Event/MergedHistograms/ElossHisto': <ROOT.TH1D object ("ElossHisto") at 0x7f83a0cfba20>,
   'Event/MergedHistograms/ElossPEHisto': <ROOT.TH1D object ("ElossPEHisto") at 0x7f83a1970000>,
@@ -449,7 +450,7 @@ shows the name of the histogram that is the full path inside the file.::
   'Event/PerEntryHistograms/YFlux': <ROOT.TH1D object ("YFlux") at 0x7f83a0cd74e0>,
   'Event/PerEntryHistograms/YFlux-Energy-Weighted': <ROOT.TH1D object ("YFlux-Energy-Weighted") at 0x7f83a0cd7de0>}
 
-The Python versions can be easily plotted using `pybdsim`.::
+The Python versions can be easily plotted using `pybdsim`. ::
 
   >>> pybdsim.Plot.Histogram1D(d.histograms1dpy['Event/PerEntryHistograms/XElectrons'])
   >>> pybdsim.Plot.Histogram2D(d.histograms2dpy['Event/PerEntryHistograms/XYFlux'])
@@ -466,7 +467,7 @@ These produce the following figures.
 
 We leave it to the user to create the plots they desire. However, the primary particle impact, loss
 and associated energy deposition is a useful standard plot that is provided in `pybdsim`. The optional
-survey arguments allow a machine diagram to be added on top of the plot.::
+survey arguments allow a machine diagram to be added on top of the plot. ::
 
   >>> pybdsim.Plot.LossAndEnergyDeposition('10khalo_ana.root', tfssurvey='../atf2-nominal-twiss-v5.2.tfs.tar.gz')
 
@@ -477,7 +478,7 @@ survey arguments allow a machine diagram to be added on top of the plot.::
 	    Primary particle impact points, losses and energy deposition from the simulation.
 
 
-Just the energy deposition can be plotted.::
+Just the energy deposition can be plotted. ::
 
   >>> pybdsim.Plot.EnergyDeposition('10khalo_ana.root', tfssurvey='../atf2-nominal-twiss-v5.2.tfs.tar.gz')
 
