@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSIntegratorRMatrixThin.hh"
 #include "BDSStep.hh"
+#include "BDSUtilities.hh"
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn) :
@@ -56,14 +57,30 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
 }
 
 void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
-                                   const G4double unitMomentum[],
-                                   const G4double h,
-                                   G4double       yOut[],
-                                   G4double       yErr[]) {
+                                       const G4double unitMomentum[],
+                                       const G4double h,
+                                       G4double       yOut[],
+                                       G4double       yErr[]) {
   for (G4int i = 0; i < 3; i++)
   {
     yErr[i]   = 0;
     yErr[i+3] = 0;
+  }
+
+  //const G4double fcof = eqOfM->FCof();
+  G4double lengthFraction = h / thinElementLength;
+
+  // only apply the kick if we're taking a step longer than half the length of the item,
+  // in which case, apply the full kick. This appears more robust than scaling the kick
+  // by h / thinElementLength as the precise geometrical length depends on the geometry
+  // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
+  // prevent more than one step begin taken, but occasionally, a very small initial step
+  // can be taken resulting in a double kick.
+  if (zeroStrength || lengthFraction < 0.51) // || !BDS::IsFinite(fcof))
+  {
+    AdvanceDriftMag(yIn, h, yOut, yErr);
+    SetDistChord(0);
+    return;
   }
 
   G4ThreeVector pos = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
@@ -83,12 +100,12 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double yp = localMomUnit.y();
   // G4double zp = localMomUnit.z();
 
-  double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
-  double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
-  double y1    = rmat31 * x0 + rmat32 * xp + rmat33 * y0 + rmat34 * yp + kick3;
-  double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
-  double z1    = z0 + h;
-  double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
+  G4double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
+  G4double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
+  G4double y1    = rmat31 * x0 + rmat32 * xp + rmat33 * y0 + rmat34 * yp + kick3;
+  G4double yp1   = rmat41 * x0 + rmat42 * xp + rmat43 * y0 + rmat44 * yp + kick4;
+  G4double z1    = z0 + h;
+  G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   // need to check against aperture before returning
 

@@ -48,9 +48,9 @@ void BDSIntegratorParallelTransport::Stepper(const G4double yIn[],
     G4double yp0 = localMomUnit.y();
     G4double zp0 = localMomUnit.z();
 
-    double x1 = x0;
-    double y1 = y0;
-    double z1 = z0+h;
+    G4double x1 = x0;
+    G4double y1 = y0;
+    G4double z1 = z0+h;
 
     for (G4int i = 0; i < 3; i++)
     {
