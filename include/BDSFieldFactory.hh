@@ -138,6 +138,9 @@ private:
   /// Create special rmatrix 'field' that applies an rmatrix
   BDSFieldObjects* CreateRmatrix(const BDSFieldInfo& info);
 
+  /// Create special parallel transport 'field' that applies an parallel transport along beam line
+  BDSFieldObjects* CreateParallelTransport(const BDSFieldInfo& info);
+
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 

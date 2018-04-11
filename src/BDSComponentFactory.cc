@@ -1243,7 +1243,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brho,
 					       intType,
-                                               stCopy,
+                 stCopy,
 					       true,
 					       fieldTransform);
 

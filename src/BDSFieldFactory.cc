@@ -63,6 +63,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorMultipoleThin.hh"
+#include "BDSIntegratorParallelTransport.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
@@ -418,6 +419,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleouterdipole3d:
       {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius); break;}
+    case BDSFieldType::paralleltransporter:
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
@@ -528,8 +530,10 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
     {
     case BDSFieldType::teleporter:
       {result = CreateTeleporter(info); break;}
-      case BDSFieldType::rmatrix:
-    {result = CreateRmatrix(info); break;}
+    case BDSFieldType::rmatrix:
+      {result = CreateRmatrix(info); break;}
+    case BDSFieldType::paralleltransporter:
+      {result = CreateParallelTransport(info); break;}
     default:
       {break;}
     }
@@ -738,6 +742,16 @@ BDSFieldObjects* BDSFieldFactory::CreateRmatrix(const BDSFieldInfo& info)
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
   G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
+                                                            bEqOfMotion, integrator);
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateParallelTransport(const BDSFieldInfo& info)
+{
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorParallelTransport(bEqOfMotion);
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
                                                             bEqOfMotion, integrator);
   return completeField;
