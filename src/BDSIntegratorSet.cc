@@ -96,8 +96,8 @@ namespace BDS
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
-			 BDSIntegratorType::rmatrixthin,
-		   BDSIntegratorType::paralleltransport);   // thin rmatrix
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
 
   const BDSIntegratorSet* integratorsBDSIMTwo =
     new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
@@ -119,8 +119,8 @@ namespace BDS
 			 BDSIntegratorType::dipolefringe,     // dipole fringe field
 			 BDSIntegratorType::multipolethin,    // thin multipole
 			 BDSIntegratorType::g4nystromrk4,     // multipole outer
-			 BDSIntegratorType::rmatrixthin,
-		   BDSIntegratorType::paralleltransport);     // thin rmatrix
+			 BDSIntegratorType::rmatrixthin,      // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
   /// Mad-x style tracking.
   const BDSIntegratorSet*  integratorsBDSIMMatrix =
     new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
@@ -142,8 +142,8 @@ namespace BDS
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
-			 BDSIntegratorType::rmatrixthin,
-		   BDSIntegratorType::paralleltransport);   // thin rmatrix
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
   /// Mad-x style tracking with fringe field momentum scaling.
   const BDSIntegratorSet*  integratorsBDSIMMatrixFringeScaling =
     new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
@@ -188,8 +188,8 @@ namespace BDS
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
-			 BDSIntegratorType::rmatrixthin,
-		   BDSIntegratorType::paralleltransport);   // thin rmatrix
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transporter
 
 #if G4VERSION_NUMBER > 1039
   const BDSIntegratorSet* integratorsGeant4DP =
@@ -212,7 +212,8 @@ namespace BDS
 			 BDSIntegratorType::dipolefringe,       // dipole fringe field
 			 BDSIntegratorType::multipolethin,      // thin multipole
   			 BDSIntegratorType::g4dormandprince745, // multipole outer
-			 BDSIntegratorType::rmatrixthin);       // thin rmatrix
+			 BDSIntegratorType::rmatrixthin,        // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transporter
 #endif
 }
 
