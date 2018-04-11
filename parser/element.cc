@@ -377,22 +377,22 @@ void Element::flush()
   kick2 = 0;
   kick3 = 0;
   kick4 = 0;
-  rmat11= 0;
+  rmat11= 1.0;
   rmat12= 0;
   rmat13= 0;
   rmat14= 0;
   rmat21= 0;
-  rmat22= 0;
+  rmat22= 1.0;
   rmat23= 0;
   rmat24= 0;
   rmat31= 0;
   rmat32= 0;
-  rmat33= 0;
+  rmat33= 1.0;
   rmat34= 0;
   rmat41= 0;
   rmat42= 0;
   rmat43= 0;
-  rmat44= 0;
+  rmat44= 1.0;
 
   // degrader
   numberWedges = 1;
