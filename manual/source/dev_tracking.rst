@@ -453,7 +453,7 @@ BDSIM Dipole Rodrigues
 * Class name: :code:`BDSIntegratorDipoleRodrigues`
 
 This integrator is constructed with it's own strength parameter and **ignores** the field
-information provided by Geant4. The field value (already multiplied by :code:`CLHEP::telsa`) is
+information provided by Geant4. The field value (already multiplied by :code:`CLHEP::tesla`) is
 assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
 :math:`\mathbf{B} = (0,B,0)`. The algorithm progresses as follows:
 
@@ -608,7 +608,7 @@ For each usage:
 
    \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
 
-If :math:`\|\kappa\| < 10^{-2}` use the drift integrator, else continue as:
+If :math:`\|\kappa\| < 10^{-20}` use the drift integrator, else continue as:
 
 * Convert to local curvilinear coordinates.
 
