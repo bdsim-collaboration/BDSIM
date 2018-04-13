@@ -408,6 +408,8 @@ Extra information can be recorded but this typically dominates the output file s
 +-----------------+-----------------------+-------------------------------------------------------------------+
 | Z               | std::vector<float>    | (optional) Global Z of energy deposition (m).                     |
 +-----------------+-----------------------+-------------------------------------------------------------------+
+| T               | std::vector<float>    | (optional) Global time of flight since begnning of event (ns).    |
++-----------------+-----------------------+-------------------------------------------------------------------+
 
 BDSOutputROOTEventTrajectory
 ****************************
@@ -546,7 +548,7 @@ increases the output file size by 2x.
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | zp              | std::vector<T>    | Vector of the fractional forward momentum.                               |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| t               | std::vector<T>    | Vector of the time of flight of the particle (ns).                       |
+| T               | std::vector<T>    | Vector of the time of flight of the particle (ns).                       |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | weight          | std::vector<T>    | Vector of the associated weights of the hits.                            |
 +-----------------+-------------------+--------------------------------------------------------------------------+

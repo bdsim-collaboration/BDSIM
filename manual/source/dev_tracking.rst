@@ -1071,7 +1071,7 @@ angle :math:`\theta`, otherwise if  :math:`~fieldRatio != 1`:
 
     \theta = fieldRatio \cdot \theta
 
-As this integrator will ultimately use particle co-ordinates in the curvilinear frame, the *bending* actually
+As this integrator will ultimately use particle coordinates in the curvilinear frame, the *bending* actually
 occurs in the curvilinear transforms. As a dipole can be underpowered or overpowered by specifying both the
 field and angle in the input component definition, the transforms must be supplied the correct bending angle
 to ensure the particles will be transformed onto the correct trajectory.
