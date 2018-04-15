@@ -35,6 +35,10 @@ void BDSIntegratorParallelTransport::Stepper(const G4double yIn[],
     G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
     G4double      momMag = mom.mag();
 
+
+    // check if beam particle, if so step as drift
+    //
+
     BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false);
     G4ThreeVector localPos     = localPosMom.PreStepPoint();
     G4ThreeVector localMom     = localPosMom.PostStepPoint();

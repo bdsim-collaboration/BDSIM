@@ -70,6 +70,10 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
     yErr[i+3] = 0;
   }
 
+  // check if beam particle, if so step as drift
+  //
+
+
   const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
 
@@ -79,7 +83,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   // ie if there's a beam pipe etc -> more length safetys.  The geometry layout should
   // prevent more than one step begin taken, but occasionally, a very small initial step
   // can be taken resulting in a double kick.
-  if (lengthFraction < 0.51) // || !BDS::IsFinite(fcof))
+  if (lengthFraction < 0.51)  || !BDS::IsFinite(fcof))
   {
     AdvanceDriftMag(yIn, h, yOut, yErr);
     SetDistChord(0);
