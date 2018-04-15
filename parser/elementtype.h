@@ -27,8 +27,8 @@ namespace GMAD
     _LASER       = 15,
     _MATERIAL    = 16,
     _RBEND       = 17,
-    _THINRMATRIX = 18,
-    _PARALLELTRANSPORTER = 19,
+    // = 18,
+    // = 19,
     _ELEMENT     = 20,
     _SCREEN      = 21,
     _AWAKESCREEN = 22,
@@ -42,7 +42,11 @@ namespace GMAD
     _MUSPOILER   = 62,
     _DEGRADER    = 63,
     _THINMULT    = 64,
-    _GAP         = 65
+    _GAP         = 65,
+
+    _THINRMATRIX = 66,
+    _PARALLELTRANSPORTER = 67,
+    _RMATRIX     = 68
   };
 
   /// conversion from enum to string

@@ -101,6 +101,7 @@ degrader { return DEGRADER;}
 gap { return GAP;}
 thinrmatrix { return THINRMATRIX;}
 paralleltransporter {return PARALLELTRANSPORTER;}
+rmatrix {return RMATRIX;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

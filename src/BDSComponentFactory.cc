@@ -46,6 +46,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
+#include "BDSLine.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
@@ -287,6 +288,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateThinRMatrix(angleIn); break;
   case ElementType::_PARALLELTRANSPORTER:
     component = CreateParallelTransporter(); break;
+  case ElementType::_RMATRIX:
+    component = CreateRMatrix(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -1082,6 +1085,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   G4cout << "---->creating Terminator" << G4endl;
 #endif
   return new BDSTerminator();
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
+{
+  G4cout << "BDSComponentFactory::CreateRMatrix" << G4endl;
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+
+  GMAD::Element *elementNew = new GMAD::Element(*element);
+  elementNew->l = (element->l-thinElementLength)/2.0;
+
+  auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+  auto rmatrix            = CreateThinRMatrix(0);
+  auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+
+  const G4String             baseName = elementName;
+  BDSLine *bLine = new BDSLine(baseName);
+  bLine->AddComponent(parallelTransport1);
+  bLine->AddComponent(rmatrix);
+  bLine->AddComponent(parallelTransport2);
+
+  return bLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
