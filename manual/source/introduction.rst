@@ -181,7 +181,7 @@ Model Physical Size
 BDSIM uses a small padding distance between all surfaces and in addition, Geant4 treats the
 intersection with every surface of every solid with a certain tolerance. Specifying a tolerance
 like this avoids infinte recursion (or at least costly recursion) to ascertain the intersection
-of a curved track with a surface. This tolerance is by default :math:`1e^-9` mm. BDSIM and Geant4
+of a curved track with a surface. This tolerance is by default :math:`10^{-9}` mm. BDSIM and Geant4
 use double floating point precision throughout providing approximately 15 to 16 significant figures.
 Therefore, a maximum size of a model while still maintaining tracking precision is :math:`10^7` mm.
 This leads us to conclude that a model of order the size of the LHC is a practical maximum.
