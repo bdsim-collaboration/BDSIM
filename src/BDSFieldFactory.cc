@@ -577,7 +577,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::kickerthin:
       integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::rmatrixthin:
-      integrator = new BDSIntegratorRMatrixThin(strength,eqOfM); break;
+      integrator = new BDSIntegratorRMatrixThin(strength,eqOfM, info.BeamPipeRadius()); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -741,7 +741,7 @@ BDSFieldObjects* BDSFieldFactory::CreateRmatrix(const BDSFieldInfo& info)
 {
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion,0.95*info.BeamPipeRadius());
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
                                                             bEqOfMotion, integrator);
   return completeField;

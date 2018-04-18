@@ -38,7 +38,7 @@ class BDSMagnetStrength;
 class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn);
+  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn, G4double aper);
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -71,6 +71,8 @@ private:
   G4double rmat42;
   G4double rmat43;
   G4double rmat44;
+
+  G4double aper;
 };
 
 #endif // BDSINTEGRATORRMATRIXTHIN_HH

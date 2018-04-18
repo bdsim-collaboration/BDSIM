@@ -1127,6 +1127,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
                                                st,
                                                true,
                                                fieldTrans);
+  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
                                           elementName,
