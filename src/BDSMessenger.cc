@@ -44,7 +44,7 @@ BDSMessenger::BDSMessenger()
   beamlineListCmd->SetGuidance("List beamline components");
 
   elementNameSearchCmd = new G4UIcmdWithAString("/bds/beamline/namesearch",this);
-  beamlineListCmd->SetGuidance("Search beamline components for element");
+  elementNameSearchCmd->SetGuidance("Search beamline components for element");
 
   elementGoToCmd = new G4UIcmdWithAString("/bds/beamline/goto", this);
   elementGoToCmd->SetGuidance("Move to a particular element's location");
