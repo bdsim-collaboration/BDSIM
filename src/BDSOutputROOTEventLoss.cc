@@ -64,16 +64,16 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
   if (storeLocal)
     {
       const G4ThreeVector& pos = hit->GetPostPosLocal();
-      x.push_back( (float &&) pos.x());
-      y.push_back( (float &&) pos.y());
-      z.push_back( (float &&) pos.z());
+      x.push_back( (float &&) pos.x() / CLHEP::m);
+      y.push_back( (float &&) pos.y() / CLHEP::m);
+      z.push_back( (float &&) pos.z() / CLHEP::m);
     }
   if (storeGlobal)
     {
       const G4ThreeVector& pos = hit->GetPosition();
-      X.push_back( (float &&) pos.x());
-      Y.push_back( (float &&) pos.y());
-      Z.push_back( (float &&) pos.z());
+      X.push_back( (float &&) pos.x() / CLHEP::m);
+      Y.push_back( (float &&) pos.y() / CLHEP::m);
+      Z.push_back( (float &&) pos.z() / CLHEP::m);
     }
   if (storeTime)
     {
