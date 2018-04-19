@@ -1,3 +1,23 @@
+V1.1 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+Bug Fixes
+---------
+
+* Fixed wrong transforms for finite `S0` in composite beam distribution.
+
+Utilities
+---------
+
+* pybdsim v1.4
+* pymadx v1.1
+* pymad8 v1.0
+* pytransport v1.0
+
+
 V1.0 - 2018 / 04 / 10
 =====================
 
