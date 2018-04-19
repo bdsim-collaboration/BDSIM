@@ -3507,7 +3507,7 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `haloeNSigmaYOuter`              | Outer radius of halo in y (multiples of sigma)                              |
+| `haloNSigmaYOuter`               | Outer radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightFunction`           | Phase space weight function [string]                                        |
 +----------------------------------+-----------------------------------------------------------------------------+
