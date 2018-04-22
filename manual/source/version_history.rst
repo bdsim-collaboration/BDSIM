@@ -1,3 +1,26 @@
+V1.1 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+* New visualiser command "/bds/beamline/goto name" to move visualiser to view a particular element.
+
+Bug Fixes
+---------
+
+* Fixed wrong transforms for finite `S0` in composite beam distribution.
+* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for `x`, `y`, `z`, `X`, `Y`, `Z` positions.
+
+Utilities
+---------
+
+* pybdsim v1.4
+* pymadx v1.1
+* pymad8 v1.0
+* pytransport v1.0
+
+
 V1.0 - 2018 / 04 / 10
 =====================
 
