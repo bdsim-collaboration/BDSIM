@@ -10,6 +10,7 @@ Bug Fixes
 ---------
 
 * Fixed wrong transforms for finite `S0` in composite beam distribution.
+* Fixed crash when finite `S0` was used with `-\\-generatePrimariesOnly` executable option.
 * Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for `x`, `y`, `z`, `X`, `Y`, `Z` positions.
 
 Utilities

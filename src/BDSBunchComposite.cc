@@ -63,6 +63,14 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
   zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);
 }
 
+void BDSBunchComposite::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
+{
+  BDSBunch::SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  xBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  yBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  zBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+}
+
 void BDSBunchComposite::CheckParameters()
 {
   xBunch->CheckParameters();

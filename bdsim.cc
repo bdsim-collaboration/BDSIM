@@ -169,7 +169,8 @@ int main(int argc,char** argv)
   /// Instantiate the specific type of bunch distribution.
   BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
 						    parser->GetBeam(),
-						    globalConstants->BeamlineTransform());
+						    globalConstants->BeamlineTransform(),
+                                                    globalConstants->GeneratePrimariesOnly());
 
   /// Optionally generate primaries only and exit
   /// Unfortunately, this has to be here as we can't query the geant4 particle table
