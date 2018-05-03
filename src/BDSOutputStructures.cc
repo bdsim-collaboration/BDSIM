@@ -59,8 +59,8 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 
   eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
                                      storeTime);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true, false, true);
-  pLastHit = new BDSOutputROOTEventLoss(true, true, false, true);
+  pFirstHit = new BDSOutputROOTEventLoss(true, true, true, true);
+  pLastHit = new BDSOutputROOTEventLoss(true, true, true, true);
   tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false);
   traj = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
