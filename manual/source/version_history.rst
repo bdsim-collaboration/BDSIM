@@ -6,6 +6,11 @@ New Features
 
 * New visualiser command "/bds/beamline/goto name" to move visualiser to view a particular element.
 
+General
+-------
+
+* Global coordinates are now always stored for primary first hit.
+  
 Bug Fixes
 ---------
 
