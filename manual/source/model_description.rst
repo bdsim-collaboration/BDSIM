@@ -3636,7 +3636,7 @@ Acceptable tokens for the columns are:
 +------------+------------------------+
 | "xp"       | Horizontal angle.      |
 +------------+------------------------+
-| "yp"       | Verticla angle.        |
+| "yp"       | Vertical angle.        |
 +------------+------------------------+
 | "zp"       | Longitudinal.          |
 +------------+------------------------+
