@@ -2268,6 +2268,12 @@ Physics Lists In BDSIM
 	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
 	     physics list in Geant4.
 
+.. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
+	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
+	     not be used along with the unsuffixed ones (e.g. "qgsp_bert" and "qgsp_bert_hp" should
+	     not be used together). Similarly, the standard electromagnetic variants should not
+	     be used with the regular "em".
+
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +------------------------------+------------------------------------------------------------------------+
