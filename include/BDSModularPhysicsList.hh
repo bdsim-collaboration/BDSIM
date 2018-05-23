@@ -128,6 +128,10 @@ private:
   /// Delegate function for the specific optical physics processes controllable from
   /// the parser.
   void ConfigureOptical();
+
+  /// Check whether the supplied physics name conflicts with any already activated
+  /// and print out a warning and exit if so.
+  void CheckIncompatiblePhysics(const G4String& singlePhysicsIn) const;
   
   /// Typedef for function pointers to simplify syntax.
   typedef void(BDSModularPhysicsList::*Constructor)(void);
@@ -143,6 +147,9 @@ private:
   /// of which ones have been activated and if the required ones haven't,
   /// activate them. This is also constructed from the physicsConstructors map.
   std::map<G4String, G4bool> physicsActivated;
+
+  /// Map of incompatible physics lists by our name for each individual list.
+  std::map<G4String, std::vector<G4String> > incompatible;
 
   /// Map of possible aliases for a given physics list.
   std::map<G4String, G4String> aliasToOriginal;

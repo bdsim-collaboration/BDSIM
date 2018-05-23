@@ -220,6 +220,46 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
       physicsLists.push_back(constructor.first);
       physicsActivated[constructor.first] = false;
     }
+
+  // setup a list of incompatible physics lists for each one - mostly based on experience
+  // initialise all to empty vectors and specify only ones that have some incompatible physics lists
+  for (const auto kv : physicsConstructors)
+    {incompatible.insert(std::make_pair(kv.first, std::vector<G4String>()));}
+  incompatible["em"]     = {"em_ss", "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
+  incompatible["em_ss"]  = {"em",    "em_wvi", "em_1",   "em_2", "em_3", "em_4"};
+  incompatible["em_wvi"] = {"em",    "em_ss",  "em_1",   "em_2", "em_3", "em_4"};
+  incompatible["em_1"]   = {"em",    "em_ss",  "em_wvi", "em_2", "em_3", "em_4"};
+  incompatible["em_2"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_3", "em_4"};
+  incompatible["em_3"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_4"};
+  incompatible["em_4"]   = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3"};
+  incompatible["em_livermore"] = {"em_livermore_polarised"};
+  incompatible["ftfp_bert"]    = {"ftfp_bert_hp", "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
+  incompatible["ftfp_bert_hp"] = {"ftfp_bert",    "qgsp_bert", "qgsp_bert_hp", "qgsp_bic", "qgsp_bic_hp"};
+  incompatible["hadronic_elastic"]      = {"hadronic_elastic_d", "hadronic_elastic_h", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
+  incompatible["hadronic_elastic_d"]    = {"hadronic_elastic",   "hadronic_elastic_h", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
+  incompatible["hadronic_elastic_h"]    = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_hp", "hadronic_elastic_lend", "hadronic_elastic_xs"};
+  incompatible["hadronic_elastic_hp"]   = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_h",  "hadronic_elastic_lend", "hadronic_elastic_xs"};
+  incompatible["hadronic_elastic_lend"] = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_h",  "hadronic_elastic_hp",   "hadronic_elastic_xs"};
+  incompatible["hadronic_elastic_xs"]   = {"hadronic_elastic",   "hadronic_elastic_d", "hadronic_elastic_h",  "hadronic_elastic_hp",   "hadronic_elastic_lend"};
+  incompatible["ion_elastic"] = {"ion_elastic_qmd"};
+  incompatible["qgsp_bert"]    = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert_hp", "qgsp_bic",     "qgsp_bic_hp"};
+  incompatible["qgsp_bert_hp"] = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert",    "qgsp_bic",     "qgsp_bic_hp"};
+  incompatible["qgsp_bic"]     = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert",    "qgsp_bert_hp", "qgsp_bic_hp"};
+  incompatible["qgsp_bic_hp"]  = {"ftfp_bert", "ftfp_bert_hp", "qgsp_bert",    "qgsp_bert_hp", "qgsp_bic"};
+
+#if G4VERSION_NUMBER > 1019
+  for (const auto& name : {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"})
+    {incompatible[name].push_back("em_gs");}
+  incompatible["em_gs"] = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3", "em_4"};
+#endif
+#if G4VERSION_NUMBER > 1020
+  incompatible["decay"].push_back("decay_spin"); // append for safety in future
+  incompatible["decay_spin"] = {"decay"};
+#endif
+#if G4VERSION_NUMBER > 1039
+  incompatible["shielding"].push_back("shielding_lend");
+  incompatible["shielding_lend"] = {"shielding"};
+#endif
   
   ParsePhysicsList(physicsList);
   ConfigurePhysics();
@@ -325,6 +365,7 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       if (result != physicsConstructors.end())
 	{
 	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\" physics list" << G4endl;
+	  CheckIncompatiblePhysics(name);
 	  auto mem = result->second;
 	  (this->*mem)(); // call the function pointer in this instance of the class
 	}
@@ -414,6 +455,25 @@ void BDSModularPhysicsList::ConfigureOptical()
   G4long maxPhotonsPerStep = globals->MaximumPhotonsPerStep();
   if (maxPhotonsPerStep >= 0)
     {opticalPhysics->SetMaxNumPhotonsPerStep(maxPhotonsPerStep);}
+}
+
+void BDSModularPhysicsList::CheckIncompatiblePhysics(const G4String& singlePhysicsIn) const
+{
+  // no need to check if key is present as we control both maps in the constructor
+  const std::vector<G4String>& forbidden = incompatible.at(singlePhysicsIn);
+  
+  for (const auto key : forbidden)
+    {// for each forbidden physics list, check if it's activated
+      if (physicsActivated.at(key))
+	{
+	  G4cerr << __METHOD_NAME__ << "Incompatible physics list \"" << singlePhysicsIn
+		 << "\" being used with already used \"" << key << "\"" << G4endl;
+	  G4cout << "\"" << singlePhysicsIn << "\" cannot be used with the following:" << G4endl;
+	  for (const auto& v : forbidden)
+	    {G4cout << "\"" << v << "\"" << G4endl;}
+	  exit(1);
+	}
+    }
 }
 
 void BDSModularPhysicsList::SetCuts()
