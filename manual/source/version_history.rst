@@ -23,9 +23,9 @@ Bug Fixes
 Utilities
 ---------
 
-* pybdsim v1.4
-* pymadx v1.1
-* pymad8 v1.0
+* pybdsim v1.6
+* pymadx v1.2
+* pymad8 v1.1
 * pytransport v1.0
 
 
