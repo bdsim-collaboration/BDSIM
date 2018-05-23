@@ -1135,9 +1135,10 @@ Where:
 
 .. math::
 
-   \Theta_x &= \sqrt{K_x}~h   &= \sqrt{|\kappa + \kappa_0^2|}~h\\
-   \Theta_y &= \sqrt{|K_y|}~h &= \sqrt{|\kappa|}~h\\
-   \kappa_0 &= \frac{1}{\rho}\\
+   \Theta_x &= \sqrt{K_x}~h   = \sqrt{\|\kappa + \kappa_0^2\|}~h\\
+   \Theta_y &= \sqrt{\|K_y\|}~h = \sqrt{\|\kappa\|}~h\\
+   \kappa_0 &= \frac{1}{\rho}
+
 
 For the case of a defocussing magnet :math:`\kappa < 0`:
 
