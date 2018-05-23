@@ -1,0 +1,13 @@
+c1: rcol, l=20*cm, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+! these cannot be used together -> BDSIM should complain
+option, physicsList="qgsp_bic qgsp_bert";
+
+option, checkOverlaps=1;
+
+beam, particle="e-",
+      energy=3*GeV;

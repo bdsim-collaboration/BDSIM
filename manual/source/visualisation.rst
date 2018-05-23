@@ -30,7 +30,7 @@ Strictly speaking, a visualisation macro must be supplied to Geant4 to
 tell it what to display. For convenience, BDSIM provides a set of macros
 that display the geometry, add a few useful buttons and menus to the
 user interface. To use these, the user need only **not** specify a
-visualisation macro.::
+visualisation macro. ::
 
   bdsim --file=mylattice.gmad
 

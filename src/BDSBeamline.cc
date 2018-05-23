@@ -750,13 +750,14 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 {
   if (!IndexOK(index))
     {return nullptr;}
-
+  
+  const G4double pl = paddingLength; // shortcut
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetRotationMiddle();
-  G4ThreeVector     elPosStart = element->GetPositionStart();
+  G4ThreeVector     elPosStart = element->GetPositionStart() - G4ThreeVector(0,0,pl).transform(*elRotStart);
   G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
-  G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
+  G4ThreeVector  positionStart = elPosStart.transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSTiltOffset*   forEndPiece = nullptr;
@@ -789,10 +790,11 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
   if (!IndexOK(index))
     {return nullptr;}
 
+  const G4double pl = paddingLength; // shortcut
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetRotationMiddle()));
-  G4ThreeVector       elPosEnd = element->GetPositionEnd();
+  G4ThreeVector       elPosEnd = element->GetPositionEnd() + G4ThreeVector(0,0,pl).transform(*elRotEnd);
   G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
   G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
   if (flip)

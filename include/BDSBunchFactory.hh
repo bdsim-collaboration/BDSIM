@@ -48,12 +48,14 @@ public:
   /// factory method
   static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
 			       const GMAD::Beam& beam,
-			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
+			       G4Transform3D beamlineTransform = G4Transform3D::Identity,
+			       const G4bool& generatePrimariesOnlyIn = false);
 
   static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
 			       BDSBunchType      distrType,
 			       const GMAD::Beam& beam,
-			       G4Transform3D beamlineTransform = G4Transform3D::Identity);
+			       G4Transform3D beamlineTransform = G4Transform3D::Identity,
+			       const G4bool& generatePrimariesOnlyIn = false);
 };
 
 #endif

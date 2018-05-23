@@ -1,3 +1,34 @@
+V1.1 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+* New visualiser command "/bds/beamline/goto name" to move visualiser to view a particular element.
+* Check explicitly on incompatible physics lists that may cause a crash when used together.
+
+General
+-------
+
+* Global coordinates are now always stored for primary first hit.
+  
+Bug Fixes
+---------
+
+* Fixed wrong transforms for finite `S0` in composite beam distribution.
+* Fixed crash when finite `S0` was used with `-\\-generatePrimariesOnly` executable option.
+* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for `x`, `y`, `z`, `X`, `Y`, `Z` positions.
+* Fixed segfault for double deletion when 'qgsp_bic' and 'qgsp_bert' were attempted to be used together.
+
+Utilities
+---------
+
+* pybdsim v1.4
+* pymadx v1.1
+* pymad8 v1.0
+* pytransport v1.0
+
+
 V1.0 - 2018 / 04 / 10
 =====================
 

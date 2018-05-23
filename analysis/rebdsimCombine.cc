@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
   for (const auto& file : inputFiles)
     {
       f = new TFile(file.c_str());
-      if (RBDS::IsREBDSIMOutputFile(f))
+      if (RBDS::IsREBDSIMOrCombineOutputFile(f))
 	{
 	  std::cout << "Accumulating> " << file << std::endl;
 	  for (const auto& hist : histograms)

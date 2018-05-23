@@ -72,6 +72,8 @@ public:
 
   /// Access the beam particle definition.
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
+
+  virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
   
 protected:
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
@@ -123,6 +125,10 @@ protected:
   G4bool finiteSigmaE;
   G4bool finiteSigmaT;
   /// @}
+
+  /// Whether we're only generating the primaries only and therefore there's no beamline
+  /// to get a transform from and we shouldn't try.
+  G4bool generatePrimariesOnly;
   
 private:
   /// Transform that beam line starts with that will also be applied to coordinates.

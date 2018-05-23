@@ -132,7 +132,7 @@ The integrator set may be one of the following (case-insensitive):
 +===========================+=========================+================================+
 | bdsimmatrixfringescaling  | Solenoid                | BDSIM Dipole Rodrigues 2       |
 |                           +-------------------------+--------------------------------+
-|                           | Dipole                  | BDSIM Dipole Rodrigues 2       |
+|                           | Dipole                  | BDSIM Dipole Matrix            |
 |                           +-------------------------+--------------------------------+
 |                           | Dipole with K1          | BDSIM Dipole Matrix            |
 |                           +-------------------------+--------------------------------+
@@ -453,7 +453,7 @@ BDSIM Dipole Rodrigues
 * Class name: :code:`BDSIntegratorDipoleRodrigues`
 
 This integrator is constructed with it's own strength parameter and **ignores** the field
-information provided by Geant4. The field value (already multiplied by :code:`CLHEP::telsa`) is
+information provided by Geant4. The field value (already multiplied by :code:`CLHEP::tesla`) is
 assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
 :math:`\mathbf{B} = (0,B,0)`. The algorithm progresses as follows:
 
@@ -608,7 +608,7 @@ For each usage:
 
    \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
 
-If :math:`\|\kappa\| < 10^{-2}` use the drift integrator, else continue as:
+If :math:`\|\kappa\| < 10^{-20}` use the drift integrator, else continue as:
 
 * Convert to local curvilinear coordinates.
 
@@ -877,12 +877,42 @@ for the dipole component of the motion. After that, the small change in momentum
 * If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
   is applied.
 
-The momentum change in the local curvilinear frame is calculated as:
+The thin matrix in the local curvilinear frame is:
 
 .. math::
 
-   dp_{x} ~ = ~ \frac{q_{x,in}}{\rho}~\tan(\theta)\\
-   dp_{y} ~ = ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
+   \begin{pmatrix}
+   x_1    \\
+   x'_1   \\
+   y_1    \\
+   y'_1   \\
+   l_1    \\
+   \delta \\
+   \end{pmatrix}
+   =
+    \begin{pmatrix}
+    1                          & 0 & 0                                     & 0 & 0 & 0 \\
+    \frac{1}{\rho}\tan{\theta} & 1 & 0                                     & 0 & 0 & 0 \\
+    0                          & 0 & 1                                     & 0 & 0 & 0 \\
+    0                          & 0 & -\frac{1}{\rho}\tan{(\theta - corr.)} & 1 & 0 & 0 \\
+    0                          & 0 & 0                                     & 0 & 1 & 0 \\
+    0                          & 0 & 0                                     & 0 & 0 & 1 \\
+   \end{pmatrix}
+   \begin{pmatrix}
+   x_0    \\
+   x'_0   \\
+   y_0    \\
+   y'_0   \\
+   l_0    \\
+   \delta \\
+   \end{pmatrix}
+
+The resulting momentum change will therefore be:
+
+.. math::
+
+   dp_{x} ~ &= ~ \frac{q_{x,in}}{\rho}~\tan(\theta)\\
+   dp_{y} ~ &= ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
 
 Where :math:`\theta` is the angle of the pole face and ":math:`corr.`" is the fringe
 field correction term. The calculation of the fringe field correction term is split
@@ -993,15 +1023,85 @@ normal and skew multipole components respectively.  The output momentum is there
 
 
 
-Combined Dipole-Quadrupole
---------------------------
+BDSIM Dipole Matrix
+-------------------
 
-RMatrix - from Particle Accelerator Physics (3rd Edition) by Wiedemann, chapter 5.
-The z terms are not calculated via the matrix method, rather the z position
-is simply the addition of the step length, and the  z momentum is calculated
-from the x and y momentum to ensure momentum conservation.
-Note that this matrix is incomplete, there are terms for the calculation of the
-l parameter which are not needed in this stepper.
+* Class name: :code:`BDSIntegratorDipoleQuadrupole`
+
+This integrator is constructed with it's own strength parameter and **ignores** the field
+information provided by Geant4. The field value (already multiplied by :code:`CLHEP::tesla`) is
+assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
+:math:`\mathbf{B} = (0,B,0)`.
+
+Upon construction of the integrator, the following are calculated:
+
+* The nominal bending radius :math:`\rho`:
+
+.. math::
+
+   \rho~=~ \frac{L}{\theta}
+
+The bending radius is not calculated using the magnetic field as the field can be set to purposefully
+underpower or overpower the magnet.
+
+* The quadrupolar component, the field gradient:
+
+.. math::
+
+   B' ~ = ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x} ~ = ~ B\rho~ \Big( \frac{1}{B\rho}~\frac{\mathrm{d}B_{y}}{\mathrm{d}x} \Big)~ = ~ B\rho~k_{1}
+
+For each usage, the strength parameter :math:`\kappa` is calculated *w.r.t.* a given particle rigidity:
+
+  .. math::
+
+    \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
+
+* The ratio of supplied magnetic field to nominal magnetic field:
+
+.. math::
+
+    fieldRatio = \frac{B \cdot \rho}{B\rho}
+
+Where :math:`B` is the magnetic field strength, :math:`\rho` is the nominal bending radius, and :math:`B\rho` is
+the nominal magnetic rigidity for the magnet, which is cached upon construction. The field ratio is used to
+calculate the curvilinear transform angle. If :math:`~fieldRatio = 1`, then proceed using the nominal bending
+angle :math:`\theta`, otherwise if  :math:`~fieldRatio != 1`:
+
+.. math::
+
+    \theta = fieldRatio \cdot \theta
+
+As this integrator will ultimately use particle coordinates in the curvilinear frame, the *bending* actually
+occurs in the curvilinear transforms. As a dipole can be underpowered or overpowered by specifying both the
+field and angle in the input component definition, the transforms must be supplied the correct bending angle
+to ensure the particles will be transformed onto the correct trajectory.
+
+The algorithm progresses as follows:
+
+* If the field value is 0, the particle is neutral, or for very small step length :math:`h < 10^{-12} m`, the coordinates are advanced as a drift.
+
+Otherwise continue as follows:
+
+The distance from the chord and arc of the true path is calculated by taking a single step taken using
+the backup dipole stepper :code:`BDSIntegratorDipoleRodrigues2`. This integrator provides access to the
+chord-arc distance which is then used in this integrator. We assume the dipole component will provide a
+bigger effect than the quadrupole component.
+
+* For small step length :math:`h < 10^{-7} m`, the coordinates are advanced using the full backup stepper.
+
+The radius of curvature is also taken from the aforementioned single step in the backup integrator. If
+the chord-arc distance is :math:`> 0.3` times the radius of curvature, the particle is assumed to be
+spiralling and subsequently the full backup stepper is used.
+
+* Convert to local curvilinear coordinates.
+
+If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and the backup
+integrator from :code:`BDSIntegratorMag` is used.  Else, proceed with thick matrix transportation.
+
+* Thick dipole matrix:
+
+The matrix implemented is the RMatrix from Particle Accelerator Physics (3rd Edition) by Wiedemann,
+chapter 5. For the case of a focussing magnet, :math:`\kappa \geq 0`:
 
 .. math::
 
@@ -1012,15 +1112,15 @@ l parameter which are not needed in this stepper.
    y'_1   \\
    l_1    \\
    \delta \\
-   \end{pmatrix} =
-
+   \end{pmatrix}
+   =
     \begin{pmatrix}
-    \cos{\Theta}            & \frac{\sin{\Theta}}{\sqrt{K}} & 0                     & 0                              & 0 & \frac{1 - \cos{\Theta}}{\sqrt{K}}  \\
-    -\sqrt{K}\sin{\Theta}   & \cos{\Theta}                  & 0                     & 0                              & 0 & \sin{\Theta}                       \\
-    0                       & 0                             & \cosh{\Theta}         & \frac{\sinh{\Theta}}{\sqrt{K}} & 0 & 0                                  \\
-    0                       & 0                             & \sqrt{K}\sinh{\Theta} & \cosh{\Theta}                  & 0 & 0                                  \\
-    0                       & 0                             & 0                     & 0                              & 1 & 0                                  \\
-    0                       & 0                             & 0                     & 0                              & 0 & 1                                  \\
+    \cos{\Theta_x}            & \frac{\sin{\Theta_x}}{\sqrt{K_x}} & 0                         & 0                                  & 0 & \frac{1 - \cos{\Theta_x}}{\sqrt{K_x}} \\
+    -\sqrt{K_x}\sin{\Theta_x} & \cos{\Theta_x}                    & 0                         & 0                                  & 0 & \sin{\Theta_x}                        \\
+    0                         & 0                                 & \cosh{\Theta_y}           & \frac{\sinh{\Theta_y}}{\sqrt{K_y}} & 0 & 0                                     \\
+    0                         & 0                                 & \sqrt{K_y}\sinh{\Theta_y} & \cosh{\Theta_y}                    & 0 & 0                                     \\
+    0                         & 0                                 & 0                         & 0                                  & 1 & 0                                     \\
+    0                         & 0                                 & 0                         & 0                                  & 0 & 1                                     \\
    \end{pmatrix}
    \begin{pmatrix}
    x_0    \\
@@ -1031,6 +1131,78 @@ l parameter which are not needed in this stepper.
    \delta \\
    \end{pmatrix}
 
+Where:
+
+.. math::
+
+   \Theta_x &= \sqrt{K_x}~h   &= \sqrt{|\kappa + \kappa_0^2|}~h\\
+   \Theta_y &= \sqrt{|K_y|}~h &= \sqrt{|\kappa|}~h\\
+   \kappa_0 &= \frac{1}{\rho}\\
+
+For the case of a defocussing magnet :math:`\kappa < 0`:
+
+.. math::
+
+   \begin{pmatrix}
+   x_1    \\
+   x'_1   \\
+   y_1    \\
+   y'_1   \\
+   l_1    \\
+   \delta \\
+   \end{pmatrix}
+   =
+    \begin{pmatrix}
+    \cosh{\Theta_x}            & \frac{\sinh{\Theta_x}}{\sqrt{K_x}} & 0                         & 0                                 & 0 & \frac{1 - \cosh{\Theta_x}}{\sqrt{K_x}} \\
+    \sqrt{K_x}\sinh{\Theta_x} & \cosh{\Theta_x}                     & 0                         & 0                                 & 0 & \sinh{\Theta_x}                        \\
+    0                         & 0                                   & \cos{\Theta_y}            & \frac{\sin{\Theta_y}}{\sqrt{K_y}} & 0 & 0                                      \\
+    0                         & 0                                   & -\sqrt{K_y}\sin{\Theta_y} & \cos{\Theta_y}                    & 0 & 0                                      \\
+    0                         & 0                                   & 0                         & 0                                 & 1 & 0                                      \\
+    0                         & 0                                   & 0                         & 0                                 & 0 & 1                                      \\
+   \end{pmatrix}
+   \begin{pmatrix}
+   x_0    \\
+   x'_0   \\
+   y_0    \\
+   y'_0   \\
+   l_0    \\
+   \delta \\
+   \end{pmatrix}
+
+In the case where :math:`\kappa = 0`, the matrix simplifies to:
+
+.. math::
+
+   \begin{pmatrix}
+   x_1    \\
+   x'_1   \\
+   y_1    \\
+   y'_1   \\
+   l_1    \\
+   \delta \\
+   \end{pmatrix}
+   =
+    \begin{pmatrix}
+    \cos{\frac{h}{\rho}}      & \rho~\sin{\frac{h}{\rho}} & 0 & 0 & 0 & \rho~\Big(1 - \cos{\frac{h}{\rho}}\Big) \\
+    -\rho\sin{\frac{h}{\rho}} & \cos{\frac{h}{\rho}}      & 0 & 0 & 0 & \sin{\frac{h}{\rho}}                    \\
+    0                         & 0                         & 1 & h & 0 & 0                                       \\
+    0                         & 0                         & 0 & 1 & 0 & 0                                       \\
+    0                         & 0                         & 0 & 0 & 1 & 0                                       \\
+    0                         & 0                         & 0 & 0 & 0 & 1                                       \\
+   \end{pmatrix}
+   \begin{pmatrix}
+   x_0    \\
+   x'_0   \\
+   y_0    \\
+   y'_0   \\
+   l_0    \\
+   \delta \\
+   \end{pmatrix}
+
+The z terms are not calculated via the matrix method, rather the z position is simply the
+addition of the step length, and the  z momentum is calculated from the x and y momentum to ensure
+momentum conservation. Note that these matrices are incomplete, there are terms for the calculation of
+the l parameter which are not needed in this stepper.
 
 Validation of BDSIM Integrators
 ===============================

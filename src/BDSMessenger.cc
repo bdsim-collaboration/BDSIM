@@ -44,8 +44,11 @@ BDSMessenger::BDSMessenger()
   beamlineListCmd->SetGuidance("List beamline components");
 
   elementNameSearchCmd = new G4UIcmdWithAString("/bds/beamline/namesearch",this);
-  beamlineListCmd->SetGuidance("Search beamline components for element");
+  elementNameSearchCmd->SetGuidance("Search beamline components for element");
 
+  elementGoToCmd = new G4UIcmdWithAString("/bds/beamline/goto", this);
+  elementGoToCmd->SetGuidance("Move to a particular element's location");
+  
   bdsSamplersDirectory = new G4UIdirectory("/bds/samplers/");
   samplerListCmd = new G4UIcmdWithoutParameter("/bds/samplers/list",this);
   samplerListCmd->SetGuidance("List samplers");
@@ -72,6 +75,8 @@ void BDSMessenger::SetNewValue(G4UIcommand *command, G4String newValue)
     {SamplerList();}
   else if(command == elementNameSearchCmd)
     {ElementNameSearch(newValue);}
+  else if(command == elementGoToCmd)
+    {GoToElement(newValue);}
 }
 
 void BDSMessenger::BeamLineList()
@@ -115,6 +120,31 @@ void BDSMessenger::ElementNameSearch(std::string name)
       if((*i)->GetName().contains(name))
 	{G4cout << (*i)->GetName() << G4endl;}
     }
+}
+
+void BDSMessenger::GoToElement(const std::string& name)
+{
+  const BDSBeamline* beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
+
+  // search for the name exactly
+  BDSBeamlineElement* e = beamline->GetElement(name);
+ 
+  if (!e)
+    {// search the beam line for any element containing the name at all
+      for (const auto& el : *beamline)
+	{
+	  if (el->GetName().contains(name))
+	    {e = el; break;}
+	}
+    }
+  
+  if (!e)
+    {G4cout << "No component found by that name" << G4endl; return;}
+  G4ThreeVector pos = e->GetReferencePositionMiddle();
+  G4cout << "goto> global position> " << pos/CLHEP::m << " m" << G4endl;
+  G4UImanager* UIManager = G4UImanager::GetUIpointer();
+  G4String posStr = std::to_string(pos.x()) + " " + std::to_string(pos.y()) + " " + std::to_string(pos.z());
+  UIManager->ApplyCommand("/vis/viewer/set/targetPoint " + posStr + " mm");
 }
 
 void BDSMessenger::ElementTypeSearch(std::string /*type*/)

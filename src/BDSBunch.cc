@@ -40,6 +40,7 @@ BDSBunch::BDSBunch():
   particleDefinition(nullptr),
   finiteSigmaE(true),
   finiteSigmaT(true),
+  generatePrimariesOnly(false),
   beamlineTransform(G4Transform3D()),
   nonZeroTransform(false),
   mass2(0.0),
@@ -130,6 +131,9 @@ void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
 void BDSBunch::EndOfRunAction()
 {;}
 
+void BDSBunch::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
+{generatePrimariesOnly = generatePrimariesOnlyIn;}
+
 void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,
 			      G4double& xp, G4double& yp, G4double& zp) const
 {
@@ -155,6 +159,8 @@ void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,
 void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z0,
 					 G4double& xp, G4double& yp, G4double& zp) const
 {
+  if (generatePrimariesOnly)
+    {return;} // no beam line built so no possible transform
   if (!beamline)
     {
 #ifdef BDSDEBUG

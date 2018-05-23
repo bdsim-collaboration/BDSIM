@@ -12,7 +12,7 @@ of the Geant4 GDML parser. In future, this need will be eliminated.
 Basic Operation
 ===============
 
-The minimum required information to run BDSIM is an input GMAD file.::
+The minimum required information to run BDSIM is an input GMAD file. ::
 
   bdsim --file=lattice.gmad
 

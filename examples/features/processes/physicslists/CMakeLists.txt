@@ -92,6 +92,11 @@ endif()
 simple_testing(physics-alias-cerenkov    "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics-alias-emlow       "--file=alias_emlow.gmad"        ${OVERLAP_CHECK})
 simple_testing(physics-alias-hadronic-hp "--file=alias_hadronic_hp.gmad"  ${OVERLAP_CHECK})
-
-
 simple_testing(physics-alias-synchrad    "--file=alias_synchrad.gmad"     ${OVERLAP_CHECK})
+
+
+#incompatible physics lists
+simple_fail(physics-incompatible-1    "--file=incomaptible1.gmad"      ${OVERLAP_CHECK})
+simple_fail(physics-incompatible-2    "--file=incomaptible2.gmad"      ${OVERLAP_CHECK})
+simple_fail(physics-incompatible-3    "--file=incomaptible3.gmad"      ${OVERLAP_CHECK})
+

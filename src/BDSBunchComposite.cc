@@ -64,6 +64,14 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
   zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);
 }
 
+void BDSBunchComposite::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
+{
+  BDSBunch::SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  xBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  yBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+  zBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
+}
+
 void BDSBunchComposite::CheckParameters()
 {
   xBunch->CheckParameters();
@@ -94,7 +102,8 @@ void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
   z0 = zz0;
   zp = zzp;
 
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  // we don't apply the transform here with Apply Transform as all distributions
+  // do that themselves.
   
   t  = zt;
   E  = zE; 

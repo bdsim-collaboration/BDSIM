@@ -44,6 +44,7 @@ public:
   void BeamLineList();
   std::string BDSBeamlineElementToString(G4int iElement);
   void ElementNameSearch(std::string name);
+  void GoToElement(const std::string& name);
   void ElementTypeSearch(std::string type);
   void SamplerList();
   std::string BDSSamplerToString(G4int iSampler);
@@ -57,6 +58,7 @@ protected:
   G4UIdirectory           *bdsBeamlineDirectory;
   G4UIcmdWithoutParameter *beamlineListCmd;
   G4UIcmdWithAString      *elementNameSearchCmd;
+  G4UIcmdWithAString*      elementGoToCmd;
   //G4UIcmdWithAString      *elementTypeSearchCmd;
   //G4UIcmdWithAString      *elementInfoCmd;
 

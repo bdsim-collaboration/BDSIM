@@ -188,7 +188,7 @@ After the desired number of turns of the primary particle have elapsed, it switc
 an infinite absorber. It achieves this by setting limits (G4UserLimits) with a maximum allowed energy
 of 0eV.
 
-The user should set the option `nturns` (default 1) (see :ref:`options-common`).::
+The user should set the option `nturns` (default 1) (see :ref:`options-common`). ::
 
   option, nturns=56;
 
@@ -2176,7 +2176,7 @@ And to attach samplers after all elements of a specific type::
 
   sample, <type>;
 
-e.g.::
+e.g. ::
 
   sample, quadrupole;
 
@@ -2194,7 +2194,7 @@ Sampler Dimensions
 
 The sampler is represented by a cube solid that is 1 pm thin along z and 5m metres wide
 transversely in x and y. If a smaller or larger capture area for the samplers is required,
-the option *samplerDiameter* may be specified in the input gmad.::
+the option *samplerDiameter* may be specified in the input gmad. ::
 
   option, samplerDiameter=3*m;
 
@@ -2267,6 +2267,12 @@ Physics Lists In BDSIM
 	     support these but in future it will. For example, note that `ftfp_bert` in BDISM
 	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
 	     physics list in Geant4.
+
+.. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
+	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
+	     not be used along with the unsuffixed ones (e.g. "qgsp_bert" and "qgsp_bert_hp" should
+	     not be used together). Similarly, the standard electromagnetic variants should not
+	     be used with the regular "em".
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -3201,7 +3207,7 @@ Examples::
         energy = 10*GeV,
 	distrType = "reference";
 
-Generates a beam with all coordinates 0 at the nominal energy.::
+Generates a beam with all coordinates 0 at the nominal energy. ::
 
   beam, particle = "e-",
         energy = 10*GeV,
@@ -3304,22 +3310,22 @@ is calculated, using the following equations:
    \sigma_{34} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
    \sigma_{43} & = -\epsilon_y \alpha_y + \eta_{y}\eta_{yp}\sigma_{E}^{2}\\
    \sigma_{44} & =  \epsilon_y \gamma_y + \eta_{yp}^{2}\sigma_{E}^{2}\\
-   \sigma_{02} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{20} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{12} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{21} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
-   \sigma_{03} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{30} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{13} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{50} & = \eta_{x}\sigma_{E}^{2}\\
-   \sigma_{05} & = \eta_{x}\sigma_{E}^{2}\\
-   \sigma_{51} & = \eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{15} & = \eta_{xp}\sigma_{E}^{2}\\
-   \sigma_{25} & = \eta_{y}\sigma_{E}^{2}\\
-   \sigma_{52} & = \eta_{y}\sigma_{E}^{2}\\
-   \sigma_{35} & = \eta_{yp}\sigma_{E}^{2}\\
-   \sigma_{53} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{13} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{31} & = \eta_{x}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{23} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{32} & = \eta_{xp}\eta_{y}\sigma_{E}^{2}\\
+   \sigma_{14} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{41} & = \eta_{x}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{24} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{42} & = \eta_{xp}\eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{16} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{61} & = \eta_{x}\sigma_{E}^{2}\\
+   \sigma_{26} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{62} & = \eta_{xp}\sigma_{E}^{2}\\
+   \sigma_{36} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{63} & = \eta_{y}\sigma_{E}^{2}\\
+   \sigma_{46} & = \eta_{yp}\sigma_{E}^{2}\\
+   \sigma_{64} & = \eta_{x}\sigma_{E}^{2}\\
    \sigma_{55} & =  \sigma_{T}^2 \\
    \sigma_{66} & =  \sigma_{E}^2
 
@@ -3507,7 +3513,7 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloNSigmaYInner`               | Inner radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `haloeNSigmaYOuter`              | Outer radius of halo in y (multiples of sigma)                              |
+| `haloNSigmaYOuter`               | Outer radius of halo in y (multiples of sigma)                              |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloPSWeightFunction`           | Phase space weight function [string]                                        |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -3636,7 +3642,7 @@ Acceptable tokens for the columns are:
 +------------+------------------------+
 | "xp"       | Horizontal angle.      |
 +------------+------------------------+
-| "yp"       | Verticla angle.        |
+| "yp"       | Vertical angle.        |
 +------------+------------------------+
 | "zp"       | Longitudinal.          |
 +------------+------------------------+
@@ -4084,7 +4090,7 @@ Minimum Kinetic Energy
 
 The user may specify a minimum kinetic energy, below which any particle will be killed.
 This may break conservation of energy if used aggressively. The default is 0 eV as all
-particle are tracked to 0 energy (allowing for the above range cuts).::
+particle are tracked to 0 energy (allowing for the above range cuts). ::
 
    option, minimumKineticEnergy=10*MeV;
 
@@ -4096,7 +4102,7 @@ Minimum Range
 
 The user may specify a minimum range for a particle to travel. Any particles with step
 sizes proposed below this will be killed. Again, this can break energy conservation
-if used aggressively.::
+if used aggressively. ::
 
   option, minimumRange=2*cm;
 
@@ -4197,7 +4203,7 @@ is given below the example.
 Firstly a series of simple elements are defined (drifts, quadrupoles and bends). A simple
 sequence called `fodo` is defined and also the main beam line called `mainLine`. After this
 extra sequences are defined that we will use for secondary beam lines.  The `use` command
-selects which beam line the simulation will be based on.::
+selects which beam line the simulation will be based on. ::
 
   use, mainLine;
 
@@ -4206,7 +4212,7 @@ then the placement of secondary beam lines.
 
 The first placement `auxLine1Place` is a placement that will place the sequence named
 `auxLine1` with respect to the 3rd instance of the element `d2` in the primary sequence
-(`mainLine`).::
+(`mainLine`). ::
 
   auxLine1Place: placement, sequence="auxLine1",
                             referenceElement="d2" ,
