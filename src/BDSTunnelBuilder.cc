@@ -30,6 +30,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
+
 BDSTunnelBuilder::BDSTunnelBuilder():
 displacementTolerance(50*CLHEP::cm), // maximum displacemenet of beamline before split
 maxItems(50),                        // maximum number of items before split
@@ -56,7 +60,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
     {lengthTest = true;}
 
   G4bool angleTest = false;
-  if (fabs(cumulativeAngle) > maxAngle)
+  if (std::abs(cumulativeAngle) > maxAngle)
     {angleTest = true;}
 
   G4bool nItemsTest = false;
