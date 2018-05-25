@@ -47,11 +47,11 @@ BDSTunnelBuilder::~BDSTunnelBuilder()
   delete BDSTunnelFactory::Instance();
 }
 
-G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
-				     G4double cumulativeAngle,
-				     G4int    cumulativeNItems,
-				     G4double cumulativeDisplacementX,
-				     G4double cumulativeDisplacementY)
+G4bool BDSTunnelBuilder::BreakTunnel(const G4double& cumulativeLength,
+				     const G4double& cumulativeAngle,
+				     const G4int&    cumulativeNItems,
+				     const G4double& cumulativeDisplacementX,
+				     const G4double& cumulativeDisplacementY)
 {
   G4bool result = false;
 

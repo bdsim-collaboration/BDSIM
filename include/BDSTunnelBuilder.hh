@@ -47,11 +47,11 @@ public:
 private:
   /// Decide whether this is a good point to break the tunnel based on various cumulative
   /// parameters.
-  G4bool BreakTunnel(G4double cumulativeLength,
-		     G4double cumulativeAngle,
-		     G4int    cumulativeNItems,
-		     G4double cumulativeOffsetX,
-		     G4double cumulativeOffsetY);
+  G4bool BreakTunnel(const G4double& cumulativeLength,
+		     const G4double& cumulativeAngle,
+		     const G4int&    cumulativeNItems,
+		     const G4double& cumulativeOffsetX,
+		     const G4double& cumulativeOffsetY);
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.
