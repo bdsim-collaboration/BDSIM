@@ -1,3 +1,18 @@
+V1.X - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+General
+-------
+
+Bug Fixes
+---------
+
+* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+
+
 V1.1 - 2018 / 05 / 23
 =====================
 

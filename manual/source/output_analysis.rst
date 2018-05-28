@@ -172,6 +172,7 @@ Examples can be found in:
 * If a Boolean and a weight is desired, multiply both with the Boolean in brackets e.g.
   :code:`Eloss.energy*(Eloss.S>145.3)`.
 * True or False as well as 1 or 0 may be used for Boolean options at the top.
+* ROOT special variables can be used as well such as :code:`Entry$` amd :code:`Entries$`. See the documentation link immediately below.
 
 .. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
 	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
