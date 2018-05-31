@@ -1,0 +1,18 @@
+c1: rcol, l=20*m, outerDiameter=20*cm, material="copper";
+
+l1: line = (c1);
+
+use, l1;
+
+option, physicsList="em_extra";
+
+! options specific to em_extra physics list
+option, useMuonNuclear=1,
+	useGammaToMuMu=1,
+	usePositronToMuMu=1,
+	usePositronToHadrons=1;
+
+option, checkOverlaps=1;
+
+beam, particle="e+",
+      energy=30*GeV;
