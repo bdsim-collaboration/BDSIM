@@ -4,8 +4,18 @@ V1.X - 2018 / ?? / ??
 New Features
 ------------
 
+* New options to activate extra models in em_extra physics list.
+
 General
 -------
+
+* Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
+
+Output Changes
+--------------
+
+* New options for physics processes in em_extra.
+* Options class number is incremented in output.
 
 Bug Fixes
 ---------
