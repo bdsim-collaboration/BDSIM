@@ -645,8 +645,21 @@ void BDSModularPhysicsList::EmExtra()
   if (!physicsActivated["em_extra"])
     {
       auto constructor = new G4EmExtraPhysics();
-#if G4VERSION_NUMBER > 1012
-      constructor->Synch(true); // introduced geant version 10.1
+#if G4VERSION_NUMBER > 1019
+      G4bool useMuonNuclear = BDSGlobalConstants::Instance()->UseMuonNuclear();
+      constructor->MuonNuclear(useMuonNuclear);
+      G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> muon nuclear processes : " << BDS::BoolToString(useMuonNuclear) << G4endl;
+#endif
+#if G4VERSION_NUMBER > 1029
+      G4bool useGammaToMuMu       = BDSGlobalConstants::Instance()->UseGammaToMuMu();
+      constructor->GammaToMuMu(useGammaToMuMu);
+      G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> gamma to mu mu : " << BDS::BoolToString(useGammaToMuMu) << G4endl;
+      G4bool usePositronToMuMu    = BDSGlobalConstants::Instance()->UsePositronToMuMu();
+      constructor->PositronToMuMu(usePositronToMuMu);
+      G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> e+ to mu mu : " << BDS::BoolToString(usePositronToMuMu) << G4endl;
+      G4bool usePositronToHadrons = BDSGlobalConstants::Instance()->UsePositronToHadrons();
+      constructor->PositronToHadrons(usePositronToHadrons);
+      G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> e+ to hadrons : " << BDS::BoolToString(usePositronToHadrons) << G4endl;
 #endif
 #if G4VERSION_NUMBER > 1039
       G4bool useLENDGammaNuclear = BDSGlobalConstants::Instance()->UseLENDGammaNuclear();
@@ -654,7 +667,10 @@ void BDSModularPhysicsList::EmExtra()
 	{
 	  BDS::CheckLowEnergyNeutronDataExists("em_extra");
 	  constructor->LENDGammaNuclear(true);
+	  G4cout << __METHOD_NAME__ << "G4EmExtraPhysics> LEND gamma nuclear : " << BDS::BoolToString(useMuonNuclear) << G4endl;
 	}
+      G4bool useElectroNuclear = BDSGlobalConstants::Instance()->UseElectroNuclear();
+      constructor->ElectroNuclear(useElectroNuclear);
 #endif
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;

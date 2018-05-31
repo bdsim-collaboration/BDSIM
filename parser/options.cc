@@ -249,6 +249,11 @@ void Options::PublishMembers()
   publish("neutronTimeLimit",            &Options::neutronTimeLimit);
   publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
   publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
+  publish("useElectroNuclear",           &Options::useElectroNuclear);
+  publish("useMuonNuclear",              &Options::useMuonNuclear);
+  publish("useGammaToMuMu",              &Options::useGammaToMuMu);
+  publish("usePositronToMuMu",           &Options::usePositronToMuMu);
+  publish("usePositronToHadrons",        &Options::usePositronToHadrons);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

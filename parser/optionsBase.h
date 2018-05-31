@@ -193,6 +193,11 @@ namespace GMAD
     double   neutronTimeLimit;
     double   neutronKineticEnergyLimit;
     bool     useLENDGammaNuclear;
+    bool     useElectroNuclear;
+    bool     useMuonNuclear;
+    bool     useGammaToMuMu;
+    bool     usePositronToMuMu;
+    bool     usePositronToHadrons;
     ///@}
 
     /// Biasing options

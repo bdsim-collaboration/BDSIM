@@ -175,6 +175,11 @@ OptionsBase::OptionsBase()
   neutronTimeLimit         = 1e-6;
   neutronKineticEnergyLimit = 0;
   useLENDGammaNuclear      = false;
+  useElectroNuclear        = true; // defaults to match g4 em extra physics defaults
+  useMuonNuclear           = true;
+  useGammaToMuMu           = false;
+  usePositronToMuMu        = false;
+  usePositronToHadrons     = false;
   
   // biasing options
   defaultBiasVacuum        = "";
