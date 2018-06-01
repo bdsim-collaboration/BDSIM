@@ -121,6 +121,14 @@ void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
     {outer->SetOutputFaceNormal(output);}
 }
 
+G4String BDSMagnet::OuterMaterial() const
+{
+  if (magnetOuterInfo)
+    {return magnetOuterInfo->outerMaterial->GetName();}
+  else
+    {return "none";}
+}
+
 void BDSMagnet::Build()
 {
 #ifdef BDSDEBUG
