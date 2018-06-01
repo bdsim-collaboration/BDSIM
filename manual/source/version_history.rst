@@ -10,6 +10,7 @@ General
 -------
 
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
+* New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 
 Output Changes
 --------------
