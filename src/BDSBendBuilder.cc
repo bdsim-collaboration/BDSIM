@@ -254,6 +254,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
       (*fringeStIn)["polefaceangle"] = element->e1;
+      (*fringeStIn)["polefacecurv"]  = element->h1;
       (*fringeStIn)["fringeint"]     = fint;
       (*fringeStIn)["fringeintK2"]   = element->fintK2;
       (*fringeStIn)["hgap"]          = hgap;
@@ -353,6 +354,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["fringeint"]     = fintx;
       (*fringeStOut)["fringeintK2"]   = element->fintxK2;
+      (*fringeStOut)["polefacecurv"]  = element->h2;
       (*fringeStOut)["hgap"]          = hgap;
       (*fringeStOut)["length"]        = thinElementArcLength;
       G4double fringeAngleIn          = 0.5*oneFringeAngle + outgoingFaceAngle;
@@ -614,6 +616,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       (*fringeStIn)["angle"]         = oneFringeAngle;
       (*fringeStIn)["fringeint"]     = fint;
       (*fringeStIn)["fringeintK2"]   = element->fintK2;
+      (*fringeStIn)["polefacecurv"]  = element->h1;
       (*fringeStIn)["hgap"]          = hgap;
       G4String fringeName            = name + "_e1_fringe";
 
@@ -664,6 +667,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       (*fringeStOut)["angle"]         = oneFringeAngle;
       (*fringeStOut)["fringeint"]     = fintx;
       (*fringeStOut)["fringeintK2"]   = element->fintxK2;
+      (*fringeStOut)["polefacecurv"]  = element->h2;
       (*fringeStOut)["hgap"]          = hgap;
       G4String fringeName             = name + "_e2_fringe";
       

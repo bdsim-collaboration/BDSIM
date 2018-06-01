@@ -30,6 +30,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "eField",          // electric field in G4units - magnitude of field only
   "bx","by","bz",    // (assumed) unit vector components for field direction
   "polefaceangle",   // required for fringe field (rad)
+  "polefacecurv",    // poleface curvature (one variable for H1 or H2)
   "angle", "length", // (rad, mm)
   "fringeint",       // fringe field integral value (one variable for FINT or FINTX)
   "fringeintK2",     // second fringe field integral value (one variable for FINTK2 or FINTXK2)

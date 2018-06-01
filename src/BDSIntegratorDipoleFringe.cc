@@ -40,6 +40,7 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   polefaceAngle((*strengthIn)["polefaceangle"]),
   fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
   secondFringeCorr(BDS::SecondFringeFieldCorrection(strengthIn)),
+  polefaceCurvature((*strengthIn)["polefacecurv"]),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
@@ -49,6 +50,23 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
 
+  // thin sextupole strength for curved polefaces
+  G4double thinSextStrength = (-polefaceCurvature / rho) * 1.0 / std::pow(std::cos(polefaceAngle),3);
+
+  // prepare magnet strength object for thin sextupole needed for curved polefaces
+  BDSMagnetStrength* sextStrength = new BDSMagnetStrength();
+  std::vector<G4double> normalComponent;
+  normalComponent.push_back(0); // zero strength quadrupolar component
+  normalComponent.push_back(thinSextStrength); // sextupolar component
+  std::vector<G4String> normKeys = sextStrength->NormalComponentKeys();
+  auto kn = normalComponent.begin();
+  auto nkey = normKeys.begin();
+  for (; kn != normalComponent.end(); kn++, nkey++)
+    {(*sextStrength)[*nkey] = (*kn);}
+  // integrator for thin sextupole
+  multipoleIntegrator = new BDSIntegratorMultipoleThin(sextStrength, brhoIn, eqOfMIn);
+  delete sextStrength;
+    
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
@@ -133,9 +151,9 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
       return; // note distchord comes from inherited BDSIntegratorDipoleRodrigues2
     }
 
-  // calculate new position and momentum kick
-  G4ThreeVector localCLPosOut;
-  G4ThreeVector localCLMomOut;
+  // calculate new position and momentum kick from fringe effect only
+  G4ThreeVector localCLPosOutFringe;
+  G4ThreeVector localCLMomOutFringe;
 
   // normalise to particle charge
   G4double charge = fcof / std::abs(fcof);
@@ -145,7 +163,16 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   bendingRad *= momScaling;
 
   // apply fringe field kick
-  OneStep(localPos, localMom, localMomU, localCLPosOut, localCLMomOut, bendingRad);
+  OneStep(localPos, localMom, localMomU, localCLPosOutFringe, localCLMomOutFringe, bendingRad);
+
+  // initialise new position and momentum for curvature effect as fringe output coords by default
+  // as curvature effect method is only called if curvature is finite.
+  G4ThreeVector localCLPosOut = localCLPosOutFringe;
+  G4ThreeVector localCLMomOut = localCLMomOutFringe;
+
+  // Zero step length as stepping has already been applied in base class stepper
+  if (BDS::IsFinite(polefaceCurvature))
+    {multipoleIntegrator->OneStep(localCLPosOutFringe, localMomU, localMom.mag(), localCLPosOut, localCLMomOut, 0);}
 
   // convert to global coordinates for output
   if (finiteTilt)

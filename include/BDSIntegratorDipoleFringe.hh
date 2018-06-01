@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
+#include "BDSIntegratorMultipoleThin.hh"
 
 #include "globals.hh"
 
@@ -90,6 +91,8 @@ protected:
   const G4double fringeCorr;
   /// Second fringe field correction term
   const G4double secondFringeCorr;
+  /// Poleface curvature
+  const G4double polefaceCurvature;
   /// Nominal magnet bending radius
   const G4double rho;
 
@@ -107,6 +110,8 @@ protected:
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;
+
+  BDSIntegratorMultipoleThin* multipoleIntegrator;
 
 private:
   /// Private default constructor to enforce use of supplied constructor
