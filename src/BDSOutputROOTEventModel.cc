@@ -23,6 +23,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSCollimatorBase.hh"
+#include "BDSMagnet.hh"
 #include "BDSSamplerRegistry.hh"
 #endif
 
@@ -72,6 +74,9 @@ void BDSOutputROOTEventModel::Flush()
   staRefRot.clear();
   midRefRot.clear();
   endRefRot.clear();
+  tilt.clear();
+  offsetX.clear();
+  offsetY.clear();
   staS.clear();
   midS.clear();
   endS.clear();
@@ -79,7 +84,8 @@ void BDSOutputROOTEventModel::Flush()
   beamPipeAper1.clear();
   beamPipeAper2.clear();
   beamPipeAper3.clear();
-  beamPipeAper4.clear();  
+  beamPipeAper4.clear();
+  material.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -164,6 +170,21 @@ void BDSOutputROOTEventModel::Fill()
     rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     endRefRot.push_back(rr);
 
+    // tilt and offset
+    BDSTiltOffset* to = (*i)->GetTiltOffset();
+    if (to)
+      {
+	tilt.push_back(to->GetTilt() / CLHEP::rad);
+	offsetX.push_back(to->GetXOffset() / CLHEP::m);
+	offsetY.push_back(to->GetYOffset() / CLHEP::m);		       
+      }
+    else
+      {
+	tilt.push_back(0);
+	offsetX.push_back(0);
+	offsetY.push_back(0);
+      }
+
     // S positions
     staS.push_back((float &&) (*i)->GetSPositionStart()  / CLHEP::m);
     midS.push_back((float &&) (*i)->GetSPositionMiddle() / CLHEP::m);
@@ -182,6 +203,9 @@ void BDSOutputROOTEventModel::Fill()
     beamPipeAper4.push_back(beampipeinfo ?
 			    beampipeinfo->aper4 / CLHEP::m : 0);
 
+    // associated material if any
+    const auto accComp = (*i)->GetAcceleratorComponent();
+    material.push_back(accComp->Material());
   }
 }
 #endif

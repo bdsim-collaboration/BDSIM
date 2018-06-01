@@ -54,6 +54,9 @@ public:
   std::vector<TRotation>   staRefRot;
   std::vector<TRotation>   midRefRot;
   std::vector<TRotation>   endRefRot;
+  std::vector<float>       tilt;
+  std::vector<float>       offsetX;
+  std::vector<float>       offsetY;
   std::vector<float>       staS;
   std::vector<float>       midS;
   std::vector<float>       endS;
@@ -62,6 +65,7 @@ public:
   std::vector<double>      beamPipeAper2;
   std::vector<double>      beamPipeAper3;
   std::vector<double>      beamPipeAper4;
+  std::vector<std::string> material;       ///< Material associated with element if any.
 
 
   /// Default constructor
@@ -78,7 +82,7 @@ public:
   virtual void Fill();
 #endif
 
-  ClassDef(BDSOutputROOTEventModel,2);
+  ClassDef(BDSOutputROOTEventModel,3);
 };
 
 #endif
