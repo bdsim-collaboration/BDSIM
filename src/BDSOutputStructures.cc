@@ -46,10 +46,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   localSamplersInitialised(false)
 {
-  G4bool storeLinks  = globals->StoreELossLinks();
-  G4bool storeLocal  = globals->StoreELossLocal();
-  G4bool storeGlobal = globals->StoreELossGlobal();
-  G4bool storeTime   = globals->StoreElossTime();
+  G4bool storeLinks      = globals->StoreELossLinks();
+  G4bool storeLocal      = globals->StoreELossLocal();
+  G4bool storeGlobal     = globals->StoreELossGlobal();
+  G4bool storeTime       = globals->StoreElossTime();
+  G4bool storeStepLength = globals->StoreElossStepLength();
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
@@ -58,10 +59,10 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   modelOutput   = new BDSOutputROOTEventModel();
 
   eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
-                                     storeTime);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true, true, true);
-  pLastHit = new BDSOutputROOTEventLoss(true, true, true, true);
-  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false);
+                                     storeTime, storeStepLength);
+  pFirstHit = new BDSOutputROOTEventLoss(true, true, true, true, false);
+  pLastHit = new BDSOutputROOTEventLoss(true, true, true, true, false);
+  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false, false);
   traj = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
