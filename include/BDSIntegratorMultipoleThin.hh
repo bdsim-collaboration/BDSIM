@@ -52,6 +52,16 @@ public:
 		       G4double       yOut[],
 		       G4double       yErr[]);
 
+  /// Calculate a single step using thin multipole matrix.
+  /// Unit momentum, momentum magnitude, and normalised bending radius are provided
+  /// as arguments because they already calculated in the Stepper method.
+  void OneStep(const G4ThreeVector& posIn,
+               const G4ThreeVector& momUIn, // assumed unit momentum of momIn
+               const G4double       momIn,
+               G4ThreeVector&       posOut,
+               G4ThreeVector&       momOut,
+               G4double             h) const;
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorMultipoleThin() = delete;
