@@ -48,7 +48,7 @@ public:
   virtual ~BDSCollimatorBase();
 
   /// Accessor for collimator material.
-  inline G4String Material() const {return collimatorMaterial;}
+  virtual G4String Material() const {return collimatorMaterial;}
 
 protected:
   virtual void Build();

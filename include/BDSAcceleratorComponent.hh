@@ -160,6 +160,9 @@ public:
   G4bool AngledOutputFace() const;
   /// @}
 
+  /// Return the name of a material associated with the component - ie the primary material.
+  virtual G4String Material() const {return "none";}
+
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
   inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}

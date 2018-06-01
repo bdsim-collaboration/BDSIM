@@ -75,7 +75,7 @@ public:
   /// @}
 
   /// Accessor to outer material if it exists.
-  G4String OuterMaterial() const;
+  G4String virtual Material() const;
   
 protected:
   /// Private default constructor to force the use of the supplied one.

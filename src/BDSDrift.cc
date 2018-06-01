@@ -20,8 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDrift.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include "G4Material.hh"
 
 BDSDrift::BDSDrift(G4String         nameIn, 
 		   G4double         lengthIn,
@@ -54,4 +56,13 @@ void BDSDrift::Build()
   // update faces
   SetInputFaceNormal(pipe->InputFaceNormal());
   SetOutputFaceNormal(pipe->OutputFaceNormal());
+}
+
+G4String BDSDrift::Material() const
+{
+  auto bpMat = GetBeamPipeInfo()->beamPipeMaterial;
+  if (bpMat)
+    {return bpMat->GetName();}
+  else
+    {return BDSAcceleratorComponent::Material();} // none
 }
