@@ -17,6 +17,10 @@ Output Changes
 
 * New options for physics processes in em_extra.
 * Options class number is incremented in output.
+* New stepLength variable in Eloss part of Event Tree with option "storeElossStepLength" to use this data.
+* Energy Loss class number is increment in output.
+* Tilt, offsetX, offsetY and material are added to the Model Tree output.
+* Model class number is incremented in output.
 
 Bug Fixes
 ---------
