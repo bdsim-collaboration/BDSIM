@@ -280,10 +280,11 @@ void Options::PublishMembers()
 
   publish("lengthSafety", &Options::lengthSafety);
 
-  publish("storeElossLinks",  &Options::storeElossLinks);
-  publish("storeElossLocal",  &Options::storeElossLocal);
-  publish("storeElossGlobal", &Options::storeElossGlobal);
-  publish("storeElossTime",   &Options::storeElossTime);
+  publish("storeElossLinks",      &Options::storeElossLinks);
+  publish("storeElossLocal",      &Options::storeElossLocal);
+  publish("storeElossGlobal",     &Options::storeElossGlobal);
+  publish("storeElossTime",       &Options::storeElossTime);
+  publish("storeElossStepLength", &Options::storeElossStepLength);
 
   // trajectory storage
   publish("storeTrajectory",                &Options::storeTrajectory);

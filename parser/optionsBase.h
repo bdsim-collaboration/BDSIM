@@ -226,7 +226,8 @@ namespace GMAD
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeElossTime;
-
+    bool        storeElossStepLength;
+    
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
