@@ -127,6 +127,8 @@ of the BDSIM classes.  The trees are:
 +=============+=====================================================================+
 | Header      | Details about the file type and software versions.                  |
 +-------------+---------------------------------------------------------------------+
+| Geant4Data  | Information about all particles and ions used in the simulation.    |
++-------------+---------------------------------------------------------------------+
 | Beam        | A record of all options associated with the beam definition.        |
 +-------------+---------------------------------------------------------------------+
 | Options     | A record of all options used by BDSIM.                              |
@@ -179,6 +181,66 @@ BDSOutputROOTEventHeader
 | doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
 |                        |                | double precision for output.          |
 +------------------------+----------------+---------------------------------------+
+
+Geant4Data Tree
+^^^^^^^^^^^^^^^
+
+.. figure:: figures/rootevent_geant4data.png
+	    :width: 40%
+	    :align: center
+
+The Geant4Data tree contains a single branch called "Geant4Data." (note the "."). This
+branch represents a single instance of :code:`BDSOutputROOTGeant4Data`. This stores
+two maps (like dictionaries) of the particle and ion information for each particle / ion
+used in the simulation (only, i.e. not all that Geant4 supports). The map goes from
+an integer, the Particle Data Group ID, to the particle or ion info that are stored
+in simple C++ structures called :code:`BDSOutputROOTGeant4Data::ParticleInfo` and
+:code:`BDSOutputROOTGeant4Data::IonInfo` respectively. These contain the name, charge,
+mass, and in the case of ions, additionally A and Z. The both have a function called
+:code:`rigidity` that can calculate the rigidity of the particle for a given total
+energy - this is used during the execution of BDSIM when rigidities are requested to
+be stored.
+
++---------------------+-------------------------------------------------------+-------------------+
+| **Variable Name**   | **Type**                                              | **Description**   |
++=====================+=======================================================+===================+
+| particles           | std::map<int, BDSOutputROOTGeant4Data::ParticleInfo>  | Map of PDG ID to  |
+|                     |                                                       | particle info.    |
++---------------------+-------------------------------------------------------+-------------------+
+| ions                | std::map<int, BDSOutputROOTGeant4Data::IonInfo>       | Map of PDG ID to  |
+|                     |                                                       | ion info.         |
++---------------------+-------------------------------------------------------+-------------------+
+
+ParticleInfo Struct
+*******************
+
++---------------------+----------------+-----------------------------------+
+| **Variable Name**   | **Type**       | **Description**                   |
++=====================+================+===================================+
+| name                | std::string    | Name of particle.                 |
++---------------------+----------------+-----------------------------------+
+| charge              | int            | Particle Data Group ID.           |
++---------------------+----------------+-----------------------------------+
+| mass                | double         | Particle Data Group mass in GeV.  |
++---------------------+----------------+-----------------------------------+
+
+IonInfo Struct
+**************
+
++---------------------+----------------+------------------------------------+
+| **Variable Name**   | **Type**       | **Description**                    |
++=====================+================+====================================+
+| name                | std::string    | Name of particle.                  |
++---------------------+----------------+------------------------------------+
+| charge              | int            | Particle Data Group ID.            |
++---------------------+----------------+------------------------------------+
+| mass                | double         | Particle Data Group mass in GeV.   |
++---------------------+----------------+------------------------------------+
+| a                   | int            | Mass number - number of neutrons   |
+|                     |                | and protons together.              |
++---------------------+----------------+------------------------------------+
+| z                   | int            | Atomic number - number of protons. |
++---------------------+----------------+------------------------------------+
 
 Beam Tree
 ^^^^^^^^^
