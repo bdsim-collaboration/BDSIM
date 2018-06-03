@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSCollimatorBase.hh"
 #include "BDSMagnet.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSSamplerRegistry.hh"
 #endif
 
@@ -86,6 +87,41 @@ void BDSOutputROOTEventModel::Flush()
   beamPipeAper3.clear();
   beamPipeAper4.clear();
   material.clear();
+  k1.clear();
+  k2.clear();
+  k3.clear();
+  k4.clear();
+  k5.clear();
+  k6.clear();
+  k7.clear();
+  k8.clear();
+  k9.clear();
+  k10.clear();
+  k11.clear();
+  k12.clear();
+  k1s.clear();
+  k2s.clear();
+  k3s.clear();
+  k4s.clear();
+  k5s.clear();
+  k6s.clear();
+  k7s.clear();
+  k8s.clear();
+  k9s.clear();
+  k10s.clear();
+  k11s.clear();
+  k12s.clear();
+  ks.clear();
+  hkick.clear();
+  vkick.clear();
+  bField.clear();
+  eField.clear();
+  e1.clear();
+  e2.clear();
+  fint.clear();
+  fintx.clear();
+  fintk2.clear();
+  fintxk2.clear();
 }
 
 #ifndef __ROOTBUILD__
@@ -206,6 +242,59 @@ void BDSOutputROOTEventModel::Fill()
     // associated material if any
     const auto accComp = (*i)->GetAcceleratorComponent();
     material.push_back(accComp->Material());
+
+    // helper shortcuts to all the memeber vectors
+    std::vector<std::vector<float>*> localNorm = {
+      &k1,&k2,&k3,&k4,&k5,&k6,&k7,&k8,&k9,&k10,&k11,&k12};
+    std::vector<std::vector<float>*> localSkew = {
+      &k1s,&k2s,&k3s,&k4s,&k5s,&k6s,&k7s,&k8s,&k9s,&k10s,&k11s,&k12s};
+    // fill magnet strength data
+    if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(accComp))
+      {
+	const BDSMagnetStrength* ms = mag->MagnetStrength();
+
+	// assume localNorm and normComponents are same size
+	std::vector<G4double> normComponents = ms->NormalComponents();
+	for (int j = 0; j < (int)localNorm.size(); j++)
+	  {localNorm[j]->push_back((float)normComponents[j]);}
+	std::vector<G4double> skewComponents = ms->SkewComponents();
+	for (int j = 0; j < (int)localSkew.size(); j++)
+	  {localSkew[j]->push_back((float)skewComponents[j]);}
+
+	ks.push_back((float)(*ms)["ks"]);
+	hkick.push_back((float)(*ms)["hkick"]);
+	vkick.push_back((float)(*ms)["vkick"]);
+	bField.push_back((float)(*ms)["field"]/CLHEP::tesla);
+	eField.push_back((float)(*ms)["eField"]/CLHEP::MeV);
+	
+	// these are mangled in BDSMagnetStrength so can't write them out just now
+	e1.push_back(0);
+	e2.push_back(0);
+	hgap.push_back(0);
+	fint.push_back(0);
+	fintx.push_back(0);
+	fintk2.push_back(0);
+	fintxk2.push_back(0);
+      }
+    else
+      {// not a magnet
+	for (int j = 0; j < (int)localNorm.size(); j++)
+	  {localNorm[j]->push_back(0);}
+	for (int j = 0; j < (int)localSkew.size(); j++)
+	  {localSkew[j]->push_back(0);}
+	ks.push_back(0);
+	hkick.push_back(0);
+	vkick.push_back(0);
+	bField.push_back(0);
+	eField.push_back(0);
+	e1.push_back(0);
+	e2.push_back(0);
+	hgap.push_back(0);
+	fint.push_back(0);
+	fintx.push_back(0);
+	fintk2.push_back(0);
+	fintxk2.push_back(0);
+      }    
   }
 }
 #endif
