@@ -348,6 +348,40 @@ BDSOutputROOTEventModel
 +--------------------+--------------------------+--------------------------------------------------------------+
 | beamPipeAper4      | std::vector<double>      | Aperture aper4 (metres).                                     |
 +--------------------+--------------------------+--------------------------------------------------------------+
+| material           | std::vector<std::string> | Main material associated with an element. For a drift this   |
+|                    |                          | is the beam pipe material, for a magnet, it's the yoke       |
+|                    |                          | material, and for a collimator the main material.            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| k1 - k12           | std::vector<float>       | Normalised magnet strength associated with element           |
+|                    |                          | (1 - 12th order).                                            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| k12 - k122         | std::vector<float>       | Normalised skew magnet strength associated with element      |
+|                    |                          | (1 - 12th order).                                            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| ks                 | std::vector<float>       | Normalised solenoid strength.                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| hkick              | std::vector<float>       | Fractional momentum kick in horizontal.                      |
++--------------------+--------------------------+--------------------------------------------------------------+
+| vkick              | std::vector<float>       | Fractional momentum kick in vertical.                        |
++--------------------+--------------------------+--------------------------------------------------------------+
+| bField             | std::vector<float>       | Magnetic field magnitude (T).                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| eField             | std::vector<float>       | Electric field magnitude (MV).                               |
++--------------------+--------------------------+--------------------------------------------------------------+
+| e1                 | std::vector<float>       | Input pole face angle (note sbend / rbend convention) (rad). |
++--------------------+--------------------------+--------------------------------------------------------------+
+| e2                 | std::vector<float>       | Output pole face angle (rad).                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| hgap               | std::vector<float>       | Half gap of pole tips for dipoles (m).                       |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fint               | std::vector<float>       | Fringe field integral.                                       |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintx              | std::vector<float>       | Fringe field integral for exit pole face.                    |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintk2             | std::vector<float>       | 2nd fringe field integral.                                   |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintxk2            | std::vector<float>       | 2nd fringe field integral for exit pole face.                |
++--------------------+--------------------------+--------------------------------------------------------------+
 
 
 Run Tree
@@ -427,6 +461,14 @@ BDSOutputROOTEventInfo
 |                   |                   | start of the event as provided by CLHEP.    |
 +-------------------+-------------------+---------------------------------------------+
 | index             | int               | Index of the event (0 counting).            |
++-------------------+-------------------+---------------------------------------------+
+| aborted           | bool              | Whether event was aborted or not.           |
++-------------------+-------------------+---------------------------------------------+
+| primaryHitMachine | bool              | Whether the primary particle hit the        |
+|                   |                   | machine. This is judged by whether there    |
+|                   |                   | are any energy deposition hits or not. If   |
+|                   |                   | no physics processes are registered this    |
+|                   |                   | won't work correctly.                       |
 +-------------------+-------------------+---------------------------------------------+
 
 BDSOutputROOTEventLoss
