@@ -345,7 +345,7 @@ void BDSOutput::FillPrimary(G4double E,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  if (WritePrimaries())
+  if (writePrimaries)
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }
 
@@ -373,7 +373,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
   for (int i = 0; i < hits->entries(); i++)
     {
       G4int samplerID = (*hits)[i]->GetSamplerID();
-      if (WritePrimaries())
+      if (writePrimaries)
 	{samplerID += 1;} // offset index by one
       samplerTrees[samplerID]->Fill((*hits)[i]);
     }
