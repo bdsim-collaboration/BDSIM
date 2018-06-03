@@ -346,9 +346,6 @@ void BDSOutput::FillPrimary(G4double E,
 			    G4int    nEvent,
 			    G4int    turnsTaken)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   if (writePrimaries)
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }

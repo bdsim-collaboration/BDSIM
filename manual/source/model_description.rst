@@ -2957,9 +2957,6 @@ following options. These options may increase the output file size by a large am
 +-----------------------------------+--------------------------------------------------------------------+
 | nperfile                          | Number of events to record per output file.                        |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
-|                                   | and for each trajectory point.                                     |
-+-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point.                                     |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -2967,8 +2964,15 @@ following options. These options may increase the output file size by a large am
 |                                   | ID and beam line index will be stored - this is intended to help   |
 |                                   | 'link' the energy deposition back to other information.            |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each      |
 |                                   | energy deposition and trajectory point.                            |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossStepLength              | Store the step length for each energy deposition hit or not.       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeModel                        | Whether to store the model information in the output (Default On). |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Store corresponding charge of particle for every entry in sampler. |
 +-----------------------------------+--------------------------------------------------------------------+
