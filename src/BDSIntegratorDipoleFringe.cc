@@ -103,7 +103,12 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
 
   // container for multipole kick output, used as dipole step input
   G4double yMultipoleOut[7];
-
+  // copy input coords as initials as multipole kick method not called
+  for (G4int i = 0; i < 3; i++)
+    {
+      yMultipoleOut[i]     = yIn[i];
+      yMultipoleOut[i + 3] = yIn[i + 3];
+    }
   // apply thin multipole kick if finite curvature. Does not step, stepping occurs in dipole integrator
   if (BDS::IsFinite(polefaceCurvature))
     {MultipoleStep(yIn, yMultipoleOut, h);}
