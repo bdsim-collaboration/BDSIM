@@ -302,6 +302,7 @@ void Options::PublishMembers()
   publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);
   publish("storeSamplerIon",                &Options::storeSamplerIon);
   publish("writePrimaries",                 &Options::writePrimaries);
+  publish("storeModel",                     &Options::storeModel);
 
   // circular options
   publish("nturns",                   &Options::nturns);

@@ -246,6 +246,7 @@ namespace GMAD
     bool        trajNoTransportation;
 
     bool        writePrimaries;
+    bool        storeModel;
 
     /// Ring parameters
     int      nturns;

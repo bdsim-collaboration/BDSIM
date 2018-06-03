@@ -78,6 +78,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
+  storeModel           = g->StoreModel();
 
   // charge + mass + rigidity - particle stuff
   storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
@@ -126,9 +127,12 @@ void BDSOutput::FillOptions(const GMAD::OptionsBase* options)
 
 void BDSOutput::FillModel()
 {
-  modelOutput->Fill();
-  WriteModel();
-  ClearStructuresModel();
+  if (storeModel)
+    {
+      modelOutput->Fill();
+      WriteModel();
+      ClearStructuresModel();
+    }
 }
 
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,

@@ -224,6 +224,7 @@ OptionsBase::OptionsBase()
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;
   writePrimaries           = true;
+  storeModel               = true;
 
   // circular options
   nturns                   = 1;
