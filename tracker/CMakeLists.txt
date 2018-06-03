@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6.4)
 
 # Suppress policy CMP0042 warning (as of cmake 3.0.0)
-if (${CMAKE_MAJOR_VERSION} GREATER 2)
+if (CMAKE_VERSION VERSION_LESS 3.9.0)
     cmake_policy(SET CMP0042 OLD)
 endif()
 
