@@ -248,11 +248,36 @@ void BDSOutputROOTEventModel::Fill()
       &k1,&k2,&k3,&k4,&k5,&k6,&k7,&k8,&k9,&k10,&k11,&k12};
     std::vector<std::vector<float>*> localSkew = {
       &k1s,&k2s,&k3s,&k4s,&k5s,&k6s,&k7s,&k8s,&k9s,&k10s,&k11s,&k12s};
+
+    // helper lambda to avoid duplication
+    auto fillzero = [&]
+      {
+	for (int j = 0; j < (int)localNorm.size(); j++)
+	  {localNorm[j]->push_back(0);}
+	for (int j = 0; j < (int)localSkew.size(); j++)
+	  {localSkew[j]->push_back(0);}
+	ks.push_back(0);
+	hkick.push_back(0);
+	vkick.push_back(0);
+	bField.push_back(0);
+	eField.push_back(0);
+	e1.push_back(0);
+	e2.push_back(0);
+	hgap.push_back(0);
+	fint.push_back(0);
+	fintx.push_back(0);
+	fintk2.push_back(0);
+	fintxk2.push_back(0);
+      };
     // fill magnet strength data
     if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(accComp))
       {
 	const BDSMagnetStrength* ms = mag->MagnetStrength();
-
+	if (!ms)
+	  {
+	    fillzero();
+	    continue;
+	  }
 	// assume localNorm and normComponents are same size
 	std::vector<G4double> normComponents = ms->NormalComponents();
 	for (int j = 0; j < (int)localNorm.size(); j++)
@@ -278,22 +303,7 @@ void BDSOutputROOTEventModel::Fill()
       }
     else
       {// not a magnet
-	for (int j = 0; j < (int)localNorm.size(); j++)
-	  {localNorm[j]->push_back(0);}
-	for (int j = 0; j < (int)localSkew.size(); j++)
-	  {localSkew[j]->push_back(0);}
-	ks.push_back(0);
-	hkick.push_back(0);
-	vkick.push_back(0);
-	bField.push_back(0);
-	eField.push_back(0);
-	e1.push_back(0);
-	e2.push_back(0);
-	hgap.push_back(0);
-	fint.push_back(0);
-	fintx.push_back(0);
-	fintk2.push_back(0);
-	fintxk2.push_back(0);
+	fillzero();
       }    
   }
 }
