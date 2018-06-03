@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
-#include "BDSIntegratorMultipoleThin.hh"
 
 #include "globals.hh"
 
@@ -78,16 +77,11 @@ public:
   /// Unit momentum, momentum magnitude, and normalised bending radius are provided
   /// as arguments because they already calculated in the BaseStepper method.
   void OneStep(const G4ThreeVector& posIn,
+               const G4ThreeVector& momIn,
                const G4ThreeVector& momUIn, // assumed unit momentum of momIn
                G4ThreeVector&       posOut,
                G4ThreeVector&       momOut,
                const G4double&      bendingRadius) const;
-
-  /// Calculate the thin multipole kick to represent the dipole poleface curvature effect.
-  /// Step length is passed in as it is needed by the transforms.
-  void MultipoleStep(const G4double  yIn[6],
-                     G4double        yMultipoleOut[7],
-                     const G4double& h);
 
 protected:
   /// Poleface rotation angle
@@ -96,8 +90,6 @@ protected:
   const G4double fringeCorr;
   /// Second fringe field correction term
   const G4double secondFringeCorr;
-  /// Poleface curvature
-  const G4double polefaceCurvature;
   /// Nominal magnet bending radius
   const G4double rho;
 
@@ -115,8 +107,6 @@ protected:
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;
-
-  BDSIntegratorMultipoleThin* multipoleIntegrator;
 
 private:
   /// Private default constructor to enforce use of supplied constructor
