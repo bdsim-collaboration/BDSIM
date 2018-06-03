@@ -4,6 +4,7 @@ simple_testing(physics-decay                  "--file=decay.gmad"               
 simple_testing(physics-decay-radioactive      "--file=decay_radioactive.gmad"      ${OVERLAP_CHECK})
 simple_testing(physics-em                     "--file=em.gmad"                     ${OVERLAP_CHECK})
 simple_testing(physics-em-extra               "--file=em_extra.gmad"               ${OVERLAP_CHECK})
+simple_testing(physics-em-extra-options       "--file=em_extra_options.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics-em-penelope            "--file=em_penelope.gmad"            ${OVERLAP_CHECK})
 simple_testing(physics-em-livermore           "--file=em_livermore.gmad"           ${OVERLAP_CHECK})
 simple_testing(physics-em-livermore-polarised "--file=em_livermore_polarised.gmad" ${OVERLAP_CHECK})

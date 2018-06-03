@@ -44,8 +44,9 @@ public:
   std::string seedStateAtStart; ///< Seed state at the start of the event.
   int    index;     ///< Number of this event or run.
   bool   aborted;   ///< Whether the event was aborted or not.
+  bool   primaryHitMachine; ///< Wether the primary particle hit the accelerator or not.
 
-  ClassDef(BDSOutputROOTEventInfo,2);
+  ClassDef(BDSOutputROOTEventInfo,3);
 };
 
 #endif

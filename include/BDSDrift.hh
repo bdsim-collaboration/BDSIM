@@ -43,6 +43,9 @@ public:
 	   BDSBeamPipeInfo* beamPipeInfo);
   virtual ~BDSDrift();
 
+  /// Override base class version and return beam pipe material if it exists.
+  virtual G4String Material() const;
+
 protected:
   /// Construct geometry.
   virtual void Build();

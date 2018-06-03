@@ -1,3 +1,37 @@
+V1.X - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+* New options to activate extra models in em_extra physics list.
+
+General
+-------
+
+* Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
+* New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
+
+Output Changes
+--------------
+
+* New options for physics processes in em_extra.
+* Options class (GMAD::optionsBase) number is incremented in output.
+* New stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
+* Tilt, offsetX, offsetY and material are added to the Model Tree output.
+* Model class (BDSOutputROOTEventModel) number is incremented in output.
+* Model information extended to provide everything necessary to make machine diagrams.
+* New option :code:`storeModel` to turn off model storage in the output.
+* Even Info class (BDSOutputROOTEventInfo) number is incremented in output.
+* Event.Info now has a Boolean of whether the primary particle hit something or not.
+
+Bug Fixes
+---------
+
+* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+
+
 V1.1 - 2018 / 05 / 23
 =====================
 

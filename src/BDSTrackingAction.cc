@@ -25,8 +25,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
-//#include "BDSNeutronTrackInfo.hh"
-
 BDSTrackingAction::BDSTrackingAction():
   interactive(false)
 {
@@ -46,6 +44,9 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 	 << " ParentID=" << track->GetParentID() << G4endl;
 #endif
 
+  // we only create a trajectory if we're in interactive mode
+  // (for visualisation), if storeTrajectory is on, or it's the primary
+  // particle.
   if (interactive || storeTrajectory || track->GetParentID() == 0)
     {
       fpTrackingManager->SetStoreTrajectory(1);
@@ -54,13 +55,4 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
     }
   else
     {fpTrackingManager->SetStoreTrajectory(0);}
-  
-  /*
-  if(track->GetDefinition()->ParticleName()=="neutron")
-  {
-    BDSNeutronTrackInfo* Info= new BDSNeutronTrackInfo();
-    Info->SetIsLogged(false);
-    fpTrackingManager->SetUserTrackInformation(Info);
-  }
-  */
 }

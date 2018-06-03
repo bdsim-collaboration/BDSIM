@@ -30,25 +30,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-BDSTunnelBuilder::BDSTunnelBuilder()
-{
-  displacementTolerance = 50 * CLHEP::cm;    // maximum displacemenet of beamline before split
-  maxItems              = 50;                // maximum number of items before split
-  maxLength             = 50 * CLHEP::m;     // maximum length of tunnel segment
-  maxAngle              = 100 * CLHEP::mrad; // maximum angle before split
-  minLength             = 4000;              // minimum length
-}
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
+
+BDSTunnelBuilder::BDSTunnelBuilder():
+  displacementTolerance(50*CLHEP::cm), // maximum displacemenet of beamline before split
+  maxItems(50),                        // maximum number of items before split
+  maxLength(50*CLHEP::m),              // maximum length of tunnel segment
+  maxAngle(100*CLHEP::mrad),           // maximum angle before split
+  minLength(4*CLHEP::m)                // minimum length
+{;}
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
 {
   delete BDSTunnelFactory::Instance();
 }
 
-G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
-				     G4double cumulativeAngle,
-				     G4int    cumulativeNItems,
-				     G4double cumulativeDisplacementX,
-				     G4double cumulativeDisplacementY)
+G4bool BDSTunnelBuilder::BreakTunnel(const G4double& cumulativeLength,
+				     const G4double& cumulativeAngle,
+				     const G4int&    cumulativeNItems,
+				     const G4double& cumulativeDisplacementX,
+				     const G4double& cumulativeDisplacementY)
 {
   G4bool result = false;
 
@@ -57,7 +60,7 @@ G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
     {lengthTest = true;}
 
   G4bool angleTest = false;
-  if (fabs(cumulativeAngle) > maxAngle)
+  if (std::abs(cumulativeAngle) > maxAngle)
     {angleTest = true;}
 
   G4bool nItemsTest = false;
@@ -376,8 +379,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 	}
       
       // accumulate angle and position
-      G4double length   = (*startElement)->GetAcceleratorComponent()->GetChordLength();
-      G4double angle    = (*startElement)->GetAcceleratorComponent()->GetAngle();
+      G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
+      G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
       cumulativeLength += length;
       cumulativeAngle  += angle;
       cumulativeDisplacementX += std::sin(angle) * length;

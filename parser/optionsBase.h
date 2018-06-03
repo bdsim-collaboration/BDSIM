@@ -193,6 +193,11 @@ namespace GMAD
     double   neutronTimeLimit;
     double   neutronKineticEnergyLimit;
     bool     useLENDGammaNuclear;
+    bool     useElectroNuclear;
+    bool     useMuonNuclear;
+    bool     useGammaToMuMu;
+    bool     usePositronToMuMu;
+    bool     usePositronToHadrons;
     ///@}
 
     /// Biasing options
@@ -215,13 +220,15 @@ namespace GMAD
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
+    /// Output related options
     int         numberOfEventsPerNtuple;
 
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeElossTime;
-
+    bool        storeElossStepLength;
+    
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -239,6 +246,7 @@ namespace GMAD
     bool        trajNoTransportation;
 
     bool        writePrimaries;
+    bool        storeModel;
 
     /// Ring parameters
     int      nturns;

@@ -175,6 +175,21 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
 
+  // primary hit something?
+  // we infer this by seeing if there are any energy deposition hits at all - if there
+  // are, the primary must have 'hit' something. possibly along step ionisation in vacuum
+  // may fool this..
+  if (energyCounterHits)
+    {
+      if (energyCounterHits->entries() > 0)
+	{eventInfo->SetPrimaryHitMachine(true);}
+    }
+  if (tunnelEnergyCounterHits)
+    {
+      if (tunnelEnergyCounterHits->entries() > 0)
+	{eventInfo->SetPrimaryHitMachine(true);}
+    }
+  
   // primary hits and losses from
   BDSTrajectoryPoint* primaryHit  = nullptr;
   BDSTrajectoryPoint* primaryLoss = nullptr;

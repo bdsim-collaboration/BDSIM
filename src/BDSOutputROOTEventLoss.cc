@@ -30,19 +30,22 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   storeLinks(false),
   storeLocal(false),
   storeGlobal(false),
-  storeTime(false)
+  storeTime(false),
+  storeStepLength(false)
 {
   Flush();
 }
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeLinksIn,
-					       bool storeLocalIn,
-					       bool storeGlobalIn,
-					       bool storeTimeIn):
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(const bool& storeLinksIn,
+					       const bool& storeLocalIn,
+					       const bool& storeGlobalIn,
+					       const bool& storeTimeIn,
+					       const bool& storeStepLengthIn):
   storeLinks(storeLinksIn),
   storeLocal(storeLocalIn),
   storeGlobal(storeGlobalIn),
-  storeTime(storeTimeIn)
+  storeTime(storeTimeIn),
+  storeStepLength(storeStepLengthIn)
 {
   Flush();
 }
@@ -79,8 +82,9 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
     {
       T.push_back( (float &&) hit->GetPostGlobalTime() / CLHEP::ns);
     }
+  // don't store stepLength for trajectory point - not possible
 }
-void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
+void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit* hit)
 {
   n++;
   energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
@@ -114,6 +118,10 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit *hit)
     {
       T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
     }
+  if (storeStepLength)
+    {
+      stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);
+    }
 }
 
 #endif
@@ -136,4 +144,5 @@ void BDSOutputROOTEventLoss::Flush()
   Y.clear();
   Z.clear();
   T.clear();
+  stepLength.clear();
 }

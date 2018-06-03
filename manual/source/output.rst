@@ -127,6 +127,8 @@ of the BDSIM classes.  The trees are:
 +=============+=====================================================================+
 | Header      | Details about the file type and software versions.                  |
 +-------------+---------------------------------------------------------------------+
+| Geant4Data  | Information about all particles and ions used in the simulation.    |
++-------------+---------------------------------------------------------------------+
 | Beam        | A record of all options associated with the beam definition.        |
 +-------------+---------------------------------------------------------------------+
 | Options     | A record of all options used by BDSIM.                              |
@@ -179,6 +181,66 @@ BDSOutputROOTEventHeader
 | doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
 |                        |                | double precision for output.          |
 +------------------------+----------------+---------------------------------------+
+
+Geant4Data Tree
+^^^^^^^^^^^^^^^
+
+.. figure:: figures/rootevent_geant4data.png
+	    :width: 40%
+	    :align: center
+
+The Geant4Data tree contains a single branch called "Geant4Data." (note the "."). This
+branch represents a single instance of :code:`BDSOutputROOTGeant4Data`. This stores
+two maps (like dictionaries) of the particle and ion information for each particle / ion
+used in the simulation (only, i.e. not all that Geant4 supports). The map goes from
+an integer, the Particle Data Group ID, to the particle or ion info that are stored
+in simple C++ structures called :code:`BDSOutputROOTGeant4Data::ParticleInfo` and
+:code:`BDSOutputROOTGeant4Data::IonInfo` respectively. These contain the name, charge,
+mass, and in the case of ions, additionally A and Z. The both have a function called
+:code:`rigidity` that can calculate the rigidity of the particle for a given total
+energy - this is used during the execution of BDSIM when rigidities are requested to
+be stored.
+
++---------------------+-------------------------------------------------------+-------------------+
+| **Variable Name**   | **Type**                                              | **Description**   |
++=====================+=======================================================+===================+
+| particles           | std::map<int, BDSOutputROOTGeant4Data::ParticleInfo>  | Map of PDG ID to  |
+|                     |                                                       | particle info.    |
++---------------------+-------------------------------------------------------+-------------------+
+| ions                | std::map<int, BDSOutputROOTGeant4Data::IonInfo>       | Map of PDG ID to  |
+|                     |                                                       | ion info.         |
++---------------------+-------------------------------------------------------+-------------------+
+
+ParticleInfo Struct
+*******************
+
++---------------------+----------------+-----------------------------------+
+| **Variable Name**   | **Type**       | **Description**                   |
++=====================+================+===================================+
+| name                | std::string    | Name of particle.                 |
++---------------------+----------------+-----------------------------------+
+| charge              | int            | Particle Data Group ID.           |
++---------------------+----------------+-----------------------------------+
+| mass                | double         | Particle Data Group mass in GeV.  |
++---------------------+----------------+-----------------------------------+
+
+IonInfo Struct
+**************
+
++---------------------+----------------+------------------------------------+
+| **Variable Name**   | **Type**       | **Description**                    |
++=====================+================+====================================+
+| name                | std::string    | Name of particle.                  |
++---------------------+----------------+------------------------------------+
+| charge              | int            | Particle Data Group ID.            |
++---------------------+----------------+------------------------------------+
+| mass                | double         | Particle Data Group mass in GeV.   |
++---------------------+----------------+------------------------------------+
+| a                   | int            | Mass number - number of neutrons   |
+|                     |                | and protons together.              |
++---------------------+----------------+------------------------------------+
+| z                   | int            | Atomic number - number of protons. |
++---------------------+----------------+------------------------------------+
 
 Beam Tree
 ^^^^^^^^^
@@ -286,6 +348,40 @@ BDSOutputROOTEventModel
 +--------------------+--------------------------+--------------------------------------------------------------+
 | beamPipeAper4      | std::vector<double>      | Aperture aper4 (metres).                                     |
 +--------------------+--------------------------+--------------------------------------------------------------+
+| material           | std::vector<std::string> | Main material associated with an element. For a drift this   |
+|                    |                          | is the beam pipe material, for a magnet, it's the yoke       |
+|                    |                          | material, and for a collimator the main material.            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| k1 - k12           | std::vector<float>       | Normalised magnet strength associated with element           |
+|                    |                          | (1 - 12th order).                                            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| k12 - k122         | std::vector<float>       | Normalised skew magnet strength associated with element      |
+|                    |                          | (1 - 12th order).                                            |
++--------------------+--------------------------+--------------------------------------------------------------+
+| ks                 | std::vector<float>       | Normalised solenoid strength.                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| hkick              | std::vector<float>       | Fractional momentum kick in horizontal.                      |
++--------------------+--------------------------+--------------------------------------------------------------+
+| vkick              | std::vector<float>       | Fractional momentum kick in vertical.                        |
++--------------------+--------------------------+--------------------------------------------------------------+
+| bField             | std::vector<float>       | Magnetic field magnitude (T).                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| eField             | std::vector<float>       | Electric field magnitude (MV).                               |
++--------------------+--------------------------+--------------------------------------------------------------+
+| e1                 | std::vector<float>       | Input pole face angle (note sbend / rbend convention) (rad). |
++--------------------+--------------------------+--------------------------------------------------------------+
+| e2                 | std::vector<float>       | Output pole face angle (rad).                                |
++--------------------+--------------------------+--------------------------------------------------------------+
+| hgap               | std::vector<float>       | Half gap of pole tips for dipoles (m).                       |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fint               | std::vector<float>       | Fringe field integral.                                       |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintx              | std::vector<float>       | Fringe field integral for exit pole face.                    |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintk2             | std::vector<float>       | 2nd fringe field integral.                                   |
++--------------------+--------------------------+--------------------------------------------------------------+
+| fintxk2            | std::vector<float>       | 2nd fringe field integral for exit pole face.                |
++--------------------+--------------------------+--------------------------------------------------------------+
 
 
 Run Tree
@@ -365,6 +461,14 @@ BDSOutputROOTEventInfo
 |                   |                   | start of the event as provided by CLHEP.    |
 +-------------------+-------------------+---------------------------------------------+
 | index             | int               | Index of the event (0 counting).            |
++-------------------+-------------------+---------------------------------------------+
+| aborted           | bool              | Whether event was aborted or not.           |
++-------------------+-------------------+---------------------------------------------+
+| primaryHitMachine | bool              | Whether the primary particle hit the        |
+|                   |                   | machine. This is judged by whether there    |
+|                   |                   | are any energy deposition hits or not. If   |
+|                   |                   | no physics processes are registered this    |
+|                   |                   | won't work correctly.                       |
 +-------------------+-------------------+---------------------------------------------+
 
 BDSOutputROOTEventLoss

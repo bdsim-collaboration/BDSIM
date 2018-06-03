@@ -248,6 +248,7 @@ private:
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
+  G4bool storeModel;
   G4bool storeOption1;
   G4bool storeOption2;
   /// @}

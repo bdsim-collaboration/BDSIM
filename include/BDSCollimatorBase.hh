@@ -47,6 +47,9 @@ public:
 		    G4String colourIn           = "collimator");
   virtual ~BDSCollimatorBase();
 
+  /// Accessor for collimator material.
+  virtual G4String Material() const {return collimatorMaterial;}
+
 protected:
   virtual void Build();
   

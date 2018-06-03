@@ -169,7 +169,6 @@ void Options::PublishMembers()
   publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
 
   publish("checkOverlaps",     &Options::checkOverlaps);
-  publish("nperfile",          &Options::numberOfEventsPerNtuple);
   publish("eventNumberOffset", &Options::eventNumberOffset);
   publish("vacuumPressure",    &Options::vacuumPressure);
   publish("xsize",             &Options::xsize);
@@ -231,7 +230,12 @@ void Options::PublishMembers()
   // options for beam loss monitor geometry
   publish("blmRad",    &Options::blmRad);
   publish("blmLength", &Options::blmLength);
-  
+
+    // physics processes
+  publish("turnOnOpticalAbsorption",     &Options::turnOnOpticalAbsorption);
+  publish("turnOnMieScattering",         &Options::turnOnMieScattering);
+  publish("turnOnRayleighScattering",    &Options::turnOnRayleighScattering);
+  publish("turnOnOpticalSurface",        &Options::turnOnOpticalSurface);
   publish("scintYieldFactor",            &Options::scintYieldFactor);
   publish("maximumPhotonsPerStep",       &Options::maximumPhotonsPerStep);
   publish("maximumBetaChangePerStep",    &Options::maximumBetaChangePerStep);
@@ -249,38 +253,44 @@ void Options::PublishMembers()
   publish("neutronTimeLimit",            &Options::neutronTimeLimit);
   publish("neutronKineticEnergyLimit",   &Options::neutronKineticEnergyLimit);
   publish("useLENDGammaNuclear",         &Options::useLENDGammaNuclear);
+  publish("useElectroNuclear",           &Options::useElectroNuclear);
+  publish("useMuonNuclear",              &Options::useMuonNuclear);
+  publish("useGammaToMuMu",              &Options::useGammaToMuMu);
+  publish("usePositronToMuMu",           &Options::usePositronToMuMu);
+  publish("usePositronToHadrons",        &Options::usePositronToHadrons);
   
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
 
   // options which influence tracking
-  publish("integratorSet",      &Options::integratorSet);
-  publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("maximumStepLength",  &Options::maximumStepLength);
-  publish("maximumStepSize",    &Options::maximumStepLength);
-  publish("maximumTrackLength", &Options::maximumTrackLength);
-  publish("chordStepMinimum",   &Options::chordStepMinimum);
-  publish("chordStepMinimumYoke", &Options::chordStepMinimumYoke);
-  publish("deltaIntersection",  &Options::deltaIntersection);
-  publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
-  publish("maximumEpsilonStep", &Options::maximumEpsilonStep);
-  publish("deltaOneStep",       &Options::deltaOneStep);
+  publish("integratorSet",            &Options::integratorSet);
+  publish("lengthSafety",             &Options::lengthSafety);
+  publish("maximumTrackingTime",      &Options::maximumTrackingTime);
+  publish("maximumStepLength",        &Options::maximumStepLength);
+  publish("maximumStepSize",          &Options::maximumStepLength);
+  publish("maximumTrackLength",       &Options::maximumTrackLength);
+  publish("chordStepMinimum",         &Options::chordStepMinimum);
+  publish("chordStepMinimumYoke",     &Options::chordStepMinimumYoke);
+  publish("deltaIntersection",        &Options::deltaIntersection);
+  publish("minimumEpsilonStep",       &Options::minimumEpsilonStep);
+  publish("maximumEpsilonStep",       &Options::maximumEpsilonStep);
+  publish("deltaOneStep",             &Options::deltaOneStep);
+  publish("stopSecondaries",          &Options::stopSecondaries);
+  publish("killNeutrinos",            &Options::killNeutrinos);
+  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
 
-  // physics processes
-  publish("turnOnOpticalAbsorption",  &Options::turnOnOpticalAbsorption);
-  publish("turnOnMieScattering",      &Options::turnOnMieScattering);
-  publish("turnOnRayleighScattering", &Options::turnOnRayleighScattering);
-  publish("turnOnOpticalSurface",     &Options::turnOnOpticalSurface);
-
-  publish("lengthSafety", &Options::lengthSafety);
-
-  publish("storeElossLinks",  &Options::storeElossLinks);
-  publish("storeElossLocal",  &Options::storeElossLocal);
-  publish("storeElossGlobal", &Options::storeElossGlobal);
-  publish("storeElossTime",   &Options::storeElossTime);
-
-  // trajectory storage
+  // output
+  publish("nperfile",                       &Options::numberOfEventsPerNtuple);
+  publish("trajConnect",                    &Options::trajConnect);
+  publish("trajCutGTZ",                     &Options::trajCutGTZ);
+  publish("trajCutLTR",                     &Options::trajCutLTR);
+  publish("trajNoTransportation",           &Options::trajNoTransportation);
+  publish("storeElossLinks",                &Options::storeElossLinks);
+  publish("storeElossLocal",                &Options::storeElossLocal);
+  publish("storeElossGlobal",               &Options::storeElossGlobal);
+  publish("storeElossTime",                 &Options::storeElossTime);
+  publish("storeElossStepLength",           &Options::storeElossStepLength);
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
@@ -291,20 +301,18 @@ void Options::PublishMembers()
   publish("storeSamplerMass",               &Options::storeSamplerMass);
   publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);
   publish("storeSamplerIon",                &Options::storeSamplerIon);
-  publish("trajConnect",                    &Options::trajConnect);
-  publish("trajCutGTZ",                     &Options::trajCutGTZ);
-  publish("trajCutLTR",                     &Options::trajCutLTR);
-  publish("trajNoTransportation",           &Options::trajNoTransportation);
+  publish("writePrimaries",                 &Options::writePrimaries);
+  publish("storeModel",                     &Options::storeModel);
 
-  publish("stopSecondaries",          &Options::stopSecondaries);
-  publish("killNeutrinos",            &Options::killNeutrinos);
-  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
+  // circular options
   publish("nturns",                   &Options::nturns);
+  
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+
+  // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
-  publish("writePrimaries",           &Options::writePrimaries);
 
   // scoring map
   publish("nbinsx", &Options::nbinsx);
