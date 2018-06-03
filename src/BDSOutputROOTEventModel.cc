@@ -174,9 +174,9 @@ void BDSOutputROOTEventModel::Fill()
     BDSTiltOffset* to = (*i)->GetTiltOffset();
     if (to)
       {
-	tilt.push_back(to->GetTilt() / CLHEP::rad);
-	offsetX.push_back(to->GetXOffset() / CLHEP::m);
-	offsetY.push_back(to->GetYOffset() / CLHEP::m);		       
+	tilt.push_back((float)to->GetTilt() / CLHEP::rad);
+	offsetX.push_back((float)to->GetXOffset() / CLHEP::m);
+	offsetY.push_back((float)to->GetYOffset() / CLHEP::m);
       }
     else
       {
