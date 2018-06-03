@@ -220,6 +220,7 @@ namespace GMAD
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
+    /// Output related options
     int         numberOfEventsPerNtuple;
 
     bool        storeElossLinks;
