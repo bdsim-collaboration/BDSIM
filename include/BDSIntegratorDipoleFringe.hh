@@ -78,11 +78,16 @@ public:
   /// Unit momentum, momentum magnitude, and normalised bending radius are provided
   /// as arguments because they already calculated in the BaseStepper method.
   void OneStep(const G4ThreeVector& posIn,
-               const G4ThreeVector& momIn,
                const G4ThreeVector& momUIn, // assumed unit momentum of momIn
                G4ThreeVector&       posOut,
                G4ThreeVector&       momOut,
                const G4double&      bendingRadius) const;
+
+  /// Calculate the thin multipole kick to represent the dipole poleface curvature effect.
+  /// Step length is passed in as it is needed by the transforms.
+  void MultipoleStep(const G4double  yIn[6],
+                     G4double        yMultipoleOut[7],
+                     const G4double& h);
 
 protected:
   /// Poleface rotation angle

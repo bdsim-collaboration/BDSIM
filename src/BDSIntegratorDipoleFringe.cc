@@ -101,11 +101,18 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
       return;
     }
 
+  // container for multipole kick output, used as dipole step input
+  G4double yMultipoleOut[7];
+
+  // apply thin multipole kick if finite curvature. Does not step, stepping occurs in dipole integrator
+  if (BDS::IsFinite(polefaceCurvature))
+    {MultipoleStep(yIn, yMultipoleOut, h);}
+
   // container for dipole step output, used as fringe step input
   G4double yTemp[7];
 
-  // do the dipole kick using base class
-  BDSIntegratorDipoleRodrigues2::Stepper(yIn, dydx, h, yTemp, yErr); // yErr is correct output variable
+  // do the dipole kick and step using base class
+  BDSIntegratorDipoleRodrigues2::Stepper(yMultipoleOut, dydx, h, yTemp, yErr); // yErr is correct output variable
 
   // only apply the kick if we're taking a step longer than half the length of the item,
   // in which case, apply the full kick. This appears more robust than scaling the kick
@@ -152,8 +159,8 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     }
 
   // calculate new position and momentum kick from fringe effect only
-  G4ThreeVector localCLPosOutFringe;
-  G4ThreeVector localCLMomOutFringe;
+  G4ThreeVector localCLPosOut;
+  G4ThreeVector localCLMomOut;
 
   // normalise to particle charge
   G4double charge = fcof / std::abs(fcof);
@@ -163,16 +170,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   bendingRad *= momScaling;
 
   // apply fringe field kick
-  OneStep(localPos, localMom, localMomU, localCLPosOutFringe, localCLMomOutFringe, bendingRad);
-
-  // initialise new position and momentum for curvature effect as fringe output coords by default
-  // as curvature effect method is only called if curvature is finite.
-  G4ThreeVector localCLPosOut = localCLPosOutFringe;
-  G4ThreeVector localCLMomOut = localCLMomOutFringe;
-
-  // Zero step length as stepping has already been applied in base class stepper
-  if (BDS::IsFinite(polefaceCurvature))
-    {multipoleIntegrator->OneStep(localCLPosOutFringe, localMomU, localMom.mag(), localCLPosOut, localCLMomOut, 0);}
+  OneStep(localPos, localMomU, localCLPosOut, localCLMomOut, bendingRad);
 
   // convert to global coordinates for output
   if (finiteTilt)
@@ -182,7 +180,7 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
     }
   
   G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
-
+  globalMom *= mom.mag();
   // error along direction of travel really
   G4ThreeVector globalMomU = globalMom.unit();
   globalMomU *= 1e-8;
@@ -198,7 +196,6 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
 }
 
 void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
-					const G4ThreeVector& momIn,
 					const G4ThreeVector& momUIn,
 					G4ThreeVector&       posOut,
 					G4ThreeVector&       momOut,
@@ -243,13 +240,40 @@ void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
   if (std::isnan(zp1))
     {zp1 = zp;} // ensure not nan
 
-  G4ThreeVector momOutUnit = G4ThreeVector(xp1, yp1, zp1);
-  G4double momInMag = momIn.mag();
-  momOut = momOutUnit * momInMag;
-
+  momOut = G4ThreeVector(xp1, yp1, zp1);
   posOut = G4ThreeVector(x1*CLHEP::m, y1*CLHEP::m, s1);
 }
 
+void BDSIntegratorDipoleFringe::MultipoleStep(const G4double  yIn[6],
+                                              G4double        yMultipoleOut[7],
+                                              const G4double& h)
+{
+  // convert to local curvilinear co-ordinates
+  G4ThreeVector pos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+
+  BDSStep localPosMom     = GlobalToCurvilinear(pos, mom, h, true);
+  G4ThreeVector localPos  = localPosMom.PreStepPoint();
+  G4ThreeVector localMom  = localPosMom.PostStepPoint();
+  G4ThreeVector localMomU = localMom.unit();
+
+  // initialise new position and momentum for curvature effect as input coords
+  G4ThreeVector localCLPosOut = localPos;
+  G4ThreeVector localCLMomOut = localMomU;
+
+  // Zero step length as stepping has already been applied in base class stepper
+  multipoleIntegrator->OneStep(localPos, localMomU, localMom.mag(), localCLPosOut, localCLMomOut, 0);
+
+  G4ThreeVector globalMom = ConvertAxisToGlobal(localCLMomOut, true);
+  globalMom *= mom.mag();
+
+  // write out values
+  for (G4int i = 0; i < 3; i++)
+    {
+      yMultipoleOut[i]     = pos[i];
+      yMultipoleOut[i + 3] = globalMom[i];
+    }
+}
 
 // fringe field correction terms are BDS namespace methods instead of class methods
 // as the functions are called during BDSIntegratorDipoleFringe construction.
