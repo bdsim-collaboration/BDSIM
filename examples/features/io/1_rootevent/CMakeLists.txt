@@ -14,3 +14,5 @@ simple_testing(io-sampler-extras        "--file=sc_samplerextras.gmad --ngenerat
 
 # write optional eloss data
 simple_testing(io-eloss-extras          "--file=sc_elossextras.gmad --ngenerate=10" "")
+
+simple_testing(io-no-model    "--file=sc_no_model.gmad --ngenerate=1" "")

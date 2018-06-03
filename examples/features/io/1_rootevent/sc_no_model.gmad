@@ -1,0 +1,4 @@
+include sc.gmad;
+
+! don't store the model in the output
+option, storeModel=0;
