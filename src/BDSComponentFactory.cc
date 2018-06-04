@@ -509,8 +509,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // the above in / out face angles are not w.r.t. the local coords - subtract angle/2 to convert
   // this may seem like undoing the += in the functions, but they're used for the beam pipes
   // and matching.
-  incomingFaceAngle -= 0.5*angle;
-  outgoingFaceAngle -= 0.5*angle;
+  //incomingFaceAngle -= 0.5*angle;
+  //outgoingFaceAngle -= 0.5*angle;
 
   BDSLine* rbendline = BDS::BuildRBendLine(elementName, element, prevElement, nextElement,
 					   brho, st, integratorSet,
