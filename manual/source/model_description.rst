@@ -3139,7 +3139,7 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
 +-----------------------------------+--------------------------------------------------------------------+
-| beeam, offsetSampleMean=1         | Default false. If true, this will remove the sample mean from the  |
+| beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
