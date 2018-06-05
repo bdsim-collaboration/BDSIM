@@ -45,7 +45,7 @@ public:
   std::vector<int>          partID;  ///< ParticleID that create the deposit
   std::vector<int>          trackID; ///< TrackID that created the deposit
   std::vector<int>          parentID;///< ParentID that created the deposit
-  //
+  
   std::vector<int>          modelID; ///< Geometry model index
   std::vector<int>          turn;    ///< Turn number
 
@@ -63,9 +63,14 @@ public:
 
   std::vector<float>        T; ///< Global time (time since beginning of event).
 
+  std::vector<float>        stepLength; ///< Step length taken for hit.
+
   BDSOutputROOTEventLoss();
-  BDSOutputROOTEventLoss(bool storeLinks, bool storeLocal, bool storeGobal,
-                         bool storeTime);
+  BDSOutputROOTEventLoss(const bool& storeLinksIn,
+			 const bool& storeLocalIn,
+			 const bool& storeGobalIn,
+                         const bool& storeTimeIn,
+			 const bool& storeStepLengthIn);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(const BDSTrajectoryPoint* hit);
@@ -73,11 +78,13 @@ public:
 #endif
   virtual void Flush();
 
-  bool storeLinks  = false; // Store links between Eloss and model and trajectors
-  bool storeLocal  = false; // Store local coordinates
-  bool storeGlobal = false; // Store global coordinates
-  bool storeTime   = false; // Store global time
-  ClassDef(BDSOutputROOTEventLoss,2);
+  bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors
+  bool storeLocal      = false; ///< Whether to store local coordinates
+  bool storeGlobal     = false; ///< Whether to store global coordinates
+  bool storeTime       = false; ///< Whether to store global time
+  bool storeStepLength = false; ///< Whether to store step length.
+
+  ClassDef(BDSOutputROOTEventLoss,3);
 };
 
 

@@ -155,8 +155,13 @@ public:
   inline G4bool   ProdCutPositronsSet()      const {return G4bool  (options.HasBeenSet("prodCutPositrons"));}
   inline G4bool   ProdCutProtonsSet()        const {return G4bool  (options.HasBeenSet("prodCutProtons"));}
   inline G4double NeutronTimeLimit()         const {return G4double(options.neutronTimeLimit)*CLHEP::s;}
-  inline G4double NeutronKineticEnergyLimit() const {return G4double(options.neutronKineticEnergyLimit)*CLHEP::GeV;}
+  inline G4double NeutronKineticEnergyLimit()const {return G4double(options.neutronKineticEnergyLimit)*CLHEP::GeV;}
   inline G4bool   UseLENDGammaNuclear()      const {return G4bool  (options.useLENDGammaNuclear);}
+  inline G4bool   UseElectroNuclear()        const {return G4bool  (options.useElectroNuclear);}
+  inline G4bool   UseMuonNuclear()           const {return G4bool  (options.useMuonNuclear);}
+  inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
+  inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
+  inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
 
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
@@ -186,6 +191,7 @@ public:
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreElossTime()           const {return G4bool  (options.storeElossTime);}
+  inline G4bool   StoreElossStepLength()     const {return G4bool  (options.storeElossStepLength);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
@@ -195,6 +201,7 @@ public:
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
+  inline G4bool   StoreModel()               const {return G4bool  (options.storeModel);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}

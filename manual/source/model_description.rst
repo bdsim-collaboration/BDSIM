@@ -2303,10 +2303,11 @@ Physics Lists In BDSIM
 |                              | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
 +------------------------------+------------------------------------------------------------------------+
 | em_extra                     | This provides extra electromagnetic models including, muon nuclear     |
-|                              | processes, bertini electro-nuclear model and synchrotron radiation     |
-|                              | (not in material). Provided by `G4EmPhysicsExtra`. Responds to the     |
-|                              | option `useLENDGammaNuclear` that requires `G4LENDDATA` environmental  |
-|                              | variable to be set for the optional LEND data set (see ** below).      |
+|                              | processes, bertini electro-nuclear model. Provided by                  |
+|                              | `G4EmPhysicsExtra`. Responds to the  option `useLENDGammaNuclear` that |
+|                              | requires `G4LENDDATA` environmental variable to be set for the         |
+|                              | optional LEND data set (see ** below). Additional options described    |
+|                              | below also allow different parts of this model to be turned on or off. |
 +------------------------------+------------------------------------------------------------------------+
 | em_gs                        | `G4EmStandardPhysicsGS`. Available form Geant4.10.2 onwards.           |
 +------------------------------+------------------------------------------------------------------------+
@@ -2457,6 +2458,44 @@ used names.
 	     `G4LENDDATA` set to the directory containing it.
 
 
+em_extra Physics Notes
+^^^^^^^^^^^^^^^^^^^^^^
+
+The em_extra model is an interface to `G4EmExtraPhysics` that collects a variety of extra electromagnetic models
+together. Not all of these are activated by default. BDSIM provides options to turn these components on and off.
+See :ref:`physics-process-options` for more details on the specific options.
+
++------------------------+-----------------------------+--------------+
+| **Option**             | **Minimum Geant4 Version**  | **Default**  |
++========================+=============================+==============+
+| useLENDGammaNuclear    | 10.4                        | Off          |
++------------------------+-----------------------------+--------------+
+| useElectroNuclear      | 10.4                        | On           |
++------------------------+-----------------------------+--------------+
+| useMuonNuclear         | 10.2                        | On           |
++------------------------+-----------------------------+--------------+
+| useGammaToMuMu         | 10.3                        | Off          |
++------------------------+-----------------------------+--------------+
+| usePositronToMuMu      | 10.3                        | Off          |
++------------------------+-----------------------------+--------------+
+| usePositronToHadrons   | 10.3                        | Off          |
++------------------------+-----------------------------+--------------+
+
+Example::
+
+  option, physicsList="em em_extra",
+          useMuonNuclear=1,
+          useGammaToMuMu=1;
+
+The options will always be accepted by BDSIM if an earlier version of Geant4 is used than supported, however,
+these will have no effect.
+
+`G4EmExtraPhysics` provides a simple interface to increase the cross-section of some processes. This interface
+is not used in BDSIM as it does not propagate the associated weights correctly. Biasing should be done through
+the generic biasing interface with the name of the process (described in the following section) as this will
+propagate the weights correctly.
+
+	     
 Physics Biasing
 ---------------
 
@@ -2857,10 +2896,30 @@ Physics Processes
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | Whether to produce cerenkov radiation.                |
 +----------------------------------+-------------------------------------------------------+
+| useElectroNuclear                | Use electro-nuclear processes when `em_extra` physics |
+|                                  | list is used. Default On. Requires Geant4.10.4 or     |
+|                                  | greater.                                              |
++----------------------------------+-------------------------------------------------------+
+| useGammaToMuMu                   | Use gamma to muon pair production process when using  |
+|                                  | `em_extra` physics list is used. Default Off.         |
+|                                  | Requires Geant4.10.3 onwards.                         |
++----------------------------------+-------------------------------------------------------+
 | useLENDGammaNuclear              | Use the low energy neutron data set as provided by    |
 |                                  | the environmental variable `G4LENDDATA` when using    |
 |                                  | the `em_extra` physics list. Boolean. Available in    |
 |                                  | Geant4.10.4 onwards.                                  |
++----------------------------------+-------------------------------------------------------+
+| useMuonNuclear                   | Use muon nuclear interaction processes when using     |
+|                                  | `em_extra` phyiscs list. Default On. Requires         |
+|                                  | Geant4.10.2 onwards.                                  |
++----------------------------------+-------------------------------------------------------+
+| usePositronToMuMu                | Use muon pair production from positron annihilation   |
+|                                  | when using `em_extra` physics list. Default Off.      |
+|                                  | Requires Geant4.10.3 onwards.                         |
++----------------------------------+-------------------------------------------------------+
+| usePositronToHadrons             | Use hadron production from positron electron          |
+|                                  | annihilation process when using `em_extra` physics    |
+|                                  | list. Default Off.  Requires Geant4.10.3 onwards.     |
 +----------------------------------+-------------------------------------------------------+
 
 
@@ -2898,9 +2957,6 @@ following options. These options may increase the output file size by a large am
 +-----------------------------------+--------------------------------------------------------------------+
 | nperfile                          | Number of events to record per output file.                        |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
-|                                   | and for each trajectory point.                                     |
-+-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point.                                     |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -2908,8 +2964,15 @@ following options. These options may increase the output file size by a large am
 |                                   | ID and beam line index will be stored - this is intended to help   |
 |                                   | 'link' the energy deposition back to other information.            |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
+|                                   | and for each trajectory point.                                     |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each      |
 |                                   | energy deposition and trajectory point.                            |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossStepLength              | Store the step length for each energy deposition hit or not.       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeModel                        | Whether to store the model information in the output (Default On). |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Store corresponding charge of particle for every entry in sampler. |
 +-----------------------------------+--------------------------------------------------------------------+

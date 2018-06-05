@@ -45,12 +45,13 @@ public:
   virtual void Print() const;
 
   /// @{ Setters
-  inline void SetStartTime(time_t startTimeIn) {info->startTime = startTimeIn;}
-  inline void SetStopTime(time_t stopTimeIn)   {info->stopTime  = stopTimeIn;}
-  inline void SetDuration(G4float durationIn)  {info->duration  = (float)durationIn;}
-  inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
-  inline void SetIndex(G4int indexIn)          {info->index     = (int)indexIn;}
-  inline void SetAborted(G4bool abortedIn)     {info->aborted   = (bool)abortedIn;}
+  inline void SetStartTime(const time_t& startTimeIn)   {info->startTime = startTimeIn;}
+  inline void SetStopTime(const time_t& stopTimeIn)     {info->stopTime  = stopTimeIn;}
+  inline void SetDuration(const G4float& durationIn)    {info->duration  = (float)durationIn;}
+  inline void SetSeedStateAtStart(const G4String& seedStateAtStartIn) {info->seedStateAtStart = (std::string)seedStateAtStartIn;}
+  inline void SetIndex(const G4int& indexIn)            {info->index     = (int)indexIn;}
+  inline void SetAborted(const G4bool& abortedIn)       {info->aborted   = (bool)abortedIn;}
+  inline void SetPrimaryHitMachine(const G4bool& hitIn) {info->primaryHitMachine = (bool)hitIn;}
   /// @}
 
   /// Accessor.
