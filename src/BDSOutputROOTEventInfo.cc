@@ -27,7 +27,8 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   stopTime(time_t()),
   duration(0),
   seedStateAtStart(""),
-  aborted(false)
+  aborted(false),
+  primaryHitMachine(false)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -35,9 +36,10 @@ BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
 
 void BDSOutputROOTEventInfo::Flush()
 {
-  startTime        = time_t();
-  stopTime         = time_t();
-  duration         = 0;
-  seedStateAtStart = "";
-  aborted          = false;
+  startTime         = time_t();
+  stopTime          = time_t();
+  duration          = 0;
+  seedStateAtStart  = "";
+  aborted           = false;
+  primaryHitMachine = false;
 }

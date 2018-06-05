@@ -54,17 +54,17 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
 {
   const G4VProcess *proc = aTrack->GetCreatorProcess();
   if(proc)
-  {
-    creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
-    creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
-  }
+    {
+      creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
+      creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
+    }
   else
-  {
-    creatorProcessType    = -1;
-    creatorProcessSubType = -1;
-  }
+    {
+      creatorProcessType    = -1;
+      creatorProcessSubType = -1;
+    }
   weight = aTrack->GetWeight();
-
+  
   fParentIndex = -1;
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer();
   // this is for the first point of the track

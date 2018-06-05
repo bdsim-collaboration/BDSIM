@@ -42,6 +42,8 @@ namespace GMAD
     double fintK2; ///< second fringe field integral at the dipole entrance - for TRANSPORT matching
     double fintxK2;///< second fringe field integral at the dipole exit - for TRANSPORT matching
     double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+    double h1; ///< input pole face curvature for bends
+    double h2; ///< output pole face curvature for bends
     double kick;   ///< fractional delta p for either h or v kicker
     double hkick;  ///< fractional delta px for hkicker
     double vkick;  ///< fractional delta py for vkicker

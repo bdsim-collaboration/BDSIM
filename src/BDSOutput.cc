@@ -78,6 +78,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
+  storeModel           = g->StoreModel();
 
   // charge + mass + rigidity - particle stuff
   storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
@@ -126,9 +127,12 @@ void BDSOutput::FillOptions(const GMAD::OptionsBase* options)
 
 void BDSOutput::FillModel()
 {
-  modelOutput->Fill();
-  WriteModel();
-  ClearStructuresModel();
+  if (storeModel)
+    {
+      modelOutput->Fill();
+      WriteModel();
+      ClearStructuresModel();
+    }
 }
 
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
@@ -342,10 +346,7 @@ void BDSOutput::FillPrimary(G4double E,
 			    G4int    nEvent,
 			    G4int    turnsTaken)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-  if (WritePrimaries())
+  if (writePrimaries)
     {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }
 
@@ -373,7 +374,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
   for (int i = 0; i < hits->entries(); i++)
     {
       G4int samplerID = (*hits)[i]->GetSamplerID();
-      if (WritePrimaries())
+      if (writePrimaries)
 	{samplerID += 1;} // offset index by one
       samplerTrees[samplerID]->Fill((*hits)[i]);
     }

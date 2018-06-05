@@ -54,6 +54,9 @@ public:
   std::vector<TRotation>   staRefRot;
   std::vector<TRotation>   midRefRot;
   std::vector<TRotation>   endRefRot;
+  std::vector<float>       tilt;
+  std::vector<float>       offsetX;
+  std::vector<float>       offsetY;
   std::vector<float>       staS;
   std::vector<float>       midS;
   std::vector<float>       endS;
@@ -62,6 +65,43 @@ public:
   std::vector<double>      beamPipeAper2;
   std::vector<double>      beamPipeAper3;
   std::vector<double>      beamPipeAper4;
+  std::vector<std::string> material;       ///< Material associated with element if any.
+  std::vector<float>       k1;
+  std::vector<float>       k2;
+  std::vector<float>       k3;
+  std::vector<float>       k4;
+  std::vector<float>       k5;
+  std::vector<float>       k6;
+  std::vector<float>       k7;
+  std::vector<float>       k8;
+  std::vector<float>       k9;
+  std::vector<float>       k10;
+  std::vector<float>       k11;
+  std::vector<float>       k12;
+  std::vector<float>       k1s;
+  std::vector<float>       k2s;
+  std::vector<float>       k3s;
+  std::vector<float>       k4s;
+  std::vector<float>       k5s;
+  std::vector<float>       k6s;
+  std::vector<float>       k7s;
+  std::vector<float>       k8s;
+  std::vector<float>       k9s;
+  std::vector<float>       k10s;
+  std::vector<float>       k11s;
+  std::vector<float>       k12s;
+  std::vector<float>       ks;     ///< Solenoid strength.
+  std::vector<float>       hkick;  ///< Horizontal fractional momentum kick.
+  std::vector<float>       vkick;  ///< Vertical fractional momentum kick.
+  std::vector<float>       bField; ///< B field in T.
+  std::vector<float>       eField; ///< E field in V/m.
+  std::vector<float>       e1;
+  std::vector<float>       e2;
+  std::vector<float>       hgap;
+  std::vector<float>       fint;
+  std::vector<float>       fintx;
+  std::vector<float>       fintk2;
+  std::vector<float>       fintxk2;
 
 
   /// Default constructor
@@ -78,7 +118,7 @@ public:
   virtual void Fill();
 #endif
 
-  ClassDef(BDSOutputROOTEventModel,2);
+  ClassDef(BDSOutputROOTEventModel,3);
 };
 
 #endif

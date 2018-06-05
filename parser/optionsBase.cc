@@ -175,6 +175,11 @@ OptionsBase::OptionsBase()
   neutronTimeLimit         = 1e-6;
   neutronKineticEnergyLimit = 0;
   useLENDGammaNuclear      = false;
+  useElectroNuclear        = true; // defaults to match g4 em extra physics defaults
+  useMuonNuclear           = true;
+  useGammaToMuMu           = false;
+  usePositronToMuMu        = false;
+  usePositronToHadrons     = false;
   
   // biasing options
   defaultBiasVacuum        = "";
@@ -208,6 +213,7 @@ OptionsBase::OptionsBase()
   storeElossLocal          = false;
   storeElossGlobal         = false;
   storeElossTime           = false;
+  storeElossStepLength     = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 0;
   storeTrajectoryParticle   = "";
@@ -218,6 +224,7 @@ OptionsBase::OptionsBase()
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;
   writePrimaries           = true;
+  storeModel               = true;
 
   // circular options
   nturns                   = 1;

@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -119,6 +120,14 @@ void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
 {
   if (outer)
     {outer->SetOutputFaceNormal(output);}
+}
+
+G4String BDSMagnet::Material() const
+{
+  if (magnetOuterInfo)
+    {return magnetOuterInfo->outerMaterial->GetName();}
+  else
+    {return BDSAcceleratorComponent::Material();}
 }
 
 void BDSMagnet::Build()

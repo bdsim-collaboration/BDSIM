@@ -1,0 +1,6 @@
+include sc.gmad;
+
+option, checkOverlaps=0; !speed up io test
+
+! don't store the model in the output
+option, storeModel=0;
