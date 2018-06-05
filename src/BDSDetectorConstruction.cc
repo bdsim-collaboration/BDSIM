@@ -366,7 +366,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   // construct beamline of end pieces
   BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
-
+  //  BDSBeamline* endPieces = nullptr;
   BDSBeamlineSet beamlineSet;
   beamlineSet.massWorld              = massWorld;
   beamlineSet.curvilinearWorld       = clBeamline;
