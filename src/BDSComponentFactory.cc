@@ -1113,15 +1113,12 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
 						       const G4bool& printWarning)
 {
-  if(el->l*CLHEP::m < 1e-7)
+  if(el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
 	{
-	  G4cerr << "---->NOT creating element, "
-		 << " name = " << el->name
-		 << ", LENGTH TOO SHORT:"
-		 << " l = " << el->l*CLHEP::um << "um"
-		 << G4endl;
+	  G4cerr << "---> NOT creating element \"" << el->name << "\""
+		 << " LENGTH TOO SHORT:" << " l = " << el->l << "m" << G4endl; // already in m
 	}
       return false;
     }
