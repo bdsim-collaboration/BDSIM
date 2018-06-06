@@ -30,6 +30,7 @@ Bug Fixes
 ---------
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
 
 
 V1.1 - 2018 / 05 / 23
