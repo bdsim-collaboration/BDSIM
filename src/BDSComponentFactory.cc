@@ -1111,7 +1111,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 }
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
-						       const G4bool printWarning)
+						       const G4bool& printWarning)
 {
   if(el->l*CLHEP::m < 1e-7)
     {
