@@ -24,6 +24,10 @@
 
 # Trajectories
 /vis/scene/endOfEventAction accumulate
+/vis/scene/add/trajectories
+/vis/ogl/flushAt endOfEvent
 
 # Commit to Renderer
 /vis/viewer/flush
+
+
