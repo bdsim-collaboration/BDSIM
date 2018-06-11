@@ -238,15 +238,52 @@ BDSIM can then be installed (default directory /usr/local) for access from anywh
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
 From any directory on your computer, ``bdsim`` should be available.
 
-.. note:: This step is not strictly necessary. It is possible to create an alias to the
-	  executable ``bdsim`` that exists in the build directory in your shell profile. This
-	  is common practice for developers who may wish to have a debug build of the code as
-	  well as the normal release build.
-
 From the build directory you can verify your installation using a series of tests
 included with BDSIM (excluding long running tests)::
 
   > ctest -LE LONG
+
+.. _setup-python-utilities:
+  
+Python Utilities
+----------------
+
+* Quick setup: simply run ``make`` from the ``bdsim/utils`` directory.
+  
+BDSIM includes copies of our accompanying Python utilities (pytransport, pymad8, pymadx
+and pybdsim) that can now be installed. These all exist in separate git repositories in
+the following locations:
+
+* https://bitbucket.org/jairhul/pybdsim
+* https://bitbucket.org/jairhul/pymadx
+* https://bitbucket.org/jairhul/pymad8
+* https://bitbucket.org/jairhul/pytransport
+
+These can all be setup separately, or alternatively the user can install all at
+once with a MakeFile added for convenience.  The Python package installer ("PIP") is
+required for this.
+
+.. note:: ROOT should be compiled with Python2.7 support for the full functionality of
+	  pybdsim data loading to be exploited.
+
+To setup all utilities at once:
+
+.. code::
+
+   cd bdsim/utils
+   make
+
+The utilities should now be available through Python::
+
+  >>> import pybdsim
+  >>> import pymadx
+  >>> import pymad8
+  >>> import pytransport
+
+.. note:: If it's required to edit these utilities, please do not edit the copy in bdsim/utils
+	  as this will cause problems with git and pulling changes. It is strongly recommended
+	  to clone each utility separately outside the BDSIM source directory and edit that version,
+	  leaving the included one untouched.
 
 .. _configuring-bdsim:
 
