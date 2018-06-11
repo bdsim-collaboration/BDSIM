@@ -102,6 +102,7 @@ gap { return GAP;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }
