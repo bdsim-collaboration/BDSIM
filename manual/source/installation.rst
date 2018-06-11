@@ -445,6 +445,51 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
+Upgrading BDSIM
+===============
+
+To update BDSIM when a new release is made, we recommend receiving updates through the
+git repository. To receive the lates version of the software, the user must 'pull' the
+changes from the git repository and then update the build.
+
+* Assuming you have a BDSIM source directory ("bdsim") that is a clone of the git repository
+  and a separate build directory ("bdsim-build") that is *outside* the source directory.
+
+.. code::
+
+   cd bdsim
+   git pull
+   git submodule update
+
+The then has two options 1) make a clean build or 2) update the current build. The first option
+is generally more robust and we reommend that. Both are described for completeness.
+
+Clean Build
+-----------
+
+.. code::
+   
+   cd ../bdsim-build
+   rm -rf *
+   cmake ../bdsim
+   make -j4
+   make install
+
+If custom locations for various dependencies had to be specified with CMake for the intial
+configuration and compilation of BDSIM, these will have to be repeated (see
+:ref:`configuring-bdsim` for details on using ccmake to do this).
+
+Updated Existing Build
+----------------------
+
+.. code::
+
+   cd ../bdsim-build
+   cmake ../bdsim
+   make -j4
+   make install
+   
+
 
 .. _Troubleshooting:
 
