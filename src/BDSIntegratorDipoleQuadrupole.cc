@@ -47,7 +47,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
-  fieldRatio((*strengthIn)["field"] / (bRho/rho)),
+  fieldRatio((*strengthIn)["field"]/(*strengthIn)["scaling"] / (bRho/rho)),
   nominalEnergy((*strengthIn)["nominalEnergy"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
