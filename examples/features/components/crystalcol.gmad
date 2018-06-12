@@ -1,0 +1,15 @@
+lovelycrystal: crystal, material="G4_Si",
+	       		data="Si220",
+			shape="box",
+			lengthY=5*cm,
+			lengthX=0.5*mm,
+			lengthZ=4*mm,
+			bendingAngleYAxis=50*urad,
+			bendingAngleZAxis=0;
+
+col1 : crystalcol,l=0.4*m, apertureType="rectangular", aper1=2.5*cm, aper2=5*cm, crystalLeft="lovelycrystal";
+
+lat : line = (col1);
+com : line = (col1);
+
+include optionsTest.gmad;
