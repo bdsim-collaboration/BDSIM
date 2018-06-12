@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCavityElement.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSCollimatorCrystal.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -277,6 +278,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateDegrader(); break;
   case ElementType::_GAP:
     component = CreateGap(); break;
+  case ElementType::_CRYSTALCOL:
+    {component = CreateCrystalCollimator(); break;}
   case ElementType::_LASER:
     component = CreateLaser(); break; 
   case ElementType::_SCREEN:
@@ -932,6 +935,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
   return (new BDSGap(elementName,
                      element->l*CLHEP::m,
                      element->angle*CLHEP::rad));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  return (new BDSCollimatorCrystal(elementName,
+				   element->l*CLHEP::m,
+				   PrepareBeamPipeInfo(element)));
+
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
