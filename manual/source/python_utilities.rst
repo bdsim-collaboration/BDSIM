@@ -16,17 +16,7 @@ sections.
 Installing Python Utilities
 ===========================
 
-To access (import) the supplied packages from anywhere on your system, simply
-run ``make`` from the ``utils`` directory.  For this to work you should have
-the python package installer ``pip`` in your PATH.
-
-This should allow you to import the python utilities ::
-
-  cd ~/
-  python
-
->>> import pybdsim
->>> # no errors
+Installation is described in the setup section in :ref:`setup-python-utilities`.
 
 
 Documentation
