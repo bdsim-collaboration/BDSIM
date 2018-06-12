@@ -24,9 +24,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAwakeSpectrometer.hh"
 #endif
 #include "BDSCavityElement.hh"
+#include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
-#include "BDSCollimatorCrystal.hh"
+#include "BDSCrystalPosition.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -49,6 +50,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBendBuilder.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
+#include "BDSCrystalInfo.hh"
+#include "BDSCrystalType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
@@ -77,6 +80,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
+#include "parser/crystal.h"
 
 #include <cmath>
 #include <string>
@@ -97,11 +101,14 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
   PrepareCavityModels(); // prepare rf cavity model info from parser
+  PrepareCrystals();     // prepare crystal model info from parser
 }
 
 BDSComponentFactory::~BDSComponentFactory()
 {
-  for(auto info : cavityInfos)
+  for (auto info : cavityInfos)
+    {delete info.second;}
+  for (auto info : crystalInfos)
     {delete info.second;}
 
   // Deleted here although not used directly here as new geometry can only be
@@ -1456,6 +1463,52 @@ void BDSComponentFactory::PrepareCavityModels()
       
       cavityInfos[model.name] = info;
     }
+}
+
+void BDSComponentFactory::PrepareCrystals()
+{
+  for (auto& model : BDSParser::Instance()->GetCrystals())
+    {
+      G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
+
+      auto info = new BDSCrystalInfo(material,
+				     G4String(model.data),
+				     BDS::DetermineCrystalType(model.shape),
+				     G4double(model.lengthX)*CLHEP::m,
+				     G4double(model.lengthY)*CLHEP::m,
+				     G4double(model.lengthZ)*CLHEP::m,
+				     G4double(model.bendingAngleYAxis)*CLHEP::rad,
+				     G4double(model.bendingAngleZAxis)*CLHEP::rad);
+      crystalInfos[model.name] = info;
+    }
+
+}
+
+BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(Element const* el,
+							BDSCrystalPosition pos) const
+{
+  G4String crystalName;
+  switch (pos.underlying())
+    {
+    case BDSCrystalPosition::left:
+      {crystalName = G4String(el->crystalLeft); break;}
+    case BDSCrystalPosition::right:
+      {crystalName = G4String(el->crystalRight); break;}
+    case BDSCrystalPosition::both:
+      {crystalName = G4String(el->crystalBoth); break;}
+    default:
+      {break;}
+    }
+  auto result = crystalInfos.find(crystalName);
+  if (result == crystalInfos.end())
+    {
+      G4cout << "Unknown crystal \"" << crystalName << "\" - please define it" << G4endl;
+      exit(1);
+    }
+
+  // prepare a copy so the component can own that recipe
+  BDSCrystalInfo* info = new BDSCrystalInfo(*(result->second));
+  return info;
 }
 
 BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
