@@ -135,6 +135,10 @@ Parameters::Parameters()
   setMap["degraderOffset"]    = false;
 
   setMap["colour"] = false;
+
+  setMap["crystalLeft"]  = false;
+  setMap["crystalRight"] = false;
+  setMap["crystalBoth"]  = false;
 }
 
 void Parameters::flush() {

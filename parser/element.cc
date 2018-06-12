@@ -186,6 +186,10 @@ void Element::PublishMembers()
   publish("blmLocTheta",&Element::blmLocTheta);
 
   publish("colour", &Element::colour);
+
+  publish("crystalLeft",  &Element::crystalLeft);
+  publish("crystalRight", &Element::crystalRight);
+  publish("crystalBoth",  &Element::crystalBoth);
 }
 
 std::string Element::getPublishedName(std::string nameIn)const
@@ -441,6 +445,10 @@ void Element::flush()
 
   colour = "";
 
+  crystalLeft  = "";
+  crystalRight = "";
+  crystalBoth  = "";
+  
   angleSet = false;
 }
 

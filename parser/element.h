@@ -152,6 +152,10 @@ namespace GMAD
 
     /// Override colour for certain items
     std::string colour;
+
+    std::string crystalLeft;
+    std::string crystalRight;
+    std::string crystalBoth;
   
     /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
     /// field. This allows us to distinguish later on.
