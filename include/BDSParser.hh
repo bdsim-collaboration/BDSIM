@@ -81,7 +81,9 @@ public:
 
   /// Return cavity model list
   inline const std::vector<GMAD::CavityModel>& GetCavityModels() const {return cavitymodel_list;}
-  
+
+  /// Return crystal model lsit
+  inline const std::vector<GMAD::Crystal>& GetCrystals() const {return crystal_list;}
   /// Return the vector of field objects.
   inline const std::vector<GMAD::Field>& GetFields() const {return field_list;}
 
