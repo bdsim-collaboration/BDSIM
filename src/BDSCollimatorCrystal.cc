@@ -18,6 +18,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
 #include "BDSCollimatorCrystal.hh"
+#include "BDSCrystalInfo.hh"
+#include "BDSCrystalPosition.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -25,14 +27,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 globals / types
 #include "G4Material.hh"
 
-BDSCollimatorCrystal::BDSCollimatorCrystal(G4String         nameIn, 
-					   G4double         lengthIn,
-					   BDSBeamPipeInfo* beamPipeInfoIn):
-  BDSAcceleratorComponent(nameIn, lengthIn, 0, "drift", beamPipeInfoIn)
+BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn, 
+					   G4double           lengthIn,
+					   BDSBeamPipeInfo*   beamPipeInfoIn,
+					   BDSCrystalPosition crystalPositionIn,
+					   BDSCrystalInfo*    crystalInfoLeftIn,
+					   BDSCrystalInfo*    crystalInfoRightIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "drift", beamPipeInfoIn),
+  crystalPosition(crystalPositionIn),
+  crystalInfoLeft(crystalInfoLeftIn),
+  crystalInfoRight(crystalInfoRightIn)
 {;}
 
 BDSCollimatorCrystal::~BDSCollimatorCrystal()
-{;}
+{
+  delete crystalInfoLeft;
+  delete crystalInfoRight;
+}
 
 void BDSCollimatorCrystal::Build()
 {

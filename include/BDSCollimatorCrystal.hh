@@ -22,8 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSCrystalPosition.hh"
 
 class BDSBeamPipeInfo;
+class BDSCrystalInfo;
 
 /**
  * @brief A piece of vacuum beam pipe with a crystal for channelling.
@@ -34,9 +36,12 @@ class BDSBeamPipeInfo;
 class BDSCollimatorCrystal: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimatorCrystal(G4String         name,
-		       G4double         length,
-		       BDSBeamPipeInfo* beamPipeInfo);
+  BDSCollimatorCrystal(G4String           name,
+		       G4double           length,
+		       BDSBeamPipeInfo*   beamPipeInfoIn,
+		       BDSCrystalPosition crystalPositionIn,
+		       BDSCrystalInfo*    crystalInfoLeftIn,
+		       BDSCrystalInfo*    crystalInfoRightIn);
   virtual ~BDSCollimatorCrystal();
 
   /// Override base class version and return crystal material.
@@ -51,7 +56,11 @@ private:
   BDSCollimatorCrystal() = delete;
   
   /// Void function to fulfill BDSAcceleratorComponent requirements.
-  virtual void BuildContainerLogicalVolume(){;}; 
+  virtual void BuildContainerLogicalVolume(){;}
+
+  BDSCrystalPosition crystalPosition;   ///< Enum for left, right or both crystals.
+  BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
+  BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
 };
 
 #endif

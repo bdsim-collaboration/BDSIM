@@ -949,9 +949,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
+  BDSCrystalPosition crysPos;
+  if (!element->crystalBoth.empty())
+    {crysPos = BDSCrystalPosition::both;}
+  else if (element->crystalRight.empty())
+    {crysPos = BDSCrystalPosition::left;}
+  else
+    {crysPos = BDSCrystalPosition::right;}
+
+  BDSCrystalInfo* left = nullptr;
+  BDSCrystalInfo* right = nullptr;
+  if (crysPos == BDSCrystalPosition::left  || crysPos == BDSCrystalPosition::both)
+    {left  = PrepareCrystalInfo(element, BDSCrystalPosition::left);}
+  if (crysPos == BDSCrystalPosition::right || crysPos == BDSCrystalPosition::both)
+    {right = PrepareCrystalInfo(element, BDSCrystalPosition::right);}
+  
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,
-				   PrepareBeamPipeInfo(element)));
+				   PrepareBeamPipeInfo(element),
+				   crysPos,
+				   left,
+				   right));
 
 }
 
