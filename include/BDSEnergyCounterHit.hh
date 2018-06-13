@@ -28,12 +28,6 @@ class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-// namespace BDS
-// {
-//   BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
-//   BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
-// }
-
 /**
  * @brief Information recorded for a single piece of energy deposition.
  *
@@ -158,5 +152,3 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
 }
 
 #endif
-
-///
