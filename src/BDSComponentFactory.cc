@@ -1498,6 +1498,13 @@ void BDSComponentFactory::PrepareCrystals()
 				     G4double(model.lengthX)*CLHEP::m,
 				     G4double(model.lengthY)*CLHEP::m,
 				     G4double(model.lengthZ)*CLHEP::m,
+				     G4double(model.sizeA)*CLHEP::m,
+				     G4double(model.sizeB)*CLHEP::m,
+				     G4double(model.sizeC)*CLHEP::m,
+				     G4double(model.alpha)*CLHEP::halfpi,
+				     G4double(model.beta)*CLHEP::halfpi,
+				     G4double(model.gamma)*CLHEP::halfpi,
+				     G4int   (model.spaceGroup),
 				     G4double(model.bendingAngleYAxis)*CLHEP::rad,
 				     G4double(model.bendingAngleZAxis)*CLHEP::rad);
       crystalInfos[model.name] = info;

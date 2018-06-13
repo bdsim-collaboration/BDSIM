@@ -49,6 +49,13 @@ public:
 		 G4double       lengthXIn,
 		 G4double       lengthYIn,
 		 G4double       lengthZIn,
+		 G4double       sizeAIn,
+		 G4double       sizeBIn,
+		 G4double       sizeCIn,
+		 G4double       alphaIn,
+		 G4double       betaIn,
+		 G4double       gammaIn,
+		 G4int          spaceGroupIn,
 		 G4double       bendingAngleYAxisIn = 0,
 		 G4double       bendingAngleZAxisIn = 0);
 
@@ -58,6 +65,13 @@ public:
   G4double       lengthX;  ///< X dimension.
   G4double       lengthY;  ///< Y dimension.
   G4double       lengthZ;  ///< Z dimension.
+  G4double       sizeA;
+  G4double       sizeB;
+  G4double       sizeC;
+  G4double       alpha;
+  G4double       beta;
+  G4double       gamma;
+  G4int          spaceGroup;
   G4double       bendingAngleYAxis; ///< Bending angle about Y axis.
   G4double       bendingAngleZAxis; ///< Bending angle about Z axis.
 

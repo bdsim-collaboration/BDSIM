@@ -25,6 +25,13 @@ namespace GMAD
     double      lengthX;              ///< X size.
     double      lengthY;              ///< Y size.
     double      lengthZ;              ///< Z size.
+    double      sizeA;
+    double      sizeB;
+    double      sizeC;
+    double      alpha;
+    double      beta;
+    double      gamma;
+    int         spaceGroup;
     double      bendingAngleYAxis;    ///< Bending angle about Y axis.
     double      bendingAngleZAxis;    ///< Bending angle about Z axis.
     
