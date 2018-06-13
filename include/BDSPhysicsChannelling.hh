@@ -16,32 +16,37 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSPHYSICSEMDISSOCIATION_H
-#define BDSPHYSICSEMDISSOCIATION_H
+#ifndef BDSPHYSICSCHANNELLING_H
+#define BDSPHYSICSCHANNELLING_H
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 1039
 
 #include "BDSSingleUse.hh"
 
 #include "G4VPhysicsConstructor.hh"
 
 /**
- * @brief Electromagnetic dissociation for high energy ions.
+ * @brief Channelling physics process.
  * 
- * Constructs G4EMDissociation and attaches to ions.
+ * Constructs G4Channeling physics process and attaches to all charged particles.
+ * Completely based on the G4ChannelingPhysics.cc in examples/extended/exoticphysics/channeling/src.
  *
  * Uses the G4PhysicsListHelper to set and order processes.
  * 
  * @author Laurie Nevay
  */
 
-class BDSPhysicsEMDissociation: public G4VPhysicsConstructor, public BDSSingleUse
+class BDSPhysicsChannelling: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
-  BDSPhysicsEMDissociation();
-  virtual ~BDSPhysicsEMDissociation(){;}
-  /// Construct all leptions, photons (inc optical), and pion +- just in case.
+  BDSPhysicsChannelling();
+  virtual ~BDSPhysicsChannelling(){;}
   virtual void ConstructParticle();
 
   /// Construct and attach the processes to the relevant particles.
   virtual void ConstructProcess();
 };
+#endif
+
 #endif
