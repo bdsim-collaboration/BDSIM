@@ -144,6 +144,7 @@ mm          :math:`10^{-3}`
 um          :math:`10^{-6}`
 mum         :math:`10^{-6}`
 nm          :math:`10^{-9}`
+ang         :math:`10^{-10}`
 pm          :math:`10^{-12}`
 s           1
 ms          :math:`10^{-3}`

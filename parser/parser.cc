@@ -197,6 +197,7 @@ void Parser::Initialise()
   add_var("um" ,1e-6,reserved);
   add_var("mum",1e-6,reserved);
   add_var("nm" ,1e-9,reserved);
+  add_var("ang",1e-10,reserved);
   add_var("pm" ,1e-12,reserved);
 
   add_var("s"  ,1.0  ,reserved);

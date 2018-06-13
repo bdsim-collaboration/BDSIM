@@ -12,6 +12,7 @@ General
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
+* "ang" unit is added to the parser for Angstroms.
 
 Output Changes
 --------------
