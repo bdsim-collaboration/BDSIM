@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalPosition.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Material.hh"
@@ -95,32 +97,50 @@ void BDSCollimatorCrystal::Build()
 
   if (crystalLeft)
     {
-      G4ThreeVector placementOffset  = crystalLeft->GetPlacementOffset();
+      G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
       G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft,0,0);
+      G4ThreeVector placementOffset  = objectOffset + colOffsetL;
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
+
+      // check if it'll fit..
+      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffset);
+      BDSExtent thisExtent = GetExtent();
+      G4bool safe = thisExtent.Encompasses(extShifted);
+      if (!safe)
+	{G4cout << __METHOD_NAME__ << "Left crystal potential overlap" << G4endl;}
+      
       auto cL = new G4PVPlacement(placementRot,
-				  placementOffset + colOffsetL,
+				  placementOffset,
 				  crystalLeft->GetContainerLogicalVolume(),
 				  name + "_crystal_left_pv",
 				  GetAcceleratorVacuumLogicalVolume(),
 				  false,
 				  0,
-				  checkOverlaps);
+				  true); // always check
       RegisterPhysicalVolume(cL);
     }
   if (crystalRight)
     {
-      G4ThreeVector placementOffset  = crystalLeft->GetPlacementOffset();
+      G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
       G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
+      G4ThreeVector placementOffset  = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
+
+      // check if it'll fit..
+      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffset);
+      BDSExtent thisExtent = GetExtent();
+      G4bool safe = thisExtent.Encompasses(extShifted);
+      if (!safe)
+	{G4cout << __METHOD_NAME__ << "Right crystal potential overlap" << G4endl;}
+      
       auto cR = new G4PVPlacement(placementRot,
-				  placementOffset + colOffsetR,
+				  placementOffset,
 				  crystalLeft->GetContainerLogicalVolume(),
 				  name + "_crystal_right_pv",
 				  GetAcceleratorVacuumLogicalVolume(),
 				  false,
 				  0,
-				  checkOverlaps);
+				  true); // always check
       RegisterPhysicalVolume(cR);
     }
 }
