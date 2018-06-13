@@ -187,9 +187,11 @@ void Element::PublishMembers()
 
   publish("colour", &Element::colour);
 
-  publish("crystalLeft",  &Element::crystalLeft);
-  publish("crystalRight", &Element::crystalRight);
-  publish("crystalBoth",  &Element::crystalBoth);
+  publish("crystalLeft",            &Element::crystalLeft);
+  publish("crystalRight",           &Element::crystalRight);
+  publish("crystalBoth",            &Element::crystalBoth);
+  publish("crystalAngleYAxisLeft" , &Element::crystalAngleYAxisLeft);
+  publish("crystalAngleYAxisRight", &Element::crystalAngleYAxisRight);
 }
 
 std::string Element::getPublishedName(std::string nameIn)const

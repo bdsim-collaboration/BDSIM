@@ -156,6 +156,8 @@ namespace GMAD
     std::string crystalLeft;
     std::string crystalRight;
     std::string crystalBoth;
+    double      crystalAngleYAxisLeft;
+    double      crystalAngleYAxisRight;
   
     /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
     /// field. This allows us to distinguish later on.
