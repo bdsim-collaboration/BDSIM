@@ -17,12 +17,15 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSColours.hh"
+#include "BDSCrystal.hh"
 #include "BDSCrystalFactory.hh"
+#include "BDSCrystalInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4ThreeVector.hh"
@@ -55,10 +58,10 @@ BDSCrystal* BDSCrystalFactory::CreateCrystal(const G4String& name,
 {
   CleanUp();
   
-  switch(type.underlying())
+  switch(recipe->shape.underlying())
     {
     case BDSCrystalType::box:
-      {return CreateCyrstalBox(); break;}
+      {return CreateCrystalBox(name, recipe); break;}
     default:
       {return nullptr; break;}
     }
@@ -93,7 +96,7 @@ void BDSCrystalFactory::SetUserLimits(const G4double& length)
 {
   auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
   //copy the default and update with the length of the object rather than the default 1m
-  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length);
+  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, length*maxStepFactor);
 
   if (ul != defaultUL) // if it's not the default register it
     {allUserLimits.push_back(ul);}
