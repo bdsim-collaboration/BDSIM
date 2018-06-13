@@ -129,7 +129,9 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 		     recipe->material,
 		     recipe->lengthZ);
 
-  BDSExtent ext = BDSExtent();
+  BDSExtent ext = BDSExtent(recipe->lengthX * 0.5,
+			    recipe->lengthY * 0.5,
+			    recipe->lengthZ * 0.5);
   
-  return BuildCrystalObject(ext);
+  return BuildCrystalObject(ext); // no placement offset - leave as default
 }
