@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSAcceleratorComponent.hh"
 #include "BDSCollimatorCrystal.hh"
+#include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
 #include "BDSCrystalPosition.hh"
 #include "BDSBeamPipe.hh"
@@ -67,6 +68,14 @@ void BDSCollimatorCrystal::Build()
   // update faces
   SetInputFaceNormal(pipe->InputFaceNormal());
   SetOutputFaceNormal(pipe->OutputFaceNormal());
+
+  BDSCrystalFactory* fac = new BDSCrystalFactory();
+  if (crystalInfoLeft)
+    {crystalLeft = fac->CreateCrystal(name, crystalInfoLeft);}
+  if (crystalInfoRight)
+    {crystalRight = fac->CreateCrystal(name, crystalInfoRight);}
+
+  delete fac;
 }
 
 G4String BDSCollimatorCrystal::Material() const

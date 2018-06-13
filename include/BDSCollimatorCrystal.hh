@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCrystalPosition.hh"
 
 class BDSBeamPipeInfo;
+class BDSCrystal;
 class BDSCrystalInfo;
 
 /**
@@ -61,6 +62,8 @@ private:
   BDSCrystalPosition crystalPosition;   ///< Enum for left, right or both crystals.
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
+  BDSCrystal* crystalLeft;
+  BDSCrystal* crystalRight;
 };
 
 #endif
