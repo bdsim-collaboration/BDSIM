@@ -42,7 +42,11 @@ public:
 		       BDSBeamPipeInfo*   beamPipeInfoIn,
 		       BDSCrystalPosition crystalPositionIn,
 		       BDSCrystalInfo*    crystalInfoLeftIn,
-		       BDSCrystalInfo*    crystalInfoRightIn);
+		       BDSCrystalInfo*    crystalInfoRightIn = nullptr,
+		       const G4double&    halfGapLeftIn     = 0,
+		       const G4double&    halfGapRightIn    = 0,
+		       const G4double&    angleYAxisLeftIn  = 0,
+		       const G4double&    angleYAxisRightIn = 0);
   virtual ~BDSCollimatorCrystal();
 
   /// Override base class version and return crystal material.
@@ -62,6 +66,10 @@ private:
   BDSCrystalPosition crystalPosition;   ///< Enum for left, right or both crystals.
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
+  const G4double     halfGapLeft;
+  const G4double     halfGapRight;
+  const G4double     angleYAxisLeft;
+  const G4double     angleYAxisRight;
   BDSCrystal* crystalLeft;
   BDSCrystal* crystalRight;
 };

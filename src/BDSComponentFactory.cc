@@ -969,8 +969,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
 				   PrepareBeamPipeInfo(element),
 				   crysPos,
 				   left,
-				   right));
-
+				   right,
+				   element->xsize*CLHEP::m, // symmetric for now
+				   element->xsize*CLHEP::m,
+				   element->crystalAngleYAxisLeft*CLHEP::rad,
+				   element->crystalAngleYAxisRight*CLHEP::rad));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()

@@ -7,7 +7,10 @@ lovelycrystal: crystal, material="G4_Si",
 			bendingAngleYAxis=50*urad,
 			bendingAngleZAxis=0;
 
-col1 : crystalcol,l=0.4*m, apertureType="rectangular", aper1=2.5*cm, aper2=5*cm, crystalLeft="lovelycrystal";
+col1 : crystalcol, l=4*cm, apertureType="rectangular", aper1=2.5*cm, aper2=5*cm,
+       		   crystalLeft="lovelycrystal",
+		   crystalAngleYAxisLeft=10*urad,
+		   xsize=2*mm;
 
 lat : line = (col1);
 com : line = (col1);
