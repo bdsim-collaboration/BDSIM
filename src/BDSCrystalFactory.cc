@@ -31,6 +31,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
+#include "G4Version.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
+
+// only use the crystal extensions if using 10.4.p00 upwards
+#if G4VERSION_NUMBER > 1039
+#include "G4ExtendedMaterial.hh"
+#include "G4CrystalExtension.hh"
+#include "G4CrystalUnitCell.hh"
+#include "G4ChannelingMaterialData.hh"
+#include "G4LogicalCrystalVolume.hh"
+#endif
 
 BDSCrystalFactory::BDSCrystalFactory():
   maxStepFactor(1.1),
@@ -72,10 +84,40 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 {
   allSolids.push_back(crystalSolid);
 
+  // only in g4.10.4 onwards do we build the crystal extensions - otherwise regular LV
+#if G4VERSION_NUMBER > 1039
+  G4ExtendedMaterial* crystalMat = new G4ExtendedMaterial("crystal.material", recipe->material);
+  
+  crystalMat->RegisterExtension(std::unique_ptr<G4CrystalExtension>(new G4CrystalExtension(crystalMat)));
+  G4CrystalExtension* crystalExtension = dynamic_cast<G4CrystalExtension*>(crystalMat->RetrieveExtension("crystal"));
+
+  G4CrystalUnitCell* uCell = new G4CrystalUnitCell(5.43 * CLHEP::angstrom,
+						   5.43 * CLHEP::angstrom,
+						   5.43 * CLHEP::angstrom,
+						   CLHEP::halfpi,
+						   CLHEP::halfpi,
+						   CLHEP::halfpi,
+						   227);
+  crystalExtension->SetUnitCell(uCell);
+
+  crystalMat->RegisterExtension(std::unique_ptr<G4ChannelingMaterialData>(new G4ChannelingMaterialData("channeling")));
+
+  G4ChannelingMaterialData* crystalChannelingData = (G4ChannelingMaterialData*)crystalMat->RetrieveExtension("channeling");
+  //crystalChannelingData->SetFilename(fECfileName);
+
+  //if(fBR!=G4ThreeVector()){
+  //  crystalChannelingData->SetBR(fBR.x());
+  // }
+    
+  crystalLV = new G4LogicalCrystalVolume(crystalSolid,
+					 crystalMat,
+					 nameIn + "_crystal_lv");
+#else
   // build logical volumes
   crystalLV = new G4LogicalVolume(crystalSolid,
 				  crystalMaterialIn,
 				  nameIn + "_crystal_lv");
+#endif
   allLogicalVolumes.push_back(crystalLV);
   
   SetVisAttributes();
