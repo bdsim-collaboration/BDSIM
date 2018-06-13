@@ -73,8 +73,8 @@ void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
       sigmaGM[1][1] = std::pow(beam.sigmaXp,2);
       sigmaGM[2][2] = std::pow(beam.sigmaY, 2);
       sigmaGM[3][3] = std::pow(beam.sigmaYp,2);
-      sigmaGM[4][4] = std::pow(beam.sigmaT, 2);
-      sigmaGM[5][5] = std::pow(beam.sigmaE, 2);
+      sigmaGM[4][4] = std::pow(sigmaT, 2); // these are potentially corrected in BDSBunch
+      sigmaGM[5][5] = std::pow(sigmaE, 2);
     }
 #ifdef BDSDEBUG
   G4cout << "sigmaGM" << sigmaGM << G4endl;
