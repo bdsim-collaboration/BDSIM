@@ -56,10 +56,9 @@ private:
   void CleanUp();
   
   /// Common construction tasks.
-  void CommonConstruction(G4String    nameIn,
-			  G4Material* crystalMaterialIn,
-			  G4double    length);
-
+  void CommonConstruction(const G4String&       nameIn,
+			  const BDSCrystalInfo* recipe);
+  
   /// build beampipe and register logical volumes
   BDSCrystal* BuildCrystalObject(const BDSExtent& extent);
   

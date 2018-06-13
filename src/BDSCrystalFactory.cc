@@ -67,9 +67,8 @@ BDSCrystal* BDSCrystalFactory::CreateCrystal(const G4String& name,
     }
 }
   
-void BDSCrystalFactory::CommonConstruction(G4String    nameIn,
-					   G4Material* crystalMaterialIn,
-					   G4double    length)
+void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
+					   const BDSCrystalInfo* recipe)
 {
   allSolids.push_back(crystalSolid);
 
@@ -80,7 +79,7 @@ void BDSCrystalFactory::CommonConstruction(G4String    nameIn,
   allLogicalVolumes.push_back(crystalLV);
   
   SetVisAttributes();
-  SetUserLimits(length);
+  SetUserLimits(recipe->lengthZ);
 }
 
 void BDSCrystalFactory::SetVisAttributes()
@@ -125,9 +124,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 			   recipe->lengthY * 0.5,
 			   recipe->lengthZ * 0.5);
 
-  CommonConstruction(nameIn,
-		     recipe->material,
-		     recipe->lengthZ);
+  CommonConstruction(nameIn, recipe);
 
   BDSExtent ext = BDSExtent(recipe->lengthX * 0.5,
 			    recipe->lengthY * 0.5,
