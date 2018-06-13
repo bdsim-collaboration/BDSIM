@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
@@ -91,23 +92,35 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   crystalMat->RegisterExtension(std::unique_ptr<G4CrystalExtension>(new G4CrystalExtension(crystalMat)));
   G4CrystalExtension* crystalExtension = dynamic_cast<G4CrystalExtension*>(crystalMat->RetrieveExtension("crystal"));
 
-  G4CrystalUnitCell* uCell = new G4CrystalUnitCell(5.43 * CLHEP::angstrom,
-						   5.43 * CLHEP::angstrom,
-						   5.43 * CLHEP::angstrom,
-						   CLHEP::halfpi,
-						   CLHEP::halfpi,
-						   CLHEP::halfpi,
-						   227);
+  G4CrystalUnitCell* uCell = new G4CrystalUnitCell(recipe->sizeA,
+						   recipe->sizeB,
+						   recipe->sizeC,
+						   recipe->alpha,
+						   recipe->beta,
+						   recipe->gamma,
+						   recipe->spaceGroup);
   crystalExtension->SetUnitCell(uCell);
 
   crystalMat->RegisterExtension(std::unique_ptr<G4ChannelingMaterialData>(new G4ChannelingMaterialData("channeling")));
 
   G4ChannelingMaterialData* crystalChannelingData = (G4ChannelingMaterialData*)crystalMat->RetrieveExtension("channeling");
-  //crystalChannelingData->SetFilename(fECfileName);
-
-  //if(fBR!=G4ThreeVector()){
-  //  crystalChannelingData->SetBR(fBR.x());
-  // }
+  G4String fileName = BDS::GetFullPath(recipe->data);
+  if (!BDS::FileExists(fileName + "_pot.txt"))
+    {
+      G4cout << __METHOD_NAME__ << "No such crystal data files beginnging with: " << G4endl
+	     << "\"" << fileName << "\"" << G4endl;
+      exit(1);
+    }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Raw data path: " << recipe->data << G4endl;
+  G4cout << __METHOD_NAME__ << "Using crystal data: " << fileName << G4endl;
+#endif
+  crystalChannelingData->SetFilename(fileName);
+  
+  //G4ThreeVector bendingAngles = G4ThreeVector(recipe->bendingAngleYAxis);//, // bend induced in X
+  //recipe->bendingAngleZAxis,
+  //0);
+  crystalChannelingData->SetBR(recipe->bendingAngleYAxis);
     
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
 					 crystalMat,
