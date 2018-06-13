@@ -101,6 +101,15 @@ void BDSCollimatorCrystal::Build()
       G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft,0,0);
       G4ThreeVector placementOffset  = objectOffset + colOffsetL;
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
+      if (BDS::IsFinite(angleYAxisLeft))
+	{
+	  if (!placementRot)
+	    {
+	      placementRot = new G4RotationMatrix();
+	      RegisterRotationMatrix(placementRot);
+	    }
+	  placementRot->rotate(angleYAxisLeft, G4ThreeVector(0,1,0)); // rotate about local unitY
+	}
 
       // check if it'll fit..
       BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffset);
@@ -125,7 +134,16 @@ void BDSCollimatorCrystal::Build()
       G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffset  = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
-
+      if (BDS::IsFinite(angleYAxisRight))
+	{
+	  if (!placementRot)
+	    {
+	      placementRot = new G4RotationMatrix();
+	      RegisterRotationMatrix(placementRot);
+	    }
+	  placementRot->rotate(angleYAxisRight, G4ThreeVector(0,1,0)); // rotate about local unitY
+	}
+      
       // check if it'll fit..
       BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffset);
       BDSExtent thisExtent = GetExtent();
