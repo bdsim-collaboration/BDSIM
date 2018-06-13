@@ -120,8 +120,10 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
   //G4ThreeVector bendingAngles = G4ThreeVector(recipe->bendingAngleYAxis);//, // bend induced in X
   //recipe->bendingAngleZAxis,
   //0);
-  crystalChannelingData->SetBR(recipe->bendingAngleYAxis);
-    
+
+  G4double bendingRadius = recipe->lengthZ / recipe->bendingAngleYAxis;
+  crystalChannelingData->SetBR(bendingRadius);
+  
   crystalLV = new G4LogicalCrystalVolume(crystalSolid,
 					 crystalMat,
 					 nameIn + "_crystal_lv");
