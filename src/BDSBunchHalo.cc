@@ -59,9 +59,10 @@ BDSBunchHalo::~BDSBunchHalo()
 
 void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
 			       const GMAD::Beam& beam,
+			       const BDSBunchType& distrType,
 			       G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
   alphaX                = G4double(beam.alfx);
   alphaY                = G4double(beam.alfy);
   betaX                 = G4double(beam.betx);
