@@ -3542,7 +3542,7 @@ depending on the single particle emittance, which is calculated as
 .. math::
    \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
-if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \epsilon_{\rm core}`
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} < \epsilon_{\rm core}`
 the particle is rejected. `haloPSWeightFunction` is a string that selects the function
 :math:`f_{\rm haloWeight}(\epsilon_{\rm SP})` which is 1 at the ellipse defined by :math:`\epsilon_{\rm core}`. The
 weighting functions are either `flat`, one over emittance `oneoverr` or exponential `exp` so
