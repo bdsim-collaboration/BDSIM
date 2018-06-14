@@ -77,8 +77,8 @@ void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
 	sigmaGM[1][1] = std::pow(beam.sigmaXp,2);
 	sigmaGM[2][2] = std::pow(beam.sigmaY, 2);
 	sigmaGM[3][3] = std::pow(beam.sigmaYp,2);
-	sigmaGM[4][4] = std::pow(beam.sigmaT, 2);
-	sigmaGM[5][5] = std::pow(beam.sigmaE, 2);
+	sigmaGM[4][4] = std::pow(sigmaT, 2); // these are made slightly finite in BDSBunchGaussian
+	sigmaGM[5][5] = std::pow(sigmaE, 2); // if 0 to ensure +ve definiteness
 	break;
       }
     default:
