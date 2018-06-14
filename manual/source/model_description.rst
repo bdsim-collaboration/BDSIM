@@ -3139,7 +3139,7 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
 +-----------------------------------+--------------------------------------------------------------------+
-| beeam, offsetSampleMean=1         | Default false. If true, this will remove the sample mean from the  |
+| beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
@@ -3541,7 +3541,7 @@ depending on the single particle emittance, which is calculated as
 .. math::
    \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
-if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \epsilon_{\rm core}`
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} < \epsilon_{\rm core}`
 the particle is rejected. `haloPSWeightFunction` is a string that selects the function
 :math:`f_{\rm haloWeight}(\epsilon_{\rm SP})` which is 1 at the ellipse defined by :math:`\epsilon_{\rm core}`. The
 weighting functions are either `flat`, one over emittance `oneoverr` or exponential `exp` so

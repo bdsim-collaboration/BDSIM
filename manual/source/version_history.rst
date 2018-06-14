@@ -11,6 +11,7 @@ General
 
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
+* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
 
 Output Changes
 --------------
@@ -30,6 +31,9 @@ Bug Fixes
 ---------
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
+* Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
+* Fix Gauss beams used in composite distribution.
 
 
 V1.1 - 2018 / 05 / 23

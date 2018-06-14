@@ -128,13 +128,14 @@ void BDSBunchPtc::LoadPtcFile()
 
 void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
 			     const GMAD::Beam& beam,
+			     const BDSBunchType& distrType,
 			     G4Transform3D beamlineTransformIn)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << beam.distrFile << G4endl;
 #endif
 
-  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
   SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();
 }
