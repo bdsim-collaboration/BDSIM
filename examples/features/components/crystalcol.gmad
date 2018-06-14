@@ -35,6 +35,3 @@ beam, particle="proton",
 !option, physicsList="ftfp_bert em channelling",
 !	stopSecondaries=1;
 option, physicsList="channelling";
-
-
-
