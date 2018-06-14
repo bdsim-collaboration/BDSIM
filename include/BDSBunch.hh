@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCH_H
 #define BDSBUNCH_H
 
+#include "BDSBunchType.hh"
 #include "globals.hh"
 #include "G4Transform3D.hh"
 

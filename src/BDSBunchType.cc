@@ -29,7 +29,7 @@ template<>
 std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
   new std::map<BDSBunchType, std::string> ({
       {BDSBunchType::reference,   "reference"},
-      {BDSBunchType::guassmatrix, "gaussmatrix"},
+      {BDSBunchType::gaussmatrix, "gaussmatrix"},
       {BDSBunchType::gauss,       "gauss"},
       {BDSBunchType::gausstwiss,  "gausstwiss"},
       {BDSBunchType::circle,      "circle"},
@@ -61,7 +61,7 @@ BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
   types["ptc"]            = BDSBunchType::ptc;
   types["sixtrack"]       = BDSBunchType::sixtrack;
 
-  distrType.toLower();
+  // distrType.toLower();
 
   auto result = types.find(distrType);
   if (result == types.end())
