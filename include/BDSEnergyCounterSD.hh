@@ -63,6 +63,7 @@ private:
 
   ///@{ per hit variable
   G4double enrg;
+  G4double preStepKineticEnergy;
   G4double weight;
   G4double X,Y,Z,sBefore,sAfter; // global coordinates
   G4double x,y,z;   // local coordinates

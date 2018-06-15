@@ -2946,7 +2946,10 @@ The particle physics simulation in BDSIM can produce an impressive quantity of o
 information. The data describing a full record of every particle and their interaction
 would prove to difficult to manage or analyse sensibly. BDSIM records the most useful
 information, but provides options to record even more data. This is controlled with the
-following options. These options may increase the output file size by a large amount.
+following options.
+
+.. note:: These options may increase the output file size by a large amount. Use only the
+	  ones you need.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2971,6 +2974,9 @@ following options. These options may increase the output file size by a large am
 |                                   | energy deposition and trajectory point.                            |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossStepLength              | Store the step length for each energy deposition hit or not.       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossPreStepKineticEnergy    | Store the kinetic energy of the particle causing energy deposition |
+|                                   | as taken from the beginning of the step before it made it.         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output (Default On). |
 +-----------------------------------+--------------------------------------------------------------------+
