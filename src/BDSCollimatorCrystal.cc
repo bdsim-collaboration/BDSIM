@@ -114,6 +114,7 @@ void BDSCollimatorCrystal::Build()
       G4bool safe = thisExtent.Encompasses(extShifted);
       if (!safe)
 	{G4cout << __METHOD_NAME__ << "Left crystal potential overlap" << G4endl;}
+      LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
       
       auto cL = new G4PVPlacement(placementRot,
 				  placementOffset,
@@ -147,7 +148,8 @@ void BDSCollimatorCrystal::Build()
       G4bool safe = thisExtent.Encompasses(extShifted);
       if (!safe)
 	{G4cout << __METHOD_NAME__ << "Right crystal potential overlap" << G4endl;}
-      
+      LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Right");
+
       auto cR = new G4PVPlacement(placementRot,
 				  placementOffset,
 				  crystalRight->GetContainerLogicalVolume(),
@@ -167,4 +169,24 @@ G4String BDSCollimatorCrystal::Material() const
     {return bpMat->GetName();}
   else
     {return BDSAcceleratorComponent::Material();} // none
+}
+
+
+void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
+						 const G4double&  crystalAngle,
+const G4String& side) const
+{
+  G4double zExt = extCrystal.MaximumZ();
+  G4double dz   = zExt*std::tan(crystalAngle);
+
+  G4bool overlap = 2*zExt + 2*std::abs(dz) > (chordLength - 2*lengthSafety);
+
+  if (overlap)
+    {
+      G4cout << __METHOD_NAME__ << side << " crystal won't fit in collimator due to rotation." << G4endl;
+      G4cout << "Crystal of length " << 2*zExt/CLHEP::mm << " mm is at angle "
+	     << crystalAngle / CLHEP::mrad << " mrad and container is "
+	     << chordLength/CLHEP::m << " m long." << G4endl;
+      exit(1);
+    }
 }

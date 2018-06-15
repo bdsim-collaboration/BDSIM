@@ -61,6 +61,12 @@ private:
   /// Void function to fulfill BDSAcceleratorComponent requirements.
   virtual void BuildContainerLogicalVolume(){;}
 
+  /// If the crystal will cause an overlap in the vacuum volume due to
+  /// its rotation, print warning and exit.
+  void LongitudinalOverlap(const BDSExtent& extCrystal,
+			   const G4double&  crystalAngle,
+			   const G4String& side) const;
+
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
   const G4double     halfGapLeft;
