@@ -4,6 +4,8 @@ add_subdirectory(dipoles)
 # standard components
 simple_testing(component-csampler            "--file=csampler.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-crystalcol          "--file=crystalcol.gamd"      ${OVERLAP_CHECK})
+simple_testing(component-crystalcol-2crystals "--file=crystalcol-2crystals.gamd" ${OVERLAP_CHECK})
+simple_testing(component-crystalcol-both      "--file=crystalcol-both.gamd"      ${OVERLAP_CHECK})
 simple_testing(component-decapole            "--file=decapole.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-degrader            "--file=degrader.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-drift               "--file=drift.gmad"           ${OVERLAP_CHECK})
