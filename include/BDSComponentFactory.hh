@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
-#include "BDSCrystalPosition.hh"
 #include "BDSFieldType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
