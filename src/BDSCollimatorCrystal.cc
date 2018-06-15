@@ -130,10 +130,10 @@ void BDSCollimatorCrystal::Build()
     }
   if (crystalRight)
     {
-      G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
+      G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
       G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
       G4ThreeVector placementOffset  = objectOffset + colOffsetR;
-      G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
+      G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisRight))
 	{
 	  if (!placementRot)
@@ -153,7 +153,7 @@ void BDSCollimatorCrystal::Build()
       
       auto cR = new G4PVPlacement(placementRot,
 				  placementOffset,
-				  crystalLeft->GetContainerLogicalVolume(),
+				  crystalRight->GetContainerLogicalVolume(),
 				  name + "_crystal_right_pv",
 				  GetAcceleratorVacuumLogicalVolume(),
 				  false,
