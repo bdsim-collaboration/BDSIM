@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSCrystalPosition.hh"
 
 class BDSBeamPipeInfo;
 class BDSCrystal;
@@ -40,7 +39,6 @@ public:
   BDSCollimatorCrystal(G4String           name,
 		       G4double           length,
 		       BDSBeamPipeInfo*   beamPipeInfoIn,
-		       BDSCrystalPosition crystalPositionIn,
 		       BDSCrystalInfo*    crystalInfoLeftIn,
 		       BDSCrystalInfo*    crystalInfoRightIn = nullptr,
 		       const G4double&    halfGapLeftIn     = 0,
@@ -63,7 +61,6 @@ private:
   /// Void function to fulfill BDSAcceleratorComponent requirements.
   virtual void BuildContainerLogicalVolume(){;}
 
-  BDSCrystalPosition crystalPosition;   ///< Enum for left, right or both crystals.
   BDSCrystalInfo*    crystalInfoLeft;   ///< Model associated with left crystal.
   BDSCrystalInfo*    crystalInfoRight;  ///< Model associated with right crystal.
   const G4double     halfGapLeft;

@@ -27,7 +27,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
-#include "BDSCrystalPosition.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -949,25 +948,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSCrystalPosition crysPos;
-  if (!element->crystalBoth.empty() || (!element->crystalLeft.empty() && !element->crystalRight.empty()) )
-    {crysPos = BDSCrystalPosition::both;}
-  else if (element->crystalRight.empty())
-    {crysPos = BDSCrystalPosition::left;}
-  else
-    {crysPos = BDSCrystalPosition::right;}
-
   BDSCrystalInfo* left = nullptr;
   BDSCrystalInfo* right = nullptr;
-  if (crysPos == BDSCrystalPosition::left  || crysPos == BDSCrystalPosition::both)
-    {left  = PrepareCrystalInfo(element, BDSCrystalPosition::left);}
-  if (crysPos == BDSCrystalPosition::right || crysPos == BDSCrystalPosition::both)
-    {right = PrepareCrystalInfo(element, BDSCrystalPosition::right);}
+  if (!element->crystalBoth.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalBoth));
+      right = PrepareCrystalInfo(G4String(element->crystalBoth));
+    }
+  else if (element->crystalBoth.empty() && !element->crystalRight.empty() && !element->crystalLeft.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalLeft));
+      right = PrepareCrystalInfo(G4String(element->crystalRight));
+    }
+  else if (element->crystalRight.empty())
+    {left  = PrepareCrystalInfo(G4String(element->crystalLeft));}
+  else
+    {right = PrepareCrystalInfo(G4String(element->crystalRight));}
   
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,
 				   PrepareBeamPipeInfo(element),
-				   crysPos,
 				   left,
 				   right,
 				   element->xsize*CLHEP::m, // symmetric for now
@@ -1512,21 +1512,8 @@ void BDSComponentFactory::PrepareCrystals()
 
 }
 
-BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(Element const* el,
-							BDSCrystalPosition pos) const
+BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(const G4String& crystalName) const
 {
-  G4String crystalName;
-  switch (pos.underlying())
-    {
-    case BDSCrystalPosition::left:
-      {crystalName = G4String(el->crystalLeft); break;}
-    case BDSCrystalPosition::right:
-      {crystalName = G4String(el->crystalRight); break;}
-    case BDSCrystalPosition::both:
-      {crystalName = G4String(el->crystalBoth); break;}
-    default:
-      {break;}
-    }
   auto result = crystalInfos.find(crystalName);
   if (result == crystalInfos.end())
     {

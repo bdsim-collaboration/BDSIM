@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCrystalFactory.hh"
 #include "BDSCrystalInfo.hh"
-#include "BDSCrystalPosition.hh"
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
 
@@ -36,7 +35,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn, 
 					   G4double           lengthIn,
 					   BDSBeamPipeInfo*   beamPipeInfoIn,
-					   BDSCrystalPosition crystalPositionIn,
 					   BDSCrystalInfo*    crystalInfoLeftIn,
 					   BDSCrystalInfo*    crystalInfoRightIn,
 					   const G4double&    halfGapLeftIn,
@@ -44,7 +42,6 @@ BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn,
 					   const G4double&    angleYAxisLeftIn,
 					   const G4double&    angleYAxisRightIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "drift", beamPipeInfoIn),
-  crystalPosition(crystalPositionIn),
   crystalInfoLeft(crystalInfoLeftIn),
   crystalInfoRight(crystalInfoRightIn),
   halfGapLeft(halfGapLeftIn),
