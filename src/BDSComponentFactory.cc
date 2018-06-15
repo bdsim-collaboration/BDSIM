@@ -950,7 +950,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
     {return nullptr;}
 
   BDSCrystalPosition crysPos;
-  if (!element->crystalBoth.empty())
+  if (!element->crystalBoth.empty() || (!element->crystalLeft.empty() && !element->crystalRight.empty()) )
     {crysPos = BDSCrystalPosition::both;}
   else if (element->crystalRight.empty())
     {crysPos = BDSCrystalPosition::left;}
