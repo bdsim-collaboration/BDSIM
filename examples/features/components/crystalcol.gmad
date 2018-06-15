@@ -1,7 +1,7 @@
 lovelycrystal: crystal, material = "G4_Si",
 	       		data = "data/Si220pl",
 			shape = "box",
-			lengthY = 5*cm,
+			lengthY = 1*cm,
 			lengthX = 0.5*mm,
 			lengthZ = 4*mm,
 			sizeA = 5.43*ang,
@@ -14,7 +14,7 @@ lovelycrystal: crystal, material = "G4_Si",
 			bendingAngleYAxis = 50*urad,
 			bendingAngleZAxis = 0;
 
-col1 : crystalcol, l=4.001*mm, apertureType="rectangular", aper1=0.25*cm, aper2=5*cm,
+col1 : crystalcol, l=4.001*mm, apertureType="rectangular", aper1=0.25*cm, aper2=0.6*cm,
        		   crystalLeft="lovelycrystal",
 		   crystalAngleYAxisLeft=10*urad,
 		   xsize=2*mm;
