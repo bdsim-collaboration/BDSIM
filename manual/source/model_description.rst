@@ -3215,6 +3215,35 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 Available input distributions and their associated parameters are described in the following
 section.
 
+Generate Only the Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+BDSIM can generate only the input distribution and store it to file without creating a model or
+running any physics simulation. This is very fast and can be used to verify the input distribution
+with a large number of particles (10k to 100k for example in under 1 minute).
+
+BDSIM should be executed with the option `--generatePrimariesOnly` as described in
+:ref:`executable-options`.
+
+Beam in Output
+^^^^^^^^^^^^^^
+
+All of the beam parameters are stored in the output as described in :ref:`output-beam-tree`. The
+particle coordinates used in the simualtion are stored directly in the Primary branch of the
+Event Tree as decsribed in :ref:`output-event-tree`.
+
+.. note:: These are the exact coordinates supplied to Geant4 at the beginning of the event.
+	  Conceptually these are 'local' coordinates with respect to the start of the beam
+	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
+	  to that location in the World, therefore the coordinates are the **global** ones used.
+
+.. warning:: For large `S0` in a large model, the particles may be displaced by a large
+	     distance as compared to the size of the beam, e.g. 1km offset for 1um beam.
+	     In this case, the limited preicision of the `float` used to store the coordinates
+	     in the output may not show the beam distribution as expected. Internally, double
+	     precision numbers are used so the beam distribution is accurate. A float typically
+	     has 7 significant figures and a double 15.
+
 .. _beam-distributions:
 
 Beam Distributions
