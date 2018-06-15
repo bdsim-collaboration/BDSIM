@@ -479,41 +479,61 @@ Extra information can be recorded but this typically dominates the output file s
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
-+-----------------+-----------------------+-------------------------------------------------------------------+
-|  **Variable**   | **Type**              |  **Description**                                                  |
-+=================+=======================+===================================================================+
-| n               | int                   | The number of energy deposition hits for this event.              |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| energy          | std::vector<float>    | Vector of energy of each piece of energy deposition.              |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| S               | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition.    |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| weight          | std::vector<float>    | Corresponding weight.                                             |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| partID          | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition. |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| trackID         | std::vector<int>      | (optional) Track ID of particle that caused energy deposition.    |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| parentID        | std::vector<int>      | (optional) Track ID of the parent particle.                       |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| modelID         | std::vector<int>      | (optional) Index in model tree for where deposition occurred.     |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| turn            | std::vector<int>      | (optional) Turn in circular machine on which hit occurred.        |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| x               | std::vector<float>    | (optional) Local X of energy deposition (m).                      |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| y               | std::vector<float>    | (optional) Local Y of energy deposition (m).                      |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| z               | std::vector<float>    | (optional) Local Z of energy deposition (m).                      |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| X               | std::vector<float>    | (optional) Global X of energy deposition (m).                     |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| Y               | std::vector<float>    | (optional) Global Y of energy deposition (m).                     |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| Z               | std::vector<float>    | (optional) Global Z of energy deposition (m).                     |
-+-----------------+-----------------------+-------------------------------------------------------------------+
-| T               | std::vector<float>    | (optional) Global time of flight since begnning of event (ns).    |
-+-----------------+-----------------------+-------------------------------------------------------------------+
++----------------------+-----------------------+-------------------------------------------------------------------+
+|  **Variable**        | **Type**              |  **Description**                                                  |
++======================+=======================+===================================================================+
+| n                    | int                   | The number of energy deposition hits for this event.              |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| energy               | std::vector<float>    | Vector of energy of each piece of energy deposition.              |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| S                    | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition.    |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| weight               | std::vector<float>    | Corresponding weight.                                             |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| partID               | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition. |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| trackID              | std::vector<int>      | (optional) Track ID of particle that caused energy deposition.    |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| parentID             | std::vector<int>      | (optional) Track ID of the parent particle.                       |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| modelID              | std::vector<int>      | (optional) Index in model tree for where deposition occurred.     |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| turn                 | std::vector<int>      | (optional) Turn in circular machine on which hit occurred.        |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| x                    | std::vector<float>    | (optional) Local X of energy deposition (m).                      |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| y                    | std::vector<float>    | (optional) Local Y of energy deposition (m).                      |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| z                    | std::vector<float>    | (optional) Local Z of energy deposition (m).                      |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| X                    | std::vector<float>    | (optional) Global X of energy deposition (m).                     |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| Y                    | std::vector<float>    | (optional) Global Y of energy deposition (m).                     |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| Z                    | std::vector<float>    | (optional) Global Z of energy deposition (m).                     |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| T                    | std::vector<float>    | (optional) Global time of flight since begnning of event (ns).    |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| stepLength           | std::vector<float>    | (optional) Step length of step that the energy deposition was     |
+|                      |                       | produced in (m).                                                  |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| preStepKineticEnergy | std::vector<float>    | (optional) The kinetic energy of the particle (any species)       |
+|                      |                       | at the starting point of the step that the energy deposition      |
+|                      |                       | was produced in.                                                  |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storeLinks           | bool                  | Whether extra information was stored (`partID`, `trackID`,        |
+|                      |                       | `parendID`, `modelID`, `turn`).                                   |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storeLocal           | bool                  | Whether `x`, `y`, `z` were stored.                                |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storeGlobal          | bool                  | Whether `X`, `Y`, `Z` were stored.                                |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storeTime            | bool                  | Whether `T` was stored.                                           |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storeStepLength      | bool                  | Whether `stepLength` was stored.                                  |
++----------------------+-----------------------+-------------------------------------------------------------------+
+| storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored.                        |
++----------------------+-----------------------+-------------------------------------------------------------------+
 
 BDSOutputROOTEventTrajectory
 ****************************

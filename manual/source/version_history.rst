@@ -19,7 +19,8 @@ Output Changes
 
 * New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
-* New stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional preStepKineticEnergy in Eloss part of Event Tree with option :code:`storeElossPreStepKineticEnergy` to use this data.
 * Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
 * Tilt, offsetX, offsetY and material are added to the Model Tree output.
 * Model class (BDSOutputROOTEventModel) number is incremented in output.
