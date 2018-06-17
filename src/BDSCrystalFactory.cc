@@ -199,6 +199,22 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
   return BuildCrystalObject(ext); // no placement offset - leave as default
 }
 
+void BDSCrystalFactory::CalculateSolidAngles(const G4double& bendingAngle,
+					     G4double& startAngle,
+					     G4double& sweepAngle) const
+{
+  if (bendingAngle >= 0)
+    {
+      startAngle = CLHEP::twopi - 0.5 * bendingAngle;
+      sweepAngle = bendingAngle;
+    }
+  else
+    {
+      startAngle = CLHEP::pi - 0.5*std::abs(bendingAngle);
+      sweepAngle = std::abs(bendingAngle);
+    }
+}
+
 BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameIn,
 						     const BDSCrystalInfo* recipe)
 {
@@ -206,7 +222,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 
   // if no bending angle, create a box as that's all we can create
   if (!BDS::IsFinite(ba))
-  {return CreateCrystalBox(nameIn, recipe);}
+    {return CreateCrystalBox(nameIn, recipe);}
 
   G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
   G4double thickness = recipe->lengthX;
@@ -214,16 +230,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   // calculate start angle and sweep angle
   G4double startAngle;
   G4double sweepAngle;
-  if (ba >= 0)
-    {
-      startAngle = CLHEP::twopi - 0.5 * ba;
-      sweepAngle = ba;
-    }
-  else
-    {
-      startAngle = CLHEP::pi - 0.5*std::abs(ba);
-      sweepAngle = std::abs(ba);
-    }
+  CalculateSolidAngles(ba, startAngle, sweepAngle);
   
   crystalSolid = new G4Tubs(nameIn + "_solid",
 			    xBR - 0.5*thickness,
