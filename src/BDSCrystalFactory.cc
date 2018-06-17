@@ -203,6 +203,11 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 						     const BDSCrystalInfo* recipe)
 {
   G4double ba  = recipe->bendingAngleYAxis; // bending angle
+
+  // if no bending angle, create a box as that's all we can create
+  if (!BDS::IsFinite(ba))
+  {return CreateCrystalBox(nameIn, recipe);}
+
   G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
   G4double thickness = recipe->lengthX;
   
