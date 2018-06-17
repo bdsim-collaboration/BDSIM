@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
@@ -54,9 +55,10 @@ BDSCrystalFactory::BDSCrystalFactory():
 
 void BDSCrystalFactory::CleanUp()
 {
-  crystalSolid    = nullptr;
-  crystalLV       = nullptr;
-  placementOffset = G4ThreeVector();
+  crystalSolid      = nullptr;
+  crystalLV         = nullptr;
+  placementOffset   = G4ThreeVector();
+  placementRotation = nullptr;
   
   allLogicalVolumes.clear();
   allPhysicalVolumes.clear();
@@ -163,7 +165,7 @@ BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSExtent& extent)
 {  
   // build the BDSCrystal instance and return it
   BDSCrystal* aCrystal = new BDSCrystal(crystalSolid, crystalLV,
-					extent, placementOffset);
+					extent, placementOffset, placementRotation);
 
   // register objects
   aCrystal->RegisterSensitiveVolume(crystalLV);

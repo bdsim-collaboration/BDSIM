@@ -86,9 +86,10 @@ private:
   const G4double   maxStepFactor;      ///< Fraction of length for maximum step in user limits.
   const G4double   nSegmentsPerCircle; ///< For visualisation improvement.
   
-  G4VSolid*        crystalSolid;
-  G4LogicalVolume* crystalLV;
-  G4ThreeVector    placementOffset;
+  G4VSolid*         crystalSolid;
+  G4LogicalVolume*  crystalLV;
+  G4ThreeVector     placementOffset;
+  G4RotationMatrix* placementRotation;
 
   /// @{ For non standard parts for easy registration - ie not the specific ones above.
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
