@@ -234,31 +234,25 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 
   CommonConstruction(nameIn, recipe);
 
-  G4double xLow;
-  G4double xHi;
-  if (!BDS::IsFinite(ba))
-    {
-      xLow = -(thickness*0.5);
-      xHi  = -xLow;
-    }
-  else if (ba <= 0)
-    {
-      xLow = recipe->lengthX * 0.5;
-      xHi  = recipe->lengthX * 0.5;
-    }
-  else
-    {
-      xLow = recipe->lengthX * 0.5;
-      xHi  = recipe->lengthX * 0.5;
-    }
-
+  // placement transform
   placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
   placementRotation = new G4RotationMatrix();
   placementRotation->rotateX(-CLHEP::halfpi);
+
+  // calculate horizontal extents - do in +ve version and flip for -ve
+  G4double xHi  = xBR - (thickness*0.5)*std::cos(std::abs(ba)*0.5);
+  G4double xLow = -(thickness * 0.5);
+  if (ba > 0)
+    {
+      std::swap(xHi, xLow);
+      xHi  *= -1;
+      xLow *= -1;
+    }
+  G4double dz = (xBR + thickness*0.5) * std::cos(std::abs(ba)*0.5);
   
   BDSExtent ext = BDSExtent(xLow, xHi,
 			    recipe->lengthY * 0.5, recipe->lengthY * 0.5,
-			    recipe->lengthZ * 0.5, recipe->lengthZ * 0.5);
+			    -dz, dz);
   
   return BuildCrystalObject(ext);
 }
