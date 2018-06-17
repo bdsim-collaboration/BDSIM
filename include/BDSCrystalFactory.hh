@@ -68,6 +68,20 @@ private:
   /// Create box geometry for a crystal.
   BDSCrystal* CreateCrystalBox(const G4String&       nameIn,
 			       const BDSCrystalInfo* recipe);
+
+  /// Utility function to calculate bending radius.
+  inline G4double BendingRadius(const G4double& length,
+				const G4double& angle) const
+  {return length / angle;}
+
+  /// Return bending radius in horizontal.
+  inline G4double BendingRadiusHorizontal(const BDSCrystalInfo* recipe) const
+  {return BendingRadius(recipe->lengthZ, recipe->bendingAngleYAxis);}
+
+  /// Return bending radius in vertical.
+  inline G4double BendingRadiusVertical(const BDSCrystalInfo* recipe) const 
+  {return BendingRadius(recipe->lengthY, recipe->bendingAngleZAxis);}
+
   
   const G4double   maxStepFactor;      ///< Fraction of length for maximum step in user limits.
   const G4double   nSegmentsPerCircle; ///< For visualisation improvement.
