@@ -105,7 +105,8 @@ void BDSCollimatorCrystal::Build()
 	      placementRot = new G4RotationMatrix();
 	      RegisterRotationMatrix(placementRot);
 	    }
-	  placementRot->rotate(angleYAxisLeft, G4ThreeVector(0,1,0)); // rotate about local unitY
+	  G4ThreeVector localUnitY = G4ThreeVector(0,1,0).transform(*placementRot);
+	  placementRot->rotate(angleYAxisLeft, localUnitY); // rotate about local unitY
 	}
 
       // check if it'll fit..
@@ -139,7 +140,8 @@ void BDSCollimatorCrystal::Build()
 	      placementRot = new G4RotationMatrix();
 	      RegisterRotationMatrix(placementRot);
 	    }
-	  placementRot->rotate(angleYAxisRight, G4ThreeVector(0,1,0)); // rotate about local unitY
+	  G4ThreeVector localUnitY = G4ThreeVector(0,1,0).transform(*placementRot);
+	  placementRot->rotate(angleYAxisRight, localUnitY); // rotate about local unitY
 	}
       
       // check if it'll fit..
