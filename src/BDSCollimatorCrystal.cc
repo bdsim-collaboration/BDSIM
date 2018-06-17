@@ -84,12 +84,12 @@ void BDSCollimatorCrystal::Build()
   BDSCrystalFactory* fac = new BDSCrystalFactory();
   if (crystalInfoLeft)
     {
-      crystalLeft = fac->CreateCrystal(name + "_left_", crystalInfoLeft);
+      crystalLeft = fac->CreateCrystal(name + "_left", crystalInfoLeft);
       RegisterDaughter(crystalLeft);
     }
   if (crystalInfoRight)
     {
-      crystalRight = fac->CreateCrystal(name + "_right_", crystalInfoRight);
+      crystalRight = fac->CreateCrystal(name + "_right", crystalInfoRight);
       RegisterDaughter(crystalRight);
     }
   delete fac;
