@@ -164,6 +164,8 @@ void BDSCollimatorCrystal::Build()
 				  true); // always check
       RegisterPhysicalVolume(cR);
     }
+  if (!crystalLeft && !crystalRight)
+    {G4cout << __METHOD_NAME__ << "Error in crystal construction" << G4endl; exit(1);}
 }
 
 G4String BDSCollimatorCrystal::Material() const
