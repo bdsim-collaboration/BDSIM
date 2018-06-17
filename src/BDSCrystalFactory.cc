@@ -211,12 +211,26 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
   G4double thickness = recipe->lengthX;
   
+  // calculate start angle and sweep angle
+  G4double startAngle;
+  G4double sweepAngle;
+  if (ba >= 0)
+    {
+      startAngle = CLHEP::twopi - 0.5 * ba;
+      sweepAngle = ba;
+    }
+  else
+    {
+      startAngle = CLHEP::pi - 0.5*std::abs(ba);
+      sweepAngle = std::abs(ba);
+    }
+  
   crystalSolid = new G4Tubs(nameIn + "_solid",
 			    xBR - 0.5*thickness,
 			    xBR + 0.5*thickness,
 			    (recipe->lengthZ)*0.5,
-			    CLHEP::twopi - 0.5*ba,
-			    ba);
+			    startAngle,
+			    sweepAngle);
 
   CommonConstruction(nameIn, recipe);
 
