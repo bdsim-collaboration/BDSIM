@@ -21,9 +21,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 #include "G4VSolid.hh"
 
-BDSCrystal::BDSCrystal(G4VSolid*        containerSolidIn,
-		       G4LogicalVolume* containerLVIn,
-		       BDSExtent        extentIn,
-		       G4ThreeVector    placementOffset):
-  BDSGeometryComponent(containerSolidIn, containerLVIn, extentIn, BDSExtent(), placementOffset)
+BDSCrystal::BDSCrystal(G4VSolid*         containerSolidIn,
+		       G4LogicalVolume*  containerLVIn,
+		       BDSExtent         extentIn,
+		       G4ThreeVector     placementOffset,
+		       G4RotationMatrix* placementRotation):
+  BDSGeometryComponent(containerSolidIn, containerLVIn, extentIn, BDSExtent(), placementOffset, placementRotation)
 {;}

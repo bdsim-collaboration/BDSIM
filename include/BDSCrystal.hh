@@ -38,10 +38,11 @@ class G4VSolid;
 class BDSCrystal: public BDSGeometryComponent
 {
 public:
-  BDSCrystal(G4VSolid*             containerSolidIn,
-	     G4LogicalVolume*      containerLVIn,
-	     BDSExtent             extent,
-	     G4ThreeVector         placementOffset = G4ThreeVector(0,0,0));
+  BDSCrystal(G4VSolid*         containerSolidIn,
+	     G4LogicalVolume*  containerLVIn,
+	     BDSExtent         extent,
+	     G4ThreeVector     placementOffset   = G4ThreeVector(0,0,0),
+	     G4RotationMatrix* placementRotation = nullptr);
   virtual ~BDSCrystal(){;}
 };
 
