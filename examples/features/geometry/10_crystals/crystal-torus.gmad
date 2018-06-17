@@ -1,5 +1,5 @@
-theangle = 0.1*rad;
-vangle = 0.5*rad;
+theangle = 0.001*rad;
+vangle = 0.001*rad;
 
 lovelycrystal: crystal, material = "G4_Si",
 	       		data = "data/Si220pl",
@@ -34,7 +34,7 @@ lovelycrystal2: crystal, material = "G4_Si",
 			bendingAngleYAxis = theangle,
 			bendingAngleZAxis = vangle;
 
-col1 : crystalcol, l=10*cm, apertureType="rectangular", aper1=1*cm, aper2=0.6*cm,
+col1 : crystalcol, l=3*cm, apertureType="rectangular", aper1=1*cm, aper2=0.6*cm,
        		   crystalLeft="lovelycrystal",
 		   crystalAngleYAxisLeft=-0.5*theangle,
 		   crystalRight="lovelycrystal2",
@@ -45,8 +45,11 @@ lat: line = (col1);
 use, lat;
 sample, all;
 
-beam, particle="e-",
-      energy=10*MeV,
+beam, particle="proton",
+      energy=100*GeV,
       X0=2*mm;
 
 option, physicsList="channelling";
+!option, physicsList="em";
+
+option, checkOverlaps=1;
