@@ -68,6 +68,14 @@ private:
   BDSCrystal* CreateCrystalBox(const G4String&       nameIn,
 			       const BDSCrystalInfo* recipe);
 
+  /// Create cylinder geometry for a crystal.
+  BDSCrystal* CreateCrystalCylinder(const G4String&       nameIn,
+				    const BDSCrystalInfo* recipe);
+
+  /// Create torus geometry for a cyrstal.
+  BDSCrystal* CreateCrystalTorus(const G4String&       nameIn,
+				 const BDSCrystalInfo* recipe);
+
   /// Utility function to calculate bending radius.
   inline G4double BendingRadius(const G4double& length,
 				const G4double& angle) const

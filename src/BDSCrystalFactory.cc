@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Version.hh"
@@ -79,6 +80,10 @@ BDSCrystal* BDSCrystalFactory::CreateCrystal(const G4String& name,
     {
     case BDSCrystalType::box:
       {return CreateCrystalBox(name, recipe); break;}
+    case BDSCrystalType::cylinder:
+      {return CreateCrystalCylinder(name, recipe); break;}
+    case BDSCrystalType::torus:
+      {return CreateCrystalTorus(name, recipe); break;}
     default:
       {return nullptr; break;}
     }
@@ -192,4 +197,57 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalBox(const G4String&       nameIn,
 			    recipe->lengthZ * 0.5);
   
   return BuildCrystalObject(ext); // no placement offset - leave as default
+}
+
+BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameIn,
+						     const BDSCrystalInfo* recipe)
+{
+  G4double ba  = recipe->bendingAngleYAxis; // bending angle
+  G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
+  G4double thickness = recipe->lengthX;
+  
+  crystalSolid = new G4Tubs(nameIn + "_solid",
+			    xBR - 0.5*thickness,
+			    xBR + 0.5*thickness,
+			    (recipe->lengthZ)*0.5,
+			    CLHEP::twopi - 0.5*ba,
+			    ba);
+
+  CommonConstruction(nameIn, recipe);
+
+  G4double xLow;
+  G4double xHi;
+  if (!BDS::IsFinite(ba))
+    {
+      xLow = -(thickness*0.5);
+      xHi  = -xLow;
+    }
+  else if (ba <= 0)
+    {
+      xLow = recipe->lengthX * 0.5;
+      xHi  = recipe->lengthX * 0.5;
+    }
+  else
+    {
+      xLow = recipe->lengthX * 0.5;
+      xHi  = recipe->lengthX * 0.5;
+    }
+
+  placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
+  placementRotation = new G4RotationMatrix();
+  placementRotation->rotateX(-CLHEP::halfpi);
+  
+  BDSExtent ext = BDSExtent(xLow, xHi,
+			    recipe->lengthY * 0.5, recipe->lengthY * 0.5,
+			    recipe->lengthZ * 0.5, recipe->lengthZ * 0.5);
+  
+  return BuildCrystalObject(ext);
+}
+
+BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
+						  const BDSCrystalInfo* recipe)
+{
+  G4double xBR = BendingRadiusHorizontal(recipe);
+  G4double zBR = BendingRadiusVertical(recipe);
+   return nullptr;
 }
