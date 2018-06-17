@@ -37,6 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <cmath>
+
 // only use the crystal extensions if using 10.4.p00 upwards
 #if G4VERSION_NUMBER > 1039
 #include "G4ExtendedMaterial.hh"

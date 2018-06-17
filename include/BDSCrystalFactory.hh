@@ -20,11 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSCRYSTALFACTORY_H
 
 #include "BDSCrystal.hh"
+#include "BDSCrystalInfo.hh"
 
 #include "globals.hh"         // geant4 globals / types
 #include "G4RotationMatrix.hh"
-
-class BDSCrystalInfo;
 
 class G4LogicalVolume;
 class G4Material;

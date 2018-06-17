@@ -32,6 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
+#include <cmath>
+
 BDSCollimatorCrystal::BDSCollimatorCrystal(G4String           nameIn, 
 					   G4double           lengthIn,
 					   BDSBeamPipeInfo*   beamPipeInfoIn,
@@ -173,9 +175,8 @@ G4String BDSCollimatorCrystal::Material() const
     {return BDSAcceleratorComponent::Material();} // none
 }
 
-
 void BDSCollimatorCrystal::LongitudinalOverlap(const BDSExtent& extCrystal,
-						 const G4double&  crystalAngle,
+					       const G4double&  crystalAngle,
 const G4String& side) const
 {
   G4double zExt = extCrystal.MaximumZ();
