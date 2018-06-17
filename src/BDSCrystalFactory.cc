@@ -215,6 +215,28 @@ void BDSCrystalFactory::CalculateSolidAngles(const G4double& bendingAngle,
     }
 }
 
+BDSExtent BDSCrystalFactory::CalculateExtents(const G4double& xBendingAngle,
+					      const G4double& xBendingRadius,
+					      const G4double& xThickness,
+					      const BDSCrystalInfo* recipe) const
+{
+  // calculate horizontal extents - do in +ve version and flip for -ve
+  G4double xHi  = xBendingRadius - (xThickness*0.5)*std::cos(std::abs(xBendingAngle)*0.5);
+  G4double xLow = -(xThickness * 0.5);
+  if (xBendingRadius > 0)
+    {
+      std::swap(xHi, xLow);
+      xHi  *= -1;
+      xLow *= -1;
+    }
+  G4double dz = (xBendingRadius + xThickness*0.5) * std::cos(std::abs(xBendingAngle)*0.5);
+  
+  BDSExtent ext = BDSExtent(xLow, xHi,
+			    recipe->lengthY * 0.5, recipe->lengthY * 0.5,
+			    -dz, dz);
+  return ext;
+}
+
 BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameIn,
 						     const BDSCrystalInfo* recipe)
 {
@@ -246,20 +268,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
   placementRotation = new G4RotationMatrix();
   placementRotation->rotateX(-CLHEP::halfpi);
 
-  // calculate horizontal extents - do in +ve version and flip for -ve
-  G4double xHi  = xBR - (thickness*0.5)*std::cos(std::abs(ba)*0.5);
-  G4double xLow = -(thickness * 0.5);
-  if (ba > 0)
-    {
-      std::swap(xHi, xLow);
-      xHi  *= -1;
-      xLow *= -1;
-    }
-  G4double dz = (xBR + thickness*0.5) * std::cos(std::abs(ba)*0.5);
-  
-  BDSExtent ext = BDSExtent(xLow, xHi,
-			    recipe->lengthY * 0.5, recipe->lengthY * 0.5,
-			    -dz, dz);
+  BDSExtent ext = CalculateExtents(ba, xBR, thickness, recipe);
   
   return BuildCrystalObject(ext);
 }

@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"         // geant4 globals / types
 #include "G4RotationMatrix.hh"
 
+class BDSExtent;
 class G4LogicalVolume;
 class G4Material;
 class G4PVPlacement;
@@ -75,6 +76,18 @@ private:
   /// Create torus geometry for a cyrstal.
   BDSCrystal* CreateCrystalTorus(const G4String&       nameIn,
 				 const BDSCrystalInfo* recipe);
+
+  /// Calculate the start angle and sweep angle given a bending angle.
+  /// Different formula if bending angle is -ve or +ve.
+  void CalculateSolidAngles(const G4double& bendingAngle,
+			    G4double&       startAngle,
+			    G4double&       sweepAngle) const;
+
+  /// Produce an extent for a curved crystal.
+  BDSExtent CalculateExtents(const G4double& bendingAngle,
+			     const G4double& xBendingRadius,
+			     const G4double& xThickness,
+			     const BDSCrystalInfo* recipe) const;
 
   /// Utility function to calculate bending radius.
   inline G4double BendingRadius(const G4double& length,
