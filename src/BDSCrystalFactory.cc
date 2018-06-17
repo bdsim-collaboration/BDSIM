@@ -27,13 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Box.hh"
-#include "G4IntersectionSolid.hh"
+#include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Torus.hh"
 #include "G4Tubs.hh"
+#include "G4TwoVector.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Version.hh"
@@ -41,6 +42,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <cmath>
+#include <vector>
 
 // only use the crystal extensions if using 10.4.p00 upwards
 #if G4VERSION_NUMBER > 1039
@@ -281,6 +283,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
 {
   G4double xBA = recipe->bendingAngleYAxis; // bending angle horizontal
   G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
+  G4double zBA = recipe->bendingAngleZAxis;
   G4double zBR = std::abs(BendingRadiusVertical(recipe));
 
   // if no bending angle, create a box as that's all we can create
@@ -293,32 +296,49 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   G4double startAngle;
   G4double sweepAngle;
   CalculateSolidAngles(xBA, startAngle, sweepAngle);
-  
-  G4VSolid* torus = new G4Torus(nameIn + "_torus_solid",
-				zBR - 0.5*thickness,
-				zBR + 0.5*thickness,
-				xBR,
-				startAngle,
-				sweepAngle);
 
-  /*G4VSolid* box = new G4Box(nameIn + "_box_solid",
-			    3*recipe->lengthX,
-			    0.5*recipe->lengthY,
-			    3*recipe->lengthZ);
+  G4int nPoints = 30;
+  G4double angFraction = sweepAngle / (G4double)nPoints;
+  std::vector<G4TwoVector> points;
 
-  allSolids.push_back(torus);
-  allSolids.push_back(box);
-  */
+  G4double innerRadius = xBR - thickness*0.5;
+  for (G4int i = 0; i < nPoints; i++)
+    {
+      G4double ang = startAngle + (G4double)i * angFraction;
+      G4double x = innerRadius * std::cos(ang);
+      G4double y = innerRadius * std::sin(ang);
+      points.emplace_back(G4TwoVector(x,y));
+    }
+  G4double outerRadius = xBR + thickness*0.5;
+  for (G4int i = nPoints; i > 0; i--)
+    {
+      G4double ang = startAngle + (G4double)i * angFraction;
+      G4double x = outerRadius * std::cos(ang);
+      G4double y = outerRadius * std::sin(ang);
+      points.emplace_back(G4TwoVector(x,y));
+    }
 
-  placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
-  /*
-  crystalSolid = new G4IntersectionSolid(nameIn + "_solid",
-					 box,
-					 torus,
-					 nullptr,
-					 placementOffset);
-  */
-  crystalSolid = torus;
+  G4double zStartAngle = CLHEP::twopi - 0.5 * zBA;
+  G4double zSweepAngle = zBA;
+
+  G4double zAngFraction = zSweepAngle / (G4double)nPoints;
+  std::vector<G4ExtrudedSolid::ZSection> zSections;
+  for (G4int i = 0; i < nPoints; i++)
+    {
+      G4double zAng = zStartAngle + (G4double)i * zAngFraction;
+      G4double z = zBR * std::sin(zAng);
+      G4double x = zBR - (zBR * std::cos(zAng));
+      if (zBA < 0)
+	{
+	  z *= -1;
+	  x *= -1;
+	}
+      zSections.emplace_back(G4ExtrudedSolid::ZSection(z, G4TwoVector(x, 0), 1));
+    }
+
+  crystalSolid = new G4ExtrudedSolid(nameIn + "_solid",
+				     points,
+				     zSections);
 
   CommonConstruction(nameIn, recipe);
 
@@ -327,7 +347,8 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   placementRotation = new G4RotationMatrix();
   placementRotation->rotateX(-CLHEP::halfpi);
   
-  BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
+  //BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
+  BDSExtent ext = BDSExtent(2*recipe->lengthX, recipe->lengthY, recipe->lengthZ);
   
   return BuildCrystalObject(ext);
 }
