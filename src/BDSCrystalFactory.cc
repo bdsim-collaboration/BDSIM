@@ -27,10 +27,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "G4Box.hh"
+#include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Torus.hh"
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
@@ -175,6 +177,7 @@ BDSCrystal* BDSCrystalFactory::BuildCrystalObject(const BDSExtent& extent)
 					extent, placementOffset, placementRotation);
 
   // register objects
+  aCrystal->RegisterSolid(allSolids);
   aCrystal->RegisterSensitiveVolume(crystalLV);
   aCrystal->RegisterUserLimits(allUserLimits);
   aCrystal->RegisterVisAttributes(allVisAttributes);
@@ -276,7 +279,55 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalCylinder(const G4String&       nameI
 BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
 						  const BDSCrystalInfo* recipe)
 {
-  G4double xBR = BendingRadiusHorizontal(recipe);
-  G4double zBR = BendingRadiusVertical(recipe);
-   return nullptr;
+  G4double xBA = recipe->bendingAngleYAxis; // bending angle horizontal
+  G4double xBR = std::abs(BendingRadiusHorizontal(recipe));
+  G4double zBR = std::abs(BendingRadiusVertical(recipe));
+
+  // if no bending angle, create a box as that's all we can create
+  if (!BDS::IsFinite(xBA))
+    {return CreateCrystalBox(nameIn, recipe);}
+  
+  G4double thickness = recipe->lengthX;
+  
+  // calculate start angle and sweep angle
+  G4double startAngle;
+  G4double sweepAngle;
+  CalculateSolidAngles(xBA, startAngle, sweepAngle);
+  
+  G4VSolid* torus = new G4Torus(nameIn + "_torus_solid",
+				zBR - 0.5*thickness,
+				zBR + 0.5*thickness,
+				xBR,
+				startAngle,
+				sweepAngle);
+
+  /*G4VSolid* box = new G4Box(nameIn + "_box_solid",
+			    3*recipe->lengthX,
+			    0.5*recipe->lengthY,
+			    3*recipe->lengthZ);
+
+  allSolids.push_back(torus);
+  allSolids.push_back(box);
+  */
+
+  placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
+  /*
+  crystalSolid = new G4IntersectionSolid(nameIn + "_solid",
+					 box,
+					 torus,
+					 nullptr,
+					 placementOffset);
+  */
+  crystalSolid = torus;
+
+  CommonConstruction(nameIn, recipe);
+
+  // placement transform
+  placementOffset = G4ThreeVector(-BendingRadiusHorizontal(recipe), 0, 0);
+  placementRotation = new G4RotationMatrix();
+  placementRotation->rotateX(-CLHEP::halfpi);
+  
+  BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
+  
+  return BuildCrystalObject(ext);
 }
