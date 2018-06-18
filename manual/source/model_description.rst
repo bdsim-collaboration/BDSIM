@@ -2946,7 +2946,10 @@ The particle physics simulation in BDSIM can produce an impressive quantity of o
 information. The data describing a full record of every particle and their interaction
 would prove to difficult to manage or analyse sensibly. BDSIM records the most useful
 information, but provides options to record even more data. This is controlled with the
-following options. These options may increase the output file size by a large amount.
+following options.
+
+.. note:: These options may increase the output file size by a large amount. Use only the
+	  ones you need.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2971,6 +2974,9 @@ following options. These options may increase the output file size by a large am
 |                                   | energy deposition and trajectory point.                            |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossStepLength              | Store the step length for each energy deposition hit or not.       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossPreStepKineticEnergy    | Store the kinetic energy of the particle causing energy deposition |
+|                                   | as taken from the beginning of the step before it made it.         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output (Default On). |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -3207,6 +3213,35 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
+
+Generate Only the Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+BDSIM can generate only the input distribution and store it to file without creating a model or
+running any physics simulation. This is very fast and can be used to verify the input distribution
+with a large number of particles (10k to 100k for example in under 1 minute).
+
+BDSIM should be executed with the option `--generatePrimariesOnly` as described in
+:ref:`executable-options`.
+
+Beam in Output
+^^^^^^^^^^^^^^
+
+All of the beam parameters are stored in the output as described in :ref:`output-beam-tree`. The
+particle coordinates used in the simualtion are stored directly in the Primary branch of the
+Event Tree as decsribed in :ref:`output-event-tree`.
+
+.. note:: These are the exact coordinates supplied to Geant4 at the beginning of the event.
+	  Conceptually these are 'local' coordinates with respect to the start of the beam
+	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
+	  to that location in the World, therefore the coordinates are the **global** ones used.
+
+.. warning:: For large `S0` in a large model, the particles may be displaced by a large
+	     distance as compared to the size of the beam, e.g. 1km offset for 1um beam.
+	     In this case, the limited preicision of the `float` used to store the coordinates
+	     in the output may not show the beam distribution as expected. Internally, double
+	     precision numbers are used so the beam distribution is accurate. A float typically
+	     has 7 significant figures and a double 15.
 
 .. _beam-distributions:
 
@@ -3541,7 +3576,7 @@ depending on the single particle emittance, which is calculated as
 .. math::
    \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
-if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \epsilon_{\rm core}`
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} < \epsilon_{\rm core}`
 the particle is rejected. `haloPSWeightFunction` is a string that selects the function
 :math:`f_{\rm haloWeight}(\epsilon_{\rm SP})` which is 1 at the ellipse defined by :math:`\epsilon_{\rm core}`. The
 weighting functions are either `flat`, one over emittance `oneoverr` or exponential `exp` so

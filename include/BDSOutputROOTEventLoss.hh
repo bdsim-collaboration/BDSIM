@@ -64,13 +64,15 @@ public:
   std::vector<float>        T; ///< Global time (time since beginning of event).
 
   std::vector<float>        stepLength; ///< Step length taken for hit.
+  std::vector<float>        preStepKineticEnergy; ///< Kinetic energy in GeV at pre step point.
 
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(const bool& storeLinksIn,
 			 const bool& storeLocalIn,
 			 const bool& storeGobalIn,
                          const bool& storeTimeIn,
-			 const bool& storeStepLengthIn);
+			 const bool& storeStepLengthIn,
+			 const bool& storePreStepKineticEnergyIn);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(const BDSTrajectoryPoint* hit);
@@ -83,6 +85,7 @@ public:
   bool storeGlobal     = false; ///< Whether to store global coordinates
   bool storeTime       = false; ///< Whether to store global time
   bool storeStepLength = false; ///< Whether to store step length.
+  bool storePreStepKineticEnergy = false; ///< Whether to store pre step kinetic energy.
 
   ClassDef(BDSOutputROOTEventLoss,3);
 };

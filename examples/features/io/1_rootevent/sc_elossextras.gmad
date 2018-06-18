@@ -41,4 +41,5 @@ option, storeElossLinks=1,
 	storeElossLocal=1,
 	storeElossGlobal=1,
 	storeElossTime=1,
-	storeElossStepLength=1;
+	storeElossStepLength=1,
+	storeElossPreStepKineticEnergy=1;
