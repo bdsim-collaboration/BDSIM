@@ -1,7 +1,7 @@
-PYBDSIM = ./pybdsim/
 PYMADX = ./pymadx/
 PYMAD8 = ./pymad8/
 PYTRANSPORT = ./pytransport/
+PYBDSIM = ./pybdsim/
 
 all:
 	$(MAKE) develop -C PYBDSIM

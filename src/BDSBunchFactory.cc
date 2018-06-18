@@ -68,22 +68,23 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
     {
     case BDSBunchType::reference:
       {bdsBunch = new BDSBunch(); break;}
-    case BDSBunchType::gaussian:
+    case BDSBunchType::gaussmatrix:
+    case BDSBunchType::gauss:
       {bdsBunch = new BDSBunchSigmaMatrix(); break;}
-    case BDSBunchType::square:
-      {bdsBunch = new BDSBunchSquare(); break;}
+    case BDSBunchType::gausstwiss:
+      {bdsBunch = new BDSBunchTwiss(); break;}
     case BDSBunchType::circle:
       {bdsBunch = new BDSBunchCircle(); break;}
+    case BDSBunchType::square:
+      {bdsBunch = new BDSBunchSquare(); break;}
     case BDSBunchType::ring:
       {bdsBunch = new BDSBunchRing(); break;}
     case BDSBunchType::eshell:
       {bdsBunch = new BDSBunchEShell(); break;}
-    case BDSBunchType::sixtrack:
-      {bdsBunch = new BDSBunchSixTrack(); break;}
-    case BDSBunchType::twiss:
-      {bdsBunch = new BDSBunchTwiss(); break;}
     case BDSBunchType::halo:
       {bdsBunch = new BDSBunchHalo(); break;}
+    case BDSBunchType::composite:
+      {bdsBunch = new BDSBunchComposite(); break;}
     case BDSBunchType::userfile:
       {
 	G4String distrFile = G4String(beam.distrFile);
@@ -101,10 +102,10 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
 	  {bdsBunch = new BDSBunchUserFile<std::ifstream>();}
 	break;
       }
-    case BDSBunchType::composite:
-      {bdsBunch = new BDSBunchComposite(); break;}
     case BDSBunchType::ptc:
       {bdsBunch = new BDSBunchPtc(); break;}
+    case BDSBunchType::sixtrack:
+      {bdsBunch = new BDSBunchSixTrack(); break;}
     default:
       {
 	G4cerr << "distrType \"" << distrType << "\" not found" << G4endl;
@@ -113,7 +114,7 @@ BDSBunch* BDSBunchFactory::CreateBunch(const BDSParticleDefinition* beamParticle
       }
     }
 
-  bdsBunch->SetOptions(beamParticle, beam, beamlineTransform);
+  bdsBunch->SetOptions(beamParticle, beam, distrType, beamlineTransform);
   bdsBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
   bdsBunch->CheckParameters();
   

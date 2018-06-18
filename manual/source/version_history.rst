@@ -18,7 +18,8 @@ Output Changes
 
 * New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
-* New stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional preStepKineticEnergy in Eloss part of Event Tree with option :code:`storeElossPreStepKineticEnergy` to use this data.
 * Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
 * Tilt, offsetX, offsetY and material are added to the Model Tree output.
 * Model class (BDSOutputROOTEventModel) number is incremented in output.
@@ -32,6 +33,8 @@ Bug Fixes
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
 * Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
+* Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
+* Fix Gauss beams used in composite distribution.
 
 
 V1.1 - 2018 / 05 / 23

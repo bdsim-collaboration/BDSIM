@@ -28,12 +28,6 @@ class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-// namespace BDS
-// {
-//   BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
-//   BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
-// }
-
 /**
  * @brief Information recorded for a single piece of energy deposition.
  *
@@ -45,28 +39,29 @@ public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
   /// setter methods is that all information should be provided as instantiation time for
   /// an instance of this class.
-  BDSEnergyCounterHit(G4int    nCopyIn           = 0,    // copy number of physical volume
-		      G4double energyIn          = 0,    // energy in this 'hit'
-		      G4double XIn               = 0,    // global x
-		      G4double YIn               = 0,    // global y
-		      G4double ZIn               = 0,    // global x
-		      G4double SBeforeIn         = 0,    // s of pre step coordinate
-		      G4double SAfterIn          = 0,    // s of post step coordinate
-		      G4double SHitIn            = 0,    // assigned s of loss
-		      G4double xIn               = 0,    // local x
-		      G4double yIn               = 0,    // local y
-		      G4double zIn               = 0,    // local z
-		      G4double globalTimeIn      = 0,    // global time
-		      G4String nameIn            = "",   // volume name
-		      G4int    partIDIn          = 0,    // PDG id - particle type
-		      G4int    trackID           = -1,   // Track ID
-		      G4int    parentID          = -1,   // Parent ID
-		      G4double weightIn          = 1,    // weight
-		      G4int    turnsTakenIn      = 1,    // turns taken if circular
-		      G4int    eventNoIn         = 0,    // event number
-		      G4double stepLengthIn      = 0,
-		      G4int    beamlineIndexIn   = -1,
-		      G4int    geomFlag          = -1);
+  BDSEnergyCounterHit(const G4int&    nCopyIn           = 0,    // copy number of physical volume
+		      const G4double& energyIn          = 0,    // energy in this 'hit'
+		      const G4double& preStepKineticEnergy = 0, // pre step point kinetic energy
+		      const G4double& XIn               = 0,    // global x
+		      const G4double& YIn               = 0,    // global y
+		      const G4double& ZIn               = 0,    // global x
+		      const G4double& SBeforeIn         = 0,    // s of pre step coordinate
+		      const G4double& SAfterIn          = 0,    // s of post step coordinate
+		      const G4double& SHitIn            = 0,    // assigned s of loss
+		      const G4double& xIn               = 0,    // local x
+		      const G4double& yIn               = 0,    // local y
+		      const G4double& zIn               = 0,    // local z
+		      const G4double& globalTimeIn      = 0,    // global time
+		      const G4String& nameIn            = "",   // volume name
+		      const G4int&    partIDIn          = 0,    // PDG id - particle type
+		      const G4int&    trackID           = -1,   // Track ID
+		      const G4int&    parentID          = -1,   // Parent ID
+		      const G4double& weightIn          = 1,    // weight
+		      const G4int&    turnsTakenIn      = 1,    // turns taken if circular
+		      const G4int&    eventNoIn         = 0,    // event number
+		      const G4double& stepLengthIn      = 0,
+		      const G4int&    beamlineIndexIn   = -1,
+		      const G4int&    geomFlag          = -1);
   
   virtual ~BDSEnergyCounterHit();
   
@@ -76,6 +71,7 @@ public:
   inline G4int    GetCopyNumber()      const {return copyNumber;}
   inline G4double GetEnergy()          const {return energy;}
   inline void     SetEnergy(G4double energyIn) {energy = energyIn;}
+  inline G4double GetPreStepKineticEnergy() const {return preStepKineticEnergy;}
   inline G4double GetX()               const {return X;} 
   inline G4double GetY()               const {return Y;}
   inline G4double GetZ()               const {return Z;}
@@ -106,6 +102,8 @@ private:
 
   G4int    copyNumber;
   G4double energy;
+  G4double preStepKineticEnergy;
+  
   /// @{ Global coordinate
   G4double X;
   G4double Y;
@@ -154,5 +152,3 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
 }
 
 #endif
-
-///
