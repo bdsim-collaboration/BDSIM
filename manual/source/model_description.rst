@@ -246,6 +246,7 @@ The following elements may be defined
 * `solenoid`_
 * `laser`_
 * `gap`_
+* `crystalcol`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -4071,6 +4072,11 @@ are requried:
 	  but the 'crystal' inside in terms of the physics process is not related to the geometry
 	  and is bent. The physical geometry is merely a volume where the crystal parameters
 	  apply.
+
+.. note:: If there is no veritical bending angle, the torus geometry will reduce to the
+	  cylinder one as this is faster for tracking. Similarly, if the cylinder is used
+	  and there is no horizontal bending angle, a box will used as it's not possible
+	  to construct a cylinder with an infinite bending radius.
 
 It is entirely possible to add more shapes to the code. Please contact the developers
 :ref:`feature-request`.

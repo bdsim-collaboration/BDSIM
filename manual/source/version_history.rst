@@ -1,10 +1,13 @@
-V1.X - 2018 / ?? / ??
+V1.2 - 2018 / ?? / ??
 =====================
 
 New Features
 ------------
 
 * New options to activate extra models in em_extra physics list.
+* New `crystalcol` element for channelling crystals.
+* New `crystal` definition in parser.
+* New "channelling" physics list for Geant4 crystal channelling physics process.
 
 General
 -------
