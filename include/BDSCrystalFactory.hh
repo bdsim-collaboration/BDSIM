@@ -105,6 +105,7 @@ private:
   
   const G4double   maxStepFactor;      ///< Fraction of length for maximum step in user limits.
   const G4double   nSegmentsPerCircle; ///< For visualisation improvement.
+  const G4int      nPoints;            ///< Number of points to split torus into.
   
   G4VSolid*         crystalSolid;
   G4LogicalVolume*  crystalLV;

@@ -55,7 +55,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSCrystalFactory::BDSCrystalFactory():
   maxStepFactor(1.1),
-  nSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle())
+  nSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()),
+  nPoints(30)
 {
   CleanUp();
 }
@@ -298,8 +299,7 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   G4double startAngle;
   G4double sweepAngle;
   CalculateSolidAngles(xBA, startAngle, sweepAngle);
-
-  G4int nPoints = 30;
+  
   G4double angFraction = sweepAngle / (G4double)nPoints;
   std::vector<G4TwoVector> points;
 
