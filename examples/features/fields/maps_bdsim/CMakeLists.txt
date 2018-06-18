@@ -24,21 +24,23 @@ if (USE_GZSTREAM)
   
   interpolator_test("interpolator-1d-nearest-gz" "1d_nearest_gz.gmad")
 
-  #field tests
-  simple_testing(field-map-b-1d "--file=b_field_1d.gmad" "")
-  simple_testing(field-map-b-2d "--file=b_field_2d.gmad" "")
-  simple_testing(field-map-b-3d "--file=b_field_3d.gmad" "")
-  simple_testing(field-map-b-4d "--file=b_field_4d.gmad" "")
+  if (USE_GDML)
+    #field tests
+    simple_testing(field-map-b-1d "--file=b_field_1d.gmad" "")
+    simple_testing(field-map-b-2d "--file=b_field_2d.gmad" "")
+    simple_testing(field-map-b-3d "--file=b_field_3d.gmad" "")
+    simple_testing(field-map-b-4d "--file=b_field_4d.gmad" "")
 
-  simple_testing(field-map-e-1d "--file=e_field_1d.gmad" "")
-  simple_testing(field-map-e-2d "--file=e_field_2d.gmad" "")
-  simple_testing(field-map-e-3d "--file=e_field_3d.gmad" "")
-  simple_testing(field-map-e-4d "--file=e_field_4d.gmad" "")
+    simple_testing(field-map-e-1d "--file=e_field_1d.gmad" "")
+    simple_testing(field-map-e-2d "--file=e_field_2d.gmad" "")
+    simple_testing(field-map-e-3d "--file=e_field_3d.gmad" "")
+    simple_testing(field-map-e-4d "--file=e_field_4d.gmad" "")
 
-  simple_testing(field-map-em-1d "--file=em_field_1d.gmad" "")
-  simple_testing(field-map-em-2d "--file=em_field_2d.gmad" "")
-  simple_testing(field-map-em-3d "--file=em_field_3d.gmad" "")
-  simple_testing(field-map-em-4d "--file=em_field_4d.gmad" "")
+    simple_testing(field-map-em-1d "--file=em_field_1d.gmad" "")
+    simple_testing(field-map-em-2d "--file=em_field_2d.gmad" "")
+    simple_testing(field-map-em-3d "--file=em_field_3d.gmad" "")
+    simple_testing(field-map-em-4d "--file=em_field_4d.gmad" "")
 
-  simple_testing(field-map-step-size "--file=field_max_step.gmad" "")
+    simple_testing(field-map-step-size "--file=field_max_step.gmad" "")
+  endif()
 endif()

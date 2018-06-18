@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSPhysicsEMDissociation.hh"
+
 #include "G4EMDissociation.hh"
 #include "G4EMDissociationCrossSection.hh"
 #include "G4Gamma.hh"

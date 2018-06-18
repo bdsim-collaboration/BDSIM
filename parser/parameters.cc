@@ -135,16 +135,20 @@ Parameters::Parameters()
   setMap["degraderOffset"]    = false;
 
   setMap["colour"] = false;
+
+  setMap["crystalLeft"]            = false;
+  setMap["crystalRight"]           = false;
+  setMap["crystalBoth"]            = false;
+  setMap["crystalAngleYAxisLeft"]  = false;
+  setMap["crystalAngleYAxisRight"] = false;
 }
 
-void Parameters::flush() {
-
+void Parameters::flush()
+{
   Element::flush();
 
   for (auto& i : setMap)
-    {
-      i.second = false;
-    }
+    {i.second = false;}
 }
 
 void Parameters::inherit_properties(const Element& e)

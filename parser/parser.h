@@ -9,6 +9,7 @@
 #include "atom.h"
 #include "beam.h"
 #include "cavitymodel.h"
+#include "crystal.h"
 #include "element.h"
 #include "elementtype.h"
 #include "field.h"
@@ -189,6 +190,7 @@ namespace GMAD
     FastList<Element>   beamline_list;
     /// List of parser defined atoms
     std::vector<Atom>   atom_list;
+    std::vector<Crystal> crystal_list; ///< List of parser defined crystals.
     /// List of parser defined fields
     std::vector<Field>  field_list;
     /// List of parser defined materials
@@ -224,6 +226,7 @@ namespace GMAD
     Parameters params;
     /// Atom instance;
     Atom atom;
+    Crystal crystal; ///< Crystal instance.
     /// Field instance;
     Field field;
     /// Material instance;

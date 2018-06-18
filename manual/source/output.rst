@@ -242,6 +242,9 @@ IonInfo Struct
 | z                   | int            | Atomic number - number of protons. |
 +---------------------+----------------+------------------------------------+
 
+
+.. _output-beam-tree:
+
 Beam Tree
 ^^^^^^^^^
 
@@ -395,6 +398,8 @@ This tree contains two branches called "Histos." and "Info." which represent ins
 :code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`
 respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
 
+.. _output-event-tree:
+
 Event Tree
 ^^^^^^^^^^
 
@@ -442,6 +447,18 @@ different value per event run in BDSIM.
 
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
+
+.. note:: The primary coordinates are the exact coordinates supplied to Geant4 at the beginning of the event.
+	  Conceptually these are 'local' coordinates with respect to the start of the beam
+	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
+	  to that location in the World, therefore the coordinates are the **global** ones used.
+
+.. warning:: For large `S0` in a large model, the primary coordinates may be displaced by a large
+	     distance as compared to the size of the beam, e.g. 1km offset for 1um beam.
+	     In this case, the limited preicision of the `float` used to store the coordinates
+	     in the output may not show the beam distribution as expected. Internally, double
+	     precision numbers are used so the beam distribution is accurate. A float typically
+	     has 7 significant figures and a double 15.
 
 BDSOutputROOTEventInfo
 **********************

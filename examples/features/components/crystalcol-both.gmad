@@ -1,0 +1,32 @@
+lovelycrystal: crystal, material = "G4_Si",
+	       		data = "data/Si220pl",
+			shape = "box",
+			lengthY = 5*cm,
+			lengthX = 0.5*mm,
+			lengthZ = 4*mm,
+			sizeA = 5.43*ang,
+			sizeB = 5.43*ang,
+			sizeC = 5.43*ang,
+			alpha = 1,
+			beta  = 1,
+			gamma = 1,
+			spaceGroup = 227,
+			bendingAngleYAxis = 0.1*rad,
+			bendingAngleZAxis = 0;
+
+col1 : crystalcol, l=6*mm, apertureType="rectangular", aper1=0.25*cm, aper2=5*cm,
+       		   crystalBoth="lovelycrystal",
+		   crystalAngleYAxisLeft=-0.1*rad, crystalAngleYAxisRight=-0.1*rad,
+		   xsize=2*mm;
+
+lat: line = (col1);
+use, lat;
+
+sample, all;
+
+beam, particle="proton",
+      energy=50*GeV,
+      X0=2*mm,
+      Xp0=10*urad;
+
+option, physicsList="channelling";

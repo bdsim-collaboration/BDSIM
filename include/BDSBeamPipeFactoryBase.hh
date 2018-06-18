@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"         // geant4 globals / types
+#include "G4RotationMatrix.hh"
 
 class G4LogicalVolume;
 class G4Material;
