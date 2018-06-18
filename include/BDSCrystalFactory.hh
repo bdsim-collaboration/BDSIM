@@ -35,8 +35,10 @@ class G4VSolid;
 /**
  * @brief Abstract base class for crystal factory classes.
  * 
- * Abstract base class that defines the interface of each factory
- * to build any type of crystal geometry required.
+ * Class to construct required crystal geometry. Normally our factories
+ * are defined by an abstract base class, but as the required geometry is
+ * just one primitive, this isn't required and we can do everything in one
+ * factory.
  * 
  * @author Laurie Nevay
  */

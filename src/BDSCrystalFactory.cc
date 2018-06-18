@@ -41,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
