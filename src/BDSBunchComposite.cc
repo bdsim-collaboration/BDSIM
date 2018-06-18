@@ -39,9 +39,10 @@ BDSBunchComposite::~BDSBunchComposite()
 
 void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
 				   const GMAD::Beam& beam,
+				   const BDSBunchType& distrType,
 				   G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
   
   delete xBunch;
   delete yBunch;
@@ -58,7 +59,9 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
       G4cerr << __METHOD_NAME__ << "x,y,z distributions cannot be 'composite'" << G4endl;
       exit(1);
     }
-  
+
+  // here we don't have generatePrimariesOnly bool but this will be overridden with the
+  // separate call to SetGeneratePrimariesOnly in BDSBunchFactory
   xBunch = BDSBunchFactory::CreateBunch(beamParticle, xType, beam, beamlineTransformIn);
   yBunch = BDSBunchFactory::CreateBunch(beamParticle, yType, beam, beamlineTransformIn);
   zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);

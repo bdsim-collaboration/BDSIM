@@ -1,23 +1,29 @@
-V1.X - 2018 / ?? / ??
+V1.2 - 2018 / ?? / ??
 =====================
 
 New Features
 ------------
 
 * New options to activate extra models in em_extra physics list.
+* New `crystalcol` element for channelling crystals.
+* New `crystal` definition in parser.
+* New "channelling" physics list for Geant4 crystal channelling physics process.
 
 General
 -------
 
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
+* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
+* "ang" unit is added to the parser for Angstroms.
 
 Output Changes
 --------------
 
 * New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
-* New stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
+* New optional preStepKineticEnergy in Eloss part of Event Tree with option :code:`storeElossPreStepKineticEnergy` to use this data.
 * Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
 * Tilt, offsetX, offsetY and material are added to the Model Tree output.
 * Model class (BDSOutputROOTEventModel) number is incremented in output.
@@ -30,6 +36,9 @@ Bug Fixes
 ---------
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
+* Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
+* Fix Gauss beams used in composite distribution.
 
 
 V1.1 - 2018 / 05 / 23

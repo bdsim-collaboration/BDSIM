@@ -84,6 +84,9 @@ Examples::
    z = sin(x) + log(y) - 8e5;
    mat = "copper";
 
+
+.. _coordinates-and-units:
+   
 Coordinates & Units
 -------------------
 
@@ -144,6 +147,7 @@ mm          :math:`10^{-3}`
 um          :math:`10^{-6}`
 mum         :math:`10^{-6}`
 nm          :math:`10^{-9}`
+ang         :math:`10^{-10}`
 pm          :math:`10^{-12}`
 s           1
 ms          :math:`10^{-3}`
@@ -242,6 +246,7 @@ The following elements may be defined
 * `solenoid`_
 * `laser`_
 * `gap`_
+* `crystalcol`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -1103,7 +1108,72 @@ Examples::
 
     GAP1: gap, l=0.25*m, angle=0.01*rad;
 
+crystalcol
+^^^^^^^^^^
 
+.. figure:: figures/crystalcol.png
+	   :width: 40%
+	   :align: right
+
+
+`crystalcol` defines a crystal collimator that uses crystals to channel particles. It is composed
+of a beam pipe with one or two crystals inside it. The crystals can be the same (but placed at different
+angles) or different. The crystals are placed +- `xsize` away from the centre.
+
+The crystal is defined in a separate object in the parser and referred to by the name of that object.
+At least one of `crystalBoth`, `crystalLeft` and `crystalRight` must be specified.
+
+.. warning:: This requires the user to use the "channelling" physics list for channelling to take place.
+
+==========================  ======================================================  ===========  =========
+parameter                   description                                             default      required
+`l`                         length [m]                                              0            yes
+`xsize`                     half gap distance of each crystal from centre [m]       0            yes
+`material`                  material                                                ""           yes
+`crystalBoth`               name of crystal object for both crystals                ""           no
+`crystalLeft`               name of crystal object for right crystal                ""           no
+`crystalRight`              name of crystal object for left crystal                 ""           no
+`crystalAngleYAxisLeft`     rotation angle of left crystal [rad]                    0            no
+`crystalAngleYAxisRight`    rotation angle of right crystal [rad]                   0            no
+==========================  ======================================================  ===========  =========
+
+* Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
+* If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
+* If both `crystalLeft` and `crystalRight` are specified, both will be constructed uniquely and placed.
+* if `crystalBoth` is specified, `crystalLeft` and `crystalRight` will be ignored and the `crystalBoth`
+  definition used for both crystals. The angles will be unique.
+
+.. note:: Crystal channelling is only available in Geant4.10.4 onwards. If BDSIM is compiled with a Geant4
+	  version below this, the geometry will be constructed correctly but the channelling phyiscs process
+	  will not be used and the crystal will not channel particles.
+
+* See :ref:`crystals` for the definition of a crystal object.
+
+Examples::
+
+  lovelycrystal: crystal, material = "G4_Si",
+	       		data = "data/Si220pl",
+			shape = "box",
+			lengthY = 5*cm,
+			lengthX = 0.5*mm,
+			lengthZ = 4*mm,
+			sizeA = 5.43*ang,
+			sizeB = 5.43*ang,
+			sizeC = 5.43*ang,
+			alpha = 1,
+			beta  = 1,
+			gamma = 1,
+			spaceGroup = 227,
+			bendingAngleYAxis = 0.1*rad,
+			bendingAngleZAxis = 0;
+
+   col1 : crystalcol, l=6*mm, apertureType="rectangular", aper1=0.25*cm, aper2=5*cm,
+                      crystalBoth="lovelycrystal", crystalAngleYAxisLeft=-0.1*rad,
+		      crystalAngleYAxisRight=-0.1*rad, xsize=2*mm;
+
+
+More examples can be found in :code:`bdsim/examples/components`.
+		      
 transform3d
 ^^^^^^^^^^^
 
@@ -2946,7 +3016,10 @@ The particle physics simulation in BDSIM can produce an impressive quantity of o
 information. The data describing a full record of every particle and their interaction
 would prove to difficult to manage or analyse sensibly. BDSIM records the most useful
 information, but provides options to record even more data. This is controlled with the
-following options. These options may increase the output file size by a large amount.
+following options.
+
+.. note:: These options may increase the output file size by a large amount. Use only the
+	  ones you need.
 
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
@@ -2971,6 +3044,9 @@ following options. These options may increase the output file size by a large am
 |                                   | energy deposition and trajectory point.                            |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossStepLength              | Store the step length for each energy deposition hit or not.       |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossPreStepKineticEnergy    | Store the kinetic energy of the particle causing energy deposition |
+|                                   | as taken from the beginning of the step before it made it.         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeModel                        | Whether to store the model information in the output (Default On). |
 +-----------------------------------+--------------------------------------------------------------------+
@@ -3139,7 +3215,7 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
 +-----------------------------------+--------------------------------------------------------------------+
-| beeam, offsetSampleMean=1         | Default false. If true, this will remove the sample mean from the  |
+| beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
 |                                   | reproduce results when this option is used and coordinates will    |
@@ -3207,6 +3283,35 @@ ionised ion). In this case, it is recommended to use the `ion` physicslist.
 
 Available input distributions and their associated parameters are described in the following
 section.
+
+Generate Only the Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+BDSIM can generate only the input distribution and store it to file without creating a model or
+running any physics simulation. This is very fast and can be used to verify the input distribution
+with a large number of particles (10k to 100k for example in under 1 minute).
+
+BDSIM should be executed with the option `--generatePrimariesOnly` as described in
+:ref:`executable-options`.
+
+Beam in Output
+^^^^^^^^^^^^^^
+
+All of the beam parameters are stored in the output as described in :ref:`output-beam-tree`. The
+particle coordinates used in the simualtion are stored directly in the Primary branch of the
+Event Tree as decsribed in :ref:`output-event-tree`.
+
+.. note:: These are the exact coordinates supplied to Geant4 at the beginning of the event.
+	  Conceptually these are 'local' coordinates with respect to the start of the beam
+	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
+	  to that location in the World, therefore the coordinates are the **global** ones used.
+
+.. warning:: For large `S0` in a large model, the particles may be displaced by a large
+	     distance as compared to the size of the beam, e.g. 1km offset for 1um beam.
+	     In this case, the limited preicision of the `float` used to store the coordinates
+	     in the output may not show the beam distribution as expected. Internally, double
+	     precision numbers are used so the beam distribution is accurate. A float typically
+	     has 7 significant figures and a double 15.
 
 .. _beam-distributions:
 
@@ -3541,7 +3646,7 @@ depending on the single particle emittance, which is calculated as
 .. math::
    \epsilon_{\rm SP} = \gamma x^2 + 2\alpha\;x\;x^{\prime} + \beta x^{\prime 2}
 
-if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} \epsilon_{\rm core}`
+if the single particle emittance is less than beam emittance so :math:`\epsilon_{\rm SP} < \epsilon_{\rm core}`
 the particle is rejected. `haloPSWeightFunction` is a string that selects the function
 :math:`f_{\rm haloWeight}(\epsilon_{\rm SP})` which is 1 at the ellipse defined by :math:`\epsilon_{\rm core}`. The
 weighting functions are either `flat`, one over emittance `oneoverr` or exponential `exp` so
@@ -3913,6 +4018,103 @@ Example::
 
 The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
 Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+
+.. _crystals:
+
+Crystals
+--------
+
+To use various crystal components in BDSIM such as `crystalcol`_, a crystal definition must first be made.
+This contains all of the required information to construct the crystal. The following parameters
+are requried:
+
++-------------------+------------------------------------------------------------+
+| **Parameter**     | **Description**                                            |
++===================+============================================================+
+| material          | Material crystal will be composed of.                      |
++-------------------+------------------------------------------------------------+
+| data              | Path to data files including first part of file name.      |
++-------------------+------------------------------------------------------------+
+| shape             | Geometry used - one of (box, cylinder, torus).             |
++-------------------+------------------------------------------------------------+
+| lengthX           | X dimension full length [m].                               |
++-------------------+------------------------------------------------------------+
+| lengthY           | Y dimension full length [m].                               |
++-------------------+------------------------------------------------------------+
+| lengthZ           | Z dimension full length [m].                               |
++-------------------+------------------------------------------------------------+
+| sizeA             | Unit cell a dimension [m]*.                                |
++-------------------+------------------------------------------------------------+
+| sizeB             | Unit cell b dimension [m]*.                                |
++-------------------+------------------------------------------------------------+
+| sizeC             | Unit cell c dimension [m]*.                                |
++-------------------+------------------------------------------------------------+
+| alpha             | Interaxial angle :math:`\alpha` in units of :math:`\pi/2`. |
++-------------------+------------------------------------------------------------+
+| beta              | Interaxial angle :math:`\beta` in units of :math:`\pi/2`.  |
++-------------------+------------------------------------------------------------+
+| gamma             | Interaxial angle :math:`\gamma` in units of :math:`\pi/2`. |
++-------------------+------------------------------------------------------------+
+| spaceGroup        | Space grouping of lattice (integer).                       |
++-------------------+------------------------------------------------------------+
+| bendingAngleYAxis | Angle crystal is bent about Y axis [rad].                  |
++-------------------+------------------------------------------------------------+
+| bendingAngleZAxis | Angle crystal is bent about Z axis [rad].                  |
++-------------------+------------------------------------------------------------+
+
+* (*) Note, the units of metres may seem ridiculous, but the parser is consistently in S.I.
+  (or as much as possible). We recommend using the units in the parser such as Angstroms.
+  See :ref:`coordinates-and-units`.
+
+.. note:: Depending on the shape chosen the geometry may or may not represent the bending angle.
+	  The `bendingAngleYAxis` is always supplied to the channelling physics process
+	  irrespsective of the geometry. This is important to note the crystal may be a box
+	  but the 'crystal' inside in terms of the physics process is not related to the geometry
+	  and is bent. The physical geometry is merely a volume where the crystal parameters
+	  apply.
+
+.. note:: If there is no veritical bending angle, the torus geometry will reduce to the
+	  cylinder one as this is faster for tracking. Similarly, if the cylinder is used
+	  and there is no horizontal bending angle, a box will used as it's not possible
+	  to construct a cylinder with an infinite bending radius.
+
+It is entirely possible to add more shapes to the code. Please contact the developers
+:ref:`feature-request`.
+
+Examples::
+
+  lovelycrystal: crystal, material = "G4_Si",
+	       		data = "data/Si220pl",
+			shape = "box",
+			lengthY = 5*cm,
+			lengthX = 0.5*mm,
+			lengthZ = 4*mm,
+			sizeA = 5.43*ang,
+			sizeB = 5.43*ang,
+			sizeC = 5.43*ang,
+			alpha = 1,
+			beta  = 1,
+			gamma = 1,
+			spaceGroup = 227,
+			bendingAngleYAxis = 0.1*rad,
+			bendingAngleZAxis = 0;
+
+  uglycrystal: crystal, material = "G4_Si",
+	     	      	data = "data/Si220pl",
+			shape = "box",
+			lengthY = 5*cm,
+			lengthX = 0.5*mm,
+			lengthZ = 4*mm,
+			sizeA = 5.43*ang,
+			sizeB = 5.43*ang,
+			sizeC = 5.43*ang,
+			alpha = 1,
+			beta  = 1,
+			gamma = 1,
+			spaceGroup = 227,
+			bendingAngleYAxis = -0.1*rad,
+			bendingAngleZAxis = 0;
+
 
 Regions
 -------

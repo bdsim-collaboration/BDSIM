@@ -4,7 +4,9 @@ simple_testing(integrators-bdsimmatrix  "--file=bdsimmatrix.gmad"       "")
 simple_testing(integrators-bdsimmatrixfringescaling "--file=bdsimmatrixfringescaling.gmad" "")
 
 if (USE_GZSTREAM)
-  simple_testing(integrators-g4classicalrk4      "--file=g4classicalrk4.gmad" "")
+  if (USE_GDML)
+    simple_testing(integrators-g4classicalrk4      "--file=g4classicalrk4.gmad" "")
+  endif()
 
   if (G4_MINOR_VERSION GREATER 2)
     simple_testing(integrators-g4bogackishampine23  "--file=g4bogackishampine23.gmad" "")

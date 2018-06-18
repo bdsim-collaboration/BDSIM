@@ -51,6 +51,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeGlobal     = globals->StoreELossGlobal();
   G4bool storeTime       = globals->StoreElossTime();
   G4bool storeStepLength = globals->StoreElossStepLength();
+  G4bool storePreStepKineticEnergy = globals->StoreElossPreStepKineticEnergy();
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
@@ -59,11 +60,11 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   modelOutput   = new BDSOutputROOTEventModel();
 
   eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
-                                     storeTime, storeStepLength);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true, true, true, false);
-  pLastHit = new BDSOutputROOTEventLoss(true, true, true, true, false);
-  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false, false);
-  traj = new BDSOutputROOTEventTrajectory();
+                                     storeTime, storeStepLength, storePreStepKineticEnergy);
+  pFirstHit = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
+  pLastHit  = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
+  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false, false, false);
+  traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
   runHistos = new BDSOutputROOTEventHistograms();

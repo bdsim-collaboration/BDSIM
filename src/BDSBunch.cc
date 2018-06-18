@@ -54,6 +54,7 @@ G4double BDSBunch::EFromP(const G4double &pIn) const
 
 void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
+			  const BDSBunchType& /*distrType*/,
 			  G4Transform3D beamlineTransformIn)
 {
   particleDefinition = beamParticle;

@@ -12,3 +12,5 @@ Geometry
    5_tunnel
    6_curvilinear
    9_gdml
+   10_multiple_beamlines
+   11_crystals

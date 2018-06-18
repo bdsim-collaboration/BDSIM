@@ -1,0 +1,19 @@
+beam, particle="e-",
+      energy=1.0*GeV,
+      distrType="composite",
+      xDistrType="gauss",
+      yDistrType="reference",
+      zDistrType="reference",
+      sigmaX=1*mm,
+      sigmaXp=1*urad,
+      sigmaY=1*mm,
+      sigmaYp=1*urad,
+      X0=1.3*mm,
+      Y0=-2*mm,
+      Yp0=3.4e-6,
+      Xp0=2.3e-6;
+
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;
