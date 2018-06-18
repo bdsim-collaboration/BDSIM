@@ -33,7 +33,7 @@ lovelycrystal2: crystal, material = "G4_Si",
 			bendingAngleYAxis = theangle,
 			bendingAngleZAxis = vangle;
 
-col1 : crystalcol, l=3*cm, apertureType="rectangular", aper1=1*cm, aper2=0.6*cm,
+col1 : crystalcol, l=2*cm, apertureType="rectangular", aper1=1*cm, aper2=0.6*cm,
        		   crystalLeft="lovelycrystal",
 		   crystalAngleYAxisLeft=-0.5*theangle,
 		   crystalRight="lovelycrystal2",
