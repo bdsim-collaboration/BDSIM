@@ -323,6 +323,9 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   G4double zStartAngle = CLHEP::twopi - 0.5 * zBA;
   G4double zSweepAngle = zBA;
 
+  // create vertical z sections, accumulate max/min shift at same time
+  G4double xmin = 0;
+  G4double xmax = 0;
   G4double zAngFraction = zSweepAngle / (G4double)nPoints;
   std::vector<G4ExtrudedSolid::ZSection> zSections;
   for (G4int i = 0; i < nPoints; i++)
@@ -335,6 +338,8 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
 	  z *= -1;
 	  x *= -1;
 	}
+      xmin = std::min(xmin, x);
+      xmax = std::max(xmax, x);
       zSections.emplace_back(G4ExtrudedSolid::ZSection(z, G4TwoVector(x, 0), 1));
     }
 
@@ -349,8 +354,10 @@ BDSCrystal* BDSCrystalFactory::CreateCrystalTorus(const G4String&       nameIn,
   placementRotation = new G4RotationMatrix();
   placementRotation->rotateX(-CLHEP::halfpi);
   
-  //BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
-  BDSExtent ext = BDSExtent(2*recipe->lengthX, recipe->lengthY, recipe->lengthZ);
+  BDSExtent ext = CalculateExtents(xBA, xBR, thickness, recipe);
+  G4double xLow = ext.XNeg() + xmin;
+  G4double xHi  = ext.XPos() + xmax;
+  BDSExtent extTorus = BDSExtent(xLow, xHi, ext.YNeg(), ext.YPos(), ext.ZNeg(), ext.ZPos());
   
-  return BuildCrystalObject(ext);
+  return BuildCrystalObject(extTorus);
 }
