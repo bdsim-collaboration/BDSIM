@@ -145,7 +145,7 @@ void BDSCrystalFactory::CommonConstruction(const G4String&       nameIn,
 #else
   // build logical volumes
   crystalLV = new G4LogicalVolume(crystalSolid,
-				  crystalMaterialIn,
+				  recipe->material,
 				  nameIn + "_crystal_lv");
 #endif
   allLogicalVolumes.push_back(crystalLV);
