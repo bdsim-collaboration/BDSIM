@@ -33,7 +33,7 @@ class BDSWirescanner: public BDSAcceleratorComponent
 public:
     BDSWirescanner(G4String name,
 	      G4double   length,
-	      G4double   outerDiameter );
+	      G4double   outerDiameter);
   virtual ~BDSWirescanner();
   
 protected:
@@ -42,7 +42,6 @@ protected:
   virtual void BuildContainerLogicalVolume();
   
   G4double outerDiameter;
-
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSWirescanner() = delete;

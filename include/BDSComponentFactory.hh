@@ -212,6 +212,7 @@ private:
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+  BDSAcceleratorComponent* CreateWireScanner();
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();

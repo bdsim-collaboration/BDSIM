@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
+#include "BDSWirescanner.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -275,6 +276,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateShield(); break;
   case ElementType::_DEGRADER:
     component = CreateDegrader(); break;
+  case ElementType::_WIRESCANNER:
+    component = CreateWireScanner(); break;
   case ElementType::_GAP:
     component = CreateGap(); break;
   case ElementType::_LASER:
@@ -922,6 +925,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  element->material));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
+{
+    if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+
+
+    return (new BDSWirescanner(elementName,
+                            element->l*CLHEP::m,
+                            PrepareOuterDiameter(element)));
+
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
