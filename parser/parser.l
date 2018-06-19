@@ -98,6 +98,7 @@ awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
+wirescanner { return WIRESCANNER; }
 gap { return GAP;}
 
 cavitymodel {return CAVITYMODEL; }

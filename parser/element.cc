@@ -311,6 +311,9 @@ void Element::print(int ident)const{
 	      << "phi= "   << phi   << "rad" << std::endl
 	      << "theta= " << theta << "rad" << std::endl
 	      << "psi= "   << psi   << "rad" << std::endl;
+
+
+
     break;
   default:
     break;
@@ -361,6 +364,9 @@ void Element::flush()
   degraderHeight = 0;
   materialThickness = 0;
   degraderOffset = 0;
+
+  // wirescanner
+
 
   // new aperture model
   beampipeThickness = 0;
