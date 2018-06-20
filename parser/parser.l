@@ -98,11 +98,13 @@ awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
-wirescanner { return WIRESCANNER; }
 gap { return GAP;}
+crystalcol { return CRYSTALCOL; }
+wirescanner { return WIRESCANNER; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }

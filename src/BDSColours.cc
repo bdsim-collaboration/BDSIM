@@ -82,6 +82,7 @@ BDSColours::BDSColours()
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["wirescanner"]      = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["shield"]           = colours["tunnel"];
+  colours["crystal"]          = colours["srfcavity"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper

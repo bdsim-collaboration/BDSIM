@@ -103,8 +103,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   if (!BDS::IsFinite(enrg))
     {return false;}
 
+  // step points - used many times
+  G4StepPoint* preStepPoint  = aStep->GetPreStepPoint();
+  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
+
+  preStepKineticEnergy = preStepPoint->GetKineticEnergy();
+  
   // avoid double getting pv
-  auto hitMassWorldPV = aStep->GetPreStepPoint()->GetPhysicalVolume();
+  auto hitMassWorldPV = preStepPoint->GetPhysicalVolume();
   volName             = hitMassWorldPV->GetName();
   G4int nCopy         = hitMassWorldPV->GetCopyNo();
   
@@ -113,8 +119,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4double randDist = G4UniformRand();
   
   // global coordinate positions of the step
-  G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
-  G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
+  G4ThreeVector posbefore = preStepPoint->GetPosition();
+  G4ThreeVector posafter  = postStepPoint->GetPosition();
   G4ThreeVector eDepPos   = posbefore + randDist*(posafter - posbefore);
 
   // calculate local coordinates
@@ -137,8 +143,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // point between the preStep and the postStep positions, attribute the
   // deposition to random time between preStep and postStep times,
   // using the same random number as for the position.
-  G4double preGlobalTime = aStep->GetPreStepPoint()->GetGlobalTime();
-  G4double postGlobalTime = aStep->GetPostStepPoint()->GetGlobalTime();
+  G4double preGlobalTime  = preStepPoint->GetGlobalTime();
+  G4double postGlobalTime = postStepPoint->GetGlobalTime();
   globalTime = preGlobalTime + randDist * (postGlobalTime - preGlobalTime);
 
   // get the s coordinate (central s + local z)
@@ -212,6 +218,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   //create hits and put in hits collection of the event
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
                                                        enrg,
+						       preStepKineticEnergy,
                                                        X, Y, Z,
                                                        sBefore,
                                                        sAfter,

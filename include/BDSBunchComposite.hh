@@ -37,6 +37,7 @@ public:
   virtual ~BDSBunchComposite();
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void CheckParameters();
   virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);

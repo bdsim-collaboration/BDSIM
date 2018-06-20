@@ -53,6 +53,7 @@ public:
   virtual ~BDSBunchGaussian();
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
 
   /// Called at the beginning of a run. Override here to call PreGenerateEvents that

@@ -41,6 +41,9 @@ if (G4_MINOR_VERSION GREATER 1)
   simple_testing(physics-alias-spindecay   "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
   simple_testing(physics-cherenkov         "--file=cherenkov.gmad"          ${OVERLAP_CHECK})
   simple_testing(physics-em-gs             "--file=em_gs.gmad"              ${OVERLAP_CHECK})
+endif()
+
+if (G4_MINOR_VERSION GREATER 2)
   simple_testing(physics-decay-spin        "--file=decay_spin.gmad"         ${OVERLAP_CHECK})
 endif()
 

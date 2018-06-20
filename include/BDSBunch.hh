@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCH_H
 #define BDSBUNCH_H
 
+#include "BDSBunchType.hh"
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
@@ -42,11 +43,15 @@ public:
   BDSBunch();
   virtual ~BDSBunch(){;}
 
-  /// Extract and set the relevant options from the beam definition.
+  /// Extract and set the relevant options from the beam definition. The distribution
+  /// type is explicitly required as this function may be used inside a nested bunch distribution.
+  /// This argument is for the most part ignored, but there's no way to have a default for it.
+  /// Also, some classes can cover multiple input distributions so need to know which one they're
+  /// meant to be.
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
-
   
   /// Check the parameters for the given bunch distribution and exit if they're
   /// problematic or unphysical.

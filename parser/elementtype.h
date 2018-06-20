@@ -43,7 +43,9 @@ namespace GMAD
     _DEGRADER    = 63,
     _THINMULT    = 64,
     _GAP         = 65,
-    _WIRESCANNER = 66
+    _CRYSTALCOL  = 66,
+    _WIRESCANNER = 67
+
   };
 
   /// conversion from enum to string
