@@ -153,6 +153,12 @@ void Element::PublishMembers()
   publish("materialThickness", &Element::materialThickness);
   publish("degraderOffset",    &Element::degraderOffset);
 
+  publish("wireDiameter" ,      &Element::wireDiameter);
+  publish("wireLength" ,        &Element::wireLength);
+  publish("wirescannerOffset" , &Element::wirescannerOffset);
+  publish("wirescannerRotx" ,   &Element::wirescannerRotx);
+  publish("wirescannerRoty" ,   &Element::wirescannerRoty);
+
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
@@ -312,7 +318,9 @@ void Element::print(int ident)const{
 	      << "theta= " << theta << "rad" << std::endl
 	      << "psi= "   << psi   << "rad" << std::endl;
 
-
+  case ElementType::_WIRESCANNER:
+    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+              << "material = \""      << material << "\"" << std::endl;
 
     break;
   default:
@@ -366,7 +374,9 @@ void Element::flush()
   degraderOffset = 0;
 
   // wirescanner
-
+  wireDiameter = 0;
+  wireLength = 0;
+  wirescannerOffset = 0;
 
   // new aperture model
   beampipeThickness = 0;

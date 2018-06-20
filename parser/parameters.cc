@@ -134,6 +134,12 @@ Parameters::Parameters()
   setMap["materialThickness"] = false;
   setMap["degraderOffset"]    = false;
 
+  setMap["wireDiameter"]      = false;
+  setMap["wireLength"]        = false;
+  setMap["wirescannerOffset"] = false;
+  setMap["wirescannerRotx"]   = false;
+  setMap["wirescannerRoty"]   = false;
+
   setMap["colour"] = false;
 }
 

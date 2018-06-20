@@ -118,6 +118,14 @@ namespace GMAD
     double degraderOffset;
     ///@}
 
+      ///@[ for wirescanner
+      double wireDiameter;
+      double wireLength;
+      double wirescannerOffset;
+      double wirescannerRotx;
+      double wirescannerRoty;
+      ///@}
+
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;
     std::list<double> blmLocTheta;
