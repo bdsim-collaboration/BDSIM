@@ -31,6 +31,7 @@ simple_testing(component-shield              "--file=shield.gmad"          ${OVE
 simple_testing(component-solenoid            "--file=solenoid.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-tunnel              "--file=tunnel.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-vKicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-wirescanner         "--file=wirescanner.gmad"     ${OVERLAP_CHECK})
 
 # crystal tests - geometry works in earlier versions but physics list not present
 if (G4_MINOR_VERSION GREATER 3)
