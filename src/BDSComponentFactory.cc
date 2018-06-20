@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAwakeSpectrometer.hh"
 #endif
 #include "BDSCavityElement.hh"
+#include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
@@ -48,6 +49,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBendBuilder.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
+#include "BDSCrystalInfo.hh"
+#include "BDSCrystalType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
@@ -76,6 +79,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
+#include "parser/crystal.h"
 
 #include <cmath>
 #include <string>
@@ -96,11 +100,14 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
   PrepareCavityModels(); // prepare rf cavity model info from parser
+  PrepareCrystals();     // prepare crystal model info from parser
 }
 
 BDSComponentFactory::~BDSComponentFactory()
 {
-  for(auto info : cavityInfos)
+  for (auto info : cavityInfos)
+    {delete info.second;}
+  for (auto info : crystalInfos)
     {delete info.second;}
 
   // Deleted here although not used directly here as new geometry can only be
@@ -277,6 +284,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateDegrader(); break;
   case ElementType::_GAP:
     component = CreateGap(); break;
+  case ElementType::_CRYSTALCOL:
+    {component = CreateCrystalCollimator(); break;}
   case ElementType::_LASER:
     component = CreateLaser(); break; 
   case ElementType::_SCREEN:
@@ -934,6 +943,39 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
                      element->angle*CLHEP::rad));
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSCrystalInfo* left = nullptr;
+  BDSCrystalInfo* right = nullptr;
+  if (!element->crystalBoth.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalBoth));
+      right = PrepareCrystalInfo(G4String(element->crystalBoth));
+    }
+  else if (element->crystalBoth.empty() && !element->crystalRight.empty() && !element->crystalLeft.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalLeft));
+      right = PrepareCrystalInfo(G4String(element->crystalRight));
+    }
+  else if (element->crystalRight.empty())
+    {left  = PrepareCrystalInfo(G4String(element->crystalLeft));}
+  else
+    {right = PrepareCrystalInfo(G4String(element->crystalRight));}
+  
+  return (new BDSCollimatorCrystal(elementName,
+				   element->l*CLHEP::m,
+				   PrepareBeamPipeInfo(element),
+				   left,
+				   right,
+				   element->xsize*CLHEP::m, // symmetric for now
+				   element->xsize*CLHEP::m,
+				   element->crystalAngleYAxisLeft*CLHEP::rad,
+				   element->crystalAngleYAxisRight*CLHEP::rad));
+}
+
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
 {
   if(!HasSufficientMinimumLength(element))
@@ -1111,17 +1153,14 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 }
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
-						       const G4bool printWarning)
+						       const G4bool& printWarning)
 {
-  if(el->l*CLHEP::m < 1e-7)
+  if(el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
 	{
-	  G4cerr << "---->NOT creating element, "
-		 << " name = " << el->name
-		 << ", LENGTH TOO SHORT:"
-		 << " l = " << el->l*CLHEP::um << "um"
-		 << G4endl;
+	  G4cerr << "---> NOT creating element \"" << el->name << "\""
+		 << " LENGTH TOO SHORT:" << " l = " << el->l << "m" << G4endl; // already in m
 	}
       return false;
     }
@@ -1445,6 +1484,46 @@ void BDSComponentFactory::PrepareCavityModels()
       
       cavityInfos[model.name] = info;
     }
+}
+
+void BDSComponentFactory::PrepareCrystals()
+{
+  for (auto& model : BDSParser::Instance()->GetCrystals())
+    {
+      G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
+
+      auto info = new BDSCrystalInfo(material,
+				     G4String(model.data),
+				     BDS::DetermineCrystalType(model.shape),
+				     G4double(model.lengthX)*CLHEP::m,
+				     G4double(model.lengthY)*CLHEP::m,
+				     G4double(model.lengthZ)*CLHEP::m,
+				     G4double(model.sizeA)*CLHEP::m,
+				     G4double(model.sizeB)*CLHEP::m,
+				     G4double(model.sizeC)*CLHEP::m,
+				     G4double(model.alpha)*CLHEP::halfpi,
+				     G4double(model.beta)*CLHEP::halfpi,
+				     G4double(model.gamma)*CLHEP::halfpi,
+				     G4int   (model.spaceGroup),
+				     G4double(model.bendingAngleYAxis)*CLHEP::rad,
+				     G4double(model.bendingAngleZAxis)*CLHEP::rad);
+      crystalInfos[model.name] = info;
+    }
+
+}
+
+BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(const G4String& crystalName) const
+{
+  auto result = crystalInfos.find(crystalName);
+  if (result == crystalInfos.end())
+    {
+      G4cout << "Unknown crystal \"" << crystalName << "\" - please define it" << G4endl;
+      exit(1);
+    }
+
+  // prepare a copy so the component can own that recipe
+  BDSCrystalInfo* info = new BDSCrystalInfo(*(result->second));
+  return info;
 }
 
 BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,

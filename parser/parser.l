@@ -97,11 +97,13 @@ awakescreen { return AWAKESCREEN; }
 awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
-degrader { return DEGRADER;}
-gap { return GAP;}
+degrader { return DEGRADER; }
+gap { return GAP; }
+crystalcol { return CRYSTALCOL; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }

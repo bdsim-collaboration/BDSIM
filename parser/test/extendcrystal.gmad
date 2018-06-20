@@ -1,0 +1,11 @@
+lovelycrystal: crystal, material="G4_Si",
+	       		data="Si220",
+			shape="box",
+			lengthY=5*cm,
+			lengthX=0.5*mm,
+			lengthZ=4*mm,
+			bendingAngleYAxis=50*urad,
+			bendingAngleZAxis=0;
+
+! extend and change properties
+lovelycrystal: lengthZ=4*cm;

@@ -70,9 +70,9 @@
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
-%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER GAP
+%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
 %token <ival> VKICKER HKICKER KICKER TKICKER
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL QUERY TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -227,6 +227,14 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<Query>();
          }
      }
+      | VARIABLE ':' crystal
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : crystal" << std::endl;
+             Parser::Instance()->SetValue<Crystal>("name", *($1));
+             Parser::Instance()->Add<Crystal>();
+         }
+     }
      | VARIABLE ':' field
      {
          if(execute) {
@@ -298,6 +306,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | SHIELD      {$$=static_cast<int>(ElementType::_SHIELD);}
           | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
           | GAP         {$$=static_cast<int>(ElementType::_GAP);}
+          | CRYSTALCOL  {$$=static_cast<int>(ElementType::_CRYSTALCOL);}
           | LASER       {$$=static_cast<int>(ElementType::_LASER);}
           | SCREEN      {$$=static_cast<int>(ElementType::_SCREEN);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
@@ -309,6 +318,7 @@ atom        : ATOM        ',' atom_options
 material    : MATERIAL    ',' material_options
 region      : REGION      ',' region_options
 placement   : PLACEMENT   ',' placement_options
+crystal     : CRYSTAL     ',' crystal_options
 field       : FIELD       ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
 query       : QUERY       ',' query_options
@@ -320,6 +330,7 @@ object_noparams : MATERIAL
                 | ATOM
                 | REGION
                 | PLACEMENT
+                | CRYSTAL
                 | FIELD
                 | CAVITYMODEL
                 | QUERY
@@ -741,6 +752,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<Placement>();
             }
         }
+        | CRYSTAL ',' crystal_options // crystal
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> CRYSTAL" << std::endl;
+              Parser::Instance()->Add<Crystal>();
+            }
+        }
         | FIELD ',' field_options // field
         {
           if(execute)
@@ -901,6 +920,14 @@ query_options : paramassign '=' aexpr query_options_extend
                 { if(execute) Parser::Instance()->SetValue<Query>((*$1),$3);}
               | paramassign '=' string query_options_extend
                 { if(execute) Parser::Instance()->SetValue<Query>((*$1),*$3);}
+
+crystal_options_extend : /* nothing */
+                     | ',' crystal_options
+
+crystal_options : paramassign '=' aexpr crystal_options_extend
+                { if(execute) Parser::Instance()->SetValue<Crystal>((*$1),$3);}
+              | paramassign '=' string crystal_options_extend
+                { if(execute) Parser::Instance()->SetValue<Crystal>((*$1),*$3);}
 
 field_options_extend : /* nothing */
                      | ',' field_options

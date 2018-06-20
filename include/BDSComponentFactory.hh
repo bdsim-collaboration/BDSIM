@@ -41,6 +41,7 @@ namespace GMAD
 class BDSAcceleratorComponent;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
+class BDSCrystalInfo;
 class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
@@ -209,6 +210,7 @@ private:
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateGap();
+  BDSAcceleratorComponent* CreateCrystalCollimator();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
@@ -226,7 +228,7 @@ private:
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
-				    const G4bool printWarning = true);
+				    const G4bool& printWarning = true);
 
   /// Prepare the vacuum material from the element or resort to default in options.
   G4Material* PrepareVacuumMaterial(GMAD::Element const* el) const;
@@ -234,6 +236,13 @@ private:
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  /// Prepare all crystals in defined the parser.
+  void PrepareCrystals();
+
+  /// Utility funciton to prepare crystal recipe for an element. Produces a unique object
+  /// this class doesn't own.
+  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 
   /// Utility function to prepare model info. Retrieve from cache of ones translated
   /// parser objects or create a default based on the element's aperture if none specified.
@@ -264,8 +273,11 @@ private:
   /// Prepare magnet strength for multipoles
   BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;
 
-  /// Map of cavity model info instances by name
+  /// Map of cavity model info instances by name.
   std::map<G4String, BDSCavityInfo*> cavityInfos;
+
+  /// Maps of crystal info instances by name.
+  std::map<G4String, BDSCrystalInfo*> crystalInfos;
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;

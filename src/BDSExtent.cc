@@ -157,8 +157,17 @@ G4double BDSExtent::MaximumAbsTransverse() const
   return *std::max_element(exts.begin(), exts.end());
 }
 
-G4bool BDSExtent::Encompasses(G4ThreeVector point) const
+G4bool BDSExtent::Encompasses(const G4ThreeVector& point) const
 {
   BDSExtent extentPoint = BDSExtent(point);
   return extentPoint < (*this);
+}
+
+G4bool BDSExtent::Encompasses(const BDSExtent& other) const
+{
+  std::vector<G4ThreeVector> otherPoints = other.AllBoundaryPoints();
+  G4bool result = false;
+  for (const auto& p : otherPoints)
+    {result = result || !Encompasses(p);}
+  return !result;
 }

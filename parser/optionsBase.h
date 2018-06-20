@@ -220,13 +220,16 @@ namespace GMAD
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
+    /// Output related options
     int         numberOfEventsPerNtuple;
 
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeElossTime;
-
+    bool        storeElossStepLength;
+    bool        storeElossPreStepKineticEnergy;
+    
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -244,6 +247,7 @@ namespace GMAD
     bool        trajNoTransportation;
 
     bool        writePrimaries;
+    bool        storeModel;
 
     /// Ring parameters
     int      nturns;

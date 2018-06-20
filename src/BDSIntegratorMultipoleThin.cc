@@ -77,11 +77,11 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-  
+
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
-  
+
   // global to local
   BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false, thinElementLength);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
@@ -109,7 +109,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-  
+
 
   ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
 }
@@ -160,9 +160,9 @@ void BDSIntegratorMultipoleThin::OneStep(const G4ThreeVector& posIn,
       knReal = (*kn) * ratio * std::pow(position,n).real() / nfact[n];
       knImag = (*kn) * ratio * std::pow(position,n).imag() / nfact[n];
       if (!std::isnan(knReal))
-	{momx = knReal;}
+    {momx = knReal;}
       if (!std::isnan(knImag))
-	{momy = knImag;}
+    {momy = knImag;}
       result = {momx,momy};
       kick += result;
     }

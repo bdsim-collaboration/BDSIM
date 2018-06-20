@@ -213,6 +213,8 @@ OptionsBase::OptionsBase()
   storeElossLocal          = false;
   storeElossGlobal         = false;
   storeElossTime           = false;
+  storeElossStepLength     = false;
+  storeElossPreStepKineticEnergy = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 0;
   storeTrajectoryParticle   = "";
@@ -223,6 +225,7 @@ OptionsBase::OptionsBase()
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;
   writePrimaries           = true;
+  storeModel               = true;
 
   // circular options
   nturns                   = 1;

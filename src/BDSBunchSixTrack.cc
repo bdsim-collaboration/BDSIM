@@ -40,9 +40,10 @@ BDSBunchSixTrack::~BDSBunchSixTrack()
 
 void BDSBunchSixTrack::SetOptions(const BDSParticleDefinition* beamParticle,
 				  const GMAD::Beam& beam,
+				  const BDSBunchType& distrType,
 				  G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
   fileName = G4String(beam.distrFile); 
   LoadSixTrackFile();
 }

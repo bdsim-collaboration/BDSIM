@@ -252,9 +252,10 @@ void BDSBunchUserFile<T>::SkipLines()
 template<class T>
 void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 				     const GMAD::Beam& beam,
+				     const BDSBunchType& distrType,
 				     G4Transform3D beamlineTransformIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
   particleMass = beamParticle->Mass();
   SetDistrFile((G4String)beam.distrFile); 
   SetBunchFormat((G4String)beam.distrFileFormat);
@@ -264,7 +265,6 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
   ParseFileFormat();
   OpenBunchFile(); 
   SkipLines();
-  return; 
 }
 
 template<class T>
