@@ -42,7 +42,8 @@ namespace GMAD
     _MUSPOILER   = 62,
     _DEGRADER    = 63,
     _THINMULT    = 64,
-    _GAP         = 65
+    _GAP         = 65,
+    _CRYSTALCOL  = 66
   };
 
   /// conversion from enum to string

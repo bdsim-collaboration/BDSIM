@@ -222,6 +222,7 @@ private:
   void DecayMuonicAtom();
 #endif
 #if G4VERSION_NUMBER > 1039
+  void Channelling();
   void ShieldingLEND();
 #endif
   /// @}

@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * Constructs G4EMDissociation and attaches to ions.
  *
  * Uses the G4PhysicsListHelper to set and order processes.
+ * 
+ * @author Laurie Nevay
  */
 
 class BDSPhysicsEMDissociation: public G4VPhysicsConstructor, public BDSSingleUse
