@@ -29,40 +29,39 @@ template<>
 std::map<BDSBunchType, std::string>* BDSBunchType::dictionary =
   new std::map<BDSBunchType, std::string> ({
       {BDSBunchType::reference,   "reference"},
-      {BDSBunchType::gaussian,    "gaussian"},
-      {BDSBunchType::square,      "square"},
+      {BDSBunchType::gaussmatrix, "gaussmatrix"},
+      {BDSBunchType::gauss,       "gauss"},
+      {BDSBunchType::gausstwiss,  "gausstwiss"},
       {BDSBunchType::circle,      "circle"},
+      {BDSBunchType::square,      "square"},
       {BDSBunchType::ring,        "ring"},
       {BDSBunchType::eshell,      "eshell"},
-      {BDSBunchType::sixtrack,    "sixtrack"},
-      {BDSBunchType::twiss,       "twiss"},
       {BDSBunchType::halo,        "halo"},
-      {BDSBunchType::userfile,    "userfile"},
       {BDSBunchType::composite,   "composite"},
-      {BDSBunchType::ptc,         "ptc"}
+      {BDSBunchType::userfile,    "userfile"},
+      {BDSBunchType::ptc,         "ptc"},
+      {BDSBunchType::sixtrack,    "sixtrack"},
 });	
 
-BDSBunchType BDS::DetermineBunchType(G4String distrType)
+BDSBunchType BDS::DetermineBunchType(const G4String& distrType)
 {
   std::map<G4String, BDSBunchType> types;
 
   types["reference"]      = BDSBunchType::reference;
-  types["gaussian"]       = BDSBunchType::gaussian;
-  types["gauss"]          = BDSBunchType::gaussian;
-  types["gaussmatrix"]    = BDSBunchType::gaussian;
-  types["square"]         = BDSBunchType::square;
+  types["gaussmatrix"]    = BDSBunchType::gaussmatrix;
+  types["gauss"]          = BDSBunchType::gauss;
+  types["gausstwiss"]     = BDSBunchType::gausstwiss;
   types["circle"]         = BDSBunchType::circle;
+  types["square"]         = BDSBunchType::square;
   types["ring"]           = BDSBunchType::ring;
   types["eshell"]         = BDSBunchType::eshell;
-  types["sixtrack"]       = BDSBunchType::sixtrack;
-  types["gausstwiss"]     = BDSBunchType::twiss;
-  types["twiss"]          = BDSBunchType::twiss;
   types["halo"]           = BDSBunchType::halo;
-  types["userfile"]       = BDSBunchType::userfile;
   types["composite"]      = BDSBunchType::composite;
+  types["userfile"]       = BDSBunchType::userfile;
   types["ptc"]            = BDSBunchType::ptc;
+  types["sixtrack"]       = BDSBunchType::sixtrack;
 
-  distrType.toLower();
+  // distrType.toLower();
 
   auto result = types.find(distrType);
   if (result == types.end())

@@ -1,0 +1,35 @@
+theangle = 50*urad;
+vangle = 50*urad;
+
+lovelycrystal: crystal, material = "G4_Si",
+	       		data = "../../components/data/Si220pl",
+			shape = "torus",
+			lengthY = 1*cm,
+			lengthX = 0.5*mm,
+			lengthZ = 4*mm,
+			sizeA = 5.43*ang,
+			sizeB = 5.43*ang,
+			sizeC = 5.43*ang,
+			alpha = 1,
+			beta  = 1,
+			gamma = 1,
+			spaceGroup = 227,
+			bendingAngleYAxis = -theangle,
+			bendingAngleZAxis = -vangle;
+
+col1 : crystalcol, l=1*cm, apertureType="rectangular", aper1=1*cm, aper2=0.6*cm,
+       		   crystalLeft="lovelycrystal",
+		   crystalAngleYAxisLeft=-0.5*theangle,
+		   xsize=2*mm;
+
+lat: line = (col1);
+use, lat;
+sample, all;
+
+beam, particle="proton",
+      energy=450*GeV,
+      X0=2*mm;
+
+option, physicsList="channelling";
+
+option, checkOverlaps=1;

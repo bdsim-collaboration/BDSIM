@@ -44,10 +44,11 @@ BDSBunchTwiss::BDSBunchTwiss():
 
 void BDSBunchTwiss::SetOptions(const BDSParticleDefinition* beamParticle,
 			       const GMAD::Beam& beam,
+			       const BDSBunchType& distrType,
 			       G4Transform3D beamlineTransformIn)
 {
   // Fill means and class BDSBunch::SetOptions
-  BDSBunchGaussian::SetOptions(beamParticle, beam, beamlineTransformIn);
+  BDSBunchGaussian::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
 
   betaX  = beam.betx;
   betaY  = beam.bety;

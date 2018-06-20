@@ -192,6 +192,7 @@ public:
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreElossTime()           const {return G4bool  (options.storeElossTime);}
   inline G4bool   StoreElossStepLength()     const {return G4bool  (options.storeElossStepLength);}
+  inline G4bool   StoreElossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}

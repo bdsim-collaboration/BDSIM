@@ -103,7 +103,11 @@ public:
   /// @}
 
   /// Return whether the extent encompasses the point. True if point lies inside the extent.
-  G4bool Encompasses(G4ThreeVector point) const;
+  G4bool Encompasses(const G4ThreeVector& point) const;
+
+  /// Return whether the boundary points given by a set of extents lie within this extent. True
+  /// if all points lie within this extent; false if even one lies outside.
+  G4bool Encompasses(const BDSExtent& other) const;
 
   /// Return whether the extent encompasses the point.  Similar, but with separate x,y,z coordinates.
   G4bool Encompasses(G4double x,
