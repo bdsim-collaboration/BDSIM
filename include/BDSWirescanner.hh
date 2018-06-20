@@ -38,7 +38,8 @@ public:
           G4double   wireLength,
           G4double   wirescannerOffset,
           G4double   wirescannerRotx,
-          G4double   wirescannerRoty);
+          G4double   wirescannerRoty,
+          BDSBeamPipeInfo*   bdsBeamPipeInfo);
   virtual ~BDSWirescanner();
   
 protected:

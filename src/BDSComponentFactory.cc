@@ -950,7 +950,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
                             element->wireLength*CLHEP::m,
                             element->wirescannerOffset*CLHEP::m,
                             element->wirescannerRotx*CLHEP::rad,
-                            element->wirescannerRoty*CLHEP::rad));
+                            element->wirescannerRoty*CLHEP::rad,
+                            PrepareBeamPipeInfo(element)));
 
 }
 
@@ -988,7 +989,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
   
   return (new BDSCollimatorCrystal(elementName,
 				   element->l*CLHEP::m,
-				   PrepareBeamPipeInfo(element),
+                                   PrepareBeamPipeInfo(element),
 				   left,
 				   right,
 				   element->xsize*CLHEP::m, // symmetric for now

@@ -21,6 +21,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSColours.hh"
 #include "BDSMaterials.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
+#include "BDSUtilities.hh"
+
 
 #include "BDSDebug.hh"
 
@@ -42,8 +47,9 @@ BDSWirescanner::BDSWirescanner(G4String   nameIn,
               G4double   wireLengthIn,
               G4double   wirescannerOffsetIn,
               G4double   wirescannerRotxIn,
-              G4double   wirescannerRotyIn):
-  BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner"),
+              G4double   wirescannerRotyIn,
+              BDSBeamPipeInfo*  beamPipeInfoIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner", beamPipeInfoIn),
   outerDiameter(outerDiameterIn),
   wireDiameter(wireDiameterIn),
   wireLength(wireLengthIn),
@@ -54,6 +60,8 @@ BDSWirescanner::BDSWirescanner(G4String   nameIn,
 
 BDSWirescanner::~BDSWirescanner()
 {;}
+
+
 
 void BDSWirescanner::BuildContainerLogicalVolume()
 {
@@ -97,19 +105,43 @@ void BDSWirescanner::BuildContainerLogicalVolume()
 
 
   //build container
-  containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,
-			     chordLength*0.5);
-    
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name + "_container_lv");
+//  containerSolid = new G4Box(name + "_container_solid",
+//			     outerDiameter*0.5,
+//			     outerDiameter*0.5,
+//			     chordLength*0.5);
+//
+  //containerLogicalVolume = new G4LogicalVolume(containerSolid,
+	//				       emptyMaterial,
+	//				       name + "_container_lv");
 }
 
 
 void BDSWirescanner::Build() {
     BDSAcceleratorComponent::Build();
+
+    BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+    BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
+                                                chordLength,
+                                                beamPipeInfo);
+
+    RegisterDaughter(pipe);
+
+// make the beam pipe container, this object's container
+    containerLogicalVolume = pipe->GetContainerLogicalVolume();
+    containerSolid         = pipe->GetContainerSolid();
+
+// register vacuum volume (for biasing)
+    SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
+
+// update extents
+    InheritExtents(pipe);
+
+// update faces
+    SetInputFaceNormal(pipe->InputFaceNormal());
+    SetOutputFaceNormal(pipe->OutputFaceNormal());
+
+
+
 
     G4Material *material = BDSMaterials::Instance()->GetMaterial("carbon");
 
