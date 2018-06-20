@@ -8,6 +8,7 @@ New Features
 * New `crystalcol` element for channelling crystals.
 * New `crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
+* Support for dipole poleface curvature in tracking.
 
 General
 -------
