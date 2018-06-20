@@ -37,9 +37,19 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSWirescanner::BDSWirescanner(G4String   nameIn,
 			  G4double   lengthIn,
-			  G4double   outerDiameterIn):
+			  G4double   outerDiameterIn,
+			  G4double   wireDiameterIn,
+              G4double   wireLengthIn,
+              G4double   wirescannerOffsetIn,
+              G4double   wirescannerRotxIn,
+              G4double   wirescannerRotyIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner"),
-  outerDiameter(outerDiameterIn)
+  outerDiameter(outerDiameterIn),
+  wireDiameter(wireDiameterIn),
+  wireLength(wireLengthIn),
+  wirescannerOffset(wirescannerOffsetIn),
+  wirescannerRotx(wirescannerRotxIn),
+  wirescannerRoty(wirescannerRotyIn)
 {;}
 
 BDSWirescanner::~BDSWirescanner()
@@ -47,25 +57,56 @@ BDSWirescanner::~BDSWirescanner()
 
 void BDSWirescanner::BuildContainerLogicalVolume()
 {
+
+
+    G4cout << wireDiameter << G4endl;
+    G4cout << wireLength   << G4endl;
+    G4cout << outerDiameter << G4endl;
+    G4cout << wirescannerOffset << G4endl;
+
+
   //Input Checks
   if (outerDiameter <= 0)
     {
       G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
+  if (wireDiameter <= 0)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"wireDiameter\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
+  if (wireLength <= 0)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"wireLength\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
+  if (-outerDiameter >= wirescannerOffset)
+    {
+       G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" <<  G4endl;
+       exit(1);
+    }
+  if (wirescannerOffset >= outerDiameter)
+    {
+       G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" << G4endl;
+       exit(1);
+    }
 
-  
+
+
+
+
+  //build container
   containerSolid = new G4Box(name + "_container_solid",
 			     outerDiameter*0.5,
 			     outerDiameter*0.5,
-			     arcLength*0.5);
+			     chordLength*0.5);
     
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
 }
 
-int wireradius = 10;
 
 void BDSWirescanner::Build() {
     BDSAcceleratorComponent::Build();
@@ -73,7 +114,7 @@ void BDSWirescanner::Build() {
     G4Material *material = BDSMaterials::Instance()->GetMaterial("carbon");
 
     // Wire Solid and logical Volume
-    G4Tubs *wire = new G4Tubs(name, 0, wireradius, arcLength*0.5, 0, 2 * CLHEP::pi);
+    G4Tubs *wire = new G4Tubs(name, 0, wireDiameter*0.5, wireLength*0.5, 0, 2 * CLHEP::pi);
 
 
     RegisterSolid(wire);
@@ -84,15 +125,12 @@ void BDSWirescanner::Build() {
     RegisterLogicalVolume(wireLV);
 
 
-    //Offsets for wedge overlap
-    G4double xoffsetLeft = 0;
-    G4double xoffsetRight = 0;
 
     //Rotation
     G4RotationMatrix *wireRot = new G4RotationMatrix;
-    wireRot->rotateX(CLHEP::pi/2.0);
-    wireRot->rotateZ(CLHEP::pi);
-    wireRot->rotateY(0);
+    wireRot->rotateX(wirescannerRotx);
+    wireRot->rotateZ(0);
+    wireRot->rotateY(wirescannerRoty);
     RegisterRotationMatrix(wireRot);
 
     //colour
@@ -102,7 +140,7 @@ void BDSWirescanner::Build() {
     RegisterVisAttributes(wireVisAttr);
 
     //position
-    G4ThreeVector wirescannerpos(0, 0, 0);
+    G4ThreeVector wirescannerpos(wirescannerOffset, 0, 0);
 
 
     //Placement

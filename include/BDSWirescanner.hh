@@ -33,7 +33,12 @@ class BDSWirescanner: public BDSAcceleratorComponent
 public:
     BDSWirescanner(G4String name,
 	      G4double   length,
-	      G4double   outerDiameter);
+	      G4double   outerDiameter,
+          G4double   wireDiameter,
+          G4double   wireLength,
+          G4double   wirescannerOffset,
+          G4double   wirescannerRotx,
+          G4double   wirescannerRoty);
   virtual ~BDSWirescanner();
   
 protected:
@@ -42,6 +47,11 @@ protected:
   virtual void BuildContainerLogicalVolume();
   
   G4double outerDiameter;
+  G4double wireDiameter;
+  G4double wireLength;
+  G4double wirescannerOffset;
+  G4double wirescannerRotx;
+  G4double wirescannerRoty;
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSWirescanner() = delete;

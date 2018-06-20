@@ -936,7 +936,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
 
     return (new BDSWirescanner(elementName,
                             element->l*CLHEP::m,
-                            PrepareOuterDiameter(element)));
+                            PrepareOuterDiameter(element),
+                            element->wireDiameter*CLHEP::m,
+                            element->wireLength*CLHEP::m,
+                            element->wirescannerOffset*CLHEP::m,
+                            element->wirescannerRotx*CLHEP::rad,
+                            element->wirescannerRoty*CLHEP::rad));
 
 }
 
