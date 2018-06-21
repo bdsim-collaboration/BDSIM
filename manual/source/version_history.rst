@@ -1,10 +1,13 @@
-V1.X - 2018 / ?? / ??
+V1.2 - 2018 / ?? / ??
 =====================
 
 New Features
 ------------
 
 * New options to activate extra models in em_extra physics list.
+* New `crystalcol` element for channelling crystals.
+* New `crystal` definition in parser.
+* New "channelling" physics list for Geant4 crystal channelling physics process.
 
 General
 -------
@@ -12,6 +15,8 @@ General
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
+* "ang" unit is added to the parser for Angstroms.
+* BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
 
 Output Changes
 --------------

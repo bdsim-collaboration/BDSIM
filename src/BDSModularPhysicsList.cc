@@ -103,6 +103,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #if G4VERSION_NUMBER > 1039
+#include "BDSPhysicsChannelling.hh"
 #include "G4HadronPhysicsShieldingLEND.hh"
 #endif
 
@@ -199,6 +200,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("decay_muonic_atom",      &BDSModularPhysicsList::DecayMuonicAtom));
 #endif
 #if G4VERSION_NUMBER > 1039
+  physicsConstructors.insert(std::make_pair("channelling",            &BDSModularPhysicsList::Channelling));
   physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
@@ -213,6 +215,9 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   aliasToOriginal["ionphp"]        = "ion_php";
   aliasToOriginal["spindecay"]     = "decay_spin";
   aliasToOriginal["synchrad"]      = "synch_rad";
+#if G4VERSION_NUMBER > 1039
+  aliasToOriginal["channeling"]    = "channelling";
+#endif
   
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
@@ -1121,6 +1126,15 @@ void BDSModularPhysicsList::DecayMuonicAtom()
 #endif
 
 #if G4VERSION_NUMBER > 1039
+void BDSModularPhysicsList::Channelling()
+{
+  if (!physicsActivated["channelling"])
+    {
+      constructors.push_back(new BDSPhysicsChannelling());
+      physicsActivated["channelling"] = true;
+    }
+}
+
 void BDSModularPhysicsList::ShieldingLEND()
 {
   BDS::CheckLowEnergyNeutronDataExists("shielding_lend");

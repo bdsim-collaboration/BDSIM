@@ -102,9 +102,11 @@ gap { return GAP;}
 thinrmatrix { return THINRMATRIX;}
 paralleltransporter {return PARALLELTRANSPORTER;}
 rmatrix {return RMATRIX;}
+crystalcol { return CRYSTALCOL; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }
 query { return QUERY; }

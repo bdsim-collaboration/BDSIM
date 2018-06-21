@@ -62,45 +62,24 @@ public:
 		G4double      irisVerticalAxisIn       = 19*CLHEP::mm,
 		G4double      tangentLineAngleIn       = 13.3*CLHEP::degree);
 
-  /// Cavity type.
-  BDSCavityType cavityType;
-
-  /// Material.
-  G4Material* material;
-
-  /// Iris radius - half width of narrowest part.
-  G4double irisRadius;
-
-  /// Thickness of wall material.
-  G4double thickness;
-
-  /// Equator radius - half width of widest part.
-  G4double equatorRadius;
-
-  /// Half cell length.
-  G4double halfCellLength;
+  
+  BDSCavityType cavityType; ///< Cavity type.  
+  G4Material* material;     ///< Material.
+  G4double irisRadius;      ///< Iris radius - half width of narrowest part.
+  G4double thickness;       ///< Thickness of wall material.
+  G4double equatorRadius;   ///< Equator radius - half width of widest part.
+  G4double halfCellLength;  ///< Half cell length.
 
   /// Number of points that will be used to make the cell shape
   /// more will be more accurate but will also increase tracking time.
   G4int numberOfPoints;
-
-  /// Number of cells per cavity.
-  G4int numberOfCells;
-
-  /// Equator ellipse horizontal semi-axis.
-  G4double equatorHorizontalAxis;
-
-  /// Equator ellipse vertical semi-axis.
-  G4double equatorVerticalAxis;
-
-  /// Iris ellipse horizontal semi-axis.
-  G4double irisHorizontalAxis;
-
-  /// Iris ellipse vertical semi-axis.
-  G4double irisVerticalAxis;
-
-  /// Tangent angle.
-  G4double tangentLineAngle;
+  
+  G4int    numberOfCells;         ///< Number of cells per cavity.
+  G4double equatorHorizontalAxis; ///< Equator ellipse horizontal semi-axis.
+  G4double equatorVerticalAxis;   ///< Equator ellipse vertical semi-axis.
+  G4double irisHorizontalAxis;    ///< Iris ellipse horizontal semi-axis.
+  G4double irisVerticalAxis;      ///< Iris ellipse vertical semi-axis.
+  G4double tangentLineAngle;      ///< Tangent angle.
 
 private:
   /// private default constructor as unused
