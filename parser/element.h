@@ -124,6 +124,7 @@ namespace GMAD
       double wirescannerOffset;
       double wirescannerRotx;
       double wirescannerRoty;
+      double wirescannerRotz;
       ///@}
 
     ///@{List of beam loss monitor locations

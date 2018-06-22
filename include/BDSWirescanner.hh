@@ -39,7 +39,9 @@ public:
           G4double   wirescannerOffset,
           G4double   wirescannerRotx,
           G4double   wirescannerRoty,
-          BDSBeamPipeInfo*   bdsBeamPipeInfo);
+          G4double   wirescannerRotz,
+          BDSBeamPipeInfo*   bdsBeamPipeInfo,
+          G4String   wireMaterial);
   virtual ~BDSWirescanner();
   
 protected:
@@ -53,6 +55,8 @@ protected:
   G4double wirescannerOffset;
   G4double wirescannerRotx;
   G4double wirescannerRoty;
+  G4double wirescannerRotz;
+  G4String wireMaterial;
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSWirescanner() = delete;

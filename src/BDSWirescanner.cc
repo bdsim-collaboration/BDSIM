@@ -48,14 +48,18 @@ BDSWirescanner::BDSWirescanner(G4String   nameIn,
               G4double   wirescannerOffsetIn,
               G4double   wirescannerRotxIn,
               G4double   wirescannerRotyIn,
-              BDSBeamPipeInfo*  beamPipeInfoIn):
+              G4double   wirescannerRotzIn,
+              BDSBeamPipeInfo*  beamPipeInfoIn,
+              G4String   wireMaterialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "wirescanner", beamPipeInfoIn),
   outerDiameter(outerDiameterIn),
   wireDiameter(wireDiameterIn),
   wireLength(wireLengthIn),
   wirescannerOffset(wirescannerOffsetIn),
   wirescannerRotx(wirescannerRotxIn),
-  wirescannerRoty(wirescannerRotyIn)
+  wirescannerRoty(wirescannerRotyIn),
+  wirescannerRotz(wirescannerRotzIn),
+  wireMaterial(wireMaterialIn)
 {;}
 
 BDSWirescanner::~BDSWirescanner()
@@ -66,11 +70,6 @@ BDSWirescanner::~BDSWirescanner()
 void BDSWirescanner::BuildContainerLogicalVolume()
 {
 
-
-    G4cout << wireDiameter << G4endl;
-    G4cout << wireLength   << G4endl;
-    G4cout << outerDiameter << G4endl;
-    G4cout << wirescannerOffset << G4endl;
 
 
   //Input Checks
@@ -100,9 +99,17 @@ void BDSWirescanner::BuildContainerLogicalVolume()
        exit(1);
     }
 
+    if (wireMaterial == "")
+    {
+        wireMaterial = "carbon";
+    }
 
 
-
+    G4cout << wireDiameter << G4endl;
+    G4cout << wireLength   << G4endl;
+    G4cout << outerDiameter << G4endl;
+    G4cout << wirescannerOffset << G4endl;
+    G4cout << wireMaterial << G4endl;
 
   //build container
 //  containerSolid = new G4Box(name + "_container_solid",
@@ -143,7 +150,7 @@ void BDSWirescanner::Build() {
 
 
 
-    G4Material *material = BDSMaterials::Instance()->GetMaterial("Carbon");
+    G4Material *material = BDSMaterials::Instance()->GetMaterial(wireMaterial);
 
     // Wire Solid and logical Volume
     G4Tubs *wire = new G4Tubs(name, 0, wireDiameter*0.5, wireLength*0.5, 0, 2 * CLHEP::pi);
@@ -161,7 +168,7 @@ void BDSWirescanner::Build() {
     //Rotation
     G4RotationMatrix *wireRot = new G4RotationMatrix;
     wireRot->rotateX(wirescannerRotx + CLHEP::pi/2.0);
-    wireRot->rotateZ(0);
+    wireRot->rotateZ(wirescannerRotz);
     wireRot->rotateY(wirescannerRoty);
     RegisterRotationMatrix(wireRot);
 

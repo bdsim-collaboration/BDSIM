@@ -139,6 +139,7 @@ Parameters::Parameters()
   setMap["wirescannerOffset"] = false;
   setMap["wirescannerRotx"]   = false;
   setMap["wirescannerRoty"]   = false;
+  setMap["wirescannerRotz"]   = false;
 
   setMap["colour"] = false;
 

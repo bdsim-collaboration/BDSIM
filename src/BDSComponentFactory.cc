@@ -951,7 +951,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateWireScanner()
                             element->wirescannerOffset*CLHEP::m,
                             element->wirescannerRotx*CLHEP::rad,
                             element->wirescannerRoty*CLHEP::rad,
-                            PrepareBeamPipeInfo(element)));
+                            element->wirescannerRotz*CLHEP::rad,
+                            PrepareBeamPipeInfo(element),
+                            element->material));
 
 }
 

@@ -80,7 +80,7 @@ BDSColours::BDSColours()
   colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
   colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
-  colours["wirescanner"]      = new G4Colour(0.466, 0.533, 0.6);   // slate gray
+  colours["wirescanner"]      = new G4Colour(0.545, 0.533, 0.470); // a nice gray
   colours["shield"]           = colours["tunnel"];
   colours["crystal"]          = colours["srfcavity"];
   

@@ -158,6 +158,7 @@ void Element::PublishMembers()
   publish("wirescannerOffset" , &Element::wirescannerOffset);
   publish("wirescannerRotx" ,   &Element::wirescannerRotx);
   publish("wirescannerRoty" ,   &Element::wirescannerRoty);
+  publish("wirescannerRotz" ,   &Element::wirescannerRotz);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
