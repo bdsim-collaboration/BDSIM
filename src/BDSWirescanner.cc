@@ -143,7 +143,7 @@ void BDSWirescanner::Build() {
 
 
 
-    G4Material *material = BDSMaterials::Instance()->GetMaterial("carbon");
+    G4Material *material = BDSMaterials::Instance()->GetMaterial("Carbon");
 
     // Wire Solid and logical Volume
     G4Tubs *wire = new G4Tubs(name, 0, wireDiameter*0.5, wireLength*0.5, 0, 2 * CLHEP::pi);
@@ -160,7 +160,7 @@ void BDSWirescanner::Build() {
 
     //Rotation
     G4RotationMatrix *wireRot = new G4RotationMatrix;
-    wireRot->rotateX(wirescannerRotx);
+    wireRot->rotateX(wirescannerRotx + CLHEP::pi/2.0);
     wireRot->rotateZ(0);
     wireRot->rotateY(wirescannerRoty);
     RegisterRotationMatrix(wireRot);
