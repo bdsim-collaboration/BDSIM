@@ -237,6 +237,7 @@ The following elements may be defined
 * `vkicker`_
 * `hkicker`_
 * `kicker`_
+* `tkicker`_
 * `rf`_
 * `rcol`_
 * `ecol`_

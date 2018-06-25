@@ -320,13 +320,16 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 	  G4cout << G4endl << "Error - the calculated teleporter delta is above 1m! "
 		 << "The teleporter" << G4endl << "was only intended for small shifts "
 		 << "- the teleporter will not be built." << G4endl << G4endl;
+	  exit(1);
 	}
       else if (teleporterLength < minimumRequiredSpace)
 	{// should protect against -ve length teleporter
 	  G4cout << G4endl << "Insufficient space between the first and last elements "
 		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
 		 << "- these will not be built." << G4endl;
-	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is " << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
+	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is "
+		 << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
+	  exit(1);
 	}
       else
 	{ 
@@ -366,7 +369,7 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   // construct beamline of end pieces
   BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
-
+  //  BDSBeamline* endPieces = nullptr;
   BDSBeamlineSet beamlineSet;
   beamlineSet.massWorld              = massWorld;
   beamlineSet.curvilinearWorld       = clBeamline;

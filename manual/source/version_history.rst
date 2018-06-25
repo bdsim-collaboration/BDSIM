@@ -16,6 +16,7 @@ General
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
 * "ang" unit is added to the parser for Angstroms.
+* BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
 
 Output Changes
 --------------

@@ -71,7 +71,7 @@
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
-%token <ival> VKICKER HKICKER KICKER TKICKER
+%token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER RMATRIX
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -313,6 +313,9 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | AWAKESPECTROMETER {$$=static_cast<int>(ElementType::_AWAKESPECTROMETER);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
+          | THINRMATRIX {$$=static_cast<int>(ElementType::_THINRMATRIX);}
+          | PARALLELTRANSPORTER {$$=static_cast<int>(ElementType::_PARALLELTRANSPORTER);}
+          | RMATRIX     {$$=static_cast<int>(ElementType::_RMATRIX);}
 
 atom        : ATOM        ',' atom_options
 material    : MATERIAL    ',' material_options
