@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
                                                    G4Mag_EqRhs* eqOfMIn,
-                                                   G4double aperIn) :
+                                                   G4double aperIn):
   BDSIntegratorMag(eqOfMIn, 6),
   aper(aperIn)
 {
@@ -52,26 +52,26 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
   rmat43  = (*strength)["rmat43"];
   rmat44  = (*strength)["rmat44"];
 
-#if 0
+#ifdef BDSDEBUG
   G4cout << "RMatrix " << rmat11 << " " << rmat12 << " " << rmat13 << " " << rmat14 << " " << kick1 << G4endl;
   G4cout << "RMatrix " << rmat21 << " " << rmat22 << " " << rmat23 << " " << rmat24 << " " << kick2 <<  G4endl;
   G4cout << "RMatrix " << rmat31 << " " << rmat32 << " " << rmat33 << " " << rmat34 << " " << kick3 <<  G4endl;
   G4cout << "RMatrix " << rmat41 << " " << rmat42 << " " << rmat43 << " " << rmat44 << " " << kick4 <<  G4endl;
 #endif
-
 }
 
 void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
                                        const G4double /*dydx*/[],
                                        const G4double h,
                                        G4double       yOut[],
-                                       G4double       yErr[]) {
+                                       G4double       yErr[])
+{
   for (G4int i = 0; i < 3; i++)
-  {
-    yErr[i]   = 0;
-    yErr[i+3] = 0;
-  }
-
+    {
+      yErr[i]   = 0;
+      yErr[i+3] = 0;
+    }
+  
   // check if beam particle, if so step as drift
   //
 
@@ -86,11 +86,11 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   // prevent more than one step begin taken, but occasionally, a very small initial step
   // can be taken resulting in a double kick.
   if (lengthFraction < 0.51)// || !BDS::IsFinite(fcof))
-  {
-    AdvanceDriftMag(yIn, h, yOut, yErr);
-    SetDistChord(0);
-    return;
-  }
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
 
   G4ThreeVector pos = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
@@ -117,19 +117,16 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
   G4double zp1 = std::sqrt(1 - std::pow(xp1,2) - std::pow(yp1,2));
 
   // need to check against aperture before returning
-  if( x1 > aper)
-    x1 = aper;
+  if(x1 > aper)
+    {x1 = aper;}
   else if( x1 < -aper)
-    x1 = -aper;
-  if( y1 > aper)
-    y1 = aper;
+    {x1 = -aper;}
+  if(y1 > aper)
+    {y1 = aper;}
   else if( y1 < -aper)
-    y1 = -aper;
+    {y1 = -aper;}
 
   G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
   G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
   ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
-
-
-  return;
 }

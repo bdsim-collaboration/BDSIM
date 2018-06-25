@@ -30,8 +30,9 @@ class G4Mag_EqRhs;
  * @brief Integrator that just moves the particle parallel to the s axis
  *
  * Teleporter for moving particles without changing angle but only advances the particle
- * by h
+ * by h.
  *
+ * @author Stewart Boogert
  */
 
 class BDSIntegratorParallelTransport: public BDSIntegratorMag
@@ -52,4 +53,4 @@ private:
 
 };
 
-#endif //BDSINTEGRATORPARALLELTRANSPORT_HH
+#endif

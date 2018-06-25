@@ -31,14 +31,17 @@ class BDSMagnetStrength;
  * @brief Integrator that just moves the particle parallel to the s axis
  *
  * Teleporter for moving particles without changing angle but only advances the particle
- * by h
+ * by h.
  *
+ * @author Stewart Boogert
  */
 
 class BDSIntegratorRMatrixThin: public BDSIntegratorMag
 {
 public:
-  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength, G4Mag_EqRhs* eqOfMIn, G4double aper);
+  BDSIntegratorRMatrixThin(BDSMagnetStrength const* strength,
+			   G4Mag_EqRhs* eqOfMIn,
+			   G4double aper);
 
   virtual ~BDSIntegratorRMatrixThin(){;}
 
@@ -75,4 +78,4 @@ private:
   G4double aper;
 };
 
-#endif // BDSINTEGRATORRMATRIXTHIN_HH
+#endif
