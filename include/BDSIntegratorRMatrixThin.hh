@@ -43,7 +43,7 @@ public:
   virtual ~BDSIntegratorRMatrixThin(){;}
 
   virtual void Stepper(const G4double y[],
-                       const G4double unitMomentum[],
+                       const G4double dydx[],
                        const G4double h,
                        G4double       yOut[],
                        G4double       yErr[]);

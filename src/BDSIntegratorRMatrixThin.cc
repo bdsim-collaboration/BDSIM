@@ -62,7 +62,7 @@ BDSIntegratorRMatrixThin::BDSIntegratorRMatrixThin(BDSMagnetStrength const* stre
 }
 
 void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
-                                       const G4double unitMomentum[],
+                                       const G4double /*dydx*/[],
                                        const G4double h,
                                        G4double       yOut[],
                                        G4double       yErr[]) {
