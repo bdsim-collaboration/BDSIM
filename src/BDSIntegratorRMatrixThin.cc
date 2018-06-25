@@ -73,10 +73,7 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
     }
   
   // check if beam particle, if so step as drift
-  //
-
-
-  const G4double fcof = eqOfM->FCof();
+  //const G4double fcof = eqOfM->FCof();
   G4double lengthFraction = h / thinElementLength;
 
   // only apply the kick if we're taking a step longer than half the length of the item,
