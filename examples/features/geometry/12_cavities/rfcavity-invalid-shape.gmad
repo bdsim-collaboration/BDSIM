@@ -1,0 +1,39 @@
+! default material will be copper
+! default phaseOffset is 0
+d1: drift, l=0.5;
+
+rf1 : rf, l=115.4*mm,
+      	  frequency=8*MHz,
+	  phase = 2*pi,
+	  gradient = 10 * MV / m,
+	  cavityModel="Tesla9Cell",
+	  material = "Niobium",
+	  fieldVacuum="rffield";
+
+! cavity geometry
+
+! banana is not a valid cavity type
+
+Tesla9Cell: cavitymodel,
+	    type = "banana",
+	    irisRadius = 35*mm,
+	    equatorRadius = 103.3*mm,
+	    halfCellLength = 57.7*mm,
+	    equatorHorizontalAxis = 40*mm,
+	    equatorVerticalAxis = 42*mm,
+	    irisHorizontalAxis = 12*mm,
+	    irisVerticalAxis = 19*mm,
+	    tangentLineAngle = 13.3*pi/180,
+	    thickness = 1*mm,
+	    numberOfPoints = 24,
+	    numberOfCells = 1;
+
+! define field object to speficy more complex field type
+rffield: field, type="rfcavity";
+
+lat: line = (d1, rf1, d1);
+
+include optionsTest.gmad;
+
+! for smoother cavity visualisation
+option, nSegmentsPerCircle=40;

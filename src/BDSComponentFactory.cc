@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
+#include "BDSLine.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSCrystalInfo.hh"
@@ -292,6 +293,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
+  case ElementType::_THINRMATRIX:
+    component = CreateThinRMatrix(angleIn); break;
+  case ElementType::_PARALLELTRANSPORTER:
+    component = CreateParallelTransporter(); break;
+  case ElementType::_RMATRIX:
+    component = CreateRMatrix(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -813,6 +820,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  return CreateMagnet(element, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+}
+
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 {
   if(!HasSufficientMinimumLength(element))
@@ -1116,6 +1129,62 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   return new BDSTerminator();
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
+{
+  G4cout << "BDSComponentFactory::CreateRMatrix" << G4endl;
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+
+  GMAD::Element *elementNew = new GMAD::Element(*element);
+  elementNew->l = (element->l-thinElementLength)/2.0;
+
+  auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+  auto rmatrix            = CreateThinRMatrix(0);
+  auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+
+  const G4String             baseName = elementName;
+  BDSLine *bLine = new BDSLine(baseName);
+  bLine->AddComponent(parallelTransport1);
+  bLine->AddComponent(rmatrix);
+  bLine->AddComponent(parallelTransport2);
+
+  return bLine;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
+{
+
+  G4cout << "BDSComponentFactory::CreateThinRMatrix" << G4endl;
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
+  beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+                                                               -angleIn, angleIn, beamPipeInfo);
+  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
+
+  BDSIntegratorType intType = integratorSet->rmatrixThin;
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rmatrix,
+                                               brho,
+                                               intType,
+                                               st,
+                                               true,
+                                               fieldTrans);
+  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
+
+  BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
+                                          elementName,
+                                          thinElementLength,
+                                          beamPipeInfo,
+                                          magnetOuterInfo,
+                                          vacuumField);
+
+  thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
+                                   beamPipeInfo->aper1,
+                                   thinElementLength*0.5));
+
+  return thinRMatrix;
+}
+
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
@@ -1228,6 +1297,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
@@ -1237,7 +1307,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brho,
 					       intType,
-                                               stCopy,
+					       stCopy,
 					       true,
 					       fieldTransform);
 
@@ -1725,6 +1795,40 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
     {(*st)[*nkey] = scaling * (*kn) / length;}
   for (; ks != el->ksl.end(); ks++, skey++)
     {(*st)[*skey] = scaling * (*ks) / length;}
+
+  return st;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForRMatrix(Element const* el) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  G4double scaling = el->scaling;
+  // G4double length  = el->l;
+
+  (*st)["kick1"] = scaling * el->kick1;
+  (*st)["kick2"] = scaling * el->kick2;
+  (*st)["kick3"] = scaling * el->kick3;
+  (*st)["kick4"] = scaling * el->kick4;
+
+  (*st)["rmat11"] = scaling * el->rmat11;
+  (*st)["rmat12"] = scaling * el->rmat12;
+  (*st)["rmat13"] = scaling * el->rmat13;
+  (*st)["rmat14"] = scaling * el->rmat14;
+
+  (*st)["rmat21"] = scaling * el->rmat21;
+  (*st)["rmat22"] = scaling * el->rmat22;
+  (*st)["rmat23"] = scaling * el->rmat23;
+  (*st)["rmat24"] = scaling * el->rmat24;
+
+  (*st)["rmat31"] = scaling * el->rmat31;
+  (*st)["rmat32"] = scaling * el->rmat32;
+  (*st)["rmat33"] = scaling * el->rmat33;
+  (*st)["rmat34"] = scaling * el->rmat34;
+
+  (*st)["rmat41"] = scaling * el->rmat41;
+  (*st)["rmat42"] = scaling * el->rmat42;
+  (*st)["rmat43"] = scaling * el->rmat43;
+  (*st)["rmat44"] = scaling * el->rmat44;
 
   return st;
 }

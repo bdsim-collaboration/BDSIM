@@ -98,7 +98,7 @@ void BDSCollimatorCrystal::Build()
     {
       G4ThreeVector objectOffset     = crystalLeft->GetPlacementOffset();
       G4ThreeVector colOffsetL       = G4ThreeVector(halfGapLeft,0,0);
-      G4ThreeVector placementOffset  = objectOffset + colOffsetL;
+      G4ThreeVector placementOffsetL = objectOffset + colOffsetL; // 'L' in p offset to avoid class with BDSGeometry Component member
       G4RotationMatrix* placementRot = crystalLeft->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisLeft))
 	{
@@ -112,7 +112,7 @@ void BDSCollimatorCrystal::Build()
 	}
 
       // check if it'll fit..
-      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffset);
+      BDSExtent extShifted = (crystalLeft->GetExtent()).Translate(placementOffsetL);
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
       if (!safe)
@@ -120,7 +120,7 @@ void BDSCollimatorCrystal::Build()
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Left");
       
       auto cL = new G4PVPlacement(placementRot,
-				  placementOffset,
+				  placementOffsetL,
 				  crystalLeft->GetContainerLogicalVolume(),
 				  name + "_crystal_left_pv",
 				  GetAcceleratorVacuumLogicalVolume(),
@@ -133,7 +133,7 @@ void BDSCollimatorCrystal::Build()
     {
       G4ThreeVector objectOffset     = crystalRight->GetPlacementOffset();
       G4ThreeVector colOffsetR       = G4ThreeVector(-halfGapRight,0,0); // -ve as r.h. coord system
-      G4ThreeVector placementOffset  = objectOffset + colOffsetR;
+      G4ThreeVector placementOffsetL = objectOffset + colOffsetR;
       G4RotationMatrix* placementRot = crystalRight->GetPlacementRotation();
       if (BDS::IsFinite(angleYAxisRight))
 	{
@@ -147,7 +147,7 @@ void BDSCollimatorCrystal::Build()
 	}
       
       // check if it'll fit..
-      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffset);
+      BDSExtent extShifted = (crystalRight->GetExtent()).Translate(placementOffsetL);
       BDSExtent thisExtent = GetExtent();
       G4bool safe = thisExtent.Encompasses(extShifted);
       if (!safe)
@@ -155,7 +155,7 @@ void BDSCollimatorCrystal::Build()
       LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Right");
 
       auto cR = new G4PVPlacement(placementRot,
-				  placementOffset,
+				  placementOffsetL,
 				  crystalRight->GetContainerLogicalVolume(),
 				  name + "_crystal_right_pv",
 				  GetAcceleratorVacuumLogicalVolume(),

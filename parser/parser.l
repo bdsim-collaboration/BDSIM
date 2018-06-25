@@ -97,8 +97,11 @@ awakescreen { return AWAKESCREEN; }
 awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
-degrader { return DEGRADER; }
-gap { return GAP; }
+degrader { return DEGRADER;}
+gap { return GAP;}
+thinrmatrix { return THINRMATRIX;}
+paralleltransporter {return PARALLELTRANSPORTER;}
+rmatrix {return RMATRIX;}
 crystalcol { return CRYSTALCOL; }
 
 cavitymodel {return CAVITYMODEL; }

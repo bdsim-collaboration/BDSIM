@@ -24,7 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSCrystal::BDSCrystal(G4VSolid*         containerSolidIn,
 		       G4LogicalVolume*  containerLVIn,
 		       BDSExtent         extentIn,
-		       G4ThreeVector     placementOffset,
-		       G4RotationMatrix* placementRotation):
-  BDSGeometryComponent(containerSolidIn, containerLVIn, extentIn, BDSExtent(), placementOffset, placementRotation)
+		       G4ThreeVector     placementOffsetIn,
+		       G4RotationMatrix* placementRotationIn):
+  BDSGeometryComponent(containerSolidIn, containerLVIn, extentIn, BDSExtent(), placementOffsetIn, placementRotationIn)
 {;}

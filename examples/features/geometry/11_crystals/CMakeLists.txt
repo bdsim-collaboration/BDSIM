@@ -10,3 +10,5 @@ simple_testing(crystal-torus-1             "--file=crystal-torus1.gmad --output=
 simple_testing(crystal-torus-1-strong      "--file=crystal-torus1-strong.gmad --output=none"      ${OVERLAP_CHECK})
 simple_testing(crystal-torus-2-strong      "--file=crystal-torus2-strong.gmad --output=none"      ${OVERLAP_CHECK})
 simple_testing(crystal-torus-2-strong-negz "--file=crystal-torus2-strong-negz.gmad --output=none" ${OVERLAP_CHECK})
+
+simple_fail(crystal-invalid-shape "--file=cyrstal-invalid-shape.gmad")
