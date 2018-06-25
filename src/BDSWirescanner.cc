@@ -116,10 +116,10 @@ void BDSWirescanner::BuildContainerLogicalVolume()
 //			     outerDiameter*0.5,
 //			     outerDiameter*0.5,
 //			     chordLength*0.5);
-//
-  //containerLogicalVolume = new G4LogicalVolume(containerSolid,
-	//				       emptyMaterial,
-	//				       name + "_container_lv");
+
+//  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+//  	  			       emptyMaterial,
+//                           name + "_container_lv");
 }
 
 
@@ -133,11 +133,11 @@ void BDSWirescanner::Build() {
 
     RegisterDaughter(pipe);
 
-// make the beam pipe container, this object's container
+ //make the beam pipe container, this object's container
     containerLogicalVolume = pipe->GetContainerLogicalVolume();
     containerSolid         = pipe->GetContainerSolid();
 
-// register vacuum volume (for biasing)
+ //register vacuum volume (for biasing)
     SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
 
 // update extents
@@ -145,7 +145,7 @@ void BDSWirescanner::Build() {
 
 // update faces
     SetInputFaceNormal(pipe->InputFaceNormal());
-    SetOutputFaceNormal(pipe->OutputFaceNormal());
+   SetOutputFaceNormal(pipe->OutputFaceNormal());
 
 
 
@@ -164,7 +164,6 @@ void BDSWirescanner::Build() {
     RegisterLogicalVolume(wireLV);
 
 
-
     //Rotation
     G4RotationMatrix *wireRot = new G4RotationMatrix;
     wireRot->rotateX(wirescannerRotx + CLHEP::pi/2.0);
@@ -175,7 +174,6 @@ void BDSWirescanner::Build() {
     //colour
     G4VisAttributes *wireVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("wirescanner"));
     wireLV->SetVisAttributes(wireVisAttr);
-
     RegisterVisAttributes(wireVisAttr);
 
     //position
@@ -187,11 +185,10 @@ void BDSWirescanner::Build() {
                                                    wirescannerpos,           // position
                                                    wireLV,            // its logical volume
                                                    name + "_wire_pv", // its name
-                                                   containerLogicalVolume, // its mother  volume
+                                              GetAcceleratorVacuumLogicalVolume(),
+//                                                   containerLogicalVolume, // its mother  volume
                                                    false,                  // no boolean operation
                                                    0,                      // copy number
                                                    checkOverlaps);
-
-
     RegisterPhysicalVolume(wirePV);
 }
