@@ -215,7 +215,7 @@ private:
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
-	BDSAcceleratorComponent* CreateRMatrix();
+  BDSAcceleratorComponent* CreateRMatrix();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();

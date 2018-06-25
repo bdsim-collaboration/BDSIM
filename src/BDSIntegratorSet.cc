@@ -44,7 +44,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType multipoleThinIn,
 				   BDSIntegratorType multipoleOuterIn,
 				   BDSIntegratorType rmatrixThinIn,
-					 BDSIntegratorType parallelTransporterIn):
+				   BDSIntegratorType parallelTransporterIn):
   solenoid(solenoidIn),
   dipole(dipoleIn),
   dipoleQuadrupole(dipoleQuadrupoleIn),
@@ -65,7 +65,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
   multipoleThin(multipoleThinIn),
   multipoleOuter(multipoleOuterIn),
   rmatrixThin(rmatrixThinIn),
-	parallelTransporter(parallelTransporterIn)
+  parallelTransporter(parallelTransporterIn)
 {
   isMatrix = false; //default
   // use dipolematrix integrator to check if matrix style as it is the
@@ -166,7 +166,7 @@ namespace BDS
 			 BDSIntegratorType::multipolethin,  // thin multipole
 			 BDSIntegratorType::g4nystromrk4,   // multipole outer
 			 BDSIntegratorType::rmatrixthin,
-		   BDSIntegratorType::paralleltransport);   // thin rmatrix
+			 BDSIntegratorType::paralleltransport);   // thin rmatrix
   /// All 4th Order Runge Kutte.
   const BDSIntegratorSet* integratorsGeant4 =
     new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
@@ -310,14 +310,14 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::skewmultipoleouterdecapole:
     case BDSFieldType::multipoleouterdipole3d:
       {return multipoleOuter;   break;}
-		case BDSFieldType::rmatrix:
-		  {return rmatrixThin;}
-		case BDSFieldType::paralleltransporter:
-		  {return parallelTransporter; break;}
+    case BDSFieldType::rmatrix:
+      {return rmatrixThin;}
+    case BDSFieldType::paralleltransporter:
+      {return parallelTransporter; break;}
     default:
-      {return general;          break;}
+      {return general; break;}
     }
 }
 
 G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
-  {return isMatrix;}
+{return isMatrix;}
