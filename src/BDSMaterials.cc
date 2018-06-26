@@ -124,6 +124,7 @@ void BDSMaterials::DefineMetals()
   AddMaterial(name="iron"          , density=  7.874, kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
   AddMaterial(name="weightiron"    , density=  7.87 , kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
   AddMaterial(name="lead"          , density= 11.35 , kStateSolid, NTP_Temperature, 1, {"Pb"}, singleElement);
+  AddMaterial(name="nickel"        , density=  8.908, kStateSolid, NTP_Temperature, 1, {"Ni"}, singleElement);
   AddMaterial(name="silicon"       , density=  2.33 , kStateSolid, NTP_Temperature, 1, {"Si"}, singleElement);
   AddMaterial(name="titanium"      , density=  4.54 , kStateSolid, NTP_Temperature, 1, {"Ti"}, singleElement);
   AddMaterial(name="tungsten"      , density= 19.3  , kStateSolid, NTP_Temperature, 1, {"W"} , singleElement);
