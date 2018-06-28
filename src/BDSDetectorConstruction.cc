@@ -94,8 +94,9 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   if ((integratorSetType == BDSIntegratorSetType::bdsimtwo) or
       (integratorSetType == BDSIntegratorSetType::geant4) or
       (integratorSetType == BDSIntegratorSetType::geant4dp))
-    {canSampleAngledFaces = false;}
-
+    { // set to be value of option, default is false.
+      canSampleAngledFaces = BDSParser::Instance()->GetOptions().sampleElementsWithPoleface;
+    }
 
   UpdateSamplerDiameter();
 }
