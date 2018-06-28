@@ -29,19 +29,33 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSScreen::BDSScreen(G4String         nameIn,  
 		     G4double         chordLengthIn,
+             G4double         screenAnglexIn,
+             G4double         screenAngleyIn,
+             G4double         screenAnglezIn,
+		     G4double         screenPosxIn,
+		     G4double         screenPosyIn,
+		     G4double         screenPoszIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn,
-		     G4TwoVector      sizeIn, //X Y dimensions of screen
-		     G4double         screenAngleIn):
+		     G4TwoVector      sizeIn): //X Y dimensions of screen
+
   BDSDrift(nameIn,chordLengthIn,beamPipeInfoIn),
   size(sizeIn), 
-  screenAngle(screenAngleIn),
-  screenPos(G4ThreeVector()),
+  screenAnglex(screenAnglexIn),
+  screenAngley(screenAngleyIn),
+  screenAnglez(screenAnglezIn),
+  screenPosx(screenPosxIn),
+  screenPosy(screenPosyIn),
+  screenPosz(screenPoszIn),
+  screenPos(G4ThreeVector(screenPosx, screenPosy, screenPosz)),
   nLayers(0)
 {
   mlScreen = new BDSMultilayerScreen(size, nameIn+"_mlscreen");
   
   screenRot = new G4RotationMatrix();
-  screenRot->rotateY(screenAngle);
+  screenRot->rotateX(screenAnglex);
+  screenRot->rotateY(screenAngley);
+  screenRot->rotateZ(screenAnglez);
+
 }
 
 BDSScreen::~BDSScreen()
