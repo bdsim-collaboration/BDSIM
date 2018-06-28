@@ -44,7 +44,8 @@ namespace GMAD
     _THINMULT    = 64,
     _GAP         = 65,
     _CRYSTALCOL  = 66,
-    _WIRESCANNER = 67
+    _WIRESCANNER = 67,
+    _AWSCREEN = 68,
 
   };
 

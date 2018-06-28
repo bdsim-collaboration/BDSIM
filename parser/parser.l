@@ -93,6 +93,7 @@ muspoiler { return MUSPOILER; }
 shield {return SHIELD; }
 element { return ELEMENT; }
 screen { return SCREEN; }
+awscreen { return AWSCREEN; }
 awakescreen { return AWAKESCREEN; }
 awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }

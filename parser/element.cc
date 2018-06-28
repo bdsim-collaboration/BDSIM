@@ -140,7 +140,15 @@ void Element::PublishMembers()
   publish("layerMaterials",  &Element::layerMaterials);
   publish("layerIsSampler",  &Element::layerIsSampler);
 
-  // for AWAKE spectrometer
+  publish("screenAnglex",    &Element::screenAnglex);
+  publish("screenAngley",    &Element::screenAngley);
+  publish("screenAnglez",    &Element::screenAnglez);
+  publish("screenPosx",      &Element::screenPosx);
+  publish("screenPosy",      &Element::screenPosy);
+  publish("screenPosz",      &Element::screenPosz);
+
+
+    // for AWAKE spectrometer
   publish("screenPSize",        &Element::screenPSize);
   publish("screenEndZ",         &Element::screenEndZ);
   publish("poleStartZ",         &Element::poleStartZ);
@@ -313,8 +321,15 @@ void Element::print(int ident)const{
     break;
 
   case ElementType::_SCREEN:
-    std::cout << "angle=" << angle <<"rad" << std::endl
+    std::cout << "screenAnglex=" << screenAnglex <<"rad" << std::endl
+          << "screenAngley="     << screenAngley <<"rad" << std::endl
+          << "screenAnglez="     << screenAnglez <<"rad" << std::endl
 	      << "precision region " << region << std::endl;
+    break;
+
+  case ElementType::_AWSCREEN:
+    std::cout << "angle=" << angle <<"rad" << std::endl
+          << "precision region " << region << std::endl;
     break;
     
   case ElementType::_TRANSFORM3D:

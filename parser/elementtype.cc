@@ -81,6 +81,8 @@ std::string GMAD::typestr(ElementType type) {
     return "muspoiler";
   case ElementType::_SCREEN :
     return "screen";
+  case ElementType::_AWSCREEN :
+    return "awscreen";
   case ElementType::_AWAKESCREEN :
     return "awakescreen";
   case ElementType::_AWAKESPECTROMETER :
