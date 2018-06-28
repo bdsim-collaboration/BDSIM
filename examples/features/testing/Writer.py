@@ -72,6 +72,7 @@ class Writer:
         return beam
 
     def _getMachine(self, particle, robust=False):
+        colLength = 1.0 # default
         if particle == 'e-':
             colLength = 0.01
         elif particle == 'proton':
@@ -175,7 +176,8 @@ class Writer:
         # make directories and loop over components, particles, and energies.
         self._mkdirs(test)
         if component == 'sbend' or component == 'rbend':
-            self.WriteDipoleTests(test)
+            #self.WriteDipoleTests(test)
+            self.WriteFullDipole(test)
         elif component == 'hkick' or component == 'vkick':
             self.WriteKickerTests(test)
         elif component == 'rcol' or component == 'ecol':
@@ -221,38 +223,117 @@ class Writer:
             machine.AddBeam(self._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
 
+    def WriteFullDipole(self, test):
+        """ Write dipoles that only vary length, and angle or field. All remaining parameters
+            are set to maximum values."""
+        def writeDipole(componentName, filename, component, length, angle=None, field=None):
+            k1 = test['k1'][-1]
+            e1 = test['e1'][-1]
+            e2 = test['e2'][-1]
+            fint = test['fint'][-1]
+            fintx = test['fintx'][-1]
+            fintK2 = test['fintK2'][-1]
+            fintxK2 = test['fintxK2'][-1]
+            hgap = test['hgap'][-1]
+            h1 = test['h1'][-1]
+            h2 = test['h2'][-1]
+            fileName = filename + '__MAXALLDIPOLEPARAMS_'
+            machine = self._getMachine(test.Particle, test._testRobustness)
+            machine.AddDrift(name='dr1', length=0.2)
+
+            if angle is not None:
+                machine.AddDipole(name=componentName, category=component, length=length, angle=angle, k1=k1, e1=e1, e2=e2,
+                                  fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+            elif field is not None:
+                machine.AddDipole(name=componentName, category=component, length=length, b=field, k1=k1, e1=e1, e2=e2,
+                                  fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+
+            machine.AddDrift(name='dr2', length=0.2)
+            machine.AddSampler('dr2')
+            machine.AddBeam(self._getBeam(test))
+            self._writeToDisk(component, fileName, machine, test)
+
+        component = test.Component
+        if component == 'rbend':
+            componentName = 'rb1'
+        elif component == 'sbend':
+            componentName = 'sb1'
+
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_'+_np.str(length)
+            lenFileName = filename + lenName
+            if test['angle'][0] is not None:
+                for angle in test['angle']:
+                    angleName = '__angle_' + _np.str(angle)
+                    angleFileName = lenFileName + angleName
+                    writeDipole(componentName, angleFileName, component, length, angle)
+
+                    # if full test range wanted, calc field from angle
+                    if test._useDefaults:
+                        bfield = self.calcBField(length, angle, test.Energy, test.Particle)
+                        fieldName = '__field_' + _np.str(bfield)
+                        fieldFileName = lenFileName + fieldName
+                        writeDipole(componentName, fieldFileName, component, length, field=bfield)
+            elif test['field'] is not None:
+                for bfield in test['field']:
+                    fieldName = '__field_' + _np.str(bfield)
+                    fieldFileName = lenFileName + fieldName
+                    writeDipole(componentName, fieldFileName, component, length, field=bfield)
+
     def WriteDipoleTests(self, test):
         # function to loop over remaining params (kwargs) to save duplication.
         def loopOverDipoleKwargs(componentName, filename, component, length, angle=None, field=None):
-            for e1 in test['e1']:
-                e1Name = '__e1_'+_np.str(e1)
-                e1FileName = filename + e1Name
-                for e2 in test['e2']:
-                    e2Name = '__e2_'+_np.str(e2)
-                    e2FileName = e1FileName + e2Name
-                    for fint in test['fint']:
-                        fintName = '__fint_'+_np.str(fint)
-                        fintFileName = e2FileName + fintName
-                        for fintx in test['fintx']:
-                            fintxName = '__fintx_'+_np.str(fintx)
-                            fintxFileName = fintFileName + fintxName
-                            for hgap in test['hgap']:
-                                hgapName = '__hgap_'+_np.str(hgap)
-                                hgapFileName = fintxFileName + hgapName
-    
-                                machine = self._getMachine(test.Particle, test._testRobustness)
-                                machine.AddDrift(name='dr1', length=0.2)
-                                
-                                if angle is not None:
-                                    machine.AddDipole(name=componentName, category=component, length=length, angle=angle, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
-                                elif field is not None:
-                                    machine.AddDipole(name=componentName, category=component, length=length, b=field, e1=e1, e2=e2, fint=fint, fintx=fintx, hgap=hgap)
-                                
-                                machine.AddDrift(name='dr2', length=0.2)
-                                machine.AddSampler('dr2')
-                                machine.AddBeam(self._getBeam(test))
-                                self._writeToDisk(component, hgapFileName, machine, test)
-    
+            for k1 in test['k1']:
+                k1Name = '__k1_'+_np.str(k1)
+                k1FileName = filename + k1Name
+                for e1 in test['e1']:
+                    e1Name = '__e1_'+_np.str(e1)
+                    e1FileName = k1FileName + e1Name
+                    for e2 in test['e2']:
+                        e2Name = '__e2_'+_np.str(e2)
+                        e2FileName = e1FileName + e2Name
+                        for fint in test['fint']:
+                            fintName = '__fint_'+_np.str(fint)
+                            fintFileName = e2FileName + fintName
+                            for fintx in test['fintx']:
+                                fintxName = '__fintx_'+_np.str(fintx)
+                                fintxFileName = fintFileName + fintxName
+                                for fintK2 in test['fintK2']:
+                                    fintK2Name = '__fintK2_'+_np.str(fintK2)
+                                    fintK2FileName = fintxFileName + fintK2Name
+                                    for fintxK2 in test['fintxK2']:
+                                        fintxK2Name = '__fintxK2_'+_np.str(fintxK2)
+                                        fintxK2FileName = fintK2FileName + fintxK2Name
+                                        for hgap in test['hgap']:
+                                            hgapName = '__hgap_'+_np.str(hgap)
+                                            hgapFileName = fintxK2FileName + hgapName
+                                            for h1 in test['h1']:
+                                                h1Name = '__h1_'+_np.str(h1)
+                                                h1FileName = hgapFileName + h1Name
+                                                for h2 in test['h2']:
+                                                    h2Name = '__h2_'+_np.str(h2)
+                                                    h2FileName = h1FileName + h2Name
+
+                                                    machine = self._getMachine(test.Particle, test._testRobustness)
+                                                    machine.AddDrift(name='dr1', length=0.2)
+
+                                                    if angle is not None:
+                                                        machine.AddDipole(name=componentName, category=component, length=length, angle=angle, k1=k1, e1=e1, e2=e2,
+                                                                          fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+                                                    elif field is not None:
+                                                        machine.AddDipole(name=componentName, category=component, length=length, b=field, k1=k1, e1=e1, e2=e2,
+                                                                          fint=fint, fintx=fintx, fintK2=fintK2, fintxK2=fintxK2, hgap=hgap, h1=h1, h2=h2)
+
+                                                    machine.AddDrift(name='dr2', length=0.2)
+                                                    machine.AddSampler('dr2')
+                                                    machine.AddBeam(self._getBeam(test))
+                                                    self._writeToDisk(component, h2FileName, machine, test)
+
+        print("WARNING: Running a full test suite varying all dipole parameters will generate\n")
+        print("a large number of tests and large amount of output data. Proceed with extreme caution.\n")
+
         component = test.Component
         if component == 'rbend':
             componentName = 'rb1'
@@ -550,7 +631,7 @@ class Writer:
                 fieldFileName = lenFileName + fieldName
 
                 machine = self._getMachine(test.Particle, test._testRobustness)
-                machine.AddLaser(name='mu1', length=length, b=bfield)
+                machine.AddDrift(name='dr1', length=length)
                 machine.AddSampler('all')
                 machine.AddBeam(self._getBeam(test))
                 self._writeToDisk(component, fieldFileName, machine, test)
@@ -577,6 +658,22 @@ class Writer:
             
             machine = self._getMachine(test.Particle, test._testRobustness)
             machine.AddShield(name='sh', length=length)
+            machine.AddSampler('all')
+            machine.AddBeam(self._getBeam(test))
+            self._writeToDisk(component, lenFileName, machine, test)
+
+    def WriteGapTests(self, test):
+        component = 'gap'
+        filename = component + '__' + test.Particle + '__energy_' + _np.str(test.Energy)
+
+        for length in test['length']:
+            lenName = '__length_' + _np.str(length)
+            lenFileName = filename + lenName
+
+            machine = self._getMachine(test.Particle, test._testRobustness)
+            machine.AddDrift(name='dr1', length=length)
+            machine.AddGap(name='gp', length=length)
+            machine.AddDrift(name='dr2', length=length)
             machine.AddSampler('all')
             machine.AddBeam(self._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
