@@ -3216,6 +3216,14 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
 +-----------------------------------+--------------------------------------------------------------------+
+| sampleElementsWithPoleface        | Default false. Samplers are not be attached to elements that have  |
+|                                   | poleface rotations as the sampler will overlap with the mass world |
+|                                   | geometry, resulting in incorrect tracking. This only occurs in     |
+|                                   | integrator sets which construct the poleface geometry, namely      |
+|                                   | :code:`bdsimtwo`, :code:`geant4`, and :code:`geant4dp`. This option|
+|                                   | overides this, allowing samplers to be attached. This options will |
+|                                   | not affect the default integrator set, :code:`bdsimmatrix`.        |
++-----------------------------------+--------------------------------------------------------------------+
 | beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
