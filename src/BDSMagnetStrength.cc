@@ -29,11 +29,15 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",           // constant field in G4units - magnitude of field only - use bx,by,bz to get direction
   "eField",          // electric field in G4units - magnitude of field only
   "bx","by","bz",    // (assumed) unit vector components for field direction
-  "polefaceangle",   // required for fringe field (rad)
-  "polefacecurv",    // poleface curvature (one variable for H1 or H2)
+  "e1",              // entrance poleface rotation angle
+  "e2",              // entrance poleface rotation angle
+  "h1",              // poleface curvature for entrance face
+  "h2",              // poleface curvature for exit face
   "angle", "length", // (rad, mm)
-  "fringeint",       // fringe field integral value (one variable for FINT or FINTX)
-  "fringeintK2",     // second fringe field integral value (one variable for FINTK2 or FINTXK2)
+  "fint",            // fringe field integral value for entrance face
+  "fintx",           // fringe field integral value for exit face
+  "fintK2",          // second fringe field integral value for entrance face
+  "fintxK2",         // second fringe field integral value for exit face
   "hgap",            // fringe field vertical half-gap
   "hkick", "vkick",  // fractional horizontal and vertical dPx (w.r.t. rigidity)
   "ks",              // not in G4 units
@@ -53,7 +57,8 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "phase",           // phase for time varying field
   "equatorRadius",   // radius from axis at which field goes to 0
   "nominalEnergy",   // nominal beam energy needed by some integrators
-  "scaling"          // field scaling factor needed by dipolequadrupole integrator
+  "scaling",         // field scaling factor needed by dipolequadrupole integrator
+  "isentrance"       // bool to determine is integrator is for entrance (1) or exit (0) face
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
