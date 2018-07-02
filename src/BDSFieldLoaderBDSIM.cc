@@ -240,7 +240,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 
       std::smatch matchHeaderString;
       // mathces "key > string" where string is 1-4 characters (not numbers)
-      // can be paddded with whitespace \s*
+      // can be paddded between each part with whitespace \s*
       // not more than four characters (via \b for word boundary)
       std::regex keyWord("(\\w+)\\s*>\\s*([a-zA-Z]{1,4})\\b\\s*");
       if (std::regex_search(line, matchHeaderString, keyWord))
@@ -380,7 +380,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
   for (unsigned long i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
-      if (i < xIndex)// x is the first
+      if (i < xIndex)// x is the first field value - coordinates before that
 	{value *= CLHEP::cm;}
       lineData[i] = value;
     }
