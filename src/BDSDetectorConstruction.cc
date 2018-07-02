@@ -91,9 +91,12 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   acceleratorModel = BDSAcceleratorModel::Instance();
   canSampleAngledFaces = true;
   BDSIntegratorSetType integratorSetType = BDSGlobalConstants::Instance()->IntegratorSet();
-  if ((integratorSetType == BDSIntegratorSetType::bdsimtwo) or
-      (integratorSetType == BDSIntegratorSetType::geant4) or
-      (integratorSetType == BDSIntegratorSetType::geant4dp))
+  if (   (integratorSetType == BDSIntegratorSetType::bdsimtwo)
+      || (integratorSetType == BDSIntegratorSetType::geant4)
+#if G4VERSION_NUMBER > 1039
+      || (integratorSetType == BDSIntegratorSetType::geant4dp)
+#endif
+      )
     { // set to be value of option, default is false.
       canSampleAngledFaces = BDSParser::Instance()->GetOptions().sampleElementsWithPoleface;
     }
