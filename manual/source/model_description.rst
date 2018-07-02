@@ -1655,8 +1655,8 @@ Fields
 ------
 
 BDSIM provides the facility to overlay a pure magnetic, pure electric or combined electromagnetic fields
-on an element as defined by an externally provided field map. This can be done for only the vacuum
-volume; only the volume outside the vacuum (i.e. the yoke); each separately; or one full map for the whole
+on an element as defined by an externally provided field map. This can be done for 1) only the vacuum
+volume; 2) only the volume outside the vacuum (i.e. the yoke); 3) or one full map for the whole
 element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
 can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
 a selection of 1-4D interpolators that are used to provide the field value in between the data points
@@ -1664,7 +1664,7 @@ in the supplied field map.
 
 To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
-* The field may be attached to everything "fieldAll", the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
+* The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum"; or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to 4 dimensions.
 
@@ -1674,7 +1674,8 @@ for dimensional flexibility can be added if required (see :ref:`feature-request`
 
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
-	  recommended the user re-sample any existing field map into a regular grid.
+	  recommended the user re-sample any existing field map into a regular grid. A regular
+	  grid is also faster for tracking purposes.
 
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
@@ -1685,7 +1686,7 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
+		    electricFile = "poisson2d:/Another/File.TXT",
 		    electricInterpolator = "linear2D";
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
