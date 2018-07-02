@@ -42,7 +42,9 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType skewDecapoleIn,
 				   BDSIntegratorType dipoleFringeIn,
 				   BDSIntegratorType multipoleThinIn,
-				   BDSIntegratorType multipoleOuterIn):
+				   BDSIntegratorType multipoleOuterIn,
+				   BDSIntegratorType rmatrixThinIn,
+				   BDSIntegratorType parallelTransporterIn):
   solenoid(solenoidIn),
   dipole(dipoleIn),
   dipoleQuadrupole(dipoleQuadrupoleIn),
@@ -61,7 +63,9 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
   skewDecapole(skewDecapoleIn),
   dipoleFringe(dipoleFringeIn),
   multipoleThin(multipoleThinIn),
-  multipoleOuter(multipoleOuterIn)
+  multipoleOuter(multipoleOuterIn),
+  rmatrixThin(rmatrixThinIn),
+  parallelTransporter(parallelTransporterIn)
 {
   isMatrix = false; //default
   // use dipolematrix integrator to check if matrix style as it is the
@@ -91,7 +95,10 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
-			 BDSIntegratorType::g4nystromrk4);  // multipole outer
+			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
+
   const BDSIntegratorSet* integratorsBDSIMTwo =
     new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
 			 BDSIntegratorType::dipolerodrigues2, // dipole
@@ -111,7 +118,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4,   // skew decapole
 			 BDSIntegratorType::dipolefringe,     // dipole fringe field
 			 BDSIntegratorType::multipolethin,    // thin multipole
-			 BDSIntegratorType::g4nystromrk4);    // multipole outer
+			 BDSIntegratorType::g4nystromrk4,     // multipole outer
+			 BDSIntegratorType::rmatrixthin,      // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
   /// Mad-x style tracking.
   const BDSIntegratorSet*  integratorsBDSIMMatrix =
     new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
@@ -132,7 +141,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
-			 BDSIntegratorType::g4nystromrk4);  // multipole outer
+			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transport
   /// Mad-x style tracking with fringe field momentum scaling.
   const BDSIntegratorSet*  integratorsBDSIMMatrixFringeScaling =
     new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
@@ -153,7 +164,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringescaling, // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
-			 BDSIntegratorType::g4nystromrk4);  // multipole outer
+			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+			 BDSIntegratorType::rmatrixthin,
+			 BDSIntegratorType::paralleltransport);   // thin rmatrix
   /// All 4th Order Runge Kutte.
   const BDSIntegratorSet* integratorsGeant4 =
     new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
@@ -174,7 +187,9 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin,  // thin multipole
-			 BDSIntegratorType::g4nystromrk4);  // multipole outer
+			 BDSIntegratorType::g4nystromrk4,   // multipole outer
+			 BDSIntegratorType::rmatrixthin,    // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transporter
 
 #if G4VERSION_NUMBER > 1039
   const BDSIntegratorSet* integratorsGeant4DP =
@@ -196,7 +211,9 @@ namespace BDS
 			 BDSIntegratorType::g4dormandprince745, // skew decapole
 			 BDSIntegratorType::dipolefringe,       // dipole fringe field
 			 BDSIntegratorType::multipolethin,      // thin multipole
-  			 BDSIntegratorType::g4dormandprince745);// multipole outer
+  			 BDSIntegratorType::g4dormandprince745, // multipole outer
+			 BDSIntegratorType::rmatrixthin,        // thin rmatrix
+			 BDSIntegratorType::paralleltransport); // parallel transporter
 #endif
 }
 
@@ -293,10 +310,14 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::skewmultipoleouterdecapole:
     case BDSFieldType::multipoleouterdipole3d:
       {return multipoleOuter;   break;}
+    case BDSFieldType::rmatrix:
+      {return rmatrixThin;}
+    case BDSFieldType::paralleltransporter:
+      {return parallelTransporter; break;}
     default:
-      {return general;          break;}
+      {return general; break;}
     }
 }
 
 G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
-  {return isMatrix;}
+{return isMatrix;}

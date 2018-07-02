@@ -41,8 +41,8 @@ public:
   BDSCrystal(G4VSolid*         containerSolidIn,
 	     G4LogicalVolume*  containerLVIn,
 	     BDSExtent         extent,
-	     G4ThreeVector     placementOffset   = G4ThreeVector(0,0,0),
-	     G4RotationMatrix* placementRotation = nullptr);
+	     G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
+	     G4RotationMatrix* placementRotationIn = nullptr);
   virtual ~BDSCrystal(){;}
 };
 

@@ -58,7 +58,27 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "equatorRadius",   // radius from axis at which field goes to 0
   "nominalEnergy",   // nominal beam energy needed by some integrators
   "scaling",         // field scaling factor needed by dipolequadrupole integrator
-  "isentrance"       // bool to determine is integrator is for entrance (1) or exit (0) face
+  "isentrance",       // bool to determine is integrator is for entrance (1) or exit (0) face
+  "kick1",
+  "kick2",
+  "kick3",
+  "kick4",
+  "rmat11",
+  "rmat12",
+  "rmat13",
+  "rmat14",
+  "rmat21",
+  "rmat22",
+  "rmat23",
+  "rmat24",
+  "rmat31",
+  "rmat32",
+  "rmat33",
+  "rmat34",
+  "rmat41",
+  "rmat42",
+  "rmat43",
+  "rmat44"
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {

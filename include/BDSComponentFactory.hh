@@ -204,6 +204,7 @@ private:
   BDSAcceleratorComponent* CreateThinMultipole(G4double angleIn);
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
+  BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
   BDSAcceleratorComponent* CreateMuSpoiler();
@@ -214,6 +215,8 @@ private:
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+  BDSAcceleratorComponent* CreateRMatrix();
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
@@ -273,7 +276,10 @@ private:
   /// Prepare magnet strength for multipoles
   BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;
 
-  /// Map of cavity model info instances by name.
+  /// Prepare magnet strength for rmatrix
+  BDSMagnetStrength* PrepareMagnetStrengthForRMatrix(GMAD::Element const* el) const;
+
+  /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
 
   /// Maps of crystal info instances by name.

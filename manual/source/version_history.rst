@@ -32,6 +32,7 @@ Output Changes
 * New option :code:`storeModel` to turn off model storage in the output.
 * Even Info class (BDSOutputROOTEventInfo) number is incremented in output.
 * Event.Info now has a Boolean of whether the primary particle hit something or not.
+* Samplers are no longer placed next to elements with angled faces when using the :code:`bdsimtwo`,:code:`geant4`, or :code:`geant4dp` integrator sets.
 
 Bug Fixes
 ---------

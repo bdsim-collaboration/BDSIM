@@ -1,0 +1,6 @@
+d1: drift, l=0.5;
+r1: rmatrix, rmat11=1, rmat12=0.0, rmat21=500, rmat22=1, rmat33=0, rmat34=500, rmat43=0, rmat44=1, l=0.25;
+d2: drift, l=0.5;
+lat : line = (d1,r1,d2);
+
+include optionsTest.gmad;
