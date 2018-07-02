@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDMAGINTERPOLATED1D_H
 #define BDSFIELDMAGINTERPOLATED1D_H
 
+#include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated.hh"
 
 #include "G4ThreeVector.hh"
@@ -34,6 +35,8 @@ class BDSInterpolator1D;
  * This provides a simple interface for magnetic fields to use a 1D
  * interpolator irrespective of which type of interpolator it is.
  *
+ * Optional dimension index to specify which dimension in space to vary with.
+ *
  * @author Laurie Nevay
  */
 
@@ -41,8 +44,9 @@ class BDSFieldMagInterpolated1D: public BDSFieldMagInterpolated
 {
 public:
   BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
-			    G4Transform3D      offset    = G4Transform3D::Identity,
-			    G4double           scalingIn = 1.0);
+			    G4Transform3D      offset           = G4Transform3D::Identity,
+			    G4double           scalingIn        = 1.0,
+			    BDSDimensionType   dimensionIn      = BDSDimensionType::x);
 
   virtual ~BDSFieldMagInterpolated1D();
 
@@ -57,6 +61,9 @@ private:
   BDSFieldMagInterpolated1D() = delete;
 
   BDSInterpolator1D* interpolator; ///< Interpolator field is based on.
+
+  G4int dimensionIndex; ///< Integer index to position that's used for the dimension to use.
+  const G4bool time;    ///< Cache of whether to use time coordinate.
 };
 
 #endif
