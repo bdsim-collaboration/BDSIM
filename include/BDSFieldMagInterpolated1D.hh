@@ -61,9 +61,8 @@ private:
   BDSFieldMagInterpolated1D() = delete;
 
   BDSInterpolator1D* interpolator; ///< Interpolator field is based on.
-
-  G4int dimensionIndex; ///< Integer index to position that's used for the dimension to use.
-  const G4bool time;    ///< Cache of whether to use time coordinate.
+  const G4int  dimensionIndex;     ///< Integer index to dimension to use.
+  const G4bool time;               ///< Cache of whether to use time coordinate.
 };
 
 #endif
