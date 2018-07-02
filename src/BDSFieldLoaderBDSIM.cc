@@ -47,7 +47,14 @@ BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   nColumns(0),
   fv(BDSFieldValue()),
   result(nullptr)
-{;}
+{
+  dimKeyMap = {
+	       {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
+	       {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
+	       {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
+	       {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+  };
+}
 
 template <class T>
 BDSFieldLoaderBDSIM<T>::~BDSFieldLoaderBDSIM()
@@ -291,15 +298,18 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
           std::string restOfLine = match[1];
           std::string columnName;
           std::istringstream restOfLineSS(restOfLine);
+	  std::vector<G4String> columnNames;
           while (restOfLineSS >> columnName)
 	    {
               nColumns++;
               if (columnName.find("Fx") != std::string::npos)
 		{xIndex = nColumns; continue;}
-              if (columnName.find("Fy") != std::string::npos)
+              else if (columnName.find("Fy") != std::string::npos)
 		{yIndex = nColumns; continue;}
-              if (columnName.find("Fz") != std::string::npos)
+              else if (columnName.find("Fz") != std::string::npos)
 		{zIndex = nColumns; continue;}
+	      else
+		{columnNames.push_back(columnName);}
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
@@ -315,9 +325,13 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	    {
 	    case 1:
 	      {
-		nX = G4int(header["nx"]);
+		BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
+		auto keys = dimKeyMap[firstDim];
+		nX = G4int(header[keys.number]);
 		result = new BDSArray1DCoords(nX,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm);
+					      header[keys.min] * CLHEP::cm,
+					      header[keys.max] * CLHEP::cm,
+					      firstDim);
 		break;
               }
 	    case 2:
