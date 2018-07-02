@@ -336,11 +336,19 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               }
 	    case 2:
 	      {
-		nX = G4int(header["nx"]);
-		nY = G4int(header["ny"]);
+		BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
+		BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+		auto fKeys = dimKeyMap[firstDim];
+		auto sKeys = dimKeyMap[secondDim];
+		nX = G4int(header[fKeys.number]);
+		nX = G4int(header[sKeys.number]);
 		result = new BDSArray2DCoords(nX, nY,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm);
+					      header[fKeys.min] * CLHEP::cm,
+					      header[fKeys.max] * CLHEP::cm,
+					      header[sKeys.min] * CLHEP::cm,
+					      header[sKeys.max] * CLHEP::cm,
+					      firstDim,
+					      secondDim);
 		break;
               }
 	    case 3:

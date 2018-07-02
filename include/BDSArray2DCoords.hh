@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAY2DCOORDS_H
 
 #include "BDSArray3DCoords.hh"
+#include "BDSDimensionType.hh"
 
 #include "globals.hh"
 
@@ -36,16 +37,29 @@ class BDSArray2DCoords: public BDSArray3DCoords
 public:
   BDSArray2DCoords(G4int nX, G4int nY,
 		   G4double xMinIn, G4double xMaxIn,
-		   G4double yMinIn, G4double yMaxIn);
+		   G4double yMinIn, G4double yMaxIn,
+		   BDSDimensionType xDimensionIn = BDSDimensionType::x,
+		   BDSDimensionType yDimensionIn = BDSDimensionType::y);
   virtual ~BDSArray2DCoords(){;}
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray2DCoords const &a);
 
+  /// Accessor for dimension that the data represents (first).
+  inline BDSDimensionType FirstDimension() const {return xDimension;}
+
+  /// Accessor for dimension that the data represents (second).
+  inline BDSDimensionType SecondDimension() const {return yDimension;}
+
 private:
   /// No default constructor as the array is not adjustable after construction and
   /// therefore the size must be known at construction time.
   BDSArray2DCoords() = delete;
+
+  /// Which dimension the contained data represents spatially. Always referred to
+  /// locally as 'x' but may represent another dimension.
+  BDSDimensionType xDimension;
+  BDSDimensionType yDimension;
 };
 
 #endif

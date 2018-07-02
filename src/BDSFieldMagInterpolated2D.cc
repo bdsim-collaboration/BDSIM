@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated2D.hh"
 #include "BDSInterpolator2D.hh"
 
@@ -25,7 +26,11 @@ BDSFieldMagInterpolated2D::BDSFieldMagInterpolated2D(BDSInterpolator2D* interpol
 						     G4Transform3D      offset,
 						     G4double           scalingIn):
   BDSFieldMagInterpolated(offset, scalingIn),
-  interpolator(interpolatorIn)
+  interpolator(interpolatorIn),
+  firstDimensionIndex((interpolatorIn->FirstDimension()).underlying()),
+  firstTime((interpolatorIn->FirstDimension()).underlying() > 2),
+  secondDimensionIndex((interpolatorIn->SecondDimension()).underlying()),
+  secondTime((interpolatorIn->SecondDimension()).underlying() > 2)
 {;}
 
 BDSFieldMagInterpolated2D::~BDSFieldMagInterpolated2D()
@@ -34,5 +39,17 @@ BDSFieldMagInterpolated2D::~BDSFieldMagInterpolated2D()
 }
 
 G4ThreeVector BDSFieldMagInterpolated2D::GetField(const G4ThreeVector& position,
-						  const G4double       /*t*/) const
-{return interpolator->GetInterpolatedValue(position[0], position[1]) * Scaling();}
+						  const G4double       t) const
+{
+  G4double fCoordinate = 0;
+  if (firstTime)
+    {fCoordinate = t;}
+  else
+    {fCoordinate = position[firstDimensionIndex];}
+  G4double sCoordinate = 0;
+  if (secondTime)
+    {sCoordinate = t;}
+  else
+    {sCoordinate = position[secondDimensionIndex];}
+  return interpolator->GetInterpolatedValue(fCoordinate, sCoordinate) * Scaling();
+}

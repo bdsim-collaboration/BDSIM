@@ -19,8 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSARRAY1DCOORDS_H
 #define BDSARRAY1DCOORDS_H
 
-#include "BDSDimensionType.hh"
 #include "BDSArray2DCoords.hh"
+#include "BDSDimensionType.hh"
 
 #include "globals.hh"
 

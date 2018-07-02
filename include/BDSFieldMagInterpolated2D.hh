@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDMAGINTERPOLATED2D_H
 #define BDSFIELDMAGINTERPOLATED2D_H
 
+#include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated.hh"
 
 #include "G4ThreeVector.hh"
@@ -57,7 +58,11 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldMagInterpolated2D() = delete;
 
-  BDSInterpolator2D* interpolator; ///< Interpolator the field is based on.
+  BDSInterpolator2D* interpolator;   ///< Interpolator the field is based on.
+  const G4int  firstDimensionIndex;  ///< Integer index to dimension to use.
+  const G4bool firstTime;            ///< Cache of whether to use time coordinate.
+  const G4int  secondDimensionIndex; ///< Integer index to dimension to use.
+  const G4bool secondTime;           ///< Cache of whether to use time coordinate.
 };
 
 #endif
