@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDimensionType.hh"
 #include "BDSFieldEInterpolated1D.hh"
 #include "BDSInterpolator1D.hh"
 
@@ -23,9 +24,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldEInterpolated1D::BDSFieldEInterpolated1D(BDSInterpolator1D* interpolatorIn,
 						 G4Transform3D      offset,
-						 G4double           eScalingIn):
+						 G4double           eScalingIn,
+						 BDSDimensionType   dimensionIn):
   BDSFieldEInterpolated(offset, eScalingIn),
-  interpolator(interpolatorIn)
+  interpolator(interpolatorIn),
+  dimensionIndex(dimensionIn.underlying()),
+  time(dimensionIn.underlying() > 2)
 {;}
 
 BDSFieldEInterpolated1D::~BDSFieldEInterpolated1D()
@@ -34,5 +38,12 @@ BDSFieldEInterpolated1D::~BDSFieldEInterpolated1D()
 }
 
 G4ThreeVector BDSFieldEInterpolated1D::GetField(const G4ThreeVector& position,
-						const G4double       /*t*/) const
-{return interpolator->GetInterpolatedValue(position[0]) * EScaling();}
+						const G4double       t) const
+{
+  G4double coordinate = 0;
+  if (time)
+    {coordinate = t;}
+  else
+    {coordinate = position[dimensionIndex];}
+  return interpolator->GetInterpolatedValue(coordinate) * EScaling();
+}

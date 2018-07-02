@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEMINTERPOLATED1D_H
 #define BDSFIELDEMINTERPOLATED1D_H
 
+#include "BDSDimensionType.hh"
 #include "BDSFieldEMInterpolated.hh"
 
 #include "G4ThreeVector.hh"
@@ -44,9 +45,11 @@ class BDSFieldEMInterpolated1D: public BDSFieldEMInterpolated
 public:
   BDSFieldEMInterpolated1D(BDSInterpolator1D* eInterpolatorIn,
 			   BDSInterpolator1D* bInterpolatorIn,
-  			   G4Transform3D      offset     = G4Transform3D::Identity,
-			   G4double           eScalingIn = 1.0,
-			   G4double           bScalingIn = 1.0);
+  			   G4Transform3D      offset       = G4Transform3D::Identity,
+			   G4double           eScalingIn   = 1.0,
+			   G4double           bScalingIn   = 1.0,
+			   BDSDimensionType   eDimensionIn = BDSDimensionType::x,
+			   BDSDimensionType   bDimensionIn = BDSDimensionType::x);
 
   virtual ~BDSFieldEMInterpolated1D();
 
@@ -63,6 +66,10 @@ private:
 
   BDSInterpolator1D* eInterpolator; ///< E Inteprolator the field is based on.
   BDSInterpolator1D* bInterpolator; ///< B Interpolator the field is based on.
+  const G4int  eDimensionIndex;     ///< E Integer index to dimension to use.
+  const G4bool eTime;               ///< E Cache of whether to use time coordinate.
+  const G4int  bDimensionIndex;     ///< B Integer index to dimension to use.
+  const G4bool bTime;               ///< B Cache of whether to use time coordinate.
 };
 
 #endif
