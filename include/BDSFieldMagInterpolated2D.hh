@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDMAGINTERPOLATED2D_H
 #define BDSFIELDMAGINTERPOLATED2D_H
 
-#include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated.hh"
 
 #include "G4ThreeVector.hh"
