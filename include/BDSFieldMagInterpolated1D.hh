@@ -43,10 +43,9 @@ class BDSInterpolator1D;
 class BDSFieldMagInterpolated1D: public BDSFieldMagInterpolated
 {
 public:
-  BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
+  explicit BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
 			    G4Transform3D      offset           = G4Transform3D::Identity,
-			    G4double           scalingIn        = 1.0,
-			    BDSDimensionType   dimensionIn      = BDSDimensionType::x);
+			    G4double           scalingIn        = 1.0);
 
   virtual ~BDSFieldMagInterpolated1D();
 

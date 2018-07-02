@@ -24,12 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldMagInterpolated1D::BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
 						     G4Transform3D      offset,
-						     G4double           scalingIn,
-						     BDSDimensionType   dimensionIn):
+						     G4double           scalingIn):
   BDSFieldMagInterpolated(offset,scalingIn),
   interpolator(interpolatorIn),
-  dimensionIndex(dimensionIn.underlying()),
-  time(dimensionIn.underlying() > 2)
+  dimensionIndex((interpolatorIn->Dimension()).underlying()),
+  time((interpolatorIn->Dimension()).underlying() > 2)
 {;}
 
 BDSFieldMagInterpolated1D::~BDSFieldMagInterpolated1D()
