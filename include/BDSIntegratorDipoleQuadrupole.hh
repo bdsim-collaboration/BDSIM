@@ -66,7 +66,9 @@ protected:
 	       const G4double&      h,
 	       const G4double&      fcof,
 	       G4ThreeVector&       posOut,
-	       G4ThreeVector&       momOut) const;
+		   G4ThreeVector&       momOut,
+		   const G4double		rho,
+		   const G4double		beta) const;
 
 
 
@@ -77,9 +79,9 @@ private:
   const G4double    bRho;  ///< Cached magnet property, nominal magnetic rigidity
   BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
   const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
-  const G4double    beta0; ///< Cached nominal relativistic beta of the nominal beam particle.
-  const G4double 	rho;   ///< Cached magnet property, nominal bending radius.
-  const G4double    fieldRatio;///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
+  const G4double    nominalBeta;    ///< Cached nominal relativistic beta of the nominal beam particle.
+  const G4double    nominalRho;     ///< Cached magnet property, nominal bending radius.
+  const G4double    fieldRatio;     ///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
   const	G4double 	nominalEnergy;  ///< Nominal beam energy
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.

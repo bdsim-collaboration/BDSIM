@@ -48,9 +48,9 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   bRho(brhoIn),
   eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
-  beta0((*strengthIn)["beta0"]),
-  rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
-  fieldRatio((*strengthIn)["field"]/(*strengthIn)["scaling"] / (bRho/rho)),
+  nominalBeta((*strengthIn)["beta0"]),
+  nominalRho((*strengthIn)["length"]/(*strengthIn)["angle"]),
+  fieldRatio((*strengthIn)["field"] / (bRho/nominalRho)),
   nominalEnergy((*strengthIn)["nominalEnergy"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
@@ -157,7 +157,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   // calculate new position
   G4ThreeVector localCLPosOut;
   G4ThreeVector localCLMomOut;
-  OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut);
+  OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut, nominalRho, nominalBeta);
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, angleForCL,
@@ -193,7 +193,9 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
 					    const G4double&      h,
 					    const G4double&      fcof,
 					    G4ThreeVector&       posOut,
-					    G4ThreeVector&       momOut) const
+                        G4ThreeVector&       momOut,
+                        const G4double       rho,
+                        const G4double       beta) const
 {
   G4double momInMag = momIn.mag();
   G4double nomMomentum = std::abs(bRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
@@ -244,8 +246,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sin(kxl)/kx;
       X21=-std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
-      X26 = (1.0/beta0) * (1.0/rho) * X12;
+      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cos(kxl));
+      X26 = (1.0/beta) * (1.0/rho) * X12;
 
       Y11= std::cosh(kyl);
       Y12= std::sinh(kyl)/ky;
@@ -260,8 +262,8 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
       X12= std::sinh(kxl)/kx;
       X21= std::abs(kx2)*X12;
       X22= X11;
-      X16 = (1.0/beta0) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
-      X26 = (1.0/beta0) * (1.0/rho) * X12;
+      X16 = (1.0/beta) * ((1.0/rho) / kx2) * (1 - std::cosh(kxl));
+      X26 = (1.0/beta) * (1.0/rho) * X12;
       
       Y11= std::cos(kyl);
       Y12= std::sin(kyl)/ky;
