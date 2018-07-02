@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDMAGINTERPOLATED1D_H
 #define BDSFIELDMAGINTERPOLATED1D_H
 
-#include "BDSDimensionType.hh"
 #include "BDSFieldMagInterpolated.hh"
 
 #include "G4ThreeVector.hh"
@@ -44,8 +43,8 @@ class BDSFieldMagInterpolated1D: public BDSFieldMagInterpolated
 {
 public:
   explicit BDSFieldMagInterpolated1D(BDSInterpolator1D* interpolatorIn,
-			    G4Transform3D      offset           = G4Transform3D::Identity,
-			    G4double           scalingIn        = 1.0);
+				     G4Transform3D      offset    = G4Transform3D::Identity,
+				     G4double           scalingIn = 1.0);
 
   virtual ~BDSFieldMagInterpolated1D();
 

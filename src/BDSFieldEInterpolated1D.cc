@@ -24,12 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldEInterpolated1D::BDSFieldEInterpolated1D(BDSInterpolator1D* interpolatorIn,
 						 G4Transform3D      offset,
-						 G4double           eScalingIn,
-						 BDSDimensionType   dimensionIn):
+						 G4double           eScalingIn):
   BDSFieldEInterpolated(offset, eScalingIn),
   interpolator(interpolatorIn),
-  dimensionIndex(dimensionIn.underlying()),
-  time(dimensionIn.underlying() > 2)
+  dimensionIndex((interpolatorIn->Dimension()).underlying()),
+  time((interpolatorIn->Dimension()).underlying() > 2)
 {;}
 
 BDSFieldEInterpolated1D::~BDSFieldEInterpolated1D()

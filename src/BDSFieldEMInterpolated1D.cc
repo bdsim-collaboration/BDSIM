@@ -28,16 +28,14 @@ BDSFieldEMInterpolated1D::BDSFieldEMInterpolated1D(BDSInterpolator1D* eInterpola
 						   BDSInterpolator1D* bInterpolatorIn,
 						   G4Transform3D      offset,
 						   G4double           eScalingIn,
-						   G4double           bScalingIn,
-						   BDSDimensionType   eDimensionIn,
-						   BDSDimensionType   bDimensionIn):
+						   G4double           bScalingIn):
   BDSFieldEMInterpolated(offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
   bInterpolator(bInterpolatorIn),
-  eDimensionIndex(eDimensionIn.underlying()),
-  eTime(eDimensionIn.underlying() > 2),
-  bDimensionIndex(bDimensionIn.underlying()),
-  bTime(bDimensionIn.underlying() > 2)
+  eDimensionIndex((eInterpolatorIn->Dimension()).underlying()),
+  eTime((eInterpolatorIn->Dimension()).underlying() > 2),
+  bDimensionIndex((bInterpolatorIn->Dimension()).underlying()),
+  bTime((bInterpolatorIn->Dimension()).underlying() > 2)
 {;}
 
 BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()

@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDEINTERPOLATED1D_H
 #define BDSFIELDEINTERPOLATED1D_H
 
-#include "BDSDimensionType.hh"
 #include "BDSFieldEInterpolated.hh"
 
 #include "G4ThreeVector.hh"
@@ -43,8 +42,7 @@ class BDSFieldEInterpolated1D: public BDSFieldEInterpolated
 public:
   BDSFieldEInterpolated1D(BDSInterpolator1D* interpolatorIn,
 			  G4Transform3D      offset      = G4Transform3D::Identity,
-			  G4double           eScalingIn  = 1.0,
-			  BDSDimensionType   dimensionIn = BDSDimensionType::x);
+			  G4double           eScalingIn  = 1.0);
 
   virtual ~BDSFieldEInterpolated1D();
 
