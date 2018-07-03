@@ -211,7 +211,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
       // key definition
       //if (line.find(">") != std::string::npos)
       std::smatch matchHeaderNumber;
-      std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
+      std::regex keyValue(R"((\w*)\s*>\s*([0-9eE.+-]+))");
       if (std::regex_search(line, matchHeaderNumber, keyValue))
 	{// must be key definition
           if (matchHeaderNumber.size() < 2)
@@ -249,7 +249,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
       // mathces "key > string" where string is 1-4 characters (not numbers)
       // can be paddded between each part with whitespace \s*
       // not more than four characters (via \b for word boundary)
-      std::regex keyWord("(\\w+)\\s*>\\s*([a-zA-Z]{1,4})\\b\\s*");
+      std::regex keyWord(R"((\w+)\s*>\s*([a-zA-Z]{1,4})\b\s*)");
       if (std::regex_search(line, matchHeaderString, keyWord))
 	{
 	  loopOrder = G4String(matchHeaderString[2]); // member variable
