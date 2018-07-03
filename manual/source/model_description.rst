@@ -3976,18 +3976,7 @@ Example::
 
   iron : matdef, Z=26, A=55.845, density=7.87;
 
-If the material is made up by several components, first of all each of them must be specified with the **atom** keyword::
-
-  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
-
-=========  =====================
-parameter  description
-Z          atomic number
-A          mass number [g/mol]
-symbol     atom symbol
-=========  =====================
-
-The compound material can be specified in two manners:
+A compound material can be specified in two manners:
 
 **1.** If the number of atoms of each component in material unit is known, the following syntax can be used::
 
@@ -4004,8 +3993,6 @@ componentsWeights number of atoms for each component in material unit
 
 Example::
 
-  niobium : atom, symbol="Nb", Z=41, A=92.906;
-  titanium : atom, symbol="Ti", Z=22, A=47.867;
   NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
 
 **2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
@@ -4022,12 +4009,28 @@ componentsFractions mass fraction of each component in material unit
 
 Example::
 
-  samarium : atom, symbol="Sm", Z=62, A=150.4;
-  cobalt : atom, symbol="Co", Z=27, A=58.93;
   SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
 
 The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
 Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+
+New elements can be defined with the **atom** keyword::
+
+  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
+
+=========  =====================
+parameter  description
+Z          atomic number
+A          mass number [g/mol]
+symbol     atom symbol
+=========  =====================
+
+Example::
+
+  myNiobium  : atom, symbol="myNb", Z=41, A=92.906;
+  myTitanium : atom, symbol="myTi", Z=22, A=47.867;
+  myNbTi     : matdef, density=5.6, T=4.0, components=["myNb","myTi"], componentsWeights={1,1};
+
 
 .. _crystals:
 
