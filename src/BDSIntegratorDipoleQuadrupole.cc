@@ -90,7 +90,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     }
 
   // Revert to the backup stepper if the particle charge or mass is not nominal
-  G4double charge = eq->FCof()/(eplus*c_light); //same equation as in BDSMagUsualEqRhs
+  G4double charge = fcof/(CLHEP::eplus*CLHEP::c_light); //same equation as in BDSMagUsualEqRhs
   G4double mass = std::sqrt(eq->Mass()); // Mass() returns mass squared
   if (!((mass == primaryMass) && (charge == primaryCharge)))
     {
