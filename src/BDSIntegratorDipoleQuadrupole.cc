@@ -55,10 +55,11 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
+  primaryMass(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass()),
+  primaryCharge(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Charge()),
+  totalEnergy(BDSGlobalConstants::Instance()->BeamParticleDefinition()->TotalEnergy()),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
-  primaryMass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
-  primaryCharge = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Charge();
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
@@ -99,7 +100,6 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     }
 
   // Revert to the backup stepper if the particle momentum is greater than 5% off nominal
-  G4double totalEnergy = BDSGlobalConstants::Instance()->BeamParticleDefinition()->TotalEnergy();
   G4double relEnergyDiff = (eq->TotalEnergy(yIn) - totalEnergy)/totalEnergy;
   if (std::abs(relEnergyDiff) > 0.05)
     {
