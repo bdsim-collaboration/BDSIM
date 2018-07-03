@@ -16,8 +16,8 @@ def main():
     period    = 0.1 #m
     ncells    = length / period
     zStep     = length / 100.
-    def fy(x,z):
-        return (1 + 0.025*x**2)*_np.sin(2*_np.pi * z / period)
+    def fy(xx,zz):
+        return amplitude*(1 + 0.025*xx**2)*_np.sin(zz / (2*_np.pi*period*10))
     
     data = []
     # loop over and build up 3d lists of lists of lists
