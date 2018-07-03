@@ -460,7 +460,6 @@ G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
     G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
     CloseBunchFile();
     OpenBunchFile();
-    InputBunchFile>>value; 
   } 
   return !InputBunchFile.eof();
 }
