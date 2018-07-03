@@ -219,6 +219,7 @@ namespace GMAD
     bool     stopSecondaries;
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
+    bool     sampleElementsWithPoleface;
 
     /// Output related options
     int         numberOfEventsPerNtuple;

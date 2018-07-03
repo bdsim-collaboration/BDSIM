@@ -45,7 +45,6 @@ BDSMaterials::BDSMaterials()
   G4cout << "kelvin= " << CLHEP::kelvin << G4endl;
 #endif
 
-  DefineElements();
   DefineMetals();
   DefineSuperconductors();
   DefineNonMetalSolids();
@@ -55,49 +54,6 @@ BDSMaterials::BDSMaterials()
   DefineGases();
   DefinePlasmas();
   DefineVacuums();
-}
-
-void BDSMaterials::DefineElements()
-{
-  G4String name, symbol; //a=mass of a mole;
-  G4double a, z;         //z=mean number of protons;
-
-  AddElement(name="Hydrogen"   , symbol="H" , z=  1, a=   1.00  );
-  AddElement(name="Helium"     , symbol="He", z=  2, a=   4.0026);
-  AddElement(name="Beryllium"  , symbol="Be", z=  4, a=   9.0122);
-  AddElement(name="Boron"      , symbol="B",  z=  5, a=  10.811 );
-  AddElement(name="Carbon"     , symbol="C" , z=  6, a=  12.00  );
-  AddElement(name="Nitrogen"   , symbol="N" , z=  7, a=  14.01  );
-  AddElement(name="Oxygen"     , symbol="O" , z=  8, a=  16.00  );
-  AddElement(name="Sodium"     , symbol="Na", z= 11, a=  22.98976928);
-  AddElement(name="Magnesium"  , symbol="Mg", z= 12, a=  24.3050);
-  AddElement(name="Aluminium"  , symbol="Al", z= 13, a=  26.98  );
-  AddElement(name="Silicon"    , symbol="Si", z= 14, a=  28.09  );
-  AddElement(name="Phosphorous", symbol="P" , z= 15, a=  30.973762);
-  AddElement(name="Sulphur"    , symbol="S" , z= 16, a=  32.066 );
-  AddElement(name="Potassium"  , symbol="K" , z= 19, a=  39.0983);
-  AddElement(name="Calcium"    , symbol="Ca", z= 20, a=  40.078 );
-  AddElement(name="Titanium"   , symbol="Ti", z= 22, a=  47.867 );
-  AddElement(name="Vanadium"   , symbol="V" , z= 23, a=  50.9415);
-  AddElement(name="Chromium"   , symbol="Cr", z= 24, a=  51.9961);
-  AddElement(name="Manganese"  , symbol="Mn", z= 25, a=  54.93805);
-  AddElement(name="Iron"       , symbol="Fe", z= 26, a=  55.847 );
-  AddElement(name="Cobalt"     , symbol="Co", z= 27, a=  58.93  );
-  AddElement(name="Nickel"     , symbol="Ni", z= 28, a=  58.693 );
-  AddElement(name="Copper"     , symbol="Cu", z= 29, a=  63.546 );
-  AddElement(name="Zinc"       , symbol="Zn", z= 30, a=  65.38  );
-  AddElement(name="Rubidium"   , symbol="Rb", z= 37, a=  85.4678);
-  AddElement(name="Strontium"  , symbol="Sr", z= 38, a=  87.62  );
-  AddElement(name="Yttrium"    , symbol="Y",  z= 39, a=  88.906 );
-  AddElement(name="Zirkonium"  , symbol="Zr", z= 40, a=  91.224 );
-  AddElement(name="Niobium"    , symbol="Nb", z= 41, a=  92.906 );
-  AddElement(name="Molybdenum" , symbol="Mo", z= 42, a=  95.94  );
-  AddElement(name="Barium"     , symbol="Ba", z= 56, a= 137.327 );
-  AddElement(name="Samarium"   , symbol="Sm", z= 62, a= 150.4   );
-  AddElement(name="Europium"   , symbol="Eu", z= 63, a= 151.964 );
-  AddElement(name="Tungsten"   , symbol="W" , z= 74, a= 183.84  );
-  AddElement(name="Lead"       , symbol="Pb", z= 82, a= 207.2   );
-  AddElement(name="Uranium"    , symbol="U",  z= 92, a= 238.0289);
 }
 
 void BDSMaterials::DefineMetals()
@@ -114,24 +70,31 @@ void BDSMaterials::DefineMetals()
 
   // solid materials
   // metals
+  // standard single element metals
+  AddMaterial("Al", "aluminium");
+  AddMaterial("Be", "beryllium");
+  AddMaterial("C" , "carbon");
+  AddMaterial("Cr", "chromium");
+  AddMaterial("Cu", "copper");
+  AddMaterial("Fe", "iron");
+  AddMaterial("Pb", "lead");
+  AddMaterial("Mg", "magnesium");
+  AddMaterial("Ni", "nickel");
+  AddMaterial("Si", "silicon");
+  AddMaterial("Ti", "titanium");
+  AddMaterial("W" , "tungsten");
+  AddMaterial("U" , "uranium");
+  AddMaterial("V" , "vanadium");
+  AddMaterial("Zn", "zinc");
+
+  // special forms
   std::list<int> singleElement = {1};
-  AddMaterial(name="aluminium"     , density=  2.700, kStateSolid, NTP_Temperature, 1, {"Al"}, singleElement);
-  AddMaterial(name="beryllium"     , density=  1.848, kStateSolid, NTP_Temperature, 1, {"Be"}, singleElement);
-  AddMaterial(name="copper"        , density=  8.96 , kStateSolid, NTP_Temperature, 1, {"Cu"}, singleElement);
-  AddMaterial(name="carbon"        , density=  1.88 , kStateSolid, NTP_Temperature, 1, {"C"} , singleElement);
   AddMaterial(name="graphite"      , density=  2.265, kStateSolid, NTP_Temperature, 1, {"C"} , singleElement);
   AddMaterial(name="graphitefoam"  , density=  0.61 , kStateSolid, NTP_Temperature, 1, {"C"} , singleElement);
-  AddMaterial(name="iron"          , density=  7.874, kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
-  AddMaterial(name="weightiron"    , density=  7.87 , kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
-  AddMaterial(name="lead"          , density= 11.35 , kStateSolid, NTP_Temperature, 1, {"Pb"}, singleElement);
-  AddMaterial(name="silicon"       , density=  2.33 , kStateSolid, NTP_Temperature, 1, {"Si"}, singleElement);
-  AddMaterial(name="titanium"      , density=  4.54 , kStateSolid, NTP_Temperature, 1, {"Ti"}, singleElement);
-  AddMaterial(name="tungsten"      , density= 19.3  , kStateSolid, NTP_Temperature, 1, {"W"} , singleElement);
-  AddMaterial(name="uranium"       , density= 18.9  , kStateSolid, NTP_Temperature, 1, {"U"} , singleElement);
-  AddMaterial(name="vanadium"      , density=  5.800, kStateSolid, NTP_Temperature, 1, {"V"} , singleElement);
   AddMaterial(name="solidhydrogen" , density=  8.96 , kStateSolid, NTP_Temperature, 1, {"H"} , singleElement);
   AddMaterial(name="solidnitrogen" , density=  8.96 , kStateSolid, NTP_Temperature, 1, {"N"} , singleElement);
   AddMaterial(name="solidoxygen"   , density=  8.96 , kStateSolid, NTP_Temperature, 1, {"O"} , singleElement);
+  AddMaterial(name="weightiron"    , density=  7.87 , kStateSolid, NTP_Temperature, 1, {"Fe"}, singleElement);
 
   // composites and alloys
 
@@ -246,8 +209,8 @@ void BDSMaterials::DefineNonMetalSolids()
   
   G4Material* tmpMaterial = new G4Material
     (name="fusedsilica", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-  tmpMaterial->AddElement(elements["O"],2);
-  tmpMaterial->AddElement(elements["Si"],1);
+  tmpMaterial->AddElement(GetElement("O") , 2);
+  tmpMaterial->AddElement(GetElement("Si"), 1);
   const G4int FusedSilica_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double FusedSilica_RIND[FusedSilica_NUMENTRIES]={1.49,1.49,1.49};
   G4double FusedSilica_AbsLength[FusedSilica_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
@@ -272,8 +235,8 @@ void BDSMaterials::DefineNonMetalSolids()
   //n-bk7
   tmpMaterial = new G4Material 
     (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-  tmpMaterial->AddElement(elements["O"],2);
-  tmpMaterial->AddElement(elements["Si"],1);
+  tmpMaterial->AddElement(GetElement("O") , 2);
+  tmpMaterial->AddElement(GetElement("Si"), 1);
   const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
   G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
@@ -338,9 +301,9 @@ void BDSMaterials::DefineScintillators()
   G4double density;
   //YAG
   G4Material* tmpMaterial = new G4Material(name="yag", density=4.56*CLHEP::g/CLHEP::cm3, 3);
-  tmpMaterial->AddElement(elements["Y"],3);
-  tmpMaterial->AddElement(elements["Al"],5);
-  tmpMaterial->AddElement(elements["O"],12);
+  tmpMaterial->AddElement(GetElement("Y") , 3);
+  tmpMaterial->AddElement(GetElement("Al"), 5);
+  tmpMaterial->AddElement(GetElement("O") , 12);
   G4double birks = 0.08*CLHEP::mm/CLHEP::MeV; 
   tmpMaterial->GetIonisation()->SetBirksConstant(birks);
   G4MaterialPropertiesTable* mpt_YAG = CreatePropertiesTable();
@@ -723,8 +686,8 @@ void BDSMaterials::DefineLiquids()
   
   //Water for Cherenkov radiation detector
   G4Material* tmpMaterial = new G4Material(name="waterCkov", density=1.*CLHEP::g/CLHEP::cm3, 2);
-  tmpMaterial->AddElement(elements["O"],1);
-  tmpMaterial->AddElement(elements["H"],2);
+  tmpMaterial->AddElement(GetElement("O"), 1);
+  tmpMaterial->AddElement(GetElement("H"), 2);
   const G4int nEntries = 9;
   G4MaterialPropertiesTable* mpt_waterCkov = CreatePropertiesTable();
   G4double PhotonEnergy[nEntries];
@@ -765,8 +728,8 @@ void BDSMaterials::DefineGases()
   //  G4cout << "Air: temperature = " << temperature/CLHEP::kelvin << " kelvin, pressure = " << pressure/CLHEP::atmosphere << " atm, density = " << density/(CLHEP::g/CLHEP::m3) << " g/m3" << G4endl;
   G4Material* tmpMaterial = new G4Material
     (name="air", density, 2, kStateGas, temperature, pressure);
-  tmpMaterial->AddElement(elements["O"], fractionmass=0.2);
-  tmpMaterial->AddElement(elements["N"], fractionmass=0.8);
+  tmpMaterial->AddElement(GetElement("O"), fractionmass=0.2);
+  tmpMaterial->AddElement(GetElement("N"), fractionmass=0.8);
   const G4int Air_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Air_RIND[Air_NUMENTRIES] = {1.000292,1.000292,1.000292};//Source: NPL Tables of Physical & Chemical Constants. Refractive indices at different energies.
   G4double Air_Energy[Air_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
@@ -829,9 +792,9 @@ void BDSMaterials::DefineVacuums()
 #endif
   G4Material* tmpMaterial = new G4Material
     (name="vacuum", density, 3, kStateGas, temperature, vacpressure);
-  tmpMaterial->AddElement(elements["H"], fractionmass=0.482);
-  tmpMaterial->AddElement(elements["C"], fractionmass=0.221);
-  tmpMaterial->AddElement(elements["O"], fractionmass=0.297);
+  tmpMaterial->AddElement(GetElement("H"), fractionmass=0.482);
+  tmpMaterial->AddElement(GetElement("C"), fractionmass=0.221);
+  tmpMaterial->AddElement(GetElement("O"), fractionmass=0.297);
   AddMaterial(tmpMaterial,name);
 
   const G4int Vac_NUMENTRIES = 3; //Number of entries in the material properties table
@@ -868,6 +831,12 @@ void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
     {G4cout << __METHOD_NAME__ << "Material \"" << aName << "\" already exists" << G4endl; exit(1);}
 }
 
+void BDSMaterials::AddMaterial(G4String aMaterial,G4String aName)
+{
+  G4Material* material = GetMaterial(aMaterial);
+  AddMaterial(material, aName);
+}
+
 void BDSMaterials::AddMaterial(G4String aName,
 			       G4double itsZ,
 			       G4double itsA,
@@ -901,39 +870,24 @@ void BDSMaterials::AddMaterial(G4String aName,
       ++sIter, ++dIter)
   {
 #ifdef BDSDEBUG
-    G4cout << "BDSMaterials::AddMaterial - Adding element: " << *sIter << G4endl;
+    G4cout << "BDSMaterials::AddMaterial: " << *sIter << G4endl;
 #endif
-    if(CheckElement(*sIter)){
-      tmpMaterial->AddElement(GetElement(*sIter),(*dIter));
+    G4Element* element = CheckElement(*sIter);
+    if(element){
+      tmpMaterial->AddElement(element,(*dIter));
     } else tmpMaterial->AddMaterial(GetMaterial(*sIter),(*dIter));
   }
   AddMaterial(tmpMaterial,aName);
 }
 
-void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
-{
-  if(elements.insert(make_pair(aSymbol,aElement)).second)
-    {
-#ifdef BDSDEBUG
-      G4cout << "New atom : " << aSymbol << G4endl;
-#endif
-    }
-  else
-    {G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" already exists" << G4endl; exit(1);}
-}
-
-void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
-{
-  G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
-  AddElement(tmpElement,aSymbol);
-}
-
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
 {
-  G4String cmpStr1 ("G4_");
-  G4String cmpStr2 (aMaterial, 3);
+  G4String nistString ("G4_");
+  if (aMaterial.length() <= 2)
+    {aMaterial.prepend(nistString);}
 
-  if (!cmpStr1.compareTo(cmpStr2))
+  G4String start (aMaterial, 3);
+  if (nistString == start)
     {
 #ifdef BDSDEBUG
       G4cout << "Using NIST material " << aMaterial << G4endl;
@@ -961,52 +915,48 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
     }
 }
 
+void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
+{
+  if (CheckElement(aSymbol) != nullptr)
+    {
+      G4cout << __METHOD_NAME__ << "Atom  \"" << aSymbol << "\" already exists." << G4endl;
+      exit(1);
+    }
+
+  elements.insert(make_pair(aSymbol,aElement));
+#ifdef BDSDEBUG
+  G4cout << "New atom : " << aSymbol << G4endl;
+#endif
+}
+
+void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
+{
+  G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
+  AddElement(tmpElement,aSymbol);
+}
+
+G4Element* BDSMaterials::CheckElement(G4String aSymbol)const
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Checking element " << aSymbol << G4endl;
+#endif
+  // first look in defined element list
+  auto iter = elements.find(aSymbol);
+  if(iter != elements.end()) return (*iter).second;
+
+  G4Element* element = G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
+  return element;
+}
+
 G4Element* BDSMaterials::GetElement(G4String aSymbol)const
 {
-  G4String cmpStr1 ("G4_");
-  G4String cmpStr2 (aSymbol, 3);
-// #ifdef BDSDEBUG
-//   G4cout << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
-// #endif
-  if (!cmpStr1.compareTo(cmpStr2))
+  G4Element* element = CheckElement(aSymbol);
+  if (element == nullptr)
     {
-#ifdef BDSDEBUG
-      G4cout << "Using NIST material " << aSymbol << G4endl;
-#endif
-      G4Element* element = G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
-      if (element == nullptr)
-        {
-          G4cout << __METHOD_NAME__ << "\"" << aSymbol << "\" could not be found by NIST." << G4endl;
-          exit(1);
-        }
-      return element;
+      G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" could not be found." << G4endl;
+      exit(1);
     }
-  else
-    {
-      auto iter = elements.find(aSymbol);
-      if(iter != elements.end())
-	{return (*iter).second;}
-      else
-	{
-	  G4cout << __METHOD_NAME__ << "\"" <<  aSymbol << " unknown." << G4endl;
-	  exit(1);
-	}
-    }
-}
-
-G4bool BDSMaterials::CheckMaterial(G4String aMaterial)const
-{
-  aMaterial.toLower();
-  auto iter = materials.find(aMaterial);
-  if(iter != materials.end()) return true;
-  else return false;
-}
-
-G4bool BDSMaterials::CheckElement(G4String aSymbol)const
-{
-  auto iter = elements.find(aSymbol);
-  if(iter != elements.end()) return true;
-  else return false;
+  return element;
 }
 
 void BDSMaterials::ListMaterials()const
@@ -1015,6 +965,7 @@ void BDSMaterials::ListMaterials()const
   for (auto element : elements) {
     G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;
   }
+
   G4cout << "***************" << G4endl;
   G4cout << "Available materials are:" << G4endl;
   for (auto material : materials) {
@@ -1034,6 +985,7 @@ BDSMaterials::~BDSMaterials()
   for(auto element : elements)
     {delete element.second;}
   elements.clear();
+
   for(G4MaterialPropertiesTable* table : propertiesTables)
     {delete table;}
 
@@ -1049,7 +1001,7 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 #else
   G4bool debug = false;
 #endif
-
+ 
   // convert the parsed atom list to list of Geant4 G4Elements
   
   if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
@@ -1063,7 +1015,7 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
     AddElement(it.name,it.symbol,it.Z,it.A);
   }
   if (verbose || debug) G4cout << "size of atom list: "<< BDSParser::Instance()->GetAtoms().size() << G4endl;
-  
+
   // convert the parsed material list to list of Geant4 G4Materials
   if (verbose || debug) G4cout << "parsing the material list..."<< G4endl;
   for(auto it : BDSParser::Instance()->GetMaterials())

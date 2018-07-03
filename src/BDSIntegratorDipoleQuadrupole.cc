@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
 #include "BDSFieldMagDipole.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
@@ -29,6 +30,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
@@ -52,6 +55,9 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
+  primaryMass(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass()),
+  primaryCharge(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Charge()),
+  totalEnergy(BDSGlobalConstants::Instance()->BeamParticleDefinition()->TotalEnergy()),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
@@ -80,6 +86,25 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       SetDistChord(0);
+      return;
+    }
+
+  // Revert to the backup stepper if the particle charge or mass is not nominal
+  G4double charge = fcof/(CLHEP::eplus*CLHEP::c_light); //same equation as in BDSMagUsualEqRhs
+  G4double mass = std::sqrt(eq->Mass()); // Mass() returns mass squared
+  if (!((mass == primaryMass) && (charge == primaryCharge)))
+    {
+      dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
+      SetDistChord(dipole->DistChord());
+      return;
+    }
+
+  // Revert to the backup stepper if the particle momentum is greater than 5% off nominal
+  G4double relEnergyDiff = (eq->TotalEnergy(yIn) - totalEnergy)/totalEnergy;
+  if (std::abs(relEnergyDiff) > 0.05)
+    {
+      dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
+      SetDistChord(dipole->DistChord());
       return;
     }
 
