@@ -69,7 +69,7 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
   std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
 				   "xmin", "xmax", "ymin", "ymax",
 				   "zmin", "zmax", "tmin", "tmax"};
-  for (const std::string s : allKeys)
+  for (const std::string& s : allKeys)
     {header[s] = 0;}
   result    = nullptr;
   loopOrder = "xyzt";
@@ -235,9 +235,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               G4double value = 0;
               try
 		{value = std::stod(matchHeaderNumber[2]);}
-              catch (std::invalid_argument)
+              catch (const std::invalid_argument&)
 		{G4cerr << "Invalid argument " << matchHeaderNumber[2] << G4endl; Terminate();}
-              catch (std::out_of_range)
+              catch (const std::out_of_range&)
 		{G4cerr << "Number out of range " << matchHeaderNumber[2] << G4endl; Terminate();}
 	      
               header[key] = value;
@@ -309,7 +309,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               else if (columnName.find("Fz") != std::string::npos)
 		{zIndex = nColumns; continue;}
 	      else
-		{columnNames.push_back(columnName);}
+		{columnNames.emplace_back(columnName);}
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
