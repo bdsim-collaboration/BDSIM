@@ -279,6 +279,7 @@ void Options::PublishMembers()
   publish("stopSecondaries",          &Options::stopSecondaries);
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
+  publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
 
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);

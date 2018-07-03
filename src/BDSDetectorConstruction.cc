@@ -37,6 +37,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorSet.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -88,6 +89,17 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
+  canSampleAngledFaces = true;
+  BDSIntegratorSetType integratorSetType = BDSGlobalConstants::Instance()->IntegratorSet();
+  if (   (integratorSetType == BDSIntegratorSetType::bdsimtwo)
+      || (integratorSetType == BDSIntegratorSetType::geant4)
+#if G4VERSION_NUMBER > 1039
+      || (integratorSetType == BDSIntegratorSetType::geant4dp)
+#endif
+      )
+    { // set to be value of option, default is false.
+      canSampleAngledFaces = BDSParser::Instance()->GetOptions().sampleElementsWithPoleface;
+    }
 
   UpdateSamplerDiameter();
 }
@@ -271,12 +283,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       const GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
       ++nextIt;
+      G4double nextElementInputFace = 0; // get poleface angle for next element whilst testing if next element exists
       while (nextIt != beamLine.end())
 	{
 	  if (nextIt->isSpecial() == false && nextIt->type != GMAD::ElementType::_THINMULT)
 	    {
 	      nextElement = &(*nextIt);
-	      break;
+          //rotated entrance face of the next element may modify the exit face of the current element.
+          nextElementInputFace = nextElement->e1;
+          break;
 	    }
 	  ++nextIt;
 	}
@@ -288,6 +303,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       if(temp)
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
+          if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
+            {sType = BDSSamplerType::none;}
+          if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
+            {sType = BDSSamplerType::none;}
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}

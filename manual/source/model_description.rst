@@ -1655,8 +1655,8 @@ Fields
 ------
 
 BDSIM provides the facility to overlay a pure magnetic, pure electric or combined electromagnetic fields
-on an element as defined by an externally provided field map. This can be done for only the vacuum
-volume; only the volume outside the vacuum (i.e. the yoke); each separately; or one full map for the whole
+on an element as defined by an externally provided field map. This can be done for 1) only the vacuum
+volume; 2) only the volume outside the vacuum (i.e. the yoke); 3) or one full map for the whole
 element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
 can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
 a selection of 1-4D interpolators that are used to provide the field value in between the data points
@@ -1664,7 +1664,7 @@ in the supplied field map.
 
 To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
-* The field may be attached to everything "fieldAll", the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
+* The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum"; or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to 4 dimensions.
 
@@ -1674,7 +1674,8 @@ for dimensional flexibility can be added if required (see :ref:`feature-request`
 
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
-	  recommended the user re-sample any existing field map into a regular grid.
+	  recommended the user re-sample any existing field map into a regular grid. A regular
+	  grid is also faster for tracking purposes.
 
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
@@ -1685,7 +1686,7 @@ a drift pipe where it covers the full volume of the drift (not outside it though
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
+		    electricFile = "poisson2d:/Another/File.TXT",
 		    electricInterpolator = "linear2D";
 
   d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
@@ -3216,6 +3217,14 @@ should only be used with understanding.
 +-----------------------------------+--------------------------------------------------------------------+
 | minimumEpsilonStep                | Minimum relative error acceptable in stepping.                     |
 +-----------------------------------+--------------------------------------------------------------------+
+| sampleElementsWithPoleface        | Default false. Samplers are not be attached to elements that have  |
+|                                   | poleface rotations as the sampler will overlap with the mass world |
+|                                   | geometry, resulting in incorrect tracking. This only occurs in     |
+|                                   | integrator sets which construct the poleface geometry, namely      |
+|                                   | :code:`bdsimtwo`, :code:`geant4`, and :code:`geant4dp`. This option|
+|                                   | overides this, allowing samplers to be attached. This options will |
+|                                   | not affect the default integrator set, :code:`bdsimmatrix`.        |
++-----------------------------------+--------------------------------------------------------------------+
 | beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |
@@ -3967,18 +3976,7 @@ Example::
 
   iron : matdef, Z=26, A=55.845, density=7.87;
 
-If the material is made up by several components, first of all each of them must be specified with the **atom** keyword::
-
-  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
-
-=========  =====================
-parameter  description
-Z          atomic number
-A          mass number [g/mol]
-symbol     atom symbol
-=========  =====================
-
-The compound material can be specified in two manners:
+A compound material can be specified in two manners:
 
 **1.** If the number of atoms of each component in material unit is known, the following syntax can be used::
 
@@ -3995,8 +3993,6 @@ componentsWeights number of atoms for each component in material unit
 
 Example::
 
-  niobium : atom, symbol="Nb", Z=41, A=92.906;
-  titanium : atom, symbol="Ti", Z=22, A=47.867;
   NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
 
 **2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
@@ -4013,12 +4009,28 @@ componentsFractions mass fraction of each component in material unit
 
 Example::
 
-  samarium : atom, symbol="Sm", Z=62, A=150.4;
-  cobalt : atom, symbol="Co", Z=27, A=58.93;
   SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
 
 The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
 Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+
+New elements can be defined with the **atom** keyword::
+
+  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
+
+=========  =====================
+parameter  description
+Z          atomic number
+A          mass number [g/mol]
+symbol     atom symbol
+=========  =====================
+
+Example::
+
+  myNiobium  : atom, symbol="myNb", Z=41, A=92.906;
+  myTitanium : atom, symbol="myTi", Z=22, A=47.867;
+  myNbTi     : matdef, density=5.6, T=4.0, components=["myNb","myTi"], componentsWeights={1,1};
+
 
 .. _crystals:
 
