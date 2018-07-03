@@ -28,8 +28,8 @@ BDSArray1DCoords::BDSArray1DCoords(G4int            nXIn,
 				   BDSDimensionType dimensionIn):
   BDSArray2DCoords(nXIn,1,
 		   xMinIn,xMaxIn,
-		   0,   1),
-  dimension(dimensionIn)
+		   0,   1,
+		   dimensionIn)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray1DCoords const &a)

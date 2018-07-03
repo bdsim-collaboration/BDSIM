@@ -27,8 +27,8 @@ BDSFieldMagInterpolated1D::BDSFieldMagInterpolated1D(BDSInterpolator1D* interpol
 						     G4double           scalingIn):
   BDSFieldMagInterpolated(offset,scalingIn),
   interpolator(interpolatorIn),
-  dimensionIndex((interpolatorIn->Dimension()).underlying()),
-  time((interpolatorIn->Dimension()).underlying() > 2)
+  dimensionIndex((interpolatorIn->FirstDimension()).underlying()),
+  time((interpolatorIn->FirstDimension()).underlying() > 2)
 {;}
 
 BDSFieldMagInterpolated1D::~BDSFieldMagInterpolated1D()

@@ -27,8 +27,8 @@ BDSFieldEInterpolated1D::BDSFieldEInterpolated1D(BDSInterpolator1D* interpolator
 						 G4double           eScalingIn):
   BDSFieldEInterpolated(offset, eScalingIn),
   interpolator(interpolatorIn),
-  dimensionIndex((interpolatorIn->Dimension()).underlying()),
-  time((interpolatorIn->Dimension()).underlying() > 2)
+  dimensionIndex((interpolatorIn->FirstDimension()).underlying()),
+  time((interpolatorIn->FirstDimension()).underlying() > 2)
 {;}
 
 BDSFieldEInterpolated1D::~BDSFieldEInterpolated1D()

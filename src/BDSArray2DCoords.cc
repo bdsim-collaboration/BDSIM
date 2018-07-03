@@ -30,9 +30,9 @@ BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
   BDSArray3DCoords(nXIn,nYIn,1,
 		   xMinIn,xMaxIn,
 		   yMinIn,yMaxIn,
-		   0,   1),
-  xDimension(xDimensionIn),
-  yDimension(yDimensionIn)
+		   0,   1,
+		   xDimensionIn,
+		   yDimensionIn)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray2DCoords const &a)

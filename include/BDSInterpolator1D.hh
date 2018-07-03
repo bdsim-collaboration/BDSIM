@@ -47,7 +47,7 @@ public:
   inline const BDSArray1DCoords* Array() const {return array;}
 
   /// Accessor for the active dimension this represents.
-  inline BDSDimensionType Dimension() const {return array->Dimension();}
+  inline BDSDimensionType FirstDimension() const {return array->FirstDimension();}
 
 protected:
   /// Each derived class should implement this function. Note T suffix (was templated)

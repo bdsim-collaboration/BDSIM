@@ -44,17 +44,10 @@ public:
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray1DCoords const &a);
 
-  /// Accessor for dimension that the data represents.
-  inline BDSDimensionType Dimension() const {return dimension;}
-
 private:
   /// No default constructor as the array is not adjustable after construction and
   /// therefore the size must be known at construction time.
   BDSArray1DCoords() = delete;
-
-  /// Which dimension the contained data represents spatially. Always referred to
-  /// locally as 'x' but may represent another dimension.
-  BDSDimensionType dimension;
 };
 
 #endif
