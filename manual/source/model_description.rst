@@ -1668,8 +1668,8 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to 4 dimensions.
 
-Currently, the dimensions are in order :math:`x,y,z,t`. For example, specifying a 3D field, will only be
-:math:`x,y,z` and cannot currently be used for :math:`x,y,t` field maps for example. The functionality
+The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
+:math:`x,y,z`. The functionality
 for dimensional flexibility can be added if required (see :ref:`feature-request`).
 
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
