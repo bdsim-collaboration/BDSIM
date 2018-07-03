@@ -353,13 +353,25 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               }
 	    case 3:
 	      {
-		nX = G4int(header["nx"]);
-		nY = G4int(header["ny"]);
-		nZ = G4int(header["nz"]);
+		BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
+		BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+		BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
+		auto fKeys = dimKeyMap[firstDim];
+		auto sKeys = dimKeyMap[secondDim];
+		auto tKeys = dimKeyMap[thirdDim];
+		nX = G4int(header[fKeys.number]);
+		nY = G4int(header[sKeys.number]);
+		nZ = G4int(header[tKeys.number]);
 		result = new BDSArray3DCoords(nX, nY, nZ,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
-					      header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm);
+					      header[fKeys.min] * CLHEP::cm,
+					      header[fKeys.max] * CLHEP::cm,
+					      header[sKeys.min] * CLHEP::cm,
+					      header[sKeys.max] * CLHEP::cm,
+					      header[tKeys.min] * CLHEP::cm,
+					      header[tKeys.max] * CLHEP::cm,
+					      firstDim,
+					      secondDim,
+					      thirdDim);
 		break;
               }
 	    case 4:
