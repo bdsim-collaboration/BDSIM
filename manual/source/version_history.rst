@@ -8,6 +8,8 @@ New Features
 * New `crystalcol` element for channelling crystals.
 * New `crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
+* Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
+  be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
 
 General
 -------
@@ -41,6 +43,8 @@ Bug Fixes
 * Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
 * Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
 * Fix Gauss beams used in composite distribution.
+* Fix no particles being tracked when using a userfile bunch distribution with only one column.
+* Fix bug where last particle was missed from user bunch distribution file.
 
 
 V1.1 - 2018 / 05 / 23

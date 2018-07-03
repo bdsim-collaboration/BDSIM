@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSFIELDLOADERBDSIM_H
 #define BDSFIELDLOADERBDSIM_H
 
+#include "BDSDimensionType.hh"
 #include "BDSFieldValue.hh"
 
 #include "G4String.hh"
@@ -89,6 +90,14 @@ private:
   std::map<G4String, double>   header;    ///< Header keys and values.
   BDSArray4DCoords*            result;    ///< Resultant array from loading.
   G4String                     loopOrder; ///< String for looping order when loading.
+
+  struct DimensionKeys
+  {
+    G4String number;
+    G4String min;
+    G4String max;
+  };
+  std::map<BDSDimensionType, DimensionKeys> dimKeyMap;
 };
 
 #endif

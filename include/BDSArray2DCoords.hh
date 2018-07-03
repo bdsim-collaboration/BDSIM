@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAY2DCOORDS_H
 
 #include "BDSArray3DCoords.hh"
+#include "BDSDimensionType.hh"
 
 #include "globals.hh"
 
@@ -36,7 +37,9 @@ class BDSArray2DCoords: public BDSArray3DCoords
 public:
   BDSArray2DCoords(G4int nX, G4int nY,
 		   G4double xMinIn, G4double xMaxIn,
-		   G4double yMinIn, G4double yMaxIn);
+		   G4double yMinIn, G4double yMaxIn,
+		   BDSDimensionType xDimensionIn = BDSDimensionType::x,
+		   BDSDimensionType yDimensionIn = BDSDimensionType::y);
   virtual ~BDSArray2DCoords(){;}
 
   /// Output stream.

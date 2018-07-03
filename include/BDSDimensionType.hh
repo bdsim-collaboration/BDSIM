@@ -16,22 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSInterpolator4D.hh"
+#ifndef BDSDIMENSIONTYPE_H
+#define BDSDIMENSIONTYPE_H 
 
-#include "globals.hh"
+#include "BDSTypeSafeEnum.hh"
+#include "globals.hh" // geant4 types / globals
 
-BDSInterpolator4D::BDSInterpolator4D(BDSArray4DCoords* arrayIn):
-  array(arrayIn)
-{
-  if (!array)
-    {G4cerr << "Invalid array to construct interpolator on" << G4endl; exit(1);}
+#include <map>
+
+/**
+ * @brief Type definition for dimensions by name.
+ */
+
+struct dimensions_def {
+  enum type {x, y, z, t};
+};
+
+typedef BDSTypeSafeEnum<dimensions_def, int> BDSDimensionType;
+
+namespace BDS {
+  /// Determine the output format to be used from the input string.
+  BDSDimensionType DetermineDimensionType(G4String dimensionType);
 }
 
-G4ThreeVector BDSInterpolator4D::GetInterpolatedValue(G4double x,
-						      G4double y,
-						      G4double z,
-						      G4double t) const
-{
-  BDSFieldValue r = GetInterpolatedValueT(x,y,z,t);
-  return G4ThreeVector(r.x(), r.y(), r.z());
-}
+
+#endif
