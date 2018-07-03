@@ -56,7 +56,13 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldEInterpolated3D() = delete;
 
-  BDSInterpolator3D* interpolator; ///< Interpolator the field is based on.
+  BDSInterpolator3D* interpolator;   ///< Interpolator the field is based on.
+  const G4int  firstDimensionIndex;  ///< Integer index to dimension to use.
+  const G4bool firstTime;            ///< Cache of whether to use time coordinate.
+  const G4int  secondDimensionIndex; ///< Integer index to dimension to use.
+  const G4bool secondTime;           ///< Cache of whether to use time coordinate.
+  const G4int  thirdDimensionIndex;  ///< Integer index to dimension to use.
+  const G4bool thirdTime;            ///< Cache of whether to use time coordinate.
 };
 
 #endif

@@ -1668,9 +1668,16 @@ To overlay a field, one must define a field 'object' in the parser and then 'att
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to 4 dimensions.
 
-Currently, the dimensions are in order :math:`x,y,z,t`. For example, specifying a 3D field, will only be
-:math:`x,y,z` and cannot currently be used for :math:`x,y,t` field maps for example. The functionality
-for dimensional flexibility can be added if required (see :ref:`feature-request`).
+The dimensions are (by default) in order :math:`x,y,z,t`. For example, specifying a 3D field will be
+:math:`x,y,z` and a 2D field :math:`x,y`.
+
+For BDSIM format fields (see :ref:`model-description-field-formats`, :ref:`field-map-formats` and
+:ref:`fields-different-dimensions`),
+the user can however specify different dimension with the other dimensions being assumed constant.
+For example, a field that varies in :math:`x,z` is possible (assumed constant in :math:`y`). For
+BDSIM format fields, this is detected automatically by the column labelling and the keys in the
+header of the file that specify the ranges in each dimension. The dimensions must however be in
+ascending or descending order.
 
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
@@ -1794,6 +1801,7 @@ Field Types
 | ebmap4d          | 4D electric-magnetic field map.  |
 +------------------+----------------------------------+
 
+.. _model-description-field-formats:
 
 Formats
 ^^^^^^^

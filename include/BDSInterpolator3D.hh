@@ -19,12 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSINTERPOLATOR3D_H
 #define BDSINTERPOLATOR3D_H
 
+#include "BDSArray3DCoords.hh"
+#include "BDSDimensionType.hh"
 #include "BDSFieldValue.hh"
 
 #include "G4Types.hh"
 #include "G4ThreeVector.hh"
-
-class BDSArray3DCoords;
 
 /**
  * @brief Interface for all 3D interpolators.
@@ -43,11 +43,16 @@ public:
   /// Public interface to a 3D interpolator. Returns Geant4 type as that's what will be needed.
   G4ThreeVector GetInterpolatedValue(G4double x, G4double y, G4double z) const;
 
-  /// Alternative public interface to allow use of a 3-vector position.
-  /// Returns Geant4 type as that's what will be needed.
-  G4ThreeVector GetInterpolatedValue(G4ThreeVector position) const;
-
   inline const BDSArray3DCoords* Array() const {return array;}
+
+  /// Accessor for the active dimension this represents (first).
+  inline BDSDimensionType FirstDimension() const {return array->FirstDimension();}
+
+  /// Accessor for the active dimension this represents (second).
+  inline BDSDimensionType SecondDimension() const {return array->SecondDimension();}
+
+  /// Accessor for the active dimension this represents (second).
+  inline BDSDimensionType ThirdDimension() const {return array->ThirdDimension();}
   
 protected:
   /// Each derived class should implement this function. Note T suffix (was templated)

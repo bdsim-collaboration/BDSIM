@@ -2,8 +2,11 @@
 simple_fail("field-map-bdsim-format-bad-header" "--file=bad_header.gmad")
 simple_fail("field-map-bdsim-format-wrong-file" "--file=wrong_file.gmad")
 
-#interpolator tests
+#field map tests that don't require gdml (use a drift)
+simple_testing(field-map-b-1d-along-z  "--file=b_field_1d_along_z.gmad --output=none" "")
 
+
+#interpolator tests
 interpolator_test("interpolator-1d-nearest" "1d_nearest.gmad")
 interpolator_test("interpolator-1d-linear"  "1d_linear.gmad")
 interpolator_test("interpolator-1d-cubic"   "1d_cubic.gmad")
@@ -13,6 +16,8 @@ interpolator_test("interpolator-2d-linear"  "2d_linear.gmad")
 interpolator_test("interpolator-2d-cubic"   "2d_cubic.gmad")
 
 if (USE_GZSTREAM)
+  simple_testing(field-map-b-2d-along-xz "--file=b_field_2d_along_xz.gmad --output=none" "")
+
   interpolator_test("interpolator-3d-nearest-gz" "3d_nearest.gmad")
   interpolator_test("interpolator-3d-linear-gz"  "3d_linear.gmad")
   interpolator_test("interpolator-3d-cubic-gz"   "3d_cubic.gmad")

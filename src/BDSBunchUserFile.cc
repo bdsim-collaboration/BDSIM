@@ -26,10 +26,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4String.hh"
 
 #ifdef USE_GZSTREAM
 #include "gzstream.h"
 #endif
+
+#include <regex>
+#include <string>
+#include <vector>
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
@@ -82,25 +87,19 @@ void BDSBunchUserFile<T>::CloseBunchFile()
 template<class T>
 void BDSBunchUserFile<T>::ParseFileFormat()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  G4String unparsed_str = bunchFormat;
-  G4int pos = unparsed_str.find(":");
-  
   struct BDSBunchUserFile::Doublet sd;
-  
-  while(pos > 0){
-    pos = unparsed_str.find(":");
-    G4String token = unparsed_str.substr(0,pos);
-    
-    unparsed_str = unparsed_str.substr(pos+1);
-#ifdef BDSDEBUG 
-    G4cout<< __METHOD_NAME__ <<"token -> "<<token<<G4endl;
-    G4cout<< __METHOD_NAME__ <<"token.substr(0,1) -> " << token.substr(0,1) << G4endl;
-    G4cout<< __METHOD_NAME__ <<"unparsed_str -> "<<unparsed_str<<G4endl;
-    G4cout<< __METHOD_NAME__ <<"pos -> "<<pos<<G4endl;
-#endif
+
+  std::regex wspace("\\s+"); // any whitepsace
+  std::vector<std::string> results;
+  std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  for (auto const& token : results)
+    {
     if(token.substr(0,1)=="E" || token.substr(0,1)=="P") {
       G4String name,rest;
       if(token.substr(0,2)=="Ek") {//Kinetic energy (longer name).
@@ -335,7 +334,6 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 					  G4double& xp, G4double& yp, G4double& zp,
 					  G4double& t , G4double&  E, G4double& weight)
 {
-
   E = x0 = y0 = z0 = xp = yp = zp = t = 0;
   weight = 1;
   
@@ -346,62 +344,28 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
   
   for(auto it=fields.begin();it!=fields.end();it++)
     {
-#ifdef BDSDEBUG 
-      G4cout<< __METHOD_NAME__ <<it->name<<"  ->  "<<it->unit<<G4endl;
-#endif
-      if(it->name=="Ek") { 
-	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
-#ifdef BDSDEBUG 
-	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
-#endif
-	E += particleMass;
-#ifdef BDSDEBUG 
-	G4cout << "******** Particle Mass = " << particleMass << G4endl;
-	G4cout << "******** Particle Total Energy = " << E << G4endl;
-	G4cout<< __METHOD_NAME__ << E <<G4endl;
-#endif
-      }
-      else if(it->name=="E") { 
-	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
-#ifdef BDSDEBUG 
-
-#endif
-#ifdef BDSDEBUG 
-	G4cout << "******** Particle Total Energy = " << E << G4endl;
-	G4cout<< __METHOD_NAME__ << E <<G4endl;
-#endif
-      }
-      else if(it->name=="P") { 
-	G4double P=0;
-	ReadValue(P); P *= ( CLHEP::GeV * it->unit ); //Paticle momentum
-	G4double totalEnergy  = std::hypot(P,particleMass);
-	E = totalEnergy - particleMass;
-#ifdef BDSDEBUG 
-	G4cout << "******** Particle Mass = " << particleMass << G4endl;
-	G4cout << "******** Particle Total Energy = " << totalEnergy << G4endl;
-	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
-	G4cout<< __METHOD_NAME__ << E <<G4endl;
-#endif
-      }
-      else if(it->name=="t") { ReadValue(t); t *= ( CLHEP::s * it->unit ); tdef = true; }
-      else if(it->name=="x") { ReadValue(x0); x0 *= ( CLHEP::m * it->unit ); 
-#ifdef BDSDEBUG 
-	G4cout<< __METHOD_NAME__ << x0 <<G4endl;
-#endif
-      }
-      else if(it->name=="y") { 
-	ReadValue(y0); y0 *= ( CLHEP::m * it->unit ); 
-#ifdef BDSDEBUG 
-	G4cout<< __METHOD_NAME__ << y0 <<G4endl;
-#endif
-      }
-      else if(it->name=="z") { 
-	ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
-#ifdef BDSDEBUG 
-
-	G4cout<< __METHOD_NAME__ << z0 <<G4endl;
-#endif
-      }
+      if(it->name=="Ek")
+	{ 
+	  ReadValue(E); E *= (CLHEP::GeV * it->unit);
+	  E += particleMass;
+	}
+      else if(it->name=="E")
+	{ReadValue(E); E *= (CLHEP::GeV * it->unit);}
+      else if(it->name=="P")
+	{ 
+	  G4double P=0;
+	  ReadValue(P); P *= (CLHEP::GeV * it->unit); //Paticle momentum
+	  G4double totalEnergy = std::hypot(P,particleMass);
+	  E = totalEnergy - particleMass;
+	}
+      else if(it->name=="t")
+	{ReadValue(t); t *= (CLHEP::s * it->unit); tdef = true;}
+      else if(it->name=="x")
+	{ReadValue(x0); x0 *= (CLHEP::m * it->unit);}
+      else if(it->name=="y")
+	{ReadValue(y0); y0 *= (CLHEP::m * it->unit);}
+      else if(it->name=="z")
+	{ReadValue(z0); z0 *= (CLHEP::m * it->unit);}
       else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
@@ -431,20 +395,21 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="weight")
 	{ReadValue(weight);}
       
-      else if(it->name=="skip") {double dummy; ReadValue(dummy);}
+      else if(it->name=="skip")
+	{double dummy; ReadValue(dummy);}
 
       // If energy isn't specified, use the central beam energy (kinetic for Geant4)
       if (!BDS::IsFinite(E))
 	{E = E0*CLHEP::GeV;}
       
       // compute zp from xp and yp if it hasn't been read from file
-      if (!zpdef) zp = CalculateZp(xp,yp,1);
+      if (!zpdef)
+	{zp = CalculateZp(xp,yp,1);}
       // compute t from z0 if it hasn't been read from file
-      if (!tdef) t=0; 
-      // use the Kinetic energy:
-      //          if(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGEncoding() != 22){
-      //}
+      if (!tdef)
+	{t=0;}
     }
+  
   //Add the global offset Z
   z0=z0+Z0*CLHEP::m;
 
@@ -461,7 +426,6 @@ G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
     G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
     CloseBunchFile();
     OpenBunchFile();
-    InputBunchFile>>value; 
   } 
   return !InputBunchFile.eof();
 }

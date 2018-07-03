@@ -47,7 +47,14 @@ BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   nColumns(0),
   fv(BDSFieldValue()),
   result(nullptr)
-{;}
+{
+  dimKeyMap = {
+	       {BDSDimensionType::x, {"nx", "xmin", "xmax"}},
+	       {BDSDimensionType::y, {"ny", "ymin", "ymax"}},
+	       {BDSDimensionType::z, {"nz", "zmin", "zmax"}},
+	       {BDSDimensionType::t, {"nt", "tmin", "tmax"}}
+  };
+}
 
 template <class T>
 BDSFieldLoaderBDSIM<T>::~BDSFieldLoaderBDSIM()
@@ -62,7 +69,7 @@ void BDSFieldLoaderBDSIM<T>::CleanUp()
   std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
 				   "xmin", "xmax", "ymin", "ymax",
 				   "zmin", "zmax", "tmin", "tmax"};
-  for (const std::string s : allKeys)
+  for (const std::string& s : allKeys)
     {header[s] = 0;}
   result    = nullptr;
   loopOrder = "xyzt";
@@ -204,7 +211,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
       // key definition
       //if (line.find(">") != std::string::npos)
       std::smatch matchHeaderNumber;
-      std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
+      std::regex keyValue(R"((\w*)\s*>\s*([0-9eE.+-]+))");
       if (std::regex_search(line, matchHeaderNumber, keyValue))
 	{// must be key definition
           if (matchHeaderNumber.size() < 2)
@@ -228,9 +235,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
               G4double value = 0;
               try
 		{value = std::stod(matchHeaderNumber[2]);}
-              catch (std::invalid_argument)
+              catch (const std::invalid_argument&)
 		{G4cerr << "Invalid argument " << matchHeaderNumber[2] << G4endl; Terminate();}
-              catch (std::out_of_range)
+              catch (const std::out_of_range&)
 		{G4cerr << "Number out of range " << matchHeaderNumber[2] << G4endl; Terminate();}
 	      
               header[key] = value;
@@ -240,9 +247,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 
       std::smatch matchHeaderString;
       // mathces "key > string" where string is 1-4 characters (not numbers)
-      // can be paddded with whitespace \s*
+      // can be paddded between each part with whitespace \s*
       // not more than four characters (via \b for word boundary)
-      std::regex keyWord("(\\w+)\\s*>\\s*([a-zA-Z]{1,4})\\b\\s*");
+      std::regex keyWord(R"((\w+)\s*>\s*([a-zA-Z]{1,4})\b\s*)");
       if (std::regex_search(line, matchHeaderString, keyWord))
 	{
 	  loopOrder = G4String(matchHeaderString[2]); // member variable
@@ -281,7 +288,8 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
       // check all required keys have been built up ok
       // set nColumns
       std::regex columnRow("\\s*^!"); // ignore any initial white space and look for '!'
-      if (std::regex_search(line, columnRow)) {
+      if (std::regex_search(line, columnRow))
+	{
           // we only need to record the number of columns and which ones are
           // the x,y,z field component ones.
           std::regex afterExclamation("\\s*!\\s*(.+)");
@@ -290,15 +298,18 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
           std::string restOfLine = match[1];
           std::string columnName;
           std::istringstream restOfLineSS(restOfLine);
+	  std::vector<G4String> columnNames;
           while (restOfLineSS >> columnName)
 	    {
               nColumns++;
               if (columnName.find("Fx") != std::string::npos)
 		{xIndex = nColumns; continue;}
-              if (columnName.find("Fy") != std::string::npos)
+              else if (columnName.find("Fy") != std::string::npos)
 		{yIndex = nColumns; continue;}
-              if (columnName.find("Fz") != std::string::npos)
+              else if (columnName.find("Fz") != std::string::npos)
 		{zIndex = nColumns; continue;}
+	      else
+		{columnNames.emplace_back(columnName);}
 	    }
           lineData.resize(nColumns + 1); // +1 for default value
           intoData = true;
@@ -314,29 +325,53 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	    {
 	    case 1:
 	      {
-		nX = G4int(header["nx"]);
+		BDSDimensionType firstDim = BDS::DetermineDimensionType(columnNames[0]);
+		auto keys = dimKeyMap[firstDim];
+		nX = G4int(header[keys.number]);
 		result = new BDSArray1DCoords(nX,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm);
+					      header[keys.min] * CLHEP::cm,
+					      header[keys.max] * CLHEP::cm,
+					      firstDim);
 		break;
               }
 	    case 2:
 	      {
-		nX = G4int(header["nx"]);
-		nY = G4int(header["ny"]);
+		BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
+		BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+		auto fKeys = dimKeyMap[firstDim];
+		auto sKeys = dimKeyMap[secondDim];
+		nX = G4int(header[fKeys.number]);
+		nY = G4int(header[sKeys.number]);
 		result = new BDSArray2DCoords(nX, nY,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm);
+					      header[fKeys.min] * CLHEP::cm,
+					      header[fKeys.max] * CLHEP::cm,
+					      header[sKeys.min] * CLHEP::cm,
+					      header[sKeys.max] * CLHEP::cm,
+					      firstDim,
+					      secondDim);
 		break;
               }
 	    case 3:
 	      {
-		nX = G4int(header["nx"]);
-		nY = G4int(header["ny"]);
-		nZ = G4int(header["nz"]);
+		BDSDimensionType firstDim  = BDS::DetermineDimensionType(columnNames[0]);
+		BDSDimensionType secondDim = BDS::DetermineDimensionType(columnNames[1]);
+		BDSDimensionType thirdDim  = BDS::DetermineDimensionType(columnNames[2]);
+		auto fKeys = dimKeyMap[firstDim];
+		auto sKeys = dimKeyMap[secondDim];
+		auto tKeys = dimKeyMap[thirdDim];
+		nX = G4int(header[fKeys.number]);
+		nY = G4int(header[sKeys.number]);
+		nZ = G4int(header[tKeys.number]);
 		result = new BDSArray3DCoords(nX, nY, nZ,
-					      header["xmin"] * CLHEP::cm, header["xmax"] * CLHEP::cm,
-					      header["ymin"] * CLHEP::cm, header["ymax"] * CLHEP::cm,
-					      header["zmin"] * CLHEP::cm, header["zmax"] * CLHEP::cm);
+					      header[fKeys.min] * CLHEP::cm,
+					      header[fKeys.max] * CLHEP::cm,
+					      header[sKeys.min] * CLHEP::cm,
+					      header[sKeys.max] * CLHEP::cm,
+					      header[tKeys.min] * CLHEP::cm,
+					      header[tKeys.max] * CLHEP::cm,
+					      firstDim,
+					      secondDim,
+					      thirdDim);
 		break;
               }
 	    case 4:
@@ -379,7 +414,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
   for (unsigned long i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
-      if (i < xIndex)// x is the first
+      if (i < xIndex)// x is the first field value - coordinates before that
 	{value *= CLHEP::cm;}
       lineData[i] = value;
     }
