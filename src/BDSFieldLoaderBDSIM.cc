@@ -341,7 +341,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 		auto fKeys = dimKeyMap[firstDim];
 		auto sKeys = dimKeyMap[secondDim];
 		nX = G4int(header[fKeys.number]);
-		nX = G4int(header[sKeys.number]);
+		nY = G4int(header[sKeys.number]);
 		result = new BDSArray2DCoords(nX, nY,
 					      header[fKeys.min] * CLHEP::cm,
 					      header[fKeys.max] * CLHEP::cm,
