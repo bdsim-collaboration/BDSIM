@@ -13,4 +13,7 @@ l1: line=(d1);
 use, l1;
 
 beam, particle="e-",
-      energy=3*GeV;
+      energy=3*GeV,
+      distrType="userfile",
+      distrFile="2rays.dat",
+      distrFileFormat="y[mm]";
