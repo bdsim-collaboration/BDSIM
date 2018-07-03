@@ -26,10 +26,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
+#include "G4String.hh"
 
 #ifdef USE_GZSTREAM
 #include "gzstream.h"
 #endif
+
+#include <regex>
+#include <string>
+#include <vector>
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():
@@ -82,25 +87,19 @@ void BDSBunchUserFile<T>::CloseBunchFile()
 template<class T>
 void BDSBunchUserFile<T>::ParseFileFormat()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  G4String unparsed_str = bunchFormat;
-  G4int pos = unparsed_str.find(":");
-  
   struct BDSBunchUserFile::Doublet sd;
-  
-  while(pos > 0){
-    pos = unparsed_str.find(":");
-    G4String token = unparsed_str.substr(0,pos);
-    
-    unparsed_str = unparsed_str.substr(pos+1);
-#ifdef BDSDEBUG 
-    G4cout<< __METHOD_NAME__ <<"token -> "<<token<<G4endl;
-    G4cout<< __METHOD_NAME__ <<"token.substr(0,1) -> " << token.substr(0,1) << G4endl;
-    G4cout<< __METHOD_NAME__ <<"unparsed_str -> "<<unparsed_str<<G4endl;
-    G4cout<< __METHOD_NAME__ <<"pos -> "<<pos<<G4endl;
-#endif
+
+  std::regex wspace("\\s+"); // any whitepsace
+  std::vector<std::string> results;
+  std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), wspace, -1);
+  std::sregex_token_iterator end;
+  for (; iter != end; ++iter)
+    {
+      std::string res = (*iter).str();
+      results.push_back(res);
+    }
+  for (auto const& token : results)
+    {
     if(token.substr(0,1)=="E" || token.substr(0,1)=="P") {
       G4String name,rest;
       if(token.substr(0,2)=="Ek") {//Kinetic energy (longer name).
