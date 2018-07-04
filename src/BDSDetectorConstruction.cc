@@ -98,7 +98,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
 #endif
       )
     { // set to be value of option, default is false.
-      canSampleAngledFaces = BDSParser::Instance()->GetOptions().sampleElementsWithPoleface;
+      canSampleAngledFaces = BDSGlobalConstants::Instance()->SampleElementsWithPoleface();
     }
 
   UpdateSamplerDiameter();
