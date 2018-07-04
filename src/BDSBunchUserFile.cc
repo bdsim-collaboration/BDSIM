@@ -89,7 +89,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 {
   struct BDSBunchUserFile::Doublet sd;
 
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace(":"); // any whitepsace
   std::vector<std::string> results;
   std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), wspace, -1);
   std::sregex_token_iterator end;
