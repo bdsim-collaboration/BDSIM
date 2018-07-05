@@ -1,4 +1,4 @@
-box: element, fieldAll="f1", l=1.1*m, geometry="gdml:abox.gdml";
+d1: drift, l=1.1*m, fielAll="f1";
 
 l1: line=(box);
 
