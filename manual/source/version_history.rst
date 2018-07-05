@@ -40,11 +40,13 @@ Bug Fixes
 ---------
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Further improvements to tunnel building algorithm for magnets with tilt.
 * Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
 * Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
+* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
 
 
 V1.1 - 2018 / 05 / 23
