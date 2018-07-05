@@ -40,3 +40,7 @@ simple_testing(component-sbend-strong-single-p-neg-B   "--file=sbend_strong_sing
 simple_testing(component-sbend-strong-single-p-neg-ang "--file=sbend_strong_single_p_neg_ang.gmad" ${OVERLAP_CHECK})
 simple_testing(component-sbend-strong-single-p-pos-B   "--file=sbend_strong_single_p_pos_B.gmad"   ${OVERLAP_CHECK})
 simple_testing(component-sbend-strong-single-p-pos-ang "--file=sbend_strong_single_p_pos_ang.gmad" ${OVERLAP_CHECK})
+
+# low angle with fringes
+simple_testing(component-sbend-low-angle-fringe "--file=sbend_low_angle_fringe.gmad" ${OVERLAP_CHECK})
+simple_testing(component-rbend-low-angle-fringe "--file=rbend_low_angle_fringe.gmad" ${OVERLAP_CHECK})
