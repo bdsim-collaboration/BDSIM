@@ -4,6 +4,54 @@
 Model Description - Input Syntax
 ================================
 
+The following sections describe how to prepare a BDSIM model. These sections are
+provided in order of requirement.
+
+* Basic Language
+  
+  - :ref:`lattice-description`
+  - :ref:`gmad-syntax`
+  - :ref:`mathematical-functions`
+  - :ref:`coordinates-and-units`
+    
+* :ref:`circular-machines`
+* :ref:`lattice-elements`
+  
+  - :ref:`aperture-parameters`
+  - :ref:`magnet-geometry-parameters`
+  - :ref:`offsets-and-tilts`
+  - :ref:`cavity-geometry-parameters`
+    
+* External Fields & Geometry
+  
+  - :ref:`field-maps`
+  - :ref:`externally-provided-geometry`
+    
+* Sequence of Elements
+  
+  - :ref:`lattice-sequence`
+  - :ref:`sampler-output`
+    
+* Physics Processes
+  
+  - :ref:`physics-processes`
+  - :ref:`physics-biasing`
+    
+* :ref:`bdsim-options`
+* :ref:`beam-parameters`
+* Advanced Topics
+  
+  - :ref:`tunnel-geometry`
+  - :ref:`materials-and-atoms`
+  - :ref:`crystals`
+  - :ref:`regions`
+  - More details about :ref:`bend-tracking-behaviour`
+  - :ref:`colours`
+  - :ref:`controlling-simulation-speed`
+  - :ref:`multiple-beamlines`
+
+.. _lattice-description:
+
 Lattice Description
 -------------------
 
@@ -45,6 +93,8 @@ While GMAD is very similar to MADX, not all MADX commands are supported.
 * !comments start with an exclamation mark "!"
 * a variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
+.. _mathematical-functions:
+  
 Mathematical Functions
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -180,6 +230,7 @@ Both the terminator and teleporter and invisible and very thin elements that are
 shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
 executable option.
 
+
 Terminator
 ^^^^^^^^^^
 
@@ -212,8 +263,8 @@ gap of :math:`0.2 \mu m` is required for the terminator.
 
 .. _lattice-elements:
 
-Lattice Elements
-----------------
+Beamline Elements
+-----------------
 
 BDSIM provides a variety of different elements each with their own function, geometry and
 potentially fields. Any element in BDSIM is described with the following pattern::
@@ -1272,6 +1323,8 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
+
+.. _aperture-parameters:
 
 Aperture Parameters
 -------------------
@@ -2575,7 +2628,8 @@ is not used in BDSIM as it does not propagate the associated weights correctly. 
 the generic biasing interface with the name of the process (described in the following section) as this will
 propagate the weights correctly.
 
-	     
+.. _physics-biasing:
+
 Physics Biasing
 ---------------
 
@@ -3886,6 +3940,8 @@ Output from MAD-X PTC used as input for BDSIM.
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
 
+.. _tunnel-geometry:
+
 Tunnel Geometry
 ---------------
 
@@ -3960,7 +4016,8 @@ the larger of the horizontal and vertical tunnel dimensions.
 	  geometry. In future, it will be possible to override the automatic algorithm between
 	  certain elements in the beamline, but for now such situations must be avoided.
 
-
+.. _materials-and-atoms:
+	  
 Materials and Atoms
 -------------------
 
@@ -4136,7 +4193,8 @@ Examples::
 			bendingAngleYAxis = -0.1*rad,
 			bendingAngleZAxis = 0;
 
-
+.. _regions:
+			
 Regions
 -------
 
@@ -4221,6 +4279,7 @@ In short, we recommend running with :code:`option, checkOverlaps=1;` once to ver
 problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
 to the typical full width of a magnet.
 
+.. _colours:
 
 Colours
 -------
@@ -4334,6 +4393,7 @@ wish to use their colour. The predefined colours in BDSIM are:
 | yellow          | 255 | 255 | 0   |
 +-----------------+-----+-----+-----+
 
+.. _controlling-simulation-speed:
 
 Controlling Simulation Speed
 ----------------------------
