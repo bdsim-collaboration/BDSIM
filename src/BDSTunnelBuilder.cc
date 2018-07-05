@@ -47,7 +47,78 @@ BDSTunnelBuilder::~BDSTunnelBuilder()
   delete BDSTunnelFactory::Instance();
 }
 
-G4bool BDSTunnelBuilder::BreakTunnel(const G4double& cumulativeLength,
+G4bool BDSTunnelBuilder::BreakTunnel(BDSBeamline::const_iterator proposedStart,
+				     BDSBeamline::const_iterator proposedEnd,
+				     const G4double& halfWidth)
+{
+  G4double sectionLength   = 0;
+  G4double cumulativeAngle = 0;
+  G4int    nItems          = 1;
+  G4double cumulativeX     = 0;
+  
+  sectionLength = ((*proposedEnd)->GetReferencePositionEnd() - (*proposedStart)->GetReferencePositionStart()).mag();
+  BDSBeamline::const_iterator it = proposedStart;
+  for (; it != proposedEnd; ++it)
+    {
+      cumulativeAngle += (*it)->GetAngle();
+      cumulativeX += std::cos((*it)->GetTilt()) * std::sin((*it)->GetAngle());
+      nItems++;
+    }
+
+  G4bool result = false;
+
+  G4bool lengthTest = false;
+  if (sectionLength > maxLength)
+    {lengthTest = true;}
+
+  G4bool angleTest = false;
+  if (std::abs(cumulativeAngle) > maxAngle)
+    {angleTest = true;}
+
+  G4bool nItemsTest = false;
+  if (nItems > maxItems)
+    {nItemsTest = true;}
+
+  G4bool dispXTest = false;
+  if (cumulativeX > displacementTolerance)
+    {dispXTest = true;}
+  
+  result = lengthTest || angleTest || nItemsTest || dispXTest;
+
+  // ensure that it's not too sharp a turn
+  G4bool lengthTestFail = sectionLength < minLength;
+  G4bool angleIsFinite  = BDS::IsFinite(cumulativeAngle);
+
+  if (lengthTestFail && result && angleIsFinite)
+    {// only in the case of bent items
+      // result is positive -> split tunnel, but too short - continue to increase length
+      result = false;
+    }
+
+  // test if faces on either side of a cylindrical tunnel would touch - ie unphysical
+  // needs to be longer, so keep going by forcing 'result' to false.
+  G4double s = 1.5*halfWidth * std::abs(cumulativeAngle);
+  G4bool willOverlapFaces = sectionLength < 1.2*s;
+  if (willOverlapFaces)
+    {result = false;}
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "testing cumulative parameters" << G4endl;
+  G4cout << "Cumulative Length (mm):    " << sectionLength    << " > " << maxLength << " test-> " << BDS::BoolToString(lengthTest) << G4endl;
+  G4cout << "Cumulative Angle (rad):    " << cumulativeAngle  << " > " << maxAngle  << " test-> " << BDS::BoolToString(angleTest)  << G4endl;
+  G4cout << "# of items:                " << nItems           << " > " << maxItems  << " test-> " << BDS::BoolToString(nItemsTest) << G4endl;
+  G4cout << "Cumulative displacement X: " << cumulativeX      << " > " << displacementTolerance
+         << " test-> " << BDS::BoolToString(dispXTest) << G4endl;
+  G4cout << "Length:                    " << sectionLength    << " < " << minLength << " test-> " << BDS::BoolToString(lengthTestFail) << G4endl;
+  G4cout << "Overlap Faces:             " << s                << " < " << sectionLength << " test-> " << BDS::BoolToString(willOverlapFaces) << G4endl;
+  G4cout << "Result:                    " << BDS::BoolToString(result) << G4endl;
+#endif
+  return result;
+}
+
+G4bool BDSTunnelBuilder::BreakTunnel(const G4double& halfWidth,
+				     const G4double& cumulativeLength,
+				     const G4double& cumulativeLengthMinus1,
 				     const G4double& cumulativeAngle,
 				     const G4int&    cumulativeNItems,
 				     const G4double& cumulativeDisplacementX,
@@ -168,12 +239,9 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
       G4cout << __METHOD_NAME__ << "start iterator at: " << (*startElement)->GetPlacementName() << G4endl;
       G4cout << __METHOD_NAME__ << "end iterator at:   " << (*endElement)->GetPlacementName()   << G4endl;
 #endif
-      G4bool breakIt = BreakTunnel(cumulativeLength,
-				   cumulativeAngle,
-				   cumulativeNItems,
-				   cumulativeDisplacementX,
-				   cumulativeDisplacementY);
-      G4bool isEnd     = (it == (flatBeamline->end() - 1));
+      G4bool breakIt = BreakTunnel(startElement, endElement, halfWidth);
+
+      G4bool isEnd = (it == (flatBeamline->end() - 1));
       // remember end points to just after the last element, not the last element itself
 
       if (isEnd)
