@@ -45,15 +45,6 @@ public:
   BDSBeamline* BuildTunnelSections(const BDSBeamline* flatBeamLine);
 
 private:
-  
-  G4bool BreakTunnel(const G4double& halfWidth,
-    const G4double& cumulativeLength,
-		     const G4double& cumulativeLengthMinus1,
-		     const G4double& cumulativeAngle,
-		     const G4int&    cumulativeNItems,
-		     const G4double& cumulativeOffsetX,
-		     const G4double& cumulativeOffsetY);
-
   /// Decide whether this is a good point to break the tunnel based on
   /// various cumulative parameters.
   G4bool BreakTunnel(BDSBeamline::const_iterator proposedStart,

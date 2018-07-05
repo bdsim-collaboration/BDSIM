@@ -116,64 +116,6 @@ G4bool BDSTunnelBuilder::BreakTunnel(BDSBeamline::const_iterator proposedStart,
   return result;
 }
 
-G4bool BDSTunnelBuilder::BreakTunnel(const G4double& halfWidth,
-				     const G4double& cumulativeLength,
-				     const G4double& cumulativeLengthMinus1,
-				     const G4double& cumulativeAngle,
-				     const G4int&    cumulativeNItems,
-				     const G4double& cumulativeDisplacementX,
-				     const G4double& cumulativeDisplacementY)
-{
-  G4bool result = false;
-
-  G4bool lengthTest = false;
-  if (cumulativeLength > maxLength)
-    {lengthTest = true;}
-
-  G4bool angleTest = false;
-  if (std::abs(cumulativeAngle) > maxAngle)
-    {angleTest = true;}
-
-  G4bool nItemsTest = false;
-  if (cumulativeNItems > maxItems)
-    {nItemsTest = true;}
-
-  G4bool dispXTest = false;
-  if (cumulativeDisplacementX > displacementTolerance)
-    {dispXTest = true;}
-
-  G4bool dispYTest = false;
-  if (cumulativeDisplacementY > displacementTolerance)
-    {dispYTest = true;}
-
-  result = lengthTest || angleTest || nItemsTest || dispXTest || dispYTest;
-
-  // ensure that it's not too sharp a turn
-  G4bool   lengthTestFail      = cumulativeLength < minLength;
-  G4bool   angleIsFinite       = BDS::IsFinite(cumulativeAngle);
-  
-  if (lengthTestFail && result && angleIsFinite)
-    {
-      // only in the case of bent items
-      // result is positive -> split tunnel, but too short - continue to increase length
-      result = false;
-    }
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "testing cumulative parameters" << G4endl;
-  G4cout << "Cumulative Length (mm):    " << cumulativeLength << " > " << maxLength << " test-> " << lengthTest << G4endl;
-  G4cout << "Cumulative Angle (rad):    " << cumulativeAngle  << " > " << maxAngle  << " test-> " << angleTest  << G4endl;
-  G4cout << "# of items:                " << cumulativeNItems << " > " << maxItems  << " test-> " << nItemsTest << G4endl;
-  G4cout << "Cumulative displacement X: " << cumulativeDisplacementX << " > " << displacementTolerance
-	 << " test-> " << dispXTest << G4endl;
-  G4cout << "Cumulative displacement Y: " << cumulativeDisplacementY << " > " << displacementTolerance
-	 << " test-> " << dispYTest << G4endl;
-  G4cout << "Length:                    " << cumulativeLength << " < " << minLength << " test-> " << lengthTestFail << G4endl;
-  G4cout << "Result:                    " << result << G4endl;
-#endif
-  return result;
-}
-
 BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamline)
 {
 #ifdef BDSDEBUG
@@ -188,11 +130,6 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 
   // temporary variables to use as we go along
   G4int    nTunnelSections            = 0;
-  G4double cumulativeLength           = 0; // integrated length since last tunnel break
-  G4double cumulativeAngle            = 0; // integrated angle since last tunnel break
-  G4int    cumulativeNItems           = 0; // integrated number of accelerator components since last tunnel break
-  G4double cumulativeDisplacementX    = 0; // integrated offset from initial point - horizontal
-  G4double cumulativeDisplacementY    = 0; // integrated offset from initial point - vertical
   BDSTunnelSection* tunnelSection     = nullptr;
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
@@ -230,7 +167,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
     } 
 
   BDSBeamline::const_iterator it = flatBeamline->begin();
-  
+
+  G4double halfWidth = defaultModel->IndicativeExtent().MaximumAbsTransverse();
   // iterate over beam line and build tunnel segments
   for (; it != flatBeamline->end(); ++it)
     {
@@ -324,7 +262,6 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 	  G4cout << "Input and output unit Z: " << unitZStart << " " << unitZEnd << G4endl;
 	  G4cout << "Has a finite angle:      " << isAngled                            << G4endl;
 	  G4cout << "Section length:          " << segmentLength                       << G4endl;
-	  G4cout << "Total angle:             " << cumulativeAngle                     << G4endl;
 	  G4cout << "Rotation start:          " << *startRot                           << G4endl;
 	  G4cout << "Rotation middle:         " << *rotationMiddle                     << G4endl;
 	  G4cout << "Rotation end:            " << *endRot                             << G4endl;
@@ -415,14 +352,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 
 	  // store segment in tunnel beam line
 	  tunnelLine->AddBeamlineElement(tunnelElement);
-								     
-	  // update / reset counters & iterators
 	  nTunnelSections   += 1;
-	  cumulativeLength   = 0;
-	  cumulativeAngle    = 0;
-	  cumulativeNItems   = 0;
-	  cumulativeDisplacementX = 0;
-	  cumulativeDisplacementY = 0;
+
 	  if (!isEnd)
 	    {
 #ifdef BDSDEBUG
@@ -448,22 +379,6 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 #endif
 	  ++endElement; // advance the potential end element iterator
 	}
-      
-      // accumulate angle and position
-      G4double length   = (*it)->GetAcceleratorComponent()->GetChordLength();
-      G4double angle    = (*it)->GetAcceleratorComponent()->GetAngle();
-      cumulativeLength += length;
-      cumulativeAngle  += angle;
-      cumulativeDisplacementX += std::sin(angle) * length;
-      //cumulativeDisplacementY += 0; // currently ignore possibility of vertical bend
-      //would still use angle, but would need to involve tilt and rotation axes
-      cumulativeNItems += 1;
-#ifdef BDSDEBUG
-      G4cout << "cumulative length:       " << cumulativeLength        << G4endl;
-      G4cout << "cumulative angle:        " << cumulativeAngle         << G4endl;
-      G4cout << "cumulative displacement: " << cumulativeDisplacementX << G4endl;
-      G4cout << "cumulative # items       " << cumulativeNItems        << G4endl;
-#endif
     } // for loop scope end
   return tunnelLine;
 }
