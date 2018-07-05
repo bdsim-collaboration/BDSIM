@@ -39,7 +39,7 @@ BDSTunnelBuilder::BDSTunnelBuilder():
   maxItems(50),                        // maximum number of items before split
   maxLength(50*CLHEP::m),              // maximum length of tunnel segment
   maxAngle(100*CLHEP::mrad),           // maximum angle before split
-  minLength(4*CLHEP::m)                // minimum length
+  minLength(10*CLHEP::m)                // minimum length
 {;}
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
