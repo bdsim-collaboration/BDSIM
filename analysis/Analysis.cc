@@ -109,7 +109,7 @@ void Analysis::PreparePerEntryHistograms()
     }
 }
 
-void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
+void Analysis::AccumulatePerEntryHistograms(const long int& entryNumber)
 {
   auto c = Config::Instance();
   if (c)
