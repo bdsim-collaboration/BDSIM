@@ -362,6 +362,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 	      previousEndElement = endElement;   // (copy endElement) mark the end of this element as the prevous end
 	      startElement       = endElement;   // copy end element iterator
 	      ++startElement;                    // next segment will begin where this one finishes
+	      endElement = startElement;
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
 	      G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
