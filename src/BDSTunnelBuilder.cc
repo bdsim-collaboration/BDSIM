@@ -126,7 +126,9 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
   BDSTunnelFactory*     tf            = BDSTunnelFactory::Instance(); // shortcut
 
   // iterator to the BDSBeamlineElement where the previous tunnel section finished
+#ifdef BDSDEBUG
   BDSBeamline::const_iterator previousEndElement = flatBeamline->begin();
+#endif
 
   // iterator to the BDSBeamlineElement where the current tunnel section will begin
   BDSBeamline::const_iterator startElement       = flatBeamline->begin();
@@ -358,8 +360,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(const BDSBeamline* flatBeamli
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "previous tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
 	      G4cout << __METHOD_NAME__ << "previous tunnel end element:   " << (*endElement)->GetPlacementName()   << G4endl;
+	      previousEndElement = endElement;   // (copy endElement) mark the end of this element as the previous end
 #endif
-	      previousEndElement = endElement;   // (copy endElement) mark the end of this element as the prevous end
 	      startElement       = endElement;   // copy end element iterator
 	      ++startElement;                    // next segment will begin where this one finishes
 	      endElement = startElement;
