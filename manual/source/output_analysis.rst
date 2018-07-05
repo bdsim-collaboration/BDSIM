@@ -236,6 +236,14 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | is false and therefore to calculate the emittance at |
 |                            | each sampler.                                        |
 +----------------------------+------------------------------------------------------+
+| EventStart                 | Event index to start from - zero counting. Default   |
+|                            | is 0.                                                |
++----------------------------+------------------------------------------------------+
+| EventEnd                   | Event index to finish analysis at - zero counting.   |
+|                            | Default is -1 that represents how ever many events   |
+|                            | there are in the file (or files if multiple are      |
+|                            | being analysed at once).                             |
++----------------------------+------------------------------------------------------+
 | InputFilePath              | The root event file to analyse (or regex for         |
 |                            | multiple).                                           |
 +----------------------------+------------------------------------------------------+

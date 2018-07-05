@@ -10,6 +10,7 @@ New Features
 * New "channelling" physics list for Geant4 crystal channelling physics process.
 * Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
+* rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
 
 General
 -------
@@ -19,6 +20,7 @@ General
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
 * "ang" unit is added to the parser for Angstroms.
 * BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
+* long int used explicitly instead of int for event indices in analysis.
 
 Output Changes
 --------------
