@@ -1,6 +1,6 @@
-d1: drift, l=1.1*m, fielAll="f1";
+d1: drift, l=1.1*m, fieldAll="f1";
 
-l1: line=(box);
+l1: line=(d1);
 
 use, l1;
 
