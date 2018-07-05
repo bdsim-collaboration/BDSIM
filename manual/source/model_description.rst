@@ -1616,6 +1616,43 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
 
+.. _offsets-and-tilts:
+
+Offsets & Tilts - Component Misalignment
+----------------------------------------
+
+To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
+and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
+
+.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
+	  horizontal offsets. This is because these would change the length of the bend about its central axis.
+	  This is not currently handled but may be implemented in future releases.
+
+.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
+	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
+	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
+	  matches the behaviour of MAD8 and MADX.
+
+.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
+
+The misalignments can be controlled through the following parameters
+
++--------------+------------------------------------------------------------------------------------+
+| Parameter    | Default value                                                                      |
++==============+====================================================================================+
+| `offsetX`    | Horizontal displacement of the component [m].                                      |
++--------------+------------------------------------------------------------------------------------+
+| `offsetY`    | Vertical displacement of the component [m].                                        |
++--------------+------------------------------------------------------------------------------------+
+| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
+|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
++--------------+------------------------------------------------------------------------------------+
+
+Examples::
+
+  d1: drift, l=1*m, offsetX=1*cm;
+  d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
+
 .. _cavity-geometry-parameters:
 
 Cavity Geometry Parameters
@@ -2158,44 +2195,6 @@ Element
 
 A general piece of geometry may be placed in the beam line along with any externally provided
 field map using the `element` beam line element.  See `element`_.
-
-
-.. _offsets-and-tilts:
-
-Offsets & Tilts - Component Misalignment
-----------------------------------------
-
-To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
-and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
-
-.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
-	  horizontal offsets. This is because these would change the length of the bend about its central axis.
-	  This is not currently handled but may be implemented in future releases.
-
-.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
-	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
-	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
-	  matches the behaviour of MAD8 and MADX.
-
-.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
-
-The misalignments can be controlled through the following parameters
-
-+--------------+------------------------------------------------------------------------------------+
-| Parameter    | Default value                                                                      |
-+==============+====================================================================================+
-| `offsetX`    | Horizontal displacement of the component [m].                                      |
-+--------------+------------------------------------------------------------------------------------+
-| `offsetY`    | Vertical displacement of the component [m].                                        |
-+--------------+------------------------------------------------------------------------------------+
-| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
-|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
-+--------------+------------------------------------------------------------------------------------+
-
-Examples::
-
-  d1: drift, l=1*m, offsetX=1*cm;
-  d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
 
 .. _lattice-sequence:
 
