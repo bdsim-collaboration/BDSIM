@@ -131,6 +131,12 @@ void EventAnalysis::Process()
   // loop over events
   if (eventEnd < 0)
     {eventEnd = entries;}
+  if (eventEnd > entries)
+    {
+      std::cerr << "EventEnd " << eventEnd << " > entries (" << entries
+		<< ") in file(s) -> curtailing to # of entries!" << std::endl;
+      eventEnd = entries;
+    }
   bool firstLoop = true;
   for (long int i = eventStart; i < eventEnd; ++i)
     {
