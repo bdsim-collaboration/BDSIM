@@ -52,15 +52,13 @@ G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once i
 
 namespace {
   // Function to recursively connect t
-  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap,
-		   std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
+  void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
   {
-    G4int parentID = t->GetParentID();
-    if (parentID > 0)
+    BDSTrajectory *t2 = t->GetParent();
+    if (t2)
       {
-	BDSTrajectory *t2 = trackIDMap.at(parentID);
-	interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
-	connectTraj(trackIDMap, interestingTraj, t2);
+	interestingTraj[t2] = true;
+	connectTraj(interestingTraj, t2);
       }
     else
       {return;}
@@ -90,10 +88,16 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajectoryCutR            = globals->TrajCutLTR();
   trajConnect               = globals->TrajConnect();
   particleToStore           = globals->StoreTrajectoryParticle();
-  particleIDToStore         = globals->StoreTrajectoryParticleID();
+  particleIDToStore         = globals->StoreTrajectoryParticleID(); 
   depth                     = globals->StoreTrajectoryDepth();
 
   printModulo = globals->PrintModuloEvents();
+
+  // particleID to store in integer vector
+  std::stringstream iss(particleIDToStore);
+  G4int i;
+  while (iss >> i)
+    particleIDIntToStore.push_back(i);
 }
 
 BDSEventAction::~BDSEventAction()
@@ -208,14 +212,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4cout << __METHOD_NAME__ << "drawing the event" << G4endl;
 #endif
     // This is an expensive funciton call - use macro commands instead to flush at end of run / event
-    //evt->Draw();
+    // evt->Draw();
   }
 
   // Save interesting trajectories
-  std::vector<BDSTrajectory*> interestingTrajVec;
+  std::map<BDSTrajectory*, bool> interestingTraj;
+
   if (storeTrajectory && trajCont)
   {
-    std::map<BDSTrajectory*, bool> interestingTraj;
 
     TrajectoryVector* trajVec = trajCont->GetVector();
 
@@ -224,23 +228,28 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	   << " storeTrajectoryEnergyThreshold=" << trajectoryEnergyThreshold << G4endl;
 #endif
 
-    // build trackID map
+    // build trackID map, depth map
     std::map<int, BDSTrajectory*> trackIDMap;
-    for (auto iT1 : *trajVec)
-      {
-	BDSTrajectory *traj = (BDSTrajectory *) iT1;
-	trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
-      }
-
-    // build depth map
     std::map<BDSTrajectory*, int> depthMap;
     for (auto iT1 : *trajVec)
       {
 	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
+	
+	// fill track ID map
+	trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+
+	// fill depth map
 	if (traj->GetParentID() == 0) 
 	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, 0));}
 	else
 	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
+      }
+
+    // fill parent pointer (TODO can this be merged with previous loop?)
+    for (auto iT1 : *trajVec) 
+      {
+        BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);	
+        traj->SetParent(trackIDMap[iT1->GetParentID()]);
       }
 
     // loop over trajectories and determine if it should be stored
@@ -265,14 +274,19 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  }
 	
 	// check on particle if not empty string
+
 	if (!particleToStore.empty() || !particleIDToStore.empty())
 	  {
 	    G4String particleName  = traj->GetParticleName();
-	    G4String particleIDStr = G4String(std::to_string(traj->GetPDGEncoding()));
-	    std::size_t found  = particleToStore.find(particleName);
-	    std::size_t found2 = particleIDToStore.find(particleIDStr);
-	    if (found != std::string::npos || found2 != std::string::npos)
+	    G4int particleID       = traj->GetPDGEncoding();
+	    G4String particleIDStr = G4String(std::to_string(particleID));
+	    std::size_t found      = particleToStore.find(particleName);
+	    //std::size_t found2     = particleIDToStore.find(particleIDStr); // This does not work e-=11, e+=-11
+	    bool        found3     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) != particleIDIntToStore.end());
+	    if ((found != std::string::npos) || found3)
 	      {
+		// G4cout << "found interesting " << traj->GetTrackID()<< " " << particleName << "(" << particleToStore << ")" << " " 
+		//        << particleIDStr << "(" << particleIDToStore << ")" << G4endl;
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 		continue;
 	      }
@@ -304,43 +318,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     if (trajConnect && trackIDMap.size() > 1)
       {
 	for (auto i : interestingTraj)
-	  {connectTraj(trackIDMap, interestingTraj, i.first);}
+	  if(i.second) 
+	    {connectTraj(interestingTraj, i.first);}
       }
-
+  }
     // Output interesting trajectories
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
 #endif
-    
-    // TODO sort accordings to trackID
-    for (auto i : trackIDMap)
-      {
-	if (interestingTraj.at(i.second))
-	  {interestingTrajVec.push_back(i.second);}
-      }
 
-    // Relabel with new track IDS
-
-    // make map
-    std::map<BDSTrajectory*, G4int> interestingTrajIndexMap;
-    int idx = 0;
-    for (auto i : interestingTrajVec)
-      {
-	interestingTrajIndexMap[i] = idx;
-	idx++;
-      }
-
-    for (auto i : interestingTrajVec)
-      {
-	G4int parentIndex = -1;
-	try
-	  {parentIndex = (G4int) interestingTrajIndexMap.at(trackIDMap.at(i->GetParentID()));}
-	catch (const std::exception &ex)
-	  {parentIndex = -1;}
-	i->SetParentIndex(parentIndex);
-      }
-  }
-  
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
 		    SampHC,
@@ -349,7 +335,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    tunnelEnergyCounterHits,
 		    primaryHit,
 		    primaryLoss,
-		    interestingTrajVec,
+		    interestingTraj,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end
@@ -364,4 +350,5 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
 #endif
-}
+  }
+

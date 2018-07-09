@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ctime>
 #include <string>
+#include <vector>
 
 class BDSEventInfo;
 class BDSOutput;
@@ -71,6 +72,7 @@ private:
   G4bool   trajConnect;
   G4String particleToStore;
   G4String particleIDToStore;
+  std::vector<int> particleIDIntToStore;
   G4int    depth;
   /// @}
 

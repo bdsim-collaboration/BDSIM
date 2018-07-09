@@ -144,7 +144,7 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(const std::vector<BDSTrajectory*> &trajVec);
+  void Fill(const std::map<BDSTrajectory*, bool> &trajectory);
   void Fill(const BDSEnergyCounterHitsCollection* phc);
 #endif
 
@@ -160,6 +160,7 @@ public:
   std::vector<int>                   parentID;
   std::vector<int>                   parentIndex;
   std::vector<int>                   parentStepIndex;
+
   std::vector<std::vector<int>>      preProcessTypes;
   std::vector<std::vector<int>>      preProcessSubTypes;
   std::vector<std::vector<int>>      postProcessTypes;
