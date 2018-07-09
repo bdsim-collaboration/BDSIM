@@ -1,0 +1,6 @@
+add_subdirectory(01_trajectoryStore)
+add_subdirectory(02_trajectoryDepth)
+add_subdirectory(03_trajectoryParticle)
+add_subdirectory(04_trajectoryParticleID)
+add_subdirectory(05_trajectoryEnergyThreshold)
+add_subdirectory(06_trajectoryConnect)
