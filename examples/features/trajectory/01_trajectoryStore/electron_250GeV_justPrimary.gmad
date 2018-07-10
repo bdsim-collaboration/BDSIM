@@ -7,5 +7,9 @@ segment: rcol, xsize=0, ysize=0, l=length, material="Copper";
 
 include lattice.gmad;
 
+beam,  particle="e-",
+       energy= 250*GeV,
+       distrType="reference";
+
 option,storeTrajectories=1;
 option,storeTrajectoryDepth=0;
