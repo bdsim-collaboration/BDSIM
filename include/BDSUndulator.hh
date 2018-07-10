@@ -34,24 +34,25 @@ public:
     BDSUndulator(G4String name,
 	      G4double   length,
 	      G4double   outerDiameter,
-	      G4int      numberWedges,
-	      G4double   wedgeLength,
-	      G4double   degraderHeight,
-	      G4double   degraderOffset,
-	      G4String   degraderMaterial     = "carbon");
+	      G4int      numberMagnets,
+	      G4double   magnetHeight,
+	      G4double   undulatorGap,
+	      G4String   material = "iron");
   virtual ~BDSUndulator();
   
 protected:
   virtual void Build();
   
   virtual void BuildContainerLogicalVolume();
+
+  virtual void BuildUndulatorMagnet();
   
   G4double outerDiameter;
-  G4int    numberWedges;
-  G4double wedgeLength;
-  G4double degraderHeight;
-  G4double degraderOffset;
-  G4String degraderMaterial;
+  G4int    numberMagnets;
+  G4double magnetLength;
+  G4double magnetHeight;
+  G4double magnetGap;
+  G4String material;
   
   
   bool isOdd(G4int integer)
@@ -71,7 +72,7 @@ protected:
   }
 private:
   /// Private default constructor to force the use of the supplied one.
-  BDSDegrader() = delete;
+  BDSUndulator() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
   BDSUndulator& operator=(const BDSUndulator&) = delete;

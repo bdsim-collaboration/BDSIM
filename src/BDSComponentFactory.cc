@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
+#include "BDSUndulator.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -299,6 +300,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateParallelTransporter(); break;
   case ElementType::_RMATRIX:
     component = CreateRMatrix(); break;
+  case ElementType::_UNDULATOR:
+    component = CreateUndulator(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -944,6 +947,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  element->material));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+    return (new BDSUndulator(elementName,
+                            element->l*CLHEP::m,
+                            PrepareOuterDiameter(element),
+                            element->numberWedges,
+                            element->degraderHeight*CLHEP::m,
+                            element->degraderOffset*CLHEP::m,
+                            element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
