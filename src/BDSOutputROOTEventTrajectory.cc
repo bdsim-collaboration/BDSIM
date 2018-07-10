@@ -335,9 +335,9 @@ void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
   int wdt = 8;
 
-  std::cout << std::setw(wdt) << "trIx"     << " " << std::setw(wdt) << "trkId"    << " "
+  std::cout << std::setw(wdt) << "trIx"      << " " << std::setw(wdt) << "trkId"    << " "
             << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
-            << std::setw(wdt) << "prStpIx" << " " << std::setw(wdt) << "pID"      << " "
+            << std::setw(wdt) << "prStpIx"   << " " << std::setw(wdt) << "pID"      << " "
             << std::setw(wdt) << "prePrcT"   << " " << std::setw(wdt) << "prePrcST" << " "
             << std::setw(wdt) << "pstPrcT"   << " " << std::setw(wdt) << "pstPrcST" << " "
             << std::setw(wdt) << "X"         << " " << std::setw(wdt) << "Y"        << " "
