@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Box.hh"
 #include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
+#include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 #include "G4Tubs.hh"
@@ -70,8 +70,6 @@ BDSWirescanner::~BDSWirescanner()
 void BDSWirescanner::BuildContainerLogicalVolume()
 {
 
-
-
   //Input Checks
   if (outerDiameter <= 0)
     {
@@ -83,11 +81,11 @@ void BDSWirescanner::BuildContainerLogicalVolume()
         G4cerr << __METHOD_NAME__ << "Error: option \"wireDiameter\" is not defined or must be greater than 0" <<  G4endl;
         exit(1);
     }
-  if (wireLength <= 0)
-    {
-        G4cerr << __METHOD_NAME__ << "Error: option \"wireLength\" is not defined or must be greater than 0" <<  G4endl;
-        exit(1);
-    }
+//  if (wireLength <= 0)
+//    {
+//       G4cerr << __METHOD_NAME__ << "Error: option \"wireLength\" is not defined or must be greater than 0" <<  G4endl;
+//        exit(1);
+//    }
   if (-outerDiameter >= wirescannerOffset)
     {
        G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" <<  G4endl;
@@ -98,16 +96,23 @@ void BDSWirescanner::BuildContainerLogicalVolume()
        G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerOffset\" is not within container boundaries" << G4endl;
        exit(1);
     }
+  if (0.5*wireLength >= sqrt(pow(beamPipeInfo->aper1,2)-pow(wirescannerOffset,2)))
+  {
+      G4cerr << __METHOD_NAME__ << "Error: option \"wirescannerLength\" is larger than beam pipe" << G4endl;
+      exit(1);
+  }
 
     if (wireMaterial == "")
     {
         wireMaterial = "carbon";
     }
-
-
+    if (wireLength == 0)
+    {
+        wireLength = beamPipeInfo->aper1;
+    }
+    G4cout << beamPipeInfo->aper1 << G4endl;
     G4cout << wireDiameter << G4endl;
-    G4cout << wireLength   << G4endl;
-    G4cout << outerDiameter << G4endl;
+    G4cout << wireLength << G4endl;
     G4cout << wirescannerOffset << G4endl;
     G4cout << wireMaterial << G4endl;
 
@@ -146,8 +151,6 @@ void BDSWirescanner::Build() {
 // update faces
     SetInputFaceNormal(pipe->InputFaceNormal());
    SetOutputFaceNormal(pipe->OutputFaceNormal());
-
-
 
 
     G4Material *material = BDSMaterials::Instance()->GetMaterial(wireMaterial);

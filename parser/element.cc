@@ -400,6 +400,14 @@ void Element::flush()
   wireLength = 0;
   wirescannerOffset = 0;
 
+  // screen
+  screenPosx = 0;
+  screenPosy = 0;
+  screenPosz = 0;
+  screenAnglez = 0;
+  screenAngley = 0;
+  screenAnglex = 0;
+
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
