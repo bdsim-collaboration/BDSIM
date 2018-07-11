@@ -16,121 +16,142 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSUndulator.hh"
+#include "globals.hh" // geant4 globals / types
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSColours.hh"
-#include "BDSMaterials.hh"
-
+#include "BDSBeamPipeInfo.hh"
+#include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldType.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSIntegratorSet.hh"
+#include "BDSIntegratorType.hh"
+#include "BDSIntegratorSetType.hh"
+#include "BDSMagnetStrength.hh"
+#include "BDSLine.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetOuterInfo.hh"
+#include "BDSUndulator.hh"
+#include "BDSUtilities.hh"
 
-#include "G4Box.hh"
-#include "G4ExtrudedSolid.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
+#include "parser/element.h"
+#include "parser/elementtype.h"
 
-#include "globals.hh" // geant4 globals / types
-#include <vector>
+#include "G4Transform3D.hh"
 
-BDSUndulator::BDSUndulator (G4String   nameIn,
-			  G4double   lengthIn,
-			  G4double   outerDiameterIn,
-			  G4int      numberMagnetsIn,
-			  G4double   magnetHeightIn,
-			  G4double   undulatorGapIn,
-			  G4String   materialIn):
-  BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator"),
-  outerDiameter(outerDiameterIn),
-  numberMagnets(numberMagnetsIn),
-  magnetLength(chordLength/numberMagnetsIn),
-  magnetHeight(magnetHeightIn),
-  magnetGap(undulatorGapIn),
-  material(materialIn)
-{;}
+using namespace GMAD;
 
-BDSUndulator::~BDSUndulator()
-{;}
-
-void BDSUndulator::BuildContainerLogicalVolume()
+BDSAcceleratorComponent* BDS::BuildUndulator(const G4String&         elementName,
+                                             const Element*          element,
+                                             BDSMagnetStrength*      st,
+                                             const G4double          brho,
+                                             const BDSIntegratorSet* integratorSet)
 {
-  
-  containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,
-			     chordLength*0.5);
-    
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name + "_container_lv");
+  const G4String    baseName = elementName;
+  const G4bool    yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
+  G4double   arcLength = element->l * CLHEP::m;
+  G4double      period = element->undulatorPeriod * CLHEP::m;
+
+  if (BDS::IsFinite(fmod(arcLength, period)))
+    {
+        G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "
+                "undulator periods (length \"period\"" <<  G4endl;
+        exit(1);
+    }
+
+  G4int nFullMagnets = (arcLength / period) - 1.0;
+
+  // Note for tilted undulators, the geometry is tilted but the curvilinear world isn't,
+  // therefore we tilt the field to match the geometry.
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
+
+  // Line for all the undulator magnets
+  BDSLine* undulatorLine  = new BDSLine(baseName); // line for resultant sbend
+
+  //single magnet length
+  G4double magnetLength = arcLength / (G4double) nFullMagnets;
+
+  BDSMagnetStrength* upStrengthFull = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
+  (*upStrengthFull)["length"] = magnetLength;
+
+  BDSMagnetStrength* downStrengthFull = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
+  (*downStrengthFull)["field"]  *= -1.0;
+  (*downStrengthFull)["length"] = magnetLength;
+
+  BDSMagnetStrength* upStrengthHalf = new BDSMagnetStrength(*upStrengthFull); // the copy is crucial to copy the field strength
+  (*upStrengthHalf)["length"] = magnetLength/2.0;
+
+  BDSMagnetStrength* downStrengthHalf = new BDSMagnetStrength(*downStrengthFull); // the copy is crucial to copy the field strength
+  (*downStrengthHalf)["length"] = magnetLength/2.0;
+
+
+  G4String halfNameIn = baseName + "_halfLengthEntrance";
+
+  BDSMagnet* entranceHalf = BDS::BuildUndulatorMagnet(element, halfNameIn, magnetLength/2.0, upStrengthHalf,
+                                        brho, integratorSet, yokeOnLeft);
+  undulatorLine->AddComponent(entranceHalf);
+
+    G4int numberOfUniqueComponents = 1; // used for naming purposes
+  BDSMagnet* oneBend = nullptr;
+  for (G4int i = 0; i < nFullMagnets; ++i)
+    {
+      G4String name = baseName + "_"+std::to_string(numberOfUniqueComponents);
+      numberOfUniqueComponents++;
+      if (i % 2 == 0)
+        {
+          oneBend = BDS::BuildUndulatorMagnet(element, name, magnetLength, downStrengthFull,
+                                              brho, integratorSet, !yokeOnLeft);
+        }
+      else
+        {
+          oneBend = BDS::BuildUndulatorMagnet(element, name, magnetLength, upStrengthFull,
+                                              brho, integratorSet, yokeOnLeft);
+        }
+      // append to the line
+      undulatorLine->AddComponent(oneBend);
+    }
+  G4String halfNameOut = baseName + "_halfLengthExit";
+  BDSMagnet* exitHalf = BDS::BuildUndulatorMagnet(element, halfNameOut, magnetLength/2.0, upStrengthHalf,
+                                                        brho, integratorSet, yokeOnLeft);
+  undulatorLine->AddComponent(exitHalf);
+
+  return undulatorLine;
 }
 
-void BDSUndulator::BuildUndulatorMagnet()
-{;}
 
-void BDSUndulator::Build()
+BDSMagnet* BDS::BuildUndulatorMagnet(const GMAD::Element*     element,
+                                     const G4String           name,
+                                     const G4double           magnetLength,
+                                     const BDSMagnetStrength* strength,
+                                     const G4double           brho,
+                                     const BDSIntegratorSet*  integratorSet,
+                                     const G4bool             yokeOnLeft)
 {
-  BDSAcceleratorComponent::Build();
-    
-  G4Material* undulatorMaterial = BDSMaterials::Instance()->GetMaterial(material);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, 0, 0);
 
-  // magnet solid and logical Volume
-  G4Box* magnet = new G4Box(name, outerDiameter/2.0, outerDiameter/4.0,chordLength/10.0);
-  
-  RegisterSolid(magnet);
-  
-  G4LogicalVolume* magnetLv = new G4LogicalVolume(magnet,             // solid
-                                                  undulatorMaterial,  // material
-                                                  name + "_magnet");  // name
-  RegisterLogicalVolume(magnetLv);
-    
-  //Rotation of magnets.
-  G4RotationMatrix* lowerRot = new G4RotationMatrix;
-  //lowerRot->rotateY(CLHEP::pi/2.0);
-  RegisterRotationMatrix(lowerRot);
+  BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength); // the copy is crucial to copy the field strength
+  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(name, element, 0, 0, bpInfo, yokeOnLeft);
+  // set the name to the desired one rather than the one from the element
+  magnetOuterInfo->name = name;
 
-  G4RotationMatrix* upperRot = new G4RotationMatrix;
-  //upperRot->rotateY(CLHEP::pi/2.0);
-  //upperRot->rotateX(CLHEP::pi);
-  RegisterRotationMatrix(upperRot);
-    
-  //Wedge color
-  G4VisAttributes* undulatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("undulator"));
-  magnetLv->SetVisAttributes(undulatorVisAttr);
-  RegisterVisAttributes(undulatorVisAttr);
+  G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
 
-  //Offsets for wedge overlap
-  G4double offsetUpper = magnetGap/2.0;
-  G4double offsetLower = -1.0 * magnetGap/2.0;
+  BDSFieldType dipoleFieldType = BDSFieldType::dipole;
+  BDSIntegratorType intType = integratorSet->undulator;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
+                                               brho,
+                                               intType,
+                                               strengthCopy,
+                                               true,
+                                               fieldTiltOffset);
 
-  //Translation of individual wedge components
-  G4ThreeVector upperMagnetpos(0, offsetUpper, 0);
-  G4ThreeVector lowerMagnetPos(0, offsetLower, 0);
-  
-    
-  //Placement of individual wedge components
-  G4PVPlacement* upperPV = new G4PVPlacement(upperRot,               // rotation
-                                             upperMagnetpos,         // position
-                                             magnetLv,               // its logical volume
-                                             name + "_upper_pv",     // its name
-                                             containerLogicalVolume, // its mother  volume
-                                             false,                  // no boolean operation
-                                             0,                      // copy number
-                                             checkOverlaps);
+  BDSMagnet* magnet = new BDSMagnet(BDSMagnetType::rectangularbend,
+                                    name,
+                                    magnetLength,
+                                    bpInfo,
+                                    magnetOuterInfo,
+                                    vacuumField,
+                                    0);
 
-
-    
-        
-  G4PVPlacement* lowerPV = new G4PVPlacement(lowerRot,               // rotation
-                                             lowerMagnetPos,         // position
-                                             magnetLv,               // its logical volume
-                                             name + "_lower_pv",     // its name
-                                             containerLogicalVolume, // its mother  volume
-                                             false,                  // no boolean operation
-                                             0,                      // copy number
-                                             checkOverlaps);
-    
-  RegisterPhysicalVolume(upperPV);
-  RegisterPhysicalVolume(lowerPV);
+  return magnet;
 }

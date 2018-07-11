@@ -167,12 +167,14 @@ void Element::PublishMembers()
   publish("poleStartZ",         &Element::poleStartZ);
   publish("screenWidth",        &Element::screenWidth);
   publish("awakeMagnetOffsetX", &Element::awakeMagnetOffsetX);
-  
+
   publish("numberWedges",      &Element::numberWedges);
   publish("wedgeLength",       &Element::wedgeLength);
   publish("degraderHeight",    &Element::degraderHeight);
   publish("materialThickness", &Element::materialThickness);
   publish("degraderOffset",    &Element::degraderOffset);
+
+  publish("undulatorPeriod",   &Element::undulatorPeriod);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
@@ -410,6 +412,9 @@ void Element::flush()
   degraderHeight = 0;
   materialThickness = 0;
   degraderOffset = 0;
+
+  // undulator
+  undulatorPeriod = 1;
 
   // new aperture model
   beampipeThickness = 0;

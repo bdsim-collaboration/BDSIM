@@ -1,83 +1,30 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2018.
+class BDSAcceleratorComponent;
+class BDSIntegratorSet;
+class BDSLine;
+class BDSMagnet;
+class BDSMagnetStrength;
 
-This file is part of BDSIM.
-
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
-by the Free Software Foundation version 3 of the License.
-
-BDSIM is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef BDSUNDULATOR_H
-#define BDSUNDULATOR_H
-
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-
-/**
- * @brief Undulator magnet
- * 
- * @author Will Shields
- */
-
-class BDSUndulator: public BDSAcceleratorComponent
+namespace GMAD
 {
-public:
-    BDSUndulator(G4String name,
-	      G4double   length,
-	      G4double   outerDiameter,
-	      G4int      numberMagnets,
-	      G4double   magnetHeight,
-	      G4double   undulatorGap,
-	      G4String   material = "iron");
-  virtual ~BDSUndulator();
-  
-protected:
-  virtual void Build();
-  
-  virtual void BuildContainerLogicalVolume();
+  struct Element;
+}
 
-  virtual void BuildUndulatorMagnet();
-  
-  G4double outerDiameter;
-  G4int    numberMagnets;
-  G4double magnetLength;
-  G4double magnetHeight;
-  G4double magnetGap;
-  G4String material;
-  
-  
-  bool isOdd(G4int integer)
-  {
-    if (integer % 2 != 0)
-      return true;
-    else
-      return false;
-  }
-  
-  bool isEven(G4int integer)
-  {
-    if (integer % 2 == 0)
-      return true;
-    else
-      return false;
-  }
-private:
-  /// Private default constructor to force the use of the supplied one.
-  BDSUndulator() = delete;
+namespace BDS
+{
+  /// This calculates and constructs a BDSLine* of BDSMagnet*. A single magnet will be constructed and placed
+  /// multiple times.
+  BDSAcceleratorComponent *BuildUndulator(const G4String &elementName,
+                                            const GMAD::Element *element,
+                                            BDSMagnetStrength *st,
+                                            const G4double brho,
+                                            const BDSIntegratorSet *integratorSet);
 
-  /// @{ Assignment and copy constructor not implemented nor used
-  BDSUndulator& operator=(const BDSUndulator&) = delete;
-  BDSUndulator(BDSUndulator&) = delete;
-  ///@}
-};
-
-#endif
+  /// Function to return a single sector bend section.
+  BDSMagnet *BuildUndulatorMagnet(const GMAD::Element *element,
+                                  const G4String name,
+                                  const G4double arcLength,
+                                  const BDSMagnetStrength *strength,
+                                  const G4double brho,
+                                  const BDSIntegratorSet *integratorSet,
+                                  const G4bool yokeOnLeft);
+}

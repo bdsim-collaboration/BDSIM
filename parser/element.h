@@ -142,6 +142,10 @@ namespace GMAD
     double degraderOffset;
     ///@}
 
+    ///@{ for undulator
+    double undulatorPeriod;
+    ///@}
+
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;
     std::list<double> blmLocTheta;
