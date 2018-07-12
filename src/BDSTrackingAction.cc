@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 
@@ -25,17 +24,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
-BDSTrackingAction::BDSTrackingAction():
-  interactive(false)
-{
-  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
-}
-
-BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
-  interactive(!batchMode)
-{
-  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
-}
+BDSTrackingAction::BDSTrackingAction(const G4bool& batchMode,
+				     const G4bool& storeTrajectoryIn):
+  interactive(!batchMode),
+  storeTrajectory(storeTrajectoryIn)
+{;}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {

@@ -31,8 +31,8 @@ class G4Track;
 class BDSTrackingAction: public G4UserTrackingAction
 {
 public:
-  BDSTrackingAction();
-  explicit BDSTrackingAction(G4bool batchMode);
+  BDSTrackingAction(const G4bool& batchMode,
+		    const G4bool& storeTrajectoryIn);
   
   virtual ~BDSTrackingAction(){;}
 
@@ -40,6 +40,9 @@ public:
   virtual void PreUserTrackingAction(const G4Track* track);
 
 private:
+  /// No default constructor required.
+  BDSTrackingAction() = delete;
+  
   /// Whether we're using the visualiser - in which case always store
   /// trajectories for visualisation.
   G4bool interactive;

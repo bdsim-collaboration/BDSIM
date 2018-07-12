@@ -228,7 +228,8 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch()));
+  runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch(),
+						  globalConstants->StoreTrajectory()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
