@@ -201,16 +201,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       primaryLoss = primary->LastInteraction();
     }
 
-  // needed to draw trajectories and hits:
-  if(!isBatch)
-  {
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "drawing the event" << G4endl;
-#endif
-    // This is an expensive funciton call - use macro commands instead to flush at end of run / event
-    //evt->Draw();
-  }
-
   // Save interesting trajectories
   std::vector<BDSTrajectory*> interestingTrajVec;
   if (storeTrajectory && trajCont)
