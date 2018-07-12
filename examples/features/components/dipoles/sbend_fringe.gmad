@@ -7,7 +7,7 @@ sb1 : sbend, l=2.5*m, angle = 0.1, e1=0.4, e2=-0.4, hgap=3*cm, fint=0.4, fintx=0
 ! strong pole faces with 0 strength bend
 sb2 : sbend, l=2.5*m, angle = 0.0, e1=-0.4, e2=0.4;
 
-! -ve bend, strontest pole face angles, different hgap, fint, fintx
+! -ve bend, strongest pole face angles, different hgap, fint, fintx
 sb3 : sbend, l=2.5*m, angle =-0.1, e1=0.4, e2=0.4, hgap=5*cm, fint=0.5, fintx=0.5;
 
 ! no pole face but should still have fringe element

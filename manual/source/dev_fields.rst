@@ -559,9 +559,8 @@ Generally:
  * A series of keys define the dimensions of the grid.
  * The keys at the beginning do not have to be in any order.
  * Empty lines will be skipped.
- * A line starting with :code:`!` denotes the column name definition row.
- * There can only be 1 column name definition row.
- * The order in the file must be keys, column name definition row, data.
+ * A line starting with :code:`!` denotes the column name definition row and there can be only one of these.
+ * The order in the file must be 1) keys, 2) column name definition row, 3) data.
  * A line starting with :code:`#` will be ignored as a comment line.
  * The order of the data must loop in the **lowest** dimension first and then the upper,
    so the order should be :math:`x`, then :math:`y`, then :math:`z`, then :math:`t`.
@@ -571,15 +570,26 @@ Generally:
  * :code:`loopOrder > zyxt` may optionally be defined the header to indicate to the
    loader the order of looping of variables in the file. The default is xyzt.
 
-.. Note:: The units are :math:`cm` for spatial coordinates and :math:`s` for temporal.
+.. note:: The units are :math:`cm` for spatial coordinates and :math:`s` for temporal.
 
+.. note:: If a 1,2 or 3D field is required that are not along :math:`x, x:y, x:y:z` respecitvely,
+	  the user should label the columns appropriately (i.e. 'X' and 'Z') and use the
+	  correct key names in the file (i.e. 'xmin' and 'zmin') and the field will be
+	  automatically constructed along the desired direction. It is assumed the field
+	  is constant in the other dimensions
+	  
 There are python scripts in :code:`bdsim/examples/features/fields/4_bdsimformat` called
 :code:`Generate1D.py` etc., that were used to create the example data sets there that
 have sinusoidally oscillating data.
 
+.. warning:: The dimension parameters (:math:`x,y,z,t`) are used in order here for 1,2,3,4D
+	     fields, but other combinations are possible. See :ref:`fields-different-dimensions`.
+
 
 BDSIM Field Format 1D
 ---------------------
+
+For a field that varies in :math:`x`.
 
 +--------------------+-------------------------------------------------------------------+
 | **Parameter**      | **Description**                                                   |
@@ -608,6 +618,13 @@ field is specified here: ::
    1.50000000E+01	1.44943102E+00	1.99498997E+00	1.43827662E+00
    2.25000000E+01	-9.08808379E-01	1.55614639E+00	1.81555922E+00
 
+The same field could be specied along :math:`z` with the following start::
+
+   zmin> -30.0
+   nz> 8
+   zmax> 22.5
+   ! Z	            Fx	            Fy	            Fz
+   
 
 BDSIM Field Format 2D
 ---------------------
@@ -770,6 +787,44 @@ All of the 1D, 2D & 3D parameters, plus:
 +--------------------+---------------------------------------------------------------------------+
 
 There is an example in :code:`bdsim/examples/features/fields/4_bdsimformat/tdexample.tar.gz`.
+
+
+.. _fields-different-dimensions:
+
+BDSIM Field Format Different Dimensions
+---------------------------------------
+
+.. warning:: Only for BDSIM format field map files.
+
+Different dimensions can be used but they must be in order. Below is a list of the allowable
+alternate dimensions for various field maps.
+
+* 4D field::
+
+    x,y,z,t
+    
+* 3D field::
+
+    x,y,z
+    x,y,t
+    x,z,t
+    y,z,t
+
+* 2D field::
+
+    x,y
+    x,z
+    x,t
+    y,z
+    y,t
+    z,t
+
+* 1D field::
+
+    x
+    y
+    z
+    t
 
 
 .. _field-map-file-preparation:

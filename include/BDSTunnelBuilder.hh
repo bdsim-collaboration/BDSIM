@@ -45,13 +45,11 @@ public:
   BDSBeamline* BuildTunnelSections(const BDSBeamline* flatBeamLine);
 
 private:
-  /// Decide whether this is a good point to break the tunnel based on various cumulative
-  /// parameters.
-  G4bool BreakTunnel(const G4double& cumulativeLength,
-		     const G4double& cumulativeAngle,
-		     const G4int&    cumulativeNItems,
-		     const G4double& cumulativeOffsetX,
-		     const G4double& cumulativeOffsetY);
+  /// Decide whether this is a good point to break the tunnel based on
+  /// various cumulative parameters.
+  G4bool BreakTunnel(BDSBeamline::const_iterator proposedStart,
+                     BDSBeamline::const_iterator proposedEnd,
+		     const G4double& halfWidth);
 
   /// Maximum distance tolerable that the beamline can deviate from the previous
   /// tunnel break point before another tunnel break point is made.

@@ -151,7 +151,8 @@ class Globals:
                            'muspoiler',
                            'shield',
                            'solenoid',
-                           'laser']
+                           'laser',
+                           'gap']
 
         # parameters that can be varied (across all components)
         self.parameters = ['length',
@@ -174,12 +175,16 @@ class Globals:
                            'ks',
                            'fint',
                            'fintx',
-                           'hgap']
+                           'hgap',
+                           'h1',
+                           'h2',
+                           'fintK2',
+                           'fintxK2']
 
         #parameters that can be varied for each components type.
         self.hasParams = {'drift'         : ['length'],
-                          'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
-                          'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
+                          'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
+                          'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
                           'vkick'         : ['length', 'kickangle'],
                           'hkick'         : ['length', 'kickangle'],
                           'quadrupole'    : ['length', 'k1'],
@@ -195,7 +200,8 @@ class Globals:
                           'muspoiler'     : ['length', 'field'],
                           'shield'        : ['length'],
                           'solenoid'      : ['length', 'ks'],
-                          'laser'         : ['length']}
+                          'laser'         : ['length'],
+                          'gap'           : ['length']}
 
         #use same magnet strengths for multipole and thinMultipole components
         self.magStrengths = {'k1': 0.025,
@@ -234,7 +240,11 @@ class Globals:
                             'ks'        : [-0.3, -0.003, 0, 0.003, 0.3],
                             'fint'      : [0, 1.0/6.0, 0.5],
                             'fintx'     : [0, 1.0/6.0, 0.5],
-                            'hgap'      : [0.01, 0.1]}
+                            'hgap'      : [0.01, 0.1],
+                            'h1'        : [-1.0, 0, 1.0],
+                            'h2'        : [-1.0, 0, 1.0],
+                            'fintK2'    : [0, 2.5, 5.0],
+                            'fintxK2'   : [0, 2.5, 5.0]}
 
         # test particles
         self.particles = ['e-', 'proton']
@@ -253,10 +263,10 @@ class Globals:
                              }
 
         # Full phase space
-        self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'PX' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'Y'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'PY' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
+        self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'PX' : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'Y'  : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'PY' : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
                                'T'  : [-1.0e-18, -1.0e-15, -1.0e-12, 0, 1.0e-12, 1.0e-15, 1.0e-18],
                                'PT' : [0      ,  1.0e-6,  1.0e-4, 1.0e-2]}
 

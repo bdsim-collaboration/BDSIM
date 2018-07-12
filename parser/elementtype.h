@@ -43,10 +43,12 @@ namespace GMAD
     _DEGRADER    = 63,
     _THINMULT    = 64,
     _GAP         = 65,
-    _CRYSTALCOL  = 66,
-    _WIRESCANNER = 67,
-    _AWSCREEN = 68,
-
+    _THINRMATRIX = 66,
+    _PARALLELTRANSPORTER = 67,
+    _RMATRIX     = 68,
+    _CRYSTALCOL  = 69,
+    _WIRESCANNER = 70,
+    _AWSCREEN    = 71
   };
 
   /// conversion from enum to string

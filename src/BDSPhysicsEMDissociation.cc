@@ -50,6 +50,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
   inelProcIon->AddDataSet(crossSectionData);
 
   G4EMDissociation* emdModel = new G4EMDissociation();
+  emdModel->SetMaxEnergy(100*CLHEP::TeV);
   inelProcIon->RegisterMe(emdModel);
 
   G4ProcessManager* pmanager = G4GenericIon::GenericIon()->GetProcessManager();

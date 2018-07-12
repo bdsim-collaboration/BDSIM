@@ -78,14 +78,17 @@ private:
   BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
   const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
   const G4double    beta0; ///< Cached nominal relativistic beta of the nominal beam particle.
-  const G4double 	rho;   ///< Cached magnet property, nominal bending radius.
+  const G4double    rho;   ///< Cached magnet property, nominal bending radius.
   const G4double    fieldRatio;///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
-  const	G4double 	nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalEnergy;  ///< Nominal beam energy
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.
   const G4double    fieldAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
-  G4double          tilt;           ///< Tilt offset transform for field.
+  const G4double    tilt;           ///< Tilt offset transform for field.
+  const G4double    primaryMass;    ///< Primary particle rest mass.
+  const G4double    primaryCharge;  ///< Primary particle charge.
+  const G4double    totalEnergy;    ///< Primary particle total energy.
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
