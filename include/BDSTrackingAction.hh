@@ -32,7 +32,8 @@ class BDSTrackingAction: public G4UserTrackingAction
 {
 public:
   BDSTrackingAction(const G4bool& batchMode,
-		    const G4bool& storeTrajectoryIn);
+		    const G4bool& storeTrajectoryIn,
+		    const G4bool& suppressTransportationStepsIn);
   
   virtual ~BDSTrackingAction(){;}
 
@@ -45,11 +46,14 @@ private:
   
   /// Whether we're using the visualiser - in which case always store
   /// trajectories for visualisation.
-  G4bool interactive;
+  const G4bool interactive;
 
   /// Flag from global constants to control storing all trajectories. Cache
   /// this from global constants at the beginning as it doesn't change.
-  G4bool storeTrajectory;
+  const G4bool storeTrajectory;
+
+  /// Cache of whether to suppress transportation steps in each trajectory.
+  const G4bool suppressTransportationSteps;
 };
 
 #endif

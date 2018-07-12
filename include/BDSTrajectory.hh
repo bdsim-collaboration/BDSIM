@@ -51,7 +51,9 @@ namespace BDS
 class BDSTrajectory: public G4Trajectory
 {
 public:
-  BDSTrajectory(const G4Track* aTrack, G4bool interactive);
+  BDSTrajectory(const G4Track* aTrack,
+		const G4bool& interactiveIn,
+		const G4bool& suppressTransportationSteps);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
   virtual ~BDSTrajectory();

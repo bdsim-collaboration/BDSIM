@@ -19,7 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectory.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -47,10 +46,12 @@ BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
   return primary;
 }
 
-BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
+BDSTrajectory::BDSTrajectory(const G4Track* aTrack,
+			     const G4bool&  interactiveIn,
+			     const G4bool&  suppressTransportationSteps):
   G4Trajectory(aTrack),
   interactive(interactiveIn),
-  trajNoTransportation(BDSGlobalConstants::Instance()->TrajNoTransportation())
+  trajNoTransportation(suppressTransportationSteps)
 {
   const G4VProcess *proc = aTrack->GetCreatorProcess();
   if(proc)

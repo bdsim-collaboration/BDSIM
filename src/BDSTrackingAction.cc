@@ -25,9 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 
 BDSTrackingAction::BDSTrackingAction(const G4bool& batchMode,
-				     const G4bool& storeTrajectoryIn):
+				     const G4bool& storeTrajectoryIn,
+				     const G4bool& suppressTransportationStepsIn):
   interactive(!batchMode),
-  storeTrajectory(storeTrajectoryIn)
+  storeTrajectory(storeTrajectoryIn),
+  suppressTransportationSteps(suppressTransportationStepsIn)
 {;}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
@@ -43,7 +45,9 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
   if (interactive || storeTrajectory || track->GetParentID() == 0)
     {
       fpTrackingManager->SetStoreTrajectory(1);
-      BDSTrajectory* bdsTraj = new BDSTrajectory(track,interactive);
+      BDSTrajectory* bdsTraj = new BDSTrajectory(track,
+						 interactive,
+						 suppressTransportationSteps);
       fpTrackingManager->SetTrajectory(bdsTraj);
     }
   else
