@@ -57,8 +57,11 @@ public:
 
   virtual ~BDSTrajectoryPrimary();
 
+  /// Override and return true always.
   virtual G4bool IsPrimary() const {return true;}
-  
+
+  inline void* operator new(size_t);
+  inline void operator delete(void*);
   inline int operator == (const BDSTrajectoryPrimary& right) const {return (this==&right);}
 
   /// Append a step point to this trajectory. This is required for the trajectory
@@ -82,5 +85,17 @@ private:
   
   BDSTrajectoryPrimary() = delete; ///< No default constructor required.
 };
+
+extern G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
+
+inline void* BDSTrajectoryPrimary::operator new(size_t)
+{
+  void* aTrajectory;
+  aTrajectory = (void*)bdsTrajectoryPrimaryAllocator.MallocSingle();
+  return aTrajectory;
+}
+
+inline void BDSTrajectoryPrimary::operator delete(void* aTrajectory)
+{bdsTrajectoryPrimaryAllocator.FreeSingle((BDSTrajectoryPrimary*)aTrajectory);}
 
 #endif

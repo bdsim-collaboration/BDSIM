@@ -21,11 +21,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "globals.hh" // geant4 globals / types
+#include "G4Allocator.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4TrajectoryContainer.hh"
 
 #include <ostream>
+
+G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
 
 BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 {
