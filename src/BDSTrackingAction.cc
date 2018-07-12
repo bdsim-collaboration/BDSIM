@@ -44,6 +44,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 					   interactive,
 					   suppressTransportationSteps,
 					   storePoints);
+      fpTrackingManager->SetStoreTrajectory(1);
       fpTrackingManager->SetTrajectory(traj);
     }
   else
@@ -54,6 +55,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 	  auto traj = new BDSTrajectory(track,
 					interactive,
 					suppressTransportationSteps);
+      fpTrackingManager->SetStoreTrajectory(1);
 	  fpTrackingManager->SetTrajectory(traj);
 	}
       else // mark as don't store
