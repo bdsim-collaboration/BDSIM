@@ -1,3 +1,0 @@
-include rbend_fringe.gmad;
-
-option, integratorSet="bdsimmatrix";

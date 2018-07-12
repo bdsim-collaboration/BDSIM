@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <regex>
 #include <sstream>
@@ -102,6 +103,8 @@ void Config::InitialiseOptions(std::string analysisFile)
   optionsString["gdmlfilename"]   = "./model.gdml";
 
   optionsNumber["printmodulofraction"] = 0.01;
+  optionsNumber["eventstart"]          = 0;
+  optionsNumber["eventend"]            = -1;
 
   // ensure keys exist for all trees.
   for (auto name : treeNames)
@@ -174,6 +177,17 @@ void Config::ParseInputFile()
       branches["Event."].push_back("Histos");
       branches["Run."].push_back("Histos");
       optionsBool["perentryevent"]   = true;
+    }
+
+  // checks on event numbers
+  double eS = optionsNumber.at("eventstart");
+  double eE = optionsNumber.at("eventend");
+  if (eE < 0) // default -1
+    {eE = std::numeric_limits<double>::max();}
+  if (eS < 0 || eS > eE)
+    {
+      std::cerr << "Invalid starting event number " << eS << std::endl;
+      exit(1);
     }
 }
 

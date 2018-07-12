@@ -89,7 +89,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
 {
   struct BDSBunchUserFile::Doublet sd;
 
-  std::regex wspace("\\s+"); // any whitepsace
+  std::regex wspace(":"); // any whitepsace
   std::vector<std::string> results;
   std::sregex_token_iterator iter(bunchFormat.begin(), bunchFormat.end(), wspace, -1);
   std::sregex_token_iterator end;
@@ -409,7 +409,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       if (!tdef)
 	{t=0;}
     }
-  
+
   //Add the global offset Z
   z0=z0+Z0*CLHEP::m;
 
@@ -423,7 +423,7 @@ G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
     //this re reads the same file again to avoid crash - must always print warning
-    G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
+    G4cout << "BDSBunchUserFile::ReadValue> End of file reached. Returning to beginning of file for next event." << G4endl;
     CloseBunchFile();
     OpenBunchFile();
   } 

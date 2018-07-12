@@ -16,43 +16,49 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPrimary.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
-BDSTrackingAction::BDSTrackingAction():
-  interactive(false)
-{
-  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
-}
-
-BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
-  interactive(!batchMode)
-{
-  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
-}
+BDSTrackingAction::BDSTrackingAction(const G4bool& batchMode,
+				     const G4bool& storeTrajectoryIn,
+				     const G4bool& suppressTransportationStepsIn):
+  interactive(!batchMode),
+  storeTrajectory(storeTrajectoryIn),
+  suppressTransportationSteps(suppressTransportationStepsIn)
+{;}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID()
-	 << " ParentID=" << track->GetParentID() << G4endl;
-#endif
-
-  // we only create a trajectory if we're in interactive mode
-  // (for visualisation), if storeTrajectory is on, or it's the primary
-  // particle.
-  if (interactive || storeTrajectory || track->GetParentID() == 0)
+  // if it's a primary track then we always store something
+  if (track->GetParentID() == 0)
     {
+      // only store the actual trajectory points if we explicitly want
+      // trajectory points or we're using the visualiser.
+      G4bool storePoints = storeTrajectory || interactive;
+      auto traj = new BDSTrajectoryPrimary(track,
+					   interactive,
+					   suppressTransportationSteps,
+					   storePoints);
       fpTrackingManager->SetStoreTrajectory(1);
-      BDSTrajectory* bdsTraj = new BDSTrajectory(track,interactive);
-      fpTrackingManager->SetTrajectory(bdsTraj);
+      fpTrackingManager->SetTrajectory(traj);
     }
   else
-    {fpTrackingManager->SetStoreTrajectory(0);}
+    {
+      // not a primary - only store if we want to or interactive
+      if (storeTrajectory || interactive)
+	{
+	  auto traj = new BDSTrajectory(track,
+					interactive,
+					suppressTransportationSteps);
+      fpTrackingManager->SetStoreTrajectory(1);
+	  fpTrackingManager->SetTrajectory(traj);
+	}
+      else // mark as don't store
+	{fpTrackingManager->SetStoreTrajectory(0);}
+    }
 }

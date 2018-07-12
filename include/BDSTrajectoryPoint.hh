@@ -42,7 +42,7 @@ public:
   /// Default constructor.
   BDSTrajectoryPoint();
   
-  /// This constructor is used to construct a point from a step intdended to
+  /// This constructor is used to construct a point from a step intended to
   /// be appended to a trajectory. It uses the post step point as the main position.
   explicit BDSTrajectoryPoint(const G4Step* step);
   
