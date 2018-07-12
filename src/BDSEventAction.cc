@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPrimary.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -191,14 +192,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // primary hits and losses from
-  BDSTrajectoryPoint* primaryHit  = nullptr;
-  BDSTrajectoryPoint* primaryLoss = nullptr;
+  const BDSTrajectoryPoint* primaryHit  = nullptr;
+  const BDSTrajectoryPoint* primaryLoss = nullptr;
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   if (trajCont)
     {
-      BDSTrajectory* primary = BDS::GetPrimaryTrajectory(trajCont);
-      primaryHit  = primary->FirstInteraction();
-      primaryLoss = primary->LastInteraction();
+      BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
+      primaryHit  = primary->FirstHit();
+      primaryLoss = primary->LastPoint();
     }
 
   // Save interesting trajectories
