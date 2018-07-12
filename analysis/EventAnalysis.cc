@@ -45,17 +45,21 @@ EventAnalysis::EventAnalysis():
   emittanceOnTheFly(false)
 {;}
 
-EventAnalysis::EventAnalysis(Event*  eventIn,
-			     TChain* chainIn,
-			     bool    perEntryAnalysis,
-			     bool    processSamplersIn,
-			     bool    debugIn,
-			     double  printModuloFraction,
-			     bool    emittanceOnTheFlyIn):
+EventAnalysis::EventAnalysis(Event*   eventIn,
+			     TChain*  chainIn,
+			     bool     perEntryAnalysis,
+			     bool     processSamplersIn,
+			     bool     debugIn,
+			     double   printModuloFraction,
+			     bool     emittanceOnTheFlyIn,
+			     long int eventStartIn,
+			     long int eventEndIn):
   Analysis("Event.", chainIn, "EventHistogramsMerged", perEntryAnalysis, debugIn),
   event(eventIn),
   processSamplers(processSamplersIn),
-  emittanceOnTheFly(emittanceOnTheFlyIn)
+  emittanceOnTheFly(emittanceOnTheFlyIn),
+  eventStart(eventStartIn),
+  eventEnd(eventEndIn)
 {
   if (processSamplers)
     {// Create sampler analyses if needed
@@ -125,7 +129,16 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << "Entries: " << chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  for(int i = 0; i < entries; ++i)
+  if (eventEnd < 0)
+    {eventEnd = entries;}
+  if (eventEnd > entries)
+    {
+      std::cerr << "EventEnd " << eventEnd << " > entries (" << entries
+		<< ") in file(s) -> curtailing to # of entries!" << std::endl;
+      eventEnd = entries;
+    }
+  bool firstLoop = true;
+  for (long int i = eventStart; i < eventEnd; ++i)
     {
       chain->GetEntry(i);
       // event analysis feedback
@@ -139,7 +152,7 @@ void EventAnalysis::Process()
 	}
 
       // merge histograms stored per event in the output
-      if(i==0)
+      if(firstLoop)
 	{histoSum = new HistogramMeanFromFile(event->Histos);}
       else
 	{histoSum->Accumulate(event->Histos);}
@@ -165,7 +178,9 @@ void EventAnalysis::Process()
 	}
       
       if(processSamplers)
-	{ProcessSamplers(i==0);}
+	{ProcessSamplers(firstLoop);}
+	if (firstLoop)
+    {firstLoop = false;} // set to false on first pass of loop
     }
   std::cout << "\rSampler analysis complete                           " << std::endl;
 }

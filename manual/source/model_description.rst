@@ -4,6 +4,54 @@
 Model Description - Input Syntax
 ================================
 
+The following sections describe how to prepare a BDSIM model. These sections are
+provided in order of requirement.
+
+* Basic Language
+  
+  - :ref:`lattice-description`
+  - :ref:`gmad-syntax`
+  - :ref:`mathematical-functions`
+  - :ref:`coordinates-and-units`
+    
+* :ref:`circular-machines`
+* :ref:`lattice-elements`
+  
+  - :ref:`aperture-parameters`
+  - :ref:`magnet-geometry-parameters`
+  - :ref:`offsets-and-tilts`
+  - :ref:`cavity-geometry-parameters`
+    
+* External Fields & Geometry
+  
+  - :ref:`field-maps`
+  - :ref:`externally-provided-geometry`
+    
+* Sequence of Elements
+  
+  - :ref:`lattice-sequence`
+  - :ref:`sampler-output`
+    
+* Physics Processes
+  
+  - :ref:`physics-processes`
+  - :ref:`physics-biasing`
+    
+* :ref:`bdsim-options`
+* :ref:`beam-parameters`
+* Advanced Topics
+  
+  - :ref:`tunnel-geometry`
+  - :ref:`materials-and-atoms`
+  - :ref:`crystals`
+  - :ref:`regions`
+  - More details about :ref:`bend-tracking-behaviour`
+  - :ref:`colours`
+  - :ref:`controlling-simulation-speed`
+  - :ref:`multiple-beamlines`
+
+.. _lattice-description:
+
 Lattice Description
 -------------------
 
@@ -45,6 +93,8 @@ While GMAD is very similar to MADX, not all MADX commands are supported.
 * !comments start with an exclamation mark "!"
 * a variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
+.. _mathematical-functions:
+  
 Mathematical Functions
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -180,6 +230,7 @@ Both the terminator and teleporter and invisible and very thin elements that are
 shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
 executable option.
 
+
 Terminator
 ^^^^^^^^^^
 
@@ -212,8 +263,8 @@ gap of :math:`0.2 \mu m` is required for the terminator.
 
 .. _lattice-elements:
 
-Lattice Elements
-----------------
+Beamline Elements
+-----------------
 
 BDSIM provides a variety of different elements each with their own function, geometry and
 potentially fields. Any element in BDSIM is described with the following pattern::
@@ -1273,6 +1324,8 @@ Examples::
 
    m1: marker;
 
+.. _aperture-parameters:
+
 Aperture Parameters
 -------------------
 
@@ -1562,6 +1615,43 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
+
+.. _offsets-and-tilts:
+
+Offsets & Tilts - Component Misalignment
+----------------------------------------
+
+To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
+and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
+
+.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
+	  horizontal offsets. This is because these would change the length of the bend about its central axis.
+	  This is not currently handled but may be implemented in future releases.
+
+.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
+	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
+	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
+	  matches the behaviour of MAD8 and MADX.
+
+.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
+
+The misalignments can be controlled through the following parameters
+
++--------------+------------------------------------------------------------------------------------+
+| Parameter    | Default value                                                                      |
++==============+====================================================================================+
+| `offsetX`    | Horizontal displacement of the component [m].                                      |
++--------------+------------------------------------------------------------------------------------+
+| `offsetY`    | Vertical displacement of the component [m].                                        |
++--------------+------------------------------------------------------------------------------------+
+| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
+|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
++--------------+------------------------------------------------------------------------------------+
+
+Examples::
+
+  d1: drift, l=1*m, offsetX=1*cm;
+  d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
 
 .. _cavity-geometry-parameters:
 
@@ -2106,44 +2196,6 @@ Element
 A general piece of geometry may be placed in the beam line along with any externally provided
 field map using the `element` beam line element.  See `element`_.
 
-
-.. _offsets-and-tilts:
-
-Offsets & Tilts - Component Misalignment
-----------------------------------------
-
-To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
-and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
-
-.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
-	  horizontal offsets. This is because these would change the length of the bend about its central axis.
-	  This is not currently handled but may be implemented in future releases.
-
-.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
-	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
-	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
-	  matches the behaviour of MAD8 and MADX.
-
-.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
-
-The misalignments can be controlled through the following parameters
-
-+--------------+------------------------------------------------------------------------------------+
-| Parameter    | Default value                                                                      |
-+==============+====================================================================================+
-| `offsetX`    | Horizontal displacement of the component [m].                                      |
-+--------------+------------------------------------------------------------------------------------+
-| `offsetY`    | Vertical displacement of the component [m].                                        |
-+--------------+------------------------------------------------------------------------------------+
-| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
-|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
-+--------------+------------------------------------------------------------------------------------+
-
-Examples::
-
-  d1: drift, l=1*m, offsetX=1*cm;
-  d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
-
 .. _lattice-sequence:
 
 Lattice Sequence
@@ -2575,7 +2627,8 @@ is not used in BDSIM as it does not propagate the associated weights correctly. 
 the generic biasing interface with the name of the process (described in the following section) as this will
 propagate the weights correctly.
 
-	     
+.. _physics-biasing:
+
 Physics Biasing
 ---------------
 
@@ -3886,6 +3939,8 @@ Output from MAD-X PTC used as input for BDSIM.
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
 
+.. _tunnel-geometry:
+
 Tunnel Geometry
 ---------------
 
@@ -3960,7 +4015,8 @@ the larger of the horizontal and vertical tunnel dimensions.
 	  geometry. In future, it will be possible to override the automatic algorithm between
 	  certain elements in the beamline, but for now such situations must be avoided.
 
-
+.. _materials-and-atoms:
+	  
 Materials and Atoms
 -------------------
 
@@ -4136,7 +4192,8 @@ Examples::
 			bendingAngleYAxis = -0.1*rad,
 			bendingAngleZAxis = 0;
 
-
+.. _regions:
+			
 Regions
 -------
 
@@ -4221,6 +4278,7 @@ In short, we recommend running with :code:`option, checkOverlaps=1;` once to ver
 problems for a machine with large angle bends. If there are any overlaps, reduce the sampler diameter
 to the typical full width of a magnet.
 
+.. _colours:
 
 Colours
 -------
@@ -4334,6 +4392,7 @@ wish to use their colour. The predefined colours in BDSIM are:
 | yellow          | 255 | 255 | 0   |
 +-----------------+-----+-----+-----+
 
+.. _controlling-simulation-speed:
 
 Controlling Simulation Speed
 ----------------------------

@@ -10,6 +10,7 @@ New Features
 * New "channelling" physics list for Geant4 crystal channelling physics process.
 * Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
+* rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
 
 General
 -------
@@ -19,6 +20,8 @@ General
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
 * "ang" unit is added to the parser for Angstroms.
 * BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
+* long int used explicitly instead of int for event indices in analysis.
+* Reimplemented primary first hit and last hit. Last hit is now the end point of the primary trajectory.
 
 Output Changes
 --------------
@@ -34,17 +37,20 @@ Output Changes
 * New option :code:`storeModel` to turn off model storage in the output.
 * Even Info class (BDSOutputROOTEventInfo) number is incremented in output.
 * Event.Info now has a Boolean of whether the primary particle hit something or not.
-* Samplers are no longer placed next to elements with angled faces when using the :code:`bdsimtwo`,:code:`geant4`, or :code:`geant4dp` integrator sets.
+* Samplers are no longer placed next to elements with angled faces when using the :code:`bdsimtwo`, :code:`geant4`, or :code:`geant4dp` integrator sets.
 
 Bug Fixes
 ---------
 
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Further improvements to tunnel building algorithm for magnets with tilt.
 * Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
 * Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
+* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
+* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to save the whole trajectory for the primary. This fixes the behaviour of linearly growing unbounded memory usage when tracking for a long time in a ring.
 
 
 V1.1 - 2018 / 05 / 23

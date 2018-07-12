@@ -1,8 +1,10 @@
 Debug						0
 InputFilePath					../../data/sample1.root
-OutputFileName					./ana_1.root
+OutputFileName					./ana_3.root
 CalculateOpticalFunctions			1
-CalculateOpticalFunctionsFileName		./ana_1_optics.dat
+CalculateOpticalFunctionsFileName		./ana_3_optics.dat
+EventStart                                    3
+EventEnd                                      2
 # Object	treeName	Histogram Name           # Bins     Binning	       Variable                 Selection
 SimpleHistogram1D    Beam.    X0                       {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1
 Histogram1D          Beam.    X0PE                     {10}        {-1e-3:1e-3}     Beam.GMAD::BeamBase.X0         1

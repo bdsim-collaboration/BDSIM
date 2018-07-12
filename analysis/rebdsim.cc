@@ -104,7 +104,9 @@ int main(int argc, char *argv[])
 						   config->ProcessSamplers(),
                                                    debug,
                                                    config->PrintModuloFraction(),
-						   config->GetOptionBool("emittanceonthefly"));
+						   config->GetOptionBool("emittanceonthefly"),
+                                                   (long int)config->GetOptionNumber("eventstart"),
+                                                   (long int)config->GetOptionNumber("eventend"));
   RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(),
 						 dl.GetRunTree(),
 						 config->PerEntryRun(),
