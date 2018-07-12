@@ -33,7 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 struct integratorsettype_def
 {
   enum type {geant4, bdsimone, bdsimtwo, bdsimmatrix, bdsimmatrixfringescaling
-#if G4VERSION_NUMBER > 1029
+#if G4VERSION_NUMBER > 1039
 	     ,
 	     geant4dp
 #endif

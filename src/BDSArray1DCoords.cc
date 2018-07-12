@@ -22,11 +22,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
-BDSArray1DCoords::BDSArray1DCoords(G4int nXIn,
-				   G4double xMinIn, G4double xMaxIn):
+BDSArray1DCoords::BDSArray1DCoords(G4int            nXIn,
+				   G4double         xMinIn,
+				   G4double         xMaxIn,
+				   BDSDimensionType dimensionIn):
   BDSArray2DCoords(nXIn,1,
 		   xMinIn,xMaxIn,
-		   0,   1)
+		   0,   1,
+		   dimensionIn)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray1DCoords const &a)

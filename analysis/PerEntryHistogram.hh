@@ -50,7 +50,7 @@ public:
 
   /// Create a histogram of the approprate dimensions for the currently loaded
   /// event then add it to the online (ie running) means and variances.
-  virtual void AccumulateCurrentEntry(const int& entryNumber);
+  virtual void AccumulateCurrentEntry(const long int& entryNumber);
 
   /// Terminate the accumulator and save the result to the result member variable.
   void Terminate();
