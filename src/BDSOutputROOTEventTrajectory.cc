@@ -48,6 +48,16 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 }
 
 #ifndef __ROOTBUILD__
+int findPrimaryStepIndex(BDSTrajectory* traj) {
+  if(!traj->GetParent()) 
+    return -1;
+
+  if(traj->GetParent()->GetTrackID() == 1) 
+    return traj->GetParentStepIndex();
+  else 
+    return findPrimaryStepIndex(traj->GetParent()); 
+}
+
 void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &trajMap)
 {  
   if(!auxNavigator) {
@@ -120,6 +130,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
     std::vector<TVector3> momentum;
     std::vector<int>      modelIndex;
 
+    // loop over trajectory points and fill structures
     for (auto i = 0; i < traj->GetPointEntries(); ++i) {
       BDSTrajectoryPoint *point = static_cast<BDSTrajectoryPoint *>(traj->GetPoint(i));
 
@@ -152,7 +163,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
                                   mom.getY(),
                                   mom.getZ()));
     }
-
+       
     trajectories.push_back(trajectory);
     modelIndicies.push_back(modelIndex);
     momenta.push_back(momentum);
@@ -164,6 +175,11 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
     postWeights.push_back(postWeight);
     energies.push_back(energy);
 
+    // recursively search for primary interaction step  
+    primaryStepIndex.push_back(findPrimaryStepIndex(traj));
+    
+    // geant4 trackID to trackIndex in this table
+    trackID_trackIndex.insert(std::pair<int,int>(traj->GetTrackID(),n));
     n++;
   }
 
@@ -224,6 +240,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   parentID.clear();
   parentIndex.clear();
   parentStepIndex.clear();
+  primaryStepIndex.clear();
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
@@ -235,11 +252,13 @@ void BDSOutputROOTEventTrajectory::Flush()
   momenta.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
-  trackIndex_trackProcess.clear();
-  trackIndex_modelIndex.clear();
-  modelIndex_trackIndex.clear();
+  
+  // trackIndex_trackProcess.clear();
+  //  trackIndex_modelIndex.clear();
+  //  modelIndex_trackIndex.clear();
 }
 
+#if 0
 std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackIndex) {
 
   std::cout << "BDSOutputROOTEventTrajectory::findParentProcess> " << trackIndex << " " << parentID.size() << " " << parentIndex.size() << std::endl;
@@ -269,6 +288,7 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
 
   return std::pair<int,int>(pin,sin);
 }
+#endif
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
 {
@@ -297,14 +317,14 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
   int                ti = trackID_trackIndex.at(trackid);  // get track index
-  std::pair<int,int> pp = trackIndex_trackProcess.at(ti);  // get track and index of start proccess
-
-  BDSOutputROOTEventTrajectoryPoint p(partID[pp.first], trackID[pp.first],
-                                      parentID[pp.first], parentIndex[pp.first],
-                                      postProcessTypes[pp.first][pp.second], postProcessSubTypes[pp.first][pp.second],
-                                      postWeights[pp.first][pp.second],energies[pp.first][pp.second],
-                                      trajectories[pp.first][pp.second], momenta[pp.first][pp.second],
-                                      modelIndicies[pp.first][pp.second]);
+  int                si = parentStepIndex.at(ti);          // get primary index          
+  
+  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                      parentID[ti], parentIndex[ti],
+                                      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
+                                      postWeights[ti][si],energies[ti][si],
+                                      trajectories[ti][si], momenta[ti][si],
+                                      modelIndicies[ti][si]);
   return p;
 }
 
