@@ -21,6 +21,7 @@ General
 * "ang" unit is added to the parser for Angstroms.
 * BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
 * long int used explicitly instead of int for event indices in analysis.
+* Reimplemented primary first hit and last hit. Last hit is now the end point of the primary trajectory.
 
 Output Changes
 --------------
@@ -49,6 +50,7 @@ Bug Fixes
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
 * Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
+* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to save the whole trajectory for the primary. This fixes the behaviour of linearly growing unbounded memory usage when tracking for a long time in a ring.
 
 
 V1.1 - 2018 / 05 / 23

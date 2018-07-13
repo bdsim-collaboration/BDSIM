@@ -26,9 +26,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSSamplerRegistry.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPrimary.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -195,25 +198,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // primary hits and losses from
-  BDSTrajectoryPoint* primaryHit  = nullptr;
-  BDSTrajectoryPoint* primaryLoss = nullptr;
+  const BDSTrajectoryPoint* primaryHit  = nullptr;
+  const BDSTrajectoryPoint* primaryLoss = nullptr;
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   if (trajCont)
     {
-      BDSTrajectory* primary = BDS::GetPrimaryTrajectory(trajCont);
-      primaryHit  = primary->FirstInteraction();
-      primaryLoss = primary->LastInteraction();
+      BDSTrajectoryPrimary* primary = BDS::GetPrimaryTrajectory(trajCont);
+      primaryHit  = primary->FirstHit();
+      primaryLoss = primary->LastPoint();
     }
-
-  // needed to draw trajectories and hits:
-  if(!isBatch)
-  {
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "drawing the event" << G4endl;
-#endif
-    // This is an expensive funciton call - use macro commands instead to flush at end of run / event
-    // evt->Draw();
-  }
 
   // Save interesting trajectories
   std::map<BDSTrajectory*, bool> interestingTraj;
@@ -280,13 +273,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    G4String particleName  = traj->GetParticleName();
 	    G4int particleID       = traj->GetPDGEncoding();
 	    G4String particleIDStr = G4String(std::to_string(particleID));
-	    std::size_t found      = particleToStore.find(particleName);
-	    //std::size_t found2     = particleIDToStore.find(particleIDStr); // This does not work e-=11, e+=-11
-	    bool        found3     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) != particleIDIntToStore.end());
-	    if ((found != std::string::npos) || found3)
+	    std::size_t found1      = particleToStore.find(particleName);
+	    bool        found2     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) 
+				      != particleIDIntToStore.end());
+	    if ((found1 != std::string::npos) || found2)
 	      {
-		// G4cout << "found interesting " << traj->GetTrackID()<< " " << particleName << "(" << particleToStore << ")" << " " 
-		//        << particleIDStr << "(" << particleIDToStore << ")" << G4endl;
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 		continue;
 	      }
@@ -322,11 +313,38 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {connectTraj(interestingTraj, i.first);}
       }
   }
-    // Output interesting trajectories
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
-#endif
 
+  
+  // loop over energy hits to connect trajectories 
+  if(true) 
+    {
+      G4int n_hit = energyCounterHits->entries();
+      BDSEnergyCounterHit *hit;
+      for(G4int i=0;i<n_hit;i++)
+	{
+	  hit = (*energyCounterHits)[i];
+	  //	  G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
+	}
+    }
+
+  // loop over samplers to connect trajectories 
+  if(true) 
+    {
+      G4int n_hit = SampHC->entries();
+      for(G4int i=0;i<n_hit;i++) 
+	{
+	  G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
+	  BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
+	  //	  G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
+	}
+    }
+  
+
+  // Output interesting trajectories
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
+#endif
+  
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
 		    SampHC,

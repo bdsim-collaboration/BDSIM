@@ -424,11 +424,14 @@ different value per event run in BDSIM.
 |                 |                                  | accelerator material.                            |
 +-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
-|                 |                                  | the process associated with the primary step is  |
-|                 |                                  | not tracking, i.e. the first interaction.        |
+|                 |                                  | step on the primary trajectory that wasn't due   |
+|                 |                                  | to tracking, i.e. the first interaction where a  |
+|                 |                                  | physics process was induced.                     |
 +-----------------+----------------------------------+--------------------------------------------------+
-| PrimaryLastHit  | BDSOutputROOTEventLoss           | Similar to PrimaryFirstHit, but the last point   |
-|                 |                                  | of this type on the primary trajectory.          |
+| PrimaryLastHit  | BDSOutputROOTEventLoss           | The end point of the primary trajectory. If S    |
+|                 |                                  | is -1 (m) it means the particle finished away    |
+|                 |                                  | from the beam line where there was no            |
+|                 |                                  | curvilinear coordinate system pressent.          |
 +-----------------+----------------------------------+--------------------------------------------------+
 | TunnelHit       | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
 |                 |                                  | material.                                        |
