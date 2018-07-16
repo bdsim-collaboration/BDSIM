@@ -93,6 +93,9 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   particleToStore           = globals->StoreTrajectoryParticle();
   particleIDToStore         = globals->StoreTrajectoryParticleID(); 
   depth                     = globals->StoreTrajectoryDepth();
+  samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
+  sRangeToStore             = globals->StoreTrajectoryELossSRange();
+
 
   printModulo = globals->PrintModuloEvents();
 
@@ -111,6 +114,11 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+
+  // set samplers for trajectory (cannot be done in contructor)
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
+
   // reset navigators to ensure no mis-navigating
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   
@@ -305,6 +313,44 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, false));
       }
     
+    // loop over energy hits to connect trajectories
+    if(sRangeToStore.size() != 0)
+      {
+	G4int n_hit = energyCounterHits->entries();
+	BDSEnergyCounterHit *hit;
+	for(G4int i=0;i<n_hit;i++)
+	  {
+	    hit = (*energyCounterHits)[i];
+	    G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
+	    double dS = hit->GetSHit();
+	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
+	      {
+		
+		if ( dS >= (*v).first && dS <= (*v).second) 
+		  {
+		    interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
+		    break;
+		  }
+	      }
+	  }
+      }
+
+    // loop over samplers to connect trajectories
+    if(samplerIDsToStore.size() != 0)
+      {
+	G4int n_hit = SampHC->entries();
+	for(G4int i=0;i<n_hit;i++)
+	  {
+	    G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
+	    BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
+	    G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
+	    if(std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(),samplerIndex) != samplerIDsToStore.end())
+	      {
+		interestingTraj[trackIDMap[(*SampHC)[i]->GetTrackID()]] = true;
+	      }
+	  }
+      } 
+
     // Connect trajectory graphs
     if (trajConnect && trackIDMap.size() > 1)
       {
@@ -313,33 +359,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {connectTraj(interestingTraj, i.first);}
       }
   }
-
   
-  // loop over energy hits to connect trajectories 
-  if(true) 
-    {
-      G4int n_hit = energyCounterHits->entries();
-      BDSEnergyCounterHit *hit;
-      for(G4int i=0;i<n_hit;i++)
-	{
-	  hit = (*energyCounterHits)[i];
-	  //	  G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
-	}
-    }
-
-  // loop over samplers to connect trajectories 
-  if(true) 
-    {
-      G4int n_hit = SampHC->entries();
-      for(G4int i=0;i<n_hit;i++) 
-	{
-	  G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
-	  BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
-	  //	  G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
-	}
-    }
   
-
+  
   // Output interesting trajectories
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;

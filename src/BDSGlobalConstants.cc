@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSSamplerRegistry.hh"
 
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -207,4 +208,43 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete visibleDebugVisAttr;
 
   instance = nullptr;
+}
+
+std::vector<int> BDSGlobalConstants::StoreTrajectorySamplerIDs()
+{
+  std::vector<int> samplerIDs;
+
+  std::istringstream is(options.storeTrajectorySamplerID);
+  G4String tok;
+  while(is >> tok)
+    {
+      BDSSamplerRegistry* samplerRegistry = BDSSamplerRegistry::Instance();
+      int i=0;
+      for(auto info = samplerRegistry->begin(); info != samplerRegistry->end(); ++info)
+        {
+          if((*info).UniqueName() == tok)
+            {
+              samplerIDs.push_back(i);
+            }
+          i++;
+        }
+    }
+  return samplerIDs;
+}
+std::vector<std::pair<double,double>> BDSGlobalConstants::StoreTrajectoryELossSRange()
+{
+  std::vector<std::pair<double,double>> elossSRange;
+
+  std::istringstream is(options.storeTrajectoryELossSRange);
+  std::string tok;
+  while(is >> tok)
+    {
+      std::cout << tok << std::endl;
+      int loc = tok.find(":",0);
+      double rstart = std::stod(tok.substr(0, loc));
+      double rend    =std::stod(tok.substr(loc+1,tok.size()));
+      elossSRange.push_back(std::pair<double,double>(rstart,rend));
+    }
+
+  return elossSRange;
 }
