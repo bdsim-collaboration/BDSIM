@@ -1,30 +1,61 @@
-class BDSAcceleratorComponent;
-class BDSIntegratorSet;
-class BDSLine;
-class BDSMagnet;
-class BDSMagnetStrength;
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
+University of London 2001 - 2018.
 
-namespace GMAD
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef BDSUNDULATOR_H
+#define BDSUNDULATOR_H
+
+#include "globals.hh"
+#include "BDSAcceleratorComponent.hh"
+
+/**
+ * @brief Undulator.
+ *
+ * @author Will Shields
+ */
+
+class BDSUndulator: public BDSAcceleratorComponent
 {
-  struct Element;
-}
+public:
+  BDSUndulator(G4String name,
+               G4double length,
+               G4double outerDiameter,
+               G4double periodIn,
+               G4double magnetHeightIn,
+               G4double undulatorGapIn,
+               G4String materialIn = "iron"
+  );
 
-namespace BDS
-{
-  /// This calculates and constructs a BDSLine* of BDSMagnet*. A single magnet will be constructed and placed
-  /// multiple times.
-  BDSAcceleratorComponent *BuildUndulator(const G4String &elementName,
-                                            const GMAD::Element *element,
-                                            BDSMagnetStrength *st,
-                                            const G4double brho,
-                                            const BDSIntegratorSet *integratorSet);
+    virtual ~BDSUndulator();
 
-  /// Function to return a single sector bend section.
-  BDSMagnet *BuildUndulatorMagnet(const GMAD::Element *element,
-                                  const G4String name,
-                                  const G4double arcLength,
-                                  const BDSMagnetStrength *strength,
-                                  const G4double brho,
-                                  const BDSIntegratorSet *integratorSet,
-                                  const G4bool yokeOnLeft);
-}
+protected:
+  virtual void Build();
+
+  virtual void BuildContainerLogicalVolume();
+
+  /// Function to place a single undulator period.
+  void BuildUndulatorMagnet();
+
+  G4double outerDiameter;
+  G4double undulatorPeriod;
+  G4String material;
+  G4double magnetHeight;
+  G4double magnetGap;
+};
+
+#endif
