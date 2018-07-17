@@ -954,18 +954,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  SetBeta0(st);
-  G4double field  = element->B * CLHEP::tesla;
-  (*st)["field"]  = field*element->scaling;
-  (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
-  (*st)["length"] = element->l * CLHEP::m; // arc length
-
-#ifdef BDSDEBUG
-  G4cout << "Field (T)   " << (*st)["field"] / CLHEP::tesla << G4endl;
-#endif
-
-  return BDS::BuildUndulator(elementName, element, st, brho, integratorSet);
+  return (new BDSUndulator(elementName,
+                      element->l * CLHEP::m,
+                      PrepareOuterDiameter(element),
+                      element->undulatorPeriod * CLHEP::m,
+                      PrepareOuterDiameter(element),    // magnet height to be added
+                      PrepareOuterDiameter(element)));  // undulator gap to be added
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
