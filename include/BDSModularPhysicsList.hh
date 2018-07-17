@@ -209,6 +209,7 @@ private:
   void Shielding();
   void Stopping();
   void SynchRad();
+  void TransitionRadiation();
 #if G4VERSION_NUMBER > 1019
   void EmGS();
 #endif

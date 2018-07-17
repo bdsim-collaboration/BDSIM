@@ -21,18 +21,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4AutoDelete.hh"
 #include "G4TransitionRadiation.hh"
+#include "G4VTransitionRadiation.hh"
 #include "G4Gamma.hh"
 #include "G4LeptonConstructor.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PhysicsListHelper.hh"
 #include "G4Version.hh"
+#include "G4ForwardXrayTR.hh"
+#include "G4Scintillation.hh"
 
-BDSPhysicsTransitionRadiation::BDSPhysicsTransitionRadiation(G4double maxPhotonsPerStepIn,
-					 G4double maxBetaChangePerStepIn):
-  G4VPhysicsConstructor("BDSPhysicsTransitionRadiation"),
-  maxPhotonsPerStep(maxPhotonsPerStepIn),
-  maxBetaChangePerStep(maxBetaChangePerStepIn)
+BDSPhysicsTransitionRadiation::BDSPhysicsTransitionRadiation():
+  G4VPhysicsConstructor("BDSPhysicsTransitionRadiation")
 {;}
 
 BDSPhysicsTransitionRadiation::~BDSPhysicsTransitionRadiation()
@@ -49,22 +49,16 @@ void BDSPhysicsTransitionRadiation::ConstructParticle()
 
 void BDSPhysicsTransitionRadiation::ConstructProcess()
 {
+
   if (Activated())
     {return;}
   
-  G4TransitionRadiation* transitionRadiation = new G4TransitionRadiation();
+//  G4VTransitionRadiation* transitionRadiation = new G4VTransitionRadiation();
+    G4VTransitionRadiation* transitionRadiation = new G4VTransitionRadiation();
   G4AutoDelete::Register(transitionRadiation);
 
-  // reduce memory profile
-  transitionRadiation->SetTrackSecondariesFirst(true);
-
-  // common settings (similar to optical physics)
-  if (maxPhotonsPerStep > 0)
-    {transitionRadiation->SetMaxNumPhotonsPerStep(maxPhotonsPerStep);}
-  transitionRadiation->SetMaxBetaChangePerStep(maxBetaChangePerStep);
-
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
-    
+
 #if G4VERSION_NUMBER > 1029
   auto aParticleIterator = GetParticleIterator();
 #endif
@@ -78,4 +72,6 @@ void BDSPhysicsTransitionRadiation::ConstructProcess()
     }
 
   SetActivated();
-}
+
+ }
+

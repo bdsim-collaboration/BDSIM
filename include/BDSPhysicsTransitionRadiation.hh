@@ -33,21 +33,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSPhysicsTransitionRadiation: public G4VPhysicsConstructor, public BDSSingleUse
 {
 public:
-  BDSPhysicsTransitionRadiation(G4double maxPhotonsPerStepIn,
-		      G4double maxBetaChangePerStepIn);
+  BDSPhysicsTransitionRadiation();
   virtual ~BDSPhysicsTransitionRadiation();
 
   virtual void ConstructParticle();
+
   virtual void ConstructProcess();
 
-private:
+//private:
 
-  BDSPhysicsTransitionRadiation() = delete;
-  
-  /// @{ Parameter from global constants to control cherenkov physics.
+//  BDSPhysicsTransitionRadiation() = delete;
+/*
+  /// @{ Parameter from global constants to control transitionRadiation physics.
   G4double maxPhotonsPerStep;
   G4double maxBetaChangePerStep;
-  /// @}
+  /// @} */
 };
 
 #endif
