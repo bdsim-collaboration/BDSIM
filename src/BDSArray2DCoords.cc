@@ -24,11 +24,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSArray2DCoords::BDSArray2DCoords(G4int nXIn, G4int nYIn,
 				   G4double xMinIn, G4double xMaxIn,
-				   G4double yMinIn, G4double yMaxIn):
+				   G4double yMinIn, G4double yMaxIn,
+				   BDSDimensionType xDimensionIn,
+				   BDSDimensionType yDimensionIn):
   BDSArray3DCoords(nXIn,nYIn,1,
 		   xMinIn,xMaxIn,
 		   yMinIn,yMaxIn,
-		   0,   1)
+		   0,   1,
+		   xDimensionIn,
+		   yDimensionIn)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSArray2DCoords const &a)

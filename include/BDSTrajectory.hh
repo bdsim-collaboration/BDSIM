@@ -32,14 +32,6 @@ class G4VTrajectoryPoint;
 
 typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
-class BDSTrajectory; // forward declaration so namespaced method can be at top
-
-namespace BDS
-{
-  /// Search the trajectory container for the primary trajectory.
-  BDSTrajectory* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
-}
-
 /**
  * @brief Trajectory information from track including last scatter etc.
  * 
@@ -51,15 +43,17 @@ namespace BDS
 class BDSTrajectory: public G4Trajectory
 {
 public:
-  BDSTrajectory(const G4Track* aTrack, G4bool interactive);
+  BDSTrajectory(const G4Track* aTrack,
+		const G4bool& interactiveIn,
+		const G4bool& suppressTransportationSteps);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
+
   virtual ~BDSTrajectory();
 
   inline void* operator new(size_t);
   inline void operator delete(void*);
-  inline int operator == (const BDSTrajectory& right) const
-  {return (this==&right);}
+  inline int operator == (const BDSTrajectory& right) const {return (this==&right);}
 
   /// Append a step point to this trajectory. This is required for the trajectory
   /// points to show up in the visualisation correctly.
@@ -68,16 +62,19 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  G4VTrajectoryPoint* GetPoint(G4int i) const {return (*fpBDSPointsContainer)[i];}
+  /// Access a point - use this class's container.
+  virtual G4VTrajectoryPoint* GetPoint(G4int i) const {return (*fpBDSPointsContainer)[i];}
 
-  virtual int GetPointEntries()    const {return fpBDSPointsContainer->size();}
+  /// Get number of trajectory points in this trajectory.
+  virtual int GetPointEntries() const {return fpBDSPointsContainer->size();}
+
+  /// Method to identify which one is a primary. Overridden in derived class.
+  virtual G4bool IsPrimary() const {return false;}
 
   void  SetParentIndex(G4int parentIndex)  {fParentIndex = parentIndex;}
   G4int GetParentIndex()               const {return fParentIndex;}
   G4int GetCreatorProcessType()    const {return creatorProcessType;}
   G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
-
-  //  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
 
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);

@@ -22,12 +22,13 @@ simple_testing(bunch-ring                     "--file=ring.gmad"                
 simple_testing(bunch-sixtrack                 "--file=sixtrack.gmad"                "")
 simple_testing(bunch-square                   "--file=square.gmad"                  "")
 simple_testing(bunch-userfile                 "--file=userfile.gmad"                "")
+simple_testing(bunch-userfile-one-column      "--file=userfile_one_column.gmad"     "")
 simple_testing(bunch-userfile-placet          "--file=userfile-placet.gmad"         "")
 
 if (USE_GZSTREAM)
-  simple_testing(bunch-user-file-gz "--file=userfile-gz.gmad" "")
+  simple_testing(bunch-userfile-gz "--file=userfile-gz.gmad" "")
 else()
-  simple_fail(bunch-user-file-gz    "--file=userfile-gz.gmad" "")
+  simple_fail(bunch-userfile-gz    "--file=userfile-gz.gmad" "")
 endif()
 
 set(TESTING_ARGS --ngenerate=32)

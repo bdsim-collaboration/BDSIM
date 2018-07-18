@@ -1,3 +1,0 @@
-include sbend_fringe.gmad;
-
-option, integratorSet="bdsimmatrix";

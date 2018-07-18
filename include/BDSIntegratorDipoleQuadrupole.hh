@@ -84,7 +84,7 @@ private:
   const G4double    nominalRho;     ///< Cached magnet property, nominal bending radius.
   const G4double    nominalField;   ///< Cached magnet property, nominal field strength.
   const G4double    fieldRatio;     ///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
-  const	G4double 	nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalEnergy;  ///< Nominal beam energy
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.
   const G4double    nominalAngle;     ///< Cache of the field angle.

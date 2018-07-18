@@ -1,0 +1,3 @@
+include sbend_poleface.gmad;
+
+option, integratorSet="bdsimtwo";

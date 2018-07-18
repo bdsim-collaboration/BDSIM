@@ -246,6 +246,7 @@ public:
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
   inline G4bool   MatchDistrFileLength()     const {return G4bool  (beam.matchDistrFileLength);}
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
+  inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}

@@ -17,10 +17,13 @@ simple_testing(component-multipole-thick     "--file=multipole_thick.gmad" ${OVE
 simple_testing(component-multipole-thin      "--file=multipole_thin.gmad"  ${OVERLAP_CHECK})
 simple_testing(component-muon-spoiler        "--file=muon_spoiler.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-octupole            "--file=octupole.gmad"        ${OVERLAP_CHECK})
+simple_testing(component-paralleltransporter "--file=paralleltransporter.gmad" ${OVERLAP_CHECK})
 simple_testing(component-quadrupole          "--file=quadrupole.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-quadrupole-offset   "--file=quadOffset.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-rcol                "--file=rcol.gmad"            ${OVERLAP_CHECK})
-simple_testing(component-rcol-Tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
+simple_testing(component-rcol-tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
+simple_testing(component-rmatrix             "--file=rmatrix.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-rmatrix-thin        "--file=rmatrix_thin.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})
 simple_testing(component-rf-cavity           "--file=rfcavity.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-sampler             "--file=sampler.gmad"         ${OVERLAP_CHECK})
@@ -30,10 +33,7 @@ simple_testing(component-sextupole           "--file=sextupole.gmad"       ${OVE
 simple_testing(component-shield              "--file=shield.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-solenoid            "--file=solenoid.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-tunnel              "--file=tunnel.gmad"          ${OVERLAP_CHECK})
-simple_testing(component-vKicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
-simple_testing(component-rmatrix             "--file=rmatrix.gmad"             ${OVERLAP_CHECK})
-simple_testing(component-rmatrix_thin        "--file=rmatrix_thin.gmad"        ${OVERLAP_CHECK})
-simple_testing(component-paralleltransporter "--file=paralleltransporter.gmad" ${OVERLAP_CHECK})
+simple_testing(component-vkicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
 
 
 # crystal tests - geometry works in earlier versions but physics list not present

@@ -35,10 +35,3 @@ G4ThreeVector BDSInterpolator4D::GetInterpolatedValue(G4double x,
   BDSFieldValue r = GetInterpolatedValueT(x,y,z,t);
   return G4ThreeVector(r.x(), r.y(), r.z());
 }
-
-G4ThreeVector BDSInterpolator4D::GetInterpolatedValue(G4ThreeVector position,
-						      G4double      t) const
-{
-  BDSFieldValue r = GetInterpolatedValueT(position.x(), position.y(), position.z(), t);
-  return G4ThreeVector(r.x(), r.y(), r.z());
-}

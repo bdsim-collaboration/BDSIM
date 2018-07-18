@@ -46,9 +46,9 @@ public:
   /// the name of the directory to create in the output root file for the combined
   /// existing histrograms from that tree, whether to operate on each entry in the
   /// tree and whether or not we're in debug mode.
-  Analysis(std::string treeNameIn,
+  Analysis(const std::string& treeNameIn,
 	   TChain*     chainIn,
-	   std::string mergedHistogramNameIn,
+	   const std::string& mergedHistogramNameIn,
 	   bool        perEntryAnalysis = true,
 	   bool        debugIn          = false);
   virtual ~Analysis();
@@ -71,7 +71,7 @@ public:
   void PreparePerEntryHistograms();
 
   /// Accumulate means and variances for per entry histograms.
-  void AccumulatePerEntryHistograms(const int& entryNumber);
+  void AccumulatePerEntryHistograms(const long int& entryNumber);
 
   /// Prepare result of per entry histogram accumulation.
   void TerminatePerEntryHistograms();

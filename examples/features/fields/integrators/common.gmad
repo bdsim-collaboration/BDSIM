@@ -1,6 +1,6 @@
-box: element, fieldAll="f1", l=1.1*m, geometry="gdml:abox.gdml";
+d1: drift, l=1.1*m, fieldAll="f1";
 
-l1: line=(box);
+l1: line=(d1);
 
 use, l1;
 
