@@ -65,6 +65,8 @@ private:
 
   /// Cache of all the possible magnet strength parameters.
   std::vector<G4String> magnetKeys;
+
+  const int gp; ///< General precision - number of characters / item.
 };
 
 #endif
