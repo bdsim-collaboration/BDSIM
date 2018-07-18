@@ -81,7 +81,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
 const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::unitsFactorsMap = {
     {"beta0"         , {"",    1.0}},
     {"field"         , {"T",   CLHEP::tesla}},
-    {"efield"        , {"",    1.0}},
+    {"efield"        , {"",    CLHEP::megavolt}},
     {"bx"            , {"",    1.0}},
     {"by"            , {"",    1.0}},
     {"bz"            , {"",    1.0}},
