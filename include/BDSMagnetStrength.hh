@@ -68,9 +68,14 @@ public:
   G4double& operator[](const G4String key);
   const G4double& operator[](G4String key) const;
   const G4double& at(G4String key) const {return (*this)[key];}
+  
+  /// Accessors with array / map [] operator.
+  G4double& operator[](const G4String& key);
+  const G4double& operator[](const G4String& key) const;
+  const G4double& at(const G4String& key) const {return (*this)[key];}
 
   /// Accessor to all keys.
-  static const std::vector<G4String> AllKeys() {return keys;}
+  static const std::vector<G4String>& AllKeys() {return keys;}
 
   /// Accessor for normal component keys - k1 - k12
 
@@ -104,7 +109,7 @@ private:
 
   /// Accessor similar to [] but without linear search through keys to check validity.
   /// for fast internal use.
-  const G4double& GetValue(const G4String key) const;
+  const G4double& GetValue(const G4String& key) const;
 
   /// Vector of the allowed strength parameters.
   static const std::vector<G4String> keys;

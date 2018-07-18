@@ -122,7 +122,7 @@ G4double& BDSMagnetStrength::operator[](const G4String key)
     }
 }
 
-const G4double& BDSMagnetStrength::operator[](G4String key) const
+const G4double& BDSMagnetStrength::operator[](const G4String& key) const
 {
   if (ValidKey(key))
     {return GetValue(key);}
@@ -157,7 +157,7 @@ G4bool BDSMagnetStrength::ValidKey(const G4String key) const
     {return false;}
 }
 
-const G4double& BDSMagnetStrength::GetValue(const G4String key) const
+const G4double& BDSMagnetStrength::GetValue(const G4String& key) const
 {
   auto it = strengths.find(key);
   if (it != strengths.end())
