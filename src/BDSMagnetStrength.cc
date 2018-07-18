@@ -178,10 +178,21 @@ std::ostream& BDSMagnetStrength::WriteValuesInSIUnitsForSuvey(std::ostream& out,
   return out;
 }
 
-const G4String BDSMagnetStrength::UnitName(const G4String& key)
+G4String BDSMagnetStrength::UnitName(const G4String& key)
 {
   if (ValidKey(key))
     {return unitsFactorsMap.at(key).unit;}
+  else
+    {
+      G4cerr << "Invalid key \"" << key << "\"" << G4endl;
+      exit(1);
+    }
+}
+
+G4double BDSMagnetStrength::Unit(const G4String& key)
+{
+  if (ValidKey(key))
+    {return unitsFactorsMap.at(key).factor;}
   else
     {
       G4cerr << "Invalid key \"" << key << "\"" << G4endl;

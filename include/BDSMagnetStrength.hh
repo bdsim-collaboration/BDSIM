@@ -89,12 +89,10 @@ public:
   static const std::map<G4String, unitsFactors>& UnitsAndFactors() {return unitsFactorsMap;}
 
   /// Accessor for normal component keys - k1 - k12.
-  inline std::vector<G4String> NormalComponentKeys() const
-  {return normalComponentKeys;}
+  static inline std::vector<G4String> NormalComponentKeys() {return normalComponentKeys;}
 
   /// Accessor for skew component keys - k1 - k12.
-  inline std::vector<G4String> SkewComponentKeys() const
-  {return skewComponentKeys;}
+  static inline std::vector<G4String> SkewComponentKeys() {return skewComponentKeys;}
 
   /// Accessor for all normal components - k1 - k12.
   std::vector<G4double> NormalComponents() const;
@@ -103,7 +101,10 @@ public:
   std::vector<G4double> SkewComponents() const;
 
   /// Access a unit name for a given key.
-  static const G4String UnitName(const G4String& key);
+  static G4String UnitName(const G4String& key);
+
+  /// Access a unit factor for a given key.
+  static G4double Unit(const G4String& key);
   
   ///@{ Iterator mechanics.
   typedef StrengthMap::iterator       iterator;
