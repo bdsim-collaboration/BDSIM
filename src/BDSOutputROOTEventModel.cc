@@ -290,7 +290,7 @@ void BDSOutputROOTEventModel::Fill()
 	hkick.push_back((float)(*ms)["hkick"]);
 	vkick.push_back((float)(*ms)["vkick"]);
 	bField.push_back((float)(*ms)["field"]/CLHEP::tesla);
-	eField.push_back((float)(*ms)["eField"]/CLHEP::megavolt);
+	eField.push_back((float)(*ms)["efield"]/CLHEP::megavolt);
 	
 	// these are mangled in BDSMagnetStrength so can't write them out just now
 	e1.push_back(0); // / CLHEP::rad
