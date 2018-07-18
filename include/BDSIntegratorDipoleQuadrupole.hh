@@ -88,8 +88,6 @@ private:
   const G4double    fieldAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
   G4double          tilt;           ///< Tilt offset transform for field.
-  G4double          primaryMass;    ///< Primary particle rest mass
-  G4double          primaryCharge;  ///< Primary particle charge
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
