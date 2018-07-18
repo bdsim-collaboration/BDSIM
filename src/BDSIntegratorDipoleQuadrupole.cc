@@ -110,7 +110,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
 
   // Revert to backup stepper for zero angle bends with a specified finite field.
   // Otherwise CLtransform angle is zero and rho is NaN
-  if ((!BDS::IsFinite(fieldAngle)) || std::isnan(rho))
+  if ((!BDS::IsFinite(fieldAngle)) || std::isnan(nominalRho))
   {
     dipole->Stepper(yIn, dydx, h, yOut, yErr);
     SetDistChord(dipole->DistChord());
