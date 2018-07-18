@@ -437,7 +437,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -467,7 +467,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
   // nominal energy needed by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["nominalenergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -508,7 +508,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
   // nominal energy required by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["nominalenergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
@@ -586,25 +586,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
   
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
       G4double         angleX = std::asin(hkick * scaling);
       G4double         angleY = std::asin(vkick * scaling);
 
@@ -1686,9 +1683,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double scaling     = el->scaling;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
-    {(*st)["eField"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
@@ -1713,7 +1710,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 

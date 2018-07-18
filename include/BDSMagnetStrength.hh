@@ -61,31 +61,52 @@ public:
 
   ~BDSMagnetStrength(){;}
 
-  /// Output stream
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSMagnetStrength const &st);
 
-  /// Accessors with array / map [] operator
-  G4double& operator[](const G4String key);
-  const G4double& operator[](G4String key) const;
-  const G4double& at(G4String key) const {return (*this)[key];}
+  /// Print out each magnet strength value in order according to keys multiplied by
+  /// the correct factors to return to the units on the input side of BDSIM rather than
+  /// the Geant4 ones used internally.
+  std::ostream& WriteValuesInSIUnitsForSuvey(std::ostream& out,
+					     const G4int precision = 14) const;
 
-  static const std::vector<G4String> AllKeys() {return keys;}
+  /// Structure for unit names and numerical factors from Geant4 to SI(ish).
+  struct unitsFactors
+  {
+    G4String unit;
+    G4double factor;
+  };
+  
+  /// Accessors with array / map [] operator.
+  G4double& operator[](const G4String& key);
+  const G4double& operator[](const G4String& key) const;
+  const G4double& at(const G4String& key) const {return (*this)[key];}
 
-  /// Accessor for normal component keys - k1 - k12
-  inline std::vector<G4String> NormalComponentKeys() const
-  {return normalComponentKeys;}
+  /// Accessor to all keys.
+  static const std::vector<G4String>& AllKeys() {return keys;}
 
-  /// Accessor for skew component keys - k1 - k12
-  inline std::vector<G4String> SkewComponentKeys() const
-  {return skewComponentKeys;}
+  /// Accessor to all units.
+  static const std::map<G4String, unitsFactors>& UnitsAndFactors() {return unitsFactorsMap;}
 
-  /// Accessor for all normal components - k1 - k12
+  /// Accessor for normal component keys - k1 - k12.
+  static inline std::vector<G4String> NormalComponentKeys() {return normalComponentKeys;}
+
+  /// Accessor for skew component keys - k1 - k12.
+  static inline std::vector<G4String> SkewComponentKeys() {return skewComponentKeys;}
+
+  /// Accessor for all normal components - k1 - k12.
   std::vector<G4double> NormalComponents() const;
 
-  /// Accessor for all skew components - k1 - k12
+  /// Accessor for all skew components - k1 - k12.
   std::vector<G4double> SkewComponents() const;
+
+  /// Access a unit name for a given key.
+  static G4String UnitName(const G4String& key);
+
+  /// Access a unit factor for a given key.
+  static G4double Unit(const G4String& key);
   
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics.
   typedef StrengthMap::iterator       iterator;
   typedef StrengthMap::const_iterator const_iterator;
   iterator       begin()       {return strengths.begin();}
@@ -96,26 +117,29 @@ public:
   ///@}
   
 private:
-  /// Whether or not the supplied key is a valid magnet strength parameter
-  G4bool ValidKey(const G4String key) const;
+  /// Whether or not the supplied key is a valid magnet strength parameter.
+  static G4bool ValidKey(const G4String& key);
 
-  /// Accessor similar to [] but without linear search through keys to check validity
+  /// Accessor similar to [] but without linear search through keys to check validity.
   /// for fast internal use.
-  const G4double& GetValue(const G4String key) const;
+  const G4double& GetValue(const G4String& key) const;
 
-  /// Vector of the allowed strength parameters
+  /// Vector of the allowed strength parameters.
   static const std::vector<G4String> keys;
 
-  /// Vector of the normal component strength parameters
+  /// Map of each unit name and numerical factor to each key.
+  static const std::map<G4String, unitsFactors> unitsFactorsMap;
+
+  /// Vector of the normal component strength parameters.
   static const std::vector<G4String> normalComponentKeys;
 
-  /// Vector of the normal component strength parameters
+  /// Vector of the normal component strength parameters.
   static const std::vector<G4String> skewComponentKeys;
 
-  /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value
+  /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value.
   static const G4double zero;
 
-  /// Dummy variable that can be overwritten
+  /// Dummy variable that can be overwritten.
   static G4double variable;
 };
 
