@@ -466,17 +466,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["field"]  = field*element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
-  (*st)["scaling"]= element->scaling;
   // central energy required by some integrators. Default nominal energy but check for scaling.
-  G4double centralEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-  if (BDS::IsFinite(element->scaling))
-    {
-      G4double scaledMom= BDSGlobalConstants::Instance()->BeamParticleDefinition()->Momentum()*element->scaling;
-      G4double particleMass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
-      centralEnergy = std::sqrt(std::pow(scaledMom, 2) + std::pow(particleMass, 2));
-    }
-  (*st)["nominalEnergy"] = centralEnergy;
-
+  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -516,16 +507,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["field"]  = field * element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
-  (*st)["scaling"]= element->scaling;
-  // central energy required by some integrators. Default nominal energy but check for scaling.
-  G4double centralEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-  if (BDS::IsFinite(element->scaling))
-    {
-        G4double scaledMom= BDSGlobalConstants::Instance()->BeamParticleDefinition()->Momentum()*element->scaling;
-        G4double particleMass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
-        centralEnergy = std::sqrt(std::pow(scaledMom, 2) + std::pow(particleMass, 2));
-    }
-  (*st)["nominalEnergy"] = centralEnergy;
+  // nominal energy required by some integrators. Default nominal energy but check for scaling.
+  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
