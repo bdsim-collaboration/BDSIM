@@ -586,25 +586,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
   
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
       G4double         angleX = std::asin(hkick * scaling);
       G4double         angleY = std::asin(vkick * scaling);
 
