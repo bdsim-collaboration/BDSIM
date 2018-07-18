@@ -20,7 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 globals / types
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <algorithm>
+#include <iomanip>
 #include <map>
 #include <vector>
 
@@ -75,6 +78,73 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "rmat44"
 };
 
+const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::unitsFactorsMap = {
+    {"beta0"         , {"",    1.0}},
+    {"field"         , {"T",   CLHEP::tesla}},
+    {"efield"        , {"",    1.0}},
+    {"bx"            , {"T",   CLHEP::tesla}},
+    {"by"            , {"T",   CLHEP::tesla}},
+    {"bz"            , {"T",   CLHEP::tesla}},
+    {"polefaceangle" , {"rad", CLHEP::rad}},
+    {"polefacecurv"  , {"rad", CLHEP::rad}},
+    {"angle"         , {"rad", CLHEP::rad}},
+    {"length"        , {"m",   CLHEP::m}},
+    {"fringeint"     , {"",    1.0}},
+    {"fringeintk2"   , {"",    1.0}},
+    {"hgap"          , {"m",   CLHEP::m}},
+    {"hkick"         , {"",    1.0}},
+    {"vkick"         , {"",    1.0}},
+    {"ks"            , {"",    1.0}},
+    {"k1"            , {"",    1.0}},
+    {"k2"            , {"",    1.0}},
+    {"k3"            , {"",    1.0}},
+    {"k4"            , {"",    1.0}},
+    {"k5"            , {"",    1.0}},
+    {"k6"            , {"",    1.0}},
+    {"k7"            , {"",    1.0}},
+    {"k8"            , {"",    1.0}},
+    {"k9"            , {"",    1.0}},
+    {"k10"           , {"",    1.0}},
+    {"k11"           , {"",    1.0}},
+    {"k12"           , {"",    1.0}},
+    {"k1s"           , {"",    1.0}},
+    {"k2s"           , {"",    1.0}},
+    {"k3s"           , {"",    1.0}},
+    {"k4s"           , {"",    1.0}},
+    {"k5s"           , {"",    1.0}},
+    {"k6s"           , {"",    1.0}},
+    {"k7s"           , {"",    1.0}},
+    {"k8s"           , {"",    1.0}},
+    {"k9s"           , {"",    1.0}},
+    {"k10s"          , {"",    1.0}},
+    {"k11s"          , {"",    1.0}},
+    {"k12s"          , {"",    1.0}},
+    {"frequency"     , {"",    CLHEP::megahertz}},
+    {"phase"         , {"rad", CLHEP::rad}},
+    {"equatorradius" , {"m",   CLHEP::m}},
+    {"nominalenergy" , {"GeV", CLHEP::GeV}},
+    {"kick1"         , {"",    1.0}},
+    {"kick2"         , {"",    1.0}},
+    {"kick3"         , {"",    1.0}},
+    {"kick4"         , {"",    1.0}},
+    {"rmat11"        , {"",    1.0}},
+    {"rmat12"        , {"",    1.0}},
+    {"rmat13"        , {"",    1.0}},
+    {"rmat14"        , {"",    1.0}},
+    {"rmat21"        , {"",    1.0}},
+    {"rmat22"        , {"",    1.0}},
+    {"rmat23"        , {"",    1.0}},
+    {"rmat24"        , {"",    1.0}},
+    {"rmat31"        , {"",    1.0}},
+    {"rmat32"        , {"",    1.0}},
+    {"rmat33"        , {"",    1.0}},
+    {"rmat34"        , {"",    1.0}},
+    {"rmat41"        , {"",    1.0}},
+    {"rmat42"        , {"",    1.0}},
+    {"rmat43"        , {"",    1.0}},
+    {"rmat44"        , {"",    1.0}}
+};
+
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
   "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
 
@@ -100,7 +170,26 @@ std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
   return out;
 }
 
-G4double& BDSMagnetStrength::operator[](const G4String key)
+std::ostream& BDSMagnetStrength::WriteValuesInSIUnitsForSuvey(std::ostream& out,
+							      const G4int precision) const
+{
+  for (auto& key : keys)
+    {out << " " << std::setw(precision) << GetValue(key) / unitsFactorsMap.at(key).factor;}
+  return out;
+}
+
+const G4String BDSMagnetStrength::UnitName(const G4String& key)
+{
+  if (ValidKey(key))
+    {return unitsFactorsMap.at(key).unit;}
+  else
+    {
+      G4cerr << "Invalid key \"" << key << "\"" << G4endl;
+      exit(1);
+    }
+}
+
+G4double& BDSMagnetStrength::operator[](const G4String& key)
 {
   if (ValidKey(key))
     {
@@ -149,7 +238,7 @@ std::vector<G4double> BDSMagnetStrength::SkewComponents() const
   return result;
 }
 
-G4bool BDSMagnetStrength::ValidKey(const G4String key) const
+G4bool BDSMagnetStrength::ValidKey(const G4String& key)
 {
   if (std::find(keys.begin(), keys.end(), key) != keys.end())
     {return true;}
