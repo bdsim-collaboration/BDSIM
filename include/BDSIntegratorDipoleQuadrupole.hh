@@ -81,6 +81,7 @@ private:
   const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
   const G4double    nominalBeta;    ///< Cached nominal relativistic beta of the nominal beam particle.
   const G4double    nominalRho;     ///< Cached magnet property, nominal bending radius.
+  const G4double    nominalField;   ///< Cached magnet property, nominal field strength.
   const G4double    fieldRatio;     ///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
   const	G4double 	nominalEnergy;  ///< Nominal beam energy
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
