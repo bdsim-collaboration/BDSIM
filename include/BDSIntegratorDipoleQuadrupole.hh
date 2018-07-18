@@ -85,7 +85,7 @@ private:
   const	G4double 	nominalEnergy;  ///< Nominal beam energy
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.
-  const G4double    fieldAngle;     ///< Cache of the field angle.
+  const G4double    nominalAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
   G4double          tilt;           ///< Tilt offset transform for field.
 
