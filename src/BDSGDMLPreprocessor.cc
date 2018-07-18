@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef USE_GDML
-#include "BDSDEBUG.hh"
+#include "BDSDebug.hh"
 #include "BDSGDMLPreprocessor.hh"
 #include "BDSTemporaryFiles.hh"
 #include "BDSUtilities.hh"
