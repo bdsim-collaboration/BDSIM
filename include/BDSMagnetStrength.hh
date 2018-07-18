@@ -61,7 +61,7 @@ public:
 
   ~BDSMagnetStrength(){;}
 
-  /// Output stream
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSMagnetStrength const &st);
 
   /// Accessors with array / map [] operator
@@ -69,23 +69,26 @@ public:
   const G4double& operator[](G4String key) const;
   const G4double& at(G4String key) const {return (*this)[key];}
 
+  /// Accessor to all keys.
   static const std::vector<G4String> AllKeys() {return keys;}
 
   /// Accessor for normal component keys - k1 - k12
+
+  /// Accessor for normal component keys - k1 - k12.
   inline std::vector<G4String> NormalComponentKeys() const
   {return normalComponentKeys;}
 
-  /// Accessor for skew component keys - k1 - k12
+  /// Accessor for skew component keys - k1 - k12.
   inline std::vector<G4String> SkewComponentKeys() const
   {return skewComponentKeys;}
 
-  /// Accessor for all normal components - k1 - k12
+  /// Accessor for all normal components - k1 - k12.
   std::vector<G4double> NormalComponents() const;
 
-  /// Accessor for all skew components - k1 - k12
+  /// Accessor for all skew components - k1 - k12.
   std::vector<G4double> SkewComponents() const;
   
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics.
   typedef StrengthMap::iterator       iterator;
   typedef StrengthMap::const_iterator const_iterator;
   iterator       begin()       {return strengths.begin();}
@@ -96,26 +99,27 @@ public:
   ///@}
   
 private:
-  /// Whether or not the supplied key is a valid magnet strength parameter
+  /// Whether or not the supplied key is a valid magnet strength parameter.
   G4bool ValidKey(const G4String key) const;
 
-  /// Accessor similar to [] but without linear search through keys to check validity
+  /// Accessor similar to [] but without linear search through keys to check validity.
   /// for fast internal use.
   const G4double& GetValue(const G4String key) const;
 
-  /// Vector of the allowed strength parameters
+  /// Vector of the allowed strength parameters.
   static const std::vector<G4String> keys;
 
   /// Vector of the normal component strength parameters
+  /// Vector of the normal component strength parameters.
   static const std::vector<G4String> normalComponentKeys;
 
-  /// Vector of the normal component strength parameters
+  /// Vector of the normal component strength parameters.
   static const std::vector<G4String> skewComponentKeys;
 
-  /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value
+  /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value.
   static const G4double zero;
 
-  /// Dummy variable that can be overwritten
+  /// Dummy variable that can be overwritten.
   static G4double variable;
 };
 
