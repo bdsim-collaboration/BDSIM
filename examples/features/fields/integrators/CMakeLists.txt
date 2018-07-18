@@ -1,12 +1,11 @@
-simple_testing(integrators-bdsimone     "--file=bdsimone.gmad"          "")
-simple_testing(integrators-bdsimtwo     "--file=one_of_each_base.gmad"  "")
-simple_testing(integrators-bdsimmatrix  "--file=bdsimmatrix.gmad"       "")
+simple_testing(integrators-bdsimone                 "--file=bdsimone.gmad"                 "")
+simple_testing(integrators-bdsimtwo                 "--file=one_of_each_base.gmad"         "")
+simple_testing(integrators-bdsimmatrix              "--file=bdsimmatrix.gmad"              "")
 simple_testing(integrators-bdsimmatrixfringescaling "--file=bdsimmatrixfringescaling.gmad" "")
 
 if (USE_GZSTREAM)
-  if (USE_GDML)
-    simple_testing(integrators-g4classicalrk4      "--file=g4classicalrk4.gmad" "")
-  endif()
+  simple_testing(integrators-g4classicalrk4         "--file=g4classicalrk4.gmad"      "")
+  simple_testing(integrators-g4cashkarprkf45        "--file=g4cashkarprkf45.gmad"     "")
 
   if (G4_MINOR_VERSION GREATER 2)
     simple_testing(integrators-g4bogackishampine23  "--file=g4bogackishampine23.gmad" "")

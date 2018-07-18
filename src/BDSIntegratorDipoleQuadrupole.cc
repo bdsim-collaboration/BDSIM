@@ -55,10 +55,11 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
+  primaryMass(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass()),
+  primaryCharge(BDSGlobalConstants::Instance()->BeamParticleDefinition()->Charge()),
+  totalEnergy(BDSGlobalConstants::Instance()->BeamParticleDefinition()->TotalEnergy()),
   dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
-  primaryMass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
-  primaryCharge = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Charge();
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
@@ -89,7 +90,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     }
 
   // Revert to the backup stepper if the particle charge or mass is not nominal
-  G4double charge = eq->FCof()/(eplus*c_light); //same equation as in BDSMagUsualEqRhs
+  G4double charge = fcof/(CLHEP::eplus*CLHEP::c_light); //same equation as in BDSMagUsualEqRhs
   G4double mass = std::sqrt(eq->Mass()); // Mass() returns mass squared
   if (!((mass == primaryMass) && (charge == primaryCharge)))
     {
@@ -99,7 +100,6 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     }
 
   // Revert to the backup stepper if the particle momentum is greater than 5% off nominal
-  G4double totalEnergy = BDSGlobalConstants::Instance()->BeamParticleDefinition()->TotalEnergy();
   G4double relEnergyDiff = (eq->TotalEnergy(yIn) - totalEnergy)/totalEnergy;
   if (std::abs(relEnergyDiff) > 0.05)
     {
@@ -107,6 +107,15 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
       SetDistChord(dipole->DistChord());
       return;
     }
+
+  // Revert to backup stepper for zero angle bends with a specified finite field. Otherwise CLtransform angle is zero
+  // and rho is NaN
+  if ((!BDS::IsFinite(fieldAngle)) || std::isnan(rho))
+  {
+    dipole->Stepper(yIn, dydx, h, yOut, yErr);
+    SetDistChord(dipole->DistChord());
+    return;
+  }
 
   // try out a simple dipole step first - dumb stepper has no error but is 2x as fast as normal step
   dipole->SingleStep(yIn, h, yOut);

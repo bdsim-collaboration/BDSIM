@@ -1,0 +1,18 @@
+f1: field, type="bmap1d",
+    	   magneticFile="bdsim1d:1dexample-along-z.dat",
+	   magneticInterpolator="cubic1d",
+	   integrator="g4classicalrk4",
+	   maximumStepLength=0.1*cm,
+	   bScaling=20,
+	   z=-30*cm;
+
+d1: drift, l=0.8*m, aper1=4*cm, fieldAll="f1";
+
+l1: line=(d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=3*GeV;
+
+option, ngenerate=1;

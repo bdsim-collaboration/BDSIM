@@ -44,13 +44,15 @@ public:
   EventAnalysis();
   
   /// Constructor intended for use to construct an event analysis object.
-  EventAnalysis(Event*  eventIn,
-		TChain* chain,
-		bool    perEntryAnalysis    = true,
-		bool    processSamplersIn   = true,
-		bool    debugIn             = false,
-		double  printModuloFraction = 0.01,
-		bool    emittanceOnTheFlyIn = false);
+  EventAnalysis(Event*   eventIn,
+		TChain*  chain,
+		bool     perEntryAnalysis    = true,
+		bool     processSamplersIn   = true,
+		bool     debugIn             = false,
+		double   printModuloFraction = 0.01,
+		bool     emittanceOnTheFlyIn = false,
+		long int eventStartIn        = 0,
+		long int eventEndIn          = -1);
 
   virtual ~EventAnalysis();
 
@@ -85,6 +87,8 @@ private:
   int  printModulo;       ///< Cache of print modulo fraction
   bool processSamplers;   ///< Whether to process samplers.
   bool emittanceOnTheFly; ///< Whether to calculate emittance fresh at each sampler.
+  long int eventStart;    ///< Event index to start analysis from.
+  long int eventEnd;      ///< Event index to end analysis at.
   
   ClassDef(EventAnalysis,1);
 };

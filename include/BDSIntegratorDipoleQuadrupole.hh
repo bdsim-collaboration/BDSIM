@@ -87,9 +87,10 @@ private:
   const G4double    fieldArcLength; ///< Cache of the field arc length.
   const G4double    fieldAngle;     ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
-  G4double          tilt;           ///< Tilt offset transform for field.
-  G4double          primaryMass;    ///< Primary particle rest mass
-  G4double          primaryCharge;  ///< Primary particle charge
+  const G4double    tilt;           ///< Tilt offset transform for field.
+  const G4double    primaryMass;    ///< Primary particle rest mass.
+  const G4double    primaryCharge;  ///< Primary particle charge.
+  const G4double    totalEnergy;    ///< Primary particle total energy.
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
