@@ -243,7 +243,7 @@ G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength)
 {
   G4double hgap    = (*strength)["hgap"];
   G4double fint    = (*strength)["fringeint"];
-  G4double fintK2  = (*strength)["fringeintK2"];
+  G4double fintK2  = (*strength)["fringeintk2"];
   G4double pfAngle = (*strength)["polefaceangle"];
   G4double vertGap = 2 * hgap;
   G4double corrValue = fint * fintK2 * vertGap * tan(pfAngle);
