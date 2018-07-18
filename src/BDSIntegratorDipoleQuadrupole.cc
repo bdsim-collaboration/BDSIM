@@ -45,7 +45,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
 							     G4double minimumRadiusOfCurvatureIn,
 							     const G4double&          tiltIn):
   BDSIntegratorMag(eqOfMIn, 6),
-  bRho(brhoIn),
+  nominalBRho(brhoIn),
   eq(static_cast<BDSMagUsualEqRhs*>(eqOfM)),
   bPrime(std::abs(brhoIn) * (*strengthIn)["k1"]),
   nominalBeta((*strengthIn)["beta0"]),
@@ -118,8 +118,54 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   G4ThreeVector globalPos   = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector globalMom   = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
-  BDSStep       localCL     = GlobalToCurvilinear(fieldArcLength, unitField, angleForCL,
-						  globalPos, globalMom, h, true, fcof, tilt);
+  // create new position and momentum vectors for matrix output
+  G4ThreeVector localCLPosOut;
+  G4ThreeVector localCLMomOut;
+
+  // bool for checking if using the nominal matrix for tracking is applicable
+  G4bool useNominal = true;
+
+  // default angle and rho for transforming are nominal
+  G4double rho               = nominalRho;
+  G4double angleForTransform = nominalAngle;
+  // transform onto a non-nominal trajectory if angle is specified as zero but dipole has finite field strength
+  if (!BDS::IsFinite(nominalAngle))
+    {
+      angleForTransform = nominalField * fieldArcLength / nominalBRho;
+      rho = fieldArcLength / angleForTransform;
+      useNominal = false;
+    }
+
+  // calculate relative energy difference
+  G4double deltaEnergy = eq->TotalEnergy(globalMom) - nominalEnergy;
+  G4double nomMomentum = std::abs(nominalBRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
+  // deltaE/P0 to match literature.
+  G4double deltaEoverP0 = deltaEnergy / (nomMomentum);
+
+/*  // correct variable for scaled field - energy offset calculated w.r.t new nominal momentum c/o scaling parameter
+  // currently not working due to ongoing bug - being resolved.
+  G4double scaledMomentum = nominalBRho * fcof * fieldRatio;
+  G4double scaledEnergy = std::sqrt(std::pow(scaledMomentum, 2) + eq->Mass());
+  G4double scaledDeltaPoverP = (globalMom.mag() - scaledMomentum) / scaledMomentum;
+  G4double deltaEoverP0new = (eq->TotalEnergy(globalMom) - scaledEnergy) / scaledMomentum;
+
+  if (std::abs(scaledDeltaPoverP) > 0.01)
+    {deltaEoverP0 = (eq->TotalEnergy(globalMom) - scaledEnergy)/scaledMomentum;}
+*/
+
+  // transform onto a non-nominal trajectory if a particle is sufficiently off energy
+  if (std::abs(deltaEoverP0) > 0.01)
+    {
+      // calculate angle for curvilinear transform
+      G4double particleBRho = globalMom.mag() / eq->FCof();
+      G4double scaleFactor = particleBRho / nominalBRho;
+      angleForTransform *= scaleFactor;
+      useNominal = false;
+    }
+
+  BDSStep localCL = GlobalToCurvilinear(fieldArcLength, unitField, angleForTransform,
+                                            globalPos, globalMom, h, true, fcof, tilt);
+
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
   G4ThreeVector localCLMomU = localCLMom.unit();
@@ -132,11 +178,22 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
       SetDistChord(dipole->DistChord());
       return;
     }
-  
-  // calculate new position
-  G4ThreeVector localCLPosOut;
-  G4ThreeVector localCLMomOut;
-  OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut, nominalRho, nominalBeta);
+
+  // calculate rho and beta for use in non-nominal matrix.
+  // abs to preserve sign on next line
+  G4double beta = nominalBeta;
+  beta = eq->Beta(yIn);
+  if (!useNominal)
+    {
+      // rho "scaled" according to momentum scaling and field scaling
+      rho = (localCLMom.mag() / fcof) / nominalField;
+      G4double gamma = eq->TotalEnergy(yIn) / std::sqrt(eq->Mass());
+      beta = std::sqrt(1.0 - 1.0 / std::pow(gamma, 2));
+    }
+
+  // dipole step. Pass in rel. energy diff. to save recalculating.
+  OneStep(localCLPos, localCLMom, localCLMomU, h, fcof, localCLPosOut, localCLMomOut, rho, beta, deltaEoverP0);
+
 
   // convert to global coordinates for output
   BDSStep globalOut = CurvilinearToGlobal(fieldArcLength, unitField, angleForCL,
@@ -174,17 +231,11 @@ void BDSIntegratorDipoleQuadrupole::OneStep(const G4ThreeVector& posIn,
 					    G4ThreeVector&       posOut,
                         G4ThreeVector&       momOut,
                         const G4double       rho,
-                        const G4double       beta) const
+                        const G4double       beta,
+                        const G4double       deltaEoverP) const
 {
   G4double momInMag = momIn.mag();
-  G4double nomMomentum = std::abs(bRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
-  G4double energy = eq->TotalEnergy(momIn);
-
-  // get beta (v/c)
-  //G4double beta = eq->Beta(momIn);
-
-  // deltaE/P0 to match literature.
-  G4double deltaEoverP = (energy - nominalEnergy) / (nomMomentum);
+  G4double nomMomentum = std::abs(nominalBRho * fcof); // safe as brho is nominal and abs(fcof) is scaling factor
 
   // quad strength k normalised to charge and nominal momentum
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly

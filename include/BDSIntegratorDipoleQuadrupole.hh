@@ -68,7 +68,8 @@ protected:
 	       G4ThreeVector&       posOut,
 		   G4ThreeVector&       momOut,
 		   const G4double		rho,
-		   const G4double		beta) const;
+		   const G4double		beta,
+           const G4double       deltaEnergy) const;
 
 
 
@@ -76,7 +77,7 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
   
-  const G4double    bRho;  ///< Cached magnet property, nominal magnetic rigidity
+  const G4double    nominalBRho;  ///< Cached magnet property, nominal magnetic rigidity
   BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
   const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
   const G4double    nominalBeta;    ///< Cached nominal relativistic beta of the nominal beam particle.
