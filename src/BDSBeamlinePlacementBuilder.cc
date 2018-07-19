@@ -37,7 +37,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 
-BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements)
+BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements,
+					 const BDSBeamline* parentBeamLine)
 {
   if (placements.empty())
     {return nullptr;} // don't do anything - no placements
@@ -62,7 +63,7 @@ BDSBeamline* BDS::BuildPlacementGeometry(const std::vector<GMAD::Placement>& pla
 							geom,
 							length);
 
-      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(placement);
+      G4Transform3D transform = BDSDetectorConstruction::CreatePlacementTransform(placement, parentBeamLine);
       
       /// Here we're assuming the length is along z which may not be true, but
       /// close enough for this purpose as we rely only on the centre position.
