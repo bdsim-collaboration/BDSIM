@@ -1134,20 +1134,22 @@ wirescanner
 `wirescanner` defines a cylindrical object within a beam pipe. Used to analyse properties of the beam from the scatter
 of particles on collision with the beam.
 
-=====================  ===============================================  =========  ==========
-parameter              description                                      default    required
-`l`                    length of drift section around wire              0          yes
-`wireDiameter`         diameter of wirescanner [m]                      0          yes
-`wireLength`           length of wirescanner [m]                        0          yes
-`wirescannerOffset`    offset of the wirescanner from the center [m]    0          no
-`wirescannerRotx`      rotation of wirescanner about x axis [rad]       pi/2       no
-`wirescannerRoty`      rotation of wirescanner about y axis [rad]       0          no
-=====================  ===============================================  =========  ==========
+=====================  ===============================================  ==========  ==========
+parameter              description                                      default     required
+`l`                    length of drift section around wire              0           yes
+`wireDiameter`         diameter of wirescanner [m]                      0           yes
+`wireLength`           length of wirescanner [m]                        aper1 / 2   no
+`wirescannerOffset`    offset of the wirescanner from the center [m]    0           no
+`wirescannerRotx`      rotation of wirescanner about x axis [rad]       pi/2        no
+`wirescannerRoty`      rotation of wirescanner about y axis [rad]       0           no
+`wirescannerRotz`      rotation of wirescanner about z axis [rad]       0           no
+`wireMaterial`         material of wire                                 carbon      no
+=====================  ===============================================  ==========  ==========
 
 Examples::
 
     wirescanner: wirescanner, l=10*cm, wireDiameter=10*mm, wireLength=5*cm, wirescannerOffset=1*cm, wirescannerRotx=0,
-    wirescannerRoty=0.79;
+    wirescannerRoty=0.79, wirescannerRotz=0, wireMaterial="tungsten";
 
 
 laser

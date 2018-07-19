@@ -4,8 +4,8 @@ perpScreenAngle=0;
 def_aper=35*mm;
 
 scr: screen, l=l_ldump1,
-     	     layerThicknesses={ 0.2*mm },
-	     layerMaterials=["G4_Al"],
+     	     layerThicknesses={ 0.2*mm,0.2*mm },
+	     layerMaterials=["G4_Al","carbon"],
 	     screenXSize=w_ldump1,
 	     screenYSize=w_ldump1,
 	     angle=perpScreenAngle,
@@ -17,4 +17,9 @@ d2: drift, l=0.5;
 lat : line = (d1,scr,d2);
 com : line = (scr);
 
-include optionsTest.gmad;
+!include optionsTest.gmad;
+use, period=lat;
+beam, particle="proton",
+      energy=10.0*GeV;
+
+option, physicsList = "em ftfp_bert decay muon hadronic_elastic em_extra";

@@ -170,8 +170,8 @@ void BDSWirescanner::Build() {
     //Rotation
     G4RotationMatrix *wireRot = new G4RotationMatrix;
     wireRot->rotateX(wirescannerRotx + CLHEP::pi/2.0);
-    wireRot->rotateZ(wirescannerRotz);
     wireRot->rotateY(wirescannerRoty);
+    wireRot->rotateZ(wirescannerRotz);
     RegisterRotationMatrix(wireRot);
 
     //colour
@@ -180,7 +180,7 @@ void BDSWirescanner::Build() {
     RegisterVisAttributes(wireVisAttr);
 
     //position
-    G4ThreeVector wirescannerpos(wirescannerOffset, 0, 0);
+    G4ThreeVector wirescannerpos(wirescannerOffset * std::cos(wirescannerRotz), wirescannerOffset * std::sin(wirescannerRotz), 0);
 
 
     //Placement

@@ -54,7 +54,8 @@ void BDSPhysicsTransitionRadiation::ConstructProcess()
     {return;}
   
 //  G4VTransitionRadiation* transitionRadiation = new G4VTransitionRadiation();
-    G4VTransitionRadiation* transitionRadiation = new G4VTransitionRadiation();
+//    G4VTransitionRadiation* transitionRadiation = new G4VTransitionRadiation();
+  G4ForwardXrayTR* transitionRadiation = new G4ForwardXrayTR();
   G4AutoDelete::Register(transitionRadiation);
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
