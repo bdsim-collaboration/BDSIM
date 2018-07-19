@@ -974,8 +974,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
 
   // propose outer dimensions.
-  yokeWidth      = outerDiameter;
-  yokeHalfHeight = 0.5 * outerDiameter * vhRatio;
+  yokeWidth      = outerDiameter; // horizontal (full)
+  yokeHalfHeight = 0.5 * outerDiameter * vhRatio; // vertical (half)
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
