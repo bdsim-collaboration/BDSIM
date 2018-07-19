@@ -969,7 +969,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleWidth > 0.9*outerDiameter)
-    {poleWidth = outerDiameter*0.36;}
+    {poleWidth = outerDiameter*0.7;}
   
   poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
 
