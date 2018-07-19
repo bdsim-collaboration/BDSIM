@@ -603,11 +603,39 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 								const BDSBeamline*     beamLine)
 {
   G4Transform3D result;
+
+  // construct rotation in both cases (global placement or w.r.t. a beam line locally)
+  G4RotationMatrix* rm = nullptr;
+  if (placement.axisAngle)
+    {
+      G4ThreeVector axis = G4ThreeVector(placement.axisX,
+					 placement.axisY,
+					 placement.axisZ);
+      rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
+    }
+  else
+    {
+      if (BDS::IsFinite(placement.phi)   ||
+	  BDS::IsFinite(placement.theta) ||
+	  BDS::IsFinite(placement.psi))
+	{// only build if finite
+	  CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
+							    placement.theta*CLHEP::rad,
+							    placement.psi*CLHEP::rad);
+	  rm = new G4RotationMatrix(ang);
+	}
+      else
+	{rm = new G4RotationMatrix();}
+    }
+  
+  
   if (BDS::IsFinite(placement.s))
     {
-      result = beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
-						     placement.x*CLHEP::m,
-						     placement.y*CLHEP::m);
+      G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
+									  placement.x*CLHEP::m,
+									  placement.y*CLHEP::m);
+      G4Transform3D localRotation(*rm, G4ThreeVector());
+      result = beamlinePart * localRotation;
     }
   else
     {
@@ -615,30 +643,11 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 						placement.y*CLHEP::m,
 						placement.z*CLHEP::m);
       
-      G4RotationMatrix* rm = nullptr;
-      if (placement.axisAngle)
-	{
-	  G4ThreeVector axis = G4ThreeVector(placement.axisX,
-					     placement.axisY,
-					     placement.axisZ);
-	  rm = new G4RotationMatrix(axis, placement.angle*CLHEP::rad);
-	}
-      else
-	{
-	  if (BDS::IsFinite(placement.phi)   ||
-	      BDS::IsFinite(placement.theta) ||
-	      BDS::IsFinite(placement.psi))
-	    {// only build if finite
-	      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(placement.phi*CLHEP::rad,
-								placement.theta*CLHEP::rad,
-								placement.psi*CLHEP::rad);
-	      rm = new G4RotationMatrix(ang);
-	    }
-	  else
-	    {rm = new G4RotationMatrix();}
-	}
+      
       result = G4Transform3D(*rm, translation);
     }
+
+  
   return result;
 }
 
