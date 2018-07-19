@@ -969,13 +969,13 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleWidth > 0.9*outerDiameter)
-    {poleWidth = outerDiameter*0.36;}
+    {poleWidth = outerDiameter*0.7;}
   
   poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
 
   // propose outer dimensions.
-  yokeWidth      = outerDiameter;
-  yokeHalfHeight = 0.5 * outerDiameter * vhRatio;
+  yokeWidth      = outerDiameter; // horizontal (full)
+  yokeHalfHeight = 0.5 * outerDiameter * vhRatio; // vertical (half)
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
