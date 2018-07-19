@@ -385,9 +385,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -672,7 +672,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // the default outerDiameter. Code further along will warn if it still doesn't fit.
   const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
   G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
   if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
