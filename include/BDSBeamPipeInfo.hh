@@ -87,6 +87,8 @@ public:
   /// as the one returned by the beam pipe factory (for simplicity).
   BDSExtent IndicativeExtent() const;
 
+  BDSExtent Extent() const;
+
   /// Return an indicative extent of the beam pipe - typically the maximum of x or y extent.
   G4double IndicativeRadius() const;
 
