@@ -324,8 +324,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
 	    double dS = hit->GetSHit();
 	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
-	      {
-		
+	      {		
 		if ( dS >= (*v).first && dS <= (*v).second) 
 		  {
 		    interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
@@ -334,7 +333,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	      }
 	  }
       }
-
+    
     // loop over samplers to connect trajectories
     if(samplerIDsToStore.size() != 0)
       {
@@ -349,8 +348,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		interestingTraj[trackIDMap[(*SampHC)[i]->GetTrackID()]] = true;
 	      }
 	  }
-      } 
-
+      }
+    
     // Connect trajectory graphs
     if (trajConnect && trackIDMap.size() > 1)
       {
