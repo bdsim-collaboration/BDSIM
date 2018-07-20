@@ -1252,7 +1252,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}
