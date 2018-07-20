@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-
+#include "BDSFieldInfo.hh"
 /**
  * @brief Undulator.
  *
@@ -34,10 +34,13 @@ class BDSUndulator: public BDSAcceleratorComponent
 public:
   BDSUndulator(G4String name,
                G4double length,
+               //BDSBeamPipeInfo* beamPipeInfoIn,
                G4double outerDiameter,
                G4double periodIn,
                G4double magnetHeightIn,
                G4double undulatorGapIn,
+               BDSBeamPipeInfo* beamPipeInfoIn,
+               BDSFieldInfo*   vacuumFieldInfoIn,
                G4String materialIn = "iron"
   );
 
@@ -55,6 +58,7 @@ protected:
   G4double undulatorPeriod;
   G4String material;
   G4double magnetHeight;
+  BDSFieldInfo* vacuumFieldInfo;
   G4double magnetGap;
 };
 

@@ -336,7 +336,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
-      SetFieldDefinitions(element, component);
+      SetFieldDefinitions(element, component),
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
@@ -951,16 +951,51 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 {
+
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
+
+    BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
   return (new BDSUndulator(elementName,
                       element->l * CLHEP::m,
                       PrepareOuterDiameter(element),
                       element->undulatorPeriod * CLHEP::m,
                       PrepareOuterDiameter(element),    // magnet height to be added
-                      PrepareOuterDiameter(element)));  // undulator gap to be added
+                      PrepareOuterDiameter(element),
+                      BDSMagnet,
+                      bpInfo));  // undulator gap to be added
+
+    BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
+                                                 BDSMagnetStrength* st,
+                                                 BDSFieldType  dipole,
+                                                 BDSMagnetType magnetType,
+                                                 G4double      angle) const
+    {
+        BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+        BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element);
+        beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
+        BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element, beamPipeInfo);
+        BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+        BDSIntegratorType intType = integratorSet->Integrator(dipole);
+        G4Transform3D fieldTrans  = CreateFieldTransform(element);
+        BDSFieldInfo* vacuumField = new BDSFieldInfo(dipole,
+                                                     brho,
+                                                     intType,
+                                                     st,
+                                                     true,
+                                                     fieldTrans);
+
+        BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+        vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
+        BDSFieldInfo* outerField = nullptr;
+
+    }
+
+
+
 }
+
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
 {
