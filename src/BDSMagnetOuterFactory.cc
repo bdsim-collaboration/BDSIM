@@ -153,14 +153,14 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     case BDSMagnetType::vkicker:
       {
 	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
-				      containerLength, true, outerMaterial, buildEndPiece,
+				      containerLength, yokeOnLeft, true, outerMaterial, buildEndPiece,
 				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
 	break;
       }
     case BDSMagnetType::hkicker:
       {
 	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
-				      containerLength, false, outerMaterial, buildEndPiece,
+				      containerLength, yokeOnLeft, false, outerMaterial, buildEndPiece,
 				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
 	break;
       }

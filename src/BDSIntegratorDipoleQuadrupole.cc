@@ -51,7 +51,7 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   beta0((*strengthIn)["beta0"]),
   rho((*strengthIn)["length"]/(*strengthIn)["angle"]),
   fieldRatio((*strengthIn)["field"] / (bRho/rho)),
-  nominalEnergy((*strengthIn)["nominalEnergy"]),
+  nominalEnergy((*strengthIn)["nominalenergy"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
   tilt(tiltIn),

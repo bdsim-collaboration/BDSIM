@@ -292,6 +292,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     BDSBeamPipe*  beamPipe,
 							     G4double      outerDiameter,
 							     G4double      containerLength,
+							     G4bool        yokeOnLeft,
 							     G4bool        vertical,
 							     G4Material*   outerMaterial,
 							     G4bool        buildEndPiece,
@@ -314,7 +315,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
   else
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-			   outerMaterial, true, colour, vertical, buildEndPiece, vhRatio,
+			   outerMaterial, yokeOnLeft, colour, vertical, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
 }
