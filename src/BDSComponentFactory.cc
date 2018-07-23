@@ -86,6 +86,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <string>
 #include <utility>
+#include <include/BDSFieldBuilder.hh>
+
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
@@ -963,38 +965,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                       element->undulatorPeriod * CLHEP::m,
                       PrepareOuterDiameter(element),    // magnet height to be added
                       PrepareOuterDiameter(element),
-                      BDSMagnet,
                       bpInfo));  // undulator gap to be added
 
-    BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
-                                                 BDSMagnetStrength* st,
-                                                 BDSFieldType  dipole,
-                                                 BDSMagnetType magnetType,
-                                                 G4double      angle) const
-    {
-        BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
-        BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element);
-        beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-        BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element, beamPipeInfo);
-        BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
-        BDSIntegratorType intType = integratorSet->Integrator(dipole);
-        G4Transform3D fieldTrans  = CreateFieldTransform(element);
-        BDSFieldInfo* vacuumField = new BDSFieldInfo(dipole,
-                                                     brho,
-                                                     intType,
-                                                     st,
-                                                     true,
-                                                     fieldTrans);
-
-        BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
-        vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
-        BDSFieldInfo* outerField = nullptr;
 
     }
 
-
-
-}
 
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()

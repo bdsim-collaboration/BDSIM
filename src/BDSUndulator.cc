@@ -1,4 +1,4 @@
-/* 
+/*
 Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
 University of London 2001 - 2018.
 
@@ -59,11 +59,11 @@ BDSUndulator::BDSUndulator (G4String   nameIn,
                             G4double   magnetHeightIn,
                             G4double   undulatorGapIn,
                             BDSBeamPipeInfo* beamPipeInfoIn,
-                            BDSFieldInfo*       vacuumFieldInfoIn,
-                            G4String   materialIn ):
+                            //BDSFieldInfo* vacuumFieldInfoIn,
+                            G4String  materialIn ):
         BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator",beamPipeInfoIn),
         outerDiameter(outerDiameterIn),
-        vacuumFieldInfo(vacuumFieldInfoIn),
+        //vacuumFieldInfo(vacuumFieldInfoIn),
         undulatorPeriod(periodIn),
         material(materialIn),
         magnetHeight(magnetHeightIn),
@@ -183,15 +183,23 @@ RegisterVisAttributes(aBoxcolour);
                                             checkOverlaps);
 
     RegisterPhysicalVolume(bpPV);
+    /*
+    {
+    BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+    BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
+    G4Transform3D fieldTrans  = CreateFieldTransform(element);
+    BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,brho,intType,st,true,fieldTrans);
 
-    //G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(0.,0.,0.5));
-    //G4FieldManager* fieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
-    //fieldMgr->SetDetectorField(magField);
-    //fieldMgr->CreateChordFinder(magField);
+    BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+    vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
+    BDSFieldInfo* outerField = nullptr;
 
-    //BDSFieldType::quadrupole,
+    G4Transform3D newFieldTransform = vacuumField->Transform();
+    vacuumField->SetTransform(newFieldTransform);
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuum, bpInfo->GetContainerLogicalVolume(),true);
 
-
+    }
+    */
 }
 
 //void BDSUndulator::BuildUndulatorMagnet()
