@@ -958,6 +958,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
     {return nullptr;}
 
     BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+    BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::undulator);
+    G4Transform3D fieldTrans  = CreateFieldTransform(element);
+    BDSMagnetStrength* st = new BDSMagnetStrength();
+    SetBeta0(st);
+    (*st)["k1"] = element->k1 * element->scaling;
+
+
+    BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,brho,intType,st,true,fieldTrans);
+
+    G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
+    vacuumFieldInfo->SetTransform(newFieldTransform);
+    //BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo, bpInfo->G true);
 
   return (new BDSUndulator(elementName,
                       element->l * CLHEP::m,
@@ -965,7 +977,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                       element->undulatorPeriod * CLHEP::m,
                       PrepareOuterDiameter(element),    // magnet height to be added
                       PrepareOuterDiameter(element),
-                      bpInfo));  // undulator gap to be added
+                      bpInfo,
+                      vacuumFieldInfo));  // undulator gap to be added
 
 
     }

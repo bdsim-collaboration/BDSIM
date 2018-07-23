@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <G4UniformMagField.hh>
 #include <G4TransportationManager.hh>
+#include <include/BDSFieldBuilder.hh>
 #include "globals.hh" // geant4 globals / types
 
 #include "BDSAcceleratorComponent.hh"
@@ -59,11 +60,11 @@ BDSUndulator::BDSUndulator (G4String   nameIn,
                             G4double   magnetHeightIn,
                             G4double   undulatorGapIn,
                             BDSBeamPipeInfo* beamPipeInfoIn,
-                            //BDSFieldInfo* vacuumFieldInfoIn,
+                            BDSFieldInfo* vacuumFieldInfoIn,
                             G4String  materialIn ):
         BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator",beamPipeInfoIn),
         outerDiameter(outerDiameterIn),
-        //vacuumFieldInfo(vacuumFieldInfoIn),
+        vacuumFieldInfo(vacuumFieldInfoIn),
         undulatorPeriod(periodIn),
         material(materialIn),
         magnetHeight(magnetHeightIn),
@@ -93,7 +94,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
       exit(1);
     }
 
-  G4double L = 1500;
+  G4double L = 300;
 
   containerSolid = new G4Box(name + "_container_solid",10*L,10*L,chordLength*0.5);
 
@@ -108,10 +109,10 @@ void BDSUndulator::Build()
 
   BDSAcceleratorComponent::Build();
 
-  G4double L = 1500;
+  G4double L = 300;
   G4double x = 100;
   G4double y = 20;
-  G4double z = 100;
+  G4double z = 150;
   G4double q = L/z; //this is the number of blocks
 
   
@@ -140,7 +141,7 @@ RegisterLogicalVolume(aBoxLV);
 aBoxLV->SetVisAttributes(aBoxcolour);
 RegisterVisAttributes(aBoxcolour);
 
-    for (int i = 1; i<2*q; i++){
+    for (int i = 1; i<q; i++){
       G4ThreeVector bBoxpos(0, -60, L - i*z);
       G4PVPlacement *bBoxPV = new G4PVPlacement(aBoxROT,                  // rotation
 					      bBoxpos,                  // position
@@ -155,8 +156,8 @@ RegisterVisAttributes(aBoxcolour);
     }
     
 
-    for (int i =1; i<2*q; i++){
-      G4ThreeVector cBoxpos(0,60,L-i*z);
+    for (int i =1; i<q; i++){
+      G4ThreeVector cBoxpos(0,60,-L+i*z);
       G4PVPlacement *cBoxPV= new G4PVPlacement(aBoxROT, cBoxpos,aBoxLV,std::to_string(i) +  "_wire_pv_pos",containerLogicalVolume,false,0,checkOverlaps);
       RegisterPhysicalVolume(cBoxPV);
 
@@ -183,23 +184,20 @@ RegisterVisAttributes(aBoxcolour);
                                             checkOverlaps);
 
     RegisterPhysicalVolume(bpPV);
-    /*
-    {
-    BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
-    BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
-    G4Transform3D fieldTrans  = CreateFieldTransform(element);
-    BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,brho,intType,st,true,fieldTrans);
 
-    BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
-    vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
-    BDSFieldInfo* outerField = nullptr;
 
-    G4Transform3D newFieldTransform = vacuumField->Transform();
-    vacuumField->SetTransform(newFieldTransform);
-    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuum, bpInfo->GetContainerLogicalVolume(),true);
 
-    }
-    */
+
+    //BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+    //vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
+    //BDSFieldInfo* outerField = nullptr;
+
+    //G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
+    //vacuumFieldInfo->SetTransform(newFieldTransform);
+    BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo, pipe->GetContainerLogicalVolume(),true);
+
+
+
 }
 
 //void BDSUndulator::BuildUndulatorMagnet()
