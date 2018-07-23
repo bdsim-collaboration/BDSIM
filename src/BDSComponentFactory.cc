@@ -466,8 +466,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["field"]  = field*element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
-  // central energy required by some integrators. Default nominal energy but check for scaling.
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -507,8 +506,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["field"]  = field * element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
-  // nominal energy required by some integrators. Default nominal energy but check for scaling.
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);

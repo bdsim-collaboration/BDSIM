@@ -84,12 +84,15 @@ private:
   const G4double    nominalRho;     ///< Cached magnet property, nominal bending radius.
   const G4double    nominalField;   ///< Cached magnet property, nominal field strength.
   const G4double    fieldRatio;     ///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
-  const	G4double    nominalEnergy;  ///< Nominal beam energy
+  const G4double    nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalMass;    ///< Primary particle mass. Needed for recalculating nominal energy with scaling.
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.
-  const G4double    nominalAngle;     ///< Cache of the field angle.
+  const G4double    nominalAngle;   ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
   G4double          tilt;           ///< Tilt offset transform for field.
+  const G4double    scaling;        ///< Cache field scaling factor
+  G4bool            isScaled;       ///< Cache if field is scaled
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
