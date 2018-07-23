@@ -49,3 +49,5 @@ simple_testing(magnet-asymmetric-beampipe-sbend-c   "--file=47_asymmetric_beampi
 simple_testing(magnet-asymmetric-beampipe-rbend-c   "--file=48_asymmetric_beampipe_rbend_c.gmad"   ${OVERLAP_CHECK})
 simple_testing(magnet-asymmetric-beampipe-sbend-h   "--file=49_asymmetric_beampipe_sbend_h.gmad"   ${OVERLAP_CHECK})
 simple_testing(magnet-asymmetric-beampipe-rbend-h   "--file=50_asymmetric_beampipe_rbend_h.gmad"   ${OVERLAP_CHECK})
+simple_testing(magnet-yoke-placement-vkicker        "--file=51_yokeOnInside_vkicker_c.gmad"        ${OVERLAP_CHECK})
+simple_testing(magnet-yoke-placement-hkicker        "--file=52_yokeOnInside_hkicker_c.gmad"        ${OVERLAP_CHECK})

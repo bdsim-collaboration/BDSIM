@@ -1666,6 +1666,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 						       BDSBeamPipe*  beamPipe,
 						       G4double      outerDiameter,
 						       G4double      containerLength,
+						       G4bool        yokeOnLeft,
 						       G4bool        vertical,
 						       G4Material*   outerMaterial,
 						       G4bool        buildEndPiece,
@@ -1678,7 +1679,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,outerDiameter,
-								    containerLength,vertical,outerMaterial,
+								    containerLength,yokeOnLeft,vertical,outerMaterial,
 								    buildEndPiece, hStyle, vhRatio,
 								    coilWidthFraction, coilHeightFraction);
 }

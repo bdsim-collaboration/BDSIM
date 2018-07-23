@@ -1,0 +1,14 @@
+el: vkicker, l=0.5*m, vkick=0.02, outerDiameter=20*cm;
+
+m1: el, yokeOnInside=0;
+m2: el, yokeOnInside=1;
+d1: drift, l=0.5*m;
+
+l1: line=(d1,m1,d1,m2,d1);
+
+use, l1;
+
+option, checkOverlaps=1;
+
+beam, particle="e-",
+      energy=1*GeV;
