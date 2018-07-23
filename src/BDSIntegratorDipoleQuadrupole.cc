@@ -58,7 +58,8 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   nominalAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
   scaling((*strengthIn)["scaling"]),
-  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
+  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
+  nominalMomCut(BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut())
 {
   isScaled = scaling == 1 ? false : true;
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);
@@ -241,7 +242,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
   G4double beta = nominalBeta;
   G4double rho  = nominalRho;
   // revert to backup if a particle is sufficiently off energy
-  if (std::abs(deltaEoverP0) > 0.05)
+  if (std::abs(deltaEoverP0) > nominalMomCut)
     {
       dipole->Stepper(yIn, dydx, h, yOut, yErr); // more accurate step with error
       SetDistChord(dipole->DistChord());

@@ -93,6 +93,7 @@ private:
   G4double          tilt;           ///< Tilt offset transform for field.
   const G4double    scaling;        ///< Cache field scaling factor
   G4bool            isScaled;       ///< Cache if field is scaled
+  G4double          nominalMomCut;  ///< Cache option for momentum cut to switch tracking to backup integrator
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };
