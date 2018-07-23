@@ -105,7 +105,8 @@ public:
 				   G4bool                useCLPlacementTransform = false);
 
   /// Create a transform based on the information in the placement.
-  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement);
+  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
+						const BDSBeamline*     beamLine);
   
 private:
   /// assignment and copy constructor not implemented nor used

@@ -385,9 +385,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -672,7 +672,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // the default outerDiameter. Code further along will warn if it still doesn't fit.
   const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
   G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
   if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
@@ -1252,7 +1252,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}

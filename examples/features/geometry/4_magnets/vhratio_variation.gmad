@@ -5,14 +5,14 @@
 ! called 'el'.
 
 ! control beam pipe radius
-option, beampipeRadius=4*cm,
+option, beampipeRadius=2.5*cm,
 	beampipeThickness = 1.5*mm;
 
-! unphyiscal aspect ratio - should still cope with this / default to beam pipe width
-m1: el, l=0.5*m, vhRatio=0.01;
+! low but default of 0.6m outerDiameter * 0.1 should still be > beam pipe total height
+m1: el, l=0.5*m, vhRatio=0.1;
 
 ! small
-m2: m1, vhRatio=0.1;
+m2: m1, vhRatio=0.2;
 
 ! small but sensible
 m3: m1, vhRatio=0.5;
