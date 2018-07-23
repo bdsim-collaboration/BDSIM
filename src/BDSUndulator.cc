@@ -141,7 +141,7 @@ RegisterLogicalVolume(aBoxLV);
 aBoxLV->SetVisAttributes(aBoxcolour);
 RegisterVisAttributes(aBoxcolour);
 
-    for (int i = 1; i<q; i++){
+    for (int i = 1; i<2*q; i++){
       G4ThreeVector bBoxpos(0, -60, L - i*z);
       G4PVPlacement *bBoxPV = new G4PVPlacement(aBoxROT,                  // rotation
 					      bBoxpos,                  // position
@@ -156,8 +156,8 @@ RegisterVisAttributes(aBoxcolour);
     }
     
 
-    for (int i =1; i<q; i++){
-      G4ThreeVector cBoxpos(0,60,-L+i*z);
+    for (int i =1; i<2*q; i++){
+      G4ThreeVector cBoxpos(0,60,L-i*z);
       G4PVPlacement *cBoxPV= new G4PVPlacement(aBoxROT, cBoxpos,aBoxLV,std::to_string(i) +  "_wire_pv_pos",containerLogicalVolume,false,0,checkOverlaps);
       RegisterPhysicalVolume(cBoxPV);
 

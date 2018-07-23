@@ -304,6 +304,8 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return rfcavity;         break;}
     case BDSFieldType::rf:
       {return rf;               break;}
+	case BDSFieldType::undulator:
+		{return undulator;               break;}
     case BDSFieldType::multipoleouterdipole:
     case BDSFieldType::multipoleouterquadrupole:
     case BDSFieldType::multipoleoutersextupole:
