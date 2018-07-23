@@ -50,7 +50,8 @@ private:
   BDSFieldMagUndulator();
   
   /// B' - the field gradient - a constant for a quadrupole.
-  G4double bPrime;
+  G4double B;
+  G4double peroid;
 };
 
 #endif

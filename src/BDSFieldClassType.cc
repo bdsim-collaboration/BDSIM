@@ -69,6 +69,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::skewmultipoleouteroctupole:
     case BDSFieldType::skewmultipoleouterdecapole:
     case BDSFieldType::multipoleouterdipole3d:
+    case BDSFieldType::undulator:
       {return BDSFieldClassType::magnetic;}
     case BDSFieldType::ezero:
     case BDSFieldType::emap1d:

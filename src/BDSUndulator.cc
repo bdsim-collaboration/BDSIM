@@ -94,7 +94,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
       exit(1);
     }
 
-  G4double L = 300;
+  G4double L = 1500;
 
   containerSolid = new G4Box(name + "_container_solid",10*L,10*L,chordLength*0.5);
 
@@ -109,10 +109,10 @@ void BDSUndulator::Build()
 
   BDSAcceleratorComponent::Build();
 
-  G4double L = 300;
+  G4double L = 1500;
   G4double x = 100;
   G4double y = 20;
-  G4double z = 150;
+  G4double z = 100;
   G4double q = L/z; //this is the number of blocks
 
   

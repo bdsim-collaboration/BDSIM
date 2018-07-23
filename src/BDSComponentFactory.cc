@@ -962,7 +962,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
     G4Transform3D fieldTrans  = CreateFieldTransform(element);
     BDSMagnetStrength* st = new BDSMagnetStrength();
     SetBeta0(st);
-    (*st)["k1"] = element->k1 * element->scaling;
+    (*st)["length"] = element->undulatorPeriod;
+    (*st)["field"] = element->B*element->scaling * CLHEP::tesla;
 
 
     BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,brho,intType,st,true,fieldTrans);
