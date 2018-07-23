@@ -83,9 +83,9 @@ public:
   /// for other aperture specific methods below
   void CheckApertureInfo();
 
-  /// Return a BDSExtent instance indicative of the size - not guaranteed to be the exact same
-  /// as the one returned by the beam pipe factory (for simplicity).
-  BDSExtent IndicativeExtent() const;
+  /// Return a BDSExtent instance for the transverse extents - extent in Z is 0 as this is
+  /// only aperture information.
+  BDSExtent Extent() const;
 
   /// Return an indicative extent of the beam pipe - typically the maximum of x or y extent.
   G4double IndicativeRadius() const;

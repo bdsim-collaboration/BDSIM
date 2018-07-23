@@ -292,6 +292,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     BDSBeamPipe*  beamPipe,
 							     G4double      outerDiameter,
 							     G4double      containerLength,
+							     G4bool        yokeOnLeft,
 							     G4bool        vertical,
 							     G4Material*   outerMaterial,
 							     G4bool        buildEndPiece,
@@ -314,7 +315,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
   else
     {
       return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-			   outerMaterial, true, colour, vertical, buildEndPiece, vhRatio,
+			   outerMaterial, yokeOnLeft, colour, vertical, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
 }
@@ -928,9 +929,15 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
   
   // vhRatio - don't allow a ratio greater than 10:1
   if (vhRatio > 10)
-    {vhRatio = 10;}
+    {
+      vhRatio = 10;
+      G4cout << __METHOD_NAME__ << "coercing vhRatio to (maximum of) 10 for element " << name << G4endl;
+    }
   else if (vhRatio < 0.1)
-    {vhRatio = 0.1;}
+    {
+      vhRatio = 0.1;
+      G4cout << __METHOD_NAME__ << "coercing vhRatio to (minimum of) 0.1 for element " << name << G4endl;
+    }
 }
 
 void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyle,
@@ -961,6 +968,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							G4double& containerSLength,
 							G4double& intersectionRadius)
 {
+  //G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
+  
   // calculate any geometrical parameters
   bpHalfWidth  = beamPipe->GetExtent().MaximumX();
   bpHalfHeight = beamPipe->GetExtent().MaximumY();
@@ -969,13 +978,14 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleWidth > 0.9*outerDiameter)
-    {poleWidth = outerDiameter*0.36;}
+    {poleWidth = outerDiameter*0.7;}
   
   poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
 
   // propose outer dimensions.
-  yokeWidth      = outerDiameter;
-  yokeHalfHeight = 0.5 * outerDiameter * vhRatio;
+  yokeWidth      = outerDiameter; // horizontal (full)
+  yokeHalfHeight = 0.5 * outerDiameter * vhRatio; // vertical (half)
+  //yokeHalfHeight = 0.5 * outerDiameter * vhRatioL; // vertical (half)
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'

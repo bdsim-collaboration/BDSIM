@@ -140,7 +140,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamlines();
 
   // construct placement geometry from parser
-  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements());
+  BDSBeamline* mainBeamLine =  BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
+  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
+					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   
   // build the tunnel and supports
@@ -221,15 +223,17 @@ void BDSDetectorConstruction::BuildBeamlines()
       auto parserLine = BDSParser::Instance()->GetSequence(placement.sequence);
 
       // determine offset in world for extra beam line
-      G4Transform3D plTransform = CreatePlacementTransform(placement);
+      const BDSBeamline* mbl = mainBeamline.massWorld;
+      // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
+      // but this could be any beam line in future if we find the right beam line to pass in.
+      G4Transform3D plTransform = CreatePlacementTransform(placement, mbl);
       G4Transform3D placementInitial;
-      if (placement.referenceElement.empty())
-	{// no reference - ie w.r.t. start of main beam line in the world volume
+      if (placement.referenceElement.empty() || !BDS::IsFinite(placement.s))
+	{// no reference element - ie w.r.t. start of main beam line in the world volume
 	  placementInitial = initialTransform; // same as beginning of beam line
 	}
       else
 	{// use reference to get placement transform - ie w.r.t. to a main beam line element
-	  const BDSBeamline* mbl = mainBeamline.massWorld;
 	  placementInitial = mbl->GetTransformForElement(placement.referenceElement,
 							 placement.referenceElementNumber);
 	}
@@ -595,12 +599,12 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement)
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
+								const BDSBeamline*     beamLine)
 {
-  G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
-					    placement.y*CLHEP::m,
-					    placement.z*CLHEP::m);
-  
+  G4Transform3D result;
+
+  // construct rotation in both cases (global placement or w.r.t. a beam line locally)
   G4RotationMatrix* rm = nullptr;
   if (placement.axisAngle)
     {
@@ -623,7 +627,27 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       else
 	{rm = new G4RotationMatrix();}
     }
-  G4Transform3D result(*rm, translation);
+  
+  
+  if (BDS::IsFinite(placement.s))
+    {
+      G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
+									  placement.x*CLHEP::m,
+									  placement.y*CLHEP::m);
+      G4Transform3D localRotation(*rm, G4ThreeVector());
+      result = beamlinePart * localRotation;
+    }
+  else
+    {
+      G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
+						placement.y*CLHEP::m,
+						placement.z*CLHEP::m);
+      
+      
+      result = G4Transform3D(*rm, translation);
+    }
+
+  
   return result;
 }
 

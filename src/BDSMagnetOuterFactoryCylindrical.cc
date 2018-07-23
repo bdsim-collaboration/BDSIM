@@ -288,6 +288,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 							       BDSBeamPipe* beamPipe,
 							       G4double     outerDiameter,
 							       G4double     containerLength,
+							       G4bool       /*yokeOnLeft*/,
 							       G4bool       /*vertical*/,
 							       G4Material*  outerMaterial,
 							       G4bool       /*buildEndPiece*/,
