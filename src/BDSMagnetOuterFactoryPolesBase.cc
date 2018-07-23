@@ -968,7 +968,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							G4double& containerSLength,
 							G4double& intersectionRadius)
 {
-  G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
+  //G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
   
   // calculate any geometrical parameters
   bpHalfWidth  = beamPipe->GetExtent().MaximumX();
@@ -984,7 +984,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 
   // propose outer dimensions.
   yokeWidth      = outerDiameter; // horizontal (full)
-  yokeHalfHeight = 0.5 * outerDiameter * vhRatioL; // vertical (half)
+  yokeHalfHeight = 0.5 * outerDiameter * vhRatio; // vertical (half)
+  //yokeHalfHeight = 0.5 * outerDiameter * vhRatioL; // vertical (half)
   
   // ensure outer edges aren't smaller than beam pipe
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
