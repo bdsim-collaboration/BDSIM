@@ -11,7 +11,8 @@ New Features
 * Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
 * rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
-* Placements can now be made with respect to S,x,y in the main beam line as well as globally.
+* Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
+  element and lastly in global Cartesian coordinates.
 
 General
 -------
