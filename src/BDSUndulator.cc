@@ -115,6 +115,9 @@ void BDSUndulator::Build()
   G4double z = 100;
   G4double q = L/z; //this is the number of blocks
 
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength ,beamPipeInfo);
+  RegisterDaughter(pipe);
   
 //G4Box(const G4String& pName,
 //      G4double& pX,
@@ -142,33 +145,32 @@ aBoxLV->SetVisAttributes(aBoxcolour);
 RegisterVisAttributes(aBoxcolour);
 
     for (int i = 1; i<2*q; i++){
-      G4ThreeVector bBoxpos(0, -60, L - i*z);
+      G4ThreeVector bBoxpos(0, pipe->GetExtentY().second*2, L - i*z);
       G4PVPlacement *bBoxPV = new G4PVPlacement(aBoxROT,                  // rotation
-					      bBoxpos,                  // position
-                                              aBoxLV,                   // its logical volume
-                                                std::to_string(i) + "_wire_pv_neg",        // its name
-					      containerLogicalVolume,   // its mother volume
-                                              false,                    // no boolean operation
-                                              0,                        // copy number
-                                              checkOverlaps);
+					                bBoxpos,                  // position
+                                    aBoxLV,                   // its logical volume
+                                    std::to_string(i) + "_wire_pv_neg",        // its name
+					                containerLogicalVolume,   // its mother volume
+                                    false,                    // no boolean operation
+                                    0,                        // copy number
+                                    checkOverlaps);
     RegisterPhysicalVolume(bBoxPV);
     
     }
     
 
     for (int i =1; i<2*q; i++){
-      G4ThreeVector cBoxpos(0,60,L-i*z);
-      G4PVPlacement *cBoxPV= new G4PVPlacement(aBoxROT, cBoxpos,aBoxLV,std::to_string(i) +  "_wire_pv_pos",containerLogicalVolume,false,0,checkOverlaps);
+      G4ThreeVector cBoxpos(0,pipe->GetExtentY().first*2,L-i*z);
+      G4PVPlacement *cBoxPV= new G4PVPlacement(aBoxROT,
+                                               cBoxpos,
+                                               aBoxLV,
+                                               std::to_string(i) +  "_wire_pv_pos",
+                                               containerLogicalVolume,
+                                               false,
+                                               0,
+                                               checkOverlaps);
       RegisterPhysicalVolume(cBoxPV);
-
-
     }
-
-
-    BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-    BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength ,beamPipeInfo);
-
-    RegisterDaughter(pipe);
 
     SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
     InheritExtents(pipe);

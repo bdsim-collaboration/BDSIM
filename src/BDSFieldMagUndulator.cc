@@ -31,7 +31,7 @@ BDSFieldMagUndulator::BDSFieldMagUndulator(BDSMagnetStrength const* strength,
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   peroid = (*strength)["length"];
-  B = (*strength)["field"]/CLHEP::tesla;
+  B = (*strength)["field"] / CLHEP::tesla;
   finiteStrength = BDS::IsFinite(B);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
@@ -44,7 +44,7 @@ G4ThreeVector BDSFieldMagUndulator::GetField(const G4ThreeVector &position,
 
   G4ThreeVector field;
   field[0] = 0;
-  field[1] = B * std::cos(position.z() * ((2*CLHEP::pi)/peroid) + 0.25*(CLHEP::pi));
+  field[1] = B * std::cos(position.z() * ((2*CLHEP::pi)/peroid));
   field[2] = 0;
 
   return field;
