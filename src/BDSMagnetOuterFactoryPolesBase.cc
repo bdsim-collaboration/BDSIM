@@ -1587,16 +1587,22 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // create coil - one solid that will be placed 4 times... or
   // if we have angled faces, they're all unique unfortunately so use a vector of solids
   // and place individually
+ 
   G4VSolid* coilSolid = nullptr;
   std::vector<G4VSolid*>        coilsSolids;
   std::vector<G4LogicalVolume*> coilLVs;
   G4bool individualCoilsSolids = false;
   if (buildPole)
     {
-      coilSolid = new G4Box(name + "_coil_solid",   // name
-			    coilWidth*0.5,          // x half width
-			    coilHeight*0.5,         // y half height
-			    sLength*0.5 - lsl);     // z half length - same as yoke
+      G4double cx = 0.5 * coilWidth;
+      G4double cy = 0.5 * coilHeight;
+      if (buildVertically) // if vertical, swap the dimensions to 'rotate' the coil as
+	{std::swap(cx,cy);}// always built horizontally in the calculations
+      
+      coilSolid = new G4Box(name + "_coil_solid", // name
+			    cx,                   // x half width
+			    cy,                   // y half height
+			    sLength*0.5 - lsl);   // z half length - same as yoke
       allSolids.push_back(coilSolid);
     }
 
