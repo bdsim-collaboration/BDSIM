@@ -269,13 +269,13 @@ G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength,
   if (isEntrance)
     {
       fint    = (*strength)["fint"];
-      fintK2  = (*strength)["fintK2"];
+      fintK2  = (*strength)["fintk2"];
       pfAngle = (*strength)["e1"];
     }
   else // must be exit face
     {
       fint    = (*strength)["fintx"];
-      fintK2  = (*strength)["fintxK2"];
+      fintK2  = (*strength)["fintxk2"];
       pfAngle = (*strength)["e2"];
     }
   G4double hgap    = (*strength)["hgap"];

@@ -385,9 +385,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -437,7 +437,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -584,25 +584,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
   
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
       G4double         angleX = std::asin(hkick * scaling);
       G4double         angleY = std::asin(vkick * scaling);
 
@@ -673,7 +670,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // the default outerDiameter. Code further along will warn if it still doesn't fit.
   const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
   G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
   if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
@@ -1253,7 +1250,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}
@@ -1684,9 +1687,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double scaling     = el->scaling;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
-    {(*st)["eField"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
@@ -1711,7 +1714,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 

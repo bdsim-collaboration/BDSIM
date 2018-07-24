@@ -715,6 +715,8 @@ G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentN
       G4cerr << __METHOD_NAME__ << "No element named \""
 	     << acceleratorComponentName << "\" found for placement number "
 	     << i << G4endl;
+      G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
+      G4cout << "multiple sections with unique names." << G4endl;
       exit(1);
     }
   else

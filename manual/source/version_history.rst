@@ -1,4 +1,4 @@
-V1.2 - 2018 / ?? / ??
+V1.2 - 2018 / 07 / ??
 =====================
 
 New Features
@@ -11,17 +11,25 @@ New Features
 * Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
 * rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
+* Placements can now be made with respect to S,x,y in the main beam line as well as globally.
 
 General
 -------
 
-* Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
+* Synchrotron radiation disabled now with em_extra physics list (use dedicated
+  synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
 * "ang" unit is added to the parser for Angstroms.
 * BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
 * long int used explicitly instead of int for event indices in analysis.
-* Reimplemented primary first hit and last hit. Last hit is now the end point of the primary trajectory.
+* Reimplemented primary first hit and last hit. Last hit is now the end point of the
+  primary trajectory. No more linear memory usage with tracking time
+* Beam pipe extent calculation reimplemented and much less simplistic - used
+  to check whether a pipe will fit inside a magnet.
+* Mini-contents for syntax section of manual as it's grown to a large size.
+* New rmatrix element (experimental).
+* EM Dissociation is now applicable up to 100 TeV.
 
 Output Changes
 --------------
@@ -37,7 +45,9 @@ Output Changes
 * New option :code:`storeModel` to turn off model storage in the output.
 * Even Info class (BDSOutputROOTEventInfo) number is incremented in output.
 * Event.Info now has a Boolean of whether the primary particle hit something or not.
-* Samplers are no longer placed next to elements with angled faces when using the :code:`bdsimtwo`, :code:`geant4`, or :code:`geant4dp` integrator sets.
+* Samplers are **no longer** placed next to elements with angled faces when using the :code:`bdsimtwo`,
+  :code:`geant4`, or :code:`geant4dp` integrator sets.
+* Units are now written to the ASCII survey output for each column.
 
 Bug Fixes
 ---------
@@ -49,8 +59,13 @@ Bug Fixes
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
+* Fix corrupted example files for userfile bunch distribution.
 * Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
 * Reimplement the method of finding primary first and last hit so BDSIM doesn't need to save the whole trajectory for the primary. This fixes the behaviour of linearly growing unbounded memory usage when tracking for a long time in a ring.
+* Optical calculation now works for sub-relativistic positrons.
+* ATF2 MADX output was not included in worked example as advertised - now included.
+* Fixed scaling variable used when scaling a field map to a decapole magnet strength.
+* Survey units for magnetic fields are now fixed from kT to T.
 
 
 V1.1 - 2018 / 05 / 23

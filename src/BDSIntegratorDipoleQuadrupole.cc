@@ -58,8 +58,8 @@ BDSIntegratorDipoleQuadrupole::BDSIntegratorDipoleQuadrupole(BDSMagnetStrength c
   nominalAngle((*strengthIn)["angle"]),
   tilt(tiltIn),
   scaling((*strengthIn)["scaling"]),
-  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn)),
-  nominalMomCut(BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut())
+  nominalMomCut(BDSGlobalConstants::Instance()->NominalMatrixRelativeMomCut()),
+  dipole(new BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn))
 {
   isScaled = scaling == 1 ? false : true;
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]);

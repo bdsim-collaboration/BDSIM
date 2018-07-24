@@ -754,8 +754,8 @@ BDSMagnetStrength* BDS::GetFringeMagnetStrength(const Element*           element
   (*fringeSt)["e2"]             = e2;     // supply separately as it may be modified for rbends
   (*fringeSt)["fint"]           = element->fint;
   (*fringeSt)["fintx"]          = fintx;  // supply separately as it may be modified to match madx behaviour
-  (*fringeSt)["fintK2"]         = element->fintK2;
-  (*fringeSt)["fintxK2"]        = element->fintxK2;
+  (*fringeSt)["fintk2"]         = element->fintK2;
+  (*fringeSt)["fintk2"]        = element->fintxK2;
   (*fringeSt)["hgap"]           = element->hgap * CLHEP::m;
   (*fringeSt)["isentrance"]     = isEntrance;
   return fringeSt;
