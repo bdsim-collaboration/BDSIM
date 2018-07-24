@@ -11,7 +11,7 @@ toolkit to simulate both the transport of particles in an accelerator and
 their interaction with the accelerator material. BDSIM is capable of
 simulating a wide variety of accelerator components and magnets with Geant4
 geometry dynamically built based on a text input file. Thick lens accelerator
-tracking routines are provided for fast accurate tracking in vacuum.
+tracking routines are provided for fast accurate tracking in a vacuum.
 
 What BDSIM is suitable for
 --------------------------
@@ -23,7 +23,7 @@ What BDSIM is suitable for
 What BDSIM is not intended for
 ------------------------------
 
-* Long term tracking studies
+* Long-term tracking studies
 * Simulating collective effects
 * Lattice optical design and optimisation
 * A replacement for tracking codes like SixTrack or PTC
@@ -31,13 +31,13 @@ What BDSIM is not intended for
 Example Applications
 --------------------
 
-* Detector background from the accelerator.
-* Beam transport in air.
-* Beam interaction with vacuum gas.
-* Losses in extraction kick.
-* LHC beam loss and energy deposition.
-* CLIC muon background from accelerator.
-* Laserwire detector signal to background ratio.
+* Detector background from the accelerator
+* Beam transport in air
+* Beam interaction with vacuum gas
+* Losses in extraction kick
+* LHC beam loss and energy deposition
+* CLIC muon background from the accelerator
+* Laserwire detector signal to background ratio
 * ILC collimator efficiency study and detector backgrounds
 
 Capabilities
@@ -45,17 +45,17 @@ Capabilities
 
 * BDSIM uses **ASCII** text input with a syntax designed to be very similar to
   **MAD8** / **MADX**.
-* Convert MADX / MAD8 / TRANSPORT model to a 3D model in minutes.
-* Generate beam distribution according to Twiss parameters of a beam.
-* Track beam distribution and record particle distribution after each component.
-* Simulate energy deposition in all components along beam line.
-* Calculate beam distribution and Twiss optical functions from particle distribution.
-* Use the full set of physics processes available in Geant4.
-* Adjust cross-sections of processes of interest.
-* Use externally provided geometry and field maps for a fully customised model.
-* Interactively visualise model in 3D as well as particle tracks.
-* Analyse history and origin of radiation produced in accelerator with analysis suite.
-* Strong reproducibility - recreate any event again exactly.
+* Converts MADX / MAD8 / TRANSPORT model to a 3D model in minutes
+* Generates beam distribution according to Twiss parameters of a beam
+* Tracks beam distribution and records particle distribution after each component
+* Simulates energy deposition in all components along beam line
+* Calculates beam distribution and Twiss optical functions from particle distribution
+* Uses the full set of physics processes available in Geant4
+* Adjusts cross-sections of processes of interest
+* Uses externally provided geometry and field maps for a fully customised model
+* Interactively visualises model in 3D as well as particle tracks
+* Analyses history and origin of radiation produced in accelerator with analysis suite
+* Strong reproducibility - can recreate any event again exactly
 
 
 Simulation Procedure
@@ -86,10 +86,10 @@ to be simulated. A Geant4 example is shown below being interactively visualised.
 
 	    Example Geant4 program being visualised with events displayed.
 
-This is labour intensive and inflexible for different accelerator models or optics. As
+This is labour-intensive and inflexible for different accelerator models or optics. As
 accelerators typically consist of a standard set of components these can be made
-reasonably generic. BDSIM provides a library of geometry and fields that allow
-simple optical descriptions to be made into 3D models. Example screen shots are shown
+reasonably generic. BDSIM provides a library of geometries and fields that allow
+simple optical descriptions to be made into 3D models. Example screenshots are shown
 below.
 
 .. figure:: figures/example-simpleCollimation.png
