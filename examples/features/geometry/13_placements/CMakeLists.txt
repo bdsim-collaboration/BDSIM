@@ -1,5 +1,5 @@
 if (USE_GDML)
   simple_testing(placements-global      "--file=1_placment_global.gmad --output=none"       ${OVERLAP_CHECK})
   simple_testing(placements-sxy         "--file=2_placment_sxy.gmad --output=none"          ${OVERLAP_CHECK})
-  simple_testing(placements-wrt-element "--file=3_placement_wrt_element.gmad --output=none" ${OVELRAP_CHECK})
+  simple_testing(placements-wrt-element "--file=3_placement_wrt_element.gmad --output=none" ${OVERLAP_CHECK})
 endif()
