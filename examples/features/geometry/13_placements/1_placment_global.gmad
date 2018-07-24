@@ -1,0 +1,7 @@
+! global placement w.r.t world frame
+p1: placement, geometryFile="gdml:box1.gdml",
+    	       x=0.3*m,
+	       y=0.4*m,
+	       z=3.2*m;
+
+include placement_common.gmad;
