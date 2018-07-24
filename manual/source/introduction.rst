@@ -111,14 +111,14 @@ below.
 	    Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
 
-Apart from the 3D geometry, a crucial component of a model are the electromagnetic
+Apart from the 3D geometry, a crucial component of a model is the electromagnetic
 fields. Fields in Geant4 may be specified through a developer-provided C++ class that returns
-the field vector as a function of global Cartesian `x`, `y`, `z` and `t`. BDSIM provides
+the field vector as a function of global Cartesian variables `x`, `y`, `z` and `t`. BDSIM provides
 classes to describe the magnetic fields found for each type of accelerator magnet as well
 as the transforms so that they can be described *locally* with respect to a particular magnet.
 
 To calculate the motion of charged particle in a field, Geant4 uses a numerical integrator
-such as a 4th Order Runge-Kutta algorithm. This are the most general solution for a varying
+such as a 4th Order Runge-Kutta algorithm. This is the most general solution for a varying
 field but in an accelerator the specific fields have specific analytical solutions that
 can be used for improved accuracy and computational efficiency. BDSIM provides these tracking
 routines for "thick lens" tracking.
@@ -129,13 +129,13 @@ in a full radiation transport simulation, there can be many different types of p
 in all directions (even backwards). The thick lens tracking routines do not work for
 particles travelling backwards or perpendicular, so we resort back to a numerical
 integrator (typically 4th order Runge-Kutta) in these cases. The thick lens routines
-are used for paraxial particle only.
+are used for paraxial particles only.
 
 Thick lens tracking routines typically work in a **curvilinear coordinate system**
 that follows the reference trajectory, whereas Geant4 must work in global Cartesian
 coordinates. BDSIM bridges these two systems with an automatically created parallel
-geometry of simple cylinders that follow the beam line. Transforms between coordinate
-systems are created by using the coordinate system of this parallel geometry.
+geometry of simple cylinders that follow the beam line. Using the coordinate system
+of this parallel geometry creates transforms between coordinate systems.
 
 
 .. _tracking-introduction:
@@ -143,18 +143,18 @@ systems are created by using the coordinate system of this parallel geometry.
 Tracking
 ========
 
-There are a variety of particle tracking routines and BDSIM provides several sets. The one
-provided *out-of-the-box* called "bdsimmatrix" uses thick lens tracking and provides
+There are a variety of particle tracking routines and BDSIM supplies several sets.
+The set "bdsimmatrix" issued *out-of-the-box* uses thick lens tracking and provides
 agreement with MADX and PTC tracking codes.
 
 A second set of routines called "bdsimtwo" is similar but differs in the way dipoles magnets
-are treated. In this cases, a constant pure dipole field is used to calculate the motion
+are treated. In this case, a constant pure dipole field is used to calculate the motion
 of the particle (using a Rodrigues rotation in global Cartesian coordinates). The field
 is a 'hard-edge' field - it exists inside the volume at the same strength everywhere and is
 zero outside. Whilst the tracking algorithm is accurate, such a model does not agree with
 MADX or PTC when the dipoles have angled pole faces. This integrator set is computationally
-more efficient than the "bdsimmatrix" set as no transforms between Cartesian and curvilinear
-coordinate systems are required for dipoles. In the case of a high energy accelerator with
+more efficient than the "bdsimmatrix" set, as no transforms between Cartesian and curvilinear
+coordinate systems are required for dipoles. In the case of a high-energy accelerator with
 no pole face angles or low angle bends, "bdsimtwo" may safely be used for accurate results
 and increased performance.
 
@@ -172,15 +172,15 @@ Energy
 ------
 
 The user must understand the validity of the Geant4 models used and the applicability of the
-physics processes / models at their energy regime. Most Geant4 high eneryg processes will not
-work above (an including) 50 TeV for a single particle.
+physics processes / models at their energy regime. Most Geant4 high-energy processes will not
+work above (and including) 50 TeV for a single particle.
 
 Model Physical Size
 -------------------
 
 BDSIM uses a small padding distance between all surfaces and in addition, Geant4 treats the
 intersection with every surface of every solid with a certain tolerance. Specifying a tolerance
-like this avoids infinte recursion (or at least costly recursion) to ascertain the intersection
+like this avoids infinite recursion (or at least costly recursion) to ascertain the intersection
 of a curved track with a surface. This tolerance is by default :math:`10^{-9}` mm. BDSIM and Geant4
 use double floating point precision throughout providing approximately 15 to 16 significant figures.
 Therefore, a maximum size of a model while still maintaining tracking precision is :math:`10^7` mm.
