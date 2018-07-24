@@ -951,8 +951,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							const G4double&    vhRatio,
 							const G4double&    coilWidthFraction,
 							const G4double&    coilHeightFraction,
-							G4double& bpHalfWidth,
-							G4double& bpHalfHeight,
+							G4double& cShapeOuterEdge,
 							G4double& poleHalfGap,
 							G4double& poleWidth,
 							G4double& poleHeight,
@@ -968,43 +967,59 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							G4double& containerSLength,
 							G4double& intersectionRadius)
 {
-  //G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
+  // swap vertical to horizontal ratio if building vertically so we can build it
+  // all horizontally here and then flip later all at once
+  G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
   
   // calculate any geometrical parameters
-  bpHalfWidth  = beamPipe->GetExtent().MaximumX();
-  bpHalfHeight = beamPipe->GetExtent().MaximumY();
+  G4double bpHalfWidth  = beamPipe->GetExtent().MaximumX();
+  G4double bpHalfHeight = beamPipe->GetExtent().MaximumY();
+  // need to flip if building vertically - as if beam pipe rotated for
+  // magnet that's always built horizontally
+  if (buildVertically)
+    {std::swap(bpHalfWidth, bpHalfHeight);}
   
-  poleWidth = 2*(buildVertically ? bpHalfHeight : bpHalfWidth)  + 2*lengthSafetyLarge;
+  // propose pole covers width of beam pipe
+  poleWidth = 2 * bpHalfWidth + 2*lengthSafetyLarge;
+  // take maximum of this (coudl be v small beam pipe) or ~1/3 of full width (normal proportion)
   poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleWidth > 0.9*outerDiameter)
-    {poleWidth = outerDiameter*0.7;}
+    {poleWidth = outerDiameter*0.7;} // cap at 70% of full width (think H style here)
+
+  // if building a c-shaped magnet, record (for a horizontal c-shape magnet) where
+  // the magnet containter volume should come into, between the poles.
+  cShapeOuterEdge = bpHalfWidth + lengthSafetyLarge;
+  cShapeOuterEdge = std::max(cShapeOuterEdge, 0.5 * poleWidth);
   
-  poleHalfGap = (buildVertically ? bpHalfWidth : bpHalfHeight) + lengthSafetyLarge;
+  // propose gap between beam centre and pole tip
+  poleHalfGap = bpHalfHeight + lengthSafetyLarge;
 
   // propose outer dimensions.
-  yokeWidth      = outerDiameter; // horizontal (full)
-  yokeHalfHeight = 0.5 * outerDiameter * vhRatio; // vertical (half)
-  //yokeHalfHeight = 0.5 * outerDiameter * vhRatioL; // vertical (half)
+  yokeWidth           = outerDiameter; // horizontal (full)
+  G4double yokeHeight = outerDiameter * vhRatioL;// vertical (full)
   
-  // ensure outer edges aren't smaller than beam pipe
+  // ensure yoke is bigger than beam pipe + small margin for minimum yoke thickness
+  // note we shouldn't get to this stage without a check already if the beam pipe will
+  // fit in the yoke, however, we check again here because we have a more accurate idea
+  // of the yoke size including vhRatio.
   const G4double margin = 50*CLHEP::um; // minimum allowable 'yoke'
-  G4double yokeWidthLowerLimit      = 2*(buildVertically ? bpHalfHeight : bpHalfWidth) + margin;
-  G4double yokeHalfHeightLowerLimit = (buildVertically ? bpHalfWidth  : bpHalfHeight)+ margin;
+  G4double yokeWidthLowerLimit  = 2 * bpHalfWidth  + margin;
+  G4double yokeHeightLowerLimit = 2 * bpHalfHeight + margin;
   if (yokeWidth <= yokeWidthLowerLimit)
     {yokeWidth = yokeWidthLowerLimit + margin;}
-  if (yokeHalfHeight <= yokeHalfHeightLowerLimit)
-    {yokeHalfHeight = yokeHalfHeightLowerLimit + margin;}
+  if (yokeHeight <= yokeHeightLowerLimit)
+    {yokeHeight = yokeHeightLowerLimit + margin;}
   
   // propose yoke thickness
   yokeThickness = yokeThicknessFraction * outerDiameter;
   // if there's not enough space (given the beam pipe and outer edge)
   // for the specified fraction of yoke, don't build pole. Also coerce
   // yoke thickness.
-  if (yokeThickness > yokeHalfHeight - poleHalfGap)
+  if (yokeThickness > 0.5 * yokeHeight - poleHalfGap)
     {
       buildPole     = false;
-      yokeThickness = yokeHalfHeight - poleHalfGap;
+      yokeThickness = 0.5 * yokeHeight - poleHalfGap;
     }
 
   // don't build pole if there's not enough room - coerce yoke thickness
@@ -1014,27 +1029,30 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
       buildPole = false;
       yokeThickness = (yokeWidth - poleWidth) / factor;
     }
+  
   // don't build pole if yoke tight around beam pipe - coerce yoke thickness
-  G4double test = buildVertically ? bpHalfWidth : bpHalfHeight;
-  if (factor * yokeThickness > yokeWidth - 2*test)
+  if (factor * yokeThickness > yokeWidth - 2 * bpHalfHeight)
     {
       buildPole = false;
-      yokeThickness = (yokeWidth - 2*test) / factor;
+      yokeThickness = (yokeWidth - 2 * bpHalfHeight) / factor;
     }
   
   if (buildPole)
-    {poleHeight = yokeHalfHeight - yokeThickness - poleHalfGap;}
+    {poleHeight = 0.5 * yokeHeight - yokeThickness - poleHalfGap;}
   else
     {poleHeight = 0;} 
 
   // ensure the yoke isn't too thick - choose smaller of two limits
   G4double yokeThicknessLimitHorizontal = yokeWidth - yokeWidthLowerLimit - margin*0.5;
-  G4double yokeThicknessLimitVertical   = yokeHalfHeight - yokeHalfHeightLowerLimit - margin;
+  G4double yokeThicknessLimitVertical   = 0.5 * yokeHeight - yokeHeightLowerLimit - margin;
   G4double yokeThicknessLimit           = std::min(yokeThicknessLimitHorizontal, 2*yokeThicknessLimitVertical);
   if (yokeThickness > yokeThicknessLimit)
     {yokeThickness = yokeThicknessLimit;}
   if (yokeThickness < margin)
     {yokeThickness = margin;} // ensure minimum width of yoke
+
+  // done with yoke sizing - updated parameters
+  yokeHalfHeight = 0.5 * yokeHeight;
   
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
@@ -1132,8 +1150,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   // 6 placement
   // general order - yoke, container, magnet container, coils
 
-  G4double bpHalfWidth         = 0;
-  G4double bpHalfHeight        = 0;
+  G4double cShapeOuterEdge     = 0;
   G4double poleHalfGap         = 0;
   G4double poleWidth           = 0;
   G4double poleHeight          = 0;
@@ -1150,7 +1167,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double intersectionRadius  = 0;
   DipoleCalculations(false, buildVertically, beamPipe, length, outerDiameter, angleIn,
 		     angleOut, 0.23, vhRatio, coilWidthFraction, coilHeightFraction,
-		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
+		     cShapeOuterEdge, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang, coilWidth,
 		     coilHeight, coilToYokeGap, coilToPoleGap,
 		     sLength, containerSLength, intersectionRadius);
@@ -1240,7 +1257,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   // points for container for full magnet object including beam pipe
   // first one in y here is -lsl to cancel +lsl to phg originally
   // container can be same height as beam pipe as it's always wider
-  G4double maxLeft = std::max(phw, bpHalfWidth);
+  G4double maxLeft = std::max(phw, cShapeOuterEdge);
   mCPoints.emplace_back(maxLeft + lsl, phg - lsl);
   if (buildPole)
     {
@@ -1302,6 +1319,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
       // 'rotate' extents too
       std::swap(extXPos, extYPos);
       std::swap(extXNeg, extYNeg);
+      std::swap(coilWidth, coilHeight); // 'rotate' coil
     }
   BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
 			    -length*0.5, length*0.5);
@@ -1367,8 +1385,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   // 6 placement
   // general order - yoke, container, magnet container, coils
   
-  G4double bpHalfWidth    = 0;
-  G4double bpHalfHeight   = 0;
+  G4double cShapeOuterEdge = 0;
   G4double poleHalfGap    = 0;
   G4double poleWidth      = 0;
   G4double poleHeight     = 0;
@@ -1385,7 +1402,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double intersectionRadius = 0;
   DipoleCalculations(true, buildVertically, beamPipe, length, outerDiameter, angleIn,
 		     angleOut, 0.12, vhRatio, coilWidthFraction, coilHeightFraction,
-		     bpHalfWidth, bpHalfHeight, poleHalfGap, poleWidth, poleHeight,
+		     cShapeOuterEdge, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang,
 		     coilWidth, coilHeight, coilToYokeGap, coilToPoleGap,
 		     sLength, containerSLength, intersectionRadius);
@@ -1479,6 +1496,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     {// 'rotate' extents too
       std::swap(extXPos, extYPos);
       std::swap(extXNeg, extYNeg);
+      for (auto& disp : coilDisps)
+	{disp.rotateZ(CLHEP::halfpi);}
     }
   BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
 			    -length*0.5, length*0.5);
@@ -1497,15 +1516,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 				     yokeOuterSolid,       // this
 				     yokeInnerSolid);      // minus this
   
-  // container for magnet outer 
-  G4double containerdx = buildVertically ? bpHalfWidth : yokeInsideX;
-  G4double containerdy = buildVertically ? yokeInsideX : bpHalfHeight;
+  // container for magnet outer
+  G4double containerdx = yokeInsideX;
+  G4double containerdy = yokeInsideY;
+  if (buildVertically)
+    {std::swap(yokeInsideX, yokeInsideY);}
 
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
-					    containerdx, containerdy, sLength);
-  G4double cOX = buildVertically ? yokeHalfHeight : 0.5*yokeWidth;
-  G4double cOY = buildVertically ? 0.5*yokeWidth : yokeHalfHeight;
+					    containerdx,
+					    containerdy,
+					    sLength);
+  G4double cOX = 0.5 * yokeWidth;
+  G4double cOY = yokeHalfHeight;
+  if (buildVertically)
+    {std::swap(cOX, cOY);}
   G4VSolid* containerOuterSolid = new G4Box(name + "_container_outer_solid", // name
 					    cOX,                             // x half length
 					    cOY,                             // y half length
