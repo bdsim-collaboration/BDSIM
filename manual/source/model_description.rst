@@ -2115,42 +2115,94 @@ For geometry to be placed in the beam line, use the :ref:`element`.
 	     placement. Although it may appear OK in the visualiser, the hierarchy of the
 	     geometry will be wrong and the tracking will not work as expected. Avoid this.
 
-The following parameters may be specified.
+There are 3 possible ways to place a piece of geometry.
 
-+----------------+--------------------------------------------------------------------+
-| **Parameter**  |  **Description**                                                   |
-+----------------+--------------------------------------------------------------------+
-| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
-+----------------+--------------------------------------------------------------------+
-| x              | Offset in global x.                                                |
-+----------------+--------------------------------------------------------------------+
-| y              | Offset in global y.                                                |
-+----------------+--------------------------------------------------------------------+
-| z              | Offset in global z.                                                |
-+----------------+--------------------------------------------------------------------+
-| phi            | Euler angle phi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| theta          | Euler angle theta for rotation.                                    |
-+----------------+--------------------------------------------------------------------+
-| psi            | Euler angle psi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| axisX          | Axis angle rotation x component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisY          | Axis angle rotation y component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisZ          | Axis angle rotation z component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| angle          | Axis angle angle to rotate about unit vector.                      |
-+----------------+--------------------------------------------------------------------+
-| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
-+----------------+--------------------------------------------------------------------+
-| sensitive      | Whether the geometry records energy deposition (default true).     |
-+----------------+--------------------------------------------------------------------+
+1) In global Cartesian coordinates.
 
+   `x`, `y`, `z` and any rotation are with respect to the world frame of reference.
+   
+2) In curvilinear coordinates.
+
+   `s`, `x`, `y` are used along with a rotation. The transform for the distance `s` along the beamline
+   is first applied and `x`, `y` and the rotation are with respect to that frame.
+
+3) In curvilinear coordinates with respect to a beam line element by name.
+
+   The name of an element is used to look up its `s` coordinate and `s`, `x`, `y` and the rotation
+   are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
+   `s`.
+
+The scenario is automatically selected based on which parameters are set. If `s` is finite, then
+it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
+	     
+The following parameters may be specified with a placement in BDSIM:
+
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| geometryFile            | :code:`format:file` - which geometry format and file to use.       |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x.                                                |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y.                                                |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z.                                                |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters). |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation.                                      |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation.                                    |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation.                                      |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle angle to rotate about unit vector.                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false). |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true).     |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string).        |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+|                         | is used more than once in the sequence. 0 counting.                |
++-------------------------+--------------------------------------------------------------------+
+
+`referenceElementNumber` is the occurence of that element in the sequence. For example if a sequence
+was::
+
+  l1: line=(d1,sb1,d2,qd1,d2,df1,d2,sb1,d1);
+
+and we wanted to place with respect to the first element, we would use::
+
+  p1: placement, referenceElement="d1",
+                 referenceElementNumber=0;
+
+If 0, the `referenceElementNumber` argument is optional. If we want to place with respect to
+the 3rd usage of "d2", we would use::
+
+  p1: placement, referenceElement="d2",
+                 referenceElementNumber=3;
+
+.. note:: Dipoles are split in BDSIM into many small straight sections. These must have a unique
+	  name to appear correctly in the Geant4 visualisation system. The splitting is done
+	  dynamically based on the angle of the bend and if it has pole face rotations on one
+	  or both sides. The names are mangled and so the original name will not be found.
+	  The user should run the visualiser first
+	  and identify the name of the segment of the dipole they wish to place with respect to.
+	  Alternatively, in the case of low angle bends, the element before or after can be used
+	  with a finite `s` offset.
+
+* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
   is executed from or an absolute path.
-* The transform is relative to the world coordinate system and not the beginning of the
-  beam line. The main beam line begins at (0,0,0) by default but may be offset.  See
+* The main beam line begins at (0,0,0) by default but may be offset.  See
   :ref:`beamline-offset` for more details.
 
 
@@ -2172,7 +2224,7 @@ The following is an example syntax is used to place a piece of geometry::
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters
 	     from the second leading to possibly unexpected geometry.
-
+	     
 .. _external-magnet-geometry:
 
 External Magnet Geometry
