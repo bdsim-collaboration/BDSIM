@@ -2134,6 +2134,10 @@ There are 3 possible ways to place a piece of geometry.
 
 The scenario is automatically selected based on which parameters are set. If `s` is finite, then
 it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
+
+.. warning:: For both scenarios 2) and 3), a placement can only be made **inside** the S length of
+	     the accelerator - it is not possible to place something beyond the accelerator currently.
+	     In this case, the user should resort to a global placement.
 	     
 The following parameters may be specified with a placement in BDSIM:
 
