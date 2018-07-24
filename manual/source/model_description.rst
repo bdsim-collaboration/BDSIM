@@ -25,7 +25,8 @@ provided in order of requirement.
 * External Fields & Geometry
   
   - :ref:`field-maps`
-  - :ref:`externally-provided-geometry`
+  - :ref:`externally-provided-geometry` Formats
+  - :ref:`placements` of Geometry
     
 * Sequence of Elements
   
@@ -2094,12 +2095,15 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 .. _placements:
 
 Placements
-^^^^^^^^^^
+----------
 
-Geometry provided in an external file, may be placed in 3D geometry at any location with
+Geometry provided in an external file may be placed at any location in the world with
 any rotation. This is intended to place geometry alongside the beamline and **not** inside
 or as part of it.  The user is responsible for ensuring that the geometry does not
-overlap with any other geometry including the beamline.
+overlap with any other geometry including the beamline. Only in special cases, such as
+for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
+
+For geometry to be placed in the beam line, use the :ref:`element`.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	     incorrect results and there may not always be warnings provided. For this reason
