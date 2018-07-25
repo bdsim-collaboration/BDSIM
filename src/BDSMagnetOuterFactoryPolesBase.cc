@@ -981,7 +981,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   
   // propose pole covers width of beam pipe
   poleWidth = 2 * bpHalfWidth + 2*lengthSafetyLarge;
-  // take maximum of this (coudl be v small beam pipe) or ~1/3 of full width (normal proportion)
+  // take maximum of this (could be very small beam pipe) or ~1/3 of full width (normal proportion)
   poleWidth = std::max(poleWidth, outerDiameter*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
   if (poleWidth > 0.9*outerDiameter)
@@ -1016,10 +1016,10 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   // if there's not enough space (given the beam pipe and outer edge)
   // for the specified fraction of yoke, don't build pole. Also coerce
   // yoke thickness.
-  if (yokeThickness > 0.5 * yokeHeight - poleHalfGap)
+  if (yokeThickness > 0.5 * yokeHeight - poleHalfGap + lengthSafetyLarge)
     {
       buildPole     = false;
-      yokeThickness = 0.5 * yokeHeight - poleHalfGap;
+      yokeThickness = 0.5 * yokeHeight - poleHalfGap + lengthSafetyLarge;
     }
 
   // don't build pole if there's not enough room - coerce yoke thickness
