@@ -1496,8 +1496,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
     {// 'rotate' extents too
       std::swap(extXPos, extYPos);
       std::swap(extXNeg, extYNeg);
-      for (auto& disp : coilDisps)
-	{disp.rotateZ(CLHEP::halfpi);}
+      std::swap(coilWidth, coilHeight); // 'rotate' coil
     }
   BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
 			    -length*0.5, length*0.5);
@@ -1517,10 +1516,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 				     yokeInnerSolid);      // minus this
   
   // container for magnet outer
-  G4double containerdx = yokeInsideX;
-  G4double containerdy = yokeInsideY;
+  G4double containerdx = 0.5 * yokeWidth - yokeThickness - lsl;
+  G4double containerdy = poleHalfGap;
   if (buildVertically)
-    {std::swap(yokeInsideX, yokeInsideY);}
+    {std::swap(containerdx, containerdy);}
 
   // full length for unambiguous subtraction
   G4VSolid* containerInnerSolid = new G4Box(name + "_container_inner_solid", // name
@@ -2051,6 +2050,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       endCoilTranslationOutLow.transform(*vertRot);
     }
   delete vertRot;
+  
   G4PVPlacement* ePOutTopPv = new G4PVPlacement(endCoilOutRM,       // rotation
 						endCoilTranslationOutTop, // position
 						ePOutLV,            // logical volume
