@@ -1869,10 +1869,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // end piece container solids - simple extruded solid intersectd with cut tubs for
   // angled faces build about magnet zero so we get the coordinates right for general placement
   std::vector<G4TwoVector> contEPPoints;
-  const G4double connector = 1*CLHEP::mm;
-  G4double xmax = poleHalfWidth + coilWidth + connector;
-  G4double ymax = poleHalfGap + coilHeight + cDY + connector;
-  G4double yInn = poleHalfGap + cDY;
+  const G4double connector = 30*CLHEP::mm;
+  G4double xmax = poleHalfWidth + epWidth + lsl;
+  G4double ymax = poleHalfGap + epHeight + cDY + connector + 20;
+  G4double yInn = poleHalfGap + cDY - lsl;
   contEPPoints.emplace_back(xmax + connector,  ymax);
   contEPPoints.emplace_back(-xmax,  ymax);
   contEPPoints.emplace_back(-xmax,  yInn);
@@ -1911,8 +1911,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 						 0.5*ePInLength + lsl, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
-
-  G4double ePOutLength  = coilWidth + lengthSafetyLarge; // adjustable for intersection
+  /*
+  G4VSolid* ePContSolidIn = new G4Box(name + "_end_coil_in_solid",
+                                      5*coilWidth,
+                                      5*coilHeight,
+                                      0.5*ePInLength);
+*/
+  G4double ePOutLength  = epWidth + lengthSafetyLarge; // adjustable for intersection
   G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
   if (BDS::IsFinite(angleOut))
     {
