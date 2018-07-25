@@ -804,13 +804,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = element->ks;
     }
 
