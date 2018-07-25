@@ -1910,12 +1910,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 						 0.5*ePInLength + lsl, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
-  /*
-  G4VSolid* ePContSolidIn = new G4Box(name + "_end_coil_in_solid",
-                                      5*coilWidth,
-                                      5*coilHeight,
-                                      0.5*ePInLength);
-*/
+  
   G4double ePOutLength  = epWidth + lengthSafetyLarge; // adjustable for intersection
   G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
   if (BDS::IsFinite(angleOut))
