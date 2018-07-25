@@ -1868,9 +1868,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // end piece container solids - simple extruded solid intersectd with cut tubs for
   // angled faces build about magnet zero so we get the coordinates right for general placement
   std::vector<G4TwoVector> contEPPoints;
-  const G4double connector = 30*CLHEP::mm;
+  const G4double connector = 1*CLHEP::mm;
   G4double xmax = poleHalfWidth + epWidth + lsl;
-  G4double ymax = poleHalfGap + epHeight + cDY + connector + 20;
+  G4double ymax = poleHalfGap + epHeight + cDY + lsl;
   G4double yInn = poleHalfGap + cDY - lsl;
   contEPPoints.emplace_back(xmax + connector,  ymax);
   contEPPoints.emplace_back(-xmax,  ymax);
