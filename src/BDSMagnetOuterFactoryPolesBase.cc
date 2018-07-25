@@ -1596,9 +1596,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
     {
       G4double cx = 0.5 * coilWidth;
       G4double cy = 0.5 * coilHeight;
-      if (buildVertically) // if vertical, swap the dimensions to 'rotate' the coil as
-	{std::swap(cx,cy);}// always built horizontally in the calculations
-      
       coilSolid = new G4Box(name + "_coil_solid", // name
 			    cx,                   // x half width
 			    cy,                   // y half height
@@ -1675,7 +1672,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
         {
 	  for (G4int i = 0; i < 4; i++)
             {
-	      G4VSolid *coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
+	      G4VSolid* coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
 							angledFaces,                // solid a
 							coilSolid,                  // solid b
 							(G4RotationMatrix *) nullptr, // 0 rotation
@@ -1753,8 +1750,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 	  allRotationMatrices.push_back(rot);
 	  if (buildVertically)
 	    {
-	      rot->rotateZ(CLHEP::halfpi);
-	      displacement.transform(*rot);
+	      G4RotationMatrix* rotVert = new G4RotationMatrix();
+	      rotVert->rotateZ(CLHEP::halfpi);
+	      displacement.transform(*rotVert);
+	      delete rotVert;
 	    }
 	  aCoilPV = new G4PVPlacement(rot,             // no rotation
 				      displacement,    // position
@@ -1821,17 +1820,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   // create an ellipse with no angle, then shear it to match the angle
   G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
   G4double increment = CLHEP::halfpi/nSegments;
+  G4double epWidth = buildVertically ? coilHeight : coilWidth;
   for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += increment)
     { // left side
-      G4double x = -inXO + coilWidth*std::cos(t);
-      G4double y = coilWidth*std::sin(t);
+      G4double x = -inXO + epWidth*std::cos(t);
+      G4double y = epWidth*std::sin(t);
       inEPPoints.emplace_back(x,y);
     }
   
   for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += increment)
     { // right side
-      G4double x = inXO + coilWidth*std::cos(t);
-      G4double y = coilWidth*std::sin(t);
+      G4double x = inXO + epWidth*std::cos(t);
+      G4double y = epWidth*std::sin(t);
       inEPPoints.emplace_back(x,y);
     }
 
@@ -1852,16 +1852,17 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double zScale = 1;       // the scale at each end of the points = 1
   
   // these are projected by coilHeight in z as they'll be rotated later
+  G4double epHeight = buildVertically ? coilWidth : coilHeight; // full length as used elsewhere
   G4VSolid* endPieceSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
-						   inEPPoints, // transverse 2d coordinates
-						   coilHeight*0.5 - lsl, // z half length
+						   inEPPoints,           // transverse 2d coordinates
+                           0.5 * epHeight - lsl, // z half length
 						   zOffsets, zScale,
 						   zOffsets, zScale);
 
   // these are projected by coilHeight in z as they'll be rotated later
   G4VSolid* endPieceSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
 						   outEPPoints, // transverse 2d coordinates
-						   coilHeight*0.5 - lsl, // z half length
+						   0.5 * epHeight - lsl, // z half length
 						   zOffsets, zScale,
 						   zOffsets, zScale);
   
@@ -1890,7 +1891,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
     }
   
   // calculate length for each end piece container volume - could be different due to different angles
-  G4double ePInLength  = coilWidth + lengthSafetyLarge; // adjustable for intersection
+  G4double ePInLength  = epWidth + lengthSafetyLarge; // adjustable for intersection
   G4double ePInLengthZ = ePInLength; // copy that will be final length of object
   if (BDS::IsFinite(angleIn))
     {
@@ -1907,7 +1908,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
 						 contEPPoints,   // transverse 2d coordinates
-						 ePInLength*0.5, // z half length
+						 0.5*ePInLength + lsl, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
 
@@ -2006,9 +2007,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4RotationMatrix* endCoilInRM = new G4RotationMatrix();
   endCoilInRM->rotateX(-CLHEP::halfpi);
   if (buildVertically)
-    {endCoilInRM->rotateY(CLHEP::halfpi);}
-  G4ThreeVector endCoilTranslationInTop(0, coilDY-lsl, 0.5*coilWidth);
-  G4ThreeVector endCoilTranslationInLow(0,-coilDY+lsl, 0.5*coilWidth);
+    {endCoilInRM->rotate(CLHEP::halfpi, G4ThreeVector(0,1,0));}
+  G4ThreeVector endCoilTranslationInTop(0, coilDY-lsl, 0.5*epWidth);
+  G4ThreeVector endCoilTranslationInLow(0,-coilDY+lsl, 0.5*epWidth);
   G4RotationMatrix* vertRot = new G4RotationMatrix();
   vertRot->rotateZ(CLHEP::halfpi);
   if (buildVertically)
@@ -2016,6 +2017,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
       endCoilTranslationInTop.transform(*vertRot);
       endCoilTranslationInLow.transform(*vertRot);
     }
+
+
   G4PVPlacement* ePInTopPv = new G4PVPlacement(endCoilInRM,        // rotation
 					       endCoilTranslationInTop, // position
 					       ePInLV,             // logical volume
@@ -2035,8 +2038,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   G4RotationMatrix* endCoilOutRM = new G4RotationMatrix(*endCoilInRM); // copy as independent objects
   
-  G4ThreeVector endCoilTranslationOutTop(0, coilDY, -0.5*coilWidth);
-  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, -0.5*coilWidth);
+  G4ThreeVector endCoilTranslationOutTop(0, coilDY, -0.5*epWidth);
+  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, -0.5*epWidth);
   if (buildVertically)
     {
       endCoilTranslationOutTop.transform(*vertRot);
