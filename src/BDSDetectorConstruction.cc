@@ -226,19 +226,8 @@ void BDSDetectorConstruction::BuildBeamlines()
       const BDSBeamline* mbl = mainBeamline.massWorld;
       // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
       // but this could be any beam line in future if we find the right beam line to pass in.
-      G4Transform3D plTransform = CreatePlacementTransform(placement, mbl);
-      G4Transform3D placementInitial;
-      if (placement.referenceElement.empty() || !BDS::IsFinite(placement.s))
-	{// no reference element - ie w.r.t. start of main beam line in the world volume
-	  placementInitial = initialTransform; // same as beginning of beam line
-	}
-      else
-	{// use reference to get placement transform - ie w.r.t. to a main beam line element
-	  placementInitial = mbl->GetTransformForElement(placement.referenceElement,
-							 placement.referenceElementNumber);
-	}
-      G4Transform3D startTransform = placementInitial * plTransform; // compound
-
+      G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
+      
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
 						   placement.sequence,
@@ -604,7 +593,12 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 {
   G4Transform3D result;
 
-  // construct rotation in both cases (global placement or w.r.t. a beam line locally)
+  // 3 scenarios
+  // 1) global placement X,Y,Z + rotation
+  // 2) w.r.t. beam line placement x,y,S + rotation
+  // 3) w.r.t. element in beam line placement elementName + x,y,s + rotation
+  
+  // in all cases, need the rotation
   G4RotationMatrix* rm = nullptr;
   if (placement.axisAngle)
     {
@@ -626,11 +620,37 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
       else
 	{rm = new G4RotationMatrix();}
+    } 
+
+  // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
+  // particular element. If it's w.r.t. a particular element, treat s as local curvilinear
+  // s and use as local 'z' in the transform.
+  if (!placement.referenceElement.empty())
+    {// scenario 3
+      BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
+							 placement.referenceElementNumber);
+      if (!element)
+	{
+	  G4cerr << __METHOD_NAME__ << "No element named \""
+		 << placement.referenceElement << "\" found for placement number "
+		 << placement.referenceElementNumber << G4endl;
+	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
+	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
+	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
+	  exit(1);
+	}
+      G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
+      sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
+
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
+									 placement.x*CLHEP::m,
+									 placement.y*CLHEP::m);
+      G4Transform3D localRotation(*rm, G4ThreeVector());
+      result = beamlinePart * localRotation;
+      
     }
-  
-  
-  if (BDS::IsFinite(placement.s))
-    {
+  else if (BDS::IsFinite(placement.s))
+    {// scenario 2
       G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
 									  placement.x*CLHEP::m,
 									  placement.y*CLHEP::m);
@@ -638,7 +658,7 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
       result = beamlinePart * localRotation;
     }
   else
-    {
+    {// scenario 1
       G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
 						placement.y*CLHEP::m,
 						placement.z*CLHEP::m);

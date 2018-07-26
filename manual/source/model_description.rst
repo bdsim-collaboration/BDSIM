@@ -25,7 +25,8 @@ provided in order of requirement.
 * External Fields & Geometry
   
   - :ref:`field-maps`
-  - :ref:`externally-provided-geometry`
+  - :ref:`externally-provided-geometry` Formats
+  - :ref:`placements` of Geometry
     
 * Sequence of Elements
   
@@ -58,12 +59,12 @@ Lattice Description
 A model of the accelerator is given to BDSIM via input text files in the :ref:`gmad-syntax`.
 The overall program structure should follow:
 
-1) Component definition (see :ref:`lattice-elements`).
-2) Sequence definition using defined components (see :ref:`lattice-sequence`).
-3) Which sequence to use (see :ref:`the-use-command`).
-4) Where to record output (see :ref:`sampler-output`).
-5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
-6) A beam definition (see :ref:`beam-parameters`).
+1) Component definition (see :ref:`lattice-elements`)
+2) Sequence definition using defined components (see :ref:`lattice-sequence`)
+3) Which sequence to use (see :ref:`the-use-command`)
+4) Where to record output (see :ref:`sampler-output`)
+5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`)
+6) A beam definition (see :ref:`beam-parameters`)
 
 These are described in the following sections. Aside from these standard parameters, more
 detail may be added to the model through:
@@ -79,19 +80,19 @@ GMAD Syntax
 -----------
 
 GMAD is a language specifically for BDSIM that is made to be human readable.
-The name comes from the design intention of MADX syntax + extensions for Geant4.
+The name comes from the design intention of MADX syntax and extensions for Geant4.
 While GMAD is very similar to MADX, not all MADX commands are supported.
 
 * S.I. units are used except where explicitly specified
-* variables can be defined using :code:`name = value;` syntax
-* arithmetic expressions can be defined
-* binary operators +, -, \*, /, ^ are valid
-* unary operators +, -, are valid
-* Boolean operators <, >, <=, >=, <> (not equal), == are valid
-* every expression **must** end with a semi-colon;
-* no variable name can begin with a number
-* !comments start with an exclamation mark "!"
-* a variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
+* Variables can be defined using :code:`name = value;` syntax
+* Arithmetic expressions can be defined
+* Binary operators +, -, \*, /, ^, are valid
+* Unary operators +, -, are valid
+* Boolean operators <, >, <=, >=, <> (not equal), ==, are valid
+* Every expression **must** end with a semi-colon;
+* No variable name can begin with a number
+* !Comments start with an exclamation mark "!"
+* A variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
 .. _mathematical-functions:
   
@@ -114,15 +115,15 @@ The following mathematical functions are provided:
 Other Commands
 ^^^^^^^^^^^^^^
 
-* :code:`print;` prints all elements
-* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of some options.
-* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
-* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
-* :code:`stop;` or :code:`return;` exists parser
-* :code:`if () {};` if construct
-* :code:`if () {} else {};` if-else construct
-* :code:`include ../some/other/file.gmad;` include another file to be parsed, note that the path provided must be relative, not absolute.
+* :code:`print;` Prints all elements
+* :code:`print, line;` Prints all elements that are in the beam line defined by :code:`use`. See also `use - Defining which Line to Use`_
+* :code:`print, option;` Prints the value of some options
+* :code:`print, variable;` Prints the value of a numerical variable, which could be your own defined variable
+* :code:`length = d1["l"];` A way to access properties of elements, in this case, length of element d1.
+* :code:`stop;` or :code:`return;` Exists parser
+* :code:`if () {};` 'if' construct
+* :code:`if () {} else {};` 'if-else' construct
+* :code:`include ../some/other/file.gmad;` Includes another file to be parsed. Note that the path provided must be relative, not absolute.
 
 Examples
 ^^^^^^^^
@@ -140,8 +141,8 @@ Examples::
 Coordinates & Units
 -------------------
 
-In Geant4, global Euclidean coordinates are used for tracking purposes, however,
-in describing a lattice with BDSIM, curvilinear coordinates are used as is common with
+In Geant4, global Euclidean coordinates are used for tracking purposes. However,
+in describing a lattice with BDSIM, curvilinear coordinates are used, as is common with
 accelerators (X,Y,S).
 
 **GMAD uses SI units**
@@ -210,8 +211,8 @@ MHz         :math:`10^{6}`
 GHz         :math:`10^{9}`
 ==========  =================================
 
-For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
-and both are equivalent.
+As an example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy value in GMAD.
+Both are equivalent.
 
 .. _circular-machines:
 
@@ -226,7 +227,7 @@ below.
 .. note:: There must be a minimum :math:`0.2 \mu m` gap between the last element and the beginning
 	  of the sequence to accommodate these elements. This has a minimal impact on tracking.
 
-Both the terminator and teleporter and invisible and very thin elements that are not normally
+Both the terminator and teleporter are invisible and very thin elements that are not normally
 shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
 executable option.
 
@@ -234,12 +235,12 @@ executable option.
 Terminator
 ^^^^^^^^^^
 
-In a Geant4 / BDSIM model, all particles are tracked down to 0 energy or until they leave the world
-volume. In the case of a circular accelerator, the particles may circulate indefinitely as they loose
+In a Geant4 / BDSIM model, all particles are tracked down to zero energy or until they leave the world
+volume. In the case of a circular accelerator, the particles may circulate indefinitely as they lose
 no energy traversing the magnetic fields. To control this behaviour and limit the number of turns
 taken in the circular machine, the terminator is inserted. This is a very thin disk that has
 dynamic limits attached to it. It is normally transparent to all particles and composed of vacuum.
-After the desired number of turns of the primary particle have elapsed, it switches to being
+After the desired number of turns of the primary particle has elapsed, it switches to being
 an infinite absorber. It achieves this by setting limits (G4UserLimits) with a maximum allowed energy
 of 0eV.
 
@@ -252,12 +253,12 @@ Teleporter
 ^^^^^^^^^^
 
 Not all optical models close perfectly in Cartesian coordinates, i.e. the ends don't perfectly
-align. Some small offsets may be tolerable as most tracking codes use curvilinear coordinates.
+align. Some small offsets may be tolerable, as most tracking codes use curvilinear coordinates.
 To account for this, the teleporter is a small disk volume inserted to make up the space
 and shift particles transversely as if the ends matched up perfectly. This is automatically
 calculated and constructed when using the `-\\-circular` executable option.
 
-Although the teleporter may not be required in a well formed model that closes, the minimum
+Although the teleporter may not be required in a well-formed model that closes, the minimum
 gap of :math:`0.2 \mu m` is required for the terminator.
 
 
@@ -267,12 +268,12 @@ Beamline Elements
 -----------------
 
 BDSIM provides a variety of different elements each with their own function, geometry and
-potentially fields. Any element in BDSIM is described with the following pattern::
+potential fields. Any element in BDSIM is described with the following pattern::
 
   name: type, parameter=value, parameter="string";
 
 .. note:: Notice the ':', the inverted commas for a string parameter and that each
-	  functional line must end with a semi-colon. Spaces will be ignored
+	  functional line must end with a semi-colon. Spaces will be ignored.
 
 The following elements may be defined
 
@@ -318,7 +319,7 @@ This defines a drift element with name `d1` and a length of 5 metres. The defini
 
   d1: l=3*m, aper=0.1*m;
 
-Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres.
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture size to 10 centimetres.
 
 .. Warning:: This only works for beam line elements and not other objects in GMAD syntax (such as a placement).
 
@@ -332,7 +333,7 @@ Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note:: BDSIM strictly follows the MADX definition of magnet strength parameter
-	  `k` - "a **positive** `k` corresponds to **horizontal focussing** for a
+	  `k` - a **positive** `k` corresponds to **horizontal focussing** for a
 	  **positively** charged particle. This therefore indicates a positive `k`
 	  corresponds to horizontal defocussing for a negatively charged particle.
 	  However, MADX treats all particles as positively charged for tracking purposes.
@@ -340,10 +341,10 @@ Magnet Strength Polarity
 .. versionadded:: 0.7
 
 
-		  BDSIM currently treats k absolutely so to convert a MADX lattice for
+		  BDSIM currently treats k absolutely, so to convert a MADX lattice for
 		  negatively particles, the MADX k values must be multiplied by -1. The
 		  pybdsim converter provides an option called `flipmagnets` for this
-		  purpose.  This may be revised in future releases depending on changes
+		  purpose. This may be revised in future releases depending on changes
 		  to MADX.
 
 
@@ -354,7 +355,7 @@ In the case of acceleration or energy degradation, the central energy of the bea
 change. However, BDSIM constructs all fields with respect to the rigidity calculated
 from the particle species and the `energy` parameter in the beam definition (not `E0`,
 but `energy`). To easily scale the strengths, every beam line element has the parameter
-`scaling` that allows its strength to be directly scaled.
+`scaling` that enables its strength to be directly scaled.
 
 In the case of a dipole, this scales the field but not the angle (the field may be calculated
 from the angle if none is specified). For example::
@@ -371,8 +372,8 @@ from the angle if none is specified). For example::
 
 In this example an rf cavity is used to accelerate the beam by 50 MeV (50 MeV / m for 1 m).
 The particle passes through one bend, the cavity and then another. As the second bend is
-scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at 0,0 with
-perfect energy will appear at 0,0 after this lattice.
+scaled (by a factor of (10 GeV + 50 MeV) / 10 GeV) = 1.005) a particle starting at (0,0) with
+perfect energy will appear at (0,0) after this lattice.
 
 In the case of a quadrupole or other magnet, the scaling is internally applied to the `k1`
 or appropriate parameter that is used along with the design rigidity to calculate a field
@@ -380,7 +381,7 @@ gradient.
 
 An example is included in `examples/features/components/scaling.gmad`.
 
-.. note:: The user should take care to use this linear scaling parameter wisely, particularly
+.. note:: The user should take care to use this linear scaling parameter wisely- particularly
 	  in sub-relativistic regimes. The fields should typically be scaled with momentum and
 	  not total energy of the particle.
 
@@ -395,9 +396,9 @@ drift
 `drift` defines a straight beam pipe with no field.
 
 ================  ===================  ==========  =========
-parameter         description          default     required
-`l`               length [m]           0           yes
-`vacuumMaterial`  the vacuum material  vacuum      no
+Parameter         Description          Default     Required
+`l`               Length [m]           0           Yes
+`vacuumMaterial`  The vacuum material  vacuum      No
                   to use, can be user
 		  defined
 ================  ===================  ==========  =========
@@ -417,29 +418,29 @@ rbend
 	    :width: 40%
 	    :align: right
 
-.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
-				 energy can be specified or the magnetic field, `B` in Tesla.
+.. |angleFieldComment| replace:: Either the total bending angle, `angle`, or the magnetic field, `B`, (in Tesla)
+				 for the nominal beam energy can be specified.
 				 If both are defined the magnet is under or over-powered.
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment|
 The faces of the magnet are normal to the chord of the
-input and output point. Can be specified using:
+input and output points. Can be specified using:
 
-1) `angle` only - `B` calculated from angle and beam design rigidity.
+1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
-3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
+3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`.
 
 Pole face rotations can be applied to both the input and output faces of the
-magnet, based upon the reference system shown figure below. A pure dipole
+magnet, based upon the reference system shown in the figure below. A pure dipole
 field is provided in the beam pipe and a more general dipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke. A
-quadrupolar component can be specified using the `k1` parameter that is
+quadrupolar component can be specified using the `k1` parameter that is given by:
 
 .. math::
 
    k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
 
-If `k1` is specified, the integrator from `bdsimmatrix` integrator set is used. This
+If `k1` is specified, the integrator from the `bdsimmatrix` integrator set is used. This
 results in no physical pole face angle being constructed for tracking purposes. The
 tracking still includes the pole face effects.
 
@@ -448,40 +449,40 @@ tracking still includes the pole face effects.
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | length [m]                        | 0         | yes             |
+| `l`             | Length [m]                        | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
+| `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `B`             | magnetic field [T]                | 0         | yes             |
+| `B`             | Magnetic field [T]                | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e1`            | input poleface angle [rad]        | 0         | no              |
+| `e1`            | Input pole face angle [rad]       | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e2`            | output poleface angle [rad]       | 0         | no              |
+| `e2`            | Output pole face angle [rad]      | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `material`      | magnet outer material             | Iron      | no              |
+| `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
+| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `hStyle`        | H style poled geometry            | 0         | no              |
+| `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `k1`            | quadrupole coefficient for        | 0         | no              |
-|                 | function magnet.                  |           |                 |
+| `k1`            | Quadrupole coefficient for        | 0         | No              |
+|                 | function magnet                   |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fint`          | fringe field integral for the     | 0         | no              |
-|                 | entrance face of the rbend.       |           |                 |
+| `fint`          | Fringe field integral for the     | 0         | No              |
+|                 | entrance face of the rbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintx`         | fringe field integral for the     | -1        | no              |
+| `fintx`         | Fringe field integral for the     | -1        | No              |
 |                 | exit face of the rbend. -1 means  |           |                 |
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintK2`        | second fringe field integral for  | 0         | no              |
-|                 | the entrance face of the rbend.   |           |                 |
+| `fintK2`        | Second fringe field integral for  | 0         | No              |
+|                 | the entrance face of the rbend    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintxK2`       | second fringe field integral for  | 0         | no              |
-|                 | the exit face of the rbend.       |           |                 |
+| `fintxK2`       | Second fringe field integral for  | 0         | No              |
+|                 | the exit face of the rbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `hgap`          | the half gap of the poles for     | 0         | no              |
+| `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
@@ -496,26 +497,26 @@ tracking still includes the pole face effects.
 
 A few points about rbends:
 
-1) For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
-   is represented by a straight (chord) section and even nominal energy particles
-   may hit the aperture depending on the degree of tracking accuracy specified. In this
+1) For large angles (> 100 mrad), particles may hit the aperture, as the beam pipe is
+   represented by a straight (chord) section and even nominal energy particles
+   may hit the aperture, depending on the degree of tracking accuracy specified. In this
    case, consider splitting the `rbend` into multiple ones.
-2) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
-3) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+2) The pole face rotation angle is limited to :math:`\pm \pi /4` radians.
+3) If a non-zero pole face rotation angle is specified, the element preceding / succeeding
    the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an rbend with
    :math:`e2 = 0.1` can be followed by an rbend with :math:`e1 = -0.1`). The preceding / succeeding
    element must be longer than the projected length from the rotation, given by
    :math:`2 \tan(\mathrm{eX})`.
-4) Fringe field kicks are applied in a thin fringefield magnet (1 micron thick by default) at the beginning
-   or at the end of the rbend. The length of the fringefield element can be
+4) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
+   or at the end of the rbend. The length of the fringe field element can be
    set by the option `thinElementLength` (see `options`_).
-5) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
-   if `e1` and `e2` have 0 angle.
+5) In the case of finite `fint` or `fintx` and `hgap`, a fringe field is used even
+   if `e1` and `e2` have no angle.
 6) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
    enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
    of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
    explicitly specified as non-zero.
-7) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+7) The effect of pole face rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
 
 Examples::
@@ -536,15 +537,15 @@ sbend
 The faces of the magnet are normal to the curvilinear coordinate
 system. `sbend` magnets are made of a series of straight segments. Can be specified using:
 
-1) `angle` only - `B` calculated from angle and beam design rigidity.
+1) `angle` only - `B` calculated from the angle and the beam design rigidity.
 2) `B` only - the angle is calculated from the beam design rigidity.
-3) `angle` & `B`  - physically constructed using angle, field strength as `B`.
+3) `angle` & `B`  - physically constructed using the angle, and field strength as `B`.
 
 Pole face rotations can be applied to both the input and output faces of the magnet,
 based upon the reference system shown in the figure below. A pure dipole field is
 provided in the beam pipe and a more general dipole (as described by
 :ref:`yoke-multipole-field`) is provided for the yoke. A quadrupolar component can
-be specified using the `k1` parameter that is
+be specified using the `k1` parameter that is given by:
 
 .. math::
 
@@ -564,40 +565,40 @@ that the maximum tangential error in the aperture is 1 mm.
 +-----------------+-----------------------------------+-----------+-----------------+
 | Parameter       | Description                       | Default   | Required        |
 +=================+===================================+===========+=================+
-| `l`             | length [m]                        | 0         | yes             |
+| `l`             | Length [m]                        | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `angle`         | angle [rad]                       | 0         | yes, and or `B` |
+| `angle`         | Angle [rad]                       | 0         | Yes, and or `B` |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `B`             | magnetic field [T]                | 0         | yes             |
+| `B`             | Magnetic field [T]                | 0         | Yes             |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e1`            | input poleface angle [rad]        | 0         | no              |
+| `e1`            | Input poleface angle [rad]        | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `e2`            | output poleface angle [rad]       | 0         | no              |
+| `e2`            | Output poleface angle [rad]       | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `material`      | magnet outer material             | Iron      | no              |
+| `material`      | Magnet outer material             | Iron      | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `yokeOnInside`  | yoke on inside of bend            | 0         | no              |
+| `yokeOnInside`  | Yoke on inside of bend            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `hStyle`        | H style poled geometry            | 0         | no              |
+| `hStyle`        | H style poled geometry            | 0         | No              |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `k1`            | quadrupole coefficient for        | 0         | no              |
-|                 | function magnet.                  |           |                 |
+| `k1`            | Quadrupole coefficient for        | 0         | No              |
+|                 | function magnet                   |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fint`          | fringe field integral for the     | 0         | no              |
-|                 | entrance face of the rbend.       |           |                 |
+| `fint`          | Fringe field integral for the     | 0         | No              |
+|                 | entrance face of the rbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintx`         | fringe field integral for the     | -1        | no              |
+| `fintx`         | Fringe field integral for the     | -1        | No              |
 |                 | exit face of the rbend. -1 means  |           |                 |
 |                 | default to the same as fint. 0    |           |                 |
 |                 | there will be no effect.          |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintK2`        | second fringe field integral for  | 0         | no              |
-|                 | the entrance face of the rbend.   |           |                 |
+| `fintK2`        | Second fringe field integral for  | 0         | No              |
+|                 | the entrance face of the rbend    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `fintxK2`       | second fringe field integral for  | 0         | no              |
-|                 | the exit face of the rbend.       |           |                 |
+| `fintxK2`       | Second fringe field integral for  | 0         | No              |
+|                 | the exit face of the rbend        |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
-| `hgap`          | the half gap of the poles for     | 0         | no              |
+| `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
 
@@ -612,22 +613,22 @@ that the maximum tangential error in the aperture is 1 mm.
 
 A few points about sbends:
 
-1) The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
-2) If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+1) The pole face rotation angle is limited to :math:`\pm \pi /4` radians.
+2) If a non-zero pole face rotation angle is specified, the element preceding / succeeding
    the rotated magnet face must either be a drift or an sbend with the opposite rotation
    (e.g. an sbend with :math:`e2 = 0.1` can be followed by an sbend with
    :math:`e1 = -0.1`). The preceding / succeeding element must be longer than
    the projected length from the rotation, given by :math:`2 \tan(\mathrm{eX})`.
 3) Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the beginning
-   or at the end of the rbend. The length of the fringe field magnet can be
+   or at the end of the sbend. The length of the fringe field magnet can be
    set by the option `thinElementLength` (see `options`_).
 4) In the case of finite `fint` or `fintx` and `hgap` a fringe field is used even
-   if `e1` and `e2` have 0 angle.
+   if `e1` and `e2` have no angle.
 5) The `fintK2` and `fintxK2` parameters are for a second fringe field correction term that are included to
    enable optics comparisons with TRANSPORT. Whilst this term is not available in MAD-X, the default values
    of 0 mean this second fringe field correction will not be applied unless `fintK2` or `fintxK2` are
    explicitly specified as non-zero.
-6) The effect of poleface rotations and fringe field kicks can be turned off for all dipoles by setting
+6) The effect of pole face rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
 
 Examples::
@@ -649,10 +650,10 @@ quadrupole
    k_{1} = \frac{1}{B \rho}\,\frac{dB_{y}}{dx}\,[m^{-2}]
 
 ================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`k1`              quadrupole coefficient       0           yes
-`material`        magnet outer material        Iron        no
+Parameter         Description                  Default     Required
+`l`               Length [m]                   0           Yes
+`k1`              Quadrupole coefficient       0           Yes
+`material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
@@ -680,10 +681,10 @@ sextupole
    k_{2} = \frac{1}{B \rho}\,\frac{dB^{2}_{y}}{dx^{2}}\,[m^{-3}]
 
 ================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`k2`              sextupole coefficient        0           yes
-`material`        magnet outer material        Iron        no
+Parameter         Description                  Default     Required
+`l`               Length [m]                   0           Yes
+`k2`              Sextupole coefficient        0           Yes
+`material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
@@ -711,10 +712,10 @@ octupole
    k_{3} = \frac{1}{B \rho}\,\frac{dB^{3}_{y}}{dx^{3}}\,[m^{-4}]
 
 ================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`k3`              octupole coefficient         0           yes
-`material`        magnet outer material        Iron        no
+Parameter         Description                  Default     Required
+`l`               Length [m]                   0           Yes
+`k3`              Octupole coefficient         0           Yes
+`material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
@@ -741,10 +742,10 @@ decapole
    k_{2} = \frac{1}{B \rho}\,\frac{dB^{4}_{y}}{dx^{4}}\,[m^{-5}]
 
 ================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`k4`              decapole coefficient         0           yes
-`material`        magnet outer material        Iron        no
+Parameter         Description                  Default     Required
+`l`               Length [m]                   0           Yes
+`k4`              Decapole coefficient         0           Yes
+`material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
 
 A pure decapolar field is provided in the beam pipe and a more general multipole (as
@@ -772,11 +773,11 @@ starting with the quadrupole component. The skew strength parameter :math:`ksl`
 is a list representing the skew coefficients.
 
 ================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`knl`             list of normal coefficients  0           no
-`ksl`             list of skew coefficients    0           no
-`material`        magnet outer material        Iron        no
+Parameter         Description                  Default     Required
+`l`               Length [m]                   0           Yes
+`knl`             List of normal coefficients  0           No
+`ksl`             List of skew coefficients    0           No
+`material`        Magnet outer material        Iron        No
 ================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
@@ -791,9 +792,9 @@ Examples::
 thinmultipole
 ^^^^^^^^^^^^^
 
-`thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
+`thinmultipole` is the same as multipole, but is set to have a default length of 1 micron.
 For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
-tube. A thinmultipole can be placed next to a bending magnet with finite poleface rotation angles.
+tube. A thin multipole can be placed next to a bending magnet with finite pole face rotation angles.
 
 Examples::
 
@@ -804,10 +805,10 @@ Examples::
 vkicker
 ^^^^^^^
 
-`vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
-with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
-a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
-with only the shape of the aperture and no surrounding geometry. It is also typically not
+`vkicker` can either be a thin or thick vertical dipole magnet. If specified
+with a finite length :code:`l`, it will be constructed as a thick dipole. However, if no length (or
+a length of exactly 0 is specified), a thin kicker will be built. This is in practice constructed as
+a 1um slice with only the aperture geometry and no surrounding geometry. It is also in this case not
 visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
@@ -815,7 +816,7 @@ in the vertical direction. A positive value corresponds to an increase in :math:
 case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
-In the case of a thick kicker, the resulting bending angle is calculated as:
+In the case of a thick kicker, the resulting bending angle is calculated using:
 
 .. math::
 
@@ -843,9 +844,8 @@ hkicker
 ^^^^^^^
 
 `hkicker` can either be a thin horizontal kicker or a thick horizontal dipole magnet. If
-specified
-with a finite length :code:`l`, it will be constructed as a dipole. However, if no length or
-a length of exactly 0 is specified, a thin kicker will be built. This it typically a 1um slice
+specified with a finite length :code:`l`, it will be constructed as a dipole. However, if no length (or
+a length of exactly 0) is specified, a thin kicker will be built. This is typically a 1um slice
 with only the shape of the aperture and no surrounding geometry. It is also typically not
 visible with the default visualisation settings.
 
@@ -854,7 +854,7 @@ in the vertical direction. A positive value corresponds to an increase in :math:
 case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
 
-.. note:: A positive value of `hkick` causes an increase in horizontal momentum so the particle
+.. note:: A positive value of `hkick` causes an increase in horizontal momentum, so the particle
 	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
 	  the opposite of a bend where a positive *angle* causes a deflection in negative
 	  `x`.
@@ -909,26 +909,26 @@ numerical integrator is used to calculate the motion of particles in both cases.
 +----------------+-------------------------------+--------------+---------------------+
 | **Parameter**  | **Description**               | **Default**  | **Required**        |
 +================+===============================+==============+=====================+
-| `l`            | length [m]                    | 0            | yes                 |
+| `l`            | Length [m]                    | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `E`            | electric field strength       | 0            | yes (or `gradient`) |
+| `E`            | Electric field strength       | 0            | Yes (or `gradient`) |
 +----------------+-------------------------------+--------------+---------------------+
-| `gradient`     | field gradient [MV/m]         | 0            | yes                 |
+| `gradient`     | Field gradient [MV/m]         | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `frequency`    | frequency of oscillation (Hz) | 0            | yes                 |
+| `frequency`    | Frequency of oscillation (Hz) | 0            | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `phase`        | phase offset (rad)            | 0            | no                  |
+| `phase`        | Phase offset (rad)            | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
-| `tOffset`      | offset in time (ns)           | 0            | no                  |
+| `tOffset`      | Offset in time (ns)           | 0            | No                  |
 +----------------+-------------------------------+--------------+---------------------+
-| `material`     | outer material                | ""           | yes                 |
+| `material`     | Outer material                | ""           | Yes                 |
 +----------------+-------------------------------+--------------+---------------------+
-| `cavityModel`  | name of cavity model object   | ""           | no                  |
+| `cavityModel`  | Name of cavity model object   | ""           | No                  |
 +----------------+-------------------------------+--------------+---------------------+
 
 .. note:: The design energy of the machine is not affected, so the strength and fields
 	  of components after an RF cavity in a lattice are calculated with respect to
-	  the design energy and particle and therefore design rigidity. The user should
+	  the design energy, the particle and therefore, design rigidity. The user should
 	  scale the strength values appropriately if they wish to match the increased
 	  energy of the particle.
 
@@ -937,18 +937,18 @@ numerical integrator is used to calculate the motion of particles in both cases.
 	     deficiencies of the Geant4 visualisation system. The geometry exists
 	     and is fully functional.
 
-* The field is such that a positive E field results in acceleration of the primary particle.
-* The phase is calculated automatically such that 0 phase results in the peak E field at
+* The field is such that a positive E-field results in acceleration of the primary particle.
+* The phase is calculated automatically such that zero phase results in the peak E-field at
   the centre of the component for its position in the lattice.
 * Either `tOffset` or `phase` may be used to specify the phase of the oscillator.
 * The material must be specified in the `rf` gmad element or in the attached cavity model
   by name. The cavity model will override the element material.
 
 If `tOffset` is specified, a phase offset is calculated from this time for the speed
-of light in vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
+of light in a vacuum. Otherwise, the curvilinear S-coordinate of the centre of the rf
 element is used to find the phase offset.
 
-If `phase` is specified, this is added to calculated phase offset from either the lattice
+If `phase` is specified, this is added to the calculated phase offset from either the lattice
 position or `tOffset`.
 
 Simple examples::
@@ -957,18 +957,18 @@ Simple examples::
    rf2: rf, l=10*cm, gradient=14*MV / m, frequency=450*MHz;
    rf3: rf, l=10*cm, E=10*MV, frequency=90*MHz, tOffset=3.2*ns;
 
-Rather than just a simple E field, an electromagnetic field that is the solution to
+Rather than just a simple E-field, an electromagnetic field that is the solution to
 a cylindrical pill-box cavity may be used. A cavity object (described in more detail
 below) is used to specify the field type. All other cavity parameters may be safely ignored
 and only the field type will be used. The field is described in :ref:`field-pill-box`.
 
-Pill-Box field example::
+Pill-box field example::
 
   rffield: field, type="rfcavity";
   rf4: rf, l=10*cm, E=2*kV, frequency=1.2*GHz, fieldVacuum="rffield";
 
 Elliptical SRF cavity geometry is also provided and may be specified by use of another
-'cavity' object in the parser.  This cavity object can then be attached to an `rf`
+'cavity' object in the parser. This cavity object can then be attached to an `rf`
 object by name. Details can be found in :ref:`cavity-geometry-parameters`.
 
 
@@ -979,22 +979,22 @@ rcol
 	    :width: 30%
 	    :align: right
 
-`rcol` defines a rectangular collimator. The aperture is rectangular and the eternal
+`rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
 ================  =================================  ==========  ===========
-parameter         description                        default     required
-`l`               length [m]                         0           yes
-`xsize`           horizontal half aperture [m]       0           yes
-`ysize`           vertical half aperture [m]         0           yes
-`xsizeOut`        horizontal exit half aperture [m]  0           no
-`ysizeOut`        vertical exit half aperture [m]    0           no
-`material`        outer material                     Iron        no
-`outerDiameter`   outer full width [m]               global      no
+Parameter         Description                        Default     Required
+`l`               Length [m]                         0           Yes
+`xsize`           Horizontal half aperture [m]       0           Yes
+`ysize`           Vertical half aperture [m]         0           Yes
+`xsizeOut`        Horizontal exit half aperture [m]  0           No
+`ysizeOut`        Vertical exit half aperture [m]    0           No
+`material`        Outer material                     Iron        No
+`outerDiameter`   Outer full width [m]               global      No
 ================  =================================  ==========  ===========
 
 .. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
-	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
+	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
 
 
 Examples::
@@ -1015,7 +1015,7 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half axes respectively. When tapered, the ratio between the horizontal and vertical half
+half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
 axes of the entrance aperture must be the same ratio for the exit aperture.
 
 
@@ -1031,15 +1031,15 @@ degrader
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
 ===================    =======================================  ==========  ===========
-parameter              description                              default     required
-`l`                    length [m]                               0           yes
-`numberWedges`         number of degrader wedges                1           yes
-`wedgeLength`          degrader wedge length [m]                0           yes
-`degraderHeight`       degrader height [m]                      0           yes
-`materialThickness`    amount of material seen by the beam [m]  0           yes/no*
-`degraderOffset`       horizontal offset of both wedge sets     0           yes/no*
-`material`             degrader material                        Carbon      yes
-`outerDiameter`        outer full width [m]                     global      no
+Parameter              Description                              Default     Required
+`l`                    Length [m]                               0           Yes
+`numberWedges`         Number of degrader wedges                1           Yes
+`wedgeLength`          Degrader wedge length [m]                0           Yes
+`degraderHeight`       Degrader height [m]                      0           Yes
+`materialThickness`    Amount of material seen by the beam [m]  0           Yes/No*
+`degraderOffset`       Horizontal offset of both wedge sets     0           Yes/No*
+`material`             Degrader material                        Carbon      Yes
+`outerDiameter`        Outer full width [m]                     global      No
 ===================    =======================================  ==========  ===========
 
 .. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
@@ -1067,11 +1067,11 @@ muspoiler
 a beam pipe in the middle. There is no magnetic field in the beam pipe.
 
 ================  ============================  ==========  ===========
-parameter         description                   default     required
-`l`               length [m]                    0           yes
-`B`               magnetic field [T]            0           yes
-`material`        outer material                Iron        no
-`outerDiameter`   outer full width [m]          global      no
+Parameter         Description                   Default     Required
+`l`               Length [m]                    0           Yes
+`B`               Magnetic field [T]            0           Yes
+`material`        Outer material                Iron        No
+`outerDiameter`   Outer full width [m]          global      No
 ================  ============================  ==========  ===========
 
 shield
@@ -1082,17 +1082,17 @@ shield
 	    :align: right
 
 `shield` defines a square block of material with a square aperture. The user may choose
-the outer width, and inner horizontal and vertical apertures of the block. A beam pipe
+the outer width and inner horizontal and vertical apertures of the block. A beam pipe
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
 ================  ==============================  ==========  ===========
-parameter         description                     default     required
-`l`               length [m]                      0           yes
-`material`        outer material                  Iron        no
-`outerDiameter`   outer full width [m]            global      no
-`xsize`           horizontal inner aperture [m]   0           no
-`ysize`           vertical inner aperture [m]     0           no
+Parameter         Description                     Default     Required
+`l`               Length [m]                      0           Yes
+`material`        Outer material                  Iron        No
+`outerDiameter`   Outer full width [m]            global      No
+`xsize`           Horizontal inner aperture [m]   0           No
+`ysize`           Vertical inner aperture [m]     0           No
 ================  ==============================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
@@ -1105,15 +1105,15 @@ solenoid
 	    :align: right
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
-hard edge field profile so it is not equivalent to split a single solenoid into multiple
+hard edge field profile, so it is not equivalent to split a single solenoid into multiple
 smaller ones. **This is currently under development**.
 
 ================  ============================  ==========  ===========
-parameter         description                   default     required
-`l`               length [m]                    0           yes
-`ks`              solenoid strength [ ]         0           yes
-`material`        outer material                Iron        no
-`outerDiameter`   outer full width [m]          global      no
+Parameter         Description                   Default     Required
+`l`               Length [m]                    0           Yes
+`ks`              Solenoid strength [ ]         0           Yes
+`material`        Outer material                Iron        No
+`outerDiameter`   Outer full width [m]          global      No
 ================  ============================  ==========  ===========
 
 * See `Magnet Strength Polarity`_ for polarity notes.
@@ -1131,10 +1131,10 @@ laser
 of photons.
 
 ================  =================================================  ==========  ===========
-parameter         description                                        default     required
-`l`               length of drift section [m]                        0           yes
-`x`, `y`, `z`     components of laser direction vector (normalised)  (1,0,0)     yes
-`waveLength`      laser wavelength [m]                               532*nm      yes
+Parameter         Description                                        Default     Required
+`l`               Length of drift section [m]                        0           Yes
+`x`, `y`, `z`     Components of laser direction vector (normalised)  (1,0,0)     yes
+`waveLength`      Laser wavelength [m]                               532*nm      Yes
 ================  =================================================  ==========  ===========
 
 Examples::
@@ -1151,9 +1151,9 @@ composed of the same material as the world volume.
 .. tabularcolumns:: |p{4cm}|p{4cm}|p{2cm}|p{2cm}|
 
 ===================    =======================================  ==========  ===========
-parameter              description                              default     required
-`l`                    length [m]                               0           yes
-`angle`                angle [rad]                              0           no
+Parameter              Description                              Default     Required
+`l`                    Length [m]                               0           Yes
+`angle`                Angle [rad]                              0           No
 ===================    =======================================  ==========  ===========
 
 Examples::
@@ -1178,25 +1178,25 @@ At least one of `crystalBoth`, `crystalLeft` and `crystalRight` must be specifie
 .. warning:: This requires the user to use the "channelling" physics list for channelling to take place.
 
 ==========================  ======================================================  ===========  =========
-parameter                   description                                             default      required
-`l`                         length [m]                                              0            yes
-`xsize`                     half gap distance of each crystal from centre [m]       0            yes
-`material`                  material                                                ""           yes
-`crystalBoth`               name of crystal object for both crystals                ""           no
-`crystalLeft`               name of crystal object for right crystal                ""           no
-`crystalRight`              name of crystal object for left crystal                 ""           no
-`crystalAngleYAxisLeft`     rotation angle of left crystal [rad]                    0            no
-`crystalAngleYAxisRight`    rotation angle of right crystal [rad]                   0            no
+Parameter                   Description                                             Default      Required
+`l`                         Length [m]                                              0            Yes
+`xsize`                     Half-gap distance of each crystal from centre [m]       0            Yes
+`material`                  Material                                                ""           Yes
+`crystalBoth`               Name of crystal object for both crystals                ""           No
+`crystalLeft`               Name of crystal object for right crystal                ""           No
+`crystalRight`              Name of crystal object for left crystal                 ""           No
+`crystalAngleYAxisLeft`     Rotation angle of left crystal [rad]                    0            No
+`crystalAngleYAxisRight`    Rotation angle of right crystal [rad]                   0            No
 ==========================  ======================================================  ===========  =========
 
 * Crystal channelling potential files are required for this - see :ref:`crystals` for more details.
 * If only `crystalLeft` or `crystalRight` is specified, only one crystal will be placed.
 * If both `crystalLeft` and `crystalRight` are specified, both will be constructed uniquely and placed.
-* if `crystalBoth` is specified, `crystalLeft` and `crystalRight` will be ignored and the `crystalBoth`
-  definition used for both crystals. The angles will be unique.
+* If `crystalBoth` is specified, `crystalLeft` and `crystalRight` will be ignored and the `crystalBoth`
+  definition will be used for both crystals. The angles will be unique.
 
 .. note:: Crystal channelling is only available in Geant4.10.4 onwards. If BDSIM is compiled with a Geant4
-	  version below this, the geometry will be constructed correctly but the channelling phyiscs process
+	  version below this, the geometry will be constructed correctly but the channelling physics process
 	  will not be used and the crystal will not channel particles.
 
 * See :ref:`crystals` for the definition of a crystal object.
@@ -1229,23 +1229,23 @@ More examples can be found in :code:`bdsim/examples/components`.
 transform3d
 ^^^^^^^^^^^
 
-`transform3d` defines an arbitrary 3-dimensional transformation of the curvilinear coordinate
+`transform3d` defines an arbitrary three-dimensional transformation of the curvilinear coordinate
 system at that point in the beam line sequence.  This is often used to rotate components by a large
 angle.
 
 
 ================  ============================  ==========  ===========
-parameter         description                   default     required
-`x`               x offset                      0           no
-`y`               y offset                      0           no
-`z`               z offset                      0           no
-`phi`             phi Euler angle               0           no
-`theta`           theta Euler angle             0           no
-`psi`             psi Euler angle               0           no
+Parameter         Description                   Default     Required
+`x`               x offset                      0           No
+`y`               y offset                      0           No
+`z`               z offset                      0           No
+`phi`             phi Euler angle               0           No
+`theta`           theta Euler angle             0           No
+`psi`             psi Euler angle               0           No
 ================  ============================  ==========  ===========
 
 .. note:: this permanently changes the coordinate frame, so care must be taken to undo any rotation
-	  if it intended for only one component.
+	  if intended for only one component.
 
 Examples::
 
@@ -1258,20 +1258,20 @@ element
 
 `element` defines an arbitrary element that's defined by externally provided geometry. It includes
 the possibility of overlaying a field as well. Several geometry formats are supported. The user
-must supply the length (accurately) as well as a diameter such that the geometry will be
-contained in a box that has horizontal and vertical size of diameter.
+must supply the length (accurately) as well as a diameter, such that the geometry will be
+contained in a box that has horizontal and vertical sizes of diameter.
 
 The geometry is simply placed in the beam line. There is no placement offset other than the
-offset \& tilt of the element in the beam line, therefore, the user must prepare geometry
+offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
 with the placement as required. An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
 ================  ===============================  ==========  ===========
-parameter         description                      default     required
-`geometryFile`    filename of geometry             NA          yes
-`l`               length                           NA          yes
-`outerDiameter`   diameter of component [m]        NA          yes
-`fieldAll`        name of field object to use      NA          no
+Parameter         Description                      Default     Required
+`geometryFile`    Filename of geometry             NA          Yes
+`l`               Length                           NA          Yes
+`outerDiameter`   Diameter of component [m]        NA          Yes
+`fieldAll`        Name of field object to use      NA          No
 ================  ===============================  ==========  ===========
 
 `geometryFile` should be of the format `format:filename`, where `format` is the geometry
@@ -1282,7 +1282,7 @@ file. See :ref:`externally-provided-geometry` for more details.
 gmad file. The syntax for this is described in :ref:`field-maps`.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
-	  no overlapping geometry will be produced. However, care must be taken as the length
+	  no overlapping geometry will be produced. However, care must be taken, as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
 	  than the size required for the geometry, the beam may be mismatched into the rest of
 	  the accelerator. A common practice is to add a picometre to the length of the geometry.
@@ -1306,7 +1306,7 @@ Example with field::
 
 .. note:: For GDML geometry, we preprocess the input file prepending all names with the name
 	  of the element. This is to compensate for the fact that the Geant4 GDML loader does
-	  not handle unique file names. However, in the case of very large files with many many
+	  not handle unique file names. However, in the case of very large files with  many
 	  vertices, the preprocessing can dominate. In this case, the option `preprocessGDML`
 	  should be turned off. The loading will only work with one file in this case.
 
@@ -1316,8 +1316,8 @@ marker
 `marker` defines a point in the lattice. This element has no physical length and is only
 used as a reference. For example, a `sampler` (see :ref:`sampler-output`)
 is used to record particle passage at the
-front of a component but how would you record particles exiting a particular component?
-The intended method is to use a `marker` and place it in the sequence after that element
+front of a component, but how would you record particles exiting a particular component?
+The intended method is to use a `marker` and place it in the sequence after that element,
 then attach a sampler to the marker.
 
 Examples::
@@ -1423,10 +1423,8 @@ The magnet geometry is controlled by the following parameters.
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | no        |
 |                       | | will always be the `outerDiameter` and the height will     |               |           |
-|                       | | scale according to this ratio. In the case of a vertical   |               |           |
-|                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
-|                       | | the geometry is simple rotated). Ranges from 0.1 to 10.    |               |           |
-|                       | | This currently only applies to dipoles with poled          |               |           |
+|                       | | scale according to this ratio. Ranges from 0.1 to 10.      |               |           |
+|                       | | This currently **only** applies to dipoles with poled      |               |           |
 |                       | | geometry.                                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | no        |
@@ -1451,11 +1449,6 @@ Examples::
                    k1=0.03,
 		   magnetGeometryType="gdml:geometryfiles/quad.gdml",
 		   outerDiameter = 0.5*m;
-
-
-.. deprecated:: 0.65
-		`boxSize` - this is still accepted by the parser for backwards compatibility
-		but users should use the `outerDiameter` keyword where possible.
 
 .. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
 	     simulation as particles and radiation may propagate much further along the beam line when
@@ -2094,12 +2087,15 @@ formats is described in more detail in :ref:`external-geometry-formats`.
 .. _placements:
 
 Placements
-^^^^^^^^^^
+----------
 
-Geometry provided in an external file, may be placed in 3D geometry at any location with
+Geometry provided in an external file may be placed at any location in the world with
 any rotation. This is intended to place geometry alongside the beamline and **not** inside
 or as part of it.  The user is responsible for ensuring that the geometry does not
-overlap with any other geometry including the beamline.
+overlap with any other geometry including the beamline. Only in special cases, such as
+for a magnet yoke, can externally provided geometry be placed "inside" BDSIM geometry.
+
+For geometry to be placed in the beam line, use the :ref:`element`.
 
 .. warning:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	     incorrect results and there may not always be warnings provided. For this reason
@@ -2111,42 +2107,98 @@ overlap with any other geometry including the beamline.
 	     placement. Although it may appear OK in the visualiser, the hierarchy of the
 	     geometry will be wrong and the tracking will not work as expected. Avoid this.
 
-The following parameters may be specified.
+There are 3 possible ways to place a piece of geometry.
 
-+----------------+--------------------------------------------------------------------+
-| **Parameter**  |  **Description**                                                   |
-+----------------+--------------------------------------------------------------------+
-| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
-+----------------+--------------------------------------------------------------------+
-| x              | Offset in global x.                                                |
-+----------------+--------------------------------------------------------------------+
-| y              | Offset in global y.                                                |
-+----------------+--------------------------------------------------------------------+
-| z              | Offset in global z.                                                |
-+----------------+--------------------------------------------------------------------+
-| phi            | Euler angle phi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| theta          | Euler angle theta for rotation.                                    |
-+----------------+--------------------------------------------------------------------+
-| psi            | Euler angle psi for rotation.                                      |
-+----------------+--------------------------------------------------------------------+
-| axisX          | Axis angle rotation x component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisY          | Axis angle rotation y component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| axisZ          | Axis angle rotation z component of unit vector.                    |
-+----------------+--------------------------------------------------------------------+
-| angle          | Axis angle angle to rotate about unit vector.                      |
-+----------------+--------------------------------------------------------------------+
-| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
-+----------------+--------------------------------------------------------------------+
-| sensitive      | Whether the geometry records energy deposition (default true).     |
-+----------------+--------------------------------------------------------------------+
+1) In global Cartesian coordinates.
 
+   `x`, `y`, `z` and any rotation are with respect to the world frame of reference.
+   
+2) In curvilinear coordinates.
+
+   `s`, `x`, `y` are used along with a rotation. The transform for the distance `s` along the beamline
+   is first applied and `x`, `y` and the rotation are with respect to that frame.
+
+3) In curvilinear coordinates with respect to a beam line element by name.
+
+   The name of an element is used to look up its `s` coordinate and `s`, `x`, `y` and the rotation
+   are with respect to the centre of that element. **Therefore**, `s` in this case is `local` curvilinear
+   `s`.
+
+The scenario is automatically selected based on which parameters are set. If `s` is finite, then
+it is either scenario 2 or 3. If `referenceElement` is specified, scenario 3 is assumed.
+
+.. warning:: For both scenarios 2) and 3), a placement can only be made **inside** the S length of
+	     the accelerator - it is not possible to place something beyond the accelerator currently.
+	     In this case, the user should resort to a global placement.
+	     
+The following parameters may be specified with a placement in BDSIM:
+
++-------------------------+--------------------------------------------------------------------+
+| **Parameter**           |  **Description**                                                   |
++-------------------------+--------------------------------------------------------------------+
+| geometryFile            | :code:`format:file` - which geometry format and file to use.       |
++-------------------------+--------------------------------------------------------------------+
+| x                       | Offset in global x.                                                |
++-------------------------+--------------------------------------------------------------------+
+| y                       | Offset in global y.                                                |
++-------------------------+--------------------------------------------------------------------+
+| z                       | Offset in global z.                                                |
++-------------------------+--------------------------------------------------------------------+
+| s                       | Curvilinear s coordinate (global | local depending on parameters). |
++-------------------------+--------------------------------------------------------------------+
+| phi                     | Euler angle phi for rotation.                                      |
++-------------------------+--------------------------------------------------------------------+
+| theta                   | Euler angle theta for rotation.                                    |
++-------------------------+--------------------------------------------------------------------+
+| psi                     | Euler angle psi for rotation.                                      |
++-------------------------+--------------------------------------------------------------------+
+| axisX                   | Axis angle rotation x component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| axisY                   | Axis angle rotation y component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| axisZ                   | Axis angle rotation z component of unit vector.                    |
++-------------------------+--------------------------------------------------------------------+
+| angle                   | Axis angle angle to rotate about unit vector.                      |
++-------------------------+--------------------------------------------------------------------+
+| axisAngle               | Boolean whether to use axis angle rotation scheme (default false). |
++-------------------------+--------------------------------------------------------------------+
+| sensitive               | Whether the geometry records energy deposition (default true).     |
++-------------------------+--------------------------------------------------------------------+
+| referenceElement        | Name of element to place geometry with respect to (string).        |
++-------------------------+--------------------------------------------------------------------+
+| referenceElementNumber  | Occurence of `referenceElement` to place with respect to if it     |
+|                         | is used more than once in the sequence. 0 counting.                |
++-------------------------+--------------------------------------------------------------------+
+
+`referenceElementNumber` is the occurence of that element in the sequence. For example if a sequence
+was::
+
+  l1: line=(d1,sb1,d2,qd1,d2,df1,d2,sb1,d1);
+
+and we wanted to place with respect to the first element, we would use::
+
+  p1: placement, referenceElement="d1",
+                 referenceElementNumber=0;
+
+If 0, the `referenceElementNumber` argument is optional. If we want to place with respect to
+the 3rd usage of "d2", we would use::
+
+  p1: placement, referenceElement="d2",
+                 referenceElementNumber=3;
+
+.. note:: Dipoles are split in BDSIM into many small straight sections. These must have a unique
+	  name to appear correctly in the Geant4 visualisation system. The splitting is done
+	  dynamically based on the angle of the bend and if it has pole face rotations on one
+	  or both sides. The names are mangled and so the original name will not be found.
+	  The user should run the visualiser first
+	  and identify the name of the segment of the dipole they wish to place with respect to.
+	  Alternatively, in the case of low angle bends, the element before or after can be used
+	  with a finite `s` offset.
+
+* Examples can be found in :code:`bdsim/examples/features/geometry/13_placements`.
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
   is executed from or an absolute path.
-* The transform is relative to the world coordinate system and not the beginning of the
-  beam line. The main beam line begins at (0,0,0) by default but may be offset.  See
+* The main beam line begins at (0,0,0) by default but may be offset.  See
   :ref:`beamline-offset` for more details.
 
 
@@ -2168,7 +2220,7 @@ The following is an example syntax is used to place a piece of geometry::
 .. warning:: Care must be taken not to define the same placement name twice. If `leadblock`
 	     were declared again here, the first definition would be updated with parameters
 	     from the second leading to possibly unexpected geometry.
-
+	     
 .. _external-magnet-geometry:
 
 External Magnet Geometry

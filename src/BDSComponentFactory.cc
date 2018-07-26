@@ -645,13 +645,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   
   BDSMagnetType t;
+  G4double defaultVHRatio = 1.5;
   switch (type)
     {
     case KickerType::horizontal:
     case KickerType::general:
       {t = BDSMagnetType::hkicker; break;}
     case KickerType::vertical:
-      {t = BDSMagnetType::vkicker; break;}
+      {
+	t = BDSMagnetType::vkicker;
+	defaultVHRatio = 1./defaultVHRatio;
+	break;
+      }
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
@@ -681,7 +686,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {defaultOuterDiameter = globalDefaultOD;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, 1.5, 0.9);
+					  defaultOuterDiameter, defaultVHRatio, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -804,13 +809,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = element->ks;
     }
 
