@@ -31,6 +31,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 
+// Note the geometry cannot scale arbitrarily with this constant. It can be
+// upscaled for debugging purposes, however, the extruded solids that use
+// it may fail when this is increased to approximately 1mm and with certain
+// small / tight magnet shapes where the size of the magnet or components
+// becomse comparable to this constant. Upscaling only for debugging purposes.
 G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
 
 BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()

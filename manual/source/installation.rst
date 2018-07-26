@@ -6,7 +6,7 @@ Obtaining  BDSIM
 ================
 
 BDSIM may be obtained either from the BDSIM website or the git repository may be cloned.
-The user must compile it on their system and must have Geant4, CLHEP & ROOT
+The user must compile it on their system and must have Geant4, CLHEP and ROOT
 already present (or access to AFS).
 
 Obtaining via the git repository allows easier updates in future as the
@@ -23,7 +23,7 @@ To download the source from the git repository, use the command::
   git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. Also the python utilities that come with BDSIM will be present.
+and documentation is provided. Also, the python utilities that come with BDSIM will be present.
 
 Download
 --------
@@ -67,7 +67,7 @@ Requirements
 
 .. note:: These are listed in the correct order of installation / requirement.
 
-Note, even though installed, the Geant4 environmental variables must be
+Note: even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
 
   > echo $G4 <tab>
@@ -75,7 +75,7 @@ available. You can test this in a terminal with::
   $G4LEDATA           $G4NEUTRONXSDATA    $G4REALSURFACEDATA
   $G4LEVELGAMMADATA   $G4PIIDATA          $G4SAIDXSDATA
 
-If these do not exists, please source the Geant4 environmental script
+If these do not exist, please source the Geant4 environmental script
 before installing BDSIM and each time before using BDSIM. It is common
 to add this to your ``.bashrc`` or profile so that it's loaded automatically
 every time::
@@ -96,7 +96,7 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-We recommend obtaining `required packages`_ using `MacPorts`_ package manager,
+We recommend obtaining `required packages`_ using the `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
@@ -108,10 +108,10 @@ Linux
 Install the `required packages`_ preferably with a
 package manager.
 
-Older version of Geant4 can be downloaded from their
+Older versions of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ .
-For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
-Note, the required compiler version (GCC 4.9) is more modern than the default one (GCC 4.4) on SL6. You
+For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4 (currently 4.10.2).
+Note: the required compiler version (GCC 4.9) is more modern than the default one (GCC 4.4) on SL6. You
 can check the compiler version with::
 
   gcc --version
@@ -168,7 +168,7 @@ BDSIM in::
   > ls
   bdsim bdsim-build
 
-It is important that the build directory be outside the source directory as otherwise
+It is important that the build directory be outside the source directory, otherwise
 trouble may be encountered when receiving further updates from the git repository.
 From this directory use the following CMake command to configure the BDSIM
 installation::
@@ -259,14 +259,14 @@ the following locations:
 * https://bitbucket.org/jairhul/pymad8
 * https://bitbucket.org/jairhul/pytransport
 
-These can all be setup separately, or alternatively the user can install all at
+These can all be set up separately, or alternatively the user can install all at
 once with a MakeFile added for convenience.  The Python package installer ("PIP") is
 required for this.
 
 .. note:: ROOT should be compiled with Python2.7 support for the full functionality of
 	  pybdsim data loading to be exploited.
 
-To setup all utilities at once:
+To set up all utilities at once:
 
 .. code::
 
@@ -280,7 +280,7 @@ The utilities should now be available through Python::
   >>> import pymad8
   >>> import pytransport
 
-.. note:: If it's required to edit these utilities, please do not edit the copy in bdsim/utils
+.. note:: If it's required to edit these utilities, please do not edit the copy in bdsim/utils,
 	  as this will cause problems with git and pulling changes. It is strongly recommended
 	  to clone each utility separately outside the BDSIM source directory and edit that version,
 	  leaving the included one untouched.
@@ -319,13 +319,13 @@ Making the Manual
 -----------------
 
 The manual is available online at http://www.pp.rhul.ac.uk/bdsim/manual and included
-as a pdf in the source directory, but if
-desired the user can compile the manual in both HTML and pdflatex from the build
-directory using the following command::
+as a pdf in the source directory, but if desired the user can compile the manual
+in both HTML and pdflatex from the build directory using the following command
+to make the HTML manual in the folder ``manual/html``::
 
   > make manual
 
-to make the HTML manual in the folder ``manual/html``. Similarly::
+ Similarly::
 
   > make manual-pdf
 
@@ -342,18 +342,17 @@ Making Doxygen Code Documentation
 Doxygen code documentation is available online at
 http://www.pp.rhul.ac.uk/bdsim/doxygen/
 
-If desired the user can create this from the build directory using the following command::
+If desired the user can create this from the build directory using the following command
+to make the Doxygen documentation in a folder called ``Doxygen``.::
 
   > make doc
-
-to make the Doxygen documentation in a folder called ``Doxygen``.
 
 .. note:: This requires the Doxygen documentation system to be installed.
 
 CLHEP Installation Guide
 ------------------------
 
-If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
+If not installed with a package manager, download `CLHEP-2.3.1.1`_ or a newer version from the `CLHEP`_ website.
 
 Move and unpack to a suitable place::
 
@@ -413,18 +412,18 @@ It is useful to change a few options with Geant4 for practical purposes.
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
-| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder to install to.          |
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.             |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically  |
+| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically, |
 |                                 | as it's required during the simulation and it may not be    |
-|                                 | possible to run offline then.                               |
+|                                 | possible to run offline.                                    |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_INSTALL_DATADIR**      | Useful to specify to a known folder you make. Typically     |
-|                                 | whatever **CMAKE_INSTALL_PREFIX** / data.                   |
+|                                 | any  **CMAKE_INSTALL_PREFIX** / data.                       |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
 +---------------------------------+-------------------------------------------------------------+
@@ -434,7 +433,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 |                                 | Needs Qt to be installed                                    |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
-|                                 | library and therefore, there's only one random number       |
+|                                 | library. Therefore, there's only one random number          |
 |                                 | generator and simulations have strong reproducibility.      |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the Geant4 internal version.         |
@@ -449,7 +448,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 .. warning:: Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
 
 .. note:: The CLHEP option is required.  The GDML and QT options are strongly recommended. Others
-	  are as the user prefers.
+	  are to the user's preference.
 
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. If ``g`` is not an
@@ -460,7 +459,7 @@ be compiled ::
 
   > make
 
-Note, Geant4 can take around 20 minutes to compile on a typical computer. If your
+Note: Geant4 can take around 20 minutes to compile on a typical computer. If your
 computer has multiple cores, you can significantly decrease the time required to
 compile by using extra cores ::
 
@@ -471,12 +470,12 @@ then be installed ::
 
   > make install
 
-Note, if you've specified the directory to install, you will not need the ``sudo``
-command, however, if you've left the settings as default, it'll be installed
+Note: if you've specified the directory to install, you will not need the ``sudo``
+command. However, if you've left the settings as default, it'll be installed
 in a folder that requires ``sudo`` permissions such as ``/usr/local/``.
 
 **IMPORTANT** - you should source the Geant4 environment each time before running
-BDSIM as this is required for the physics models of Geant4.  This can be done using ::
+BDSIM, as this is required for the physics models of Geant4.  This can be done using ::
 
   > source path/to/geant4.10.2-install/bin/geant4.sh
 
@@ -486,10 +485,10 @@ Upgrading BDSIM
 ===============
 
 To update BDSIM when a new release is made, we recommend receiving updates through the
-git repository. To receive the lates version of the software, the user must 'pull' the
+git repository. To receive the latest version of the software, the user must 'pull' the
 changes from the git repository and then update the build.
 
-* Assuming you have a BDSIM source directory ("bdsim") that is a clone of the git repository
+..note::  Assuming you have a BDSIM source directory ("bdsim") that is a clone of the git repository
   and a separate build directory ("bdsim-build") that is *outside* the source directory.
 
 .. code::
@@ -498,8 +497,8 @@ changes from the git repository and then update the build.
    git pull
    git submodule update
 
-The then has two options 1) make a clean build or 2) update the current build. The first option
-is generally more robust and we reommend that. Both are described for completeness.
+You then have two options: 1) make a clean build or 2) update the current build. The first option
+is generally more robust and we recommend that. Both are described for completeness.
 
 Clean Build
 -----------
@@ -512,7 +511,7 @@ Clean Build
    make -j4
    make install
 
-If custom locations for various dependencies had to be specified with CMake for the intial
+If custom locations for various dependencies had to be specified with CMake for the initial
 configuration and compilation of BDSIM, these will have to be repeated (see
 :ref:`configuring-bdsim` for details on using ccmake to do this).
 
@@ -533,14 +532,14 @@ Updated Existing Build
 Troubleshooting
 ===============
 
-Below are a list of possible encountered problems. If you experience problems beyond these,
+Below is a list of possible encountered problems. If you experience problems beyond these,
 please contact us (see :ref:`support-section`).
 
 1) Visualisation does not work::
 
      "parameter value is not listed in the candidate List."
 
-   Check which graphics systems BDSIM has available, this is shown in the terminal when
+   Check which graphics systems BDSIM has available. This is shown in the terminal when
    you run BDSIM ::
 
      You have successfully registered the following graphics systems.
@@ -592,25 +591,25 @@ please contact us (see :ref:`support-section`).
      /lib64/libG4analysis.so: undefined reference to
      'std::__detail::_List_node_base::_M_unhook()@GLIBCXX_3.4.15'
 
-   This means compiler version for BDSIM is different from the one used to compile Geant4.
-   Make sure it is the same compiler version. Remember to start from a clean build
-   directory otherwise CMake does **NOT** update the compiler version.
+   This means that the compiler version for BDSIM is different from the one used to compile Geant4.
+   Make sure it is the same compiler version. Remember to start from a clean build directory, otherwise
+   CMake does **NOT** update the compiler version.
 
 4) Build does not work - linker errors with xml and zlib like ::
 
      /usr/lib/../lib64/libxml2.so: undefined reference to `gzdirect@ZLIB_1.2.2.3'
      collect2: error: ld returned 1 exit status
 
-   This probably means that the xml library is not properly installed. Easiest might be to not use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
+   This probably means that the xml library is not properly installed. The easiest option may be not to use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
 
 .. rubric:: Footnotes
 
-.. [#macafsnote] Note, the use of **AFS** with the Mac OSX build of BDSIM is not supported
+.. [#macafsnote] Note: the use of **AFS** with the Mac OSX build of BDSIM is not supported,
 		 as there is no compatible version of Geant4 available on AFS.
 
 .. [#ncoresnote] If your computer supports hyper-threading, you can use twice the number of
-		 cores with the ``make -jN`` command, i.e. a computer has 4 cores and supports
-		 hyper-threading, can support up to ``make -j8``.  Exceeding this number will
+		 cores with the ``make -jN`` command (i.e. a computer has 4 cores and supports
+		 hyper-threading, can support up to ``make -j8``). Exceeding this number will
 		 result in slower than normal compilation.
 
 .. Links

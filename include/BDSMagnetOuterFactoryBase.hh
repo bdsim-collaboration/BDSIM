@@ -198,6 +198,10 @@ public:
   /// Virtual base destructor
   virtual ~BDSMagnetOuterFactoryBase() {}
 
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
+
 protected:
   BDSMagnetOuterFactoryBase();
 
@@ -259,10 +263,6 @@ protected:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
-
-  /// A larger length safety that can be used where tracking accuracy isn't required
-  /// or more tolerant geometry is required (1um).
-  static G4double const lengthSafetyLarge;
 };
 
 #endif

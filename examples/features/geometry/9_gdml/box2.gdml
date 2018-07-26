@@ -4,7 +4,7 @@
 	<materials/>
 	<solids>
 		<orb name="PREPEND_box" r="34"/>
-		<box lunit="mm" name="PREPEND_world" x="2*200" y="2*200" z="2*200"/>
+		<box lunit="mm" name="PREPEND_world" x="2*35" y="2*35" z="2*35"/>
 	</solids>
 	<structure>
 		<volume name="PREPEND_boxlv_lv">

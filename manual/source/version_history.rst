@@ -1,35 +1,60 @@
-V1.2 - 2018 / ?? / ??
+V1.2 - 2018 / 07 / ??
 =====================
 
 New Features
 ------------
 
 * New options to activate extra models in em_extra physics list.
-* New `crystalcol` element for channelling crystals.
-* New `crystal` definition in parser.
+* New :code:`crystalcol` element for channelling crystals.
+* New :code:`crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
-* Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
-  be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
+* Field maps need not be in `x`, `y`, `z`, `t` order and lower dimension fields (i.e. 1D or 2D) can
+  be made for any dimension. i.e. it is now possible to specify a 1D field along the `z` direction.
 * rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
+  Issue #240.
+* Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
+  element and lastly in global Cartesian coordinates.
+* Samplers will no longer be automatically attached (with :code:`sample, all;`) to dipoles with finite
+  pole face rotations as this may lead to tracking issues in Geant4. A developer option can force
+  this on, although this is not recommended. Issue #241.
 
 General
 -------
 
-* Synchrotron radiation disabled now with em_extra physics list (use dedicated synchrad physics list. Avoids double registration of physics process.
+* :code:`vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
+  the lab frame.
+* The horizontal width of kickers is now take from :code:`outerDiameter`. Previously :code:`outerDiameter`
+  corresponded to the height and :code:`vhratio` was really the horizontal to vertical ratio in
+  the lab frame.
+* Synchrotron radiation disabled now with em_extra physics list (use dedicated
+  synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
-* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
+* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
+  visualisation system.
 * "ang" unit is added to the parser for Angstroms.
-* BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
+* BDSIM will now exit if there is no space to make the necessary circular management objects
+  (teleporter and terminator).
 * long int used explicitly instead of int for event indices in analysis.
-* Reimplemented primary first hit and last hit. Last hit is now the end point of the primary trajectory.
+* Reimplemented primary first hit and last hit. Last hit is now the end point of the
+  primary trajectory. No more linear memory usage with tracking time
+* Beam pipe extent calculation reimplemented and much less simplistic - used
+  to check whether a pipe will fit inside a magnet.
+* Mini-contents for syntax section of manual as it's grown to a large size.
+* New rmatrix element (experimental).
+* EM Dissociation is now applicable up to 100 TeV.
+* Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
+* BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
+  database by automatically prefixing the name with "G4\_". Issue #236.
 
 Output Changes
 --------------
 
 * New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
-* New optional stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
-* New optional preStepKineticEnergy in Eloss part of Event Tree with option :code:`storeElossPreStepKineticEnergy` to use this data.
+* New optional stepLength variable in Eloss part of Event Tree with option
+  :code:`storeElossStepLength` to use this data.
+* New optional preStepKineticEnergy in Eloss part of Event Tree with option
+  :code:`storeElossPreStepKineticEnergy` to use this data.
 * Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
 * Tilt, offsetX, offsetY and material are added to the Model Tree output.
 * Model class (BDSOutputROOTEventModel) number is incremented in output.
@@ -37,21 +62,52 @@ Output Changes
 * New option :code:`storeModel` to turn off model storage in the output.
 * Even Info class (BDSOutputROOTEventInfo) number is incremented in output.
 * Event.Info now has a Boolean of whether the primary particle hit something or not.
-* Samplers are no longer placed next to elements with angled faces when using the :code:`bdsimtwo`, :code:`geant4`, or :code:`geant4dp` integrator sets.
+* Samplers are **no longer** placed next to elements with angled faces when using the :code:`bdsimtwo`,
+  :code:`geant4`, or :code:`geant4dp` integrator sets.
+* Units are now written to the ASCII survey output for each column.
 
 Bug Fixes
 ---------
 
-* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
-* Further improvements to tunnel building algorithm for magnets with tilt.
-* Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
-* Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
+* Fix tracking bug where particle in very niche coordinates may reflect from a sampler in
+  at the end of a dipole with a very strongly angled pole face. #Issue 241.
+* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to
+  problems when thin elements such as fringe fields or thin multipoles were included.
+* Further improvements to tunnel building algorithm for magnets with tilt. Issue #243.
+* Fix length check for very short elements. Small drifts would cause a crash from
+  Geant4 due to invalid parameters - occurred as length check was wrong.
+* Fix non-positive definite warnings for no energy spread and time spread when using
+  a Gaussian beam in a composite beam definition.
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
-* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
-* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to save the whole trajectory for the primary. This fixes the behaviour of linearly growing unbounded memory usage when tracking for a long time in a ring.
+* Fix corrupted example files for userfile bunch distribution. Issue #244.
+* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02
+  from too short tunnel section.
+* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to
+  save the whole trajectory for the primary. This fixes the behaviour of linearly growing
+  unbounded memory usage when tracking for a long time in a ring. Issue #246, #242.
+* Optical calculation now works for sub-relativistic positrons.
+* ATF2 MADX output was not included in worked example as advertised - now included.
+* Fixed scaling variable used when scaling a field map to a decapole magnet strength.
+* Survey units for magnetic fields are now fixed from kT to T.
+* Fixed issue where C-shaped vkickers and hkickers would ignore :code:`yokeOnInside`. Issue #251.
+* Fixed possible overlap in vkicker, hkicker, and h-style dipole geometry with highly asymmetric
+  beam pipes.
+* Fixed incorrect report that beam pipe wouldn't fit in magnet for various aperture shapes. Issue #253.
+* Fixed issue where the option :code:`writePrimaries = 0` would result in the hits for the first sampler
+  being written to the primary sampler structure. Issue #245.
+* Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
+  Issue #220.
 
+Utilities
+---------
+
+* pybdsim v1.9
+* pymadx v1.5
+* pymad8 v1.4
+* pytransport v1.2
+  
 
 V1.1 - 2018 / 05 / 23
 =====================
@@ -72,7 +128,8 @@ Bug Fixes
 
 * Fixed wrong transforms for finite `S0` in composite beam distribution.
 * Fixed crash when finite `S0` was used with `-\\-generatePrimariesOnly` executable option.
-* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for `x`, `y`, `z`, `X`, `Y`, `Z` positions.
+* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for
+  `x`, `y`, `z`, `X`, `Y`, `Z` positions.
 * Fixed segfault for double deletion when 'qgsp_bic' and 'qgsp_bert' were attempted to be used together.
 
 Utilities
@@ -204,7 +261,8 @@ Bug Fixes
 * Fixed bug where overlapping dipole end pieces would be produced.
 * Fixed GDML preprocessing for parameterised variables.
 * Tracking limits are now attached to magnet yokes.
-* Fixed central value of `T0` not being set for `circle`, `gauss`, `gausstwiss`, `gaussmatrix`, `halo` and `square`
+* Fixed central value of `T0` not being set for `circle`, `gauss`,
+  `gausstwiss`, `gaussmatrix`, `halo` and `square`
   distributions.
 
 Utilities
@@ -416,7 +474,8 @@ Bug Fixes
  * Regions and biases set correctly to components in BDSLine class.
  * Circle distribution did not have central value offsets.
  * Fix double registration of pion decay as well as some others for muons when using muon physics list.
- * Particles from physics list are now constructed correctly allowing more particles to be used in the beam definition.
+ * Particles from physics list are now constructed correctly allowing more
+   particles to be used in the beam definition.
  * Removal of cherenkov radiation from muon physics significantly reducing simulation time.
  * Fix double registration of pion decay with muon physics list.
  * Issue #134 - samplers cause tracking warning.
