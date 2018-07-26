@@ -11,12 +11,20 @@ New Features
 * Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
 * rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
+  Issue #240.
 * Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
   element and lastly in global Cartesian coordinates.
+* Samplers will no longer be automatically attached (with `sample, all;`) to dipoles with finite
+  pole face rotations as this may lead to tracking issues in Geant4. A developer option can force
+  this on, although this is not recommended. Issue #241.
 
 General
 -------
 
+* `vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
+  the lab frame.
+* The horizontal width of kickers is now take from `outerDiameter`. Previously `outerDiameter`
+  corresponded to the height and `vhratio` was really the horizontal to vertical ratio in the lab frame.
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated
   synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
@@ -33,6 +41,9 @@ General
 * Mini-contents for syntax section of manual as it's grown to a large size.
 * New rmatrix element (experimental).
 * EM Dissociation is now applicable up to 100 TeV.
+* Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
+* BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
+  database by automatically prefixing the name with "G4_". Issue #236.
 
 Output Changes
 --------------
@@ -57,9 +68,11 @@ Output Changes
 Bug Fixes
 ---------
 
+* Fix tracking bug where particle in very niche coordinates may reflect from a sampler in
+  at the end of a dipole with a very strongly angled pole face. #Issue 241.
 * Fix automatic tunnel building algorithm. Accumulated wrong variables leading to
   problems when thin elements such as fringe fields or thin multipoles were included.
-* Further improvements to tunnel building algorithm for magnets with tilt.
+* Further improvements to tunnel building algorithm for magnets with tilt. Issue #243.
 * Fix length check for very short elements. Small drifts would cause a crash from
   Geant4 due to invalid parameters - occurred as length check was wrong.
 * Fix non-positive definite warnings for no energy spread and time spread when using
@@ -67,16 +80,24 @@ Bug Fixes
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
-* Fix corrupted example files for userfile bunch distribution.
+* Fix corrupted example files for userfile bunch distribution. Issue #244.
 * Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02
   from too short tunnel section.
 * Reimplement the method of finding primary first and last hit so BDSIM doesn't need to
   save the whole trajectory for the primary. This fixes the behaviour of linearly growing
-  unbounded memory usage when tracking for a long time in a ring.
+  unbounded memory usage when tracking for a long time in a ring. Issue #246, #242.
 * Optical calculation now works for sub-relativistic positrons.
 * ATF2 MADX output was not included in worked example as advertised - now included.
 * Fixed scaling variable used when scaling a field map to a decapole magnet strength.
 * Survey units for magnetic fields are now fixed from kT to T.
+* Fixed issue where C-shaped vkickers and hkickers would ignore `yokeOnInside`. Issue #251.
+* Fixed possible overlap in vkicker, hkicker, and h-style dipole geometry with highly asymmetric
+  beam pipes.
+* Fixed incorrect report that beam pipe wouldn't fit in magnet for various aperture shapes. Issue #253.
+* Fixed issue where the option `writePrimaries=0` would result in the hits for the first sampler
+  being written to the primary sampler structure. Issue #245.
+* Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
+  Issue #220.
 
 
 V1.1 - 2018 / 05 / 23
