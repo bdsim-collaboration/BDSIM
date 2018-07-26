@@ -934,7 +934,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							G4double& intersectionRadius)
 {
   // swap vertical to horizontal ratio if building vertically so we can build it
-  // all horizontally here and then flip later all at once
+  // all horizontally here and then flip geometry later all at once
   G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
 
   G4double horizontalSize = buildVertically ? vhRatio * outerDiameter : outerDiameter;
@@ -1375,10 +1375,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 		     sLength, containerSLength, intersectionRadius);
 
   // distance from axis to inside of yoke horizontally
-  G4double yokeInsideX = 0.5*poleWidth + yokeOverHang;
+  G4double yokeInsideX = 0;
+  if (buildPole)
+    {yokeInsideX = 0.5*poleWidth + yokeOverHang;}
+  else
+    {yokeInsideX = 0.5*yokeWidth - yokeThickness;}
   //yokeWidth*0.5 - yokeThickness;
   //G4double yokeInsideY = yokeHalfHeight - yokeThickness;
-  G4double yokeInsideY = poleHalfGap + poleHeight;
+  G4double yokeInsideY = 0;
+  if (buildPole)
+    {yokeInsideY = poleHalfGap + poleHeight;}
+  else
+    {yokeInsideY = yokeHalfHeight - yokeThickness;}
   
   // Vertical offset of coil from pole tip
   G4double cDY = (poleHeight - coilHeight)*0.5;
