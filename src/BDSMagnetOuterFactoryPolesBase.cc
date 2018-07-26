@@ -683,39 +683,6 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
-							 G4double&    outerDiameter,
-							 G4Material*& outerMaterial)// reference to a pointer
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  //function arguments by reference to they can be modified in place
-  //check outer material is something
-  if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
-
-  // ensure box size is bigger than the beampipe
-  if (beamPipe->ContainerIsCircular())
-    {
-      // if it's circular, just check radius
-      if (outerDiameter < 2*(beamPipe->GetContainerRadius()) )
-	{outerDiameter = 2*(beamPipe->GetContainerRadius()) + 1*CLHEP::mm;}
-    }
-  else
-    {
-      // it's not circular - have a look at extents
-      // +ve - -ve
-      G4double extentX = beamPipe->GetExtentX().second - beamPipe->GetExtentX().first;
-      G4double extentY = beamPipe->GetExtentY().second - beamPipe->GetExtentY().first;
-      if ( (outerDiameter < extentX) || (outerDiameter < extentY) )
-	{
-	  // outerDiameter isn't sufficient for range in x or y
-	  outerDiameter = std::max(extentX,extentY) + 1*CLHEP::mm;
-	}
-    }
-}
-
 void BDSMagnetOuterFactoryPolesBase::TestCoilFractions(G4double& coilWidthFraction,
 						       G4double& coilHeightFraction)
 {
@@ -913,9 +880,9 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*   
 								 G4double&       vhRatio)
 {
   CleanUp();
- 
-  // Test input parameters
-  TestInputParameters(beamPipe, outerDiameter, material);
+
+  if (!material)
+    {material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
 
   // Test faces
   if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
@@ -1138,8 +1105,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter,
-			      material, vhRatio);
+  DipoleCommonPreConstruction(name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
 
   // 1 calculations
@@ -1374,7 +1340,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(beamPipe, name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
+  DipoleCommonPreConstruction(name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
     
   // 1 calculations
