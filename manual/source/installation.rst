@@ -412,7 +412,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 +---------------------------------+-------------------------------------------------------------+
 | **Option**                      | **Description**                                             |
 +---------------------------------+-------------------------------------------------------------+
-| **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.          |
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify a known folder to install to.             |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
 +---------------------------------+-------------------------------------------------------------+
@@ -433,7 +433,7 @@ It is useful to change a few options with Geant4 for practical purposes.
 |                                 | Needs Qt to be installed                                    |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_SYSTEM_CLHEP**     | ON - must be on so both Geant4 and BDSIM use the same CLHEP |
-|                                 | library. Therefore, there's only one random number       |
+|                                 | library. Therefore, there's only one random number          |
 |                                 | generator and simulations have strong reproducibility.      |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_USE_SYSTEM_ZLIB**      | OFF - easier if we use the Geant4 internal version.         |
