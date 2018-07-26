@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSFieldESinusoid::BDSFieldESinusoid(BDSMagnetStrength const* strength,
 				     G4double                 brho):
-  BDSFieldESinusoid((*strength)["eField"],
+  BDSFieldESinusoid((*strength)["efield"],
 		    (*strength)["frequency"],
 		    (*strength)["phase"])
 {
