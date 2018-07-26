@@ -5,8 +5,8 @@ New Features
 ------------
 
 * New options to activate extra models in em_extra physics list.
-* New `crystalcol` element for channelling crystals.
-* New `crystal` definition in parser.
+* New :code:`crystalcol` element for channelling crystals.
+* New :code:`crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
 * Field maps need not be in `x`, `y`, `z`, `t` order and lower dimension fields (i.e. 1D or 2D) can
   be made for any dimension. i.e. it is now possible to specify a 1D field along the `z` direction.
@@ -14,17 +14,18 @@ New Features
   Issue #240.
 * Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
   element and lastly in global Cartesian coordinates.
-* Samplers will no longer be automatically attached (with `sample, all;`) to dipoles with finite
+* Samplers will no longer be automatically attached (with :code:`sample, all;`) to dipoles with finite
   pole face rotations as this may lead to tracking issues in Geant4. A developer option can force
   this on, although this is not recommended. Issue #241.
 
 General
 -------
 
-* `vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
+* :code:`vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
   the lab frame.
-* The horizontal width of kickers is now take from `outerDiameter`. Previously `outerDiameter`
-  corresponded to the height and `vhratio` was really the horizontal to vertical ratio in the lab frame.
+* The horizontal width of kickers is now take from :code:`outerDiameter`. Previously :code:`outerDiameter`
+  corresponded to the height and :code:`vhratio` was really the horizontal to vertical ratio in
+  the lab frame.
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated
   synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
@@ -90,11 +91,11 @@ Bug Fixes
 * ATF2 MADX output was not included in worked example as advertised - now included.
 * Fixed scaling variable used when scaling a field map to a decapole magnet strength.
 * Survey units for magnetic fields are now fixed from kT to T.
-* Fixed issue where C-shaped vkickers and hkickers would ignore `yokeOnInside`. Issue #251.
+* Fixed issue where C-shaped vkickers and hkickers would ignore :code:`yokeOnInside`. Issue #251.
 * Fixed possible overlap in vkicker, hkicker, and h-style dipole geometry with highly asymmetric
   beam pipes.
 * Fixed incorrect report that beam pipe wouldn't fit in magnet for various aperture shapes. Issue #253.
-* Fixed issue where the option `writePrimaries=0` would result in the hits for the first sampler
+* Fixed issue where the option :code:`writePrimaries = 0` would result in the hits for the first sampler
   being written to the primary sampler structure. Issue #245.
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
