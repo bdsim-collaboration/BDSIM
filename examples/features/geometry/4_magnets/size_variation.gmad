@@ -7,7 +7,7 @@
 ! called 'el'.
 
 ! control beam pipe radius
-option, beampipeRadius=4*cm,
+option, beampipeRadius=2.5*cm,
 	beampipeThickness = 1.5*mm;
 
 ! unphyiscally small, but outerDiameter > 2* beampipeRadius should work

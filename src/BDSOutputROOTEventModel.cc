@@ -269,6 +269,7 @@ void BDSOutputROOTEventModel::Fill()
 	fintk2.push_back(0);
 	fintxk2.push_back(0);
       };
+        
     // fill magnet strength data
     if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(accComp))
       {
@@ -286,11 +287,11 @@ void BDSOutputROOTEventModel::Fill()
 	for (int j = 0; j < (int)localSkew.size(); j++)
 	  {localSkew[j]->push_back((float)skewComponents[j]);}
 
-	ks.push_back((float)(*ms)["ks"]);
-	hkick.push_back((float)(*ms)["hkick"]);
-	vkick.push_back((float)(*ms)["vkick"]);
-	bField.push_back((float)(*ms)["field"]/CLHEP::tesla);
-	eField.push_back((float)(*ms)["eField"]/CLHEP::megavolt);
+	ks.push_back((float)(*ms)["ks"]/BDSMagnetStrength::Unit("ks"));
+	hkick.push_back((float)(*ms)["hkick"]/BDSMagnetStrength::Unit("hkick"));
+	vkick.push_back((float)(*ms)["vkick"]/BDSMagnetStrength::Unit("vkick"));
+	bField.push_back((float)(*ms)["field"]/BDSMagnetStrength::Unit("field"));
+	eField.push_back((float)(*ms)["efield"]/BDSMagnetStrength::Unit("efield"));
 	
 	// these are mangled in BDSMagnetStrength so can't write them out just now
 	e1.push_back(0); // / CLHEP::rad

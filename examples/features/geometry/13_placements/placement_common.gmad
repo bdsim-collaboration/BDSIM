@@ -1,0 +1,8 @@
+d1: drift, l=1*m;
+sb1: sbend, l=1*m, angle=0.2*rad;
+
+l1: line=(d1, sb1, d1, sb1, d1);
+use, l1;
+
+beam, particle="e-",
+      energy=1.3*GeV;

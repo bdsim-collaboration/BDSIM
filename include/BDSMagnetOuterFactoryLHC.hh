@@ -161,6 +161,7 @@ public:
 				       BDSBeamPipe* beamPipe,              // beampipe
 				       G4double     outerDiameter,         // full width
 				       G4double     containerLength,       // full length to make AccComp container
+				       G4bool       yokeOnLeft,            // where c-shaped yoke is
 				       G4bool       vertical = true,       // is it a vertical kicker?
 				       G4Material*  outerMaterial = nullptr,// material for outer volume
 				       G4bool       buildEndPiece = false,

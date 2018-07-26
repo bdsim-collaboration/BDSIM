@@ -30,7 +30,9 @@ namespace BDS
   /// Construct a BDSBeamline instance with all external geometry. The
   /// geometry is constructed using the geometry factory (and owned by it)
   /// but the beam line is necessary for extent calculation for the world.
-  BDSBeamline* BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements);
+  /// The parent beam line is required for making placements w.r.t. it.
+  BDSBeamline* BuildPlacementGeometry(const std::vector<GMAD::Placement>& placements,
+				      const BDSBeamline* parentBeamLine);
 }
 
 #endif
