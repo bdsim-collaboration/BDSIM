@@ -999,10 +999,10 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
     }
   
   // don't build pole if yoke tight around beam pipe - coerce yoke thickness
-  if (factor * yokeThickness > yokeWidth - 2 * bpHalfHeight)
+  if (factor * yokeThickness > yokeWidth - 2 * bpHalfWidth)
     {
       buildPole = false;
-      yokeThickness = (yokeWidth - 2 * bpHalfHeight) / factor;
+      yokeThickness = (yokeWidth - 2 * bpHalfWidth) / factor;
     }
   
   if (buildPole)
