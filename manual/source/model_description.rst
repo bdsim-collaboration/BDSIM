@@ -1332,7 +1332,7 @@ Aperture Parameters
 For elements that contain a beam pipe, several aperture models can be used. These aperture
 parameters can be set as the default for every element using the :code:`option` command
 (see `options`_ ) and
-can be overridden for each element by specifying them with the element definition.  The aperture
+can be overridden for each element by specifying them with the element definition. The aperture
 is controlled through the following parameters:
 
 * `apertureType`
@@ -1346,7 +1346,7 @@ is controlled through the following parameters:
 
 
 For each aperture model, a different number of parameters are required. Here, we follow the MADX
-convention and have four parameters and the user must specify them as required for that model.
+convention and have four parameters. The user must specify them as required for that model.
 BDSIM will check to see if the combination of parameters is valid. `beampipeRadius` and `aper1`
 are degenerate.
 
@@ -1376,8 +1376,8 @@ are degenerate.
 |                   |              |                   |                 | start of edge | start of edge |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
-These parameters can be set with the *option* command as the default parameters
-and also on a per element basis, that overrides the defaults for that specific element.
+These parameters can be set with the *option* command, as the default parameters
+and also on a per element basis that overrides the defaults for that specific element.
 Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
@@ -1404,24 +1404,24 @@ The magnet geometry is controlled by the following parameters.
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +=======================+==============================================================+===============+===========+
-| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `polessquare` | no        |
+| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `polessquare` | No        |
 |                       | | `cylindrical`, `polescircular`, `polessquare`,             |               |           |
 |                       | | `polesfacet`, `polesfacetcrop`, `lhcleft`, `lhcright`,     |               |           |
 |                       | | `none` and `format:path`.                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 0.6 m         | no        |
+| `outerDiameter`       | | **Full** horizontal width of the magnet (m)                | 0.6 m         | No        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
+| `outerMaterial`       | |  Material of the magnet                                    | "iron"        | No        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `yokeOnInside`        | | Whether the yoke of a dipole appears on the inside of the  | 1             | no        |
+| `yokeOnInside`        | | Whether the yoke of a dipole appears on the inside of the  | 1             | No        |
 |                       | | bend and if false, it's on the outside. Applicable only    |               |           |
 |                       | | to dipoles.                                                |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `hStyle`              | | Whether a dipole (only a dipole) will be an H style one    | 0             | no        |
+| `hStyle`              | | Whether a dipole (only a dipole) will be an H style one    | 0             | No        |
 |                       | | or a C style one (c style by default. True ('1') or False  |               |           |
 |                       | | ('0').                                                     |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | no        |
+| `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | No        |
 |                       | | will always be the `outerDiameter` and the height will     |               |           |
 |                       | | scale according to this ratio. In the case of a vertical   |               |           |
 |                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
@@ -1429,12 +1429,12 @@ The magnet geometry is controlled by the following parameters.
 |                       | | This currently only applies to dipoles with poled          |               |           |
 |                       | | geometry.                                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | no        |
+| `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | No        |
 |                       | | pole and the yoke for dipole geometry that the coil will   |               |           |
 |                       | | occupy. This currently only applies to dipoles with poled  |               |           |
 |                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `coilHeightFraction`  | | Fraction of the available vertical space between the pole  | 0.9           | no        |
+| `coilHeightFraction`  | | Fraction of the available vertical space between the pole  | 0.9           | No        |
 |                       | | tip and the yoke for dipole geometry that the coil will    |               |           |
 |                       | | occupy. This currently only applies to dipoles with poled  |               |           |
 |                       | | geometry. Ranges from 0.05 to 0.98.                        |               |           |
@@ -1458,16 +1458,16 @@ Examples::
 		but users should use the `outerDiameter` keyword where possible.
 
 .. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
-	     simulation as particles and radiation may propagate much further along the beam line when
+	     simulation, as particles and radiation may propagate much further along the beam line when
 	     a magnet geometry with poles is used.
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
-	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
+	  contact us (see :ref:`feature-request`) and this can be added - it is a relatively simple process.
 
 No Magnet Outer Geometry - "`none`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-No geometry for the magnet outer part is built at all and nothing is place in the model. This results
+No geometry for the magnet outer part is built at all and nothing is placed in the model. This results
 in only a beam pipe with the correct fields being provided.
 
 .. image:: figures/none_beamline.png
@@ -1539,9 +1539,9 @@ same way as `polescircular` with regard to the beam pipe size.
 Poles Faceted - "`polesfacet`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This magnet geometry is much like `polessquare`, however the yoke is such that the pole always
+This magnet geometry is much like `polessquare`; however, the yoke is such that the pole always
 joins at a flat piece of yoke and not in a corner. This geometry behaves in the
-same way as `polescircular` with regard to the beam pipe size.
+same way as `polescircular` with regards to the beam pipe size.
 
 `outerDiameter` is the full width as shown in the figure.
 
@@ -1562,7 +1562,7 @@ Poles Faceted with Crop - "`polesfacetcrop`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This magnet geometry is quite similar to `polesfacet`, but the yoke in between each
-pole is cropped to form another facet. This results in this magnet geometry having
+pole is cropped to form another facet. This results in the magnet geometry having
 double the number of poles as sides.
 
 `outerDiameter` is the full width horizontally as shown in the figure.
@@ -1594,7 +1594,7 @@ For this geometry, only the `sbend` and `quadrupole` have been implemented.  All
 defaults to the cylindrical set.
 
 This geometry is parameterised to a degree regarding the beam pipe chosen.  Of course, parameters similar
-to the LHC make most sense as does use of the `lhcdetailed` aperture type. Examples are shown with various
+to the LHC make most sense, as does use of the `lhcdetailed` aperture type. Examples are shown with various
 beam pipes and both `sbend` and `quadrupole` geometries.
 
 
@@ -1628,14 +1628,14 @@ and rotations. Every component can be displaced transversely and rotated along t
 	  horizontal offsets. This is because these would change the length of the bend about its central axis.
 	  This is not currently handled but may be implemented in future releases.
 
-.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
+.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y-
 	  axis) to be rotated without rotating the reference frame of the beam, i.e. a dipole with a :math:`\pi/2`
-	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
+	  tilt will become a vertical bend without flipping x and y in the sampler or subsequent components. This
 	  matches the behaviour of MAD8 and MADX.
 
-.. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
+.. note:: A right-handed coordinate system is used and the beamline is built along the `z` direction.
 
-The misalignments can be controlled through the following parameters
+The misalignments can be controlled through the following parameters.
 
 +--------------+------------------------------------------------------------------------------------+
 | Parameter    | Default value                                                                      |
@@ -1644,8 +1644,10 @@ The misalignments can be controlled through the following parameters
 +--------------+------------------------------------------------------------------------------------+
 | `offsetY`    | Vertical displacement of the component [m].                                        |
 +--------------+------------------------------------------------------------------------------------+
-| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
-|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
+| `tilt`       | Clockwise rotation of the component, facing in the direction of the beamline `z`   |
+|              |  [rad]. In the case of an rbend or sbend, this rotates the axis about which the    |
+|	       | beam bends.                                                                        |
+|              |                                                                                    |
 +--------------+------------------------------------------------------------------------------------+
 
 Examples::
@@ -1667,17 +1669,17 @@ to a cavity object:
 +--------------------------+-----------------+-----------------------------------------------------------------+
 | **Parameter**            | **Required**    | **Description**                                                 |
 +==========================+=================+=================================================================+
-| `name`                   | yes             | Name of the object                                              |
+| `name`                   | Yes             | Name of the object                                              |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `type`                   | yes             | (elliptical | rectangular | pillbox)                            |
+| `type`                   | Yes             | (elliptical | rectangular | pillbox)                            |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `material`               | yes             | The material for the cavity.                                    |
+| `material`               | Yes             | The material for the cavity.                                    |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `irisRadius`             | no              | The radius of the narrowest part.                               |
+| `irisRadius`             | No              | The radius of the narrowest part.                               |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `equatorRadius`          | no              | The radius of the widest part.                                  |
+| `equatorRadius`          | No              | The radius of the widest part.                                  |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `halfCellLength`         | no              | Half length along a cell.                                       |
+| `halfCellLength`         | No              | Half-length along a cell.                                       |
 +--------------------------+-----------------+-----------------------------------------------------------------+
 | `equatorHorizontalAxis`  | Elliptical only | Horizontal semi-axis of the ellipse at the cavity equator.      |
 +--------------------------+-----------------+-----------------------------------------------------------------+
@@ -1689,11 +1691,11 @@ to a cavity object:
 +--------------------------+-----------------+-----------------------------------------------------------------+
 | `tangentLineAngle`       | Elliptical only | Angle to the vertical line connecting two ellipses.             |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `thickness`              | no              | Thickness of material.                                          |
+| `thickness`              | No              | Thickness of material.                                          |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `numberOfPoints`         | no              | Number of points to generate around 2 :math:`\pi`.              |
+| `numberOfPoints`         | No              | Number of points to generate around 2 :math:`\pi`.              |
 +--------------------------+-----------------+-----------------------------------------------------------------+
-| `numberOfCells`          | no              | Number of cells to construct.                                   |
+| `numberOfCells`          | No              | Number of cells to construct.                                   |
 +--------------------------+-----------------+-----------------------------------------------------------------+
 
 Example::
