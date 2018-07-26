@@ -43,11 +43,11 @@ BDSFieldMagDipole::BDSFieldMagDipole(const BDSMagnetStrength* strength)
   if (!BDS::IsFinite(bx) && !BDS::IsFinite(by) && !BDS::IsFinite(bz) && BDS::IsFinite(field))
     {localField = G4ThreeVector(0,1,0) * field;}
   else
-    {localField = G4ThreeVector(bx,by,bz) * field;}
+    {localField = G4ThreeVector(bx,by,bz).unit() * field;}
 
   finiteStrength = BDS::IsFinite(localField.mag());
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
+  G4cout << __METHOD_NAME__ << "B (local) (T) = " << localField / CLHEP::tesla << G4endl;
 #endif
 }
 
