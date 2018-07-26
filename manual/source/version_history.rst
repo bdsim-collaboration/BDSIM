@@ -8,8 +8,8 @@ New Features
 * New `crystalcol` element for channelling crystals.
 * New `crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
-* Field maps need not be in 'x', 'y', 'z', 't' order and lower dimension fields (i.e. 1D or 2D) can
-  be made for any dimension. i.e. it is now possible to specify a 1D field along the 'z' direction.
+* Field maps need not be in `x`, `y`, `z`, `t` order and lower dimension fields (i.e. 1D or 2D) can
+  be made for any dimension. i.e. it is now possible to specify a 1D field along the `z` direction.
 * rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
   Issue #240.
 * Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
@@ -43,7 +43,7 @@ General
 * EM Dissociation is now applicable up to 100 TeV.
 * Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
 * BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
-  database by automatically prefixing the name with "G4_". Issue #236.
+  database by automatically prefixing the name with "G4\_". Issue #236.
 
 Output Changes
 --------------
@@ -99,6 +99,14 @@ Bug Fixes
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
 
+Utilities
+---------
+
+* pybdsim v1.9
+* pymadx v1.5
+* pymad8 v1.4
+* pytransport v1.2
+  
 
 V1.1 - 2018 / 05 / 23
 =====================
