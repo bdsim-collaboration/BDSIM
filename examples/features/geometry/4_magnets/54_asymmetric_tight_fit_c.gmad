@@ -1,0 +1,13 @@
+angle = 0.64*mrad;
+py = -sin(angle);
+
+BVEX4E: vkicker, l=4*m, vkick=py, apertureType="elliptical", aper1=0.44*0.5, aper2=1.53*0.5, outerDiameter=1.7, vhRatio=2.84/1.34, beampipeThickness=5*mm;
+
+l1: line=(BVEX4E);
+
+use, l1;
+
+beam, particle="e-",
+      energy=1.5*TeV;
+
+option, checkOverlaps=1;

@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
@@ -753,7 +754,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   if (!IndexOK(index))
     {return nullptr;}
   
-  const G4double pl = paddingLength; // shortcut
+  const G4double pl = BDSMagnetOuterFactoryBase::lengthSafetyLarge; // shortcut
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetRotationMiddle();

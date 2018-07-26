@@ -232,9 +232,9 @@ protected:
 inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const
 {
   if (!placementRotation)
-  {return G4Transform3D(G4RotationMatrix(), placementOffset);}
+    {return G4Transform3D(G4RotationMatrix(), placementOffset);}
   else
-  {return G4Transform3D(*placementRotation, placementOffset);}
+    {return G4Transform3D(*placementRotation, placementOffset);}
 }
 
 #endif
