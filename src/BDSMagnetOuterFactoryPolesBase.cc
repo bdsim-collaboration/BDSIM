@@ -936,8 +936,10 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   // swap vertical to horizontal ratio if building vertically so we can build it
   // all horizontally here and then flip later all at once
   G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
-  
-  // calculate any geometrical parameters
+
+  G4double horizontalSize = buildVertically ? vhRatio * outerDiameter : outerDiameter;
+
+  // real beam pipe width
   G4double bpHalfWidth  = beamPipe->GetExtent().MaximumX();
   G4double bpHalfHeight = beamPipe->GetExtent().MaximumY();
   // need to flip if building vertically - as if beam pipe rotated for
@@ -948,10 +950,10 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   // propose pole covers width of beam pipe
   poleWidth = 2 * bpHalfWidth + 2*lengthSafetyLarge;
   // take maximum of this (could be very small beam pipe) or ~1/3 of full width (normal proportion)
-  poleWidth = std::max(poleWidth, outerDiameter*0.36);
+  poleWidth = std::max(poleWidth, horizontalSize*0.36);
   // in the case of a very wide beam pipe, we can't build a pole that matches
-  if (poleWidth > 0.9*outerDiameter)
-    {poleWidth = outerDiameter*0.7;} // cap at 70% of full width (think H style here)
+  if (poleWidth > 0.9*horizontalSize)
+    {poleWidth = horizontalSize*0.7;} // cap at 70% of full width (think H style here)
 
   // if building a c-shaped magnet, record (for a horizontal c-shape magnet) where
   // the magnet containter volume should come into, between the poles.
@@ -962,8 +964,8 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   poleHalfGap = bpHalfHeight + lengthSafetyLarge;
 
   // propose outer dimensions.
-  yokeWidth           = outerDiameter; // horizontal (full)
-  G4double yokeHeight = outerDiameter * vhRatioL;// vertical (full)
+  yokeWidth           = horizontalSize; // horizontal (full)
+  G4double yokeHeight = horizontalSize * vhRatioL;// vertical (full)
   
   // ensure yoke is bigger than beam pipe + small margin for minimum yoke thickness
   // note we shouldn't get to this stage without a check already if the beam pipe will
@@ -978,7 +980,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
     {yokeHeight = yokeHeightLowerLimit + margin;}
   
   // propose yoke thickness
-  yokeThickness = yokeThicknessFraction * outerDiameter;
+  yokeThickness = yokeThicknessFraction * horizontalSize;
   // if there's not enough space (given the beam pipe and outer edge)
   // for the specified fraction of yoke, don't build pole. Also coerce
   // yoke thickness.
@@ -1022,7 +1024,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
-  if (yokeThickness + poleWidth > outerDiameter - margin)
+  if (yokeThickness + poleWidth > horizontalSize - margin)
     {yokeThickness = outerDiameter - poleWidth - margin;}
 
   if (hStyle)
@@ -1054,7 +1056,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 
   intersectionRadius = std::hypot(0.5*poleWidth + yokeOverHang, poleHalfGap + poleHeight);
   // if finite thickness yoke (independent of overall size)
-  if (yokeThickness > 0.05*outerDiameter) // nicely round edges of outer side without cutting inner
+  if (yokeThickness > 0.05*horizontalSize) // nicely round edges of outer side without cutting inner
     {intersectionRadius += 0.8 * std::hypot(yokeThickness, yokeThickness);}
   else
     {intersectionRadius *= 1.3;} // some margin
