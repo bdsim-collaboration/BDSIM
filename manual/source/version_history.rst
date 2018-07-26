@@ -20,9 +20,11 @@ General
 * Synchrotron radiation disabled now with em_extra physics list (use dedicated
   synchrad physics list. Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
-* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4 visualisation system.
+* Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
+  visualisation system.
 * "ang" unit is added to the parser for Angstroms.
-* BDSIM will now exit if there is no space to make the necessary circular management objects (teleporter and terminator).
+* BDSIM will now exit if there is no space to make the necessary circular management objects
+  (teleporter and terminator).
 * long int used explicitly instead of int for event indices in analysis.
 * Reimplemented primary first hit and last hit. Last hit is now the end point of the
   primary trajectory. No more linear memory usage with tracking time
@@ -37,8 +39,10 @@ Output Changes
 
 * New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
-* New optional stepLength variable in Eloss part of Event Tree with option :code:`storeElossStepLength` to use this data.
-* New optional preStepKineticEnergy in Eloss part of Event Tree with option :code:`storeElossPreStepKineticEnergy` to use this data.
+* New optional stepLength variable in Eloss part of Event Tree with option
+  :code:`storeElossStepLength` to use this data.
+* New optional preStepKineticEnergy in Eloss part of Event Tree with option
+  :code:`storeElossPreStepKineticEnergy` to use this data.
 * Energy Loss class (BDSOutputROOTEventLoss) number is increment in output.
 * Tilt, offsetX, offsetY and material are added to the Model Tree output.
 * Model class (BDSOutputROOTEventModel) number is incremented in output.
@@ -53,16 +57,22 @@ Output Changes
 Bug Fixes
 ---------
 
-* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to problems when thin elements such as fringe fields or thin multipoles were included.
+* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to
+  problems when thin elements such as fringe fields or thin multipoles were included.
 * Further improvements to tunnel building algorithm for magnets with tilt.
-* Fix length check for very short elements. Small drifts would cause a crash from Geant4 due to invalid parameters - occurred as length check was wrong.
-* Fix non-positive definite warnings for no energy spread and time spread when using a Gaussian beam in a composite beam definition.
+* Fix length check for very short elements. Small drifts would cause a crash from
+  Geant4 due to invalid parameters - occurred as length check was wrong.
+* Fix non-positive definite warnings for no energy spread and time spread when using
+  a Gaussian beam in a composite beam definition.
 * Fix Gauss beams used in composite distribution.
 * Fix no particles being tracked when using a userfile bunch distribution with only one column.
 * Fix bug where last particle was missed from user bunch distribution file.
 * Fix corrupted example files for userfile bunch distribution.
-* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02 from too short tunnel section.
-* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to save the whole trajectory for the primary. This fixes the behaviour of linearly growing unbounded memory usage when tracking for a long time in a ring.
+* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02
+  from too short tunnel section.
+* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to
+  save the whole trajectory for the primary. This fixes the behaviour of linearly growing
+  unbounded memory usage when tracking for a long time in a ring.
 * Optical calculation now works for sub-relativistic positrons.
 * ATF2 MADX output was not included in worked example as advertised - now included.
 * Fixed scaling variable used when scaling a field map to a decapole magnet strength.
@@ -88,7 +98,8 @@ Bug Fixes
 
 * Fixed wrong transforms for finite `S0` in composite beam distribution.
 * Fixed crash when finite `S0` was used with `-\\-generatePrimariesOnly` executable option.
-* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for `x`, `y`, `z`, `X`, `Y`, `Z` positions.
+* Fixed units from mm to m for PrimaryFirstHit and PrimaryLastHit for
+  `x`, `y`, `z`, `X`, `Y`, `Z` positions.
 * Fixed segfault for double deletion when 'qgsp_bic' and 'qgsp_bert' were attempted to be used together.
 
 Utilities
@@ -220,7 +231,8 @@ Bug Fixes
 * Fixed bug where overlapping dipole end pieces would be produced.
 * Fixed GDML preprocessing for parameterised variables.
 * Tracking limits are now attached to magnet yokes.
-* Fixed central value of `T0` not being set for `circle`, `gauss`, `gausstwiss`, `gaussmatrix`, `halo` and `square`
+* Fixed central value of `T0` not being set for `circle`, `gauss`,
+  `gausstwiss`, `gaussmatrix`, `halo` and `square`
   distributions.
 
 Utilities
@@ -432,7 +444,8 @@ Bug Fixes
  * Regions and biases set correctly to components in BDSLine class.
  * Circle distribution did not have central value offsets.
  * Fix double registration of pion decay as well as some others for muons when using muon physics list.
- * Particles from physics list are now constructed correctly allowing more particles to be used in the beam definition.
+ * Particles from physics list are now constructed correctly allowing more
+   particles to be used in the beam definition.
  * Removal of cherenkov radiation from muon physics significantly reducing simulation time.
  * Fix double registration of pion decay with muon physics list.
  * Issue #134 - samplers cause tracking warning.
