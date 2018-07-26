@@ -230,7 +230,7 @@ G4double& BDSMagnetStrength::operator[](const G4String& key)
   else
     {
       G4cerr << "Invalid key \"" << key << "\"" << G4endl;
-      return variable;
+      exit(1);
     }
 }
 
@@ -241,7 +241,7 @@ const G4double& BDSMagnetStrength::operator[](const G4String& key) const
   else
     {
       G4cerr << "Invalid key \"" << key << G4endl;
-      return variable;
+      exit(1);
     }
 }
 
