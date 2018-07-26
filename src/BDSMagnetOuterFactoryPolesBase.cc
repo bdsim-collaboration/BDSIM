@@ -870,8 +870,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
 
-void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(BDSBeamPipe*    beamPipe,
-								 const G4String& name,
+void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(const G4String& name,
 								 const G4double& angleIn,
 								 const G4double& angleOut,
 								 const G4double& length,
