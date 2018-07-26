@@ -11,7 +11,7 @@ toolkit to simulate both the transport of particles in an accelerator and
 their interaction with the accelerator material. BDSIM is capable of
 simulating a wide variety of accelerator components and magnets with Geant4
 geometry dynamically built based on a text input file. Thick lens accelerator
-tracking routines are provided for fast accurate tracking in vacuum.
+tracking routines are provided for fast accurate tracking in a vacuum.
 
 What BDSIM is suitable for
 --------------------------
@@ -23,7 +23,7 @@ What BDSIM is suitable for
 What BDSIM is not intended for
 ------------------------------
 
-* Long term tracking studies
+* Long-term tracking studies
 * Simulating collective effects
 * Lattice optical design and optimisation
 * A replacement for tracking codes like SixTrack or PTC
@@ -31,13 +31,13 @@ What BDSIM is not intended for
 Example Applications
 --------------------
 
-* Detector background from the accelerator.
-* Beam transport in air.
-* Beam interaction with vacuum gas.
-* Losses in extraction kick.
-* LHC beam loss and energy deposition.
-* CLIC muon background from accelerator.
-* Laserwire detector signal to background ratio.
+* Detector background from the accelerator
+* Beam transport in air
+* Beam interaction with vacuum gas
+* Losses in extraction kick
+* LHC beam loss and energy deposition
+* CLIC muon background from the accelerator
+* Laserwire detector signal to background ratio
 * ILC collimator efficiency study and detector backgrounds
 
 Capabilities
@@ -45,17 +45,17 @@ Capabilities
 
 * BDSIM uses **ASCII** text input with a syntax designed to be very similar to
   **MAD8** / **MADX**.
-* Convert MADX / MAD8 / TRANSPORT model to a 3D model in minutes.
-* Generate beam distribution according to Twiss parameters of a beam.
-* Track beam distribution and record particle distribution after each component.
-* Simulate energy deposition in all components along beam line.
-* Calculate beam distribution and Twiss optical functions from particle distribution.
-* Use the full set of physics processes available in Geant4.
-* Adjust cross-sections of processes of interest.
-* Use externally provided geometry and field maps for a fully customised model.
-* Interactively visualise model in 3D as well as particle tracks.
-* Analyse history and origin of radiation produced in accelerator with analysis suite.
-* Strong reproducibility - recreate any event again exactly.
+* Converts MADX / MAD8 / TRANSPORT model to a 3D model in minutes
+* Generates beam distribution according to Twiss parameters of a beam
+* Tracks beam distribution and records particle distribution after each component
+* Simulates energy deposition in all components along beam line
+* Calculates beam distribution and Twiss optical functions from particle distribution
+* Uses the full set of physics processes available in Geant4
+* Adjusts cross-sections of processes of interest
+* Uses externally provided geometry and field maps for a fully customised model
+* Interactively visualises model in 3D as well as particle tracks
+* Analyses history and origin of radiation produced in accelerator with analysis suite
+* Strong reproducibility - can recreate any event again exactly
 
 
 Simulation Procedure
@@ -86,10 +86,10 @@ to be simulated. A Geant4 example is shown below being interactively visualised.
 
 	    Example Geant4 program being visualised with events displayed.
 
-This is labour intensive and inflexible for different accelerator models or optics. As
+This is labour-intensive and inflexible for different accelerator models or optics. As
 accelerators typically consist of a standard set of components these can be made
-reasonably generic. BDSIM provides a library of geometry and fields that allow
-simple optical descriptions to be made into 3D models. Example screen shots are shown
+reasonably generic. BDSIM provides a library of geometries and fields that allow
+simple optical descriptions to be made into 3D models. Example screenshots are shown
 below.
 
 .. figure:: figures/example-simpleCollimation.png
@@ -111,14 +111,14 @@ below.
 	    Accelerator Test Facility 2 in KEK, Japan with tunnel model.
 
 
-Apart from the 3D geometry, a crucial component of a model are the electromagnetic
+Apart from the 3D geometry, a crucial component of a model is the electromagnetic
 fields. Fields in Geant4 may be specified through a developer-provided C++ class that returns
-the field vector as a function of global Cartesian `x`, `y`, `z` and `t`. BDSIM provides
+the field vector as a function of global Cartesian variables `x`, `y`, `z` and `t`. BDSIM provides
 classes to describe the magnetic fields found for each type of accelerator magnet as well
 as the transforms so that they can be described *locally* with respect to a particular magnet.
 
 To calculate the motion of charged particle in a field, Geant4 uses a numerical integrator
-such as a 4th Order Runge-Kutta algorithm. This are the most general solution for a varying
+such as a 4th Order Runge-Kutta algorithm. This is the most general solution for a varying
 field but in an accelerator the specific fields have specific analytical solutions that
 can be used for improved accuracy and computational efficiency. BDSIM provides these tracking
 routines for "thick lens" tracking.
@@ -129,13 +129,13 @@ in a full radiation transport simulation, there can be many different types of p
 in all directions (even backwards). The thick lens tracking routines do not work for
 particles travelling backwards or perpendicular, so we resort back to a numerical
 integrator (typically 4th order Runge-Kutta) in these cases. The thick lens routines
-are used for paraxial particle only.
+are used for paraxial particles only.
 
 Thick lens tracking routines typically work in a **curvilinear coordinate system**
 that follows the reference trajectory, whereas Geant4 must work in global Cartesian
 coordinates. BDSIM bridges these two systems with an automatically created parallel
-geometry of simple cylinders that follow the beam line. Transforms between coordinate
-systems are created by using the coordinate system of this parallel geometry.
+geometry of simple cylinders that follow the beam line. Using the coordinate system
+of this parallel geometry creates transforms between coordinate systems.
 
 
 .. _tracking-introduction:
@@ -143,18 +143,18 @@ systems are created by using the coordinate system of this parallel geometry.
 Tracking
 ========
 
-There are a variety of particle tracking routines and BDSIM provides several sets. The one
-provided *out-of-the-box* called "bdsimmatrix" uses thick lens tracking and provides
+There are a variety of particle tracking routines and BDSIM supplies several sets.
+The set "bdsimmatrix" issued *out-of-the-box* uses thick lens tracking and provides
 agreement with MADX and PTC tracking codes.
 
 A second set of routines called "bdsimtwo" is similar but differs in the way dipoles magnets
-are treated. In this cases, a constant pure dipole field is used to calculate the motion
+are treated. In this case, a constant pure dipole field is used to calculate the motion
 of the particle (using a Rodrigues rotation in global Cartesian coordinates). The field
 is a 'hard-edge' field - it exists inside the volume at the same strength everywhere and is
 zero outside. Whilst the tracking algorithm is accurate, such a model does not agree with
 MADX or PTC when the dipoles have angled pole faces. This integrator set is computationally
-more efficient than the "bdsimmatrix" set as no transforms between Cartesian and curvilinear
-coordinate systems are required for dipoles. In the case of a high energy accelerator with
+more efficient than the "bdsimmatrix" set, as no transforms between Cartesian and curvilinear
+coordinate systems are required for dipoles. In the case of a high-energy accelerator with
 no pole face angles or low angle bends, "bdsimtwo" may safely be used for accurate results
 and increased performance.
 
@@ -172,15 +172,15 @@ Energy
 ------
 
 The user must understand the validity of the Geant4 models used and the applicability of the
-physics processes / models at their energy regime. Most Geant4 high eneryg processes will not
-work above (an including) 50 TeV for a single particle.
+physics processes / models at their energy regime. Most Geant4 high-energy processes will not
+work above (and including) 50 TeV for a single particle.
 
 Model Physical Size
 -------------------
 
 BDSIM uses a small padding distance between all surfaces and in addition, Geant4 treats the
 intersection with every surface of every solid with a certain tolerance. Specifying a tolerance
-like this avoids infinte recursion (or at least costly recursion) to ascertain the intersection
+like this avoids infinite recursion (or at least costly recursion) to ascertain the intersection
 of a curved track with a surface. This tolerance is by default :math:`10^{-9}` mm. BDSIM and Geant4
 use double floating point precision throughout providing approximately 15 to 16 significant figures.
 Therefore, a maximum size of a model while still maintaining tracking precision is :math:`10^7` mm.
