@@ -805,10 +805,10 @@ Examples::
 vkicker
 ^^^^^^^
 
-`vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
-with a finite length :code:`l`, it will be constructed as a dipole. However, if no length (or
-a length of exactly 0 is specified), a thin kicker will be built. This is typically a 1um slice
-with only the shape of the aperture and no surrounding geometry. It is also typically not
+`vkicker` can either be a thin or thick vertical dipole magnet. If specified
+with a finite length :code:`l`, it will be constructed as a thick dipole. However, if no length (or
+a length of exactly 0 is specified), a thin kicker will be built. This is in practice constructed as
+a 1um slice with only the aperture geometry and no surrounding geometry. It is also in this case not
 visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
@@ -1423,10 +1423,8 @@ The magnet geometry is controlled by the following parameters.
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `vhRatio`             | | The vertical to horizontal ratio of a magnet. The width    | 0.8           | no        |
 |                       | | will always be the `outerDiameter` and the height will     |               |           |
-|                       | | scale according to this ratio. In the case of a vertical   |               |           |
-|                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
-|                       | | the geometry is simple rotated). Ranges from 0.1 to 10.    |               |           |
-|                       | | This currently only applies to dipoles with poled          |               |           |
+|                       | | scale according to this ratio. Ranges from 0.1 to 10.      |               |           |
+|                       | | This currently **only** applies to dipoles with poled      |               |           |
 |                       | | geometry.                                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | no        |
@@ -1451,11 +1449,6 @@ Examples::
                    k1=0.03,
 		   magnetGeometryType="gdml:geometryfiles/quad.gdml",
 		   outerDiameter = 0.5*m;
-
-
-.. deprecated:: 0.65
-		`boxSize` - this is still accepted by the parser for backwards compatibility
-		but users should use the `outerDiameter` keyword where possible.
 
 .. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
 	     simulation as particles and radiation may propagate much further along the beam line when
