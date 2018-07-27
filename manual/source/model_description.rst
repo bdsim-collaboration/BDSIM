@@ -1637,16 +1637,16 @@ The misalignments can be controlled through the following parameters.
 +--------------+------------------------------------------------------------------------------------+
 | `offsetY`    | Vertical displacement of the component [m].                                        |
 +--------------+------------------------------------------------------------------------------------+
-| `tilt`       | Clockwise rotation of the component, facing in the direction of the beamline `z`   |
-|              |  [rad]. In the case of an rbend or sbend, this rotates the axis about which the    |
+| `tilt`       | Clockwise rotation of the component, facing in the direction of the beamline       |
+|              | `z` [rad]. In the case of an rbend or sbend, this rotates the axis about which the |
 |	       | beam bends.                                                                        |
-|              |                                                                                    |
 +--------------+------------------------------------------------------------------------------------+
 
 Examples::
 
   d1: drift, l=1*m, offsetX=1*cm;
   d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
+
 
 .. _cavity-geometry-parameters:
 
