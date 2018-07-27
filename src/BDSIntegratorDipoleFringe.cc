@@ -37,9 +37,6 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 minimumRadiusOfCurvatureIn,
 						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  polefaceAngle((*strengthIn)["polefaceangle"]),
-  fringeCorr(BDS::FringeFieldCorrection(strengthIn)),
-  secondFringeCorr(BDS::SecondFringeFieldCorrection(strengthIn)),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
@@ -48,6 +45,19 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 {
   if (thinElementLength < 0)
     {thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();}
+
+  if ((*strengthIn)["isentrance"])
+    {
+      polefaceAngle = (*strengthIn)["e1"];
+      fringeCorr = BDS::FringeFieldCorrection(strengthIn, 1);
+      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 1);
+    }
+  else  // must be exit face
+    {
+      polefaceAngle = (*strengthIn)["e2"];
+      fringeCorr = BDS::FringeFieldCorrection(strengthIn, 0);
+      secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 0);
+    }
 
   zeroStrength = !BDS::IsFinite((*strengthIn)["field"]); // no fringe if no field
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
@@ -229,23 +239,48 @@ void BDSIntegratorDipoleFringe::OneStep(const G4ThreeVector& posIn,
 // The fringe field correction terms should be cached at construction rather than
 // calculated every time the integrator is called.
 
-G4double BDS::FringeFieldCorrection(BDSMagnetStrength const* strength)
+G4double BDS::FringeFieldCorrection(BDSMagnetStrength const* strength,
+                                    G4bool isEntrance)
 {
-  G4double hgap    = (*strength)["hgap"];
-  G4double fint    = (*strength)["fringeint"];
-  G4double pfAngle = (*strength)["polefaceangle"];
+  G4double fint;
+  G4double pfAngle;
+  if (isEntrance)
+    {
+      fint = (*strength)["fint"];
+      pfAngle = (*strength)["e1"];
+    }
+  else // must be exit face
+    {
+      fint = (*strength)["fintx"];
+      pfAngle = (*strength)["e2"];
+    }
+  G4double hgap = (*strength)["hgap"];
   G4double vertGap = 2 * hgap;
   G4double corrValue = fint * vertGap * (1.0 + std::pow(sin(pfAngle),2)) / cos(pfAngle);
   return corrValue;
 }
 
-G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength)
+G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength,
+                                          G4bool isEntrance)
 {
+  G4double fint;
+  G4double fintK2;
+  G4double pfAngle;
+  if (isEntrance)
+    {
+      fint    = (*strength)["fint"];
+      fintK2  = (*strength)["fintk2"];
+      pfAngle = (*strength)["e1"];
+    }
+  else // must be exit face
+    {
+      fint    = (*strength)["fintx"];
+      fintK2  = (*strength)["fintxk2"];
+      pfAngle = (*strength)["e2"];
+    }
   G4double hgap    = (*strength)["hgap"];
-  G4double fint    = (*strength)["fringeint"];
-  G4double fintK2  = (*strength)["fringeintk2"];
-  G4double pfAngle = (*strength)["polefaceangle"];
   G4double vertGap = 2 * hgap;
   G4double corrValue = fint * fintK2 * vertGap * tan(pfAngle);
   return corrValue;
 }
+

@@ -28,10 +28,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace BDS
 {
   /// Function to calculate the value of the fringe field correction term.
-  G4double FringeFieldCorrection(BDSMagnetStrength const* strength);
+  G4double FringeFieldCorrection(BDSMagnetStrength const* strength, G4bool entranceOrExit);
 
   /// Function to calculate the value of the second fringe field correction term.
-  G4double SecondFringeFieldCorrection(BDSMagnetStrength const* strength);
+  G4double SecondFringeFieldCorrection(BDSMagnetStrength const* strength, G4bool entranceOrExit);
 }
 
 class G4Mag_EqRhs;
@@ -85,11 +85,11 @@ public:
 
 protected:
   /// Poleface rotation angle
-  const G4double polefaceAngle;
+  G4double polefaceAngle;
   /// Fringe field correction term
-  const G4double fringeCorr;
+  G4double fringeCorr;
   /// Second fringe field correction term
-  const G4double secondFringeCorr;
+  G4double secondFringeCorr;
   /// Nominal magnet bending radius
   const G4double rho;
 

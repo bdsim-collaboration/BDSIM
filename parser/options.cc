@@ -280,6 +280,7 @@ void Options::PublishMembers()
   publish("killNeutrinos",            &Options::killNeutrinos);
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
+  publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
 
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);
