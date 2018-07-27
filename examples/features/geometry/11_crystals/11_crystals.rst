@@ -1,3 +1,5 @@
+.. _crystal-examples:
+
 Crystals
 ========
 
