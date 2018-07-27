@@ -17,6 +17,8 @@ New Features
 * Samplers will no longer be automatically attached (with :code:`sample, all;`) to dipoles with finite
   pole face rotations as this may lead to tracking issues in Geant4. A developer option can force
   this on, although this is not recommended. Issue #241.
+* `hkicker` and `vkicker` strength can be specified via the magnetic field :code:`B` instead of
+  `hkick` or `vkick`.
 
 General
 -------
