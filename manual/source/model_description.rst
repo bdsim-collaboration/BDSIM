@@ -805,16 +805,19 @@ Examples::
 vkicker
 ^^^^^^^
 
-`vkicker` can either be a thin vertical kicker or a thick vertical dipole magnet. If specified
-with a finite length :code:`l`, it will be constructed as a dipole. However, if no length (or
-a length of exactly 0 is specified), a thin kicker will be built. This is typically a 1um slice
-with only the shape of the aperture and no surrounding geometry. It is also typically not
+`vkicker` can either be a thin or thick vertical dipole magnet. If specified
+with a finite length :code:`l`, it will be constructed as a thick dipole. However, if no length (or
+a length of exactly 0 is specified), a thin kicker will be built. In practice, the thin version is
+constructed as a 1um slice with only the aperture geometry and no surrounding geometry and is not
 visible with the default visualisation settings.
 
 The strength is specified by the parameter :code:`vkick`, which is the fractional momentum kick
 in the vertical direction. A positive value corresponds to an increase in :math:`p_y`. In the
 case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
+
+The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
+to an increase in :math:`p_y` for a positively charged particle.
 
 In the case of a thick kicker, the resulting bending angle is calculated using:
 
@@ -839,6 +842,8 @@ Examples::
 
    KX15v: vkicker, vkick=1.3e-5;
    KX17v: vkicker, vkick=-2.4e-2, l=0.5*m;
+   KX18v: vkicker, B=0.04*T;
+
 
 hkicker
 ^^^^^^^
@@ -853,6 +858,9 @@ The strength is specified by the parameter :code:`hkick`, which is the fractiona
 in the vertical direction. A positive value corresponds to an increase in :math:`p_x`. In the
 case of the thin kicker the position is not affected, whereas with the thick kicker, the position
 will change.
+
+The strength may also be specified by the magnetic field :code:`B`. A positive field value corresponds
+to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positively charged particle.
 
 .. note:: A positive value of `hkick` causes an increase in horizontal momentum, so the particle
 	  will bend to the left looking along the beam line, i.e. in positive `x`. This is
@@ -869,6 +877,8 @@ Examples::
 
    KX17h: hkicker, hkick=0.01;
    KX19h: hkicker, hkick=-1.3e-5, l=0.2*m;
+   KX21h: hkicker, B=0.03*T;
+
 
 kicker
 ^^^^^^
@@ -889,6 +899,9 @@ tkicker
 BDSIM, like MADX, provides a `tkicker` element. This is an alias in BDSIM for a `kicker`_,
 however MADX differentiates the two on the basis of fitting parameters. BDSIM does
 not make this distinction. See `kicker`_ for more details.
+
+In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
+can be used.
 
 
 rf
@@ -1644,16 +1657,16 @@ The misalignments can be controlled through the following parameters.
 +--------------+------------------------------------------------------------------------------------+
 | `offsetY`    | Vertical displacement of the component [m]                                         |
 +--------------+------------------------------------------------------------------------------------+
-| `tilt`       | Clockwise rotation of the component, facing in the direction of the beamline `z`   |
-|              |  [rad]. In the case of an rbend or sbend, this rotates the axis about which the    |
+| `tilt`       | Clockwise rotation of the component, facing in the direction of the beamline       |
+|              | `z` [rad]. In the case of an rbend or sbend, this rotates the axis about which the |
 |	       | beam bends.                                                                        |
-|              |                                                                                    |
 +--------------+------------------------------------------------------------------------------------+
 
 Examples::
 
   d1: drift, l=1*m, offsetX=1*cm;
   d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
+
 
 .. _cavity-geometry-parameters:
 
