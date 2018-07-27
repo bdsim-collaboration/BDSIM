@@ -673,7 +673,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     case KickerType::vertical:
       {
 	t = BDSMagnetType::vkicker;
-	defaultVHRatio = 1./defaultVHRatio;
+	defaultVHRatio = 1./defaultVHRatio; // inverted for vertical magnet
 	break;
       }
     default:
