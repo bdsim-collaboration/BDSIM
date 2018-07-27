@@ -107,6 +107,14 @@ namespace BDS
 			   G4double&      segmentAngleIn,
 			   G4double&      segmentAngleOut);
 
+  BDSMagnetStrength* GetFringeMagnetStrength(const GMAD::Element* element,
+                             const BDSMagnetStrength*  st,
+                             const G4double            fringeAngle,
+                             const G4double            e1,
+                             const G4double            e2,
+                             const G4double            fintx,
+                             const G4bool              entranceOrExit);
+
   /// Function to get the integrator type. Test for finite K1 and returns
   /// dipole or dipolequadrupole integrator as appropriate.
   BDSIntegratorType GetDipoleIntegratorType(const BDSIntegratorSet* integratorSet,
