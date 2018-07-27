@@ -32,11 +32,15 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",           // constant field in G4units - magnitude of field only - use bx,by,bz to get direction
   "efield",          // electric field in G4units - magnitude of field only
   "bx","by","bz",    // (assumed) unit vector components for field direction
-  "polefaceangle",   // required for fringe field (rad)
-  "polefacecurv",    // poleface curvature (one variable for H1 or H2)
+  "e1",              // entrance poleface rotation angle
+  "e2",              // entrance poleface rotation angle
+  "h1",              // poleface curvature for entrance face
+  "h2",              // poleface curvature for exit face
   "angle", "length", // (rad, mm)
-  "fringeint",       // fringe field integral value (one variable for FINT or FINTX)
-  "fringeintk2",     // second fringe field integral value (one variable for FINTK2 or FINTXK2)
+  "fint",            // fringe field integral value for entrance face
+  "fintx",           // fringe field integral value for exit face
+  "fintk2",          // second fringe field integral value for entrance face
+  "fintxk2",         // second fringe field integral value for exit face
   "hgap",            // fringe field vertical half-gap
   "hkick", "vkick",  // fractional horizontal and vertical dPx (w.r.t. rigidity)
   "ks",              // not in G4 units
@@ -55,7 +59,9 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "frequency",       // frequency for time varying field (presumably em)
   "phase",           // phase for time varying field
   "equatorradius",   // radius from axis at which field goes to 0
-  "nominalenergy",    // nominal beam energy needed by some integrators
+  "nominalenergy",   // nominal beam energy needed by some integrators
+  "scaling",         // field scaling factor needed by dipolequadrupole integrator
+  "isentrance",      // bool to determine is integrator is for entrance (1) or exit (0) face
   "kick1",
   "kick2",
   "kick3",
@@ -85,12 +91,16 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"bx"            , {"",    1.0}},
     {"by"            , {"",    1.0}},
     {"bz"            , {"",    1.0}},
-    {"polefaceangle" , {"rad", CLHEP::rad}},
-    {"polefacecurv"  , {"rad", CLHEP::rad}},
+    {"e1"            , {"rad", CLHEP::rad}},
+    {"e2"            , {"rad", CLHEP::rad}},
+    {"h1"            , {"rad", CLHEP::rad}},
+    {"h2"            , {"rad", CLHEP::rad}},
     {"angle"         , {"rad", CLHEP::rad}},
     {"length"        , {"m",   CLHEP::m}},
-    {"fringeint"     , {"",    1.0}},
-    {"fringeintk2"   , {"",    1.0}},
+    {"fint"          , {"",    1.0}},
+    {"fintx"         , {"",    1.0}},
+    {"fintk2"        , {"",    1.0}},
+    {"fintxk2"       , {"",    1.0}},
     {"hgap"          , {"m",   CLHEP::m}},
     {"hkick"         , {"",    1.0}},
     {"vkick"         , {"",    1.0}},
@@ -123,6 +133,8 @@ const std::map<G4String, BDSMagnetStrength::unitsFactors> BDSMagnetStrength::uni
     {"phase"         , {"rad", CLHEP::rad}},
     {"equatorradius" , {"m",   CLHEP::m}},
     {"nominalenergy" , {"GeV", CLHEP::GeV}},
+    {"scaling"       , {"",    1.0}},
+    {"isentrance"    , {"",    1.0}},
     {"kick1"         , {"",    1.0}},
     {"kick2"         , {"",    1.0}},
     {"kick3"         , {"",    1.0}},
@@ -218,7 +230,7 @@ G4double& BDSMagnetStrength::operator[](const G4String& key)
   else
     {
       G4cerr << "Invalid key \"" << key << "\"" << G4endl;
-      return variable;
+      exit(1);
     }
 }
 
@@ -229,7 +241,7 @@ const G4double& BDSMagnetStrength::operator[](const G4String& key) const
   else
     {
       G4cerr << "Invalid key \"" << key << G4endl;
-      return variable;
+      exit(1);
     }
 }
 

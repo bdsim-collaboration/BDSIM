@@ -250,13 +250,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // build incoming fringe field if required
   if (buildFringeIncoming)
     {
-      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
-      (*fringeStIn)["length"]        = thinElementArcLength;
-      (*fringeStIn)["angle"]         = oneFringeAngle;
-      (*fringeStIn)["polefaceangle"] = element->e1;
-      (*fringeStIn)["fringeint"]     = fint;
-      (*fringeStIn)["fringeintk2"]   = element->fintK2;
-      (*fringeStIn)["hgap"]          = hgap;
+      BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
+                                                                   element->e1, element->e2, fintx, 1);
       G4String segmentName           = baseName + "_e1_fringe";
       G4double fringeAngleIn         = 0.5*oneFringeAngle - incomingFaceAngle;
       G4double fringeAngleOut        = 0.5*oneFringeAngle + incomingFaceAngle;
@@ -348,13 +343,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
     {
-      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
-      (*fringeStOut)["angle"]         = oneFringeAngle;
-      (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["fringeint"]     = fintx;
-      (*fringeStOut)["fringeintk2"]   = element->fintxK2;
-      (*fringeStOut)["hgap"]          = hgap;
-      (*fringeStOut)["length"]        = thinElementArcLength;
+      BDSMagnetStrength* fringeStOut = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
+                                                                    element->e1, element->e2, fintx, 0);
       G4double fringeAngleIn          = 0.5*oneFringeAngle + outgoingFaceAngle;
       G4double fringeAngleOut         = 0.5*oneFringeAngle - outgoingFaceAngle;
       G4String segmentName            = baseName + "_e2_fringe";
@@ -608,13 +598,9 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   if (buildFringeIncoming)
     {
-      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
-      (*fringeStIn)["polefaceangle"] = trackingPolefaceAngleIn;
-      (*fringeStIn)["length"]        = thinElementArcLength;
-      (*fringeStIn)["angle"]         = oneFringeAngle;
-      (*fringeStIn)["fringeint"]     = fint;
-      (*fringeStIn)["fringeintk2"]   = element->fintK2;
-      (*fringeStIn)["hgap"]          = hgap;
+      BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
+                                                                   trackingPolefaceAngleIn, trackingPolefaceAngleOut,
+                                                                   fintx, 1);
       G4String fringeName            = name + "_e1_fringe";
 
       // element used for beam pipe materials etc - not strength, angle or length.
@@ -657,14 +643,10 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
   
   //Last element should be fringe if poleface specified
   if (buildFringeOutgoing)
-    { 
-      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength(*st); // the copy is crucial to copy the field strength
-      (*fringeStOut)["polefaceangle"] = trackingPolefaceAngleOut;
-      (*fringeStOut)["length"]        = thinElementArcLength;
-      (*fringeStOut)["angle"]         = oneFringeAngle;
-      (*fringeStOut)["fringeint"]     = fintx;
-      (*fringeStOut)["fringeintk2"]   = element->fintxK2;
-      (*fringeStOut)["hgap"]          = hgap;
+    {
+      BDSMagnetStrength* fringeStOut = BDS::GetFringeMagnetStrength(element, st, oneFringeAngle,
+                                                                    trackingPolefaceAngleIn, trackingPolefaceAngleOut,
+                                                                    fintx, 0);
       G4String fringeName             = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
@@ -755,4 +737,26 @@ BDSIntegratorType BDS::GetDipoleIntegratorType(const BDSIntegratorSet* integrato
   //  {intType = BDSIntegratorType::dipolerodrigues2;}
 
   return intType;
+}
+
+BDSMagnetStrength* BDS::GetFringeMagnetStrength(const Element*           element,
+                                                const BDSMagnetStrength* st,
+                                                const G4double           fringeAngle,
+                                                const G4double           e1,
+                                                const G4double           e2,
+                                                const G4double           fintx,
+                                                const G4bool             isEntrance)
+{
+  BDSMagnetStrength* fringeSt   = new BDSMagnetStrength(*st);
+  (*fringeSt)["length"]         = BDSGlobalConstants::Instance()->ThinElementLength();;
+  (*fringeSt)["angle"]          = fringeAngle;
+  (*fringeSt)["e1"]             = e1;     // supply separately as it may be modified for rbends
+  (*fringeSt)["e2"]             = e2;     // supply separately as it may be modified for rbends
+  (*fringeSt)["fint"]           = element->fint;
+  (*fringeSt)["fintx"]          = fintx;  // supply separately as it may be modified to match madx behaviour
+  (*fringeSt)["fintk2"]         = element->fintK2;
+  (*fringeSt)["fintk2"]        = element->fintxK2;
+  (*fringeSt)["hgap"]           = element->hgap * CLHEP::m;
+  (*fringeSt)["isentrance"]     = isEntrance;
+  return fringeSt;
 }
