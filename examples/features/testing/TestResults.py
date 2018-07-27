@@ -39,7 +39,7 @@ class Results(list):
         """ A function to return a Results instance containing the subset of
             results which have the specified particle type.
             """
-        if not GlobalData.particles.__contains__(particle):
+        if not particle in GlobalData.particles:
             raise ValueError("Unknown particle type.")
         particleResults = Results(self._component)
         for testNum, testResult in enumerate(self):

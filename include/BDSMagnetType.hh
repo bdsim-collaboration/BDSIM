@@ -33,7 +33,7 @@ struct magnettypes_def
 {
   enum type { decapole, hkicker, vkicker, muonspoiler, octupole, quadrupole,
 	      sectorbend, rectangularbend, rfcavity, sextupole,
-	      solenoid, multipole, thinmultipole, dipolefringe};
+	      solenoid, multipole, thinmultipole, dipolefringe, rmatrix, paralleltransporter};
 };
 
 typedef BDSTypeSafeEnum<magnettypes_def,int> BDSMagnetType;

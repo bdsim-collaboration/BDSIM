@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
+#include "BDSLine.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSCrystalInfo.hh"
@@ -292,6 +293,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
+  case ElementType::_THINRMATRIX:
+    component = CreateThinRMatrix(angleIn); break;
+  case ElementType::_PARALLELTRANSPORTER:
+    component = CreateParallelTransporter(); break;
+  case ElementType::_RMATRIX:
+    component = CreateRMatrix(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -378,9 +385,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -430,7 +437,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -459,8 +466,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["field"]  = field*element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
-  // nominal energy needed by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -500,8 +506,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["field"]  = field * element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
-  // nominal energy required by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
@@ -579,55 +584,71 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
   
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      G4double         angleX = std::asin(hkick * scaling);
-      G4double         angleY = std::asin(vkick * scaling);
+      G4double angleX = std::asin(hkick * scaling);
+      G4double angleY = std::asin(vkick * scaling);
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
       G4double fieldY = 0;
 
-      if (BDS::IsFinite(angleX))
-	{// with comments
-	  // calculate the chord length of the arc through the field from the straight
-	  // ahead length for this element which here is 'chordLength'.
-	  G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
-
-	  // now calculate the bending radius
-	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+      // if B is specified and hkick and vkick (including backwards compatible check on
+      // 'angle') are not, then use the field for the appropriate component
+      // can only be 1d in this case -> doesn't work for tkicker
+      if (BDS::IsFinite(element->B) && (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick)))
+	{
+	  switch (type)
+	    {// 'X' and 'Y' are the angle of bending here, not the B field direction.
+	    case KickerType::horizontal:
+	    case KickerType::general:
+	      {fieldX = element->B * CLHEP::tesla; break;}
+	    case KickerType::vertical:
+	      {fieldY = element->B * CLHEP::tesla; break;}
+	    default:
+	      {break;} // do nothing - no field - just for compiler warnings
+	    }
+	}
+      else
+	{
+	  if (BDS::IsFinite(angleX))
+	    {// with comments
+	      // calculate the chord length of the arc through the field from the straight
+	      // ahead length for this element which here is 'chordLength'.
+	      G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
+	      
+	      // now calculate the bending radius
+	      G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	      
+	      // no calculate the arc length of the trajectory based on each bending radius
+	      G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+	      
+	      // -ve here in horizontal only for convention matching
+	      fieldX = FieldFromAngle(-angleX, arcLengthX);
+	    } // else fieldX default is 0
 	  
-	  // no calculate the arc length of the trajectory based on each bending radius
-	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
-
-	  // -ve here in horizontal only for convention matching
-	  fieldX = FieldFromAngle(-angleX, arcLengthX);
-	} // else fieldX default is 0
-
-      if (BDS::IsFinite(angleY))
-	{// same as x, no need for comments
-	  G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
-	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
-	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
-	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	  if (BDS::IsFinite(angleY))
+	    {// same as x, no need for comments
+	      G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
+	      G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	      G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	      fieldY = FieldFromAngle(angleY,  arcLengthY);
+	    }
 	}
       
       // note field for kick in x is unit Y, hence B = (y,x,0) here
@@ -641,13 +662,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   
   BDSMagnetType t;
+  G4double defaultVHRatio = 1.5;
   switch (type)
     {
     case KickerType::horizontal:
     case KickerType::general:
       {t = BDSMagnetType::hkicker; break;}
     case KickerType::vertical:
-      {t = BDSMagnetType::vkicker; break;}
+      {
+	t = BDSMagnetType::vkicker;
+	defaultVHRatio = 1./defaultVHRatio; // inverted for vertical magnet
+	break;
+      }
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
@@ -668,7 +694,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // the default outerDiameter. Code further along will warn if it still doesn't fit.
   const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
   G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
   if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
@@ -677,7 +703,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {defaultOuterDiameter = globalDefaultOD;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, 1.5, 0.9);
+					  defaultOuterDiameter, defaultVHRatio, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -800,17 +826,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = element->ks;
     }
 
   return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  return CreateMagnet(element, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -1116,6 +1148,62 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   return new BDSTerminator();
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
+{
+  G4cout << "BDSComponentFactory::CreateRMatrix" << G4endl;
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+
+  GMAD::Element *elementNew = new GMAD::Element(*element);
+  elementNew->l = (element->l-thinElementLength)/2.0;
+
+  auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+  auto rmatrix            = CreateThinRMatrix(0);
+  auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+
+  const G4String             baseName = elementName;
+  BDSLine *bLine = new BDSLine(baseName);
+  bLine->AddComponent(parallelTransport1);
+  bLine->AddComponent(rmatrix);
+  bLine->AddComponent(parallelTransport2);
+
+  return bLine;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
+{
+
+  G4cout << "BDSComponentFactory::CreateThinRMatrix" << G4endl;
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
+  beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+                                                               -angleIn, angleIn, beamPipeInfo);
+  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
+
+  BDSIntegratorType intType = integratorSet->rmatrixThin;
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rmatrix,
+                                               brho,
+                                               intType,
+                                               st,
+                                               true,
+                                               fieldTrans);
+  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
+
+  BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
+                                          elementName,
+                                          thinElementLength,
+                                          beamPipeInfo,
+                                          magnetOuterInfo,
+                                          vacuumField);
+
+  thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
+                                   beamPipeInfo->aper1,
+                                   thinElementLength*0.5));
+
+  return thinRMatrix;
+}
+
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
@@ -1186,7 +1274,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}
@@ -1228,6 +1322,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
@@ -1237,7 +1332,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brho,
 					       intType,
-                                               stCopy,
+					       stCopy,
 					       true,
 					       fieldTransform);
 
@@ -1616,9 +1711,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double scaling     = el->scaling;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
-    {(*st)["eField"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
@@ -1643,7 +1738,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 
@@ -1725,6 +1820,40 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
     {(*st)[*nkey] = scaling * (*kn) / length;}
   for (; ks != el->ksl.end(); ks++, skey++)
     {(*st)[*skey] = scaling * (*ks) / length;}
+
+  return st;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForRMatrix(Element const* el) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  G4double scaling = el->scaling;
+  // G4double length  = el->l;
+
+  (*st)["kick1"] = scaling * el->kick1;
+  (*st)["kick2"] = scaling * el->kick2;
+  (*st)["kick3"] = scaling * el->kick3;
+  (*st)["kick4"] = scaling * el->kick4;
+
+  (*st)["rmat11"] = scaling * el->rmat11;
+  (*st)["rmat12"] = scaling * el->rmat12;
+  (*st)["rmat13"] = scaling * el->rmat13;
+  (*st)["rmat14"] = scaling * el->rmat14;
+
+  (*st)["rmat21"] = scaling * el->rmat21;
+  (*st)["rmat22"] = scaling * el->rmat22;
+  (*st)["rmat23"] = scaling * el->rmat23;
+  (*st)["rmat24"] = scaling * el->rmat24;
+
+  (*st)["rmat31"] = scaling * el->rmat31;
+  (*st)["rmat32"] = scaling * el->rmat32;
+  (*st)["rmat33"] = scaling * el->rmat33;
+  (*st)["rmat34"] = scaling * el->rmat34;
+
+  (*st)["rmat41"] = scaling * el->rmat41;
+  (*st)["rmat42"] = scaling * el->rmat42;
+  (*st)["rmat43"] = scaling * el->rmat43;
+  (*st)["rmat44"] = scaling * el->rmat44;
 
   return st;
 }

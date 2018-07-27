@@ -60,7 +60,28 @@ Parameters::Parameters()
   setMap["frequency"] = false;
   setMap["phase"]     = false;
   setMap["tOffset"]   = false;
-  
+
+  setMap["kick1"]     = false;
+  setMap["kick2"]     = false;
+  setMap["kick3"]     = false;
+  setMap["kick4"]     = false;
+  setMap["rmat11"]     = false;
+  setMap["rmat12"]     = false;
+  setMap["rmat13"]     = false;
+  setMap["rmat14"]     = false;
+  setMap["rmat21"]     = false;
+  setMap["rmat22"]     = false;
+  setMap["rmat23"]     = false;
+  setMap["rmat24"]     = false;
+  setMap["rmat31"]     = false;
+  setMap["rmat32"]     = false;
+  setMap["rmat33"]     = false;
+  setMap["rmat34"]     = false;
+  setMap["rmat41"]     = false;
+  setMap["rmat42"]     = false;
+  setMap["rmat43"]     = false;
+  setMap["rmat44"]     = false;
+
   setMap["beampipeThickness"]  = false;
   setMap["aper1"]              = false;
   setMap["aper2"]              = false;

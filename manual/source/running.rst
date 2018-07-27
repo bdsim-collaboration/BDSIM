@@ -6,8 +6,9 @@ Run Time Requirements
 =====================
 
 If BDSIM is compiled with GDML support on and GDML is required, the user is required
-to be connected to the internet to access the GDML schema. This is a requirement
-of the Geant4 GDML parser. In future, this need will be eliminated.
+to be connected to the Internet to access the GDML schema. This is a requirement
+of the Geant4 GDML parser.
+.. note:: In future, this need will be eliminated.
 
 Basic Operation
 ===============
@@ -17,8 +18,8 @@ The minimum required information to run BDSIM is an input GMAD file. ::
   bdsim --file=lattice.gmad
 
 The following section describes other 'executable' options that may specify
-various options such as whether to run in 'batch' mode or interactively with a
-visualiser; and where to write output.
+various options, such as whether to run in 'batch' mode or interactively with a
+visualiser and where to write output.
 
 .. _executable-options:
 
@@ -26,7 +27,7 @@ Executable Options
 ==================
 
 BDSIM can be executed in a terminal with extra arguments to specify various inputs.
-The angular brackets here are to indicate a user specified value and should not
+The angular brackets here are to indicate a user-specified value and should not
 be used literally.  The following command may be used to display all options::
 
   bdsim --help
@@ -34,49 +35,49 @@ be used literally.  The following command may be used to display all options::
 .. tabularcolumns:: |p{6cm}|p{9cm}|
 
 +------------------------------+------------------------------------------------+
-| -\\-file=<file>              | Specify the input gmad file.                   |
+| -\\-file=<file>              | Specifies the input gmad file                  |
 +------------------------------+------------------------------------------------+
-| -\\-batch                    | Batch mode - no graphics.                      |
+| -\\-batch                    | Batch mode - no graphics                       |
 +------------------------------+------------------------------------------------+
-| -\\-circular                 | Assume circular machine - turn control. See    |
+| -\\-circular                 | Assumes circular machine - turn control. See   |
 |                              | note below.                                    |
 +------------------------------+------------------------------------------------+
 | -\\-distrFile=<file>         | Which file to use for the bunch                |
-|                              | distribution.                                  |
+|                              | distribution                                   |
 +------------------------------+------------------------------------------------+
-| -\\-exportGeometryTo=<file>  | Export the geometry to a file                  |
-|                              | extension determines format                    |
-|                              | where possible extensions are ("gdml").        |
+| -\\-exportGeometryTo=<file>  | Exports the geometry to a file                 |
+|                              | extension, which determines the format         |
+|                              | where possible extensions are ("gdml")         |
 +------------------------------+------------------------------------------------+
-| -\\-generatePrimariesOnly    | Generate primary particle coordinates only     |
-|                              | then exit without simulating anything.         |
+| -\\-generatePrimariesOnly    | Generates primary particle coordinates only    |
+|                              | then exits without simulating anything         |
 +------------------------------+------------------------------------------------+
-| -\\-help                     | List all executable commands.                  |
+| -\\-help                     | Lists all executable commands                  |
 +------------------------------+------------------------------------------------+
-| -\\-materials                | List materials included in BDSIM by default.   |
+| -\\-materials                | Lists materials included in BDSIM by default   |
 +------------------------------+------------------------------------------------+
 | -\\-ngenerate=N              | The number of primary events to simulate       |
-|                              | overrides the ngenerate option in input        |
+|                              | overrides the ngenerate option in the input    |
 |                              | file.                                          |
 +------------------------------+------------------------------------------------+
-| -\\-output=<fmt>             | Output format "rootevent" (default) or         |
-|                              | "none".                                        |
+| -\\-output=<fmt>             | Outputs the format "rootevent" (default) or    |
+|                              | "none"                                         |
 +------------------------------+------------------------------------------------+
-| -\\-outfile=<file>           | Output file name. Will be appended with _N     |
+| -\\-outfile=<file>           | Outputs file name. Will be appended with _N    |
 |                              | where N = 0, 1, 2, 3...                        |
 +------------------------------+------------------------------------------------+
 | -\\-recreate=<file>          | The rootevent output file to recreate events   |
 |                              | from.                                          |
 +------------------------------+------------------------------------------------+
-| -\\-seed=<N>                 | Seed for the random number generator.          |
+| -\\-seed=<N>                 | Seed for the random number generator           |
 +------------------------------+------------------------------------------------+
 | -\\-seedStateFileName=<file> | File containing CLHEP::Random seed state       |
-|                              | NB \- this overrides other seed value.         |
+|                              | NB \- this overrides other seed values         |
 +------------------------------+------------------------------------------------+
 | -\\-startFromEvent=N         | Event offset to start from when recreating     |
-|                              | events when using `-\\-recreate`.              |
+|                              | events when using `-\\-recreate`               |
 +------------------------------+------------------------------------------------+
-| -\\-survey=<file>            | Print survey info to <file>.                   |
+| -\\-survey=<file>            | Prints survey info to <file>                   |
 +------------------------------+------------------------------------------------+
 | -\\-printFractionEvents=N    | How often to print out events as a fraction    |
 |                              | of the total number of events to simulate      |
@@ -88,36 +89,36 @@ be used literally.  The following command may be used to display all options::
 |                              | only print out on an event that will print     |
 |                              | out as well.                                   |
 +------------------------------+------------------------------------------------+
-| -\\-verbose                  | Display general parameters before run          |
+| -\\-verbose                  | Displays general parameters before run         |
 +------------------------------+------------------------------------------------+
-| -\\-verbose\_event           | Display information for every event            |
+| -\\-verbose\_event           | Displays information for every event           |
 +------------------------------+------------------------------------------------+
-| -\\-verbose\_step            | Display tracking information after each        |
-|                              | step.                                          |
+| -\\-verbose\_step            | Displays tracking information after each       |
+|                              | step                                           |
 +------------------------------+------------------------------------------------+
-| -\\-verbose\_event\_num=<N>  | Display tracking information for event N.      |
+| -\\-verbose\_event\_num=<N>  | Displays tracking information for event 'N'    |
 +------------------------------+------------------------------------------------+
-| -\\-vis_debug                | Display all volumes in the visualiser.         |
+| -\\-vis_debug                | Displays all volumes in the visualiser         |
 +------------------------------+------------------------------------------------+
-| -\\-vis_mac=<file>           | File with the visualisation macro script,      |
-|                              | default provided by BDSIM: openGL (OGLSQt)).   |
+| -\\-vis_mac=<file>           | File with the visualisation macro script.      |
+|                              | Default provided by BDSIM: openGL (OGLSQt)).   |
 +------------------------------+------------------------------------------------+
-| -\\-writeSeedState           | Write an ASCII file seed state for each        |
-|                              | event.                                         |
+| -\\-writeSeedState           | Writes an ASCII file seed state for each       |
+|                              | event                                          |
 +------------------------------+------------------------------------------------+
 
-BDSIM can be run in one of two ways, `interactively`_, or `in batch mode`_, which
+BDSIM can be run in one of two ways: `interactively`_ or `in batch mode`_, which
 are described in the following sections.
 
 When run interactively, a Geant4 visualiser is invoked that produces a window with an image
 of the BDSIM model as well as a terminal prompt to control it. No events are simulated
 without user input. Alternatively, BDSIM can be run in batch mode, where no visualiser
-is used and the specified number of primary events is simulated and feedback printed
+is used and the specified number of primary events is simulated and feedback is printed
 to the terminal. Batch mode is typically much faster than the interactive mode, but
 the interactive mode is very useful for understanding the model and a typical event
 in the simulation, i.e. where a particle hits.
 
-.. note:: For more information on `-\\-circular` option and using BDSIM with circular machines,
+.. note:: For more information on the `-\\-circular` option and using BDSIM with circular machines,
 	  see :ref:`circular-machines`.
 
 Interactively
@@ -125,15 +126,15 @@ Interactively
 
 Features:
 
-* default option
-* interactive visualisation of accelerator model
-* ability to view and rotate accelerator model
-* ability to run individual events
-* typically slower than batch mode
-* no events run without user input
+* Default option
+* Interactive visualisation of the accelerator model
+* Ability to view and rotate the accelerator model
+* Ability to run individual events
+* Typically slower than batch mode
+* No events run without user input
 
 To execute BDSIM in interactive mode, the user must simply not use the :code:`-\\-batch` command.
-The user can also specify a macro file using the :code:`-\\-vis_mac` option above otherwise, BDSIM
+The user can also specify a macro file using the :code:`-\\-vis_mac` option above; otherwise, BDSIM
 will look for "vis.mac" in the current working directory. If not found, BDSIM will use its own
 default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
 executed a window such as this will appear (depending on the visualiser you use).
@@ -145,7 +146,7 @@ executed a window such as this will appear (depending on the visualiser you use)
 
    BDSIM running interactively with OpenGL Qt visualiser from Geant4.
 
-Note, the visualiser is part of Geant4 so if the desired visualiser isn't available, you
+Note: the visualiser is part of Geant4, so if the desired visualiser isn't available, you
 must recompile Geant4 with the correct visualiser (and subsequently BDSIM afterwards). Geant4
 also uses the CMake configuration system. The visualiser shown is the OpenGL Qt visualiser, which
 we recommend for its ease of use and high level of interactivity.
@@ -162,11 +163,11 @@ In Batch Mode
 
 Features:
 
-* no interactive visualiser
-* faster
-* number of events run then program quits
-* no user input
-* typical use for a "job" on a farm
+* No interactive visualiser
+* Faster
+* Number of events runs, then program quits
+* No user input
+* Typical use for a "job" on a farm
 
 To execute BDSIM in batch mode, simply use the :code:`-\\-batch` execution option.
 
@@ -184,9 +185,9 @@ mode with a seed value of 123. The simulation runs the number of events specifie
 
 This executes BDSIM for the simpleMachine example with ROOT output to a file named
 "run2". The program is run interactively and the window in Figure appears. From here, the
-user types::
+user types into the visualiser terminal::
 
   /run/beamOn 1
   exit
 
-In the visualiser terminal to run one event and visualise it.
+,which runs one event and visualises it.  

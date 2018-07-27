@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSARRAY3DCOORDS_H
 
 #include "BDSArray4DCoords.hh"
+#include "BDSDimensionType.hh"
 
 #include "globals.hh"
 
@@ -27,6 +28,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @brief 3D array with spatial mapping derived from BDSArray4DCoords.
+ *
+ * Internally dimensions are x,y,z but these can represent different
+ * coordinates. Hence the possibility of naming with BDSDimensionType.
  *
  * @author Laurie Nevay
  */
@@ -37,16 +41,34 @@ public:
   BDSArray3DCoords(G4int nX, G4int nY, G4int nZ,
 		   G4double xMinIn, G4double xMaxIn,
 		   G4double yMinIn, G4double yMaxIn,
-		   G4double zMinIn, G4double zMaxIn);
+		   G4double zMinIn, G4double zMaxIn,
+		   BDSDimensionType xDimensionIn = BDSDimensionType::x,
+		   BDSDimensionType yDimensionIn = BDSDimensionType::y,
+		   BDSDimensionType zDimensionIn = BDSDimensionType::z);
   virtual ~BDSArray3DCoords(){;}
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a);
 
+  /// Accessor for dimension that the data represents (first).
+  inline BDSDimensionType FirstDimension() const {return xDimension;}
+
+  /// Accessor for dimension that the data represents (second).
+  inline BDSDimensionType SecondDimension() const {return yDimension;}
+
+  /// Accessor for dimension that the data represents (second).
+  inline BDSDimensionType ThirdDimension() const {return zDimension;}
+
 private:
   /// No default constructor as the array is not adjustable after construction and
   /// therefore the size must be known at construction time.
   BDSArray3DCoords() = delete;
+
+  /// Which dimension the contained data represents spatially. Always referred to
+  /// locally as 'x' but may represent another dimension.
+  BDSDimensionType xDimension;
+  BDSDimensionType yDimension;
+  BDSDimensionType zDimension;
 };
 
 #endif

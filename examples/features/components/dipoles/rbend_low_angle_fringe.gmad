@@ -1,0 +1,11 @@
+d1  : drift, l=1.5;
+
+! no pole face but should still have fringe element
+sb1 : rbend, l=2.5*m, angle=1e-4, hgap=6*cm, fint=0.5, e1=1e-2, e2=1.2e-2;
+
+lat : line = (d1,sb1,d1);
+
+include optionsTest.gmad;
+
+option, outerDiameter=20*cm,
+	samplerDiameter=50*cm;

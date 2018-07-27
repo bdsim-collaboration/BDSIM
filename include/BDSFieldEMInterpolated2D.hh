@@ -61,8 +61,16 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldEMInterpolated2D() = delete;
 
-  BDSInterpolator2D* eInterpolator; ///< E Interpolator the field is based on.
-  BDSInterpolator2D* bInterpolator; ///< B Interpolator the field is based on.
+  BDSInterpolator2D* eInterpolator;   ///< E Interpolator the field is based on.
+  BDSInterpolator2D* bInterpolator;   ///< B Interpolator the field is based on.
+  const G4int  eFirstDimensionIndex;  ///< Integer index to dimension to use.
+  const G4bool eFirstTime;            ///< Cache of whether to use time coordinate.
+  const G4int  eSecondDimensionIndex; ///< Integer index to dimension to use.
+  const G4bool eSecondTime;           ///< Cache of whether to use time coordinate.
+  const G4int  bFirstDimensionIndex;  ///< Integer index to dimension to use.
+  const G4bool bFirstTime;            ///< Cache of whether to use time coordinate.
+  const G4int  bSecondDimensionIndex; ///< Integer index to dimension to use.
+  const G4bool bSecondTime;           ///< Cache of whether to use time coordinate.
 };
 
 #endif

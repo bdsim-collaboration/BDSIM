@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDimensionType.hh"
 #include "BDSFieldEMInterpolated1D.hh"
 #include "BDSInterpolator1D.hh"
 
@@ -30,7 +31,11 @@ BDSFieldEMInterpolated1D::BDSFieldEMInterpolated1D(BDSInterpolator1D* eInterpola
 						   G4double           bScalingIn):
   BDSFieldEMInterpolated(offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
-  bInterpolator(bInterpolatorIn)
+  bInterpolator(bInterpolatorIn),
+  eDimensionIndex((eInterpolatorIn->FirstDimension()).underlying()),
+  eTime((eInterpolatorIn->FirstDimension()).underlying() > 2),
+  bDimensionIndex((bInterpolatorIn->FirstDimension()).underlying()),
+  bTime((bInterpolatorIn->FirstDimension()).underlying() > 2)
 {;}
 
 BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()
@@ -40,9 +45,19 @@ BDSFieldEMInterpolated1D::~BDSFieldEMInterpolated1D()
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated1D::GetField(const G4ThreeVector& position,
-									  const G4double       /*t*/) const
+									  const G4double       t) const
 {
-  G4ThreeVector e = eInterpolator->GetInterpolatedValue(position[0]) * EScaling();
-  G4ThreeVector b = bInterpolator->GetInterpolatedValue(position[0]) * BScaling();
+  G4double eCoordinate = 0;
+  if (eTime)
+    {eCoordinate = t;}
+  else
+    {eCoordinate = position[eDimensionIndex];}
+  G4double bCoordinate = 0;
+  if (bTime)
+    {bCoordinate = t;}
+  else
+    {bCoordinate = position[bDimensionIndex];}
+  G4ThreeVector e = eInterpolator->GetInterpolatedValue(eCoordinate) * EScaling();
+  G4ThreeVector b = bInterpolator->GetInterpolatedValue(bCoordinate) * BScaling();
   return std::make_pair(b,e);
 }

@@ -52,6 +52,7 @@ void SamplerAnalysis::UpdateMass(SamplerAnalysis* s)
   switch (std::abs(id))
     {
     case 11:
+    case -11:
       {
 	std::cout << "Primary particle: e-" << std::endl;
 	particleMass = 0.000510999; break;}

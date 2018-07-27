@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDimensionType.hh"
 #include "BDSFieldEMInterpolated2D.hh"
 #include "BDSInterpolator2D.hh"
 
@@ -30,7 +31,15 @@ BDSFieldEMInterpolated2D::BDSFieldEMInterpolated2D(BDSInterpolator2D* eInterpola
 						   G4double           bScalingIn):
   BDSFieldEMInterpolated(offset, eScalingIn, bScalingIn),
   eInterpolator(eInterpolatorIn),
-  bInterpolator(bInterpolatorIn)
+  bInterpolator(bInterpolatorIn),
+  eFirstDimensionIndex((eInterpolatorIn->FirstDimension()).underlying()),
+  eFirstTime((eInterpolatorIn->FirstDimension()).underlying() > 2),
+  eSecondDimensionIndex((eInterpolatorIn->SecondDimension()).underlying()),
+  eSecondTime((eInterpolatorIn->SecondDimension()).underlying() > 2),
+  bFirstDimensionIndex((bInterpolatorIn->FirstDimension()).underlying()),
+  bFirstTime((bInterpolatorIn->FirstDimension()).underlying() > 2),
+  bSecondDimensionIndex((bInterpolatorIn->SecondDimension()).underlying()),
+  bSecondTime((bInterpolatorIn->SecondDimension()).underlying() > 2)
 {;}
 
 BDSFieldEMInterpolated2D::~BDSFieldEMInterpolated2D()
@@ -40,9 +49,31 @@ BDSFieldEMInterpolated2D::~BDSFieldEMInterpolated2D()
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMInterpolated2D::GetField(const G4ThreeVector& position,
-									  const G4double       /*t*/) const
+									  const G4double       t) const
 {
-  G4ThreeVector e = eInterpolator->GetInterpolatedValue(position[0], position[1]) * EScaling();
-  G4ThreeVector b = bInterpolator->GetInterpolatedValue(position[0], position[1]) * BScaling();
+  G4double eFCoordinate = 0;
+  if (eFirstTime)
+    {eFCoordinate = t;}
+  else
+    {eFCoordinate = position[eFirstDimensionIndex];}
+  G4double eSCoordinate = 0;
+  if (eSecondTime)
+    {eSCoordinate = t;}
+  else
+    {eSCoordinate = position[eSecondDimensionIndex];}
+  G4double bFCoordinate = 0;
+  if (bFirstTime)
+    {bFCoordinate = t;}
+  else
+    {bFCoordinate = position[bFirstDimensionIndex];}
+  G4double bSCoordinate = 0;
+  if (bSecondTime)
+    {bSCoordinate = t;}
+  else
+    {bSCoordinate = position[bSecondDimensionIndex];}
+  G4ThreeVector e = eInterpolator->GetInterpolatedValue(eFCoordinate,
+							eSCoordinate) * EScaling();
+  G4ThreeVector b = bInterpolator->GetInterpolatedValue(bFCoordinate,
+							bSCoordinate) * BScaling();
   return std::make_pair(b,e);
 }

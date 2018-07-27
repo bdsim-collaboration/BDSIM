@@ -219,6 +219,8 @@ namespace GMAD
     bool     stopSecondaries;
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
+    bool     sampleElementsWithPoleface;
+    double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
 
     /// Output related options
     int         numberOfEventsPerNtuple;

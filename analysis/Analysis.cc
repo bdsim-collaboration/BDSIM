@@ -38,9 +38,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-Analysis::Analysis(std::string treeNameIn,
+Analysis::Analysis(const std::string& treeNameIn,
 		   TChain*     chainIn,
-		   std::string mergedHistogramNameIn,
+		   const std::string& mergedHistogramNameIn,
 		   bool        perEntryAnalysis,
 		   bool        debugIn):
   treeName(treeNameIn),
@@ -109,7 +109,7 @@ void Analysis::PreparePerEntryHistograms()
     }
 }
 
-void Analysis::AccumulatePerEntryHistograms(const int& entryNumber)
+void Analysis::AccumulatePerEntryHistograms(const long int& entryNumber)
 {
   auto c = Config::Instance();
   if (c)
@@ -145,11 +145,10 @@ void Analysis::Write(TFile* outputFile)
 {
   // treeName typically has a "." at the end, deleting it here:
   std::string cleanedName     = treeName.erase(treeName.size() - 1);
-  std::string outputDirName   = cleanedName;
   std::string perEntryDirName = "PerEntryHistograms";
   std::string simpleDirName   = "SimpleHistograms";
   std::string mergedDirName   = "MergedHistograms";
-  TDirectory* rebdsimDir  = outputFile->mkdir(outputDirName.c_str());
+  TDirectory* rebdsimDir  = outputFile->mkdir(cleanedName.c_str());
   TDirectory* perEntryDir = rebdsimDir->mkdir(perEntryDirName.c_str());
   TDirectory* simpleDir   = rebdsimDir->mkdir(simpleDirName.c_str());
   TDirectory* mergedDir   = rebdsimDir->mkdir(mergedDirName.c_str());
@@ -202,7 +201,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
     {
     case 1:
       {
-	HistogramDef1D* d = static_cast<HistogramDef1D*>(definition);
+	HistogramDef1D* d = dynamic_cast<HistogramDef1D*>(definition);
 	TH1D* h = HistogramFactory::CreateHistogram1D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
@@ -211,7 +210,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
       }
     case 2:
       {
-	HistogramDef2D* d = static_cast<HistogramDef2D*>(definition);
+	HistogramDef2D* d = dynamic_cast<HistogramDef2D*>(definition);
 	TH2D* h = HistogramFactory::CreateHistogram2D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);
@@ -220,7 +219,7 @@ void Analysis::FillHistogram(HistogramDef* definition)
       }
     case 3:
       {
-	HistogramDef3D* d = static_cast<HistogramDef3D*>(definition);
+	HistogramDef3D* d = dynamic_cast<HistogramDef3D*>(definition);
 	TH3D* h = HistogramFactory::CreateHistogram3D(d);
 	chain->Draw(command.c_str(), selection.c_str(),"goff");
 	histogramNames.push_back(name);

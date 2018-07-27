@@ -16,27 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDebug.hh"
-#include "BDSFieldMagSolenoid.hh"
-#include "BDSMagnetStrength.hh"
-#include "BDSUtilities.hh"
+#ifndef BDSDIMENSIONTYPE_H
+#define BDSDIMENSIONTYPE_H 
 
+#include "BDSTypeSafeEnum.hh"
 #include "globals.hh" // geant4 types / globals
-#include "G4ThreeVector.hh"
+
+#include <map>
+
+/**
+ * @brief Type definition for dimensions by name.
+ */
+
+struct dimensions_def {
+  enum type {x, y, z, t};
+};
+
+typedef BDSTypeSafeEnum<dimensions_def, int> BDSDimensionType;
+
+namespace BDS {
+  /// Determine the output format to be used from the input string.
+  BDSDimensionType DetermineDimensionType(G4String dimensionType);
+}
 
 
-BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength const* strength,
-					 G4double          const  brho)
-{
-  localField = G4ThreeVector(0,0,brho * (*strength)["ks"] / CLHEP::m);
-  finiteStrength = BDS::IsFinite(localField.mag());
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif
-}
-
-G4ThreeVector BDSFieldMagSolenoid::GetField(const G4ThreeVector& /*position*/,
-					    const G4double       /*t*/) const
-{
-  return localField;
-}
