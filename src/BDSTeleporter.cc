@@ -71,6 +71,11 @@ G4ThreeVector BDS::CalculateTeleporterDelta(BDSBeamline* thebeamline)
   G4ThreeVector lastitemposition  = thebeamline->back()->GetReferencePositionEnd();
   G4ThreeVector firstitemposition = thebeamline->front()->GetReferencePositionStart();
   G4ThreeVector delta             = lastitemposition - firstitemposition;
+
+  G4ThreeVector nominalDirection = G4ThreeVector(0,0,1);
+  auto previousReferenceRotationEnd = thebeamline->back()->GetReferenceRotationEnd();
+  G4ThreeVector angleDifference = nominalDirection.transform(*previousReferenceRotationEnd);
+  G4cout << "Difference in angle " << angleDifference << G4endl;
   
   G4cout << "Calculating Teleporter delta"   << G4endl;
   G4cout << "Last item end position:       " << lastitemposition  << " mm" << G4endl;
