@@ -37,7 +37,6 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
 						     G4double                 minimumRadiusOfCurvatureIn,
 						     const G4double&          tiltIn):
   BDSIntegratorDipoleRodrigues2(eqOfMIn, minimumRadiusOfCurvatureIn),
-  polefaceCurvature((*strengthIn)["polefacecurv"]),
   rho(std::abs(brhoIn)/(*strengthIn)["field"]),
   fieldArcLength((*strengthIn)["length"]),
   fieldAngle((*strengthIn)["angle"]),
@@ -50,12 +49,14 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   if ((*strengthIn)["isentrance"])
     {
       polefaceAngle = (*strengthIn)["e1"];
+      polefaceCurvature = (*strengthIn)["h1"];
       fringeCorr = BDS::FringeFieldCorrection(strengthIn, 1);
       secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 1);
     }
   else  // must be exit face
     {
       polefaceAngle = (*strengthIn)["e2"];
+      polefaceCurvature = (*strengthIn)["h2"];
       fringeCorr = BDS::FringeFieldCorrection(strengthIn, 0);
       secondFringeCorr = BDS::SecondFringeFieldCorrection(strengthIn, 0);
     }
@@ -339,4 +340,3 @@ G4double BDS::SecondFringeFieldCorrection(BDSMagnetStrength const* strength,
   G4double corrValue = fint * fintK2 * vertGap * tan(pfAngle);
   return corrValue;
 }
-

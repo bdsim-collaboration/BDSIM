@@ -97,7 +97,7 @@ protected:
   /// Second fringe field correction term
   G4double secondFringeCorr;
   /// Poleface curvature
-  const G4double polefaceCurvature;
+  G4double polefaceCurvature;
   /// Nominal magnet bending radius
   const G4double rho;
 
