@@ -1823,7 +1823,7 @@ When defining a field, the following parameters can be specified.
 | globalTransform      | Boolean. Whether a transform from local curvilinear coordinates |
 |                      | to global coordinates should be provided (default true).        |
 +----------------------+-----------------------------------------------------------------+
-| magneticFile         | "format:filePath" - see formats below.                         |
+| magneticFile         | "format:filePath" - see formats below.                          |
 +----------------------+-----------------------------------------------------------------+
 | magneticInterpolator | Which interpolator to use - see below for a full list.          |
 +----------------------+-----------------------------------------------------------------+
@@ -2864,7 +2864,7 @@ General Run Options
 |                                  | generator                                             |
 +----------------------------------+-------------------------------------------------------+
 | writeSeedState                   | Writes the seed state of the last event start in      |
-|                                  | ASCII                                                |
+|                                  | ASCII                                                 |
 +----------------------------------+-------------------------------------------------------+
 
 .. _options-geometry:
