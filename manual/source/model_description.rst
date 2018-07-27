@@ -1,4 +1,4 @@
-A.. _model-description:
+.. _model-description:
 
 ================================
 Model Description - Input Syntax
@@ -1251,9 +1251,9 @@ angle.
 
 ================  ============================  ==========  ===========
 Parameter         Description                   Default     Required
-`x`               x-offset                      0           No
-`y`               y-offset                      0           No
-`z`               z-offset                      0           No
+`x`               x offset                      0           No
+`y`               y offset                      0           No
+`z`               z offset                      0           No
 `phi`             phi Euler angle               0           No
 `theta`           theta Euler angle             0           No
 `psi`             psi Euler angle               0           No
@@ -1441,7 +1441,7 @@ The magnet geometry is controlled by the following parameters.
 |                       | | scale according to this ratio. In the case of a vertical   |               |           |
 |                       | | kicker it will be the height that is `outerDiameter` (as   |               |           |
 |                       | | the geometry is simple rotated). Ranges from 0.1 to 10.    |               |           |
-|                       | | This currently only applies to dipoles with poled          |               |           |
+|                       | | This currently **only** applies to dipoles with poled      |               |           |
 |                       | | geometry.                                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `coilWidthFraction`   | | Fraction of the available horizontal space between the     | 0.9           | No        |
@@ -1466,11 +1466,6 @@ Examples::
                    k1=0.03,
 		   magnetGeometryType="gdml:geometryfiles/quad.gdml",
 		   outerDiameter = 0.5*m;
-
-
-.. deprecated:: 0.65
-		`boxSize` - this is still accepted by the parser for backwards compatibility
-		but users should use the `outerDiameter` keyword where possible.
 
 .. warning:: The choice of magnet outer geometry will significantly affect the beam loss pattern in the
 	     simulation, as particles and radiation may propagate much further along the beam line when
@@ -2105,7 +2100,7 @@ formats are described in more detail in :ref:`external-geometry-formats`.
 	     correctly located (i.e. main.gmad includes ../somedir/anotherfile.gmad, which defines
 	     geometry in "../a/relative/path/geometryfile.gdml". The file will not be found). If all
 	     GMAD files are located in the same directory, this will not be a problem. It is better / cleaner
-             overall to use multiple GMAD input files and include them.
+	     overall to use multiple GMAD input files and include them.
 
 
 .. _placements:
