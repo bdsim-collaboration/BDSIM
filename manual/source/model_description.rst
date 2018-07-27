@@ -1181,12 +1181,14 @@ crystalcol
 	   :align: right
 
 
-`crystalcol` defines a crystal collimator that uses crystals to channel particles. It is composed
-of a beam pipe with one or two crystals inside it. The crystals can be the same (but placed at different
-angles) or different. The crystals are placed +- `xsize` away from the centre.
+`crystalcol` defines a crystal collimator that uses crystals to channel particles. It is
+composed of a beam pipe with one or two crystals inside it. The crystals can be the same
+(but placed at different angles) or different. The crystals are placed +- `xsize` away
+from the centre.
 
-The crystal is defined in a separate object in the parser and referred to by the name of that object.
-At least one of `crystalBoth`, `crystalLeft` and `crystalRight` must be specified.
+The crystal is defined in a separate object in the parser and referred to by the name of
+that object. At least one of `crystalBoth`, `crystalLeft` and `crystalRight` must be
+specified.
 
 .. warning:: This requires the user to use the "channelling" physics list for channelling to take place.
 
@@ -1237,7 +1239,7 @@ Examples::
 		      crystalAngleYAxisRight=-0.1*rad, xsize=2*mm;
 
 
-More examples can be found in :code:`bdsim/examples/components`.
+More examples can be found in :code:`bdsim/examples/components` and are described in :ref:`crystal-examples`.
 		      
 transform3d
 ^^^^^^^^^^^
@@ -4168,9 +4170,9 @@ Example::
 Crystals
 --------
 
-To use various crystal components in BDSIM such as `crystalcol`_, a crystal definition must first be made.
-This contains all of the required information to construct the crystal. The following parameters
-are requried:
+To use various crystal components in BDSIM such as `crystalcol`_, a crystal definition
+must first be made. This contains all of the required information to construct the
+crystal. The following parameters are requried:
 
 +-------------------+------------------------------------------------------------+
 | **Parameter**     | **Description**                                            |
@@ -4258,6 +4260,9 @@ Examples::
 			spaceGroup = 227,
 			bendingAngleYAxis = -0.1*rad,
 			bendingAngleZAxis = 0;
+
+
+More examples can be found in :ref:`crystal-examples`.
 
 .. _regions:
 			
