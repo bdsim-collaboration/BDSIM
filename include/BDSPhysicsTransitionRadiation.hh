@@ -36,18 +36,12 @@ public:
   BDSPhysicsTransitionRadiation();
   virtual ~BDSPhysicsTransitionRadiation();
 
+  /// Construct all leptons and the photon.
   virtual void ConstructParticle();
 
+  /// Construct and attach transition radiation to all charged particles.
   virtual void ConstructProcess();
 
-//private:
-
-//  BDSPhysicsTransitionRadiation() = delete;
-/*
-  /// @{ Parameter from global constants to control transitionRadiation physics.
-  G4double maxPhotonsPerStep;
-  G4double maxBetaChangePerStep;
-  /// @} */
 };
 
 #endif

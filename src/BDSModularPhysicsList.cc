@@ -1077,12 +1077,10 @@ void BDSModularPhysicsList::SynchRad()
 void BDSModularPhysicsList::TransitionRadiation()
 {
   if (!physicsActivated["transition_radiation"])
-  {
-    constructors.push_back(new BDSPhysicsTransitionRadiation());
-    physicsActivated["transition_radiation"] = true;
-//    if (!physicsActivated["em"])
-//    {Em();} // requires em physics to work (found empirically)
-  }
+    {
+      constructors.push_back(new BDSPhysicsTransitionRadiation());
+      physicsActivated["transition_radiation"] = true;
+    }
 }
 
 #if G4VERSION_NUMBER > 1019
