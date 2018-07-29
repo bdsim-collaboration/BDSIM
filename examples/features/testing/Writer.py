@@ -102,7 +102,7 @@ class Writer:
     def _writeToDisk(self, component, filename, machine, test):
         """ Function that writes the test machine to disk."""
         self._numFilesWritten += 1
-        
+        gmadname = filename+'.gmad'
         writer = _Writer.Writer()
         writer.Components.WriteInMain()
         writer.Sequence.WriteInMain()
@@ -127,18 +127,18 @@ class Writer:
             direc = _np.str(_np.int(self._numFilesWritten - _np.mod(self._numFilesWritten, 1000)))
             _os.chdir(direc)
             files = _glob.glob('*')
-            if not files.__contains__(filename+'.gmad'):
+            if not gmadname in files:
                 machine.beam._SetDistribFileName('../../' + test._beamFilename)
                 writer.Options.CallExternalFile('../../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
             _os.chdir('../')
         else:
             files = _glob.glob('*')
-            if not files.__contains__(filename+'.gmad'):
+            if not gmadname in files:
                 machine.beam._SetDistribFileName('../' + self._beamFilename)
                 writer.Options.CallExternalFile('../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
-        if not self._fileNamesWritten.keys().__contains__(component):
+        if not component in self._fileNamesWritten.keys():
             self._fileNamesWritten[component] = []
         self._fileNamesWritten[component].append(component + "/" + filename + ".gmad")
         _os.chdir('../')
@@ -469,9 +469,9 @@ class Writer:
             """
         def writemachine(knArray, ksArray, length, kslName):
             # convert multientry data type to tuples as pybdsim can only handle knl and ksl as tuples.
-            if multiEntryTypes.__contains__(type(knArray)) and (type(knArray) is not tuple):
+            if type(knArray) in multiEntryTypes and (type(knArray) is not tuple):
                 knArray = tuple(knArray)
-            if multiEntryTypes.__contains__(type(ksArray)) and (type(ksArray) is not tuple):
+            if type(ksArray) in multiEntryTypes and (type(ksArray) is not tuple):
                 ksArray = tuple(ksArray)
 
             machine = self._getMachine(test.Particle, test._testRobustness)
@@ -494,14 +494,14 @@ class Writer:
             if skewed:
                 componentsName = '__KSL'
 
-            if not multiEntryTypes.__contains__(type(kArray)):
+            if not type(kArray) in multiEntryTypes:
                 if _np.float(kArray) != 0:
                     return componentsName + '_K1_' + _np.str(kArray)
                 else:
                     return ''
 
             for index, klArray in enumerate(kArray):
-                if multiEntryTypes.__contains__(type(klArray)):
+                if type(klArray) in multiEntryTypes:
                     for knOrder, knValue in enumerate(klArray):
                         if knValue != 0:
                             componentsName += '_K' + _np.str(knOrder + 1) + '_' + _np.str(knValue)
@@ -517,8 +517,8 @@ class Writer:
             """ Get the ksl component values and write. This is a seperate
                 function to remove duplication.
                 """
-            if multiEntryTypes.__contains__(type(test['ksl'])):
-                if multiEntryTypes.__contains__(type(test['ksl'][0])):
+            if type(test['ksl']) in multiEntryTypes:
+                if type(test['ksl'][0]) in multiEntryTypes:
                     for kslArray in test['ksl']:
                         kslName = knlName + getName(kslArray, True)
                         writemachine(knlArray, kslArray, length, kslName)
@@ -530,9 +530,9 @@ class Writer:
                 writemachine(knlArray, tuple(test['ksl']), length, kslName)
 
         # if the container is multiEntryType...
-        if multiEntryTypes.__contains__(type(test['knl'])):
+        if type(test['knl']) in multiEntryTypes:
             # containing multiEntryType containers...
-            if multiEntryTypes.__contains__(type(test['knl'][0])):
+            if type(test['knl'][0]) in multiEntryTypes:
                 # then each of those multiEntryTypes should contain component strengths
                 for knlArray in test['knl']:
                     knlName = filename + getName(knlArray)

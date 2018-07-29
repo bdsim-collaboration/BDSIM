@@ -102,7 +102,7 @@ G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
     case BDSMagnetType::octupole:
       {result = "k3"; break;}
     case BDSMagnetType::decapole:
-      {result = "k5"; break;}
+      {result = "k4"; break;}
     default:
       {break;} // leave as none without complaint
     };

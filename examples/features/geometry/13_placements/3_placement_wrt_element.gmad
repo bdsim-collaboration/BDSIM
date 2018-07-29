@@ -1,0 +1,9 @@
+! placement w.r.t. beam line element and offset from that
+! "referenceElementNumber" is 0 counting
+p1: placement, geometryFile="gdml:box1.gdml",
+    	       referenceElement="d1",
+	       referenceElementNumber=1,
+    	       x=0.3*m,
+	       s=1-0.12*m;
+
+include placement_common.gmad;

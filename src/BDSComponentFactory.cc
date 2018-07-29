@@ -391,9 +391,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -443,7 +443,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -472,8 +472,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["field"]  = field*element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
-  // nominal energy needed by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -513,8 +512,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["field"]  = field * element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
-  // nominal energy required by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
@@ -592,55 +590,71 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
   
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      G4double         angleX = std::asin(hkick * scaling);
-      G4double         angleY = std::asin(vkick * scaling);
+      G4double angleX = std::asin(hkick * scaling);
+      G4double angleY = std::asin(vkick * scaling);
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
       G4double fieldY = 0;
 
-      if (BDS::IsFinite(angleX))
-	{// with comments
-	  // calculate the chord length of the arc through the field from the straight
-	  // ahead length for this element which here is 'chordLength'.
-	  G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
-
-	  // now calculate the bending radius
-	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+      // if B is specified and hkick and vkick (including backwards compatible check on
+      // 'angle') are not, then use the field for the appropriate component
+      // can only be 1d in this case -> doesn't work for tkicker
+      if (BDS::IsFinite(element->B) && (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick)))
+	{
+	  switch (type)
+	    {// 'X' and 'Y' are the angle of bending here, not the B field direction.
+	    case KickerType::horizontal:
+	    case KickerType::general:
+	      {fieldX = element->B * CLHEP::tesla; break;}
+	    case KickerType::vertical:
+	      {fieldY = element->B * CLHEP::tesla; break;}
+	    default:
+	      {break;} // do nothing - no field - just for compiler warnings
+	    }
+	}
+      else
+	{
+	  if (BDS::IsFinite(angleX))
+	    {// with comments
+	      // calculate the chord length of the arc through the field from the straight
+	      // ahead length for this element which here is 'chordLength'.
+	      G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
+	      
+	      // now calculate the bending radius
+	      G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	      
+	      // no calculate the arc length of the trajectory based on each bending radius
+	      G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+	      
+	      // -ve here in horizontal only for convention matching
+	      fieldX = FieldFromAngle(-angleX, arcLengthX);
+	    } // else fieldX default is 0
 	  
-	  // no calculate the arc length of the trajectory based on each bending radius
-	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
-
-	  // -ve here in horizontal only for convention matching
-	  fieldX = FieldFromAngle(-angleX, arcLengthX);
-	} // else fieldX default is 0
-
-      if (BDS::IsFinite(angleY))
-	{// same as x, no need for comments
-	  G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
-	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
-	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
-	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	  if (BDS::IsFinite(angleY))
+	    {// same as x, no need for comments
+	      G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
+	      G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	      G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	      fieldY = FieldFromAngle(angleY,  arcLengthY);
+	    }
 	}
       
       // note field for kick in x is unit Y, hence B = (y,x,0) here
@@ -654,13 +668,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   
   BDSMagnetType t;
+  G4double defaultVHRatio = 1.5;
   switch (type)
     {
     case KickerType::horizontal:
     case KickerType::general:
       {t = BDSMagnetType::hkicker; break;}
     case KickerType::vertical:
-      {t = BDSMagnetType::vkicker; break;}
+      {
+	t = BDSMagnetType::vkicker;
+	defaultVHRatio = 1./defaultVHRatio; // inverted for vertical magnet
+	break;
+      }
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
@@ -681,7 +700,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // the default outerDiameter. Code further along will warn if it still doesn't fit.
   const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
   G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
   if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
@@ -690,7 +709,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {defaultOuterDiameter = globalDefaultOD;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, 1.5, 0.9);
+					  defaultOuterDiameter, defaultVHRatio, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -813,13 +832,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = element->ks;
     }
 
@@ -1344,7 +1363,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}
@@ -1775,9 +1800,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double scaling     = el->scaling;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
-    {(*st)["eField"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
@@ -1802,7 +1827,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 

@@ -178,14 +178,15 @@ public:
 					  ) = 0;
   
   /// horizontal and vertical kicker outer volume
-  virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name
-				       G4double     length,                // length [mm]
-				       BDSBeamPipe* beamPipe,              // beampipe
-				       G4double     outerDiameter,         // full width
-				       G4double     containerLength,       // full length to make AccComp container
-				       G4bool       vertical = true,       // is it a vertical kicker?
-				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false,  // build and end piece
+  virtual BDSMagnetOuter* CreateKicker(G4String     name,                         // name
+				       G4double     length,                       // length [mm]
+				       BDSBeamPipe* beamPipe,                     // beampipe
+				       G4double     outerDiameter,                // full width
+				       G4double     containerLength,              // full length to make AccComp container
+				       G4bool       yokeOnLeft,                   // whether the yoke is on the left or right for C shaped
+				       G4bool       vertical           = true,    // is it a vertical kicker?
+				       G4Material*  outerMaterial      = nullptr, // material for outer volume
+				       G4bool       buildEndPiece      = false,   // build and end piece
 				       G4bool       hStyle             = false,
 				       G4double     vhRatio            = 1.0,
 				       G4double     coilWidthFraction  = 0.65,
@@ -196,6 +197,10 @@ public:
   virtual void CleanUp();
   /// Virtual base destructor
   virtual ~BDSMagnetOuterFactoryBase() {}
+
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
 
 protected:
   BDSMagnetOuterFactoryBase();
@@ -258,10 +263,6 @@ protected:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
-
-  /// A larger length safety that can be used where tracking accuracy isn't required
-  /// or more tolerant geometry is required (1um).
-  static G4double const lengthSafetyLarge;
 };
 
 #endif

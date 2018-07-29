@@ -150,13 +150,14 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 
   /// Write initial particle position and momentum
-  if (writeASCIISeedState) {
-    std::ofstream ofstr("output.primary.txt");
-    ofstr << x0 << " " << y0 << " " << z0 << " "
-          << xp << " " << yp << " " << zp << " "
-          << t << " " << E << " " << weight << std::endl;
-    ofstr.close();
-  }
+  if (writeASCIISeedState)
+    {
+      std::ofstream ofstr("output.primary.txt");
+      ofstr << x0 << " " << y0 << " " << z0 << " "
+	    << xp << " " << yp << " " << zp << " "
+	    << t << " " << E << " " << weight << std::endl;
+      ofstr.close();
+    }
 
   /// Check the coordinates are valid
   if (!worldExtent.Encompasses(x0,y0,z0))

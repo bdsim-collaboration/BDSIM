@@ -153,14 +153,14 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     case BDSMagnetType::vkicker:
       {
 	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
-				      containerLength, true, outerMaterial, buildEndPiece,
+				      containerLength, yokeOnLeft, true, outerMaterial, buildEndPiece,
 				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
 	break;
       }
     case BDSMagnetType::hkicker:
       {
 	outer = factory->CreateKicker(name, outerLength, beamPipe, outerDiameter,
-				      containerLength, false, outerMaterial, buildEndPiece,
+				      containerLength, yokeOnLeft, false, outerMaterial, buildEndPiece,
 				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
 	break;
       }
@@ -328,14 +328,15 @@ void BDSMagnetOuterFactory::CheckOuterBiggerThanBeamPipe(const G4String         
 							 const BDSMagnetOuterInfo* outerInfo,
 							 const BDSBeamPipe*        beamPipe) const
 {
-
-  G4double od = outerInfo->outerDiameter;
+  G4double outerHorizontal = outerInfo->outerDiameter;
+  G4double outerVertical   = outerInfo->outerDiameter * outerInfo->vhRatio;
   BDSExtent bpExtent = beamPipe->GetExtent();
-  if (od < bpExtent.DX() || od < bpExtent.DY())
+  if (outerHorizontal < bpExtent.DX() || outerVertical < bpExtent.DY())
     {
       G4cerr << __METHOD_NAME__ << "Magnet outer dimensions too small to "
 	     << "encompass beam pipe for element " << name << G4endl;
-      G4cerr << "outerDiameter -> " << od << G4endl;
+      G4cerr << "outerDiameter (horizontal) -> " << outerHorizontal << G4endl;
+      G4cerr << "outerDiameter (vertical)   -> " << outerVertical   << G4endl;
       G4cerr << "Beam pipe width : " << bpExtent.DX() << ", height : " << bpExtent.DY() << G4endl;
       exit(1);
     }

@@ -36,10 +36,10 @@ const G4double BDSFieldEMRFCavity::Z0 = CLHEP::mu0 * CLHEP::c_light;
 
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSMagnetStrength const* strength,
 				       G4double                 brho):
-  BDSFieldEMRFCavity((*strength)["eField"],
+  BDSFieldEMRFCavity((*strength)["efield"],
 		     (*strength)["frequency"],
 		     (*strength)["phase"],
-		     (*strength)["equatorRadius"])
+		     (*strength)["equatorradius"])
 {
   eFieldMax *= BDS::Sign(brho);
 }
