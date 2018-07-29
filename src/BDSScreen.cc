@@ -59,7 +59,6 @@ BDSScreen::BDSScreen(G4String         nameIn,
 		     G4double         screenPoszIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn,
 		     G4TwoVector      sizeIn): //X Y dimensions of screen
-
   BDSDrift(nameIn,chordLengthIn,beamPipeInfoIn),
   size(sizeIn), 
   screenAnglex(screenAnglexIn),
@@ -68,16 +67,14 @@ BDSScreen::BDSScreen(G4String         nameIn,
   screenPosx(screenPosxIn),
   screenPosy(screenPosyIn),
   screenPosz(screenPoszIn),
-  screenPos(G4ThreeVector(screenPosx, screenPosy, screenPosz)),
-  nLayers(0)
+  screenPos(G4ThreeVector(screenPosx, screenPosy, screenPosz))
 {
+  nLayers = 0;
   mlScreen = new BDSMultilayerScreen(size, nameIn+"_mlscreen");
-  
   screenRot = new G4RotationMatrix();
   screenRot->rotateX(screenAnglex);
   screenRot->rotateY(screenAngley);
   screenRot->rotateZ(screenAnglez);
-
 
   if (0.5*sqrt(pow(screenPosx, 2)+pow(screenPosy,2)) >= beamPipeInfo->aper1 - (2.0/sqrt(2.0))*size.X)
   {

@@ -56,22 +56,22 @@ public:
   void AddScreenLayer(G4double thickness, G4String material, G4int isSampler=0);
 
 private:
-  G4double screenAnglex;
-  G4double screenAngley;
-  G4double screenAnglez;
-  G4double screenPosx;
-  G4double screenPosy;
-  G4double screenPosz;
+  const G4TwoVector size;
+  const G4double screenAnglex;
+  const G4double screenAngley;
+  const G4double screenAnglez;
+  const G4double screenPosx;
+  const G4double screenPosy;
+  const G4double screenPosz;
+  G4int nLayers;
   BDSMultilayerScreen* mlScreen;
   std::list<G4double> layerThicknesses;
-  G4TwoVector size;
   std::list<G4String> layerMaterials;
   
   virtual void Build();
   void PlaceScreen();
   G4ThreeVector screenPos;
   G4RotationMatrix* screenRot;
-  G4int nLayers;
 };
 
 #endif
