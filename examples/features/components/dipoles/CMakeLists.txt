@@ -8,6 +8,9 @@ simple_testing(component-sbend-rodrigues               "--file=sbend_rodrigues.g
 simple_testing_long(component-sbend-rodrigues-poleface "--file=sbend_rodrigues_poleface.gmad"  ${OVERLAP_CHECK})
 simple_testing_long(component-sbend-rodrigues-fringe   "--file=sbend_rodrigues_fringe.gmad"    ${OVERLAP_CHECK})
 
+# with poleface curvature using 'bdsimmatrix' integrator set
+simple_testing(component-sbend-poleface-curvature   "--file=rbend_poleface_curvature.gmad"  ${OVERLAP_CHECK})
+
 # standard rbends
 simple_testing(component-rbend                   "--file=rbend.gmad"           ${OVERLAP_CHECK})
 simple_testing(component-rbend-poleface          "--file=rbend_poleface.gmad"  ${OVERLAP_CHECK})
@@ -17,6 +20,9 @@ simple_testing(component-rbend-fringe            "--file=rbend_fringe.gmad"    $
 simple_testing(component-rbend-rodrigues            "--file=rbend_rodrigues.gmad"           ${OVERLAP_CHECK})
 simple_testing(component-rbend-rodrigues-poleface   "--file=rbend_rodrigues_poleface.gmad"  ${OVERLAP_CHECK})
 simple_testing(component-rbend-rodrigues-fringe     "--file=rbend_rodrigues_fringe.gmad"    ${OVERLAP_CHECK})
+
+# with poleface curvature using 'bdsimmatrix' integrator set
+simple_testing(component-rbend-poleface-curvature  "--file=sbend_poleface_curvature.gmad"  ${OVERLAP_CHECK})
 
 # bends with quadrupole components
 simple_testing(component-sbend-k1     "--file=sbend_k1.gmad"  ${OVERLAP_CHECK})
