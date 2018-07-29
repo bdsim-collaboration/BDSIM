@@ -50,14 +50,14 @@ protected:
 
   virtual void BuildContainerLogicalVolume();
 
-  /// Function to place a single undulator period.
+  /// Function for building geometry for a single undulator period.
   void BuildUndulatorMagnet();
 
   G4double outerDiameter;
+  BDSFieldInfo* vacuumFieldInfo;
   G4double undulatorPeriod;
   G4String material;
   G4double magnetHeight;
-  BDSFieldInfo* vacuumFieldInfo;
   G4double magnetGap;
 };
 

@@ -959,32 +959,34 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-    BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
-    BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::undulator);
-    G4Transform3D fieldTrans  = CreateFieldTransform(element);
-    BDSMagnetStrength* st = new BDSMagnetStrength();
-    SetBeta0(st);
-    (*st)["length"] = element->undulatorPeriod * CLHEP::m;
-    (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::undulator);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
+  (*st)["length"] = element->undulatorPeriod * CLHEP::m;
+  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
 
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,
+                                                   brho,
+                                                   intType,
+                                                   st,
+                                                   true,
+                                                   fieldTrans);
 
-    BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,brho,intType,st,true,fieldTrans);
-
-    G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
-    vacuumFieldInfo->SetTransform(newFieldTransform);
-    //BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo, bpInfo->G true);
+  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
+  vacuumFieldInfo->SetTransform(newFieldTransform);
 
   return (new BDSUndulator(elementName,
                       element->l * CLHEP::m,
                       PrepareOuterDiameter(element),
                       element->undulatorPeriod * CLHEP::m,
                       PrepareOuterDiameter(element),    // magnet height to be added
-                      PrepareOuterDiameter(element),
+                      PrepareOuterDiameter(element),    // undulator gap to be added
                       bpInfo,
-                      vacuumFieldInfo));  // undulator gap to be added
-
-
-    }
+                      vacuumFieldInfo,
+                      element->material));
+}
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
 {
