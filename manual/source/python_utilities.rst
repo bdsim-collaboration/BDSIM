@@ -5,7 +5,7 @@ Python Utilities
 ****************
 
 Several python packages are provided to aid preparation and conversion
-of models to a from BDSIM's gmad format and are described the following
+of models to and from BDSIM's gmad format and are described in the following
 sections.
 
 * pybdsim - conversion and building of input as well as ASCII data analysis
@@ -23,7 +23,7 @@ Documentation
 =============
 
 In the following sections is individual documentation for each python package.
-These are also available when using ipython by typing ? after any module, class
+These are also available when using ipython by typing '?' after any module, class
 or function.
 
    * `<http://www.pp.rhul.ac.uk/bdsim/pybdsim/>`_
