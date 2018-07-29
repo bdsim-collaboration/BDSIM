@@ -308,11 +308,6 @@ protected:
   /// If we're building coils, place two coils for each pole.
   virtual void PlaceComponentsCoils(G4String name,
 				    G4int    order);
-  
-  /// Test inputs for no null pointers or overlapping volumes due to poorly defined sizes
-  void TestInputParameters(BDSBeamPipe* beamPipe,
-			   G4double&    boxSizeIn,
-			   G4Material*& outerMaterialIn);
 
   /// Ensure the coil fractions lie with [0.05, 0.98] and if they're negative set them to
   /// a provided default. -ve is assumed to require the default parameter and allows different
@@ -323,8 +318,7 @@ protected:
   /// Common task to both dipole construction routines. Clean up, test  inputs and check
   /// if faces will intersect and warn user. Note reference to material pointer so it can
   /// be fixed if needs be to the default.
-  void DipoleCommonPreConstruction(BDSBeamPipe*    beamPipe,
-				   const G4String& name,
+  void DipoleCommonPreConstruction(const G4String& name,
 				   const G4double& angleIn,
 				   const G4double& angleOut,
 				   const G4double& length,
@@ -345,8 +339,7 @@ protected:
 			  const G4double&    vhRatio,
 			  const G4double&    coilWidthFraction,
 			  const G4double&    coilHeightFraction,
-			  G4double& bpHalfWidth,
-			  G4double& bpHalfHeight,
+			  G4double& cShapeOuterEdge,
 			  G4double& poleHalfGap,
 			  G4double& poleWidth,
 			  G4double& poleHeight,

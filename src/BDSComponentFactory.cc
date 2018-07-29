@@ -602,36 +602,55 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double         angleX = std::asin(hkick * scaling);
-      G4double         angleY = std::asin(vkick * scaling);
+      G4double angleX = std::asin(hkick * scaling);
+      G4double angleY = std::asin(vkick * scaling);
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
       G4double fieldY = 0;
 
-      if (BDS::IsFinite(angleX))
-	{// with comments
-	  // calculate the chord length of the arc through the field from the straight
-	  // ahead length for this element which here is 'chordLength'.
-	  G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
-
-	  // now calculate the bending radius
-	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+      // if B is specified and hkick and vkick (including backwards compatible check on
+      // 'angle') are not, then use the field for the appropriate component
+      // can only be 1d in this case -> doesn't work for tkicker
+      if (BDS::IsFinite(element->B) && (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick)))
+	{
+	  switch (type)
+	    {// 'X' and 'Y' are the angle of bending here, not the B field direction.
+	    case KickerType::horizontal:
+	    case KickerType::general:
+	      {fieldX = element->B * CLHEP::tesla; break;}
+	    case KickerType::vertical:
+	      {fieldY = element->B * CLHEP::tesla; break;}
+	    default:
+	      {break;} // do nothing - no field - just for compiler warnings
+	    }
+	}
+      else
+	{
+	  if (BDS::IsFinite(angleX))
+	    {// with comments
+	      // calculate the chord length of the arc through the field from the straight
+	      // ahead length for this element which here is 'chordLength'.
+	      G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
+	      
+	      // now calculate the bending radius
+	      G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	      
+	      // no calculate the arc length of the trajectory based on each bending radius
+	      G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+	      
+	      // -ve here in horizontal only for convention matching
+	      fieldX = FieldFromAngle(-angleX, arcLengthX);
+	    } // else fieldX default is 0
 	  
-	  // no calculate the arc length of the trajectory based on each bending radius
-	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
-
-	  // -ve here in horizontal only for convention matching
-	  fieldX = FieldFromAngle(-angleX, arcLengthX);
-	} // else fieldX default is 0
-
-      if (BDS::IsFinite(angleY))
-	{// same as x, no need for comments
-	  G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
-	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
-	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
-	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	  if (BDS::IsFinite(angleY))
+	    {// same as x, no need for comments
+	      G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
+	      G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	      G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	      fieldY = FieldFromAngle(angleY,  arcLengthY);
+	    }
 	}
       
       // note field for kick in x is unit Y, hence B = (y,x,0) here
@@ -645,13 +664,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     }
   
   BDSMagnetType t;
+  G4double defaultVHRatio = 1.5;
   switch (type)
     {
     case KickerType::horizontal:
     case KickerType::general:
       {t = BDSMagnetType::hkicker; break;}
     case KickerType::vertical:
-      {t = BDSMagnetType::vkicker; break;}
+      {
+	t = BDSMagnetType::vkicker;
+	defaultVHRatio = 1./defaultVHRatio; // inverted for vertical magnet
+	break;
+      }
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
@@ -681,7 +705,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {defaultOuterDiameter = globalDefaultOD;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, 1.5, 0.9);
+					  defaultOuterDiameter, defaultVHRatio, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -804,13 +828,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["bz"]    = 1;
       (*st)["ks"]    = element->ks;
     }
 
