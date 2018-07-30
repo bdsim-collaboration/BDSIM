@@ -996,10 +996,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 
   return (new BDSUndulator(elementName,
                       element->l * CLHEP::m,
-                      PrepareOuterDiameter(element),
+                      PrepareHorizontalWidth(element),
                       element->undulatorPeriod * CLHEP::m,
-                      PrepareOuterDiameter(element),    // magnet height to be added
-                      PrepareOuterDiameter(element),    // undulator gap to be added
+                      PrepareHorizontalWidth(element),    // magnet height to be added
+                      PrepareHorizontalWidth(element),    // undulator gap to be added
                       bpInfo,
                       vacuumFieldInfo,
                       element->material));
