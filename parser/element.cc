@@ -363,7 +363,7 @@ void Element::print(int ident)const{
 	      << "psi= "   << psi   << "rad" << std::endl;
 
   case ElementType::_WIRESCANNER:
-    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+    std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
               << "material = \""      << material << "\"" << std::endl;
 
     break;
