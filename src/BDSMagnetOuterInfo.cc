@@ -25,7 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   name("not_specified"),
   geometryType(BDSMagnetGeometryType::cylindrical),
-  outerDiameter(0),
+  horizontalWidth(0),
   outerMaterial(nullptr),
   innerRadius(1.0),
   vhRatio(1.0),
@@ -41,7 +41,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,
-				       G4double              outerDiameterIn,
+				       G4double              horizontalWidthIn,
 				       G4Material*           outerMaterialIn,
 				       G4double              innerRadiusIn,
 				       G4double              vhRatioIn,
@@ -55,7 +55,7 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4String              geometryTypeAndPathIn):
   name(nameIn),
   geometryType(geometryTypeIn),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   outerMaterial(outerMaterialIn),
   innerRadius(innerRadiusIn),
   vhRatio(vhRatioIn),
@@ -73,7 +73,7 @@ std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
 {
   out << "Magnet Outer Info:  \"" << info.name << "\""             << G4endl;
   out << "Geometry Type:       "  << info.geometryType             << G4endl;
-  out << "Diameter:            "  << info.outerDiameter            << G4endl;
+  out << "Horizontal Width:    "  << info.horizontalWidth          << G4endl;
   out << "Material:            "  << info.outerMaterial->GetName() << G4endl;
   out << "Inner Radius:        "  << info.innerRadius              << G4endl;
   out << "V / H Ratio:         "  << info.vhRatio                  << G4endl;

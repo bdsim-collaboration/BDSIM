@@ -80,7 +80,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String componentName,
 						       G4String formatAndFileName,
 						       std::map<G4String, G4Colour*>* colourMapping,
 						       G4double suggestedLength,
-						       G4double suggestedOuterDiameter,
+						       G4double suggestedHorizontalWidth,
 						       G4bool   makeSensitive)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
@@ -101,7 +101,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String componentName,
     {return nullptr;}
   
   BDSGeometryExternal* result = factory->Build(componentName, fileName, colourMapping,
-					       suggestedLength, suggestedOuterDiameter);
+					       suggestedLength, suggestedHorizontalWidth);
   
   if (result)
     {

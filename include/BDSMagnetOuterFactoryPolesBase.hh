@@ -56,7 +56,7 @@ public:
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
 					   G4double     length,          // length [mm]
 					   BDSBeamPipe* beamPipe,        // beampipe
-					   G4double     outerDiameter,   // full width
+					   G4double     horizontalWidth, // full width
 					   G4double     containerLength, // full length to make AccComp container
 					   G4double     angleIn,         // input face angle w.r.t. chord
 					   G4double     angleOut,        // output face angle w.r.t. chord
@@ -72,7 +72,7 @@ public:
   virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
 						G4double     length,            // length [mm]
 						BDSBeamPipe* beamPipe,          // beampipe
-						G4double     outerDiameter,     // full width
+						G4double     horizontalWidth,     // full width
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
@@ -88,7 +88,7 @@ public:
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
 					   G4double     length,                // length [mm]
 					   BDSBeamPipe* beamPipe,              // beampipe
-					   G4double     outerDiameter,         // full width
+					   G4double     horizontalWidth,       // full width
 					   G4double     containerLength,       // full length to make AccComp container
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
 					   G4bool       buildEndPiece = false
@@ -99,7 +99,7 @@ public:
   virtual BDSMagnetOuter* CreateSextupole(G4String     name,                  // name
 					  G4double     length,                // length [mm]
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false
@@ -109,7 +109,7 @@ public:
   virtual BDSMagnetOuter* CreateOctupole(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false
@@ -119,7 +119,7 @@ public:
   virtual BDSMagnetOuter* CreateDecapole(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false
@@ -129,7 +129,7 @@ public:
   virtual BDSMagnetOuter* CreateSolenoid(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false
@@ -139,7 +139,7 @@ public:
   virtual BDSMagnetOuter* CreateMultipole(G4String     name,                  // name
 					  G4double     length,                // length [mm]
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false
@@ -149,7 +149,7 @@ public:
   virtual BDSMagnetOuter* CreateRfCavity(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false
@@ -159,7 +159,7 @@ public:
   virtual BDSMagnetOuter* CreateMuSpoiler(G4String     name,                  // name
 					  G4double     length,                // length [mm]
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false
@@ -169,7 +169,7 @@ public:
   virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name
 				       G4double     length,                // length [mm]
 				       BDSBeamPipe* beamPipe,              // beampipe
-				       G4double     outerDiameter,         // full width
+				       G4double     horizontalWidth,       // full width
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       yokeOnLeft,            // where c-shaped yoke is
 				       G4bool       vertical = true,       // is it a vertical kicker?
@@ -182,14 +182,14 @@ public:
   
 protected:
   // geometry parameters
-  /// The fraction of the distance from the beam pipe to the outerDiameter/2 that each pole
+  /// The fraction of the distance from the beam pipe to the horizontalWidth/2 that each pole
   /// will take - always < 1
   const G4double poleFraction;
 
   /// Fraction of 2pi/Npoles that the pole will occupy - always < 1
   const G4double poleAngularFraction;
 
-  /// Fraction of length from pole tip to outerDiameter that pole tip ellisoid will
+  /// Fraction of length from pole tip to horizontalWidth that pole tip ellisoid will
   /// take up
   const G4double poleTipFraction;
 
@@ -208,7 +208,7 @@ protected:
   const G4double poleStopFactor;
   
   G4double yokeStartRadius;        ///< Start radius of yoke geometry from magnet cetnre.
-  G4double yokeFinishRadius;       ///< Finish radius of yoke geometry from magnet centre - less than outerDiameter.
+  G4double yokeFinishRadius;       ///< Finish radius of yoke geometry from magnet centre - less than horizontalWidth.
   G4double magnetContainerRadius;  ///< Radius of the container solid for the outer geometry.
   G4bool   buildPole;              ///< Whether or not to build poles (and therefore coils).
   G4double poleStartRadius;        ///< Start radius of the pole from magnet centre.
@@ -246,7 +246,7 @@ protected:
 					    G4double     length,
 					    BDSBeamPipe* beamPipe,
 					    G4int        order,
-					    G4double     outerDiameter,
+					    G4double     horizontalWidth,
 					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength,
 					    G4bool       buildEndPiece);
@@ -254,7 +254,7 @@ protected:
   /// Calculate the length of the pole and yoke radii based on the design. This is only
   /// responsible for calculating the gross proportions of the yoke and pole, not all the
   /// geometrical parameters that may be required for the final geometry.
-  virtual void CalculatePoleAndYoke(G4double     outerDiameter,
+  virtual void CalculatePoleAndYoke(G4double     horizontalWidth,
 				    BDSBeamPipe* beamPipe,
 				    G4int        order);
   
@@ -322,7 +322,7 @@ protected:
 				   const G4double& angleIn,
 				   const G4double& angleOut,
 				   const G4double& length,
-				   G4double&       outerDiameter,
+				   G4double&       horizontalWidth,
 				   G4Material*&    material,
 				   G4double&       vhRatio);
 
@@ -332,7 +332,7 @@ protected:
 			  const G4bool&      buildVertically,
 			  const BDSBeamPipe* beamPipe,
 			  const G4double&    length,
-			  const G4double&    outerDiameter,
+			  const G4double&    horizontalWidth,
 			  const G4double&    angleIn,
 			  const G4double&    angleOut,
 			  const G4double&    yokeThicknessFraction,
@@ -369,7 +369,7 @@ protected:
   BDSMagnetOuter* CreateDipoleC(G4String     name,
 				G4double     length,
 				BDSBeamPipe* beamPipe,
-				G4double     outerDiameter,
+				G4double     horizontalWidth,
 				G4double     containerLength,
 				G4double     angleIn,
 				G4double     angleOut,
@@ -386,7 +386,7 @@ protected:
   BDSMagnetOuter* CreateDipoleH(G4String     name,
 				G4double     length,
 				BDSBeamPipe* beamPipe,
-				G4double     outerDiameter,
+				G4double     horizontalWidth,
 				G4double     containerLength,
 				G4double     angleIn,
 				G4double     angleOut,
@@ -399,7 +399,7 @@ protected:
 				G4double     coilHeightFraction = 0.8);
 
   BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
-					   G4double    outerDiameter,
+					   G4double    horizontalWidth,
 					   G4bool      buildEndPiece,
 					   G4double    coilWidth,
 					   G4double    length,

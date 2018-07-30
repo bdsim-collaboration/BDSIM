@@ -260,7 +260,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
 								    G4double     length,
 								    BDSBeamPipe* beamPipe,
 								    G4int        orderIn,
-								    G4double     outerDiameter,
+								    G4double     horizontalWidth,
 								    G4Material*  outerMaterial,
 								    G4double     magnetContainerRadiusIn,
 								    G4bool       buildEndPiece)
@@ -269,7 +269,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuter* outer = BDSMagnetOuterFactoryPolesBase::CommonConstructor(name, length, beamPipe,
-									    orderIn, outerDiameter,
+									    orderIn, horizontalWidth,
 									    outerMaterial, magnetContainerRadiusIn,buildEndPiece);
   
   outer->RegisterLogicalVolume(poleLVs);

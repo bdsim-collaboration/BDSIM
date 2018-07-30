@@ -159,7 +159,7 @@ namespace BDS
   /// vector arguments.
   G4bool WillIntersect(const G4double& angleIn,
 		       const G4double& angleOut,
-		       const G4double& outerDiameter,
+		       const G4double& horizontalWidth,
 		       const G4double& length);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to

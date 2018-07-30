@@ -177,8 +177,9 @@ void Options::PublishMembers()
   // options which influence the geometry
   publish("magnetGeometryType",   &Options::magnetGeometryType);
   publish("outerMaterial",        &Options::outerMaterialName);
-  publish("outerDiameter",        &Options::outerDiameter);
-  publish("boxSize",              &Options::outerDiameter); // for backwards compatability
+  publish("horizontalWidth",      &Options::horizontalWidth);
+  publish("outerDiameter",        &Options::horizontalWidth); // for backwards compatability
+  publish("boxSize",              &Options::horizontalWidth); // for backwards compatability
   publish("yokeFields",           &Options::yokeFields);
   publish("includeIronMagFields", &Options::yokeFields); // for backwards compatibility
   publish("includeFringeFields",  &Options::includeFringeFields);
