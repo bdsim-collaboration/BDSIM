@@ -105,7 +105,7 @@ namespace GMAD
     /// default magnet geometry parameters
     std::string magnetGeometryType;
     std::string outerMaterialName;
-    double      outerDiameter;
+    double      horizontalWidth; // formerly outerDiameter
     double      thinElementLength;
     bool        hStyle; ///< H Style dipoles (if not, C Style).
     double      vhRatio;
@@ -220,6 +220,7 @@ namespace GMAD
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
     bool     sampleElementsWithPoleface;
+    double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
 
     /// Output related options
     int         numberOfEventsPerNtuple;

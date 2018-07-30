@@ -77,11 +77,11 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-  
+
   G4ThreeVector pos    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector mom    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4double      momMag = mom.mag();
-  
+
   // global to local
   BDSStep       localPosMom  = ConvertToLocal(pos, mom, h, false, thinElementLength);
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
@@ -96,12 +96,37 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       return;
     }
 
-  G4double x0  = localPos.x();
-  G4double y0  = localPos.y();
-  G4double z0  = localPos.z();
-  G4double xp  = localMomUnit.x();
-  G4double yp  = localMomUnit.y();
-  G4double zp  = localMomUnit.z();
+  G4ThreeVector localPosOut;
+  G4ThreeVector localMomUnitOut;
+
+  OneStep(localPos, localMomUnit, momMag, localPosOut, localMomUnitOut, h);
+
+  // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
+  G4double zp1 = localMom.z();
+  if (std::isnan(zp1) || (zp1 < 0.9))
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
+
+
+  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+}
+
+void BDSIntegratorMultipoleThin::OneStep(const G4ThreeVector& posIn,
+                                         const G4ThreeVector& momUIn,
+                                         const G4double       momIn,
+                                         G4ThreeVector&       posOut,
+                                         G4ThreeVector&       momOut,
+                                         G4double             h) const
+{
+  G4double x0  = posIn.x();
+  G4double y0  = posIn.y();
+  G4double z0  = posIn.z();
+  G4double xp  = momUIn.x();
+  G4double yp  = momUIn.y();
+  G4double zp  = momUIn.z();
 
   // initialise output variables with input position as default
   G4double x1  = x0;
@@ -122,10 +147,10 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double momy;
 
   // normalise to momentum and charge
-  G4double ratio = eqOfM->FCof() * std::abs(brho) / momMag;
+  G4double ratio = eqOfM->FCof() * std::abs(brho) / momIn;
 
   G4int n = 1;
-  std::list<double>::iterator kn = bnl.begin();
+  std::list<double>::const_iterator kn = bnl.begin();
 
   // sum higher order components into one kick
   for (; kn != bnl.end(); n++, ++kn)
@@ -135,9 +160,9 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
       knReal = (*kn) * ratio * std::pow(position,n).real() / nfact[n];
       knImag = (*kn) * ratio * std::pow(position,n).imag() / nfact[n];
       if (!std::isnan(knReal))
-	{momx = knReal;}
+    {momx = knReal;}
       if (!std::isnan(knImag))
-	{momy = knImag;}
+    {momy = knImag;}
       result = {momx,momy};
       kick += result;
     }
@@ -148,7 +173,7 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   G4double ksImag = 0;
   G4complex skewkick(0,0);
 
-  std::list<double>::iterator ks = bsl.begin();
+  std::list<double>::const_iterator ks = bsl.begin();
   for (; ks != bsl.end(); n++, ++ks)
     {
       if (BDS::IsFinite(*ks))
@@ -166,11 +191,11 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
           skewkick += result;
         }
     }
-  
+
   // apply normal kick
   xp1 -= kick.real();
   yp1 += kick.imag();
-  
+
   //apply skewed kick
   xp1 -= skewkick.imag();
   yp1 += skewkick.real();
@@ -179,17 +204,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yIn[],
   if (std::isnan(zp1))
     {zp1 = zp;}
 
-  // xp1 or yp1 may be > 1, so isnan check also needed for zp1.
-  if (std::isnan(zp1) || (zp1 < 0.9))
-    {
-      AdvanceDriftMag(yIn, h, yOut, yErr);
-      SetDistChord(0);
-      return;
-    }
-  
-  G4ThreeVector localPosOut     = G4ThreeVector(x1, y1, z1);
-  G4ThreeVector localMomUnitOut = G4ThreeVector(xp1, yp1, zp1);
-  ConvertToGlobal(localPosOut, localMomUnitOut, yOut, yErr, momMag);
+  posOut = G4ThreeVector(x1, y1, z1);
+  momOut = G4ThreeVector(xp1, yp1, zp1);
 }
 
 G4int BDSIntegratorMultipoleThin::Factorial(G4int n)

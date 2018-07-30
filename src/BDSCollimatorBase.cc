@@ -36,7 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
 				     G4double lengthIn,
-				     G4double outerDiameterIn,
+				     G4double horizontalWidthIn,
 				     G4String typeIn,
 				     G4double xApertureIn,
 				     G4double yApertureIn,
@@ -46,7 +46,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
 				     G4String vacuumMaterialIn,
 				     G4String colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   xAperture(xApertureIn),
   yAperture(yApertureIn),
   xOutAperture(xOutApertureIn),
@@ -55,22 +55,22 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
   vacuumMaterial(vacuumMaterialIn),
   colour(colourIn)
 {
-  if(outerDiameter==0)
-    {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
+  if(horizontalWidth==0)
+    {horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
 
-  if ( (xAperture > 0.5*outerDiameter) || (yAperture > 0.5*outerDiameter) )
+  if ( (xAperture > 0.5*horizontalWidth) || (yAperture > 0.5*horizontalWidth) )
     {
-      G4cerr << __METHOD_NAME__ << "half aperture bigger than diameter!" << G4endl;
-      G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
+      G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
+      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
 	     << name << "\"" << G4endl;
       G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
       exit(1);
     }
     
-  if ( (xOutAperture > 0.5*outerDiameter) || (yOutAperture > 0.5*outerDiameter) )
+  if ( (xOutAperture > 0.5*horizontalWidth) || (yOutAperture > 0.5*horizontalWidth) )
     {
-      G4cerr << __METHOD_NAME__ << "half aperture exit bigger than diameter!" << G4endl;
-      G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
+      G4cerr << __METHOD_NAME__ << "half aperture exit bigger than width!" << G4endl;
+      G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
 	     << name << "\"" << G4endl;
       G4cerr << "x aperture " << xOutAperture << " mm, y aperture " << yOutAperture << " mm" << G4endl;
       exit(1);
@@ -107,8 +107,8 @@ BDSCollimatorBase::~BDSCollimatorBase()
 void BDSCollimatorBase::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,
+			     horizontalWidth*0.5,
+			     horizontalWidth*0.5,
 			     chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
@@ -122,8 +122,8 @@ void BDSCollimatorBase::Build()
   
   // now build the collimator
   G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
-				   outerDiameter * 0.5 - lengthSafety,
-				   outerDiameter * 0.5 - lengthSafety,
+				   horizontalWidth * 0.5 - lengthSafety,
+				   horizontalWidth * 0.5 - lengthSafety,
 				   chordLength * 0.5   - lengthSafety);
   RegisterSolid(outerSolid);
   

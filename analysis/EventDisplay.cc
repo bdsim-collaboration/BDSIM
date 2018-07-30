@@ -140,8 +140,8 @@ void EventDisplay::DrawModel()
 {
   std::cout << "EventDisplay::DrawModel>" << std::endl;
   BDSOutputROOTEventOptions *ob = options->options;
-  std::cout << "EventDisplay::DrawModel> outerDiameter" << ob->outerDiameter << std::endl;
-  double outerDiameter = ob->outerDiameter; // need cm
+  std::cout << "EventDisplay::DrawModel> horizontalWidth " << ob->horizontalWidth << std::endl;
+  double horizontalWidth = ob->horizontalWidth; // need cm
 
 
   TEveBoxSet *bs = new TEveBoxSet("model");
@@ -155,15 +155,15 @@ void EventDisplay::DrawModel()
     TRotation modelRotation = model->model->midRot[i];
 
     // 100 as need cm not m
-    TVector3 v1 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2, -outerDiameter / 2, -modelLength / 2));
-    TVector3 v2 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2,  outerDiameter / 2, -modelLength / 2));
-    TVector3 v3 = 100*(mp + modelRotation*TVector3( outerDiameter / 2,  outerDiameter / 2, -modelLength / 2));
-    TVector3 v4 = 100*(mp + modelRotation*TVector3( outerDiameter / 2, -outerDiameter / 2, -modelLength / 2));
+    TVector3 v1 = 100*(mp + modelRotation*TVector3(-horizontalWidth / 2, -horizontalWidth / 2, -modelLength / 2));
+    TVector3 v2 = 100*(mp + modelRotation*TVector3(-horizontalWidth / 2,  horizontalWidth / 2, -modelLength / 2));
+    TVector3 v3 = 100*(mp + modelRotation*TVector3( horizontalWidth / 2,  horizontalWidth / 2, -modelLength / 2));
+    TVector3 v4 = 100*(mp + modelRotation*TVector3( horizontalWidth / 2, -horizontalWidth / 2, -modelLength / 2));
 
-    TVector3 v5 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2, -outerDiameter / 2,  modelLength / 2));
-    TVector3 v6 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2,  outerDiameter / 2,  modelLength / 2));
-    TVector3 v7 = 100*(mp + modelRotation*TVector3( outerDiameter / 2,  outerDiameter / 2,  modelLength / 2));
-    TVector3 v8 = 100*(mp + modelRotation*TVector3( outerDiameter / 2, -outerDiameter / 2,  modelLength / 2));
+    TVector3 v5 = 100*(mp + modelRotation*TVector3(-horizontalWidth / 2, -horizontalWidth / 2,  modelLength / 2));
+    TVector3 v6 = 100*(mp + modelRotation*TVector3(-horizontalWidth / 2,  horizontalWidth / 2,  modelLength / 2));
+    TVector3 v7 = 100*(mp + modelRotation*TVector3( horizontalWidth / 2,  horizontalWidth / 2,  modelLength / 2));
+    TVector3 v8 = 100*(mp + modelRotation*TVector3( horizontalWidth / 2, -horizontalWidth / 2,  modelLength / 2));
 
 
     vert[0] = (float) v1.x();

@@ -865,9 +865,23 @@ BDSIM Dipole Fringe
 
 * Class name: :code:`BDSIntegratorDipoleFringe`
 
-This integrator provides a change in momentum only that represents the edge effect of a dipole
-with a pole face rotation. This class inherits :code:`BDSIntegratorDipoleRodrigues2` as it uses it
-for the dipole component of the motion. After that, the small change in momentum is applied.
+This integrator provides a change in momentum only that represents both the edge effect of a dipole
+with a pole face rotation and dipole poleface curvature. The effect of poleface curvature is applied
+using the thin multipole integrator with a sextupole strength of:
+
+.. math::
+
+    K_3l = -\frac{h}{\rho} \frac{1}{\cos^3(\theta)}
+
+where :math:`h` is the poleface curvature and :math:`\theta` is the poleface rotation angle.
+
+The poleface curvature effect is applied first, but only if the poleface curvature is finite. The function
+for applying the momentum kick converts to curvilinear coordinates, calls the thin multipole stepper function
+that applies the kick, and finally converts back to global coordinates.
+
+As the thin fringe element has finite length, a small dipole kick must be applied to conserve the magnetic
+length of the dipole. This class inherits :code:`BDSIntegratorDipoleRodrigues2` for the dipole component of
+the motion. After that, the small change in momentum is applied.
 
 * If the step length is longer than 1 mm, the kick is not applied (i.e. not a thin dipole edge element).
 
@@ -914,10 +928,9 @@ The resulting momentum change will therefore be:
    dp_{x} ~ &= ~ \frac{q_{x,in}}{\rho}~\tan(\theta)\\
    dp_{y} ~ &= ~ \frac{q_{y,in}}{\rho}~\tan(\theta - corr.)
 
-Where :math:`\theta` is the angle of the pole face and ":math:`corr.`" is the fringe
-field correction term. The calculation of the fringe field correction term is split
-into two terms, which are calculated separately in two namespace functions
-:code:`BDS::FringeFieldCorrection()` and :code:`BDS::SecondFringeFieldCorrection()`
+Where ":math:`corr.`" is the fringe field correction term. The calculation of the fringe
+field correction term is split into two terms, which are calculated separately in two
+namespace functions :code:`BDS::FringeFieldCorrection()` and :code:`BDS::SecondFringeFieldCorrection()`
 upon class instantiation. These functions calculate:
 
 .. math::

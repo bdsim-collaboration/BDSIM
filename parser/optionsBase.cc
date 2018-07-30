@@ -93,7 +93,7 @@ OptionsBase::OptionsBase()
   // magnet geometry
   magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
-  outerDiameter        = 0.6;
+  horizontalWidth      = 0.6;
   thinElementLength    = 1e-7;
   hStyle               = false;
   vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default
@@ -195,6 +195,7 @@ OptionsBase::OptionsBase()
   chordStepMinimumYoke     = 1e-6;
   deltaIntersection        = 1e-8;    // m - should be greater than lengthSafety!
   sampleElementsWithPoleface  = false;   // affects dipole tracking in certain integrator sets when true
+  nominalMatrixRelativeMomCut = 0.05;  // be careful adjusting this as it affects dipolequadrupole tracking
 
   // default value in Geant4, old value 0 - error must be greater than this
   minimumEpsilonStep       = 5e-25;
