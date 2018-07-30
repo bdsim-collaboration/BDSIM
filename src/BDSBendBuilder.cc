@@ -242,7 +242,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 											 yokeOnLeft);
   // minus for conversion to 3d cartesian
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
-						      magnetOuterInfoCheck->outerDiameter,
+						      magnetOuterInfoCheck->horizontalWidth,
 						      centralName);
   // clean up
   delete magnetOuterInfoCheck;

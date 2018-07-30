@@ -113,7 +113,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   BDSMagnetOuter* outer = nullptr;
 
   G4String name                         = outerInfo->name;
-  G4double outerDiameter                = outerInfo->outerDiameter;
+  G4double outerDiameter                = outerInfo->horizontalWidth;
   G4Material* outerMaterial             = outerInfo->outerMaterial;
   BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
   G4bool yokeOnLeft                     = outerInfo->yokeOnLeft;
@@ -328,8 +328,8 @@ void BDSMagnetOuterFactory::CheckOuterBiggerThanBeamPipe(const G4String         
 							 const BDSMagnetOuterInfo* outerInfo,
 							 const BDSBeamPipe*        beamPipe) const
 {
-  G4double outerHorizontal = outerInfo->outerDiameter;
-  G4double outerVertical   = outerInfo->outerDiameter * outerInfo->vhRatio;
+  G4double outerHorizontal = outerInfo->horizontalWidth;
+  G4double outerVertical   = outerInfo->horizontalWidth * outerInfo->vhRatio;
   BDSExtent bpExtent = beamPipe->GetExtent();
   if (outerHorizontal < bpExtent.DX() || outerVertical < bpExtent.DY())
     {

@@ -46,7 +46,7 @@ public:
   /// extra constructor to assign all members at once
   BDSMagnetOuterInfo(G4String              nameIn,
 		     BDSMagnetGeometryType geometryTypeIn,
-		     G4double              outerDiameterIn,
+		     G4double              horizontalWidthIn,
 		     G4Material*           outerMaterialIn,
 		     G4double              innerRadiusIn,
 		     G4double              vhRatioIn             = 1,
@@ -61,7 +61,7 @@ public:
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
-  G4double              outerDiameter;
+  G4double              horizontalWidth;
   G4Material*           outerMaterial;
   G4double              innerRadius;
   G4double              vhRatio;

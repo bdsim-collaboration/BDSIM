@@ -68,7 +68,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
   outer(nullptr),
   beamPipePlacementTransform(G4Transform3D())
 {
-  horizontalWidth = magnetOuterInfoIn->outerDiameter;
+  horizontalWidth = magnetOuterInfoIn->horizontalWidth;
   containerRadius = 0.5*horizontalWidth;
   
   beampipe = nullptr;
