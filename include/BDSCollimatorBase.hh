@@ -36,7 +36,7 @@ class BDSCollimatorBase: public BDSAcceleratorComponent
 public:
   BDSCollimatorBase(G4String name,
 		    G4double length,
-		    G4double outerDiameter,
+		    G4double horizontalWidth,
 		    G4String type,
 		    G4double xApertureIn        = 0,
 		    G4double yApertureIn        = 0,
@@ -67,7 +67,7 @@ protected:
   G4VSolid* vacuumSolid;
   ///@}
   /// Outer diameter
-  G4double outerDiameter;
+  G4double horizontalWidth;
   /// Aperture at entrance in x dimension
   G4double xAperture;
   /// Aperture at entrance in y dimension
