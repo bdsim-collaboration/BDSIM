@@ -31,14 +31,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSDegrader: public BDSAcceleratorComponent
 {
 public:
-  BDSDegrader(G4String name, 
-	      G4double   length,
-	      G4double   outerDiameter,
-	      G4int      numberWedges,
-	      G4double   wedgeLength,
-	      G4double   degraderHeight,
-	      G4double   degraderOffset,
-	      G4String   degraderMaterial     = "carbon");
+  BDSDegrader(G4String nameIn, 
+	      G4double lengthIn,
+	      G4double horizontalWidthIn,
+	      G4int    numberWedgesIn,
+	      G4double wedgeLengthIn,
+	      G4double degraderHeightIn,
+	      G4double degraderOffsetIn,
+	      G4String degraderMaterialIn = "carbon");
   virtual ~BDSDegrader();
   
 protected:
@@ -46,13 +46,12 @@ protected:
   
   virtual void BuildContainerLogicalVolume();
   
-  G4double outerDiameter;
+  G4double horizontalWidth;
   G4int    numberWedges;
   G4double wedgeLength;
   G4double degraderHeight;
   G4double degraderOffset;
-  G4String degraderMaterial;
-  
+  G4String degraderMaterial; 
   
   bool isOdd(G4int integer)
   {
@@ -69,6 +68,7 @@ protected:
     else
       return false;
   }
+  
 private:
   /// Private default constructor to force the use of the supplied one.
   BDSDegrader() = delete;
