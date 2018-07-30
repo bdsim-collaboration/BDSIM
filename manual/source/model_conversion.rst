@@ -1,6 +1,6 @@
-================
+=================
 Model Preparation
-================
+=================
 
 A BDSIM model can be prepared either manually in a hand-written fashion,
 or using a provided suite of python tools to automatically convert

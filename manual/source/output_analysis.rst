@@ -270,12 +270,12 @@ Variables In Data
 
 The variables for histograms are described in :ref:`output-section`. However, the
 user can also quickly determine what they want by using a ROOT TBrowser to inspect
-a file::
+a file, ::
 
   root output.root
   root> TBrowser tb;
 
-,at which point, a browser window will appear with the specified file open. The variable
+at which point, a browser window will appear with the specified file open. The variable
 used in the histogram should be the full 'address' of the variable inside the Tree. Here,
 the tree is :code:`Event.` and the variable is :code:`Info.duration`.
 
