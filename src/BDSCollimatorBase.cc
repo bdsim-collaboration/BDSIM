@@ -60,7 +60,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
 
   if ( (xAperture > 0.5*horizontalWidth) || (yAperture > 0.5*horizontalWidth) )
     {
-      G4cerr << __METHOD_NAME__ << "half aperture bigger than diameter!" << G4endl;
+      G4cerr << __METHOD_NAME__ << "half aperture bigger than width!" << G4endl;
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
 	     << name << "\"" << G4endl;
       G4cerr << "x aperture " << xAperture << " mm, y aperture " << yAperture << " mm" << G4endl;
@@ -69,7 +69,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
     
   if ( (xOutAperture > 0.5*horizontalWidth) || (yOutAperture > 0.5*horizontalWidth) )
     {
-      G4cerr << __METHOD_NAME__ << "half aperture exit bigger than diameter!" << G4endl;
+      G4cerr << __METHOD_NAME__ << "half aperture exit bigger than width!" << G4endl;
       G4cerr << "Horizontal width is " << horizontalWidth << " mm for component named: \""
 	     << name << "\"" << G4endl;
       G4cerr << "x aperture " << xOutAperture << " mm, y aperture " << yOutAperture << " mm" << G4endl;

@@ -121,7 +121,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
 						  G4String fileName,
 						  std::map<G4String, G4Colour*>* colourMapping,
 						  G4double suggestedLength,
-						  G4double suggestedOuterDiameter)
+						  G4double suggestedHorizontalWidth)
 {
   // strip of the file name effectively
   G4String containingDir = BDS::GetFullPath(fileName, true);
@@ -138,7 +138,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String /*componentName*/,
   //nPoleField = 0;
   //hasUniformField = false;
 
-  G4double outerR = suggestedOuterDiameter*0.5;
+  G4double outerR = suggestedHorizontalWidth*0.5;
   G4VSolid* containerSolid = new G4Box("container_solid",
 				       outerR,
 				       outerR,
