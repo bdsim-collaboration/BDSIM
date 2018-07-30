@@ -19,6 +19,7 @@ New Features
   this on, although this is not recommended. Issue #241.
 * `hkicker` and `vkicker` strength can be specified via the magnetic field :code:`B` instead of
   `hkick` or `vkick`.
+* Support for dipole poleface curvature in tracking.
 
 General
 -------
@@ -101,6 +102,7 @@ Bug Fixes
   being written to the primary sampler structure. Issue #245.
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
+* Fixed incorrect dipole scaling. Issue #239.
 
 Utilities
 ---------

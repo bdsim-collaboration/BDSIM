@@ -4,13 +4,12 @@
 Output Analysis
 ===============
 
-This section describes how to load and view data from the recommend output **rootevent**
+This section describes how to load and view data from the recommended output **rootevent**
 format.
 
 BDSIM is accompanied by an analysis tool called REBDSIM (that stands for "root event BDSIM")
-that provides
-the ability to use simple text input files to specify histograms and process data. It also
-provides the ability to calculate optical functions from the sampler data.
+that provides the ability to use simple text input files to specify histograms and process data.
+It also provides the ability to calculate optical functions from the sampler data.
 
 REBDSIM is based on a set of analysis classes that are compiled into a library. These
 may be used through REBDSIM, but also through the ROOT interpreter and in a user's
@@ -29,8 +28,8 @@ Setup
 2) Environmental variables should be set.
 3) A ROOT logon macro may be written for convenience.
 
-Once BDSIM has been installed the following environmental variables must be updated to
-allow `rebdsim`, to function.  These can be set manually or added to your
+Once BDSIM has been installed, the following environmental variables must be updated to
+allow `rebdsim` to function.  These can be set manually or added to your
 :code:`.profile` or :code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
@@ -56,14 +55,14 @@ loading in root by finding and editing the :code:`rootlogon.C` in your
 
 .. note:: The file extension is omitted on purpose.
 
-The absolute path is not necessary as the above environmental variables are used by ROOT
+The absolute path is not necessary, as the above environmental variables are used by ROOT
 to find the library.
 
 REBDSIM Usage
 -------------
 
-rebdsim is executed with one argument which is the path to an analysis configuration text
-file. This is a simple text file that describes what histograms to make from the data.
+Rebdsim is executed with one argument which is the path to an analysis configuration text
+file. This is a simple text file that describes which histograms to make from the data.
 Optionally, a second argument of a data file to operate on will override the one specified
 in the analysis configuration file. This allows the same analysis configuration to be used
 to analyse many different data files. A third optional argument (must have second argument
@@ -84,8 +83,8 @@ The analysis configuration file is a simple text file. This can be prepared by c
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
 
-We strongly recommend browsing the data in a TBrowser beforehand and double clicking
-the variables. This gives you idea of the range of the data. See :ref:`basic-data-inspection`
+We strongly recommend browsing the data in a TBrowser beforehand and double-clicking
+the variables. This gives you an idea of the range of the data. See :ref:`basic-data-inspection`
 for more details.
 
 There are three types of histograms that rebdsim can produce:
@@ -98,19 +97,19 @@ There are three types of histograms that rebdsim can produce:
    already in the output file. For example, there is an energy deposition histogram
    stored with each event. This would be merged into a per-event average.
 
-Per Entry and Simple Histograms
+Per-Entry and Simple Histograms
 ===============================
 
 For the energy deposition histogram for example, the energy deposition hits are binned
-as a function of curvilinear `S` position along the accelerator. In fact, the `S` position
+as a function of the curvilinear `S` position along the accelerator. In fact, the `S` position
 is binned with the weight of the energy. In each event, a single primary particle can lead
 to the creation of thousands of secondaries that can each create many energy deposition hits.
 In the case of a simple histogram, all energy deposition hits across all events are binned.
 This gives us a total for the simulation performed and the bin error (uncertainty associated
-with a given histogram bin) is proportional to :math:`1/sqrt(N)` where :math:`N` is the
-number of entries in that bin. This however, doesn't represent correctly the variation seen
-from event to event. Using the per event histograms, a single simple 1D histogram of energy
-deposition is created and these are averaged. The resultant histogram has the mean per event
+with a given histogram bin) is proportional to :math:`1/sqrt(N)`, where :math:`N` is the
+number of entries in that bin. This, however, doesn't correctly represent the variation seen
+from event to event. Using the per-event histograms, a single simple 1D histogram of energy
+deposition is created and these are averaged. The resultant histogram has the mean per-event
 (note the normalisation here versus the simple histograms) and the error on the bin is the
 standard error on the beam, i.e.
 
@@ -119,15 +118,15 @@ standard error on the beam, i.e.
 
 where :math:`\sigma` is the standard deviation of the values in that bin for all events.
 
-.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
-	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+.. note:: Per-entry histograms will only be calculated where there exists two or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than two events.
 
 .. _output-analysis-configuration-file:
 	  
 Analysis Configuration File
 ===========================
 
-The input text file has roughly two sections - options and histogram definitions.
+The input text file has roughly two sections: options and histogram definitions.
 
 Examples can be found in:
 
@@ -155,8 +154,8 @@ Examples can be found in:
   Histogram2DLog    Event. PhaseSpaceAbs2 {20,20}   {-9:-3,-1e-6:1e-5} abs(Primary.x):Primary.y 1
 
 
-* :code:`HistogramND` defines an N dimension per-entry histogram where `N` is 1,2 or 3.
-* :code:`SimpleHistogramND` defines an N dimension simple histogram where `N` is 1,2 or 3.
+* :code:`HistogramND` defines an N-dimension per-entry histogram where `N` is 1,2 or 3.
+* :code:`SimpleHistogramND` defines an N-dimension simple histogram where `N` is 1,2 or 3.
 * Arguments in the histogram rows must not contain any white space!
 * Columns in the histogram rows must be separated by any amount of white space (at least one space).
 * A line beginning with :code:`#` is ignored as a comment line.
@@ -169,13 +168,13 @@ Examples can be found in:
 * The selection is a weight. In the case of the Boolean expression, it is a weight of 1 or 0.
 * Selection can be a Boolean operation (e.g. :code:`Primary.x>0`) or simply :code:`1` for all events.
 * Multiple Boolean operations can be used e.g. :code:`Primary.x>0&&samplername.ParentID!=0`.
-* If a Boolean and a weight is desired, multiply both with the Boolean in brackets e.g.
+* If a Boolean and a weight is desired, multiply both with the Boolean in brackets, e.g.
   :code:`Eloss.energy*(Eloss.S>145.3)`.
-* True or False as well as 1 or 0 may be used for Boolean options at the top.
-* ROOT special variables can be used as well such as :code:`Entry$` amd :code:`Entries$`. See the documentation link immediately below.
+* True or False, as well as 1 or 0, may be used for Boolean options at the top.
+* ROOT special variables can be used as well, such as :code:`Entry$` amd :code:`Entries$`. See the documentation link immediately below.
 
-.. note:: Per-entry histograms will only be calculated where there exists 2 or more entries
-	  in the tree. In the case of the Event tree, this corresponds to more than 2 events.
+.. note:: Per-entry histograms will only be calculated where there exists two or more entries
+	  in the tree. In the case of the Event tree, this corresponds to more than two events.
 	  Whilst the per-entry histograms will work for any tree in the output, they are primarily
 	  useful for per-event analysis on the Event tree.
 
@@ -187,7 +186,7 @@ Logarithmic Binning
 
 Logarithmic binning may be used by specifying 'Log' after 'HistogramND' for each dimension.
 The dimensions specified in order are `x`, `y`, `z`. If a linearly spaced dimension is
-required the user should write 'Lin'. If nothing is specified it is assumed to be linear.
+required, the user should write 'Lin'. If nothing is specified it is assumed to be linear.
 
 Examples::
 
@@ -197,8 +196,8 @@ Examples::
   Histogram2DLog    // X is logarithmically spaced and Y linearly
   Histgoram2DLinLog // X is linearly spaced and Y logarithmically
 
-The bin lower edges and upper edges should be an exponent of 10. For example to generate
-a 1D histogram with 30 logarithmically spaced bins from 1e-3 to 1e3, the following syntax
+The bin's lower edges and upper edges should be an exponent of 10. For example, to generate
+a 1D histogram with thirty logarithmically spaced bins from 1e-3 to 1e3, the following syntax
 would be used::
 
   Histogram1DLog Event. EnergySpectrum {30} {-3:3} Eloss.energy 1
@@ -222,18 +221,18 @@ The following (case-insensitive) options may be specified in the top part.
 | BackwardsCompatible        | ROOT event output files from BDSIM prior to v0.994   |
 |                            | do not have the header structure that is used to     |
 |                            | ensure the files are the right format and prevent    |
-|                            | a segfault from ROOT. If this options is true, the   |
-|                            | header will not be checked allowing old files to be  |
+|                            | a segfault from ROOT. If this option is true, the    |
+|                            | header will not be checked, allowing old files to be |
 |                            | analysed.                                            |
 +----------------------------+------------------------------------------------------+
-| CalculateOptics            | Whether to calculate optical functions or not.       |
+| CalculateOptics            | Whether to calculate optical functions or not        |
 +----------------------------+------------------------------------------------------+
-| Debug                      | Whether to print out debug information.              |
+| Debug                      | Whether to print out debug information               |
 +----------------------------+------------------------------------------------------+
 | EmittanceOnTheFly          | Whether to calculate the emittance freshly at each   |
 |                            | sampler or simply use the emittance calculated from  |
 |                            | the first sampler (i.e. the primaries). The default  |
-|                            | is false and therefore to calculate the emittance at |
+|                            | is false and therefore calculates the emittance at   |
 |                            | each sampler.                                        |
 +----------------------------+------------------------------------------------------+
 | EventStart                 | Event index to start from - zero counting. Default   |
@@ -252,16 +251,16 @@ The following (case-insensitive) options may be specified in the top part.
 |                            | significantly improve the speed of analysis if only  |
 |                            | separate user-defined histograms are desired.        |
 +----------------------------+------------------------------------------------------+
-| OutputFileName             | The name of the result file to written to.           |
+| OutputFileName             | The name of the result file  written to              |
 +----------------------------+------------------------------------------------------+
 | OpticsFileName             | The name of a separate text file copy of the         |
-|                            | optical functions output.                            |
+|                            | optical functions output                             |
 +----------------------------+------------------------------------------------------+
 | PrintModuloFraction        | The fraction of events to print out (default 0.01).  |
 |                            | If you require print out for every event, set this   |
 |                            | to 0.                                                |
 +----------------------------+------------------------------------------------------+
-| ProcessSamplers            | Whether to load the sampler data or not.             |
+| ProcessSamplers            | Whether to load the sampler data or not              |
 +----------------------------+------------------------------------------------------+
 
 
@@ -271,12 +270,12 @@ Variables In Data
 
 The variables for histograms are described in :ref:`output-section`. However, the
 user can also quickly determine what they want by using a ROOT TBrowser to inspect
-a file::
+a file, ::
 
   root output.root
   root> TBrowser tb;
 
-At which point, a browser window will appear with the specified file open. The variable
+at which point, a browser window will appear with the specified file open. The variable
 used in the histogram should be the full 'address' of the variable inside the Tree. Here,
 the tree is :code:`Event.` and the variable is :code:`Info.duration`.
 
@@ -293,11 +292,11 @@ easily result in slow running analysis. To combat this, only the minimal variabl
 should be loaded that need to be. REBDSIM automatically activates only the 'ROOT
 branches' it needs for the analysis. A few possible ways to improve performance are:
 
-* Turn off optical function calculation if it's not needed or doesn't make sense. I.e.
+* Turn off optical function calculations if they're not needed or don't make sense, i.e.
   if you're analysing the spray from a collimator in a sampler, it makes no sense to
   calculate the optical functions of that distribution.
-* Turn off the MergeHistograms option. If you're only making your own histograms this should
-  speed up the analysis considerably for a large number of events.
+* Turn off the MergeHistograms option. If you're only making your own histograms, this should
+  considerably speed up the analysis for a large number of events.
 
 Simple histograms to not require loading each entry in the tree and an analysis with
 only simple histograms will be quicker. Per-entry histograms of course, require loading
@@ -309,15 +308,15 @@ given analysis.
 Scaling Up - Parallelising Analysis
 -----------------------------------
 
-For high statistics studies, it's common to run multiple instances of BDSIM with different
-seeds (different seeds ensures different results) on a high throughput computer cluster.
-There are two possible strategies to efficiently scale the statistics and analysis. Both
+For high-statistics studies, it's common to run multiple instances of BDSIM with different
+seeds (different seeds ensures different results) on a high throughout the computer cluster.
+There are two possible strategies to efficiently scale the statistics and analysis; both
 produce numerically identical output but make different use of computing resources. The
 more data stored per event in the output files, the longer it takes to load it from disk and
 the longer the analysis. Similarly, the more events simulated, the longer the analysis will
 take. Of course either strategy can be used.
 
-Low Data Volume
+Low-Data Volume
 ===============
 
 If the overall output data volume is relatively low, we recommend analysing all of the
@@ -328,7 +327,7 @@ in the current directory.
 .. note:: For `"*.root"` all files should be from the same simulation and only BDSIM
 	  output files (i.e. not rebdsim output files).
 
-rebdsim will 'chain' the files together to behave as one big file with all of the events.
+Rebdsim will 'chain' the files together to behave as one big file with all of the events.
 This is shown schematically in the figure below.
 
 .. figure:: figures/multiple_outputs_rebdsim.pdf
@@ -336,20 +335,20 @@ This is shown schematically in the figure below.
 	    :align: center
 
 	    Schematic of strategy for a low volume of data produced from a computationally
-	    intense simulation. Multiple instances of BDSIM are executed each producing their
+	    intense simulation. Multiple instances of BDSIM are executed, each producing their
 	    own output file. These are analysed all at once with `rebdsim`.
 
 This strategy works best for a relatively low number of events and data volume (example
 numbers might be < 10000 events and < 10 GB of data).
 
-High Data Volume
+High-Data Volume
 ================
 
 In this case, it is better to analyse each output file with rebdsim separately and then
 combine the results. In the case of per-event histograms, rebdsim provides the mean
-per event along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`
+per event, along with the error on the mean for the bin error. A separate tool, `rebdsimCombine`,
 is provided that can combine these rebdsim output files correctly (i.e. the mean of the
-mean histograms) to provide the overall mean and error on the mean as if all events had
+mean histograms) to provide the overall mean and error on the mean, as if all events had
 been analysed in one execution of rebdsim.
 
 The combination of the histograms from the rebdsim output files is very quick in comparison
@@ -364,7 +363,7 @@ are input files to be merged. This workflow is shown schematically in the figure
 	    :width: 100%
 	    :align: center
 
-	    Schematic of strategy for a high data volume analysis. Multiple instances of
+	    Schematic of strategy for a high-data volume analysis. Multiple instances of
 	    BDSIM are executed in a script that then executes `rebdsim` with a suitable
 	    analysis configuration. Only the output files from `rebdsim` are then combined
 	    into a final output identical to what would have been produced from analysing
@@ -382,7 +381,7 @@ Interactively in Python
 =======================
 
 This is the preferred method. ROOT must have been installed or compiled with Python support.
-You can test this by starting Python and trying to import ROOT - there should be no errors:
+You can test this by starting Python and trying to import ROOT - there should be no errors.
 
    >>> import ROOT
 
@@ -398,7 +397,7 @@ Interactively in ROOT
 =====================
 
 When using ROOT's interpreter, you can use the functionality of the BDSIM classes
-dynamically. First you must load the shared library (if not done so in your root logon
+dynamically. First, you must load the shared library (if not done so in your ROOT logon
 macro) to provide the classes::
 
   root> gSystem->Load("librebdsimLib");
@@ -533,9 +532,9 @@ To calculate the mean in the per-entry histograms as well as the associated erro
    \sigma_{\bar{x}} &= \frac{1}{\sqrt{n}}\sigma = \frac{1}{\sqrt{n}}\sqrt{\frac{1}{n}\sum_{i = 0}^{n}(x_{i} - \bar{x})^2 }
 
 These equations are however problematic to implement computationally. The formula above
-for the variance requires two passes through the data to first calculate the mean and
-then the variance using that mean. The above equation can rearranged to provide the same
-calculation with a single pass through the data, however such algorithms are typically
+for the variance requires two passes through the data to first calculate the mean,
+then the variance using that mean. The above equation can be rearranged to provide the same
+calculation with a single pass through the data, however, such algorithms are typically
 numerically unstable, i.e. they rely on a small difference between two very large numbers.
 With the finite precision of a number represented in a C++ double type (~15 significant
 digits), the instability may lead to unphysical results (negative variances) and generally

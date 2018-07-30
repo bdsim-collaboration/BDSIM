@@ -4,14 +4,14 @@
 Support
 *******
 
-All support issues can be submitted to our `issue tracker <https://bitbucket.org/jairhul/bdsim/issues?status=new&status=open>`_
+All support issues can be submitted to our `issue tracker <https://bitbucket.org/jairhul/bdsim/issues?status=new&status=open>`_.
 
 .. TODO email list
 
 BDSIM News Letter
 -----------------
 
-For the latest updates about BDSIM and future releases, please register for our email list:
+For the latest updates about BDSIM and future releases, please register for our mailing list:
 
 https://www.jiscmail.ac.uk/lists/BDSIM.html
 
