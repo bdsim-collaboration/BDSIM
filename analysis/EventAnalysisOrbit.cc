@@ -101,7 +101,6 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
       dyp = yp.at(i);
       delement_name = elementName.at(i);
       orbitTree->Fill();
-      elementName.clear();
     }
 
   orbitTree->Write();
