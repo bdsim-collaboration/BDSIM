@@ -36,7 +36,7 @@ void EventAnalysisOrbit::Clear()
   xp.clear();
   y.clear();
   yp.clear();
-  element_name.clear();
+  elementName.clear();
 }
 
 void EventAnalysisOrbit::ExtractOrbit(int index)
@@ -66,7 +66,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
 	  xp.push_back(s->s->xp[0]);
 	  y.push_back(s->s->y[0]);
 	  yp.push_back(s->s->yp[0]);
-          element_name.push_back(s->s->samplerName);
+          elementName.push_back(s->s->samplerName);
 	}
       counter++;
     }
@@ -83,14 +83,14 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
   double dxp;
   double dy;
   double dyp;
-  std::vector<std::string> delement_name;
+  std::string delement_name;
 
   orbitTree->Branch("s",  &dss, "s/D");
   orbitTree->Branch("x",  &dx,  "x/D");
   orbitTree->Branch("xp", &dxp, "xp/D");
   orbitTree->Branch("y",  &dy,  "y/D");
   orbitTree->Branch("yp", &dyp, "yp/D");
-  orbitTree->Branch("element_name", &delement_name);
+  orbitTree->Branch("elementName", &delement_name);
   
   for (int i = 0; i < (int)ss.size(); ++i)
     {
@@ -99,9 +99,9 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
       dxp = xp.at(i);
       dy  = y.at(i);
       dyp = yp.at(i);
-      delement_name = element_name;
+      delement_name = elementName.at(i);
       orbitTree->Fill();
-      element_name.clear();
+      elementName.clear();
     }
 
   orbitTree->Write();
