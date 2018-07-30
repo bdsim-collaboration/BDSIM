@@ -395,8 +395,8 @@ Run Tree
 	    :align: center
 
 This tree contains two branches called "Histos." and "Info." which represent instances of
-:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`
-,respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
+:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`,
+respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
 
 .. _output-event-tree:
 
