@@ -49,7 +49,7 @@ BDSMagnetOuterFactoryNone::~BDSMagnetOuterFactoryNone()
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name*/,
 							    G4double      /*length*/,
 							    BDSBeamPipe*  /*beamPipe*/,
-							    G4double      /*outerDiameter*/,
+							    G4double      /*horizontalWidth*/,
 							    G4double      /*containerLength*/,
 							    G4double      /*angleIn*/,
 							    G4double      /*angelOut*/,
@@ -67,7 +67,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /*name*/,
 								 G4double      /*length*/,
 								 BDSBeamPipe*  /*beamPipe*/,
-								 G4double      /*outerDiameter*/,
+								 G4double      /*horizontalWidth*/,
 								 G4double      /*containerLength*/,
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,
@@ -85,7 +85,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
 							    G4double      /*length*/,
 							    BDSBeamPipe*  /*beamPipe*/,
-							    G4double      /*outerDiameter*/,
+							    G4double      /*horizontalWidth*/,
 							    G4double      /*containerLength*/,
 							    G4Material*   /*outerMaterial*/,
 							    G4bool        /*buildEndPiece*/)
@@ -96,7 +96,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*outerDiameter*/,
+							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
 							   G4Material*   /*outerMaterial*/,
 							   G4bool        /*buildEndPiece*/)
@@ -107,7 +107,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*outerDiameter*/,
+							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
 							  G4Material*   /*outerMaterial*/,
 							  G4bool        /*buildEndPiece*/)
@@ -118,7 +118,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*outerDiameter*/,
+							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
 							  G4Material*   /*outerMaterial*/,
 							  G4bool        /*buildEndPiece*/)
@@ -129,7 +129,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*outerDiameter*/,
+							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
 							  G4Material*   /*outerMaterial*/,
 							  G4bool        /*buildEndPiece*/)
@@ -140,7 +140,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*outerDiameter*/,
+							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
 							   G4Material*   /*outerMaterial*/,
 							   G4bool        /*buildEndPiece*/)
@@ -151,7 +151,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*outerDiameter*/,
+							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
 							  G4Material*   /*outerMaterial*/,
 							  G4bool        /*buildEndPiece*/)
@@ -162,7 +162,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*outerDiameter*/,
+							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
 							   G4Material*   /*outerMaterial*/,
 							   G4bool        /*buildEndPiece*/)
@@ -173,7 +173,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
 							G4double      /*length*/,
 							BDSBeamPipe*  /*beamPipe*/,
-							G4double      /*outerDiameter*/,
+							G4double      /*horizontalWidth*/,
 							G4double      /*containerLength*/,
 							G4bool        /*yokeOnLeft*/,
 							G4bool        /*vertical*/,

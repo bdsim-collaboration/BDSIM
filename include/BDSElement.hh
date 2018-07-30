@@ -36,7 +36,7 @@ class BDSElement: public BDSAcceleratorComponent
 public:
   BDSElement(G4String name,
 	     G4double length,
-	     G4double outerDiameterIn,
+	     G4double horizontalWidthIn,
 	     G4String geometry,
 	     G4String fieldNameIn = "");
   virtual ~BDSElement(){;}
@@ -54,7 +54,7 @@ private:
   /// one.
   virtual void BuildContainerLogicalVolume();
 
-  G4double outerDiameter;
+  G4double horizontalWidth;
   G4String geometryFileName;
   G4String fieldName;
 };

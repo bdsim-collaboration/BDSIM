@@ -93,7 +93,7 @@ namespace GMAD
     // magnet geometry
     std::string magnetGeometryType;
     std::string outerMaterial;
-    double outerDiameter;
+    double horizontalWidth; // formerly outerDiameter
     bool   yokeOnInside;
     int    hStyle;  ///< -1 = unset; 0 = false (ie c style); 1 = true, use hstyle
     double vhRatio; ///< ratio of vertial to horizontal for some magnets
