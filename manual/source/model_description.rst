@@ -485,6 +485,12 @@ tracking still includes the pole face effects.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `h1`            | input poleface curvature          | 0         | no              |
+|                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `h2`            | output poleface curvature         | 0         | no              |
+|                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -518,6 +524,8 @@ A few points about rbends:
    explicitly specified as non-zero.
 7) The effect of pole face rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
+8) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
+   fringefield magnet.
 
 Examples::
 
@@ -601,6 +609,12 @@ that the maximum tangential error in the aperture is 1 mm.
 | `hgap`          | The half gap of the poles for     | 0         | No              |
 |                 | **fringe field purposes only**    |           |                 |
 +-----------------+-----------------------------------+-----------+-----------------+
+| `h1`            | input poleface curvature          | 0         | no              |
+|                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
+| `h2`            | output poleface curvature         | 0         | no              |
+|                 | :math:`[m^{-1}]`                  |           |                 |
++-----------------+-----------------------------------+-----------+-----------------+
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -630,6 +644,8 @@ A few points about sbends:
    explicitly specified as non-zero.
 6) The effect of pole face rotations and fringe field kicks can be turned off for all dipoles by setting
    the option `includeFringeFields=0` (see `options`_).
+7) The poleface curvature does not construct the curved geometry. The effect is instead applied in the thin
+   fringefield magnet.
 
 Examples::
 
