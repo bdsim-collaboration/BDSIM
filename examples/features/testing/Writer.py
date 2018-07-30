@@ -208,6 +208,8 @@ class Writer:
             self.WriteShieldTests(test)
         elif component == 'laser':
             self.WriteLaserTests(test)
+        elif component == 'gap':
+            self.WriteGapTests(test)
 
     def WriteDriftTests(self, test):
         component = 'drift'

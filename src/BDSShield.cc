@@ -33,13 +33,13 @@ class G4Material;
 
 BDSShield::BDSShield(G4String         nameIn,
 		     G4double         lengthIn,
-		     G4double         outerDiameterIn,
+		     G4double         horizontalWidthIn,
 		     G4double         xAperIn,
 		     G4double         yAperIn,
 		     G4Material*      materialIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   xAper(xAperIn),
   yAper(yAperIn),
   material(materialIn)
@@ -58,8 +58,8 @@ void BDSShield::Build()
 void BDSShield::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,
+			     horizontalWidth*0.5,
+			     horizontalWidth*0.5,
 			     chordLength*0.5);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       worldMaterial,
@@ -69,8 +69,8 @@ void BDSShield::BuildContainerLogicalVolume()
 void BDSShield::BuildShield()
 {
   G4VSolid* outerSolid = new G4Box(name+"_outer_solid",
-				   outerDiameter*0.5 - lengthSafetyLarge,
-				   outerDiameter*0.5 - lengthSafetyLarge,
+				   horizontalWidth*0.5 - lengthSafetyLarge,
+				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   chordLength*0.5 - lengthSafety);
   G4VSolid* innerSolid = new G4Box(name+"_inner_solid",
 				   xAper,

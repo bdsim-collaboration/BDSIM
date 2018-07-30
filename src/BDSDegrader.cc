@@ -36,14 +36,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSDegrader::BDSDegrader (G4String   nameIn, 
 			  G4double   lengthIn,
-			  G4double   outerDiameterIn,
+			  G4double   horizontalWidthIn,
 			  G4int      numberWedgesIn,
 			  G4double   wedgeLengthIn,
 			  G4double   degraderHeightIn,
 			  G4double   degraderOffsetIn,
 			  G4String   degraderMaterialIn ):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "degrader"),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   numberWedges(numberWedgesIn),
   wedgeLength(wedgeLengthIn),
   degraderHeight(degraderHeightIn),
@@ -57,9 +57,9 @@ BDSDegrader::~BDSDegrader()
 void BDSDegrader::BuildContainerLogicalVolume()
 {
   //Input Checks
-  if (outerDiameter <= 0)
+  if (horizontalWidth <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
   
@@ -81,9 +81,9 @@ void BDSDegrader::BuildContainerLogicalVolume()
       exit(1);
     }
   
-  if (degraderHeight > (0.5*outerDiameter))
+  if (degraderHeight > (0.5*horizontalWidth))
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be less than 0.5 times \"outerDiameter\"" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be less than 0.5 times \"horizontalWidth\"" <<  G4endl;
       exit(1);
     }
   
@@ -93,8 +93,8 @@ void BDSDegrader::BuildContainerLogicalVolume()
     }
   
   containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,
+			     horizontalWidth*0.5,
+			     horizontalWidth*0.5,
 			     chordLength*0.5);
     
   containerLogicalVolume = new G4LogicalVolume(containerSolid,

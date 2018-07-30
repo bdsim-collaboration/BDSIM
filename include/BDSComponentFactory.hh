@@ -119,10 +119,9 @@ public:
   static G4bool YokeOnLeft(const GMAD::Element*     el,
 			   const BDSMagnetStrength* st);
 
-  /// Prepare the element outer diameter in Geant4 units - if not set, use the global
-  /// default.
-  static G4double PrepareOuterDiameter(GMAD::Element const* el,
-				       G4double defaultOuterDiameter = -1);
+  /// Prepare the element horizontal width in Geant4 units - if not set, use the global default.
+  static G4double PrepareHorizontalWidth(GMAD::Element const* el,
+					 G4double defaultHorizontalWidth = -1);
 
   BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
                                             const BDSFieldType&       fieldType,
@@ -137,7 +136,7 @@ public:
 						    const GMAD::Element*     el,
 						    const BDSMagnetStrength* st,
 						    const BDSBeamPipeInfo*   beamPipe,
-						    G4double defaultOuterDiameter      = -1,
+						    G4double defaultHorizontalWidth    = -1,
 						    G4double defaultVHRatio            = 1.0,
 						    G4double defaultCoilWidthFraction  = -1,
 						    G4double defaultCoilHeightFraction = -1);
@@ -151,16 +150,16 @@ public:
 						    const G4double         angleOut,
 						    const BDSBeamPipeInfo* beamPipe,
 						    const G4bool   yokeOnLeft                = false,
-						    G4double       defaultOuterDiameter      = -1,
+						    G4double       defaultHorizontalWidth    = -1,
 						    G4double       defaultVHRatio            = -1,
 						    G4double       defaultCoilWidthFraction  = -1,
 						    G4double       defaultCoilHeightFraction = -1);
 
-  /// Utility function to check if the combination of outer diameter, angle and length
+  /// Utility function to check if the combination of horizontal width, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
-					     G4double outerDiameter,
+					     G4double horizontalWidth,
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.

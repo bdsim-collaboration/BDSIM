@@ -30,11 +30,11 @@ class BDSFieldInfo;
 
 BDSElement::BDSElement(G4String      nameIn,
 		       G4double      lengthIn,
-		       G4double      outerDiameterIn,
+		       G4double      horizontalWidthIn,
 		       G4String      geometryIn,
 		       G4String      fieldNameIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "element"),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
   fieldName(fieldNameIn)
 {;}
@@ -45,10 +45,10 @@ void BDSElement::BuildContainerLogicalVolume()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
 
-  // The outerDiameter here is a suggested outerDiameter for the factory. Each subfactory may treat this
+  // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
   // differently.
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
-									    chordLength, outerDiameter);
+									    chordLength, horizontalWidth);
   
   if (!geom)
     {
@@ -71,7 +71,7 @@ void BDSElement::BuildContainerLogicalVolume()
   InheritExtents(geom);
 
   const BDSExtent geomExtent = geom->GetExtent();
-  BDSExtent nominalExt = BDSExtent(outerDiameter*0.5, outerDiameter*0.5, chordLength*0.5);
+  BDSExtent nominalExt = BDSExtent(horizontalWidth*0.5, horizontalWidth*0.5, chordLength*0.5);
   if (nominalExt.TransverselyGreaterThan(geomExtent))
     {SetExtent(nominalExt);}
 
