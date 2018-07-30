@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TChain.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TString.h"
 
 void EventAnalysisOrbit::Clear()
 {
@@ -35,6 +36,7 @@ void EventAnalysisOrbit::Clear()
   xp.clear();
   y.clear();
   yp.clear();
+  element_name.clear();
 }
 
 void EventAnalysisOrbit::ExtractOrbit(int index)
@@ -64,6 +66,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
 	  xp.push_back(s->s->xp[0]);
 	  y.push_back(s->s->y[0]);
 	  yp.push_back(s->s->yp[0]);
+          element_name.push_back(s->s->samplerName);
 	}
       counter++;
     }
@@ -80,21 +83,27 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
   double dxp;
   double dy;
   double dyp;
+  std::vector<std::string> delement_name;
 
   orbitTree->Branch("s",  &dss, "s/D");
   orbitTree->Branch("x",  &dx,  "x/D");
   orbitTree->Branch("xp", &dxp, "xp/D");
   orbitTree->Branch("y",  &dy,  "y/D");
   orbitTree->Branch("yp", &dyp, "yp/D");
+  orbitTree->Branch("element_name", &delement_name);
   
   for (int i = 0; i < (int)ss.size(); ++i)
     {
-      dss = ss[i];
-      dx  = x[i];
-      dxp = xp[i];
-      dy  = y[i];
-      dyp = yp[i];
+      dss = ss.at(i);
+      dx  = x.at(i);
+      dxp = xp.at(i);
+      dy  = y.at(i);
+      dyp = yp.at(i);
+      delement_name = element_name;
       orbitTree->Fill();
+      element_name.clear();
     }
+
   orbitTree->Write();
+  f->Close();
 }
