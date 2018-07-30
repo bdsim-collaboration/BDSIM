@@ -137,7 +137,7 @@ protected:
   G4bool          placeBeamPipe;
 
   /// For outer volume construction
-  G4double        outerDiameter;
+  G4double        horizontalWidth;
 
   /// Separate variable for the container radius so it can be changed if
   /// required by specific magnet geometry.

@@ -40,7 +40,7 @@ class BDSShield: public BDSAcceleratorComponent
 public:
   BDSShield(G4String         name,
 	    G4double         length,
-	    G4double         outerDiameterIn,
+	    G4double         horizontalWidthIn,
 	    G4double         xAper,
 	    G4double         yAper,
 	    G4Material*      materialIn,
@@ -68,10 +68,10 @@ private:
   /// Build a beam pipe in the hole if required.
   void BuildBeamPipe();
   
-  G4double         outerDiameter; ///< Outer size of shield.
-  G4double         xAper;         ///< Inner horizontal full width of shield.
-  G4double         yAper;         ///< Inner vertical full width of shield.
-  G4Material*      material;      ///< Shield material.
+  G4double         horizontalWidth; ///< Outer size of shield.
+  G4double         xAper;           ///< Inner horizontal full width of shield.
+  G4double         yAper;           ///< Inner vertical full width of shield.
+  G4Material*      material;        ///< Shield material.
 };
 
 #endif
