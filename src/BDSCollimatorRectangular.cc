@@ -26,7 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String nameIn,
 						   G4double lengthIn,
-						   G4double outerDiameterIn,
+						   G4double horizontalWidthIn,
 						   G4double xApertureIn,
 						   G4double yApertureIn,
 						   G4double xOutApertureIn,
@@ -34,7 +34,7 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String nameIn,
 						   G4String collimatorMaterialIn,
 						   G4String vacuumMaterialIn,
 						   G4String colourIn):
-  BDSCollimatorBase(nameIn, lengthIn, outerDiameterIn, "rcol",
+  BDSCollimatorBase(nameIn, lengthIn, horizontalWidthIn, "rcol",
 		    xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
 		    collimatorMaterialIn,
 		    vacuumMaterialIn, colourIn)

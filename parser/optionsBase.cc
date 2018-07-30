@@ -93,7 +93,7 @@ OptionsBase::OptionsBase()
   // magnet geometry
   magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
-  outerDiameter        = 0.6;
+  horizontalWidth      = 0.6;
   thinElementLength    = 1e-7;
   hStyle               = false;
   vhRatio              = -1; // vhRatio < 0 as signal to use geometry factory default

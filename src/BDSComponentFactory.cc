@@ -509,8 +509,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["scaling"]= element->scaling;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
-  G4double outerDiameter = PrepareOuterDiameter(element);
-  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], outerDiameter, elementName);
+  G4double horizontalWidth = PrepareHorizontalWidth(element);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], horizontalWidth, elementName);
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -689,21 +689,21 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   auto bpInf = PrepareBeamPipeInfo(element);
   
-  // Decide on a default outerDiameter for the kicker - try 0.3x ie smaller kicker
+  // Decide on a default horizontalWidth for the kicker - try 0.3x ie smaller kicker
   // than typical magnet, but if that would not fit around the beam pipe - go back to
-  // the default outerDiameter. Code further along will warn if it still doesn't fit.
-  const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
-  G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
+  // the default horizontalWidth. Code further along will warn if it still doesn't fit.
+  const G4double globalDefaultHW = BDSGlobalConstants::Instance()->HorizontalWidth();
+  G4double defaultHorizontalWidth = 0.3 * globalDefaultHW;
   BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
-  if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
-    {defaultOuterDiameter = globalDefaultOD;}
-  else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
-    {defaultOuterDiameter = globalDefaultOD;}
+  if (bpDX > defaultHorizontalWidth && bpDX < globalDefaultHW)
+    {defaultHorizontalWidth = globalDefaultHW;}
+  else if (bpDY > defaultHorizontalWidth && bpDY > globalDefaultHW)
+    {defaultHorizontalWidth = globalDefaultHW;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, defaultVHRatio, 0.9);
+					  defaultHorizontalWidth, defaultVHRatio, 0.9);
   
   return new BDSMagnet(t,
 		       elementName,
@@ -811,7 +811,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
-			 PrepareOuterDiameter(element),
+			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
 			 element->fieldAll));
 }
@@ -852,7 +852,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
-				      PrepareOuterDiameter(element),
+				      PrepareHorizontalWidth(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
@@ -869,7 +869,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
-				     PrepareOuterDiameter(element),
+				     PrepareHorizontalWidth(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
@@ -919,7 +919,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
-				    PrepareOuterDiameter(element),
+				    PrepareHorizontalWidth(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
 				    material,
@@ -957,7 +957,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
-			  PrepareOuterDiameter(element),
+			  PrepareHorizontalWidth(element),
 			  element->numberWedges,
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
@@ -1348,7 +1348,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 								const Element* element,
 								const BDSMagnetStrength* st,
 								const BDSBeamPipeInfo* beamPipe,
-								G4double defaultOuterDiameter,
+								G4double defaultHorizontalWidth,
 								G4double defaultVHRatio,
 								G4double defaultCoilWidthFraction,
 								G4double defaultCoilHeightFraction)
@@ -1357,7 +1357,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   G4double    angle = (*st)["angle"];
   
   return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
-				defaultOuterDiameter, defaultVHRatio, defaultCoilWidthFraction,
+				defaultHorizontalWidth, defaultVHRatio, defaultCoilWidthFraction,
 				defaultCoilHeightFraction);
 }
 
@@ -1367,7 +1367,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 								const G4double  angleOut,
 								const BDSBeamPipeInfo* beamPipe,
 								const G4bool    yokeOnLeft,
-								G4double        defaultOuterDiameter,
+								G4double        defaultHorizontalWidth,
 								G4double        defaultVHRatio,
 								G4double        defaultCoilWidthFraction,
 								G4double        defaultCoilHeightFraction)
@@ -1391,8 +1391,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->angleIn  = angleIn;
   info->angleOut = angleOut;
   
-  // outer diameter
-  info->outerDiameter = PrepareOuterDiameter(element, defaultOuterDiameter);
+  // horizontal width
+  info->horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
 
   // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
@@ -1446,18 +1446,18 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el,
-						   G4double defaultOuterDiameter)
+G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
+						     G4double defaultHorizontalWidth)
 {
-  G4double outerDiameter = el->outerDiameter*CLHEP::m;
-  if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use either global or specified default
-      if (defaultOuterDiameter > 0)
-	{outerDiameter = defaultOuterDiameter;}
+  G4double horizontalWidth = el->horizontalWidth*CLHEP::m;
+  if (horizontalWidth < 1e-6)
+    {//horizontalWidth not set - use either global or specified default
+      if (defaultHorizontalWidth > 0)
+	{horizontalWidth = defaultHorizontalWidth;}
       else
-	{outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
+	{horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
     }
-  return outerDiameter;
+  return horizontalWidth;
 }
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
@@ -1538,16 +1538,16 @@ G4Transform3D BDSComponentFactory::CreateFieldTransform(Element const* el)
 
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
-							 G4double outerDiameter,
+							 G4double horizontalWidth,
 							 G4String name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
 #endif
-  if (outerDiameter > 2*radiusFromAngleLength)
+  if (horizontalWidth > 2*radiusFromAngleLength)
     {
-      G4cerr << "Error: the combination of length, angle and outerDiameter in element named \""
+      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
 	     << name
 	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
       exit(1);
@@ -1668,15 +1668,15 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(el);
 
   G4double aper1     = aperture->aper1;
-  G4double outerD    = PrepareOuterDiameter(el);
-  G4double defaultOuterD = 20*CLHEP::cm;
-  if (aper1 < defaultOuterD) // only do if the aperture will fit
-    {outerD = std::min(defaultOuterD, outerD);} // better default
+  G4double horizontalWidth = PrepareHorizontalWidth(el);
+  G4double defaultHorizontalWidth = 20*CLHEP::cm;
+  if (aper1 < defaultHorizontalWidth) // only do if the aperture will fit
+    {horizontalWidth = std::min(defaultHorizontalWidth, horizontalWidth);} // better default
   G4double thickness = aperture->beamPipeThickness;
-  G4double equatorRadius = outerD - thickness;
+  G4double equatorRadius = horizontalWidth - thickness;
   if (equatorRadius <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Combination of outerDiameter and beampipeThickness for"
+      G4cerr << __METHOD_NAME__ << "Combination of horizontalWidth and beampipeThickness for"
 	     << " element \"" << el->name << "\" produce 0 size cavity" << G4endl;
       exit(1);
     }

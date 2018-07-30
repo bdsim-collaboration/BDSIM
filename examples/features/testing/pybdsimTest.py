@@ -82,14 +82,14 @@ def Run(inputDict):
     if processReturnCode < 0:
         inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')
         inputDict['generalStatus'] = [GlobalData.ReturnsAndErrors.GetCode('TIMEOUT')]
-        if files.__contains__(inputDict['ROOTFile']):
+        if inputDict['ROOTFile'] in files:
             _os.remove(inputDict['ROOTFile'])
 
     bdsimTime = _np.float(time.time() - t)
     inputDict['bdsimTime'] = bdsimTime
     originalFile = inputDict['originalFile']
 
-    if not files.__contains__(inputDict['ROOTFile']):
+    if not inputDict['ROOTFile'] in files:
         if inputDict['code'] != GlobalData.ReturnsAndErrors.GetCode('TIMEOUT'):
             inputDict['code'] = GlobalData.ReturnsAndErrors.GetCode('FILE_NOT_FOUND')  # False
 
@@ -126,7 +126,7 @@ def Run(inputDict):
     inputDict['generalStatus'] = generalStatus
 
     # list of soft failure code in the general status.
-    hasSofts = [code for code in GlobalData.ReturnsAndErrors.GetSoftCodeNumbers() if generalStatus.__contains__(code)]
+    hasSofts = [code for code in GlobalData.ReturnsAndErrors.GetSoftCodeNumbers() if code in generalStatus]
 
     # if the comparator passed
     if inputDict['code'] == 0:
@@ -169,7 +169,7 @@ def Run(inputDict):
     elif inputDict['code'] == 2 :
         # if the original file that is being compared to doesn't exist, delete ROOT and
         # BDSIM log file, and move the comparator file.
-        if (originalFile == '') and (files.__contains__(inputDict['ROOTFile'])):
+        if (originalFile == '') and (inputDict['ROOTFile'] in files):
             _os.remove(inputDict['bdsimLogFile'])
             _os.remove(inputDict['ROOTFile'])
             _os.system("mv " + inputDict['compLogFile'] + " FailedTests/" + inputDict['compLogFile'])
@@ -191,6 +191,7 @@ class TestData(dict):
                  originalFile='',
                  generateOriginal=False,
                  isSelfComparison=False):
+        dict.__init__(self)
         # add test file name, extract test params from filename and add to dict
         if testFile != '':
             self['testFile'] = testFile
@@ -291,7 +292,7 @@ class Test(dict):
         
         # Initialise parameters for the component as empty lists (or defaults) and dynamically
         # create setter functions for those component parameters.
-        if isinstance(component, _np.str) and (GlobalData.components.__contains__(component)):
+        if isinstance(component, _np.str) and (component in GlobalData.components):
             self.Component = component
             for param in GlobalData.hasParams[component]:
                 if not useDefaults:
@@ -304,7 +305,7 @@ class Test(dict):
             # set the parameter values to the kwarg values if defaults are not specified
             if not useDefaults:
                 for key, value in kwargs.iteritems():
-                    if GlobalData.hasParams[component].__contains__(key):
+                    if key in GlobalData.hasParams[component]:
                         self.__Update(key, value)
         else:
             raise ValueError("Unknown component type.")
@@ -338,11 +339,11 @@ class Test(dict):
 
         variableValues = []
         # process multiple value types
-        if multiEntryTypes.__contains__(type(values)):
+        if type(values) in multiEntryTypes:
             if len(values) > 0:
                 for val in values:
                     # if each value is another multiple entry type, set it as the parameter value
-                    if multiEntryTypes.__contains__(type(val)):
+                    if type(val) in multiEntryTypes:
                         variableValues.append(val)
                     else:
                         # try converting all other dtypes to float
@@ -396,7 +397,7 @@ class Test(dict):
             else:
                 files = _glob.glob(fileName[:(startOfFileName + 1)] + '*')
                 fName = fileName[(startOfFileName + 1):]
-            if files.__contains__(fName):
+            if fName in files:
                 self._testFiles = fileName
 
     def SetEnergy(self, energy):
@@ -410,7 +411,7 @@ class Test(dict):
     def SetParticleType(self, particle=''):
         """ Set test beam particle.
             """
-        if GlobalData.particles.__contains__(particle):
+        if particle in GlobalData.particles:
             setattr(self, "Particle", particle)
         else:
             raise ValueError("Unknown particle type")
@@ -441,12 +442,12 @@ class Test(dict):
     def AddParameter(self, parameter, values=[]):
         """ Function to add a parameter that is not a default parameter for the test's
             component type. An example would be defining a K1 value for a dipole."""
-        if self.keys().__contains__(parameter):
+        if parameter in self.keys():
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter, _np.str):
             #check that the parameter can be parsed.
-            if GlobalData.parameters.__contains__(parameter):
+            if parameter in GlobalData.parameters:
                 self[parameter] = []
                 funcName = "Set" + _string.capitalize(parameter)
                 setattr(self, funcName, self.__createSetterFunction(name=parameter))
@@ -514,7 +515,7 @@ class TestUtilities(object):
         for test in self._tests:
             writer = Writer.Writer()
             writer.WriteTests(test)
-            if not self._testNames.__contains__(test.Component):
+            if not test.Component in self._testNames:
                 self._testNames[test.Component] = []
             self._testNames[test.Component].extend(writer._fileNamesWritten[test.Component])
         _os.chdir('../')
@@ -553,7 +554,7 @@ class TestUtilities(object):
         # If it does exist, delete the log and return the filename
         files = _glob.glob('*.root')
         outputevent = outputfile + '_event.root'
-        if not files.__contains__(outputevent):
+        if not outputevent in files:
             return None
         else:
             _os.system("rm temp.log")
@@ -634,7 +635,7 @@ class TestUtilities(object):
         testname = testname.replace('Tests', dataDir)
         testname = testname.replace('.gmad', '_event.root')
         files = _glob.glob('../' + dataDir + '/' + componentType + "/*.root")
-        if files.__contains__(testname):
+        if testname in files:
             return testname
         else:
             return ''
@@ -653,22 +654,22 @@ class TestUtilities(object):
                 filename = filename[:-5]  # remove .gmad extension
             splitFilename = filename.split('__')  # split into param_value parts
             particle = splitFilename[1]
-            if not particles.__contains__(particle):
+            if not particle in particles:
                 particles.append(particle)
 
             # dict of compiled lists of different kwarg values.
             for kwarg in splitFilename[2:]:
                 param = kwarg.split('_')[0]
                 value = kwarg.split('_')[1]
-                if not compKwargs.keys().__contains__(param):
+                if not param in compKwargs.keys():
                     compKwargs[param] = []
-                if not compKwargs[param].__contains__(value):
+                if not value in compKwargs[param]:
                     compKwargs[param].append(value)
             # sort the kwarg values
             for key in compKwargs.keys():
                 compKwargs[key].sort()
 
-        if not self._testParamValues.keys().__contains__(componentType):
+        if not componentType in self._testParamValues.keys():
             self._testParamValues[componentType] = []
 
         # sort energy when energy is a float, not string.
@@ -690,7 +691,7 @@ class TestUtilities(object):
                 fullname = path + name + '.gmad'
                 if depth < (len(kwargKeys) - 1):
                     sublevel(depth + 1, name)
-                elif testlist.__contains__(fullname):
+                elif fullname in testlist:
                     OrderedTests.append(path + name + '.gmad')
 
         for particle in particles:
@@ -909,11 +910,13 @@ class TestSuite(TestUtilities):
             energy = machineInfo['energy']
             particle = machineInfo['particle']
 
+            bannedComponents = ["rbend", "sbend", "muspoiler"]
             # loop over all components
             for component in GlobalData.components:
-                componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
-                self.AddTest(componentTest)
-                self.numFiles[component] += componentTest._numFiles
+                if component not in bannedComponents:
+                    componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
+                    self.AddTest(componentTest)
+                    self.numFiles[component] += componentTest._numFiles
 
         self.totalFiles = 0
         for component in self.numFiles:

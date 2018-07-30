@@ -194,16 +194,16 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
   // unlike an rbend, the sbend will mostly likely be split up into segments.
   // we must check that the faces of each segment (varying from e1 to e2) will
   // not overlap given the outer diamter.
-  // calculate extent along z due poleface rotation at half the outer diameter.
-  G4double outerDiameter = BDSComponentFactory::PrepareOuterDiameter(element);
+  // calculate extent along z due poleface rotation at half the horizontal width.
+  G4double horizontalWidth = BDSComponentFactory::PrepareHorizontalWidth(element);
   if (incomingFaceAngle > 0)
-    {zExtentIn = 0.5*outerDiameter*std::tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
+    {zExtentIn = 0.5*horizontalWidth*std::tan(incomingFaceAngle - 0.5*std::abs(semiAngle));}
   else if (incomingFaceAngle < 0)
-    {zExtentIn = 0.5*outerDiameter*std::tan(0.5*std::abs(semiAngle) + incomingFaceAngle);}
+    {zExtentIn = 0.5*horizontalWidth*std::tan(0.5*std::abs(semiAngle) + incomingFaceAngle);}
   if (outgoingFaceAngle > 0)
-    {zExtentOut = 0.5*outerDiameter*std::tan(outgoingFaceAngle - 0.5*std::abs(semiAngle));}
+    {zExtentOut = 0.5*horizontalWidth*std::tan(outgoingFaceAngle - 0.5*std::abs(semiAngle));}
   else if (outgoingFaceAngle < 0)
-    {zExtentOut = 0.5*outerDiameter*std::tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
+    {zExtentOut = 0.5*horizontalWidth*std::tan(0.5*std::abs(semiAngle) + outgoingFaceAngle);}
   
   //decide if segment angles fade or not depending on the extents
   if (std::abs(zExtentIn) < semiArcLength/4.0)
@@ -242,7 +242,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
 											 yokeOnLeft);
   // minus for conversion to 3d cartesian
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semiArcLength, -semiAngle,
-						      magnetOuterInfoCheck->outerDiameter,
+						      magnetOuterInfoCheck->horizontalWidth,
 						      centralName);
   // clean up
   delete magnetOuterInfoCheck;
