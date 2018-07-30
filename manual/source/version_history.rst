@@ -1,6 +1,12 @@
 V1.2 - 2018 / 07 / ??
 =====================
 
+Highlights
+----------
+
+* :code:`outerDiameter` is now :code:`horizontalWidth` to better describe its function (backwards-compatible).
+* Fixed dipole scaling with (the default) bdsimmatrix integrator set.
+
 New Features
 ------------
 
@@ -24,6 +30,10 @@ New Features
 General
 -------
 
+* :code:`outerDiameter` is now :code:`horizontalWidth` to better describe its function
+  (backwards-compatible). This naming was from a time when BDSIM could only create cylindrical
+  magnets and beam pipes. Given it can now create more complicated geometry, this name is not
+  a good choice and so has been renamed. BDSIM still supports the old syntax.
 * :code:`vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
   the lab frame.
 * The horizontal width of kickers is now take from :code:`outerDiameter`. Previously :code:`outerDiameter`

@@ -32,7 +32,7 @@ class BDSCollimatorElliptical: public BDSCollimatorBase
 public:
   BDSCollimatorElliptical(G4String name,
 			  G4double length,
-			  G4double outerDiameter,
+			  G4double horizontalWidth,
 			  G4double xApertureIn        = 0,
 			  G4double yApertureIn        = 0,
 			  G4double xOutApertureIn     = 0,

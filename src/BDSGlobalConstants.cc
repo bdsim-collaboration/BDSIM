@@ -75,10 +75,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 					     options.beampipeMaterial);
   
   // magnet geometry
-  G4double outerDi = options.outerDiameter * CLHEP::m;
-  if (outerDi < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
+  G4double horizontalWidth = options.horizontalWidth * CLHEP::m;
+  if (horizontalWidth < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" " << outerDi
+      G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" " << horizontalWidth
 	     << " must be greater than 2x (\"aper1\" + \"beamPipeThickness\") ("
 	     << defaultBeamPipeModel->aper1 << " + " << defaultBeamPipeModel->beamPipeThickness << ")" << G4endl;
       exit(1);

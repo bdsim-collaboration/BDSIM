@@ -87,7 +87,7 @@ private:
 					    G4double     length,
 					    BDSBeamPipe* beamPipe,
 					    G4int        order,
-					    G4double     outerDiameter,
+					    G4double     horizontalWidth,
 					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength,
 					    G4bool       buildEndPiece);

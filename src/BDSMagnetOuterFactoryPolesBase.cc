@@ -108,7 +108,7 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
-								 G4double      outerDiameter,
+								 G4double      horizontalWidth,
 								 G4double      containerLength,
 								 G4double      angleIn,
 								 G4double      angleOut,
@@ -126,13 +126,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   auto colour = BDSColours::Instance()->GetColour("sectorbend");
   if (hStyle)
     {
-      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+      return CreateDipoleH(name, length, beamPipe, horizontalWidth, containerLength, angleIn,
 			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
   else
     {
-      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+      return CreateDipoleC(name, length, beamPipe, horizontalWidth, containerLength, angleIn,
 			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
 			   vhRatio, coilWidthFraction, coilHeightFraction);
     }
@@ -141,7 +141,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String      name,
 								      G4double      length,
 								      BDSBeamPipe*  beamPipe,
-								      G4double      outerDiameter,
+								      G4double      horizontalWidth,
 								      G4double      containerLength,
 								      G4double      angleIn,
 								      G4double      angleOut,
@@ -159,13 +159,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   auto colour = BDSColours::Instance()->GetColour("rectangularbend");
   if (hStyle)
     {
-      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+      return CreateDipoleH(name, length, beamPipe, horizontalWidth, containerLength, angleIn,
 			   angleOut, outerMaterial, colour, false, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
   else
     {
-      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+      return CreateDipoleC(name, length, beamPipe, horizontalWidth, containerLength, angleIn,
 			   angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece,
 			   vhRatio, coilWidthFraction, coilHeightFraction);
     }
@@ -174,7 +174,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
-								 G4double      outerDiameter,
+								 G4double      horizontalWidth,
 								 G4double      containerLength,
 								 G4Material*   outerMaterial,
 								 G4bool        buildEndPiece)
@@ -182,13 +182,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 2, outerDiameter, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 2, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      name,
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
-								G4double      outerDiameter,
+								G4double      horizontalWidth,
 								G4double      containerLength,
 								G4Material*   outerMaterial,
 								G4bool        buildEndPiece)
@@ -196,13 +196,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 3, outerDiameter, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 3, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      outerDiameter,
+							       G4double      horizontalWidth,
 							       G4double      containerLength,
 							       G4Material*   outerMaterial,
 							       G4bool        buildEndPiece)
@@ -210,13 +210,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 4, outerDiameter, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 4, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      outerDiameter,
+							       G4double      horizontalWidth,
 							       G4double      containerLength,
 							       G4Material*   outerMaterial,
 							       G4bool        buildEndPiece)
@@ -224,13 +224,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 5, outerDiameter, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 5, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      outerDiameter,
+							       G4double      horizontalWidth,
 							       G4double      containerLength,
 							       G4Material*   outerMaterial,
 							       G4bool        buildEndPiece)
@@ -238,14 +238,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,outerDiameter,
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,horizontalWidth,
 								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
-								G4double      outerDiameter,
+								G4double      horizontalWidth,
 								G4double      containerLength,
 								G4Material*   outerMaterial,
 								G4bool        buildEndPiece)
@@ -253,14 +253,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,outerDiameter,
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,horizontalWidth,
 								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      outerDiameter,
+							       G4double      horizontalWidth,
 							       G4double      containerLength,
 							       G4Material*   outerMaterial,
 							       G4bool        buildEndPiece)
@@ -268,14 +268,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      nam
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,outerDiameter,
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,horizontalWidth,
 								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      name,
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
-								G4double      outerDiameter,
+								G4double      horizontalWidth,
 								G4double      containerLength,
 								G4Material*   outerMaterial,
 								G4bool        buildEndPiece)
@@ -283,14 +283,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,outerDiameter,
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,horizontalWidth,
 								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     G4double      length,
 							     BDSBeamPipe*  beamPipe,
-							     G4double      outerDiameter,
+							     G4double      horizontalWidth,
 							     G4double      containerLength,
 							     G4bool        yokeOnLeft,
 							     G4bool        vertical,
@@ -308,13 +308,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
   auto colour = BDSColours::Instance()->GetColour(colourName);
   if (hStyle)
     {
-      return CreateDipoleH(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
+      return CreateDipoleH(name, length, beamPipe, horizontalWidth, containerLength, 0, 0,
 			   outerMaterial, colour, vertical, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
   else
     {
-      return CreateDipoleC(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
+      return CreateDipoleC(name, length, beamPipe, horizontalWidth, containerLength, 0, 0,
 			   outerMaterial, yokeOnLeft, colour, vertical, buildEndPiece, vhRatio,
 			   coilWidthFraction, coilHeightFraction);
     }
@@ -325,7 +325,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 								  G4double     length,
 								  BDSBeamPipe* beamPipe,
 								  G4int        order,
-								  G4double     outerDiameter,
+								  G4double     horizontalWidth,
 								  G4Material*  outerMaterial,
 								  G4double     magnetContainerLength,
 								  G4bool       buildEndPiece)
@@ -336,7 +336,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   // reset all pointers and variables to protect against bugs using previous use of factory
   CleanUp();
   
-  CalculatePoleAndYoke(outerDiameter, beamPipe, order);
+  CalculatePoleAndYoke(horizontalWidth, beamPipe, order);
   if (buildPole)
     {
       CreatePoleSolid(name, length, order);
@@ -357,7 +357,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   
   // record extents
   // container radius is just outerDiamter as yoke is circular
-  G4double containerRadius = outerDiameter + lengthSafety;
+  G4double containerRadius = horizontalWidth + lengthSafety;
   BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
@@ -388,7 +388,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   return outer;
 }
 
-void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiameter,
+void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     horizontalWidth,
 							  BDSBeamPipe* beamPipe,
 							  G4int        order)
 {
@@ -398,17 +398,17 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   G4double bpRadius = beamPipe->GetContainerRadius();
   
   // check parameters are valid
-  if (outerDiameter*0.5 < bpRadius)
+  if (horizontalWidth*0.5 < bpRadius)
     {
       G4cerr << __METHOD_NAME__
-	     << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
+	     << "horizontalWidth (" << horizontalWidth << ") must be greater than 2*beampipe radius ("
 	     << 2*bpRadius << ")" << G4endl;
       exit(1);
     }
 
   // layout markers for the pole and yoke - radially out from centre
   poleStartRadius       = bpRadius + lengthSafety;
-  yokeFinishRadius      = outerDiameter*0.5 - lengthSafety;
+  yokeFinishRadius      = horizontalWidth*0.5 - lengthSafety;
   G4double totalLength  = yokeFinishRadius - poleStartRadius;
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;
@@ -421,9 +421,9 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   poleAngle = segmentAngle * poleAngularFraction;
 
   G4double minimumPoleFraction = 0.05;
-  // If the space occupied by the yoke / pole is < 5% of outerDiameter, don't bother with
+  // If the space occupied by the yoke / pole is < 5% of horizontalWidth, don't bother with
   // pole and coil - it's clearly unphysical.
-  if ( (yokeFinishRadius - yokeStartRadius) < (minimumPoleFraction * outerDiameter) )
+  if ( (yokeFinishRadius - yokeStartRadius) < (minimumPoleFraction * horizontalWidth) )
     {
         buildPole = false;
         yokeStartRadius = poleStartRadius; // make the magnet all yoke
@@ -874,7 +874,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(const G4String&
 								 const G4double& angleIn,
 								 const G4double& angleOut,
 								 const G4double& length,
-								 G4double&       outerDiameter,
+								 G4double&       horizontalWidth,
 								 G4Material*&    material,
 								 G4double&       vhRatio)
 {
@@ -884,7 +884,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCommonPreConstruction(const G4String&
     {material = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
 
   // Test faces
-  if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
+  if (BDS::WillIntersect(-angleIn, -angleOut, horizontalWidth, length))
     {
       G4cout << __METHOD_NAME__ << "Error: Faces of magnet (section) named \""
 	     << name << "\" will overlap!" << G4endl;
@@ -910,7 +910,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
 							const G4bool&      buildVertically,
 							const BDSBeamPipe* beamPipe,
 							const G4double&    length,
-							const G4double&    outerDiameter,
+							const G4double&    horizontalWidth,
 							const G4double&    angleIn,
 							const G4double&    angleOut,
 							const G4double&    yokeThicknessFraction,
@@ -937,7 +937,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   // all horizontally here and then flip geometry later all at once
   G4double vhRatioL = buildVertically ? 1./vhRatio : vhRatio;
 
-  G4double horizontalSize = buildVertically ? vhRatio * outerDiameter : outerDiameter;
+  G4double horizontalSize = buildVertically ? vhRatio * horizontalWidth : horizontalWidth;
 
   // real beam pipe width
   G4double bpHalfWidth  = beamPipe->GetExtent().MaximumX();
@@ -1025,7 +1025,7 @@ void BDSMagnetOuterFactoryPolesBase::DipoleCalculations(const G4bool&      hStyl
   // prevent negative coil widths by yoke becoming too wide in the case
   // of a wide pole
   if (yokeThickness + poleWidth > horizontalSize - margin)
-    {yokeThickness = outerDiameter - poleWidth - margin;}
+    {yokeThickness = horizontalWidth - poleWidth - margin;}
 
   if (hStyle)
     {yokeOverHang = 0.5*yokeWidth - yokeThickness - 0.5*poleWidth;}
@@ -1093,7 +1093,7 @@ std::vector<G4ThreeVector> BDSMagnetOuterFactoryPolesBase::CalculateCoilDisplace
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     length,
 							      BDSBeamPipe* beamPipe,
-							      G4double     outerDiameter,
+							      G4double     horizontalWidth,
 							      G4double     containerLength,
 							      G4double     angleIn,
 							      G4double     angleOut,
@@ -1106,7 +1106,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
+  DipoleCommonPreConstruction(name, angleIn, angleOut, length, horizontalWidth, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
 
   // 1 calculations
@@ -1132,7 +1132,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   G4double sLength             = length; // 'safe' length fo intersection - default is normal length
   G4double containerSLength    = containerLength; // similarly for the container
   G4double intersectionRadius  = 0;
-  DipoleCalculations(false, buildVertically, beamPipe, length, outerDiameter, angleIn,
+  DipoleCalculations(false, buildVertically, beamPipe, length, horizontalWidth, angleIn,
 		     angleOut, 0.23, vhRatio, coilWidthFraction, coilHeightFraction,
 		     cShapeOuterEdge, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang, coilWidth,
@@ -1319,7 +1319,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
   allSolids.push_back(containerSolid);
   allSolids.push_back(magnetContainerSolid);
   
-  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
+  return DipoleCommonConstruction(name, horizontalWidth, buildEndPiece, coilWidth, length,
                                   containerLength, sLength, angleIn, angleOut,
                                   colour, material,
                                   coilDisps, buildVertically, ext, 0.5*poleWidth, poleHalfGap,
@@ -1329,7 +1329,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleC(G4String     name,
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4double     length,
 							      BDSBeamPipe* beamPipe,
-							      G4double     outerDiameter,
+							      G4double     horizontalWidth,
 							      G4double     containerLength,
 							      G4double     angleIn,
 							      G4double     angleOut,
@@ -1341,7 +1341,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 							      G4double     coilWidthFraction,
 							      G4double     coilHeightFraction)
 {
-  DipoleCommonPreConstruction(name, angleIn, angleOut, length, outerDiameter, material, vhRatio);
+  DipoleCommonPreConstruction(name, angleIn, angleOut, length, horizontalWidth, material, vhRatio);
   TestCoilFractions(coilWidthFraction, coilHeightFraction);
     
   // 1 calculations
@@ -1367,7 +1367,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   G4double sLength        = length; // 'safe' length fo intersection - default is normal length
   G4double containerSLength = containerLength; // similarly for the container
   G4double intersectionRadius = 0;
-  DipoleCalculations(true, buildVertically, beamPipe, length, outerDiameter, angleIn,
+  DipoleCalculations(true, buildVertically, beamPipe, length, horizontalWidth, angleIn,
 		     angleOut, 0.12, vhRatio, coilWidthFraction, coilHeightFraction,
 		     cShapeOuterEdge, poleHalfGap, poleWidth, poleHeight,
 		     yokeWidth, yokeHalfHeight, yokeThickness, yokeOverHang,
@@ -1529,7 +1529,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
   allSolids.push_back(containerSolid);
   allSolids.push_back(magnetContainerSolid);
 
-  return DipoleCommonConstruction(name, outerDiameter, buildEndPiece, coilWidth, length,
+  return DipoleCommonConstruction(name, horizontalWidth, buildEndPiece, coilWidth, length,
 				  containerLength, sLength, angleIn, angleOut,
 				  colour, material,
 				  coilDisps, buildVertically, ext, poleWidth*0.5, poleHalfGap,
@@ -1537,7 +1537,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipoleH(G4String     name,
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4String    name,
-									 G4double    outerDiameter,
+									 G4double    horizontalWidth,
 									 G4bool      buildEndPiece,
 									 G4double    coilWidth,
 									 G4double    length,
@@ -1869,7 +1869,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double ePInLengthZ = ePInLength; // copy that will be final length of object
   if (BDS::IsFinite(angleIn))
     {
-      G4double dzIn = std::tan(std::abs(angleIn)) * outerDiameter;
+      G4double dzIn = std::tan(std::abs(angleIn)) * horizontalWidth;
       ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
     }
 
@@ -1890,7 +1890,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
   if (BDS::IsFinite(angleOut))
     {
-      G4double dzOut = std::tan(std::abs(angleOut)) * outerDiameter;
+      G4double dzOut = std::tan(std::abs(angleOut)) * horizontalWidth;
       ePOutLength    = std::max(2*ePOutLength, 2*dzOut); // 2x as long for intersection
     }
 
