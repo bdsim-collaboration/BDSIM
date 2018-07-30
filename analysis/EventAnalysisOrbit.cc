@@ -55,7 +55,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
   std::cout << "Loaded" << std::endl;
   
   int counter = 0;
-  for(auto s : samplerAnalyses)
+  for (auto s : samplerAnalyses)
     {
       std::cout << "\rSampler #" << std::setw(6) << counter << " of " << nSamplers;
       std::cout.flush();
@@ -83,14 +83,14 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
   double dxp;
   double dy;
   double dyp;
-  std::string delement_name;
+  std::string delementName;
 
   orbitTree->Branch("s",  &dss, "s/D");
   orbitTree->Branch("x",  &dx,  "x/D");
   orbitTree->Branch("xp", &dxp, "xp/D");
   orbitTree->Branch("y",  &dy,  "y/D");
   orbitTree->Branch("yp", &dyp, "yp/D");
-  orbitTree->Branch("elementName", &delement_name);
+  orbitTree->Branch("elementName", &delementName);
   
   for (int i = 0; i < (int)ss.size(); ++i)
     {
@@ -99,7 +99,7 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
       dxp = xp.at(i);
       dy  = y.at(i);
       dyp = yp.at(i);
-      delement_name = elementName.at(i);
+      delementName = elementName.at(i);
       orbitTree->Fill();
     }
 
