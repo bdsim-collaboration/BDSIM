@@ -20,8 +20,8 @@ of available visualisers on an example system.
    :align: center
    :figclass: align-center
 
-By default, BDSIM uses the **OpenGL Qt** visualiser - we highly recommend this
-,as it's very easy to work with and has a rich feature set.
+By default, BDSIM uses the **OpenGL Qt** visualiser - we highly recommend this,
+ as it's very easy to work with and has a rich feature set.
 
 Default and Custom Visualisation
 ================================
