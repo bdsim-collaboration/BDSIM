@@ -692,7 +692,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   // Decide on a default horizontalWidth for the kicker - try 0.3x ie smaller kicker
   // than typical magnet, but if that would not fit around the beam pipe - go back to
   // the default horizontalWidth. Code further along will warn if it still doesn't fit.
-  const G4double globalDefaultHW = BDSGlobalConstants::Instance()->OuterDiameter();
+  const G4double globalDefaultHW = BDSGlobalConstants::Instance()->HorizontalWidth();
   G4double defaultHorizontalWidth = 0.3 * globalDefaultHW;
   BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
@@ -1455,7 +1455,7 @@ G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
       if (defaultHorizontalWidth > 0)
 	{horizontalWidth = defaultHorizontalWidth;}
       else
-	{horizontalWidth = BDSGlobalConstants::Instance()->OuterDiameter();}
+	{horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
     }
   return horizontalWidth;
 }

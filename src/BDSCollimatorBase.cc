@@ -56,7 +56,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
   colour(colourIn)
 {
   if(outerDiameter==0)
-    {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
+    {outerDiameter = BDSGlobalConstants::Instance()->HorizontalWidth();}
 
   if ( (xAperture > 0.5*outerDiameter) || (yAperture > 0.5*outerDiameter) )
     {
