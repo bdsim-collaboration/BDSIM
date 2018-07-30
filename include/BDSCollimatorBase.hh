@@ -62,28 +62,18 @@ protected:
 
   ///@{ Geometrical objects:
   G4VSolid* collimatorSolid;
-
   G4VSolid* innerSolid;
   G4VSolid* vacuumSolid;
   ///@}
-  /// Outer diameter
-  G4double horizontalWidth;
-  /// Aperture at entrance in x dimension
-  G4double xAperture;
-  /// Aperture at entrance in y dimension
-  G4double yAperture;
-  /// Aperture at exit in x dimension
-  G4double xOutAperture;
-  /// Aperture at exit in y dimension
-  G4double yOutAperture;
-  /// Flag for tapered collimator
-  G4bool tapered;
-  /// Material
-  G4String collimatorMaterial;
-  /// Vacuum material
-  G4String vacuumMaterial;
-  /// Colour of collimator
-  G4String colour;
+  G4double horizontalWidth;    ///< Horizontal width.
+  G4double xAperture;          ///< Aperture at entrance in x dimension
+  G4double yAperture;          ///< Aperture at entrance in y dimension
+  G4double xOutAperture;       ///< Aperture at exit in x dimension
+  G4double yOutAperture;       ///< Aperture at exit in y dimension
+  G4bool tapered;              ///< Flag for tapered collimator
+  G4String collimatorMaterial; ///< Material
+  G4String vacuumMaterial;     ///< Vacuum material
+  G4String colour;             ///< Colour of collimator
 
 private:
   /// Private default constructor to force the use of the supplied one.
