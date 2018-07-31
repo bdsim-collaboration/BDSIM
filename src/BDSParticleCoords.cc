@@ -18,6 +18,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSParticleCoords.hh"
 
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+
+#include "CLHEP/Geometry/Point3D.h"
+
 #include <ostream>
 
 BDSParticleCoords::BDSParticleCoords():
@@ -58,10 +63,29 @@ BDSParticleCoords::BDSParticleCoords(G4ThreeVector pos,
   t(tIn)
 {;}
 
+BDSParticleCoords BDSParticleCoords::ApplyTransform(const G4Transform3D& transform) const
+{
+  // if no transform, return copy of self
+  if (transform == G4Transform3D::Identity)
+    {return BDSParticleCoords(*this);}
+  
+  G4ThreeVector originalPos = G4ThreeVector(x,y,z);
+  G4ThreeVector newPos      = transform * (HepGeom::Point3D<G4double>)originalPos;
+  G4ThreeVector originalMom = G4ThreeVector(xp,yp,zp);
+  G4ThreeVector newMom      = transform * (HepGeom::Vector3D<G4double>)originalMom;
+  return BDSParticleCoords(newPos.x(), newPos.y(), newPos.z(),
+			   newMon.x(), newMon.y(), newMon.z(),
+			   t);
+}
+
 std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p)
 {
-  out << "Position: (" << p.x  << ", " << p.y  << ", " << p.z  << ")" << G4endl;
-  out << "Momentum: (" << p.xp << ", " << p.yp << ", " << p.zp << ")" << G4endl;
-  out << " t: " << p.t << G4endl;
+  p.Print(out);
   return out;
+}
+
+void BDSParticleCorods::Print(std::ostream& out) const
+  out << "Position: (" << x  << ", " << y  << ", " << z  << ")" << G4endl;
+  out << "Momentum: (" << xp << ", " << yp << ", " << zp << ")" << G4endl;
+  out << " t: " << t << G4endl;
 }

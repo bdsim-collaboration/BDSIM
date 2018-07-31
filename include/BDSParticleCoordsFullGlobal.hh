@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSPARTICLECOORDSFULL_H
-#define BDSPARTICLECOORDSFULL_H 
+#ifndef BDSPARTICLECOORDSFULLGLOBAL_H
+#define BDSPARTICLECOORDSFULLGLOBAL_H 
 
 #include "BDSParticleCoords.hh"
 
@@ -26,36 +26,23 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 /**
- * @brief A set of particle coordinates including energy and weight.
+ * @brief A set of particle coordinates in both local and global.
  * 
  * @author Laurie Nevay
  */
 
-class BDSParticleCoordsFull: public BDSParticleCoords
+class BDSParticleCoordsFullGlobal
 {
 public:
-  BDSParticleCoordsFull();
-  BDSParticleCoordsFull(G4double xIn,
-			G4double yIn,
-			G4double zIn,
-			G4double xpIn,
-			G4double ypIn,
-			G4double zpIn,
-			G4double tIn,
-			G4double sIn,
-			G4double totalEnergyIn,
-			G4double weightIn);
-  BDSParticleCoordsFull(const BDSParticleCoords& localIn,
-			G4double                 sIn,
-			G4double                 totalEnergyIn,
-			G4double                 weightIn);
+  BDSParticleCoordsFullGlobal();
+  BDSParticleCoordsFullGlobal(const BDSParticleCoordsFull& localIn,
+			      const BDSParticleCoords&     globalIn);
   
   /// Output stream
-  friend std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFull const& p);
-
-  G4double          s;
-  G4double          totalEnergy;
-  G4double          weight;
+  friend std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFullGlobal const& p);
+  
+  BDSParticleCoordsFull local;
+  BDSParticleCoords     global;
 };
 
 #endif

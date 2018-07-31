@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSPARTICLECOORDS_H 
 
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4Types.hh"
 
 #include <ostream>
@@ -44,10 +45,16 @@ public:
   BDSParticleCoords(G4ThreeVector pos,
 		    G4ThreeVector mom,
 		    G4double      tIn);
+
+  /// Apply a transform to the coordinates and return a copy of them transformed.
+  BDSParticleCoords ApplyTransform(const G4Transform3D& transform) const;
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p);
-
+  
+  /// Actual print out method so it can be called from a derived class.
+  virtual void Print(std::ostream& out) const;
+  
   G4double x;
   G4double y;
   G4double z;
