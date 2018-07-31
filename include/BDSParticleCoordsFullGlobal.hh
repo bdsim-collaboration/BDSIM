@@ -37,6 +37,7 @@ public:
   BDSParticleCoordsFullGlobal();
   BDSParticleCoordsFullGlobal(const BDSParticleCoordsFull& localIn,
 			      const BDSParticleCoords&     globalIn);
+  ~BDSParticleCoordsFullGlobal(){;}
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFullGlobal const& p);

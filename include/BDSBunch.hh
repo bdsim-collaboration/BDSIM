@@ -20,6 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSBUNCH_H
 
 #include "BDSBunchType.hh"
+#include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
+
 #include "globals.hh"
 #include "G4Transform3D.hh"
 

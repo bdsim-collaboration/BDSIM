@@ -46,6 +46,8 @@ public:
 		    G4ThreeVector mom,
 		    G4double      tIn);
 
+  virtual ~BDSParticleCoords(){;}
+
   /// Apply a transform to the coordinates and return a copy of them transformed.
   BDSParticleCoords ApplyTransform(const G4Transform3D& transform) const;
   

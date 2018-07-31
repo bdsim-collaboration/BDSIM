@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSParticleCoords.hh"
 #include "BDSParticleCoordsFull.hh"
-#include "BDSParticleCorodsGlobal.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 

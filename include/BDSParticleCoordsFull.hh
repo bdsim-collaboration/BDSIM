@@ -49,6 +49,8 @@ public:
 			G4double                 sIn,
 			G4double                 totalEnergyIn,
 			G4double                 weightIn);
+
+  virtual ~BDSParticleCoordsFull(){;}
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFull const& p);
