@@ -57,12 +57,9 @@ public:
   /// problematic or unphysical.
   virtual void CheckParameters();
 
-  /// Each derived class can override this default method of reference
-  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
-  /// z0 will be treated as S and the global z0 be calculated.
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);
+  /// Main interface. Calls GetNextParticleLocal() and then applies the curvilinear
+  /// transform if required.
+  BDSParticleCoordsFullGlobal GetNextParticle();
 
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
@@ -81,6 +78,16 @@ public:
   virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
   
 protected:
+  /// Each derived class can override this default method of reference
+  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
+  /// z0 will be treated as S and the global z0 be calculated.
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
+
+  
+  BDSParticleCoordsFullGlobal ApplyTransform(const BDSParticleCoordsFull& localIn) const;
+
+  BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
+  
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
   /// start of the beamline line. In the first case the beam line transform is picked
   /// up by definition.

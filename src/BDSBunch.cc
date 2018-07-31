@@ -20,6 +20,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSParticleCorodsGlobal.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSUtilities.hh"
 
@@ -61,14 +64,14 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   beamlineTransform  = beamlineTransformIn;
   nonZeroTransform   = beamlineTransform != G4Transform3D::Identity;
   
-  X0     = beam.X0;
-  Y0     = beam.Y0;
-  Z0     = beam.Z0;
-  S0     = beam.S0;
-  T0     = beam.T0;
-  Xp0    = beam.Xp0;
-  Yp0    = beam.Yp0;
-  E0     = beam.E0;
+  X0     = beam.X0 * CLHEP::m;
+  Y0     = beam.Y0 * CLHEP::m;
+  Z0     = beam.Z0 * CLHEP::m;
+  S0     = beam.S0 * CLHEP::m;
+  T0     = beam.T0 * CLHEP::s;
+  Xp0    = beam.Xp0 * CLHEP::rad;
+  Yp0    = beam.Yp0 * CLHEP::rad;
+  E0     = beam.E0  * CLHEP::GeV;
   sigmaE = beam.sigmaE;
   sigmaT = beam.sigmaT;
 
@@ -76,7 +79,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
   finiteSigmaT = BDS::IsFinite(sigmaT);
   
   // calculate momentum - used by some generators
-  G4double mass = beamParticle->Mass()/CLHEP::GeV;
+  G4double mass = beamParticle->Mass();
   mass2 = std::pow(mass,2);
   if (E0 <= mass)
     {
@@ -108,22 +111,19 @@ void BDSBunch::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "sigmaT " << sigmaT << " < 0!" << G4endl; exit(1);}
 }
 
-void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double& E,  G4double& weight)
+BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
 {
-  x0 = X0  * CLHEP::m;
-  y0 = Y0  * CLHEP::m;
-  z0 = Z0  * CLHEP::m;
-  xp = Xp0 * CLHEP::rad;
-  yp = Yp0 * CLHEP::rad;
-  zp = CalculateZp(xp,yp,Zp0);
+  BDSParticleCoordsFull local = GetNextPartilceLocal();
+  BDSParticleCorodsFullGlobal all = ApplyTransform(local);
+  return all;
+}
 
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-  
-  t = T0 * CLHEP::s;
-  E = E0 * CLHEP::GeV;
-  weight = 1.0;
+BDSParticleCoordsFull BDSBunch::GetNextParticleLocal()
+{
+  BDSParticleCoordsFull local(X0,  Y0,  Z0,
+			      Xp0, Yp0, Zp0,
+			      S0, T0, E0, /*weight=*/1.0);
+  return local;
 }
 
 void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
@@ -135,38 +135,21 @@ void BDSBunch::EndOfRunAction()
 void BDSBunch::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
 {generatePrimariesOnly = generatePrimariesOnlyIn;}
 
-void BDSBunch::ApplyTransform(G4double& x0, G4double& y0, G4double& z0,
-			      G4double& xp, G4double& yp, G4double& zp) const
+BDSParticleCoordsFullGlobal BDSBunch::ApplyTransform(const BDSParticleCoordsFull& localIn) const
 {
-  
-  if (useCurvilinear)
-    {ApplyCurvilinearTransform(x0,y0,z0,xp,yp,zp);}
-  else if (nonZeroTransform)
-    {
-      G4ThreeVector originalPos = G4ThreeVector(x0,y0,z0);
-      G4ThreeVector newPos = beamlineTransform * (HepGeom::Point3D<G4double>)originalPos;
-      x0 = newPos.x();
-      y0 = newPos.y();
-      z0 = newPos.z();
-      
-      G4ThreeVector originalMom = G4ThreeVector(xp,yp,zp);
-      G4ThreeVector newMom      = beamlineTransform * (HepGeom::Vector3D<G4double>)originalMom;
-      xp = newMom.x();
-      yp = newMom.y();
-      zp = newMom.z();
-    }
+  if (useCurvilinear) // i.e. S0 is finite
+    {return ApplyCurvilinearTransform(localIn);}
+  else
+    {return localIn.ApplyTransform(beamlineTransform);}
 }
 
-void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z0,
-					 G4double& xp, G4double& yp, G4double& zp) const
+BDSParticleCoordsFullGlobal BDSBunch::ApplyCurivlinearTransform(const BDSPartilceCoordsFull& localIn) const
 {
-  if (generatePrimariesOnly)
-    {return;} // no beam line built so no possible transform
+  if (generatePrimariesOnly) // no beam line built so no possible transform
+    {return BDSParticleCoordsFullGlobal(localIn, (BDSParticleCoords)localIn);}
+
   if (!beamline)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "initialising beam line reference" << G4endl;
-#endif
+    {// initialise cache of beam line pointer
       beamline = BDSAcceleratorModel::Instance()->BeamlineMain();
       if (!beamline)
 	{
@@ -174,24 +157,25 @@ void BDSBunch::ApplyCurvilinearTransform(G4double& x0, G4double& y0, G4double& z
 	  exit(1);
 	}
     }
-
-  // 'c' for curvilinear
-  // z0 is treated as the intended s coordinate on input
-  G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S0*CLHEP::m + z0,x0,y0);
-  G4ThreeVector cPrime = G4ThreeVector(xp,yp,zp).transform(cTrans.getRotation()); // rotate the momentum vector
-  G4ThreeVector cPos   = cTrans.getTranslation(); // translation contains displacement from origin already
-  x0 = cPos.x();
-  y0 = cPos.y();
-  z0 = cPos.z(); // z0 now treated as global z0 rather than s (as is required)
-  xp = cPrime.x();
-  yp = cPrime.y();
-  zp = cPrime.z();
   
+  // 'c' for curvilinear
+  G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S0*CLHEP::m + localIn.z,
+							       localIn.x,
+							       localIn.y);
+  // rotate the momentum vector
+  G4ThreeVector cMom = G4ThreeVector(localIn.xp, localIn.yp, localIn.zp).transform(cTrans.getRotation());
+  // translation contains displacement from origin already
+  G4ThreeVector cPos = cTrans.getTranslation();
+
+  BDSParticleCoords global = BDSParticleCoords(cPos.x(), cPos.y(), cPos.z(),
+					       cMom.x(), cMom.y(), cMom.z(),
+					       localIn.t);
+
+  BDSParticleCoordsFullGlobal result = BDSParticleCorodsFullGlobal(localIn, global);
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "x0: " << x0 << " y0: " << y0 << " z0: " << z0 << G4endl;
-  G4cout << "xp: " << xp << " yp: " << yp << " zp: " << zp << G4endl;
+  G4cout << __METHOD_NAME__ << result << G4endl;
 #endif
+  return result;
 }
 
 G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)const
@@ -199,10 +183,11 @@ G4double BDSBunch::CalculateZp(G4double xp, G4double yp, G4double Zp0In)const
   G4double zp;
   G4double transMom = std::pow(xp, 2) + std::pow(yp, 2);
 
-  if (transMom > 1) {
-    G4cout << __METHOD_NAME__ << "ERROR xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
-    exit(1);
-  }
+  if (transMom > 1)
+    {
+      G4cout << __METHOD_NAME__ << "ERROR xp, yp too large, xp: " << xp << " yp: " << yp << G4endl;
+      exit(1);
+    }
   if (Zp0In < 0)
     {zp = -std::sqrt(1.0 - transMom);}
   else
