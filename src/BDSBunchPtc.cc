@@ -42,11 +42,7 @@ BDSBunchPtc::~BDSBunchPtc()
 }
 
 void BDSBunchPtc::LoadPtcFile()
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
+{
   // open file and read line by line and extract values
   std::ifstream ifstr(fileName);
 
@@ -149,9 +145,6 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				  G4double& xp, G4double& yp, G4double& zp,
 				  G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // if all particles are read, start at 0 again and note it down in bool flag
   if (iRay == nRays)
     {

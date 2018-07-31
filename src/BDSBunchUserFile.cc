@@ -64,9 +64,6 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
     { 
@@ -78,9 +75,6 @@ void BDSBunchUserFile<T>::OpenBunchFile()
 template<class T>
 void BDSBunchUserFile<T>::CloseBunchFile()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   InputBunchFile.close();
 }
 

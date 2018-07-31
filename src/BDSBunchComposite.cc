@@ -84,11 +84,7 @@ void BDSBunchComposite::CheckParameters()
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 					G4double& xp, G4double& yp, G4double& zp,
 					G4double& t , G4double&  E, G4double& weight)
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
+{
   G4double xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight;
   G4double yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight;
   G4double zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight;

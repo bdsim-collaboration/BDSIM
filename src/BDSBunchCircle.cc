@@ -68,9 +68,6 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 				     G4double& xp, G4double& yp, G4double& zp,
 				     G4double& t , G4double&  E, G4double& weight)
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   x0 = X0 * CLHEP::m;
   y0 = Y0 * CLHEP::m;
   z0 = Z0 * CLHEP::m;
