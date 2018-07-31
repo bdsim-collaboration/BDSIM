@@ -80,14 +80,13 @@ public:
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
   virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
-  
-protected:
+
   /// Each derived class can override this default method of reference
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
   /// z0 will be treated as S and the global z0 be calculated.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
-
   
+protected:  
   BDSParticleCoordsFullGlobal ApplyTransform(const BDSParticleCoordsFull& localIn) const;
 
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
