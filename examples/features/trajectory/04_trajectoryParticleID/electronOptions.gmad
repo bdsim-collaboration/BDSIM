@@ -13,4 +13,4 @@ option, beampipeRadius = 10 * cm,
 
 option,physicsList="em";
 option,storeTrajectories=1;
-option,seed=1;
+option,seed=3;;

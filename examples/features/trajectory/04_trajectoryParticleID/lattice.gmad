@@ -1,5 +1,5 @@
 beam,  particle="e-",
-       energy= 250*GeV,
+       energy= 250*MeV,
        distrType="reference";
 
 beamline: line=(segment, segment, segment, segment, segment, segment, segment, segment, segment, segment);
