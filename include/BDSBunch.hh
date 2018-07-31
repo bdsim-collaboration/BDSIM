@@ -68,7 +68,7 @@ public:
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
   /// calculate sample mean offsets in some derived classes.
-  virtual void BeginOfRunAction(const G4int& numberOfEvents);
+  virtual void BeginOfRunAction(G4int numberOfEvents);
 
   /// An action that is called at the end of a run. By default, does nothing.
   virtual void EndOfRunAction();
@@ -79,7 +79,7 @@ public:
   /// Access the beam particle definition.
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
-  virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
+  virtual void SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn);
 
   /// Each derived class can override this default method of reference
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'

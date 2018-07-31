@@ -40,7 +40,7 @@ public:
 			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
   virtual void CheckParameters();
-  virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
+  virtual void SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn);
 
   virtual BDSParticleCoordsFull GetNextParticleLocal();
 

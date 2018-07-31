@@ -126,13 +126,13 @@ BDSParticleCoordsFull BDSBunch::GetNextParticleLocal()
   return local;
 }
 
-void BDSBunch::BeginOfRunAction(const G4int& /*numberOfEvents*/)
+void BDSBunch::BeginOfRunAction(G4int /*numberOfEvents*/)
 {;}
 
 void BDSBunch::EndOfRunAction()
 {;}
 
-void BDSBunch::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
+void BDSBunch::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
 {generatePrimariesOnly = generatePrimariesOnlyIn;}
 
 BDSParticleCoordsFullGlobal BDSBunch::ApplyTransform(const BDSParticleCoordsFull& localIn) const

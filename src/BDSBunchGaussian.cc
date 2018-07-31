@@ -89,7 +89,7 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
   meansGM[5] = 1;
 }
 
-void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
+void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
 {
   if (!offsetSampleMean)
     {return;}
@@ -164,7 +164,7 @@ CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
-void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
+void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
 {
   // generate all required primaries first
   G4double x0,xp,y0,yp,z0,zp,E,t,weight;
