@@ -113,8 +113,9 @@ Bug Fixes
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
 * Fixed incorrect dipole scaling. Issue #239.
-* Fixed E0 spread in `ring` bunch distribution, which was finite in contrast to the description
+* Fixed E0 spread in `ring` beam distribution, which was finite in contrast to the description
   that it is always the central value.
+* Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
 
 Utilities
 ---------
