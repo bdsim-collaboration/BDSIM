@@ -74,7 +74,7 @@ BDSParticleCoords BDSParticleCoords::ApplyTransform(const G4Transform3D& transfo
   G4ThreeVector originalMom = G4ThreeVector(xp,yp,zp);
   G4ThreeVector newMom      = transform * (HepGeom::Vector3D<G4double>)originalMom;
   return BDSParticleCoords(newPos.x(), newPos.y(), newPos.z(),
-			   newMon.x(), newMon.y(), newMon.z(),
+			   newMom.x(), newMom.y(), newMom.z(),
 			   t);
 }
 
@@ -84,7 +84,8 @@ std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p)
   return out;
 }
 
-void BDSParticleCorods::Print(std::ostream& out) const
+void BDSParticleCoords::Print(std::ostream& out) const
+{
   out << "Position: (" << x  << ", " << y  << ", " << z  << ")" << G4endl;
   out << "Momentum: (" << xp << ", " << yp << ", " << zp << ")" << G4endl;
   out << " t: " << t << G4endl;

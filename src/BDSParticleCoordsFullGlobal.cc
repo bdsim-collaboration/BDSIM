@@ -18,12 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSParticleCoords.hh"
 #include "BDSParticleCoordsFull.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
 
 #include <ostream>
 
 BDSParticleCoordsFullGlobal::BDSParticleCoordsFullGlobal():
   local(BDSParticleCoordsFull()),
-  global(BDSParticleCOords())
+  global(BDSParticleCoords())
 {;}
 
 BDSParticleCoordsFullGlobal::BDSParticleCoordsFullGlobal(const BDSParticleCoordsFull& localIn,
@@ -34,13 +35,6 @@ BDSParticleCoordsFullGlobal::BDSParticleCoordsFullGlobal(const BDSParticleCoords
 
 std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFullGlobal const& p)
 {
-  p.Print(out);
-  return out;
-}
-
-void BDSParticleCoordsFull::Print(std::ostream& out) const
-{
-  BDSParticleCoords::Print(out);
-  out << "s: " << s << ", E (total): " << totalEnergy << ", weight: " << p.weight << G4endl;
+  out << "Local: " << p.local << G4endl << "Global: " << p.global;
   return out;
 }

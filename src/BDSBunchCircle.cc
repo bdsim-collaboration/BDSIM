@@ -23,6 +23,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
 
 BDSBunchCircle::BDSBunchCircle():
   BDSBunch(),
@@ -64,7 +67,7 @@ void BDSBunchCircle::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "envelopeE < 0 "  << G4endl; exit(1);}
 }
 
-BDSParticleCoordsFull BDSBunchCircle::GetNextParticle()
+BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
 {
   G4double t     = T0 - envelopeT * CLHEP::s * (1.-2.*flatGen->shoot());
   G4double z0    = Z0 + t * CLHEP::c_light;
@@ -77,9 +80,8 @@ BDSParticleCoordsFull BDSBunchCircle::GetNextParticle()
   G4double y0 = Y0  + std::sin(phiR)  * r;
   G4double xp = Xp0 + std::cos(phiRp) * rp;
   G4double yp = Yp0 + std::sin(phiRp) * rp; 
-  zp = CalculateZp(xp,yp,Zp0);
-  
-  E = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
+  G4double zp = CalculateZp(xp,yp,Zp0);
+  G4double E  = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
 
-  return BDSParticleCoordsFull(x0,y0,z0,xp,yp,zp,t,E,/*weight=*/1.0);
+  return BDSParticleCoordsFull(x0,y0,z0,xp,yp,zp,t,S0,E,/*weight=*/1.0);
 }

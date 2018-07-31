@@ -37,19 +37,17 @@ BDSParticleCoordsFull::BDSParticleCoordsFull(G4double xIn,
 					     G4double sIn,
 					     G4double totalEnergyIn,
 					     G4double weightIn):
-  ParticleCoords(xIn, yIn, zIn, xpIn, ypIn, zpIn, tIn),
+  BDSParticleCoords(xIn, yIn, zIn, xpIn, ypIn, zpIn, tIn),
   s(sIn),
   totalEnergy(totalEnergyIn),
   weight(weightIn)
 {;}
 
 BDSParticleCoordsFull::BDSParticleCoordsFull(const BDSParticleCoords& localIn,
-					     const BDSParticleCoords& globalIn,
 					     G4double                 sIn,
 					     G4double                 totalEnergyIn,
 					     G4double                 weightIn):
-  local(localIn),
-  global(globalIn),
+  BDSParticleCoords(localIn),
   s(sIn),
   totalEnergy(totalEnergyIn),
   weight(weightIn)
@@ -64,6 +62,5 @@ std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFull const& p)
 void BDSParticleCoordsFull::Print(std::ostream& out) const
 {
   BDSParticleCoords::Print(out);
-  out << "s: " << s << ", E (total): " << totalEnergy << ", weight: " << p.weight << G4endl;
-  return out;
+  out << "s: " << s << ", E (total): " << totalEnergy << ", weight: " << weight << G4endl;
 }

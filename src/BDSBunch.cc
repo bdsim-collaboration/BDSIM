@@ -113,8 +113,8 @@ void BDSBunch::CheckParameters()
 
 BDSParticleCoordsFullGlobal BDSBunch::GetNextParticle()
 {
-  BDSParticleCoordsFull local = GetNextPartilceLocal();
-  BDSParticleCorodsFullGlobal all = ApplyTransform(local);
+  BDSParticleCoordsFull local = GetNextParticleLocal();
+  BDSParticleCoordsFullGlobal all = ApplyTransform(local);
   return all;
 }
 
@@ -140,10 +140,10 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyTransform(const BDSParticleCoordsFull
   if (useCurvilinear) // i.e. S0 is finite
     {return ApplyCurvilinearTransform(localIn);}
   else
-    {return localIn.ApplyTransform(beamlineTransform);}
+    {return BDSParticleCoordsFullGlobal(localIn,(BDSParticleCoords)localIn.ApplyTransform(beamlineTransform));}
 }
 
-BDSParticleCoordsFullGlobal BDSBunch::ApplyCurivlinearTransform(const BDSPartilceCoordsFull& localIn) const
+BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const
 {
   if (generatePrimariesOnly) // no beam line built so no possible transform
     {return BDSParticleCoordsFullGlobal(localIn, (BDSParticleCoords)localIn);}
@@ -171,7 +171,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurivlinearTransform(const BDSPartilc
 					       cMom.x(), cMom.y(), cMom.z(),
 					       localIn.t);
 
-  BDSParticleCoordsFullGlobal result = BDSParticleCorodsFullGlobal(localIn, global);
+  BDSParticleCoordsFullGlobal result = BDSParticleCoordsFullGlobal(localIn, global);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << result << G4endl;
 #endif

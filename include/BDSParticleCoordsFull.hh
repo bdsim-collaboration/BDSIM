@@ -55,6 +55,9 @@ public:
   /// Output stream
   friend std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFull const& p);
 
+  /// Actual print out method so it can be called from a derived class.
+  virtual void Print(std::ostream& out) const;
+
   G4double          s;
   G4double          totalEnergy;
   G4double          weight;
