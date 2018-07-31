@@ -40,7 +40,7 @@ public:
 		    G4double xpIn,
 		    G4double ypIn,
 		    G4double zpIn,
-		    G4double tIn)
+		    G4double tIn);
   BDSParticleCoords(G4ThreeVector pos,
 		    G4ThreeVector mom,
 		    G4double      tIn);
@@ -53,7 +53,7 @@ public:
   G4double z;
   G4double xp;
   G4double yp;
-  G4dobule zp;
+  G4double zp;
   G4double t;
 };
 

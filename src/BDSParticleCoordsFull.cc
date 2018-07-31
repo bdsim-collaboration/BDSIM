@@ -40,7 +40,7 @@ BDSParticleCoordsFull::BDSParticleCoordsFull(const BDSParticleCoords& localIn,
 
 std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFull const& p)
 {
-  out << "Local: " << local << "Global: " << global << G4endl;
-  out << "E (total): " << totalEnergy << ", weight: " << weight << G4endl;
+  out << "Local: " << p.local << "Global: " << p.global << G4endl;
+  out << "E (total): " << p.totalEnergy << ", weight: " << p.weight << G4endl;
   return out;
 }

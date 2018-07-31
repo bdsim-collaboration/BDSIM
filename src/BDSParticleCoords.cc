@@ -27,9 +27,7 @@ BDSParticleCoords::BDSParticleCoords():
   xp(0),
   yp(0),
   zp(0),
-  t(0),
-  energy(0),
-  weight(1)
+  t(0)
 {;}
 
 BDSParticleCoords::BDSParticleCoords(G4double xIn,
@@ -38,40 +36,32 @@ BDSParticleCoords::BDSParticleCoords(G4double xIn,
 				     G4double xpIn,
 				     G4double ypIn,
 				     G4double zpIn,
-				     G4double tIn,
-				     G4double energyIn,
-				     G4double weightIn):
+				     G4double tIn):
   x(xIn),
   y(yIn),
   z(zIn),
   xp(xpIn),
   yp(ypIn),
   zp(zpIn),
-  t(tIn),
-  energy(energyIn),
-  weight(weightIn)
+  t(tIn)
 {;}
 
 BDSParticleCoords::BDSParticleCoords(G4ThreeVector pos,
 				     G4ThreeVector mom,
-				     G4double      tIn,
-				     G4double      energyIn,
-				     G4double      weightIn):
+				     G4double      tIn):
   x(pos.x()),
   y(pos.y()),
   z(pos.z()),
   xp(mom.x()),
   yp(mom.y()),
   zp(mom.z()),
-  t(tIn),
-  energy(energyIn),
-  weight(weightIn)
+  t(tIn)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p)
 {
-  out << "Position: (" << x  << ", " << y  << ", " << z  << ")" << G4endl;
-  out << "Momentum: (" << xp << ", " << yp << ", " << zp << ")" << G4endl;
-  out << "E (total): " << energy << ", t: " << t << ", weight: " << weight << G4endl;
+  out << "Position: (" << p.x  << ", " << p.y  << ", " << p.z  << ")" << G4endl;
+  out << "Momentum: (" << p.xp << ", " << p.yp << ", " << p.zp << ")" << G4endl;
+  out << " t: " << p.t << G4endl;
   return out;
 }
