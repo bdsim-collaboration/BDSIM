@@ -1138,11 +1138,11 @@ V0.64 - 2015 / 02 / 16
 V0.63 - 2015 / 02 / 06
 ======================
 
-* Large angle sbends split into multiple sbends - based on aperture error tolerance - currently 1mm.
+* Large angle sbends split into multiple sbends, based on aperture error tolerance - currently 1mm.
 * New geometry construction and placement for sbends and rbends - no overlapping volumes and
-  simpler / increased performance.
-* Proper building under c++11 if available.
-* Introduction of composite bunch distribution.
+  simpler / increased performance
+* Proper building under c++11 if available
+* Introduction of composite bunch distribution
 * Drop support for Geant4 versions 9.5 and older
 
 V0.62 - 2014 / 08 / 07
