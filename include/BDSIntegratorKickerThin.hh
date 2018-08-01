@@ -53,6 +53,15 @@ public:
 		       G4double       yOut[],
 		       G4double       yErr[]);
 
+  virtual void OneStep(const G4ThreeVector& localPos,
+                       const G4ThreeVector& localMomUnit,
+                       const G4ThreeVector& localMom,
+                       const G4double&      h,
+                       const G4double&      fcof,
+                       G4ThreeVector&       localPosOut,
+                       G4ThreeVector&       localMomOut) const;
+
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorKickerThin() = delete;

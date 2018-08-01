@@ -77,7 +77,25 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
       SetDistChord(0);
       return;
     }
-  
+
+  G4ThreeVector localPosOut;
+  G4ThreeVector localMomOut;
+
+  // do thin kicker step
+  OneStep(localPos, localMomUnit, localMom, h, fcof, localPosOut, localMomOut);
+
+  // convert back to global
+  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
+}
+
+void BDSIntegratorKickerThin::OneStep(const G4ThreeVector& localPos,
+                                      const G4ThreeVector& localMomUnit,
+                                      const G4ThreeVector& localMom,
+                                      const G4double&      h,
+                                      const G4double&      fcof,
+                                      G4ThreeVector&       localPosOut,
+                                      G4ThreeVector&       localMomOut) const
+{
   // Transverse position stays the same and the particle is advanced by h along local z.
   G4double x1 = localPos.x();
   G4double y1 = localPos.y();
@@ -108,9 +126,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   px += dpx;
   py += dpy;
   pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
-  
-  G4ThreeVector localPosOut = G4ThreeVector(x1, y1, z1);
-  G4ThreeVector localMomOut = G4ThreeVector(px, py, pz);
-  
-  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
+
+  localPosOut = G4ThreeVector(x1, y1, z1);
+  localMomOut = G4ThreeVector(px, py, pz);
 }
