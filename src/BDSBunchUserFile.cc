@@ -324,19 +324,17 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 }
 
 template<class T>
-void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-					  G4double& xp, G4double& yp, G4double& zp,
-					  G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
-  E = x0 = y0 = z0 = xp = yp = zp = t = 0;
-  weight = 1;
+  G4double E = 0, x0 = 0, y0 = 0, z0 = 0, xp = 0, yp = 0, zp = 0, t = 0;
+  G4double weight = 1;
   
   bool zpdef = false; //keeps record whether zp has been read from file
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
   
-  for(auto it=fields.begin();it!=fields.end();it++)
+  for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
 	{ 
@@ -407,7 +405,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
   //Add the global offset Z
   z0=z0+Z0*CLHEP::m;
 
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  return BDSParticleCoordsFull(x0,y0,z0,xp,yp,zp,t,S0,E,weight);
 }
 
 template <class T>
