@@ -33,6 +33,7 @@ template <class T> class G4THitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;
+class BDSParticleCoordsFullGlobal;
 class BDSSamplerHit;
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
@@ -88,6 +89,8 @@ public:
   /// This also calls WriteModel(). After writing the model it clears the structure.
   void FillModel();
 
+  void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords);
+  
   /// Fill the local structure with primary vertex information. A unique interface
   /// for the case of generating primaries only. This fills the primary structure,
   /// and calls WriteFileEventLevel() and then clears the structures. It therefore
