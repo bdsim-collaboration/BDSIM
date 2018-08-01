@@ -66,7 +66,10 @@ protected:
 	       const G4double&      h,
 	       const G4double&      fcof,
 	       G4ThreeVector&       posOut,
-	       G4ThreeVector&       momOut) const;
+		   G4ThreeVector&       momOut,
+		   const G4double		rho,
+		   const G4double		beta,
+           const G4double       deltaEnergy) const;
 
 
 
@@ -74,21 +77,23 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorDipoleQuadrupole() = delete;
   
-  const G4double    bRho;  ///< Cached magnet property, nominal magnetic rigidity
+  const G4double    nominalBRho;  ///< Cached magnet property, nominal magnetic rigidity
   BDSMagUsualEqRhs* eq;    ///< BDSIM's eqRhs class to give access to particle properties
   const G4double    bPrime;///< Cached magnet property, B field gradient for calculating K1
-  const G4double    beta0; ///< Cached nominal relativistic beta of the nominal beam particle.
-  const G4double    rho;   ///< Cached magnet property, nominal bending radius.
-  const G4double    fieldRatio;///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
-  const	G4double    nominalEnergy;  ///< Nominal beam energy
+  const G4double    nominalBeta;    ///< Cached nominal relativistic beta of the nominal beam particle.
+  const G4double    nominalRho;     ///< Cached magnet property, nominal bending radius.
+  const G4double    nominalField;   ///< Cached magnet property, nominal field strength.
+  const G4double    fieldRatio;     ///< Ratio of supplied field to nominal field. Needed for over/underpowered magnets.
+  const G4double    nominalEnergy;  ///< Nominal beam energy
+  const	G4double    nominalMass;    ///< Primary particle mass. Needed for recalculating nominal energy with scaling.
   G4ThreeVector     unitField;      ///< Cache of the unit field direction.
   const G4double    fieldArcLength; ///< Cache of the field arc length.
-  const G4double    fieldAngle;     ///< Cache of the field angle.
+  const G4double    nominalAngle;   ///< Cache of the field angle.
   G4double          angleForCL;     ///< Angle used for curvilinear transforms.
-  const G4double    tilt;           ///< Tilt offset transform for field.
-  const G4double    primaryMass;    ///< Primary particle rest mass.
-  const G4double    primaryCharge;  ///< Primary particle charge.
-  const G4double    totalEnergy;    ///< Primary particle total energy.
+  G4double          tilt;           ///< Tilt offset transform for field.
+  const G4double    scaling;        ///< Cache field scaling factor
+  G4bool            isScaled;       ///< Cache if field is scaled
+  G4double          nominalMomCut;  ///< Cache option for momentum cut to switch tracking to backup integrator
 
   BDSIntegratorDipoleRodrigues2* dipole;///< Backup integrator
 };

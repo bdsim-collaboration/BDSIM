@@ -197,7 +197,7 @@ class Globals:
                           'rcol'          : ['length'],
                           'ecol'          : ['length'],
                           'degrader'      : ['length', 'numWedges', 'thickness'],
-                          'muspoiler'     : ['length', 'field'],
+                          'muspoiler'     : ['length', 'field', 'angle'],
                           'shield'        : ['length'],
                           'solenoid'      : ['length', 'ks'],
                           'laser'         : ['length'],

@@ -121,7 +121,9 @@ void Element::PublishMembers()
   publish("aper4",            &Element::aper4);
   publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
-  publish("outerDiameter",    &Element::outerDiameter);
+  publish("horizontalWidth",  &Element::horizontalWidth);
+  publish("outerDiameter",    &Element::horizontalWidth);
+  alternativeNames["outerDiameter"] = "horizontalWidth";
   publish("xsize",            &Element::xsize);
   publish("ysize",            &Element::ysize);
   publish("xsizeOut",         &Element::xsizeOut);
@@ -218,9 +220,8 @@ void Element::PublishMembers()
 std::string Element::getPublishedName(std::string nameIn)const
 {
   auto it = alternativeNames.find(nameIn);
-  if (it != alternativeNames.end()) {
-    return it->second;
-  }
+  if (it != alternativeNames.end())
+    {return it->second;}
   // if not found return name
   return nameIn;
 }
@@ -292,7 +293,7 @@ void Element::print(int ident)const{
     break;
 
   case ElementType::_ELEMENT:
-    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+    std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
 	      << "precision region " << region << std::endl
 	      << "Geometry file : "  << geometryFile << std::endl
 	      << "Field object  : "  << fieldAll << std::endl;
@@ -424,7 +425,7 @@ void Element::flush()
   // magnet geometry
   magnetGeometryType  = "";
   outerMaterial = "";
-  outerDiameter = 0;
+  horizontalWidth = 0;
   yokeOnInside  = true;
   hStyle             = -1;
   vhRatio            = -1;

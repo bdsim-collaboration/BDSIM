@@ -118,8 +118,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   // set samplers for trajectory (cannot be done in contructor)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
-
-  // reset navigators to ensure no mis-navigating
+  
+  // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   
   // update reference to event info

@@ -44,7 +44,7 @@ public:
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
 					   G4double     length,          // length
 					   BDSBeamPipe* beamPipe,        // beampipe
-					   G4double     outerDiameter,   // full width
+					   G4double     horizontalWidth, // full width
 					   G4double     containerLength, // full length to make AccComp container
 					   G4double     angleIn,         // input face angle w.r.t. chord
 					   G4double     angleOut,        // output face angle w.r.t. chord
@@ -60,7 +60,7 @@ public:
   virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
 						G4double     length,            // length
 						BDSBeamPipe* beamPipe,          // beampipe
-						G4double     outerDiameter,     // full width
+						G4double     horizontalWidth,   // full width
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
@@ -76,7 +76,7 @@ public:
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
 					   G4double     length,                // length
 					   BDSBeamPipe* beamPipe,              // beampipe
-					   G4double     outerDiameter,         // full width
+					   G4double     horizontalWidth,       // full width
 					   G4double     containerLength,       // full length to make AccComp container
 					   G4Material*  outerMaterial = nullptr,// material for outer volume
 					   G4bool       buildEndPiece = false   // build and end piece
@@ -87,7 +87,7 @@ public:
   virtual BDSMagnetOuter* CreateSextupole(G4String     name,                  // name
 					  G4double     length,                // length
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false   // build and end piece
@@ -97,7 +97,7 @@ public:
   virtual BDSMagnetOuter* CreateOctupole(G4String     name,                  // name
 					 G4double     length,                // length 
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false   // build and end piece
@@ -107,7 +107,7 @@ public:
   virtual BDSMagnetOuter* CreateDecapole(G4String     name,                  // name
 					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false   // build and end piece
@@ -117,7 +117,7 @@ public:
   virtual BDSMagnetOuter* CreateSolenoid(G4String     name,                  // name
 					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false   // build and end piece
@@ -127,7 +127,7 @@ public:
   virtual BDSMagnetOuter* CreateMultipole(G4String     name,                  // name
 					  G4double     length,                // length
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false   // build and end piece
@@ -137,7 +137,7 @@ public:
   virtual BDSMagnetOuter* CreateRfCavity(G4String     name,                  // name
 					 G4double     length,                // length 
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     outerDiameter,         // full width
+					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
 					 G4Material*  outerMaterial = nullptr,// material for outer volume
 					 G4bool       buildEndPiece = false   // build and end piece
@@ -147,7 +147,7 @@ public:
   virtual BDSMagnetOuter* CreateMuSpoiler(G4String     name,                  // name
 					  G4double     length,                // length
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     outerDiameter,         // full width
+					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
 					  G4Material*  outerMaterial = nullptr,// material for outer volume
 					  G4bool       buildEndPiece = false   // build and end piece
@@ -157,7 +157,7 @@ public:
   virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name
 				       G4double     length,                // length
 				       BDSBeamPipe* beamPipe,              // beampipe
-				       G4double     outerDiameter,         // full width
+				       G4double     horizontalWidth,       // full width
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       yokeOnLeft,            // where c-shaped yoke is
 				       G4bool       vertical = true,       // is it a vertical kicker?
@@ -189,8 +189,8 @@ private:
   /// Only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  Group all this functionality together
   BDSMagnetOuter* CommonFinalConstructor(G4String    name,
-					 G4double    length,        // length
-					 G4double    outerDiameter, // full width
+					 G4double    length,          // length
+					 G4double    horizontalWidth, // full width
 					 G4Material* outerMaterial,
 					 G4Colour*   colour);
 

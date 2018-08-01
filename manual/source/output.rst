@@ -4,7 +4,7 @@
 Output
 ======
 
-BDSIM by default writes an output file with a summary of the model created, the particle coordinates
+By default, BDSIM writes an output file with a summary of the model created, the particle coordinates
 generated, the options used, and basic energy deposition histograms. This can be turned off by
 executing BDSIM with::
 
@@ -22,7 +22,7 @@ File Writing Policy
 * The default file name is "output".
 * If no output file name is run and there is already a file called "output", a suffix with an integer will
   be added, i.e. "output-1".
-* However, BDSIM will overwrite an output file if `-\\-outfile` is supplied with the same name again.
+* BDSIM will overwrite an output file if `-\\-outfile` is supplied with the same name again.
 * The behaviour is the same in both visualiser mode and batch mode.
   
 Output Information
@@ -30,10 +30,10 @@ Output Information
 
 The following information can be recorded from a BDSIM simulation:
 
-- particle coordinates at a plane after each element - 'sampler' information.
-- energy deposition 'hits' from any component.
-- trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
-- a single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
+- Particle coordinates at a plane after each element - 'sampler' information.
+- Energy deposition 'hits' from any component.
+- Trajectories of all or certain particles (optional - see :ref:`bdsim-options-output`).
+- A single 3D histogram of any hits in the simulation (optional - see :ref:`scoring-map-description`).
 
 Samplers are 'attached' to a beam line element by using the sample command::
 
@@ -46,7 +46,7 @@ will therefore be recorded in the output as well as stored in pre-made energy de
 histograms per event.
 
 Trajectories are vectors of trajectory points that record the information about a particle
-at each step in the simulation. This records information such as all coordinates, particle
+at each step in the simulation. This records information, such as: all coordinates, particle
 type, state and the physics process that determined that step.
 
 Output Files
@@ -61,8 +61,8 @@ binary internally; and can store and load complex custom structures.
 
 * Units, unless specified, are SI (i.e. m, rad).
 * Energy is in GeV and is the total energy of a particle.
-* Time in nanoseconds.
-* Small letters denote local (to that object) coordinates whereas capitals represent
+* Time is measured in nanoseconds.
+* Small letters denote local (to that object) coordinates, whereas capital letters represent
   global coordinates.
 
 Not all information described may be written by default. Options described in
@@ -79,7 +79,7 @@ and cannot be usably stored.
 | None                 | --output=none        | No output is written                          |
 +----------------------+----------------------+-----------------------------------------------+
 | ROOT Event (Default) | --output=rootevent   | A ROOT file with details of the model built,  |
-|                      |                      | options used, seed states, and event by event |
+|                      |                      | options used, seed states, and event-by-event |
 |                      |                      | information (default and recommended).        |
 +----------------------+----------------------+-----------------------------------------------+
 
@@ -88,10 +88,10 @@ As a general guideline, the following naming conventions are used:
 ========== ================
 Short Name Meaning
 ========== ================
-phits      primary hits
-ploss      primary losses
-eloss      energy loss
-PE         per element
+phits      Primary hits
+ploss      Primary losses
+eloss      Energy loss
+PE         Per element
 ========== ================
 
 .. note:: A "hit" is the point of first contact, whereas a "loss" is the
@@ -109,7 +109,7 @@ to the output.
 
 In the case of the ROOT event output format, these classes are stored directly in the file
 so that the same classes can be used by the output analysis tool (rebdsim) to read
-and process the data. A BDSIM ROOT event file has the following structure.
+and process the data. A BDSIM ROOT event file has the following structure:
 
 .. figure:: figures/rootevent_contents.png
 	    :width: 40%
@@ -125,19 +125,19 @@ of the BDSIM classes.  The trees are:
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
 +=============+=====================================================================+
-| Header      | Details about the file type and software versions.                  |
+| Header      | Details about the file type and software versions                   |
 +-------------+---------------------------------------------------------------------+
-| Geant4Data  | Information about all particles and ions used in the simulation.    |
+| Geant4Data  | Information about all particles and ions used in the simulation     |
 +-------------+---------------------------------------------------------------------+
-| Beam        | A record of all options associated with the beam definition.        |
+| Beam        | A record of all options associated with the beam definition         |
 +-------------+---------------------------------------------------------------------+
-| Options     | A record of all options used by BDSIM.                              |
+| Options     | A record of all options used by BDSIM                               |
 +-------------+---------------------------------------------------------------------+
 | Model       | A record of the lengths and placement transforms of every element   |
 |             | built by BDSIM in the accelerator beam line suitable for recreating |
-|             | global coordinates or visualising trajectories.                     |
+|             | global coordinates or visualising trajectories                      |
 +-------------+---------------------------------------------------------------------+
-| Run         | Information collected per Run.                                      |
+| Run         | Information collected per Run                                       |
 +-------------+---------------------------------------------------------------------+
 | Event       | Information collected per Event                                     |
 +-------------+---------------------------------------------------------------------+
@@ -151,8 +151,8 @@ Header Tree
 
 The header tree contains a single branch called "Header." (note the "."). This branch
 represents a single instance of :code:`BDSOutputROOTEventHeader`. This stores the
-various software libraries BDSIM is compiled against as well as the BDSIM version.
-It also stores the time the file was created and the file type i.e. whether the file
+various software libraries BDSIM is compiled against, as well as the BDSIM version.
+It also stores the time the file was created and the file type, i.e. whether the file
 is from BDSIM, rebdsim or rebdsimCombine.
 
 BDSOutputROOTEventHeader
@@ -163,23 +163,23 @@ BDSOutputROOTEventHeader
 +------------------------+----------------+---------------------------------------+
 | **Variable Name**      | **Type**       | **Description**                       |
 +========================+================+=======================================+
-| bdsimVersion           | std::string    | Version of BDSIM used.                |
+| bdsimVersion           | std::string    | Version of BDSIM used                 |
 +------------------------+----------------+---------------------------------------+
-| geant4Version          | std::string    | Version of Geant4 used.               |
+| geant4Version          | std::string    | Version of Geant4 used                |
 +------------------------+----------------+---------------------------------------+
-| rootVersion            | std::string    | Version of ROOT used.                 |
+| rootVersion            | std::string    | Version of ROOT used                  |
 +------------------------+----------------+---------------------------------------+
-| clhepVersion           | std::string    | Version of CLHEP used.                |
+| clhepVersion           | std::string    | Version of CLHEP used                 |
 +------------------------+----------------+---------------------------------------+
-| timeStamp              | std::string    | Time and date file was created.       |
+| timeStamp              | std::string    | Time and date file was created        |
 +------------------------+----------------+---------------------------------------+
 | fileType               | std::string    | String describing what stage of       |
-|                        |                | simulation the file came from.        |
+|                        |                | simulation the file came from         |
 +------------------------+----------------+---------------------------------------+
-| dataVersion            | int            | BDSIM data format version.            |
+| dataVersion            | int            | BDSIM data format version             |
 +------------------------+----------------+---------------------------------------+
 | doublePrecisionOutput  | bool           | Whether BDSIM was compiled with       |
-|                        |                | double precision for output.          |
+|                        |                | double precision for output           |
 +------------------------+----------------+---------------------------------------+
 
 Geant4Data Tree
@@ -217,11 +217,11 @@ ParticleInfo Struct
 +---------------------+----------------+-----------------------------------+
 | **Variable Name**   | **Type**       | **Description**                   |
 +=====================+================+===================================+
-| name                | std::string    | Name of particle.                 |
+| name                | std::string    | Name of particle                  |
 +---------------------+----------------+-----------------------------------+
-| charge              | int            | Particle Data Group ID.           |
+| charge              | int            | Particle Data Group ID            |
 +---------------------+----------------+-----------------------------------+
-| mass                | double         | Particle Data Group mass in GeV.  |
+| mass                | double         | Particle Data Group mass in GeV   |
 +---------------------+----------------+-----------------------------------+
 
 IonInfo Struct
@@ -230,16 +230,16 @@ IonInfo Struct
 +---------------------+----------------+------------------------------------+
 | **Variable Name**   | **Type**       | **Description**                    |
 +=====================+================+====================================+
-| name                | std::string    | Name of particle.                  |
+| name                | std::string    | Name of particle                   |
 +---------------------+----------------+------------------------------------+
-| charge              | int            | Particle Data Group ID.            |
+| charge              | int            | Particle Data Group ID             |
 +---------------------+----------------+------------------------------------+
-| mass                | double         | Particle Data Group mass in GeV.   |
+| mass                | double         | Particle Data Group mass in GeV    |
 +---------------------+----------------+------------------------------------+
 | a                   | int            | Mass number - number of neutrons   |
-|                     |                | and protons together.              |
+|                     |                | and protons together               |
 +---------------------+----------------+------------------------------------+
-| z                   | int            | Atomic number - number of protons. |
+| z                   | int            | Atomic number - number of protons  |
 +---------------------+----------------+------------------------------------+
 
 
@@ -254,7 +254,7 @@ Beam Tree
 
 The beam tree contains a single branch called "Beam." (note the "."). This branch
 represents an instance of :code:`parser/BeamBase.hh`. The tree typically contains one
-entry as only one definition of the beam was used per execution of BDSIM.
+entry, as only one definition of the beam was used per execution of BDSIM.
 
 Options Tree
 ^^^^^^^^^^^^
@@ -265,7 +265,7 @@ Options Tree
 
 The options tree contains a single branch called "Options." (note the "."). This branch
 represents an instance of :code:`parser/OptionsBase.hh`. The tree typically contains one
-entry as only one set of options were used per execution of BDSIM.
+entry, as only one set of options were used per execution of BDSIM.
 
 Model Tree
 ^^^^^^^^^^
@@ -274,9 +274,9 @@ Model Tree
 	    :width: 40%
 	    :align: center
 
-This tree contains a single branch called "Model.".  This branch represents and instance
-of :code:`include/BDSOutputROOTEventModel.hh`. There is also typically one entry as there
-is one model.  Note some variables here appear as 'leaf' icons and some as 'branch' icons.
+This tree contains a single branch called "Model.".  This branch represents an instance
+of :code:`include/BDSOutputROOTEventModel.hh`. There is also typically one entry, as there
+is one model. Note that some variables here appear as 'leaf' icons and some as 'branch' icons.
 This is because some of the variables are vectors.
 
 BDSOutputROOTEventModel
@@ -291,99 +291,99 @@ BDSOutputROOTEventModel
 |                    |                          | are identical to the names of the sampler branches           |
 |                    |                          | found in the Event tree.                                     |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| componentName      | std::vector<std::string> | The beamline component names.                                |
+| componentName      | std::vector<std::string> | The beamline component names                                 |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| placementName      | std::vector<std::string> | Unique name for each placement.                              |
+| placementName      | std::vector<std::string> | Unique name for each placement                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | componentType      | std::vector<std::string> | Beamline component type; "drift", "sbend", etc.              |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| length             | std::vector<float>       | Component length (metres).                                   |
+| length             | std::vector<float>       | Component length (metres)                                    |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staPos             | std::vector<TVector3>    | Global coordinates of start of beamline element (metres).    |
+| staPos             | std::vector<TVector3>    | Global coordinates of start of beamline element (metres)     |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midPos             | std::vector<TVector3>    | Global coordinates of middle of beamline element (metres).   |
+| midPos             | std::vector<TVector3>    | Global coordinates of middle of beamline element (metres)    |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endPos             | std::vector<TVector3>    | Global coordinates of end of beamline element (metres).      |
+| endPos             | std::vector<TVector3>    | Global coordinates of end of beamline element (metres)       |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staRot             | std::vector<TRotation>   | Global rotation for the start of this beamline element.      |
+| staRot             | std::vector<TRotation>   | Global rotation for the start of this beamline element       |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midRot             | std::vector<TRotation>   | Global rotation for the middle of this beamline element.     |
+| midRot             | std::vector<TRotation>   | Global rotation for the middle of this beamline element      |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endRot             | std::vector<TRotation>   | Global rotation for the end of this beamline element.        |
+| endRot             | std::vector<TRotation>   | Global rotation for the end of this beamline element         |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staRefPos          | std::vector<TVector3>    | Global coordinates for start of the beamline elements,       |
+| staRefPos          | std::vector<TVector3>    | Global coordinates for the start of the beamline elements    |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midRefPos          | std::vector<TVector3>    | Global coordinates for the middle of the beamline elements,  |
+| midRefPos          | std::vector<TVector3>    | Global coordinates for the middle of the beamline elements   |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endRefPos          | std::vector<TVector3>    | Global coordinates for the start of the beamline elements,   |
+| endRefPos          | std::vector<TVector3>    | Global coordinates for the start of the beamline elements    |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staRefRot          | std::vector<TRotation>   | Global rotation matrix for start of the beamline elements,   |
+| staRefRot          | std::vector<TRotation>   | Global rotation matrix for start of the beamline elements    |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements,  |
+| midRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements   |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements,  |
+| endRefRot          | std::vector<TRotation>   | Global rotation matrix for middle of the beamline elements   |
 |                    |                          | along the reference trajectory and without any tilt          |
-|                    |                          | or rotation from the component.                              |
+|                    |                          | or rotation from the component                               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| staS               | std::vector<float>       | S position of start of start of element (metres).            |
+| staS               | std::vector<float>       | S-position of start of start of element (metres)             |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| midS               | std::vector<float>       | S position of start of middle of element (metres).           |
+| midS               | std::vector<float>       | S-position of start of middle of element (metres)            |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| endS               | std::vector<float>       | S position of start of end of element (metres).              |
+| endS               | std::vector<float>       | S-position of start of end of element (metres)               |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | beamPipeType       | std::vector<std::string> | Aperture type; "circular", "lhc", etc.                       |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| beamPipeAper1      | std::vector<double>      | Aperture aper1 (metres).                                     |
+| beamPipeAper1      | std::vector<double>      | Aperture aper1 (metres)                                      |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| beamPipeAper2      | std::vector<double>      | Aperture aper2 (metres).                                     |
+| beamPipeAper2      | std::vector<double>      | Aperture aper2 (metres)                                      |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| beamPipeAper3      | std::vector<double>      | Aperture aper3 (metres).                                     |
+| beamPipeAper3      | std::vector<double>      | Aperture aper3 (metres)                                      |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| beamPipeAper4      | std::vector<double>      | Aperture aper4 (metres).                                     |
+| beamPipeAper4      | std::vector<double>      | Aperture aper4 (metres)                                      |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| material           | std::vector<std::string> | Main material associated with an element. For a drift this   |
-|                    |                          | is the beam pipe material, for a magnet, it's the yoke       |
-|                    |                          | material, and for a collimator the main material.            |
+| material           | std::vector<std::string> | Main material associated with an element. For a drift, this  |
+|                    |                          | is the beam pipe material; for a magnet, the yoke            |
+|                    |                          | material; a collimator, the main material.                   |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | k1 - k12           | std::vector<float>       | Normalised magnet strength associated with element           |
-|                    |                          | (1 - 12th order).                                            |
+|                    |                          | (1st - 12th order)                                           |
 +--------------------+--------------------------+--------------------------------------------------------------+
 | k12 - k122         | std::vector<float>       | Normalised skew magnet strength associated with element      |
-|                    |                          | (1 - 12th order).                                            |
+|                    |                          | (1st - 12th order)                                           |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| ks                 | std::vector<float>       | Normalised solenoid strength.                                |
+| ks                 | std::vector<float>       | Normalised solenoid strength                                 |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| hkick              | std::vector<float>       | Fractional momentum kick in horizontal.                      |
+| hkick              | std::vector<float>       | Fractional momentum kick in horizontal direction             |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| vkick              | std::vector<float>       | Fractional momentum kick in vertical.                        |
+| vkick              | std::vector<float>       | Fractional momentum kick in vertical direction               |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| bField             | std::vector<float>       | Magnetic field magnitude (T).                                |
+| bField             | std::vector<float>       | Magnetic field magnitude (T)                                 |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| eField             | std::vector<float>       | Electric field magnitude (MV).                               |
+| eField             | std::vector<float>       | Electric field magnitude (MV)                                |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| e1                 | std::vector<float>       | Input pole face angle (note sbend / rbend convention) (rad). |
+| e1                 | std::vector<float>       | Input pole face angle (note sbend / rbend convention) (rad)  |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| e2                 | std::vector<float>       | Output pole face angle (rad).                                |
+| e2                 | std::vector<float>       | Output pole face angle (rad)                                 |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| hgap               | std::vector<float>       | Half gap of pole tips for dipoles (m).                       |
+| hgap               | std::vector<float>       | Half-gap of pole tips for dipoles (m)                        |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| fint               | std::vector<float>       | Fringe field integral.                                       |
+| fint               | std::vector<float>       | Fringe-field integral                                        |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| fintx              | std::vector<float>       | Fringe field integral for exit pole face.                    |
+| fintx              | std::vector<float>       | Fringe-field integral for exit pole face                     |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| fintk2             | std::vector<float>       | 2nd fringe field integral.                                   |
+| fintk2             | std::vector<float>       | 2nd fringe-field integral                                    |
 +--------------------+--------------------------+--------------------------------------------------------------+
-| fintxk2            | std::vector<float>       | 2nd fringe field integral for exit pole face.                |
+| fintxk2            | std::vector<float>       | 2nd fringe-field integral for exit pole face                 |
 +--------------------+--------------------------+--------------------------------------------------------------+
 
 
@@ -395,7 +395,7 @@ Run Tree
 	    :align: center
 
 This tree contains two branches called "Histos." and "Info." which represent instances of
-:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`
+:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`,
 respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
 
 .. _output-event-tree:
@@ -407,44 +407,44 @@ Event Tree
 	    :width: 35%
 	    :align: center
 
-This tree contains information on a per event basis.  Everything shown in the above tree has a
-different value per event run in BDSIM.
+This tree contains information on a per-event basis.  Everything shown in the above tree has a
+different value per-event run in BDSIM.
 
 .. tabularcolumns:: |p{0.15\textwidth}|p{0.35\textwidth}|p{0.4\textwidth}|
 
 +-----------------+----------------------------------+--------------------------------------------------+
 | Branch Name     | Type                             | Description                                      |
 +=================+==================================+==================================================+
-| Info            | BDSOutputROOTEventInfo           | Per event information.                           |
+| Info            | BDSOutputROOTEventInfo           | Per-event information                            |
 +-----------------+----------------------------------+--------------------------------------------------+
 | Primary         | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
-|                 |                                  | simulation, before tracking.                     |
+|                 |                                  | simulation (before tracking)                     |
 +-----------------+----------------------------------+--------------------------------------------------+
 | Eloss           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
-|                 |                                  | accelerator material.                            |
+|                 |                                  | accelerator material                             |
 +-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
 |                 |                                  | step on the primary trajectory that wasn't due   |
 |                 |                                  | to tracking, i.e. the first interaction where a  |
-|                 |                                  | physics process was induced.                     |
+|                 |                                  | physics process was induced                      |
 +-----------------+----------------------------------+--------------------------------------------------+
 | PrimaryLastHit  | BDSOutputROOTEventLoss           | The end point of the primary trajectory. If S    |
 |                 |                                  | is -1 (m) it means the particle finished away    |
 |                 |                                  | from the beam line where there was no            |
-|                 |                                  | curvilinear coordinate system pressent.          |
+|                 |                                  | curvilinear coordinate system present.           |
 +-----------------+----------------------------------+--------------------------------------------------+
 | TunnelHit       | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
-|                 |                                  | material.                                        |
+|                 |                                  | material                                         |
 +-----------------+----------------------------------+--------------------------------------------------+
 | Trajectory      | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
-|                 |                                  | took and the associated physics processes.       |
+|                 |                                  | took and the associated physics processes        |
 +-----------------+----------------------------------+--------------------------------------------------+
-| Histos          | BDSOutputROOTEventHistograms     | Per event histograms in vectors.                 |
+| Histos          | BDSOutputROOTEventHistograms     | Per-event histograms in vectors                  |
 +-----------------+----------------------------------+--------------------------------------------------+
 | xxxxx           | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
 |                 |                                  | sampler (here named 'xxxxx') that contains a     |
 |                 |                                  | record of all particles that passed through the  |
-|                 |                                  | sampler during the event. Note this includes     |
+|                 |                                  | sampler during the event. Note: this includes    |
 |                 |                                  | both primary and secondary particles.            |
 +-----------------+----------------------------------+--------------------------------------------------+
 
@@ -452,16 +452,17 @@ The types and names of the contents of each class can be found in the header fil
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
 
 .. note:: The primary coordinates are the exact coordinates supplied to Geant4 at the beginning of the event.
-	  Conceptually these are 'local' coordinates with respect to the start of the beam
+	  Conceptually, these are 'local' coordinates with respect to the start of the beam
 	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
 	  to that location in the World, therefore the coordinates are the **global** ones used.
 
-.. warning:: For large `S0` in a large model, the primary coordinates may be displaced by a large
-	     distance as compared to the size of the beam, e.g. 1km offset for 1um beam.
-	     In this case, the limited preicision of the `float` used to store the coordinates
-	     in the output may not show the beam distribution as expected. Internally, double
-	     precision numbers are used so the beam distribution is accurate. A float typically
-	     has 7 significant figures and a double 15.
+.. warning:: For large `S0` in a large model, a large distance as compared to the size of the beam
+	     may displace the primary coordinates, e.g. 1km offset for 1um beam. In this case, the
+	     limited precision of the `float` used to store the coordinates in the output may not show
+	     the beam distribution as expected. Internally, double precision numbers are used so the beam
+	     distribution is accurate. A float typically has seven significant figures and a double 15.
+
+
 
 BDSOutputROOTEventInfo
 **********************
@@ -471,18 +472,18 @@ BDSOutputROOTEventInfo
 +-------------------+-------------------+---------------------------------------------+
 |  **Variable**     | **Type**          |  **Description**                            |
 +===================+===================+=============================================+
-| startTime         | time_t            | Time stamp at start of event.               |
+| startTime         | time_t            | Time stamp at start of event                |
 +-------------------+-------------------+---------------------------------------------+
-| stopTime          | time_t            | Time stamp at end of event.                 |
+| stopTime          | time_t            | Time stamp at end of event                  |
 +-------------------+-------------------+---------------------------------------------+
-| duration          | float             | Duration of event in seconds.               |
+| duration          | float             | Duration of event in seconds                |
 +-------------------+-------------------+---------------------------------------------+
 | seedStateAtStart  | std::string       | State of random number generator at the     |
-|                   |                   | start of the event as provided by CLHEP.    |
+|                   |                   | start of the event as provided by CLHEP     |
 +-------------------+-------------------+---------------------------------------------+
-| index             | int               | Index of the event (0 counting).            |
+| index             | int               | Index of the event (0 counting)             |
 +-------------------+-------------------+---------------------------------------------+
-| aborted           | bool              | Whether event was aborted or not.           |
+| aborted           | bool              | Whether event was aborted or not            |
 +-------------------+-------------------+---------------------------------------------+
 | primaryHitMachine | bool              | Whether the primary particle hit the        |
 |                   |                   | machine. This is judged by whether there    |
@@ -494,7 +495,7 @@ BDSOutputROOTEventInfo
 BDSOutputROOTEventLoss
 **********************
 
-Energy deposition hits are the most numerous so not all information is recorded by default.
+Energy deposition hits are the most numerous, so not all information is recorded by default.
 Extra information can be recorded but this typically dominates the output file size.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
@@ -502,68 +503,68 @@ Extra information can be recorded but this typically dominates the output file s
 +----------------------+-----------------------+-------------------------------------------------------------------+
 |  **Variable**        | **Type**              |  **Description**                                                  |
 +======================+=======================+===================================================================+
-| n                    | int                   | The number of energy deposition hits for this event.              |
+| n                    | int                   | The number of energy deposition hits for this event               |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| energy               | std::vector<float>    | Vector of energy of each piece of energy deposition.              |
+| energy               | std::vector<float>    | Vector of energy of each piece of energy deposition               |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| S                    | std::vector<float>    | Corresponding curvilinear S position (m) of energy deposition.    |
+| S                    | std::vector<float>    | Corresponding curvilinear S-position (m) of energy deposition     |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| weight               | std::vector<float>    | Corresponding weight.                                             |
+| weight               | std::vector<float>    | Corresponding weight                                              |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| partID               | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition. |
+| partID               | std::vector<int>      | (optional) Particle ID of particle that caused energy deposition  |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| trackID              | std::vector<int>      | (optional) Track ID of particle that caused energy deposition.    |
+| trackID              | std::vector<int>      | (optional) Track ID of particle that caused energy deposition     |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| parentID             | std::vector<int>      | (optional) Track ID of the parent particle.                       |
+| parentID             | std::vector<int>      | (optional) Track ID of the parent particle                        |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| modelID              | std::vector<int>      | (optional) Index in model tree for where deposition occurred.     |
+| modelID              | std::vector<int>      | (optional) Index in model tree for where deposition occurred      |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| turn                 | std::vector<int>      | (optional) Turn in circular machine on which hit occurred.        |
+| turn                 | std::vector<int>      | (optional) Turn in circular machine on which hit occurred         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| x                    | std::vector<float>    | (optional) Local X of energy deposition (m).                      |
+| x                    | std::vector<float>    | (optional) Local X of energy deposition (m)                       |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| y                    | std::vector<float>    | (optional) Local Y of energy deposition (m).                      |
+| y                    | std::vector<float>    | (optional) Local Y of energy deposition (m)                       |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| z                    | std::vector<float>    | (optional) Local Z of energy deposition (m).                      |
+| z                    | std::vector<float>    | (optional) Local Z of energy deposition (m)                       |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| X                    | std::vector<float>    | (optional) Global X of energy deposition (m).                     |
+| X                    | std::vector<float>    | (optional) Global X of energy deposition (m)                      |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| Y                    | std::vector<float>    | (optional) Global Y of energy deposition (m).                     |
+| Y                    | std::vector<float>    | (optional) Global Y of energy deposition (m)                      |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| Z                    | std::vector<float>    | (optional) Global Z of energy deposition (m).                     |
+| Z                    | std::vector<float>    | (optional) Global Z of energy deposition (m)                      |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| T                    | std::vector<float>    | (optional) Global time of flight since begnning of event (ns).    |
+| T                    | std::vector<float>    | (optional) Global time-of-flight since beginning of event (ns)    |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| stepLength           | std::vector<float>    | (optional) Step length of step that the energy deposition was     |
-|                      |                       | produced in (m).                                                  |
+| stepLength           | std::vector<float>    | (optional) Length of step that the energy deposition was          |
+|                      |                       | produced in (m)                                                   |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | preStepKineticEnergy | std::vector<float>    | (optional) The kinetic energy of the particle (any species)       |
 |                      |                       | at the starting point of the step that the energy deposition      |
-|                      |                       | was produced in.                                                  |
+|                      |                       | was produced in                                                   |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 | storeLinks           | bool                  | Whether extra information was stored (`partID`, `trackID`,        |
-|                      |                       | `parendID`, `modelID`, `turn`).                                   |
+|                      |                       | `parendID`, `modelID`, `turn`)                                    |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| storeLocal           | bool                  | Whether `x`, `y`, `z` were stored.                                |
+| storeLocal           | bool                  | Whether `x`, `y`, `z` were stored                                 |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| storeGlobal          | bool                  | Whether `X`, `Y`, `Z` were stored.                                |
+| storeGlobal          | bool                  | Whether `X`, `Y`, `Z` were stored                                 |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| storeTime            | bool                  | Whether `T` was stored.                                           |
+| storeTime            | bool                  | Whether `T` was stored                                            |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| storeStepLength      | bool                  | Whether `stepLength` was stored.                                  |
+| storeStepLength      | bool                  | Whether `stepLength` was stored                                   |
 +----------------------+-----------------------+-------------------------------------------------------------------+
-| storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored.                        |
+| storePreStepKinetic  | bool                  | Whether `preStepKineticEnergy` was stored                         |
 +----------------------+-----------------------+-------------------------------------------------------------------+
 
 BDSOutputROOTEventTrajectory
 ****************************
 
-By default only the primary particle trajectory is stored - see :ref:`bdsim-options-output` for
+By default, only the primary particle trajectory is stored - see :ref:`bdsim-options-output` for
 which options to set to control the level of detail stored in the trajectories.
 
 Currently, some degenerate information is stored for completeness.  This may be removed in future
-versions (e.g. the pre-step point of on part is the same as the post step point of the previous
-part of the trajectory).
+versions (e.g. the pre-step point of the  part of the trajectory  is the same as the post-step point
+of the previous part of the trajectory).
 
 Each entry in the vectors in BDSOutputROOTEventTrajectory represents one step along the
 particle trajectory with a 'pre-step' and 'post-step' point - information associated with
@@ -574,46 +575,46 @@ the start and end of that step.
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 |  **Variable**            | **Type**                            |  **Description**                                        |
 +==========================+=====================================+=========================================================+
-| n                        | int                                 | The number of trajectories stored for this event.       |
+| n                        | int                                 | The number of trajectories stored for this event        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| partID                   | std::vector<int>                    | The PDG ID for the particle in each trajectory step.    |
+| partID                   | std::vector<int>                    | The PDG ID for the particle in each trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trackID                  | std::vector<unsigned int>           | The track ID for the particle in each trajectory step.  |
+| trackID                  | std::vector<unsigned int>           | The track ID for the particle in each trajectory step   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | parentID                 | std::vector<float>                  | The track ID of the parent particle for each trajectory |
-|                          |                                     | step.                                                   |
+|                          |                                     | step                                                    |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | parentIndex              | std::vector<int>                    | The index in the vectors of this class that correspond  |
-|                          |                                     | to parent particle - the one that lead to the creation  |
-|                          |                                     | of the particle in the current entry.                   |
+|                          |                                     | to parent particle (the one that lead to the creation   |
+|                          |                                     | of the particle in the current entry)                   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| parentStepIndex          | std::vector<int>                    | TBC.                                                    |
+| parentStepIndex          | std::vector<int>                    | TBC                                                     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessTypes          | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - general       |
-|                          |                                     | category.                                               |
+|                          |                                     | category                                                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | preProcessSubTypes       | std::vector<std::vector<int>>       | Geant4 enum of pre-step physics process - specific      |
-|                          |                                     | process ID within category.                             |
+|                          |                                     | process ID within category                              |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | postProcessTypes         | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - general      |
-|                          |                                     | category.                                               |
+|                          |                                     | category                                                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | postProcesssSubTypes     | std::vector<std::vector<int>>       | Geant4 enum of post-step physics process - specific     |
-|                          |                                     | process ID within category.                             |
+|                          |                                     | process ID within category                              |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| preWeights               | std::vector<std::vector<double>>    | Weighting associated with pre-step point.               |
+| preWeights               | std::vector<std::vector<double>>    | Weighting associated with pre-step point                |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point.              |
+| postWeights              | std::vector<std::vector<double>>    | Weighting associated with post-step point               |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step.    |
+| energies                 | std::vector<std::vector<double>>    | Total energy of particle in current trajectory step     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 | trajectories             | std::vector<std::vector<TVector3>>  | The 'position' of the trajectory according to Geant4 -  |
-|                          |                                     | from G4Track->GetPosition().                            |
+|                          |                                     | from G4Track->GetPosition()                             |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| momenta                  | std::vector<std::vector<TVector3>>  | Momentum of the track (GeV).                            |
+| momenta                  | std::vector<std::vector<TVector3>>  | Momentum of the track (GeV)                             |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element trajectory is in.   |
-|                          |                                     | -1 if not inside an accelerator component.              |
+| modelIndicies            | std::vector<std::vector<int>>       | Index in beam line of which element the trajectory is in|
+|                          |                                     | (-1 if not inside an accelerator component)             |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 
 In addition, some maps are stored to link the entries together conceptually.
@@ -623,13 +624,13 @@ In addition, some maps are stored to link the entries together conceptually.
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 |  **Variable**            | **Type**                            |  **Description**                                        |
 +==========================+=====================================+=========================================================+
-| trackID_trackIndex       | std::map<int, int>                  | A map of all trackIDs to the index in this class.       |
+| trackID_trackIndex       | std::map<int, int>                  | A map of all trackIDs to the index in this class        |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trackIndex_trackProcess  | std::map<int, std::pair<int,int>>   | A map from the index in this class to track process.    |
+| trackIndex_trackProcess  | std::map<int, std::pair<int,int>>   | A map from the index in this class to track process     |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| trackIndex_modelIndex    | std::map<int, int>                  | A map from the index in this class to the model index.  |
+| trackIndex_modelIndex    | std::map<int, int>                  | A map from the index in this class to the model index   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
-| modelIndex_trackIndex    | std::map<int, std::vector<int>>     | A map from the model index to the index in this class.  |
+| modelIndex_trackIndex    | std::map<int, std::vector<int>>     | A map from the model index to the index in this class   |
 +--------------------------+-------------------------------------+---------------------------------------------------------+
 
 Functions are provided that allow exploration of the data through the connections stored.
@@ -639,7 +640,7 @@ Functions are provided that allow exploration of the data through the connection
 +-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
 | **Function**                      | **Return Type**                                 | **Description**                                         |
 +===================================+=================================================+=========================================================+
-| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process index from      |
+| findParentProcess(int trackIndex) | std::pair<int,int>                              | Find the parent track index and process indexfrom       |
 |                                   |                                                 | the ultimate parent of this particle up the             |
 |                                   |                                                 | trajectory table.                                       |
 +-----------------------------------+-------------------------------------------------+---------------------------------------------------------+
@@ -657,64 +658,64 @@ Functions are provided that allow exploration of the data through the connection
 BDSOutputROOTEventSampler
 *************************
 
-Note, the sampler structure, like everything else in the event tree is stored
+Note: the sampler structure, like everything else in the event tree, is stored
 per event.  However, for a given event, there may be multiple hits on a sampler, i.e.
-many secondary particles may have passed through a sampler. For this purpose most variables
-are vectors of numbers, where the vector is all the hits in that event.
+many secondary particles may have passed through a sampler. For this purpose, most
+variables are vectors of numbers, where the vector represents all the hits in that event.
 
 As the sampler is considered infinitely thin and always in the same place, there is no
-point in storing the z location or the S location for every particle hit. Therefore,
+point in storing the z-location or the S-location for every particle hit. Therefore,
 these variables are only stored once as a single number per event.
 
 The class is templated to allow use of both double and float precision numbers. By default,
 T = float, i.e. float precision number is stored. BDSIM can be compiled with an option for
 double precision output (useful typically only for development or precision testing) but this
-increases the output file size by 2x.
+doubles the output file size.
 
 .. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +-----------------+-------------------+--------------------------------------------------------------------------+
 |  **Variable**   | **Type**          |  **Description**                                                         |
 +=================+===================+==========================================================================+
-| n               | int               | The number of this in this event in this sampler.                        |
+| n               | int               | The number in this event in this sampler                                 |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| energy          | std::vector<T>    | Vector of the total energy (GeV) of each hit in this sampler.            |
+| energy          | std::vector<T>    | Vector of the total energy (GeV) of each hit in this sampler             |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| x               | std::vector<T>    | Vector of the x coordinate of each hit (m).                              |
+| x               | std::vector<T>    | Vector of the x-coordinate of each hit (m)                               |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| y               | std::vector<T>    | Vector of the y coordinate of each hit (m).                              |
+| y               | std::vector<T>    | Vector of the y-coordinate of each hit (m)                               |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| z               | T                 | Single entry of z for this sampler (m).                                  |
+| z               | T                 | Single entry of z for this sampler (m)                                   |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| xp              | std::vector<T>    | Vector of the fractional x transverse momentum.                          |
+| xp              | std::vector<T>    | Vector of the fractional x transverse momentum                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| yp              | std::vector<T>    | Vector of the fractional y transverse momentum.                          |
+| yp              | std::vector<T>    | Vector of the fractional y transverse momentum                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| zp              | std::vector<T>    | Vector of the fractional forward momentum.                               |
+| zp              | std::vector<T>    | Vector of the fractional forward momentum                                |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| T               | std::vector<T>    | Vector of the time of flight of the particle (ns).                       |
+| T               | std::vector<T>    | Vector of the time-of-flight of the particle (ns)                        |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| weight          | std::vector<T>    | Vector of the associated weights of the hits.                            |
+| weight          | std::vector<T>    | Vector of the associated weights of the hits                             |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| partID          | std::vector<int>  | Vector of the PDG ID for the particle of each hit.                       |
+| partID          | std::vector<int>  | Vector of the PDG ID for the particle of each hit                        |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| parentID        | std::vector<int>  | Vector of the trackID of the progenitor of the particle that hit.        |
+| parentID        | std::vector<int>  | Vector of the trackID of the progenitor of the particle that hit         |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| trackID         | std::vector<int>  | Vector of the trackID of the particle that hit.                          |
+| trackID         | std::vector<int>  | Vector of the trackID of the particle that hit                           |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| modelID         | int               | The index to the BDSIM model of which element the sampler belonged to.   |
+| modelID         | int               | The index to the BDSIM model of which element the sampler belonged to    |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| turnNumber      | std::vector<int>  | Vector of the turn number of the particle that hit.                      |
+| turnNumber      | std::vector<int>  | Vector of the turn number of the particle that hit                       |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| S               | T                 | S position of the sampler (m).                                           |
+| S               | T                 | S-position of the sampler (m)                                            |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| charge (*)      | std::vector<int>  | Vector of the PDG charge of the particle for each hit.                   |
+| charge (*)      | std::vector<int>  | Vector of the PDG charge of the particle for each hit                    |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| mass (*)        | std::vector<T>    | Vector of the PDG mass of the particle for each hit (GeV).               |
+| mass (*)        | std::vector<T>    | Vector of the PDG mass of the particle for each hit (GeV)                |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| rigidity (*)    | std::vector<T>    | Vector of the rigidity of the particle for each hit (Tm).                |
+| rigidity (*)    | std::vector<T>    | Vector of the rigidity of the particle for each hit (Tm)                 |
 +-----------------+-------------------+--------------------------------------------------------------------------+
-| isIon (*)       | std::vector<bool> | Vector of whether the particle is an ion or not.                         |
+| isIon (*)       | std::vector<bool> | Vector of whether the particle is an ion or not                          |
 +-----------------+-------------------+--------------------------------------------------------------------------+
 | ionA (*)        | std::vector<int>  | Vector of the atomic mass number. 0 for non-nuclei.                      |
 +-----------------+-------------------+--------------------------------------------------------------------------+
@@ -725,14 +726,13 @@ increases the output file size by 2x.
 	  parameters are desired, please use the appropriate options to turn their storage on.
 	  See :ref:`bdsim-options-output` for more details.
 
-.. warning:: A common issue is apparently half of the particles missing in the first sampler in
+.. warning:: A common issue is that apparently half of the particles missing in the first sampler in
 	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch
-	     distribution with a finite z width is used, approximately half of the particles will
+	     distribution with a finite z-width is used, approximately half of the particles will
 	     start in front of the sampler, never pass through it and never be registered. For this
-	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
-	     confusion. The primary output records
-	     all primary coordinates before they enter the tracking in the geometry, so it always
-	     contains all primary particles.
+	     reason, one should refrain from putting a sampler at the beginning of a beam line to avoid
+	     confusion. The primary output records all primary coordinates before they enter the tracking
+	     in the geometry, so it always contains all primary particles.
 
 
 BDSOutputROOTEventHistograms
@@ -743,11 +743,11 @@ This class contains the following data:
 +-----------------+---------------------+-------------------------------------------------------+
 |  **Variable**   | **Type**            |  **Description**                                      |
 +=================+=====================+=======================================================+
-| histograms1D    | std::vector<TH1D*>  | Vector of 1D histograms stored in the simulation.     |
+| histograms1D    | std::vector<TH1D*>  | Vector of 1D histograms stored in the simulation      |
 +-----------------+---------------------+-------------------------------------------------------+
-| histograms2D    | std::vector<TH2D*>  | Vector of 2D histograms stored in the simulation.     |
+| histograms2D    | std::vector<TH2D*>  | Vector of 2D histograms stored in the simulation      |
 +-----------------+---------------------+-------------------------------------------------------+
-| histograms3D    | std::vector<TH3D*>  | Vector of 3D histograms stored in the simulation.     |
+| histograms3D    | std::vector<TH3D*>  | Vector of 3D histograms stored in the simulation      |
 +-----------------+---------------------+-------------------------------------------------------+
 
 These are histograms stored for each event. BDSIM produces six histograms by default during the
@@ -756,31 +756,31 @@ simulation. These are:
 +-------------+-----------------------------------------+-----------------------+
 | **Number**  | **Description**                         | **Location**          |
 +=============+=========================================+=======================+
-| 1           | Primary hits.                           | `histograms1D[0]`     |
+| 1           | Primary hits                            | `histograms1D[0]`     |
 +-------------+-----------------------------------------+-----------------------+
-| 2           | Primary loss.                           | `histograms1D[1]`     |
+| 2           | Primary loss                            | `histograms1D[1]`     |
 +-------------+-----------------------------------------+-----------------------+
 | 3           | Energy loss (GeV)                       | `histograms1D[2]`     |
 +-------------+-----------------------------------------+-----------------------+
-| 4           | Primary hits per element binning.       | `histograms1D[3]`     |
+| 4           | Primary hits per element binning        | `histograms1D[3]`     |
 +-------------+-----------------------------------------+-----------------------+
-| 5           | Primary loss per element binning.       | `histograms1D[4]`     |
+| 5           | Primary loss per element binning        | `histograms1D[4]`     |
 +-------------+-----------------------------------------+-----------------------+
-| 6           | Energy loss (GeV) per element binning.  | `histograms1D[5]`     |
+| 6           | Energy loss (GeV) per element binning   | `histograms1D[5]`     |
 +-------------+-----------------------------------------+-----------------------+
 
 If the tunnel is constructed in the simulation, two more histograms for energy loss
 and energy loss per tunnel element are also constructed.
 
 +-------------+-----------------------------------------+-----------------------+
-| 7           | Energy loss (GeV) in tunnel.            | `histograms1D[6]`     |
+| 7           | Energy loss (GeV) in tunnel             | `histograms1D[6]`     |
 +-------------+-----------------------------------------+-----------------------+
 | 8           | Energy loss (GeV) in tunnel per element | `histograms1D[5]`     |
-|             | binning.                                |                       |
+|             | binning                                 |                       |
 +-------------+-----------------------------------------+-----------------------+
 
-.. note:: The per element histograms are integrated across the length of each element so they
-	  will have a different bin widths.
+.. note:: The per-element histograms are integrated across the length of each element so they
+	  will have a different bin width.
 
 The energy loss histograms are evenly binned according to the option :code:`elossHistoBinWidth` (in metres).
 
@@ -804,15 +804,15 @@ While in the ROOT interpreter, enter the following command to 'construct' a TBro
 	    :width: 100%
 	    :align: center
 
-Double click the file and then the 'Trees' (small folders with green leaf on them)
-to explore the hierarchy of the file. Eventually, individual variables can be double-clicked-on
+Double-click the file and then the 'Trees' (small folders with green leaf on them)
+to explore the hierarchy of the file. Eventually, individual variables can be double-clicked on
 to give a preview histogram on-the-fly that is a histogram of all entries in the Tree (i.e.
-all events in the Event Tree). If the variable is a vector each item in the vector is
+all events in the Event Tree). If the variable is a vector, each item in the vector is
 entered ('filled') into the histogram.
 
 .. figure:: figures/root-tbrowser.png
 	    :width: 100%
 	    :align: center
 
-.. note:: If a file is open in ROOT in a TBrowser but has been overwritten externally it will
+.. note:: If a file is open in ROOT in a TBrowser but has been overwritten externally, it will
 	  not show the correct contents - close the TBrowser and ROOT and reopen it.
