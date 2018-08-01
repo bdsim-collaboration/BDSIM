@@ -278,6 +278,13 @@ class Globals:
                                           'T'  : [-1.0e-12, 0, 1.0e-12],
                                           'PT' : [0, 1.0e-2]}
 
+        self.BeamPhaseSpaceReference = {'X'  : 0,
+                                        'PX' : 0,
+                                        'Y'  : 0,
+                                        'PY' : 0,
+                                        'T'  : 0,
+                                        'PT' : 0}
+
         # integrator (mainly for use with field maps)
         self.Integrators = {'g4cashkarprkf45'       : {'Field': 'EM', 'Dim': 4},
                             'g4classicalrk4'        : {'Field': 'EM', 'Dim': 4},
@@ -329,6 +336,8 @@ class Globals:
         self.ReturnsAndErrors.Add('NAN_CHORD',          9, 'y', 'G4ChordFinder::FindNextChord()', True)
 
         self.timeout = 300  # timeout in seconds
+
+        self.multiEntryTypes = [tuple, list, _np.ndarray]
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
