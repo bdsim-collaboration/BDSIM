@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORKICKERTHIN_H
 
 #include "BDSIntegratorMag.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 
 #include "globals.hh"
 
@@ -42,7 +43,9 @@ class BDSIntegratorKickerThin: public BDSIntegratorMag
 public:
   BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 			  G4double                 brhoIn,
-			  G4Mag_EqRhs*             eqOfMIn);
+			  G4Mag_EqRhs*             eqOfMIn,
+			  G4double                 minimumRadiusOfCurvatureIn,
+			  const G4double&          tiltIn);
   
   virtual ~BDSIntegratorKickerThin(){;}
 
@@ -61,6 +64,9 @@ public:
                        G4ThreeVector&       localPosOut,
                        G4ThreeVector&       localMomOut) const;
 
+  /// Separate fringe field integrators for entrance and exit fringes
+  BDSIntegratorDipoleFringe* fringeIntEntr;
+  BDSIntegratorDipoleFringe* fringeIntExit;
 
 private:
   /// Private default constructor to enforce use of supplied constructor
@@ -71,6 +77,10 @@ private:
   const G4double vkick;
   const G4double brho;
   /// @}
+
+  /// Cache of tilt and if tilt is finite
+  const G4double tilt;
+  const G4bool   finiteTilt;
 
   /// Cache of whether input parameters are 0 and therefore whether to kick at all.
   G4bool zeroStrength;

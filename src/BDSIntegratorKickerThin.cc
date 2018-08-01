@@ -28,13 +28,28 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 						 G4double                 brhoIn,
-						 G4Mag_EqRhs*             eqOfMIn):
+						 G4Mag_EqRhs*             eqOfMIn,
+                         G4double                 minimumRadiusOfCurvatureIn,
+                         const G4double&          tiltIn):
   BDSIntegratorMag(eqOfMIn, 6),
   hkick((*strength)["hkick"]),
   vkick((*strength)["vkick"]),
-  brho(brhoIn)
+  brho(brhoIn),
+  tilt(tiltIn),
+  finiteTilt(BDS::IsFinite(tiltIn))
 {
   zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
+
+  // duplicate magnetstrength for fringe field integrators as all its physical parameters are set for the magnet
+  // as a whole, including fringes. Only isentrance bool determines if the object is for an entrance or exit
+  // fringe, therefore it is changed for the exit integrator (as BDSIntegratorDipoleFringe members are set upon
+  // instantiation according to isentrance).
+  BDSMagnetStrength* fringeStEntr = new BDSMagnetStrength(*strength);
+  BDSMagnetStrength* fringeStExit = new BDSMagnetStrength(*strength);
+  (*fringeStExit)["isentrance"] = false;
+  // tilt is zero as only onestep function in local coords will be called in this integrator
+  fringeIntEntr = new BDSIntegratorDipoleFringe(fringeStEntr, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
+  fringeIntExit = new BDSIntegratorDipoleFringe(fringeStExit, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
 }
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
