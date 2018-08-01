@@ -71,8 +71,18 @@ public:
   /// Method to identify which one is a primary. Overridden in derived class.
   virtual G4bool IsPrimary() const {return false;}
 
+  void  SetTrajIndex(G4int trajIndex) {fTrajIndex = trajIndex;}
+  G4int GetTrajIndex() {return fTrajIndex;}
+
   void  SetParentIndex(G4int parentIndex)  {fParentIndex = parentIndex;}
-  G4int GetParentIndex()               const {return fParentIndex;}
+  G4int GetParentIndex() const {return fParentIndex;}
+
+  void  SetParentStepIndex(G4int parentStepIndex)  {fParentStepIndex = parentStepIndex;}
+  G4int GetParentStepIndex() const {return fParentStepIndex;}
+
+  void  SetParent(BDSTrajectory* parent)   {fParent = parent;}
+  BDSTrajectory* GetParent()      const {return fParent;}
+
   G4int GetCreatorProcessType()    const {return creatorProcessType;}
   G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
 
@@ -82,8 +92,8 @@ public:
   /// Find the first point in a trajectory where the post step process isn't fTransportation
   /// AND the post step process isn't fGeneral in combination with the post step process subtype
   /// isn't step_limiter.
-  BDSTrajectoryPoint* FirstInteraction()const;
-  BDSTrajectoryPoint* LastInteraction() const;
+  BDSTrajectoryPoint* FirstInteraction() const;
+  BDSTrajectoryPoint* LastInteraction()  const;
 
 protected:
   G4int          creatorProcessType;
@@ -91,7 +101,10 @@ protected:
   G4double       weight;
   G4bool         interactive;
   const G4bool   trajNoTransportation; ///< Cache of option from global constants.
+  BDSTrajectory* fParent;
+  G4int          fTrajIndex;
   G4int          fParentIndex;
+  G4int          fParentStepIndex;
 
   /// Container of all points. This is really a vector so all memory is dynamically
   /// allocated and there's no need to make this dynamically allocated itself a la
