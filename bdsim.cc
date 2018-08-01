@@ -179,7 +179,6 @@ int main(int argc,char** argv)
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
-      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
       const G4int printModulo = globalConstants->PrintModuloEvents();
       bdsBunch->BeginOfRunAction(nToGenerate);
@@ -187,8 +186,9 @@ int main(int argc,char** argv)
       {
 	if (i%printModulo == 0)
 	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+        auto coords = bdsBunch->GetNextParticle();
+	bdsOutput->FillEventPrimaryOnly(coords);
+        //bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
       }
       bdsOutput->CloseFile();
       delete bdsBunch;
