@@ -65,9 +65,7 @@ public:
 
   /// Either draw from the vector of already created points or fire fresh
   /// from the matrix.
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
   
 protected:
   /// Create multidimensional Gaussian random number generator
@@ -80,9 +78,7 @@ protected:
   void PreGenerateEvents(G4int nGenerate);
 
   /// Fire random number generator and get coordinates. Can be overloaded if required.
-  virtual void GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
-				     G4double& xp, G4double& yp, G4double& zp,
-				     G4double& t , G4double&  E, G4double& weight);
+  virtual BDSParticleCoordsFull GetNextParticleLocalCoords();
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
