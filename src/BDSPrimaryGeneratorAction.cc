@@ -190,12 +190,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords));
   
 #ifdef BDSDEBUG
-  G4cout
-    << "BDSPrimaryGeneratorAction: " << G4endl
-    << "  position= " << particleGun->GetParticlePosition()/CLHEP::m<<" m"<<G4endl
-    << "  total energy= " << coords.local.totalEnergy/CLHEP::GeV << " GeV" << G4endl
-    << "  kinetic energy= " << EK/CLHEP::GeV << " GeV" << G4endl
-    << "  momentum direction= " << PartMomDir << G4endl
-    << "  weight= " << anEvent->GetPrimaryVertex()->GetWeight() << G4endl;
+  G4cout << __METHOD_NAME__ << G4endl;
+  vertex->Print();
 #endif
 }
