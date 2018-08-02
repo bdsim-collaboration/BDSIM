@@ -187,7 +187,11 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (info)
     {FillEventInfo(info);}
   if (vertex)
-    {FillPrimary(vertex, info->GetInfo()->index, turnsTaken);}
+    {
+      if (info)
+	{FillPrimary(vertex, info->GetInfo()->index, turnsTaken);}
+      else
+	{FillPrimary(vertex, 0, turnsTaken);}
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
   if (samplerHitsCylinder)
