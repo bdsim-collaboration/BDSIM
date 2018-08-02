@@ -99,6 +99,11 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using curvilinear transform" << G4endl;
 #endif
+      if (BDS::IsFinite(Z0))
+	{
+	  G4cerr << __METHOD_NAME__ << "both Z0 and S0 are defined - please define only one!" << G4endl;
+	  exit(1);
+	}
       useCurvilinear = true;
     } 
 }
