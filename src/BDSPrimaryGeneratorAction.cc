@@ -72,11 +72,11 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  // Load seed state if recreating.
+  // load seed state if recreating.
   if (recreate)
     {BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));}
   
-  // Save the seed state in a file to recover potentially unrecoverable events
+  // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
 
@@ -87,7 +87,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       BDSRandom::LoadSeedState(fileName);
     }
 
-  // Always save seed state in output
+  // always save seed state in output
   BDSEventInfo* eventInfo = new BDSEventInfo();
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
@@ -136,7 +136,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   particleGun->SetParticleDefinition(particleDef);
   
-  // Always update the charge - ok for normal particles; fixes purposively specified ions.
+  // always update the charge - ok for normal particles; fixes purposively specified ions.
   particleGun->SetParticleCharge(particleCharge);
   
   // check that kinetic energy is positive and finite anyway and abort if not.
@@ -148,7 +148,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       anEvent->SetEventAborted();
     }
 
-  /// Write initial particle position and momentum
+  // write initial particle position and momentum
   if (writeASCIISeedState)
     {
       std::ofstream ofstr("output.primary.txt");
@@ -158,7 +158,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       ofstr.close();
     }
 
-  /// Check the coordinates are valid
+  // check the coordinates are valid
   if (!worldExtent.Encompasses(coords.global))
     {
       G4cerr << __METHOD_NAME__ << "point: " << coords.global

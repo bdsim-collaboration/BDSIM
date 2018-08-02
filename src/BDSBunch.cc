@@ -137,9 +137,9 @@ void BDSBunch::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
 
 BDSParticleCoordsFullGlobal BDSBunch::ApplyTransform(const BDSParticleCoordsFull& localIn) const
 {
-  if (useCurvilinear) // i.e. S0 is finite
+  if (useCurvilinear) // i.e. S0 is finite - use beam line
     {return ApplyCurvilinearTransform(localIn);}
-  else
+  else // just general beam line offset
     {return BDSParticleCoordsFullGlobal(localIn,(BDSParticleCoords)localIn.ApplyTransform(beamlineTransform));}
 }
 
