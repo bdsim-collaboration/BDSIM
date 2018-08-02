@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -54,7 +55,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 const std::set<G4String> BDSOutput::protectedNames = {
-  "Event", "Histos", "Info", "Primary", "Eloss",
+  "Event", "Histos", "Info", "Primary", "PrimaryGlobal", "Eloss",
   "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit",
   "Trajectory"
 };
