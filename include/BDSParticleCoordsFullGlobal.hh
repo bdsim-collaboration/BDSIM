@@ -28,6 +28,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @brief A set of particle coordinates in both local and global.
+ *
+ * The beam line index is an optional index for convenience representing
+ * the index in the beam line
  * 
  * @author Laurie Nevay
  */
