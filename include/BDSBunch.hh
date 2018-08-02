@@ -86,9 +86,13 @@ public:
   /// z0 will be treated as S and the global z0 be calculated.
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   
-protected:  
+protected:
+  /// Apply either the curivilinear transform if we're using curvilinear coordinates or
+  /// just apply the general beam line offset in global coordinates to the 'local'
+  /// curvilinear coordinates.
   BDSParticleCoordsFullGlobal ApplyTransform(const BDSParticleCoordsFull& localIn) const;
 
+  /// Calculate the global coordinates from curvilinear coordinates of a beam line.
   BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
   
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
