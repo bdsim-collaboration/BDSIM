@@ -86,15 +86,6 @@ public:
   explicit BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __ROOTBUILD__
-  void Fill(G4double E,
-            G4double x0, G4double y0, G4double z0,
-            G4double xp, G4double yp, G4double zp,
-            G4double t,
-            G4double weight,
-	    G4int    PDGType,
-	    G4int    nEvent,
-	    G4int    TurnsTaken,
-            G4int beamlineIndex);
   void Fill(const BDSSamplerHit* hit);
   void Fill(const BDSParticleCoordsFull& coords,
 	    const G4int pdgID,

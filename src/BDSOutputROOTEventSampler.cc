@@ -52,40 +52,6 @@ template
 
 #ifndef __ROOTBUILD__
 template <class U>
-void BDSOutputROOTEventSampler<U>::Fill(G4double E,
-					G4double xIn,
-					G4double yIn,
-					G4double zIn,
-					G4double xpIn,
-					G4double ypIn,
-					G4double zpIn,
-					G4double globalTimeIn,
-					G4double weightIn,
-					G4int    partIDIn,
-					G4int    /*nEvent*/,
-					G4int    TurnsTaken,
-					G4int    beamlineIndex)
-{
-  n++;
-  z = (U) (zIn / CLHEP::m);
-  S = (U) (0 / CLHEP::m);
-
-  energy.push_back((U &&) (E / CLHEP::GeV));
-  x.push_back((U &&) (xIn / CLHEP::m));
-  y.push_back((U &&) (yIn / CLHEP::m));
-
-  xp.push_back((U &&) (xpIn / CLHEP::radian));
-  yp.push_back((U &&) (ypIn / CLHEP::radian));
-  zp.push_back((U &&) (zpIn / CLHEP::radian));
-  T.push_back((U &&) (globalTimeIn / CLHEP::ns));
-  weight.push_back((const U &) weightIn);
-  partID.push_back(partIDIn);
-  parentID.push_back(0);
-  turnNumber.push_back(TurnsTaken);
-  modelID = beamlineIndex;
-}
-
-template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
 {
   // get single values
