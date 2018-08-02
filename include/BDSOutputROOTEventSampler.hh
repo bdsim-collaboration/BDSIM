@@ -26,6 +26,7 @@ class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__ 
 #include "globals.hh"
+class BDSParticleCoordsFull;
 class BDSSamplerHit;
 #endif
 
@@ -95,6 +96,10 @@ public:
 	    G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(const BDSSamplerHit* hit);
+  void Fill(const BDSParticleCoordsFull& coords,
+	    const G4int pdgID,
+	    const G4int turnsTaken,
+	    const G4int beamlineIndex);
 #endif
 
   /// @{ Calculate and fill calculated variables.

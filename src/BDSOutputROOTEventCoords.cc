@@ -18,7 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSOutputROOTEventCoords.hh"
 
-#include <ctime>
+#ifndef __ROOTBUILD__
+#include "BDSParticleCoords.hh"
+#endif
 
 ClassImp(BDSOutputROOTEventCoords)
 
@@ -45,3 +47,16 @@ void BDSOutputROOTEventCoords::Flush()
   zp = 0;
   t  = 0;
 }
+
+#ifndef __ROOTBUILD__
+void BDSOutputROOTEventCoords::Fill(const BDSParticleCoords& coords)
+{
+  x  = coords.x  / CLHEP::m;
+  y  = coords.y  / CLHEP::m;
+  z  = coords.z  / CLHEP::m;
+  xp = coords.xp / CLHEP::rad;
+  yp = coords.yp / CLHEP::rad;
+  zp = coords.zp / CLHEP::rad;
+  t  = coords.t  / CLHEP::ns; // to match sampler data
+}
+#endif

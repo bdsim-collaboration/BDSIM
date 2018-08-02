@@ -110,6 +110,30 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
   trackID.push_back(hit->GetTrackID());
   turnNumber.push_back(hit->GetTurnsTaken());
 }
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
+					const G4int pdgID,
+					const G4int turnsTaken,
+					const G4int beamlineIndex)
+{
+  n++;
+  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
+  x.push_back((U &&)  (coords.x  / CLHEP::m));
+  y.push_back((U &&)  (coords.y  / CLHEP::m));
+  z = (U) (coords.z / CLHEP::m);
+  xp.push_back((U &&) (coords.xp / CLHEP::radian));
+  yp.push_back((U &&) (coords.yp / CLHEP::radian));
+  zp.push_back((U &&) (coords.zp / CLHEP::radian));
+  T.push_back((U &&) (coords.t / CLHEP::ns));
+  weight.push_back((const U &) coords.weight);
+  partID.push_back(pdgID);
+  parentID.push_back(0);
+  modelID = beamlineIndex;
+  turnNumber.push_back(turnsTaken);
+  S = (U) (coords.s / CLHEP::GeV);
+}
+
 //#else
 //void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
 //{}

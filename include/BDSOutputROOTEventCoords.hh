@@ -22,6 +22,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TROOT.h"
 #include "TObject.h"
 
+#ifndef __ROOTBUILD__
+#include "BDSParticleCoords.hh"
+#endif
+
 /**
  * @brief A set of coordinates.
  *
@@ -43,6 +47,10 @@ public:
   double yp;
   double zp;
   double t;
+
+#ifndef __ROOTBUILD__
+  void Fill(const BDSParticleCoords& coords);
+#endif
 
   ClassDef(BDSOutputROOTEventCoords,1);
 };
