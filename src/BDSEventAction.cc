@@ -321,7 +321,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	for(G4int i=0;i<n_hit;i++)
 	  {
 	    hit = (*energyCounterHits)[i];
-	    G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
+	    // G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
 	    double dS = hit->GetSHit();
 	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
 	      {		
@@ -342,7 +342,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  {
 	    G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
 	    BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
-	    G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
+	    // G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
 	    if(std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(),samplerIndex) != samplerIDsToStore.end())
 	      {
 		interestingTraj[trackIDMap[(*SampHC)[i]->GetTrackID()]] = true;
