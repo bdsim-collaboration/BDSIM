@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParticle.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
+#include "BDSPrimaryVertexInformation.hh"
 #include "BDSRandom.hh"
 
 #include "CLHEP/Random/Random.h"

@@ -24,8 +24,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerHit.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 #endif
 
 templateClassImp(BDSOutputROOTEventSampler)
