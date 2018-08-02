@@ -180,8 +180,11 @@ void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &tr
     
     // geant4 trackID to trackIndex in this table
     trackID_trackIndex.insert(std::pair<int,int>(traj->GetTrackID(),n));
+
+    // this->printTrajectoryInfo(n);
     n++;
   }
+
 
   /////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////
@@ -353,7 +356,7 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 
 void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
-  int wdt = 8;
+  int wdt = 11;
 
   std::cout << std::setw(wdt) << "trIx"      << " " << std::setw(wdt) << "trkId"    << " "
             << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
