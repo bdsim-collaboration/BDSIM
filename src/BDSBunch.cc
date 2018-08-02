@@ -159,9 +159,11 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
     }
   
   // 'c' for curvilinear
+  G4int beamlineIndex = 0;
   G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S0*CLHEP::m + localIn.z,
 							       localIn.x,
-							       localIn.y);
+							       localIn.y,
+							       &beamlineIndex);
   // rotate the momentum vector
   G4ThreeVector cMom = G4ThreeVector(localIn.xp, localIn.yp, localIn.zp).transform(cTrans.getRotation());
   // translation contains displacement from origin already
@@ -172,6 +174,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
 					       localIn.t);
 
   BDSParticleCoordsFullGlobal result = BDSParticleCoordsFullGlobal(localIn, global);
+  result.beamlineIndex = beamlineIndex;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << result << G4endl;
 #endif

@@ -24,13 +24,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSParticleCoordsFullGlobal::BDSParticleCoordsFullGlobal():
   local(BDSParticleCoordsFull()),
-  global(BDSParticleCoords())
+  global(BDSParticleCoords()),
+  beamlineIndex(0)
 {;}
 
 BDSParticleCoordsFullGlobal::BDSParticleCoordsFullGlobal(const BDSParticleCoordsFull& localIn,
 							 const BDSParticleCoords&     globalIn):
   local(localIn),
-  global(globalIn)
+  global(globalIn),
+  beamlineIndex(0)
 {;}
 
 std::ostream& operator<< (std::ostream& out, BDSParticleCoordsFullGlobal const& p)

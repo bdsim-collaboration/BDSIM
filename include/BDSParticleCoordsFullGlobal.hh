@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSPARTICLECOORDSFULLGLOBAL_H 
 
 #include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
 
 #include "G4Types.hh"
 
@@ -44,6 +45,7 @@ public:
   
   BDSParticleCoordsFull local;
   BDSParticleCoords     global;
+  G4int                 beamlineIndex; ///< Optional index for where transform was found.
 };
 
 #endif
