@@ -181,11 +181,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   particleGun->GeneratePrimaryVertex(anEvent);
 
-  //Set the weight
-#ifdef BDSDEBUG
-  G4cout << "BDSPrimaryGeneratorAction: setting weight = " << weight << G4endl;
-#endif
-  anEvent->GetPrimaryVertex()->SetWeight(coords.local.weight);
+  // set the weight
+  auto vertex = anEvent->GetPrimaryVertex();
+  vertex->SetWeight(coords.local.weight);
+
+  // associate full set of coordinates with vertex for writing to output after event
+  vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords));
   
 #ifdef BDSDEBUG
   G4cout
