@@ -81,11 +81,11 @@ void BDSBunchEShell::CheckParameters()
 
 BDSParticleCoordsFull BDSBunchEShell::GetNextParticleLocal()
 {
+  G4double phi   = 2 * CLHEP::pi * flatGen->shoot();
   G4double xamp  = 0.5 - flatGen->shoot();
   G4double yamp  = 0.5 - flatGen->shoot();
   G4double xpamp = 0.5 - flatGen->shoot();
   G4double ypamp = 0.5 - flatGen->shoot();
-  G4double phi   = 2 * CLHEP::pi * flatGen->shoot();
   
   G4double x  = X0  + (std::sin(phi) * shellX)  + xamp  * shellXWidth * CLHEP::m;
   G4double xp = Xp0 + (std::cos(phi) * shellXp) + xpamp * shellXpWidth;
