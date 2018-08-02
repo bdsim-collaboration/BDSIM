@@ -69,7 +69,7 @@ void BDSBunchCircle::CheckParameters()
 
 BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
 {
-  G4double t     = T0 - envelopeT * CLHEP::s * (1.-2.*flatGen->shoot());
+  G4double t     = T0 - envelopeT * (1.-2.*flatGen->shoot());
   G4double z0    = Z0 + t * CLHEP::c_light;
   G4double phiR  = flatGen->shoot() * CLHEP::twopi;
   G4double phiRp = flatGen->shoot() * CLHEP::twopi;
