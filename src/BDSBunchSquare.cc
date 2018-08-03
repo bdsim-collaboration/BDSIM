@@ -83,7 +83,7 @@ BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
   G4double t  = T0 + dt;
   G4double dz = dt * CLHEP::c_light;
   G4double z  = Z0 + dz;
-  G4double E  = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
+  G4double E  = E0 + envelopeE * (1 - 2*flatGen->shoot());
   
   return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }
