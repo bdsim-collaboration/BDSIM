@@ -51,7 +51,7 @@ void BDSBunchCircle::SetOptions(const BDSParticleDefinition* beamParticle,
   envelopeR  = beam.envelopeR  * CLHEP::m; 
   envelopeRp = beam.envelopeRp * CLHEP::rad;
   envelopeT  = beam.envelopeT  * CLHEP::s;
-  envelopeE  = beam.envelopeE; 
+  envelopeE  = beam.envelopeE  * CLHEP::GeV; 
 }
 
 void BDSBunchCircle::CheckParameters()
@@ -84,7 +84,7 @@ BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
   G4double xp = Xp0 + std::cos(phiRp) * rp;
   G4double yp = Yp0 + std::sin(phiRp) * rp; 
   G4double zp = CalculateZp(xp,yp,Zp0);
-  G4double E  = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
+  G4double E  = E0 + envelopeE * (1-2*flatGen->shoot());
   
   return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0-dz,E,/*weight=*/1.0);
 }
