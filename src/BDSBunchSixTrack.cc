@@ -68,7 +68,7 @@ BDSParticleCoordsFull BDSBunchSixTrack::GetNextParticleLocal()
       iPart=0;
       G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
     }
-  return BDSParticleCoordsFull(x,y,0,xp,yp,zp,T0,s,E,/*weight=*/1.0);
+  return BDSParticleCoordsFull(x,y,s,xp,yp,zp,T0,s,E,/*weight=*/1.0);
 }
 
 void BDSBunchSixTrack::LoadSixTrackFile()
