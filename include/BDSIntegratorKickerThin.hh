@@ -44,8 +44,7 @@ public:
   BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 			  G4double                 brhoIn,
 			  G4Mag_EqRhs*             eqOfMIn,
-			  G4double                 minimumRadiusOfCurvatureIn,
-			  const G4double&          tiltIn);
+			  G4double                 minimumRadiusOfCurvatureIn);
   
   virtual ~BDSIntegratorKickerThin(){;}
 
@@ -78,9 +77,6 @@ private:
   const G4double brho;
   /// @}
 
-  /// Cache of tilt and if tilt is finite
-  const G4double tilt;
-  const G4bool   finiteTilt;
 
   /// Cache of whether input parameters are 0 and therefore whether to kick at all.
   G4bool zeroStrength;

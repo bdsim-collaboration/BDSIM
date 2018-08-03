@@ -62,6 +62,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -578,6 +579,7 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 {
+  const G4String baseName       = elementName;
   BDSMagnetStrength* st         = new BDSMagnetStrength();
   SetBeta0(st);
   BDSFieldType       fieldType  = BDSFieldType::dipole3d;
@@ -589,7 +591,37 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   GetKickValue(hkick, vkick, type);
   (*st)["hkick"] = scaling * hkick;
   (*st)["vkick"] = scaling * vkick;
-  
+
+  // create fringe magnet strengths. Copies supplied stength object so it should contain all
+  // the kicker strength information as well as the added fringe information
+  BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element,
+                                                               st,
+                                                               0,
+                                                               element->e1,
+                                                               element->e2,
+                                                               element->fintx,
+                                                               true);
+  BDSMagnetStrength* fringeStOut = new BDSMagnetStrength(*fringeStIn);
+  (*fringeStOut)["isentrance"] = false;
+
+  // check if the fringe effect is finite
+  G4bool finiteEntrFringe = false;
+  G4bool finiteExitFringe = false;
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) or
+          BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
+    {finiteEntrFringe = true;}
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) or
+        BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
+    {finiteExitFringe = true;}
+
+  // only build the fringe elements if the poleface rotation or fringe field correction terms are finite
+  G4bool buildEntranceFringe = false;
+  G4bool buildExitFringe     = false;
+  if (BDS::IsFinite(element->e1) or finiteEntrFringe)
+    {buildEntranceFringe = true;}
+  if (BDS::IsFinite(element->e2) or finiteExitFringe)
+    {buildExitFringe = true;}
+
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
@@ -704,13 +736,56 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
 					  defaultHorizontalWidth, defaultVHRatio, 0.9);
-  
-  return new BDSMagnet(t,
-		       elementName,
-		       chordLength,
-		       bpInf,
-		       magOutInf,
-		       vacuumField);
+
+  if(!HasSufficientMinimumLength(element, false))
+    {
+      // fringe effect applied in integrator so nothing more to do.
+      return new BDSMagnet(t,
+                 baseName,
+                 chordLength,
+                 bpInf,
+                 magOutInf,
+                 vacuumField);
+    }
+  else
+    {
+      BDSLine *kickerLine = new BDSLine(baseName);
+      // subtract fringe length from kicker to preserve element length
+      G4double kickerChordLength = chordLength;
+      if (buildEntranceFringe)
+        {kickerChordLength -= thinElementLength;}
+      if (buildExitFringe)
+        {kickerChordLength -= thinElementLength;}
+
+      if (buildEntranceFringe)
+        {
+          G4String entrFringeName = baseName + "_e1_fringe";
+          BDSMagnet *startfringe = BDS::BuildDipoleFringe(element, 0, 0,
+                                                          entrFringeName,
+                                                          fringeStIn, brho,
+                                                          integratorSet, fieldType);
+          kickerLine->AddComponent(startfringe);
+        }
+
+      BDSMagnet* kicker = new BDSMagnet(t,
+                              baseName,
+                              kickerChordLength,
+                              bpInf,
+                              magOutInf,
+                              vacuumField);
+      kickerLine->AddComponent(kicker);
+
+      if (buildEntranceFringe)
+        {
+          G4String exitFringeName = baseName + "_e2_fringe";
+          BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, 0, 0,
+                                                        exitFringeName,
+                                                        fringeStOut, brho,
+                                                        integratorSet, fieldType);
+          kickerLine->AddComponent(endfringe);
+        }
+      return kickerLine;
+    }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
