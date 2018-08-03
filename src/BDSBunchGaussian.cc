@@ -80,12 +80,14 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 
   offsetSampleMean  = beam.offsetSampleMean;
   iPartIteration    = 0;
-  
-  meansGM[0] = X0;
-  meansGM[1] = Xp0;
-  meansGM[2] = Y0;
-  meansGM[3] = Yp0;
-  meansGM[4] = T0;
+
+  // undo units and redo after the multivariate Gaussian
+  // easier for the Gauss classes where we have sigma^2 in places
+  meansGM[0] = X0  / CLHEP::m;
+  meansGM[1] = Xp0 / CLHEP::rad;
+  meansGM[2] = Y0  / CLHEP::m;
+  meansGM[3] = Yp0 / CLHEP::rad;
+  meansGM[4] = T0  / CLHEP::s;
   meansGM[5] = 1;
 }
 
@@ -255,20 +257,27 @@ BDSParticleCoordsFull BDSBunchGaussian::GetNextParticleLocal()
 BDSParticleCoordsFull BDSBunchGaussian::GetNextParticleLocalCoords()
 {
   CLHEP::HepVector v = gaussMultiGen->fire();
-  G4double x  = v[0];
-  G4double xp = v[1];
-  G4double y  = v[2];
-  G4double yp = v[3];
+  // unlike other bunch distributions reintroduce units (taken out in set options)
+  G4double x  = v[0] * CLHEP::m;
+  G4double xp = v[1] * CLHEP::rad;
+  G4double y  = v[2] * CLHEP::m;
+  G4double yp = v[3] * CLHEP::rad;
   G4double t  = T0;
   if (finiteSigmaT)
     {t = v[4];}
+  t *= CLHEP::s;
   G4double zp = CalculateZp(xp,yp,Zp0);
   G4double z  = Z0;
+  G4double dz = 0;
   if (finiteSigmaT)
-    {z += t * CLHEP::c_light;}  
-  G4double E  = E0;
+    {
+      dz = t * CLHEP::c_light;
+      z += dz;
+    }
+  G4double E  = E0; // exceptionally left in G4 units
   if (finiteSigmaE)
     {E *= v[5];} // only if there's a finite energy spread
+  // cov-matrix is E_bar(1), with sigma fractional - so no units here
   
-  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0,E,/*weight=*/1.0);
+  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }

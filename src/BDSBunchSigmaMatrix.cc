@@ -28,8 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 #include "CLHEP/Units/PhysicalConstants.h"
 
-BDSBunchSigmaMatrix::BDSBunchSigmaMatrix(): 
-  BDSBunchGaussian()
+BDSBunchSigmaMatrix::BDSBunchSigmaMatrix()
 {;}
 
 void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
