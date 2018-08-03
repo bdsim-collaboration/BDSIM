@@ -3,6 +3,7 @@ import os as _os
 import time as _time
 import collections
 import Globals
+import _General
 import pickle
 import string as _string
 from matplotlib import colors as _color
@@ -11,8 +12,6 @@ import matplotlib.pyplot as _plt
 import matplotlib.patches as _patches
 import matplotlib.backends.backend_pdf as _bkpdf
 
-# data type with multiple entries that can be handled by the functions.
-multiEntryTypes = [tuple, list, _np.ndarray]
 
 GlobalData = Globals.Globals()
 
@@ -179,192 +178,6 @@ class ResultsUtilities:
         self.DipoleResults = {}  # seperate results dict for dipoles.
         self.TimingData = Timing()  # timing data.
 
-    def _getPhaseSpaceComparatorData(self, result, logFile=''):
-        """ A function to get the comparator results for all 6 dimensions.
-
-            result :  an entry from the Results object which respresents a single test.
-
-            logfile :  string
-                The filename and path of the comparator log file for the result.
-            """
-        # phasespace coords initialised as passed.
-        coords = _np.zeros(7)
-
-        # return all true if comparator returned passed
-        code = result['code']
-        if code == 0:
-            return coords
-        elif code == 2:  # incorrect args
-            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
-            return coords
-        elif code == 3:  # file not found
-            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
-            return coords
-        elif code == 6:  # Timeout
-            coords[:] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
-            return coords
-
-        # get data in logfile.
-        f = open(logFile)
-        lines = f.read()
-        f.close()
-
-        # get data on number particles comparison. If the numbers are not equal,
-        # set the phase space coords to no data, and number of particle compared to failed.
-        numParticlesIndex = lines.find('Event Tree (1/2) entries')
-        if numParticlesIndex != -1:
-            offendingSamplerBranchesLine = lines[numParticlesIndex:].split('\n')[0]
-            branches = offendingSamplerBranchesLine.replace('Event Tree (1/2) entries ', '')
-            branches = branches.replace('(', '')
-            branches = branches.replace(')', '')
-            numParticles = branches.split('/')
-            if numParticles[0] != numParticles[1]:
-                coords[6] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-                coords[0:6] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
-                # if num particles don't match, there'll be no phase space comparison
-                return coords
-
-        # get data on phase space branches that failed. Log file only contains failed branches.
-        phasespaceIndex = lines.find('type Sampler')
-        if phasespaceIndex != -1:
-            offendingSamplerBranchesLine = lines[phasespaceIndex:].split('\n')[1]
-            branches = offendingSamplerBranchesLine.split(' ')
-            branches.remove('Offending')
-            branches.remove('branches:')
-            branches.remove('')
-            if branches.__contains__('x'):
-                coords[0] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('xp'):
-                coords[1] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('y'):
-                coords[2] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('yp'):
-                coords[3] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('t'):
-                coords[4] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('zp'):
-                coords[5] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-            if branches.__contains__('n'):
-                coords[6] = GlobalData.ReturnsAndErrors.GetCode('FAILED')
-                coords[0:6] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
-        return coords
-
-    def _getBDSIMLogData(self, result):
-        """ A function to recognise errors and warnings in the printout when
-            running BDSIM .
-
-            result :  an entry from the Results object which respresents a single test.
-            """
-        generalStatus = []
-
-        # append comparator check
-        if result['code'] == 0:
-            generalStatus.append(0)
-        elif result['code'] == 1:
-            generalStatus.append(1)
-        elif result['code'] == 2:
-            generalStatus.append(2)
-        elif result['code'] == 3:
-            generalStatus.append(3)
-        elif result['code'] == 6:
-            generalStatus.append(6)
-
-        # get data in logfile.
-        f = open(result['bdsimLogFile'])
-        lines = f.read()
-        f.close()
-
-        splitLines = lines.split('\n')
-
-        # start and endlines. There are two copies of the G4Exception warning/error, however one
-        # has a space at the end.
-        startLines = ['-------- WWWW ------- G4Exception-START -------- WWWW -------',
-                      '-------- WWWW ------- G4Exception-START -------- WWWW ------- ',
-                      '-------- EEEE ------- G4Exception-START -------- EEEE -------',
-                      '-------- EEEE ------- G4Exception-START -------- EEEE ------- ']
-        endLines = ['-------- WWWW -------- G4Exception-END --------- WWWW -------',
-                    '-------- WWWW -------- G4Exception-END --------- WWWW ------- ',
-                    '-------- EEEE -------- G4Exception-END --------- EEEE -------',
-                    '-------- EEEE -------- G4Exception-END --------- EEEE ------- ']
-
-        # indices of start and end of geant4 exceptions and warnings.
-        startLineIndices = [i for i, x in enumerate(splitLines) if startLines.__contains__(x)]
-        endLineIndices = [i for i, x in enumerate(splitLines) if endLines.__contains__(x)]
-        endLineIndices.sort()  # sort just in case
-
-        if len(startLineIndices) != len(endLineIndices):
-            # something went wrong
-            return generalStatus
-
-        # loop over all soft codes and update general status with error code depending
-        # on which Geant4 class(es) the error was issued by. There are two seperate checks,
-        # one for the whole error line in the file, the other for the Geant4 class that issued
-        # the error in the G4Exception section in the file. The whole error line must be checked
-        # as some Geant4 errors are written out with cerr rather than G4Exception class.
-        softCodes = GlobalData.ReturnsAndErrors.GetSoftCodes()
-        for code in softCodes:
-            issuedBy = GlobalData.ReturnsAndErrors.GetIssuedBy(code)
-
-            if multiEntryTypes.__contains__(type(issuedBy)):
-                for issue in issuedBy:
-                    issueCR = issue + "\r\n"
-                    if splitLines.__contains__(issueCR):
-                        generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
-            else:
-                issueCR = issuedBy + "\r\n"
-                if splitLines.__contains__(issueCR):
-                    generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
-
-            if len(startLineIndices) > 0:
-                for index, startLine in enumerate(startLineIndices):
-                    exceptions = splitLines[startLine:endLineIndices[index] + 1]
-                    issuedLine = exceptions[2]
-
-                    if multiEntryTypes.__contains__(type(issuedBy)):
-                        for issue in issuedBy:
-                            if issuedLine.__contains__(issue):
-                                generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
-                    else:
-                        if issuedLine.__contains__(issuedBy):
-                            generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
-        return generalStatus
-
-    def _getGitCommit(self):
-        """ Function to get the information about which commit BDSIM was built using.
-            """
-        pwd = _os.getcwd()  # keep copy of testing cwd
-        logfile = pwd + '/gitCommit.log'
-        branchfile = pwd + '/gitBranch.log'
-
-        # cd to git repo, output info to log file in testing dir, and cd back
-        _os.chdir(GlobalData._bdsimSource)
-        _os.system("git log -1 > " + logfile)
-        _os.system("git branch | grep  \* > " + branchfile)
-        fetchTime = _time.strftime('%Y-%m-%d %H:%M:%S', _time.localtime(_os.stat('.git/FETCH_HEAD').st_mtime))
-        _os.chdir(pwd)
-
-        # branch info should only be one line of text
-        f = open('gitBranch.log', 'r')
-        branchLine = f.next()
-        f.close()
-        # get branch name
-        branchLine = branchLine.strip('\r')
-        branchLine = branchLine.strip('\n')
-        branch = branchLine.split(' ')[1]
-
-        gitLines = "BDSIM was built from the git repository using the branch " + branch + ".\r\n"
-        gitLines += "Last fetch from remote was at " + fetchTime + ".\r\n"
-        gitLines += "Local repository is at the following commit: \r\n"
-        gitLines += "\r\n"
-
-        # append lines from commit log
-        f = open('gitCommit.log')
-        for line in f:
-            gitLines += (line + '\r\n')
-        _os.remove('gitCommit.log')
-        _os.remove('gitBranch.log')
-        return gitLines
-
     def _getPickledData(self):
         """ Function to get the pickled data files.
             """
@@ -374,28 +187,6 @@ class ResultsUtilities:
             self.DipoleResults = pickle.load(handle)
         with open('timing.pickle', 'rb') as handle:
             self.TimingData = pickle.load(handle)
-
-    def _getCommonFactors(self, results):
-        """ Function to get the common parameter values of a data set.
-            """
-        # Note, this is equivalent to the _getCommonValues funstion in the Results
-        # class, however, here the results are supplied as a argument which doesn't
-        # have to be a Results instance.
-
-        commonFactors = {}
-        globalParams = {}
-        for res in results:
-            for param, value in res['testParams'].iteritems():
-                if not globalParams.keys().__contains__(param):
-                    globalParams[param] = []
-                if not globalParams[param].__contains__(value):
-                    globalParams[param].append(value)
-        for param, value in globalParams.iteritems():
-            if len(value) == 1:
-                commonFactors[param] = value[0]
-            elif len(value) == 2:
-                commonFactors[param] = value
-        return commonFactors
 
     def _processTimingData(self, component):
         bdsimMean = _np.mean(self.TimingData.bdsimTimes[component])
@@ -407,9 +198,9 @@ class ResultsUtilities:
         longTests = Results(component)
         longTests.extend([test for test in self.Results[component] if test['bdsimTime'] > bdsimLimit])
 
-        commonFactors = self._getCommonFactors(longTests)
+        commonFactors = _General.GetCommonFactors(longTests)
 
-        if commonFactors.keys().__len__() > 0:
+        if len(commonFactors.keys()) > 0:
             s = "There were " + _np.str(len(longTests)) + " tests that took longer than " \
                 + _np.str(_np.round(bdsimLimit, 6)) + " s,\r\n"
             s += "these tests had the following common parameters:\r\n"
@@ -443,7 +234,7 @@ class Analysis(ResultsUtilities):
             self.Results[componentType] = Results(componentType)
         if isinstance(results, dict):
             self.Results[componentType].append(results)
-        elif multiEntryTypes.__contains__(type(results)):
+        elif GlobalData.multiEntryTypes.__contains__(type(results)):
             for res in results:
                 self.Results[componentType].append(res)
         self.Results[componentType]._numEntries = len(self.Results[componentType])
@@ -470,14 +261,14 @@ class Analysis(ResultsUtilities):
 
                 generalStatus = testdict['generalStatus']
                 # if failed
-                if (generalStatus is not None) and (not generalStatus.__contains__(0)):
+                if (generalStatus is not None) and (not 0 in generalStatus):
                     numFailed += 1
                     failedFile = testdict['testFile'].split('/')[-1]
                     failedTests.append(failedFile)
                 # check for soft failures
                 for failure in GlobalData.ReturnsAndErrors.GetSoftCodes():
-                    if generalStatus.__contains__(GlobalData.ReturnsAndErrors.GetCode(failure)):
-                        if not softFails.keys().__contains__(failure):
+                    if GlobalData.ReturnsAndErrors.GetCode(failure) in generalStatus:
+                        if not failure in softFails.keys():
                             softFails[failure] = []
                         failedFile = testdict['testFile'].split('/')[-1]
                         softFails[failure].append(failedFile)
@@ -500,7 +291,7 @@ class Analysis(ResultsUtilities):
 
         for failure in GlobalData.ReturnsAndErrors.GetSoftCodes():
             failures = []
-            if softFails.keys().__contains__(failure):
+            if failure in softFails.keys():
                 failures = softFails[failure]
 
             if len(failures) > 0:
@@ -512,7 +303,7 @@ class Analysis(ResultsUtilities):
                     f.write(test + "\r\n")
                 f.write("\r\n")
 
-        f.write(self._getGitCommit())
+        f.write(_General.GetGitCommit())
         f.close()
 
     def ProcessResults(self, componentType=''):
@@ -524,7 +315,7 @@ class Analysis(ResultsUtilities):
             testResults = self.Results[componentType]
             # set comparator results of all failed tests
             for index, result in enumerate(testResults):
-                coords = self._getPhaseSpaceComparatorData(result, 'FailedTests/' + result['compLogFile'])
+                coords = _General.GetPhaseSpaceComparatorData(result, 'FailedTests/' + result['compLogFile'])
                 self.Results[componentType][index]['comparatorResults'] = coords
         else:
             GlobalData._CheckComponent(componentType)  # raises value error
@@ -559,11 +350,11 @@ class Analysis(ResultsUtilities):
         def _updateGeneralStatus(_genStatus):
             genStat = []
             for codes in _genStatus:
-                if (len(codes) == 1) and (not genStat.__contains__(codes[0])):
+                if (len(codes) == 1) and (not codes[0] in genStat):
                     genStat.append(codes[0])
                 elif len(codes) > 1:
                     for code in codes:
-                        if not genStat.__contains__(code):
+                        if not code in genStat:
                             genStat.append(code)
             return genStat
 
@@ -575,7 +366,7 @@ class Analysis(ResultsUtilities):
                 values = coords[:, index]
                 templist = []
                 for i in values:
-                    if not templist.__contains__(i):
+                    if not i in templist:
                         templist.append(i)
                 resList[index] = templist
             return resList
@@ -887,7 +678,7 @@ class _Plotting:
             for test in data:
                 dataRes = []
                 for val in test:
-                    if multiEntryTypes.__contains__(type(val)):
+                    if type(val) in GlobalData.multiEntryTypes:
                         dataRes.append(val[0])
                     else:
                         dataRes.append(val)
@@ -927,7 +718,7 @@ class _Plotting:
                 for coord, vals in enumerate(status):
                     # only plot rectangles if there's more than one coord status value, imshow will
                     # have already plotted that box correctly.
-                    if multiEntryTypes.__contains__(type(vals)):
+                    if type(vals) in GlobalData.multiEntryTypes:
                         numStatus = len(vals)
                         yIndex = index
                         for statIndex, stat in enumerate(vals):
@@ -939,7 +730,7 @@ class _Plotting:
             for index, status in enumerate(generalStatus):
                 # only plot rectangles if there's more than one general status value, imshow will
                 # have already plotted that box correctly.
-                if multiEntryTypes.__contains__(type(status)):
+                if type(status) in GlobalData.multiEntryTypes:
                     numStatus = len(status)
                     yIndex = index
                     for statIndex, stat in enumerate(status):
@@ -1149,7 +940,7 @@ class _Report:
             """
         results = self.groupedResults[component]['FATAL_EXCEPTION']
         utils = ResultsUtilities()
-        commonFactors = utils._getCommonFactors(results)
+        commonFactors = _General.GetCommonFactors(results)
 
         if commonFactors.keys().__len__() > 0:
             s = "\tTests where a fatal exception was called had the common parameters:\r\n"
@@ -1165,7 +956,7 @@ class _Report:
             """
         results = self.groupedResults[component][failure]
         utils = ResultsUtilities()
-        commonFactors = utils._getCommonFactors(results)
+        commonFactors = _General.GetCommonFactors(results)
 
         if commonFactors.keys().__len__() > 0:
             strName = failure.replace("_", " ")
@@ -1222,7 +1013,7 @@ class _Report:
                     if compResults[i] == 1:
                         failedTests.append(res)
                 utils = ResultsUtilities()
-                commonFactors = utils._getCommonFactors(failedTests)
+                commonFactors = _General.GetCommonFactors(failedTests)
 
                 if commonFactors.keys().__len__() > 0:
                     for param, value in commonFactors.iteritems():

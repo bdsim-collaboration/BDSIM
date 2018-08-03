@@ -18,7 +18,7 @@ and magnetic field vectors for a given set of :math:`(x,y,z,t)` coordinates.
 Specifically, this is a class that inherits :code:`G4Field` and provides an implementation
 of the pure virtual method :code:`GetFieldValue(position)` where position is :math:`x,y,z,t`.
 
-As the user specifies the field, and it is essentially unknown, numerical integration
+As the user specifies the field (and it is essentially unknown), numerical integration
 techniques must be used to solve the equation of motion to calculate the trajectory
 of a given particle.  Geant4 provides a variety of different numerical integrators
 that offer various capabilities and trade-offs in accuracy and computational speed.
@@ -27,7 +27,7 @@ Geant4 classes to create a *complete* "field" capable of calculating the traject
 a particle that would represent the physical motion in the given field. After this,
 the complete field may be attached to a *G4LogicalVolume* instance. A logical volume
 has not just a shape, but also material, colour, field, sensitivity etc. Even though
-only one logical volume object may be created it may *placed* multiple times in the
+only one logical volume object may be created, it may *placed* multiple times in the
 3D geometry model.
 
 As described in :ref:`dev-fields`, BDSIM provides a variety of C++ classes that
@@ -42,15 +42,15 @@ For both a uniform dipole field and quadrupolar field (linear fields), there exi
 analytical solutions to the equations of
 motion. These solutions provide a more accurate representation of the particle's
 motion in the field and may offer significant computational advantage over numerical
-integration techniques. Primarily for reasons of accuracy, these are provided in
+integration techniques. Primarily, for reasons of accuracy, these are provided in
 BDSIM for the dipole and quadrupole.
 
 Non-Linear Fields
 -----------------
 
-BDSIM provides an integrator for higher order fields that more accurately conserves
+BDSIM provides an integrator for higher-order fields that more accurately conserves
 energy when calculating the particle trajectory ('symplecticity') as well as being
-competitive computationally. The routine provided is a 2nd order Euler integration
+competitive computationally. The routine provided is a second-order Euler integration
 algorithm.  More will be added in future.
 
 .. _integrator-sets:
@@ -63,7 +63,7 @@ with the following syntax::
 
   option, integratorSet="bdsimtwo";
 
-This choice affects the computation time and accuracy of the simulation but each set
+This choice affects the computation time and accuracy of the simulation, but each set
 may be suited to different scenarios.  As more integration algorithms are added to BDSIM,
 more sets can be added that mix and match routines as required.
 
@@ -72,10 +72,10 @@ more sets can be added that mix and match routines as required.
 
 All sets apart from "geant4" make use of custom BDSIM integrators for accelerator tracking.
 These integrators ignore the supplied field and use a strength parameter (such as `k1`
-for a quadrupole) instead. The field is always present and should a backwards, or
+for a quadrupole) instead. The field is always present and should a backwards or
 non-paraxial particle be used, these BDSIM integrators resort to a G4ClassicalRK4
 algorithm. This allows all particles to be tracking in all directions over all momentum
-ranges but with the accuracy and speed of accelerator tracking for paraxial particles.
+ranges, but with the accuracy and speed of accelerator tracking for paraxial particles.
 
 The specific details are described in _`Integrator Algorithms`.
 
@@ -347,9 +347,9 @@ The integrator set may be one of the following (case-insensitive):
 .. Note:: `*` "geant4dp" is only available when BDSIM is compiled against
 	  Geant 4.10.4 or higher.
 
-.. Note:: Both dipole fringe and thin multipole fields are *thin* elements
-	  and have no *thick* equivalent and therefore have no field that
-	  Geant4 can use. Therefore, they only use the BDSIM integrators.
+.. Note:: Both dipole, fringe and thin multipole fields are *thin* elements
+	  and have no *thick* equivalent. Therefore, they have no field that
+	  Geant4 can use and can only use the BDSIM integrators.
 
 
 .. _integrator_algorithms_section:
@@ -383,7 +383,7 @@ An integrator derived from :code:`G4MagIntegratorStepper` must implement a metho
 This is responsible for calculating the coordinates of a trajectory given the input
 point :code:`y[]` (which is [:math:`x,y,z,p_x,p_y,p_z,t`]) for a step length of :math:`h`.
 The output coordinates are written to :code:`yout[]` (also [:math:`x,y,z,p_x,p_y,p_z,t`])
-along with the associated absolute uncertainty for each parameter to :code:`yerr[]`.
+, along with the associated absolute uncertainty for each parameter to :code:`yerr[]`.
 The differentials at the initial location are given by :code:`dydx`.  These are calculated
 in :code:`G4Mag_UsualEqRhs.cc` as follows:
 
@@ -402,20 +402,20 @@ in :code:`G4Mag_UsualEqRhs.cc` as follows:
    \mathrm{dydx}[5] &= ~ \mathbf{A}[2]
 
 
-There are other factors in the code for units that aren't shown here.
+(There are other factors in the code for units that aren't shown here.)
 
 .. note:: **Field calls**: Geant4 will sample the field to give to the equation of
 	  motion to calculate
 	  :math:`\mathbf{A}`. Getting the field value is generally conidered an *expensive*
-	  operation as may often involve geometry lookup for transforms, applying transforms
+	  operation, as it may often involve geometry lookup for transforms, applying transforms
 	  or indexing a large array along with interpolation.  In the case of BDSIM, the
 	  majority of fields require a geometry lookup and transform but are simple equations.
 
 .. note:: **Time**: Geant4 magnetic integrators do not integrate time and
 	  therefore copy the initial
 	  value of time to the output coordinates.  BDSIM integrators follow this behaviour.
-	  The time is handled by Geant4 at a higher level as the magnetic integrators are
-	  specified to be only integrating over 6 variables.
+	  The time is handled by Geant4 at a higher level, as the magnetic integrators are
+	  specified to be only integrating over six variables.
 
 
 Coordinate Convention
@@ -433,7 +433,7 @@ BDSIM Drift
 -----------
 
 This algorithm transports a particle through free space with no external force acting on it.
-This is provided here although provided generally by Geant4 as it is required by other
+This is provided here, although provided generally by Geant4, as it is required by other
 BDSIM integrators under various circumstances. It exists in the
 :code:`BDSIntegratorBase::AdvanceDrift`
 base class for the majority of BDSIM integrators.
@@ -443,7 +443,7 @@ base class for the majority of BDSIM integrators.
    \mathbf{q}_{out} ~ &= ~ \mathbf{q}_{in} + h~\mathbf{\hat{p}_{in}} \\
    \mathbf{p}_{out} ~ &= ~ \mathbf{p}_{in}
 
-.. note:: The drift element in BDSIM is not assigned a field or BDSIM provided tracking
+.. note:: The drift element in BDSIM is not assigned a field or BDSIM-provided tracking
 	  algorithm. The tracking is handled by Geant4.
 
 
@@ -452,12 +452,12 @@ BDSIM Dipole Rodrigues
 
 * Class name: :code:`BDSIntegratorDipoleRodrigues`
 
-This integrator is constructed with it's own strength parameter and **ignores** the field
+This integrator is constructed with its own strength parameter and **ignores** the field
 information provided by Geant4. The field value (already multiplied by :code:`CLHEP::tesla`) is
 assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
 :math:`\mathbf{B} = (0,B,0)`. The algorithm progresses as follows:
 
-* If the field value is 0 or the particle is neutral, the coordinates are advanced as a drift.
+* If the field value is zero or the particle is neutral, the coordinates are advanced as a drift.
 
 Otherwise continue as follows:
 
@@ -483,11 +483,11 @@ Otherwise continue as follows:
    (1- \mathrm{CT})\, \mathbf{\hat{f}} \,  \right]\\
    \mathbf{p}_{out} ~ &= ~ \mathbf{\hat{p}_{in}}\,\mathrm{CT} + \mathbf{\hat{f}}\,\mathrm{ST}
 
-* If :math:`\rho` is less than a minimum radius of curvature (5 cm by default) reduce the
-  magnitude of the momentum by 2 % to induce artificial spiralling.
+* If :math:`\rho` is less than a minimum radius of curvature (5 cm by default), reduce the
+  magnitude of the momentum by two percent to induce artificial spiralling.
 * Convert to global coordinates.
 
-This was the original dipole algorithm included with BDSIM until v0.96, however this
+This was the original dipole algorithm included with BDSIM until v0.96, however, this
 is limited to dipole fields aligned with :math:`\hat{y}` only and often caused tracking
 warnings with very low momenta particles in strong magnetic fields. A more flexible integrator
 that works in 3D was written to improve upon this and is described in _`BDSIM Dipole2`.
@@ -503,7 +503,7 @@ This routine makes use of the tracking routine provided in Geant4 for a pure mag
 This is provided in the :code:`G4MagHelicalStepper` class, which provides the tracking routine
 for a single step through a pure magnetic field, but not the other functionality required
 for a suitable integrator. This BDSIM class that inherits it provides the rest of the require
-functionality as well as special treatment for particles that may spiral indefinitely.
+functionality, as well as special treatment for particles that may spiral indefinitely.
 
 * The field :math:`\mathbf{B}` is queried at :math:`\mathbf{q}_{in}`.
 * A full step along the trajectory is calculated.
@@ -512,10 +512,10 @@ functionality as well as special treatment for particles that may spiral indefin
 
 Otherwise:
 
-* Calculate the motion through two half steps (includes sampling the field at the half step
+* Calculate the motion through two half-steps (includes sampling the field at the half-step
   point).
-* Calculate the error on the output coordinates as the difference between two half steps and
-  one full step.
+* Calculate the error on the output coordinates as the difference between two half-steps and
+  one full-step.
 
 The spiralling algorithm artificially advances the helix of the particle along the field
 direction more quickly than it would naturally by step length :math:`h`, even if it had
@@ -526,7 +526,7 @@ the radius of the typical aperture throughout the model (specified in the option
 magnetic field does no work, a spiralling particle could spiral for a very long time and cause
 an event to run almost indefinitely. Given most dipoles in accelerators induce only a few
 milliradians of deflection, such a particle must be of a much lower momentum than the
-design momentum of the dipole and would in reality not progress far from the magnet.
+design momentum of the dipole and would not progress far from the magnet in reality.
 
 This artificial behaviour terminates particles in the approximate location by moving them
 more quickly to a boundary.
@@ -602,13 +602,13 @@ The field gradient is calculated upon construction of the integrator as:
 
 For each usage:
 
-* Calculate strength parameter :math:`\kappa` *w.r.t.* a given particle rigidity:
+* Calculates strength parameter :math:`\kappa` *w.r.t.* a given particle rigidity:
 
 .. math::
 
    \kappa ~=~ \frac{charge \cdot c}{\|\mathbf{p}_{in}\|} ~ \frac{\mathrm{d}B_{y}}{\mathrm{d}x}
 
-If :math:`\|\kappa\| < 10^{-20}` use the drift integrator, else continue as:
+If :math:`\|\kappa\| < 10^{-20}`, use the drift integrator. Else, continue as:
 
 * Convert to local curvilinear coordinates.
 
@@ -702,17 +702,17 @@ BDSIM Euler
 
 * Class name: :code:`BDSIntegratorEuler`
 
-* Calculate the half way position along step length :math:`h` if the particle were to drift:
+* Calculates the halfway position along step length :math:`h` if the particle were to drift:
 
 .. math::
 
    \mathbf{q}_{half} ~ = ~ \mathbf{q}_{in} + \mathbf{\hat{p}_{in}} ~ \frac{h}{2}
 
-* Calculate the vector potential :math:`\mathbf{A}` *w.r.t.* :math:`\mathbf{q}_{half}`
+* Calculates the vector potential :math:`\mathbf{A}` *w.r.t.* :math:`\mathbf{q}_{half}`
   but with :math:`\mathbf{p}_{in}` (the original momentum - so as if the particle truly
   drifted to that point). Uses the equation of motion method :code:`RightHandSide`.
-  This invokes 1 query of the field.
-* Calculate the new coordinates:
+  This invokes one query of the field.
+* Calculates the new coordinates:
 
 .. math::
 
@@ -736,7 +736,7 @@ but one fewer for the field and so has roughly the same performance. The algorit
 * If :math:`\|k_{2}\| < 10^{-12}`, track as a drift.
 
 * Convert coordinates from global to local curvilinear frame.
-* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* A point halfway along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
 
@@ -749,7 +749,7 @@ but one fewer for the field and so has roughly the same performance. The algorit
    \hat{p}_{x,in}~(q_{x,mid}^2 - q_{y,mid}^2 ) - 2~\hat{p}_{y,in}~q_{x,mid}~q_{y,mid}
    \end{pmatrix}
 
-.. note:: This can viewed as the cross product between the unit momentum vector and the
+.. note:: This can be viewed as the cross product between the unit momentum vector and the
 	  sextupolar field, whilst assuming that the :math:`B_z` component is always zero
 	  and so some terms of the cross product can be omitted.
 
@@ -766,7 +766,7 @@ beam rigidity higher up in BDSIM).
 * If :math:`\|k_{3}\| < 10^{-20}`, track as a drift.
 
 * Convert coordinates from global to local curvilinear frame.
-* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* A point halfway along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
 
@@ -779,7 +779,7 @@ beam rigidity higher up in BDSIM).
    \hat{p}_{x,in}~(q_{x,mid}^3 - 3~q_{y,mid}^2~q_{x,mid} ) - \hat{p}_{y,in}~(q_{x,mid}^3 - 3~q_{x,mid}^2~q_{y,mid} )
    \end{pmatrix}
 
-.. note:: This can viewed as the cross product between the unit momentum vector and the
+.. note:: This can be viewed as the cross product between the unit momentum vector and the
 	  octupolar field, whilst assuming that the :math:`B_z` component is always zero
 	  and so some terms of the cross product can be omitted.
 
@@ -797,7 +797,7 @@ beam rigidity higher up in BDSIM).
 * If :math:`\|k_{4}\| < 10^{-20}`, track as a drift.
 
 * Convert coordinates from global to local curvilinear frame.
-* A point half way along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
+* A point halfway along the step length :math:`h` is calculated using a drift algorithm (":math:`_{mid}`").
 * This position is used to calculate the vector potential as:
 
 
@@ -811,7 +811,7 @@ beam rigidity higher up in BDSIM).
    \hat{p}_{y,in}~\big[4~q_{x,mid}~q_{y,mid}~(q_{x,mid}^2-q_{y,mid}^2) \big]
    \end{pmatrix}
 
-.. note:: This can viewed as the cross product between the unit momentum vector and the
+.. note:: This can be viewed as the cross product between the unit momentum vector and the
 	  decapolar field, whilst assuming that the :math:`B_z` component is always zero
 	  and so some terms of the cross product can be omitted.
 
@@ -825,7 +825,7 @@ BDSIM Old Euler Common
 
 * Class name: :code:`BDSIntegratorMag`
 
-The euler integration part of the original BDSIM integrators for higher order fields
+The Euler integration part of the original BDSIM integrators for higher order fields
 exists in one place in :code:`BDSIntegratorMag::AdvanceChord()`. This takes the step
 length :math:`h`, the local position, momentum and vector potential.  The algorithm
 is as follows:
@@ -838,7 +838,7 @@ is as follows:
    q_{x,out} ~ = ~ q_{x,in} + p_{x,in}~h + \frac{A_{x}~h^2}{2}\\
    q_{y,out} ~ = ~ q_{y,in} + p_{y,in}~h + \frac{A_{y}~h^2}{2}\\
 
-The output z coordinate is calculated as:
+The output z-coordinate is calculated as:
 
 .. math::
 
@@ -865,17 +865,17 @@ BDSIM Dipole Fringe
 
 * Class name: :code:`BDSIntegratorDipoleFringe`
 
-This integrator provides a change in momentum only that represents both the edge effect of a dipole
-with a pole face rotation and dipole poleface curvature. The effect of poleface curvature is applied
+This integrator provides only a change in momentum that represents both the edge effect of a dipole
+with a pole face rotation and dipole pole face curvature. The effect of pole face curvature is applied
 using the thin multipole integrator with a sextupole strength of:
 
 .. math::
 
     K_3l = -\frac{h}{\rho} \frac{1}{\cos^3(\theta)}
 
-where :math:`h` is the poleface curvature and :math:`\theta` is the poleface rotation angle.
+where :math:`h` is the pole face curvature and :math:`\theta` is the pole face rotation angle.
 
-The poleface curvature effect is applied first, but only if the poleface curvature is finite. The function
+The pole face curvature effect is applied first, but only if the pole face curvature is finite. The function
 for applying the momentum kick converts to curvilinear coordinates, calls the thin multipole stepper function
 that applies the kick, and finally converts back to global coordinates.
 
@@ -886,7 +886,7 @@ the motion. After that, the small change in momentum is applied.
 * If the step length is longer than 1 mm, the kick is not applied (i.e. not a thin dipole edge element).
 
 * The input coordinates are converted to the local curvilinear frame. This is required only for
-  this algorithm and not that in :code:`BDSIntegratorDipoleRodrigues2`.
+  this algorithm and not for that in :code:`BDSIntegratorDipoleRodrigues2`.
 
 * If :math:`\hat{p}_{z,local} < 0.9`, the particle is considered non-paraxial and no change in momentum
   is applied.
@@ -949,7 +949,7 @@ respectively, where :math:`f_{int}` is an input parameter but described by:
 
    f_{int} ~ = ~ \int_{-\infty}^{\infty} \frac{B_y(s)~\big(B_0 - B_y(s)\big)}{2~h_{gap}~B_0^2} \mathrm{d}s
 
-Here, :math:`h_{gap}` is also an input parameter that specifies the half distance between the dipole
+Here, :math:`h_{gap}` is also an input parameter that specifies the half-distance between the dipole
 poles. Fintk2 is a second fringe parameter with a default of zero, meaning the :math:`corr_{2}` term equals
 1 by default.
 
@@ -983,12 +983,12 @@ BDSIM Thin Multipole
 
 This integrator applies a thin multipole kick to forward going paraxial particles. This is
 normally attached to a box or disc that is very thin (Geant4 requires finite dimensions)
-but sufficiently small that only one step is taken through it. Typically, a length of 1 pm
+,but sufficiently small that only one step is taken through it. Typically, a length of 1 pm
 is used along :math:`S`. It is not possible to control how many steps a particle takes
-through a given volume in Geant4 tracking as many physics processes can propose different
+through a given volume in Geant4 tracking, as many physics processes can propose different
 step lengths. However, by choosing such a short length of volume and by filling it with
 vacuum, no other process will force a step in the middle of the volume. If more than one
-step were taken, the integrator would be used multiple times resulting in stronger
+step were taken, the integrator would be used multiple times, resulting in stronger
 kicks than are correct.
 
 * Convert coordinates from global to local curvilinear frame.
@@ -1041,7 +1041,7 @@ BDSIM Dipole Matrix
 
 * Class name: :code:`BDSIntegratorDipoleQuadrupole`
 
-This integrator is constructed with it's own strength parameter and **ignores** the field
+This integrator is constructed with its own strength parameter and **ignores** the field
 information provided by Geant4. The field value (already multiplied by :code:`CLHEP::tesla`) is
 assumed to be entirely along local :math:`\hat{\mathbf{y}}`, i.e. the field vector is
 :math:`\mathbf{B} = (0,B,0)`.
@@ -1054,7 +1054,7 @@ Upon construction of the integrator, the following are calculated:
 
    \rho~=~ \frac{L}{\theta}
 
-The bending radius is not calculated using the magnetic field as the field can be set to purposefully
+The bending radius is not calculated using the magnetic field, as the field can be set to purposefully
 underpower or overpower the magnet.
 
 * The quadrupolar component, the field gradient:
@@ -1086,12 +1086,12 @@ angle :math:`\theta`, otherwise if  :math:`~fieldRatio != 1`:
 
 As this integrator will ultimately use particle coordinates in the curvilinear frame, the *bending* actually
 occurs in the curvilinear transforms. As a dipole can be underpowered or overpowered by specifying both the
-field and angle in the input component definition, the transforms must be supplied the correct bending angle
+field and angle in the input component definition, the transforms must be supplied with the correct bending angle
 to ensure the particles will be transformed onto the correct trajectory.
 
 The algorithm progresses as follows:
 
-* If the field value is 0, the particle is neutral, or for very small step length :math:`h < 10^{-12} m`, the coordinates are advanced as a drift.
+* If the field value is zero, the particle is neutral. For a very small step length :math:`h < 10^{-12} m`, the coordinates are advanced as a drift.
 
 Otherwise continue as follows:
 
@@ -1114,7 +1114,7 @@ integrator from :code:`BDSIntegratorMag` is used.  Else, proceed with thick matr
 * Thick dipole matrix:
 
 The matrix implemented is the RMatrix from Particle Accelerator Physics (3rd Edition) by Wiedemann,
-chapter 5. For the case of a focussing magnet, :math:`\kappa \geq 0`:
+chapter five. For the case of a focussing magnet, :math:`\kappa \geq 0`:
 
 .. math::
 
@@ -1213,9 +1213,9 @@ In the case where :math:`\kappa = 0`, the matrix simplifies to:
    \delta \\
    \end{pmatrix}
 
-The z terms are not calculated via the matrix method, rather the z position is simply the
-addition of the step length, and the  z momentum is calculated from the x and y momentum to ensure
-momentum conservation. Note that these matrices are incomplete, there are terms for the calculation of
+The z terms are not calculated via the matrix method, rather the z-position is simply the
+addition of the step length, and the z-momentum is calculated from the x- and y-momentum to ensure
+momentum conservation. Note that these matrices are incomplete; there are terms for the calculation of
 the l parameter which are not needed in this stepper.
 
 Validation of BDSIM Integrators

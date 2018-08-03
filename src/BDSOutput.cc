@@ -181,7 +181,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSEnergyCounterHitsCollection* tunnelLoss,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
-			  const std::vector<BDSTrajectory*>&    trajectories,
+			  const std::map<BDSTrajectory*,bool>&  trajectories,
 			  const G4int                           turnsTaken)
 {
   if (info)
@@ -478,7 +478,7 @@ void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
   evtHistos->Fill1DHistogram(4, postStepSPosition);
 }
 
-void BDSOutput::FillTrajectories(const std::vector<BDSTrajectory*>& trajectories)
+void BDSOutput::FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ntrajectory=" << trajectories.size() << G4endl;

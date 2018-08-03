@@ -10,11 +10,11 @@ pseudo-random particle distributions for tracking.
 Gauss Twiss Covariance Matrix
 =============================
 
-The beam in an accelerator can be described as a 6D distribution of particles. The 6
-dimensions are 3 canonical conjugate coordinate pairs in three planes and can be
+The beam in an accelerator can be described as a 6D distribution of particles. The six
+dimensions are three canonical conjugate coordinate pairs in three planes, and can be
 represented by the vector - :math:`\boldsymbol{x} = (x,\,x^{\prime},\,y,y^{\prime},\,t,\,\delta)`.
-The means of that distribution are the beam centroids and the 6x6 matrix of second
-order moments of the distribution is referred to as sigma matrix and can be represented
+The means of that distribution are the beam centroids. The 6x6 matrix of second
+order moments of the distribution is referred to as the sigma matrix and can be represented
 compactly as :math:`\Sigma_{ij}=\langle\boldsymbol{x_{i}}\,\boldsymbol{x_{j}}\rangle`
 with the angle brackets denoting a central moment. More explicitly for a particle beam,
 this is:
@@ -32,7 +32,7 @@ this is:
    \end{pmatrix}
 
 
-The beam is typically parameterised in an accelerator using the Twiss functions
+The beam is typically parameterised in an accelerator using the Twiss functions.
 :math:`\beta,\alpha,\gamma` and dispersions :math:`\eta_x,\eta_x^{\prime},\eta_y,\eta_y^{\prime}`.
 These are used in combination with beam parameters
 :math:`\epsilon_x,\epsilon_y,\sigma_{\delta},\sigma_{t}`. The combination of
@@ -42,9 +42,9 @@ Please note that
 :math:`\sigma_{\delta}` is used here for clarity, but its definition is equivalent
 to :math:`\sigma_{E}` defined in :ref:`model-description`.
 
-For linear optics, and in the absence of dispersion or energy spread the 3 2x2 submatrices
+For linear optics, and in the absence of dispersion or energy spread, the three 2x2 submatrices
 along the diagonal of the sigma matrix fully represent each plane and can be treated
-independently of each other. For example, the horizontal plane is parameterised as,
+independently of each other. For example, the horizontal plane is parameterised as:
 
 .. math::
    \begin{pmatrix}
@@ -58,8 +58,8 @@ independently of each other. For example, the horizontal plane is parameterised 
    -\alpha_{x} & \gamma_{x}
    \end{pmatrix}.
 
-When dispersion and energy spread are present, numerous couplings are introduced
-which appear as off-diagonal elements in the sigma matrix. In this case the energy
+When dispersion and energy spread are present, numerous couplings are introduced,
+which appear as off-diagonal elements in the sigma matrix. In this case, the energy
 dependence of the coordinates results in both longitudinal-transverse and
 transverse-transverse couplings.
 
@@ -68,7 +68,7 @@ definite. This ensures a positive variance in each dimension.
 
 To derive each term of the covariance matrix, we consider the effect of dispersion
 on single coordinates. For example, for an individual particle, the horizontal
-position is affected as follows,
+position is affected as follows:
 
 .. math::
    x_{i} = x_{\beta i} + \eta_{s}\delta_{i},
@@ -79,7 +79,7 @@ relative energy offset in a dispersive region.
 
 Because :math:`x_{\beta}` and :math:`\delta_{i}` are random variables and are
 independent by construction, the second order moment in :math:`x_{\beta}` can be
-factorised using the properties of the variance,
+factorised using the properties of the variance
 
 .. math::
    \langle x^{2}\rangle = \mathrm{var}[x_{\beta}+\eta_{x}\delta] = \langle x_{\beta}^{2}\rangle + \eta_{x}^{2}\langle\delta_{i}^{2}\rangle = \epsilon_{x}\beta_{x} + \eta_{x}^{2}\sigma_{\delta}^{2},
@@ -87,7 +87,7 @@ factorised using the properties of the variance,
 where the last form is obtained by applying the Courant-Snyder equations and rewriting
 the variance in terms of standard deviation.
 
-The covariance of the horizontal position and the energy offset can also be obtained as,
+The covariance of the horizontal position and the energy offset can also be obtained as:
 
 .. math::
    \langle x\,\delta\rangle = \textrm{cov}[x_{\beta}+\eta_{x}\delta, \delta] = \langle x_{\beta}\,\delta\rangle + \eta_{x}\langle \delta^{2}\rangle = \eta_{x}\langle\delta^{2}\rangle,
@@ -95,7 +95,7 @@ The covariance of the horizontal position and the energy offset can also be obta
 as :math:`\langle x_{\beta}\,\delta\rangle = 0` by construction as explained above.
 
 Finally, correlations that involve two different variables affected by dispersion
-have the same form. For example,
+have the same form. For example:
 
 .. math::
    \langle x\,y\rangle &= \mathrm{cov}[x_{\beta}+\eta_{x}\delta,\,x^{\prime}_{\beta}+\eta_{x^{\prime}}\delta] \\
