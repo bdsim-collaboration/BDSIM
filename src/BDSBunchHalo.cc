@@ -102,14 +102,14 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
 BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()  
 {
   // Central orbit 
-  G4double x0 = X0;
-  G4double y0 = Y0;
-  G4double z0 = Z0;
+  G4double x = X0;
+  G4double y = Y0;
+  G4double z = Z0;
   G4double xp = Xp0;
   G4double yp = Yp0;
 
-  //  z0 += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
-  z0 = 0;
+  //  z += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  z = 0;
 
   while(true)
   {
@@ -179,8 +179,8 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
 	  {continue;}
 	
 	// add to reference orbit 
-	x0 += dx * CLHEP::m;
-	y0 += dy * CLHEP::m;
+	x += dx * CLHEP::m;
+	y += dy * CLHEP::m;
 	xp += dxp * CLHEP::rad;
 	yp += dyp * CLHEP::rad;
 	
@@ -191,7 +191,7 @@ BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()
 #ifdef BDSDEBUG
 	G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
 #endif
-	BDSParticleCoordsFull result(x0,y0,z0,xp,yp,zp,t,S0,E,/*weight=*/1.0);
+	BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
 	return result;
       }
   }
