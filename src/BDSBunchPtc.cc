@@ -58,12 +58,12 @@ void BDSBunchPtc::LoadPtcFile()
   while(std::getline(ifstr,line)) { 
     
     // variable for storage
-    double x=0.0;
-    double y=0.0;
-    double px=0.0;
-    double py=0.0; 
-    double t=0.0;
-    double pt=0.0;
+    double x  = 0.0;
+    double y  = 0.0;
+    double px = 0.0;
+    double py = 0.0; 
+    double t  = 0.0;
+    double pt = 0.0;
     
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
@@ -151,16 +151,16 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
       loopedOver = true;
     }
   
-  G4double x  = (ptcData[iRay][0] + X0) * CLHEP::m;
-  G4double y  = (ptcData[iRay][2] + Y0) * CLHEP::m;
-  G4double z  = (ptcData[iRay][4] + Z0) * CLHEP::m;
-  G4double xp = ptcData[iRay][1] * CLHEP::rad+Xp0;
-  G4double yp = ptcData[iRay][3] * CLHEP::rad+Yp0;
+  G4double x  = ptcData[iRay][0] * CLHEP::m + X0;
+  G4double y  = ptcData[iRay][2] * CLHEP::m + Y0;
+  G4double z  = ptcData[iRay][4] * CLHEP::m + Z0;
+  G4double xp = ptcData[iRay][1] * CLHEP::rad + Xp0;
+  G4double yp = ptcData[iRay][3] * CLHEP::rad + Yp0;
   G4double t  = (z-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
   G4double E  = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
   G4double zp = CalculateZp(xp,yp,Zp0);
 
-  BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0,E,/*weight=*/1.0);
+  BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
 
   iRay++;  
   if (loopedOver)
