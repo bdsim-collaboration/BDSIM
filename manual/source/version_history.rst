@@ -59,7 +59,11 @@ General
 * BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
   database by automatically prefixing the name with "G4\_". Issue #236.
 * `circle` distribution z and t distributions are now reversed to be consistent with all other generators.
-  These were T0 - dt and are now T0 + dt.
+  These were T0 - dt and are now T0 + dt. Distribution will be different for the same seed as compared
+  to a previous version of BDSIM.
+* `square` distribution now calls random number generator for each coordinate every time for
+  consistency. Distribution will be different for the same seed as compared
+  to a previous version of BDSIM.
 
 Output Changes
 --------------
@@ -120,6 +124,7 @@ Bug Fixes
 * Fixed reproducibility for the `ring` distribution that didn't use the same random number generator
   as every other distribution. Coordinates will be different for this distribution for the same seed now.
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
+* `square` beam distiribution now varies with :code:`envelopeT`.
 
 Utilities
 ---------
