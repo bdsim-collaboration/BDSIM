@@ -326,7 +326,7 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 template<class T>
 BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
-  G4double E = 0, x0 = 0, y0 = 0, z0 = 0, xp = 0, yp = 0, zp = 0, t = 0;
+  G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
   G4double weight = 1;
   
   bool zpdef = false; //keeps record whether zp has been read from file
@@ -353,11 +353,11 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
       else if(it->name=="t")
 	{ReadValue(t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
-	{ReadValue(x0); x0 *= (CLHEP::m * it->unit);}
+	{ReadValue(x); x *= (CLHEP::m * it->unit);}
       else if(it->name=="y")
-	{ReadValue(y0); y0 *= (CLHEP::m * it->unit);}
+	{ReadValue(y); y *= (CLHEP::m * it->unit);}
       else if(it->name=="z")
-	{ReadValue(z0); z0 *= (CLHEP::m * it->unit);}
+	{ReadValue(z); z *= (CLHEP::m * it->unit);}
       else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
@@ -392,20 +392,17 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 
       // If energy isn't specified, use the central beam energy (kinetic for Geant4)
       if (!BDS::IsFinite(E))
-	{E = E0*CLHEP::GeV;}
+	{E = E0;}
       
       // compute zp from xp and yp if it hasn't been read from file
       if (!zpdef)
 	{zp = CalculateZp(xp,yp,1);}
-      // compute t from z0 if it hasn't been read from file
+      // compute t from z if it hasn't been read from file
       if (!tdef)
 	{t=0;}
     }
 
-  //Add the global offset Z
-  z0=z0+Z0*CLHEP::m;
-
-  return BDSParticleCoordsFull(x0,y0,z0,xp,yp,zp,t,S0,E,weight);
+  return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);
 }
 
 template <class T>
