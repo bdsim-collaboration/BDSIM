@@ -72,10 +72,8 @@ BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
   G4double dt    = envelopeT * (1.-2.*flatGen->shoot());
   G4double dz    = dt * CLHEP::c_light;
 
-  // note the minus here is inconsistent with the other bunch distributions
-  // but retained to be consistent with previous versions
-  G4double t     = T0 - dt;
-  G4double z     = Z0 - dz;
+  G4double t     = T0 + dt;
+  G4double z     = Z0 + dz;
   G4double phiR  = flatGen->shoot() * CLHEP::twopi;
   G4double phiRp = flatGen->shoot() * CLHEP::twopi;
   G4double r     = flatGen->shoot() * envelopeR;

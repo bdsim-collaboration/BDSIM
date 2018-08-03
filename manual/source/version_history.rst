@@ -58,6 +58,8 @@ General
 * Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
 * BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
   database by automatically prefixing the name with "G4\_". Issue #236.
+* `circle` distribution z and t distributions are now reversed to be consistent with all other generators.
+  These were T0 - dt and are now T0 + dt.
 
 Output Changes
 --------------
