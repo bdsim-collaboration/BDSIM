@@ -6,7 +6,11 @@ beam,  particle="e-",
        shellXp = 0.09*0.005,
        shellYp = 0.09*0.005,
        envelopeT  = 1e-9,
-       envelopeE  = 1e-5;
+       envelopeE  = 1e-5,
+       shellXWidth = 0.01*um,
+       shellYWidth = 0.02*um,
+       shellXpWidth = 0.02*um,
+       shellYpWidth = 0.03*um;
 
 
 include options.gmad
