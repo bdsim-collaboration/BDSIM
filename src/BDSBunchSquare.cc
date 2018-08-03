@@ -79,9 +79,11 @@ BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
   G4double xp = Xp0 + envelopeXp * (1-2*flatGen->shoot());
   G4double yp = Yp0 + envelopeYp * (1-2*flatGen->shoot());
   G4double zp = CalculateZp(xp,yp,Zp0);
-  G4double t  = T0 - envelopeT * (1.-2.*flatGen->shoot());
-  G4double z  = Z0 + t * CLHEP::c_light;
+  G4double dt = envelopeT * (1.-2.*flatGen->shoot());
+  G4double t  = T0 + dt;
+  G4double dz = dt * CLHEP::c_light;
+  G4double z  = Z0 + dz;
   G4double E  = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
   
-  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0,E,/*weight=*/1.0);
+  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }
