@@ -87,10 +87,10 @@ BDSParticleCoordsFull BDSBunchEShell::GetNextParticleLocal()
   G4double xpamp = 0.5 - flatGen->shoot();
   G4double ypamp = 0.5 - flatGen->shoot();
   
-  G4double x  = X0  + (std::sin(phi) * shellX)  + xamp  * shellXWidth * CLHEP::m;
+  G4double x  = X0  + (std::sin(phi) * shellX)  + xamp  * shellXWidth;
   G4double xp = Xp0 + (std::cos(phi) * shellXp) + xpamp * shellXpWidth;
   phi = 2 * CLHEP::pi * flatGen->shoot();
-  G4double y  = Y0  + (std::sin(phi) * shellY)  + yamp  * shellYWidth * CLHEP::m;
+  G4double y  = Y0  + (std::sin(phi) * shellY)  + yamp  * shellYWidth;
   G4double yp = Yp0 + (std::cos(phi) * shellYp) + ypamp * shellYpWidth;
   G4double zp = CalculateZp(xp,yp,Zp0);
   G4double E  = E0 * (1 + sigmaE/2. * (1. -2. * flatGen->shoot()));
