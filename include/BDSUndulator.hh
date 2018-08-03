@@ -37,6 +37,7 @@ public:
                G4double outerDiameter,
                G4double periodIn,
                G4double magnetHeightIn,
+               G4double magnetWidthIn,
                G4double undulatorGapIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
                BDSFieldInfo*   vacuumFieldInfoIn,
@@ -58,7 +59,8 @@ protected:
   G4double undulatorPeriod;
   G4String material;
   G4double magnetHeight;
-  G4double magnetGap;
+  G4double magnetWidth;
+  G4double undulatorGap;
 };
 
 #endif
