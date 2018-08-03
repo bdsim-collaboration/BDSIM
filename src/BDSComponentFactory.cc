@@ -627,6 +627,44 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
+
+      // Fringe and poleface effects for a thin kicker require an effective bending radius, rho.
+      // Lack of length and angle knowledge means the field is the only way rho can be calculated.
+      // A zero field would lead to div by zero errors in the integrator constructor, therefore
+      // do not replace the kicker magnetstrength with the fringe magnetstrength which should prevent
+      // any fringe/poleface effects from ever being applied.
+      if (!BDS::IsFinite(element->B))
+        {
+          // only print warning if a poleface or fringe field effect was specified
+          if (buildEntranceFringe or buildExitFringe)
+            {
+              G4cerr << __METHOD_NAME__ << "B field was not supplied for the thin kicker "
+                     << "\"" << elementName << "\". Poleface and fringe field effects "
+                     << "will not available for this element." << G4endl;
+            }
+        }
+      // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
+      // field direction cannot be assumed. Therefore we are unsure of poleface angle and fringe
+      // effects so don't replace the kicker magnetstrength with the fringe magnetstrength
+      else if (type == KickerType::general)
+        {
+          // only print warning if a poleface or fringe field effect was specified
+          if (buildEntranceFringe or buildExitFringe)
+            {
+              G4cerr << __METHOD_NAME__ << " Poleface and fringe field effects are unavailable "
+                     << "for thin the (t)kicker element ""\"" << elementName << "\"." << G4endl;
+            }
+        }
+      // Good to apply fringe effects.
+      else
+        {
+          // overwrite magnet strength with copy of fringe strength. Should be safe as it has the
+          // kicker information from copying previously.
+          st = new BDSMagnetStrength(*fringeStIn);
+          // supply the field for a thin kicker field as it is required to calculate the
+          // effective bending radius needed for fringe field and poleface effects
+          (*st)["field"] = element->B * CLHEP::tesla;
+        }
     }
   else
     {// thick kicker

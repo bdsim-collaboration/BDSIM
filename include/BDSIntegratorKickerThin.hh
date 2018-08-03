@@ -75,8 +75,11 @@ private:
   const G4double hkick;
   const G4double vkick;
   const G4double brho;
+  G4double rho;
   /// @}
 
+  G4bool hasEntranceFringe;
+  G4bool hasExitFringe;
 
   /// Cache of whether input parameters are 0 and therefore whether to kick at all.
   G4bool zeroStrength;

@@ -39,14 +39,42 @@ BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* streng
 
   // duplicate magnetstrength for fringe field integrators as all its physical parameters are set for the magnet
   // as a whole, including fringes. Only isentrance bool determines if the object is for an entrance or exit
-  // fringe, therefore it is changed for the exit integrator (as BDSIntegratorDipoleFringe members are set upon
+  // fringe, therefore set as appropriate (required as BDSIntegratorDipoleFringe members are set upon
   // instantiation according to isentrance).
   BDSMagnetStrength* fringeStEntr = new BDSMagnetStrength(*strength);
   BDSMagnetStrength* fringeStExit = new BDSMagnetStrength(*strength);
+  (*fringeStEntr)["isentrance"] = true;
   (*fringeStExit)["isentrance"] = false;
   // tilt is zero as only onestep function in local coords will be called in this integrator
   fringeIntEntr = new BDSIntegratorDipoleFringe(fringeStEntr, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
   fringeIntExit = new BDSIntegratorDipoleFringe(fringeStExit, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
+
+  // check if the fringe effect is finite
+  G4bool finiteEntrFringe = false;
+  G4bool finiteExitFringe = false;
+  if (BDS::IsFinite(fringeIntEntr->GetFringeCorr()) or BDS::IsFinite(fringeIntEntr->GetSecondFringeCorr()))
+    {finiteEntrFringe = true;}
+  if (BDS::IsFinite(fringeIntExit->GetFringeCorr()) or BDS::IsFinite(fringeIntExit->GetSecondFringeCorr()))
+    {finiteExitFringe = true;}
+
+  // only call fringe tracking if the poleface rotation or fringe field correction terms are finite
+  hasEntranceFringe = false;
+  hasExitFringe     = false;
+  if (BDS::IsFinite(fringeIntEntr->GetPolefaceAngle()) or finiteEntrFringe)
+    {hasEntranceFringe = true;}
+  if (BDS::IsFinite(fringeIntExit->GetPolefaceAngle()) or finiteExitFringe)
+    {hasExitFringe = true;}
+
+  // effect bending radius needed for fringe field calculations
+  if (BDS::IsFinite((*strength)["field"]))
+    {rho = brhoIn/(*strength)["field"];}
+  else
+    {
+      // zero field means rho cannot be calculated, therefore do not allow fringe kicks.
+      rho = 1; // for safety
+      hasEntranceFringe = false;
+      hasExitFringe = false;
+    }
 }
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
@@ -90,14 +118,32 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
       return;
     }
 
+  // normalise to particle charge for fringe/poleface effects
+  G4double charge = fcof / std::abs(fcof);
+  G4double bendingRad = rho * charge;
+
+  // set as local coords in case no entrance fringe effect
+  G4ThreeVector fringeEntrPosOut = localPos;
+  G4ThreeVector fringeEntrMomOut = localMomUnit;
+
+  if (hasEntranceFringe)
+    {fringeIntEntr->OneStep(localPos, localMomUnit, fringeEntrPosOut, fringeEntrMomOut, bendingRad);}
+
   G4ThreeVector localPosOut;
   G4ThreeVector localMomOut;
 
   // do thin kicker step
-  OneStep(localPos, localMomUnit, localMom, h, fcof, localPosOut, localMomOut);
+  OneStep(fringeEntrPosOut, fringeEntrMomOut, localMom, h, fcof, localPosOut, localMomOut);
+
+  // set as coords after kick in case no exit fringe effect
+  G4ThreeVector fringeExitPosOut = localPosOut;
+  G4ThreeVector fringeExitMomOut = localMomOut;
+
+  if (hasEntranceFringe)
+    {fringeIntExit->OneStep(localPosOut, localMomOut, fringeExitPosOut, fringeExitMomOut, bendingRad);}
 
   // convert back to global
-  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
+  ConvertToGlobal(fringeExitPosOut, fringeExitMomOut, yOut, yErr);
 }
 
 void BDSIntegratorKickerThin::OneStep(const G4ThreeVector& localPos,
