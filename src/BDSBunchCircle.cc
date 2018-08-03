@@ -69,19 +69,24 @@ void BDSBunchCircle::CheckParameters()
 
 BDSParticleCoordsFull BDSBunchCircle::GetNextParticleLocal()
 {
-  G4double t     = T0 - envelopeT * (1.-2.*flatGen->shoot());
-  G4double z0    = Z0 + t * CLHEP::c_light;
+  G4double dt    = envelopeT * (1.-2.*flatGen->shoot());
+  G4double dz    = dt * CLHEP::c_light;
+
+  // note the minus here is inconsistent with the other bunch distributions
+  // but retained to be consistent with previous versions
+  G4double t     = T0 - dt;
+  G4double z     = Z0 - dz;
   G4double phiR  = flatGen->shoot() * CLHEP::twopi;
   G4double phiRp = flatGen->shoot() * CLHEP::twopi;
   G4double r     = flatGen->shoot() * envelopeR;
   G4double rp    = flatGen->shoot() * envelopeRp; 
 
-  G4double x0 = X0  + std::cos(phiR)  * r;
-  G4double y0 = Y0  + std::sin(phiR)  * r;
+  G4double x  = X0  + std::cos(phiR)  * r;
+  G4double y  = Y0  + std::sin(phiR)  * r;
   G4double xp = Xp0 + std::cos(phiRp) * rp;
   G4double yp = Yp0 + std::sin(phiRp) * rp; 
   G4double zp = CalculateZp(xp,yp,Zp0);
   G4double E  = E0 * (1 + envelopeE * (1-2*flatGen->shoot()));
-
-  return BDSParticleCoordsFull(x0,y0,z0,xp,yp,zp,t,S0,E,/*weight=*/1.0);
+  
+  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0-dz,E,/*weight=*/1.0);
 }
