@@ -115,6 +115,8 @@ Bug Fixes
 * Fixed incorrect dipole scaling. Issue #239.
 * Fixed E0 spread in `ring` beam distribution, which was finite in contrast to the description
   that it is always the central value.
+* Fixed reproducibility for the `ring` distribution that didn't use the same random number generator
+  as every other distribution. Coordinates will be different for this distribution for the same seed now.
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
 
 Utilities
