@@ -88,9 +88,8 @@ BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
   auto y = yBunch->GetNextParticleLocal();
   auto z = zBunch->GetNextParticleLocal();
 
-  BDSParticleCoordsFull result(x.x, x.xp,
-			       y.y, y.yp,
-			       z.z, z.zp,
+  BDSParticleCoordsFull result(x.x, y.y, z.z,
+                               x.xp, y.yp, z.zp,
 			       z.t, z.s,
 			       z.totalEnergy,
 			       x.weight);
