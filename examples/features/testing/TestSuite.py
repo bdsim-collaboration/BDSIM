@@ -180,6 +180,9 @@ class TestSuite(object):
         after which the BDSIM output will be generated, the comparator run,
         and result/plots generated.
 
+        SuiteType : integer
+            0 : Generate original data set a
+
         Parameters:
 
         testingDirectory :  string
@@ -431,93 +434,26 @@ class TestSuite(object):
         if self._testEnv["generateData"]:
             # generate new data set
             _os.chdir(self._directories["dataSet"])
-            self._GenerateDataSet()
+            self._GenerateDataSet(selfCompare=self._testEnv["selfCompare"])
             _os.chdir('../')
 
         # analysis
         if not self._testEnv["generateOriginals"]:
-            self._debugOutput("\tRunning analysis...")
+            self._debugOutput("Running analysis...")
             for componentType in self._testNames.keys():
                 self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
 
-                self._debugOutput("\tGenerating output results...")
+                self._debugOutput("\tGenerating " + componentType + " output results...")
                 self.Analysis.ProcessResults(componentType=componentType)
 
                 if self._testEnv["plotResults"]:
                     self.Analysis.PlotResults(componentType=componentType)
-                    self._debugOutput("\tGenerating plot(s)...")
+                    self._debugOutput("\tGenerating " + componentType + " plot(s)...")
         else:
             self.Analysis.ProcessOriginals()
 
-        self._debugOutput("\tAnalysis and output complete.")
+        self._debugOutput("Analysis and output complete.")
 
-        """
-        if self._testEnv['generateOriginals']:
-            _os.chdir(self._directories["origSet"])
-        else:
-            _os.chdir(self._directories["dataSet"])
-
-        self._debugOutput("Running component tests...")
-        # loop over all component types.
-        for componentType in self._testNames.keys():
-            self._debugOutput("  Component: "+componentType)
-            testfilesDir = '../Tests/'
-
-            if self._testEnv['generateOriginals']:
-                _General.CheckDirExistsElseMake(componentType)
-                _os.chdir(componentType)
-                _General.CheckDirExistsElseMake("FailedTests")
-                testfilesDir = '../../Tests/'
-
-            t = time.time()  # initial time
-
-            # list of file paths for every test of this component type
-            tests = [(testfilesDir + testFile) for testFile in self._testNames[componentType]]
-
-            # order tests
-            if (len(tests) > 1) and (componentType != 'multipole') and (componentType != 'thinmultipole'):
-                tests = _General.GetOrderedTests(self._testParamValues, tests, componentType)
-
-            self._debugOutput("Compiling test list:")
-            # compile iterable list of dicts for multithreading function.
-            testlist = []
-            for test in tests:
-                origname = _General.CheckForOriginal(self._directories["dataSet"], test, componentType)
-
-                # pass data in a dict. Easier to pass single expandable variable.
-                testDict = TestData(testFile=test,
-                                    componentType=componentType,
-                                    originalFile=origname,
-                                    generateOriginals=self._testEnv['generateOriginals'],
-                                    selfCompare=selfCompare
-                                    )
-
-                testlist.append(testDict)
-            self._debugOutput("... Done.")
-
-            # Run BDSIM for these tests.
-            self._Run(testlist, componentType)
-
-            self._debugOutput("\tRunning analysis...")
-
-            componentTime = time.time() - t  # final time
-            self.Analysis.TimingData.AddComponentTotalTime(componentType, componentTime)
-
-            if self._testEnv['generateOriginals']:
-                _os.chdir('../')
-            else:
-                self.Analysis.AddTimingData(componentType, self.Analysis.TimingData)
-
-                self._debugOutput("\tGenerating output results...")
-                self.Analysis.ProcessResults(componentType=componentType)
-
-                if self._testEnv["plotResults"]:
-                    self.Analysis.PlotResults(componentType=componentType)
-                    self._debugOutput("\tGenerating plot(s)...")
-
-            self._debugOutput("\tAnalysis and output complete.")
-            self._debugOutput("\tElement finished.")
-        """
         if not self._testEnv['generateOnly']:
             finalTime = time.time() - initialTime
             self.Analysis.TimingData.SetTotalTime(finalTime)

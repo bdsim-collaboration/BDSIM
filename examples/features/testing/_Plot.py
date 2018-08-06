@@ -1,5 +1,4 @@
 import numpy as _np
-import time as _time
 
 import string as _string
 from matplotlib import colors as _color
@@ -33,7 +32,7 @@ def PlotResults(allResults, componentType=''):
         _plotSingleParticle(electronResults)
     elif (protonResults._numEntries > 0) and (electronResults._numEntries > 0):
         if (protonResults._numEntries <= GlobalData.testsPerAxes) and (electronResults._numEntries <= GlobalData.testsPerAxes):
-            fileName = '../Results/' + componentType + '.png'
+            fileName = 'Results/' + componentType + '.png'
             _singleFigureDoubleData(electronResults, protonResults, fileName)
         else:
             _plotSingleParticle(electronResults)
@@ -82,7 +81,7 @@ def PlotTimingData(timingData, component):
     ax2.set_title('Comparator Run Time')
     ax2.yaxis.set_visible(False)
 
-    filename = '../Results/' + component + '_timingData'
+    filename = 'Results/' + component + '_timingData'
 
     pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
     for i in _plt.get_fignums():
@@ -158,7 +157,7 @@ def _plotSingleParticle(results):
                 _doubleDataAxesByEnergy(numFigures - 1, results)
                 _singleDataAxesByEnergy(results)
     else:
-        fileName = '../Results/' + results._component + '.png'
+        fileName = 'Results/' + results._component + '.png'
         _singleFigureSingleData(results, fileName)
 
 
@@ -207,7 +206,7 @@ def _doubleDataAxesByEnergy(numFigures, results):
 
         particle = results[0]['particle']
         energyString = '_' + particle + '_energies__' + energy1 + '_' + energy2
-        fileName = '../Results/' + results._component + energyString + '.png'
+        fileName = 'Results/' + results._component + energyString + '.png'
 
         _singleFigureDoubleData(res1, res2, fileName)
 
@@ -220,7 +219,7 @@ def _singleDataAxesByEnergy(results):
     energy1 = results.uniqueValues['energy'][-1]
     particle = results[0]['particle']
     energyString = '_' + particle + '_energies__' + energy1
-    fileName = '../Results/' + results._component + energyString + '.png'
+    fileName = 'Results/' + results._component + energyString + '.png'
     _singleFigureSingleData(res1, fileName)
 
 
@@ -235,7 +234,7 @@ def _singleFigureSingleData(results, filename):
         ax1 = f.add_subplot(121)
         ax2 = f.add_subplot(122)
 
-    dataAxes = _updateAxes(ax2, ax1, results, 1.0)
+    dataAxes = _updateAxes(ax2, ax1, results, 0.1)
     _addColorBar(f, dataAxes)
 
     pdf = _bkpdf.PdfPages(filename+"_plots.pdf")
@@ -370,7 +369,7 @@ def _updateAxes(dataAxis, diagramAxis, dataSetresults, labOffset):
             if i == 0:  # alway include energy (1st key in uniqueValues)
                 numLevel *= numValues
                 numBoxesPerLevel.append(numLevel)
-            elif numValues > 1:
+            elif numValues > 0:
                 numLevel *= numValues
                 numBoxesPerLevel.append(numLevel)
 
