@@ -19,12 +19,12 @@ pybdsim - python tools for bdsim
 
 
 """
-
+import _General
 import Globals
 import PhaseSpace
-import pybdsimTest
+import Test
+import TestSuite
 import Writer
-import _General
 
 
 
