@@ -22,6 +22,8 @@ pybdsim - python tools for bdsim
 import _General
 import Globals
 import PhaseSpace
+import _Plot
+import Results
 import Test
 import TestSuite
 import Writer

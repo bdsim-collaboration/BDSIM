@@ -1,20 +1,17 @@
 import numpy as _np
 import os as _os
-import string as _string
 import glob as _glob
 import subprocess as _sub
 import multiprocessing
 import time
-import collections
 from subprocess import Popen
 import threading
 import pickle
-import socket as _soc
 
 import _General
 import Globals
 import PhaseSpace
-import TestResults
+import Results
 import Test
 import Writer
 
@@ -23,8 +20,7 @@ GlobalData = Globals.Globals()
 
 # result utility functions for checking output log files.
 # Needed by Run function, so instantiate here.
-ResultUtils = TestResults.ResultsUtilities()
-
+ResultUtils = Results.ResultsUtilities()
 
 
 def _runBDSIM(inputDict, timeout):
@@ -163,7 +159,7 @@ def Run(inputDict):
             _os.remove(inputDict['bdsimLogFile'])
 
     # elif the comparator couldn't find one of the files
-    elif inputDict['code'] == 2 :
+    elif inputDict['code'] == 2:
         # if the original file that is being compared to doesn't exist, delete ROOT and
         # BDSIM log file, and move the comparator file.
         if (originalFile == '') and (inputDict['ROOTFile'] in files):
@@ -237,7 +233,7 @@ class TestSuite(object):
             if numCores > numSysCores:
                 numCoreStr = _np.str(numCores)
                 numSysStr = _np.str(numSysCores)
-                threadError =  "Number of threads specified (" + numCoreStr + ") is greater than the number \n"
+                threadError = "Number of threads specified (" + numCoreStr + ") is greater than the number \n"
                 threadError += "available (" + numSysStr + "), setting number of threads to " + numSysStr + "."
                 self._debugOutput(threadError)
                 numCores = numSysCores
@@ -290,7 +286,7 @@ class TestSuite(object):
         _General.CheckDirExistsElseMake(self._directories["failed"])
         _os.chdir("../")
 
-        self.Analysis = TestResults.Analysis()  # results instance
+        self.Analysis = Results.Analysis()  # results instance
 
         if fullTestSuite:
             self._FullTestSuite()
@@ -302,7 +298,7 @@ class TestSuite(object):
         for test in self._tests:
             writer = Writer.Writer()
             writer.WriteTests(test)
-            if not test.Component in self._testNames:
+            if test.Component not in self._testNames:
                 self._testNames[test.Component] = []
             self._testNames[test.Component].extend(writer._fileNamesWritten[test.Component])
         _os.chdir('../')
@@ -341,7 +337,7 @@ class TestSuite(object):
     def AddTest(self, test):
         """ Add a Test instance to the test suite.
             """
-        if not isinstance(test, Test):
+        if not isinstance(test, Test.Test):
             raise TypeError("Test is not a Test instance")
         else:
             self._tests.append(test)
@@ -364,7 +360,6 @@ class TestSuite(object):
     def _GenerateDataSet(self, generateOriginals=False, selfCompare=False):
         for componentType in self._testNames.keys():
             self._debugOutput("  Component: "+componentType)
-            #testfilesDir = '../Tests/'
 
             _General.CheckDirExistsElseMake(componentType)
             _os.chdir(componentType)
@@ -552,7 +547,7 @@ class TestSuite(object):
             # loop over all components
             for component in GlobalData.components:
                 if component not in bannedComponents:
-                    componentTest = Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
+                    componentTest = Test.Test(component, energy, particle, BeamPhaseSpace, useDefaults=True)
                     self.AddTest(componentTest)
                     numFiles[component] += componentTest._numFiles
 
@@ -563,4 +558,3 @@ class TestSuite(object):
 
         # run the test suite now that all the tests have been added.
         self.RunTestSuite()
-

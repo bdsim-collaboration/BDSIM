@@ -345,6 +345,8 @@ class Globals:
                                "linappserv2.pp.rhul.ac.uk",
                                "linappserv3.pp.rhul.ac.uk"]
 
+        self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
+
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
             raise ValueError("Unknown component type.")
