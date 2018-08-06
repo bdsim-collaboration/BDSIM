@@ -178,16 +178,6 @@ class ResultsUtilities:
         self.DipoleResults = {}  # seperate results dict for dipoles.
         self.TimingData = Timing()  # timing data.
 
-    def _getPickledData(self):
-        """ Function to get the pickled data files.
-            """
-        with open('results.pickle', 'rb') as handle:
-            self.Results = pickle.load(handle)
-        with open('dipoleResults.pickle', 'rb') as handle:
-            self.DipoleResults = pickle.load(handle)
-        with open('timing.pickle', 'rb') as handle:
-            self.TimingData = pickle.load(handle)
-
     def _processTimingData(self, component):
         bdsimMean = _np.mean(self.TimingData.bdsimTimes[component])
         compMean = _np.mean(self.TimingData.comparatorTimes[component])
@@ -897,7 +887,7 @@ class _Report:
         self.DipoleResults = dipoleResults
         self.groupedResults = {}
         self._numResults = {}
-        self._fileName = "../Results/TestResults_" + _time.strftime("%d%m%Y_%H%M%S", _time.gmtime()) + ".txt"
+        self._fileName = "Results/TestResults_" + _time.strftime("%d%m%Y_%H%M%S", _time.gmtime()) + ".txt"
 
     def _getResults(self, component):
         """ A function to get the test results for the specified

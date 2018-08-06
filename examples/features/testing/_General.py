@@ -467,3 +467,21 @@ def Machine(particle, robust=False):
         machine.AddRCol(name='FeCol', length=colLength, xsize=0, ysize=0)
         machine.AddDrift(name='precr2', length=0.1)
     return machine
+
+def debugFunc(debug):
+    # dynamically create function to print debug output. Saves accessing bool at runtime to
+    # check if debug is true every time the function is called
+    if debug:
+        def function_template(output):
+            print output
+
+        return function_template
+    else:
+        def function_template(output):
+            pass
+
+        return function_template
+
+def CheckDirExistsElseMake(dir):
+    if not _os.path.exists(dir):
+        _os.mkdir(dir)

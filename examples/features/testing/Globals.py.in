@@ -14,6 +14,7 @@ class ReturnsAndErrors(dict):
         """
 
     def __init__(self):
+        dict.__init__(self)
         self['name'] = []
         self['code'] = []
         self['colours'] = []
@@ -338,6 +339,10 @@ class Globals:
         self.timeout = 300  # timeout in seconds
 
         self.multiEntryTypes = [tuple, list, _np.ndarray]
+
+        self.limitedServers = ["linappserv1.pp.rhul.ac.uk",
+                               "linappserv2.pp.rhul.ac.uk",
+                               "linappserv3.pp.rhul.ac.uk"]
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
