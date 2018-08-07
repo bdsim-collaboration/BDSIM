@@ -213,16 +213,15 @@ class Globals:
 
         #lists for multipole and thinMultipole (all K components for given element)
         self.k1l = [[-1.0 * self.magStrengths['k1']],             [0], [1.0 * self.magStrengths['k1']]]
-        self.k2l = [[0, -1.0 * self.magStrengths['k1']],          [0], [0, 1.0 * self.magStrengths['k1']]]
-        self.k3l = [[0, 0, -1.0 * self.magStrengths['k1']],       [0], [0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k1']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k1']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k1']]]
+        self.k2l = [[0, -1.0 * self.magStrengths['k2']],          [0], [0, 1.0 * self.magStrengths['k2']]]
+        self.k3l = [[0, 0, -1.0 * self.magStrengths['k3']],       [0], [0, 0, 1.0 * self.magStrengths['k3']]]
+        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k4']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k4']]]
+        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k5']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k5']]]
 
         #test values for the components parameters
         #field is not set, it will be calculated upon writing based on length, angle, and energy.
         #number of field values must equal the number of angle values.
-        self.paramValues = {#'length'    : [0.2, 2.0, 20.0],
-                            'length'    : [0.2],
+        self.paramValues = {'length'    : [0.2, 2.0, 20.0],
                             'angle'     : [-0.3, -0.003, 0, 0.003, 0.3],
                             'kickangle' : [-0.003, 0, 0.003],
                             'field'     : [0, 0, 0, 0, 0],
@@ -253,15 +252,15 @@ class Globals:
 
         # Accelerator information of example machines. Full test ranges will test all these machines at their
         # energies and for their given particles
-        self.accelerators = {'ATF2'         : {'particle': 'e-', 'energy': 1.282}
-                             #'DLS'          : {'particle': 'e-', 'energy': 3.0},
-                             #'ILC'          : {'particle': 'e-', 'energy': 250},
-                             #'CLIC'         : {'particle': 'e-', 'energy': 1500},
-                             #'PSI Gantry 2' : {'particle': 'proton', 'energy': 1.188272},
-                             #'J-PARC'       : {'particle': 'proton', 'energy': 50},
-                             #'SPS'          : {'particle': 'proton', 'energy': 400},
-                             #'LHC'          : {'particle': 'proton', 'energy': 4000},
-                             #'FCC'          : {'particle': 'proton', 'energy': 50000}
+        self.accelerators = {'ATF2'         : {'particle': 'e-', 'energy': 1.282},
+                             'DLS'          : {'particle': 'e-', 'energy': 3.0},
+                             'ILC'          : {'particle': 'e-', 'energy': 250},
+                             'CLIC'         : {'particle': 'e-', 'energy': 1500},
+                             'PSI Gantry 2' : {'particle': 'proton', 'energy': 1.188272},
+                             'J-PARC'       : {'particle': 'proton', 'energy': 50},
+                             'SPS'          : {'particle': 'proton', 'energy': 400},
+                             'LHC'          : {'particle': 'proton', 'energy': 4000},
+                             'FCC'          : {'particle': 'proton', 'energy': 50000}
                              }
 
         # Full phase space

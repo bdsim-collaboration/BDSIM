@@ -10,6 +10,7 @@ import Globals
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 from pybdsim import Builder as _Builder
+from pybdsim import Beam as _Beam
 
 
 GlobalData = Globals.Globals()
@@ -29,6 +30,7 @@ def CheckForOriginal(dataSetDirectory, testname, componentType):
         return testname
     else:
         return ''
+
 
 def CompareOutput(originalFile='', newFile='', isSelfComparison=False):
     """ Compare the output file against another file. This function uses BDSIM's comparator.
@@ -67,6 +69,7 @@ def CompareOutput(originalFile='', newFile='', isSelfComparison=False):
         UpdateComparatorLog(newFile)
         _os.system("rm tempComp.log")
 
+
 def GenerateRootFile(inputfile):
     """ Generate the rootevent output for a given gmad file.
         This function can only be used for single thread testing.
@@ -88,15 +91,17 @@ def GenerateRootFile(inputfile):
     # If it does exist, delete the log and return the filename
     files = _glob.glob('*.root')
     outputevent = outputfile + '_event.root'
-    if not outputevent in files:
+    if outputevent not in files:
         return None
     else:
         _os.system("rm temp.log")
         return outputevent
 
+
 def GetHostName():
     hostName = _soc.gethostname()
     return hostName
+
 
 def GetOrderedTests(testParamValues, testlist, componentType):
     """ Function to order the tests according to their parameter values."""
@@ -112,22 +117,22 @@ def GetOrderedTests(testParamValues, testlist, componentType):
             filename = filename[:-5]  # remove .gmad extension
         splitFilename = filename.split('__')  # split into param_value parts
         particle = splitFilename[1]
-        if not particle in particles:
+        if particle not in particles:
             particles.append(particle)
 
         # dict of compiled lists of different kwarg values.
         for kwarg in splitFilename[2:]:
             param = kwarg.split('_')[0]
             value = kwarg.split('_')[1]
-            if not param in compKwargs.keys():
+            if param not in compKwargs.keys():
                 compKwargs[param] = []
-            if not value in compKwargs[param]:
+            if value not in compKwargs[param]:
                 compKwargs[param].append(value)
         # sort the kwarg values
         for key in compKwargs.keys():
             compKwargs[key].sort()
 
-    if not componentType in testParamValues.keys():
+    if componentType not in testParamValues.keys():
         testParamValues[componentType] = []
 
     # sort energy when energy is a float, not string.
@@ -157,6 +162,7 @@ def GetOrderedTests(testParamValues, testlist, componentType):
         sublevel(0, fname)
     return OrderedTests
 
+
 def UpdateBDSIMFailLog(testFileName):
     """ Update the test failure log.
         This function can only be used for single thread testing.
@@ -170,6 +176,7 @@ def UpdateBDSIMFailLog(testFileName):
         g.write(line)
     g.close()
     f.close()
+
 
 def UpdateComparatorLog(testFileName):
     """ Update the test pass log.
@@ -185,6 +192,7 @@ def UpdateComparatorLog(testFileName):
     g.close()
     f.close()
 
+
 def WriteGlobalOptions(robust=False):
     """ Write the options file that will be used by all test files.
         """
@@ -197,6 +205,7 @@ def WriteGlobalOptions(robust=False):
     options.SetBeamPipeRadius(beampiperadius=20)
     writer = _pybdsimWriter.Writer()
     writer.WriteOptions(options, 'Tests/trackingTestOptions.gmad')
+
 
 def GetBDSIMLogData(result):
     """ A function to recognise errors and warnings in the printout when
@@ -278,6 +287,7 @@ def GetBDSIMLogData(result):
                         generalStatus.append(GlobalData.ReturnsAndErrors.GetCode(code))
     return generalStatus
 
+
 def GetGitCommit():
     """ Function to get the information about which commit BDSIM was built using.
         """
@@ -314,6 +324,7 @@ def GetGitCommit():
     _os.remove('gitBranch.log')
     return gitLines
 
+
 def GetCommonFactors(results):
     """ Function to get the common parameter values of a data set.
         """
@@ -335,6 +346,7 @@ def GetCommonFactors(results):
         elif len(value) == 2:
             commonFactors[param] = value
     return commonFactors
+
 
 def GetPhaseSpaceComparatorData(result, logFile=''):
     """ A function to get the comparator results for all 6 dimensions.
@@ -406,6 +418,7 @@ def GetPhaseSpaceComparatorData(result, logFile=''):
             coords[0:6] = GlobalData.ReturnsAndErrors.GetCode('NO_DATA')
     return coords
 
+
 def CalculateEnergy(total_energy, particle='e-'):
     # Calculate the energy & momentum of a proton and electron at a given total energy.
     eMass = _con.electron_mass * _con.c**2 / _con.e / 1e9
@@ -445,6 +458,7 @@ def CalculateEnergy(total_energy, particle='e-'):
          'brho'   : brho}
     return res
 
+
 def calcBField(length, angle, energy, particle):
     # Calculate the magnetic field for a dipole
     if angle == 0:
@@ -454,6 +468,7 @@ def calcBField(length, angle, energy, particle):
         rho = length / angle
         b = energies['brho'] / rho
         return b
+
 
 def Machine(particle, robust=False):
     machine = _Builder.Machine()
@@ -467,6 +482,7 @@ def Machine(particle, robust=False):
         machine.AddRCol(name='FeCol', length=colLength, xsize=0, ysize=0)
         machine.AddDrift(name='precr2', length=0.1)
     return machine
+
 
 def debugFunc(debug):
     # dynamically create function to print debug output. Saves accessing bool at runtime to
@@ -482,6 +498,34 @@ def debugFunc(debug):
 
         return function_template
 
+
 def CheckDirExistsElseMake(dir):
     if not _os.path.exists(dir):
         _os.mkdir(dir)
+
+
+def _getBeam(test):
+    """ Function to create and return a pybdsim.Beam.Beam instance.
+        The beam is set to PTC."""
+    beam = _Beam.Beam()
+    beam.SetParticleType(particletype=test.Particle)
+    beam.SetEnergy(test.Energy)
+    beam.SetDistributionType(distrtype='ptc')
+    beam._SetSigmaE(sigmae=0)
+    return beam
+
+
+def _mkdirs(test):
+    """ Function to make the directories that the tests will be written in.
+        If the number of tests for the component is > 1000, the files will
+        be split into multiple subdirectories. """
+    component = test.Component  # component type from test object
+    if not _os.path.exists(component):
+        _os.system("mkdir -p " + component)
+    if test._numFiles > 1000:
+        _os.chdir(component)
+        numdirs = test._numFiles - _np.mod(test._numFiles, 1000)
+        dirs = _np.linspace(0, numdirs, (numdirs / 1000) + 1)
+        for direc in dirs:
+            _os.system("mkdir -p " + _np.str(_np.int(direc)))
+        _os.chdir('../')
