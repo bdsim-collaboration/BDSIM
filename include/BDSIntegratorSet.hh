@@ -70,7 +70,8 @@ public:
 		   BDSIntegratorType multipoleThinIn,
 		   BDSIntegratorType multipoleOuterIn,
 		   BDSIntegratorType rmatrixThinIn,
-		   BDSIntegratorType parallelTransporterIn);
+		   BDSIntegratorType parallelTransporterIn,
+		   BDSIntegratorType undulator);
 
   /// Get appropriate integrator based on the field type.
   BDSIntegratorType Integrator(const BDSFieldType field)const;
@@ -96,6 +97,7 @@ public:
   BDSIntegratorType multipoleOuter;
   BDSIntegratorType rmatrixThin;
   BDSIntegratorType parallelTransporter;
+  BDSIntegratorType undulator;
 
   /// Accessor for bool of is the integrator set matrix style.
   G4bool IsMatrixIntegratorSet() const;

@@ -32,7 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 struct magnettypes_def
 {
   enum type { decapole, hkicker, vkicker, muonspoiler, octupole, quadrupole,
-	      sectorbend, rectangularbend, rfcavity, sextupole,
+	      sectorbend, rectangularbend, rfcavity, sextupole, undulator,
 	      solenoid, multipole, thinmultipole, dipolefringe, rmatrix, paralleltransporter};
 };
 
