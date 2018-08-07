@@ -60,6 +60,7 @@ BDSUndulator::BDSUndulator (G4String   nameIn,
                             G4double   magnetHeightIn,
                             G4double   magnetWidthIn,
                             G4double   undulatorGapIn,
+                            G4double   undulatorLengthIn,
                             BDSBeamPipeInfo* beamPipeInfoIn,
                             BDSFieldInfo* vacuumFieldInfoIn,
                             G4String  materialIn ):
@@ -70,7 +71,8 @@ BDSUndulator::BDSUndulator (G4String   nameIn,
         material(materialIn),
         magnetHeight(magnetHeightIn),
         magnetWidth(magnetWidthIn),
-        undulatorGap(undulatorGapIn)
+        undulatorGap(undulatorGapIn),
+        undulatorLength(undulatorLengthIn)
 
 {;}
 BDSUndulator::~BDSUndulator()
@@ -84,7 +86,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
       G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
-  if (BDS::IsFinite(fmod(arcLength, undulatorPeriod)))
+  if (BDS::IsFinite(fmod(undulatorLength, undulatorPeriod)))
     {
       G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "
             "undulator periods (length \"undulatorPeriod\"" <<  G4endl;
@@ -121,7 +123,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
 //    G4double x = 100;
 //    G4double y = 20;
 
-  containerSolid = new G4Box(name + "_container_solid",magnetWidth,undulatorGap/2.0 + magnetHeight,chordLength*0.5);
+  containerSolid = new G4Box(name + "_container_solid",magnetWidth,undulatorGap/2.0 + magnetHeight,undulatorLength*0.5);
 
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                                emptyMaterial,
@@ -138,20 +140,23 @@ void BDSUndulator::Build()
   G4cout << outerDiameter << G4endl;
   G4cout << magnetHeight << G4endl;
   G4cout << magnetWidth << G4endl;
+  G4cout << chordLength << G4endl;
+  G4cout << undulatorLength << G4endl;
 
  // undulatorGap = 200;
 
   G4double L = 1500;
 //  G4double x = 100;
 //  G4double y = 20;
-  G4double numMagnets = 0.5*chordLength/undulatorPeriod; //number of magnets (undulator period is 2 magnets)
+
+  G4double numMagnets = 2*undulatorLength/undulatorPeriod; //number of magnets (undulator period is 2 magnets)
 
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
   BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength ,beamPipeInfo);
   RegisterDaughter(pipe);
 
   // magnet geometry
-  G4Box* aBox = new G4Box(name, magnetWidth, magnetHeight, undulatorPeriod/2.0);
+  G4Box* aBox = new G4Box(name, magnetWidth, magnetHeight, undulatorPeriod/4.0);
 
   RegisterSolid(aBox);
  
@@ -181,14 +186,14 @@ void BDSUndulator::Build()
   RegisterVisAttributes(upperBoxcolour);
 
   // place upper and lower magnets in a loop
-  for (int i = 1; i<2*numMagnets; i++)
+  for (int i = 1; i<=numMagnets; i++)
     {
-
+      G4cout << i << G4endl;
       if (BDS::IsFinite(fmod(i, 2)))
       {
         //G4cout << i << G4endl;
         // upper magnet
-        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, L - i * undulatorPeriod);
+        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, (0.5*undulatorLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
                                                   bBoxpos,                  // position
                                                   upperBoxLV,                   // its logical volume
@@ -199,7 +204,7 @@ void BDSUndulator::Build()
                                                   checkOverlaps);
         RegisterPhysicalVolume(upperBoxPV);
 
-        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, L - i*undulatorPeriod);
+        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, (0.5*undulatorLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
                                                  cBoxpos,
                                                  lowerBoxLV,
@@ -213,22 +218,22 @@ void BDSUndulator::Build()
         else
 
       {
-        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, L - i * undulatorPeriod);
+        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, (0.5*undulatorLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
                                                       bBoxpos,                  // position
                                                       lowerBoxLV,                   // its logical volume
-                                                      std::to_string(i) + "_upper_pv_neg",        // its name
+                                                      std::to_string(i) + "_elseupper_pv_neg",        // its name
                                                       containerLogicalVolume,   // its mother volume
                                                       false,                    // no boolean operation
                                                       0,                        // copy number
                                                       checkOverlaps);
         RegisterPhysicalVolume(upperBoxPV);
 
-        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, L - i*undulatorPeriod);
+        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, (0.5*undulatorLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
                                                      cBoxpos,
                                                      upperBoxLV,
-                                                     std::to_string(i) +  "_lower_pv_pos",
+                                                     std::to_string(i) +  "_elselower_pv_pos",
                                                      containerLogicalVolume,
                                                      false,
                                                      0,

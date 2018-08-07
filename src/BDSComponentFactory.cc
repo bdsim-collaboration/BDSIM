@@ -1001,6 +1001,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                       element->magnetWidth * CLHEP::m,    // magnet height to be added
                       element->magnetHeight * CLHEP::m,    // magnet width to be added
                       element->undulatorGap * CLHEP::m,
+                      element->undulatorLength * CLHEP::m,
                       bpInfo,
                       vacuumFieldInfo,
                       element->material));
