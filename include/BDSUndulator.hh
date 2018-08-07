@@ -39,7 +39,6 @@ public:
                G4double magnetHeightIn,
                G4double magnetWidthIn,
                G4double undulatorGapIn,
-               G4double undulatorLengthIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
                BDSFieldInfo*   vacuumFieldInfoIn,
                G4String materialIn = "iron"
@@ -62,7 +61,6 @@ protected:
   G4double magnetHeight;
   G4double magnetWidth;
   G4double undulatorGap;
-  G4double undulatorLength;
 };
 
 #endif
