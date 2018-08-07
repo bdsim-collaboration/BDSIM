@@ -232,7 +232,7 @@ class TestSuite(object):
             numCores = 1
             self._debugOutput("Number of threads must be finite. Setting number of threads to 1.")
         else:
-            numCores = self._testEnv["numthreads"]
+            numCores = numThreads
             if numCores > numSysCores:
                 numCoreStr = _np.str(numCores)
                 numSysStr = _np.str(numSysCores)
@@ -240,6 +240,8 @@ class TestSuite(object):
                 threadError += "available (" + numSysStr + "), setting number of threads to " + numSysStr + "."
                 self._debugOutput(threadError)
                 numCores = numSysCores
+            else:
+                self._debugOutput("Using " + _np.str(numCores) + " threads.")
 
         self._testEnv = {"pickledData"      : usePickledData,
                          "plotResults"      : plotResults,

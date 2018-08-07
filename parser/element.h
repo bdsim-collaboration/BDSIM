@@ -159,6 +159,13 @@ namespace GMAD
     double screenPosy;
     double screenPosz;
 
+    ///@{ for undulator
+    double undulatorPeriod;
+    double undulatorGap;
+    double magnetHeight;
+    double magnetWidth;
+    ///@}
+
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;
     std::list<double> blmLocTheta;

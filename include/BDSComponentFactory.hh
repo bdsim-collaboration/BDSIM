@@ -218,6 +218,8 @@ private:
   BDSAcceleratorComponent* CreateWireScanner();
   BDSAcceleratorComponent* CreateRMatrix();
   BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
+  BDSAcceleratorComponent* CreateUndulator();
+
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();

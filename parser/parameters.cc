@@ -169,6 +169,11 @@ Parameters::Parameters()
   setMap["screenPosy"]        = false;
   setMap["screenPosz"]        = false;
 
+  setMap["undulatorPeriod"]   = false;
+  setMap["undulatorGap"]      = false;
+  setMap["magnetHeight"]      = false;
+  setMap["magnetWidth"]       = false;
+
   setMap["colour"] = false;
 
   setMap["crystalLeft"]            = false;

@@ -48,7 +48,8 @@ namespace GMAD
     _RMATRIX     = 68,
     _CRYSTALCOL  = 69,
     _WIRESCANNER = 70,
-    _AWSCREEN    = 71
+    _AWSCREEN    = 71,
+    _UNDULATOR   = 72,
   };
 
   /// conversion from enum to string
