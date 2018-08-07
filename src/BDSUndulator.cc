@@ -190,9 +190,9 @@ void BDSUndulator::Build()
       {
         //G4cout << i << G4endl;
         // upper magnet
-        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+        G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
-                                                  bBoxpos,                  // position
+                                                  upperBoxpos,                  // position
                                                   upperBoxLV,                   // its logical volume
                                                   std::to_string(i) + "_upper_pv_neg",        // its name
                                                   containerLogicalVolume,   // its mother volume
@@ -201,9 +201,9 @@ void BDSUndulator::Build()
                                                   checkOverlaps);
         RegisterPhysicalVolume(upperBoxPV);
 
-        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+        G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
-                                                 cBoxpos,
+                                                 lowerBoxpos,
                                                  lowerBoxLV,
                                                  std::to_string(i) +  "_lower_pv_pos",
                                                  containerLogicalVolume,
@@ -215,9 +215,9 @@ void BDSUndulator::Build()
         else
 
       {
-        G4ThreeVector bBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+        G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
-                                                      bBoxpos,                  // position
+                                                      upperBoxpos,                  // position
                                                       lowerBoxLV,                   // its logical volume
                                                       std::to_string(i) + "_elseupper_pv_neg",        // its name
                                                       containerLogicalVolume,   // its mother volume
@@ -226,9 +226,9 @@ void BDSUndulator::Build()
                                                       checkOverlaps);
         RegisterPhysicalVolume(upperBoxPV);
 
-        G4ThreeVector cBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+        G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
         G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
-                                                     cBoxpos,
+                                                     lowerBoxpos,
                                                      upperBoxLV,
                                                      std::to_string(i) +  "_elselower_pv_pos",
                                                      containerLogicalVolume,
