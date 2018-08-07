@@ -26,8 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-BDSFieldMagUndulator::BDSFieldMagUndulator(BDSMagnetStrength const* strength,
-					     G4double          const  brho)
+BDSFieldMagUndulator::BDSFieldMagUndulator(BDSMagnetStrength const* strength)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   peroid = (*strength)["length"];

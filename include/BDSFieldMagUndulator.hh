@@ -36,8 +36,7 @@ class BDSMagnetStrength;
 class BDSFieldMagUndulator: public BDSFieldMag
 {
 public:
-    BDSFieldMagUndulator(BDSMagnetStrength const* strength,
-			G4double          const  brho);
+    BDSFieldMagUndulator(BDSMagnetStrength const* strength);
   
   virtual ~BDSFieldMagUndulator(){;}
 

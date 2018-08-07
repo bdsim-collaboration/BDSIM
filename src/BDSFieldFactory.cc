@@ -326,7 +326,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::undulator:
-      {field = new BDSFieldMagUndulator(strength, brho); break;}
+      {field = new BDSFieldMagUndulator(strength); break;}
     case BDSFieldType::dipolequadrupole:
       {field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;}
     case BDSFieldType::sextupole:

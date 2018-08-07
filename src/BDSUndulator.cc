@@ -116,10 +116,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
     magnetHeight = 20;
   }
 
-
-//    G4double L = 1500;
-//    G4double x = 100;
-//    G4double y = 20;
+  
 
   containerSolid = new G4Box(name + "_container_solid",magnetWidth,undulatorGap/2.0 + magnetHeight,chordLength*0.5);
 
@@ -140,11 +137,6 @@ void BDSUndulator::Build()
   G4cout << magnetWidth << G4endl;
   G4cout << chordLength << G4endl;
 
- // undulatorGap = 200;
-
-  G4double L = 1500;
-//  G4double x = 100;
-//  G4double y = 20;
 
   G4double numMagnets = 2*chordLength/undulatorPeriod; //number of magnets (undulator period is 2 magnets)
 
