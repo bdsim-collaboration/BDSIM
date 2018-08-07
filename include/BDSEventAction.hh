@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ctime>
 #include <string>
+#include <vector>
 
 class BDSEventInfo;
 class BDSOutput;
@@ -71,7 +72,10 @@ private:
   G4bool   trajConnect;
   G4String particleToStore;
   G4String particleIDToStore;
+  std::vector<int> particleIDIntToStore;
   G4int    depth;
+  std::vector<int> samplerIDsToStore;
+  std::vector<std::pair<double,double>> sRangeToStore;
   /// @}
 
   std::string seedStateAtStart; ///< Seed state at start of the event.

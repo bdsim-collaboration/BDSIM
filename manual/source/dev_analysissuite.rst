@@ -11,14 +11,14 @@ Executables
 +===================+========================================================+
 | rebdsim           | Main analysis tool. Reads histogram definition file.   |
 +-------------------+--------------------------------------------------------+
-| rebdsimCombine    | Combine output from multiple runs of rebdsim.          |
+| rebdsimCombine    | Combines output from multiple runs of rebdsim          |
 +-------------------+--------------------------------------------------------+
-| rebdsimOptics     | Calculate the optics only from a BDSIM ROOT file.      |
+| rebdsimOptics     | Calculates the optics only from a BDSIM ROOT file      |
 +-------------------+--------------------------------------------------------+
-| rebdsimOrbit      | Extract the primary particle hit in each sampler for   |
-|                   | a given event.                                         |
+| rebdsimOrbit      | Extracts the primary particle hit in each sampler for  |
+|                   | a given event                                          |
 +-------------------+--------------------------------------------------------+
-| edbdsim           | Event display.                                         |
+| edbdsim           | Event display                                          |
 +-------------------+--------------------------------------------------------+
 
 
@@ -52,12 +52,12 @@ and these are stored in a map of branch names for each tree. The `DataLoader` cl
 this as an optional argument and turns on the appropriate branches.
 
 The default arguments for the `DataLoader` class are such that all data is loaded. It is
-non-trivial and requires a lot of typing to define the map necessary for efficient loading
-and this hinders a user when inspecting data interactively. Therefore, all data is on when
+non-trivial and requires a lot of typing to define the map necessary for efficient loading,
+which hinders a user when inspecting data interactively. Therefore, all data is on when
 loading interactively.
 
 Interactive Usage
 -----------------
 
 The code used for analysis must be maintained in such a way that is both useful for the
-compiled analysis tools but also simple to use interactively.
+compiled analysis tools, but also simple to use interactively.

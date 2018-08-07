@@ -1,0 +1,15 @@
+include electronOptions.gmad;
+
+length = 5*cm;
+
+d      : drift, l=0.5*m;
+! sb     : sbend, l=14*m, angle=0.0041887902047863905; ! 1500 dipoles
+sb     : sbend, l=14*m, angle=0.004188790204; ! 1500 dipoles
+
+include lattice.gmad;
+
+beam,  particle="e-",
+       energy= 250*GeV,
+       distrType="reference";
+
+option,storeTrajectories=1;

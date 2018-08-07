@@ -14,6 +14,7 @@ class ReturnsAndErrors(dict):
         """
 
     def __init__(self):
+        dict.__init__(self)
         self['name'] = []
         self['code'] = []
         self['colours'] = []
@@ -212,10 +213,10 @@ class Globals:
 
         #lists for multipole and thinMultipole (all K components for given element)
         self.k1l = [[-1.0 * self.magStrengths['k1']],             [0], [1.0 * self.magStrengths['k1']]]
-        self.k2l = [[0, -1.0 * self.magStrengths['k1']],          [0], [0, 1.0 * self.magStrengths['k1']]]
-        self.k3l = [[0, 0, -1.0 * self.magStrengths['k1']],       [0], [0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k1']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k1']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k1']]]
+        self.k2l = [[0, -1.0 * self.magStrengths['k2']],          [0], [0, 1.0 * self.magStrengths['k2']]]
+        self.k3l = [[0, 0, -1.0 * self.magStrengths['k3']],       [0], [0, 0, 1.0 * self.magStrengths['k3']]]
+        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k4']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k4']]]
+        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k5']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k5']]]
 
         #test values for the components parameters
         #field is not set, it will be calculated upon writing based on length, angle, and energy.
@@ -278,6 +279,13 @@ class Globals:
                                           'T'  : [-1.0e-12, 0, 1.0e-12],
                                           'PT' : [0, 1.0e-2]}
 
+        self.BeamPhaseSpaceReference = {'X'  : 0,
+                                        'PX' : 0,
+                                        'Y'  : 0,
+                                        'PY' : 0,
+                                        'T'  : 0,
+                                        'PT' : 0}
+
         # integrator (mainly for use with field maps)
         self.Integrators = {'g4cashkarprkf45'       : {'Field': 'EM', 'Dim': 4},
                             'g4classicalrk4'        : {'Field': 'EM', 'Dim': 4},
@@ -329,6 +337,14 @@ class Globals:
         self.ReturnsAndErrors.Add('NAN_CHORD',          9, 'y', 'G4ChordFinder::FindNextChord()', True)
 
         self.timeout = 300  # timeout in seconds
+
+        self.multiEntryTypes = [tuple, list, _np.ndarray]
+
+        self.limitedServers = ["linappserv1.pp.rhul.ac.uk",
+                               "linappserv2.pp.rhul.ac.uk",
+                               "linappserv3.pp.rhul.ac.uk"]
+
+        self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):
