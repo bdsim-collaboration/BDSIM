@@ -180,6 +180,7 @@ void Element::PublishMembers()
   publish("undulatorGap",      &Element::undulatorGap);
   publish("magnetWidth",       &Element::magnetWidth);
   publish("magnetHeight",      &Element::magnetHeight);
+  publish("undulatorLength",   &Element::undulatorLength);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
@@ -422,6 +423,7 @@ void Element::flush()
   undulatorGap = 0;
   magnetHeight = 0;
   magnetWidth = 0;
+  undulatorLength = 1;
 
   // new aperture model
   beampipeThickness = 0;

@@ -159,6 +159,7 @@ Parameters::Parameters()
   setMap["undulatorGap"]      = false;
   setMap["magnetHeight"]      = false;
   setMap["magnetWidth"]       = false;
+  setMap["undulatorLength"]   = false;
 
   setMap["colour"] = false;
 
