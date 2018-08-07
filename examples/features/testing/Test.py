@@ -5,14 +5,14 @@ import collections
 
 import Globals
 import PhaseSpace
-import TestResults
+import Results
 
 
 GlobalData = Globals.Globals()
 
 # result utility functions for checking output log files.
 # Needed by Run function, so instantiate here.
-ResultUtils = TestResults.ResultsUtilities()
+ResultUtils = Results.ResultsUtilities()
 
 
 class TestData(dict):
