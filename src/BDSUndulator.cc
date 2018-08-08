@@ -121,14 +121,15 @@ void BDSUndulator::BuildContainerLogicalVolume()
 void BDSUndulator::Build()
 {
   BDSAcceleratorComponent::Build();
-  
+
+#ifdef BDSDEBUG
   G4cout << "para" << G4endl;
   G4cout << undulatorGap << G4endl;
   G4cout << outerDiameter << G4endl;
   G4cout << magnetHeight << G4endl;
   G4cout << magnetWidth << G4endl;
   G4cout << chordLength << G4endl;
-
+#endif
 
   G4double numMagnets = 2*chordLength/undulatorPeriod; //number of magnets (undulator period is 2 magnets)
 
