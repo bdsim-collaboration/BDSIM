@@ -270,9 +270,3 @@ void BDSUndulator::Build()
                                                             pipe->GetContainerLogicalVolume(),
                                                             true);
 }
-
-//void BDSUndulator::BuildUndulatorMagnet()
-//{;}
-
-
-//}
