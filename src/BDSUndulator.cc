@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 
+#include <cmath>
 
 BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   lengthIn,
@@ -56,7 +57,8 @@ BDSUndulator::~BDSUndulator()
 void BDSUndulator::BuildContainerLogicalVolume()
 {
   // input Checks
-  if (BDS::IsFinite(fmod(chordLength, undulatorPeriod)))
+  BDSExtent bp = beamPipeInfo->Extent();
+  if (BDS::IsFinite(std::fmod(chordLength, undulatorPeriod)))
     {
       G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "
             "undulator periods (length \"undulatorPeriod\"" <<  G4endl;
@@ -67,20 +69,27 @@ void BDSUndulator::BuildContainerLogicalVolume()
       G4cerr << __METHOD_NAME__ << "Undulator period is 0, period must be finite" <<  G4endl;
       exit(1);
     }
-   if (undulatorGap == 0)
-     {undulatorGap = beamPipeInfo->aper1*4;}
-
-  if (undulatorGap/2 <= beamPipeInfo->aper1)
+  if (!BDS::IsFinite(undulatorGap))
+     {
+       G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height" << G4endl;
+       undulatorGap = bp.DY() * 2;
+     }
+  if (0.5 * undulatorGap <= bp.DY())
     {
       G4cerr << __METHOD_NAME__ << "undulatorGap smaller then aperture " <<  G4endl;
       exit(1);
     }
 
-
-  if (magnetWidth == 0)
-    {magnetWidth = 100;}
-  if (magnetHeight == 0)
-    {magnetHeight = 20;}  
+  if (!BDS::IsFinite(magnetWidth))
+    {
+      G4cout << __METHOD_NAME__ << "\"magnetWidth\" = 0 -> using 100 mm" << G4endl;
+      magnetWidth = 100;
+    }
+  if (!BDS::IsFinite(magnetHeight))
+    {
+      G4cout << __METHOD_NAME__ << "\"magnetWidth\" = 0 -> using 20 mm" << G4endl;
+      magnetHeight = 20;
+    }
 
   containerSolid = new G4Box(name + "_container_solid",
 			     magnetWidth,
