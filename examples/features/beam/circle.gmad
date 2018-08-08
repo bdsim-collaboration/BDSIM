@@ -3,8 +3,8 @@ beam,  particle="e-",
        distrType="circle",
        envelopeR  = 0.002*mm, 
        envelopeRp = 0.09*0.005,
-       envelopeT  = 1e-9;
-       envelopeE  = 1e-5;
+       envelopeT  = 1e-9,
+       envelopeE  = 1e-3;
 
 include options.gmad
 include fodo.gmad;

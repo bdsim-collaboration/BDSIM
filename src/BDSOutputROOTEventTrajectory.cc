@@ -48,25 +48,80 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 }
 
 #ifndef __ROOTBUILD__
-void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajVec)
-{
+int findPrimaryStepIndex(BDSTrajectory* traj) {
+  if(!traj->GetParent()) 
+    return -1;
+
+  if(traj->GetParent()->GetTrackID() == 1) 
+    return traj->GetParentStepIndex();
+  else 
+    return findPrimaryStepIndex(traj->GetParent()); 
+}
+
+void BDSOutputROOTEventTrajectory::Fill(const std::map<BDSTrajectory*, bool> &trajMap)
+{  
   if(!auxNavigator) {
     /// Navigator for checking points in read out geometry
     auxNavigator = new BDSAuxiliaryNavigator();
   }
 
-  n = (int) trajVec.size();
-  for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT) {
-    BDSTrajectory *traj = *iT;
+  // assign trajectory indicies 
+  int idx = 0;
+  for(auto iT = trajMap.begin(); iT != trajMap.end(); ++iT) {
+    BDSTrajectory *traj = (*iT).first;
+    if((*iT).second) {
+      traj->SetTrajIndex(idx);     
+      idx++;
+    }
+    else 
+      traj->SetTrajIndex(-1);
+  }
+  
+  // assign parent (and step) indicies 
+  for(auto iT = trajMap.begin(); iT != trajMap.end(); ++iT) {
+    BDSTrajectory *traj   = (*iT).first;
+    BDSTrajectory *parent = traj->GetParent();
+    if((*iT).second && parent != NULL) { // to store and not primary
+      traj->SetParentIndex(parent->GetTrajIndex());
+      
+      // search for parent step index
+      if(parent->GetTrajIndex() != -1) {
+	auto trajStartPos = traj->GetPoint(0)->GetPosition();
+	traj->SetParentStepIndex(-1);
+	for(auto i = 0; i < parent->GetPointEntries(); ++i) {
+	  if(parent->GetPoint(i)->GetPosition() == trajStartPos) {
+	    traj->SetParentStepIndex(i);
+	    break;
+	  }
+	}
+      }
+      else {
+	parent->SetParentStepIndex(-1);
+      }	
+    }
+    else {
+      traj->SetParentIndex(-1);
+    }
+  }
+
+  n = 0;
+  for(auto iT = trajMap.begin(); iT != trajMap.end(); ++iT) {
+    BDSTrajectory *traj = (*iT).first;
+
+    // check if the trajectory is to be stored
+    if( !(*iT).second) 
+      continue;
+
     partID.push_back((int &&) traj->GetPDGEncoding());
     trackID.push_back((unsigned int &&) traj->GetTrackID());
     parentID.push_back((unsigned int &&) traj->GetParentID());
     parentIndex.push_back((int &&) traj->GetParentIndex());
-
-    std::vector<int> preProcessType;
-    std::vector<int> preProcessSubType;
-    std::vector<int> postProcessType;
-    std::vector<int> postProcessSubType;
+    parentStepIndex.push_back((int &&) traj->GetParentStepIndex());
+    
+    std::vector<int>    preProcessType;
+    std::vector<int>    preProcessSubType;
+    std::vector<int>    postProcessType;
+    std::vector<int>    postProcessSubType;
     std::vector<double> preWeight;
     std::vector<double> postWeight;
     std::vector<double> energy;
@@ -75,7 +130,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
     std::vector<TVector3> momentum;
     std::vector<int>      modelIndex;
 
-
+    // loop over trajectory points and fill structures
     for (auto i = 0; i < traj->GetPointEntries(); ++i) {
       BDSTrajectoryPoint *point = static_cast<BDSTrajectoryPoint *>(traj->GetPoint(i));
 
@@ -108,7 +163,7 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
                                   mom.getY(),
                                   mom.getZ()));
     }
-
+       
     trajectories.push_back(trajectory);
     modelIndicies.push_back(modelIndex);
     momenta.push_back(momentum);
@@ -120,33 +175,21 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
     postWeights.push_back(postWeight);
     energies.push_back(energy);
 
-    // loop over parent trajectory steps and find production location and add
+    // recursively search for primary interaction step  
+    primaryStepIndex.push_back(findPrimaryStepIndex(traj));
+    
+    // geant4 trackID to trackIndex in this table
+    trackID_trackIndex.insert(std::pair<int,int>(traj->GetTrackID(),n));
 
-    // primary (special case)
-    if (traj->GetTrackID() == 1) {
-      parentStepIndex.push_back(-1);
-      continue;
-    };
-
-    // secondary
-    auto newParentID = traj->GetParentIndex();
-    if (newParentID >= 0) {
-      auto trajParent = trajVec.at((int)newParentID);
-      auto trajDaughterPos = traj->GetPoint(0)->GetPosition();
-      for (auto i = 0; i < trajParent->GetPointEntries(); ++i) {
-        if (trajParent->GetPoint(i)->GetPosition() == trajDaughterPos) {
-          parentStepIndex.push_back(i);
-          break;
-        }
-      }
-    }
-
-    // could not find the vertex, possible for disconnected trees
-    if (parentStepIndex.size() == 0) {
-      parentStepIndex.push_back(-1);
-    }
+    // this->printTrajectoryInfo(n);
+    n++;
   }
 
+
+  /////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+#if 0
   // Fill maps for later analysis
   int trackIndex = 0;
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT) {
@@ -154,6 +197,9 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
 
     // map of trackID to trackIndex
     trackID_trackIndex.insert(std::pair<int, int>(traj->GetTrackID(),trackIndex));
+
+    std::cout << trajVec.size() << " " << parentID.size() << " " << parentIndex.size() << " " 
+	      << traj->GetTrackID() << " " << traj->GetParentID() << " " << trackIndex << std::endl;
 
     // map of trackIndex to trackProcess
     auto processPair = findParentProcess(trackIndex);
@@ -175,6 +221,10 @@ void BDSOutputROOTEventTrajectory::Fill(const std::vector<BDSTrajectory*> &trajV
 
     ++trackIndex;
   }
+#endif
+  /////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
 }
 
 void BDSOutputROOTEventTrajectory::Fill(const BDSEnergyCounterHitsCollection *phc)
@@ -193,6 +243,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   parentID.clear();
   parentIndex.clear();
   parentStepIndex.clear();
+  primaryStepIndex.clear();
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
@@ -204,20 +255,27 @@ void BDSOutputROOTEventTrajectory::Flush()
   momenta.clear();
   modelIndicies.clear();
   trackID_trackIndex.clear();
-  trackIndex_trackProcess.clear();
-  trackIndex_modelIndex.clear();
-  modelIndex_trackIndex.clear();
+  
+  // trackIndex_trackProcess.clear();
+  //  trackIndex_modelIndex.clear();
+  //  modelIndex_trackIndex.clear();
 }
 
+#if 0
 std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackIndex) {
 
+  std::cout << "BDSOutputROOTEventTrajectory::findParentProcess> " << trackIndex << " " << parentID.size() << " " << parentIndex.size() << std::endl;
   int tid = trackIndex;
   int pid = parentID.at(tid);
+  std::cout << pid << std::endl;
   int pin = parentIndex.at(tid);
+  std::cout << pin << std::endl;
+
   if(pin == -1) {
     return std::pair<int,int>(-1,-1);
   }
   int sin = parentStepIndex.at(tid);
+  std::cout << sin << std::endl;
 
   while(pid > 0) {
     if(pin == 0) {
@@ -228,20 +286,15 @@ std::pair<int,int> BDSOutputROOTEventTrajectory::findParentProcess(int trackInde
     pin = parentIndex.at(tid);
     sin = parentStepIndex.at(tid);
 
+    std::cout << tid << " " << pid << " " << pin << " " << sin << " " << std::endl;
   }
 
   return std::pair<int,int>(pin,sin);
 }
+#endif
 
 std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::trackInteractions(int trackid)
 {
-  /*
-  for(auto it = trackID_trackIndex.cbegin(); it != trackID_trackIndex.cend(); ++it)
-  {
-    std::cout << it->first << " "  << it->second << "\n";
-  }
-   */
-
   int ti = trackID_trackIndex.at(trackid);  // get track index
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> tpv; // trajectory point vector - result
@@ -267,14 +320,14 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::tra
 BDSOutputROOTEventTrajectoryPoint BDSOutputROOTEventTrajectory::primaryProcessPoint(int trackid)
 {
   int                ti = trackID_trackIndex.at(trackid);  // get track index
-  std::pair<int,int> pp = trackIndex_trackProcess.at(ti);  // get track and index of start proccess
-
-  BDSOutputROOTEventTrajectoryPoint p(partID[pp.first], trackID[pp.first],
-                                      parentID[pp.first], parentIndex[pp.first],
-                                      postProcessTypes[pp.first][pp.second], postProcessSubTypes[pp.first][pp.second],
-                                      postWeights[pp.first][pp.second],energies[pp.first][pp.second],
-                                      trajectories[pp.first][pp.second], momenta[pp.first][pp.second],
-                                      modelIndicies[pp.first][pp.second]);
+  int                si = parentStepIndex.at(ti);          // get primary index          
+  
+  BDSOutputROOTEventTrajectoryPoint p(partID[ti], trackID[ti],
+                                      parentID[ti], parentIndex[ti],
+                                      postProcessTypes[ti][si], postProcessSubTypes[ti][si],
+                                      postWeights[ti][si],energies[ti][si],
+                                      trajectories[ti][si], momenta[ti][si],
+                                      modelIndicies[ti][si]);
   return p;
 }
 
@@ -303,11 +356,11 @@ std::vector<BDSOutputROOTEventTrajectoryPoint> BDSOutputROOTEventTrajectory::pro
 
 void BDSOutputROOTEventTrajectory::printTrajectoryInfo(int i)
 {
-  int wdt = 8;
+  int wdt = 11;
 
-  std::cout << std::setw(wdt) << "trIx"     << " " << std::setw(wdt) << "trkId"    << " "
+  std::cout << std::setw(wdt) << "trIx"      << " " << std::setw(wdt) << "trkId"    << " "
             << std::setw(wdt) << "prId"      << " " << std::setw(wdt) << "prIx"    << " "
-            << std::setw(wdt) << "prStpIx" << " " << std::setw(wdt) << "pID"      << " "
+            << std::setw(wdt) << "prStpIx"   << " " << std::setw(wdt) << "pID"      << " "
             << std::setw(wdt) << "prePrcT"   << " " << std::setw(wdt) << "prePrcST" << " "
             << std::setw(wdt) << "pstPrcT"   << " " << std::setw(wdt) << "pstPrcST" << " "
             << std::setw(wdt) << "X"         << " " << std::setw(wdt) << "Y"        << " "

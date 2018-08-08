@@ -40,9 +40,7 @@ public:
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-                               G4double& xp, G4double& yp, G4double& zp,
-                               G4double& t , G4double&  E, G4double& weight);
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
   
 private:
   /// Load the PTC file into memory
