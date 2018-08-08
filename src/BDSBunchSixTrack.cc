@@ -18,11 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSixTrack.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
+#include <cmath>
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
@@ -48,23 +50,16 @@ void BDSBunchSixTrack::SetOptions(const BDSParticleDefinition* beamParticle,
   LoadSixTrackFile();
 }
 
-void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchSixTrack::GetNextParticleLocal()
 {
-  z0 = sixtrackData[iPart][2] * CLHEP::m;
-  x0 = sixtrackData[iPart][3] * CLHEP::mm; 
-  xp = sixtrackData[iPart][4] * CLHEP::mrad;
-  y0 = sixtrackData[iPart][5] * CLHEP::mm;
-  yp = sixtrackData[iPart][6] * CLHEP::mrad;
-  G4double beamenergy = E0 * CLHEP::GeV;
-  E  = beamenergy + sixtrackData[iPart][7] * beamenergy;
-  weight = 1.;
-  t      = 0.;
-  zp     = CalculateZp(xp,yp,1.);
-
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-
+  G4double s  = sixtrackData[iPart][2] * CLHEP::m;
+  G4double x  = sixtrackData[iPart][3] * CLHEP::mm; 
+  G4double xp = sixtrackData[iPart][4] * CLHEP::mrad;
+  G4double y  = sixtrackData[iPart][5] * CLHEP::mm;
+  G4double yp = sixtrackData[iPart][6] * CLHEP::mrad;
+  G4double E  = E0 * (1 + sixtrackData[iPart][7]);
+  G4double zp = CalculateZp(xp,yp,Zp0);
+  
   iPart++;
 
   // if all particles are read, start at 0 again
@@ -73,7 +68,7 @@ void BDSBunchSixTrack::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       iPart=0;
       G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
     }
-  return;
+  return BDSParticleCoordsFull(x,y,s,xp,yp,zp,T0,s,E,/*weight=*/1.0);
 }
 
 void BDSBunchSixTrack::LoadSixTrackFile()

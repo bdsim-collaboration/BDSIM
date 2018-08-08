@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoordsFull.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/beam.h"
@@ -98,19 +99,17 @@ void  BDSBunchHalo::SetOptions(const BDSParticleDefinition* beamParticle,
   CheckParameters(); 
 }
 
-void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				   G4double& xp, G4double& yp, G4double& zp,
-				   G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchHalo::GetNextParticleLocal()  
 {
   // Central orbit 
-  x0 = X0  * CLHEP::m;
-  y0 = Y0  * CLHEP::m;
-  z0 = Z0  * CLHEP::m;
-  xp = Xp0 * CLHEP::rad;
-  yp = Yp0 * CLHEP::rad;
+  G4double x = X0;
+  G4double y = Y0;
+  G4double z = Z0;
+  G4double xp = Xp0;
+  G4double yp = Yp0;
 
-  //  z0 += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
-  z0 = 0;
+  //  z += (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+  z = 0;
 
   while(true)
   {
@@ -180,24 +179,20 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	  {continue;}
 	
 	// add to reference orbit 
-	x0 += dx * CLHEP::m;
-	y0 += dy * CLHEP::m;
+	x += dx * CLHEP::m;
+	y += dy * CLHEP::m;
 	xp += dxp * CLHEP::rad;
 	yp += dyp * CLHEP::rad;
 	
-	zp = CalculateZp(xp, yp, Zp0);
-	
-	ApplyTransform(x0,y0,z0,xp,yp,zp);
-	
-	t = T0 * CLHEP::s;
-	E = E0 * CLHEP::GeV;
+	G4double zp = CalculateZp(xp, yp, Zp0);	
+	G4double t = T0 * CLHEP::s;
+	G4double E = E0 * CLHEP::GeV;
 	
 #ifdef BDSDEBUG
 	G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
 #endif
-	
-	weight = 1.0;
-	return;
+	BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
+	return result;
       }
   }
 }

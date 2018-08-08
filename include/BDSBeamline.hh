@@ -143,10 +143,12 @@ public:
   G4ThreeVector GetMaximumExtentAbsolute() const;
 
   /// Get the local to global transform for curvilinear coordinates
-  /// to global coordinates. 0,0 transverse position by default.
+  /// to global coordinates. 0,0 transverse position by default. Optionally returns
+  /// the index of the found element in the beam line (by reference variable).
   G4Transform3D GetGlobalEuclideanTransform(G4double s,
 					    G4double x = 0,
-					    G4double y = 0) const;
+					    G4double y = 0,
+					    G4int* indexOfFoundElement = nullptr) const;
 
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.

@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+class BDSParticleCoords;
 class BDSTiltOffset;
 
 /**
@@ -113,6 +114,8 @@ public:
   G4bool Encompasses(G4double x,
 		     G4double y,
 		     G4double z) const {return Encompasses(G4ThreeVector(x,y,z));}
+
+  G4bool Encompasses(const BDSParticleCoords& coords) const;
   
   /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
   BDSExtent Tilted(G4double angle) const;

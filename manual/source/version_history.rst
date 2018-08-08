@@ -58,6 +58,12 @@ General
 * Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
 * BDSIM now recognises all elements by chemical abbreviation. These are found in the Geant4 NIST
   database by automatically prefixing the name with "G4\_". Issue #236.
+* `circle` distribution z and t distributions are now reversed to be consistent with all other generators.
+  These were T0 - dt and are now T0 + dt. Distribution will be different for the same seed as compared
+  to a previous version of BDSIM.
+* `square` distribution now calls random number generator for each coordinate every time for
+  consistency. Distribution will be different for the same seed as compared
+  to a previous version of BDSIM.
 
 Output Changes
 --------------
@@ -78,6 +84,9 @@ Output Changes
 * Samplers are **no longer** placed next to elements with angled faces when using the :code:`bdsimtwo`,
   :code:`geant4`, or :code:`geant4dp` integrator sets.
 * Units are now written to the ASCII survey output for each column.
+* New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
+* New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
+  the global Cartesian frame.
 
 Bug Fixes
 ---------
@@ -113,6 +122,13 @@ Bug Fixes
 * Fixed lack of interaction with vacuum when processes biased - due to a specific Geant4 version.
   Issue #220.
 * Fixed incorrect dipole scaling. Issue #239.
+* Fixed E0 spread in `ring` beam distribution, which was finite in contrast to the description
+  that it is always the central value.
+* Fixed reproducibility for the `ring` distribution that didn't use the same random number generator
+  as every other distribution. Coordinates will be different for this distribution for the same seed now.
+* Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
+* `square` beam distiribution now varies with :code:`envelopeT`.
+* Fixed S coordinate in output. Issues #247 and #248.
 
 Utilities
 ---------
