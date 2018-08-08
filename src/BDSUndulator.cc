@@ -72,7 +72,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
   if (!BDS::IsFinite(undulatorGap))
      {
        G4cout << __METHOD_NAME__ << "\"undulatorGap\" = 0 -> using 2x beam pipe height" << G4endl;
-       undulatorGap = bp.DY() * 2;
+       undulatorGap = bp.DY() * 4;
      }
   if (0.5 * undulatorGap <= bp.DY())
     {
@@ -91,15 +91,19 @@ void BDSUndulator::BuildContainerLogicalVolume()
       magnetHeight = 20;
     }
 
+  G4double halfWidth  = magnetWidth + lengthSafetyLarge;
+  G4double halfHeight = undulatorGap*0.5 + magnetHeight + lengthSafetyLarge;
   containerSolid = new G4Box(name + "_container_solid",
-			     magnetWidth,
-			     undulatorGap*0.5 + magnetHeight,
+			     halfWidth,
+			     halfHeight,
 			     chordLength*0.5);
 
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                                emptyMaterial,
                                                name + "_container_lv");
 
+  BDSExtent ext = BDSExtent(2 * halfWidth, 2 * halfHeight, chordLength);
+  SetExtent(ext);
 }
 
 void BDSUndulator::Build()
@@ -175,7 +179,6 @@ void BDSUndulator::Build()
 
   // place beam pipe volume
   SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
-  InheritExtents(pipe);
   SetInputFaceNormal(pipe->InputFaceNormal());
   SetOutputFaceNormal(pipe->OutputFaceNormal());
   G4PVPlacement* bpPV = new G4PVPlacement(nullptr,
