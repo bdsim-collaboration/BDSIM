@@ -301,6 +301,8 @@ void Options::PublishMembers()
   publish("storeTrajectoryParticle",        &Options::storeTrajectoryParticle);
   publish("storeTrajectoryParticleID",      &Options::storeTrajectoryParticleID);
   publish("storeTrajectoryEnergyThreshold", &Options::storeTrajectoryEnergyThreshold);
+  publish("storeTrajectorySamplerID"      , &Options::storeTrajectorySamplerID);
+  publish("storeTrajectoryELossSRange"    , &Options::storeTrajectoryELossSRange);
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
   publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);

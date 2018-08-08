@@ -119,6 +119,9 @@ public:
   inline void SetBeamPipeRadius(const G4double& beamPipeRadiusIn) {beamPipeRadius = beamPipeRadiusIn;}
   inline void SetChordStepMinimum(const G4double& chordStepMinimumIn) {chordStepMinimum = chordStepMinimumIn;}
 
+  /// Delete and replace the user limits which this class owns (only if not default ul).
+  void SetUserLimits(G4UserLimits* userLimitsIn);
+
   /// Translate - adds an additional translation to the transform member variable. May only
   /// be known at assembly time given parameterised geometry. Used by AWAKE Spectrometer only.
   void Translate(G4ThreeVector translationIn);
@@ -128,6 +131,8 @@ public:
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
+
+  static G4UserLimits* defaultUL; ///< Cache of default user limits
   
 private:
   

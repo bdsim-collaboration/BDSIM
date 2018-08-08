@@ -248,6 +248,9 @@ namespace GMAD
     bool        trajConnect;
     bool        trajNoTransportation;
 
+    std::string storeTrajectorySamplerID;
+    std::string storeTrajectoryELossSRange;
+
     bool        writePrimaries;
     bool        storeModel;
 

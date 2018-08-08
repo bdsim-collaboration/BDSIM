@@ -155,6 +155,11 @@ Parameters::Parameters()
   setMap["materialThickness"] = false;
   setMap["degraderOffset"]    = false;
 
+  setMap["undulatorPeriod"]   = false;
+  setMap["undulatorGap"]      = false;
+  setMap["magnetHeight"]      = false;
+  setMap["magnetWidth"]       = false;
+
   setMap["colour"] = false;
 
   setMap["crystalLeft"]            = false;

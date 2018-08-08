@@ -144,7 +144,7 @@ public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
-  void Fill(const std::vector<BDSTrajectory*> &trajVec);
+  void Fill(const std::map<BDSTrajectory*, bool> &trajectory);
   void Fill(const BDSEnergyCounterHitsCollection* phc);
 #endif
 
@@ -160,6 +160,8 @@ public:
   std::vector<int>                   parentID;
   std::vector<int>                   parentIndex;
   std::vector<int>                   parentStepIndex;
+  std::vector<int>                   primaryStepIndex;
+
   std::vector<std::vector<int>>      preProcessTypes;
   std::vector<std::vector<int>>      preProcessSubTypes;
   std::vector<std::vector<int>>      postProcessTypes;
@@ -174,12 +176,12 @@ public:
 
   std::vector<std::vector<int>>      modelIndicies;
 
-  std::map<int, int>                 trackID_trackIndex;
-  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
-  std::map<int, int>                 trackIndex_modelIndex;
-  std::map<int, std::vector<int>>    modelIndex_trackIndex;
+  std::map<int, int>                 trackID_trackIndex;          // trackID to trackIndex 
 
-  std::pair<int,int>                 findParentProcess(int trackIndex);
+  //  std::map<int, std::pair<int,int>>  trackIndex_trackProcess;     // trackProcess pair<trackIndex,trackProcessIndex>
+  //  std::map<int, int>                 trackIndex_modelIndex;       // trackIndex to model index map
+  //  std::map<int, std::vector<int>>    modelIndex_trackIndex;       // modelIndex to track index map
+  //  std::pair<int,int>                 findParentProcess(int trackIndex);
 
   std::vector<BDSOutputROOTEventTrajectoryPoint> trackInteractions(int trackID);
   BDSOutputROOTEventTrajectoryPoint              primaryProcessPoint(int trackID);

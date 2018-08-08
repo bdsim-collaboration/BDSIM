@@ -40,6 +40,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
+#include "BDSUndulator.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -85,6 +86,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 #include <string>
 #include <utility>
+#include <include/BDSFieldBuilder.hh>
+
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
@@ -299,6 +302,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateParallelTransporter(); break;
   case ElementType::_RMATRIX:
     component = CreateRMatrix(); break;
+  case ElementType::_UNDULATOR:
+    component = CreateUndulator(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -333,7 +338,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
-      SetFieldDefinitions(element, component);
+      SetFieldDefinitions(element, component),
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
@@ -963,6 +968,49 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
 			  element->material));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
+{
+
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::undulator);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
+  (*st)["length"] = element->undulatorPeriod * CLHEP::m;
+  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,
+                                                   brho,
+                                                   intType,
+                                                   st,
+                                                   true,
+                                                   fieldTrans);
+
+  // limit step length in field - crucial to this component
+  // to get the motion correct this has to be less than one oscillation
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  G4double limit = (*st)["length"] * 0.075;
+  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+  if (ul != defaultUL)
+    {vacuumFieldInfo->SetUserLimits(ul);}
+
+  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
+  vacuumFieldInfo->SetTransform(newFieldTransform);
+
+  return (new BDSUndulator(elementName,
+			   element->l * CLHEP::m,
+			   element->undulatorPeriod * CLHEP::m,
+			   element->magnetWidth * CLHEP::m,
+			   element->magnetHeight * CLHEP::m,
+			   element->undulatorGap * CLHEP::m,
+			   bpInfo,
+			   vacuumFieldInfo,
+			   element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()

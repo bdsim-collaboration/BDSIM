@@ -182,7 +182,7 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
 void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
-  std::vector<std::string> treesToIgnore = {"Header", "Model", "Options", "Run"};
+  std::vector<std::string> treesToIgnore = {"Header", "Model", "Options", "Run", "Beam", "Geant4Data"};
 
   // skip some trees
   std::string treeName = t1->GetName();

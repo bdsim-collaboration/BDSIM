@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 #include <set>
 #include <vector>
+#include <map>
 
 // forward declarations
 template <class T> class G4THitsCollection;
@@ -116,7 +117,7 @@ public:
 		 const BDSEnergyCounterHitsCollection* tunnelLoss,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
-		 const std::vector<BDSTrajectory*>&    trajectories,
+		 const std::map<BDSTrajectory*, bool>& trajectories,
 		 const G4int                           turnsTaken);
 
   /// Close a file and open a new one.
@@ -216,7 +217,7 @@ private:
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
 
   /// Copy a set of trajectories to the output structure.
-  void FillTrajectories(const std::vector<BDSTrajectory*>& trajectories);
+  void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);

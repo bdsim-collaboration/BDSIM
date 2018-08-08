@@ -45,7 +45,7 @@ struct fieldtypes_def
 	     solenoid, dipole, quadrupole, dipolequadrupole, sextupole,
 	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
-	     rfcavity, rf, rmatrix, paralleltransporter,
+	     rfcavity, rf, rmatrix, paralleltransporter, undulator,
              dipole3d,
 	     multipoleouterdipole, multipoleouterquadrupole,
 	     multipoleoutersextupole, multipoleouteroctupole,

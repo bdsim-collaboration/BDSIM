@@ -1,0 +1,7 @@
+cell: line=(d,sb,d);
+beamline: line=(1500*cell);
+use, beamline;
+sample, all;
+
+option,	elossHistoBinWidth = length/5;
+option, ngenerate=100; 

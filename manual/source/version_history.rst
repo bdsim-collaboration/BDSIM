@@ -15,13 +15,13 @@ New Features
 * New :code:`crystal` definition in parser.
 * New "channelling" physics list for Geant4 crystal channelling physics process.
 * Field maps need not be in `x`, `y`, `z`, `t` order and lower dimension fields (i.e. 1D or 2D) can
-  be made for any dimension. i.e. it is now possible to specify a 1D field along the `z` direction.
-* rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
+  be made for any dimension, i.e. it is now possible to specify a 1D field along the `z` direction.
+* Rebdsim can now analyse a select range of events specifed by "EventStart" and "EventEnd" options.
   Issue #240.
-* Placements can now be made with respect to S,x,y in the main beam line, with respect to a beam line
+* Placements can now be made with respect to S,x, and y in the main beam line, with respect to a beam line
   element and lastly in global Cartesian coordinates.
 * Samplers will no longer be automatically attached (with :code:`sample, all;`) to dipoles with finite
-  pole face rotations as this may lead to tracking issues in Geant4. A developer option can force
+  pole face rotations, as this may lead to tracking issues in Geant4. A developer option can force
   this on, although this is not recommended. Issue #241.
 * `hkicker` and `vkicker` strength can be specified via the magnetic field :code:`B` instead of
   `hkick` or `vkick`.
@@ -36,11 +36,11 @@ General
   a good choice and so has been renamed. BDSIM still supports the old syntax.
 * :code:`vhratio` is now consistent with vkickers and refers to the vertical and horizontal ratio in
   the lab frame.
-* The horizontal width of kickers is now take from :code:`outerDiameter`. Previously :code:`outerDiameter`
-  corresponded to the height and :code:`vhratio` was really the horizontal to vertical ratio in
+* The horizontal width of kickers is now taken from :code:`outerDiameter`. Previously, :code:`outerDiameter`
+  corresponded to the height and :code:`vhratio` was really the horizontal-to-vertical ratio in
   the lab frame.
-* Synchrotron radiation disabled now with em_extra physics list (use dedicated
-  synchrad physics list. Avoids double registration of physics process.
+* Synchrotron radiation is disabled now with em_extra physics list (use dedicated
+  synchrad physics list). Avoids double registration of physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
   visualisation system.
@@ -49,10 +49,10 @@ General
   (teleporter and terminator).
 * long int used explicitly instead of int for event indices in analysis.
 * Reimplemented primary first hit and last hit. Last hit is now the end point of the
-  primary trajectory. No more linear memory usage with tracking time
+  primary trajectory. No more linear memory usage with tracking time.
 * Beam pipe extent calculation reimplemented and much less simplistic - used
   to check whether a pipe will fit inside a magnet.
-* Mini-contents for syntax section of manual as it's grown to a large size.
+* Mini-contents for syntax section of manual, as it's grown to a large size.
 * New rmatrix element (experimental).
 * EM Dissociation is now applicable up to 100 TeV.
 * Significantly improved aperture shape checking for whether beam pipe will fit inside a magnet.
@@ -82,22 +82,22 @@ Output Changes
 Bug Fixes
 ---------
 
-* Fix tracking bug where particle in very niche coordinates may reflect from a sampler in
+* Fixed tracking bug where particle in very niche coordinates may reflect from a sampler
   at the end of a dipole with a very strongly angled pole face. #Issue 241.
-* Fix automatic tunnel building algorithm. Accumulated wrong variables leading to
+* Fixed automatic tunnel building algorithm, which accumulated wrong variables, leading to
   problems when thin elements such as fringe fields or thin multipoles were included.
-* Further improvements to tunnel building algorithm for magnets with tilt. Issue #243.
-* Fix length check for very short elements. Small drifts would cause a crash from
+* Further improvements made to tunnel building algorithm for magnets with tilt. Issue #243.
+* Fixed length check for very short elements. Small drifts would cause a crash from
   Geant4 due to invalid parameters - occurred as length check was wrong.
-* Fix non-positive definite warnings for no energy spread and time spread when using
+* Fixed non-positive definite warnings for no energy spread and time spread when using
   a Gaussian beam in a composite beam definition.
-* Fix Gauss beams used in composite distribution.
-* Fix no particles being tracked when using a userfile bunch distribution with only one column.
-* Fix bug where last particle was missed from user bunch distribution file.
-* Fix corrupted example files for userfile bunch distribution. Issue #244.
-* Fix cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02
+* Fixed Gauss beams used in composite distribution.
+* Fixed the problem where no particles were being tracked when using a userfile bunch distribution with only one column.
+* Fixed bug where last particle was missed from user bunch distribution file.
+* Fixed corrupted example files for userfile bunch distribution. Issue #244.
+* Fixed cutting planes in G4CutTubs constructor for tunnel in Geant up to Geant4.10.2.p02
   from too short tunnel section.
-* Reimplement the method of finding primary first and last hit so BDSIM doesn't need to
+* Reimplemented the method of finding primary first and last hit so BDSIM doesn't need to
   save the whole trajectory for the primary. This fixes the behaviour of linearly growing
   unbounded memory usage when tracking for a long time in a ring. Issue #246, #242.
 * Optical calculation now works for sub-relativistic positrons.
@@ -183,7 +183,7 @@ New Features
 * Support for new numerical integrator tracking algorithms in Geant 4.10.3 and 4.10.4.
 * New integrator set "geant4dp" for Dormand Prince integrators (Geant 4.10.4 or higher required).
 * Significantly improved analysis documentation.
-* New component: 'gap'. Create a space in the beam line with no geometry.
+* New component: 'gap'. Creates a space in the beam line with no geometry.
 * Ability to specify the world volume material with the `worldMaterial` option.
 * Introduced `minimumRange` and `minimumKineticEnergy` user limits as provided by G4UserLimits.
 * Ability to limit step size in user-specified fields.
@@ -191,9 +191,9 @@ New Features
 * Magnet yokes now have a general multipolar field.
 * Sampler diameter is automatically reduced when high angle bends are used to prevent overlaps.
 * New CMake option to disable event display for installation with ROOT EVE problems.
-* Ability to combine rebdsim output files with correct statistical analysis allowing high throughput
+* Ability to combine rebdsim output files with correct statistical analysis, allowing high throughput
   analysis with scaling. New tool `rebdsimCombine` for this purpose.
-* Parameter tests for all bunch distributions - BDSIM will exit with message if invalid parameters.
+* Parameter tests for all bunch distributions - BDSIM will exit with message if parameters are invalid.
 * `scaling` parameter for each element allowing simple scaling of strengths.
 * New program to convert PTC output in a TFS file to BDSIM output format (`ptc2bdsim`).
 
@@ -207,7 +207,7 @@ Output Changes
   of global and local coordinates.
 * Samplers now have optional charge, mass, rigidity and ion A and Z
   (see :ref:`bdsim-options-output` for details).
-  Classes in library can calculate on-the-fly for user analysis.
+* Classes in library can calculate on-the-fly for user analysis.
 * Trajectory momentum is now in GeV.
 
 Analysis Changes
@@ -232,7 +232,7 @@ General
 * Physics list names are now consistently named with '_' between words. Old list
   names are still supported.
 * `hadronic` and `hadronic_hp` physics lists have switched from `qgsp_bert` and
-  `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively as these are
+  `qgsp_bert_hp` to `ftfp_bert` and `ftfp_bert_hp` respectively, as these are
   recommended by Geant4 for high energy hadronic interactions.
 * "bdsim" integrator set now maps to "bdsimtwo" integrator set.
 * All objects in the parser can now be extended later rather than just elements.
@@ -244,7 +244,7 @@ General
 * `printModuloFraction` is now `printFractionEvents`.
 * `includeIronMagFields` option is now `yokeFields`.
 * Vacuum volumes now visible in `-\\-vis_debug` mode.
-* Only forwards going particles are now considered for the optical function calculation.
+* Only forward moving particles are now considered for the optical function calculation.
 * Updated examples for ATF2, LHC. New Diamond machine example.
 
 Bug Fixes
@@ -260,7 +260,7 @@ Bug Fixes
   option to analyse old files without the new header structure).
 * The `stopTracks` option has been removed as it did not function as intended. Use `stopSecondaries`.
 * `thresholdCutCharged` and `thresholdCutPhotons` have been removed as they did not function as intended.
-* Fixed bug where world size would be too small with placements of large externally provided
+* Fixed bug where the world size would be too small with placements of large externally provided
   geometry with strong rotations.
 * When no energy was specified in the `userfile` bunch distribution, the central beam energy was
   1000x too low - fixed - missing factory of GeV.
@@ -304,24 +304,24 @@ New Features
   deficiency in Geant4 GDML parser.
 * Local copy of GDML schema included. No longer require internet access to load GDML files. Custom
   local schema still supported.
-* Support for Geant4.10.4 - however we don't recommend using this until p01 is used as there
+* Support for Geant4.10.4 - however, we don't recommend using this until p01 is used, as there
   is a fault with G4ExtrudedSolid that is used for all poled magnet geometry.
 
 Bug Fixes
 ---------
 
 * Compilation fixes for compilers with XCode 9.
-* Fix compiler dependent possible tracking bug where particle would get stuck in dipole.
+* Fixed possible compiler-dependent tracking bug where particle would get stuck in dipole.
 * Cherenkov radiation in water fixed with specification of optical refractive index.
-* Fix ATF2 example input syntax and update model.
-* Remove temporary files created in current working directory.
+* Fixed ATF2 example input syntax and updated model.
+* Removed temporary files created in current working directory.
 
 Output Changes
 --------------
 
 * Options split into options and beam - beam contains all information related to beam definition.
 * Associated output classes and analysis classes added for Beam in output.
-* Remove older output format.
+* Removed older output format.
 
 General
 -------
@@ -356,15 +356,15 @@ New Features
 Bug Fixes
 ---------
 
-* Fix uncaught exception in analysis DataLoader class construction depending on optional arguments.
+* Fixed uncaught exception in analysis DataLoader class construction depending on optional arguments.
 * BDSIM installation no longer dependent on build files - ROOT analysis dictionaries would use
   build headers. Issues #197 and #199.
-* Fixed magnitude of B field in rfcavity that resulted in extraordinarily strong B fields.
-* Fixed rf E and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
-* Fix for crash when particle was at exactly 0 in a quadrupole.
-* Fix compiler warnings for Clang 8.1.
+* Fixed magnitude of B-field in rfcavity that resulted in extraordinarily strong B-fields.
+* Fixed rf E- and pill-box fields ignoring phase and being a factor of 2:math:`\pi` too low in frequency.
+* Fixed for crash when particle was at exactly 0 in a quadrupole.
+* Fixed compiler warnings for Clang 8.1.
 * Fixed all variable shadowing throughout codebase and reintroduced compiler warning if present.
-* Fix field transform for tilted and offset magnets. This fixes incorrect tracking for tilted
+* Fixed field transform for tilted and offset magnets. This fixes incorrect tracking for tilted
   magnets when using the "bdsimtwo" integrator set for dipoles.
 
 General
@@ -390,20 +390,20 @@ V0.991 - 2017 / 07 / 04
 Bug Fixes
 ---------
 
-* Fix simple histogram weighting with Boolean expressions in rebdsim.
-* Fix comparator always failing.
-* Fix loading default event information in analysis.
-* Fix executing BDSIM from outside the directory containing the main gmad file.
-* Fix charge dependence of thin multipole and dipole fringe integrators.
-* Scale dipole fringe and thin multipole by momentum and of particle.
-* Fix for loading geometry files prefixed with superfluous './'.
-* Fix for duplicate run beam on icon in visualiser for Geant4.10.3 onward.
+* Fixed simple histogram weighting with Boolean expressions in rebdsim.
+* Fixed comparator always failing.
+* Fixed loading default event information in analysis.
+* Fixed executing BDSIM from outside the directory containing the main gmad file.
+* Fixed charge dependence of thin multipole and dipole fringe integrators.
+* Scaled dipole fringe and thin multipole by momentum of particle.
+* Fixed for loading geometry files prefixed with superfluous './'.
+* Fixed for duplicate run beam on icon in visualiser for Geant4.10.3 onward.
 
 
 General
 -------
 
-* Separate Doxygen cmake into own macro.
+* Separated Doxygen cmake into own macro.
 
 Utilities
 ---------
@@ -478,19 +478,19 @@ Bug Fixes
  * ASCII seed state can be loaded properly. Issue #163.
  * rfcavity can be created without a cavitymodel instance. Issue #165.
  * Memory leak in comparator event tree comparison fixed. Issue #169.
- * 0 angle bend with finite field can be created. Issue #176.
+ * Zero angle bend with finite field can be created. Issue #176.
  * Samplers are compared properly in comparator. Issue #177.
- * Sampler names in Model tree now match exactly those in the Event tree.
- * Missing virtual keyword from destructors fixed through to fix leaks at end of program.
+ * Sampler names in Model tree now match those exactly in the Event tree.
+ * Missing virtual keyword from destructors fixed through to fix leaks at the end of the program.
  * GFlash parameterisation is only loaded if specified in physics list.
  * Fixed geometry construction errors that may occur due to dynamic tolerances for physically large models.
- * Fix infinite loop events if the primary vertex starts outside the world volume.
+ * Fixed infinite loop events if the primary vertex starts outside the world volume.
  * Regions and biases set correctly to components in BDSLine class.
  * Circle distribution did not have central value offsets.
  * Fix double registration of pion decay as well as some others for muons when using muon physics list.
  * Particles from physics list are now constructed correctly allowing more
    particles to be used in the beam definition.
- * Removal of cherenkov radiation from muon physics significantly reducing simulation time.
+ * Removal of Cherenkov radiation from muon physics significantly reducing simulation time.
  * Fix double registration of pion decay with muon physics list.
  * Issue #134 - samplers cause tracking warning.
  * Long running events due to spiralling particles. Issues #178, #132, #187.
@@ -520,27 +520,27 @@ New Features
 * Comparator program introduced for statistical comparison against reference results.
 * rebdsim analysis examples and tests added.
 * ROOT examples and tests added for analysis code usage in ROOT.
-* Discrete optics only program rebdsimOptics added.
+* Discrete optics only program (rebdsimOptics) added.
 * Update CLHEP in AFS build to 2.3.1.0 for apple and 2.3.3.0 for RHL6.
 * Reduced compilation time.
 
 Bug Fixes
 ---------
 
-* Fix geometry tolerance issue that would cause Geant4 run time errors for
+* Fixed geometry tolerance issue that would cause Geant4 run-time errors for
   regular geometry for some particularly large spatial size models.
-* Fix for linker error with ZLIB and gzstream. Issues #9, #155, #158.
-* Fix NaN errors in certain circumstances when calculating optical functions.
-* Fix shadowing compilation warnings.
-* Fix geometry overlaps in rf cavity geometry. Issue #136.
+* Fixed for linker error with ZLIB and gzstream. Issues #9, #155, #158.
+* Fixed NaN errors in certain circumstances when calculating optical functions.
+* Fixed shadowing compilation warnings.
+* Fixed geometry overlaps in rf cavity geometry. Issue #136.
 * Coverity fixes for uninitialised variables / small memory leaks. Issues #152, #156.
-* Fix potential magnet geometry errors when creating very thin components.
-* Fix negative interaction warnings due to biasing. Issue #141.
+* Fixed potential magnet geometry errors when creating very thin components.
+* Fixed negative interaction warnings due to biasing. Issue #141.
 
 General
 -------
 
-* Deprecate BDSIM Plank scattering, laserwire calorimeter, e bremsstrahlung
+* Deprecate BDSIM Plank scattering, laserwire calorimeter and Bremsstrahlung
   lead particle biasing.
 
 Utilities
@@ -559,19 +559,19 @@ New Features
 Analysis
 ^^^^^^^^
 
-* Analysis class have been refactored to allow analysis on any tree in the BDSIM
+* Analysis class has been refactored to allow analysis on any tree in the BDSIM
   ROOT event output format using rebdsim.
 
 Geometry
 ^^^^^^^^
 
 * Tilted dipoles are now supported.
-* The Read Out geometry has been moved to the Geant4 parallel world scheme.
+* The Read-Out geometry has been moved to the Geant4 parallel world scheme.
 * The parallel sensitive geometry for tunnel hits has been deprecated and the
-  functionality now provided by the new parallel read out geometry.
-* The read out geometry construction has moved out of BDSAcceleratorComponent
+  functionality now provided by the new parallel read-out geometry.
+* The read-out geometry construction has moved out of BDSAcceleratorComponent
   to its own geometry factory.
-* Beam pipes are now constructed with arbitrary 3-vector surface normals rather
+* Beam pipes are now constructed with arbitrary 3-vector surface normals, rather
   than angled faces described by an angle only in the x-z plane.
 * The side of the yoke of a dipole with poled geometry can now be controlled with
   the :code:`yokeOnLeft` option.
@@ -591,7 +591,7 @@ Parser
 ^^^^^^
 
 * The option :code:`modularPhysicsListsOn` has been deprecated.
-* New per element parameter :code:`yokeOnLeft`.
+* New per-element parameter :code:`yokeOnLeft`.
 
 Physics
 ^^^^^^^
@@ -617,7 +617,7 @@ Output
 ^^^^^^
 
 * Energy deposition coordinates are randomly chosen along the step of the deposition. The
-  x,y,z coordinates now match the random point where as they were the post step point previously.
+  x,y,z coordinates now match the random point, whereas they were the post step point previously.
 
 Physics
 ^^^^^^^
@@ -628,7 +628,7 @@ General
 ^^^^^^^
 
 * Initialisation of variables fixed throughout.
-* Includes reduced to significantly improve compilation speed.
+* Significantly improved compilation speed.
 * Removed executable permission on all source files.
 
 Utilities
@@ -649,7 +649,7 @@ Analysis
 ^^^^^^^^
 
 * New analysis tool 'rebdsim' replaces robdsim.
-* Analysis directory with event, model, event info, options analysis.
+* Analysis directory with event, model, event info and options analysis.
 * Histogram merging with correct statistical uncertainties.
 * Deprecated root utilities to :code:`analysis/old/`.
 * Rewritten optical function calculation with validated calculation.
@@ -670,7 +670,7 @@ Geometry
 * Overlap checking between magnets with pole face rotations.
 * Collimator colour can now be controlled.
 * End pieces for coils also introduced
-* Default poled dipole geometry is now a C shaped magnet with yoke on inside of bend.
+* Default poled dipole geometry is now a C-shaped magnet with yoke on inside of bend.
 
 Output
 ^^^^^^
@@ -688,7 +688,7 @@ Output
 Parser
 ^^^^^^
 
-* Factorised options into optionsBase that is simple struct for easy saving.
+* Factorised options into optionsBase that is simple structure for easy saving.
 
 Physics
 ^^^^^^^
@@ -696,7 +696,7 @@ Physics
 * "Modular physics" list is now the default.
 * Use geant4 helper class for physics lists construction to ensure correct order.
 * Ability to provide a default bias to all types of volumes (vacuum, accelerator, all).
-* Attribute energy deposition (uniformly) randomly along the step it happened for more correct energy deposition - currently only s, not x,y,z - they represent before, after.
+* Attribute energy deposition (uniformly) randomly along the step where it occurred for more accurate energy deposition - currently only s, not x,y,z - they represent before, after.
 * 'solid' air materials for cross-section validation.
 * Seed states are saved and restored in the primary generator action rather than event action.
 
@@ -725,7 +725,7 @@ Bug Fixes
 Geometry
 ^^^^^^^^
 
-* Fix for multiple GDML file loading having conflicting 'world' volumes.
+* Fixed loading for multiple GDML files having conflicting 'world' volumes.
 * Reimplementation of pole geometry fixes gaps in poles (issue #110).
 
 Parser
@@ -742,8 +742,8 @@ Tracking
 ^^^^^^^^
 
 * Fixes for cavity field values (issue #124).
-* Fix field value transform in sextupoles and above for global / local coordinates.
-* Auxiliary navigator used for transforms more routinely with optional caching.
+* Fixed field value transform in sextupoles and above for global / local coordinates.
+* Auxiliary navigator used more routinely for transforms with optional caching.
 
 General
 ^^^^^^^
@@ -805,7 +805,7 @@ Geometry
 Parser
 ^^^^^^
 
-* Fix fast list insertion (issue #113).
+* Fixed fast list insertion (issue #113).
 * Support for tildes in path names (issue #119).
 
 Physics
@@ -833,7 +833,7 @@ V0.91 - 2015 / 12 / 17
 New Features
 ------------
 
-* New tests for file IO, coordinate transforms, aperture models, extra optical lattice patterns and general ring example.
+* New tests for file IO, coordinate transforms, aperture models, extra optical lattice patterns and general ring examples.
 
 Geometry
 ^^^^^^^^
@@ -854,7 +854,7 @@ Parser
 * Parser reorganised to C++ class structure (issue #77)
 * Command line options more flexible (issue #105)
 * Ability to define Geant4 regions as objects in parser.
-* Can attach samplers to all elements of one type, i.e. collimators.
+* Can attach samplers to all elements of one type (i.e. collimators).
 
 Physics
 ^^^^^^^
@@ -864,7 +864,7 @@ Physics
 Tracking
 ^^^^^^^^
 
-* Ability to start bunch from any S position along accelerator rather than just at beginning.
+* Ability to start bunch from any S-position along accelerator, rather than just at beginning.
 
 Bug fixes
 ---------
@@ -872,9 +872,9 @@ Bug fixes
 Geometry
 ^^^^^^^^
 
-* Fix for LHC detailed geometry when beam shield is rotated.
+* Fixed for LHC detailed geometry when beam shield is rotated.
 * Consolidation and improvement of aperture parameter validity testing.
-* Fix for femtometre occasional overlaps in magnet outer geometry.
+* Fixed for femtometre occasional overlaps in magnet outer geometry.
 * Fixed placement overlaps in rbend.
 * Fixed segfault with RfCavity at end of run.
 * Fixed crashes with zero angle sector bends.
@@ -895,15 +895,15 @@ Tracking
 * Fields only constructed if non-zero strength used - avoids tracking errors for zero strength components.
 * Fixed several issues with vertical and horizontal kicker construction and tracking.
 * Broken external magnet fields disabled by default.
-* Circular turn counting bugs fixed
-* Particles no longer killed with circular flag on if starting slightly behind starting mid point.
-* Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting mid point.
-* Fix teleporter tracking for backwards travelling particles that would get stuck in a loop.
+* Circular turn counting bugs fixed.
+* Particles no longer killed with circular flag on if starting slightly behind starting midpoint.
+* Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting midpoint.
+* Fixed teleporter tracking for backwards travelling particles that would get stuck in a loop.
 
 General
 ^^^^^^^
 
-* Add CMake protection against Geant4 built with multithreading on (issue #103)
+* Add CMake protection against Geant4 built with multithreading on (issue #103).
 
 Utilities
 ---------
@@ -919,23 +919,23 @@ New Features
 ------------
 
 * Physics biasing with ability to change cross-section for individual particles
-  and processes as well as attach to a variety of objects
+  and processes, as well as attach to a variety of objects
 * Decapole magnet
 * Robdsim analysis package as separate executable for testing
 * Tracking tester
 * Improved C++11 use and iterator implementation across containers
-* Fill histogram with energy hit over a range covering several bins
+* Can fill histogram with energy hit over a range covering several bins
 * Introduced a separate auxiliary G4Navigator to avoid accidentally moving
-  the particle during tracking when querying global to local transforms
+  the particle during tracking when querying global-to-local transforms.
 * Transform for curvilinear coordinates to global coordinates
   so primaries in those coordinates can be injected from anywhere (issue #63)
 * Parser put in GMAD namespace
 * New executable options for writing out geometry coordinates as built by BDSIM
-* Magnets now have tightly fitting invisible container volumes as opposed to
-  large boxes before
+* Magnets now have tightly fitting invisible container volumes, as opposed to
+  large boxes before.
 * Changed return type of magnet outer geometry factories to new BDSMagnetOuter
   class. This is because the container construction is now delegated to the
-  magnet outer factory for tight fitting container volumes.
+  magnet outer factory for tight-fitting container volumes.
 * Extended examples and tests
 * Move entirely to Geant4 visualisation manager supporting all available visualisers
   available with the local Geant4 installation
@@ -946,14 +946,14 @@ Bug fixes
 Geometry
 ^^^^^^^^
 
-* Fixed bug where the read out coordinates would also be offset by the offset
-  of the element
-* Fixed overlaps in read out geometry
-* Reduced duplication in magnet outer factories
-* Fixed overlaps in rbend geometry (issue #64)
-* Increase tolerance for sector bends (issue #73)
-* Protect against zero angle sector bends (issue #74)
-* Fixed overlaps in GDML geometry (issue #81)
+* Fixed bug where the read-out coordinates would also be offset by the offset
+  of the element.
+* Fixed overlaps in read out geometry.
+* Reduced duplication in magnet outer factories.
+* Fixed overlaps in rbend geometry (issue #64).
+* Increased tolerance for sector bends (issue #73).
+* Protected against zero angle sector bends (issue #74).
+* Fixed overlaps in GDML geometry (issue #81).
 * Geometry fixes (issues #76, 94, 95)
 
 Physics
@@ -963,7 +963,7 @@ Parser
 ^^^^^^
 
 * Occasional material parser segfault fixed (issue #25)
-* Improved syntax checking and not ignore unknown keywords (issue #71)
+* Improved syntax checking and to not ignore unknown keywords (issue #71)
 * Element extension fixed (issue #87)
 
 Tracking
@@ -974,11 +974,11 @@ Tracking
 General
 ^^^^^^^
 
-* Samplers can be attached to occurrence of a duplicated element (issue #47)
+* Samplers can be attached to occurrence of a duplicated element (issue #47).
 * Output survey updated and fixed (issue #60)
 * Check for Geant4 environment variables (issue #62)
 * Consistent policy for overwriting output files (issue #65)
-* Improve memory and CPU for output writing (issue #86)
+* Improved memory and CPU for output writing (issue #86)
 
 Utilities
 ---------
@@ -997,21 +997,21 @@ New Features
 * Tunnel read out geometry introduced for coordinates along tunnel axis
 * C++11 adopted (required)
 * `stopSecondaries` option
-* Remove dependency on boost (issue #57)
+* Removed dependency on boost (issue #57)
 * Restructured examples directory - top level contains only full machines
-  and sub-directories contain features.
+  and sub-directories contain features
 * Example documentation in manual and in place beside each example with
   example screenshots
 * Updated python utilities *pybdsim v0.1*, *pymadx v0.1*, *pymad8 v0.1* and *robdsim v0.2*
 * Repeated components are not duplicated in memory - previously, they would
-  be repeatedly constructed. Reduced memory footprint
+  be repeatedly constructed. Reduced memory footprint.
 * Component information comes from Physical Volumes instead of Logical Volumes
 * Improved manual documentation
 * Improved Doxygen documentation
-* Rubbish collection for all objects rather than relying on only one run and
+* Rubbish collection for all objects, rather than relying on only one run and
   Geant4 (partial) rubbish collection.
 * String representation of enum types leading to more readable output
-* Introduce ability to switch to new modular physics lists with flexible
+* Introduced ability to switch to new modular physics lists with flexible
   construction and addition of physics lists without hard-coded names for each
   combination - the user must turn this on explicitly
 
@@ -1023,65 +1023,65 @@ Geometry
 * Geometry overlaps (issues #55 and #58)
 * Transform3d fix (issue #54)
 * Fixed placement of objects outside x,z global plane - rotation bug, similarly
-  for read out geometry placement
-* Fix broken circular control - bug was introduced in v0.7 - (issue #51)
+  for read-out geometry placement.
+* Fixed broken circular control - bug was introduced in v0.7 - (issue #51).
 * Strict checking of read out geometry construction to avoid invalid solids that
-  would cause Geant4 to exit and BDSIM to crash
+  would cause Geant4 to exit and BDSIM to crash.
 * Strict checking on teleporter volume construction for circular machines that
-  would cause Geant4 to exit and BDSIM to crash
-* Fix for calculation of length of sector bend magnet that would cause it to be
-  slightly short - introduced in v0.7
-* Removed stored axes of rotation due to better implementation in BDSBeamline
-  avoiding duplication of information
-* Fixed issue of zero angle rbends causing a crash (issue #44)
-* Event number print out is now dynamic and based on the number of events to be
-  generated and is also controllable with `printModuloFraction` option
-* Protect against bad user specified values of `lengthSafety` to avoid
-  geometry overlaps
-* Improved parser speed
+  would cause Geant4 to exit and BDSIM to crash.
+* Fixed calculation of length of sector bend magnet that would cause it to be
+  slightly short - introduced in v0.7.
+* Removed stored axes of rotation due to better implementation in BDSBeamline,
+  avoiding duplication of information.
+* Fixed issue of zero angle rbends causing a crash (issue #44).
+* Event number print-out is now dynamic and based on the number of events to be
+  generated. It is also controllable with the `printModuloFraction` option.
+* Protected against bad user-specified values of `lengthSafety` to avoid
+  geometry overlaps.
+* Improved parser speed.
 
 Physics
 ^^^^^^^
-* SR radiation fix in dipole (issue #53)
-* Removed continuous synchrotron radiation as traps particles in low step size
-  infinite loop
+* SR radiation fixed in dipole (issue #53).
+* Removed continuous synchrotron radiation, as it traps particles in low step-size
+  infinite loop.
 * Removal of poorly set deltaIntersection, chordStepMinimum and lengthSafety
   variables from examples - these should be left unset unless the user knows
   their purpose.
 
 Output
 ^^^^^^
-* Change all transverse output units to **metres** - manual updated accordingly
-* Change `z` in ASCII output to **global Z** instead of local z.
-* Recorded energy in output is now unweighted but energy recorded in convenience
-  energy loss histogram is. Could have lead to double weighting previously
-* Fix for global coordinates being written out as local coordinates in ROOT
-  output
-* Random number generator seed state not written out when no output is specified
+* Changed all transverse output units to **metres** - manual updated accordingly.
+* Changed `z` in ASCII output to **global Z** instead of local z.
+* Recorded energy in output is now unweighted, but energy recorded in convenient
+  energy loss histogram is. Could have lead to double weighting previously.
+* Fixed global coordinates being written out as local coordinates in ROOT
+  output.
+* Random number generator seed state not written out when no output is specified.
 
 Parser
 ^^^^^^
-* Return error if superfluous arguments are present (issue #56)
-* Make parser more robust against duplicate element names (issue #43)
-* Fixed warnings about compiling c as c++ being deprecated behaviour
+* Return error if superfluous arguments are present (issue #56).
+* Make parser more robust against duplicate element names (issue #43).
+* Fixed warnings about compiling c as c++ being deprecated behaviour.
 
 General
 ^^^^^^^
-* Fix for wrong print out warning due to logic error (issue #51)
-* Fix for boundary effects of energy deposition (issue #52)
-* Fix large memory leak for events with large number of particles - was due to
-  accumulation of BDSTrajectory objects
+* Fixed wrong print out warning due to logic error (issue #51).
+* Fixed boundary effects of energy deposition (issue #52).
+* Fixed large memory leak for events with large number of particles - was due to
+  accumulation of BDSTrajectory objects.
 
 
 V0.702 2015 / 07 / 28 - Hotfix
 ==============================
 
-* Fix for physics production range cuts were not obeyed in simulation
+* Fixes for physics production range cuts were not obeyed in simulation.
 
 V0.701 2015 / 07 / 02 - Hotfix
 ==============================
 
-* Fix for global X coordinate not written to output for energy deposition
+* Fix for global X-coordinate not written to output for energy deposition.
 
 V0.7 - 2015 / 06 / 30
 =====================
@@ -1090,23 +1090,23 @@ New Features
 ------------
 
 * Ability to write no output
-* New magnet geometry factories introduced with 7 possible magnet types.
+* New magnet geometry factories introduced with seven possible magnet types.
 * Introduction of --vis_debug flag to see container volumes without debug build.
-* Revised magnet colours (same base colour, just prettier variant).
-* New manual using sphinx documentation system.
-* Default visualiser provided - no requirement for a vis.mac by the user.
-* Nicer visualisation GUI by default.
-* Improved visualisation for GDML geometry.
+* Revised magnet colours (same base colour, just prettier variant)
+* New manual using sphinx documentation system
+* Default visualiser provided - no requirement for a vis.mac by the user
+* Nicer visualisation GUI by default
+* Improved visualisation for GDML geometry
 * Support for all Geant4 visualisers introduced (issue #11).
 
 Bug fixes
 ---------
 
-* Fixes to overlapping volumes and tracking errors in beam pipes.
-* Fix for wrong transverse coordinates for geometry other than cylindrical magnets (issue #30).
-* Histograms now written to disk in case of crash or kill signal (issue #38).
+* Fixed overlapping volumes and tracking errors in beam pipes.
+* Fixes for wrong transverse coordinates for geometry other than cylindrical magnets (issue #30).
+* Histograms are now written to disk in case of crash or kill signal (issue #38).
 * Fix for uncontrolled memory consumption for synchrotron radiation (issue #36).
-* Fix syntax error in parser on windows end of line character (issue #40).
+* Fixed syntax error in parser on windows end of line character (issue #40).
 * Follow user paths properly (issue #24).
 * Parser can end on commented line (issue #41).
 * Introduction of more flexible and weighted halo bunch distribution.
@@ -1117,32 +1117,32 @@ Bug fixes
 V0.65 - 2015 / 04 / 10
 ======================
 
-* New base class for any geometrical object BDSGeometryComponent.
-* New interchangeable beam pipes with 6 possible beam pipe shapes.
-* New sensitive detector manager to hold single instance of sd classes.
-* Introduction of G4Galactic material for 'empty' volumes rather than beam pipe vacuum.
-* Possibility to write to multiple output formats at once.
-* Extensive removal of unnecessary headers throughout.
-* Updated python utilities.
-* Fix for muon spoiler magnetic field (thanks to B. Pilicer).
-* Fix for invisible cylinder of iron surrounding drifts previously.
+* New base class for any geometrical object BDSGeometryComponent
+* New interchangeable beam pipes with six possible beam pipe shapes
+* New sensitive detector manager to hold single instance of sd classes
+* Introduction of G4Galactic material for 'empty' volumes rather than beam pipe vacuum
+* Possibility to write to multiple output formats at once
+* Extensive removal of unnecessary headers throughout
+* Updated python utilities
+* Fix for muon spoiler magnetic field (thanks to B. Pilicer)
+* Fix for invisible cylinder of iron surrounding drifts previously
 
 
 V0.64 - 2015 / 02 / 16
 ======================
 
-* New histogram manager and factorisation of histograms from outputs.
-* Extra per element histograms.
-* Basic implementation of valid solenoid.
+* New histogram manager and factorisation of histograms from outputs
+* Extra per-element histograms
+* Basic implementation of valid solenoid
 
 V0.63 - 2015 / 02 / 06
 ======================
 
-* Large angle sbends split into multiple sbends - based on aperture error tolerance - currently 1mm.
+* Large angle sbends split into multiple sbends, based on aperture error tolerance - currently 1mm.
 * New geometry construction and placement for sbends and rbends - no overlapping volumes and
-  simpler / increased performance.
-* Proper building under c++11 if available.
-* Introduction of composite bunch distribution.
+  simpler / increased performance
+* Proper building under c++11 if available
+* Introduction of composite bunch distribution
 * Drop support for Geant4 versions 9.5 and older
 
 V0.62 - 2014 / 08 / 07

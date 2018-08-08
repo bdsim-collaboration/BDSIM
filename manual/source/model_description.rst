@@ -3426,6 +3426,12 @@ Energy is the total energy in `GeV`. The beam particle may be one of the followi
 * `neutron`
 * `mu-` or `mu+`
 * `pi-` or `pi+`
+* `photon` or `gamma`
+
+In fact, the user may specify any particle that is available through the physics lists
+used. The particle must be given by the Geant4 name. The ones above are always defined
+and so can always safely be used irrespective of the physics lists used. If the particle
+definition is not found, BDSIM will print a warning and exit.
 
 The user may also specify any ion with the following syntax::
 
