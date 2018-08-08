@@ -54,8 +54,6 @@ private:
   
   /// Pointer a to G4 service class.
   G4ParticleGun*   particleGun;	  
-  /// Weight of the primaries (currently always 1 and not possible to change it).
-  G4double         weight;
   /// Pointer to the particle distribution generator.
   BDSBunch*        bunch;
 

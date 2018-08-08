@@ -575,7 +575,8 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y) const
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y,
+						       G4int* indexOfFoundElement) const
 {
   // check if s is in the range of the beamline
   if (s > totalArcLength)
@@ -596,6 +597,8 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4cout << "Index:                " << index << G4endl;
   G4cout << "Element: " << *element << G4endl;
 #endif
+  if (indexOfFoundElement)
+    {*indexOfFoundElement = index;}
 
   G4double dx = 0;
   // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
