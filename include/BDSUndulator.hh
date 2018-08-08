@@ -20,9 +20,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSUNDULATOR_H
 #define BDSUNDULATOR_H
 
-#include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSFieldInfo.hh"
+
+#include "globals.hh"
+
+class BDSFieldInfo;
+
 /**
  * @brief Undulator.
  *
@@ -41,10 +44,9 @@ public:
                G4double undulatorGapIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
                BDSFieldInfo*   vacuumFieldInfoIn,
-               G4String materialIn = "iron"
-  );
+               G4String materialIn = "iron");
 
-    virtual ~BDSUndulator();
+  virtual ~BDSUndulator();
 
 protected:
   virtual void Build();
