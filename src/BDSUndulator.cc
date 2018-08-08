@@ -34,7 +34,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   lengthIn,
-			   G4double   outerDiameterIn,
+			   G4double   horizontalWidthIn,
 			   G4double   periodIn,
 			   G4double   magnetHeightIn,
 			   G4double   magnetWidthIn,
@@ -42,8 +42,8 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
 			   BDSFieldInfo* vacuumFieldInfoIn,
 			   G4String   materialIn):
-  BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator",beamPipeInfoIn),
-  outerDiameter(outerDiameterIn),
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
+  horizontalWidth(horizontalWidthIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   undulatorPeriod(periodIn),
   material(materialIn),
@@ -58,9 +58,9 @@ BDSUndulator::~BDSUndulator()
 void BDSUndulator::BuildContainerLogicalVolume()
 {
   //Input Checks
-  if (outerDiameter <= 0)
+  if (horizontalWidth <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
   if (BDS::IsFinite(fmod(chordLength, undulatorPeriod)))
@@ -107,7 +107,7 @@ void BDSUndulator::Build()
 #ifdef BDSDEBUG
   G4cout << "para" << G4endl;
   G4cout << undulatorGap << G4endl;
-  G4cout << outerDiameter << G4endl;
+  G4cout << horizontalWidth << G4endl;
   G4cout << magnetHeight << G4endl;
   G4cout << magnetWidth << G4endl;
   G4cout << chordLength << G4endl;
