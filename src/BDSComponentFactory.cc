@@ -920,14 +920,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
-
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
 				    PrepareHorizontalWidth(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
-				    material,
+				    element->material,
 				    bpInfo);
   return shield;
 }

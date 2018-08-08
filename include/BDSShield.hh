@@ -43,7 +43,7 @@ public:
 	    G4double         horizontalWidthIn,
 	    G4double         xAper,
 	    G4double         yAper,
-	    G4Material*      materialIn,
+	    G4String         materialIn,
 	    BDSBeamPipeInfo* beamPipeInfoIn = nullptr);
   virtual ~BDSShield();
 

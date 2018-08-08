@@ -20,7 +20,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
+#include "BDSDebug.hh"
+#include "BDSMaterials.hh"
 #include "BDSShield.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4Box.hh"
@@ -36,14 +39,21 @@ BDSShield::BDSShield(G4String         nameIn,
 		     G4double         horizontalWidthIn,
 		     G4double         xAperIn,
 		     G4double         yAperIn,
-		     G4Material*      materialIn,
+		     G4String         materialIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
   horizontalWidth(horizontalWidthIn),
   xAper(xAperIn),
-  yAper(yAperIn),
-  material(materialIn)
-{;}
+  yAper(yAperIn)
+{
+  if (materialIn == "")
+	{
+	  G4cout << __METHOD_NAME__ << "Warning - no material set for shield - using iron" << G4endl;
+	  material = BDSMaterials::Instance()->GetMaterial("iron");
+	}
+  else
+    {material = BDSMaterials::Instance()->GetMaterial(materialIn);}
+}
 
 BDSShield::~BDSShield()
 {;}
@@ -72,23 +82,36 @@ void BDSShield::BuildShield()
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   chordLength*0.5 - lengthSafety);
-  G4VSolid* innerSolid = new G4Box(name+"_inner_solid",
-				   xAper,
-				   yAper,
-				   chordLength); // extra long for unambiguous subtraction
-
-  G4VSolid* shieldSolid = new G4SubtractionSolid(name+"shield_solid",
-						 outerSolid,   // this
-						 innerSolid);  // minus this
-  
-
-  G4LogicalVolume* shieldLV = new G4LogicalVolume(shieldSolid,
-						  material,
-						  name+"_shield_lv");
-  
   RegisterSolid(outerSolid);
-  RegisterSolid(innerSolid);
-  RegisterSolid(shieldSolid);
+
+  G4VSolid* shieldSolid;
+  G4LogicalVolume* shieldLV;
+
+  // only subtract inner solid if shield aperture is finite.
+  if (BDS::IsFinite(xAper) and BDS::IsFinite(yAper))
+    {
+	  G4VSolid *innerSolid = new G4Box(name + "_inner_solid",
+					   0.5*xAper,
+					   0.5*yAper,
+					   chordLength); // extra long for unambiguous subtraction
+	  RegisterSolid(innerSolid);
+
+	  shieldSolid = new G4SubtractionSolid(name + "shield_solid",
+										outerSolid,   // this
+										innerSolid);  // minus this
+      RegisterSolid(shieldSolid);
+
+	  shieldLV = new G4LogicalVolume(shieldSolid,
+							  material,
+							  name+"_shield_lv");
+	}
+  else
+    {
+	  shieldLV = new G4LogicalVolume(outerSolid,
+							  material,
+							  name+"_shield_lv");
+    }
+  
   RegisterLogicalVolume(shieldLV);
   RegisterSensitiveVolume(shieldLV);
 
@@ -120,7 +143,7 @@ void BDSShield::BuildBeamPipe()
   // check beam pipe fits
   if ((xAper < beamPipeInfo->aper1*2) || (yAper < beamPipeInfo->aper2*2))
     {
-      G4cout << "Shield will not fit around beam pipe - not building beam pipe!" << G4endl;
+      G4cout << __METHOD_NAME__ << "Shield will not fit around beam pipe - not building beam pipe!" << G4endl;
       return;
     }
   
