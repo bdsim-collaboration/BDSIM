@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GeometryManager.hh"
 #include "G4ParallelWorldPhysics.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
@@ -177,19 +178,20 @@ int main(int argc,char** argv)
   /// until after the physics list has been constructed and attached a run manager.
   if (globalConstants->GeneratePrimariesOnly())
     {
+      const G4int pdgID = beamParticle->ParticleDefinition()->GetPDGEncoding();
+	
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput->NewFile();
-      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
       const G4int printModulo = globalConstants->PrintModuloEvents();
       bdsBunch->BeginOfRunAction(nToGenerate);
       for (G4int i = 0; i < nToGenerate; i++)
-      {
-	if (i%printModulo == 0)
-	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
-        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
-        bdsOutput->FillEventPrimaryOnly(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
-      }
+	{
+	  if (i%printModulo == 0)
+	    {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
+	  auto coords = bdsBunch->GetNextParticle();
+	  bdsOutput->FillEventPrimaryOnly(coords, pdgID);
+	}
       bdsOutput->CloseFile();
       delete bdsBunch;
       delete bdsOutput;

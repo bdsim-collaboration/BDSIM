@@ -3502,7 +3502,7 @@ The following beam distributions are available in BDSIM
 	  the bunch at the beginning of the line. This is used only for optical comparisons currently.
 
 
-Reference
+reference
 ^^^^^^^^^
 This is a single particle with the same position and angle defined by the following parameters. The
 coordinates are the same for every particle fired using the reference distribution. It is therefore
@@ -3698,7 +3698,8 @@ circle
 Beam of randomly distributed particles with a uniform distribution within a circle in each
 dimension of phase space - `x` & `xp`; `y` & `yp`, `T` & `E` with each uncorrelated.
 Each parameter defines the maximum absolute extent in that dimension, i.e. the possible values
-range from `-envelopeX` to `envelopeX` for example.
+range from `-envelopeX` to `envelopeX` for example. Total
+energy is also uniformly distributed between $\pm$ `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -3721,7 +3722,8 @@ square
 ^^^^^^
 
 This distribution has similar properties to the `circle`_ distribution, with the
-exception that the particles are randomly uniformly distributed within a square.
+exception that the particles are randomly uniformly distributed within a square. Total
+energy is also uniformly distributed between $\pm$ `envelopeE`.
 
 * All parameters from `reference`_ distribution are used as centroids.
 
@@ -3762,6 +3764,8 @@ all other parameters, the `reference`_ coordinates are used, i.e. `xp`, `yp` etc
 | `Rmax`                           | Maximum radius in `x` and `y` [m]                     |
 +----------------------------------+-------------------------------------------------------+
 
+* No variation in `z`, `xp`, `yp`, `t`, `s` and total energy. Only central values.
+
 
 eshell
 ^^^^^^
@@ -3791,6 +3795,11 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 +----------------------------------+--------------------------------------------------------------------+
 | `shellYpWidth`                   | Spread of ellipse in phase space in vertical momentum              |
 +----------------------------------+--------------------------------------------------------------------+
+| `sigmaE`                         | Extent of energy spread in fractional total energy. Uniformly      |
+|                                  | distributed between $\pm$ `sigmaE`.                                |
++----------------------------------+--------------------------------------------------------------------+
+
+* No variation in `t`, `z`, `s`. Only central values.
 
 .. _beam-halo-distribution:
 
@@ -3855,6 +3864,8 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `haloYCutInner`                  | Y position cut in halo (multiples of sigma)                                 |
 +----------------------------------+-----------------------------------------------------------------------------+
+
+* No variation in `t`, total energy, `z` and `s`. Only central values.
 
 Example::
 
@@ -4031,6 +4042,8 @@ Output from MAD-X PTC used as input for BDSIM.
 +==================================+=======================================================+
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
+
+* Reference offsets specified in the gmad file such as `X0` are added to each coordinate.
 
 .. _tunnel-geometry:
 

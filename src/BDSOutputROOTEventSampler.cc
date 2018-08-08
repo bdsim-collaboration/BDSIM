@@ -24,8 +24,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSOutputROOTGeant4Data;
 
 #ifndef __ROOTBUILD__
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerHit.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 #endif
 
 templateClassImp(BDSOutputROOTEventSampler)
@@ -34,7 +36,8 @@ template <class U>
 BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
 template <class U>
-BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():samplerName("sampler")
+BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():
+  samplerName("sampler")
 {
   Flush();
 }
@@ -51,40 +54,6 @@ template
 {;}
 
 #ifndef __ROOTBUILD__
-template <class U>
-void BDSOutputROOTEventSampler<U>::Fill(G4double E,
-					G4double xIn,
-					G4double yIn,
-					G4double zIn,
-					G4double xpIn,
-					G4double ypIn,
-					G4double zpIn,
-					G4double globalTimeIn,
-					G4double weightIn,
-					G4int    partIDIn,
-					G4int    /*nEvent*/,
-					G4int    TurnsTaken,
-					G4int    beamlineIndex)
-{
-  n++;
-  z = (U) (zIn / CLHEP::m);
-  S = (U) (0 / CLHEP::m);
-
-  energy.push_back((U &&) (E / CLHEP::GeV));
-  x.push_back((U &&) (xIn / CLHEP::m));
-  y.push_back((U &&) (yIn / CLHEP::m));
-
-  xp.push_back((U &&) (xpIn / CLHEP::radian));
-  yp.push_back((U &&) (ypIn / CLHEP::radian));
-  zp.push_back((U &&) (zpIn / CLHEP::radian));
-  T.push_back((U &&) (globalTimeIn / CLHEP::ns));
-  weight.push_back((const U &) weightIn);
-  partID.push_back(partIDIn);
-  parentID.push_back(0);
-  turnNumber.push_back(TurnsTaken);
-  modelID = beamlineIndex;
-}
-
 template <class U>
 void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
 {
@@ -110,6 +79,30 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
   trackID.push_back(hit->GetTrackID());
   turnNumber.push_back(hit->GetTurnsTaken());
 }
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
+					const G4int pdgID,
+					const G4int turnsTaken,
+					const G4int beamlineIndex)
+{
+  n++;
+  energy.push_back((U &&) (coords.totalEnergy / CLHEP::GeV));  
+  x.push_back((U &&)  (coords.x  / CLHEP::m));
+  y.push_back((U &&)  (coords.y  / CLHEP::m));
+  z = (U) (coords.z / CLHEP::m);
+  xp.push_back((U &&) (coords.xp / CLHEP::radian));
+  yp.push_back((U &&) (coords.yp / CLHEP::radian));
+  zp.push_back((U &&) (coords.zp / CLHEP::radian));
+  T.push_back((U &&) (coords.T / CLHEP::ns));
+  weight.push_back((const U &) coords.weight);
+  partID.push_back(pdgID);
+  parentID.push_back(0);
+  modelID = beamlineIndex;
+  turnNumber.push_back(turnsTaken);
+  S = (U) (coords.s / CLHEP::GeV);
+}
+
 //#else
 //void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
 //{}

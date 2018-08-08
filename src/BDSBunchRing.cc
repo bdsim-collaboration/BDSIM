@@ -18,15 +18,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchRing.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
 
 BDSBunchRing::BDSBunchRing(): 
   rMin(0),
-  rMax(0)
+  rMax(0),
+  rDif(0)
 {
   flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
@@ -42,8 +47,9 @@ void BDSBunchRing::SetOptions(const BDSParticleDefinition* beamParticle,
 			      G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
-  rMin = beam.Rmin;  
-  rMax = beam.Rmax;  
+  rMin = beam.Rmin * CLHEP::m;
+  rMax = beam.Rmax * CLHEP::m;
+  rDif = rMax - rMin;
 }
 
 void BDSBunchRing::CheckParameters()
@@ -57,24 +63,13 @@ void BDSBunchRing::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "rMax: " << rMax << " < rMin: " << rMin << G4endl; exit(1);}
 }
 
-void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				   G4double& xp, G4double& yp, G4double& zp,
-				   G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchRing::GetNextParticleLocal()
 {
-  double r = ( rMin + (rMax - rMin) *  rand() / RAND_MAX );
-  double phi = 2 * CLHEP::pi * rand() / RAND_MAX;
-     
-  x0 = ( X0 + r * sin(phi) ) * CLHEP::m;
-  y0 = ( Y0 + r * cos(phi) ) * CLHEP::m;
-  z0 = Z0  * CLHEP::m;
-  xp = Xp0 * CLHEP::rad;
-  yp = Yp0 * CLHEP::rad;
-  zp = CalculateZp(xp,yp,Zp0);
-
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  G4double r   = rMin + rDif * flatGen->shoot();
+  G4double phi = 2 * CLHEP::pi * flatGen->shoot();
+  G4double x   = X0 + r * std::sin(phi);
+  G4double y   = Y0 + r * std::cos(phi);
   
-  t  = T0 * CLHEP::s;
-  E  = E0 * CLHEP::GeV * (1 + sigmaE/2. * (1. -2. * flatGen->shoot()));
-  weight = 1.0;
+  return BDSParticleCoordsFull(x,y,Z0,Xp0,Yp0,Zp0,T0,S0,E0,/*weight=*/1.0);
 }
 

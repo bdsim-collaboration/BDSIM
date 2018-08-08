@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -35,6 +36,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTGeant4Data.hh"
+#include "BDSPrimaryVertexInformation.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
@@ -54,7 +56,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "CLHEP/Units/SystemOfUnits.h"
 
 const std::set<G4String> BDSOutput::protectedNames = {
-  "Event", "Histos", "Info", "Primary", "Eloss",
+  "Event", "Histos", "Info", "Primary", "PrimaryGlobal", "Eloss",
   "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit",
   "Trajectory"
 };
@@ -136,39 +138,25 @@ void BDSOutput::FillModel()
 }
 
 void BDSOutput::FillPrimary(const G4PrimaryVertex* vertex,
-			    const G4int            eventNumber,
 			    const G4int            turnsTaken)
 {
-  const G4PrimaryParticle* primaryParticle = vertex->GetPrimary();
-  G4ThreeVector momDir  = primaryParticle->GetMomentumDirection();
-  G4double      E       = primaryParticle->GetTotalEnergy();
-  G4double      xp      = momDir.x();
-  G4double      yp      = momDir.y();
-  G4double      zp      = momDir.z();
-  G4double      x0      = vertex->GetX0();
-  G4double      y0      = vertex->GetY0();
-  G4double      z0      = vertex->GetZ0();
-  G4double      t       = vertex->GetT0();
-  G4double      weight  = primaryParticle->GetWeight();
-  G4int         PDGType = primaryParticle->GetPDGcode();
-
-  FillPrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, eventNumber, turnsTaken);
+  auto vertexInfo    = vertex->GetUserInformation();
+  auto vertexInfoBDS = dynamic_cast<const BDSPrimaryVertexInformation*>(vertexInfo);
+  if (vertexInfoBDS)
+    {
+      primary->Fill(vertexInfoBDS->primaryVertex.local,
+		    vertex->GetPrimary()->GetPDGcode(),
+		    turnsTaken,
+		    vertexInfoBDS->primaryVertex.beamlineIndex);
+      primaryGlobal->Fill(vertexInfoBDS->primaryVertex.global);
+    }
 }
 
-void BDSOutput::FillEventPrimaryOnly(G4double E,
-				     G4double x0,
-				     G4double y0,
-				     G4double z0,
-				     G4double xp,
-				     G4double yp,
-				     G4double zp,
-				     G4double t,
-				     G4double weight,
-				     G4int    PDGType,
-				     G4int    eventNumber,
-				     G4int    turnsTaken)
+void BDSOutput::FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
+				     const G4int pdgID)
 {
-  FillPrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, eventNumber, turnsTaken);
+  primary->Fill(coords.local, pdgID, 0, 0);
+  primaryGlobal->Fill(coords.global);
   WriteFileEventLevel();
   ClearStructuresEventLevel();
 }
@@ -187,7 +175,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   if (info)
     {FillEventInfo(info);}
   if (vertex)
-    {FillPrimary(vertex, info->GetInfo()->index, turnsTaken);}
+    {FillPrimary(vertex, turnsTaken);}
   if (samplerHitsPlane)
     {FillSamplerHits(samplerHitsPlane, BDSOutput::HitsType::plane);}
   if (samplerHitsCylinder)
@@ -331,23 +319,6 @@ void BDSOutput::CreateHistograms()
 				   g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
 				   g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
     }
-}
-
-void BDSOutput::FillPrimary(G4double E,
-			    G4double x0,
-			    G4double y0,
-			    G4double z0,
-			    G4double xp,
-			    G4double yp,
-			    G4double zp,
-			    G4double t,
-			    G4double weight,
-			    G4int    PDGType,
-			    G4int    nEvent,
-			    G4int    turnsTaken)
-{
-  if (writePrimaries)
-    {primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,turnsTaken,0 /* always first element */);}
 }
 
 void BDSOutput::FillEventInfo(const BDSEventInfo* info)

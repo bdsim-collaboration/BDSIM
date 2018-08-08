@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSExtent.hh"
+#include "BDSParticleCoords.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
@@ -170,4 +171,10 @@ G4bool BDSExtent::Encompasses(const BDSExtent& other) const
   for (const auto& p : otherPoints)
     {result = result || !Encompasses(p);}
   return !result;
+}
+
+G4bool BDSExtent::Encompasses(const BDSParticleCoords& coords) const
+{
+  G4ThreeVector point(coords.x, coords.y, coords.z);
+  return Encompasses(point);
 }

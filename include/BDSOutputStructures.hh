@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 // forward declarations
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
+class BDSOutputROOTEventCoords;
 class BDSOutputROOTEventHeader;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
@@ -101,6 +102,7 @@ protected:
 #else 
   BDSOutputROOTEventSampler<float>* primary;
 #endif
+  BDSOutputROOTEventCoords* primaryGlobal; /// Global coordinates of primary particle.
   /// Sampler structures.
 #ifdef __ROOTDOUBLE__
   std::vector<BDSOutputROOTEventSampler<double>*> samplerTrees;

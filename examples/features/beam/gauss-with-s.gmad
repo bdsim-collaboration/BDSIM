@@ -1,0 +1,24 @@
+d1: drift, l=0.25;
+d2: drift, l=0.025;
+q1: quadrupole, l=0.5, k1=2.0;
+q2: quadrupole, l=0.5, k1=-2.0;
+sb1: sbend, l=0.2*m, angle=0.2;
+
+lat : line = (d1,q1,d1,d2,sb1,d2,q2,d1);
+seq : line=(lat,lat,lat);
+use, period=seq;
+
+sample, all;
+
+beam,  particle = "e-",
+       energy = 1.0*GeV,
+       distrType = "gauss",
+       sigmaX  = 0.002*mm,
+       sigmaY  = 0.005*mm,
+       sigmaXp = 3.2e-6,
+       sigmaYp = 2.45e-6,
+       sigmaE  = 1e-5,
+       sigmaT  = 1e-12,
+       S0=3.2*m;
+
+include options.gmad;
