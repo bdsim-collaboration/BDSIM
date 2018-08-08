@@ -29,7 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSFieldMagUndulator::BDSFieldMagUndulator(BDSMagnetStrength const* strength)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  peroid = (*strength)["length"];
+  period = (*strength)["length"];
   B = (*strength)["field"] / CLHEP::tesla;
   finiteStrength = BDS::IsFinite(B);
 #ifdef BDSDEBUG
@@ -43,7 +43,7 @@ G4ThreeVector BDSFieldMagUndulator::GetField(const G4ThreeVector &position,
 
   G4ThreeVector field;
   field[0] = 0;
-  field[1] = B * std::cos(position.z() * ((2*CLHEP::pi)/peroid));
+  field[1] = B * std::cos(position.z() * ((2*CLHEP::pi)/period));
   field[2] = 0;
 
   return field;

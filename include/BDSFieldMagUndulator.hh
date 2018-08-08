@@ -50,7 +50,7 @@ private:
   
   /// B' - the field gradient - a constant for a quadrupole.
   G4double B;
-  G4double peroid;
+  G4double period;
 };
 
 #endif
