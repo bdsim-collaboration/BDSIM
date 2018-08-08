@@ -991,19 +991,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                                                    true,
                                                    fieldTrans);
 
+  // limit step length in field - crucial to this component
+  // to get the motion correct this has to be less than one oscillation
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  G4double limit = (*st)["length"] * 0.075;
+  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+  if (ul != defaultUL)
+    {vacuumFieldInfo->SetUserLimits(ul);}
+
   G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
   vacuumFieldInfo->SetTransform(newFieldTransform);
 
   return (new BDSUndulator(elementName,
-                      element->l * CLHEP::m,
-                      PrepareHorizontalWidth(element),
-                      element->undulatorPeriod * CLHEP::m,
-                      element->magnetWidth * CLHEP::m,    // magnet height to be added
-                      element->magnetHeight * CLHEP::m,    // magnet width to be added
-                      element->undulatorGap * CLHEP::m,
-                      bpInfo,
-                      vacuumFieldInfo,
-                      element->material));
+			   element->l * CLHEP::m,
+			   element->undulatorPeriod * CLHEP::m,
+			   element->magnetWidth * CLHEP::m,
+			   element->magnetHeight * CLHEP::m,
+			   element->undulatorGap * CLHEP::m,
+			   bpInfo,
+			   vacuumFieldInfo,
+			   element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
