@@ -16,16 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <G4UniformMagField.hh>
-#include <G4TransportationManager.hh>
-#include <include/BDSFieldBuilder.hh>
-#include "globals.hh" // geant4 globals / types
-
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldBuilder.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
@@ -39,17 +37,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUndulator.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
-#include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"
+#include "G4Transform3D.hh"
+#include "G4TransportationManager.hh"
+#include "G4UniformMagField.hh"
+#include "G4VisAttributes.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
-
-#include "G4Transform3D.hh"
 
 using namespace GMAD;
 
