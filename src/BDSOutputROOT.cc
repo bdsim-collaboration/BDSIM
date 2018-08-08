@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/options.h"
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -103,7 +104,10 @@ void BDSOutputROOT::NewFile()
 
   // Build primary structures
   if (WritePrimaries())
-    {theEventOutputTree->Branch("Primary.",     "BDSOutputROOTEventSampler",primary,32000,1);}
+    {
+      theEventOutputTree->Branch("Primary.",       "BDSOutputROOTEventSampler",primary,32000,1);
+      theEventOutputTree->Branch("PrimaryGlobal.", "BDSOutputROOTEventCoords", primaryGlobal, 3200,1);
+    }
 
   // Build loss and hit structures
   theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss", eLoss,     4000, 1);

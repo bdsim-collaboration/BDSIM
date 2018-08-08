@@ -16,11 +16,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSBunch.hh"
 #include "BDSBunchComposite.hh"
 #include "BDSDebug.hh"
 #include "BDSBunchFactory.hh"
-#include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
 
@@ -67,7 +68,7 @@ void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
   zBunch = BDSBunchFactory::CreateBunch(beamParticle, zType, beam, beamlineTransformIn);
 }
 
-void BDSBunchComposite::SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn)
+void BDSBunchComposite::SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn)
 {
   BDSBunch::SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
   xBunch->SetGeneratePrimariesOnly(generatePrimariesOnlyIn);
@@ -82,35 +83,16 @@ void BDSBunchComposite::CheckParameters()
   zBunch->CheckParameters();
 }
 
-void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-					G4double& xp, G4double& yp, G4double& zp,
-					G4double& t , G4double&  E, G4double& weight)
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
+{  
+  auto x = xBunch->GetNextParticleLocal();
+  auto y = yBunch->GetNextParticleLocal();
+  auto z = zBunch->GetNextParticleLocal();
 
-  G4double xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight;
-  G4double yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight;
-  G4double zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight;
-  
-  xBunch->GetNextParticle(xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight);
-  yBunch->GetNextParticle(yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight);
-  zBunch->GetNextParticle(zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight);
-
-  x0 = xx0;
-  xp = xxp;
-  y0 = yy0;
-  yp = yyp;
-  z0 = zz0;
-  zp = zzp;
-
-  // we don't apply the transform here with Apply Transform as all distributions
-  // do that themselves.
-  
-  t  = zt;
-  E  = zE; 
-  weight = xWeight;
-
-  return;
+  BDSParticleCoordsFull result(x.x, y.y, z.z,
+                               x.xp, y.yp, z.zp,
+			       z.T, z.s,
+			       z.totalEnergy,
+			       x.weight);
+  return result;
 }

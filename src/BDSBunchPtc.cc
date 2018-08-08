@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchPtc.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParticleCoordsFull.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/beam.h"
@@ -42,11 +43,7 @@ BDSBunchPtc::~BDSBunchPtc()
 }
 
 void BDSBunchPtc::LoadPtcFile()
-{ 
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
+{
   // open file and read line by line and extract values
   std::ifstream ifstr(fileName);
 
@@ -61,12 +58,12 @@ void BDSBunchPtc::LoadPtcFile()
   while(std::getline(ifstr,line)) { 
     
     // variable for storage
-    double x=0.0;
-    double y=0.0;
-    double px=0.0;
-    double py=0.0; 
-    double t=0.0;
-    double pt=0.0;
+    double x  = 0.0;
+    double y  = 0.0;
+    double px = 0.0;
+    double py = 0.0; 
+    double t  = 0.0;
+    double pt = 0.0;
     
     // create regular expressions 
     std::regex rex("\\sx\\s*=\\s*([0-9eE.+-]+)");
@@ -145,13 +142,8 @@ void BDSBunchPtc::SetDistrFile(G4String distrFileName)
   fileName = BDS::GetFullPath(distrFileName);
 }
 
-void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				  G4double& xp, G4double& yp, G4double& zp,
-				  G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // if all particles are read, start at 0 again and note it down in bool flag
   if (iRay == nRays)
     {
@@ -159,27 +151,24 @@ void BDSBunchPtc::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       loopedOver = true;
     }
   
-  x0     = (ptcData[iRay][0] + X0) * CLHEP::m;
-  y0     = (ptcData[iRay][2] + Y0) * CLHEP::m;
-  z0     = (ptcData[iRay][4] + Z0) * CLHEP::m;
-  xp     = ptcData[iRay][1] * CLHEP::rad+Xp0;
-  yp     = ptcData[iRay][3] * CLHEP::rad+Yp0;
-  t      = (z0-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
-  E      = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
-  zp     = CalculateZp(xp,yp,Zp0);
+  G4double x  = ptcData[iRay][0] * CLHEP::m + X0;
+  G4double y  = ptcData[iRay][2] * CLHEP::m + Y0;
+  G4double z  = ptcData[iRay][4] * CLHEP::m + Z0;
+  G4double xp = ptcData[iRay][1] * CLHEP::rad + Xp0;
+  G4double yp = ptcData[iRay][3] * CLHEP::rad + Yp0;
+  G4double t  = (z-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
+  G4double E  = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
+  G4double zp = CalculateZp(xp,yp,Zp0);
 
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-  
-  weight = 1.0; 
+  BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
 
-  iRay++;
-  
+  iRay++;  
   if (loopedOver)
     {
       G4cout << __METHOD_NAME__ << "End of file reached. Returning to beginning of file." << G4endl;
       loopedOver = false; // reset flag until next time
     }
 
-  return;
+  return result;
 }
 

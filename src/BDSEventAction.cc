@@ -359,8 +359,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
   }
   
-  
-  
   // Output interesting trajectories
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
