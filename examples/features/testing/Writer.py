@@ -1,9 +1,8 @@
 import numpy as _np
 import os as _os
 import glob as _glob
-from pybdsim import Beam as _Beam
 from pybdsim import Writer as _Writer
-import pybdsimTest
+import Test
 import Globals
 import _General
 
@@ -16,31 +15,6 @@ class Writer:
         self._optionsFilename = ''
         self._numFilesWritten = 0
         self._fileNamesWritten = {}
-
-    def _getBeam(self, test):
-        """ Function to create and return a pybdsim.Beam.Beam instance.
-            The beam is set to PTC."""
-        beam = _Beam.Beam()
-        beam.SetParticleType(particletype=test.Particle)
-        beam.SetEnergy(test.Energy)
-        beam.SetDistributionType(distrtype='ptc')
-        beam._SetSigmaE(sigmae=0)
-        return beam
-
-    def _mkdirs(self, test):
-        """ Function to make the directories that the tests will be written in.
-            If the number of tests for the component is > 1000, the files will
-            be split into multiple subdirectories. """
-        component = test.Component  # component type from test object
-        if not _os.path.exists(component):
-            _os.system("mkdir -p " + component)
-        if test._numFiles > 1000:
-            _os.chdir(component)
-            numdirs = test._numFiles - _np.mod(test._numFiles, 1000)
-            dirs = _np.linspace(0, numdirs, (numdirs/1000)+1)
-            for direc in dirs:
-                _os.system("mkdir -p " + _np.str(_np.int(direc)))
-            _os.chdir('../')
 
     def _writeToDisk(self, component, filename, machine, test):
         """ Function that writes the test machine to disk."""
@@ -58,7 +32,6 @@ class Writer:
         else:
             self.SetBeamFilename(test._beamFilename)
 
-
         if self._optionsFilename == '':
             self._optionsFilename = 'trackingTestOptions.gmad'
         
@@ -70,18 +43,18 @@ class Writer:
             direc = _np.str(_np.int(self._numFilesWritten - _np.mod(self._numFilesWritten, 1000)))
             _os.chdir(direc)
             files = _glob.glob('*')
-            if not gmadname in files:
+            if gmadname not in files:
                 machine.beam._SetDistribFileName('../../' + test._beamFilename)
                 writer.Options.CallExternalFile('../../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
             _os.chdir('../')
         else:
             files = _glob.glob('*')
-            if not gmadname in files:
+            if gmadname not in files:
                 machine.beam._SetDistribFileName('../' + self._beamFilename)
                 writer.Options.CallExternalFile('../' + self._optionsFilename)
                 writer.WriteMachine(machine, filename, verbose=False)
-        if not component in self._fileNamesWritten.keys():
+        if component not in self._fileNamesWritten.keys():
             self._fileNamesWritten[component] = []
         self._fileNamesWritten[component].append(component + "/" + filename + ".gmad")
         _os.chdir('../')
@@ -107,8 +80,8 @@ class Writer:
     def WriteTests(self, test):
         """ Function to write all parameter combinations in a Test instance.
             """
-        if not isinstance(test, pybdsimTest.Test):
-            raise TypeError("test is not a bdsimtesting.pybdsim.Test instance.")
+        if not isinstance(test, Test.Test):
+            raise TypeError("test is not a bdsim Test.Test instance.")
 
         component = test.Component
         
@@ -117,9 +90,9 @@ class Writer:
                 test[keys].append(0)
         
         # make directories and loop over components, particles, and energies.
-        self._mkdirs(test)
+        _General._mkdirs(test)
         if component == 'sbend' or component == 'rbend':
-            #self.WriteDipoleTests(test)
+            # self.WriteDipoleTests(test)
             self.WriteFullDipole(test)
         elif component == 'hkick' or component == 'vkick':
             self.WriteKickerTests(test)
@@ -165,7 +138,7 @@ class Writer:
             machine = _General.Machine(test.Particle, test._testRobustness)
             machine.AddDrift(name='dr', length=length)
             machine.AddSampler('all')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
 
     def WriteFullDipole(self, test):
@@ -195,7 +168,7 @@ class Writer:
 
             machine.AddDrift(name='dr2', length=0.2)
             machine.AddSampler('dr2')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, fileName, machine, test)
 
         component = test.Component
@@ -273,7 +246,7 @@ class Writer:
 
                                                     machine.AddDrift(name='dr2', length=0.2)
                                                     machine.AddSampler('dr2')
-                                                    machine.AddBeam(self._getBeam(test))
+                                                    machine.AddBeam(_General._getBeam(test))
                                                     self._writeToDisk(component, h2FileName, machine, test)
 
         print("WARNING: Running a full test suite varying all dipole parameters will generate\n")
@@ -322,7 +295,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddQuadrupole(name='qd', length=length, k1=k1)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, k1FileName, machine, test)
   
     def WriteSextupoleTests(self, test):
@@ -338,7 +311,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddSextupole(name='sx', length=length, k2=k2)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, k2FileName, machine, test)
 
     def WriteOctupoleTests(self, test):
@@ -354,7 +327,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddOctupole(name='oc', length=length, k3=k3)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, k3FileName, machine, test)
 
     def WriteDecapoleTests(self, test):
@@ -370,7 +343,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddOctupole(name='dc', length=length, k4=k4)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, k4FileName, machine, test)
 
     def WriteKickerTests(self, test):
@@ -393,7 +366,7 @@ class Writer:
                 elif component == 'vkick':
                     machine.AddVKicker(name=componentName, l=length, angle=kickangle)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, kickAngleFileName, machine, test)
 
     def WriteThinMultipoleTests(self, test):
@@ -428,10 +401,10 @@ class Writer:
             elif component == 'multipole':
                 machine.AddMultipole(name='mp1', length=length, knl=knArray, ksl=ksArray)
                 machine.AddSampler('mp1')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, kslName, machine, test)
 
-        def getName(kArray, skewed = False):
+        def getName(kArray, skewed=False):
             """ Get the test file name based on the kn and ks component strengths.
                 Do not include kn or ks component if it is zero.
                 """
@@ -464,9 +437,10 @@ class Writer:
                 """
             if type(test['ksl']) in GlobalData.multiEntryTypes:
                 if type(test['ksl'][0]) in GlobalData.multiEntryTypes:
-                    for kslArray in test['ksl']:
-                        kslName = knlName + getName(kslArray, True)
-                        writemachine(knlArray, kslArray, length, kslName)
+                    for kslArrays in test['ksl']:
+                        for kslArray in kslArrays:
+                            kslName = knlName + getName(kslArray, True)
+                            writemachine(knlArray, kslArray, length, kslName)
                 else:
                     kslName = knlName + getName(test['ksl'], True)
                     writemachine(knlArray, tuple(test['ksl']), length, kslName)
@@ -478,10 +452,11 @@ class Writer:
         if type(test['knl']) in GlobalData.multiEntryTypes:
             # containing multiEntryType containers...
             if type(test['knl'][0]) in GlobalData.multiEntryTypes:
-                # then each of those multiEntryTypes should contain component strengths
-                for knlArray in test['knl']:
-                    knlName = filename + getName(knlArray)
-                    getKSLandWrite(test, knlName, knlArray, length)
+                for knlArrays in test['knl']:
+                    # then each of those multiEntryTypes should contain component strengths
+                    for knlArray in knlArrays:
+                        knlName = filename + getName(knlArray)
+                        getKSLandWrite(test, knlName, knlArray, length)
             # containing non-multiEntryType data then it should only contain component strengths
             else:
                 knlName = filename + getName(test['knl'])
@@ -509,7 +484,7 @@ class Writer:
             if component == 'ecol':
                 machine.AddECol(name='ec1', length=length, xsize=xsize, ysize=ysize)
             machine.AddSampler('all')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, collFileName, machine, test)
 
     def WriteSolenoidTests(self, test):
@@ -525,7 +500,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddSolenoid(name='sn1', length=length, ks=ks)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, ksFileName, machine, test)
 
     def WriteRFCavityTests(self, test):
@@ -541,7 +516,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddRFCavity(name='rc1', length=length, gradient=gradient)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, gradientFileName, machine, test)
 
     def WriteDegraderTests(self, test):
@@ -561,7 +536,7 @@ class Writer:
                     # thickness is fraction of length
                     machine.AddDegrader(name='deg1', length=length, nWedges=numWedges, materialThickness=thickness*length)
                     machine.AddSampler('all')
-                    machine.AddBeam(self._getBeam(test))
+                    machine.AddBeam(_General._getBeam(test))
                     self._writeToDisk(component, thicknessFileName, machine, test)
 
     def WriteMuSpoilerTests(self, test):
@@ -578,7 +553,7 @@ class Writer:
                 machine = _General.Machine(test.Particle, test._testRobustness)
                 machine.AddDrift(name='dr1', length=length)
                 machine.AddSampler('all')
-                machine.AddBeam(self._getBeam(test))
+                machine.AddBeam(_General._getBeam(test))
                 self._writeToDisk(component, fieldFileName, machine, test)
 
     def WriteLaserTests(self, test):
@@ -591,7 +566,7 @@ class Writer:
             machine = _General.Machine(test.Particle, test._testRobustness)
             machine.AddLaser(name='las', length=length)
             machine.AddSampler('all')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
 
     def WriteShieldTests(self, test):
@@ -604,7 +579,7 @@ class Writer:
             machine = _General.Machine(test.Particle, test._testRobustness)
             machine.AddShield(name='sh', length=length)
             machine.AddSampler('all')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
 
     def WriteGapTests(self, test):
@@ -620,7 +595,7 @@ class Writer:
             machine.AddGap(name='gp', length=length)
             machine.AddDrift(name='dr2', length=length)
             machine.AddSampler('all')
-            machine.AddBeam(self._getBeam(test))
+            machine.AddBeam(_General._getBeam(test))
             self._writeToDisk(component, lenFileName, machine, test)
 
 

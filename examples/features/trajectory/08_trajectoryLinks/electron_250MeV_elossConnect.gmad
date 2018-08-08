@@ -13,5 +13,5 @@ beam,  particle="e-",
 
 option,storeTrajectories=1;
 option,storeTrajectoryDepth=0;
-option,storeTrajectoryELossSRange="400.0:450.0";
+option,storeTrajectoryELossSRange="350.0:400.0";
 option,trajConnect=1;
