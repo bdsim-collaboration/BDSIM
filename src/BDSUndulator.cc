@@ -109,7 +109,6 @@ void BDSUndulator::Build()
 #ifdef BDSDEBUG
   G4cout << "para" << G4endl;
   G4cout << undulatorGap << G4endl;
-  G4cout << horizontalWidth << G4endl;
   G4cout << magnetHeight << G4endl;
   G4cout << magnetWidth << G4endl;
   G4cout << chordLength << G4endl;
