@@ -103,6 +103,7 @@ thinrmatrix { return THINRMATRIX;}
 paralleltransporter {return PARALLELTRANSPORTER;}
 rmatrix {return RMATRIX;}
 crystalcol { return CRYSTALCOL; }
+undulator { return UNDULATOR; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }

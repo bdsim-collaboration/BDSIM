@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSOutputType.hh"
 #include "BDSParser.hh"
@@ -171,6 +172,8 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
   defaultUserLimits->SetUserMinEkine(MinimumKineticEnergy());
   defaultUserLimits->SetUserMinRange(MinimumRange());
+
+  BDSFieldInfo::defaultUL = defaultUserLimits; // update static member for field definitions
 }
 
 G4int BDSGlobalConstants::PrintModuloEvents() const

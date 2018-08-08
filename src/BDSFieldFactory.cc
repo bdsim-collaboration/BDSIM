@@ -72,6 +72,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
+#include "BDSFieldMagUndulator.hh"
 
 #include "parser/field.h"
 
@@ -324,6 +325,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       {field = new BDSFieldMagDipole(strength); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
+    case BDSFieldType::undulator:
+      {field = new BDSFieldMagUndulator(strength); break;}
     case BDSFieldType::dipolequadrupole:
       {field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;}
     case BDSFieldType::sextupole:
