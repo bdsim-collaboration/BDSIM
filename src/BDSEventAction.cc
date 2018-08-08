@@ -26,6 +26,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSSamplerRegistry.hh"
+#include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
@@ -53,15 +55,13 @@ G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once i
 
 namespace {
   // Function to recursively connect t
-  void connectTraj(const std::map<int, BDSTrajectory*> &trackIDMap,
-		   std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
+  void connectTraj(std::map<BDSTrajectory*, bool> &interestingTraj, BDSTrajectory* t)
   {
-    G4int parentID = t->GetParentID();
-    if (parentID > 0)
+    BDSTrajectory *t2 = t->GetParent();
+    if (t2)
       {
-	BDSTrajectory *t2 = trackIDMap.at(parentID);
-	interestingTraj.insert(std::pair<BDSTrajectory *, bool>(t2, true));
-	connectTraj(trackIDMap, interestingTraj, t2);
+	interestingTraj[t2] = true;
+	connectTraj(interestingTraj, t2);
       }
     else
       {return;}
@@ -91,10 +91,19 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   trajectoryCutR            = globals->TrajCutLTR();
   trajConnect               = globals->TrajConnect();
   particleToStore           = globals->StoreTrajectoryParticle();
-  particleIDToStore         = globals->StoreTrajectoryParticleID();
+  particleIDToStore         = globals->StoreTrajectoryParticleID(); 
   depth                     = globals->StoreTrajectoryDepth();
+  samplerIDsToStore         = globals->StoreTrajectorySamplerIDs();
+  sRangeToStore             = globals->StoreTrajectoryELossSRange();
+
 
   printModulo = globals->PrintModuloEvents();
+
+  // particleID to store in integer vector
+  std::stringstream iss(particleIDToStore);
+  G4int i;
+  while (iss >> i)
+    particleIDIntToStore.push_back(i);
 }
 
 BDSEventAction::~BDSEventAction()
@@ -105,6 +114,11 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+
+  // set samplers for trajectory (cannot be done in contructor)
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
+  
   // reset navigators to ensure no mis-navigating and that events are truly independent
   BDSAuxiliaryNavigator::ResetNavigatorStates();
   
@@ -203,10 +217,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
 
   // Save interesting trajectories
-  std::vector<BDSTrajectory*> interestingTrajVec;
+  std::map<BDSTrajectory*, bool> interestingTraj;
+
   if (storeTrajectory && trajCont)
   {
-    std::map<BDSTrajectory*, bool> interestingTraj;
 
     TrajectoryVector* trajVec = trajCont->GetVector();
 
@@ -215,23 +229,28 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	   << " storeTrajectoryEnergyThreshold=" << trajectoryEnergyThreshold << G4endl;
 #endif
 
-    // build trackID map
+    // build trackID map, depth map
     std::map<int, BDSTrajectory*> trackIDMap;
-    for (auto iT1 : *trajVec)
-      {
-	BDSTrajectory *traj = (BDSTrajectory *) iT1;
-	trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
-      }
-
-    // build depth map
     std::map<BDSTrajectory*, int> depthMap;
     for (auto iT1 : *trajVec)
       {
 	BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
+	
+	// fill track ID map
+	trackIDMap.insert(std::pair<int, BDSTrajectory *>(traj->GetTrackID(), traj));
+
+	// fill depth map
 	if (traj->GetParentID() == 0) 
 	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, 0));}
 	else
 	  {depthMap.insert(std::pair<BDSTrajectory*, int>(traj, depthMap.at(trackIDMap.at(traj->GetParentID())) + 1));}
+      }
+
+    // fill parent pointer (TODO can this be merged with previous loop?)
+    for (auto iT1 : *trajVec) 
+      {
+        BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);	
+        traj->SetParent(trackIDMap[iT1->GetParentID()]);
       }
 
     // loop over trajectories and determine if it should be stored
@@ -256,13 +275,16 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  }
 	
 	// check on particle if not empty string
+
 	if (!particleToStore.empty() || !particleIDToStore.empty())
 	  {
 	    G4String particleName  = traj->GetParticleName();
-	    G4String particleIDStr = G4String(std::to_string(traj->GetPDGEncoding()));
-	    std::size_t found  = particleToStore.find(particleName);
-	    std::size_t found2 = particleIDToStore.find(particleIDStr);
-	    if (found != std::string::npos || found2 != std::string::npos)
+	    G4int particleID       = traj->GetPDGEncoding();
+	    G4String particleIDStr = G4String(std::to_string(particleID));
+	    std::size_t found1      = particleToStore.find(particleName);
+	    bool        found2     = (std::find(particleIDIntToStore.begin(), particleIDIntToStore.end(),particleID) 
+				      != particleIDIntToStore.end());
+	    if ((found1 != std::string::npos) || found2)
 	      {
 		interestingTraj.insert(std::pair<BDSTrajectory *, bool>(traj, true));
 		continue;
@@ -291,46 +313,58 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	interestingTraj.insert(std::pair<BDSTrajectory*, bool>(traj, false));
       }
     
+    // loop over energy hits to connect trajectories
+    if(sRangeToStore.size() != 0)
+      {
+	G4int n_hit = energyCounterHits->entries();
+	BDSEnergyCounterHit *hit;
+	for(G4int i=0;i<n_hit;i++)
+	  {
+	    hit = (*energyCounterHits)[i];
+	    // G4cout << hit->GetSHit() << " " << hit->GetTrackID() << G4endl;
+	    double dS = hit->GetSHit();
+	    for(auto v = sRangeToStore.begin(); v != sRangeToStore.end(); ++v) 
+	      {		
+		if ( dS >= (*v).first && dS <= (*v).second) 
+		  {
+		    interestingTraj[trackIDMap[hit->GetTrackID()]] = true;
+		    break;
+		  }
+	      }
+	  }
+      }
+    
+    // loop over samplers to connect trajectories
+    if(samplerIDsToStore.size() != 0)
+      {
+	G4int n_hit = SampHC->entries();
+	for(G4int i=0;i<n_hit;i++)
+	  {
+	    G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
+	    BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
+	    // G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
+	    if(std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(),samplerIndex) != samplerIDsToStore.end())
+	      {
+		interestingTraj[trackIDMap[(*SampHC)[i]->GetTrackID()]] = true;
+	      }
+	  }
+      }
+    
     // Connect trajectory graphs
     if (trajConnect && trackIDMap.size() > 1)
       {
 	for (auto i : interestingTraj)
-	  {connectTraj(trackIDMap, interestingTraj, i.first);}
-      }
-
-    // Output interesting trajectories
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
-#endif
-    
-    // TODO sort accordings to trackID
-    for (auto i : trackIDMap)
-      {
-	if (interestingTraj.at(i.second))
-	  {interestingTrajVec.push_back(i.second);}
-      }
-
-    // Relabel with new track IDS
-
-    // make map
-    std::map<BDSTrajectory*, G4int> interestingTrajIndexMap;
-    int idx = 0;
-    for (auto i : interestingTrajVec)
-      {
-	interestingTrajIndexMap[i] = idx;
-	idx++;
-      }
-
-    for (auto i : interestingTrajVec)
-      {
-	G4int parentIndex = -1;
-	try
-	  {parentIndex = (G4int) interestingTrajIndexMap.at(trackIDMap.at(i->GetParentID()));}
-	catch (const std::exception &ex)
-	  {parentIndex = -1;}
-	i->SetParentIndex(parentIndex);
+	  if(i.second) 
+	    {connectTraj(interestingTraj, i.first);}
       }
   }
+  
+  
+  
+  // Output interesting trajectories
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTraj.size() << G4endl;
+#endif
   
   output->FillEvent(eventInfo,
 		    evt->GetPrimaryVertex(),
@@ -340,7 +374,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    tunnelEnergyCounterHits,
 		    primaryHit,
 		    primaryLoss,
-		    interestingTrajVec,
+		    interestingTraj,
 		    BDSGlobalConstants::Instance()->TurnsTaken());
   
   // if events per ntuples not set (default 0) - only write out at end

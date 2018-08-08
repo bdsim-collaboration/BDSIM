@@ -1,0 +1,11 @@
+d1: drift, l=0.5;
+
+u1: undulator, l=2*m,
+    	       B=0.2*T,
+	       undulatorPeriod=0.1*m,
+	       material="carbon";
+
+lat : line = (d1,u1,d1);
+com : line = (u1);
+
+include optionsTest.gmad;

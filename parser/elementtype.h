@@ -46,7 +46,8 @@ namespace GMAD
     _THINRMATRIX = 66,
     _PARALLELTRANSPORTER = 67,
     _RMATRIX     = 68,
-    _CRYSTALCOL  = 69
+    _CRYSTALCOL  = 69,
+    _UNDULATOR   = 70,
   };
 
   /// conversion from enum to string

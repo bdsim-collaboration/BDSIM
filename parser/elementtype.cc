@@ -95,6 +95,8 @@ std::string GMAD::typestr(ElementType type) {
     return "paralleltransporter";
   case ElementType::_RMATRIX :
     return "rmatrix";
+  case ElementType::_UNDULATOR :
+    return "undulator";
   default:
     return "none";
   }
