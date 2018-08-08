@@ -991,6 +991,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
                                                    true,
                                                    fieldTrans);
 
+  // limit step length in field - crucial to this component
+  // to get the motion correct this has to be less than one oscillation
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  G4double limit = (*st)["length"] * 0.075;
+  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+  if (ul != defaultUL)
+    {vacuumFieldInfo->SetUserLimits(ul);}
+
   G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
   vacuumFieldInfo->SetTransform(newFieldTransform);
 
