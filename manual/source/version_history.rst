@@ -84,6 +84,9 @@ Output Changes
 * Samplers are **no longer** placed next to elements with angled faces when using the :code:`bdsimtwo`,
   :code:`geant4`, or :code:`geant4dp` integrator sets.
 * Units are now written to the ASCII survey output for each column.
+* New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
+* New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
+  the global Cartesian frame.
 
 Bug Fixes
 ---------
@@ -125,6 +128,7 @@ Bug Fixes
   as every other distribution. Coordinates will be different for this distribution for the same seed now.
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
 * `square` beam distiribution now varies with :code:`envelopeT`.
+* Fixed S coordinate in output. Issues #247 and #248.
 
 Utilities
 ---------
