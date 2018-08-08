@@ -80,16 +80,18 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 
   offsetSampleMean  = beam.offsetSampleMean;
   iPartIteration    = 0;
-  
-  meansGM[0] = X0;
-  meansGM[1] = Xp0;
-  meansGM[2] = Y0;
-  meansGM[3] = Yp0;
-  meansGM[4] = T0;
+
+  // undo units and redo after the multivariate Gaussian
+  // easier for the Gauss classes where we have sigma^2 in places
+  meansGM[0] = X0  / CLHEP::m;
+  meansGM[1] = Xp0 / CLHEP::rad;
+  meansGM[2] = Y0  / CLHEP::m;
+  meansGM[3] = Yp0 / CLHEP::rad;
+  meansGM[4] = T0  / CLHEP::s;
   meansGM[5] = 1;
 }
 
-void BDSBunchGaussian::BeginOfRunAction(const G4int& numberOfEvents)
+void BDSBunchGaussian::BeginOfRunAction(G4int numberOfEvents)
 {
   if (!offsetSampleMean)
     {return;}
@@ -164,122 +166,118 @@ CLHEP::RandMultiGauss* BDSBunchGaussian::CreateMultiGauss(CLHEP::HepRandomEngine
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 
-void BDSBunchGaussian::PreGenerateEvents(const G4int& nGenerate)
+void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
 {
   // generate all required primaries first
-  G4double x0,xp,y0,yp,z0,zp,E,t,weight;
-  G4double x0_a = 0.0, xp_a = 0.0, y0_a = 0.0, yp_a = 0.0;
-  G4double z0_a = 0.0, zp_a = 0.0, E_a  = 0.0, t_a  = 0.0;
+  G4double x_a = 0.0, xp_a = 0.0, y_a = 0.0, yp_a = 0.0;
+  G4double z_a = 0.0, zp_a = 0.0, E_a  = 0.0, t_a  = 0.0;
 
   for (G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
-      GetNextParticleCoords(x0, y0, z0, xp, yp, zp, t, E, weight);
+      BDSParticleCoordsFull fire = GetNextParticleLocalCoords();
 
       G4double nT = (G4double)iParticle + 1;
       G4double d = 0;
-      d     = x0 - x0_a;
-      x0_a  = x0_a + (d/nT);
-      d     = xp - xp_a;
-      xp_a  = xp_a + (d/nT);
-      d     = y0 - y0_a;
-      y0_a  = y0_a + (d/nT);
-      d     = yp - yp_a;
-      yp_a  = yp_a + (d/nT);
-      d     = z0 - z0_a;
-      z0_a  = z0_a + (d/nT);
-      d     = zp - zp_a;
-      zp_a  = zp_a + (d/nT);
-      d     = y0 - y0_a;
-      d     = E - E_a;
-      E_a   = E_a + (d/nT);
-      d     = t - t_a;
-      t_a   = t_a + (d/nT);
+      d    = fire.x - x_a;
+      x_a  = x_a + (d/nT);
+      d    = fire.xp - xp_a;
+      xp_a = xp_a + (d/nT);
+      d    = fire.y - y_a;
+      y_a  = y_a + (d/nT);
+      d    = fire.yp - yp_a;
+      yp_a = yp_a + (d/nT);
+      d    = fire.z - z_a;
+      z_a  = z_a + (d/nT);
+      d    = fire.zp - zp_a;
+      zp_a = zp_a + (d/nT);
+      d    = fire.totalEnergy - E_a;
+      E_a  = E_a + (d/nT);
+      d    = fire.T - t_a;
+      t_a  = t_a + (d/nT);
       
-      x0_v.push_back(x0);
-      xp_v.push_back(xp);
-      y0_v.push_back(y0);
-      yp_v.push_back(yp);
-      z0_v.push_back(z0);
-      zp_v.push_back(zp);
-      E_v.push_back(E);
-      t_v.push_back(t);
-      weight_v.push_back(weight);
+      x0_v.push_back(fire.x);
+      xp_v.push_back(fire.xp);
+      y0_v.push_back(fire.y);
+      yp_v.push_back(fire.yp);
+      z0_v.push_back(fire.z);
+      zp_v.push_back(fire.zp);
+      E_v.push_back(fire.totalEnergy);
+      t_v.push_back(fire.T);
+      weight_v.push_back(fire.weight);
     }
 
   // Compute difference between sample mean and specified means
-  x0_a = x0_a - X0*CLHEP::m;
-  xp_a = xp_a - Xp0*CLHEP::rad;
-  y0_a = y0_a - Y0*CLHEP::m;
-  yp_a = yp_a - Yp0*CLHEP::rad;
-  z0_a = z0_a - Z0*CLHEP::m;
-  zp_a = zp_a - Zp0*CLHEP::rad;
-  E_a  = E_a  - E0*CLHEP::GeV;
-  t_a  = t_a  - T0*CLHEP::s;
+  x_a  = x_a  - X0;
+  xp_a = xp_a - Xp0;
+  y_a  = y_a  - Y0;
+  yp_a = yp_a - Yp0;
+  z_a  = z_a  - Z0;
+  zp_a = zp_a - Zp0;
+  E_a  = E_a  - E0;
+  t_a  = t_a  - T0;
 
   // Offset with different w.r.t. central value
   for(G4int iParticle = 0; iParticle < nGenerate; ++iParticle)
     {
-      x0_v[iParticle] -= x0_a;
+      x0_v[iParticle] -= x_a;
       xp_v[iParticle] -= xp_a;
-      y0_v[iParticle] -= y0_a;
+      y0_v[iParticle] -= y_a;
       yp_v[iParticle] -= yp_a;
-      z0_v[iParticle] -= z0_a;
+      z0_v[iParticle] -= z_a;
       zp_v[iParticle] -= zp_a;
       E_v[iParticle]  -= E_a;
       t_v[iParticle]  -= t_a;
     }
 }
   
-void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-				       G4double& xp, G4double& yp, G4double& zp,
-				       G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchGaussian::GetNextParticleLocal()
 {
   if (offsetSampleMean)
     {
       // iPartIteration should never exceed the size of each vector.
       // the units are already correct in the vector of stored coordinates
-      x0     = x0_v[iPartIteration];
-      xp     = xp_v[iPartIteration];
-      y0     = y0_v[iPartIteration];
-      yp     = yp_v[iPartIteration];
-      z0     = z0_v[iPartIteration];
-      zp     = zp_v[iPartIteration];
-      t      = t_v[iPartIteration];
-      E      = E_v[iPartIteration];
-      weight = weight_v[iPartIteration];
+      G4double x      = x0_v[iPartIteration];
+      G4double xp     = xp_v[iPartIteration];
+      G4double y      = y0_v[iPartIteration];
+      G4double yp     = yp_v[iPartIteration];
+      G4double z      = z0_v[iPartIteration];
+      G4double zp     = zp_v[iPartIteration];
+      G4double t      = t_v[iPartIteration];
+      G4double E      = E_v[iPartIteration];
+      G4double weight = weight_v[iPartIteration];
       
       iPartIteration++;
+      return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0,E,weight);
     }
   else
-    {GetNextParticleCoords(x0, y0, z0, xp, yp, zp, t, E, weight);}
+    {return GetNextParticleLocalCoords();}
 }
 
 
-void BDSBunchGaussian::GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
-					     G4double& xp, G4double& yp, G4double& zp,
-					     G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchGaussian::GetNextParticleLocalCoords()
 {
   CLHEP::HepVector v = gaussMultiGen->fire();
-  x0 = v[0] * CLHEP::m;
-  xp = v[1] * CLHEP::rad;
-  y0 = v[2] * CLHEP::m;
-  yp = v[3] * CLHEP::rad;
+  // unlike other bunch distributions reintroduce units (taken out in set options)
+  G4double x  = v[0] * CLHEP::m;
+  G4double xp = v[1] * CLHEP::rad;
+  G4double y  = v[2] * CLHEP::m;
+  G4double yp = v[3] * CLHEP::rad;
+  G4double t  = T0;
   if (finiteSigmaT)
-    {t = v[4] * CLHEP::s;}
-  else
-    {t = T0 * CLHEP::s;}
-  zp = 0.0  * CLHEP::rad;
-  z0 = Z0 * CLHEP::m;
+    {t = v[4];}
+  t *= CLHEP::s;
+  G4double zp = CalculateZp(xp,yp,Zp0);
+  G4double z  = Z0;
+  G4double dz = 0;
   if (finiteSigmaT)
-    {z0 += t * CLHEP::c_light;}
-  
-  E  = E0 * CLHEP::GeV;
+    {
+      dz = t * CLHEP::c_light;
+      z += dz;
+    }
+  G4double E  = E0; // exceptionally left in G4 units
   if (finiteSigmaE)
     {E *= v[5];} // only if there's a finite energy spread
+  // cov-matrix is E_bar(1), with sigma fractional - so no units here
   
-  zp = CalculateZp(xp,yp,Zp0);
-  
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-  
-  weight = 1.0;
+  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }

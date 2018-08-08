@@ -58,16 +58,14 @@ public:
 
   /// Called at the beginning of a run. Override here to call PreGenerateEvents that
   /// will generate all coordinates and subtract the sample mean.
-  virtual void BeginOfRunAction(const G4int& numberOfEvents);
+  virtual void BeginOfRunAction(G4int numberOfEvents);
 
   /// Clear the pregenerated bunch coordinates and reset the member iterator.
   virtual void EndOfRunAction();
 
   /// Either draw from the vector of already created points or fire fresh
   /// from the matrix.
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
   
 protected:
   /// Create multidimensional Gaussian random number generator
@@ -77,12 +75,10 @@ protected:
 					  CLHEP::HepSymMatrix&    sigma);
   
   /// Pregenerate all the particle coordinates and subtract the sample mean.
-  void PreGenerateEvents(const G4int& nGenerate);
+  void PreGenerateEvents(G4int nGenerate);
 
   /// Fire random number generator and get coordinates. Can be overloaded if required.
-  virtual void GetNextParticleCoords(G4double& x0, G4double& y0, G4double& z0, 
-				     G4double& xp, G4double& yp, G4double& zp,
-				     G4double& t , G4double&  E, G4double& weight);
+  virtual BDSParticleCoordsFull GetNextParticleLocalCoords();
 
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;

@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -77,6 +78,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #endif
   samplerTrees.push_back(primary);
   samplerNames.push_back("Primary");
+  primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
 BDSOutputStructures::~BDSOutputStructures()
@@ -87,6 +89,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete optionsOutput;
   delete modelOutput;
   delete primary;
+  delete primaryGlobal;
   delete eLoss;
   delete pFirstHit;
   delete pLastHit;
@@ -160,6 +163,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
     {(*i)->Flush();}
+  primaryGlobal->Flush();
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();

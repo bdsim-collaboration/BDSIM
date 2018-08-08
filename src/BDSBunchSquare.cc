@@ -18,15 +18,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunchSquare.hh"
 #include "BDSDebug.hh"
+#include "BDSParticleCoordsFull.hh"
 
 #include "parser/beam.h"
 
 #include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
-BDSBunchSquare::BDSBunchSquare() :
-  BDSBunch(), envelopeX(0.0), envelopeY(0.0),
-  envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
+BDSBunchSquare::BDSBunchSquare():
+  envelopeX(0.0),
+  envelopeY(0.0),
+  envelopeXp(0.0),
+  envelopeYp(0.0),
+  envelopeT(0.0),
+  envelopeE(0.0)
 {
   flatGen = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
@@ -42,12 +47,12 @@ void BDSBunchSquare::SetOptions(const BDSParticleDefinition* beamParticle,
 				G4Transform3D beamlineTransformIn)
 {
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
-  envelopeX  = beam.envelopeX; 
-  envelopeY  = beam.envelopeY;
-  envelopeXp = beam.envelopeXp;
-  envelopeYp = beam.envelopeYp;
-  envelopeT  = beam.envelopeT;
-  envelopeE  = beam.envelopeE; 
+  envelopeX  = beam.envelopeX  * CLHEP::m;
+  envelopeY  = beam.envelopeY  * CLHEP::m;
+  envelopeXp = beam.envelopeXp * CLHEP::rad;
+  envelopeYp = beam.envelopeYp * CLHEP::rad;
+  envelopeT  = beam.envelopeT  * CLHEP::s;
+  envelopeE  = beam.envelopeE  * CLHEP::GeV;
 }
 
 void BDSBunchSquare::CheckParameters()
@@ -67,29 +72,18 @@ void BDSBunchSquare::CheckParameters()
     {G4cerr << __METHOD_NAME__ << "envelopeE < 0 "  << G4endl; exit(1);}
 }
 
-void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight)
-{
-  x0 = X0  * CLHEP::m;
-  y0 = Y0  * CLHEP::m;
-  z0 = Z0  * CLHEP::m;
-  xp = Xp0 * CLHEP::rad;
-  yp = Yp0 * CLHEP::rad;
-  z0 = Z0  * CLHEP::m + (T0 - envelopeT * (1.-2.*flatGen->shoot())) * CLHEP::c_light * CLHEP::s;
+BDSParticleCoordsFull BDSBunchSquare::GetNextParticleLocal()
+{  
+  G4double x  = X0  + envelopeX  * (1-2*flatGen->shoot());
+  G4double y  = Y0  + envelopeY  * (1-2*flatGen->shoot());
+  G4double xp = Xp0 + envelopeXp * (1-2*flatGen->shoot());
+  G4double yp = Yp0 + envelopeYp * (1-2*flatGen->shoot());
+  G4double zp = CalculateZp(xp,yp,Zp0);
+  G4double dt = envelopeT * (1.-2.*flatGen->shoot());
+  G4double t  = T0 + dt;
+  G4double dz = dt * CLHEP::c_light;
+  G4double z  = Z0 + dz;
+  G4double E  = E0 + envelopeE * (1 - 2*flatGen->shoot());
   
-  if(envelopeX !=0) x0  += envelopeX  * (1-2*flatGen->shoot()) * CLHEP::m;
-  if(envelopeY !=0) y0  += envelopeY  * (1-2*flatGen->shoot()) * CLHEP::m;
-  if(envelopeXp !=0) xp += envelopeXp * (1-2*flatGen->shoot()) * CLHEP::rad;
-  if(envelopeYp !=0) yp += envelopeYp * (1-2*flatGen->shoot()) * CLHEP::rad;
-  
-  zp = CalculateZp(xp,yp,Zp0);
-
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
-  
-  t = T0 * CLHEP::s;
-  E = E0 * CLHEP::GeV * (1 + envelopeE * (1-2*flatGen->shoot()));
-
-  weight = 1.0;
-  return; 
+  return BDSParticleCoordsFull(x,y,z,xp,yp,zp,t,S0+dz,E,/*weight=*/1.0);
 }

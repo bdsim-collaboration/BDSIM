@@ -64,9 +64,6 @@ BDSBunchUserFile<T>::~BDSBunchUserFile()
 template<class T>
 void BDSBunchUserFile<T>::OpenBunchFile()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   InputBunchFile.open(distrFilePath);
   if (!InputBunchFile.good())
     { 
@@ -78,9 +75,6 @@ void BDSBunchUserFile<T>::OpenBunchFile()
 template<class T>
 void BDSBunchUserFile<T>::CloseBunchFile()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   InputBunchFile.close();
 }
 
@@ -330,19 +324,17 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 }
 
 template<class T>
-void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-					  G4double& xp, G4double& yp, G4double& zp,
-					  G4double& t , G4double&  E, G4double& weight)
+BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
-  E = x0 = y0 = z0 = xp = yp = zp = t = 0;
-  weight = 1;
+  G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
+  G4double weight = 1;
   
   bool zpdef = false; //keeps record whether zp has been read from file
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
   
-  for(auto it=fields.begin();it!=fields.end();it++)
+  for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
 	{ 
@@ -361,11 +353,11 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="t")
 	{ReadValue(t); t *= (CLHEP::s * it->unit); tdef = true;}
       else if(it->name=="x")
-	{ReadValue(x0); x0 *= (CLHEP::m * it->unit);}
+	{ReadValue(x); x *= (CLHEP::m * it->unit);}
       else if(it->name=="y")
-	{ReadValue(y0); y0 *= (CLHEP::m * it->unit);}
+	{ReadValue(y); y *= (CLHEP::m * it->unit);}
       else if(it->name=="z")
-	{ReadValue(z0); z0 *= (CLHEP::m * it->unit);}
+	{ReadValue(z); z *= (CLHEP::m * it->unit);}
       else if(it->name=="xp") { ReadValue(xp); xp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="yp") { ReadValue(yp); yp *= ( CLHEP::radian * it->unit ); }
       else if(it->name=="zp") { ReadValue(zp); zp *= ( CLHEP::radian * it->unit ); zpdef = true;}
@@ -400,20 +392,17 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
 
       // If energy isn't specified, use the central beam energy (kinetic for Geant4)
       if (!BDS::IsFinite(E))
-	{E = E0*CLHEP::GeV;}
+	{E = E0;}
       
       // compute zp from xp and yp if it hasn't been read from file
       if (!zpdef)
 	{zp = CalculateZp(xp,yp,1);}
-      // compute t from z0 if it hasn't been read from file
+      // compute t from z if it hasn't been read from file
       if (!tdef)
 	{t=0;}
     }
 
-  //Add the global offset Z
-  z0=z0+Z0*CLHEP::m;
-
-  ApplyTransform(x0,y0,z0,xp,yp,zp);
+  return BDSParticleCoordsFull(x,y,Z0+z,xp,yp,zp,t,S0+z,E,weight);
 }
 
 template <class T>
