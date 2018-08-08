@@ -6,11 +6,11 @@ Build System & Testing
 Build System
 ============
 
-The build system is based on CMake. The build options and variables are described in the user's manual. Some additional options for developers.
+The build system is based on CMake. The build options and variables are described in the user's manual. Some additional options for developers:
 
  * make dist: This archives the git repository in a file bdsim-0.9.develop.tar.bz2
  * make copy-deps: This copies all dependent libraries to the build/devs/ directory
- * BUILD_MACOSX_APP: CMake variable that builds an MacOS application at installation time.
+ * BUILD_MACOSX_APP: CMake variable that builds an MacOS application at installation time
 
 Test System
 ===========
@@ -27,7 +27,7 @@ Useful ctest commands (can all be combined):
 * ctest -I 5,5 : only execute test 5
 * ctest -VV : print output to screen
 
-For example to find the test command for the sextupole component test::
+For example, to find the test command for the sextupole component test::
 
   ctest -R Component-Sextupole -VV -N
 

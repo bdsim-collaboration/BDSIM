@@ -3,11 +3,11 @@ Program Layout
 
 BDSIM progresses in the following general steps:
 
-1. Parser reads and parses input text files preparing structures representing input - all in GMAD namespace
-2. A Geant4 model (geometry, fields, sensitivity) is created based on information from the parser structures
-3. Special Geant4 user actions are registered
-4. The simulation proceeds either interactively or automatically for a given number of events
-5. Some analysis is performed at run time, output is written and post run analysis can be performed.
+1. Parser reads and parses input text files that prepare structures representing input - all in GMAD namespace.
+2. A Geant4 model (geometry, fields, sensitivity) is created based on information from the parser structures.
+3. Special Geant4 user actions are registered.
+4. The simulation proceeds either interactively or automatically for a given number of events.
+5. Some analysis is performed at run time, output is written and post-run analysis can be performed.
 
 
 Parser
@@ -50,8 +50,8 @@ This is a rough description of the first few actions in BDSIM (bdsim.cc) that ha
 order.
 
 1. :code:`BDSExecOptions`
-2. Check if Geant4 is available in the current environment (env variables checked) - cannot proceed without this
-3. Construct parser and parser input
-4. Construct required Geant4 materials as they're required by :code:`BDSGlobalConstants`
-5. Force instantiation of :code:`BDSGlobalConstants` singleton based on :code:`GMAD::Options`
-6. Initialise the pseudo-random number generator engine
+2. Check if Geant4 is available in the current environment (env variables checked) - cannot proceed without this.
+3. Construct parser and parser input.
+4. Construct required Geant4 materials, as they're required by :code:`BDSGlobalConstants`.
+5. Force instantiation of :code:`BDSGlobalConstants` singleton based on :code:`GMAD::Options`.
+6. Initialise the pseudo-random number generator engine.
