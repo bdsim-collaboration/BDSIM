@@ -63,7 +63,7 @@ public:
   G4double xp;
   G4double yp;
   G4double zp;
-  G4double t;
+  G4double T;
 };
 
 #endif

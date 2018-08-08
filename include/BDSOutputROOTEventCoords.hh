@@ -46,7 +46,7 @@ public:
   double xp;
   double yp;
   double zp;
-  double t;
+  double T;
 
 #ifndef __ROOTBUILD__
   void Fill(const BDSParticleCoords& coords);

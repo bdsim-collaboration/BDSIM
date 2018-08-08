@@ -165,7 +165,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
   
   // 'c' for curvilinear
   G4int beamlineIndex = 0;
-  G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S0*CLHEP::m + localIn.z,
+  G4Transform3D cTrans = beamline->GetGlobalEuclideanTransform(S0 + localIn.z,
 							       localIn.x,
 							       localIn.y,
 							       &beamlineIndex);
@@ -176,7 +176,7 @@ BDSParticleCoordsFullGlobal BDSBunch::ApplyCurvilinearTransform(const BDSParticl
 
   BDSParticleCoords global = BDSParticleCoords(cPos.x(), cPos.y(), cPos.z(),
 					       cMom.x(), cMom.y(), cMom.z(),
-					       localIn.t);
+					       localIn.T);
 
   BDSParticleCoordsFullGlobal result = BDSParticleCoordsFullGlobal(localIn, global);
   result.beamlineIndex = beamlineIndex;

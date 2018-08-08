@@ -32,7 +32,7 @@ BDSParticleCoords::BDSParticleCoords():
   xp(0),
   yp(0),
   zp(0),
-  t(0)
+  T(0)
 {;}
 
 BDSParticleCoords::BDSParticleCoords(G4double xIn,
@@ -48,7 +48,7 @@ BDSParticleCoords::BDSParticleCoords(G4double xIn,
   xp(xpIn),
   yp(ypIn),
   zp(zpIn),
-  t(tIn)
+  T(tIn)
 {;}
 
 BDSParticleCoords::BDSParticleCoords(G4ThreeVector pos,
@@ -60,7 +60,7 @@ BDSParticleCoords::BDSParticleCoords(G4ThreeVector pos,
   xp(mom.x()),
   yp(mom.y()),
   zp(mom.z()),
-  t(tIn)
+  T(tIn)
 {;}
 
 BDSParticleCoords BDSParticleCoords::ApplyTransform(const G4Transform3D& transform) const
@@ -75,7 +75,7 @@ BDSParticleCoords BDSParticleCoords::ApplyTransform(const G4Transform3D& transfo
   G4ThreeVector newMom      = transform * (HepGeom::Vector3D<G4double>)originalMom;
   return BDSParticleCoords(newPos.x(), newPos.y(), newPos.z(),
 			   newMom.x(), newMom.y(), newMom.z(),
-			   t);
+			   T);
 }
 
 std::ostream& operator<< (std::ostream& out, BDSParticleCoords const& p)
@@ -88,5 +88,5 @@ void BDSParticleCoords::Print(std::ostream& out) const
 {
   out << "Position: (" << x  << ", " << y  << ", " << z  << ")" << G4endl;
   out << "Momentum: (" << xp << ", " << yp << ", " << zp << ")" << G4endl;
-  out << " t: " << t << G4endl;
+  out << " t: " << T << G4endl;
 }

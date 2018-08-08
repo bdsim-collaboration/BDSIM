@@ -155,7 +155,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       std::ofstream ofstr("output.primary.txt");
       ofstr << coords.local.x  << " " << coords.local.y  << " " << coords.local.z << " "
 	    << coords.local.xp << " " << coords.local.yp << " " << coords.local.zp << " "
-	    << coords.local.t  << " " << coords.local.totalEnergy << " " << coords.local.weight << std::endl;
+	    << coords.local.T  << " " << coords.local.totalEnergy << " " << coords.local.weight << std::endl;
       ofstr.close();
     }
 
@@ -178,7 +178,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleGun->SetParticlePosition(PartPosition);
   particleGun->SetParticleEnergy(EK);
   particleGun->SetParticleMomentumDirection(PartMomDir);
-  particleGun->SetParticleTime(coords.global.t);
+  particleGun->SetParticleTime(coords.global.T);
   
   particleGun->GeneratePrimaryVertex(anEvent);
 

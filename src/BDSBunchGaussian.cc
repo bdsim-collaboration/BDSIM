@@ -192,7 +192,7 @@ void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
       zp_a = zp_a + (d/nT);
       d    = fire.totalEnergy - E_a;
       E_a  = E_a + (d/nT);
-      d    = fire.t - t_a;
+      d    = fire.T - t_a;
       t_a  = t_a + (d/nT);
       
       x0_v.push_back(fire.x);
@@ -202,7 +202,7 @@ void BDSBunchGaussian::PreGenerateEvents(G4int nGenerate)
       z0_v.push_back(fire.z);
       zp_v.push_back(fire.zp);
       E_v.push_back(fire.totalEnergy);
-      t_v.push_back(fire.t);
+      t_v.push_back(fire.T);
       weight_v.push_back(fire.weight);
     }
 

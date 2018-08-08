@@ -36,7 +36,8 @@ template <class U>
 BDSOutputROOTGeant4Data* BDSOutputROOTEventSampler<U>::particleTable = nullptr;
 
 template <class U>
-BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():samplerName("sampler")
+BDSOutputROOTEventSampler<U>::BDSOutputROOTEventSampler():
+  samplerName("sampler")
 {
   Flush();
 }
@@ -93,7 +94,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   xp.push_back((U &&) (coords.xp / CLHEP::radian));
   yp.push_back((U &&) (coords.yp / CLHEP::radian));
   zp.push_back((U &&) (coords.zp / CLHEP::radian));
-  T.push_back((U &&) (coords.t / CLHEP::ns));
+  T.push_back((U &&) (coords.T / CLHEP::ns));
   weight.push_back((const U &) coords.weight);
   partID.push_back(pdgID);
   parentID.push_back(0);

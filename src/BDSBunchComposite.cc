@@ -90,7 +90,7 @@ BDSParticleCoordsFull BDSBunchComposite::GetNextParticleLocal()
 
   BDSParticleCoordsFull result(x.x, y.y, z.z,
                                x.xp, y.yp, z.zp,
-			       z.t, z.s,
+			       z.T, z.s,
 			       z.totalEnergy,
 			       x.weight);
   return result;

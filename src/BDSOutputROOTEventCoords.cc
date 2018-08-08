@@ -31,7 +31,7 @@ BDSOutputROOTEventCoords::BDSOutputROOTEventCoords():
   xp(0),
   yp(0),
   zp(0),
-  t(0)
+  T(0)
 {;}
 
 BDSOutputROOTEventCoords::~BDSOutputROOTEventCoords()
@@ -45,7 +45,7 @@ void BDSOutputROOTEventCoords::Flush()
   xp = 0;
   yp = 0;
   zp = 0;
-  t  = 0;
+  T  = 0;
 }
 
 #ifndef __ROOTBUILD__
@@ -57,6 +57,6 @@ void BDSOutputROOTEventCoords::Fill(const BDSParticleCoords& coords)
   xp = coords.xp / CLHEP::rad;
   yp = coords.yp / CLHEP::rad;
   zp = coords.zp / CLHEP::rad;
-  t  = coords.t  / CLHEP::ns; // to match sampler data
+  T  = coords.T  / CLHEP::ns; // to match sampler data
 }
 #endif
