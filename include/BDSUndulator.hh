@@ -20,11 +20,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSUNDULATOR_H
 #define BDSUNDULATOR_H
 
-#include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSFieldInfo.hh"
+
+#include "globals.hh"
+
+class BDSBeamPipeInfo;
+class BDSFieldInfo;
+
 /**
  * @brief Undulator.
+ *
+ * Requires a valid BDSBeamPipeInfo* instance.
  *
  * @author Will Shields
  */
@@ -32,19 +38,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSUndulator: public BDSAcceleratorComponent
 {
 public:
-  BDSUndulator(G4String name,
-               G4double length,
-               G4double outerDiameter,
+  BDSUndulator(G4String nameIn,
+               G4double lengthIn,
                G4double periodIn,
                G4double magnetHeightIn,
                G4double magnetWidthIn,
                G4double undulatorGapIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
-               BDSFieldInfo*   vacuumFieldInfoIn,
-               G4String materialIn = "iron"
-  );
+               BDSFieldInfo*    vacuumFieldInfoIn,
+               G4String         materialIn = "iron");
 
-    virtual ~BDSUndulator();
+  virtual ~BDSUndulator();
 
 protected:
   virtual void Build();
@@ -53,8 +57,7 @@ protected:
 
   /// Function for building geometry for a single undulator period.
   void BuildUndulatorMagnet();
-
-  G4double outerDiameter;
+  
   BDSFieldInfo* vacuumFieldInfo;
   G4double undulatorPeriod;
   G4String material;

@@ -152,7 +152,7 @@ void BDSCollimatorCrystal::Build()
       G4bool safe = thisExtent.Encompasses(extShifted);
       if (!safe)
 	{G4cout << __METHOD_NAME__ << "Right crystal potential overlap" << G4endl;}
-      LongitudinalOverlap(crystalLeft->GetExtent(), angleYAxisLeft, "Right");
+      LongitudinalOverlap(crystalRight->GetExtent(), angleYAxisLeft, "Right");
 
       auto cR = new G4PVPlacement(placementRot,
 				  placementOffsetL,
