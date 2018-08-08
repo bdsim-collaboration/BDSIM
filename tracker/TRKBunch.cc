@@ -31,6 +31,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
 #include "BDSParticleDefinition.hh"
 
 #include "parser/beam.h"
@@ -87,22 +88,17 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
   //initialise the vector of particles
   bunch.reserve(population);
 
-  //note in this tracker there are only local rectilinear coordinates
-  //therefore 'z' is misleading and 's' should be used instead
-  double x0=0.0, y0=0.0, s0=0.0, xp=0.0, yp=0.0, sp=0.0, t=0.0, E=0.0, weight=1.0;
-
   for (int i = 0; i < population; i++)
     {
       // bdsbunch generates values in CLHEP mm standard.
-      bdsbunch->GetNextParticle(x0,y0,s0,xp,yp,sp,t,E,weight);
-
-      double energy = E/CLHEP::GeV;
+      BDSParticleCoordsFullGlobal c = bdsbunch->GetNextParticle();
+      double energy = c.local.totalEnergy/CLHEP::GeV;
       //momentum back calculated from kinetic energy - can't change bds bunch
       // p = sqrt( (E + m)^2 - m^2 )
       double p = sqrt( energy*energy + 2*energy*mass );
 
-      double paramsIn[8] = {x0/CLHEP::um,y0/CLHEP::um,s0/CLHEP::um,
-			    xp/CLHEP::rad,yp/CLHEP::rad,sp/CLHEP::rad,
+      double paramsIn[8] = {c.local.x/CLHEP::um,c.local.y/CLHEP::um,c.local.s/CLHEP::um,
+			    c.local.xp/CLHEP::rad,c.local.yp/CLHEP::rad,c.local.zp/CLHEP::rad,
 			    p,mass};
       bunch.push_back(TRKParticle(paramsIn, charge, i));
 
