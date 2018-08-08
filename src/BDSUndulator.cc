@@ -50,26 +50,26 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-BDSUndulator::BDSUndulator (G4String   nameIn,
-                            G4double   lengthIn,
-                            G4double   outerDiameterIn,
-                            G4double   periodIn,
-                            G4double   magnetHeightIn,
-                            G4double   magnetWidthIn,
-                            G4double   undulatorGapIn,
-                            BDSBeamPipeInfo* beamPipeInfoIn,
-                            BDSFieldInfo* vacuumFieldInfoIn,
-                            G4String  materialIn ):
-        BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator",beamPipeInfoIn),
-        outerDiameter(outerDiameterIn),
-        vacuumFieldInfo(vacuumFieldInfoIn),
-        undulatorPeriod(periodIn),
-        material(materialIn),
-        magnetHeight(magnetHeightIn),
-        magnetWidth(magnetWidthIn),
-        undulatorGap(undulatorGapIn)
-
+BDSUndulator::BDSUndulator(G4String   nameIn,
+			   G4double   lengthIn,
+			   G4double   outerDiameterIn,
+			   G4double   periodIn,
+			   G4double   magnetHeightIn,
+			   G4double   magnetWidthIn,
+			   G4double   undulatorGapIn,
+			   BDSBeamPipeInfo* beamPipeInfoIn,
+			   BDSFieldInfo* vacuumFieldInfoIn,
+			   G4String   materialIn):
+  BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator",beamPipeInfoIn),
+  outerDiameter(outerDiameterIn),
+  vacuumFieldInfo(vacuumFieldInfoIn),
+  undulatorPeriod(periodIn),
+  material(materialIn),
+  magnetHeight(magnetHeightIn),
+  magnetWidth(magnetWidthIn),
+  undulatorGap(undulatorGapIn)
 {;}
+
 BDSUndulator::~BDSUndulator()
 {;}
 
@@ -93,9 +93,7 @@ void BDSUndulator::BuildContainerLogicalVolume()
       exit(1);
     }
    if (undulatorGap == 0)
-   {
-       undulatorGap = beamPipeInfo->aper1*4;
-   }
+     {undulatorGap = beamPipeInfo->aper1*4;}
 
   if (undulatorGap/2 <= beamPipeInfo->aper1)
     {
@@ -105,17 +103,14 @@ void BDSUndulator::BuildContainerLogicalVolume()
 
 
   if (magnetWidth == 0)
-  {
-    magnetWidth = 100;
-  }
+    {magnetWidth = 100;}
   if (magnetHeight == 0)
-  {
-    magnetHeight = 20;
-  }
+    {magnetHeight = 20;}  
 
-  
-
-  containerSolid = new G4Box(name + "_container_solid",magnetWidth,undulatorGap/2.0 + magnetHeight,chordLength*0.5);
+  containerSolid = new G4Box(name + "_container_solid",
+			     magnetWidth,
+			     undulatorGap*0.5 + magnetHeight,
+			     chordLength*0.5);
 
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                                emptyMaterial,
@@ -142,17 +137,19 @@ void BDSUndulator::Build()
   RegisterDaughter(pipe);
 
   // magnet geometry
-  G4Box* aBox = new G4Box(name, magnetWidth, magnetHeight, undulatorPeriod/4.0);
-
+  G4Box* aBox = new G4Box(name,
+			  magnetWidth,
+			  magnetHeight,
+			  undulatorPeriod/4.0);
   RegisterSolid(aBox);
  
   G4Material *materialBox  = BDSMaterials::Instance()->GetMaterial(material);
 
-  G4LogicalVolume *lowerBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_lower_box_lv");
+  G4LogicalVolume* lowerBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_lower_box_lv");
   RegisterLogicalVolume(lowerBoxLV);
 
 
-  G4LogicalVolume *upperBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_upper_box_lv");
+  G4LogicalVolume* upperBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_upper_box_lv");
   RegisterLogicalVolume(upperBoxLV);
 
   //Rotation
@@ -162,72 +159,69 @@ void BDSUndulator::Build()
   aBoxROT->rotateY(0);
   RegisterRotationMatrix(aBoxROT);
 
-  //colour
-  G4VisAttributes *lowerBoxcolour = new G4VisAttributes(G4Colour(0.8,0.1,0.1));
+  // colour
+  G4VisAttributes* lowerBoxcolour = new G4VisAttributes(G4Colour(0.8,0.1,0.1));
   lowerBoxLV->SetVisAttributes(lowerBoxcolour);
   RegisterVisAttributes(lowerBoxcolour);
 
-  G4VisAttributes *upperBoxcolour = new G4VisAttributes(G4Colour(0.1,0.1,0.8));
+  G4VisAttributes* upperBoxcolour = new G4VisAttributes(G4Colour(0.1,0.1,0.8));
   upperBoxLV->SetVisAttributes(upperBoxcolour);
   RegisterVisAttributes(upperBoxcolour);
 
   // place upper and lower magnets in a loop
   for (int i = 1; i<=numMagnets; i++)
     {
-      G4cout << i << G4endl;
       if (BDS::IsFinite(fmod(i, 2)))
-      {
-        //G4cout << i << G4endl;
-        // upper magnet
-        G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
-        G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
-                                                  upperBoxpos,                  // position
-                                                  upperBoxLV,                   // its logical volume
-                                                  std::to_string(i) + "_upper_pv_neg",        // its name
-                                                  containerLogicalVolume,   // its mother volume
-                                                  false,                    // no boolean operation
-                                                  0,                        // copy number
-                                                  checkOverlaps);
-        RegisterPhysicalVolume(upperBoxPV);
-
-        G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
-        G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
-                                                 lowerBoxpos,
-                                                 lowerBoxLV,
-                                                 std::to_string(i) +  "_lower_pv_pos",
-                                                 containerLogicalVolume,
-                                                 false,
-                                                 0,
-                                                 checkOverlaps);
-        RegisterPhysicalVolume(lowerBoxPV);
-      }
-        else
-
-      {
-        G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
-        G4PVPlacement *upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
-                                                      upperBoxpos,                  // position
-                                                      lowerBoxLV,                   // its logical volume
-                                                      std::to_string(i) + "_elseupper_pv_neg",        // its name
-                                                      containerLogicalVolume,   // its mother volume
-                                                      false,                    // no boolean operation
-                                                      0,                        // copy number
-                                                      checkOverlaps);
-        RegisterPhysicalVolume(upperBoxPV);
-
-        G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
-        G4PVPlacement *lowerBoxPV= new G4PVPlacement(aBoxROT,
-                                                     lowerBoxpos,
-                                                     upperBoxLV,
-                                                     std::to_string(i) +  "_elselower_pv_pos",
-                                                     containerLogicalVolume,
-                                                     false,
-                                                     0,
-                                                     checkOverlaps);
-        RegisterPhysicalVolume(lowerBoxPV);
-
-      }
-
+	{
+	  // upper magnet
+	  G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+	  G4PVPlacement* upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
+							upperBoxpos,                  // position
+							upperBoxLV,                   // its logical volume
+							std::to_string(i) + "_upper_pv_neg",        // its name
+							containerLogicalVolume,   // its mother volume
+							false,                    // no boolean operation
+							0,                        // copy number
+							checkOverlaps);
+	  RegisterPhysicalVolume(upperBoxPV);
+	  
+	  G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+	  G4PVPlacement* lowerBoxPV= new G4PVPlacement(aBoxROT,
+						       lowerBoxpos,
+						       lowerBoxLV,
+						       std::to_string(i) +  "_lower_pv_pos",
+						       containerLogicalVolume,
+						       false,
+						       0,
+						       checkOverlaps);
+	  RegisterPhysicalVolume(lowerBoxPV);
+	}
+      else
+	
+	{
+	  G4ThreeVector upperBoxpos(0, undulatorGap / 2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+	  G4PVPlacement* upperBoxPV = new G4PVPlacement(aBoxROT,      // rotation
+							upperBoxpos,                  // position
+							lowerBoxLV,                   // its logical volume
+							std::to_string(i) + "_elseupper_pv_neg",        // its name
+							containerLogicalVolume,   // its mother volume
+							false,                    // no boolean operation
+							0,                        // copy number
+							checkOverlaps);
+	  RegisterPhysicalVolume(upperBoxPV);
+	  
+	  G4ThreeVector lowerBoxpos(0,undulatorGap / -2.0, (0.5*chordLength - undulatorPeriod/4.0) -  ((i-1) *undulatorPeriod/2.0));
+	  G4PVPlacement* lowerBoxPV= new G4PVPlacement(aBoxROT,
+						       lowerBoxpos,
+						       upperBoxLV,
+						       std::to_string(i) +  "_elselower_pv_pos",
+						       containerLogicalVolume,
+						       false,
+						       0,
+						       checkOverlaps);
+	  RegisterPhysicalVolume(lowerBoxPV);	  
+	}
+      
 /*
       // upper magnet
       G4ThreeVector bBoxpos(0, pipe->GetExtentY().second * 2, L - i * undulatorPeriod);
