@@ -34,7 +34,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   lengthIn,
-			   G4double   horizontalWidthIn,
 			   G4double   periodIn,
 			   G4double   magnetHeightIn,
 			   G4double   magnetWidthIn,
@@ -43,7 +42,6 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
 			   BDSFieldInfo* vacuumFieldInfoIn,
 			   G4String   materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
-  horizontalWidth(horizontalWidthIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   undulatorPeriod(periodIn),
   material(materialIn),
@@ -57,12 +55,7 @@ BDSUndulator::~BDSUndulator()
 
 void BDSUndulator::BuildContainerLogicalVolume()
 {
-  //Input Checks
-  if (horizontalWidth <= 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" is not defined or must be greater than 0" <<  G4endl;
-      exit(1);
-    }
+  // input Checks
   if (BDS::IsFinite(fmod(chordLength, undulatorPeriod)))
     {
       G4cerr << __METHOD_NAME__ << "Undulator length \"arcLength\" does not divide into an integer number of "

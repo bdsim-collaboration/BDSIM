@@ -995,15 +995,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   vacuumFieldInfo->SetTransform(newFieldTransform);
 
   return (new BDSUndulator(elementName,
-                      element->l * CLHEP::m,
-                      PrepareHorizontalWidth(element),
-                      element->undulatorPeriod * CLHEP::m,
-                      element->magnetWidth * CLHEP::m,    // magnet height to be added
-                      element->magnetHeight * CLHEP::m,    // magnet width to be added
-                      element->undulatorGap * CLHEP::m,
-                      bpInfo,
-                      vacuumFieldInfo,
-                      element->material));
+			   element->l * CLHEP::m,
+			   element->undulatorPeriod * CLHEP::m,
+			   element->magnetWidth * CLHEP::m,
+			   element->magnetHeight * CLHEP::m,
+			   element->undulatorGap * CLHEP::m,
+			   bpInfo,
+			   vacuumFieldInfo,
+			   element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()

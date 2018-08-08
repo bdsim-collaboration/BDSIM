@@ -38,7 +38,6 @@ class BDSUndulator: public BDSAcceleratorComponent
 public:
   BDSUndulator(G4String nameIn,
                G4double lengthIn,
-               G4double horizontalWidthIn,
                G4double periodIn,
                G4double magnetHeightIn,
                G4double magnetWidthIn,
@@ -56,8 +55,7 @@ protected:
 
   /// Function for building geometry for a single undulator period.
   void BuildUndulatorMagnet();
-
-  G4double horizontalWidth;
+  
   BDSFieldInfo* vacuumFieldInfo;
   G4double undulatorPeriod;
   G4String material;
