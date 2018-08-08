@@ -121,7 +121,7 @@ void BDSUndulator::Build()
   RegisterDaughter(pipe);
 
   // magnet geometry
-  G4Box* aBox = new G4Box(name,
+  G4Box* aBox = new G4Box(name + "_single_magnet_solid",
 			  magnetWidth,
 			  magnetHeight,
 			  undulatorPeriod*0.25);
@@ -157,7 +157,7 @@ void BDSUndulator::Build()
   RegisterVisAttributes(upperBoxcolour);
 
   // place upper and lower magnets in a loop
-  for (int i = 1; i<=numMagnets; i++)
+  for (G4int i = 1; i <= numMagnets; i++)
     {
       if (BDS::IsFinite(fmod(i, 2)))
 	{
@@ -194,7 +194,7 @@ void BDSUndulator::Build()
 							std::to_string(i) + "_elseupper_pv_neg",        // its name
 							containerLogicalVolume,   // its mother volume
 							false,                    // no boolean operation
-							0,                        // copy number
+							i,                        // copy number
 							checkOverlaps);
 	  RegisterPhysicalVolume(upperBoxPV);
 	  
@@ -205,7 +205,7 @@ void BDSUndulator::Build()
 						       std::to_string(i) +  "_elselower_pv_pos",
 						       containerLogicalVolume,
 						       false,
-						       0,
+						       i,
 						       checkOverlaps);
 	  RegisterPhysicalVolume(lowerBoxPV);	  
 	}
