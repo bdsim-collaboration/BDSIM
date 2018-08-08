@@ -20,35 +20,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSColours.hh"
-#include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
-#include "BDSFieldType.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSIntegratorSet.hh"
-#include "BDSIntegratorType.hh"
-#include "BDSIntegratorSetType.hh"
-#include "BDSMagnetStrength.hh"
 #include "BDSMaterials.hh"
-#include "BDSLine.hh"
-#include "BDSMagnet.hh"
-#include "BDSMagnetOuterInfo.hh"
 #include "BDSUndulator.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
 #include "G4PVPlacement.hh"
-#include "G4Transform3D.hh"
-#include "G4TransportationManager.hh"
-#include "G4UniformMagField.hh"
 #include "G4VisAttributes.hh"
 
-#include "parser/element.h"
-#include "parser/elementtype.h"
-
-using namespace GMAD;
 
 BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   lengthIn,
@@ -134,7 +116,7 @@ void BDSUndulator::Build()
   G4double numMagnets = 2*chordLength/undulatorPeriod; //number of magnets (undulator period is 2 magnets)
 
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength ,beamPipeInfo);
+  BDSBeamPipe* pipe = factory->CreateBeamPipe(name, chordLength, beamPipeInfo);
   RegisterDaughter(pipe);
 
   // magnet geometry
@@ -144,7 +126,7 @@ void BDSUndulator::Build()
 			  undulatorPeriod/4.0);
   RegisterSolid(aBox);
  
-  G4Material *materialBox  = BDSMaterials::Instance()->GetMaterial(material);
+  G4Material* materialBox  = BDSMaterials::Instance()->GetMaterial(material);
 
   G4LogicalVolume* lowerBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_lower_box_lv");
   RegisterLogicalVolume(lowerBoxLV);

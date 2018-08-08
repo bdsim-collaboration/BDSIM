@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh"
 
+class BDSBeamPipeInfo;
 class BDSFieldInfo;
 
 /**
