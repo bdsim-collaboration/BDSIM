@@ -124,16 +124,20 @@ void BDSUndulator::Build()
   G4Box* aBox = new G4Box(name,
 			  magnetWidth,
 			  magnetHeight,
-			  undulatorPeriod/4.0);
+			  undulatorPeriod*0.25);
   RegisterSolid(aBox);
  
   G4Material* materialBox  = BDSMaterials::Instance()->GetMaterial(material);
 
-  G4LogicalVolume* lowerBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_lower_box_lv");
+  G4LogicalVolume* lowerBoxLV = new G4LogicalVolume(aBox,
+						    materialBox,
+						    name + "_lower_box_lv");
   RegisterLogicalVolume(lowerBoxLV);
 
-
-  G4LogicalVolume* upperBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_upper_box_lv");
+  
+  G4LogicalVolume* upperBoxLV = new G4LogicalVolume(aBox,
+						    materialBox,
+						    name + "_upper_box_lv");
   RegisterLogicalVolume(upperBoxLV);
 
   // rotation
@@ -205,32 +209,6 @@ void BDSUndulator::Build()
 						       checkOverlaps);
 	  RegisterPhysicalVolume(lowerBoxPV);	  
 	}
-      
-/*
-      // upper magnet
-      G4ThreeVector bBoxpos(0, pipe->GetExtentY().second * 2, L - i * undulatorPeriod);
-      G4PVPlacement *bBoxPV = new G4PVPlacement(aBoxROT,      // rotation
-                                              bBoxpos,                  // position
-                                              aBoxLV,                   // its logical volume
-                                              std::to_string(i) + "_upper_pv_neg",        // its name
-                                              containerLogicalVolume,   // its mother volume
-                                              false,                    // no boolean operation
-                                              0,                        // copy number
-                                              checkOverlaps);
-      RegisterPhysicalVolume(bBoxPV);
-
-      //lower magnet
-      G4ThreeVector cBoxpos(0,pipe->GetExtentY().first*2, L - i*undulatorPeriod);
-      G4PVPlacement *cBoxPV= new G4PVPlacement(aBoxROT,
-                                    cBoxpos,
-                                    aBoxLV,
-                                    std::to_string(i) +  "_lower_pv_pos",
-                                    containerLogicalVolume,
-                                    false,
-                                    0,
-                                    checkOverlaps);
-      RegisterPhysicalVolume(cBoxPV);
-      */
     }
 
   // place beam pipe volume

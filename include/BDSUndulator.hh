@@ -30,6 +30,8 @@ class BDSFieldInfo;
 /**
  * @brief Undulator.
  *
+ * Requires a valid BDSBeamPipeInfo* instance.
+ *
  * @author Will Shields
  */
 
