@@ -152,11 +152,11 @@ void BDSUndulator::Build()
   G4LogicalVolume* upperBoxLV = new G4LogicalVolume(aBox,materialBox, name+"_upper_box_lv");
   RegisterLogicalVolume(upperBoxLV);
 
-  //Rotation
-  G4RotationMatrix *aBoxROT = new G4RotationMatrix;
-  aBoxROT->rotateX(0);
-  aBoxROT->rotateZ(0);
-  aBoxROT->rotateY(0);
+  // rotation
+  G4RotationMatrix* aBoxROT = new G4RotationMatrix;
+  //aBoxROT->rotateX(0);
+  //aBoxROT->rotateZ(0);
+  //aBoxROT->rotateY(0);
   RegisterRotationMatrix(aBoxROT);
 
   // colour
