@@ -1149,14 +1149,14 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-================  ==============================  ==========  ===========
-Parameter         Description                     Default     Required
-`l`               Length [m]                      0           Yes
-`material`        Outer material                  Iron        No
-`outerDiameter`   Outer full width [m]            global      No
-`xsize`           Horizontal inner aperture [m]   0           No
-`ysize`           Vertical inner aperture [m]     0           No
-================  ==============================  ==========  ===========
+================  ==================================  ==========  ===========
+Parameter         Description                         Default     Required
+`l`               Length [m]                          0           Yes
+`material`        Outer material                      Iron        No
+`outerDiameter`   Outer full width [m]                global      No
+`xsize`           Horizontal inner half aperture [m]  0           Yes
+`ysize`           Vertical inner half aperture [m]    0           No
+================  ==================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 
