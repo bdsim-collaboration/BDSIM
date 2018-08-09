@@ -626,6 +626,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
     {buildEntranceFringe = true;}
   if (BDS::IsFinite(element->e2) or finiteExitFringe)
     {buildExitFringe = true;}
+  if (!includeFringeFields)
+    {
+      buildEntranceFringe = false;
+      buildExitFringe = false;
+    }
 
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
@@ -643,9 +648,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           // only print warning if a poleface or fringe field effect was specified
           if (buildEntranceFringe or buildExitFringe)
             {
-              G4cerr << __METHOD_NAME__ << "B field was not supplied for the thin kicker "
-                     << "\"" << elementName << "\". Poleface and fringe field effects "
-                     << "will not available for this element." << G4endl;
+              G4cout << __METHOD_NAME__ << "Warning - finite B field required for kicker pole face and fringe fields,"
+                        " effects are unavailable for element ""\"" << elementName << "\"." << G4endl;
             }
         }
       // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
@@ -669,6 +673,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
           // supply the field for a thin kicker field as it is required to calculate the
           // effective bending radius needed for fringe field and poleface effects
           (*st)["field"] = element->B * CLHEP::tesla;
+
+          // set field for vertical kickers - element needs rotating as poleface rotation is assumed
+          // to be about the vertical axis unless explicitly tilted.
+          if (type == KickerType::vertical)
+            {(*st)["bx"] = 1;}
+          else
+            {(*st)["by"] = 1;}
         }
     }
   else
@@ -735,7 +746,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["bx"]    = unitField.x();
       (*st)["by"]    = unitField.y();
     }
-  
+
+  if (fringeStIn)
+    {
+        (*fringeStIn)["bx"] = (*st)["bx"];
+        (*fringeStIn)["by"] = (*st)["by"];
+    }
+  if (fringeStOut)
+    {
+        (*fringeStOut)["bx"] = (*st)["bx"];
+        (*fringeStOut)["by"] = (*st)["by"];
+    }
+
   BDSMagnetType t;
   G4double defaultVHRatio = 1.5;
   switch (type)

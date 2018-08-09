@@ -76,8 +76,10 @@ private:
   const G4double vkick;
   const G4double brho;
   G4double rho;
+  G4double tiltAngle;
   /// @}
 
+  /// Cache if the fringe or pole face effects are to be applied
   G4bool hasEntranceFringe;
   G4bool hasExitFringe;
 

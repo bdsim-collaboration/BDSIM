@@ -114,7 +114,8 @@ protected:
 
   const G4double tilt;
   const G4bool   finiteTilt;
-
+  G4double bx;
+  G4double by;
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.
   G4bool zeroStrength;
