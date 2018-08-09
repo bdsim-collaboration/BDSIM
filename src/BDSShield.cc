@@ -37,14 +37,14 @@ class G4Material;
 BDSShield::BDSShield(G4String         nameIn,
 		     G4double         lengthIn,
 		     G4double         horizontalWidthIn,
-		     G4double         xAperIn,
-		     G4double         yAperIn,
+		     G4double         xSizeIn,
+		     G4double         ySizeIn,
 		     G4String         materialIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
   horizontalWidth(horizontalWidthIn),
-  xAper(xAperIn),
-  yAper(yAperIn)
+  xSize(xSizeIn),
+  ySize(ySizeIn)
 {
   if (materialIn == "")
 	{
@@ -88,11 +88,11 @@ void BDSShield::BuildShield()
   G4LogicalVolume* shieldLV;
 
   // only subtract inner solid if shield aperture is finite.
-  if (BDS::IsFinite(xAper) and BDS::IsFinite(yAper))
+  if (BDS::IsFinite(xSize) and BDS::IsFinite(ySize))
     {
 	  G4VSolid *innerSolid = new G4Box(name + "_inner_solid",
-					   0.5*xAper,
-					   0.5*yAper,
+					   xSize,
+					   ySize,
 					   chordLength); // extra long for unambiguous subtraction
 	  RegisterSolid(innerSolid);
 
@@ -141,7 +141,7 @@ void BDSShield::BuildBeamPipe()
     {return;}
   
   // check beam pipe fits
-  if ((xAper < beamPipeInfo->aper1*2) || (yAper < beamPipeInfo->aper2*2))
+  if ((xSize < beamPipeInfo->aper1*2) || (ySize < beamPipeInfo->aper2*2))
     {
       G4cout << __METHOD_NAME__ << "Shield will not fit around beam pipe - not building beam pipe!" << G4endl;
       return;
