@@ -1109,20 +1109,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
+  const BDSFieldType undField = BDSFieldType::undulator;
+
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
-  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::undulator);
+  BDSIntegratorType intType = integratorSet->Integrator(undField);
   G4Transform3D fieldTrans  = CreateFieldTransform(element);
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
   (*st)["length"] = element->undulatorPeriod * CLHEP::m;
   (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
 
-  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::undulator,
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(undField,
                                                    brho,
                                                    intType,
                                                    st,
                                                    true,
                                                    fieldTrans);
+  BDSFieldInfo* outerFieldInfo = PrepareMagnetOuterFieldInfo(st, undField, bpInfo, 0, fieldTrans);
 
   // limit step length in field - crucial to this component
   // to get the motion correct this has to be less than one oscillation
@@ -1143,6 +1146,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
 			   element->undulatorGap * CLHEP::m,
 			   bpInfo,
 			   vacuumFieldInfo,
+               outerFieldInfo,
 			   element->material));
 }
 
@@ -1503,7 +1507,8 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
-
+    case BDSFieldType::undulator:
+      {outerType = BDSFieldType::undulator; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }

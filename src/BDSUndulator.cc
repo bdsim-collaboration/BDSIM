@@ -41,9 +41,11 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   undulatorGapIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
 			   BDSFieldInfo* vacuumFieldInfoIn,
+               BDSFieldInfo* outerFieldInfoIn,
 			   G4String   materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
+  outerFieldInfo(outerFieldInfoIn),
   undulatorPeriod(periodIn),
   material(materialIn),
   magnetHeight(magnetHeightIn),
@@ -194,4 +196,15 @@ void BDSUndulator::Build()
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
                                                             pipe->GetContainerLogicalVolume(),
                                                             true);
+
+  if (outerFieldInfo)
+    {
+      // Attach to the container but don't propagate to daughter volumes. This ensures
+      // any gap between the beam pipe and the outer also has a field.
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+                                                                containerLogicalVolume,
+                                                                false,
+                                                                vacuumFieldInfo->MagnetStrength(),
+                                                                "field");
+    }
 }

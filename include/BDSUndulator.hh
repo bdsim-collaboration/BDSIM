@@ -46,6 +46,7 @@ public:
                G4double undulatorGapIn,
                BDSBeamPipeInfo* beamPipeInfoIn,
                BDSFieldInfo*    vacuumFieldInfoIn,
+               BDSFieldInfo*    outerFieldInfoIn,
                G4String         materialIn = "iron");
 
   virtual ~BDSUndulator();
@@ -64,6 +65,7 @@ protected:
   G4double magnetHeight;
   G4double magnetWidth;
   G4double undulatorGap;
+  BDSFieldInfo* outerFieldInfo;
 };
 
 #endif
