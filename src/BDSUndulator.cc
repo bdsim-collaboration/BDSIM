@@ -52,9 +52,16 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
   undulatorPeriod(periodIn),
   horizontalWidth(horizontalWidthIn),
   undulatorMagnetHeight(undulatorMagnetHeightIn),
-  undulatorGap(undulatorGapIn),
-  material(materialIn)
-{;}
+  undulatorGap(undulatorGapIn)
+{
+  if (materialIn == "")
+    {
+      G4cout << __METHOD_NAME__ << "Warning - no material set for undulator magnet - using iron" << G4endl;
+      material = "iron";
+    }
+  else
+    {material = materialIn;}
+}
 
 BDSUndulator::~BDSUndulator()
 {;}
