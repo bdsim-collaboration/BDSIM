@@ -176,10 +176,9 @@ void Element::PublishMembers()
   publish("materialThickness", &Element::materialThickness);
   publish("degraderOffset",    &Element::degraderOffset);
 
-  publish("undulatorPeriod",   &Element::undulatorPeriod);
-  publish("undulatorGap",      &Element::undulatorGap);
-  publish("magnetWidth",       &Element::magnetWidth);
-  publish("magnetHeight",      &Element::magnetHeight);
+  publish("undulatorPeriod",       &Element::undulatorPeriod);
+  publish("undulatorGap",          &Element::undulatorGap);
+  publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
 
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
@@ -420,8 +419,7 @@ void Element::flush()
   // undulator
   undulatorPeriod = 1;
   undulatorGap = 0;
-  magnetHeight = 0;
-  magnetWidth = 0;
+  undulatorMagnetHeight = 0;
 
   // new aperture model
   beampipeThickness = 0;
