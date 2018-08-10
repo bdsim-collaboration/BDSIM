@@ -300,6 +300,7 @@ The following elements may be defined
 * `laser`_
 * `gap`_
 * `crystalcol`_
+* `undulator`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -1290,7 +1291,50 @@ Examples::
 
 
 More examples can be found in :code:`bdsim/examples/components` and are described in :ref:`crystal-examples`.
-		      
+
+undulator
+^^^^^^^^^
+
+.. figure:: figures/undulator.png
+    :width: 60%
+
+`undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
+field components:
+
+.. math::
+
+   B_{x} ~ &= ~ 0 \\
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ 0
+
+where :math:`\lambda` is the undulator period.
+
+=======================  =============================  ==========  ===========
+Parameter                Description                    Default     Required
+`l`                      Length [m]                     0           Yes
+`B`                      Magnetic field [T]             0           Yes
+`undulatorPeriod`        Undulator magnetic period [m]  1           Yes
+`undulatorGap`           Undulator gap [m]              0           No
+`undulatorMagnetHeight`  Undulator magnet height [m]    0           No
+`material`               Magnet outer material          Iron        No
+=======================  =============================  ==========  ===========
+
+* The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
+* The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
+  it is set to twice the beam pipe diameter.
+* The undulator magnet height is the vertical height of the sets of magnets. If not supplied, it is set
+  to the 0.5*horizontalWidth - undulator gap.
+* The `aperture parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
+* To generate radiation from particles propagating through the undulator field, synchrotron radiation
+  physics must be included in the model's physicsList. See :ref:`physics-processes` for further details.
+
+Examples::
+
+ u1: undulator, l=2.0*m, B=0.1*T, undulatorPeriod=0.2*m;
+ u2: undulator, l=3.2*m, B=0.02*T, undulatorPeriod=0.16*m, undulatorGap=15*cm, undulatorMagnetHeight=10*cm;
+
+
 transform3d
 ^^^^^^^^^^^
 
