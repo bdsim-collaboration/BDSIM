@@ -43,9 +43,9 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   horizontalWidthIn,
 			   G4double   undulatorGapIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
-			   BDSFieldInfo* vacuumFieldInfoIn,
-               BDSFieldInfo* outerFieldInfoIn,
-			   G4String   materialIn):
+			   BDSFieldInfo*    vacuumFieldInfoIn,
+			   BDSFieldInfo*    outerFieldInfoIn,
+			   G4String          materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -144,9 +144,9 @@ void BDSUndulator::Build()
 
   // magnet geometry
   G4Box* magnet = new G4Box(name + "_single_magnet_solid",
-			  0.5*horizontalWidth,
-              0.5*undulatorMagnetHeight,
-			  0.5*singleMagnetLength);
+			    0.5*horizontalWidth,
+			    0.5*undulatorMagnetHeight,
+			    0.5*singleMagnetLength);
   RegisterSolid(magnet);
 
   G4Material* materialBox  = BDSMaterials::Instance()->GetMaterial(material);
