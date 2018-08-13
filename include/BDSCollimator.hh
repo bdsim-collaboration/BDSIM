@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSCOLLIMATORBASE_H
-#define BDSCOLLIMATORBASE_H
+#ifndef BDSCOLLIMATOR_H
+#define BDSCOLLIMATOR_H
 
 #include "BDSAcceleratorComponent.hh"
 
@@ -31,21 +31,21 @@ class G4VSolid;
  * @author Laurie Nevay
  */
 
-class BDSCollimatorBase: public BDSAcceleratorComponent
+class BDSCollimator: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimatorBase(G4String name,
-		    G4double length,
-		    G4double horizontalWidth,
-		    G4String type,
-		    G4double xApertureIn        = 0,
-		    G4double yApertureIn        = 0,
-		    G4double xOutApertureIn     = 0,
-		    G4double yOutApertureIn     = 0,
-		    G4String collimatorMaterial = "copper",
-		    G4String vacuumMaterial     = "vacuum",
-		    G4String colourIn           = "collimator");
-  virtual ~BDSCollimatorBase();
+  BDSCollimator(G4String name,
+		G4double length,
+		G4double horizontalWidth,
+		G4String type,
+		G4double xApertureIn        = 0,
+		G4double yApertureIn        = 0,
+		G4double xOutApertureIn     = 0,
+		G4double yOutApertureIn     = 0,
+		G4String collimatorMaterial = "copper",
+		G4String vacuumMaterial     = "vacuum",
+		G4String colourIn           = "collimator");
+  virtual ~BDSCollimator();
 
   /// Accessor for collimator material.
   virtual G4String Material() const {return collimatorMaterial;}
@@ -77,11 +77,11 @@ protected:
 
 private:
   /// Private default constructor to force the use of the supplied one.
-  BDSCollimatorBase() = delete;
+  BDSCollimator() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSCollimatorBase& operator=(const BDSCollimatorBase&) = delete;
-  BDSCollimatorBase(BDSCollimatorBase&) = delete;
+  BDSCollimator& operator=(const BDSCollimator&) = delete;
+  BDSCollimator(BDSCollimator&) = delete;
   /// @}
 };
 

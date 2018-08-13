@@ -19,13 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOLLIMATORRECTANGULAR_H
 #define BDSCOLLIMATORRECTANGULAR_H
 
-#include "BDSCollimatorBase.hh"
+#include "BDSCollimator.hh"
 
 /**
  * @brief A class for a rectangular collimator.
  */
 
-class BDSCollimatorRectangular: public BDSCollimatorBase
+class BDSCollimatorRectangular: public BDSCollimator
 {
 public:
   BDSCollimatorRectangular(G4String name,

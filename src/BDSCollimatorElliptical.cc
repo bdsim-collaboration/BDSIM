@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCollimatorElliptical.hh"
-#include "BDSCollimatorBase.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4EllipticalTube.hh"
@@ -34,12 +33,11 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String nameIn,
 						 G4String collimatorMaterialIn,
 						 G4String vacuumMaterialIn,
 						 G4String colourIn):
-  BDSCollimatorBase(nameIn, lengthIn, horizontalWidthIn, "ecol",
-		    xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
-		    collimatorMaterialIn,
-		    vacuumMaterialIn, colourIn)
+  BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "ecol",
+		xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
+		collimatorMaterialIn,
+		vacuumMaterialIn, colourIn)
 {;}
-
 
 void BDSCollimatorElliptical::BuildInnerCollimator()
 {

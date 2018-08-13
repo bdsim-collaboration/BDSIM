@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOLLIMATORELLIPTICAL_H
 #define BDSCOLLIMATORELLIPTICAL_H
 
-#include "BDSCollimatorBase.hh"
+#include "BDSCollimator.hh"
 
 #include "globals.hh" // geant4 globals / types
 
@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @brief A class for an elliptical collimator.
  */
 
-class BDSCollimatorElliptical: public BDSCollimatorBase
+class BDSCollimatorElliptical: public BDSCollimator
 {
 public:
   BDSCollimatorElliptical(G4String name,

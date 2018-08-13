@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSCollimatorBase.hh"
+#include "BDSCollimator.hh"
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
@@ -34,17 +34,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
-BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
-				     G4double lengthIn,
-				     G4double horizontalWidthIn,
-				     G4String typeIn,
-				     G4double xApertureIn,
-				     G4double yApertureIn,
-				     G4double xOutApertureIn,
-				     G4double yOutApertureIn,
-				     G4String collimatorMaterialIn,
-				     G4String vacuumMaterialIn,
-				     G4String colourIn):
+BDSCollimator::BDSCollimator(G4String nameIn,
+			     G4double lengthIn,
+			     G4double horizontalWidthIn,
+			     G4String typeIn,
+			     G4double xApertureIn,
+			     G4double yApertureIn,
+			     G4double xOutApertureIn,
+			     G4double yOutApertureIn,
+			     G4String collimatorMaterialIn,
+			     G4String vacuumMaterialIn,
+			     G4String colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),
   horizontalWidth(horizontalWidthIn),
   xAperture(xApertureIn),
@@ -101,10 +101,10 @@ BDSCollimatorBase::BDSCollimatorBase(G4String nameIn,
   tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
 }
 
-BDSCollimatorBase::~BDSCollimatorBase()
+BDSCollimator::~BDSCollimator()
 {;}
 
-void BDSCollimatorBase::BuildContainerLogicalVolume()
+void BDSCollimator::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name + "_container_solid",
 			     horizontalWidth*0.5,
@@ -116,7 +116,7 @@ void BDSCollimatorBase::BuildContainerLogicalVolume()
 					       name + "_container_lv");
 }
 
-void BDSCollimatorBase::Build()
+void BDSCollimator::Build()
 {
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
   
