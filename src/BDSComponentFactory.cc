@@ -1531,7 +1531,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element* element,
+								const Element* el,
 								const BDSMagnetStrength* st,
 								const BDSBeamPipeInfo* beamPipe,
 								G4double defaultHorizontalWidth,
@@ -1539,16 +1539,16 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 								G4double defaultCoilWidthFraction,
 								G4double defaultCoilHeightFraction)
 {
-  G4bool yokeOnLeft = YokeOnLeft(element,st);
+  G4bool yokeOnLeft = YokeOnLeft(el,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
+  return PrepareMagnetOuterInfo(elementNameIn, el, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
 				defaultHorizontalWidth, defaultVHRatio, defaultCoilWidthFraction,
 				defaultCoilHeightFraction);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element*  element,
+								const Element*  el,
 								const G4double  angleIn,
 								const G4double  angleOut,
 								const BDSBeamPipeInfo* beamPipe,
@@ -1565,12 +1565,12 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (element->magnetGeometryType == "")
+  if (el->magnetGeometryType == "")
     {info->geometryType = globals->MagnetGeometryType();}
   else
     {
-      info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
-      info->geometryTypeAndPath = element->magnetGeometryType;
+      info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
+      info->geometryTypeAndPath = el->magnetGeometryType;
     }
 
   // set face angles w.r.t. chord
@@ -1578,32 +1578,32 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->angleOut = angleOut;
   
   // horizontal width
-  info->horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
+  info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
   // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
 
   // outer material
   G4Material* outerMaterial;
-  if(element->outerMaterial == "")
+  if(el->outerMaterial == "")
     {
       G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(el->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
   // yoke direction
   info->yokeOnLeft = yokeOnLeft;
 
-  if (element->hStyle < 0) // it's unset
+  if (el->hStyle < 0) // it's unset
     {info->hStyle = globals->HStyle();}
   else
-    {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
+    {info->hStyle = G4bool(el->hStyle);} // convert from int to bool
 
-  if (element->vhRatio > 0)
-    {info->vhRatio = G4double(element->vhRatio);}
+  if (el->vhRatio > 0)
+    {info->vhRatio = G4double(el->vhRatio);}
   else if (globals->VHRatio() > 0)
     {info->vhRatio = globals->VHRatio();}
   else if (defaultVHRatio > 0) // allow calling function to supply optional default
@@ -1611,8 +1611,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->vhRatio = info->hStyle ? 0.8 : 1.0;} // h default : c default
   
-  if (element->coilWidthFraction > 0)
-    {info->coilWidthFraction = G4double(element->coilWidthFraction);}
+  if (el->coilWidthFraction > 0)
+    {info->coilWidthFraction = G4double(el->coilWidthFraction);}
   else if (globals->CoilWidthFraction() > 0)
     {info->coilWidthFraction = globals->CoilWidthFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
@@ -1620,8 +1620,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->coilWidthFraction = info->hStyle ? 0.8 : 0.65;} // h default : c default
 
-  if (element->coilHeightFraction > 0)
-    {info->coilHeightFraction = G4double(element->coilHeightFraction);}
+  if (el->coilHeightFraction > 0)
+    {info->coilHeightFraction = G4double(el->coilHeightFraction);}
   else if (globals->CoilHeightFraction() > 0)
     {info->coilHeightFraction = globals->CoilHeightFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
