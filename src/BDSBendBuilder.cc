@@ -257,7 +257,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       G4double fringeAngleOut        = 0.5*oneFringeAngle + incomingFaceAngle;
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						      segmentName, fringeStIn, brho,
-						      integratorSet);
+						      integratorSet, dipoleFieldType);
       sbendline->AddComponent(startfringe);
     }
   
@@ -351,7 +351,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const G4String&         elementName
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						    segmentName, fringeStOut, brho,
-						    integratorSet);
+						    integratorSet, dipoleFieldType);
       sbendline->AddComponent(endfringe);
     }
   return sbendline;
@@ -607,7 +607,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angleIn, fringeInOutputAngle,
 						      fringeName,
 						      fringeStIn, brho,
-						      integratorSet);
+						      integratorSet, dipoleFieldType);
       rbendline->AddComponent(startfringe);
     }
   
@@ -652,7 +652,7 @@ BDSLine* BDS::BuildRBendLine(const G4String&         elementName,
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeOutInputAngle, angleOut,
 						    fringeName,
 						    fringeStOut, brho,
-						    integratorSet);
+						    integratorSet, dipoleFieldType);
       rbendline->AddComponent(endfringe);
     }
   
@@ -665,7 +665,8 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
 				  G4String                 name,
 				  const BDSMagnetStrength* st,
 				  G4double                 brho,
-				  const BDSIntegratorSet*  integratorSet)
+				  const BDSIntegratorSet*  integratorSet,
+                  BDSFieldType             dipoleFieldType)
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
@@ -676,9 +677,6 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
   magnetOuterInfo->buildEndPieces = false;
   
   G4Transform3D fieldTiltOffset = BDSComponentFactory::CreateFieldTransform(element);
-
-  G4bool finiteK1 = BDS::IsFinite((*st)["k1"]);
-  BDSFieldType dipoleFieldType = finiteK1 ? BDSFieldType::dipolequadrupole : BDSFieldType::dipole;
   
   BDSIntegratorType intType = integratorSet->dipoleFringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(dipoleFieldType,
@@ -748,7 +746,7 @@ BDSMagnetStrength* BDS::GetFringeMagnetStrength(const Element*           element
                                                 const G4bool             isEntrance)
 {
   BDSMagnetStrength* fringeSt   = new BDSMagnetStrength(*st);
-  (*fringeSt)["length"]         = BDSGlobalConstants::Instance()->ThinElementLength();;
+  (*fringeSt)["length"]         = BDSGlobalConstants::Instance()->ThinElementLength();
   (*fringeSt)["angle"]          = fringeAngle;
   (*fringeSt)["e1"]             = e1;     // supply separately as it may be modified for rbends
   (*fringeSt)["e2"]             = e2;     // supply separately as it may be modified for rbends

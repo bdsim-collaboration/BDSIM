@@ -82,6 +82,9 @@ BDSIntegratorDipoleFringe::BDSIntegratorDipoleFringe(BDSMagnetStrength const* st
   BDSFieldMagDipole* dipoleField = new BDSFieldMagDipole(strengthIn);
   unitField = (dipoleField->FieldValue()).unit();
   delete dipoleField;
+
+  bx = (*strengthIn)["bx"];
+  by = (*strengthIn)["by"];
 }
 
 void BDSIntegratorDipoleFringe::Stepper(const G4double yIn[6],
@@ -185,8 +188,21 @@ void BDSIntegratorDipoleFringe::BaseStepper(const G4double  yIn[6],
   // normalise to momentum - passed in from derived class.
   bendingRad *= momScaling;
 
-  // apply fringe field kick
-  OneStep(localPos, localMomU, localCLPosOut, localCLMomOut, bendingRad);
+  // rotate by pi/2 if field is only horizontal and tilt is zero - can only be from a vertical kicker
+  if (!BDS::IsFinite(tilt) and BDS::IsFinite(bx) and (!BDS::IsFinite(by)))
+    {
+      // rotate only by the sign of the field and not the magnitude.
+      G4double sign = bx < 0 ? -1 : 1;
+      G4double verticalFringeTiltAngle = 0.5*CLHEP::pi * sign;
+
+      localPos.rotateZ(-verticalFringeTiltAngle);
+      localMomU.rotateZ(-verticalFringeTiltAngle);
+      OneStep(localPos, localMomU, localCLPosOut, localCLMomOut, bendingRad);
+      localCLPosOut.rotateZ(verticalFringeTiltAngle);
+      localCLMomOut.rotateZ(verticalFringeTiltAngle);
+    }
+  else // apply fringe field kick
+    {OneStep(localPos, localMomU, localCLPosOut, localCLMomOut, bendingRad);}
 
   // convert to global coordinates for output
   if (finiteTilt)

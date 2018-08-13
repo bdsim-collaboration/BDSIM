@@ -169,7 +169,7 @@ def Run(inputDict):
         else:
             # move bdsim log file to fail dir
             _os.system("mv " + inputDict['bdsimLogFile'] + " FailedTests/" + inputDict['bdsimLogFile'])
-        if selfCompare:
+        if (originalFile != '') and selfCompare:
             _os.remove(inputDict['originalFile'])
 
     return inputDict

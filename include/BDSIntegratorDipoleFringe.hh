@@ -89,6 +89,13 @@ public:
                      G4double        yMultipoleOut[7],
                      const G4double& h);
 
+  /// Getter functions for poleface and fringe variables. Values need to be read in at least the
+  /// thin kicker integrator, but should not be overwritten.
+  inline G4double GetPolefaceAngle() {return polefaceAngle;}
+  inline G4double GetFringeCorr() {return fringeCorr;}
+  inline G4double GetSecondFringeCorr() {return secondFringeCorr;}
+  inline G4double GetPolefaceCurv() {return polefaceCurvature;}
+
 protected:
   /// Poleface rotation angle
   G4double polefaceAngle;
@@ -107,7 +114,8 @@ protected:
 
   const G4double tilt;
   const G4bool   finiteTilt;
-
+  G4double bx;
+  G4double by;
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.
   G4bool zeroStrength;
