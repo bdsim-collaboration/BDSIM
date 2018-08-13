@@ -459,7 +459,7 @@ def CalculateEnergy(total_energy, particle='e-'):
     return res
 
 
-def calcBField(length, angle, energy, particle):
+def CalcBField(length, angle, energy, particle):
     # Calculate the magnetic field for a dipole
     if angle == 0:
         return 0
@@ -504,7 +504,7 @@ def CheckDirExistsElseMake(dir):
         _os.mkdir(dir)
 
 
-def _getBeam(test):
+def GetBeam(test):
     """ Function to create and return a pybdsim.Beam.Beam instance.
         The beam is set to PTC."""
     beam = _Beam.Beam()
@@ -515,7 +515,7 @@ def _getBeam(test):
     return beam
 
 
-def _mkdirs(test):
+def MakeTestDirs(test):
     """ Function to make the directories that the tests will be written in.
         If the number of tests for the component is > 1000, the files will
         be split into multiple subdirectories. """

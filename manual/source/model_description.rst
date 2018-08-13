@@ -300,6 +300,7 @@ The following elements may be defined
 * `laser`_
 * `gap`_
 * `crystalcol`_
+* `undulator`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -851,6 +852,22 @@ The dipole field strength is then calculated with respect to the chord length:
 * The `aperture parameters`_ may also be specified.
 * For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to vkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the vkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the vkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the vkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -886,6 +903,21 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
 * The `aperture parameters`_ may also be specified.
 * For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to hkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the hkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the hkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the hkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -904,6 +936,8 @@ parameters `hkick` and `vkick` may be specified. Like the `hkicker` and `vkicker
 may also be thin or thick. In the case of the thick kicker, the field is the linear
 sum of two independently calculated fields.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for plain kickers
+
 Example::
 
   kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0.3e-4;
@@ -919,6 +953,7 @@ not make this distinction. See `kicker`_ for more details.
 In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
 can be used.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for tkickers
 
 rf
 ^^^^
@@ -1115,14 +1150,14 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-================  ==============================  ==========  ===========
-Parameter         Description                     Default     Required
-`l`               Length [m]                      0           Yes
-`material`        Outer material                  Iron        No
-`outerDiameter`   Outer full width [m]            global      No
-`xsize`           Horizontal inner aperture [m]   0           No
-`ysize`           Vertical inner aperture [m]     0           No
-================  ==============================  ==========  ===========
+================  ==================================  ==========  ===========
+Parameter         Description                         Default     Required
+`l`               Length [m]                          0           Yes
+`material`        Outer material                      Iron        No
+`outerDiameter`   Outer full width [m]                global      No
+`xsize`           Horizontal inner half aperture [m]  0           Yes
+`ysize`           Vertical inner half aperture [m]    0           No
+================  ==================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 
@@ -1256,7 +1291,50 @@ Examples::
 
 
 More examples can be found in :code:`bdsim/examples/components` and are described in :ref:`crystal-examples`.
-		      
+
+undulator
+^^^^^^^^^
+
+.. figure:: figures/undulator.png
+    :width: 60%
+
+`undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
+field components:
+
+.. math::
+
+   B_{x} ~ &= ~ 0 \\
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ 0
+
+where :math:`\lambda` is the undulator period.
+
+=======================  =============================  ==========  ===========
+Parameter                Description                    Default     Required
+`l`                      Length [m]                     0           Yes
+`B`                      Magnetic field [T]             0           Yes
+`undulatorPeriod`        Undulator magnetic period [m]  1           Yes
+`undulatorGap`           Undulator gap [m]              0           No
+`undulatorMagnetHeight`  Undulator magnet height [m]    0           No
+`material`               Magnet outer material          Iron        No
+=======================  =============================  ==========  ===========
+
+* The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
+* The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
+  it is set to twice the beam pipe diameter.
+* The undulator magnet height is the vertical height of the sets of magnets. If not supplied, it is set
+  to the 0.5*horizontalWidth - undulator gap.
+* The `aperture parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
+* To generate radiation from particles propagating through the undulator field, synchrotron radiation
+  physics must be included in the model's physicsList. See :ref:`physics-processes` for further details.
+
+Examples::
+
+ u1: undulator, l=2.0*m, B=0.1*T, undulatorPeriod=0.2*m;
+ u2: undulator, l=3.2*m, B=0.02*T, undulatorPeriod=0.16*m, undulatorGap=15*cm, undulatorMagnetHeight=10*cm;
+
+
 transform3d
 ^^^^^^^^^^^
 

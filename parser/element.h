@@ -145,8 +145,7 @@ namespace GMAD
     ///@{ for undulator
     double undulatorPeriod;
     double undulatorGap;
-    double magnetHeight;
-    double magnetWidth;
+    double undulatorMagnetHeight;
     ///@}
 
     ///@{List of beam loss monitor locations
