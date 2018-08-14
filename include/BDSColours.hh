@@ -43,7 +43,7 @@ public:
 
 private:
   BDSColours(); ///< Private constructor as singleton
-  static BDSColours* _instance;
+  static BDSColours* instance;
 
   /// A map of the magnet name for which order it is, which
   /// can be used to access the appropriate colour map

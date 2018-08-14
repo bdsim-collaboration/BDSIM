@@ -27,18 +27,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <sstream>
 
-BDSColours* BDSColours::_instance = nullptr;
+BDSColours* BDSColours::instance = nullptr;
 
 BDSColours* BDSColours::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSColours();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSColours();}
+  return instance;
 }
 
 BDSColours::~BDSColours()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSColours::BDSColours()
