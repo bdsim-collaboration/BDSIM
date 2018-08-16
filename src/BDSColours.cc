@@ -190,3 +190,8 @@ G4Colour* BDSColours::GetMagnetColour(G4int magnetOrder) const
       return colours.at(magnetName.at(magnetOrder));
     }
 }
+
+G4Colour* BDSColours::GetMagnetColour(const BDSMagnetType magnetType) const
+{
+  return colours.at(magnetType.ToString());
+}
