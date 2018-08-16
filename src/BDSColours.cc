@@ -64,6 +64,7 @@ BDSColours::BDSColours()
   colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
   
   // elements
+  // must match name and full set in BDSMagnetType
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
@@ -76,13 +77,17 @@ BDSColours::BDSColours()
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
-  colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
+  colours["muonspoiler"]      = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
   colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
   colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["undulator"]        = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
   colours["crystal"]          = colours["srfcavity"];
+  colours["thinmultipole"]    = colours["default"];
+  colours["dipolefringe"]     = colours["default"];
+  colours["rmatrix"]          = colours["default"];
+  colours["paralleltransporter"] = colours["default"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
