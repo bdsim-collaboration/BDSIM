@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSColours.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -1934,6 +1935,17 @@ G4String BDSComponentFactory::PrepareColour(Element const* el, const G4String fa
   if (colour == "")
     {colour = fallback;}
   return colour;
+}
+
+G4Colour* BDSComponentFactory::PrepareColourForMagnet(Element const* el, G4int order) const
+{
+  G4String colourName = el->colour;
+  G4Colour* result = nullptr;
+  if (!colourName.empty())
+    {result = BDSColours::Instance()->GetColour(colourName);}
+  else // resort to default for a given magnet
+    {result = BDSColours::Instance()->GetMagnetColour(order);}
+  return result;
 }
 
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,

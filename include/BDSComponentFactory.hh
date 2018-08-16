@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
+class G4Colour;
 class G4Material;
 
 namespace GMAD
@@ -267,6 +268,10 @@ private:
 
   /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
+
+  /// Return a colour for a magnet. Falls back to colour for a particular magnet as defined
+  /// by the order (1=dipole, 2=quadrupole, etc).
+  G4Colour* PrepareColourForMagnet(GMAD::Element const* el, G4int order = 1) const;
 
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
