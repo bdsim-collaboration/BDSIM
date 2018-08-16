@@ -156,14 +156,14 @@ public:
 					 );
 
   /// muon spoiler outer volume
-  virtual BDSMagnetOuter* CreateMuSpoiler(G4String     name,                  // name
-					  G4double     length,                // length [mm]
-					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
-					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+  virtual BDSMagnetOuter* CreateMuonSpoiler(G4String     name,                  // name
+					    G4double     length,                // length [mm]
+					    BDSBeamPipe* beamPipe,              // beampipe
+					    G4double     horizontalWidth,       // full width
+					    G4double     containerLength,       // full length to make AccComp container
+					    G4Material*  outerMaterial = nullptr,// material for outer volume
+					    G4bool       buildEndPiece = false
+					    );
 
   /// horizontal and vertical kicker outer volume
   virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name

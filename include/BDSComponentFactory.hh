@@ -206,7 +206,7 @@ private:
   BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
-  BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateMuonSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateGap();

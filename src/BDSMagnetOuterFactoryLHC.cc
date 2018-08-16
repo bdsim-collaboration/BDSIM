@@ -1646,19 +1646,19 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      name,
 								      containerLength,outerMaterial,buildEndPiece);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      name,
-							  G4double      length,
-							  BDSBeamPipe*  beamPipe,
-							  G4double      horizontalWidth,
-							  G4double      containerLength,
-							  G4Material*   outerMaterial,
-							  G4bool        buildEndPiece)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuonSpoiler(G4String      name,
+							    G4double      length,
+							    BDSBeamPipe*  beamPipe,
+							    G4double      horizontalWidth,
+							    G4double      containerLength,
+							    G4Material*   outerMaterial,
+							    G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,horizontalWidth,
+									 containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,

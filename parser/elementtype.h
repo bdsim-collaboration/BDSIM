@@ -39,7 +39,7 @@ namespace GMAD
     _KICKER      = 33,
     _TKICKER     = 34,
     _TRANSFORM3D = 61,
-    _MUSPOILER   = 62,
+    _MUONSPOILER = 62,
     _DEGRADER    = 63,
     _THINMULT    = 64,
     _GAP         = 65,

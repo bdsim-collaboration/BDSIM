@@ -159,13 +159,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/
   return nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
-							   G4double      /*length*/,
-							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
-							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuonSpoiler(G4String      /*name*/,
+							     G4double      /*length*/,
+							     BDSBeamPipe*  /*beamPipe*/,
+							     G4double      /*horizontalWidth*/,
+							     G4double      /*containerLength*/,
+							     G4Material*   /*outerMaterial*/,
+							     G4bool        /*buildEndPiece*/)
 {
   return nullptr;
 }

@@ -166,8 +166,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       }
     case BDSMagnetType::muonspoiler:
       {
-	outer = factory->CreateMuSpoiler(name, outerLength, beamPipe, horizontalWidth,
-					 containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateMuonSpoiler(name, outerLength, beamPipe, horizontalWidth,
+					   containerLength, outerMaterial, buildEndPiece);
 	break;
       }
     case BDSMagnetType::octupole:

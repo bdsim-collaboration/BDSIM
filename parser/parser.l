@@ -89,7 +89,8 @@ thinmultipole { return THINMULT; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}
 ecol { return ECOL; } 
-muspoiler { return MUSPOILER; }
+muonspoiler { return MUONSPOILER; }
+muspoiler { return MUONSPOILER; }
 shield {return SHIELD; }
 element { return ELEMENT; }
 screen { return SCREEN; }

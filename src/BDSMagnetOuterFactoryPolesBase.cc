@@ -272,19 +272,19 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      nam
 								      containerLength,outerMaterial,buildEndPiece);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      name,
-								G4double      length,
-								BDSBeamPipe*  beamPipe,
-								G4double      horizontalWidth,
-								G4double      containerLength,
-								G4Material*   outerMaterial,
-								G4bool        buildEndPiece)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuonSpoiler(G4String      name,
+								  G4double      length,
+								  BDSBeamPipe*  beamPipe,
+								  G4double      horizontalWidth,
+								  G4double      containerLength,
+								  G4Material*   outerMaterial,
+								  G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,horizontalWidth,
+									 containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,

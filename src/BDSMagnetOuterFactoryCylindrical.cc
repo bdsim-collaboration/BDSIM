@@ -266,13 +266,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 				BDSColours::Instance()->GetColour("rfcavity"));
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     name,
-								  G4double     length,
-								  BDSBeamPipe* beamPipe,
-								  G4double     horizontalWidth,
-								  G4double     containerLength,
-								  G4Material*  outerMaterial,
-								  G4bool       /*buildEndPiece*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuonSpoiler(G4String     name,
+								    G4double     length,
+								    BDSBeamPipe* beamPipe,
+								    G4double     horizontalWidth,
+								    G4double     containerLength,
+								    G4Material*  outerMaterial,
+								    G4bool       /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -280,7 +280,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     n
   CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, horizontalWidth);
   return CommonFinalConstructor(name, length, horizontalWidth, outerMaterial,
-				BDSColours::Instance()->GetColour("muspoiler"));
+				BDSColours::Instance()->GetColour("muonspoiler"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name,

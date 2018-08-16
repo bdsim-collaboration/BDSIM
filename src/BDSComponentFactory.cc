@@ -281,8 +281,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateEllipticalCollimator(); break; 
   case ElementType::_RCOL:
     component = CreateRectangularCollimator(); break; 
-  case ElementType::_MUSPOILER:    
-    component = CreateMuSpoiler(); break;
+  case ElementType::_MUONSPOILER:    
+    component = CreateMuonSpoiler(); break;
   case ElementType::_SHIELD:
     component = CreateShield(); break;
   case ElementType::_DEGRADER:
@@ -1019,7 +1019,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     PrepareColour(element, "collimator"));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
+BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
