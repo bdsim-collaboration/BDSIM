@@ -55,7 +55,7 @@ BDSColours::BDSColours()
   // https://en.wikipedia.org/wiki/Web_colors
 
   // special
-  colours["default"]          = new G4Colour(1,     1,     1);     // white
+  colours["default"]          = new G4Colour(0.9,   0.9,   0.9);   // almost white
   colours["warning"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
 
   // tunnel
@@ -63,11 +63,14 @@ BDSColours::BDSColours()
   colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
   colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
   
-  // elements
-  // must match name and full set in BDSMagnetType
+  // elements - one for each type in parser/elementtype.cc
+  colours["marker"]           = colours["default"];
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
+  colours["drift"]            = colours["beampipe"];
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["sbend"]            = colours["sectorbend"];
+  colours["rectangularbend"]  = colours["sectorbend"];
+  colours["rbend"]            = colours["sectorbend"];
   colours["quadrupole"]       = new G4Colour(0.82,  0.1,   0.1);   // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
@@ -75,11 +78,16 @@ BDSColours::BDSColours()
   colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
+  colours["rf"]               = colours["rfcavity"];
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
+  colours["ecol"]             = colours["collimator"];
+  colours["rcol"]             = colours["collimator"];
   colours["muonspoiler"]      = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
   colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
   colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
+  colours["kicker"]           = colours["sectorbend"];
+  colours["tkicker"]          = colours["kicker"];
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["undulator"]        = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
@@ -87,7 +95,13 @@ BDSColours::BDSColours()
   colours["thinmultipole"]    = colours["default"];
   colours["dipolefringe"]     = colours["default"];
   colours["rmatrix"]          = colours["default"];
+  colours["thinrmatrix"]       = colours["rmatrix"];
   colours["paralleltransporter"] = colours["default"];
+  colours["element"]          = colours["default"];
+  colours["screen"]           = new G4Colour(0.69,  0.769, 0.871); // slate grey
+  colours["awakescreen"]      = colours["screen"];
+  colours["awakespectrometer"] = colours["sectorbend"];
+  colours["gap"]               = colours["default"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
