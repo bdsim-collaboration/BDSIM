@@ -1304,8 +1304,8 @@ field components:
 .. math::
 
    B_{x} ~ &= ~ 0 \\
-   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big)\\
-   B_{z} ~ &= ~ 0
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big) \cosh\big(y \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ -B \cdot \sin\big(z \frac{2\pi}{\lambda}\big) \sinh\big(y \frac{2\pi}{\lambda}\big)
 
 where :math:`\lambda` is the undulator period.
 

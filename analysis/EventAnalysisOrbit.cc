@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TChain.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TString.h"
 
 void EventAnalysisOrbit::Clear()
 {
@@ -35,6 +36,7 @@ void EventAnalysisOrbit::Clear()
   xp.clear();
   y.clear();
   yp.clear();
+  elementName.clear();
 }
 
 void EventAnalysisOrbit::ExtractOrbit(int index)
@@ -53,7 +55,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
   std::cout << "Loaded" << std::endl;
   
   int counter = 0;
-  for(auto s : samplerAnalyses)
+  for (auto s : samplerAnalyses)
     {
       std::cout << "\rSampler #" << std::setw(6) << counter << " of " << nSamplers;
       std::cout.flush();
@@ -64,6 +66,7 @@ void EventAnalysisOrbit::ExtractOrbit(int index)
 	  xp.push_back(s->s->xp[0]);
 	  y.push_back(s->s->y[0]);
 	  yp.push_back(s->s->yp[0]);
+          elementName.push_back(s->s->samplerName);
 	}
       counter++;
     }
@@ -80,21 +83,26 @@ void EventAnalysisOrbit::WriteOrbit(TFile* f)
   double dxp;
   double dy;
   double dyp;
+  std::string delementName;
 
   orbitTree->Branch("s",  &dss, "s/D");
   orbitTree->Branch("x",  &dx,  "x/D");
   orbitTree->Branch("xp", &dxp, "xp/D");
   orbitTree->Branch("y",  &dy,  "y/D");
   orbitTree->Branch("yp", &dyp, "yp/D");
+  orbitTree->Branch("elementName", &delementName);
   
   for (int i = 0; i < (int)ss.size(); ++i)
     {
-      dss = ss[i];
-      dx  = x[i];
-      dxp = xp[i];
-      dy  = y[i];
-      dyp = yp[i];
+      dss = ss.at(i);
+      dx  = x.at(i);
+      dxp = xp.at(i);
+      dy  = y.at(i);
+      dyp = yp.at(i);
+      delementName = elementName.at(i);
       orbitTree->Fill();
     }
+
   orbitTree->Write();
+  f->Close();
 }

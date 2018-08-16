@@ -48,9 +48,10 @@ private:
   /// Private default constructor to force use of supplied constructor.
   BDSFieldMagUndulator();
   
-  /// B' - the field gradient - a constant for a quadrupole.
+  /// The peak field.
   G4double B;
-  G4double period;
+  /// The undulator wavenumber
+  G4double wavenumber;
 };
 
 #endif

@@ -311,6 +311,17 @@ the skewed strength parameters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to 
 	    Example field map of a multipole with :math:`\{k_1, k_2, k_3, k_4, k_5\} = \{0.12,0.02,-0.003,0.0004,-0.00005\}`,
 	    and :math:`B\rho = 4.333`.
 
+Undulator
+---------
+
+The undulator field is constructed with the peak field strength :math:`B` and the undulator period :math:`\lambda`.
+The field, according to Wiedemann pg. 103, is described by
+
+.. math::
+   B_{x} ~ &= ~ 0 \\
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big) \cosh\big(y \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ -B \cdot \sin\big(z \frac{2\pi}{\lambda}\big) \sinh\big(y \frac{2\pi}{\lambda}\big)
+
 
 Muon Spoiler
 ------------
