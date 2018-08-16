@@ -1000,7 +1000,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysizeOut*CLHEP::m,
 				      G4String(element->material),
 				      G4String(element->vacuumMaterial),
-				      PrepareColour(element, "collimator"));
+				      PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -1017,7 +1017,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysizeOut*CLHEP::m,
 				     G4String(element->material),
 				     G4String(element->vacuumMaterial),
-				     PrepareColour(element, "collimator"));
+				     PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
@@ -1629,6 +1629,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
     {info->coilHeightFraction = defaultCoilHeightFraction;}
   else
     {info->coilHeightFraction = 0.8;} // default for both h and c type
+
+  info->colour = PrepareColour(el);
   
   return info;
 }
@@ -1929,12 +1931,13 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   return st;
 }
 
-G4String BDSComponentFactory::PrepareColour(Element const* el, const G4String fallback) const
+G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
 {
   G4String colour = el->colour;
   if (colour == "")
-    {colour = fallback;}
-  return colour;
+    {return BDSColours::Instance()->GetColour(GMAD::typestr(el->type));}
+  else
+    {return BDSColours::Instance()->GetColour(colour);}
 }
 
 G4Colour* BDSComponentFactory::PrepareColourForMagnet(Element const* el, G4int order) const

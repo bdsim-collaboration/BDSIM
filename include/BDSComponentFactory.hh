@@ -156,6 +156,9 @@ public:
 						    G4double       defaultCoilWidthFraction  = -1,
 						    G4double       defaultCoilHeightFraction = -1);
 
+  /// Checks if colour is specified for element, else uses the default for that element type.
+  static G4Colour* PrepareColour(GMAD::Element const* element);
+
   /// Utility function to check if the combination of horizontal width, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
@@ -265,9 +268,6 @@ private:
   /// Utility function to prepare field strength object for rf cavity.
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
 					   G4double currentArcLength) const;
-
-  /// Checks if colour is specified for element, else uses fallback color
-  G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
   /// Return a colour for a magnet. Falls back to colour for a particular magnet as defined
   /// by the order (1=dipole, 2=quadrupole, etc).

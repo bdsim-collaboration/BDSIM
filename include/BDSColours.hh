@@ -40,6 +40,7 @@ public:
 
   /// Get colour from name
   G4Colour* GetColour(G4String type);
+  
   /// Get colour from magnet order (1=dipole, 2=quadrupole, etc.)
   G4Colour* GetMagnetColour(G4int magnetOrder) const;
 
