@@ -138,8 +138,7 @@ private:
   void InfoOKForRaceTrack();
 
   /// aperture info check for octagon aperture
-  void InfoOKForOctagonal();
-  
+  void InfoOKForOctagonal(); 
 };
 
 #endif
