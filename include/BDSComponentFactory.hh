@@ -269,10 +269,6 @@ private:
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
 					   G4double currentArcLength) const;
 
-  /// Return a colour for a magnet. Falls back to colour for a particular magnet as defined
-  /// by the order (1=dipole, 2=quadrupole, etc).
-  G4Colour* PrepareColourForMagnet(GMAD::Element const* el, G4int order = 1) const;
-
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.

@@ -19,8 +19,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOLOURS_H
 #define BDSCOLOURS_H
 
-#include "BDSMagnetType.hh"
-
 #include "globals.hh"         // geant4 types / globals
 
 #include <map>
@@ -43,9 +41,6 @@ public:
   
   /// Get colour from magnet order (1=dipole, 2=quadrupole, etc.)
   G4Colour* GetMagnetColour(G4int magnetOrder) const;
-
-  /// Get colour for any type of magnet.
-  G4Colour* GetMagnetColour(const BDSMagnetType magnetType) const;
 
 private:
   BDSColours(); ///< Private constructor as singleton

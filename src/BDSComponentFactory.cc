@@ -1940,17 +1940,6 @@ G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
     {return BDSColours::Instance()->GetColour(colour);}
 }
 
-G4Colour* BDSComponentFactory::PrepareColourForMagnet(Element const* el, G4int order) const
-{
-  G4String colourName = el->colour;
-  G4Colour* result = nullptr;
-  if (!colourName.empty())
-    {result = BDSColours::Instance()->GetColour(colourName);}
-  else // resort to default for a given magnet
-    {result = BDSColours::Instance()->GetMagnetColour(order);}
-  return result;
-}
-
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 					      BDSAcceleratorComponent* component) const
 {
