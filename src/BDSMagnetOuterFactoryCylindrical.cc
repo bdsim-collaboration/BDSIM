@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
@@ -61,19 +62,15 @@ BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     name,
 								   G4double     length,
-								   BDSBeamPipe* beamPipe,
-								   G4double     horizontalWidth,
+								   const BDSBeamPipe* beamPipe,
 								   G4double     containerLength,
-								   G4double     angleIn,
-								   G4double     angleOut,
-								   G4bool       /*yokeOnLeft*/,
-								   G4bool       /*hStyle*/,
-								   G4Material*  outerMaterial,
-								   G4bool       /*buildEndPiece*/,
-								   G4double     /*vhRatio*/,
-								   G4double     /*coilWidthFraction*/,
-								   G4double     /*coilHeightFraction*/)
+								   const BDSMagnetOuterInfo* recipe)
 {
+  G4double horizontalWidth  = recipe->horizontalWidth;
+  G4double angleIn          = recipe->angleIn;
+  G4double angleOut         = recipe->angleOut;
+  G4Material* outerMaterial = recipe->outerMaterial;
+  
   // clear up variables
   CleanUp();
   
@@ -106,19 +103,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String     name,
 									G4double     length,
-									BDSBeamPipe* beamPipe,
-									G4double     horizontalWidth,
+									const BDSBeamPipe* beamPipe,
 									G4double     containerLength,
-									G4double     angleIn,
-									G4double     angleOut,
-									G4bool       /*yokeOnLeft*/,
-									G4bool       /*hStyle*/,
-									G4Material*  outerMaterial,
-									G4bool       /*buildEndPiece*/,
-									G4double     /*vhRatio*/,
-									G4double     /*coilWidthFraction*/,
-									G4double     /*coilHeightFraction*/)
+									const BDSMagnetOuterInfo* recipe)
 {
+  G4double horizontalWidth  = recipe->horizontalWidth;
+  G4double angleIn          = recipe->angleIn;
+  G4double angleOut         = recipe->angleOut;
+  G4Material* outerMaterial = recipe->outerMaterial;
+  
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
 
   // clear up variables
@@ -303,7 +296,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 
 void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name,
 							       G4double     length,
-							       BDSBeamPipe* beamPipe,
+							       const BDSBeamPipe* beamPipe,
 							       G4double     magnetContainerLength,
 							       G4double     horizontalWidth)
 {
@@ -361,7 +354,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 // Function for cylinder with angled faces - for pole face rotation in dipoles.
 void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String     name,
 								     G4double     length,
-								     BDSBeamPipe* beamPipe,
+								     const BDSBeamPipe* beamPipe,
 								     G4double     magnetContainerLength,
 								     G4double     horizontalWidth)
 { 
@@ -424,7 +417,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
   allSolids.push_back(yokeSolid);
 }
 
-void BDSMagnetOuterFactoryCylindrical::TestInputParameters(BDSBeamPipe* beamPipe,
+void BDSMagnetOuterFactoryCylindrical::TestInputParameters(const BDSBeamPipe* beamPipe,
 							   G4double&    horizontalWidth,
 							   G4Material*& outerMaterial)// reference to a pointer
 {

@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
@@ -57,23 +58,18 @@ BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   CleanUp();
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
-							   G4double      length,
-							   BDSBeamPipe*  beamPipe,
-							   G4double      horizontalWidth,
-							   G4double      containerLength,
-							   G4double      angleIn,
-							   G4double      angleOut,
-							   G4bool        /*yokeOnLeft*/,
-							   G4bool        /*hStyle*/,
-							   G4Material*   outerMaterial,
-							   G4bool        /*buildEndPiece*/,
-							   G4double      /*vhRatio*/,
-							   G4double      /*coilWidthFraction*/,
-							   G4double      /*coilHeightFraction*/)
-
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
+							   G4double     length,
+							   const BDSBeamPipe* beamPipe,
+							   G4double     containerLength,
+							   const BDSMagnetOuterInfo* recipe)
 {
   CleanUp();
+
+  G4double horizontalWidth  = recipe->horizontalWidth;
+  G4double angleIn          = recipe->angleIn;
+  G4double angleOut         = recipe->angleOut;
+  G4Material* outerMaterial = recipe->outerMaterial;
   
   // note this geometry does not respond to horizontalWidth - it's hard coded to the
   // design of a sector bend for the lhc.  TestInputParameters requires it though
@@ -934,35 +930,17 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   return outer;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      name,
-								G4double      length,
-								BDSBeamPipe*  beamPipe,
-								G4double      horizontalWidth,
-								G4double      containerLength,
-								G4double      angleIn,
-								G4double      angleOut,
-								G4bool        yokeOnLeft,
-								G4bool        hStyle,
-								G4Material*   outerMaterial,
-								G4bool        buildEndPiece,
-								G4double      vhRatio,
-								G4double      coilWidthFraction,
-								G4double      coilHeightFraction)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String     name,
+								G4double     length,
+								const BDSBeamPipe* beamPipe,
+								G4double     containerLength,
+								const BDSMagnetOuterInfo* recipe)
 {
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name,
 									     length,
 									     beamPipe,
-									     horizontalWidth,
 									     containerLength,
-									     angleIn,
-									     angleOut,
-									     yokeOnLeft,
-									     hStyle,
-									     outerMaterial,
-									     buildEndPiece,
-									     vhRatio,
-									     coilWidthFraction,
-									     coilHeightFraction);
+									     recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
@@ -1679,7 +1657,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 }
 
 /// functions below here are private to this particular factory
-void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* /*beamPipe*/,
+void BDSMagnetOuterFactoryLHC::TestInputParameters(const BDSBeamPipe* /*beamPipe*/,
 						   G4double&    horizontalWidth,
 						   G4Material*& outerMaterial)// reference to a pointer
 {

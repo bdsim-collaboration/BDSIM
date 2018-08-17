@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"           // geant4 globals / types
 
 class BDSBeamPipe;
+class BDSMagnetOuterInfo;
 class G4Colour;
 class G4Material;
 
@@ -41,36 +42,18 @@ public:
   virtual ~BDSMagnetOuterFactoryCylindrical();
   
   /// sector bend outer volume
-  virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
-					   G4double     length,          // length
-					   BDSBeamPipe* beamPipe,        // beampipe
-					   G4double     horizontalWidth, // full width
-					   G4double     containerLength, // full length to make AccComp container
-					   G4double     angleIn,         // input face angle w.r.t. chord
-					   G4double     angleOut,        // output face angle w.r.t. chord
-					   G4bool       yokeOnLeft,      // build magnet yoke on left of bend
-					   G4bool       hStyle,                 // H style magnet (c shaped if not)
-					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false,  // build and end piece
-					   G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
-					   G4double     coilWidthFraction  = 0.65,
-					   G4double     coilHeightFraction = 0.8);
+  virtual BDSMagnetOuter* CreateSectorBend(G4String           name,             // name
+					   G4double           length,           // full length [mm]
+					   const BDSBeamPipe* beamPipe,         // beampipe
+					   G4double           containerLength,  // full length to make AccComp container
+					   const BDSMagnetOuterInfo* recipe);   // recipe for geometry
   
   /// rectangular bend outer volume
-  virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
-						G4double     length,            // length
-						BDSBeamPipe* beamPipe,          // beampipe
-						G4double     horizontalWidth,   // full width
-						G4double     containerLength,   // full length to make AccComp container
-						G4double     angleIn,           // input face angle w.r.t. chord
-						G4double     angleOut,          // output face angle w.r.t. chord
-						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
-						G4bool       hStyle,                 // H style magnet (c shaped if not)
-						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false,  // build and end piece
-						G4double     vhRatio       = 1.0,    // ratio of vertical to horizontal proportions
-						G4double     coilWidthFraction  = 0.65,
-						G4double     coilHeightFraction = 0.8);
+  virtual BDSMagnetOuter* CreateRectangularBend(G4String           name,             // name
+						G4double           length,           // full length [mm]
+						const BDSBeamPipe* beamPipe,         // beampipe
+						G4double           containerLength,  // full length to make AccComp container
+						const BDSMagnetOuterInfo* recipe);   // recipe for geometry
   
   /// quadrupole outer volume
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
@@ -176,13 +159,13 @@ private:
   //private to this factory only
   void CreateCylindricalSolids(G4String     name,                  // name
 			       G4double     length,                // full length
-			       BDSBeamPipe* beamPipe,              // beampipe
+			       const BDSBeamPipe* beamPipe,        // beampipe
 			       G4double     magnetContainerLength, // magnet object container full length
 			       G4double     boxSize);              // full width
 
   void CreateCylindricalSolidsAngled(G4String      name,                  // name
 				     G4double      length,                // full length
-				     BDSBeamPipe*  beamPipe,              // beampipe
+				     const BDSBeamPipe*  beamPipe,        // beampipe
 				     G4double      magnetContainerLength, // magnet object container full length
 				     G4double      boxSize);              // full width
 
@@ -195,7 +178,7 @@ private:
 					 G4Colour*   colour);
 
   /// test inputs for no null pointers or overlapping volumes due to poorly defined sizes
-  void TestInputParameters(BDSBeamPipe* beamPipe,
+  void TestInputParameters(const BDSBeamPipe* beamPipe,
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
   
