@@ -116,12 +116,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   G4double horizontalWidth              = outerInfo->horizontalWidth;
   G4Material* outerMaterial             = outerInfo->outerMaterial;
   BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
-  G4bool yokeOnLeft                     = outerInfo->yokeOnLeft;
   G4bool buildEndPiece                  = outerInfo->buildEndPieces;
-  G4bool hStyle                         = outerInfo->hStyle;
-  G4double vhRatio                      = outerInfo->vhRatio;
-  G4double coilWidthFraction            = outerInfo->coilWidthFraction;
-  G4double coilHeightFraction           = outerInfo->coilHeightFraction;
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
@@ -152,16 +147,12 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
       }
     case BDSMagnetType::vkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, horizontalWidth,
-				      containerLength, yokeOnLeft, true, outerMaterial, buildEndPiece,
-				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, true);
 	break;
       }
     case BDSMagnetType::hkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, horizontalWidth,
-				      containerLength, yokeOnLeft, false, outerMaterial, buildEndPiece,
-				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, false);
 	break;
       }
     case BDSMagnetType::muonspoiler:

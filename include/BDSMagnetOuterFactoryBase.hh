@@ -160,19 +160,12 @@ public:
 					    ) = 0;
   
   /// horizontal and vertical kicker outer volume
-  virtual BDSMagnetOuter* CreateKicker(G4String     name,                         // name
-				       G4double     length,                       // length [mm]
-				       BDSBeamPipe* beamPipe,                     // beampipe
-				       G4double     horizontalWidth,              // full width
-				       G4double     containerLength,              // full length to make AccComp container
-				       G4bool       yokeOnLeft,                   // whether the yoke is on the left or right for C shaped
-				       G4bool       vertical           = true,    // is it a vertical kicker?
-				       G4Material*  outerMaterial      = nullptr, // material for outer volume
-				       G4bool       buildEndPiece      = false,   // build and end piece
-				       G4bool       hStyle             = false,
-				       G4double     vhRatio            = 1.0,
-				       G4double     coilWidthFraction  = 0.65,
-				       G4double     coilHeightFraction = 0.8
+  virtual BDSMagnetOuter* CreateKicker(G4String                  name,            // name
+				       G4double                  length,          // length [mm]
+				       const BDSBeamPipe*        beamPipe,        // beampipe
+				       G4double                  containerLength, // full length to make AccComp container
+				       const BDSMagnetOuterInfo* recipe,          // geometry recipe
+				       G4bool                    vertical         // is it a vertical kicker?
 				       ) = 0;
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope

@@ -152,19 +152,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuonSpoiler(G4String      /*nam
   return nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
-							G4double      /*length*/,
-							BDSBeamPipe*  /*beamPipe*/,
-							G4double      /*horizontalWidth*/,
-							G4double      /*containerLength*/,
-							G4bool        /*yokeOnLeft*/,
-							G4bool        /*vertical*/,
-							G4Material*   /*outerMaterial*/,
-							G4bool        /*buildEndPiece*/,
-							G4bool        /*hStyle*/,
-							G4double      /*vhRatio*/,
-							G4double      /*coilWidthFraction*/,
-							G4double      /*coiHeightFraction*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String                  /*name*/,
+							G4double                  /*length*/,
+							const BDSBeamPipe*        /*beamPipe*/,
+							G4double                  /*containerLength*/,
+							const BDSMagnetOuterInfo* /*recipe*/,
+							G4bool                    /*vertical*/)
 {
   return nullptr;
 }

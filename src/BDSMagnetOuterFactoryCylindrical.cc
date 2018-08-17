@@ -270,27 +270,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuonSpoiler(G4String    
 				BDSColours::Instance()->GetColour("muonspoiler"));
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name,
-							       G4double     length,
-							       BDSBeamPipe* beamPipe,
-							       G4double     horizontalWidth,
-							       G4double     containerLength,
-							       G4bool       /*yokeOnLeft*/,
-							       G4bool       /*vertical*/,
-							       G4Material*  outerMaterial,
-							       G4bool       /*buildEndPiece*/,
-							       G4bool       /*hStyle*/,
-							       G4double     /*vhRatio*/,
-							       G4double     /*coilWidthFraction*/,
-							       G4double     /*coilHeightFraction*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String                  name,
+							       G4double                  length,
+							       const BDSBeamPipe*        beamPipe,
+							       G4double                  containerLength,
+							       const BDSMagnetOuterInfo* recipe,
+							       G4bool                    /*vertical*/)
 {
+  G4double horizontalWidth  = recipe->horizontalWidth;
+  G4Material* outerMaterial = recipe->outerMaterial;
+  G4Colour*   colour        = recipe->colour;
   CleanUp();
   // in this factory, h and v kickers will look the same so ignore bool vertical
   // have to retain it though for virtual base class compatability
   CreateCylindricalSolids(name, length, beamPipe, containerLength, horizontalWidth);
-  return CommonFinalConstructor(name, length, horizontalWidth, outerMaterial,
-				BDSColours::Instance()->GetColour("hkicker"));
-}
+  return CommonFinalConstructor(name, length, horizontalWidth, outerMaterial, colour);}
 
 /// functions below here are private to this particular factory
 

@@ -246,37 +246,17 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuonSpoiler(G4String      
 									 containerLength,outerMaterial,buildEndPiece);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
-							     G4double      length,
-							     BDSBeamPipe*  beamPipe,
-							     G4double      horizontalWidth,
-							     G4double      containerLength,
-							     G4bool        yokeOnLeft,
-							     G4bool        vertical,
-							     G4Material*   outerMaterial,
-							     G4bool        buildEndPiece,
-							     G4bool        hStyle,
-							     G4double      vhRatio,
-							     G4double      coilWidthFraction,
-							     G4double      coilHeightFraction)
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String                  name,
+							     G4double                  length,
+							     const BDSBeamPipe*        beamPipe,
+							     G4double                  containerLength,
+							     const BDSMagnetOuterInfo* recipe,
+							     G4bool                    vertical)
 {
-  /*
-  G4String colourName = (vertical) ? "vkicker" : "hkicker";
-  auto colour = BDSColours::Instance()->GetColour(colourName);
-  if (hStyle)
-    {
-      return CreateDipoleH(name, length, beamPipe, horizontalWidth, containerLength, 0, 0,
-			   outerMaterial, colour, vertical, buildEndPiece, vhRatio,
-			   coilWidthFraction, coilHeightFraction);
-    }
+  if (recipe->hStyle)
+    {return CreateDipoleH(name, length, beamPipe, containerLength, recipe, vertical);}
   else
-    {
-      return CreateDipoleC(name, length, beamPipe, horizontalWidth, containerLength, 0, 0,
-			   outerMaterial, yokeOnLeft, colour, vertical, buildEndPiece, vhRatio,
-			   coilWidthFraction, coilHeightFraction);
-    }
-  */
-  return nullptr;
+    {return CreateDipoleC(name, length, beamPipe, containerLength, recipe, vertical);}
 }
 
 /// functions below here are private to this particular factory

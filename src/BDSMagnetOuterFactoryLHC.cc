@@ -1633,27 +1633,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuonSpoiler(G4String      name,
 									 containerLength,outerMaterial,buildEndPiece);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
-						       G4double      length,
-						       BDSBeamPipe*  beamPipe,
-						       G4double      horizontalWidth,
-						       G4double      containerLength,
-						       G4bool        yokeOnLeft,
-						       G4bool        vertical,
-						       G4Material*   outerMaterial,
-						       G4bool        buildEndPiece,
-						       G4bool        hStyle,
-						       G4double      vhRatio,
-						       G4double      coilWidthFraction,
-						       G4double      coilHeightFraction)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String                  name,
+						       G4double                  length,
+						       const BDSBeamPipe*        beamPipe,
+						       G4double                  containerLength,
+						       const BDSMagnetOuterInfo* recipe,
+						       G4bool                    vertical)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,horizontalWidth,
-								    containerLength,yokeOnLeft,vertical,outerMaterial,
-								    buildEndPiece, hStyle, vhRatio,
-								    coilWidthFraction, coilHeightFraction);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,
+								    containerLength,recipe,
+								    vertical);
 }
 
 /// functions below here are private to this particular factory
