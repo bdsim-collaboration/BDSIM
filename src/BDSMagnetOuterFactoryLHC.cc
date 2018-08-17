@@ -73,9 +73,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      /*coilHeightFraction*/)
 
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CleanUp();
   
   // note this geometry does not respond to horizontalWidth - it's hard coded to the
@@ -952,9 +949,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      coilWidthFraction,
 								G4double      coilHeightFraction)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name,
 									     length,
 									     beamPipe,

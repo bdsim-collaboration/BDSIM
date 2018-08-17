@@ -74,9 +74,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     /*coilWidthFraction*/,
 								   G4double     /*coilHeightFraction*/)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // clear up variables
   CleanUp();
   
@@ -122,9 +119,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     /*coilWidthFraction*/,
 									G4double     /*coilHeightFraction*/)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif  
   //rectangular bends currently just make a shorter straight volume, so ignore angle for now
 
   // clear up variables
@@ -297,9 +291,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 							       G4double     /*coilWidthFraction*/,
 							       G4double     /*coilHeightFraction*/)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CleanUp();
   // in this factory, h and v kickers will look the same so ignore bool vertical
   // have to retain it though for virtual base class compatability
