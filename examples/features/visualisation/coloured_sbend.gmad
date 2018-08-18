@@ -1,0 +1,16 @@
+d1: drift, l=1*m;
+sb1: sbend, l=2*m, angle=0.1, colour="purple: 128 0 128";
+sb2: sbend, l=2*m, angle=0.1;
+sb3: sbend, l=2*m, angle=0.1, colour="green";
+sb4: sbend, l=2*m, angle=0.1, colour="yellow";
+sb5: sbend, l=2*m, angle=0.1, colour="orange: 255 140 0";
+sb6: sbend, l=2*m, angle=0.1, colour="red";
+
+beamline: line=(d1,sb1,d1,sb2,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
+
+use, beamline;
+
+sample, all;
+
+beam,  particle="proton",
+       energy= 50*GeV;
