@@ -28,22 +28,21 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::_instance = nullptr;
+BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::instance = nullptr;
 
 BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryNone();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactoryNone();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryNone::BDSMagnetOuterFactoryNone()
-{
-}
+{;}
 
 BDSMagnetOuterFactoryNone::~BDSMagnetOuterFactoryNone()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String           /*name*/,

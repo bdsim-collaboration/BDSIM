@@ -122,7 +122,7 @@ public:
   
 private:
   BDSMagnetOuterFactoryCylindrical(); //private constructor as singleton
-  static BDSMagnetOuterFactoryCylindrical* _instance;
+  static BDSMagnetOuterFactoryCylindrical* instance;
 
   //only really one function needed for this factory
   //private to this factory only

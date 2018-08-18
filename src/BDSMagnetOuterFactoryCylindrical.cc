@@ -43,13 +43,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::_instance = nullptr;
+BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::instance = nullptr;
 
 BDSMagnetOuterFactoryCylindrical* BDSMagnetOuterFactoryCylindrical::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryCylindrical();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactoryCylindrical();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
@@ -57,7 +57,7 @@ BDSMagnetOuterFactoryCylindrical::BDSMagnetOuterFactoryCylindrical()
 
 BDSMagnetOuterFactoryCylindrical::~BDSMagnetOuterFactoryCylindrical()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     name,
