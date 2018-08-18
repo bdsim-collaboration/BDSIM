@@ -71,86 +71,61 @@ public:
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
 					   G4double     length,                // length [mm]
 					   BDSBeamPipe* beamPipe,              // beampipe
-					   G4double     horizontalWidth,       // full width
 					   G4double     containerLength,       // full length to make AccComp container
-					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false
-					   );
-
+					   const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// sextupole outer volume
   virtual BDSMagnetOuter* CreateSextupole(G4String     name,                  // name
 					  G4double     length,                // length [mm]
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+					  const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// octupole outer volume
   virtual BDSMagnetOuter* CreateOctupole(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// decapole outer volume
   virtual BDSMagnetOuter* CreateDecapole(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// solenoid  outer volume
   virtual BDSMagnetOuter* CreateSolenoid(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// general multipole outer volume - could be any 2N order multipole
   virtual BDSMagnetOuter* CreateMultipole(G4String     name,                  // name
-					  G4double     length,                // length [mm]
+					  G4double     length,                // length
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+					  const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// RF cavity outer volume
   virtual BDSMagnetOuter* CreateRfCavity(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// muon spoiler outer volume
   virtual BDSMagnetOuter* CreateMuonSpoiler(G4String     name,                  // name
-					    G4double     length,                // length [mm]
+					    G4double     length,                // length
 					    BDSBeamPipe* beamPipe,              // beampipe
-					    G4double     horizontalWidth,       // full width
 					    G4double     containerLength,       // full length to make AccComp container
-					    G4Material*  outerMaterial = nullptr,// material for outer volume
-					    G4bool       buildEndPiece = false
-					    );
+					    const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// horizontal and vertical kicker outer volume
   virtual BDSMagnetOuter* CreateKicker(G4String                  name,            // name
-				       G4double                  length,          // length [mm]
+				       G4double                  length,          // length
 				       const BDSBeamPipe*        beamPipe,        // beampipe
 				       G4double                  containerLength, // full length to make AccComp container
 				       const BDSMagnetOuterInfo* recipe,          // geometry recipe
@@ -222,10 +197,8 @@ protected:
 					    G4double     length,
 					    BDSBeamPipe* beamPipe,
 					    G4int        order,
-					    G4double     horizontalWidth,
-					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength,
-					    G4bool       buildEndPiece);
+					    const BDSMagnetOuterInfo* recipe);
   
   /// Calculate the length of the pole and yoke radii based on the design. This is only
   /// responsible for calculating the gross proportions of the yoke and pole, not all the

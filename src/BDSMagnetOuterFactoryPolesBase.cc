@@ -133,117 +133,77 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
 								 G4double      length,
 								 BDSBeamPipe*  beamPipe,
-								 G4double      horizontalWidth,
 								 G4double      containerLength,
-								 G4Material*   outerMaterial,
-								 G4bool        buildEndPiece)
+								 const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return CommonConstructor(name, length, beamPipe, 2, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 2, containerLength, recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      name,
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
-								G4double      horizontalWidth,
 								G4double      containerLength,
-								G4Material*   outerMaterial,
-								G4bool        buildEndPiece)
+								const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return CommonConstructor(name, length, beamPipe, 3, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 3, containerLength, recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      horizontalWidth,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial,
-							       G4bool        buildEndPiece)
+							       const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return CommonConstructor(name, length, beamPipe, 4, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 4, containerLength, recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      horizontalWidth,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial,
-							       G4bool        buildEndPiece)
+							       const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return CommonConstructor(name, length, beamPipe, 5, horizontalWidth, outerMaterial, containerLength, buildEndPiece);
+  return CommonConstructor(name, length, beamPipe, 5, containerLength, recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      horizontalWidth,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial,
-							       G4bool        buildEndPiece)
+							       const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
 								G4double      length,
 								BDSBeamPipe*  beamPipe,
-								G4double      horizontalWidth,
 								G4double      containerLength,
-								G4Material*   outerMaterial,
-								G4bool        buildEndPiece)
+								const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,
+								       containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
 							       G4double      length,
 							       BDSBeamPipe*  beamPipe,
-							       G4double      horizontalWidth,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial,
-							       G4bool        buildEndPiece)
+							       const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuonSpoiler(G4String      name,
 								  G4double      length,
 								  BDSBeamPipe*  beamPipe,
-								  G4double      horizontalWidth,
 								  G4double      containerLength,
-								  G4Material*   outerMaterial,
-								  G4bool        buildEndPiece)
+								  const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,horizontalWidth,
-									 containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,
+									 containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String                  name,
@@ -264,14 +224,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 								  G4double     length,
 								  BDSBeamPipe* beamPipe,
 								  G4int        order,
-								  G4double     horizontalWidth,
-								  G4Material*  outerMaterial,
 								  G4double     magnetContainerLength,
-								  G4bool       buildEndPiece)
+								  const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+  G4double horizontalWidth = recipe->horizontalWidth;
+  G4Material* outerMaterial = recipe->outerMaterial;
+  if (!outerMaterial)
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
+  G4Colour* colour = recipe->colour;
+  
   // reset all pointers and variables to protect against bugs using previous use of factory
   CleanUp();
   
@@ -284,11 +245,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength, magnetContainerRadius);
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
-  G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
-  CreateLogicalVolumes(name, magnetColour, outerMaterial);
+  CreateLogicalVolumes(name, colour, outerMaterial);
   SetUserLimits();
   CreateMagnetContainerComponent();
-  if (buildPole && buildEndPiece)
+  if (buildPole && recipe->buildEndPieces)
     {CreateEndPiece(name);}
   PlaceComponents(name, order); //returns vector of PVs
   if (buildPole)
@@ -331,9 +291,6 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     horizonta
 							  BDSBeamPipe* beamPipe,
 							  G4int        order)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   G4double bpRadius = beamPipe->GetContainerRadius();
   
   // check parameters are valid
@@ -373,9 +330,6 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
 						     G4double length,
 						     G4int    order)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // calculate geometrical parameters first.
   // pole is ellipse at tip, then (possibly) tapered section going outwards and then
   // a section that is straight - ie constant width going outwards. This is later
@@ -541,10 +495,6 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(const G4String&
 								 const G4double& magnetContainerLength,
 								 const G4double& magnetContainerRadiusIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif  
-  
   // circular yoke so pretty easy
   yokeSolid = new G4Tubs(name + "_yoke_solid",      // name
 			 yokeStartRadius,           // start radius
@@ -649,9 +599,6 @@ void BDSMagnetOuterFactoryPolesBase::TestCoilFractions(G4double& coilWidthFracti
 void BDSMagnetOuterFactoryPolesBase::PlaceComponents(const G4String& name,
 						     G4int    order)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // place the components inside the container
   yokePV = new G4PVPlacement((G4RotationMatrix *) nullptr, // no rotation
 			     G4ThreeVector(),              // position

@@ -67,10 +67,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String       
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
 							    G4double      /*length*/,
 							    BDSBeamPipe*  /*beamPipe*/,
-							    G4double      /*horizontalWidth*/,
 							    G4double      /*containerLength*/,
-							    G4Material*   /*outerMaterial*/,
-							    G4bool        /*buildEndPiece*/)
+							    const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -78,10 +76,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+							   const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -89,10 +85,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -100,10 +94,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -111,10 +103,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -122,10 +112,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+							   const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -133,10 +121,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -144,10 +130,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuonSpoiler(G4String      /*name*/,
 							     G4double      /*length*/,
 							     BDSBeamPipe*  /*beamPipe*/,
-							     G4double      /*horizontalWidth*/,
 							     G4double      /*containerLength*/,
-							     G4Material*   /*outerMaterial*/,
-							     G4bool        /*buildEndPiece*/)
+							     const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
