@@ -1,15 +1,16 @@
 purple: newcolour, red=128, green=0, blue=128;
 orange: newcolour, red=255, green=140, blue=0;
+nicegreen: newcolour, red=0, green=128, blue=0;
 
 d1: drift, l=1*m;
-sb1: sbend, l=2*m, angle=0.1, colour="purple";
-sb2: sbend, l=2*m, angle=0.1;
-sb3: sbend, l=2*m, angle=0.1, colour="green";
-sb4: sbend, l=2*m, angle=0.1, colour="yellow";
-sb5: sbend, l=2*m, angle=0.1, colour="orange";
-sb6: sbend, l=2*m, angle=0.1, colour="red";
+basebend: sbend, l=2*m, angle=0.9;
+sb1: basebend, colour="purple";
+sb3: basebend, colour="nicegreen";
+sb4: basebend, colour="yellow";
+sb5: basebend, colour="orange";
+sb6: basebend, colour="red";
 
-beamline: line=(d1,sb1,d1,sb2,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
+beamline: line=(d1,sb1,d1,basebend,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
 
 use, beamline;
 
