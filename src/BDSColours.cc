@@ -207,23 +207,7 @@ G4Colour* BDSColours::GetColour(G4String type)
     }
   else
     {// colour not found
-      G4cout << __METHOD_NAME__ << "WARNING: invalid colour" << type << G4endl;
-      return colours.at("warning");
-    }
-}
-
-G4Colour* BDSColours::GetMagnetColour(G4int magnetOrder) const
-{
-  if (magnetOrder < 1)
-    { // too low order
-      return colours.at("warning");
-    }
-  else if (magnetOrder > 5)
-    { // high order multipole
-      return colours.at("multipole");
-    }
-  else
-    { // specified order
-      return colours.at(magnetName.at(magnetOrder));
+      G4cout << __METHOD_NAME__ << "WARNING: invalid colour \"" << type << "\"" << G4endl;
+      return colours.at("default");
     }
 }
