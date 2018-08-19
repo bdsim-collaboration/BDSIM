@@ -137,7 +137,13 @@ void BDSColours::DefineColour(G4String name,
 			      G4double blue,
 			      G4double alpha)
 {
-
+  if (colours.find(name) != colours.end())
+    {
+      G4cerr << "Colour \"" << name
+	     << "\" is already defined - clashing definitions" << G4endl;
+      exit(1);
+    }
+  
   BDS::EnsureInLimits(red,0,255);
   BDS::EnsureInLimits(green,0,255);
   BDS::EnsureInLimits(blue,0,255);
@@ -177,12 +183,6 @@ G4Colour* BDSColours::GetColour(G4String type)
     {
       colourName = type.substr(0, type.find(":"));
       canDefine  = true;
-      if (colours.find(colourName) != colours.end())
-	{
-	  G4cerr << "Colour \"" << colourName
-		 << "\" is already defined - clashing definitions" << G4endl;
-	  exit(1);
-	}
     }
     
   auto it = colours.find(colourName);
@@ -198,16 +198,12 @@ G4Colour* BDSColours::GetColour(G4String type)
       G4String rgb = type.substr(type.find(":")+1); // everything after ':'
       std::stringstream ss(rgb);
       ss >> r >> g >> b;
-      BDS::EnsureInLimits(r,0,255);
-      BDS::EnsureInLimits(g,0,255);
-      BDS::EnsureInLimits(b,0,255);
-      G4Colour* newColour = new G4Colour(r/255.,g/255.,b/255.);
-      colours[colourName] = newColour;
-      return newColour;
+      DefineColour(colourName,r,g,b);
+      return colours[colourName];
     }
   else
     {// colour not found
-      G4cout << __METHOD_NAME__ << "WARNING: invalid colour \"" << type << "\"" << G4endl;
+      G4cout << __METHOD_NAME__ << "WARNING: unknown colour \"" << type << "\"" << G4endl;
       return colours.at("default");
     }
 }
