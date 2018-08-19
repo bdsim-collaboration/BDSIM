@@ -1,4 +1,4 @@
-V1.2 - 2018 / 07 / ??
+V1.2 - 2018 / 08 / ??
 =====================
 
 Highlights
@@ -27,7 +27,8 @@ New Features
   `hkick` or `vkick`.
 * Support for dipole poleface curvature in tracking.
 * Pole face rotations and fringe fields are now available for hkickers and vkickers, both thick and thin.
-
+* New ability to specify the colour of any magnet and most elements through custom colour definition.
+  
 General
 -------
 
