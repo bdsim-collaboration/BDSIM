@@ -245,6 +245,9 @@ private:
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
+  /// Prepare all colours defined in the parser.
+  void PrepareColours();
+
   /// Prepare all crystals in defined the parser.
   void PrepareCrystals();
 

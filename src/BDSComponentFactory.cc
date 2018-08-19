@@ -1770,6 +1770,19 @@ void BDSComponentFactory::PrepareCavityModels()
     }
 }
 
+void BDSComponentFactory::PrepareColours()
+{
+  BDSColours* allColours = BDSColours::Instance();
+  for (auto colour : BDSParser::Instance()->GetColours())
+    {
+      allColours->DefineColour(G4String(colour.name),
+			       (G4double)colour.red,
+			       (G4double)colour.green,
+			       (G4double)colour.blue,
+			       (G4double)colour.alpha);
+    }
+}
+
 void BDSComponentFactory::PrepareCrystals()
 {
   for (auto& model : BDSParser::Instance()->GetCrystals())

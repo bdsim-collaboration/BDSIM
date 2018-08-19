@@ -42,6 +42,12 @@ public:
   /// Get colour from magnet order (1=dipole, 2=quadrupole, etc.)
   G4Colour* GetMagnetColour(G4int magnetOrder) const;
 
+  /// Define a new colour.
+  void DefineColour(G4String name,
+		    G4double red,
+		    G4double green,
+		    G4double blue,
+		    G4double alpha = 1);
 
   /// Print out a full list of colours using Sphinx rst table syntax. Looks
   /// nice and easy to regenerate table for the manual.

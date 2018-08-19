@@ -131,6 +131,21 @@ BDSColours::BDSColours()
 #endif
 }
 
+void BDSColours::DefineColour(G4String name,
+			      G4double red,
+			      G4double green,
+			      G4double blue,
+			      G4double alpha)
+{
+
+  BDS::EnsureInLimits(red,0,255);
+  BDS::EnsureInLimits(green,0,255);
+  BDS::EnsureInLimits(blue,0,255);
+  BDS::EnsureInLimits(alpha,0,1);
+  G4Colour* newColour = new G4Colour(red/255.,green/255.,blue/255.,alpha);
+  colours[name] = newColour;
+}
+
 void BDSColours::Print()
 {
   // auto-generate the manual colour table in rst syntax
