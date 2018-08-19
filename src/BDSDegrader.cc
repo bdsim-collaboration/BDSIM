@@ -249,29 +249,25 @@ void BDSDegrader::Build()
   // Translation of individual wedge components
   G4ThreeVector rightwedgepos(xoffsetLeft, 0, 0);
   G4ThreeVector leftwedgepos(xoffsetRight, 0, 0);
-  
     
   // Placement of individual wedge components
   G4PVPlacement* leftwedgePV = new G4PVPlacement(leftRot,           // rotation
-                                            leftwedgepos,           // position
-                                            leftWedgeLV,            // its logical volume
-                                            name + "_leftwedge_pv", // its name
-                                            containerLogicalVolume, // its mother  volume
-                                            false,                  // no boolean operation
-                                            0,                      // copy number
-                                            checkOverlaps);
-
-
-    
+						 leftwedgepos,           // position
+						 leftWedgeLV,            // its logical volume
+						 name + "_leftwedge_pv", // its name
+						 containerLogicalVolume, // its mother  volume
+						 false,                  // no boolean operation
+						 0,                      // copy number
+						 checkOverlaps);
         
   G4PVPlacement* rightwedgePV = new G4PVPlacement(rightRot,         // rotation
-                                            rightwedgepos,          // position
-                                            rightWedgeLV,           // its logical volume
-                                            name + "_rightwedge_pv",// its name
-                                            containerLogicalVolume, // its mother  volume
-                                            false,                  // no boolean operation
-                                            0,                      // copy number
-                                            checkOverlaps);
+						  rightwedgepos,          // position
+						  rightWedgeLV,           // its logical volume
+						  name + "_rightwedge_pv",// its name
+						  containerLogicalVolume, // its mother  volume
+						  false,                  // no boolean operation
+						  0,                      // copy number
+						  checkOverlaps);
     
   RegisterPhysicalVolume(leftwedgePV);
   RegisterPhysicalVolume(rightwedgePV);

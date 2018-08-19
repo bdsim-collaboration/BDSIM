@@ -72,7 +72,7 @@ void BDSShield::BuildContainerLogicalVolume()
 
 void BDSShield::BuildShield()
 {
-  G4VSolid* outerSolid = new G4Box(name+"_outer_solid",
+  G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   chordLength*0.5 - lengthSafety);
@@ -82,28 +82,28 @@ void BDSShield::BuildShield()
   G4LogicalVolume* shieldLV;
 
   // only subtract inner solid if shield aperture is finite.
-  if (BDS::IsFinite(xSize) and BDS::IsFinite(ySize))
+  if (BDS::IsFinite(xSize) && BDS::IsFinite(ySize))
     {
-	  G4VSolid *innerSolid = new G4Box(name + "_inner_solid",
-					   xSize,
-					   ySize,
-					   chordLength); // extra long for unambiguous subtraction
-	  RegisterSolid(innerSolid);
-
-	  shieldSolid = new G4SubtractionSolid(name + "shield_solid",
-										outerSolid,   // this
-										innerSolid);  // minus this
+      G4VSolid* innerSolid = new G4Box(name + "_inner_solid",
+				       xSize,
+				       ySize,
+				       chordLength); // extra long for unambiguous subtraction
+      RegisterSolid(innerSolid);
+      
+      shieldSolid = new G4SubtractionSolid(name + "shield_solid",
+					   outerSolid,   // this
+					   innerSolid);  // minus this
       RegisterSolid(shieldSolid);
-
-	  shieldLV = new G4LogicalVolume(shieldSolid,
-							  material,
-							  name+"_shield_lv");
-	}
+      
+      shieldLV = new G4LogicalVolume(shieldSolid,
+				     material,
+				     name+"_shield_lv");
+    }
   else
     {
-	  shieldLV = new G4LogicalVolume(outerSolid,
-							  material,
-							  name+"_shield_lv");
+      shieldLV = new G4LogicalVolume(outerSolid,
+				     material,
+				     name+"_shield_lv");
     }
   
   RegisterLogicalVolume(shieldLV);
@@ -111,9 +111,7 @@ void BDSShield::BuildShield()
 
   G4VisAttributes* shieldVisAttr = new G4VisAttributes(colour);
   shieldVisAttr->SetVisibility(true);
-
   shieldLV->SetVisAttributes(shieldVisAttr);
-
   RegisterVisAttributes(shieldVisAttr);
 
   G4PVPlacement* shieldPV = new G4PVPlacement(nullptr,
