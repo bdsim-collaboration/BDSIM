@@ -1955,6 +1955,16 @@ G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
     {return BDSColours::Instance()->GetColour(colour);}
 }
 
+G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
+						 G4String defaultMaterialName)
+{
+  G4String materialName = el->material;
+  if (materialName.empty())
+    {return BDSMaterials::Instance()->GetMaterial(defaultMaterialName);}
+  else
+    {return BDSMaterials::Instance()->GetMaterial(materialName);}
+}
+
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,
 					      BDSAcceleratorComponent* component) const
 {

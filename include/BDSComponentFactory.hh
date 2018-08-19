@@ -159,6 +159,10 @@ public:
   /// Checks if colour is specified for element, else uses the default for that element type.
   static G4Colour* PrepareColour(GMAD::Element const* element);
 
+  /// Checks if a material is named in Element::material, else uses the supplied default.
+  static G4Material* PrepareMaterial(GMAD::Element const* element,
+				     G4String defaultMaterialName);
+
   /// Utility function to check if the combination of horizontal width, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
