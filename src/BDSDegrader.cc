@@ -16,13 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSDegrader.hh"
-
 #include "BDSAcceleratorComponent.hh"
-#include "BDSColours.hh"
-#include "BDSMaterials.hh"
-
 #include "BDSDebug.hh"
+#include "BDSDegrader.hh"
 
 #include "G4Box.hh"
 #include "G4ExtrudedSolid.hh"
@@ -41,14 +37,16 @@ BDSDegrader::BDSDegrader(G4String   nameIn,
 			 G4double   wedgeLengthIn,
 			 G4double   degraderHeightIn,
 			 G4double   degraderOffsetIn,
-			 G4String   degraderMaterialIn):
+			 G4Material* materialIn,
+			 G4Colour*   colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "degrader"),
   horizontalWidth(horizontalWidthIn),
   numberWedges(numberWedgesIn),
   wedgeLength(wedgeLengthIn),
   degraderHeight(degraderHeightIn),
   degraderOffset(degraderOffsetIn),
-  degraderMaterial(degraderMaterialIn)
+  material(materialIn),
+  colour(colourIn)
 {;}
 
 BDSDegrader::~BDSDegrader()
@@ -87,11 +85,6 @@ void BDSDegrader::BuildContainerLogicalVolume()
       exit(1);
     }
   
-  if (degraderMaterial == "")
-    {
-      degraderMaterial = "carbon";
-    }
-  
   containerSolid = new G4Box(name + "_container_solid",
 			     horizontalWidth*0.5,
 			     horizontalWidth*0.5,
@@ -105,8 +98,6 @@ void BDSDegrader::BuildContainerLogicalVolume()
 void BDSDegrader::Build()
 {
   BDSAcceleratorComponent::Build();
-    
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(degraderMaterial);
     
   G4double wedgeBasewidth = chordLength/numberWedges - lengthSafety;
     
@@ -249,7 +240,7 @@ void BDSDegrader::Build()
   RegisterRotationMatrix(leftRot);
     
   // Wedge color
-  G4VisAttributes* degraderVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("degrader"));
+  G4VisAttributes* degraderVisAttr = new G4VisAttributes(colour);
   leftWedgeLV->SetVisAttributes(degraderVisAttr);
   rightWedgeLV->SetVisAttributes(degraderVisAttr);
 

@@ -1058,12 +1058,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
+  G4Colour* colour = PrepareColour(element);
+  G4Material* material = PrepareMaterial(element, "concrete");
+
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
 				    PrepareHorizontalWidth(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
-				    element->material,
+				    material,
+				    colour,
 				    bpInfo);
   return shield;
 }
@@ -1103,7 +1107,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
-			  element->material));
+			  PrepareMaterial(element, "carbon"),
+			  PrepareColour(element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
@@ -1144,12 +1149,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   return (new BDSUndulator(elementName,
 			   element->l * CLHEP::m,
 			   element->undulatorPeriod * CLHEP::m,
-               element->undulatorMagnetHeight * CLHEP::m,
-               PrepareHorizontalWidth(element),
+			   element->undulatorMagnetHeight * CLHEP::m,
+			   PrepareHorizontalWidth(element),
 			   element->undulatorGap * CLHEP::m,
 			   bpInfo,
 			   vacuumFieldInfo,
-               outerFieldInfo,
+			   outerFieldInfo,
 			   element->material));
 }
 
@@ -1588,13 +1593,13 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 
   // outer material
   G4Material* outerMaterial;
-  if(el->outerMaterial == "")
+  if(el->material == "")
     {
       G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(el->outerMaterial);}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(el->material);}
   info->outerMaterial = outerMaterial;
 
   // yoke direction
