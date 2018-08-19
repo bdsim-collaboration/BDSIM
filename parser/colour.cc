@@ -32,7 +32,7 @@ void Colour::clear()
   red   = 0;
   green = 0;
   blue  = 0;
-  alpha = 0;
+  alpha = 1; // so visible by default
 }
 
 void Colour::PublishMembers()
