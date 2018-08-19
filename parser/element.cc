@@ -183,9 +183,10 @@ void Element::PublishMembers()
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
- 
-  publish("outerMaterial",       &Element::outerMaterial);
+
   publish("material",            &Element::material);
+  publish("outerMaterial",       &Element::material);
+  alternativeNames["outerMaterial"] = "material";
   publish("yokeOnInside",        &Element::yokeOnInside);
   publish("hStyle",              &Element::hStyle);
   publish("vhRatio",             &Element::vhRatio);
@@ -433,7 +434,6 @@ void Element::flush()
 
   // magnet geometry
   magnetGeometryType  = "";
-  outerMaterial = "";
   horizontalWidth = 0;
   yokeOnInside  = true;
   hStyle             = -1;

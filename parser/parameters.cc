@@ -91,7 +91,6 @@ Parameters::Parameters()
   setMap["beampipeMaterial"]   = false;
   setMap["vacuumMaterial"]     = false;
   setMap["magnetGeometryType"] = false;
-  setMap["outerMaterial"]      = false;
   setMap["horizontalWidth"]    = false;
   setMap["yokeOnInside"]       = false;
   setMap["hStyle"]             = false;
