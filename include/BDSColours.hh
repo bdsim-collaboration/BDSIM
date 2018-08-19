@@ -42,6 +42,11 @@ public:
   /// Get colour from magnet order (1=dipole, 2=quadrupole, etc.)
   G4Colour* GetMagnetColour(G4int magnetOrder) const;
 
+
+  /// Print out a full list of colours using Sphinx rst table syntax. Looks
+  /// nice and easy to regenerate table for the manual.
+  void Print();
+
 private:
   BDSColours(); ///< Private constructor as singleton
   static BDSColours* instance;

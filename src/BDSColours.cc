@@ -127,23 +127,31 @@ BDSColours::BDSColours()
   colours["yellow"]  = new G4Colour(G4Colour::Yellow());
 
 #ifdef BDSDEBUG
-  // auto-generate the manual coolour table in rst syntax
+  Print();
+#endif
+}
+
+void BDSColours::Print()
+{
+  // auto-generate the manual colour table in rst syntax
   G4cout << __METHOD_NAME__ << "Colour Table" << G4endl;
-  G4cout << "+-----------------+-----+-----+-----+" << G4endl;
-  G4cout << "| Name            |  R  |  G  |  B  |" << G4endl;
-  G4cout << "+=================+=====+=====+=====+" << G4endl;
+  G4cout << "This is only the pre-defined BDSIM colours and not the user-defined ones." << G4endl;
+  G4cout << "+--------------------+-----+-----+-----+-----+" << G4endl;
+  G4cout << "| Name               |  R  |  G  |  B  |  A  |" << G4endl;
+  G4cout << "+====================+=====+=====+=====+=====+" << G4endl;
   for (const auto& col : colours)
     {
       int r = (int)(col.second->GetRed() * 255);
       int g = (int)(col.second->GetGreen() * 255);
       int b = (int)(col.second->GetBlue() * 255);
-      G4cout << "| " << std::setw(16) << col.first << "| "
+      double a = col.second->GetAlpha();
+      G4cout << "| " << std::setw(19) << col.first << "| "
 	     << std::setw(3) << r << " | "
 	     << std::setw(3) << g << " | "
-	     << std::setw(3) << b << " |" << G4endl;
-      G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+	     << std::setw(3) << b << " | "
+	     << std::setw(3) << a << " |" << G4endl;
+      G4cout << "+--------------------+-----+-----+-----+-----+" << G4endl;
     }
-#endif
 }
 
 G4Colour* BDSColours::GetColour(G4String type)
