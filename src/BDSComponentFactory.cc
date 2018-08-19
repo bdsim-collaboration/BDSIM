@@ -83,6 +83,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
+#include "parser/newcolour.h"
 #include "parser/crystal.h"
 
 #include <cmath>

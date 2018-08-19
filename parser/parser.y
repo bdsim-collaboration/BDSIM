@@ -90,7 +90,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUONSPOILER MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER RMATRIX UNDULATOR
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT COLOUR CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -245,12 +245,12 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<Query>();
          }
      }
-      | VARIABLE ':' colour
+      | VARIABLE ':' newcolour
      {
          if(execute) {
-             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : colour" << std::endl;
-             Parser::Instance()->SetValue<Colour>("name", *($1));
-             Parser::Instance()->Add<Colour>();
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : newcolour" << std::endl;
+             Parser::Instance()->SetValue<NewColour>("name", *($1));
+             Parser::Instance()->Add<NewColour>();
          }
      }
       | VARIABLE ':' crystal
@@ -349,7 +349,7 @@ atom        : ATOM        ',' atom_options
 material    : MATERIAL    ',' material_options
 region      : REGION      ',' region_options
 placement   : PLACEMENT   ',' placement_options
-colour      : COLOUR      ',' colour_options
+newcolour   : NEWCOLOUR   ',' colour_options
 crystal     : CRYSTAL     ',' crystal_options
 field       : FIELD       ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
@@ -362,7 +362,7 @@ object_noparams : MATERIAL
                 | ATOM
                 | REGION
                 | PLACEMENT
-                | COLOUR
+                | NEWCOLOUR
                 | CRYSTAL
                 | FIELD
                 | CAVITYMODEL
@@ -785,12 +785,12 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<Placement>();
             }
         }
-        | COLOUR ',' colour_options // colour
+        | NEWCOLOUR ',' colour_options // colour
         {
           if(execute)
             {
-              if(ECHO_GRAMMAR) std::cout << "command -> COLOUR" << std::endl;
-              Parser::Instance()->Add<Colour>();
+              if(ECHO_GRAMMAR) std::cout << "command -> NEWCOLOUR" << std::endl;
+              Parser::Instance()->Add<NewColour>();
             }
         }
         | CRYSTAL ',' crystal_options // crystal
@@ -966,9 +966,9 @@ colour_options_extend : /* nothing */
                      | ',' colour_options
 
 colour_options : paramassign '=' aexpr colour_options_extend
-                { if(execute) Parser::Instance()->SetValue<Colour>((*$1),$3);}
+                { if(execute) Parser::Instance()->SetValue<NewColour>((*$1),$3);}
               | paramassign '=' string colour_options_extend
-                { if(execute) Parser::Instance()->SetValue<Colour>((*$1),*$3);}
+                { if(execute) Parser::Instance()->SetValue<NewColour>((*$1),*$3);}
 
 crystal_options_extend : /* nothing */
                      | ',' crystal_options

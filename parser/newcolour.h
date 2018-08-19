@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COLOUR_H
-#define COLOUR_H
+#ifndef NEWCOLOUR_H
+#define NEWCOLOUR_H
 
 #include <iomanip>
 #include <iostream>
@@ -29,11 +29,14 @@ namespace GMAD
 {
   /**
    * @brief Colour definition for parser.
+   *
+   * This is called "newcolour" instead of colour to avoid the 
+   * conflict with Element::colour for the parser.
    * 
    * @author Laurie Nevay
    */
   
-  class Colour: public Published<Colour>
+  class NewColour: public Published<NewColour>
   {
   public:
     std::string name;                 ///< Name of object.
@@ -43,7 +46,7 @@ namespace GMAD
     double alpha;
     
     /// Constructor
-    Colour();
+    NewColour();
     /// Reset
     void clear();
     /// Print some properties
@@ -58,7 +61,7 @@ namespace GMAD
   };
   
   template <typename T>
-    void Colour::set_value(std::string property, T value)
+    void NewColour::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "colour> Setting value " << std::setw(25) << std::left << property << value << std::endl;

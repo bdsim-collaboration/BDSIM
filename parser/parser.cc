@@ -646,7 +646,7 @@ void Parser::Overwrite(const std::string& objectName)
   // vectors
   if (extended == false) {
     if (      (extended = FindAndExtend<Atom>       (objectName)) ) {}
-    else if ( (extended = FindAndExtend<Colour>     (objectName)) ) {}
+    else if ( (extended = FindAndExtend<NewColour>  (objectName)) ) {}
     else if ( (extended = FindAndExtend<Crystal>    (objectName)) ) {}
     else if ( (extended = FindAndExtend<Field>      (objectName)) ) {}
     else if ( (extended = FindAndExtend<Material>   (objectName)) ) {}
@@ -736,10 +736,10 @@ namespace GMAD {
   std::vector<Region>& Parser::GetList<Region>(){return region_list;}
 
   template<>
-  Colour& Parser::GetGlobal(){return colour;}
+  NewColour& Parser::GetGlobal(){return colour;}
 
   template<>
-  std::vector<Colour>& Parser::GetList<Colour>(){return colour_list;}
+  std::vector<NewColour>& Parser::GetList<NewColour>(){return colour_list;}
   
   template<>
   Crystal& Parser::GetGlobal(){return crystal;}

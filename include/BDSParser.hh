@@ -84,7 +84,7 @@ public:
   inline const std::vector<GMAD::CavityModel>& GetCavityModels() const {return cavitymodel_list;}
 
   /// Return colour model list.
-  inline const std::vector<GMAD::Colour>& GetColours() const {return colour_list;}
+  inline const std::vector<GMAD::NewColour>& GetColours() const {return colour_list;}
 
   /// Return crystal model list.
   inline const std::vector<GMAD::Crystal>& GetCrystals() const {return crystal_list;}

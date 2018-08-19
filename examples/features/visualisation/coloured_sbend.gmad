@@ -1,5 +1,5 @@
-purple: colour, red=128, green=0, blue=128;
-orange: colour, red=255, green=140, blue=0;
+purple: newcolour, red=128, green=0, blue=128;
+orange: newcolour, red=255, green=140, blue=0;
 
 d1: drift, l=1*m;
 sb1: sbend, l=2*m, angle=0.1, colour="purple";

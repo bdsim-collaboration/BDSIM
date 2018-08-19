@@ -127,7 +127,7 @@ undulator { return UNDULATOR; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
-colour { return COLOUR; }
+newcolour { return NEWCOLOUR; }
 crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }

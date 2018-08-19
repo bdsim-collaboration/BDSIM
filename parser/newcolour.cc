@@ -16,17 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "colour.h"
+#include "newcolour.h"
 
 using namespace GMAD;
 
-Colour::Colour()
+NewColour::NewColour()
 {
   clear();
   PublishMembers();
 }
 
-void Colour::clear()
+void NewColour::clear()
 {
   name  = "";
   red   = 0;
@@ -35,16 +35,16 @@ void Colour::clear()
   alpha = 1; // so visible by default
 }
 
-void Colour::PublishMembers()
+void NewColour::PublishMembers()
 {
-  publish("name",  &Colour::name);
-  publish("red",   &Colour::red);
-  publish("green", &Colour::green);
-  publish("blue",  &Colour::blue);
-  publish("alpha", &Colour::alpha);
+  publish("name",  &NewColour::name);
+  publish("red",   &NewColour::red);
+  publish("green", &NewColour::green);
+  publish("blue",  &NewColour::blue);
+  publish("alpha", &NewColour::alpha);
 }
 
-void Colour::print()const
+void NewColour::print()const
 {
   std::cout << "colour: "
 	    << "name "  << name  << std::endl
