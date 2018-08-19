@@ -141,6 +141,8 @@ void BDSColours::DefineColour(G4String name,
     {
       G4cerr << "Colour \"" << name
 	     << "\" is already defined - clashing definitions" << G4endl;
+      G4cout << "Already defined colours are " << G4endl;
+      Print();
       exit(1);
     }
   
