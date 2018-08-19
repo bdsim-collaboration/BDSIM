@@ -106,6 +106,7 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
+  PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
   PrepareCrystals();     // prepare crystal model info from parser
 }
