@@ -790,7 +790,7 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
           if(execute)
             {
               if(ECHO_GRAMMAR) std::cout << "command -> COLOUR" << std::endl;
-              Parser::Instance()->Add<COLOUR>();
+              Parser::Instance()->Add<Colour>();
             }
         }
         | CRYSTAL ',' crystal_options // crystal
