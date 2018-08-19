@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 
 #include "BDSDebug.hh"
+#include "BDSColours.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSUtilities.hh"
@@ -81,6 +82,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "output", 1, 0, 0 },
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
+					{ "colours",   0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0 },
 					{ "seed",           1, 0, 0},
@@ -188,6 +190,11 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
 	{options.set_value("visMacroFileName", BDS::GetCurrentDir() + "/" + std::string(optarg));}
+      else if( !strcmp(optionName, "colours") )
+	{
+	  BDSColours::Instance()->Print();
+	  exit(0);// return after printing colour list
+	}
       else if( !strcmp(optionName, "materials") )
 	{
 	  BDSMaterials::Instance()->ListMaterials();
@@ -306,6 +313,7 @@ void BDSExecOptions::Usage() const
 	<<"--generatePrimariesOnly      : generate N primary particle coordinates without simulation then quit"<<G4endl
 	<<"--help                       : display this message"<<G4endl
 	<<"--materials                  : list materials included in bdsim by default"<<G4endl
+	<<"--colours                    : list available colours included in bdsim by default"<<G4endl
 	<<"--ngenerate=N                : the number of primary events to simulate - overrides the ngenerate " << G4endl
 	<<"                               option in the input gmad file" << G4endl
 	<<"--output=<fmt>               : output format (rootevent|none), default rootevent"<<G4endl
