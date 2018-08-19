@@ -1949,7 +1949,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
 G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
 {
   G4String colour = el->colour;
-  if (colour == "")
+  if (colour.empty())
     {return BDSColours::Instance()->GetColour(GMAD::typestr(el->type));}
   else
     {return BDSColours::Instance()->GetColour(colour);}
