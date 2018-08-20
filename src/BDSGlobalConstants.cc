@@ -66,7 +66,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
 
-  //beampipe
+  // beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,
 					     options.aper2 * CLHEP::m,
