@@ -239,6 +239,7 @@ namespace GMAD
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
     bool     sampleElementsWithPoleface;
     double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
+    bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
 
     /// Output related options
     int         numberOfEventsPerNtuple;
