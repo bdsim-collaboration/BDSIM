@@ -18,17 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
-#include "BDSParticle.hh"
-#include "BDSRunManager.hh"
 #include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
-#include "BDSTrajectory.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
-#include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
@@ -88,7 +84,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
-  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global)
+  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
@@ -98,10 +94,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   // so always use the pre step point for volume identification.
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   G4int samplerID   = preStepPoint->GetTouchable()->GetVolume()->GetCopyNo();
-  
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Sampler ID: " << samplerID << G4endl;
-#endif
 
   //Initialize variables for the local position and direction
   G4ThreeVector localPosition;
