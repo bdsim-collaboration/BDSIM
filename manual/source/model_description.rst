@@ -4473,15 +4473,48 @@ Colours
 Most items allow you to define a custom colour for them to aid in visualisation. This includes
 all magnets and collimators, the shield and degrader. The colour can be defined with red, green
 and blue components, as well as a level of transparency, alpha. RGB values can range from 0
-to 255. Once defined, a colour may not be redefined. The syntax to define a colour is::
+to 255. Once defined, a colour may not be redefined. The syntax to define a colour is
 
-  NAME: newcolour, red=#, green=#, blue=#, alpha=#
+.. code-block:: none
+
+		NAME: newcolour, red=#, green=#, blue=#, alpha=#
 
 Examples::
   
   purple: newcolour, red=128, green=0, blue=128;
   col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="purple", material="copper";
 
+
+and::
+
+  purple: newcolour, red=128, green=0, blue=128;
+  orange: newcolour, red=255, green=140, blue=0;
+  nicegreen: newcolour, red=0, green=128, blue=0;
+
+  d1: drift, l=1*m;
+  basebend: sbend, l=2*m, angle=0.9;
+  sb1: basebend, colour="purple";
+  sb3: basebend, colour="nicegreen";
+  sb4: basebend, colour="yellow";
+  sb5: basebend, colour="orange";
+  sb6: basebend, colour="red";
+
+  beamline: line=(d1,sb1,d1,basebend,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
+  use, beamline;
+  sample, all;
+
+  beam,  particle="proton",
+         energy= 50*GeV;
+
+This examples if from `bdsim/examples/features/visualisation/coloured_sbend.gmad` and
+produces the model shown below.
+
+.. figure:: figures/visualisation/coloured_sbends.png
+	    :width: 80%
+	    :align: center
+
+
+* Colours can only be specified on an element-by-element basis.
 * Colour names are case-sensitive.
 * New colour names must not clash with predefined BDSIM colour names.
 
