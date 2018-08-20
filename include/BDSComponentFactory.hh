@@ -91,7 +91,8 @@ public:
 
   /// Public creation for object that accounts for slight offset between ends of a ring.
   /// The z component of the delta three vector is used for the length of the teleporter.
-  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
+  BDSAcceleratorComponent* CreateTeleporter(const G4double teleporterLength,
+					    const G4Transform3D transformIn);
 
   /// Create the tilt and offset information object by inspecting the parser element
   static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);

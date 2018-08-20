@@ -19,15 +19,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSTeleporter.hh"
 
 #include "globals.hh" //G4 global constants & types
 #include "G4Box.hh" 
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <cmath>
 
@@ -62,22 +65,74 @@ void BDSTeleporter::BuildContainerLogicalVolume()
   SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
 
-G4ThreeVector BDS::CalculateTeleporterDelta(BDSBeamline* thebeamline)
+G4Transform3D BDS::CalculateTeleporterDelta(const BDSBeamline* beamline,
+					    G4double& teleporterLength)
 {
-  if (thebeamline->empty())
-    {return G4ThreeVector();}
+  if (beamline->empty())
+    {// can't do anything for an empty beam line
+      teleporterLength = 0;
+      return G4Transform3D();
+    }
+  
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
-  G4ThreeVector lastitemposition  = thebeamline->back()->GetReferencePositionEnd();
-  G4ThreeVector firstitemposition = thebeamline->front()->GetReferencePositionStart();
-  G4ThreeVector delta             = lastitemposition - firstitemposition;
+  // remember beam line could have finite offset and rotation to start with
+  auto firstElement = beamline->front();
+  auto lastElement  = beamline->back();
+  G4ThreeVector lastItemPosition  = lastElement->GetReferencePositionEnd();
+  G4ThreeVector firstItemPosition = firstElement->GetReferencePositionStart();
+  G4ThreeVector positionDelta     = firstItemPosition - lastItemPosition;
   
-  G4cout << "Calculating Teleporter delta"   << G4endl;
-  G4cout << "Last item end position:       " << lastitemposition  << " mm" << G4endl;
-  G4cout << "First item start position:    " << firstitemposition << " mm" << G4endl;
-  G4cout << "Teleport delta:               " << delta << " mm" << G4endl;
+  // we must subtract off the required padding length from the teleporter
+  // delta 3-vector (note, along the axis of the beam line at the end)
+  const G4double sL = BDSSamplerPlane::ChordLength();
+  const G4double pL = beamline->PaddingLength();
 
-  return delta;
+  // unit z direction at end of current beam line
+  G4ThreeVector lastItemUnitDir = G4ThreeVector(0,0,1).transform(*(lastElement->GetReferenceRotationEnd()));
+
+  // project the length of the position delta onto the beam line direction.
+  G4double rawLength = positionDelta.dot(lastItemUnitDir);
+
+  // minimum space for the circular mechanics are:
+  // 1x terminator with sampler chord length
+  // 1x teleporter with (minimum) 1x sampler chord length
+  // 3x padding length
+  G4double minimumRequiredSpace = 2*sL + 3*pL;
+
+  if (rawLength > 1*CLHEP::m)
+    {
+      G4cout << G4endl << "Error - the calculated teleporter delta is above 1m! "
+	     << "The teleporter" << G4endl << "was only intended for small shifts "
+	     << "- the teleporter will not be built." << G4endl << G4endl;
+      exit(1);
+    }
+  else if (rawLength < minimumRequiredSpace)
+    {// should protect against -ve length teleporter
+      G4cout << G4endl << "Insufficient space between the first and last elements "
+	     << "in the beam line" << G4endl << "to fit the terminator and teleporter "
+	     << "- these will not be built." << G4endl;
+      G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is "
+	     << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
+      exit(1);
+    }
+
+  // update input reference variable (ie 2nd output variable)
+  teleporterLength = rawLength - (sL + 3*pL);
+  positionDelta -= lastItemUnitDir * (sL + 3*pL); // subtraction only in local z
+  
+  auto firstItemRotation = firstElement->GetReferenceRotationStart();
+  auto lastItemRotation  = lastElement->GetReferenceRotationEnd();
+  auto rotation = (*firstItemRotation) * (*lastItemRotation);
+
+  G4Transform3D result = G4Transform3D(rotation, positionDelta);
+  
+  G4cout << "Calculating Teleporter delta" << G4endl;
+  G4cout << "Last item end position:             " << lastItemPosition  << " mm" << G4endl;
+  G4cout << "First item start position:          " << firstItemPosition << " mm" << G4endl;
+  G4cout << "Teleporter delta (pos):             " << positionDelta     << " mm" << G4endl;
+  G4cout << "Rotation: " << rotation << G4endl;
+  return result;
 }
 
 BDSTeleporter::~BDSTeleporter()
