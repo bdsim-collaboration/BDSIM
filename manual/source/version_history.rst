@@ -66,6 +66,8 @@ General
 * `square` distribution now calls random number generator for each coordinate every time for
   consistency. Distribution will be different for the same seed as compared
   to a previous version of BDSIM.
+* Memory usage for sampler hits has been significantly reduced with no affect to the output
+  information stored.
 
 Output Changes
 --------------

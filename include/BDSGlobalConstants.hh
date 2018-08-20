@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
-#include "BDSParticle.hh"
 #include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
@@ -259,7 +258,6 @@ public:
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
-  inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      VisibleDebugVisAttr()     const {return visibleDebugVisAttr;}
   inline G4VisAttributes*      ContainerVisAttr()        const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
@@ -270,7 +268,6 @@ public:
   /// @{ Setter
   inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
-  inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -329,9 +326,6 @@ private:
   /// Turn Control
   G4int turnsTaken;
 
-  /// initial particle for production of sampler hit
-  BDSParticle initialPoint;
-
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
@@ -345,8 +339,5 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
-
-inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
-{initialPoint = particle;}
 
 #endif
