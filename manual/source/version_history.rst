@@ -66,6 +66,8 @@ General
 * `square` distribution now calls random number generator for each coordinate every time for
   consistency. Distribution will be different for the same seed as compared
   to a previous version of BDSIM.
+* Memory usage for sampler hits has been significantly reduced with no affect to the output
+  information stored.
 
 Output Changes
 --------------
@@ -131,6 +133,8 @@ Bug Fixes
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
 * `square` beam distiribution now varies with :code:`envelopeT`.
 * Fixed S coordinate in output. Issues #247 and #248.
+* Fixed the setting of the sampler diameter where the user specifies a smaller one than that calcualted
+  from the minimum bending radius.
 
 Utilities
 ---------

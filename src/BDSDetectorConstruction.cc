@@ -121,11 +121,18 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
   G4double curvilinearRadius = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
   if (maxBendingRatio > 0.4) // max ratio for a 2.5m sampler diameter
     {
-      curvilinearRadius = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
-      G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
-	     << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
-	     << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
-      BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
+      G4double curvilinearRadiusBends = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
+
+      // check it's smaller - the user may have already specified a smaller sampler diameter
+      // and htat should take precedence
+      if (curvilinearRadiusBends < curvilinearRadius)
+	{
+	  curvilinearRadius = curvilinearRadiusBends;
+	  G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
+		 << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
+		 << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
+	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
+	}
     }
 }
 

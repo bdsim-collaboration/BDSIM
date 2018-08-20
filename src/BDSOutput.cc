@@ -344,7 +344,7 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
     {return;}
   for (int i = 0; i < hits->entries(); i++)
     {
-      G4int samplerID = (*hits)[i]->GetSamplerID();
+      G4int samplerID = (*hits)[i]->samplerID;
       samplerID += 1; // offset index by one due to primary branch.
       samplerTrees[samplerID]->Fill((*hits)[i]);
     }

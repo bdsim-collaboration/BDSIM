@@ -18,16 +18,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
-#include "BDSParticle.hh"
-#include "BDSRunManager.hh"
+#include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
-#include "BDSTrajectory.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
-#include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
@@ -87,7 +84,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   G4double energy   = track->GetTotalEnergy();       // total track energy
   G4int turnstaken  = globals->TurnsTaken();         // turn Number
   G4ThreeVector pos = track->GetPosition();          // current particle position (global)
-  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global)
+  G4ThreeVector mom = track->GetMomentumDirection(); // current particle direction (global) (unit)
   G4double weight   = track->GetWeight();            // weighting
   
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
@@ -97,10 +94,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
   // so always use the pre step point for volume identification.
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   G4int samplerID   = preStepPoint->GetTouchable()->GetVolume()->GetCopyNo();
-  
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Sampler ID: " << samplerID << G4endl;
-#endif
 
   //Initialize variables for the local position and direction
   G4ThreeVector localPosition;
@@ -132,60 +125,31 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
       localDirection = globalToLocal * (HepGeom::Vector3D<G4double>)mom;
     }
 
-  BDSParticle local(localPosition,localDirection,energy,T);
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Local coordinates: " << local << G4endl;
-#endif
-
   const BDSSamplerInfo& info = registry->GetInfo(samplerID);
-  G4String samplerName = info.Name();
   G4double s           = info.SPosition();
   G4int beamlineIndex  = info.BeamlineIndex();
-  
-  G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  nEvent += globals->EventNumberOffset();
   G4int    PDGtype     = track->GetDefinition()->GetPDGEncoding();
   G4String pName       = track->GetDefinition()->GetParticleName();
 
-  // more advanced / detailed information
-  G4ThreeVector vtx               = track->GetVertexPosition();
-  G4ThreeVector dir               = track->GetVertexMomentumDirection();
-  G4ThreeVector posLastScatter    = G4ThreeVector(); //bdsTraj->GetPositionOfLastScatter(track);
-  G4ThreeVector momDirLastScatter = G4ThreeVector(); // bdsTraj->GetMomDirAtLastScatter(track);
-  G4double timeLastScatter        = 0.0;             // bdsTraj->GetTimeAtLastScatter(track);
-  G4double energyLastScatter      = 0.0;             // bdsTraj->GetEnergyAtLastScatter(track);
-  G4double vertexEnergy           = 0.0;             // track->GetVertexKineticEnergy() + track->GetParticleDefinition()->GetPDGMass();
-  G4double vertexTime             = 0.0;             // bdsTraj->GetTimeAtVertex(track);
+  BDSParticleCoordsFull coords(localPosition.x(),
+			       localPosition.y(),
+			       localPosition.z(),
+			       localDirection.x(),
+			       localDirection.y(),
+			       localDirection.z(),
+			       T,
+			       s,
+			       energy,
+			       weight);
 
-  // store production/scatter point
-  BDSParticle lastScatter(posLastScatter,momDirLastScatter,energyLastScatter,timeLastScatter);
-  BDSParticle production(vtx,dir,vertexEnergy,vertexTime); //production point
-  BDSParticle global(pos,mom,energy,T); // global point
-
-  // process that creating the particle
-  G4String process = "";
-  if(track->GetCreatorProcess()) 
-    {process = track->GetCreatorProcess()->GetProcessName();}
-  
-  BDSSamplerHit* smpHit = new BDSSamplerHit(samplerName,
-                                            samplerID,
-                                            globals->GetInitialPoint(),
-                                            production,
-                                            lastScatter,
-                                            local,
-                                            global,
-                                            s,
-                                            weight,
-                                            PDGtype,
-                                            nEvent,
-                                            ParentID,
-                                            TrackID,
-                                            turnstaken,
-                                            process,
-                                            beamlineIndex);
+  BDSSamplerHit* smpHit = new BDSSamplerHit(samplerID,
+					    coords,
+					    PDGtype,
+					    ParentID,
+					    TrackID,
+					    turnstaken,
+					    beamlineIndex);
   
   SamplerCollection->insert(smpHit);
-
-  return true;    //The hit was stored
+  return true; // the hit was stored
 }
