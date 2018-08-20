@@ -39,7 +39,7 @@ public:
 
 private:
   BDSMagnetOuterFactoryLHCLeft(); //private constructor as singleton
-  static BDSMagnetOuterFactoryLHCLeft* _instance;
+  static BDSMagnetOuterFactoryLHCLeft* instance;
 };
 
 #endif

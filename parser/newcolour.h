@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TUNNEL_H
-#define TUNNEL_H
+#ifndef NEWCOLOUR_H
+#define NEWCOLOUR_H
 
 #include <iomanip>
 #include <iostream>
@@ -28,65 +28,50 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 namespace GMAD
 {
   /**
-   * @brief Tunnel class for parser
+   * @brief Colour definition for parser.
+   *
+   * This is called "newcolour" instead of colour to avoid the 
+   * conflict with Element::colour for the parser.
    * 
-   * @author Jochem Snuverink
+   * @author Laurie Nevay
    */
-  class Tunnel: public Published<Tunnel> {
-
+  
+  class NewColour: public Published<NewColour>
+  {
   public:
-    std::string name; ///< name
-    /// geometry type
-    std::string type;
-
-    /// radius, aperture parameters
-    double   aper1;
-    double   aper2;
-    /// offset x and y
-    double   offsetX, offsetY;
-    /// tunnel geometry parameters
-    double   thickness;
-    double   soilThickness;
-    double   floorOffset;
-
-    /// visibility
-    int      visible;
-  
-    /// material
-    std::string material;
-    /// soil
-    std::string soilMaterial;
-
-    /// start and end element by name
-    std::string startElement, endElement;
-  
-    /// constructor
-    Tunnel();
-    /// reset
+    std::string name;                 ///< Name of object.
+    double red;
+    double green;
+    double blue;
+    double alpha;
+    
+    /// Constructor
+    NewColour();
+    /// Reset
     void clear();
-    /// print some properties
+    /// Print some properties
     void print()const;
-    /// set methods by property name and value
+    /// Set methods by property name and value
     template <typename T>
-      void set_value(std::string property, T value);
+    void set_value(std::string property, T value);
 
   private:
-    /// Publish members
+    /// publish members
     void PublishMembers();
   };
   
   template <typename T>
-    void Tunnel::set_value(std::string property, T value)
+    void NewColour::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "tunnel> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+      std::cout << "colour> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
         set(this,property,value);
       }
       catch(std::runtime_error) {
-        std::cerr << "Error: tunnel> unknown option \"" << property << "\" with value " << value  << std::endl;
+        std::cerr << "Error: crystal> unknown option \"" << property << "\" with value " << value  << std::endl;
         exit(1);
       }
     }

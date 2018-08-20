@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 class BDSBeamPipe;
+class BDSMagnetOuterInfo;
 class G4Material;
 class G4VSolid;
 
@@ -53,132 +54,82 @@ public:
   virtual ~BDSMagnetOuterFactoryPolesBase(){;}
   
   /// sector bend outer volume
-  virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
-					   G4double     length,          // length [mm]
-					   BDSBeamPipe* beamPipe,        // beampipe
-					   G4double     horizontalWidth, // full width
-					   G4double     containerLength, // full length to make AccComp container
-					   G4double     angleIn,         // input face angle w.r.t. chord
-					   G4double     angleOut,        // output face angle w.r.t. chord
-					   G4bool       yokeOnLeft,      // build magnet yoke on left of bend
-					   G4bool       hStyle,                 // H style magnet (c shaped if not)
-					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false,
-					   G4double     vhRatio       = 1.0,
-					   G4double     coilWidthFraction  = 0.65,
-					   G4double     coilHeightFraction = 0.8);
+  virtual BDSMagnetOuter* CreateSectorBend(G4String           name,             // name
+					   G4double           length,           // full length [mm]
+					   const BDSBeamPipe* beamPipe,         // beampipe
+					   G4double           containerLength,  // full length to make AccComp container
+					   const BDSMagnetOuterInfo* recipe);   // recipe for geometry
 
   /// rectangular bend outer volume
-  virtual BDSMagnetOuter* CreateRectangularBend(G4String     name,              // name
-						G4double     length,            // length [mm]
-						BDSBeamPipe* beamPipe,          // beampipe
-						G4double     horizontalWidth,     // full width
-						G4double     containerLength,   // full length to make AccComp container
-						G4double     angleIn,           // input face angle w.r.t. chord
-						G4double     angleOut,          // output face angle w.r.t. chord
-						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
-						G4bool       hStyle,                 // H style magnet (c shaped if not)
-						G4Material*  outerMaterial = nullptr,// material for outer volume
-						G4bool       buildEndPiece = false,
-						G4double     vhRatio       = 1.0,
-						G4double     coilWidthFraction  = 0.65,
-						G4double     coilHeightFraction = 0.8);
+  virtual BDSMagnetOuter* CreateRectangularBend(G4String           name,             // name
+						G4double           length,           // full length [mm]
+						const BDSBeamPipe* beamPipe,         // beampipe
+						G4double           containerLength,  // full length to make AccComp container
+						const BDSMagnetOuterInfo* recipe);   // recipe for geometry
   
   /// quadrupole outer volume
   virtual BDSMagnetOuter* CreateQuadrupole(G4String     name,                  // name
 					   G4double     length,                // length [mm]
 					   BDSBeamPipe* beamPipe,              // beampipe
-					   G4double     horizontalWidth,       // full width
 					   G4double     containerLength,       // full length to make AccComp container
-					   G4Material*  outerMaterial = nullptr,// material for outer volume
-					   G4bool       buildEndPiece = false
-					   );
-
+					   const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// sextupole outer volume
   virtual BDSMagnetOuter* CreateSextupole(G4String     name,                  // name
 					  G4double     length,                // length [mm]
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+					  const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// octupole outer volume
   virtual BDSMagnetOuter* CreateOctupole(G4String     name,                  // name
 					 G4double     length,                // length [mm]
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// decapole outer volume
   virtual BDSMagnetOuter* CreateDecapole(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// solenoid  outer volume
   virtual BDSMagnetOuter* CreateSolenoid(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// general multipole outer volume - could be any 2N order multipole
   virtual BDSMagnetOuter* CreateMultipole(G4String     name,                  // name
-					  G4double     length,                // length [mm]
+					  G4double     length,                // length
 					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
 					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+					  const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// RF cavity outer volume
   virtual BDSMagnetOuter* CreateRfCavity(G4String     name,                  // name
-					 G4double     length,                // length [mm]
+					 G4double     length,                // length
 					 BDSBeamPipe* beamPipe,              // beampipe
-					 G4double     horizontalWidth,       // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr,// material for outer volume
-					 G4bool       buildEndPiece = false
-					 );
+					 const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// muon spoiler outer volume
-  virtual BDSMagnetOuter* CreateMuSpoiler(G4String     name,                  // name
-					  G4double     length,                // length [mm]
-					  BDSBeamPipe* beamPipe,              // beampipe
-					  G4double     horizontalWidth,       // full width
-					  G4double     containerLength,       // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr,// material for outer volume
-					  G4bool       buildEndPiece = false
-					  );
+  virtual BDSMagnetOuter* CreateMuonSpoiler(G4String     name,                  // name
+					    G4double     length,                // length
+					    BDSBeamPipe* beamPipe,              // beampipe
+					    G4double     containerLength,       // full length to make AccComp container
+					    const BDSMagnetOuterInfo* recipe);  // geometry recipe
 
   /// horizontal and vertical kicker outer volume
-  virtual BDSMagnetOuter* CreateKicker(G4String     name,                  // name
-				       G4double     length,                // length [mm]
-				       BDSBeamPipe* beamPipe,              // beampipe
-				       G4double     horizontalWidth,       // full width
-				       G4double     containerLength,       // full length to make AccComp container
-				       G4bool       yokeOnLeft,            // where c-shaped yoke is
-				       G4bool       vertical = true,       // is it a vertical kicker?
-				       G4Material*  outerMaterial = nullptr,// material for outer volume
-				       G4bool       buildEndPiece = false,
-				       G4bool       hStyle             = false,
-				       G4double     vhRatio            = 1.0,
-				       G4double     coilWidthFraction  = 0.65,
-				       G4double     coilHeightFraction = 0.8);
+  virtual BDSMagnetOuter* CreateKicker(G4String                  name,            // name
+				       G4double                  length,          // length
+				       const BDSBeamPipe*        beamPipe,        // beampipe
+				       G4double                  containerLength, // full length to make AccComp container
+				       const BDSMagnetOuterInfo* recipe,          // geometry recipe
+				       G4bool                    vertical);       // is it a vertical kicker?
   
 protected:
   // geometry parameters
@@ -246,10 +197,8 @@ protected:
 					    G4double     length,
 					    BDSBeamPipe* beamPipe,
 					    G4int        order,
-					    G4double     horizontalWidth,
-					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength,
-					    G4bool       buildEndPiece);
+					    const BDSMagnetOuterInfo* recipe);
   
   /// Calculate the length of the pole and yoke radii based on the design. This is only
   /// responsible for calculating the gross proportions of the yoke and pole, not all the
@@ -366,37 +315,20 @@ protected:
     
   /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
   /// and can optionally be built vertically.
-  BDSMagnetOuter* CreateDipoleC(G4String     name,
-				G4double     length,
-				BDSBeamPipe* beamPipe,
-				G4double     horizontalWidth,
-				G4double     containerLength,
-				G4double     angleIn,
-				G4double     angleOut,
-				G4Material*  material,
-				G4bool       yokeOnLeft,
-				G4Colour*    colour,
-				G4bool       buildVertically = false,
-				G4bool       buildEndPiece   = true,
-				G4double     vhRatio         = 1.0,
-				G4double     coilWidthFraction  = 0.65,
-				G4double     coilHeightFraction = 0.8);
+  BDSMagnetOuter* CreateDipoleC(G4String                  name,
+				G4double                  length,
+				const BDSBeamPipe*        beamPipe,
+				G4double                  containerLength,
+				const BDSMagnetOuterInfo* recipe,
+				G4bool                    buildVertically);
 
   /// Routine to construct an H shaped dipole magnet and can optionally be built vertically.
-  BDSMagnetOuter* CreateDipoleH(G4String     name,
-				G4double     length,
-				BDSBeamPipe* beamPipe,
-				G4double     horizontalWidth,
-				G4double     containerLength,
-				G4double     angleIn,
-				G4double     angleOut,
-				G4Material*  material,
-				G4Colour*    colour,
-				G4bool       buildVertically = false,
-				G4bool       buildEndPiece   = true,
-				G4double     vhRatio         = 1.0,
-				G4double     coilWidthFraction  = 0.8,
-				G4double     coilHeightFraction = 0.8);
+  BDSMagnetOuter* CreateDipoleH(G4String                  name,
+				G4double                  length,
+				const BDSBeamPipe*        beamPipe,
+				G4double                  containerLength,
+				const BDSMagnetOuterInfo* recipe,
+				G4bool                    buildVertically);
 
   BDSMagnetOuter* DipoleCommonConstruction(G4String    name,
 					   G4double    horizontalWidth,

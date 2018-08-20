@@ -16,24 +16,40 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMagnetOuterFactoryLHCRight.hh"
-#include "BDSMagnetOuterFactoryLHC.hh"
+#include "newcolour.h"
 
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::instance = nullptr;
+using namespace GMAD;
 
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
+NewColour::NewColour()
 {
-  if (instance == nullptr)
-    {instance = new BDSMagnetOuterFactoryLHCRight();}
-  return instance;
+  clear();
+  PublishMembers();
 }
 
-BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
-  BDSMagnetOuterFactoryLHC(false)
+void NewColour::clear()
 {
+  name  = "";
+  red   = 0;
+  green = 0;
+  blue  = 0;
+  alpha = 1; // so visible by default
 }
 
-BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
+void NewColour::PublishMembers()
 {
-  instance = nullptr;
+  publish("name",  &NewColour::name);
+  publish("red",   &NewColour::red);
+  publish("green", &NewColour::green);
+  publish("blue",  &NewColour::blue);
+  publish("alpha", &NewColour::alpha);
+}
+
+void NewColour::print()const
+{
+  std::cout << "colour: "
+	    << "name "  << name  << std::endl
+	    << "red "   << red   << std::endl
+	    << "green " << green << std::endl
+	    << "blue "  << blue  << std::endl
+	    << "alpha " << alpha << std::endl;
 }

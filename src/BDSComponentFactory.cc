@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSColours.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -82,6 +83,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
+#include "parser/newcolour.h"
 #include "parser/crystal.h"
 
 #include <cmath>
@@ -104,6 +106,7 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
+  PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
   PrepareCrystals();     // prepare crystal model info from parser
 }
@@ -281,8 +284,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateEllipticalCollimator(); break; 
   case ElementType::_RCOL:
     component = CreateRectangularCollimator(); break; 
-  case ElementType::_MUSPOILER:    
-    component = CreateMuSpoiler(); break;
+  case ElementType::_MUONSPOILER:    
+    component = CreateMuonSpoiler(); break;
   case ElementType::_SHIELD:
     component = CreateShield(); break;
   case ElementType::_DEGRADER:
@@ -1000,7 +1003,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysizeOut*CLHEP::m,
 				      G4String(element->material),
 				      G4String(element->vacuumMaterial),
-				      PrepareColour(element, "collimator"));
+				      PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -1017,10 +1020,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysizeOut*CLHEP::m,
 				     G4String(element->material),
 				     G4String(element->vacuumMaterial),
-				     PrepareColour(element, "collimator"));
+				     PrepareColour(element));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
+BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -1056,12 +1059,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
+  G4Colour* colour = PrepareColour(element);
+  G4Material* material = PrepareMaterial(element, "concrete");
+
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
 				    PrepareHorizontalWidth(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
-				    element->material,
+				    material,
+				    colour,
 				    bpInfo);
   return shield;
 }
@@ -1101,7 +1108,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
-			  element->material));
+			  PrepareMaterial(element, "carbon"),
+			  PrepareColour(element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
@@ -1142,12 +1150,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
   return (new BDSUndulator(elementName,
 			   element->l * CLHEP::m,
 			   element->undulatorPeriod * CLHEP::m,
-               element->undulatorMagnetHeight * CLHEP::m,
-               PrepareHorizontalWidth(element),
+			   element->undulatorMagnetHeight * CLHEP::m,
+			   PrepareHorizontalWidth(element),
 			   element->undulatorGap * CLHEP::m,
 			   bpInfo,
 			   vacuumFieldInfo,
-               outerFieldInfo,
+			   outerFieldInfo,
 			   element->material));
 }
 
@@ -1532,7 +1540,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element* element,
+								const Element* el,
 								const BDSMagnetStrength* st,
 								const BDSBeamPipeInfo* beamPipe,
 								G4double defaultHorizontalWidth,
@@ -1540,16 +1548,16 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
 								G4double defaultCoilWidthFraction,
 								G4double defaultCoilHeightFraction)
 {
-  G4bool yokeOnLeft = YokeOnLeft(element,st);
+  G4bool yokeOnLeft = YokeOnLeft(el,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
+  return PrepareMagnetOuterInfo(elementNameIn, el, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
 				defaultHorizontalWidth, defaultVHRatio, defaultCoilWidthFraction,
 				defaultCoilHeightFraction);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element*  element,
+								const Element*  el,
 								const G4double  angleIn,
 								const G4double  angleOut,
 								const BDSBeamPipeInfo* beamPipe,
@@ -1566,12 +1574,12 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (element->magnetGeometryType == "")
+  if (el->magnetGeometryType == "")
     {info->geometryType = globals->MagnetGeometryType();}
   else
     {
-      info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
-      info->geometryTypeAndPath = element->magnetGeometryType;
+      info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
+      info->geometryTypeAndPath = el->magnetGeometryType;
     }
 
   // set face angles w.r.t. chord
@@ -1579,32 +1587,32 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->angleOut = angleOut;
   
   // horizontal width
-  info->horizontalWidth = PrepareHorizontalWidth(element, defaultHorizontalWidth);
+  info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
   // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
 
   // outer material
   G4Material* outerMaterial;
-  if(element->outerMaterial == "")
+  if(el->material == "")
     {
       G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(el->material);}
   info->outerMaterial = outerMaterial;
 
   // yoke direction
   info->yokeOnLeft = yokeOnLeft;
 
-  if (element->hStyle < 0) // it's unset
+  if (el->hStyle < 0) // it's unset
     {info->hStyle = globals->HStyle();}
   else
-    {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
+    {info->hStyle = G4bool(el->hStyle);} // convert from int to bool
 
-  if (element->vhRatio > 0)
-    {info->vhRatio = G4double(element->vhRatio);}
+  if (el->vhRatio > 0)
+    {info->vhRatio = G4double(el->vhRatio);}
   else if (globals->VHRatio() > 0)
     {info->vhRatio = globals->VHRatio();}
   else if (defaultVHRatio > 0) // allow calling function to supply optional default
@@ -1612,8 +1620,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->vhRatio = info->hStyle ? 0.8 : 1.0;} // h default : c default
   
-  if (element->coilWidthFraction > 0)
-    {info->coilWidthFraction = G4double(element->coilWidthFraction);}
+  if (el->coilWidthFraction > 0)
+    {info->coilWidthFraction = G4double(el->coilWidthFraction);}
   else if (globals->CoilWidthFraction() > 0)
     {info->coilWidthFraction = globals->CoilWidthFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
@@ -1621,14 +1629,16 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->coilWidthFraction = info->hStyle ? 0.8 : 0.65;} // h default : c default
 
-  if (element->coilHeightFraction > 0)
-    {info->coilHeightFraction = G4double(element->coilHeightFraction);}
+  if (el->coilHeightFraction > 0)
+    {info->coilHeightFraction = G4double(el->coilHeightFraction);}
   else if (globals->CoilHeightFraction() > 0)
     {info->coilHeightFraction = globals->CoilHeightFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
     {info->coilHeightFraction = defaultCoilHeightFraction;}
   else
     {info->coilHeightFraction = 0.8;} // default for both h and c type
+
+  info->colour = PrepareColour(el);
   
   return info;
 }
@@ -1765,6 +1775,19 @@ void BDSComponentFactory::PrepareCavityModels()
 				    model.tangentLineAngle);
       
       cavityInfos[model.name] = info;
+    }
+}
+
+void BDSComponentFactory::PrepareColours()
+{
+  BDSColours* allColours = BDSColours::Instance();
+  for (auto colour : BDSParser::Instance()->GetColours())
+    {
+      allColours->DefineColour(G4String(colour.name),
+			       (G4double)colour.red,
+			       (G4double)colour.green,
+			       (G4double)colour.blue,
+			       (G4double)colour.alpha);
     }
 }
 
@@ -1929,12 +1952,23 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   return st;
 }
 
-G4String BDSComponentFactory::PrepareColour(Element const* el, const G4String fallback) const
+G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
 {
   G4String colour = el->colour;
-  if (colour == "")
-    {colour = fallback;}
-  return colour;
+  if (colour.empty())
+    {return BDSColours::Instance()->GetColour(GMAD::typestr(el->type));}
+  else
+    {return BDSColours::Instance()->GetColour(colour);}
+}
+
+G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
+						 G4String defaultMaterialName)
+{
+  G4String materialName = el->material;
+  if (materialName.empty())
+    {return BDSMaterials::Instance()->GetMaterial(defaultMaterialName);}
+  else
+    {return BDSMaterials::Instance()->GetMaterial(materialName);}
 }
 
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,

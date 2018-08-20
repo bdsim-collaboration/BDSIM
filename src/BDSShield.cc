@@ -19,9 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSMaterials.hh"
 #include "BDSShield.hh"
 #include "BDSUtilities.hh"
 
@@ -32,6 +30,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 #include "G4PVPlacement.hh"
 
+class G4Colour;
 class G4Material;
 
 BDSShield::BDSShield(G4String         nameIn,
@@ -39,21 +38,16 @@ BDSShield::BDSShield(G4String         nameIn,
 		     G4double         horizontalWidthIn,
 		     G4double         xSizeIn,
 		     G4double         ySizeIn,
-		     G4String         materialIn,
+		     G4Material*      materialIn,
+		     G4Colour*        colourIn,
 		     BDSBeamPipeInfo* beamPipeInfoIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "shield", beamPipeInfoIn),
   horizontalWidth(horizontalWidthIn),
   xSize(xSizeIn),
-  ySize(ySizeIn)
-{
-  if (materialIn == "")
-	{
-	  G4cout << __METHOD_NAME__ << "Warning - no material set for shield - using iron" << G4endl;
-	  material = BDSMaterials::Instance()->GetMaterial("iron");
-	}
-  else
-    {material = BDSMaterials::Instance()->GetMaterial(materialIn);}
-}
+  ySize(ySizeIn),
+  material(materialIn),
+  colour(colourIn)
+{;}
 
 BDSShield::~BDSShield()
 {;}
@@ -78,7 +72,7 @@ void BDSShield::BuildContainerLogicalVolume()
 
 void BDSShield::BuildShield()
 {
-  G4VSolid* outerSolid = new G4Box(name+"_outer_solid",
+  G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   horizontalWidth*0.5 - lengthSafetyLarge,
 				   chordLength*0.5 - lengthSafety);
@@ -88,38 +82,36 @@ void BDSShield::BuildShield()
   G4LogicalVolume* shieldLV;
 
   // only subtract inner solid if shield aperture is finite.
-  if (BDS::IsFinite(xSize) and BDS::IsFinite(ySize))
+  if (BDS::IsFinite(xSize) && BDS::IsFinite(ySize))
     {
-	  G4VSolid *innerSolid = new G4Box(name + "_inner_solid",
-					   xSize,
-					   ySize,
-					   chordLength); // extra long for unambiguous subtraction
-	  RegisterSolid(innerSolid);
-
-	  shieldSolid = new G4SubtractionSolid(name + "shield_solid",
-										outerSolid,   // this
-										innerSolid);  // minus this
+      G4VSolid* innerSolid = new G4Box(name + "_inner_solid",
+				       xSize,
+				       ySize,
+				       chordLength); // extra long for unambiguous subtraction
+      RegisterSolid(innerSolid);
+      
+      shieldSolid = new G4SubtractionSolid(name + "shield_solid",
+					   outerSolid,   // this
+					   innerSolid);  // minus this
       RegisterSolid(shieldSolid);
-
-	  shieldLV = new G4LogicalVolume(shieldSolid,
-							  material,
-							  name+"_shield_lv");
-	}
+      
+      shieldLV = new G4LogicalVolume(shieldSolid,
+				     material,
+				     name+"_shield_lv");
+    }
   else
     {
-	  shieldLV = new G4LogicalVolume(outerSolid,
-							  material,
-							  name+"_shield_lv");
+      shieldLV = new G4LogicalVolume(outerSolid,
+				     material,
+				     name+"_shield_lv");
     }
   
   RegisterLogicalVolume(shieldLV);
   RegisterSensitiveVolume(shieldLV);
 
-  G4VisAttributes* shieldVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("shield"));
+  G4VisAttributes* shieldVisAttr = new G4VisAttributes(colour);
   shieldVisAttr->SetVisibility(true);
-
   shieldLV->SetVisAttributes(shieldVisAttr);
-
   RegisterVisAttributes(shieldVisAttr);
 
   G4PVPlacement* shieldPV = new G4PVPlacement(nullptr,

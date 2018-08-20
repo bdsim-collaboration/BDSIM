@@ -5,7 +5,7 @@ vk1 : vkicker, l=0.5*m, angle = 0.01;
 vk2 : vkicker, l=0.5*m, kick = -0.01;
 vk3 : vkicker, kick = -0.01;
 vk4 : vkicker, vkick = 0.01;
-vk5 : hkicker, l=0.5*m, vkick = 0.0;
+vk5 : vkicker, l=0.5*m, vkick = 0.0;
 
 
 lat : line = (d1,vk1,d1,vk2,d1,vk3,d1,vk4,d1,vk5,d1);

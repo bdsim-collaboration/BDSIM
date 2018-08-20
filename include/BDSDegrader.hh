@@ -22,6 +22,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
+class G4Colour;
+class G4Material;
+
 /**
  * @brief Degrader based on wedge design used in the PSI medical accelerator.
  * 
@@ -38,7 +41,8 @@ public:
 	      G4double wedgeLengthIn,
 	      G4double degraderHeightIn,
 	      G4double degraderOffsetIn,
-	      G4String degraderMaterialIn = "carbon");
+	      G4Material* materialIn,
+	      G4Colour*   colourIn);
   virtual ~BDSDegrader();
   
 protected:
@@ -46,12 +50,13 @@ protected:
   
   virtual void BuildContainerLogicalVolume();
   
-  G4double horizontalWidth;
-  G4int    numberWedges;
-  G4double wedgeLength;
-  G4double degraderHeight;
-  G4double degraderOffset;
-  G4String degraderMaterial; 
+  G4double    horizontalWidth;
+  G4int       numberWedges;
+  G4double    wedgeLength;
+  G4double    degraderHeight;
+  G4double    degraderOffset;
+  G4Material* material;
+  G4Colour*   colour;
   
   bool isOdd(G4int integer)
   {
