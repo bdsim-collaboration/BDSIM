@@ -32,7 +32,9 @@ BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
   transform(transformIn),
   dPos(transform.getTranslation()),
   teleporterLength(teleporterLengthIn)
-{;}
+{
+  newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
+}
 
 void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 				      const G4double /*dxdy*/[],
@@ -60,27 +62,31 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
       G4ThreeVector globalMom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
-      G4ThreeVector globalPosAfter = globalPos + dPos;
-      G4ThreeVector globalMomAfter = globalMom.transform(transform.getRotation());
+      G4ThreeVector globalPosAfter;
+      G4ThreeVector globalMomAfter;
+      if (newMethod)
+	{// new method - full tranfsorm3D - works in 3d with beam line offset / rotation
+	  globalPosAfter = globalPos + dPos;
+	  globalMomAfter = globalMom.transform(transform.getRotation());
+	}
+      else
+	{// old method - only works with beam line pointing in global (0,0,1)
+	  // global to local
+	  BDSStep   localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
+	  G4ThreeVector localPosition = localPosMom.PreStepPoint();
+	  G4ThreeVector localMomentum = localPosMom.PostStepPoint();
+	  G4ThreeVector localPositionAfter;
+	  G4ThreeVector localMomentumAfter;
+	  G4ThreeVector posDelta = transform.getTranslation();
+	  localPositionAfter[0] = localPosition.x() - posDelta.x();
+	  localPositionAfter[1] = localPosition.y() - posDelta.y();
+	  localPositionAfter[2] = localPosition.z() + h;
 
-      /*
-      // global to local
-      BDSStep   localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
-      G4ThreeVector localPosition = localPosMom.PreStepPoint();
-      G4ThreeVector localMomentum = localPosMom.PostStepPoint();
-      G4ThreeVector localPositionAfter;
-      G4ThreeVector localMomentumAfter;
-      G4ThreeVector posDelta = transform.getTranslation();
-      localPositionAfter[0] = localPosition.x() - posDelta.x();
-      localPositionAfter[1] = localPosition.y() - posDelta.y();
-      localPositionAfter[2] = localPosition.z() + h;
-      localMomentumAfter[0] = localMomentum.x() - unitMomDelta.x();
-      localMomentumAfter[1] = localMomentum.y() - unitMomDelta.y();
-
-      BDSStep globalPosDir = ConvertToGlobalStep(localPositionAfter, localMomentum, false);
-      G4ThreeVector globalPosition = globalPosDir.PreStepPoint();
-      G4ThreeVector globalMomentum = globalPosDir.PostStepPoint();
-      */
+	  BDSStep globalPosDir = ConvertToGlobalStep(localPositionAfter, localMomentum, false);
+	  globalPosAfter = globalPosDir.PreStepPoint();
+	  globalMomAfter = globalPosDir.PostStepPoint();
+	}
+      
       for (G4int i = 0; i < 3; i++)
 	{
 	  yOut[i]   = globalPosAfter[i];

@@ -53,6 +53,7 @@ private:
   const G4Transform3D transform;
   const G4ThreeVector dPos;
   const G4double      teleporterLength;
+  G4bool              newMethod;  ///< Whether to use full 3D transform.
 };
 
 #endif
