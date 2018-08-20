@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSIonDefinition.hh"
 #include "BDSOutputLoader.hh"
-#include "BDSParticle.hh"
 #include "BDSParticleDefinition.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSPrimaryVertexInformation.hh"
