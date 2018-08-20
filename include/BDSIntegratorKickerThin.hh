@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSINTEGRATORKICKERTHIN_H
 
 #include "BDSIntegratorMag.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 
 #include "globals.hh"
 
@@ -42,7 +43,8 @@ class BDSIntegratorKickerThin: public BDSIntegratorMag
 public:
   BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 			  G4double                 brhoIn,
-			  G4Mag_EqRhs*             eqOfMIn);
+			  G4Mag_EqRhs*             eqOfMIn,
+			  G4double                 minimumRadiusOfCurvatureIn);
   
   virtual ~BDSIntegratorKickerThin(){;}
 
@@ -53,6 +55,18 @@ public:
 		       G4double       yOut[],
 		       G4double       yErr[]);
 
+  virtual void OneStep(const G4ThreeVector& localPos,
+                       const G4ThreeVector& localMomUnit,
+                       const G4ThreeVector& localMom,
+                       const G4double&      h,
+                       const G4double&      fcof,
+                       G4ThreeVector&       localPosOut,
+                       G4ThreeVector&       localMomOut) const;
+
+  /// Separate fringe field integrators for entrance and exit fringes
+  BDSIntegratorDipoleFringe* fringeIntEntr;
+  BDSIntegratorDipoleFringe* fringeIntExit;
+
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorKickerThin() = delete;
@@ -61,7 +75,13 @@ private:
   const G4double hkick;
   const G4double vkick;
   const G4double brho;
+  G4double rho;
+  G4double tiltAngle;
   /// @}
+
+  /// Cache if the fringe or pole face effects are to be applied
+  G4bool hasEntranceFringe;
+  G4bool hasExitFringe;
 
   /// Cache of whether input parameters are 0 and therefore whether to kick at all.
   G4bool zeroStrength;

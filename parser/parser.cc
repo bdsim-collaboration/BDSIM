@@ -630,7 +630,7 @@ void Parser::Overwrite(const std::string& objectName)
   // find object and set values
 
   // possible object types are:
-  // element, atom, crystal, field, material, physicsbiasing, placement, query, region, tunnel, cavitymodel
+  // element, atom, colour, crystal, field, material, physicsbiasing, placement, query, region, tunnel, cavitymodel
   bool extended = false;
   auto element_it = element_list.find(objectName);
   if (element_it != element_list.end()) {
@@ -646,6 +646,7 @@ void Parser::Overwrite(const std::string& objectName)
   // vectors
   if (extended == false) {
     if (      (extended = FindAndExtend<Atom>       (objectName)) ) {}
+    else if ( (extended = FindAndExtend<NewColour>  (objectName)) ) {}
     else if ( (extended = FindAndExtend<Crystal>    (objectName)) ) {}
     else if ( (extended = FindAndExtend<Field>      (objectName)) ) {}
     else if ( (extended = FindAndExtend<Material>   (objectName)) ) {}
@@ -734,6 +735,12 @@ namespace GMAD {
   template<>
   std::vector<Region>& Parser::GetList<Region>(){return region_list;}
 
+  template<>
+  NewColour& Parser::GetGlobal(){return colour;}
+
+  template<>
+  std::vector<NewColour>& Parser::GetList<NewColour>(){return colour_list;}
+  
   template<>
   Crystal& Parser::GetGlobal(){return crystal;}
 

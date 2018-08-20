@@ -300,6 +300,7 @@ The following elements may be defined
 * `laser`_
 * `gap`_
 * `crystalcol`_
+* `undulator`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -851,6 +852,22 @@ The dipole field strength is then calculated with respect to the chord length:
 * The `aperture parameters`_ may also be specified.
 * For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to vkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the vkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the vkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the vkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -886,6 +903,21 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
 * The `aperture parameters`_ may also be specified.
 * For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to hkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the hkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the hkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the hkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -904,6 +936,8 @@ parameters `hkick` and `vkick` may be specified. Like the `hkicker` and `vkicker
 may also be thin or thick. In the case of the thick kicker, the field is the linear
 sum of two independently calculated fields.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for plain kickers
+
 Example::
 
   kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0.3e-4;
@@ -919,6 +953,7 @@ not make this distinction. See `kicker`_ for more details.
 In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
 can be used.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for tkickers
 
 rf
 ^^^^
@@ -1115,14 +1150,14 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-================  ==============================  ==========  ===========
-Parameter         Description                     Default     Required
-`l`               Length [m]                      0           Yes
-`material`        Outer material                  Iron        No
-`outerDiameter`   Outer full width [m]            global      No
-`xsize`           Horizontal inner aperture [m]   0           No
-`ysize`           Vertical inner aperture [m]     0           No
-================  ==============================  ==========  ===========
+================  ==================================  ==========  ===========
+Parameter         Description                         Default     Required
+`l`               Length [m]                          0           Yes
+`material`        Outer material                      Iron        No
+`outerDiameter`   Outer full width [m]                global      No
+`xsize`           Horizontal inner half aperture [m]  0           Yes
+`ysize`           Vertical inner half aperture [m]    0           No
+================  ==================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 
@@ -1256,7 +1291,50 @@ Examples::
 
 
 More examples can be found in :code:`bdsim/examples/components` and are described in :ref:`crystal-examples`.
-		      
+
+undulator
+^^^^^^^^^
+
+.. figure:: figures/undulator.png
+    :width: 60%
+
+`undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
+field components:
+
+.. math::
+
+   B_{x} ~ &= ~ 0 \\
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big) \cosh\big(y \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ -B \cdot \sin\big(z \frac{2\pi}{\lambda}\big) \sinh\big(y \frac{2\pi}{\lambda}\big)
+
+where :math:`\lambda` is the undulator period.
+
+=======================  =============================  ==========  ===========
+Parameter                Description                    Default     Required
+`l`                      Length [m]                     0           Yes
+`B`                      Magnetic field [T]             0           Yes
+`undulatorPeriod`        Undulator magnetic period [m]  1           Yes
+`undulatorGap`           Undulator gap [m]              0           No
+`undulatorMagnetHeight`  Undulator magnet height [m]    0           No
+`material`               Magnet outer material          Iron        No
+=======================  =============================  ==========  ===========
+
+* The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
+* The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
+  it is set to twice the beam pipe diameter.
+* The undulator magnet height is the vertical height of the sets of magnets. If not supplied, it is set
+  to the 0.5*horizontalWidth - undulator gap.
+* The `aperture parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
+* To generate radiation from particles propagating through the undulator field, synchrotron radiation
+  physics must be included in the model's physicsList. See :ref:`physics-processes` for further details.
+
+Examples::
+
+ u1: undulator, l=2.0*m, B=0.1*T, undulatorPeriod=0.2*m;
+ u2: undulator, l=3.2*m, B=0.02*T, undulatorPeriod=0.16*m, undulatorGap=15*cm, undulatorMagnetHeight=10*cm;
+
+
 transform3d
 ^^^^^^^^^^^
 
@@ -4392,114 +4470,187 @@ to the typical full width of a magnet.
 Colours
 -------
 
-A few items allow you to define a custom colour for them to aid in visualisation. Currently,
-only `rcol`_ and `ecol`_ respond to this. The colour can be defined with an RGB colour code,
-where the RGB values are space delimited and given from 0 to 255. Once the colour name has
-been defined, it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined. The syntax is::
+Most items allow you to define a custom colour for them to aid in visualisation. This includes
+all magnets and collimators, the shield and degrader. The colour can be defined with red, green
+and blue components, as well as a level of transparency, alpha. RGB values can range from 0
+to 255. Once defined, a colour may not be redefined. The syntax to define a colour is
 
-  color="NAME: R G B";
+.. code-block:: none
 
-where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
-colour, and `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
+		NAME: newcolour, red=#, green=#, blue=#, alpha=#
 
 Examples::
+  
+  purple: newcolour, red=128, green=0, blue=128;
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="purple", material="copper";
 
-  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
-  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
 
+and::
+
+  purple: newcolour, red=128, green=0, blue=128;
+  orange: newcolour, red=255, green=140, blue=0;
+  nicegreen: newcolour, red=0, green=128, blue=0;
+
+  d1: drift, l=1*m;
+  basebend: sbend, l=2*m, angle=0.9;
+  sb1: basebend, colour="purple";
+  sb3: basebend, colour="nicegreen";
+  sb4: basebend, colour="yellow";
+  sb5: basebend, colour="orange";
+  sb6: basebend, colour="red";
+
+  beamline: line=(d1,sb1,d1,basebend,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
+  use, beamline;
+  sample, all;
+
+  beam,  particle="proton",
+         energy= 50*GeV;
+
+This examples if from `bdsim/examples/features/visualisation/coloured_sbend.gmad` and
+produces the model shown below.
+
+.. figure:: figures/visualisation/coloured_sbends.png
+	    :width: 80%
+	    :align: center
+
+
+* Colours can only be specified on an element-by-element basis.
 * Colour names are case-sensitive.
-* Note the colon `:` in the syntax is crucial.
+* New colour names must not clash with predefined BDSIM colour names.
 
-If a colour is already defined, that will be used. In the case a colour is already defined in
-BDSIM, that colour will be used. The user should therefore choose a different name if they
-wish to use their colour. The predefined colours in BDSIM are:
+All available colours in BDSIM can be found by running BDSIM with the `--colours` command::
 
-+-----------------+-----+-----+-----+
-| Name            |  R  |  G  |  B  |
-+=================+=====+=====+=====+
-| LHCcoil         | 229 | 191 | 0   |
-+-----------------+-----+-----+-----+
-| LHCcollar       | 229 | 229 | 229 |
-+-----------------+-----+-----+-----+
-| LHCcopperskin   | 184 | 133 | 10  |
-+-----------------+-----+-----+-----+
-| LHCyoke         | 0   | 127 | 255 |
-+-----------------+-----+-----+-----+
-| LHCyokered      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| beampipe        | 102 | 102 | 102 |
-+-----------------+-----+-----+-----+
-| black           | 0   | 0   | 0   |
-+-----------------+-----+-----+-----+
-| blue            | 0   | 0   | 255 |
-+-----------------+-----+-----+-----+
-| brown           | 114 | 63  | 0   |
-+-----------------+-----+-----+-----+
-| coil            | 184 | 115 | 51  |
-+-----------------+-----+-----+-----+
-| collimator      | 76  | 102 | 51  |
-+-----------------+-----+-----+-----+
-| cyan            | 0   | 255 | 255 |
-+-----------------+-----+-----+-----+
-| decapole        | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| default         | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| degrader        | 159 | 159 | 159 |
-+-----------------+-----+-----+-----+
-| gdml            | 102 | 51  | 0   |
-+-----------------+-----+-----+-----+
-| gray            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| green           | 0   | 255 | 0   |
-+-----------------+-----+-----+-----+
-| grey            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| hkicker         | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| magenta         | 255 | 0   | 255 |
-+-----------------+-----+-----+-----+
-| multipole       | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| muspoiler       | 0   | 205 | 208 |
-+-----------------+-----+-----+-----+
-| octupole        | 0   | 153 | 76  |
-+-----------------+-----+-----+-----+
-| quadrupole      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| rectangularbend | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| red             | 255 | 0   | 0   |
-+-----------------+-----+-----+-----+
-| rfcavity        | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| screenframe     | 178 | 178 | 178 |
-+-----------------+-----+-----+-----+
-| sectorbend      | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| sextupole       | 255 | 204 | 0   |
-+-----------------+-----+-----+-----+
-| shield          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| soil            | 138 | 90  | 0   |
-+-----------------+-----+-----+-----+
-| solenoid        | 255 | 139 | 0   |
-+-----------------+-----+-----+-----+
-| srfcavity       | 175 | 196 | 222 |
-+-----------------+-----+-----+-----+
-| tunnel          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| tunnelfloor     | 127 | 127 | 114 |
-+-----------------+-----+-----+-----+
-| vkicker         | 186 | 84  | 211 |
-+-----------------+-----+-----+-----+
-| warning         | 255 | 19  | 146 |
-+-----------------+-----+-----+-----+
-| white           | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| yellow          | 255 | 255 | 0   |
-+-----------------+-----+-----+-----+
+  bdsim --colours
+
+For convenience the predefined colours in BDSIM are:
+
++--------------------+-----+-----+-----+-----+
+| Name               |  R  |  G  |  B  |  A  |
++====================+=====+=====+=====+=====+
+|             LHCcoil| 229 | 191 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|           LHCcollar| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|       LHCcopperskin| 184 | 133 |  10 |   1 |
++--------------------+-----+-----+-----+-----+
+|             LHCyoke|   0 | 127 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|          LHCyokered| 209 |  25 |  25 |   1 |
++--------------------+-----+-----+-----+-----+
+|         awakescreen| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|   awakespectrometer|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|            beampipe| 102 | 102 | 102 |   1 |
++--------------------+-----+-----+-----+-----+
+|               black|   0 |   0 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                blue|   0 |   0 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|               brown| 114 |  63 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                coil| 184 | 115 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|          collimator|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|             crystal| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|                cyan|   0 | 255 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|            decapole|  76 |  51 | 178 |   1 |
++--------------------+-----+-----+-----+-----+
+|             default| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|            degrader| 159 | 159 | 159 |   1 |
++--------------------+-----+-----+-----+-----+
+|        dipolefringe| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|               drift| 102 | 102 | 102 |   1 |
++--------------------+-----+-----+-----+-----+
+|                ecol|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|             element| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|                 gap| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|                gdml| 102 |  51 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                gray| 127 | 127 | 127 |   1 |
++--------------------+-----+-----+-----+-----+
+|               green|   0 | 255 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                grey| 127 | 127 | 127 |   1 |
++--------------------+-----+-----+-----+-----+
+|             hkicker|  76 |  51 | 178 |   1 |
++--------------------+-----+-----+-----+-----+
+|              kicker|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|             magenta| 255 |   0 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|              marker| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|           multipole| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|         muonspoiler|   0 | 205 | 208 |   1 |
++--------------------+-----+-----+-----+-----+
+|            octupole|   0 | 153 |  76 |   1 |
++--------------------+-----+-----+-----+-----+
+| paralleltransporter| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|          quadrupole| 209 |  25 |  25 |   1 |
++--------------------+-----+-----+-----+-----+
+|               rbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|                rcol|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|     rectangularbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|                 red| 255 |   0 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                  rf| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|            rfcavity| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|             rmatrix| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|               sbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|              screen| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|         screenframe| 178 | 178 | 178 | 0.4 |
++--------------------+-----+-----+-----+-----+
+|          sectorbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|           sextupole| 255 | 204 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|              shield| 138 | 135 | 119 |   1 |
++--------------------+-----+-----+-----+-----+
+|                soil| 138 |  90 |   0 | 0.4 |
++--------------------+-----+-----+-----+-----+
+|            solenoid| 255 | 139 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|           srfcavity| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|       thinmultipole| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|         thinrmatrix| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|             tkicker|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|              tunnel| 138 | 135 | 119 |   1 |
++--------------------+-----+-----+-----+-----+
+|         tunnelfloor| 127 | 127 | 114 |   1 |
++--------------------+-----+-----+-----+-----+
+|           undulator| 159 | 159 | 159 |   1 |
++--------------------+-----+-----+-----+-----+
+|             vkicker| 186 |  84 | 211 |   1 |
++--------------------+-----+-----+-----+-----+
+|             warning| 255 |  19 | 146 |   1 |
++--------------------+-----+-----+-----+-----+
+|               white| 255 | 255 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|              yellow| 255 | 255 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
 
 .. _controlling-simulation-speed:
 

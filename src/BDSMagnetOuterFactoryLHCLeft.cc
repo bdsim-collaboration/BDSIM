@@ -19,13 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHC.hh"
 
-BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::_instance = nullptr;
+BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::instance = nullptr;
 
 BDSMagnetOuterFactoryLHCLeft* BDSMagnetOuterFactoryLHCLeft::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryLHCLeft();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactoryLHCLeft();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryLHCLeft::BDSMagnetOuterFactoryLHCLeft():
@@ -35,5 +35,5 @@ BDSMagnetOuterFactoryLHCLeft::BDSMagnetOuterFactoryLHCLeft():
 
 BDSMagnetOuterFactoryLHCLeft::~BDSMagnetOuterFactoryLHCLeft()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }

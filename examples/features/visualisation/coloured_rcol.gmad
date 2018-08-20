@@ -1,48 +1,15 @@
-! custom tungsten collimator
-! beam offset, beamline not
-! em ftfp_bery muon decay physics
-! samplers on everything
+copperyellow: newcolour, red=242, green=235, blue=20;
+lightsteelblue: newcolour, red=176, green=196, blue=222;
 
-option, beampipeRadius = 10 * cm,
-        outerDiameter = 1.9 * m,
-        beampipeThickness = 0.5 * mm,
-	elossHistoBinWidth = 0.01*m;
-
-option,physicsList="em";
-
-! Collimator material defintions: Z[atomic number], A[mass number g/mol], density[g/cm3], T[temperatre in K], P[pressure in atm] state [solid,liquid, gass]
-
-mytungsten: matdef, Z=74, A=183.84, density=19.2; !tungsten already defined, use density provided by Adriana
-!http://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=W
-
-l1: ecol, xsize=0.028*m, ysize=0.030*m, outerDiameter=0.08*m, xsizeOut=0.01*m, ysizeOut = 0.03*m ,colour="copperyellow:242 235 20", material="copper", l=0.1*m;
-l2: rcol, xsize=0.01*m, ysize=0.03*m, outerDiameter=0.06*m, colour="lightsteelblue:176 196 222 ", material="mytungsten", l=1.0*m;
+l1: ecol, xsize=0.028*m, ysize=0.030*m, outerDiameter=0.08*m, xsizeOut=0.01*m, ysizeOut = 0.03*m ,colour="copperyellow", material="copper", l=0.1*m;
+l2: rcol, xsize=0.01*m, ysize=0.03*m, outerDiameter=0.06*m, colour="lightsteelblue", material="W", l=1.0*m;
 l3: ecol, xsize=0.01*m, ysize=0.03*m, outerDiameter=0.08*m, xsizeOut=0.028*m, ysizeOut = 0.0301*m ,colour="copperyellow", material="copper", l=0.1*m;
-!rcoloffset: transform3d, x=-0.012*m; 
-myPipe1 : drift, l=10*um; 
 
-beamLine: line=(myPipe1, l1, l2, l3);
+beamLine: line=(l1, l2, l3);
 
 use, period=beamLine;
 
 sample, all;
 
-! beam offset to hit collimator
-beam,  particle="proton",
-       energy= 5000*GeV,
-       distrType="gauss",
-       X0=12*mm,
-       Y0=0.00*mm,
-       Xp0=0,
-       Yp0=0.,
-       sigmaX=0.3*mm,
-       sigmaY=0.19*mm,
-       sigmaXp=0,
-       sigmaYp=0,
-       sigmaE=0,
-       sigmaT=0;
-
-option, ngenerate=1;
-
-! print out each event because they're so slow
-option, printModuloFraction=0.0001;
+beam, particle="proton",
+      energy=10*GeV;

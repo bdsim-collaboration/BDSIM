@@ -23,7 +23,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSCollimatorBase.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSSamplerRegistry.hh"
