@@ -98,6 +98,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSParticleCoordsFull& coords,
   weight.push_back((const U &) coords.weight);
   partID.push_back(pdgID);
   parentID.push_back(0);
+  trackID.push_back(0);
   modelID = beamlineIndex;
   turnNumber.push_back(turnsTaken);
   S = (U) (coords.s / CLHEP::GeV);
