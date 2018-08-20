@@ -59,25 +59,25 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
 {
   // get single values
   n++;
-  z = (U) (hit->GetZ() / CLHEP::m);
-  S = (U) (hit->GetS() / CLHEP::m);
+  z = (U) (hit->coords.z / CLHEP::m);
+  S = (U) (hit->coords.s / CLHEP::m);
+  
+  energy.push_back((U &&) (hit->coords.totalEnergy / CLHEP::GeV));
+  x.push_back((U &&) (hit->coords.x / CLHEP::m));
+  y.push_back((U &&) (hit->coords.y / CLHEP::m));
 
-  energy.push_back((U &&) (hit->GetTotalEnergy() / CLHEP::GeV));
-  x.push_back((U &&) (hit->GetX() / CLHEP::m));
-  y.push_back((U &&) (hit->GetY() / CLHEP::m));
-
-  xp.push_back((U &&) (hit->GetXPrime() / CLHEP::radian));
-  yp.push_back((U &&) (hit->GetYPrime() / CLHEP::radian));
-  zp.push_back((U &&) (hit->GetZPrime() / CLHEP::radian));
-
-  T.push_back((U &&) (hit->GetT() / CLHEP::ns));
-  modelID = hit->GetBeamlineIndex();
-
-  weight.push_back((U &&) hit->GetWeight());
-  partID.push_back(hit->GetPDGtype());
-  parentID.push_back(hit->GetParentID());
-  trackID.push_back(hit->GetTrackID());
-  turnNumber.push_back(hit->GetTurnsTaken());
+  xp.push_back((U &&) (hit->coords.xp / CLHEP::radian));
+  yp.push_back((U &&) (hit->coords.yp / CLHEP::radian));
+  zp.push_back((U &&) (hit->coords.zp / CLHEP::radian));
+  T.push_back((U &&) (hit->coords.T / CLHEP::ns));
+  
+  modelID = hit->beamlineIndex;
+  
+  weight.push_back((U &&) hit->coords.weight);
+  partID.push_back(hit->pdgID);
+  parentID.push_back(hit->parentID);
+  trackID.push_back(hit->trackID);
+  turnNumber.push_back(hit->turnsTaken);
 }
 
 template <class U>

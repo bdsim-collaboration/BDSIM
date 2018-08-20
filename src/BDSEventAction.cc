@@ -340,12 +340,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	G4int n_hit = SampHC->entries();
 	for(G4int i=0;i<n_hit;i++)
 	  {
-	    G4int samplerIndex = (*SampHC)[i]->GetSamplerID();
+	    G4int samplerIndex = (*SampHC)[i]->samplerID;
 	    BDSSamplerInfo info = BDSSamplerRegistry::Instance()->GetInfo(samplerIndex);
 	    // G4cout << i << " " << info.Name() << " " << info.UniqueName() << " " << info.SPosition() << G4endl;
 	    if(std::find(samplerIDsToStore.begin(), samplerIDsToStore.end(),samplerIndex) != samplerIDsToStore.end())
 	      {
-		interestingTraj[trackIDMap[(*SampHC)[i]->GetTrackID()]] = true;
+		interestingTraj[trackIDMap[(*SampHC)[i]->trackID]] = true;
 	      }
 	  }
       }
