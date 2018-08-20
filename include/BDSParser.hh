@@ -35,15 +35,15 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSParser: private GMAD::Parser
 {
 public:
-  /// No default constructor
+  /// No default constructor.
   BDSParser() = delete;
-  /// Constructor method
+  /// Constructor method.
   static BDSParser* Instance(std::string filename);
-  /// Access method
+  /// Access method.
   static BDSParser* Instance();
-  /// Returns if parser is initialised
+  /// Returns if parser is initialised.
   static bool IsInitialised();
-  /// Destructor
+  /// Destructor.
   virtual ~BDSParser();
   
   /// Return options
@@ -71,40 +71,45 @@ public:
   /// Return the vector of region objects.
   inline const std::vector<GMAD::Atom>& GetAtoms() const {return atom_list;}
   
-  /// Return beamline
+  /// Return beamline.
   inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
 
+  /// Return sequence.
   inline const GMAD::FastList<GMAD::Element>& GetSequence(std::string name) {return get_sequence(name);}
   
-  /// Return biasing list
+  /// Return biasing list.
   inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}
 
-  /// Return cavity model list
+  /// Return cavity model list.
   inline const std::vector<GMAD::CavityModel>& GetCavityModels() const {return cavitymodel_list;}
 
-  /// Return crystal model lsit
+  /// Return colour model list.
+  inline const std::vector<GMAD::NewColour>& GetColours() const {return colour_list;}
+
+  /// Return crystal model list.
   inline const std::vector<GMAD::Crystal>& GetCrystals() const {return crystal_list;}
+
   /// Return the vector of field objects.
   inline const std::vector<GMAD::Field>& GetFields() const {return field_list;}
 
-  /// Return material list
+  /// Return material list.
   inline const std::vector<GMAD::Material>& GetMaterials() const {return material_list;}
   
   /// Return the vector of placement objects.
   inline const std::vector<GMAD::Placement>& GetPlacements() const {return placement_list;}
 
-  /// Query list
+  /// Query list.
   inline const std::vector<GMAD::Query>& GetQuery() const {return query_list;}
   
-  /// Return region list
+  /// Return region list.
   inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}
 
 protected:
-  /// Constructor from filename
+  /// Constructor from filename.
   explicit BDSParser(std::string filename);
 
 private:
-  /// Instance
+  /// Instance.
   static BDSParser* instance;
 };
 

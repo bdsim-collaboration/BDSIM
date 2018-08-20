@@ -42,6 +42,9 @@ be used literally.  The following command may be used to display all options::
 | -\\-circular                 | Assumes circular machine - turn control. See   |
 |                              | note below.                                    |
 +------------------------------+------------------------------------------------+
+| -\\-colours                  | Print out all colours predefined in BDSIM and  |
+|                              | exit                                           |
++------------------------------+------------------------------------------------+
 | -\\-distrFile=<file>         | Which file to use for the bunch                |
 |                              | distribution                                   |
 +------------------------------+------------------------------------------------+

@@ -112,16 +112,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 {
   BDSMagnetOuter* outer = nullptr;
 
-  G4String name                         = outerInfo->name;
-  G4double horizontalWidth              = outerInfo->horizontalWidth;
-  G4Material* outerMaterial             = outerInfo->outerMaterial;
-  BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
-  G4bool yokeOnLeft                     = outerInfo->yokeOnLeft;
-  G4bool buildEndPiece                  = outerInfo->buildEndPieces;
-  G4bool hStyle                         = outerInfo->hStyle;
-  G4double vhRatio                      = outerInfo->vhRatio;
-  G4double coilWidthFraction            = outerInfo->coilWidthFraction;
-  G4double coilHeightFraction           = outerInfo->coilHeightFraction;
+  G4String name                      = outerInfo->name;
+  BDSMagnetGeometryType geometryType = outerInfo->geometryType;
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
@@ -146,86 +138,71 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     {
     case BDSMagnetType::decapole:
       {
-	outer = factory->CreateDecapole(name, outerLength, beamPipe, horizontalWidth,
-					containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateDecapole(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::vkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, horizontalWidth,
-				      containerLength, yokeOnLeft, true, outerMaterial, buildEndPiece,
-				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, true);
 	break;
       }
     case BDSMagnetType::hkicker:
       {
-	outer = factory->CreateKicker(name, outerLength, beamPipe, horizontalWidth,
-				      containerLength, yokeOnLeft, false, outerMaterial, buildEndPiece,
-				      hStyle, vhRatio, coilWidthFraction, coilHeightFraction);
+	outer = factory->CreateKicker(name, outerLength, beamPipe, containerLength, outerInfo, false);
 	break;
       }
     case BDSMagnetType::muonspoiler:
       {
-	outer = factory->CreateMuSpoiler(name, outerLength, beamPipe, horizontalWidth,
-					 containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateMuonSpoiler(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::octupole:
       {
-	outer = factory->CreateOctupole(name, outerLength, beamPipe, horizontalWidth,
-					containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateOctupole(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::quadrupole:
       {
-	outer = factory->CreateQuadrupole(name, outerLength, beamPipe, horizontalWidth,
-					  containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateQuadrupole(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::rfcavity:
       {
-	outer = factory->CreateRfCavity(name, outerLength, beamPipe, horizontalWidth,
-					containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateRfCavity(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::sectorbend:
       {
 	outer = factory->CreateSectorBend(name, outerLength, beamPipe,
-					  horizontalWidth, containerLength,
-					  outerInfo->angleIn, outerInfo->angleOut,
-					  yokeOnLeft, hStyle, outerMaterial, buildEndPiece,
-					  vhRatio, coilWidthFraction, coilHeightFraction);
+					  containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::rectangularbend:
       {
 	outer = factory->CreateRectangularBend(name, outerLength, beamPipe,
-					       horizontalWidth, containerLength,
-					       outerInfo->angleIn, outerInfo->angleOut,
-					       yokeOnLeft, hStyle, outerMaterial, buildEndPiece,
-					       vhRatio, coilWidthFraction, coilHeightFraction);
+					       containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::sextupole:
       {
-	outer = factory->CreateSextupole(name, outerLength, beamPipe, horizontalWidth,
-					 containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateSextupole(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::solenoid:
       {
-	outer = factory->CreateSolenoid(name, outerLength, beamPipe, horizontalWidth,
-					containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateSolenoid(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::multipole:
       {
-	outer = factory->CreateMultipole(name, outerLength, beamPipe, horizontalWidth,
-					 containerLength, outerMaterial, buildEndPiece);
+	outer = factory->CreateMultipole(name, outerLength, beamPipe, containerLength, outerInfo);
 	break;
       }
     case BDSMagnetType::thinmultipole:
     case BDSMagnetType::dipolefringe:
+    case BDSMagnetType::undulator:
+    case BDSMagnetType::rmatrix:
+    case BDSMagnetType::paralleltransporter:
       {break;} // leave as nullptr - no outer geometry for dipole fringe or thin multipole
     default:
       G4cout << __METHOD_NAME__ << "unknown magnet type " << magnetType << " - no outer volume built" << G4endl;

@@ -27,18 +27,18 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <sstream>
 
-BDSColours* BDSColours::_instance = nullptr;
+BDSColours* BDSColours::instance = nullptr;
 
 BDSColours* BDSColours::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSColours();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSColours();}
+  return instance;
 }
 
 BDSColours::~BDSColours()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSColours::BDSColours()
@@ -55,7 +55,7 @@ BDSColours::BDSColours()
   // https://en.wikipedia.org/wiki/Web_colors
 
   // special
-  colours["default"]          = new G4Colour(1,     1,     1);     // white
+  colours["default"]          = new G4Colour(0.9,   0.9,   0.9);   // almost white
   colours["warning"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
 
   // tunnel
@@ -63,10 +63,14 @@ BDSColours::BDSColours()
   colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
   colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
   
-  // elements
+  // elements - one for each type in parser/elementtype.cc
+  colours["marker"]           = colours["default"];
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
+  colours["drift"]            = colours["beampipe"];
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
+  colours["sbend"]            = colours["sectorbend"];
+  colours["rectangularbend"]  = colours["sectorbend"];
+  colours["rbend"]            = colours["sectorbend"];
   colours["quadrupole"]       = new G4Colour(0.82,  0.1,   0.1);   // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
@@ -74,15 +78,30 @@ BDSColours::BDSColours()
   colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
+  colours["rf"]               = colours["rfcavity"];
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
-  colours["muspoiler"]        = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
+  colours["ecol"]             = colours["collimator"];
+  colours["rcol"]             = colours["collimator"];
+  colours["muonspoiler"]      = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
   colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
   colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue
+  colours["kicker"]           = colours["sectorbend"];
+  colours["tkicker"]          = colours["kicker"];
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["undulator"]        = new G4Colour(0.625, 0.625, 0.625); // silver
   colours["shield"]           = colours["tunnel"];
   colours["crystal"]          = colours["srfcavity"];
+  colours["thinmultipole"]    = colours["default"];
+  colours["dipolefringe"]     = colours["default"];
+  colours["rmatrix"]          = colours["default"];
+  colours["thinrmatrix"]       = colours["rmatrix"];
+  colours["paralleltransporter"] = colours["default"];
+  colours["element"]          = colours["default"];
+  colours["screen"]           = new G4Colour(0.69,  0.769, 0.871); // slate grey
+  colours["awakescreen"]      = colours["screen"];
+  colours["awakespectrometer"] = colours["sectorbend"];
+  colours["gap"]               = colours["default"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper
@@ -108,23 +127,54 @@ BDSColours::BDSColours()
   colours["yellow"]  = new G4Colour(G4Colour::Yellow());
 
 #ifdef BDSDEBUG
-  // auto-generate the manual coolour table in rst syntax
+  Print();
+#endif
+}
+
+void BDSColours::DefineColour(G4String name,
+			      G4double red,
+			      G4double green,
+			      G4double blue,
+			      G4double alpha)
+{
+  if (colours.find(name) != colours.end())
+    {
+      G4cerr << "Colour \"" << name
+	     << "\" is already defined - clashing definitions" << G4endl;
+      G4cout << "Already defined colours are " << G4endl;
+      Print();
+      exit(1);
+    }
+  
+  BDS::EnsureInLimits(red,0,255);
+  BDS::EnsureInLimits(green,0,255);
+  BDS::EnsureInLimits(blue,0,255);
+  BDS::EnsureInLimits(alpha,0,1);
+  G4Colour* newColour = new G4Colour(red/255.,green/255.,blue/255.,alpha);
+  colours[name] = newColour;
+}
+
+void BDSColours::Print()
+{
+  // auto-generate the manual colour table in rst syntax
   G4cout << __METHOD_NAME__ << "Colour Table" << G4endl;
-  G4cout << "+-----------------+-----+-----+-----+" << G4endl;
-  G4cout << "| Name            |  R  |  G  |  B  |" << G4endl;
-  G4cout << "+=================+=====+=====+=====+" << G4endl;
+  G4cout << "This is only the pre-defined BDSIM colours and not the user-defined ones." << G4endl;
+  G4cout << "+--------------------+-----+-----+-----+-----+" << G4endl;
+  G4cout << "| Name               |  R  |  G  |  B  |  A  |" << G4endl;
+  G4cout << "+====================+=====+=====+=====+=====+" << G4endl;
   for (const auto& col : colours)
     {
       int r = (int)(col.second->GetRed() * 255);
       int g = (int)(col.second->GetGreen() * 255);
       int b = (int)(col.second->GetBlue() * 255);
-      G4cout << "| " << std::setw(16) << col.first << "| "
+      double a = col.second->GetAlpha();
+      G4cout << "| " << std::setw(19) << col.first << "| "
 	     << std::setw(3) << r << " | "
 	     << std::setw(3) << g << " | "
-	     << std::setw(3) << b << " |" << G4endl;
-      G4cout << "+-----------------+-----+-----+-----+" << G4endl;
+	     << std::setw(3) << b << " | "
+	     << std::setw(3) << a << " |" << G4endl;
+      G4cout << "+--------------------+-----+-----+-----+-----+" << G4endl;
     }
-#endif
 }
 
 G4Colour* BDSColours::GetColour(G4String type)
@@ -135,12 +185,6 @@ G4Colour* BDSColours::GetColour(G4String type)
     {
       colourName = type.substr(0, type.find(":"));
       canDefine  = true;
-      if (colours.find(colourName) != colours.end())
-	{
-	  G4cerr << "Colour \"" << colourName
-		 << "\" is already defined - clashing definitions" << G4endl;
-	  exit(1);
-	}
     }
     
   auto it = colours.find(colourName);
@@ -156,32 +200,12 @@ G4Colour* BDSColours::GetColour(G4String type)
       G4String rgb = type.substr(type.find(":")+1); // everything after ':'
       std::stringstream ss(rgb);
       ss >> r >> g >> b;
-      BDS::EnsureInLimits(r,0,255);
-      BDS::EnsureInLimits(g,0,255);
-      BDS::EnsureInLimits(b,0,255);
-      G4Colour* newColour = new G4Colour(r/255.,g/255.,b/255.);
-      colours[colourName] = newColour;
-      return newColour;
+      DefineColour(colourName,r,g,b);
+      return colours[colourName];
     }
   else
     {// colour not found
-      G4cout << __METHOD_NAME__ << "WARNING: invalid colour" << type << G4endl;
-      return colours.at("warning");
-    }
-}
-
-G4Colour* BDSColours::GetMagnetColour(G4int magnetOrder) const
-{
-  if (magnetOrder < 1)
-    { // too low order
-      return colours.at("warning");
-    }
-  else if (magnetOrder > 5)
-    { // high order multipole
-      return colours.at("multipole");
-    }
-  else
-    { // specified order
-      return colours.at(magnetName.at(magnetOrder));
+      G4cout << __METHOD_NAME__ << "WARNING: unknown colour \"" << type << "\"" << G4endl;
+      return colours.at("default");
     }
 }

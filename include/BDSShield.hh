@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSBeamPipeInfo;
 
+class G4Colour;
 class G4Material;
 
 /**
@@ -41,9 +42,10 @@ public:
   BDSShield(G4String         name,
 	    G4double         length,
 	    G4double         horizontalWidthIn,
-	    G4double         xAper,
-	    G4double         yAper,
+	    G4double         xSize,
+	    G4double         ySize,
 	    G4Material*      materialIn,
+	    G4Colour*        colourIn,
 	    BDSBeamPipeInfo* beamPipeInfoIn = nullptr);
   virtual ~BDSShield();
 
@@ -68,10 +70,11 @@ private:
   /// Build a beam pipe in the hole if required.
   void BuildBeamPipe();
   
-  G4double         horizontalWidth; ///< Outer size of shield.
-  G4double         xAper;           ///< Inner horizontal full width of shield.
-  G4double         yAper;           ///< Inner vertical full width of shield.
-  G4Material*      material;        ///< Shield material.
+  G4double    horizontalWidth; ///< Outer size of shield.
+  G4double    xSize;           ///< Inner horizontal half width of shield.
+  G4double    ySize;           ///< Inner vertical half width of shield.
+  G4Material* material;        ///< Shield material.
+  G4Colour*   colour;          ///< Colour of shielding block.
 };
 
 #endif

@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
+class G4Colour;
 class G4Material;
 
 namespace GMAD
@@ -155,6 +156,13 @@ public:
 						    G4double       defaultCoilWidthFraction  = -1,
 						    G4double       defaultCoilHeightFraction = -1);
 
+  /// Checks if colour is specified for element, else uses the default for that element type.
+  static G4Colour* PrepareColour(GMAD::Element const* element);
+
+  /// Checks if a material is named in Element::material, else uses the supplied default.
+  static G4Material* PrepareMaterial(GMAD::Element const* element,
+				     G4String defaultMaterialName);
+
   /// Utility function to check if the combination of horizontal width, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
@@ -206,7 +214,7 @@ private:
   BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
-  BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateMuonSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateGap();
@@ -241,6 +249,9 @@ private:
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
+  /// Prepare all colours defined in the parser.
+  void PrepareColours();
+
   /// Prepare all crystals in defined the parser.
   void PrepareCrystals();
 
@@ -264,9 +275,6 @@ private:
   /// Utility function to prepare field strength object for rf cavity.
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
 					   G4double currentArcLength) const;
-
-  /// Checks if colour is specified for element, else uses fallback color
-  G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum

@@ -87,10 +87,8 @@ private:
 					    G4double     length,
 					    BDSBeamPipe* beamPipe,
 					    G4int        order,
-					    G4double     horizontalWidth,
-					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength,
-					    G4bool       buildEndPiece);
+					    const BDSMagnetOuterInfo* recipe);
   
   /// Poles have to be different lengths to fit in a square - have to be unique
   /// therefore keep a vector of them

@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /*
    bison grammar for the gmad parser
 */
@@ -70,9 +88,9 @@
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
-%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
+%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUONSPOILER MUSPOILER SHIELD DEGRADER GAP CRYSTALCOL
 %token <ival> VKICKER HKICKER KICKER TKICKER THINRMATRIX PARALLELTRANSPORTER RMATRIX UNDULATOR
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT NEWCOLOUR CRYSTAL FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -227,6 +245,14 @@ decl : VARIABLE ':' component_with_params
              Parser::Instance()->Add<Query>();
          }
      }
+      | VARIABLE ':' newcolour
+     {
+         if(execute) {
+             if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : newcolour" << std::endl;
+             Parser::Instance()->SetValue<NewColour>("name", *($1));
+             Parser::Instance()->Add<NewColour>();
+         }
+     }
       | VARIABLE ':' crystal
      {
          if(execute) {
@@ -302,7 +328,8 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | SOLENOID    {$$=static_cast<int>(ElementType::_SOLENOID);}
           | ECOL        {$$=static_cast<int>(ElementType::_ECOL);}
           | RCOL        {$$=static_cast<int>(ElementType::_RCOL);}
-          | MUSPOILER   {$$=static_cast<int>(ElementType::_MUSPOILER);}
+          | MUONSPOILER {$$=static_cast<int>(ElementType::_MUONSPOILER);}
+          | MUSPOILER   {$$=static_cast<int>(ElementType::_MUONSPOILER);}
           | SHIELD      {$$=static_cast<int>(ElementType::_SHIELD);}
           | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
           | GAP         {$$=static_cast<int>(ElementType::_GAP);}
@@ -322,6 +349,7 @@ atom        : ATOM        ',' atom_options
 material    : MATERIAL    ',' material_options
 region      : REGION      ',' region_options
 placement   : PLACEMENT   ',' placement_options
+newcolour   : NEWCOLOUR   ',' colour_options
 crystal     : CRYSTAL     ',' crystal_options
 field       : FIELD       ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
@@ -334,6 +362,7 @@ object_noparams : MATERIAL
                 | ATOM
                 | REGION
                 | PLACEMENT
+                | NEWCOLOUR
                 | CRYSTAL
                 | FIELD
                 | CAVITYMODEL
@@ -756,6 +785,14 @@ command : STOP         { if(execute) Parser::Instance()->quit(); }
               Parser::Instance()->Add<Placement>();
             }
         }
+        | NEWCOLOUR ',' colour_options // colour
+        {
+          if(execute)
+            {
+              if(ECHO_GRAMMAR) std::cout << "command -> NEWCOLOUR" << std::endl;
+              Parser::Instance()->Add<NewColour>();
+            }
+        }
         | CRYSTAL ',' crystal_options // crystal
         {
           if(execute)
@@ -924,6 +961,14 @@ query_options : paramassign '=' aexpr query_options_extend
                 { if(execute) Parser::Instance()->SetValue<Query>((*$1),$3);}
               | paramassign '=' string query_options_extend
                 { if(execute) Parser::Instance()->SetValue<Query>((*$1),*$3);}
+
+colour_options_extend : /* nothing */
+                     | ',' colour_options
+
+colour_options : paramassign '=' aexpr colour_options_extend
+                { if(execute) Parser::Instance()->SetValue<NewColour>((*$1),$3);}
+              | paramassign '=' string colour_options_extend
+                { if(execute) Parser::Instance()->SetValue<NewColour>((*$1),*$3);}
 
 crystal_options_extend : /* nothing */
                      | ',' crystal_options

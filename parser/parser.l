@@ -1,3 +1,22 @@
+/* 
+ *Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+ *University of London 2001 - 2018.
+ *
+ *This file is part of BDSIM.
+ *
+ *BDSIM is free software: you can redistribute it and/or modify 
+ *it under the terms of the GNU General Public License as published 
+ *by the Free Software Foundation version 3 of the License.
+ *
+ *BDSIM is distributed in the hope that it will be useful, but 
+ *WITHOUT ANY WARRANTY; without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *GNU General Public License for more details.
+ *
+ *You should have received a copy of the GNU General Public License
+ *along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /*
  *  Lexical analyzer for gmad bison parser  
  *  Ilya Agapov, 2005
@@ -89,7 +108,8 @@ thinmultipole { return THINMULT; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}
 ecol { return ECOL; } 
-muspoiler { return MUSPOILER; }
+muonspoiler { return MUONSPOILER; }
+muspoiler { return MUONSPOILER; }
 shield {return SHIELD; }
 element { return ELEMENT; }
 screen { return SCREEN; }
@@ -107,6 +127,7 @@ undulator { return UNDULATOR; }
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+newcolour { return NEWCOLOUR; }
 crystal { return CRYSTAL; }
 field { return FIELD; }
 placement { return PLACEMENT; }

@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSDebug.hh"
 #include "BDSIntegratorKickerThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
@@ -28,13 +29,59 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorKickerThin::BDSIntegratorKickerThin(BDSMagnetStrength const* strength,
 						 G4double                 brhoIn,
-						 G4Mag_EqRhs*             eqOfMIn):
+						 G4Mag_EqRhs*             eqOfMIn,
+                         G4double                 minimumRadiusOfCurvatureIn):
   BDSIntegratorMag(eqOfMIn, 6),
   hkick((*strength)["hkick"]),
   vkick((*strength)["vkick"]),
   brho(brhoIn)
 {
   zeroStrength = (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick));
+
+  // duplicate magnetstrength for fringe field integrators as all its physical parameters are set for the magnet
+  // as a whole, including fringes. Only isentrance bool determines if the object is for an entrance or exit
+  // fringe, therefore set as appropriate (required as BDSIntegratorDipoleFringe members are set upon
+  // instantiation according to isentrance).
+  BDSMagnetStrength* fringeStEntr = new BDSMagnetStrength(*strength);
+  BDSMagnetStrength* fringeStExit = new BDSMagnetStrength(*strength);
+  (*fringeStEntr)["isentrance"] = true;
+  (*fringeStExit)["isentrance"] = false;
+  // tilt is zero as only onestep function in local coords will be called in this integrator
+  fringeIntEntr = new BDSIntegratorDipoleFringe(fringeStEntr, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
+  fringeIntExit = new BDSIntegratorDipoleFringe(fringeStExit, brhoIn, eqOfMIn, minimumRadiusOfCurvatureIn, 0);
+
+  // check if the fringe effect is finite
+  G4bool finiteEntrFringe = false;
+  G4bool finiteExitFringe = false;
+  if (BDS::IsFinite(fringeIntEntr->GetFringeCorr()) or BDS::IsFinite(fringeIntEntr->GetSecondFringeCorr()))
+    {finiteEntrFringe = true;}
+  if (BDS::IsFinite(fringeIntExit->GetFringeCorr()) or BDS::IsFinite(fringeIntExit->GetSecondFringeCorr()))
+    {finiteExitFringe = true;}
+
+  // only call fringe tracking if the poleface rotation or fringe field correction terms are finite
+  hasEntranceFringe = false;
+  hasExitFringe     = false;
+  if (BDS::IsFinite(fringeIntEntr->GetPolefaceAngle()) or finiteEntrFringe)
+    {hasEntranceFringe = true;}
+  if (BDS::IsFinite(fringeIntExit->GetPolefaceAngle()) or finiteExitFringe)
+    {hasExitFringe = true;}
+
+  // effective bending radius needed for fringe field calculations
+  if (BDS::IsFinite((*strength)["field"]))
+    {rho = brhoIn/(*strength)["field"];}
+  else
+    {
+      // zero field means rho cannot be calculated, therefore do not allow fringe kicks.
+      rho = 1; // for safety
+      hasEntranceFringe = false;
+      hasExitFringe = false;
+    }
+
+  // tilt for vertial kickers. Poleface rotations are assumed to be about the vertical axis,
+  // so effect should be applied to rotated axes.
+  tiltAngle = 0;
+  if (!BDS::IsFinite((*strength)["by"]) and ((*strength)["bx"] == 1.0))
+    {tiltAngle = -CLHEP::pi/2.0;}
 }
 
 void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
@@ -69,6 +116,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   G4ThreeVector localPos     = localPosMom.PreStepPoint();
   G4ThreeVector localMom     = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();
+  G4double      localMomMag  = localMom.mag();
 
   // only use for paraxial momenta, else advance particle as if in a drift
   if (std::abs(localMomUnit.z()) < 0.9)
@@ -77,7 +125,67 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
       SetDistChord(0);
       return;
     }
-  
+
+  // normalise to particle charge for fringe/poleface effects
+  G4double charge = fcof / std::abs(fcof);
+  G4double bendingRad = rho * charge;
+
+  // set as local coords in case no entrance fringe effect
+  G4ThreeVector fringeEntrPosOut = localPos;
+  G4ThreeVector fringeEntrMomOut = localMomUnit;
+
+  if (hasEntranceFringe)
+    {
+      if (BDS::IsFinite(tiltAngle))
+        {
+          localPos.rotateZ(tiltAngle);
+          localMomUnit.rotateZ(tiltAngle);
+          fringeIntEntr->OneStep(localPos, localMomUnit, fringeEntrPosOut, fringeEntrMomOut, bendingRad);
+          fringeEntrPosOut.rotateZ(-tiltAngle);
+          fringeEntrMomOut.rotateZ(-tiltAngle);
+        }
+      else
+        {fringeIntEntr->OneStep(localPos, localMomUnit, fringeEntrPosOut, fringeEntrMomOut, bendingRad);}
+    }
+  fringeEntrMomOut *= localMomMag; // fringe returns unit momentum m
+
+  G4ThreeVector localPosOut;
+  G4ThreeVector localMomOut;
+
+  // do thin kicker step
+  OneStep(fringeEntrPosOut, fringeEntrMomOut, localMom, h, fcof, localPosOut, localMomOut);
+
+  // set as coords after kick in case no exit fringe effect
+  G4ThreeVector fringeExitPosOut = localPosOut;
+  G4ThreeVector fringeExitMomOut = localMomOut;
+
+  if (hasExitFringe)
+    {
+      if (BDS::IsFinite(tiltAngle))
+        {
+          localPosOut.rotateZ(tiltAngle);
+          localMomOut.rotateZ(tiltAngle);
+          fringeIntExit->OneStep(localPosOut, localMomOut.unit(), fringeExitPosOut, fringeExitMomOut, bendingRad);
+          fringeExitPosOut.rotateZ(-tiltAngle);
+          fringeExitMomOut.rotateZ(-tiltAngle);
+        }
+      else
+        {fringeIntExit->OneStep(localPosOut, localMomOut, fringeExitPosOut, fringeExitMomOut, bendingRad);}
+    }
+  fringeExitMomOut *= localMomMag; // fringe returns unit momentum
+
+  // convert back to global
+  ConvertToGlobal(fringeExitPosOut, fringeExitMomOut, yOut, yErr);
+}
+
+void BDSIntegratorKickerThin::OneStep(const G4ThreeVector& localPos,
+                                      const G4ThreeVector& localMomUnit,
+                                      const G4ThreeVector& localMom,
+                                      const G4double&      h,
+                                      const G4double&      fcof,
+                                      G4ThreeVector&       localPosOut,
+                                      G4ThreeVector&       localMomOut) const
+{
   // Transverse position stays the same and the particle is advanced by h along local z.
   G4double x1 = localPos.x();
   G4double y1 = localPos.y();
@@ -108,9 +216,7 @@ void BDSIntegratorKickerThin::Stepper(const G4double   yIn[],
   px += dpx;
   py += dpy;
   pz -= std::abs(dpx) + std::abs(dpy); // conservation of momentum
-  
-  G4ThreeVector localPosOut = G4ThreeVector(x1, y1, z1);
-  G4ThreeVector localMomOut = G4ThreeVector(px, py, pz);
-  
-  ConvertToGlobal(localPosOut, localMomOut, yOut, yErr);
+
+  localPosOut = G4ThreeVector(x1, y1, z1);
+  localMomOut = G4ThreeVector(px, py, pz);
 }

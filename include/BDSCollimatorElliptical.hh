@@ -19,27 +19,29 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSCOLLIMATORELLIPTICAL_H
 #define BDSCOLLIMATORELLIPTICAL_H
 
-#include "BDSCollimatorBase.hh"
+#include "BDSCollimator.hh"
 
 #include "globals.hh" // geant4 globals / types
+
+class G4Colour;
 
 /**
  * @brief A class for an elliptical collimator.
  */
 
-class BDSCollimatorElliptical: public BDSCollimatorBase
+class BDSCollimatorElliptical: public BDSCollimator
 {
 public:
-  BDSCollimatorElliptical(G4String name,
-			  G4double length,
-			  G4double horizontalWidth,
-			  G4double xApertureIn        = 0,
-			  G4double yApertureIn        = 0,
-			  G4double xOutApertureIn     = 0,
-			  G4double yOutApertureIn     = 0,
-			  G4String collimatorMaterial = "copper",
-			  G4String vacuumMaterial     = "vacuum",
-			  G4String colour             = "collimator");
+  BDSCollimatorElliptical(G4String  name,
+			  G4double  length,
+			  G4double  horizontalWidth,
+			  G4double  xApertureIn        = 0,
+			  G4double  yApertureIn        = 0,
+			  G4double  xOutApertureIn     = 0,
+			  G4double  yOutApertureIn     = 0,
+			  G4String  collimatorMaterial = "copper",
+			  G4String  vacuumMaterial     = "vacuum",
+			  G4Colour* colour             = nullptr);
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();
