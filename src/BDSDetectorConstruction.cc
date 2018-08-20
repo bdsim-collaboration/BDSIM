@@ -42,7 +42,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
@@ -320,52 +319,22 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      // minimum space for the circular mechanics are:
-      // 1x terminator with sampler chord length
-      // 1x teleporter with (minimum) 1x sampler chord length
-      // 3x padding length
-      const G4double sL = BDSSamplerPlane::ChordLength();
-      const G4double pL = massWorld->PaddingLength();
-      G4double minimumRequiredSpace = 2*sL + 3*pL;
-      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(massWorld);
+
+      G4double teleporterLength = 0;
+      G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
       
-      // note delta is from end to beginning, which will have correct transverse but opposite
-      // z component, hence -ve here.
-      G4double rawLength        = -teleporterDelta.z();
-      G4double teleporterLength =  rawLength - minimumRequiredSpace + sL; // leaves at least 1x sL for teleporter
-      
-      if (teleporterDelta.mag() > 1*CLHEP::m)
+      auto terminator = theComponentFactory->CreateTerminator();
+      if (terminator)
 	{
-	  G4cout << G4endl << "Error - the calculated teleporter delta is above 1m! "
-		 << "The teleporter" << G4endl << "was only intended for small shifts "
-		 << "- the teleporter will not be built." << G4endl << G4endl;
-	  exit(1);
+	  terminator->Initialise();
+	  massWorld->AddComponent(terminator);
 	}
-      else if (teleporterLength < minimumRequiredSpace)
-	{// should protect against -ve length teleporter
-	  G4cout << G4endl << "Insufficient space between the first and last elements "
-		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
-		 << "- these will not be built." << G4endl;
-	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is "
-		 << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
-	  exit(1);
-	}
-      else
-	{ 
-	  BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
-	  if (terminator)
-	    {
-	      terminator->Initialise();
-	      massWorld->AddComponent(terminator);
-	    }	  
-	  // update delta
-	  teleporterDelta.setZ(teleporterLength);
-	  BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
-	  if (teleporter)
-	    {
-	      teleporter->Initialise();
-	      massWorld->AddComponent(teleporter);
-	    }
+      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+							      teleporterTransform);
+      if (teleporter)
+	{
+	  teleporter->Initialise();
+	  massWorld->AddComponent(teleporter);
 	}
     }
   

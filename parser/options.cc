@@ -282,6 +282,7 @@ void Options::PublishMembers()
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
+  publish("teleporterFullTransform",  &Options::teleporterFullTransform);
 
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);

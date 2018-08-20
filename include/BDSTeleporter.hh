@@ -22,7 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 class BDSBeamline;
 class BDSFieldInfo;
@@ -71,8 +71,10 @@ private:
 
 namespace BDS
 {
-  /// Calculate the difference between the beginning and end of a beam line.
-  G4ThreeVector CalculateTeleporterDelta(BDSBeamline* thebeamline);
+  /// Calculate the difference between the beginning and end of a beam line. Writes
+  /// the length to the argument passed by reference.
+  G4Transform3D CalculateTeleporterDelta(const BDSBeamline* beamline,
+					 G4double& teleporterLength);
 }
 
 #endif

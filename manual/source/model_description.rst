@@ -3451,6 +3451,12 @@ should only be used with understanding.
 |                                   | overides this, allowing samplers to be attached. This option will  |
 |                                   | not affect the default integrator set, :code:`bdsimmatrix`.        |
 +-----------------------------------+--------------------------------------------------------------------+
+| teleporterFullTransform           | Default true. Whether to use the newer teleporter offset method    |
+|                                   | that uses a G4Transform3D to apply both an offset and a rotation.  |
+|                                   | The newer method works in any 3D orientation whereas the old one   |
+|                                   | only works with the beam line starting along unit Z (i.e. no       |
+|                                   | beam line offset or rotation.                                      |
++-----------------------------------+--------------------------------------------------------------------+
 | beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
 |                                   | optical function calculation. BDSIM is not currently able to       |

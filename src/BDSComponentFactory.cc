@@ -351,22 +351,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   return component;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4double      teleporterLength,
+							       const G4Transform3D transformIn)
 {
-  G4Transform3D transform = G4Transform3D(G4RotationMatrix(), teleporterDelta);
-  
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["length"] = teleporterLength; // convey length scale to integrator
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::teleporter,
 						   brho,
 						   BDSIntegratorType::teleporter,
-						   nullptr,    // magnet strength doesn't apply
-						   true,       // provide global translation
-						   transform);
+						   st,
+						   true,
+						   transformIn);
   
   G4cout << "---->creating Teleporter, "
-	 << "l = " << teleporterDelta.z()/CLHEP::m << "m"
+	 << "l = " << teleporterLength/CLHEP::m << "m"
 	 << G4endl;
 
-  return( new BDSTeleporter(teleporterDelta.z(), vacuumFieldInfo));
+  return( new BDSTeleporter(teleporterLength, vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
