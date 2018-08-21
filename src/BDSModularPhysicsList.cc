@@ -104,6 +104,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
+#include "G4EmDNAPhysics.hh"
+#include "G4EmDNAPhysics_option1.hh"
+#include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option3.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option5.hh"
+#include "G4EmDNAPhysics_option6.hh"
+#include "G4EmDNAPhysics_option7.hh"
 #include "G4HadronPhysicsShieldingLEND.hh"
 #endif
 
@@ -134,6 +142,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
+  temporaryName(""),
   opticalPhysics(nullptr),
   emWillBeUsed(false),
   usingIons(false)
@@ -201,6 +210,14 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #endif
 #if G4VERSION_NUMBER > 1039
   physicsConstructors.insert(std::make_pair("channelling",            &BDSModularPhysicsList::Channelling));
+  physicsConstructors.insert(std::make_pair("dna",                    &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_1",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_2",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_3",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_4",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_5",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_6",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_7",                  &BDSModularPhysicsList::DNA));
   physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
@@ -255,7 +272,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #if G4VERSION_NUMBER > 1019
   for (const auto& name : {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"})
     {incompatible[name].push_back("em_gs");}
-  incompatible["em_gs"] = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3", "em_4"};
+  incompatible["em_gs"] = {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"};
 #endif
 #if G4VERSION_NUMBER > 1020
   incompatible["decay"].push_back("decay_spin"); // append for safety in future
@@ -349,6 +366,8 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       G4String name = G4String(physicsListName); // convert string to G4String.
       name.toLower(); // change to lower case - physics lists are case insensitive
 
+      temporaryName = name; // copy to temporary variable
+      
       // search aliases
       auto result = aliasToOriginal.find(name);
       if (result != aliasToOriginal.end())
@@ -1126,6 +1145,36 @@ void BDSModularPhysicsList::DecayMuonicAtom()
 #endif
 
 #if G4VERSION_NUMBER > 1039
+void BDSModularPhysicsList::DNA()
+{
+  if (!physicsActivated["dna"])
+    {
+      // only one DNA physics list possible
+      if (temporaryName.contains("option"))
+	{
+	  if (temporaryName.contains("1"))
+	    {constructors.push_back(new G4EmDNAPhysics_option1());}
+	  if (temporaryName.contains("2"))
+	    {constructors.push_back(new G4EmDNAPhysics_option2());}
+	  if (temporaryName.contains("3"))
+	    {constructors.push_back(new G4EmDNAPhysics_option3());}
+	  if (temporaryName.contains("4"))
+	    {constructors.push_back(new G4EmDNAPhysics_option4());}
+	  if (temporaryName.contains("5"))
+	    {constructors.push_back(new G4EmDNAPhysics_option5());}
+	  if (temporaryName.contains("6"))
+	    {constructors.push_back(new G4EmDNAPhysics_option6());}
+	  if (temporaryName.contains("7"))
+	    {constructors.push_back(new G4EmDNAPhysics_option7());}
+	}
+      else
+	{constructors.push_back(new G4EmDNAPhysics());}
+      
+      physicsActivated["dna"] = true;
+    }
+}
+
+
 void BDSModularPhysicsList::Channelling()
 {
   if (!physicsActivated["channelling"])
