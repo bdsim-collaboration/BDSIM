@@ -84,6 +84,15 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   G4double xp0 = localMomUnit.x();
   G4double yp0 = localMomUnit.y();
   G4double zp0 = localMomUnit.z();
+
+  // only proceed with thick matrix if particle is paraxial
+  // judged by forward momentum > 0.9 and |transverse| < 0.1
+  if (zp0 < 0.9 || std::abs(xp0) > 0.1 || std::abs(yp0) > 0.1)
+    {
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
+      return;
+    }
   
   // local r'' (for curvature)
   G4ThreeVector localA;
@@ -113,14 +122,6 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
     {SetDistChord(0);}
   else
     {SetDistChord(dc);}
-
-  // check for paraxial approximation:
-  if(std::abs(zp0) < 0.9)
-    {// use a classical Runge Kutta stepper here
-      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
-      SetDistChord(backupStepper->DistChord());
-      return;
-    }  
 
   // RMatrix - from Andy Wolszki's Linear Dynamics lectures (#5, slide 43)
   // http://pcwww.liv.ac.uk/~awolski/main_teaching_Cockcroft_LinearDynamics.htm
