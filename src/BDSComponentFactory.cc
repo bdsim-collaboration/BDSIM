@@ -979,8 +979,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["field"] = (scaling * element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
+  
+  // lambda to help - sign convention - this is the 'entry' version
+  auto strength = [](G4double phi){
+		    BDSMagnetStrength* s = new BDSMagnetStrength();
+		    (*s)["rmat11"] = 1;
+		    (*s)["rmat22"] = 1;
+		    (*s)["rmat33"] = 1;
+		    (*s)["rmat44"] = 1;
+		    (*s)["rmat41"] = -phi;
+		    (*s)["rmat23"] = phi;
+		    return s;
+		  };
 
-  return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+  G4double s = 0.5*(*st)["ks"]; // already includes scaling
+  auto stIn        = strength(s);
+  auto stOut       = strength(-s); // -ve for exit
+  auto solenoidIn  = CreateThinRMatrix(0, stIn);
+  auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+  auto solenoidOut = CreateThinRMatrix(0, stOut);
+  
+  const G4String baseName = elementName;
+  BDSLine* bLine = new BDSLine(baseName);
+  bLine->AddComponent(solenoidIn);
+  bLine->AddComponent(solenoid);
+  bLine->AddComponent(solenoidOut);
+  return bLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
