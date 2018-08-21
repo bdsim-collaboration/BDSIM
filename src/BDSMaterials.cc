@@ -682,7 +682,7 @@ void BDSMaterials::DefineLiquids()
   G4String name;
   G4double density;
   AddMaterial(name="liquidhelium"  , density=  0.12498, kStateLiquid, 4.15, 1, {"He"}, std::list<int>{1});
-  AddMaterial(name="water"         , density=  1.00   , kStateLiquid, 300 , 1, {"O","H"}, std::list<int>{1,2});
+  AddMaterial("G4_WATER", "water"); // use NIST water
   
   //Water for Cherenkov radiation detector
   G4Material* tmpMaterial = new G4Material(name="waterCkov", density=1.*CLHEP::g/CLHEP::cm3, 2);

@@ -68,6 +68,8 @@ General
   to a previous version of BDSIM.
 * Memory usage for sampler hits has been significantly reduced with no affect to the output
   information stored.
+* The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
+  that was defined by BDSIM.
 
 Output Changes
 --------------
