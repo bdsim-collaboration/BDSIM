@@ -104,7 +104,16 @@ void BDSIntegratorRMatrixThin::Stepper(const G4double yIn[],
 
   G4double xp = localMomUnit.x();
   G4double yp = localMomUnit.y();
-  // G4double zp = localMomUnit.z();
+  G4double zp = localMomUnit.z();
+
+  // only proceed with thick matrix if particle is paraxial
+  // judged by forward momentum > 0.9 and |transverse| < 0.1
+  if (zp < 0.9 || std::abs(xp) > 0.1 || std::abs(yp) > 0.1)
+    {
+      AdvanceDriftMag(yIn, h, yOut, yErr);
+      SetDistChord(0);
+      return;
+    }
 
   G4double x1    = rmat11 * x0 + rmat12 * xp + rmat13 * y0 + rmat14 * yp + kick1;
   G4double xp1   = rmat21 * x0 + rmat22 * xp + rmat23 * y0 + rmat24 * yp + kick2;
