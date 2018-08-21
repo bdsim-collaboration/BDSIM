@@ -42,8 +42,8 @@ General
 * The horizontal width of kickers is now taken from :code:`outerDiameter`. Previously, :code:`outerDiameter`
   corresponded to the height and :code:`vhratio` was really the horizontal-to-vertical ratio in
   the lab frame.
-* Synchrotron radiation is disabled now with em_extra physics list (use dedicated
-  synchrad physics list). Avoids double registration of physics process.
+* Synchrotron radiation is now disabled with em_extra physics list (use dedicated
+  synchrad physics list). Avoids the double registration of the physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
   visualisation system.
