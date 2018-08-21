@@ -967,16 +967,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
+  (*st)["bz"]    = 1;
+  const G4double scaling = element->scaling;
   if (BDS::IsFinite(element->B))
     {
-      (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = 1;
+      (*st)["field"] = scaling * element->B * CLHEP::tesla;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
-      (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = 1;
+      (*st)["field"] = (scaling * element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
 
