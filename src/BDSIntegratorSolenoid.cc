@@ -54,27 +54,28 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-  
-  G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+
   G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  G4ThreeVector momUnit = mom.unit();
   G4double      momMag  = mom.mag();
   G4double      kappa   = - 0.5*fcof*bField/momMag;
-  G4double      h2      = h*h;
-  
-  BDSStep   localPosMom = ConvertToLocal(pos, mom, h, false);
-  G4ThreeVector localPos  = localPosMom.PreStepPoint();
-  G4ThreeVector localMom = localPosMom.PostStepPoint();
-  G4ThreeVector localMomUnit = localMom.unit();
-  
-  G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
-  
-  if (std::abs(kappa)<1e-12)
+
+  // Neutral particle or no strength - advance as a drift.
+  if (std::abs(kappa)<1e-20)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
+
+  G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector momUnit  = mom.unit();
+  G4double      h2       = h*h;
+  BDSStep   localPosMom  = ConvertToLocal(pos, mom, h, false);
+  G4ThreeVector localPos = localPosMom.PreStepPoint();
+  G4ThreeVector localMom = localPosMom.PostStepPoint();
+  G4ThreeVector localMomUnit = localMom.unit();
+  
+  G4double x1=0,xp1=0,y1=0,yp1=0,z1=0,zp1=0; //output coordinates to be
   
   // finite strength - treat as a solenoid
   G4double x0  = localPos.x();
