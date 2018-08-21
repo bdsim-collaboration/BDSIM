@@ -882,6 +882,8 @@ void BDSMaterials::AddMaterial(G4String aName,
 
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
 {
+  // for short names we assume they're elements so we prefix with G4_ and
+  // get them from NIST
   G4String nistString ("G4_");
   if (aMaterial.length() <= 2)
     {aMaterial.prepend(nistString);}
