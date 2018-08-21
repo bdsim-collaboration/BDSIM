@@ -1344,7 +1344,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
 {
-  G4cout << "BDSComponentFactory::CreateRMatrix" << G4endl;
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
 
   GMAD::Element *elementNew = new GMAD::Element(*element);
@@ -1365,8 +1364,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
 {
-
-  G4cout << "BDSComponentFactory::CreateThinRMatrix" << G4endl;
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
