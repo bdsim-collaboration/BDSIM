@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 
 #include <cmath>
+#include <limits>
 
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
