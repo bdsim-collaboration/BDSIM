@@ -979,6 +979,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["field"] = (scaling * element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
+
+  if (!BDS::IsFinite((*st)["field"]))
+    {// ie no strength solenoid - don't bother with fringe effects
+      return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+    }
   
   // lambda to help - sign convention - this is the 'entry' version
   auto strength = [](G4double phi){
