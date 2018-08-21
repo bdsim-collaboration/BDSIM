@@ -28,7 +28,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 
-
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
 					     G4Mag_EqRhs*             eqOfMIn):
@@ -41,14 +40,14 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 #endif
 }
 
-void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
-					 const G4double dydx[],
-					 G4double       h,
-					 G4double       yOut[],
-					 G4double       yErr[])
+void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
+				    const G4double dydx[],
+				    G4double       h,
+				    G4double       yOut[],
+				    G4double       yErr[])
 {
-  const G4double fcof = eqOfM->FCof();
   // In case of zero field or neutral particles do a linear step
+  const G4double fcof = eqOfM->FCof();
   if (zeroStrength || !BDS::IsFinite(fcof))
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
@@ -64,20 +63,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4double      kappa      = - 0.5*fcof*bField/InitPMag;
   G4double      h2         = h*h;
   
-#ifdef BDSDEBUG
-  G4double charge = (fcof)/CLHEP::c_light;
-  G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
-         << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
-         << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl
-         << " z  = " << yIn[2]/CLHEP::m   << " m"     << G4endl
-         << " px = " << yIn[3]/CLHEP::GeV << " GeV/c" << G4endl
-         << " py = " << yIn[4]/CLHEP::GeV << " GeV/c" << G4endl
-         << " pz = " << yIn[5]/CLHEP::GeV << " GeV/c" << G4endl
-         << " q  = " << charge/CLHEP::eplus << "e" << G4endl
-         << " Bz = " << bField/(CLHEP::tesla/CLHEP::m) << " T" << G4endl
-         << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
-         << G4endl; 
-#endif
   BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
   G4ThreeVector Localv0 = localPosMom.PostStepPoint();
@@ -85,7 +70,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   
   G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
-  if (fabs(kappa)<1e-12)
+  if (std::abs(kappa)<1e-12)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
@@ -119,10 +104,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       SetDistChord(0);
       return;
     }
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " using thick lens matrix " << G4endl;
-#endif
   
   // Save for Synchrotron Radiation calculations
   G4double R=1./R_1;
@@ -203,28 +184,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   LocalRp.setX(xp1);
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
-  
-#ifdef BDSDEBUG 
-  G4cout << "BDSIntegratorSolenoid: final point in local coordinates:" << G4endl
-	 << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
-	 << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
-	 << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
-	 << " x' = " << LocalRp[0]         << G4endl
-	 << " y' = " << LocalRp[1]         << G4endl
-	 << " z' = " << LocalRp[2]         << G4endl
-	 << G4endl; 
-#endif
 
   ConvertToGlobal(LocalR, LocalRp, yOut, yErr, InitPMag);
-}
-
-
-void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
-				    const G4double dydx[],
-				    const G4double h,
-				    G4double yOut[],
-				    G4double yErr[])
-{
-  // perform one step here
-  AdvanceHelix(yIn, dydx, h, yOut, yErr);
 }

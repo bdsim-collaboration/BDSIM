@@ -45,24 +45,12 @@ public:
 
   virtual ~BDSIntegratorSolenoid(){;}
 
-  /// The stepper for the Runge Kutta integration. The stepsize is fixed, equal to h.
-  /// Integrates ODE starting values y[0 to 6] and utputs yout[] and its estimated error yerr[].
-  /// This is a delegate function that may use the BDSIntegratorSolenoid::AdvanceHelix method.
-  /// The reason for this is so that intermediate steps can be calculated and therefore the
-  /// error ascertained or distance from the chord.  Error calculation is not currently implemented.
+  /// Calculate the particle motion along step length l in the paraxial approximation.
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],
 		       const G4double h,
 		       G4double       yOut[],
-		       G4double       yErr[]);
-
-protected:
-  /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.
-  void AdvanceHelix(const G4double yIn[],
-		    const G4double dydx[],
-		    G4double       h,
-		    G4double       yOut[],
-		    G4double       yErr[]);    
+		       G4double       yErr[]);  
 
 
 private:
