@@ -1346,15 +1346,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
 
-  GMAD::Element *elementNew = new GMAD::Element(*element);
+  GMAD::Element* elementNew = new GMAD::Element(*element);
   elementNew->l = (element->l-thinElementLength)/2.0;
 
   auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
   auto rmatrix            = CreateThinRMatrix(0);
   auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
 
-  const G4String             baseName = elementName;
-  BDSLine *bLine = new BDSLine(baseName);
+  const G4String baseName = elementName;
+  BDSLine* bLine = new BDSLine(baseName);
   bLine->AddComponent(parallelTransport1);
   bLine->AddComponent(rmatrix);
   bLine->AddComponent(parallelTransport2);
