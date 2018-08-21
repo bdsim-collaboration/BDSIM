@@ -57,16 +57,16 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
-  G4ThreeVector InitMomDir = GlobalP.unit();
-  G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - 0.5*fcof*bField/InitPMag;
+  G4ThreeVector mom    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
+  G4ThreeVector momUnit = mom.unit();
+  G4double      momMag   = mom.mag();
+  G4double      kappa      = - 0.5*fcof*bField/momMag;
   G4double      h2         = h*h;
   
-  BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
-  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
-  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
-  G4ThreeVector LocalRp = Localv0.unit();
+  BDSStep   localPosMom = ConvertToLocal(GlobalR, mom, h, false);
+  G4ThreeVector localPos  = localPosMom.PreStepPoint();
+  G4ThreeVector localMom = localPosMom.PostStepPoint();
+  G4ThreeVector localMomUnit = localMom.unit();
   
   G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
@@ -78,25 +78,22 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
     }
   
   // finite strength - treat as a solenoid
-  G4double x0  = LocalR.x();
-  G4double y0  = LocalR.y();
-  G4double z0  = LocalR.z();
-  G4double xp0 = LocalRp.x();
-  G4double yp0 = LocalRp.y();
-  G4double zp0 = LocalRp.z();
+  G4double x0  = localPos.x();
+  G4double y0  = localPos.y();
+  G4double z0  = localPos.z();
+  G4double xp0 = localMomUnit.x();
+  G4double yp0 = localMomUnit.y();
+  G4double zp0 = localMomUnit.z();
   
   // local r'' (for curvature)
-  G4ThreeVector LocalRpp;
-  LocalRpp.setX(-zp0*x0);
-  LocalRpp.setY( zp0*y0);
-  LocalRpp.setZ( x0*xp0 - y0*yp0);
-  LocalRpp *= kappa;
+  G4ThreeVector localA;
+  localA.setX(-zp0*x0);
+  localA.setY( zp0*y0);
+  localA.setZ( x0*xp0 - y0*yp0);
+  localA *= kappa;
   
   // determine effective curvature 
-  G4double R_1 = LocalRpp.mag();
-#ifdef BDSDEBUG 
-  G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
-#endif
+  G4double R_1 = localA.mag();
 
   if (R_1 < 1e-15)
     {
@@ -132,7 +129,7 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   
   G4double w       = kappa;
   //need the length along curvilinear s -> project h on z
-  G4ThreeVector positionMove = h * InitMomDir; 
+  G4ThreeVector positionMove = h * momUnit;
   G4double dz      = positionMove.z();
   G4double wL      = kappa*dz; 
   G4double cosOL   = std::cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
@@ -178,12 +175,12 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   z1 = z0+dz;
   
   //write the final coordinates
-  LocalR.setX(x1);
-  LocalR.setY(y1);
-  LocalR.setZ(z1);
-  LocalRp.setX(xp1);
-  LocalRp.setY(yp1);
-  LocalRp.setZ(zp1);
+  localPos.setX(x1);
+  localPos.setY(y1);
+  localPos.setZ(z1);
+  localMomUnit.setX(xp1);
+  localMomUnit.setY(yp1);
+  localMomUnit.setZ(zp1);
 
-  ConvertToGlobal(LocalR, LocalRp, yOut, yErr, InitPMag);
+  ConvertToGlobal(localPos, localMomUnit, yOut, yErr, momMag);
 }
