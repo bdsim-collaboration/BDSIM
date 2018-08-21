@@ -49,6 +49,14 @@ endif()
 
 if (G4_MINOR_VERSION GREATER 3)
   simple_testing(physics-decay-muonic-atom "--file=decay_muonic_atom.gmad"  ${OVERLAP_CHECK})
+  simple_testing(physics-dna               "--file=dna.gmad"                ${OVERLAP_CHECK})
+  simple_testing(physics-dna-1             "--file=dna_1.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-2             "--file=dna_2.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-3             "--file=dna_3.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-4             "--file=dna_4.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-5             "--file=dna_5.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-6             "--file=dna_6.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-7             "--file=dna_7.gmad"              ${OVERLAP_CHECK})
 endif()
 
 # test invalid physics list

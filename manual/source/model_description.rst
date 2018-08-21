@@ -2596,6 +2596,12 @@ Physics Lists In BDSIM
 |                              | Geant4 tracking integrators track spin correctly. Uses                 |
 |                              | `G4SpinDecayPhysics`. Available from Geant4.10.2.p01 onwards.          |
 +------------------------------+------------------------------------------------------------------------+
+| dna                          | G4EmDNAPhysics list.  Only applies to G4_WATER material.               |
++------------------------------+------------------------------------------------------------------------+
+| dna_1                        | Variant 1 of G4EmDNAPhysics list. Uses G4EmDNAPhysics_option1.         |
++------------------------------+------------------------------------------------------------------------+
+| dna_X                        | Variant X of G4EmDNAPhysics list, where X is one of 1,2,3,4,5,6,7.     |
++------------------------------+------------------------------------------------------------------------+
 | em                           | Transportation of primary particles, ionisation, Bremsstrahlung,       |
 |                              | Cherenkov, multiple scattering. Uses `G4EmStandardPhysics`.            |
 +------------------------------+------------------------------------------------------------------------+
