@@ -1362,9 +1362,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   return bLine;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn)
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+  return CreateThinRMatrix(angleIn, st);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								const BDSMagnetStrength* st)
+{
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
