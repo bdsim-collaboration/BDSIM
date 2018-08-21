@@ -55,15 +55,14 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
       return;
     }
   
-  const G4double *pIn      = yIn+3;
-  G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector mom    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
+  G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector mom     = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4ThreeVector momUnit = mom.unit();
-  G4double      momMag   = mom.mag();
-  G4double      kappa      = - 0.5*fcof*bField/momMag;
-  G4double      h2         = h*h;
+  G4double      momMag  = mom.mag();
+  G4double      kappa   = - 0.5*fcof*bField/momMag;
+  G4double      h2      = h*h;
   
-  BDSStep   localPosMom = ConvertToLocal(GlobalR, mom, h, false);
+  BDSStep   localPosMom = ConvertToLocal(pos, mom, h, false);
   G4ThreeVector localPos  = localPosMom.PreStepPoint();
   G4ThreeVector localMom = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();
@@ -93,21 +92,26 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   localA *= kappa;
   
   // determine effective curvature 
-  G4double R_1 = localA.mag();
+  G4double localAMag = localA.mag();
 
-  if (R_1 < 1e-15)
+  // low strength - drift
+  if (localAMag < 1e-15)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);
       SetDistChord(0);
       return;
     }
   
-  // Save for Synchrotron Radiation calculations
-  G4double R=1./R_1;
+  G4double radiusOfCurvature = std::numeric_limits<double>::max();
+  if (BDS::IsFinite(localAMag))
+    {radiusOfCurvature = 1./localAMag;} // avoid division by 0
   
   // chord distance (simple quadratic approx)
-  G4double dc = h2/(8*R);
-  SetDistChord(dc);
+  G4double dc = h2/(8*radiusOfCurvature);
+  if (std::isnan(dc))
+    {SetDistChord(0);}
+  else
+    {SetDistChord(dc);}
 
   // check for paraxial approximation:
   if(std::abs(zp0) < 0.9)
@@ -150,31 +154,17 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
     {zp1 = zp0;}
   
   // calculate deltas to existing coords
-  G4double dx = x1-x0;
-  G4double dy = y1-y0;
+  G4double dx = x1 - x0;
+  G4double dy = y1 - y0;
+
+  // Linear chord length
+  G4double dR2 = dx*dx + dy*dy;
+  dz = std::sqrt(h2 * (1. - h2 / (12 * radiusOfCurvature * radiusOfCurvature)) - dR2);
+  if (std::isnan(dz))
+    {dz = h;}
   
-  // check for precision problems
-  G4double ScaleFac = (dx*dx+dy*dy+dz*dz)/h2;
-#ifdef BDSDEBUG
-  G4cout << "Ratio of calculated to proposed step length: " << ScaleFac << G4endl;
-#endif
-  if(ScaleFac>1.0000001)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " normalising to conserve step length" << G4endl;
-#endif
-      ScaleFac = std::sqrt(ScaleFac);
-      if (std::isnan(ScaleFac))
-	{ScaleFac = 1;}
-      dx /= ScaleFac;
-      dy /= ScaleFac;
-      dz /= ScaleFac;
-      x1 =  x0+dx;
-      y1 =  y0+dy;
-    }
-  z1 = z0+dz;
+  z1 = z0 + dz;
   
-  //write the final coordinates
   localPos.setX(x1);
   localPos.setY(y1);
   localPos.setZ(z1);
@@ -182,5 +172,24 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   localMomUnit.setY(yp1);
   localMomUnit.setZ(zp1);
 
-  ConvertToGlobal(localPos, localMomUnit, yOut, yErr, momMag);
+  // normalise from unit momentum to absolute momentum
+  G4ThreeVector localMomOut = localMomUnit * momMag;
+
+  // convert to global coordinates
+  BDSStep globalPosMom = CurvilinearToGlobal(localPos, localMomOut, true);
+  G4ThreeVector globalPosOut = globalPosMom.PreStepPoint();
+  G4ThreeVector globalMomOut = globalPosMom.PostStepPoint();
+
+  // error along direction of travel really
+  G4ThreeVector globalMomOutU = globalMomOut.unit();
+  globalMomOutU *= 1e-8;
+  
+  // write out coordinates and errors to arrays
+  for (G4int i = 0; i < 3; i++)
+    {
+      yOut[i]   = globalPosOut[i];
+      yOut[i+3] = globalMomOut[i];
+      yErr[i]   = globalMomOutU[i]*1e-10; // empirically this has to be very small
+      yErr[i+3] = 1e-40;
+    }
 }
