@@ -123,19 +123,13 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
 
   // RMatrix - from Andy Wolszki's Linear Dynamics lectures (#5, slide 43)
   // http://pcwww.liv.ac.uk/~awolski/main_teaching_Cockcroft_LinearDynamics.htm
-  // note this is actually for one step through the whole solenoid as focussing
-  // comes from edge effects - may need to reconsider this in the future...
-  // maximum step size is set to full length in BDSSolenoid.cc
   // ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) ) (x )
   // ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  ) (x')
   // ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) ) (y )
   // ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      ) (y')
   
   G4double w       = kappa;
-  //need the length along curvilinear s -> project h on z
-  G4ThreeVector positionMove = h * momUnit;
-  G4double dz      = positionMove.z();
-  G4double wL      = kappa*dz; 
+  G4double wL      = kappa*h; 
   G4double cosOL   = std::cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
   G4double cosSqOL = cosOL*cosOL;
   G4double sinOL   = std::sin(wL);
@@ -148,22 +142,11 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   y1  = (-0.5*x0)*sin2OL - (xp0/w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
   yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
   
+  z1 = z0 + h;
   // ensure normalisation for vector
-  zp1 = std::sqrt(1 - xp1*xp1 -yp1*yp1);
+  zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
   if (std::isnan(zp1))
-    {zp1 = zp0;}
-  
-  // calculate deltas to existing coords
-  G4double dx = x1 - x0;
-  G4double dy = y1 - y0;
-
-  // Linear chord length
-  G4double dR2 = dx*dx + dy*dy;
-  dz = std::sqrt(h2 * (1. - h2 / (12 * radiusOfCurvature * radiusOfCurvature)) - dR2);
-  if (std::isnan(dz))
-    {dz = h;}
-  
-  z1 = z0 + dz;
+    {zp1 = zp0;} 
   
   localPos.setX(x1);
   localPos.setY(y1);
