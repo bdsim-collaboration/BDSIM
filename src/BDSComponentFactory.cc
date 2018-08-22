@@ -209,6 +209,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       // modified or is flat, therefore we mark them all as unique.
       differentFromDefinition = true;
     }
+  else if (element->type == ElementType::_SOLENOID)
+    {// we build incoming / outgoing fringe fields for solenoids
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+    }
   
   // Check if the component already exists and return that.
   // Don't use the registry for output elements since reliant on unique name.
@@ -998,17 +1011,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		  };
 
   G4double s = 0.5*(*st)["ks"]; // already includes scaling
-  auto stIn        = strength(-s);
-  auto stOut       = strength(s);
-  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
-  auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
-  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
-  
-  const G4String baseName = elementName;
-  BDSLine* bLine = new BDSLine(baseName);
-  bLine->AddComponent(solenoidIn);
+  BDSLine* bLine = new BDSLine(elementName);
+  if (prevElement)
+    {// only build fringe if previous element isn't another solenoid
+      if (prevElement->type != ElementType::_SOLENOID)
+	{
+	  auto stIn        = strength(-s);
+	  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+	  bLine->AddComponent(solenoidIn);
+	}
+    }
+  auto solenoid = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
   bLine->AddComponent(solenoid);
-  bLine->AddComponent(solenoidOut);
+  if (nextElement)
+    {// only build fringe if next element isn't another solenoid
+      if (nextElement->type != ElementType::_SOLENOID)
+	{
+	  auto stOut       = strength(s);
+	  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+	  bLine->AddComponent(solenoidOut);
+	}
+    }
+  
   return bLine;
 }
 
