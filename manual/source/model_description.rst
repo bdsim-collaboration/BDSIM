@@ -1169,17 +1169,19 @@ solenoid
 	    :align: right
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
-hard edge field profile, so it is not equivalent to split a single solenoid into multiple
-smaller ones. **This is currently under development**.
+hard edge field profile. Fringes for the edge effects are provided by default and
+are controllable with the option `includeFringeFields`.
 
 ================  ============================  ==========  ===========
 Parameter         Description                   Default     Required
 `l`               Length [m]                    0           Yes
-`ks`              Solenoid strength [ ]         0           Yes
+`ks`              Solenoid strength             0           No
+`B`               Magnetic field                0           No
 `material`        Outer material                Iron        No
 `outerDiameter`   Outer full width [m]          global      No
 ================  ============================  ==========  ===========
 
+* A positive field corresponds to a field in along the direction of positive S.
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 
