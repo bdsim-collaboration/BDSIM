@@ -100,7 +100,7 @@ public:
   BDSIntegratorType undulator;
 
   /// Accessor for bool of is the integrator set matrix style.
-  G4bool IsMatrixIntegratorSet() const;
+  inline G4bool IsMatrixIntegratorSet() const {return isMatrix;}
 
 private:
   G4bool isMatrix;

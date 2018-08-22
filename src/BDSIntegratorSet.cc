@@ -325,6 +325,3 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return general; break;}
     }
 }
-
-G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
-{return isMatrix;}
