@@ -68,10 +68,10 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
       return;
     }
 
-  G4ThreeVector pos     = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector pos      = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector momUnit  = mom.unit();
   G4double      h2       = h*h;
-  BDSStep   localPosMom  = ConvertToLocal(pos, mom, h, false);
+  BDSStep    localPosMom = GlobalToCurvilinear(pos, momUnit, h, true);
   G4ThreeVector localPos = localPosMom.PreStepPoint();
   G4ThreeVector localMom = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();
@@ -170,7 +170,7 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   BDSStep globalPosMom = CurvilinearToGlobal(localPos, localMomOut, true);
   G4ThreeVector globalPosOut = globalPosMom.PreStepPoint();
   G4ThreeVector globalMomOut = globalPosMom.PostStepPoint();
-
+  
   // error along direction of travel really
   G4ThreeVector globalMomOutU = globalMomOut.unit();
   globalMomOutU *= 1e-8;
