@@ -998,8 +998,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		  };
 
   G4double s = 0.5*(*st)["ks"]; // already includes scaling
-  auto stIn        = strength(s);
-  auto stOut       = strength(-s); // -ve for exit
+  auto stIn        = strength(-s);
+  auto stOut       = strength(s);
   auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
   auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
   auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
