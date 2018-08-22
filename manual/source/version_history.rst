@@ -104,7 +104,7 @@ Bug Fixes
 * Fixed solenoid tracking. The anti-spiralling code in the dipole integrator that is desgined
   to stop infinite spiralling of low energy particles in strong fields was causing incorrect
   tracking in solenoids. This has been fixed with the reimplementation of the solenoid matrix
-  and now includes the fringe effects.
+  and now includes the fringe effects. Issue #255.
 * Fixed tracking bug where particle in very niche coordinates may reflect from a sampler
   at the end of a dipole with a very strongly angled pole face. #Issue 241.
 * Fixed automatic tunnel building algorithm, which accumulated wrong variables, leading to
