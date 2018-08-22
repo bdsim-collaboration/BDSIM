@@ -49,7 +49,7 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
 {
   // in case of zero field or neutral particles do a linear step
   const G4double fcof = eqOfM->FCof();
-  if (zeroStrength || !BDS::IsFinite(fcof))
+  if (zeroStrength || !BDS::IsFinite(fcof) || h < 1e-9)
     {
       AdvanceDriftMag(yIn,h,yOut,yErr);
       SetDistChord(0);
