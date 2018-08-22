@@ -97,6 +97,7 @@ Output Changes
 * New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
 * New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
   the global Cartesian frame.
+* Sampler name now stored in Orbit output from rebdsimOrbit to make sampler matching possible.
 
 Bug Fixes
 ---------
