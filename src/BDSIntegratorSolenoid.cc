@@ -76,8 +76,6 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   G4ThreeVector localMom = localPosMom.PostStepPoint();
   G4ThreeVector localMomUnit = localMom.unit();
   
-  G4double x1=0,xp1=0,y1=0,yp1=0,z1=0,zp1=0; //output coordinates to be
-  
   // finite strength - treat as a solenoid
   G4double x0  = localPos.x();
   G4double y0  = localPos.y();
@@ -145,14 +143,14 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   G4double S2oK = S2 / kappa;
   G4double S2K  = S2 * kappa;
   
-  x1  =  x0*C2  + xp0*SCoK + y0*SC  + yp0*S2oK;
-  xp1 = -x0*SCK + xp0*C2   - y0*S2K + yp0*SC;
-  y1  = -x0*SC  - xp0*S2oK + y0*C2  + yp0*SCoK;
-  yp1 =  x0*S2K - xp0*SC   - y0*SCK + yp0*C2;
+  G4double x1  =  x0*C2  + xp0*SCoK + y0*SC  + yp0*S2oK;
+  G4double xp1 = -x0*SCK + xp0*C2   - y0*S2K + yp0*SC;
+  G4double y1  = -x0*SC  - xp0*S2oK + y0*C2  + yp0*SCoK;
+  G4double yp1 =  x0*S2K - xp0*SC   - y0*SCK + yp0*C2;
   
-  z1 = z0 + h;
+  G4double z1 = z0 + h;
   // ensure normalisation for vector
-  zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
+  G4double zp1 = std::sqrt(1 - xp1*xp1 - yp1*yp1);
   if (std::isnan(zp1))
     {zp1 = zp0;} 
   
