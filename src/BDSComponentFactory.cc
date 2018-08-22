@@ -301,7 +301,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
   case ElementType::_THINRMATRIX:
-    component = CreateThinRMatrix(angleIn); break;
+    component = CreateThinRMatrix(angleIn, elementName); break;
   case ElementType::_PARALLELTRANSPORTER:
     component = CreateParallelTransporter(); break;
   case ElementType::_RMATRIX:
@@ -980,7 +980,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["ks"]    = element->ks;
     }
 
-  if (!BDS::IsFinite((*st)["field"]))
+  if (!BDS::IsFinite((*st)["field"]) || !includeFringeFields)
     {// ie no strength solenoid - don't bother with fringe effects
       return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
     }
@@ -1000,9 +1000,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   G4double s = 0.5*(*st)["ks"]; // already includes scaling
   auto stIn        = strength(s);
   auto stOut       = strength(-s); // -ve for exit
-  auto solenoidIn  = CreateThinRMatrix(0, stIn);
+  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
   auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
-  auto solenoidOut = CreateThinRMatrix(0, stOut);
+  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
   
   const G4String baseName = elementName;
   BDSLine* bLine = new BDSLine(baseName);
@@ -1379,7 +1379,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   elementNew->l = (element->l-thinElementLength)/2.0;
 
   auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
-  auto rmatrix            = CreateThinRMatrix(0);
+  auto rmatrix            = CreateThinRMatrix(0, elementName + "_centre");
   auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
 
   const G4String baseName = elementName;
@@ -1391,18 +1391,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   return bLine;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								G4String name)
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
-  return CreateThinRMatrix(angleIn, st);
+  return CreateThinRMatrix(angleIn, st, name);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
-								const BDSMagnetStrength* st)
+								const BDSMagnetStrength* st,
+								G4String name)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
                                                                -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
@@ -1417,7 +1419,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn
   vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
-                                          elementName,
+                                          name,
                                           thinElementLength,
                                           beamPipeInfo,
                                           magnetOuterInfo,
