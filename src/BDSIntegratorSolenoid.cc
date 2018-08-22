@@ -124,26 +124,31 @@ void BDSIntegratorSolenoid::Stepper(const G4double yIn[],
   else
     {SetDistChord(dc);}
 
-  // RMatrix - from Andy Wolszki's Linear Dynamics lectures (#5, slide 43)
-  // http://pcwww.liv.ac.uk/~awolski/main_teaching_Cockcroft_LinearDynamics.htm
-  // ( cos^2 (wL)     , (1/2w)sin(2wL)  , (1/2)sin(2wL)  , (1/w)sin^2(wL) ) (x )
-  // ( (w/2)sin(2wL)  , cos^2(wL)       ,  -w sin^2(wL)  , (1/2)sin(2wL)  ) (x')
-  // ( -(1/2)sin(2wL) , (-1/w)sin^2(wL) , cos^2(wL)      , (1/2w)sin(2wL) ) (y )
-  // ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      ) (y')
+  // From PRSTAB 8 021001 (2005) and Handbook of Acc. Phys & Engineering, 2nd Ed., A. Chao, pg74
+  // (C^2    , SC / K   , SC     , S^2 / K  ) (x )
+  // (-K SC  , C^2      , -K S^2 , SC       ) (x')
+  // (-SC    , -S^2 / K , C^2    , SC / K   ) (y )
+  // (K S^2  , -SC      , -K SC  , C^2      ) (y')
+  // K = B_0 / 2Brho
+  // B_0 is field in solenoid
+  // Brho is momentum of central trajectory
+  // C = cos( KL )
+  // S = sin( KL )
+
+  G4double C    = std::cos(kappa * h);
+  G4double S    = std::sin(kappa * h);
+  G4double C2   = C * C;
+  G4double S2   = S * S;
+  G4double SC   = S * C;
+  G4double SCK  = SC * kappa;
+  G4double SCoK = SC / kappa;
+  G4double S2oK = S2 / kappa;
+  G4double S2K  = S2 * kappa;
   
-  G4double w       = kappa;
-  G4double wL      = kappa*h; 
-  G4double cosOL   = std::cos(wL); // w is really omega - so use 'O' to describe - OL = omega*L
-  G4double cosSqOL = cosOL*cosOL;
-  G4double sinOL   = std::sin(wL);
-  G4double sin2OL  = std::sin(2.0*wL);
-  G4double sinSqOL = sinOL*sinOL;
-  
-  // calculate thick lens transfer matrix
-  x1  = x0*cosSqOL + (0.5*xp0/w)*sin2OL + (0.5*y0)*sin2OL + (yp0/w)*sinSqOL;
-  xp1 = (0.5*x0*w)*sin2OL + xp0*cosSqOL - (w*y0)*sinSqOL + (0.5*yp0)*sin2OL;
-  y1  = (-0.5*x0)*sin2OL - (xp0/w)*sinSqOL + y0*cosSqOL + (0.5*yp0/w)*sin2OL;
-  yp1 = x0*w*sinSqOL - (0.5*xp0)*sin2OL - (0.5*w*y0)*sin2OL + yp0*cosSqOL;  
+  x1  =  x0*C2  + xp0*SCoK + y0*SC  + yp0*S2oK;
+  xp1 = -x0*SCK + xp0*C2   - y0*S2K + yp0*SC;
+  y1  = -x0*SC  - xp0*S2oK + y0*C2  + yp0*SCoK;
+  yp1 =  x0*S2K - xp0*SC   - y0*SCK + yp0*C2;
   
   z1 = z0 + h;
   // ensure normalisation for vector
