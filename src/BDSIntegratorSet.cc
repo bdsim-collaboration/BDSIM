@@ -103,7 +103,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4);// undulator
 
   const BDSIntegratorSet* integratorsBDSIMTwo =
-    new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,         // solenoid
 			 BDSIntegratorType::dipolerodrigues2, // dipole
 			 BDSIntegratorType::dipolematrix,     // dipole quadrupole
 			 BDSIntegratorType::quadrupole,       // quadrupole
@@ -127,7 +127,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4);  // undulator
   /// Mad-x style tracking.
   const BDSIntegratorSet*  integratorsBDSIMMatrix =
-    new BDSIntegratorSet(BDSIntegratorType::dipolerodrigues2, // solenoid
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipolematrix,   // dipole
 			 BDSIntegratorType::dipolematrix,   // dipole quadrupole
 			 BDSIntegratorType::quadrupole,     // quadrupole
@@ -304,8 +304,8 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return rfcavity;         break;}
     case BDSFieldType::rf:
       {return rf;               break;}
-	case BDSFieldType::undulator:
-		{return undulator;               break;}
+    case BDSFieldType::undulator:
+      {return undulator;        break;}
     case BDSFieldType::multipoleouterdipole:
     case BDSFieldType::multipoleouterquadrupole:
     case BDSFieldType::multipoleoutersextupole:
@@ -318,13 +318,10 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
     case BDSFieldType::multipoleouterdipole3d:
       {return multipoleOuter;   break;}
     case BDSFieldType::rmatrix:
-      {return rmatrixThin;}
+      {return rmatrixThin;      break;}
     case BDSFieldType::paralleltransporter:
       {return parallelTransporter; break;}
     default:
-      {return general; break;}
+      {return general;          break;}
     }
 }
-
-G4bool BDSIntegratorSet::IsMatrixIntegratorSet() const
-{return isMatrix;}

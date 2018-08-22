@@ -1,9 +1,24 @@
-d1: drift, l=0.5;
-s1: solenoid, l=0.1, ks=0.5;
-d2: drift, l=0.5;
+d1: drift, l=0.1;
+s1: solenoid, l=0.1, ks=0.05;
 s2: solenoid, l=0.1, ks=0.0;
 
-lat : line = (d1,s1,d2,s2);
-com : line = (s1,s2);
+lat : line = (d1,s1,d1);
 
-include optionsTest.gmad;
+use, lat;
+
+beam, particle="e-",
+      energy=1*GeV,
+      distrType="gauss",
+      sigmaX=1*mm,
+      sigmaXp=1e-3,
+      sigmaY=1*mm,
+      sigmaYp=1e-3;
+
+
+!option, integratorSet="geant4";
+
+option, maximumStepLength=1*mm;
+
+option, includeFringeFields=0;
+
+option, seed=123;

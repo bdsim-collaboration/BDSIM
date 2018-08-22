@@ -209,6 +209,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       // modified or is flat, therefore we mark them all as unique.
       differentFromDefinition = true;
     }
+  else if (element->type == ElementType::_SOLENOID)
+    {// we build incoming / outgoing fringe fields for solenoids
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+    }
   
   // Check if the component already exists and return that.
   // Don't use the registry for output elements since reliant on unique name.
@@ -301,7 +314,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
   case ElementType::_THINRMATRIX:
-    component = CreateThinRMatrix(angleIn); break;
+    component = CreateThinRMatrix(angleIn, elementName); break;
   case ElementType::_PARALLELTRANSPORTER:
     component = CreateParallelTransporter(); break;
   case ElementType::_RMATRIX:
@@ -967,20 +980,60 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
+  (*st)["bz"]    = 1;
+  const G4double scaling = element->scaling;
   if (BDS::IsFinite(element->B))
     {
-      (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = 1;
+      (*st)["field"] = scaling * element->B * CLHEP::tesla;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
-      (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = 1;
+      (*st)["field"] = (scaling * element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
 
-  return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+  if (!BDS::IsFinite((*st)["field"]) || !includeFringeFields)
+    {// ie no strength solenoid - don't bother with fringe effects
+      return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+    }
+  
+  // lambda to help - sign convention - this is the 'entry' version
+  auto strength = [](G4double phi){
+		    BDSMagnetStrength* s = new BDSMagnetStrength();
+		    (*s)["rmat11"] = 1;
+		    (*s)["rmat22"] = 1;
+		    (*s)["rmat33"] = 1;
+		    (*s)["rmat44"] = 1;
+		    (*s)["rmat41"] = -phi;
+		    (*s)["rmat23"] = phi;
+		    return s;
+		  };
+
+  G4double s = 0.5*(*st)["ks"]; // already includes scaling
+  BDSLine* bLine = new BDSLine(elementName);
+  if (prevElement)
+    {// only build fringe if previous element isn't another solenoid
+      if (prevElement->type != ElementType::_SOLENOID)
+	{
+	  auto stIn        = strength(-s);
+	  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+	  bLine->AddComponent(solenoidIn);
+	}
+    }
+  auto solenoid = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
+  bLine->AddComponent(solenoid);
+  if (nextElement)
+    {// only build fringe if next element isn't another solenoid
+      if (nextElement->type != ElementType::_SOLENOID)
+	{
+	  auto stOut       = strength(s);
+	  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+	  bLine->AddComponent(solenoidOut);
+	}
+    }
+  
+  return bLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
@@ -1344,18 +1397,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
 {
-  G4cout << "BDSComponentFactory::CreateRMatrix" << G4endl;
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
 
-  GMAD::Element *elementNew = new GMAD::Element(*element);
+  GMAD::Element* elementNew = new GMAD::Element(*element);
   elementNew->l = (element->l-thinElementLength)/2.0;
 
   auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
-  auto rmatrix            = CreateThinRMatrix(0);
+  auto rmatrix            = CreateThinRMatrix(0, elementName + "_centre");
   auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
 
-  const G4String             baseName = elementName;
-  BDSLine *bLine = new BDSLine(baseName);
+  const G4String baseName = elementName;
+  BDSLine* bLine = new BDSLine(baseName);
   bLine->AddComponent(parallelTransport1);
   bLine->AddComponent(rmatrix);
   bLine->AddComponent(parallelTransport2);
@@ -1363,14 +1415,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
   return bLine;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								G4String name)
 {
-
-  G4cout << "BDSComponentFactory::CreateThinRMatrix" << G4endl;
   BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+  return CreateThinRMatrix(angleIn, st, name);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								const BDSMagnetStrength* st,
+								G4String name)
+{
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(elementName, element,
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
                                                                -angleIn, angleIn, beamPipeInfo);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
@@ -1385,7 +1443,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(double angleIn)
   vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
 
   BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
-                                          elementName,
+                                          name,
                                           thinElementLength,
                                           beamPipeInfo,
                                           magnetOuterInfo,
@@ -1402,7 +1460,8 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
 					     BDSMagnetType magnetType,
-					     G4double      angle) const
+					     G4double      angle,
+G4String nameSuffix) const
 {
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
@@ -1414,7 +1473,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       true,
 					       fieldTrans);
 
-  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + nameSuffix, element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
   BDSFieldInfo* outerField = nullptr;
 
@@ -1425,7 +1484,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
     {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
 
   return new BDSMagnet(magnetType,
-		       elementName,
+		       elementName + nameSuffix,
 		       element->l * CLHEP::m,
 		       bpInfo,
 		       outerInfo,

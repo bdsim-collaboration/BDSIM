@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
@@ -56,7 +55,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
-  // In case of zero field or neutral particles do a linear step
+  // in case of zero field or neutral particles do a linear step
   const G4double fcof = eqOfM->FCof();
   if (zeroStrength || !BDS::IsFinite(fcof))
     {
@@ -74,7 +73,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   // as well as charge of the given particle
   G4double kappa = fcof*bPrime/momMag;
   
-  // Neutral particle or no strength - advance as a drift.
+  // neutral particle or no strength - advance as a drift.
   if(std::abs(kappa) < 1e-20)
     {
       AdvanceDriftMag(yIn, h, yOut, yErr);

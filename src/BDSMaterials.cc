@@ -682,7 +682,7 @@ void BDSMaterials::DefineLiquids()
   G4String name;
   G4double density;
   AddMaterial(name="liquidhelium"  , density=  0.12498, kStateLiquid, 4.15, 1, {"He"}, std::list<int>{1});
-  AddMaterial(name="water"         , density=  1.00   , kStateLiquid, 300 , 1, {"O","H"}, std::list<int>{1,2});
+  AddMaterial("G4_WATER", "water"); // use NIST water
   
   //Water for Cherenkov radiation detector
   G4Material* tmpMaterial = new G4Material(name="waterCkov", density=1.*CLHEP::g/CLHEP::cm3, 2);
@@ -725,7 +725,6 @@ void BDSMaterials::DefineGases()
   G4double pressure = 1.0*CLHEP::atmosphere;
   //Air
   G4double density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))* 30*CLHEP::g/(22.4e-3*CLHEP::m3) ;
-  //  G4cout << "Air: temperature = " << temperature/CLHEP::kelvin << " kelvin, pressure = " << pressure/CLHEP::atmosphere << " atm, density = " << density/(CLHEP::g/CLHEP::m3) << " g/m3" << G4endl;
   G4Material* tmpMaterial = new G4Material
     (name="air", density, 2, kStateGas, temperature, pressure);
   tmpMaterial->AddElement(GetElement("O"), fractionmass=0.2);
@@ -882,6 +881,8 @@ void BDSMaterials::AddMaterial(G4String aName,
 
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)const
 {
+  // for short names we assume they're elements so we prefix with G4_ and
+  // get them from NIST
   G4String nistString ("G4_");
   if (aMaterial.length() <= 2)
     {aMaterial.prepend(nistString);}
@@ -961,17 +962,17 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)const
 
 void BDSMaterials::ListMaterials()const
 {
-  G4cout << "Available elements are:" << G4endl;
-  for (auto element : elements) {
-    G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;
-  }
+  G4cout << "All elements are available with their 1 or 2 letter chemical symbol. ie C or G4_C" << G4endl;
 
-  G4cout << "***************" << G4endl;
-  G4cout << "Available materials are:" << G4endl;
-  for (auto material : materials) {
-    G4cout << material.second->GetName() << G4endl;
-  }
-  G4cout << "****************************" << G4endl;
+  G4cout << "Extra defined elements are:" << G4endl;
+  for (auto element : elements)
+    {G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;}
+  G4cout << G4endl;
+  
+  G4cout << "Defined materials are:" << G4endl;
+  for (auto material : materials)
+    {G4cout << material.second->GetName() << G4endl;}
+  G4cout << G4endl;
   G4cout << "Available NIST materials are:" << G4endl;
   G4NistManager::Instance()->ListMaterials("all");
 }

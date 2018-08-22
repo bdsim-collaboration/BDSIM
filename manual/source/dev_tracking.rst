@@ -86,7 +86,7 @@ The integrator set may be one of the following (case-insensitive):
 +-------------+-------------------------+--------------------------------+
 | **Set**     | **Magnetic Field Type** | **Integrator**                 |
 +=============+=========================+================================+
-| bdsimmatrix | Solenoid                | BDSIM Dipole Rodrigues 2       |
+| bdsimmatrix | Solenoid                | BDSIM Solenoid                 |
 |             +-------------------------+--------------------------------+
 |             | Dipole                  | BDSIM Dipole Matrix            |
 |             +-------------------------+--------------------------------+
@@ -123,6 +123,8 @@ The integrator set may be one of the following (case-insensitive):
 |             | Thin Multipole          | BDSIM Thin Multipole           |
 |             +-------------------------+--------------------------------+
 |             | Multipole Outer         | G4NystromRK4                   |
+|             +-------------------------+--------------------------------+
+|             | Thin RMatrix            | BDSIM Thin RMatrix             |
 +-------------+-------------------------+--------------------------------+
 
 .. tabularcolumns:: |p{6cm}|p{5cm}|p{6cm}|
@@ -130,7 +132,7 @@ The integrator set may be one of the following (case-insensitive):
 +---------------------------+-------------------------+--------------------------------+
 | **Set**                   | **Magnetic Field Type** | **Integrator**                 |
 +===========================+=========================+================================+
-| bdsimmatrixfringescaling  | Solenoid                | BDSIM Dipole Rodrigues 2       |
+| bdsimmatrixfringescaling  | Solenoid                | BDSIM Solenoid                 |
 |                           +-------------------------+--------------------------------+
 |                           | Dipole                  | BDSIM Dipole Matrix            |
 |                           +-------------------------+--------------------------------+
@@ -167,6 +169,8 @@ The integrator set may be one of the following (case-insensitive):
 |                           | Thin Multipole          | BDSIM Thin Multipole           |
 |                           +-------------------------+--------------------------------+
 |                           | Multipole Outer         | G4NystromRK4                   |
+|                           +-------------------------+--------------------------------+
+|                           | Thin RMatrix            | BDSIM Thin RMatrix             |
 +---------------------------+-------------------------+--------------------------------+
 
 
@@ -175,7 +179,7 @@ The integrator set may be one of the following (case-insensitive):
 +------------+-------------------------+--------------------------------+
 | **Set**    | **Magnetic Field Type** | **Integrator**                 |
 +============+=========================+================================+
-| bdsimtwo   | Solenoid                | BDSIM Dipole Rodrigues 2       |
+| bdsimtwo   | Solenoid                | BDSIM Solenoid                 |
 |            +-------------------------+--------------------------------+
 |            | Dipole                  | BDSIM Dipole Rodrigues 2       |
 |            +-------------------------+--------------------------------+
@@ -212,6 +216,8 @@ The integrator set may be one of the following (case-insensitive):
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 |            +-------------------------+--------------------------------+
 |            | Multipole Outer         | G4NystromRK4                   |
+|            +-------------------------+--------------------------------+
+|            | Thin RMatrix            | BDSIM Thin RMatrix             |
 +------------+-------------------------+--------------------------------+
 
 .. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
@@ -254,7 +260,10 @@ The integrator set may be one of the following (case-insensitive):
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 |            +-------------------------+--------------------------------+
 |            | Multipole Outer         | G4NystromRK4                   |
+|            +-------------------------+--------------------------------+
+|            | Thin RMatrix            | BDSIM Thin RMatrix             |
 +------------+-------------------------+--------------------------------+
+
 
 .. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
 
@@ -298,6 +307,8 @@ The integrator set may be one of the following (case-insensitive):
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 |            +-------------------------+--------------------------------+
 |            | Multipole Outer         | G4NystromRK4                   |
+|            +-------------------------+--------------------------------+
+|            | Thin RMatrix            | BDSIM Thin RMatrix             |
 +------------+-------------------------+--------------------------------+
 
 .. tabularcolumns:: |p{5cm}|p{5cm}|p{6cm}|
@@ -342,6 +353,8 @@ The integrator set may be one of the following (case-insensitive):
 |            | Thin Multipole          | BDSIM Thin Multipole           |
 |            +-------------------------+--------------------------------+
 |            | Multipole Outer         | G4NystromRK4                   |
+|            +-------------------------+--------------------------------+
+|            | Thin RMatrix            | BDSIM Thin RMatrix             |
 +------------+-------------------------+--------------------------------+
 
 .. Note:: `*` "geant4dp" is only available when BDSIM is compiled against
@@ -817,7 +830,50 @@ beam rigidity higher up in BDSIM).
 
 * The output coordinates are calculated with the communal :ref:`communal-euler` algorithm.
 
+BDSIM Solenoid
+--------------
 
+* Class name: :code:`BDSIntegratorSolenoid`
+
+This integrator is constructed with a field strength. `ks` is calculated from this field
+strength for the nominal rigidity.
+
+The particle motion for a solenoid is calculated for the body of the solenoid only and
+the edge effects are provided via thin elements using the rmatrix integrator.
+
+The thick matrix for the central part is:
+
+.. math::
+   
+   \begin{pmatrix}
+   \cos^2 (Kl)            & \frac{1}{K} \sin(Kl) \cos(Kl) & \sin(Kl) \cos(Kl)    & \frac{1}{K} \sin^2(Kl)        \\
+   -K \sin(Kl) \cos(Kl)   &  \cos^2 (Kl)                 & -K \sin^2(Kl)        & \sin(Kl) \cos(Kl)              \\
+   - \sin(Kl) \cos(Kl)    & \frac{-1}{K}\sin^2(Kl)       &  \cos^2 (Kl)         & \frac{1}{K} \sin(Kl) \cos(Kl)  \\
+   K \sin^2(Kl)           & -\sin(Kl) \cos(Kl)           & -K \sin(Kl) \cos(Kl) & \cos^2 (Kl)                    \\
+   \end{pmatrix}
+
+For the fringes, the following matrix is used
+
+.. math::
+   
+   \begin{pmatrix}
+   1      & 0  & 0     & 0 \\
+   0      & 1  & \mp K & 0 \\
+   0      & 0  & 1     & 0 \\
+   \pm K  & 0  & 0     & 1\\
+   \end{pmatrix}
+
+where :math:`K` is
+
+.. math::
+
+   \frac{B}{2 B\rho}
+
+The plus minuses are flipped for the exit fringe.
+
+If the the `x` and `y` components of the unit curvilinear momentum are greater than 0.1 or the
+`z` component is less than 0.9, the fall-back G4ClassicalRK4 integrator is used.
+   
 .. _communal-euler:
 
 BDSIM Old Euler Common
