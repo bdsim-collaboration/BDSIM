@@ -209,7 +209,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 					      "main beam line",
 					      initialTransform,
 					      circular);
-  
+
   if (mainBeamline.massWorld->empty())
     {
       G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
@@ -262,9 +262,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model in Geant4" << G4endl;
 	  exit(1);
 	}
+      if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
+        {
+          G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
+                 << "to have at least one element for a circular machine." << G4endl;
+          exit(1);
+        }
     }  
 
-  for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
+  for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
       // find next and previous element, but ignore special elements or thin multipoles.
       const GMAD::Element* prevElement = nullptr;
@@ -314,12 +320,11 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (beamlineIsCircular)
+  if (beamlineIsCircular && !massWorld->empty())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-
       G4double teleporterLength = 0;
       G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
       
@@ -357,7 +362,6 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   // construct beamline of end pieces
   BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
-  //  BDSBeamline* endPieces = nullptr;
   BDSBeamlineSet beamlineSet;
   beamlineSet.massWorld              = massWorld;
   beamlineSet.curvilinearWorld       = clBeamline;

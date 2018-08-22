@@ -1,4 +1,4 @@
-V1.2 - 2018 / 08 / ??
+V1.2 - 2018 / 08 / 24
 =====================
 
 Highlights
@@ -97,6 +97,7 @@ Output Changes
 * New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
 * New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
   the global Cartesian frame.
+* Sampler name now stored in Orbit output from rebdsimOrbit to make sampler matching possible.
 
 Bug Fixes
 ---------
@@ -149,10 +150,10 @@ Bug Fixes
 Utilities
 ---------
 
-* pybdsim v1.9
-* pymadx v1.5
-* pymad8 v1.4
-* pytransport v1.2
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
   
 
 V1.1 - 2018 / 05 / 23
