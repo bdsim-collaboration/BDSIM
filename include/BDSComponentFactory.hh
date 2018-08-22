@@ -224,7 +224,11 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
   BDSAcceleratorComponent* CreateRMatrix();
-  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn);
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
+					     const BDSMagnetStrength* stIn,
+					     G4String name);
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
+					     G4String name);
   BDSAcceleratorComponent* CreateUndulator();
 
 #ifdef USE_AWAKE
@@ -237,7 +241,8 @@ private:
 			  BDSMagnetStrength* st,
 			  BDSFieldType  fieldType,
 			  BDSMagnetType magnetType,
-			  G4double      angle = 0.0) const;
+			  G4double      angle = 0.0,
+  G4String nameSuffix = "") const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,

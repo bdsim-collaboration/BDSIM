@@ -6,6 +6,7 @@ Highlights
 
 * :code:`outerDiameter` is now :code:`horizontalWidth` to better describe its function (backwards-compatible).
 * Fixed dipole scaling with (the default) bdsimmatrix integrator set.
+* Solenoid tracking fixed.
 
 New Features
 ------------
@@ -28,6 +29,9 @@ New Features
 * Support for dipole poleface curvature in tracking.
 * Pole face rotations and fringe fields are now available for hkickers and vkickers, both thick and thin.
 * New ability to specify the colour of any magnet and most elements through custom colour definition.
+* Geant4's DNA physics lists have been added.
+* Solenoid fringe fields have been implemented and are on by default. They are controlled with
+  the `includeFringeFields` option.
   
 General
 -------
@@ -41,8 +45,8 @@ General
 * The horizontal width of kickers is now taken from :code:`outerDiameter`. Previously, :code:`outerDiameter`
   corresponded to the height and :code:`vhratio` was really the horizontal-to-vertical ratio in
   the lab frame.
-* Synchrotron radiation is disabled now with em_extra physics list (use dedicated
-  synchrad physics list). Avoids double registration of physics process.
+* Synchrotron radiation is now disabled with em_extra physics list (use dedicated
+  synchrad physics list). Avoids the double registration of the physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
   visualisation system.
@@ -68,6 +72,8 @@ General
   to a previous version of BDSIM.
 * Memory usage for sampler hits has been significantly reduced with no affect to the output
   information stored.
+* The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
+  that was defined by BDSIM.
 
 Output Changes
 --------------
@@ -95,6 +101,10 @@ Output Changes
 Bug Fixes
 ---------
 
+* Fixed solenoid tracking. The anti-spiralling code in the dipole integrator that is desgined
+  to stop infinite spiralling of low energy particles in strong fields was causing incorrect
+  tracking in solenoids. This has been fixed with the reimplementation of the solenoid matrix
+  and now includes the fringe effects. Issue #255.
 * Fixed tracking bug where particle in very niche coordinates may reflect from a sampler
   at the end of a dipole with a very strongly angled pole face. #Issue 241.
 * Fixed automatic tunnel building algorithm, which accumulated wrong variables, leading to

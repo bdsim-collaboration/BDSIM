@@ -185,7 +185,7 @@ void BDSIntegratorDipoleQuadrupole::Stepper(const G4double yIn[6],
     }
 
   BDSStep localCL = GlobalToCurvilinear(fieldArcLength, unitField, angleForCL,
-                                          globalPos, globalMom, h, true, fcof, tilt);
+					globalPos, globalMom, h, true, fcof, tilt);
 
   G4ThreeVector localCLPos  = localCL.PreStepPoint();
   G4ThreeVector localCLMom  = localCL.PostStepPoint();
