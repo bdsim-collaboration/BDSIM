@@ -1001,7 +1001,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   auto stIn        = strength(s);
   auto stOut       = strength(-s); // -ve for exit
   auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
-  auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+  auto solenoid    = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
   auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
   
   const G4String baseName = elementName;
@@ -1436,7 +1436,8 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
 					     BDSMagnetType magnetType,
-					     G4double      angle) const
+					     G4double      angle,
+G4String nameSuffix) const
 {
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
@@ -1448,7 +1449,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       true,
 					       fieldTrans);
 
-  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + nameSuffix, element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
   BDSFieldInfo* outerField = nullptr;
 
@@ -1459,7 +1460,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
     {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
 
   return new BDSMagnet(magnetType,
-		       elementName,
+		       elementName + nameSuffix,
 		       element->l * CLHEP::m,
 		       bpInfo,
 		       outerInfo,
