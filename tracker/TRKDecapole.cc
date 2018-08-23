@@ -22,8 +22,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 TRKDecapole::TRKDecapole(double        strengthIn,
 			 std::string   nameIn,
 			 double        lengthIn,
-			 TRKAperture  *apertureIn,
-			 TRKPlacement *placementIn):
+			 TRKAperture*  apertureIn,
+			 TRKPlacement* placementIn):
   TRKElement(nameIn,lengthIn,apertureIn,placementIn, strengthIn)
 {;}
 

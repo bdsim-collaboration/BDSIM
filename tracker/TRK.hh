@@ -49,17 +49,20 @@ namespace TRK {
    * syntax similar to sincos(phi,s,c),
    * except sincosh expects doubles and no pointers!
    */
-  static inline void sincosh(const double a, double &s, double &c) {
-    
-    if (std::abs(a) <= 0.05) {
-      s = sinh(a);
-      c = sqrt(1.0 + s*s);
-    } else {
-      double ea = exp(a);
-      double inv_ea = 1./(ea);
-      s = (ea - inv_ea)*0.5;
-      c = (ea + inv_ea)*0.5;
-    }
+  static inline void sincosh(const double a, double &s, double &c)
+  {  
+    if (std::abs(a) <= 0.05)
+      {
+	s = std::sinh(a);
+	c = std::sqrt(1.0 + s*s);
+      }
+    else
+      {
+	double ea = std::exp(a);
+	double inv_ea = 1./(ea);
+	s = (ea - inv_ea)*0.5;
+	c = (ea + inv_ea)*0.5;
+      }
   }
 }
 

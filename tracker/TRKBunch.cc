@@ -81,7 +81,7 @@ void TRKBunch::Populate(const GMAD::Beam& beam,
 
   //must have positive number of particles
   if (population < 0)
-    {population = abs(population);}
+    {population = std::abs(population);}
   //must have at least 1 particle
   if (population == 0)
     {population = 1;}
