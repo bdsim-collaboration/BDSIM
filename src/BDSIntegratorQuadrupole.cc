@@ -184,17 +184,6 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
   if (std::isnan(zp1))
     {zp1 = zp;} // ensure not nan
   
-  G4double dx = x1 - x0;
-  G4double dy = y1 - y0;
-  
-  // Linear chord length
-  G4double dR2 = dx*dx + dy*dy;
-  G4double dz = std::sqrt(h2 * (1. - h2 / (12 * radiusOfCurvature * radiusOfCurvature)) - dR2);
-  if (std::isnan(dz))
-    {dz = h;}
-  
-  z1 = z0 + dz;
-  
   localPos.setX(x1);
   localPos.setY(y1);
   localPos.setZ(z1);
