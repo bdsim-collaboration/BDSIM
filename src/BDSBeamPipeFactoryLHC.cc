@@ -74,7 +74,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
   G4VSolid* vacCylSolid = new G4Tubs(nameIn + "_vacuum_cylinder", // name
 				     0,                           // inner radius
 				     aper3In,                     // outer radius
-				     lengthIn*0.5-2*lengthSafety, // half length
+				     lengthIn*0.5-lengthSafety, // half length
 				     0,                           // rotation start angle
 				     CLHEP::twopi);               // rotation finish angle
   //vacuum box solid (rectangular cross-section)
@@ -111,7 +111,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,
   G4VSolid* bpOuterCylSolid = new G4Tubs(nameIn + "_pipe_inner_cylinder", // name
 					 0,                               // inner radius (0 for unambiguous subtraction)
 					 aper3In + beamPipeThicknessIn,   // outer radius
-					 (lengthIn*0.5)-2*lengthSafety,   // half length
+					 (lengthIn*0.5)-lengthSafety,   // half length
 					 0,                               // rotation start angle
 					 CLHEP::twopi);                   // rotation finish angle
   //beampipe outer edge box solid (rectangular cross-section)
@@ -228,7 +228,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* vacCylSolid = new G4CutTubs(nameIn + "_vacuum_cylinder", // name
 					0,                           // inner radius
 					aper3In,                     // outer radius
-					lengthIn*0.5-2*lengthSafety, // half length
+					lengthIn*0.5-lengthSafety, // half length
 					0,                           // rotation start angle
 					CLHEP::twopi,                // rotation finish angle
 					inputfaceIn,                 // input face normal
@@ -270,7 +270,7 @@ void BDSBeamPipeFactoryLHC::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* bpOuterCylSolid = new G4CutTubs(nameIn + "_pipe_inner_cylinder", // name
 					    0,                               // inner radius (0 for unambiguous subtraction)
 					    aper3In + beamPipeThicknessIn,   // outer radius
-					    (lengthIn*0.5)-2*lengthSafety,   // half length
+					    (lengthIn*0.5)-lengthSafety,   // half length
 					    0,                               // rotation start angle
 					    CLHEP::twopi,                    // rotation finish angle
 					    inputfaceIn,                     // input face normal

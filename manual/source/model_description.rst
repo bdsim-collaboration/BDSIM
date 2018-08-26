@@ -4218,9 +4218,39 @@ the larger of the horizontal and vertical tunnel dimensions.
 Materials and Atoms
 -------------------
 
-Materials and atoms can be added via the parser, just like lattice elements.
+All chemical elements are available in BDSIM as well as the Geant4 NIST database
+of materials for use. Custom materials and can also be added via the parser. All materials
+available in BDSIM can be found by executing BDSIM with the `-\\-materials` option.::
 
-If the material is composed by a single element, it can be defined using the **matdef** command with the following syntax::
+  bdsim --materials
+
+Aside from these, several materials useful for accelerator applications are already defined
+that are listed in :ref:`predefined-materials`.
+
+Generally, each beam line element accepts an argument "material" that is the
+material used for that element. It is used differently depending on the element. For example,
+in the case of a magnet, it is used for the yoke and for a collimator for the collimator
+block.
+
+Single Element
+^^^^^^^^^^^^^^
+
+In the case of an element, the chemical symbol can be specified::
+
+  rc1: rcol, l=0.6*m, xsize=1.2*cm, ysize=0.6*cm, material="W";
+
+These are automatically prefixed with :code:`G4_` and retrieved from the NIST database of
+materials.
+
+The user can also define their own material and then refer to it by name when defining
+a beam line element.
+
+Custom Single Element Material
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the material required is composed of a single element, but say of a different density or
+state than the default NIST one provided, it can be defined using the **matdef**
+command with the following syntax::
 
   materialname : matdef, Z=<int>, A=<double>, density=<double>, T=<double>, P=<double>, state=<char*>;
 
@@ -4236,11 +4266,14 @@ state      "solid", "liquid" or "gas" "solid"
 
 Example::
 
-  iron : matdef, Z=26, A=55.845, density=7.87;
+  iron2 : matdef, Z=26, A=55.845, density=7.87;
 
 A compound material can be specified in two manners:
 
-**1.** If the number of atoms of each component in a material unit is known, the following syntax can be used::
+Compound Material by Atoms
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+If the number of atoms of each component in a material unit is known,
+the following syntax can be used::
 
    <material> : matdef, density=<double>, T=<double>, P=<double>,
                 state=<char*>, components=<[list<char*>]>,
@@ -4257,7 +4290,11 @@ Example::
 
   NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
 
-**2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
+Compound Material by Mass Fraction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On the other hand, if the mass fraction of each component is known, the
+following syntax can be used::
 
    <material> : matdef, density=<double>, T=<double>, P=<double>,
                 state=<char*>, components=<[list<char*>]>,
@@ -4273,8 +4310,11 @@ Example::
 
   SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
 
-The second syntax can also be used to define materials which are composed by other materials (and not by atoms).
-Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+The second syntax can also be used to define materials which are composed by
+other materials (and not by atoms).
+
+.. note:: Square brackets are required for the list of element symbols, curly
+	  brackets for the list of weights or fractions.
 
 New elements can be defined with the **atom** keyword::
 
@@ -4293,6 +4333,101 @@ Example::
   myTitanium : atom, symbol="myTi", Z=22, A=47.867;
   myNbTi     : matdef, density=5.6, T=4.0, components=["myNb","myTi"], componentsWeights={1,1};
 
+.. _predefined-materials:
+
+Predefined Materials
+^^^^^^^^^^^^^^^^^^^^
+
+The following elements are available by full name that refer to the Geant4 NIST
+elements:
+
+* aluminium
+* beryllium
+* carbon
+* chromium
+* copper
+* iron
+* lead
+* magnesium
+* nickel
+* nitrogen
+* silicon
+* titanium
+* tungstem
+* uranium
+* vanadium
+* zinc
+
+The following materials are also defined in BDSIM. The user should consult
+:code:`bdsim/src/BDSMaterials.cc` for the full definition of each including
+elements, mass fractions, temperature and state.
+
+* air
+* aralditef
+* awakeplasma
+* beamgasplugmat
+* berylliumcopper
+* bn5000
+* bp_carbonmonoxide
+* calciumCarbonate
+* carbonfiber
+* carbonmonoxide
+* carbonsteel
+* cellulose
+* clay
+* clayousMarl
+* concrete
+* cu_4k
+* dy061
+* epoxyresin3
+* fusedsilica
+* gos_lanex
+* gos_ri1
+* graphite
+* graphitefoam
+* hy906
+* lanex
+* lanex2
+* laservac
+* leadtungstate
+* lhcconcrete
+* lhc_rock
+* lhe_1.9k
+* limousMarl
+* liquidhelium
+* invar
+* kapton
+* marl
+* medex
+* mild_steel
+* niobium
+* nbti
+* nbti.1
+* nbti_87k
+* nb_87k
+* n-bk7
+* perspex
+* pet
+* pet_lanex
+* pet_opaque
+* polyurethane
+* quartz
+* smco
+* soil
+* solidhydrogen
+* solidnitrogen
+* solidoxygen
+* stainlesssteel
+* stainless_steel_304L
+* stainless_steel_304L_87K
+* stainless_steel_304LN
+* stainless_steel_304LN_87K
+* ti_87k
+* tungsten_heavy_alloy
+* ups923a
+* vacuum
+* weightiron
+* yag
 
 .. _crystals:
 

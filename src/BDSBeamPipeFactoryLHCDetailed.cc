@@ -146,7 +146,7 @@ void BDSBeamPipeFactoryLHCDetailed::CalculateGeometricalParameters(G4double aper
   containerRadius = cbOuterRadius + 1*CLHEP::um;  
   
   // general length variable (to avoid mistakes)
-  vacHalfLength   = length*0.5 - 2*lengthSafety;
+  vacHalfLength   = length*0.5 - lengthSafety;
   halfLength      = length*0.5 - 1*CLHEP::um; 
   
   // cooling pipe geometrical parameters

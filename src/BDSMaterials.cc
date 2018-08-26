@@ -79,6 +79,7 @@ void BDSMaterials::DefineMetals()
   AddMaterial("Fe", "iron");
   AddMaterial("Pb", "lead");
   AddMaterial("Mg", "magnesium");
+  AddMaterial("N",  "nitrogen");
   AddMaterial("Ni", "nickel");
   AddMaterial("Si", "silicon");
   AddMaterial("Ti", "titanium");
@@ -749,11 +750,7 @@ void BDSMaterials::DefineGases()
     * (12.+16.)*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
   AddMaterial(name="bp_carbonmonoxide", density, kStateGas, temperature, bp_pressure, {"C","O"},
 	      std::list<int>{1,1});
-
-  //Nitrogen
-  density = (CLHEP::STP_Temperature/temperature) * (pressure/(1.*CLHEP::atmosphere))
-    * (14.)*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
-  AddMaterial(name="nitrogen", density, kStateGas, temperature, pressure, {"N"}, std::list<int>{1});
+  
 }
 
 void BDSMaterials::DefinePlasmas()

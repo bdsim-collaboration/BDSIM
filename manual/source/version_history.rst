@@ -1,4 +1,28 @@
-V1.2 - 2018 / 08 / 24
+V1.3 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+Utilities
+---------
+
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
+
+
+V1.2 - 2018 / 08 / 26
 =====================
 
 Highlights
@@ -74,11 +98,11 @@ General
   information stored.
 * The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
   that was defined by BDSIM.
+* New options for physics processes in em_extra.
 
 Output Changes
 --------------
 
-* New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.

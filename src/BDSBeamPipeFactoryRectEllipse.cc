@@ -73,7 +73,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
   G4VSolid* vacCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid", // name
 					       aper3In,                      // horizontal semi-axis
 					       aper4In,                      // vertical semi-axis
-					       lengthIn*0.5-2*lengthSafety); // half length
+					       lengthIn*0.5-lengthSafety); // half length
   //vacuum box solid (rectangular cross-section)
   G4VSolid* vacRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				     aper1In,                // x half width
@@ -106,7 +106,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
   G4VSolid* bpOuterCylSolid = new G4EllipticalTube(nameIn + "_pipe_inner_ellipsoid",// name
 						   aper3In + beamPipeThicknessIn,   // horizontal semi-axis
 						   aper4In + beamPipeThicknessIn,   // hotizontal semi-axis
-						   (lengthIn*0.5)-2*lengthSafety);  // half length
+						   (lengthIn*0.5)-lengthSafety);  // half length
   //beampipe outer edge box solid (rectangular cross-section)
   G4VSolid* bpOuterRectSolid = new G4Box(nameIn + "_pipe_inner_box",    // name
 					 aper1In + beamPipeThicknessIn, // x half width
@@ -241,7 +241,7 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* vacuumAngledSolid = new G4CutTubs(nameIn + "_pipe_angled_faces",     // name
 					      0,                                 // inner radius
 					      angledFaceRadius,                  // outer radius
-					      (lengthIn*0.5) - (2*lengthSafety), // accurate length
+					      (lengthIn*0.5) - (lengthSafety), // accurate length
 					      0,                                 // rotation start angle
 					      CLHEP::twopi,                      // rotation sweep angle
 					      inputfaceIn,                       // input face normal
