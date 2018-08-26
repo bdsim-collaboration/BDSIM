@@ -74,11 +74,11 @@ General
   information stored.
 * The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
   that was defined by BDSIM.
+* New options for physics processes in em_extra.
 
 Output Changes
 --------------
 
-* New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.
