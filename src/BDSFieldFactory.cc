@@ -46,7 +46,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkewOwn.hh"
-#include "BDSFieldMagSolenoid.hh"
 #include "BDSFieldMagZero.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
@@ -63,14 +62,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorMultipoleThin.hh"
+#include "BDSIntegratorParallelTransport.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
+#include "BDSIntegratorRMatrixThin.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
+#include "BDSFieldMagUndulator.hh"
 
 #include "parser/field.h"
 
@@ -318,12 +320,13 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
     case BDSFieldType::bzero:
       {field = new BDSFieldMagZero(); break;}
     case BDSFieldType::solenoid:
-      {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
     case BDSFieldType::dipole3d:
       {field = new BDSFieldMagDipole(strength); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
+    case BDSFieldType::undulator:
+      {field = new BDSFieldMagUndulator(strength); break;}
     case BDSFieldType::dipolequadrupole:
       {field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;}
     case BDSFieldType::sextupole:
@@ -417,6 +420,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo&      info,
       }
     case BDSFieldType::multipoleouterdipole3d:
       {field = new BDSFieldMagDipoleOuter(strength, poleTipRadius); break;}
+    case BDSFieldType::paralleltransporter:
     default:
       {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
@@ -527,6 +531,10 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
     {
     case BDSFieldType::teleporter:
       {result = CreateTeleporter(info); break;}
+    case BDSFieldType::rmatrix:
+      {result = CreateRmatrix(info); break;}
+    case BDSFieldType::paralleltransporter:
+      {result = CreateParallelTransport(info); break;}
     default:
       {break;}
     }
@@ -568,7 +576,9 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::euler:
       integrator = new BDSIntegratorEuler(eqOfM); break;
     case BDSIntegratorType::kickerthin:
-      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
+    case BDSIntegratorType::rmatrixthin:
+      integrator = new BDSIntegratorRMatrixThin(strength,eqOfM, info.BeamPipeRadius()); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -719,11 +729,31 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
+								    (*info.MagnetStrength())["length"]);
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
 							    bEqOfMotion, integrator);
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateRmatrix(const BDSFieldInfo& info)
+{
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorRMatrixThin(info.MagnetStrength(),bEqOfMotion,0.95*info.BeamPipeRadius()/2.0);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
+                                                            bEqOfMotion, integrator);
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateParallelTransport(const BDSFieldInfo& info)
+{
+  G4MagneticField* bGlobalField       = new BDSFieldMagZero();
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorParallelTransport(bEqOfMotion);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
+                                                            bEqOfMotion, integrator);
   return completeField;
 }

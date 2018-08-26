@@ -105,7 +105,8 @@ public:
 				   G4bool                useCLPlacementTransform = false);
 
   /// Create a transform based on the information in the placement.
-  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement);
+  static G4Transform3D CreatePlacementTransform(const GMAD::Placement& placement,
+						const BDSBeamline*     beamLine);
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -172,6 +173,7 @@ private:
   BDSBeamline* placementBL; ///< Placement beam line.
   G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
   G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
+  G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
 };
 
 #endif

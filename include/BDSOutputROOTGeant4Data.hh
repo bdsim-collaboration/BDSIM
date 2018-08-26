@@ -29,10 +29,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <map>
 #include <limits>
 
+/**
+ * @brief Geant4 particle data for particles used in simulation
+ * 
+ * @author Laurie Nevay
+ */
 class BDSOutputROOTGeant4Data: public TObject
 {
 public:
   // structs up front
+  /// Simple particle information to be stored per particle.
   struct ParticleInfo
   {
     std::string name;   ///< Name of particle.
@@ -54,6 +60,7 @@ public:
     }
   };
 
+  /// Simple particle information to be stored per ion specifically.
   struct IonInfo
   {
     std::string name;   ///< Name of particle.

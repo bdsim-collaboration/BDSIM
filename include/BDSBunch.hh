@@ -19,6 +19,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBUNCH_H
 #define BDSBUNCH_H
 
+#include "BDSBunchType.hh"
+#include "BDSParticleCoords.hh"
+#include "BDSParticleCoordsFull.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
+
 #include "globals.hh"
 #include "G4Transform3D.hh"
 
@@ -42,27 +47,28 @@ public:
   BDSBunch();
   virtual ~BDSBunch(){;}
 
-  /// Extract and set the relevant options from the beam definition.
+  /// Extract and set the relevant options from the beam definition. The distribution
+  /// type is explicitly required as this function may be used inside a nested bunch distribution.
+  /// This argument is for the most part ignored, but there's no way to have a default for it.
+  /// Also, some classes can cover multiple input distributions so need to know which one they're
+  /// meant to be.
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
+			  const BDSBunchType& distrType,
 			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
-
   
   /// Check the parameters for the given bunch distribution and exit if they're
   /// problematic or unphysical.
   virtual void CheckParameters();
 
-  /// Each derived class can override this default method of reference
-  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
-  /// z0 will be treated as S and the global z0 be calculated.
-  virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
-			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight);
+  /// Main interface. Calls GetNextParticleLocal() and then applies the curvilinear
+  /// transform if required.
+  BDSParticleCoordsFullGlobal GetNextParticle();
 
   /// An action that is called at the beginning of a run when we know the number of
   /// events that'll be generated. By default this is nothing, but can be used to
   /// calculate sample mean offsets in some derived classes.
-  virtual void BeginOfRunAction(const G4int& numberOfEvents);
+  virtual void BeginOfRunAction(G4int numberOfEvents);
 
   /// An action that is called at the end of a run. By default, does nothing.
   virtual void EndOfRunAction();
@@ -73,9 +79,22 @@ public:
   /// Access the beam particle definition.
   inline const BDSParticleDefinition* ParticleDefinition() const {return particleDefinition;}
 
-  virtual void SetGeneratePrimariesOnly(const G4bool& generatePrimariesOnlyIn);
+  virtual void SetGeneratePrimariesOnly(G4bool generatePrimariesOnlyIn);
+
+  /// Each derived class can override this default method of reference
+  /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
+  /// z0 will be treated as S and the global z0 be calculated.
+  virtual BDSParticleCoordsFull GetNextParticleLocal();
   
 protected:
+  /// Apply either the curivilinear transform if we're using curvilinear coordinates or
+  /// just apply the general beam line offset in global coordinates to the 'local'
+  /// curvilinear coordinates.
+  BDSParticleCoordsFullGlobal ApplyTransform(const BDSParticleCoordsFull& localIn) const;
+
+  /// Calculate the global coordinates from curvilinear coordinates of a beam line.
+  BDSParticleCoordsFullGlobal ApplyCurvilinearTransform(const BDSParticleCoordsFull& localIn) const;
+  
   /// Apply curvilinear transform. Otherwise apply transform for offset of the
   /// start of the beamline line. In the first case the beam line transform is picked
   /// up by definition.

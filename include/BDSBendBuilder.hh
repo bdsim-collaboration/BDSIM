@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 globals / types
 #include "G4String.hh"
+#include "BDSFieldType.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 
@@ -85,7 +86,8 @@ namespace BDS
 			       G4String                 name,
 			       const BDSMagnetStrength* st,
 			       G4double                 brho,
-			       const BDSIntegratorSet*  integratorSet);
+			       const BDSIntegratorSet*  integratorSet,
+				   BDSFieldType 			dipoleFieldType);
 
   /// Function to return a single sector bend section.
   BDSMagnet* BuildSingleSBend(const GMAD::Element*     element,
@@ -106,6 +108,14 @@ namespace BDS
 			   const G4double outgoingFaceAngle,
 			   G4double&      segmentAngleIn,
 			   G4double&      segmentAngleOut);
+
+  BDSMagnetStrength* GetFringeMagnetStrength(const GMAD::Element* element,
+                             const BDSMagnetStrength*  st,
+                             const G4double            fringeAngle,
+                             const G4double            e1,
+                             const G4double            e2,
+                             const G4double            fintx,
+                             const G4bool              entranceOrExit);
 
   /// Function to get the integrator type. Test for finite K1 and returns
   /// dipole or dipolequadrupole integrator as appropriate.

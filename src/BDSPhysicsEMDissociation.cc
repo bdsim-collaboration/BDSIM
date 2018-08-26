@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSPhysicsEMDissociation.hh"
+
 #include "G4EMDissociation.hh"
 #include "G4EMDissociationCrossSection.hh"
 #include "G4Gamma.hh"
@@ -49,6 +50,7 @@ void BDSPhysicsEMDissociation::ConstructProcess()
   inelProcIon->AddDataSet(crossSectionData);
 
   G4EMDissociation* emdModel = new G4EMDissociation();
+  emdModel->SetMaxEnergy(100*CLHEP::TeV);
   inelProcIon->RegisterMe(emdModel);
 
   G4ProcessManager* pmanager = G4GenericIon::GenericIon()->GetProcessManager();

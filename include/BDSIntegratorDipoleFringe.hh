@@ -22,16 +22,17 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSIntegratorDipoleRodrigues2.hh"
 #include "BDSIntegratorDipoleQuadrupole.hh"
+#include "BDSIntegratorMultipoleThin.hh"
 
 #include "globals.hh"
 
 namespace BDS
 {
   /// Function to calculate the value of the fringe field correction term.
-  G4double FringeFieldCorrection(BDSMagnetStrength const* strength);
+  G4double FringeFieldCorrection(BDSMagnetStrength const* strength, G4bool entranceOrExit);
 
   /// Function to calculate the value of the second fringe field correction term.
-  G4double SecondFringeFieldCorrection(BDSMagnetStrength const* strength);
+  G4double SecondFringeFieldCorrection(BDSMagnetStrength const* strength, G4bool entranceOrExit);
 }
 
 class G4Mag_EqRhs;
@@ -77,19 +78,33 @@ public:
   /// Unit momentum, momentum magnitude, and normalised bending radius are provided
   /// as arguments because they already calculated in the BaseStepper method.
   void OneStep(const G4ThreeVector& posIn,
-               const G4ThreeVector& momIn,
                const G4ThreeVector& momUIn, // assumed unit momentum of momIn
                G4ThreeVector&       posOut,
                G4ThreeVector&       momOut,
                const G4double&      bendingRadius) const;
 
+  /// Calculate the thin multipole kick to represent the dipole poleface curvature effect.
+  /// Step length is passed in as it is needed by the transforms.
+  void MultipoleStep(const G4double  yIn[6],
+                     G4double        yMultipoleOut[7],
+                     const G4double& h);
+
+  /// Getter functions for poleface and fringe variables. Values need to be read in at least the
+  /// thin kicker integrator, but should not be overwritten.
+  inline G4double GetPolefaceAngle() {return polefaceAngle;}
+  inline G4double GetFringeCorr() {return fringeCorr;}
+  inline G4double GetSecondFringeCorr() {return secondFringeCorr;}
+  inline G4double GetPolefaceCurv() {return polefaceCurvature;}
+
 protected:
   /// Poleface rotation angle
-  const G4double polefaceAngle;
+  G4double polefaceAngle;
   /// Fringe field correction term
-  const G4double fringeCorr;
+  G4double fringeCorr;
   /// Second fringe field correction term
-  const G4double secondFringeCorr;
+  G4double secondFringeCorr;
+  /// Poleface curvature
+  G4double polefaceCurvature;
   /// Nominal magnet bending radius
   const G4double rho;
 
@@ -99,7 +114,8 @@ protected:
 
   const G4double tilt;
   const G4bool   finiteTilt;
-
+  G4double bx;
+  G4double by;
   /// Whether a magnet has a finite strength or not. Can be set in the constructor for
   /// zero strength elements and then a drift routine is used before anything else.
   G4bool zeroStrength;
@@ -107,6 +123,8 @@ protected:
   /// Cache of thin element length from global constants. Initialised via check
   /// on unphysical -1 value as global constants doesn't exist at compile time.
   static G4double thinElementLength;
+
+  BDSIntegratorMultipoleThin* multipoleIntegrator;
 
 private:
   /// Private default constructor to enforce use of supplied constructor

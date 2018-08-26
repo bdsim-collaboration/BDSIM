@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
+#include "BDSOutputROOTEventCoords.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -46,10 +47,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   localSamplersInitialised(false)
 {
-  G4bool storeLinks  = globals->StoreELossLinks();
-  G4bool storeLocal  = globals->StoreELossLocal();
-  G4bool storeGlobal = globals->StoreELossGlobal();
-  G4bool storeTime   = globals->StoreElossTime();
+  G4bool storeLinks      = globals->StoreELossLinks();
+  G4bool storeLocal      = globals->StoreELossLocal();
+  G4bool storeGlobal     = globals->StoreELossGlobal();
+  G4bool storeTime       = globals->StoreElossTime();
+  G4bool storeStepLength = globals->StoreElossStepLength();
+  G4bool storePreStepKineticEnergy = globals->StoreElossPreStepKineticEnergy();
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
@@ -58,11 +61,11 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   modelOutput   = new BDSOutputROOTEventModel();
 
   eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
-                                     storeTime);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true, true, true);
-  pLastHit = new BDSOutputROOTEventLoss(true, true, true, true);
-  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false);
-  traj = new BDSOutputROOTEventTrajectory();
+                                     storeTime, storeStepLength, storePreStepKineticEnergy);
+  pFirstHit = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
+  pLastHit  = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
+  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false, false, false);
+  traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
   runHistos = new BDSOutputROOTEventHistograms();
@@ -75,6 +78,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
 #endif
   samplerTrees.push_back(primary);
   samplerNames.push_back("Primary");
+  primaryGlobal = new BDSOutputROOTEventCoords();
 }
 
 BDSOutputStructures::~BDSOutputStructures()
@@ -85,6 +89,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete optionsOutput;
   delete modelOutput;
   delete primary;
+  delete primaryGlobal;
   delete eLoss;
   delete pFirstHit;
   delete pLastHit;
@@ -158,6 +163,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
     {(*i)->Flush();}
+  primaryGlobal->Flush();
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();

@@ -1,0 +1,6 @@
+p1: placement, geometryFile="gdml:box1.gdml",
+    	       x=0.3*m,
+	       y=0.2*m,
+	       s=3*m;
+
+include placement_common.gmad;

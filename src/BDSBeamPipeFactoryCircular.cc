@@ -69,14 +69,14 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,
   vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
 			     0,                             // inner radius
 			     aper1In,                       // outer radius
-			     lengthIn*0.5 - 2*lengthSafety, // half length
+			     lengthIn*0.5 - lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
   beamPipeSolid = new G4Tubs(nameIn + "_pipe_solid",        // name
 			     aper1In + lengthSafety,        // inner radius + length safety to avoid overlaps
 			     aper1In + lengthSafety + beamPipeThicknessIn, // outer radius
-			     lengthIn*0.5 - 2*lengthSafety, // half length
+			     lengthIn*0.5 - lengthSafety, // half length
 			     0,                             // rotation start angle
 			     CLHEP::twopi);                 // rotation finish angle
   
@@ -162,7 +162,7 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   vacuumSolid   = new G4CutTubs(nameIn + "_vacuum_solid",      // name
 				0,                             // inner radius
 				aper1In,                       // outer radius
-				lengthIn*0.5 - 2*lengthSafety, // half length
+				lengthIn*0.5 - lengthSafety, // half length
 				0,                             // rotation start angle
 				CLHEP::twopi,                  // rotation finish angle
 				inputfaceIn,                   // input face normal
@@ -183,7 +183,7 @@ void BDSBeamPipeFactoryCircular::CreateGeneralAngledSolids(G4String      nameIn,
   G4VSolid* outer = new G4CutTubs(nameIn + "_pipe_outer_solid",  // name
 				  0,                             // inner radius + length safety to avoid overlaps
 				  aper1In + lengthSafety + beamPipeThicknessIn,   // outer radius
-				  lengthIn*0.5 - 2*lengthSafety, // half length
+				  lengthIn*0.5 - lengthSafety, // half length
 				  0,                             // rotation start angle
 				  CLHEP::twopi,                  // rotation finish angle
 				  inputfaceIn,                   // input face normal

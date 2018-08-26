@@ -22,7 +22,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
-#include "BDSParticle.hh"
 #include "BDSParticleDefinition.hh"
 
 #include "globals.hh"
@@ -133,7 +132,7 @@ public:
   inline G4double PrintFractionEvents()      const {return G4double(options.printFractionEvents);}
   inline G4double PrintFractionTurns()       const {return G4double(options.printFractionTurns);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
-  inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
+  inline G4double HorizontalWidth()          const {return G4double(options.horizontalWidth)*CLHEP::m;}
   inline G4bool   IgnoreLocalAperture()      const {return G4bool  (options.ignoreLocalAperture);}
   inline G4String OuterMaterialName()        const {return G4String(options.outerMaterialName);}
   inline G4bool   DontSplitSBends()          const {return G4bool  (options.dontSplitSBends);}
@@ -155,8 +154,13 @@ public:
   inline G4bool   ProdCutPositronsSet()      const {return G4bool  (options.HasBeenSet("prodCutPositrons"));}
   inline G4bool   ProdCutProtonsSet()        const {return G4bool  (options.HasBeenSet("prodCutProtons"));}
   inline G4double NeutronTimeLimit()         const {return G4double(options.neutronTimeLimit)*CLHEP::s;}
-  inline G4double NeutronKineticEnergyLimit() const {return G4double(options.neutronKineticEnergyLimit)*CLHEP::GeV;}
+  inline G4double NeutronKineticEnergyLimit()const {return G4double(options.neutronKineticEnergyLimit)*CLHEP::GeV;}
   inline G4bool   UseLENDGammaNuclear()      const {return G4bool  (options.useLENDGammaNuclear);}
+  inline G4bool   UseElectroNuclear()        const {return G4bool  (options.useElectroNuclear);}
+  inline G4bool   UseMuonNuclear()           const {return G4bool  (options.useMuonNuclear);}
+  inline G4bool   UseGammaToMuMu()           const {return G4bool  (options.useGammaToMuMu);}
+  inline G4bool   UsePositronToMuMu()        const {return G4bool  (options.usePositronToMuMu);}
+  inline G4bool   UsePositronToHadrons()     const {return G4bool  (options.usePositronToHadrons);}
 
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
@@ -186,15 +190,20 @@ public:
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreElossTime()           const {return G4bool  (options.storeElossTime);}
+  inline G4bool   StoreElossStepLength()     const {return G4bool  (options.storeElossStepLength);}
+  inline G4bool   StoreElossPreStepKineticEnergy() const {return G4bool  (options.storeElossPreStepKineticEnergy);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
   inline G4String StoreTrajectoryParticleID()const {return G4String(options.storeTrajectoryParticleID);}
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold*CLHEP::GeV);}
+  std::vector<int>                           StoreTrajectorySamplerIDs();
+  std::vector<std::pair<double,double>>      StoreTrajectoryELossSRange();
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}
+  inline G4bool   StoreModel()               const {return G4bool  (options.storeModel);}
   inline G4bool   TrajConnect()              const {return G4bool  (options.trajConnect);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ*CLHEP::m);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR*CLHEP::m);}
@@ -238,6 +247,9 @@ public:
   inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
   inline G4bool   MatchDistrFileLength()     const {return G4bool  (beam.matchDistrFileLength);}
   inline G4bool   RemoveTemporaryFiles()     const {return G4bool  (options.removeTemporaryFiles);}
+  inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
+  inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
+  inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
   
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
@@ -247,7 +259,6 @@ public:
   inline BDSBeamPipeInfo*      DefaultBeamPipeModel()    const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType MagnetGeometryType()      const {return magnetGeometryType;}
   inline BDSTunnelInfo*        TunnelInfo()              const {return tunnelInfo;}
-  inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      VisibleDebugVisAttr()     const {return visibleDebugVisAttr;}
   inline G4VisAttributes*      ContainerVisAttr()        const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
@@ -258,7 +269,6 @@ public:
   /// @{ Setter
   inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
   inline void SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn);
-  inline void SetInitialPoint(BDSParticle& particle);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 1;}
   inline void SetNumberToGenerate(G4int number) {numberToGenerate = number;}
@@ -317,9 +327,6 @@ private:
   /// Turn Control
   G4int turnsTaken;
 
-  /// initial particle for production of sampler hit
-  BDSParticle initialPoint;
-
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
@@ -333,8 +340,5 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
-
-inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
-{initialPoint = particle;}
 
 #endif

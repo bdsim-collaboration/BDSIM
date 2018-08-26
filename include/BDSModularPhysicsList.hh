@@ -136,6 +136,9 @@ private:
   /// Typedef for function pointers to simplify syntax.
   typedef void(BDSModularPhysicsList::*Constructor)(void);
 
+  /// Temporary string used to pass name to constructor functions.
+  G4String temporaryName;
+
   /// A map of physics list names to their constructors.
   std::map<std::string, Constructor> physicsConstructors;
 
@@ -222,10 +225,11 @@ private:
   void DecayMuonicAtom();
 #endif
 #if G4VERSION_NUMBER > 1039
+  void Channelling();
+  void DNA();
   void ShieldingLEND();
 #endif
   /// @}
 };
 
 #endif
-

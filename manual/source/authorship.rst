@@ -2,8 +2,8 @@
 Authorship
 ===========
 
-BDSIM was originally started G.A. Blair in around 2001 and has since been
-developed and maintained a group based at Royal Holloway, University of London.
+BDSIM was originally started by G.A. Blair around 2001 and has since been
+developed and maintained by a group based at Royal Holloway, University of London.
 
 Current Authors
 ---------------

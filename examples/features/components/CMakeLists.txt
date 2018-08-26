@@ -3,6 +3,7 @@ add_subdirectory(dipoles)
 
 # standard components
 simple_testing(component-csampler            "--file=csampler.gmad"        ${OVERLAP_CHECK})
+simple_testing(component-crystal-no-phys     "--file=crystalcol-no-phys.gmad" ${OVERLAP_CHECK})
 simple_testing(component-decapole            "--file=decapole.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-degrader            "--file=degrader.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-drift               "--file=drift.gmad"           ${OVERLAP_CHECK})
@@ -10,16 +11,20 @@ simple_testing(component-ecol                "--file=ecol.gmad"            ${OVE
 simple_testing(component-ecol-tapered        "--file=ecol_tapered.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-gap                 "--file=gap.gmad"             ${OVERLAP_CHECK})	
 simple_testing(component-hkicker             "--file=hkicker.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-hkicker-fringe      "--file=hkicker_fringe.gmad"  ${OVERLAP_CHECK})
 simple_testing(component-kicker              "--file=kicker.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-laserire            "--file=laser.gmad"           ${OVERLAP_CHECK})
 simple_testing(component-multipole-thick     "--file=multipole_thick.gmad" ${OVERLAP_CHECK})
 simple_testing(component-multipole-thin      "--file=multipole_thin.gmad"  ${OVERLAP_CHECK})
 simple_testing(component-muon-spoiler        "--file=muon_spoiler.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-octupole            "--file=octupole.gmad"        ${OVERLAP_CHECK})
+simple_testing(component-paralleltransporter "--file=paralleltransporter.gmad" ${OVERLAP_CHECK})
 simple_testing(component-quadrupole          "--file=quadrupole.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-quadrupole-offset   "--file=quadOffset.gmad"      ${OVERLAP_CHECK})
 simple_testing(component-rcol                "--file=rcol.gmad"            ${OVERLAP_CHECK})
-simple_testing(component-rcol-Tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
+simple_testing(component-rcol-tapered        "--file=rcol_tapered.gmad"    ${OVERLAP_CHECK})
+simple_testing(component-rmatrix             "--file=rmatrix.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-rmatrix-thin        "--file=rmatrix_thin.gmad"    ${OVERLAP_CHECK})
 simple_testing(component-rf                  "--file=rf.gmad"              ${OVERLAP_CHECK})
 simple_testing(component-rf-cavity           "--file=rfcavity.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-sampler             "--file=sampler.gmad"         ${OVERLAP_CHECK})
@@ -29,7 +34,17 @@ simple_testing(component-sextupole           "--file=sextupole.gmad"       ${OVE
 simple_testing(component-shield              "--file=shield.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-solenoid            "--file=solenoid.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-tunnel              "--file=tunnel.gmad"          ${OVERLAP_CHECK})
-simple_testing(component-vKicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-undulator           "--file=undulator.gmad"       ${OVERLAP_CHECK})
+simple_testing(component-vkicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
+simple_testing(component-vkicker-fringe      "--file=vkicker_fringe.gmad"  ${OVERLAP_CHECK})
+
+
+# crystal tests - geometry works in earlier versions but physics list not present
+if (G4_MINOR_VERSION GREATER 3)
+  simple_testing(component-crystalcol           "--file=crystalcol.gmad"           ${OVERLAP_CHECK})
+  simple_testing(component-crystalcol-2crystals "--file=crystalcol-2crystals.gmad" ${OVERLAP_CHECK})
+  simple_testing(component-crystalcol-both      "--file=crystalcol-both.gmad"      ${OVERLAP_CHECK})
+endif()
 
 # ones requiring special options / falgs
 if(USE_GDML)

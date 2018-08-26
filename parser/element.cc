@@ -68,6 +68,8 @@ void Element::PublishMembers()
   publish("fintK2",    &Element::fintK2);
   publish("fintxK2",   &Element::fintxK2);
   publish("hgap",      &Element::hgap);
+  publish("h1",        &Element::h1);
+  publish("h2",        &Element::h2);
   publish("kick",      &Element::kick);
   publish("hkick",     &Element::hkick);
   publish("vkick",     &Element::vkick);
@@ -78,7 +80,28 @@ void Element::PublishMembers()
   publish("frequency", &Element::frequency);
   publish("phase",     &Element::phase);
   publish("tOffset",   &Element::tOffset);
-  
+
+  publish("kick1",     &Element::kick1);
+  publish("kick2",     &Element::kick2);
+  publish("kick3",     &Element::kick3);
+  publish("kick4",     &Element::kick4);
+  publish("rmat11",     &Element::rmat11);
+  publish("rmat12",     &Element::rmat12);
+  publish("rmat13",     &Element::rmat13);
+  publish("rmat14",     &Element::rmat14);
+  publish("rmat21",     &Element::rmat21);
+  publish("rmat22",     &Element::rmat22);
+  publish("rmat23",     &Element::rmat23);
+  publish("rmat24",     &Element::rmat24);
+  publish("rmat31",     &Element::rmat31);
+  publish("rmat32",     &Element::rmat32);
+  publish("rmat33",     &Element::rmat33);
+  publish("rmat34",     &Element::rmat34);
+  publish("rmat41",     &Element::rmat41);
+  publish("rmat42",     &Element::rmat42);
+  publish("rmat43",     &Element::rmat43);
+  publish("rmat44",     &Element::rmat44);
+
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper1",            &Element::aper1);
   publish("aper",             &Element::aper1);
@@ -98,7 +121,9 @@ void Element::PublishMembers()
   publish("aper4",            &Element::aper4);
   publish("aperture4",        &Element::aper4);
   alternativeNames["aperture4"] = "aper4";
-  publish("outerDiameter",    &Element::outerDiameter);
+  publish("horizontalWidth",  &Element::horizontalWidth);
+  publish("outerDiameter",    &Element::horizontalWidth);
+  alternativeNames["outerDiameter"] = "horizontalWidth";
   publish("xsize",            &Element::xsize);
   publish("ysize",            &Element::ysize);
   publish("xsizeOut",         &Element::xsizeOut);
@@ -144,19 +169,24 @@ void Element::PublishMembers()
   publish("poleStartZ",         &Element::poleStartZ);
   publish("screenWidth",        &Element::screenWidth);
   publish("awakeMagnetOffsetX", &Element::awakeMagnetOffsetX);
-  
+
   publish("numberWedges",      &Element::numberWedges);
   publish("wedgeLength",       &Element::wedgeLength);
   publish("degraderHeight",    &Element::degraderHeight);
   publish("materialThickness", &Element::materialThickness);
   publish("degraderOffset",    &Element::degraderOffset);
 
+  publish("undulatorPeriod",       &Element::undulatorPeriod);
+  publish("undulatorGap",          &Element::undulatorGap);
+  publish("undulatorMagnetHeight", &Element::undulatorMagnetHeight);
+
   publish("geometryFile",&Element::geometryFile);
   publish("geometry",    &Element::geometryFile);
   alternativeNames["geometry"] = "geometryFile"; // backwards compatibility
- 
-  publish("outerMaterial",       &Element::outerMaterial);
+
   publish("material",            &Element::material);
+  publish("outerMaterial",       &Element::material);
+  alternativeNames["outerMaterial"] = "material";
   publish("yokeOnInside",        &Element::yokeOnInside);
   publish("hStyle",              &Element::hStyle);
   publish("vhRatio",             &Element::vhRatio);
@@ -184,14 +214,19 @@ void Element::PublishMembers()
   publish("blmLocTheta",&Element::blmLocTheta);
 
   publish("colour", &Element::colour);
+
+  publish("crystalLeft",            &Element::crystalLeft);
+  publish("crystalRight",           &Element::crystalRight);
+  publish("crystalBoth",            &Element::crystalBoth);
+  publish("crystalAngleYAxisLeft" , &Element::crystalAngleYAxisLeft);
+  publish("crystalAngleYAxisRight", &Element::crystalAngleYAxisRight);
 }
 
 std::string Element::getPublishedName(std::string nameIn)const
 {
   auto it = alternativeNames.find(nameIn);
-  if (it != alternativeNames.end()) {
-    return it->second;
-  }
+  if (it != alternativeNames.end())
+    {return it->second;}
   // if not found return name
   return nameIn;
 }
@@ -263,7 +298,7 @@ void Element::print(int ident)const{
     break;
 
   case ElementType::_ELEMENT:
-    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+    std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
 	      << "precision region " << region << std::endl
 	      << "Geometry file : "  << geometryFile << std::endl
 	      << "Field object  : "  << fieldAll << std::endl;
@@ -340,6 +375,8 @@ void Element::flush()
   fintK2 = 0;
   fintxK2 = 0;
   hgap  = 0;
+  h1 = 0;
+  h2 = 0;
   kick  = 0;
   hkick = 0;
   vkick = 0;
@@ -350,13 +387,40 @@ void Element::flush()
   frequency = 0;
   phase     = 0;
   tOffset   = 0;
-  
+
+  // rmatrix
+  kick1 = 0;
+  kick2 = 0;
+  kick3 = 0;
+  kick4 = 0;
+  rmat11= 1.0;
+  rmat12= 0;
+  rmat13= 0;
+  rmat14= 0;
+  rmat21= 0;
+  rmat22= 1.0;
+  rmat23= 0;
+  rmat24= 0;
+  rmat31= 0;
+  rmat32= 0;
+  rmat33= 1.0;
+  rmat34= 0;
+  rmat41= 0;
+  rmat42= 0;
+  rmat43= 0;
+  rmat44= 1.0;
+
   // degrader
   numberWedges = 1;
   wedgeLength = 0;
   degraderHeight = 0;
   materialThickness = 0;
   degraderOffset = 0;
+
+  // undulator
+  undulatorPeriod = 1;
+  undulatorGap = 0;
+  undulatorMagnetHeight = 0;
 
   // new aperture model
   beampipeThickness = 0;
@@ -370,8 +434,7 @@ void Element::flush()
 
   // magnet geometry
   magnetGeometryType  = "";
-  outerMaterial = "";
-  outerDiameter = 0;
+  horizontalWidth = 0;
   yokeOnInside  = true;
   hStyle             = -1;
   vhRatio            = -1;
@@ -437,6 +500,10 @@ void Element::flush()
 
   colour = "";
 
+  crystalLeft  = "";
+  crystalRight = "";
+  crystalBoth  = "";
+  
   angleSet = false;
 }
 

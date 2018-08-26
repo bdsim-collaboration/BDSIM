@@ -37,11 +37,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorSet.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
@@ -88,6 +88,17 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   
   // instantiate the accelerator model holding class
   acceleratorModel = BDSAcceleratorModel::Instance();
+  canSampleAngledFaces = true;
+  BDSIntegratorSetType integratorSetType = BDSGlobalConstants::Instance()->IntegratorSet();
+  if (   (integratorSetType == BDSIntegratorSetType::bdsimtwo)
+      || (integratorSetType == BDSIntegratorSetType::geant4)
+#if G4VERSION_NUMBER > 1039
+      || (integratorSetType == BDSIntegratorSetType::geant4dp)
+#endif
+      )
+    { // set to be value of option, default is false.
+      canSampleAngledFaces = BDSGlobalConstants::Instance()->SampleElementsWithPoleface();
+    }
 
   UpdateSamplerDiameter();
 }
@@ -109,11 +120,18 @@ void BDSDetectorConstruction::UpdateSamplerDiameter()
   G4double curvilinearRadius = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
   if (maxBendingRatio > 0.4) // max ratio for a 2.5m sampler diameter
     {
-      curvilinearRadius = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
-      G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
-	     << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
-	     << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
-      BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
+      G4double curvilinearRadiusBends = (0.9 / maxBendingRatio)*CLHEP::m; // 90% of theoretical maximum radius
+
+      // check it's smaller - the user may have already specified a smaller sampler diameter
+      // and htat should take precedence
+      if (curvilinearRadiusBends < curvilinearRadius)
+	{
+	  curvilinearRadius = curvilinearRadiusBends;
+	  G4cout << __METHOD_NAME__ << "Reducing sampler diameter from "
+		 << BDSGlobalConstants::Instance()->SamplerDiameter()/CLHEP::m << "m to "
+		 << 2*curvilinearRadius/CLHEP::m << "m" << G4endl;
+	  BDSGlobalConstants::Instance()->SetSamplerDiameter(curvilinearRadius);
+	}
     }
 }
 
@@ -128,7 +146,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamlines();
 
   // construct placement geometry from parser
-  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements());
+  BDSBeamline* mainBeamLine =  BDSAcceleratorModel::Instance()->BeamlineSetMain().massWorld;
+  placementBL = BDS::BuildPlacementGeometry(BDSParser::Instance()->GetPlacements(),
+					    mainBeamLine);
   BDSAcceleratorModel::Instance()->RegisterPlacementBeamline(placementBL); // Acc model owns it
   
   // build the tunnel and supports
@@ -189,7 +209,7 @@ void BDSDetectorConstruction::BuildBeamlines()
 					      "main beam line",
 					      initialTransform,
 					      circular);
-  
+
   if (mainBeamline.massWorld->empty())
     {
       G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
@@ -209,20 +229,11 @@ void BDSDetectorConstruction::BuildBeamlines()
       auto parserLine = BDSParser::Instance()->GetSequence(placement.sequence);
 
       // determine offset in world for extra beam line
-      G4Transform3D plTransform = CreatePlacementTransform(placement);
-      G4Transform3D placementInitial;
-      if (placement.referenceElement.empty())
-	{// no reference - ie w.r.t. start of main beam line in the world volume
-	  placementInitial = initialTransform; // same as beginning of beam line
-	}
-      else
-	{// use reference to get placement transform - ie w.r.t. to a main beam line element
-	  const BDSBeamline* mbl = mainBeamline.massWorld;
-	  placementInitial = mbl->GetTransformForElement(placement.referenceElement,
-							 placement.referenceElementNumber);
-	}
-      G4Transform3D startTransform = placementInitial * plTransform; // compound
-
+      const BDSBeamline* mbl = mainBeamline.massWorld;
+      // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
+      // but this could be any beam line in future if we find the right beam line to pass in.
+      G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
+      
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
 						   placement.sequence,
@@ -251,9 +262,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 		 << "model in Geant4" << G4endl;
 	  exit(1);
 	}
+      if (beamLine.size() <= 1) // if an empty LINE it still has 1 item in it
+        {
+          G4cerr << __METHOD_NAME__ << "BDSIM requires the sequence defined with the use command "
+                 << "to have at least one element for a circular machine." << G4endl;
+          exit(1);
+        }
     }  
 
-  for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
+  for (auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
       // find next and previous element, but ignore special elements or thin multipoles.
       const GMAD::Element* prevElement = nullptr;
@@ -271,12 +288,15 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       const GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
       ++nextIt;
+      G4double nextElementInputFace = 0; // get poleface angle for next element whilst testing if next element exists
       while (nextIt != beamLine.end())
 	{
 	  if (nextIt->isSpecial() == false && nextIt->type != GMAD::ElementType::_THINMULT)
 	    {
 	      nextElement = &(*nextIt);
-	      break;
+          //rotated entrance face of the next element may modify the exit face of the current element.
+          nextElementInputFace = nextElement->e1;
+          break;
 	    }
 	  ++nextIt;
 	}
@@ -288,6 +308,10 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
       if(temp)
 	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
+          if ((!canSampleAngledFaces) && (BDS::IsFinite((*elementIt).e2)))
+            {sType = BDSSamplerType::none;}
+          if ((!canSampleAngledFaces) && (BDS::IsFinite(nextElementInputFace)))
+            {sType = BDSSamplerType::none;}
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           massWorld->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
@@ -296,54 +320,26 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (beamlineIsCircular)
+  if (beamlineIsCircular && !massWorld->empty())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      // minimum space for the circular mechanics are:
-      // 1x terminator with sampler chord length
-      // 1x teleporter with (minimum) 1x sampler chord length
-      // 3x padding length
-      const G4double sL = BDSSamplerPlane::ChordLength();
-      const G4double pL = massWorld->PaddingLength();
-      G4double minimumRequiredSpace = 2*sL + 3*pL;
-      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(massWorld);
+      G4double teleporterLength = 0;
+      G4Transform3D teleporterTransform = BDS::CalculateTeleporterDelta(massWorld, teleporterLength);
       
-      // note delta is from end to beginning, which will have correct transverse but opposite
-      // z component, hence -ve here.
-      G4double rawLength        = -teleporterDelta.z();
-      G4double teleporterLength =  rawLength - minimumRequiredSpace + sL; // leaves at least 1x sL for teleporter
-      
-      if (teleporterDelta.mag() > 1*CLHEP::m)
+      auto terminator = theComponentFactory->CreateTerminator();
+      if (terminator)
 	{
-	  G4cout << G4endl << "Error - the calculated teleporter delta is above 1m! "
-		 << "The teleporter" << G4endl << "was only intended for small shifts "
-		 << "- the teleporter will not be built." << G4endl << G4endl;
+	  terminator->Initialise();
+	  massWorld->AddComponent(terminator);
 	}
-      else if (teleporterLength < minimumRequiredSpace)
-	{// should protect against -ve length teleporter
-	  G4cout << G4endl << "Insufficient space between the first and last elements "
-		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
-		 << "- these will not be built." << G4endl;
-	  G4cout << __METHOD_NAME__ << "Minimum space for circular mechanics is " << minimumRequiredSpace/CLHEP::um << " um" << G4endl;
-	}
-      else
-	{ 
-	  BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
-	  if (terminator)
-	    {
-	      terminator->Initialise();
-	      massWorld->AddComponent(terminator);
-	    }	  
-	  // update delta
-	  teleporterDelta.setZ(teleporterLength);
-	  BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
-	  if (teleporter)
-	    {
-	      teleporter->Initialise();
-	      massWorld->AddComponent(teleporter);
-	    }
+      auto teleporter = theComponentFactory->CreateTeleporter(teleporterLength,
+							      teleporterTransform);
+      if (teleporter)
+	{
+	  teleporter->Initialise();
+	  massWorld->AddComponent(teleporter);
 	}
     }
   
@@ -366,7 +362,6 @@ BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD:
 
   // construct beamline of end pieces
   BDSBeamline* endPieces = BDS::BuildEndPieceBeamline(massWorld, circular);
-
   BDSBeamlineSet beamlineSet;
   beamlineSet.massWorld              = massWorld;
   beamlineSet.curvilinearWorld       = clBeamline;
@@ -573,12 +568,17 @@ void BDSDetectorConstruction::PlaceBeamlineInWorld(BDSBeamline*          beamlin
     }
 }
 
-G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement)
+G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Placement& placement,
+								const BDSBeamline*     beamLine)
 {
-  G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
-					    placement.y*CLHEP::m,
-					    placement.z*CLHEP::m);
+  G4Transform3D result;
+
+  // 3 scenarios
+  // 1) global placement X,Y,Z + rotation
+  // 2) w.r.t. beam line placement x,y,S + rotation
+  // 3) w.r.t. element in beam line placement elementName + x,y,s + rotation
   
+  // in all cases, need the rotation
   G4RotationMatrix* rm = nullptr;
   if (placement.axisAngle)
     {
@@ -600,8 +600,54 @@ G4Transform3D BDSDetectorConstruction::CreatePlacementTransform(const GMAD::Plac
 	}
       else
 	{rm = new G4RotationMatrix();}
+    } 
+
+  // create a tranform from w.r.t. the beam line if s is finite and it's not w.r.t a
+  // particular element. If it's w.r.t. a particular element, treat s as local curvilinear
+  // s and use as local 'z' in the transform.
+  if (!placement.referenceElement.empty())
+    {// scenario 3
+      BDSBeamlineElement* element = beamLine->GetElement(placement.referenceElement,
+							 placement.referenceElementNumber);
+      if (!element)
+	{
+	  G4cerr << __METHOD_NAME__ << "No element named \""
+		 << placement.referenceElement << "\" found for placement number "
+		 << placement.referenceElementNumber << G4endl;
+	  G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
+	  G4cout << "multiple sections with unique names. Run the visualiser to get " << G4endl;
+	  G4cout << "the name of the segment, or place w.r.t. the element before / after." << G4endl;
+	  exit(1);
+	}
+      G4double sCoordinate = element->GetSPositionMiddle(); // start from middle of element
+      sCoordinate += placement.s * CLHEP::m; // add on (what's considered) 'local' s from the placement
+
+      G4Transform3D beamlinePart = beamLine->GetGlobalEuclideanTransform(sCoordinate,
+									 placement.x*CLHEP::m,
+									 placement.y*CLHEP::m);
+      G4Transform3D localRotation(*rm, G4ThreeVector());
+      result = beamlinePart * localRotation;
+      
     }
-  G4Transform3D result(*rm, translation);
+  else if (BDS::IsFinite(placement.s))
+    {// scenario 2
+      G4Transform3D beamlinePart =  beamLine->GetGlobalEuclideanTransform(placement.s*CLHEP::m,
+									  placement.x*CLHEP::m,
+									  placement.y*CLHEP::m);
+      G4Transform3D localRotation(*rm, G4ThreeVector());
+      result = beamlinePart * localRotation;
+    }
+  else
+    {// scenario 1
+      G4ThreeVector translation = G4ThreeVector(placement.x*CLHEP::m,
+						placement.y*CLHEP::m,
+						placement.z*CLHEP::m);
+      
+      
+      result = G4Transform3D(*rm, translation);
+    }
+
+  
   return result;
 }
 

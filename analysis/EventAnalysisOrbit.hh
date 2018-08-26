@@ -46,6 +46,7 @@ public:
   std::vector<double> xp;
   std::vector<double> y;
   std::vector<double> yp;
+  std::vector<std::string> elementName;
   /// @}
 };
 

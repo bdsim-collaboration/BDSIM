@@ -77,8 +77,8 @@ std::string GMAD::typestr(ElementType type) {
     return "element";
   case ElementType::_TRANSFORM3D :
     return "transform3d";
-  case ElementType::_MUSPOILER : 
-    return "muspoiler";
+  case ElementType::_MUONSPOILER : 
+    return "muonspoiler";
   case ElementType::_SCREEN :
     return "screen";
   case ElementType::_AWAKESCREEN :
@@ -89,6 +89,14 @@ std::string GMAD::typestr(ElementType type) {
     return "degrader";
   case ElementType::_GAP :
     return "gap";
+  case ElementType::_THINRMATRIX :
+    return "thinrmatrix";
+  case ElementType::_PARALLELTRANSPORTER :
+    return "paralleltransporter";
+  case ElementType::_RMATRIX :
+    return "rmatrix";
+  case ElementType::_UNDULATOR :
+    return "undulator";
   default:
     return "none";
   }

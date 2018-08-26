@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef OPTIONSBASE_H
 #define OPTIONSBASE_H
 
@@ -105,7 +123,7 @@ namespace GMAD
     /// default magnet geometry parameters
     std::string magnetGeometryType;
     std::string outerMaterialName;
-    double      outerDiameter;
+    double      horizontalWidth; // formerly outerDiameter
     double      thinElementLength;
     bool        hStyle; ///< H Style dipoles (if not, C Style).
     double      vhRatio;
@@ -193,6 +211,11 @@ namespace GMAD
     double   neutronTimeLimit;
     double   neutronKineticEnergyLimit;
     bool     useLENDGammaNuclear;
+    bool     useElectroNuclear;
+    bool     useMuonNuclear;
+    bool     useGammaToMuMu;
+    bool     usePositronToMuMu;
+    bool     usePositronToHadrons;
     ///@}
 
     /// Biasing options
@@ -214,14 +237,20 @@ namespace GMAD
     bool     stopSecondaries;
     bool     killNeutrinos;
     double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
+    bool     sampleElementsWithPoleface;
+    double   nominalMatrixRelativeMomCut; ///< Momentum threshold for nominal dipole matrix tracking.
+    bool     teleporterFullTransform;     ///< Whether to use the new Transform3D method for the teleporter.
 
+    /// Output related options
     int         numberOfEventsPerNtuple;
 
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeElossTime;
-
+    bool        storeElossStepLength;
+    bool        storeElossPreStepKineticEnergy;
+    
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
@@ -238,7 +267,11 @@ namespace GMAD
     bool        trajConnect;
     bool        trajNoTransportation;
 
+    std::string storeTrajectorySamplerID;
+    std::string storeTrajectoryELossSRange;
+
     bool        writePrimaries;
+    bool        storeModel;
 
     /// Ring parameters
     int      nturns;

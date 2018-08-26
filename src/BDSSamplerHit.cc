@@ -16,44 +16,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSParticleCoordsFull.hh"
 #include "BDSSamplerHit.hh"
-#include "G4ios.hh"
+
+#include "globals.hh"
+#include "G4Allocator.hh"
 
 G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
 
-BDSSamplerHit::BDSSamplerHit(G4String    aName,
-			     G4int       samplerID,
-			     BDSParticle init,
-			     BDSParticle prod,
-			     BDSParticle last_scat,
-			     BDSParticle local,
-			     BDSParticle global,
-			     G4double    s,
-			     G4double    weight,
-			     G4int       PDGtype,
-			     G4int       nEvent,
-			     G4int       ParentID,
-			     G4int       TrackID,
-			     G4int       TurnsTaken,
-			     G4String    process,
-			     G4int       beamlineIndex):
-  itsName(aName),
-  itsSamplerID(samplerID),
-  itsInit(init),
-  itsProd(prod),
-  itsLastScat(last_scat),
-  itsLocal(local),
-  itsGlobal(global),
-  itsS(s),
-  itsWeight(weight),
-  itsPDGtype(PDGtype),
-  itsEventNo(nEvent),
-  itsParentID(ParentID),
-  itsTrackID(TrackID),
-  itsTurnsTaken(TurnsTaken),
-  itsProcess(process),
-  itsBeamlineIndex(beamlineIndex)
-{;}
-
-BDSSamplerHit::~BDSSamplerHit()
+BDSSamplerHit::BDSSamplerHit(G4int samplerIDIn,
+			     const BDSParticleCoordsFull& coordsIn,
+			     G4int pdgIDIn,
+			     G4int parentIDIn,
+			     G4int trackIDIn,
+			     G4int turnsTakenIn,
+			     G4int beamlineIndexIn):
+  samplerID(samplerIDIn),
+  coords(coordsIn),
+  pdgID(pdgIDIn),
+  parentID(parentIDIn),
+  trackID(trackIDIn),
+  turnsTaken(turnsTakenIn),
+  beamlineIndex(beamlineIndexIn)
 {;}

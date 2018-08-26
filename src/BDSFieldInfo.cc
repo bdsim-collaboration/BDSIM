@@ -31,6 +31,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 
+G4UserLimits* BDSFieldInfo::defaultUL = nullptr;
+
 BDSFieldInfo::BDSFieldInfo():
   fieldType(BDSFieldType::none),
   brho(0),
@@ -141,6 +143,13 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
     {stepLimit = new G4UserLimits(*other.stepLimit);}
   else
     {stepLimit = nullptr;}
+}
+
+void BDSFieldInfo::SetUserLimits(G4UserLimits* userLimitsIn)
+{
+  if (stepLimit != defaultUL)
+    {delete stepLimit;} // shouldn't delete global default step limit!
+  stepLimit = userLimitsIn;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 class G4Mag_EqRhs;
 
@@ -36,7 +37,8 @@ class BDSIntegratorTeleporter: public BDSIntegratorMag
 {
 public:
   BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
-			  G4ThreeVector teleporterDelta);
+			  G4Transform3D teleporterDeltaIn,
+			  G4double      teleporterLengthIn);
 
   virtual ~BDSIntegratorTeleporter(){;}
   
@@ -47,8 +49,11 @@ public:
 		       G4double       yErr[]);
 
 private:
-  /// The offset the teleport should transport particles by
-  G4ThreeVector teleporterDelta;
+
+  const G4Transform3D transform;
+  const G4ThreeVector dPos;
+  const G4double      teleporterLength;
+  G4bool              newMethod;  ///< Whether to use full 3D transform.
 };
 
 #endif

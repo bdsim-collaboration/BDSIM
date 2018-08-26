@@ -69,6 +69,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::skewmultipoleouteroctupole:
     case BDSFieldType::skewmultipoleouterdecapole:
     case BDSFieldType::multipoleouterdipole3d:
+    case BDSFieldType::undulator:
       {return BDSFieldClassType::magnetic;}
     case BDSFieldType::ezero:
     case BDSFieldType::emap1d:
@@ -86,6 +87,8 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::rfcavity:
       {return BDSFieldClassType::electromagnetic;}
     case BDSFieldType::teleporter:
+    case BDSFieldType::rmatrix:
+    case BDSFieldType::paralleltransporter:
       {return BDSFieldClassType::irregular;}
     default:
       {return BDSFieldClassType::electromagnetic;}

@@ -35,6 +35,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnet.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -67,8 +68,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType       typeIn,
   outer(nullptr),
   beamPipePlacementTransform(G4Transform3D())
 {
-  outerDiameter   = magnetOuterInfoIn->outerDiameter;
-  containerRadius = 0.5*outerDiameter;
+  horizontalWidth = magnetOuterInfoIn->horizontalWidth;
+  containerRadius = 0.5*horizontalWidth;
   
   beampipe = nullptr;
   outer    = nullptr;
@@ -101,7 +102,7 @@ G4String BDSMagnet::DetermineScalingKey(BDSMagnetType typeIn)
     case BDSMagnetType::octupole:
       {result = "k3"; break;}
     case BDSMagnetType::decapole:
-      {result = "k5"; break;}
+      {result = "k4"; break;}
     default:
       {break;} // leave as none without complaint
     };
@@ -119,6 +120,14 @@ void BDSMagnet::SetOutputFaceNormal(const G4ThreeVector& output)
 {
   if (outer)
     {outer->SetOutputFaceNormal(output);}
+}
+
+G4String BDSMagnet::Material() const
+{
+  if (magnetOuterInfo)
+    {return magnetOuterInfo->outerMaterial->GetName();}
+  else
+    {return BDSAcceleratorComponent::Material();}
 }
 
 void BDSMagnet::Build()
@@ -143,7 +152,7 @@ void BDSMagnet::BuildBeampipe()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-							    chordLength - lengthSafety,
+							    chordLength - 2*lengthSafety,
 							    beamPipeInfo);
 
   beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();

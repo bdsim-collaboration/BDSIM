@@ -27,12 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 #include <set>
 #include <vector>
+#include <map>
 
 // forward declarations
 template <class T> class G4THitsCollection;
 class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 class BDSEventInfo;
+class BDSParticleCoordsFullGlobal;
 class BDSSamplerHit;
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
@@ -92,18 +94,8 @@ public:
   /// for the case of generating primaries only. This fills the primary structure,
   /// and calls WriteFileEventLevel() and then clears the structures. It therefore
   /// should not be used in conjunction with FillEvent().
-  void FillEventPrimaryOnly(const G4double E,
-			    const G4double x0,
-			    const G4double y0,
-			    const G4double z0,
-			    const G4double xp,
-			    const G4double yp,
-			    const G4double zp,
-			    const G4double t,
-			    const G4double weight,
-			    const G4int    PDGType,
-			    const G4int    eventNumber,
-			    const G4int    turnsTaken);
+  void FillEventPrimaryOnly(const BDSParticleCoordsFullGlobal& coords,
+			    const G4int pdgID);
   
   /// Copy event information from Geant4 simulation structures to output structures.
   void FillEvent(const BDSEventInfo*                   info,
@@ -114,7 +106,7 @@ public:
 		 const BDSEnergyCounterHitsCollection* tunnelLoss,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
-		 const std::vector<BDSTrajectory*>&    trajectories,
+		 const std::map<BDSTrajectory*, bool>& trajectories,
 		 const G4int                           turnsTaken);
 
   /// Close a file and open a new one.
@@ -175,22 +167,7 @@ private:
   /// Fill the local structure with primary vertex information. Utility function
   /// to translate from G4PrimaryVertex to simple numbers.
   void FillPrimary(const G4PrimaryVertex* vertex,
-		   const G4int            eventNumber,
 		   const G4int            turnsTaken);
-
-  /// Fill the primary particle structure with the primary coordinates.
-  void FillPrimary(const G4double E,
-		   const G4double x0,
-		   const G4double y0,
-		   const G4double z0,
-		   const G4double xp,
-		   const G4double yp,
-		   const G4double zp,
-		   const G4double t,
-		   const G4double weight,
-		   const G4int    PDGType,
-		   const G4int    eventNumber,
-		   const G4int    turnsTaken);
   
   /// Fill event summary information.
   void FillEventInfo(const BDSEventInfo* info);
@@ -210,7 +187,7 @@ private:
   void FillPrimaryLoss(const BDSTrajectoryPoint* ploss);
 
   /// Copy a set of trajectories to the output structure.
-  void FillTrajectories(const std::vector<BDSTrajectory*>& trajectories);
+  void FillTrajectories(const std::map<BDSTrajectory*, bool>& trajectories);
 
   /// Fill run level summary information.
   void FillRunInfo(const BDSEventInfo* info);
@@ -242,6 +219,7 @@ private:
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;
+  G4bool storeModel;
   G4bool storeOption1;
   G4bool storeOption2;
   /// @}

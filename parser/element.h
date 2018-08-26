@@ -1,3 +1,21 @@
+/* 
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+University of London 2001 - 2018.
+
+This file is part of BDSIM.
+
+BDSIM is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published 
+by the Free Software Foundation version 3 of the License.
+
+BDSIM is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
@@ -42,6 +60,8 @@ namespace GMAD
     double fintK2; ///< second fringe field integral at the dipole entrance - for TRANSPORT matching
     double fintxK2;///< second fringe field integral at the dipole exit - for TRANSPORT matching
     double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+    double h1; ///< input pole face curvature for bends
+    double h2; ///< output pole face curvature for bends
     double kick;   ///< fractional delta p for either h or v kicker
     double hkick;  ///< fractional delta px for hkicker
     double vkick;  ///< fractional delta py for vkicker
@@ -52,6 +72,30 @@ namespace GMAD
     double frequency; ///< frequency for rf cavity in Hz
     double phase;     ///< phase of rf cavity (rad)
     double tOffset;   ///< time offset used for phase calculation (ns)
+
+    ///@{ rmatrix elements, only 4x4
+    double kick1;
+    double kick2;
+    double kick3;
+    double kick4;
+    double rmat11;
+    double rmat12;
+    double rmat13;
+    double rmat14;
+    double rmat21;
+    double rmat22;
+    double rmat23;
+    double rmat24;
+    double rmat31;
+    double rmat32;
+    double rmat33;
+    double rmat34;
+    double rmat41;
+    double rmat42;
+    double rmat43;
+    double rmat44;
+    ///@}
+
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
@@ -66,8 +110,7 @@ namespace GMAD
   
     // magnet geometry
     std::string magnetGeometryType;
-    std::string outerMaterial;
-    double outerDiameter;
+    double horizontalWidth; // formerly outerDiameter
     bool   yokeOnInside;
     int    hStyle;  ///< -1 = unset; 0 = false (ie c style); 1 = true, use hstyle
     double vhRatio; ///< ratio of vertial to horizontal for some magnets
@@ -116,6 +159,12 @@ namespace GMAD
     double degraderOffset;
     ///@}
 
+    ///@{ for undulator
+    double undulatorPeriod;
+    double undulatorGap;
+    double undulatorMagnetHeight;
+    ///@}
+
     ///@{List of beam loss monitor locations
     std::list<double> blmLocZ;
     std::list<double> blmLocTheta;
@@ -150,6 +199,12 @@ namespace GMAD
 
     /// Override colour for certain items
     std::string colour;
+
+    std::string crystalLeft;
+    std::string crystalRight;
+    std::string crystalBoth;
+    double      crystalAngleYAxisLeft;
+    double      crystalAngleYAxisRight;
   
     /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
     /// field. This allows us to distinguish later on.

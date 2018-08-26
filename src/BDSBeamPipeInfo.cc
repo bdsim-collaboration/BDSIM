@@ -155,20 +155,50 @@ void BDSBeamPipeInfo::CheckApertureInfo()
     }
 }
 
-BDSExtent BDSBeamPipeInfo::IndicativeExtent() const
+BDSExtent BDSBeamPipeInfo::Extent() const
 {
-  // There is a potential problem here where the defaults used are much larger
-  // than the specified ones and they're picked up and cause a false positive.
-  G4double maxParam = std::max(std::max(aper1, aper2), std::max(aper3, aper4));
-  BDSExtent result = BDSExtent(-maxParam, maxParam,
-			       -maxParam, maxParam,
-			       0,0); // z not know from beam pipe info instance
-  return result;
+  G4double extX = 0;
+  G4double extY = 0;
+  switch (beamPipeType.underlying())
+    {
+      case BDSBeamPipeType::circular:
+      case BDSBeamPipeType::circularvacuum:
+        {
+          extX = aper1;
+          extY = aper1;
+          break;
+        }
+      case BDSBeamPipeType::elliptical:
+      case BDSBeamPipeType::rectangular:
+      case BDSBeamPipeType::octagonal:
+        {
+          extX = aper1;
+          extY = aper2;
+          break;
+        }
+      case BDSBeamPipeType::lhc:
+      case BDSBeamPipeType::lhcdetailed:
+      case BDSBeamPipeType::rectellipse:
+        {
+          extX = std::min(aper1, aper3);
+          extY = std::min(aper2, aper3);
+          break;
+        }
+      case BDSBeamPipeType::racetrack:
+        {
+          extX = aper1 + aper3;
+          extY = aper2 + aper3;
+          break;
+        }
+      default:break;
+    }
+  BDSExtent ext = BDSExtent(extX, extY, 0);
+  return ext;
 }
 
 G4double BDSBeamPipeInfo::IndicativeRadius() const
 {
-  BDSExtent ext = IndicativeExtent();
+  BDSExtent ext = Extent();
   return ext.MaximumAbsTransverse();
 }
 

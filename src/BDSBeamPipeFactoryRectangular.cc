@@ -70,7 +70,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
   vacuumSolid   = new G4Box(nameIn + "_vacuum_solid",       // name
 			    aper1In,                        // x half width
 			    aper2In,                        // y half width
-			    (lengthIn*0.5)-2*lengthSafety); // half length
+			    (lengthIn*0.5)-lengthSafety); // half length
 
   G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
@@ -85,7 +85,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,
   beamPipeSolidOuter = new G4Box(nameIn + "_pipe_solid_outer",   // name
 				 aper1In + beamPipeThicknessIn,  // x half width
 				 aper2In + beamPipeThicknessIn,  // y half width
-				 (lengthIn*0.5)-2*lengthSafety); // half length - lengthSafety to fit in container
+				 (lengthIn*0.5)-lengthSafety); // half length - lengthSafety to fit in container
   allSolids.push_back(beamPipeSolidInner);
   allSolids.push_back(beamPipeSolidOuter);
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
@@ -194,7 +194,7 @@ void BDSBeamPipeFactoryRectangular::CreateGeneralAngledSolids(G4String      name
   angledFaceSolid = new G4CutTubs(nameIn + "_angled_face",       // name
 				  0,                             // inner radius
 				  angledFaceRadius,              // outer radius
-				  (lengthIn*0.5)-2*lengthSafety, // half length - must fit within container
+				  (lengthIn*0.5)-lengthSafety, // half length - must fit within container
 				  0,                             // rotation start angle
 				  CLHEP::twopi,                  // rotation sweep angle
 				  inputfaceIn,                   // input face normal

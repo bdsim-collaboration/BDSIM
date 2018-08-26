@@ -177,6 +177,12 @@ add_test(gmad-extend-field ${gmadBinary} extendfield.gmad)
 # test material extension
 add_test(gmad-extend-material ${gmadBinary} extendmaterial.gmad)
 
+# test colour extension
+add_test(gmad-extend-colour ${gmadBinary} extendcolour.gmad)
+
+# test crystal extension
+add_test(gmad-extend-crystal ${gmadBinary} extendcrystal.gmad)
+
 # test string (issue #126)
 add_test(gmad-string ${gmadBinary} string.gmad)
 
@@ -200,6 +206,12 @@ add_test(gmad-cavity-model ${gmadBinary} cavitymodel.gmad)
 # test field
 add_test(gmad-field ${gmadBinary} field.gmad)
 
+# test colour
+add_test(gmad-colour ${gmadBinary} colour.gmad)
+
+# test crystal
+add_test(gmad-crystal ${gmadBinary} crystal.gmad)
+
 # test query
 add_test(gmad-query ${gmadBinary} query.gmad)
 
@@ -215,4 +227,3 @@ add_test(gmad-region ${gmadBinary} region.gmad)
 
 # test tunnel
 add_test(gmad-tunnel ${gmadBinary} tunnel.gmad)
-

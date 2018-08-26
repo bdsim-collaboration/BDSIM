@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <map>
 
+class G4Colour;
 class G4Material;
 
 namespace GMAD
@@ -41,6 +42,7 @@ namespace GMAD
 class BDSAcceleratorComponent;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
+class BDSCrystalInfo;
 class BDSFieldInfo;
 class BDSIntegratorSet;
 class BDSMagnet;
@@ -89,7 +91,8 @@ public:
 
   /// Public creation for object that accounts for slight offset between ends of a ring.
   /// The z component of the delta three vector is used for the length of the teleporter.
-  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
+  BDSAcceleratorComponent* CreateTeleporter(const G4double teleporterLength,
+					    const G4Transform3D transformIn);
 
   /// Create the tilt and offset information object by inspecting the parser element
   static BDSTiltOffset*    CreateTiltOffset(GMAD::Element const* el);
@@ -118,10 +121,9 @@ public:
   static G4bool YokeOnLeft(const GMAD::Element*     el,
 			   const BDSMagnetStrength* st);
 
-  /// Prepare the element outer diameter in Geant4 units - if not set, use the global
-  /// default.
-  static G4double PrepareOuterDiameter(GMAD::Element const* el,
-				       G4double defaultOuterDiameter = -1);
+  /// Prepare the element horizontal width in Geant4 units - if not set, use the global default.
+  static G4double PrepareHorizontalWidth(GMAD::Element const* el,
+					 G4double defaultHorizontalWidth = -1);
 
   BDSFieldInfo* PrepareMagnetOuterFieldInfo(const BDSMagnetStrength*  vacuumSt,
                                             const BDSFieldType&       fieldType,
@@ -136,7 +138,7 @@ public:
 						    const GMAD::Element*     el,
 						    const BDSMagnetStrength* st,
 						    const BDSBeamPipeInfo*   beamPipe,
-						    G4double defaultOuterDiameter      = -1,
+						    G4double defaultHorizontalWidth    = -1,
 						    G4double defaultVHRatio            = 1.0,
 						    G4double defaultCoilWidthFraction  = -1,
 						    G4double defaultCoilHeightFraction = -1);
@@ -150,16 +152,23 @@ public:
 						    const G4double         angleOut,
 						    const BDSBeamPipeInfo* beamPipe,
 						    const G4bool   yokeOnLeft                = false,
-						    G4double       defaultOuterDiameter      = -1,
+						    G4double       defaultHorizontalWidth    = -1,
 						    G4double       defaultVHRatio            = -1,
 						    G4double       defaultCoilWidthFraction  = -1,
 						    G4double       defaultCoilHeightFraction = -1);
 
-  /// Utility function to check if the combination of outer diameter, angle and length
+  /// Checks if colour is specified for element, else uses the default for that element type.
+  static G4Colour* PrepareColour(GMAD::Element const* element);
+
+  /// Checks if a material is named in Element::material, else uses the supplied default.
+  static G4Material* PrepareMaterial(GMAD::Element const* element,
+				     G4String defaultMaterialName);
+
+  /// Utility function to check if the combination of horizontal width, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
   static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
-					     G4double outerDiameter,
+					     G4double horizontalWidth,
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
@@ -203,15 +212,25 @@ private:
   BDSAcceleratorComponent* CreateThinMultipole(G4double angleIn);
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
+  BDSAcceleratorComponent* CreateParallelTransporter();
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
-  BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateMuonSpoiler();
   BDSAcceleratorComponent* CreateShield();
   BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateGap();
+  BDSAcceleratorComponent* CreateCrystalCollimator();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+  BDSAcceleratorComponent* CreateRMatrix();
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
+					     const BDSMagnetStrength* stIn,
+					     G4String name);
+  BDSAcceleratorComponent* CreateThinRMatrix(G4double angleIn,
+					     G4String name);
+  BDSAcceleratorComponent* CreateUndulator();
+
 #ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
@@ -222,11 +241,12 @@ private:
 			  BDSMagnetStrength* st,
 			  BDSFieldType  fieldType,
 			  BDSMagnetType magnetType,
-			  G4double      angle = 0.0) const;
+			  G4double      angle = 0.0,
+  G4String nameSuffix = "") const;
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element const* el,
-				    const G4bool printWarning = true);
+				    const G4bool& printWarning = true);
 
   /// Prepare the vacuum material from the element or resort to default in options.
   G4Material* PrepareVacuumMaterial(GMAD::Element const* el) const;
@@ -234,6 +254,16 @@ private:
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  /// Prepare all colours defined in the parser.
+  void PrepareColours();
+
+  /// Prepare all crystals in defined the parser.
+  void PrepareCrystals();
+
+  /// Utility funciton to prepare crystal recipe for an element. Produces a unique object
+  /// this class doesn't own.
+  BDSCrystalInfo* PrepareCrystalInfo(const G4String& crystalName) const;
 
   /// Utility function to prepare model info. Retrieve from cache of ones translated
   /// parser objects or create a default based on the element's aperture if none specified.
@@ -252,9 +282,6 @@ private:
   BDSMagnetStrength* PrepareCavityStrength(GMAD::Element const* el,
 					   G4double currentArcLength) const;
 
-  /// Checks if colour is specified for element, else uses fallback color
-  G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
-
   /// Set the field definition on a BDSAcceleratorComponent from the string definition
   /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
   /// and outer field in place of the one general field.
@@ -264,8 +291,14 @@ private:
   /// Prepare magnet strength for multipoles
   BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* el) const;
 
+  /// Prepare magnet strength for rmatrix
+  BDSMagnetStrength* PrepareMagnetStrengthForRMatrix(GMAD::Element const* el) const;
+
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
+
+  /// Maps of crystal info instances by name.
+  std::map<G4String, BDSCrystalInfo*> crystalInfos;
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;

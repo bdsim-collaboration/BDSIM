@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSOutput.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSimpleComponent.hh"
@@ -574,7 +575,8 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
   return mEA;
 }
 
-G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y) const
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y,
+						       G4int* indexOfFoundElement) const
 {
   // check if s is in the range of the beamline
   if (s > totalArcLength)
@@ -595,6 +597,8 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4cout << "Index:                " << index << G4endl;
   G4cout << "Element: " << *element << G4endl;
 #endif
+  if (indexOfFoundElement)
+    {*indexOfFoundElement = index;}
 
   G4double dx = 0;
   // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
@@ -715,6 +719,8 @@ G4Transform3D BDSBeamline::GetTransformForElement(G4String acceleratorComponentN
       G4cerr << __METHOD_NAME__ << "No element named \""
 	     << acceleratorComponentName << "\" found for placement number "
 	     << i << G4endl;
+      G4cout << "Note, this may be because the element is a bend and split into " << G4endl;
+      G4cout << "multiple sections with unique names." << G4endl;
       exit(1);
     }
   else
@@ -751,7 +757,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   if (!IndexOK(index))
     {return nullptr;}
   
-  const G4double pl = paddingLength; // shortcut
+  const G4double pl = BDSMagnetOuterFactoryBase::lengthSafetyLarge; // shortcut
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetRotationMiddle();

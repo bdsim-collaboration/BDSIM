@@ -134,7 +134,13 @@ private:
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
   BDSFieldObjects* CreateTeleporter(const BDSFieldInfo& info);
-  
+
+  /// Create special rmatrix 'field' that applies an rmatrix
+  BDSFieldObjects* CreateRmatrix(const BDSFieldInfo& info);
+
+  /// Create special parallel transport 'field' that applies an parallel transport along beam line
+  BDSFieldObjects* CreateParallelTransport(const BDSFieldInfo& info);
+
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 

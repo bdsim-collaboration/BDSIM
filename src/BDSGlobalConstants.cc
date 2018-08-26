@@ -22,11 +22,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSOutputType.hh"
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSSamplerRegistry.hh"
 
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -64,7 +66,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
 
-  //beampipe
+  // beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,
 					     options.aper2 * CLHEP::m,
@@ -75,10 +77,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 					     options.beampipeMaterial);
   
   // magnet geometry
-  G4double outerDi = options.outerDiameter * CLHEP::m;
-  if (outerDi < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
+  G4double horizontalWidth = options.horizontalWidth * CLHEP::m;
+  if (horizontalWidth < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" " << outerDi
+      G4cerr << __METHOD_NAME__ << "Error: option \"horizontalWidth\" " << horizontalWidth
 	     << " must be greater than 2x (\"aper1\" + \"beamPipeThickness\") ("
 	     << defaultBeamPipeModel->aper1 << " + " << defaultBeamPipeModel->beamPipeThickness << ")" << G4endl;
       exit(1);
@@ -170,6 +172,8 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   defaultUserLimits->SetUserMaxTrackLength(MaxTrackLength());
   defaultUserLimits->SetUserMinEkine(MinimumKineticEnergy());
   defaultUserLimits->SetUserMinRange(MinimumRange());
+
+  BDSFieldInfo::defaultUL = defaultUserLimits; // update static member for field definitions
 }
 
 G4int BDSGlobalConstants::PrintModuloEvents() const
@@ -207,4 +211,43 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete visibleDebugVisAttr;
 
   instance = nullptr;
+}
+
+std::vector<int> BDSGlobalConstants::StoreTrajectorySamplerIDs()
+{
+  std::vector<int> samplerIDs;
+
+  std::istringstream is(options.storeTrajectorySamplerID);
+  G4String tok;
+  while(is >> tok)
+    {
+      BDSSamplerRegistry* samplerRegistry = BDSSamplerRegistry::Instance();
+      int i=0;
+      for(auto info = samplerRegistry->begin(); info != samplerRegistry->end(); ++info)
+        {
+          if((*info).UniqueName() == tok)
+            {
+              samplerIDs.push_back(i);
+            }
+          i++;
+        }
+    }
+  return samplerIDs;
+}
+std::vector<std::pair<double,double>> BDSGlobalConstants::StoreTrajectoryELossSRange()
+{
+  std::vector<std::pair<double,double>> elossSRange;
+
+  std::istringstream is(options.storeTrajectoryELossSRange);
+  std::string tok;
+  while(is >> tok)
+    {
+      std::cout << tok << std::endl;
+      int loc = tok.find(":",0);
+      double rstart = std::stod(tok.substr(0, loc));
+      double rend    =std::stod(tok.substr(loc+1,tok.size()));
+      elossSRange.push_back(std::pair<double,double>(rstart,rend));
+    }
+
+  return elossSRange;
 }

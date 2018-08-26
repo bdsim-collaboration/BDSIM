@@ -10,8 +10,8 @@ C++
 General
 -------
 
-* All variables shall be namespaced and not global
-* The asterisk is attached to the object not the variable name
+* All variables shall be namespaced and not global.
+* The asterisk is attached to the object, not the variable name.
 
 ::
 
@@ -21,34 +21,34 @@ General
 Naming
 ------
 
-* Underscores are to be avoided as hard to type and read
+* Underscores are to be avoided, as they are hard to type and read.
 * HEADERGUARDS_H are like this
-* Classes start with "BDS"
-* Classes use UpperCamelCaseForNaming
-* Member functions use UpperCamelCase as well
-* Member variables have no prefix (such as :code:`_variable` or :code:`m_variable`)
-* Member variables use lowerCamelCase
+* Classes start with "BDS".
+* Classes use UpperCamelCaseForNaming.
+* Member functions use UpperCamelCase as well.
+* Member variables have no prefix (such as :code:`_variable` or :code:`m_variable`).
+* Member variables use lowerCamelCase.
 
 
 Indentation & Spacing
 ---------------------
 
-* Two spaces per level of indentation
-* Tabs should not be used
-* Spaces should be between operators
+* Two spaces per level of indentation.
+* Tabs should not be used.
+* Spaces should be between operators.
 
 
 Braces
 ------
 
-* Explicit braces should always be used, even for one line if statements
+* Explicit braces should always be used, even for one line if statements.
 
 ::
 
    if (a > 4)
      {G4cout << a << G4endl;}
 
-* Braces should be on a new line - makes scope easier to determine
+* Braces should be on a new line - makes scope easier to determine.
 
 ::
 
@@ -58,7 +58,7 @@ Braces
        G4cout << "This is a test" << G4endl;
      }
 
-* The above style is preferred (indented block), but the following is also fine
+* The above style is preferred (indented block), but the following is also fine.
 
 ::
 
@@ -73,9 +73,9 @@ Braces
 In-Code Documentation
 ---------------------
 
-* Every single class should have doxygen documentation in the header
-* Obviously comments are strongly encouraged, as well as notes in this documentation
-* Avoid documenting the purpose of functions (i.e. outside the function) in the source code - document the header
+* Every single class should have doxygen documentation in the header.
+* Obviously comments are strongly encouraged, as well as notes in this documentation.
+* Avoid documenting the purpose of functions (i.e. outside the function) in the source code - document the header.
 
 
 Python
@@ -83,14 +83,14 @@ Python
 
 The Python modules are developed with the intention that they be used and discovered
 interactively in ipython, therefore, the naming convention described should make
-tab completion easy to understand and docstrings allow the use of the :code:`?` for
+tab completion easy to understand and docstrings should allow the use of the :code:`?` for
 help on any class or object.
 
 General
 -------
 
-* Docstrings must be provided for all modules, classes and functions
-* General packages such as numpy should be imported in a hidden fashion by renaming
+* Docstrings must be provided for all modules, classes and functions.
+* General packages such as numpy should be imported in a hidden fashion by renaming.
 
 ::
 
@@ -101,7 +101,7 @@ General
 Naming
 ------
 
-* Classes use UpperCamelCaseForNaming
-* Member functions use UpperCamelCase as well
-* Member variables have no prefix (such as :code:`_variable` or :code:`m_variable`)
-* Member variables use lowerCamelCase
+* Classes use UpperCamelCaseForNaming.
+* Member functions use UpperCamelCase as well.
+* Member variables have no prefix (such as :code:`_variable` or :code:`m_variable`).
+* Member variables use lowerCamelCase.

@@ -8,10 +8,10 @@ airCylinder2: drift, l=50*cm, apertureType="circularVacuum", vacuumMaterial="air
 
 ! by defining an rectangular collimator with no opening, we get a square block
 
-waterBlock: rcol, l=20*cm, material="water", colour="blueish: 0 128 255";
+blueish: newcolour, red=0, green=128, blue=255, alpha=0.3;
+waterBlock: rcol, l=20*cm, material="water", colour="blueish";
 
 ! similarly a recangular block of water but with a casing as provided by the beam pipe
-
 waterBox: drift, l=1*m, apertureType="rectangular", beampipeThickness=1*cm, aper1=20*cm, aper2=40*cm, vacuumMaterial="water";
 
 l1: line=(d1, airCylinder, waterBlock, airCylinder2, waterBox);
@@ -20,6 +20,6 @@ use, l1;
 beam, particle="e-",
       energy=1*GeV;
 
-option, physicsList="em em_livermore",
+option, physicsList="em_livermore",
 	elossHistoBinWidth=10*cm,
 	ngenerate=100;

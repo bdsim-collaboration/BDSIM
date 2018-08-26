@@ -73,6 +73,9 @@ public:
   virtual void SetInputFaceNormal(const G4ThreeVector& input);
   virtual void SetOutputFaceNormal(const G4ThreeVector& output);
   /// @}
+
+  /// Accessor to outer material if it exists.
+  G4String virtual Material() const;
   
 protected:
   /// Private default constructor to force the use of the supplied one.
@@ -134,7 +137,7 @@ protected:
   G4bool          placeBeamPipe;
 
   /// For outer volume construction
-  G4double        outerDiameter;
+  G4double        horizontalWidth;
 
   /// Separate variable for the container radius so it can be changed if
   /// required by specific magnet geometry.

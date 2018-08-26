@@ -116,6 +116,9 @@ namespace BDS
   template <typename T>
   G4int Sign(T val)
   {return G4int((T(0) < val) - (val < T(0)));}
+
+  inline G4String BoolToString(const G4bool& in)
+  {return in ? "true" : "false";}
   
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
@@ -156,7 +159,7 @@ namespace BDS
   /// vector arguments.
   G4bool WillIntersect(const G4double& angleIn,
 		       const G4double& angleOut,
-		       const G4double& outerDiameter,
+		       const G4double& horizontalWidth,
 		       const G4double& length);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to

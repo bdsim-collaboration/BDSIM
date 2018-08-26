@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifdef USE_GDML
+#include "BDSDebug.hh"
 #include "BDSGDMLPreprocessor.hh"
 #include "BDSTemporaryFiles.hh"
 #include "BDSUtilities.hh"
@@ -82,6 +83,8 @@ BDSGDMLPreprocessor::~BDSGDMLPreprocessor()
 G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
 					     const G4String& prefix)
 {
+  G4cout << __METHOD_NAME__ << "Preprocessing GDML file " << file << G4endl;
+  
   try
     {XMLPlatformUtils::Initialize();}
   catch (const XMLException& toCatch)
@@ -152,6 +155,8 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   pDomLsOutput->setByteStream(pTarget);  
   pSerializer->write(doc, pDomLsOutput);
   pSerializer->release();
+
+  G4cout << __METHOD_NAME__ << "Preprcessing complete" << G4endl;
 
   delete pTarget;
   delete parser;

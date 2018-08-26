@@ -14,6 +14,7 @@ class ReturnsAndErrors(dict):
         """
 
     def __init__(self):
+        dict.__init__(self)
         self['name'] = []
         self['code'] = []
         self['colours'] = []
@@ -151,7 +152,8 @@ class Globals:
                            'muspoiler',
                            'shield',
                            'solenoid',
-                           'laser']
+                           'laser',
+                           'gap']
 
         # parameters that can be varied (across all components)
         self.parameters = ['length',
@@ -174,12 +176,16 @@ class Globals:
                            'ks',
                            'fint',
                            'fintx',
-                           'hgap']
+                           'hgap',
+                           'h1',
+                           'h2',
+                           'fintK2',
+                           'fintxK2']
 
         #parameters that can be varied for each components type.
         self.hasParams = {'drift'         : ['length'],
-                          'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
-                          'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
+                          'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
+                          'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap', 'k1', 'h1', 'h2', 'fintK2', 'fintxK2'],
                           'vkick'         : ['length', 'kickangle'],
                           'hkick'         : ['length', 'kickangle'],
                           'quadrupole'    : ['length', 'k1'],
@@ -192,10 +198,11 @@ class Globals:
                           'rcol'          : ['length'],
                           'ecol'          : ['length'],
                           'degrader'      : ['length', 'numWedges', 'thickness'],
-                          'muspoiler'     : ['length', 'field'],
+                          'muspoiler'     : ['length', 'field', 'angle'],
                           'shield'        : ['length'],
                           'solenoid'      : ['length', 'ks'],
-                          'laser'         : ['length']}
+                          'laser'         : ['length'],
+                          'gap'           : ['length']}
 
         #use same magnet strengths for multipole and thinMultipole components
         self.magStrengths = {'k1': 0.025,
@@ -206,10 +213,10 @@ class Globals:
 
         #lists for multipole and thinMultipole (all K components for given element)
         self.k1l = [[-1.0 * self.magStrengths['k1']],             [0], [1.0 * self.magStrengths['k1']]]
-        self.k2l = [[0, -1.0 * self.magStrengths['k1']],          [0], [0, 1.0 * self.magStrengths['k1']]]
-        self.k3l = [[0, 0, -1.0 * self.magStrengths['k1']],       [0], [0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k1']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k1']]]
-        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k1']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k1']]]
+        self.k2l = [[0, -1.0 * self.magStrengths['k2']],          [0], [0, 1.0 * self.magStrengths['k2']]]
+        self.k3l = [[0, 0, -1.0 * self.magStrengths['k3']],       [0], [0, 0, 1.0 * self.magStrengths['k3']]]
+        self.k4l = [[0, 0, 0, -1.0 * self.magStrengths['k4']],    [0], [0, 0, 0, 1.0 * self.magStrengths['k4']]]
+        self.k5l = [[0, 0, 0, 0, -1.0 * self.magStrengths['k5']], [0], [0, 0, 0, 0, 1.0 * self.magStrengths['k5']]]
 
         #test values for the components parameters
         #field is not set, it will be calculated upon writing based on length, angle, and energy.
@@ -234,7 +241,11 @@ class Globals:
                             'ks'        : [-0.3, -0.003, 0, 0.003, 0.3],
                             'fint'      : [0, 1.0/6.0, 0.5],
                             'fintx'     : [0, 1.0/6.0, 0.5],
-                            'hgap'      : [0.01, 0.1]}
+                            'hgap'      : [0.01, 0.1],
+                            'h1'        : [-1.0, 0, 1.0],
+                            'h2'        : [-1.0, 0, 1.0],
+                            'fintK2'    : [0, 2.5, 5.0],
+                            'fintxK2'   : [0, 2.5, 5.0]}
 
         # test particles
         self.particles = ['e-', 'proton']
@@ -253,10 +264,10 @@ class Globals:
                              }
 
         # Full phase space
-        self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'PX' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'Y'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
-                               'PY' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
+        self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'PX' : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'Y'  : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
+                               'PY' : [-1.0e-2, -1.0e-5, -1.0e-8, 0, 1.0e-8, 1.0e-5, 1.0e-2],
                                'T'  : [-1.0e-18, -1.0e-15, -1.0e-12, 0, 1.0e-12, 1.0e-15, 1.0e-18],
                                'PT' : [0      ,  1.0e-6,  1.0e-4, 1.0e-2]}
 
@@ -267,6 +278,13 @@ class Globals:
                                           'PY' : [-1.0e-2, 0, 1.0e-2],
                                           'T'  : [-1.0e-12, 0, 1.0e-12],
                                           'PT' : [0, 1.0e-2]}
+
+        self.BeamPhaseSpaceReference = {'X'  : 0,
+                                        'PX' : 0,
+                                        'Y'  : 0,
+                                        'PY' : 0,
+                                        'T'  : 0,
+                                        'PT' : 0}
 
         # integrator (mainly for use with field maps)
         self.Integrators = {'g4cashkarprkf45'       : {'Field': 'EM', 'Dim': 4},
@@ -319,6 +337,14 @@ class Globals:
         self.ReturnsAndErrors.Add('NAN_CHORD',          9, 'y', 'G4ChordFinder::FindNextChord()', True)
 
         self.timeout = 300  # timeout in seconds
+
+        self.multiEntryTypes = [tuple, list, _np.ndarray]
+
+        self.limitedServers = ["linappserv1.pp.rhul.ac.uk",
+                               "linappserv2.pp.rhul.ac.uk",
+                               "linappserv3.pp.rhul.ac.uk"]
+
+        self.testsPerAxes = 75  # about the maximum that is resolvable on a figure.
 
     def _CheckComponent(self, componentType=''):
         if not self.components.__contains__(componentType):

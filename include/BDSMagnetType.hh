@@ -32,8 +32,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 struct magnettypes_def
 {
   enum type { decapole, hkicker, vkicker, muonspoiler, octupole, quadrupole,
-	      sectorbend, rectangularbend, rfcavity, sextupole,
-	      solenoid, multipole, thinmultipole, dipolefringe};
+	      sectorbend, rectangularbend, rfcavity, sextupole, undulator,
+	      solenoid, multipole, thinmultipole, dipolefringe, rmatrix, paralleltransporter};
 };
 
 typedef BDSTypeSafeEnum<magnettypes_def,int> BDSMagnetType;

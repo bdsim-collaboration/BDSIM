@@ -203,7 +203,7 @@ public:
 			      const G4bool&        useCurvilinearWorld);
 
   BDSStep CurvilinearToGlobal(const G4double&      fieldArcLength,
-			      const G4ThreeVector& unifField,
+			      const G4ThreeVector& unitField,
 			      const G4double&      angle,
 			      const G4ThreeVector& CLPosition,
 			      const G4ThreeVector& CLMomentum,

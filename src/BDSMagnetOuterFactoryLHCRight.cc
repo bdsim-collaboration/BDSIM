@@ -19,13 +19,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryLHC.hh"
 
-BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::_instance = nullptr;
+BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::instance = nullptr;
 
 BDSMagnetOuterFactoryLHCRight* BDSMagnetOuterFactoryLHCRight::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryLHCRight();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactoryLHCRight();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
@@ -35,5 +35,5 @@ BDSMagnetOuterFactoryLHCRight::BDSMagnetOuterFactoryLHCRight():
 
 BDSMagnetOuterFactoryLHCRight::~BDSMagnetOuterFactoryLHCRight()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }

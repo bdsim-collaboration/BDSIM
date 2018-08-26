@@ -1,0 +1,19 @@
+f1: field, type="bmap2d",
+    	   magneticFile="bdsim2d:2dexample-along-xz.tar.gz",
+	   magneticInterpolator="cubic2d",
+	   bScaling=5.6,
+	   integrator="g4classicalrk4",
+	   maximumStepLength=0.1*cm;
+
+
+d1: drift, l=60*cm, fieldAll="f1";
+
+l1: line=(d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=3*GeV,
+      distrType="userfile",
+      distrFile="2rays.dat",
+      distrFileFormat="y[mm]";

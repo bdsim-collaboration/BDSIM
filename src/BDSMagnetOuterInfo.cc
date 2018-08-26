@@ -16,16 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-#include "BDSMagnetGeometryType.hh"
 #include "globals.hh"             // geant4 globals / types
+#include "G4Colour.hh"
 #include "G4Material.hh"
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   name("not_specified"),
   geometryType(BDSMagnetGeometryType::cylindrical),
-  outerDiameter(0),
+  horizontalWidth(0),
   outerMaterial(nullptr),
   innerRadius(1.0),
   vhRatio(1.0),
@@ -36,12 +37,13 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   buildEndPieces(true),
   coilWidthFraction(0.65),
   coilHeightFraction(0.8),
-  geometryTypeAndPath("")
+  geometryTypeAndPath(""),
+  colour(nullptr)
 {;}
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,
-				       G4double              outerDiameterIn,
+				       G4double              horizontalWidthIn,
 				       G4Material*           outerMaterialIn,
 				       G4double              innerRadiusIn,
 				       G4double              vhRatioIn,
@@ -52,10 +54,11 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4bool                buildEndPiecesIn,
 				       G4double              coilWidthFractionIn,
 				       G4double              coilHeightFractionIn,
-				       G4String              geometryTypeAndPathIn):
+				       G4String              geometryTypeAndPathIn,
+				       G4Colour*             colourIn):
   name(nameIn),
   geometryType(geometryTypeIn),
-  outerDiameter(outerDiameterIn),
+  horizontalWidth(horizontalWidthIn),
   outerMaterial(outerMaterialIn),
   innerRadius(innerRadiusIn),
   vhRatio(vhRatioIn),
@@ -66,14 +69,15 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
   buildEndPieces(buildEndPiecesIn),
   coilWidthFraction(coilWidthFractionIn),
   coilHeightFraction(coilHeightFractionIn),
-  geometryTypeAndPath(geometryTypeAndPathIn)
+  geometryTypeAndPath(geometryTypeAndPathIn),
+  colour(colourIn)
 {;}
   
 std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
 {
   out << "Magnet Outer Info:  \"" << info.name << "\""             << G4endl;
   out << "Geometry Type:       "  << info.geometryType             << G4endl;
-  out << "Diameter:            "  << info.outerDiameter            << G4endl;
+  out << "Horizontal Width:    "  << info.horizontalWidth          << G4endl;
   out << "Material:            "  << info.outerMaterial->GetName() << G4endl;
   out << "Inner Radius:        "  << info.innerRadius              << G4endl;
   out << "V / H Ratio:         "  << info.vhRatio                  << G4endl;
@@ -85,5 +89,10 @@ std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
   out << "Coil Width Fraction  "  << info.coilWidthFraction        << G4endl;
   out << "Coil Height Fraction "  << info.coilHeightFraction       << G4endl;
   out << "Geometry:            "  << info.geometryTypeAndPath      << G4endl;
+  if (info.colour)
+    {out << "Colour:              " << *(info.colour)             << G4endl;}
+  else
+    {out << "No colour specified" << G4endl;}
+      
   return out;
 }

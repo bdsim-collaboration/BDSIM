@@ -24,8 +24,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSAwakeSpectrometer.hh"
 #endif
 #include "BDSCavityElement.hh"
+#include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSColours.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSElement.hh"
@@ -39,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
+#include "BDSUndulator.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -46,8 +49,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBendBuilder.hh"
+#include "BDSLine.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
+#include "BDSCrystalInfo.hh"
+#include "BDSCrystalType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
@@ -58,6 +64,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -76,10 +83,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "parser/element.h"
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
+#include "parser/newcolour.h"
+#include "parser/crystal.h"
 
 #include <cmath>
 #include <string>
 #include <utility>
+#include <include/BDSFieldBuilder.hh>
+
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
@@ -95,12 +106,16 @@ BDSComponentFactory::BDSComponentFactory(const G4double& brhoIn,
   integratorSet = BDS::IntegratorSet(integratorSetType);
   G4cout << __METHOD_NAME__ << "Using \"" << integratorSetType << "\" set of integrators" << G4endl;
 
+  PrepareColours();      // prepare colour definitions from parser
   PrepareCavityModels(); // prepare rf cavity model info from parser
+  PrepareCrystals();     // prepare crystal model info from parser
 }
 
 BDSComponentFactory::~BDSComponentFactory()
 {
-  for(auto info : cavityInfos)
+  for (auto info : cavityInfos)
+    {delete info.second;}
+  for (auto info : crystalInfos)
     {delete info.second;}
 
   // Deleted here although not used directly here as new geometry can only be
@@ -194,6 +209,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       // modified or is flat, therefore we mark them all as unique.
       differentFromDefinition = true;
     }
+  else if (element->type == ElementType::_SOLENOID)
+    {// we build incoming / outgoing fringe fields for solenoids
+      if (prevElement)
+	{
+	  if (prevElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+      if (nextElement)
+	{
+	  if (nextElement->type == ElementType::_SOLENOID)
+	    {differentFromDefinition = true;}
+	}
+    }
   
   // Check if the component already exists and return that.
   // Don't use the registry for output elements since reliant on unique name.
@@ -269,20 +297,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateEllipticalCollimator(); break; 
   case ElementType::_RCOL:
     component = CreateRectangularCollimator(); break; 
-  case ElementType::_MUSPOILER:    
-    component = CreateMuSpoiler(); break;
+  case ElementType::_MUONSPOILER:    
+    component = CreateMuonSpoiler(); break;
   case ElementType::_SHIELD:
     component = CreateShield(); break;
   case ElementType::_DEGRADER:
     component = CreateDegrader(); break;
   case ElementType::_GAP:
     component = CreateGap(); break;
+  case ElementType::_CRYSTALCOL:
+    {component = CreateCrystalCollimator(); break;}
   case ElementType::_LASER:
     component = CreateLaser(); break; 
   case ElementType::_SCREEN:
     component = CreateScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
+  case ElementType::_THINRMATRIX:
+    component = CreateThinRMatrix(angleIn, elementName); break;
+  case ElementType::_PARALLELTRANSPORTER:
+    component = CreateParallelTransporter(); break;
+  case ElementType::_RMATRIX:
+    component = CreateRMatrix(); break;
+  case ElementType::_UNDULATOR:
+    component = CreateUndulator(); break;
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
@@ -317,7 +355,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
-      SetFieldDefinitions(element, component);
+      SetFieldDefinitions(element, component),
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
@@ -326,22 +364,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   return component;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4double      teleporterLength,
+							       const G4Transform3D transformIn)
 {
-  G4Transform3D transform = G4Transform3D(G4RotationMatrix(), teleporterDelta);
-  
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["length"] = teleporterLength; // convey length scale to integrator
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::teleporter,
 						   brho,
 						   BDSIntegratorType::teleporter,
-						   nullptr,    // magnet strength doesn't apply
-						   true,       // provide global translation
-						   transform);
+						   st,
+						   true,
+						   transformIn);
   
   G4cout << "---->creating Teleporter, "
-	 << "l = " << teleporterDelta.z()/CLHEP::m << "m"
+	 << "l = " << teleporterLength/CLHEP::m << "m"
 	 << G4endl;
 
-  return( new BDSTeleporter(teleporterDelta.z(), vacuumFieldInfo));
+  return( new BDSTeleporter(teleporterLength, vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
@@ -369,9 +408,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
 						      outputFaceNormal);
 
-  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  const BDSExtent extent = beamPipeInfo->Extent();
   G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
-						 length, indicativeExtent, indicativeExtent);
+						 length, extent, extent);
 
   if (facesWillIntersect)
     {
@@ -421,7 +460,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF(G4double currentArcLength
   BDSCavityInfo* cavityInfo = PrepareCavityModelInfo(element, (*st)["frequency"]);
 
   // update 0 point of field with geometry
-  (*st)["equatorRadius"] = cavityInfo->equatorRadius;
+  (*st)["equatorradius"] = cavityInfo->equatorRadius;
   G4Material* vacuumMaterial = PrepareVacuumMaterial(element);
     
   return new BDSCavityElement(elementName,
@@ -450,8 +489,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   (*st)["field"]  = field*element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = element->l * CLHEP::m; // arc length
-  // nominal energy needed by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -491,12 +529,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   (*st)["field"]  = field * element->scaling;
   (*st)["by"]     = 1;// bx,by,bz is unit field direction, so (0,1,0) here
   (*st)["length"] = arcLength;
-  // nominal energy required by some integrators
-  (*st)["nominalEnergy"] = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  (*st)["scaling"]= element->scaling;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
-  G4double outerDiameter = PrepareOuterDiameter(element);
-  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], outerDiameter, elementName);
+  G4double horizontalWidth = PrepareHorizontalWidth(element);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], horizontalWidth, elementName);
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -564,61 +601,157 @@ void BDSComponentFactory::GetKickValue(G4double& hkick,
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
 {
+  const G4String baseName       = elementName;
   BDSMagnetStrength* st         = new BDSMagnetStrength();
   SetBeta0(st);
   BDSFieldType       fieldType  = BDSFieldType::dipole3d;
   BDSIntegratorType  intType    = BDSIntegratorType::g4classicalrk4; // default
   G4double           chordLength;
   G4double           scaling    = element->scaling;
-  
+  G4double           hkick      = 0;
+  G4double           vkick      = 0;
+  GetKickValue(hkick, vkick, type);
+  (*st)["hkick"] = scaling * hkick;
+  (*st)["vkick"] = scaling * vkick;
+
+  // create fringe magnet strengths. Copies supplied stength object so it should contain all
+  // the kicker strength information as well as the added fringe information
+  BDSMagnetStrength* fringeStIn = BDS::GetFringeMagnetStrength(element,
+                                                               st,
+                                                               0,
+                                                               element->e1,
+                                                               element->e2,
+                                                               element->fintx,
+                                                               true);
+  BDSMagnetStrength* fringeStOut = new BDSMagnetStrength(*fringeStIn);
+  (*fringeStOut)["isentrance"] = false;
+
+  // check if the fringe effect is finite
+  G4bool finiteEntrFringe = false;
+  G4bool finiteExitFringe = false;
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStIn, true)) or
+          BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStIn, true)))
+    {finiteEntrFringe = true;}
+  if (BDS::IsFinite(BDS::FringeFieldCorrection(fringeStOut, true)) or
+        BDS::IsFinite(BDS::SecondFringeFieldCorrection(fringeStOut, true)))
+    {finiteExitFringe = true;}
+
+  // only build the fringe elements if the poleface rotation or fringe field correction terms are finite
+  G4bool buildEntranceFringe = false;
+  G4bool buildExitFringe     = false;
+  if (BDS::IsFinite(element->e1) or finiteEntrFringe)
+    {buildEntranceFringe = true;}
+  if (BDS::IsFinite(element->e2) or finiteExitFringe)
+    {buildExitFringe = true;}
+  if (!includeFringeFields)
+    {
+      buildEntranceFringe = false;
+      buildExitFringe = false;
+    }
+
   if(!HasSufficientMinimumLength(element, false)) // false for don't print warning
     {// thin kicker
       fieldType   = BDSFieldType::bzero;
       intType     = BDSIntegratorType::kickerthin;
       chordLength = thinElementLength;
-      G4double hkick = 0;
-      G4double vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      (*st)["hkick"] = scaling * hkick;
-      (*st)["vkick"] = scaling * vkick;
+
+      // Fringe and poleface effects for a thin kicker require an effective bending radius, rho.
+      // Lack of length and angle knowledge means the field is the only way rho can be calculated.
+      // A zero field would lead to div by zero errors in the integrator constructor, therefore
+      // do not replace the kicker magnetstrength with the fringe magnetstrength which should prevent
+      // any fringe/poleface effects from ever being applied.
+      if (!BDS::IsFinite(element->B))
+        {
+          // only print warning if a poleface or fringe field effect was specified
+          if (buildEntranceFringe or buildExitFringe)
+            {
+              G4cout << __METHOD_NAME__ << "Warning - finite B field required for kicker pole face and fringe fields,"
+                        " effects are unavailable for element ""\"" << elementName << "\"." << G4endl;
+            }
+        }
+      // A thin kicker or tkicker element has possible hkick and vkick combination, meaning the
+      // field direction cannot be assumed. Therefore we are unsure of poleface angle and fringe
+      // effects so don't replace the kicker magnetstrength with the fringe magnetstrength
+      else if (type == KickerType::general)
+        {
+          // only print warning if a poleface or fringe field effect was specified
+          if (buildEntranceFringe or buildExitFringe)
+            {
+              G4cerr << __METHOD_NAME__ << " Poleface and fringe field effects are unavailable "
+                     << "for thin the (t)kicker element ""\"" << elementName << "\"." << G4endl;
+            }
+        }
+      // Good to apply fringe effects.
+      else
+        {
+          // overwrite magnet strength with copy of fringe strength. Should be safe as it has the
+          // kicker information from copying previously.
+          st = new BDSMagnetStrength(*fringeStIn);
+          // supply the field for a thin kicker field as it is required to calculate the
+          // effective bending radius needed for fringe field and poleface effects
+          (*st)["field"] = element->B * CLHEP::tesla;
+
+          // set field for vertical kickers - element needs rotating as poleface rotation is assumed
+          // to be about the vertical axis unless explicitly tilted.
+          if (type == KickerType::vertical)
+            {(*st)["bx"] = 1;}
+          else
+            {(*st)["by"] = 1;}
+        }
     }
   else
     {// thick kicker
       chordLength = element->l*CLHEP::m;
       // sin(angle) = dP -> angle = sin^-1(dP)
-      G4double          hkick = 0;
-      G4double          vkick = 0;
-      GetKickValue(hkick, vkick, type);
-      G4double         angleX = std::asin(hkick * scaling);
-      G4double         angleY = std::asin(vkick * scaling);
+      G4double angleX = std::asin(hkick * scaling);
+      G4double angleY = std::asin(vkick * scaling);
 
       // Setup result variables - 'x' and 'y' refer to the components along the direction
       // the particle will change. These will therefore not be Bx and By.
       G4double fieldX = 0;
       G4double fieldY = 0;
 
-      if (BDS::IsFinite(angleX))
-	{// with comments
-	  // calculate the chord length of the arc through the field from the straight
-	  // ahead length for this element which here is 'chordLength'.
-	  G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
-
-	  // now calculate the bending radius
-	  G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+      // if B is specified and hkick and vkick (including backwards compatible check on
+      // 'angle') are not, then use the field for the appropriate component
+      // can only be 1d in this case -> doesn't work for tkicker
+      if (BDS::IsFinite(element->B) && (!BDS::IsFinite(hkick) && !BDS::IsFinite(vkick)))
+	{
+	  switch (type)
+	    {// 'X' and 'Y' are the angle of bending here, not the B field direction.
+	    case KickerType::horizontal:
+	    case KickerType::general:
+	      {fieldX = element->B * CLHEP::tesla; break;}
+	    case KickerType::vertical:
+	      {fieldY = element->B * CLHEP::tesla; break;}
+	    default:
+	      {break;} // do nothing - no field - just for compiler warnings
+	    }
+	}
+      else
+	{
+	  if (BDS::IsFinite(angleX))
+	    {// with comments
+	      // calculate the chord length of the arc through the field from the straight
+	      // ahead length for this element which here is 'chordLength'.
+	      G4double fieldChordLengthX = chordLength / std::cos(0.5*angleX);
+	      
+	      // now calculate the bending radius
+	      G4double bendingRadiusX = fieldChordLengthX * 0.5 / sin(std::abs(angleX) * 0.5);
+	      
+	      // no calculate the arc length of the trajectory based on each bending radius
+	      G4double arcLengthX = std::abs(bendingRadiusX * angleX);
+	      
+	      // -ve here in horizontal only for convention matching
+	      fieldX = FieldFromAngle(-angleX, arcLengthX);
+	    } // else fieldX default is 0
 	  
-	  // no calculate the arc length of the trajectory based on each bending radius
-	  G4double arcLengthX = std::abs(bendingRadiusX * angleX);
-
-	  // -ve here in horizontal only for convention matching
-	  fieldX = FieldFromAngle(-angleX, arcLengthX);
-	} // else fieldX default is 0
-
-      if (BDS::IsFinite(angleY))
-	{// same as x, no need for comments
-	  G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
-	  G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
-	  G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
-	  fieldY = FieldFromAngle(angleY,  arcLengthY);
+	  if (BDS::IsFinite(angleY))
+	    {// same as x, no need for comments
+	      G4double fieldChordLengthY = chordLength / std::cos(0.5*angleY);
+	      G4double bendingRadiusY    = fieldChordLengthY * 0.5 / sin(std::abs(angleY) * 0.5);
+	      G4double arcLengthY        = std::abs(bendingRadiusY * angleY);
+	      fieldY = FieldFromAngle(angleY,  arcLengthY);
+	    }
 	}
       
       // note field for kick in x is unit Y, hence B = (y,x,0) here
@@ -630,15 +763,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
       (*st)["bx"]    = unitField.x();
       (*st)["by"]    = unitField.y();
     }
-  
+
+  if (fringeStIn)
+    {
+        (*fringeStIn)["bx"] = (*st)["bx"];
+        (*fringeStIn)["by"] = (*st)["by"];
+    }
+  if (fringeStOut)
+    {
+        (*fringeStOut)["bx"] = (*st)["bx"];
+        (*fringeStOut)["by"] = (*st)["by"];
+    }
+
   BDSMagnetType t;
+  G4double defaultVHRatio = 1.5;
   switch (type)
     {
     case KickerType::horizontal:
     case KickerType::general:
       {t = BDSMagnetType::hkicker; break;}
     case KickerType::vertical:
-      {t = BDSMagnetType::vkicker; break;}
+      {
+	t = BDSMagnetType::vkicker;
+	defaultVHRatio = 1./defaultVHRatio; // inverted for vertical magnet
+	break;
+      }
     default:
       {t = BDSMagnetType::hkicker; break;}
     }
@@ -654,28 +803,71 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(KickerType type)
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   auto bpInf = PrepareBeamPipeInfo(element);
   
-  // Decide on a default outerDiameter for the kicker - try 0.3x ie smaller kicker
+  // Decide on a default horizontalWidth for the kicker - try 0.3x ie smaller kicker
   // than typical magnet, but if that would not fit around the beam pipe - go back to
-  // the default outerDiameter. Code further along will warn if it still doesn't fit.
-  const G4double globalDefaultOD = BDSGlobalConstants::Instance()->OuterDiameter();
-  G4double defaultOuterDiameter = 0.3 * globalDefaultOD;
-  BDSExtent bpExt = bpInf->IndicativeExtent();
+  // the default horizontalWidth. Code further along will warn if it still doesn't fit.
+  const G4double globalDefaultHW = BDSGlobalConstants::Instance()->HorizontalWidth();
+  G4double defaultHorizontalWidth = 0.3 * globalDefaultHW;
+  BDSExtent bpExt = bpInf->Extent();
   G4double bpDX = bpExt.DX();
   G4double bpDY = bpExt.DY();
-  if (bpDX > defaultOuterDiameter && bpDX < globalDefaultOD)
-    {defaultOuterDiameter = globalDefaultOD;}
-  else if (bpDY > defaultOuterDiameter && bpDY > globalDefaultOD)
-    {defaultOuterDiameter = globalDefaultOD;}
+  if (bpDX > defaultHorizontalWidth && bpDX < globalDefaultHW)
+    {defaultHorizontalWidth = globalDefaultHW;}
+  else if (bpDY > defaultHorizontalWidth && bpDY > globalDefaultHW)
+    {defaultHorizontalWidth = globalDefaultHW;}
   
   auto magOutInf = PrepareMagnetOuterInfo(elementName, element, 0, 0, bpInf, yokeOnLeft,
-					  defaultOuterDiameter, 1.5, 0.9);
-  
-  return new BDSMagnet(t,
-		       elementName,
-		       chordLength,
-		       bpInf,
-		       magOutInf,
-		       vacuumField);
+					  defaultHorizontalWidth, defaultVHRatio, 0.9);
+
+  if(!HasSufficientMinimumLength(element, false))
+    {
+      // fringe effect applied in integrator so nothing more to do.
+      return new BDSMagnet(t,
+                 baseName,
+                 chordLength,
+                 bpInf,
+                 magOutInf,
+                 vacuumField);
+    }
+  else
+    {
+      BDSLine *kickerLine = new BDSLine(baseName);
+      // subtract fringe length from kicker to preserve element length
+      G4double kickerChordLength = chordLength;
+      if (buildEntranceFringe)
+        {kickerChordLength -= thinElementLength;}
+      if (buildExitFringe)
+        {kickerChordLength -= thinElementLength;}
+
+      if (buildEntranceFringe)
+        {
+          G4String entrFringeName = baseName + "_e1_fringe";
+          BDSMagnet *startfringe = BDS::BuildDipoleFringe(element, 0, 0,
+                                                          entrFringeName,
+                                                          fringeStIn, brho,
+                                                          integratorSet, fieldType);
+          kickerLine->AddComponent(startfringe);
+        }
+
+      BDSMagnet* kicker = new BDSMagnet(t,
+                              baseName,
+                              kickerChordLength,
+                              bpInf,
+                              magOutInf,
+                              vacuumField);
+      kickerLine->AddComponent(kicker);
+
+      if (buildEntranceFringe)
+        {
+          G4String exitFringeName = baseName + "_e2_fringe";
+          BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, 0, 0,
+                                                        exitFringeName,
+                                                        fringeStOut, brho,
+                                                        integratorSet, fieldType);
+          kickerLine->AddComponent(endfringe);
+        }
+      return kickerLine;
+    }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -776,7 +968,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
-			 PrepareOuterDiameter(element),
+			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
 			 element->fieldAll));
 }
@@ -788,20 +980,66 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   SetBeta0(st);
+  (*st)["bz"]    = 1;
+  const G4double scaling = element->scaling;
   if (BDS::IsFinite(element->B))
     {
-      (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["field"] = scaling * element->B * CLHEP::tesla;
       (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
-      (*st)["field"] = (element->scaling * element->ks / CLHEP::m) * brho;
-      (*st)["bz"]    = (*st)["field"];
+      (*st)["field"] = (scaling * element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
 
-  return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+  if (!BDS::IsFinite((*st)["field"]) || !includeFringeFields)
+    {// ie no strength solenoid - don't bother with fringe effects
+      return CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
+    }
+  
+  // lambda to help - sign convention - this is the 'entry' version
+  auto strength = [](G4double phi){
+		    BDSMagnetStrength* s = new BDSMagnetStrength();
+		    (*s)["rmat11"] = 1;
+		    (*s)["rmat22"] = 1;
+		    (*s)["rmat33"] = 1;
+		    (*s)["rmat44"] = 1;
+		    (*s)["rmat41"] = -phi;
+		    (*s)["rmat23"] = phi;
+		    return s;
+		  };
+
+  G4double s = 0.5*(*st)["ks"]; // already includes scaling
+  BDSLine* bLine = new BDSLine(elementName);
+  if (prevElement)
+    {// only build fringe if previous element isn't another solenoid
+      if (prevElement->type != ElementType::_SOLENOID)
+	{
+	  auto stIn        = strength(-s);
+	  auto solenoidIn  = CreateThinRMatrix(0, stIn, elementName + "_fringe_in");
+	  bLine->AddComponent(solenoidIn);
+	}
+    }
+  auto solenoid = CreateMagnet(element, st, BDSFieldType::solenoid, BDSMagnetType::solenoid, 0, "_centre");
+  bLine->AddComponent(solenoid);
+  if (nextElement)
+    {// only build fringe if next element isn't another solenoid
+      if (nextElement->type != ElementType::_SOLENOID)
+	{
+	  auto stOut       = strength(s);
+	  auto solenoidOut = CreateThinRMatrix(0, stOut, elementName + "_fringe_out");
+	  bLine->AddComponent(solenoidOut);
+	}
+    }
+  
+  return bLine;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateParallelTransporter()
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  return CreateMagnet(element, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -811,14 +1049,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
-				      PrepareOuterDiameter(element),
+				      PrepareHorizontalWidth(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
 				      G4String(element->material),
 				      G4String(element->vacuumMaterial),
-				      PrepareColour(element, "collimator"));
+				      PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -828,17 +1066,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
-				     PrepareOuterDiameter(element),
+				     PrepareHorizontalWidth(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
 				     G4String(element->material),
 				     G4String(element->vacuumMaterial),
-				     PrepareColour(element, "collimator"));
+				     PrepareColour(element));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
+BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -874,14 +1112,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
+  G4Colour* colour = PrepareColour(element);
+  G4Material* material = PrepareMaterial(element, "concrete");
 
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
-				    PrepareOuterDiameter(element),
+				    PrepareHorizontalWidth(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
 				    material,
+				    colour,
 				    bpInfo);
   return shield;
 }
@@ -916,12 +1156,60 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
-			  PrepareOuterDiameter(element),
+			  PrepareHorizontalWidth(element),
 			  element->numberWedges,
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
 			  degraderOffset,
-			  element->material));
+			  PrepareMaterial(element, "carbon"),
+			  PrepareColour(element)));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateUndulator()
+{
+
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  const BDSFieldType undField = BDSFieldType::undulator;
+
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+  BDSIntegratorType intType = integratorSet->Integrator(undField);
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  SetBeta0(st);
+  (*st)["length"] = element->undulatorPeriod * CLHEP::m;
+  (*st)["field"] = element->scaling * element->B * CLHEP::tesla;
+
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(undField,
+                                                   brho,
+                                                   intType,
+                                                   st,
+                                                   true,
+                                                   fieldTrans);
+  BDSFieldInfo* outerFieldInfo = PrepareMagnetOuterFieldInfo(st, undField, bpInfo, 0, fieldTrans);
+
+  // limit step length in field - crucial to this component
+  // to get the motion correct this has to be less than one oscillation
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  G4double limit = (*st)["length"] * 0.075;
+  auto ul = BDS::CreateUserLimits(defaultUL, limit, 1.0);
+  if (ul != defaultUL)
+    {vacuumFieldInfo->SetUserLimits(ul);}
+
+  G4Transform3D newFieldTransform = vacuumFieldInfo->Transform();
+  vacuumFieldInfo->SetTransform(newFieldTransform);
+
+  return (new BDSUndulator(elementName,
+			   element->l * CLHEP::m,
+			   element->undulatorPeriod * CLHEP::m,
+			   element->undulatorMagnetHeight * CLHEP::m,
+			   PrepareHorizontalWidth(element),
+			   element->undulatorGap * CLHEP::m,
+			   bpInfo,
+			   vacuumFieldInfo,
+			   outerFieldInfo,
+			   element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
@@ -932,6 +1220,39 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGap()
   return (new BDSGap(elementName,
                      element->l*CLHEP::m,
                      element->angle*CLHEP::rad));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateCrystalCollimator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSCrystalInfo* left = nullptr;
+  BDSCrystalInfo* right = nullptr;
+  if (!element->crystalBoth.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalBoth));
+      right = PrepareCrystalInfo(G4String(element->crystalBoth));
+    }
+  else if (element->crystalBoth.empty() && !element->crystalRight.empty() && !element->crystalLeft.empty())
+    {
+      left  = PrepareCrystalInfo(G4String(element->crystalLeft));
+      right = PrepareCrystalInfo(G4String(element->crystalRight));
+    }
+  else if (element->crystalRight.empty())
+    {left  = PrepareCrystalInfo(G4String(element->crystalLeft));}
+  else
+    {right = PrepareCrystalInfo(G4String(element->crystalRight));}
+  
+  return (new BDSCollimatorCrystal(elementName,
+				   element->l*CLHEP::m,
+				   PrepareBeamPipeInfo(element),
+				   left,
+				   right,
+				   element->xsize*CLHEP::m, // symmetric for now
+				   element->xsize*CLHEP::m,
+				   element->crystalAngleYAxisLeft*CLHEP::rad,
+				   element->crystalAngleYAxisRight*CLHEP::rad));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
@@ -1074,11 +1395,73 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   return new BDSTerminator();
 }
 
+BDSAcceleratorComponent* BDSComponentFactory::CreateRMatrix()
+{
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+
+  GMAD::Element* elementNew = new GMAD::Element(*element);
+  elementNew->l = (element->l-thinElementLength)/2.0;
+
+  auto parallelTransport1 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+  auto rmatrix            = CreateThinRMatrix(0, elementName + "_centre");
+  auto parallelTransport2 = CreateMagnet(elementNew, st, BDSFieldType::paralleltransporter, BDSMagnetType::paralleltransporter);
+
+  const G4String baseName = elementName;
+  BDSLine* bLine = new BDSLine(baseName);
+  bLine->AddComponent(parallelTransport1);
+  bLine->AddComponent(rmatrix);
+  bLine->AddComponent(parallelTransport2);
+
+  return bLine;
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								G4String name)
+{
+  BDSMagnetStrength* st = PrepareMagnetStrengthForRMatrix(element);
+  return CreateThinRMatrix(angleIn, st, name);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinRMatrix(G4double angleIn,
+								const BDSMagnetStrength* st,
+								G4String name)
+{
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, -angleIn);
+  beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(name, element,
+                                                               -angleIn, angleIn, beamPipeInfo);
+  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
+
+  BDSIntegratorType intType = integratorSet->rmatrixThin;
+  G4Transform3D fieldTrans  = CreateFieldTransform(element);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rmatrix,
+                                               brho,
+                                               intType,
+                                               st,
+                                               true,
+                                               fieldTrans);
+  vacuumField->SetBeamPipeRadius(fmin(beamPipeInfo->aper1,beamPipeInfo->aper2));
+
+  BDSMagnet* thinRMatrix =  new BDSMagnet(BDSMagnetType::rmatrix,
+                                          name,
+                                          thinElementLength,
+                                          beamPipeInfo,
+                                          magnetOuterInfo,
+                                          vacuumField);
+
+  thinRMatrix->SetExtent(BDSExtent(beamPipeInfo->aper1,
+                                   beamPipeInfo->aper1,
+                                   thinElementLength*0.5));
+
+  return thinRMatrix;
+}
+
 BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					     BDSMagnetStrength* st,
 					     BDSFieldType  fieldType,
 					     BDSMagnetType magnetType,
-					     G4double      angle) const
+					     G4double      angle,
+G4String nameSuffix) const
 {
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
   BDSIntegratorType intType = integratorSet->Integrator(fieldType);
@@ -1090,7 +1473,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 					       true,
 					       fieldTrans);
 
-  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName, element, st, bpInfo);
+  BDSMagnetOuterInfo* outerInfo = PrepareMagnetOuterInfo(elementName + nameSuffix, element, st, bpInfo);
   vacuumField->SetScalingRadius(outerInfo->innerRadius); // purely for completeness of information - not required
   BDSFieldInfo* outerField = nullptr;
 
@@ -1101,7 +1484,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
     {outerField = PrepareMagnetOuterFieldInfo(st, fieldType, bpInfo, outerInfo, fieldTrans);}
 
   return new BDSMagnet(magnetType,
-		       elementName,
+		       elementName + nameSuffix,
 		       element->l * CLHEP::m,
 		       bpInfo,
 		       outerInfo,
@@ -1111,17 +1494,14 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(const GMAD::Element* el,
 }
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* el,
-						       const G4bool printWarning)
+						       const G4bool& printWarning)
 {
-  if(el->l*CLHEP::m < 1e-7)
+  if(el->l < 1e-7) // 'l' already in metres from parser
     {
       if (printWarning)
 	{
-	  G4cerr << "---->NOT creating element, "
-		 << " name = " << el->name
-		 << ", LENGTH TOO SHORT:"
-		 << " l = " << el->l*CLHEP::um << "um"
-		 << G4endl;
+	  G4cerr << "---> NOT creating element \"" << el->name << "\""
+		 << " LENGTH TOO SHORT:" << " l = " << el->l << "m" << G4endl; // already in m
 	}
       return false;
     }
@@ -1147,7 +1527,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
 				       const BDSMagnetStrength* st)
 {
-  G4double angle = (*st)["angle"];
+  G4double angle    = (*st)["angle"];
+  G4double hkickAng = -(*st)["hkick"]; // not really angle but proportional in the right direction
+  G4double vkickAng = -(*st)["vkick"];
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(hkickAng))
+    {angle = hkickAng;}
+  if (!BDS::IsFinite(angle) && BDS::IsFinite(vkickAng))
+    {angle = vkickAng;}
   G4bool yokeOnLeft;
   if ((angle < 0) && (element->yokeOnInside))
     {yokeOnLeft = true;}
@@ -1189,6 +1575,8 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
     case BDSFieldType::solenoid:
       {outerType = BDSFieldType::multipoleouterdipole3d; break;}
+    case BDSFieldType::undulator:
+      {outerType = BDSFieldType::undulator; break;}
     default:
       {return nullptr; break;} // no possible outer field for any other magnet types
     }
@@ -1198,7 +1586,7 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
   BDSFieldInfo* outerField  = new BDSFieldInfo(outerType,
 					       brho,
 					       intType,
-                                               stCopy,
+					       stCopy,
 					       true,
 					       fieldTransform);
 
@@ -1211,29 +1599,29 @@ BDSFieldInfo* BDSComponentFactory::PrepareMagnetOuterFieldInfo(const BDSMagnetSt
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element* element,
+								const Element* el,
 								const BDSMagnetStrength* st,
 								const BDSBeamPipeInfo* beamPipe,
-								G4double defaultOuterDiameter,
+								G4double defaultHorizontalWidth,
 								G4double defaultVHRatio,
 								G4double defaultCoilWidthFraction,
 								G4double defaultCoilHeightFraction)
 {
-  G4bool yokeOnLeft = YokeOnLeft(element,st);
+  G4bool yokeOnLeft = YokeOnLeft(el,st);
   G4double    angle = (*st)["angle"];
   
-  return PrepareMagnetOuterInfo(elementNameIn, element, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
-				defaultOuterDiameter, defaultVHRatio, defaultCoilWidthFraction,
+  return PrepareMagnetOuterInfo(elementNameIn, el, 0.5*angle, 0.5*angle, beamPipe, yokeOnLeft,
+				defaultHorizontalWidth, defaultVHRatio, defaultCoilWidthFraction,
 				defaultCoilHeightFraction);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& elementNameIn,
-								const Element*  element,
+								const Element*  el,
 								const G4double  angleIn,
 								const G4double  angleOut,
 								const BDSBeamPipeInfo* beamPipe,
 								const G4bool    yokeOnLeft,
-								G4double        defaultOuterDiameter,
+								G4double        defaultHorizontalWidth,
 								G4double        defaultVHRatio,
 								G4double        defaultCoilWidthFraction,
 								G4double        defaultCoilHeightFraction)
@@ -1245,45 +1633,45 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   info->name = elementNameIn;
   
   // magnet geometry type
-  if (element->magnetGeometryType == "")
+  if (el->magnetGeometryType == "")
     {info->geometryType = globals->MagnetGeometryType();}
   else
     {
-      info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
-      info->geometryTypeAndPath = element->magnetGeometryType;
+      info->geometryType = BDS::DetermineMagnetGeometryType(el->magnetGeometryType);
+      info->geometryTypeAndPath = el->magnetGeometryType;
     }
 
   // set face angles w.r.t. chord
   info->angleIn  = angleIn;
   info->angleOut = angleOut;
   
-  // outer diameter
-  info->outerDiameter = PrepareOuterDiameter(element, defaultOuterDiameter);
+  // horizontal width
+  info->horizontalWidth = PrepareHorizontalWidth(el, defaultHorizontalWidth);
 
   // inner radius of magnet geometry - TBC when poles can be built away from beam pipe
   info->innerRadius = beamPipe->IndicativeRadius();
 
   // outer material
   G4Material* outerMaterial;
-  if(element->outerMaterial == "")
+  if(el->material == "")
     {
       G4String defaultMaterialName = globals->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(el->material);}
   info->outerMaterial = outerMaterial;
 
   // yoke direction
   info->yokeOnLeft = yokeOnLeft;
 
-  if (element->hStyle < 0) // it's unset
+  if (el->hStyle < 0) // it's unset
     {info->hStyle = globals->HStyle();}
   else
-    {info->hStyle = G4bool(element->hStyle);} // convert from int to bool
+    {info->hStyle = G4bool(el->hStyle);} // convert from int to bool
 
-  if (element->vhRatio > 0)
-    {info->vhRatio = G4double(element->vhRatio);}
+  if (el->vhRatio > 0)
+    {info->vhRatio = G4double(el->vhRatio);}
   else if (globals->VHRatio() > 0)
     {info->vhRatio = globals->VHRatio();}
   else if (defaultVHRatio > 0) // allow calling function to supply optional default
@@ -1291,8 +1679,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->vhRatio = info->hStyle ? 0.8 : 1.0;} // h default : c default
   
-  if (element->coilWidthFraction > 0)
-    {info->coilWidthFraction = G4double(element->coilWidthFraction);}
+  if (el->coilWidthFraction > 0)
+    {info->coilWidthFraction = G4double(el->coilWidthFraction);}
   else if (globals->CoilWidthFraction() > 0)
     {info->coilWidthFraction = globals->CoilWidthFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
@@ -1300,30 +1688,32 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const G4String& 
   else
     {info->coilWidthFraction = info->hStyle ? 0.8 : 0.65;} // h default : c default
 
-  if (element->coilHeightFraction > 0)
-    {info->coilHeightFraction = G4double(element->coilHeightFraction);}
+  if (el->coilHeightFraction > 0)
+    {info->coilHeightFraction = G4double(el->coilHeightFraction);}
   else if (globals->CoilHeightFraction() > 0)
     {info->coilHeightFraction = globals->CoilHeightFraction();}
   else if (defaultCoilHeightFraction > 0) // allow calling function to supply optional default
     {info->coilHeightFraction = defaultCoilHeightFraction;}
   else
     {info->coilHeightFraction = 0.8;} // default for both h and c type
+
+  info->colour = PrepareColour(el);
   
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element const* el,
-						   G4double defaultOuterDiameter)
+G4double BDSComponentFactory::PrepareHorizontalWidth(Element const* el,
+						     G4double defaultHorizontalWidth)
 {
-  G4double outerDiameter = el->outerDiameter*CLHEP::m;
-  if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use either global or specified default
-      if (defaultOuterDiameter > 0)
-	{outerDiameter = defaultOuterDiameter;}
+  G4double horizontalWidth = el->horizontalWidth*CLHEP::m;
+  if (horizontalWidth < 1e-6)
+    {//horizontalWidth not set - use either global or specified default
+      if (defaultHorizontalWidth > 0)
+	{horizontalWidth = defaultHorizontalWidth;}
       else
-	{outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
+	{horizontalWidth = BDSGlobalConstants::Instance()->HorizontalWidth();}
     }
-  return outerDiameter;
+  return horizontalWidth;
 }
 
 G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element const* el) const
@@ -1404,16 +1794,16 @@ G4Transform3D BDSComponentFactory::CreateFieldTransform(Element const* el)
 
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
-							 G4double outerDiameter,
+							 G4double horizontalWidth,
 							 G4String name)
 {
   G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
 #endif
-  if (outerDiameter > 2*radiusFromAngleLength)
+  if (horizontalWidth > 2*radiusFromAngleLength)
     {
-      G4cerr << "Error: the combination of length, angle and outerDiameter in element named \""
+      G4cerr << "Error: the combination of length, angle and horizontalWidth in element named \""
 	     << name
 	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
       exit(1);
@@ -1445,6 +1835,59 @@ void BDSComponentFactory::PrepareCavityModels()
       
       cavityInfos[model.name] = info;
     }
+}
+
+void BDSComponentFactory::PrepareColours()
+{
+  BDSColours* allColours = BDSColours::Instance();
+  for (auto colour : BDSParser::Instance()->GetColours())
+    {
+      allColours->DefineColour(G4String(colour.name),
+			       (G4double)colour.red,
+			       (G4double)colour.green,
+			       (G4double)colour.blue,
+			       (G4double)colour.alpha);
+    }
+}
+
+void BDSComponentFactory::PrepareCrystals()
+{
+  for (auto& model : BDSParser::Instance()->GetCrystals())
+    {
+      G4Material* material = BDSMaterials::Instance()->GetMaterial(model.material);
+
+      auto info = new BDSCrystalInfo(material,
+				     G4String(model.data),
+				     BDS::DetermineCrystalType(model.shape),
+				     G4double(model.lengthX)*CLHEP::m,
+				     G4double(model.lengthY)*CLHEP::m,
+				     G4double(model.lengthZ)*CLHEP::m,
+				     G4double(model.sizeA)*CLHEP::m,
+				     G4double(model.sizeB)*CLHEP::m,
+				     G4double(model.sizeC)*CLHEP::m,
+				     G4double(model.alpha)*CLHEP::halfpi,
+				     G4double(model.beta)*CLHEP::halfpi,
+				     G4double(model.gamma)*CLHEP::halfpi,
+				     G4int   (model.spaceGroup),
+				     G4double(model.bendingAngleYAxis)*CLHEP::rad,
+				     G4double(model.bendingAngleZAxis)*CLHEP::rad);
+      crystalInfos[model.name] = info;
+    }
+
+}
+
+BDSCrystalInfo* BDSComponentFactory::PrepareCrystalInfo(const G4String& crystalName) const
+{
+  auto result = crystalInfos.find(crystalName);
+  if (result == crystalInfos.end())
+    {
+      G4cout << "Unknown crystal \"" << crystalName << "\" - please define it" << G4endl;
+      exit(1);
+    }
+
+  // prepare a copy so the component can own that recipe
+  BDSCrystalInfo* info = new BDSCrystalInfo(*(result->second));
+  return info;
 }
 
 BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* el,
@@ -1494,15 +1937,15 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfoForElement(Element con
   BDSBeamPipeInfo* aperture = PrepareBeamPipeInfo(el);
 
   G4double aper1     = aperture->aper1;
-  G4double outerD    = PrepareOuterDiameter(el);
-  G4double defaultOuterD = 20*CLHEP::cm;
-  if (aper1 < defaultOuterD) // only do if the aperture will fit
-    {outerD = std::min(defaultOuterD, outerD);} // better default
+  G4double horizontalWidth = PrepareHorizontalWidth(el);
+  G4double defaultHorizontalWidth = 20*CLHEP::cm;
+  if (aper1 < defaultHorizontalWidth) // only do if the aperture will fit
+    {horizontalWidth = std::min(defaultHorizontalWidth, horizontalWidth);} // better default
   G4double thickness = aperture->beamPipeThickness;
-  G4double equatorRadius = outerD - thickness;
+  G4double equatorRadius = horizontalWidth - thickness;
   if (equatorRadius <= 0)
     {
-      G4cerr << __METHOD_NAME__ << "Combination of outerDiameter and beampipeThickness for"
+      G4cerr << __METHOD_NAME__ << "Combination of horizontalWidth and beampipeThickness for"
 	     << " element \"" << el->name << "\" produce 0 size cavity" << G4endl;
       exit(1);
     }
@@ -1537,9 +1980,9 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
   G4double scaling     = el->scaling;
   
   if (BDS::IsFinite(el->gradient))
-    {(*st)["eField"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
+    {(*st)["efield"] = scaling * el->gradient * CLHEP::MeV / CLHEP::m;}
   else
-    {(*st)["eField"] = scaling * el->E * CLHEP::volt / chordLength;}
+    {(*st)["efield"] = scaling * el->E * CLHEP::volt / chordLength;}
 
   (*st)["frequency"] = el->frequency * CLHEP::hertz;
 
@@ -1564,16 +2007,27 @@ BDSMagnetStrength* BDSComponentFactory::PrepareCavityStrength(Element const* el,
     {(*st)["phase"] = phaseOffset + phase;}
   else
     {(*st)["phase"] = phaseOffset;}
-  (*st)["equatorRadius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
+  (*st)["equatorradius"] = 1*CLHEP::m; // to prevent 0 division - updated later on in createRF
   return st;
 }
 
-G4String BDSComponentFactory::PrepareColour(Element const* el, const G4String fallback) const
+G4Colour* BDSComponentFactory::PrepareColour(Element const* el)
 {
   G4String colour = el->colour;
-  if (colour == "")
-    {colour = fallback;}
-  return colour;
+  if (colour.empty())
+    {return BDSColours::Instance()->GetColour(GMAD::typestr(el->type));}
+  else
+    {return BDSColours::Instance()->GetColour(colour);}
+}
+
+G4Material* BDSComponentFactory::PrepareMaterial(Element const* el,
+						 G4String defaultMaterialName)
+{
+  G4String materialName = el->material;
+  if (materialName.empty())
+    {return BDSMaterials::Instance()->GetMaterial(defaultMaterialName);}
+  else
+    {return BDSMaterials::Instance()->GetMaterial(materialName);}
 }
 
 void BDSComponentFactory::SetFieldDefinitions(Element const* el,
@@ -1646,6 +2100,40 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
     {(*st)[*nkey] = scaling * (*kn) / length;}
   for (; ks != el->ksl.end(); ks++, skey++)
     {(*st)[*skey] = scaling * (*ks) / length;}
+
+  return st;
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForRMatrix(Element const* el) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  G4double scaling = el->scaling;
+  // G4double length  = el->l;
+
+  (*st)["kick1"] = scaling * el->kick1;
+  (*st)["kick2"] = scaling * el->kick2;
+  (*st)["kick3"] = scaling * el->kick3;
+  (*st)["kick4"] = scaling * el->kick4;
+
+  (*st)["rmat11"] = scaling * el->rmat11;
+  (*st)["rmat12"] = scaling * el->rmat12;
+  (*st)["rmat13"] = scaling * el->rmat13;
+  (*st)["rmat14"] = scaling * el->rmat14;
+
+  (*st)["rmat21"] = scaling * el->rmat21;
+  (*st)["rmat22"] = scaling * el->rmat22;
+  (*st)["rmat23"] = scaling * el->rmat23;
+  (*st)["rmat24"] = scaling * el->rmat24;
+
+  (*st)["rmat31"] = scaling * el->rmat31;
+  (*st)["rmat32"] = scaling * el->rmat32;
+  (*st)["rmat33"] = scaling * el->rmat33;
+  (*st)["rmat34"] = scaling * el->rmat34;
+
+  (*st)["rmat41"] = scaling * el->rmat41;
+  (*st)["rmat42"] = scaling * el->rmat42;
+  (*st)["rmat43"] = scaling * el->rmat43;
+  (*st)["rmat44"] = scaling * el->rmat44;
 
   return st;
 }
