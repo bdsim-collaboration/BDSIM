@@ -4245,10 +4245,11 @@ materials.
 The user can also define their own material and then refer to it by name when defining
 a beam line element.
 
-Single Element Material
-^^^^^^^^^^^^^^^^^^^^^^^
+Custom Single Element Material
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the material is composed of a single element, it can be defined using the **matdef**
+If the material required is composed of a single element, but say of a different density or
+state than the default NIST one provided, it can be defined using the **matdef**
 command with the following syntax::
 
   materialname : matdef, Z=<int>, A=<double>, density=<double>, T=<double>, P=<double>, state=<char*>;
