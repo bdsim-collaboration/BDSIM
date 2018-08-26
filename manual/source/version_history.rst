@@ -1,3 +1,27 @@
+V1.3 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+Utilities
+---------
+
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
+
+
 V1.2 - 2018 / 08 / 26
 =====================
 
