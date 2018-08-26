@@ -3,7 +3,7 @@ Beam Delivery Simulation (BDSIM) Copyright (c) Royal Holloway, University of Lon
 General Information
 ===================
 
-BDSIM version 1.1.develop, program for radiation transport in accelerators
+BDSIM version 1.2.develop, program for radiation transport in accelerators
 
 The official web site is:
 	http://www.pp.rhul.ac.uk/bdsim
@@ -20,11 +20,12 @@ Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
 Stuart Walker         <stuart.walker.2011@live.rhul.ac.uk>
 
-Originally started by G.A. Blair
+Originally started by G.A. Blair.
 
 History
 =======
 
+v1.2:   26.08.18
 v1.1:   23.05.18
 v1.0:   10.04.18
 v0.993: 11.12.17
@@ -65,7 +66,7 @@ mandatory:
    - BISON
    - CLHEP (recommended version 2.1.3.1 or greater)
    - FLEX
-   - Geant4 versions Geant4.10 or greater (10.3.p03 recommended)
+   - Geant4 versions Geant4.10 or greater (10.4.p02 recommended)
      Latest patch version recommended of any 10.X version. 
    - ROOT 6
 

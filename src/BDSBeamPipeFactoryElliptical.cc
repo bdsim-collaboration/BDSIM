@@ -69,7 +69,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
   vacuumSolid   = new G4EllipticalTube(nameIn + "_vacuum_solid",       // name
 				       aper1In,                        // x half width
 				       aper2In,                        // y half width
-				       (lengthIn*0.5)-2*lengthSafety); // half length
+				       (lengthIn*0.5)-lengthSafety); // half length
 
   G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
   G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
@@ -84,7 +84,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,
   beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
 					    aper1In + beamPipeThicknessIn,  // x half width
 					    aper2In + beamPipeThicknessIn,  // y half width
-					    (lengthIn*0.5)-2*lengthSafety); // half length - lengthSafety to fit in container
+					    (lengthIn*0.5)-lengthSafety); // half length - lengthSafety to fit in container
   beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
 					 beamPipeSolidOuter,
 					 beamPipeSolidInner); // outer minus inner
@@ -191,7 +191,7 @@ void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameI
   angledFaceSolid = new G4CutTubs(nameIn + "_angled_face",       // name
 				  0,                             // inner radius
 				  angledFaceRadius,              // outer radius
-				  (lengthIn*0.5)-2*lengthSafety, // half length - must fit within container
+				  (lengthIn*0.5)-lengthSafety, // half length - must fit within container
 				  0,                             // rotation start angle
 				  CLHEP::twopi,                  // rotation finish angle
 				  inputfaceIn,                   // input face normal

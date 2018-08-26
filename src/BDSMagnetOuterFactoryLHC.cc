@@ -808,7 +808,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   G4VSolid* yokeCylinder = new G4CutTubs(name+"_yoke_cylinder_solid",     // name
 					 0.,                              // inner radius
 					 yokeOuterRadius - lengthSafety,  // outer radius
-					 centralHalfLength-2*lengthSafety,// length
+					 centralHalfLength-lengthSafety,// length
 					 0,                               // starting angle
 					 CLHEP::twopi,                    // sweep angle
 					 inputFaceNormal,                 // input face normal
@@ -1141,7 +1141,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       coil1 = new G4Tubs(name+"_coil1_solid",          // name
 			 coilInnerRadius,              // inner radius
 			 coilOuterRadius,              // outer radius
-			 length*0.5-2*lengthSafety,    // z half length
+			 length*0.5-lengthSafety,    // z half length
 			 coilStartAngle,               // start angle
 			 coilFullAngle);               // sweep angle
       // coil logical volumes
@@ -1247,7 +1247,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   coil2   = new G4Tubs(name+"_coil2_solid",          // name
 		       coilInnerRadiusF,             // inner radius
 		       coilOuterRadius,              // outer radius
-		       length*0.5-2*lengthSafety,    // length
+		       length*0.5-lengthSafety,    // length
 		       coilStartAngle,               // start angle
 		       coilFullAngle);               // sweep angle
   coil2LV = new G4LogicalVolume(coil2,               // solid
@@ -1353,7 +1353,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   collar = new G4Tubs(name+"_collar_solid",        // name
 		      collarInnerRadiusF,          // inner radius
 		      collarOuterRadius,           // outer radius
-		      length*0.5 - 2*lengthSafety, // length
+		      length*0.5 - lengthSafety, // length
 		      0,                           // start angle
 		      CLHEP::twopi);               // sweep angle
   allSolids.push_back(collar);
@@ -1374,7 +1374,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 	  G4VSolid* collar2 = new G4Tubs(name+"_collar2_solid",      // name
 					 collarInnerRadius,          // inner radius
 					 collarOuterRadius,          // outer radius
-					 length*0.5-2*lengthSafety,  // length
+					 length*0.5-lengthSafety,  // length
 					 0,                          // starting angle
 					 CLHEP::twopi);              // angle of sweep
 	  allSolids.push_back(collar2);
@@ -1422,7 +1422,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4VSolid* yokeCylinder = new G4Tubs(name+"_yoke_cylinder_solid",     // name
 				      0.,                              // inner radius
 				      yokeOuterRadius,                 // outer radius
-				      0.5*length-2*lengthSafety,       // length
+				      0.5*length-lengthSafety,       // length
 				      0,                               // starting angle
 				      CLHEP::twopi * CLHEP::rad);      // sweep angle
 

@@ -75,6 +75,10 @@ public:
   const BDSTrajectoryPoint* FirstHit()  const {return firstHit;}
   const BDSTrajectoryPoint* LastPoint() const {return lastPoint;}
   /// @}
+
+  /// Wether this primary trajectory has hit an object (ie physics process invoked).
+  /// Judged by casting first hit pointer to Boolean.
+  G4bool HasHitSomething() const {return firstHit;}
   
 protected:
   BDSTrajectoryPoint* firstHit;  ///< Point owned by this class for the first scattering point.

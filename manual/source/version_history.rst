@@ -1,4 +1,28 @@
-V1.2 - 2018 / 08 / ??
+V1.3 - 2018 / ?? / ??
+=====================
+
+New Features
+------------
+
+General
+-------
+
+Bug Fixes
+---------
+
+Output Changes
+--------------
+
+Utilities
+---------
+
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
+
+
+V1.2 - 2018 / 08 / 26
 =====================
 
 Highlights
@@ -74,11 +98,11 @@ General
   information stored.
 * The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
   that was defined by BDSIM.
+* New options for physics processes in em_extra.
 
 Output Changes
 --------------
 
-* New options for physics processes in em_extra.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.
@@ -97,6 +121,7 @@ Output Changes
 * New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
 * New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
   the global Cartesian frame.
+* Sampler name now stored in Orbit output from rebdsimOrbit to make sampler matching possible.
 
 Bug Fixes
 ---------
@@ -149,10 +174,10 @@ Bug Fixes
 Utilities
 ---------
 
-* pybdsim v1.9
-* pymadx v1.5
-* pymad8 v1.4
-* pytransport v1.2
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
   
 
 V1.1 - 2018 / 05 / 23

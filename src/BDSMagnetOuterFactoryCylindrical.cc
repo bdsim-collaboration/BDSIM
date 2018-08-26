@@ -264,7 +264,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
       yokeSolid = new G4Tubs(name + "_yoke_solid",        // name
 			     beamPipe->GetContainerRadius() + 2*lengthSafety, // inner radius
 			     horizontalWidth*0.5,           // outer radius
-			     length*0.5-2*lengthSafety,   // half length
+			     length*0.5-lengthSafety,   // half length
 			     0,                           // rotation start angle
 			     CLHEP::twopi);               // rotation finish angle
 
@@ -281,7 +281,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
       G4VSolid* yokeSolidCylinder = new G4Tubs(name + "_yoke_solid_cylinder",// name
 					       0,  // inner radius - for unambiguous subtraction
 					       horizontalWidth*0.5,            // outer radius
-					       length*0.5-2*lengthSafety,    // half length
+					       length*0.5-lengthSafety,    // half length
 					       0,                            // rotation start angle
 					       CLHEP::twopi);                // rotation finish angle
       allSolids.push_back(yokeSolidCylinder);
@@ -322,7 +322,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
       yokeSolid = new G4CutTubs(name + "_yoke_solid",        // name
 			     beamPipe->GetContainerRadius() + 2*lengthSafety, // inner radius
 			     horizontalWidth*0.5,           // outer radius
-			     length*0.5-2*lengthSafety,   // half length
+			     length*0.5-lengthSafety,   // half length
 			     0,                           // rotation start angle
 			     CLHEP::twopi,                // rotation finish angle
 			     inputFaceNormal,             // input face normal
@@ -343,7 +343,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
       G4VSolid* yokeSolidCylinder = new G4CutTubs(name + "_yoke_solid_cylinder",// name
 						  0,  // inner radius - for unambiguous subtraction
 						  horizontalWidth*0.5,        // outer radius
-						  length*0.5-2*lengthSafety,// half length
+						  length*0.5-lengthSafety,// half length
 						  0,                        // rotation start angle
 						  CLHEP::twopi,             // rotation finish angle
 						  inputFaceNormal,          // input face normal

@@ -34,6 +34,7 @@ simple_testing(component-sextupole           "--file=sextupole.gmad"       ${OVE
 simple_testing(component-shield              "--file=shield.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-solenoid            "--file=solenoid.gmad"        ${OVERLAP_CHECK})
 simple_testing(component-tunnel              "--file=tunnel.gmad"          ${OVERLAP_CHECK})
+simple_testing(component-undulator           "--file=undulator.gmad"       ${OVERLAP_CHECK})
 simple_testing(component-vkicker             "--file=vkicker.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-vkicker-fringe      "--file=vkicker_fringe.gmad"  ${OVERLAP_CHECK})
 
