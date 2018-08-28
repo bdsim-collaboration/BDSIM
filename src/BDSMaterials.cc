@@ -79,7 +79,6 @@ void BDSMaterials::DefineMetals()
   AddMaterial("Fe", "iron");
   AddMaterial("Pb", "lead");
   AddMaterial("Mg", "magnesium");
-  AddMaterial("N",  "nitrogen");
   AddMaterial("Ni", "nickel");
   AddMaterial("Si", "silicon");
   AddMaterial("Ti", "titanium");
@@ -708,6 +707,8 @@ void BDSMaterials::DefineLiquids()
 
 void BDSMaterials::DefineGases()
 {
+  AddMaterial("N",  "nitrogen");
+  
   G4String name;
   G4double fractionmass;
   // gaseous materials
