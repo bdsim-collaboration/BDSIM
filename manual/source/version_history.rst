@@ -103,6 +103,7 @@ General
 Output Changes
 --------------
 
+* Data v3 incremented from v2.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.
