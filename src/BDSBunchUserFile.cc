@@ -333,16 +333,19 @@ BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-  
   for (auto it=fields.begin();it!=fields.end();it++)
     {
       if(it->name=="Ek")
 	{ 
-	  ReadValue(E); E *= (CLHEP::GeV * it->unit);
+	  ReadValue(E);
+	  E *= (CLHEP::GeV * it->unit);
 	  E += particleMass;
 	}
       else if(it->name=="E")
-	{ReadValue(E); E *= (CLHEP::GeV * it->unit);}
+	{
+	  ReadValue(E);
+	  E *= (CLHEP::GeV * it->unit);
+	}
       else if(it->name=="P")
 	{ 
 	  G4double P=0;
