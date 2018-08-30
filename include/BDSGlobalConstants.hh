@@ -265,6 +265,7 @@ public:
   inline G4UserLimits*         DefaultUserLimits()       const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
+  inline G4double              BeamlineS()               const {return beamlineS;}
 
   /// @{ Setter
   inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
@@ -329,7 +330,8 @@ private:
 
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
-  G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
+  G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
+  G4double             beamlineS;          ///< Curvilinear S for start of beam line
 };
 
 inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
@@ -340,5 +342,6 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
+
 
 #endif

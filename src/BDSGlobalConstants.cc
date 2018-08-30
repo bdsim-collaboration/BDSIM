@@ -142,6 +142,7 @@ void BDSGlobalConstants::InitialiseBeamlineTransform()
       rm = G4RotationMatrix(ang);
     }
 
+  beamlineS         = options.beamlineS;
   beamlineTransform = G4Transform3D(rm, offset);
 }
 

@@ -69,10 +69,12 @@ public:
   /// extents of the beamline will also be displaced. The default constructor is in effect
   /// achieved via defaults
   BDSBeamline(G4ThreeVector     initialGlobalPosition = G4ThreeVector(0,0,0),
-	      G4RotationMatrix* initialGlobalRotation = nullptr);
+	      G4RotationMatrix* initialGlobalRotation = nullptr,
+	      G4double          initialS              = 0.0);
 
   /// Constructor with transform instance that uses other constructor.
-  explicit BDSBeamline(G4Transform3D intialTransform);
+  explicit BDSBeamline(G4Transform3D initialTransform,
+		       G4double      initialS         = 0.0);
   
   ~BDSBeamline();
 
