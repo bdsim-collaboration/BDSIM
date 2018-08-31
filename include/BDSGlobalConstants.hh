@@ -173,6 +173,7 @@ public:
   inline G4double MaxTrackLength()           const {return G4double(options.maximumTrackLength)*CLHEP::m;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
+  inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
@@ -265,7 +266,6 @@ public:
   inline G4UserLimits*         DefaultUserLimits()       const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4Transform3D         BeamlineTransform()       const {return beamlineTransform;}
-  inline G4double              BeamlineS()               const {return beamlineS;}
 
   /// @{ Setter
   inline void SetSamplerDiameter(const G4double& samplerDiameterIn) {samplerDiameter = samplerDiameterIn;}
@@ -331,7 +331,6 @@ private:
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
-  G4double             beamlineS;          ///< Curvilinear S for start of beam line
 };
 
 inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
