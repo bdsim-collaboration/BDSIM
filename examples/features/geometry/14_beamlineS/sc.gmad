@@ -1,8 +1,8 @@
 
 d1 : drift,      l=0.5*m;
-fq1: quadrupole, l=0.1*m, k1=0.5; 
+fq1: quadrupole, l=0.1*m, k1=20; 
 d2 : drift,      l=1.0*m;
-dq1: quadrupole, l=0.1*m, k1=-0.5;
+dq1: quadrupole, l=0.1*m, k1=-20;
 d3 : drift,      l=0.5*m;
 
 fodoRaw: line = (d1,fq1, d2, dq1, d3);
@@ -21,7 +21,8 @@ option, ngenerate=1,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-	checkOverlaps=1;
+	checkOverlaps=1,
+	beamlineS=10000*m;
 
 
 beam, particle="e-",
