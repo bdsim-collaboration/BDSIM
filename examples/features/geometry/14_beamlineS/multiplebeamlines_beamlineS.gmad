@@ -16,9 +16,19 @@ auxLine3: line=(fodo);
 use, mainLine;
 
 beam, particle="e-",
-      energy=3*GeV;
+      energy=3.0*GeV,
+      distrType="gausstwiss",
+      emitx=1e-11*m,
+      emity=1e-11*m,
+      betx=1e-6*m,
+      bety=1e-6*m,
+      alfx=0.0,
+      alfy=0.0,
+      X0=0.000,
+      Y0=0.000,
+      S0=10*m;
 
-option, beamlineS=10000*m;
+option, beamlineS=10*m;
 sample, all;
 
 auxLine1Place: placement, sequence = "auxLine1",
