@@ -171,6 +171,7 @@ int main(int argc,char** argv)
   BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
 						    parser->GetBeam(),
 						    globalConstants->BeamlineTransform(),
+						    globalConstants->BeamlineS(),
                                                     globalConstants->GeneratePrimariesOnly());
 
   /// Optionally generate primaries only and exit

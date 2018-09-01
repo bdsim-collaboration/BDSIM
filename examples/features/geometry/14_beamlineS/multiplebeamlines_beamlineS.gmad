@@ -25,8 +25,7 @@ beam, particle="e-",
       alfx=0.0,
       alfy=0.0,
       X0=0.000,
-      Y0=0.000,
-      S0=10*m;
+      Y0=0.000;
 
 option, beamlineS=10*m;
 sample, all;

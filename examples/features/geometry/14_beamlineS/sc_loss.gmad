@@ -13,7 +13,7 @@ use,period=simpleCollimation;
 sample, all;
 
 option, ngenerate=1,
-	physicsList="",
+	physicsList="em",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.1*cm,
 	outerDiameter=0.5*m,
@@ -21,20 +21,17 @@ option, ngenerate=1,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-	checkOverlaps=1,
-	beamlineS=10*m;
-
+	checkOverlaps=1;
 
 beam, particle="e-",
       energy=1.0*GeV,
       distrType="gausstwiss",
-      emitx=1e-11*m,
-      emity=1e-11*m,
+      emitx=1e-9*m,
+      emity=1e-9*m,
       betx=1e-6*m,
       bety=1e-6*m,
       alfx=0.0,
       alfy=0.0,
       X0=0.000,
-      Y0=0.000,
-      S0=11*m;
+      Y0=0.000;
 

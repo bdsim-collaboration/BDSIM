@@ -43,9 +43,10 @@ BDSBunchEShell::~BDSBunchEShell()
 void BDSBunchEShell::SetOptions(const BDSParticleDefinition* beamParticle,
 				const GMAD::Beam& beam,
 				const BDSBunchType& distrType,
-				G4Transform3D beamlineTransformIn)
+				G4Transform3D beamlineTransformIn,
+				const G4double beamlineS)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
   shellX  = beam.shellX  * CLHEP::m;
   shellY  = beam.shellY  * CLHEP::m;
   shellXp = beam.shellXp * CLHEP::rad;

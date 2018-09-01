@@ -49,12 +49,14 @@ public:
   static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
 			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity,
+			       G4double beamlineS = 0,
 			       const G4bool& generatePrimariesOnlyIn = false);
 
   static BDSBunch* CreateBunch(const BDSParticleDefinition* beamParticle,
 			       BDSBunchType      distrType,
 			       const GMAD::Beam& beam,
 			       G4Transform3D beamlineTransform = G4Transform3D::Identity,
+			       G4double beamlineS = 0,
 			       const G4bool& generatePrimariesOnlyIn = false);
 };
 

@@ -3370,6 +3370,8 @@ volume, which is the outermost coordinate system.
 +----------------------+--------------------------------------------------------------------+
 | beamlineAxisAngle    | Boolean whether to use axis angle rotation scheme (default false)  |
 +----------------------+--------------------------------------------------------------------+
+| beamlineS            | S offset of start of beamline (default 0)                          |
++----------------------+--------------------------------------------------------------------+
 
 Two styles of rotation can be used: either a set of three Euler angles, or the axis angle
 rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to

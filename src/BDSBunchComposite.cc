@@ -40,9 +40,10 @@ BDSBunchComposite::~BDSBunchComposite()
 void BDSBunchComposite::SetOptions(const BDSParticleDefinition* beamParticle,
 				   const GMAD::Beam& beam,
 				   const BDSBunchType& distrType,
-				   G4Transform3D beamlineTransformIn)
+				   G4Transform3D beamlineTransformIn,
+				   G4double beamlineS)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn,beamlineS);
   
   delete xBunch;
   delete yBunch;

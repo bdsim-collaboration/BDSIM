@@ -21,9 +21,7 @@ option, ngenerate=1,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-	checkOverlaps=1,
-	beamlineS=10*m;
-
+	checkOverlaps=1;;
 
 beam, particle="e-",
       energy=1.0*GeV,
@@ -35,6 +33,5 @@ beam, particle="e-",
       alfx=0.0,
       alfy=0.0,
       X0=0.000,
-      Y0=0.000,
-      S0=10*m;
+      Y0=0.000;
 
