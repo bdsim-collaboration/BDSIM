@@ -193,6 +193,14 @@ int main(int argc,char** argv)
 	  auto coords = bdsBunch->GetNextParticle();
 	  bdsOutput->FillEventPrimaryOnly(coords, pdgID);
 	}
+      // Write options now file open.
+      const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
+      bdsOutput->FillOptions(ob);
+
+      // Write beam
+      const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
+      bdsOutput->FillBeam(bb);
+
       bdsOutput->CloseFile();
       delete bdsBunch;
       delete bdsOutput;

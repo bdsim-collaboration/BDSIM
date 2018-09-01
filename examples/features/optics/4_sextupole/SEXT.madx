@@ -3,7 +3,7 @@
 
 TITLE,'Example 4: SEXT.MADX';
 
-BEAM, PARTICLE=PROTON,ENERGY=10.0, EX=1e-6, EY=1e-6;
+BEAM, PARTICLE=PROTON,ENERGY=10.0, EX=1e-9, EY=1e-9;
 
 //A very long and strong sextupole
 SX: SEXTUPOLE,L=0.7,K2=1300.0;
