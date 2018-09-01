@@ -45,7 +45,8 @@ public:
   int    index;     ///< Number of this event or run.
   bool   aborted;   ///< Whether the event was aborted or not.
   bool   primaryHitMachine; ///< Wether the primary particle hit the accelerator or not.
-
+  double memoryUsageMb; ///< memoryUsage (rusage.ru_maxrss)
+ 
   ClassDef(BDSOutputROOTEventInfo,3);
 };
 
