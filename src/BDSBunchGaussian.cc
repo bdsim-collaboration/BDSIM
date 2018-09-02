@@ -59,7 +59,6 @@ BDSBunchGaussian::BDSBunchGaussian():
   coordinates = {&x0_v, &xp_v, &y0_v, &yp_v, &z0_v, &zp_v, &E_v, &t_v, &weight_v};
 }
 
-
 BDSBunchGaussian::~BDSBunchGaussian()
 {
   delete gaussMultiGen;
