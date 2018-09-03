@@ -19,7 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBEAMPIPEFACTORYCLICPCL_H
 #define BDSBEAMPIPEFACTORYCLICPCL_H
 
-#include "BDSBeamPipeFactoryBase.hh"
+#include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
 
 /**
@@ -30,61 +30,53 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
  * @author Laurie Nevay
  */
 
-class BDSBeamPipeFactoryClicPCL: public BDSBeamPipeFactoryBase
+class BDSBeamPipeFactoryClicPCL: public BDSBeamPipeFactoryPoints
 {
 public:
-  static BDSBeamPipeFactoryClicPCL* Instance(); /// Singleton accessor.
-  
+  static BDSBeamPipeFactoryClicPCL* Instance(); /// Singleton accessor.  
   virtual ~BDSBeamPipeFactoryClicPCL();
-
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,
-				      G4double    lengthIn,
-				      G4double    aper1               = 0,
-				      G4double    aper2               = 0,
-				      G4double    aper3               = 0,
-				      G4double    aper4               = 0,
-				      G4Material* vacuumMaterialIn    = nullptr,
-				      G4double    beamPipeThicknessIn = 0,
-				      G4Material* beamPipeMaterialIn  = nullptr);
   
-  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
-				      G4double      lengthIn,
-				      G4ThreeVector inputFaceNormalIn,
-				      G4ThreeVector outputFaceNormalIn,
-				      G4double      aper1               = 0,
-				      G4double      aper2               = 0,
-				      G4double      aper3               = 0,
-				      G4double      aper4               = 0,
-				      G4Material*   vacuumMaterialIn    = nullptr,
-				      G4double      beamPipeThicknessIn = 0,
-				      G4Material*   beamPipeMaterialIn  = nullptr);
-
 private:
   BDSBeamPipeFactoryClicPCL(); ///< Private default constructor - singelton pattern.
   static BDSBeamPipeFactoryClicPCL* instance; ///< Singleton instance.
+  
+  /// Generate quarters of a circle to represent the edges joined by straight lines.
+  /// Overloaded (required) from BDSBeamPipeFactoryPoints
+  virtual void GeneratePoints(G4double aper1,
+			      G4double aper2,
+			      G4double aper3,
+			      G4double aper4,
+			      G4double beamPipeThickness,
+			      G4int    pointsPerTwoPi = 40);
 
-  //abstract common build features to one function
-  //use member variables unique to this factory to pass them around
+  /// Calculate the radius of the solid used for intersection for angled faces.
+  virtual G4double CalculateIntersectionRadius(G4double aper1,
+					       G4double aper2,
+					       G4double aper3,
+					       G4double aper4,
+					       G4double beamPipeThickness);
 
-  /// only the solids are unique, once we have those, the logical volumes and placement in the
-  /// container are the same.  group all this functionality together
-  BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
-				       G4Material* vacuumMaterialIn,
-				       G4Material* beamPipeMaterialIn,
-				       G4double    lengthIn,
-				       G4double    aper1In,
-				       G4double    aper2In,
-				       G4double    beamPipeThicknessIn);
+  void GenerateClicPCL(std::vector<G4TwoVector>& vec,
+		       G4double aper1,
+		       G4double aper2,
+		       G4double aper3,
+		       G4double aper4,
+		       G4int    pointsPerTowPi,
+		       G4double margin = 0);
 
-  /// The angled ones have degeneracy in the geant4 solids they used so we can
-  /// avoid code duplication by grouping common construction tasks.
-  void CreateGeneralAngledSolids(G4String      nameIn,
-				 G4double      lengthIn,
-				 G4double      aper1In,
-				 G4double      aper2In,
-				 G4double      beamPipeThicknessIn,
-				 G4ThreeVector inputfaceIn,
-				 G4ThreeVector outputfaceIn);
+protected:
+  /// Clear member vectors and run base class clean up to clear pointers between runs
+  virtual void CleanUp();
+  
+private:
+  /// Overloads BDSBeamPipeFactoryPoints to make asymmetric extents, otherwise the same.
+  virtual BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
+					       G4Material* vacuumMaterialIn,
+					       G4Material* beamPipeMaterialIn,
+					       G4double    lengthIn);
+
+  G4double extentYLow;   ///< Cache of extent to pass around.
+  G4double extentYHigh;  ///< Cache of extent to pass around.
 };
   
 #endif

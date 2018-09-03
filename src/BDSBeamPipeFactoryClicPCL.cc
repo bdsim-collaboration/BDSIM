@@ -41,7 +41,9 @@ BDSBeamPipeFactoryClicPCL* BDSBeamPipeFactoryClicPCL::Instance()
   return instance;
 }
 
-BDSBeamPipeFactoryClicPCL::BDSBeamPipeFactoryClicPCL()
+BDSBeamPipeFactoryClicPCL::BDSBeamPipeFactoryClicPCL():
+  extentYLow(0),
+  extentYHigh(0)
 {;}
 
 BDSBeamPipeFactoryClicPCL::~BDSBeamPipeFactoryClicPCL()
@@ -49,208 +51,84 @@ BDSBeamPipeFactoryClicPCL::~BDSBeamPipeFactoryClicPCL()
   instance = nullptr;
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryClicPCL::CreateBeamPipe(G4String    nameIn,
-							  G4double    lengthIn,
-							  G4double    aper1In,
-							  G4double    aper2In,
-							  G4double    /*aper3In*/,
-							  G4double    /*aper4In*/,
-							  G4Material* vacuumMaterialIn,
-							  G4double    beamPipeThicknessIn,
-							  G4Material* beamPipeMaterialIn)
+void BDSBeamPipeFactoryClicPCL::GenerateClicPCL(std::vector<G4TwoVector>& vec,
+						G4double aper1,
+						G4double aper2,
+						G4double aper3,
+						G4double aper4,
+						G4int    pointsPerTwoPi,
+						G4double margin)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // clean up after last usage
-  CleanUp();
-  
-  // build the solids
-  vacuumSolid   = new G4EllipticalTube(nameIn + "_vacuum_solid",       // name
-				       aper1In,                        // x half width
-				       aper2In,                        // y half width
-				       (lengthIn*0.5)-lengthSafety); // half length
+  G4double a1 = aper1 + margin;
+  G4double a2 = aper2 + margin;
+  G4double a3 = aper3 + margin;
+  G4double a4 = aper4 + margin;
 
-  G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
-  G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
-  // beamPipeSolidInner will be the inner edge of the metal beampipe
-  // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
-					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-					    aper2In + lengthSafety,         // y half width
-					    lengthIn);                      // length - full length for unambiguous subtraction
-  // beamPipeSolidOuter will be the outer edge of the metal beampipe
-  // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
-					    aper1In + beamPipeThicknessIn,  // x half width
-					    aper2In + beamPipeThicknessIn,  // y half width
-					    (lengthIn*0.5)-lengthSafety); // half length - lengthSafety to fit in container
-  beamPipeSolid = new G4SubtractionSolid(nameIn + "_pipe_solid",
-					 beamPipeSolidOuter,
-					 beamPipeSolidInner); // outer minus inner
-  
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
-  containerSolid = new G4EllipticalTube(nameIn  + "_container_solid",  // name
-					containerXHalfWidth,           // x half width
-					containerYHalfWidth,           // y half width
-					lengthIn*0.5);                 // half length
-					
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+  AppendAngleEllipse(vec, -CLHEP::halfpi, CLHEP::halfpi, a1, a2, (int)0.5*pointsPerTwoPi, 0, a4);
+  AppendPoint(vec, a1, 0);
+  AppendAngleEllipse(vec, CLHEP::halfpi, -CLHEP::halfpi, a1, a3, (int)0.5*pointsPerTwoPi);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryClicPCL::CreateBeamPipe(G4String      nameIn,
-							  G4double      lengthIn,
-							  G4ThreeVector inputFaceNormalIn,
-							  G4ThreeVector outputFaceNormalIn,
-							  G4double      aper1In,
-							  G4double      aper2In,
-							  G4double      /*aper3In*/,
-							  G4double      /*aper4In */,
-							  G4Material*   vacuumMaterialIn,
-							  G4double      beamPipeThicknessIn,
-							  G4Material*   beamPipeMaterialIn)
+void BDSBeamPipeFactoryClicPCL::GeneratePoints(G4double aper1,
+					       G4double aper2,
+					       G4double aper3,
+					       G4double aper4,
+					       G4double beamPipeThickness,
+					       G4int    pointsPerTwoPi)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // clean up after last usage
-  CleanUp();
-  
-  inputFaceNormal  = inputFaceNormalIn;
-  outputFaceNormal = outputFaceNormalIn;
-  
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn,
-			    inputFaceNormal, outputFaceNormal);
-  
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
-				 lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+  G4double bpInMargin  = lengthSafety;
+  G4double bpOutMargin = bpInMargin + beamPipeThickness;
+  G4double cont1Margin = bpOutMargin + lengthSafetyLarge;
+  G4double cont2Margin = cont1Margin + lengthSafetyLarge;
+  GenerateClicPCL(vacuumEdge,               aper1, aper2, aper3, aper4, pointsPerTwoPi);
+  GenerateClicPCL(beamPipeInnerEdge,        aper1, aper2, aper3, aper4, pointsPerTwoPi, bpInMargin);
+  GenerateClicPCL(beamPipeOuterEdge,        aper1, aper2, aper3, aper4, pointsPerTwoPi, bpOutMargin);
+  GenerateClicPCL(containerEdge,            aper1, aper2, aper3, aper4, pointsPerTwoPi, cont1Margin);
+  GenerateClicPCL(containerSubtractionEdge, aper1, aper2, aper3, aper4, pointsPerTwoPi, cont2Margin);
+
+  extentX     = aper1 + cont1Margin;
+  extentYLow  = -(std::abs(aper3) + cont1Margin);
+  extentYHigh = aper2 + aper4 + cont1Margin;
+}
+
+G4double BDSBeamPipeFactoryClicPCL::CalculateIntersectionRadius(G4double aper1,
+								G4double aper2,
+								G4double aper3,
+								G4double aper4,
+								G4double beamPipeThickness)
+{
+  G4double bottom = std::max(std::abs(aper3), aper1);
+  G4double top    = std::max(aper1, aper2);
+  G4double hyp    = std::hypot(aper1, aper4);
+
+  G4double result = std::max(std::max(bottom, top), hyp) + beamPipeThickness;
+  result *= 1.2; // 20% margin
+  return result;
+}
+
+void BDSBeamPipeFactoryClicPCL::CleanUp()
+{
+  extentYLow  = 0;
+  extentYHigh = 0;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryClicPCL::CommonFinalConstruction(G4String    nameIn,
-								   G4Material* vacuumMaterialIn,
-								   G4Material* beamPipeMaterialIn,
-								   G4double    lengthIn,
-								   G4double    aper1In,
-								   G4double    aper2In,
-								   G4double    beamPipeThicknessIn)
+								G4Material* vacuumMaterialIn,
+								G4Material* beamPipeMaterialIn,
+								G4double    lengthIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // prepare a longer container subtraction solid
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
-  // doesn't have to be angled as it's only used for transverse subtraction
-  containerSubtractionSolid = new G4EllipticalTube(nameIn  + "_container_solid", // name
-						   containerXHalfWidth,          // x half width
-						   containerYHalfWidth,          // y half width
-						   lengthIn);                    // full length for unambiguous subtraction
-
-
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn, vacuumMaterialIn,
 					     beamPipeMaterialIn, lengthIn);
 
   // record extents
-  BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
+  BDSExtent ext = BDSExtent(-extentX,     extentX,
+			    extentYLow,   extentYHigh,
+			    -lengthIn*0.5,lengthIn*0.5);
   
   // calculate radius if a tube were to be place around it
-  G4double containerRadius = std::max(containerXHalfWidth, containerYHalfWidth);
+  G4double containerRadius = ext.MaximumAbsTransverse();
   
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext, containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
   
   return aPipe;
-}
-
-void BDSBeamPipeFactoryClicPCL::CreateGeneralAngledSolids(G4String      nameIn,
-							     G4double      lengthIn,
-							     G4double      aper1In,
-							     G4double      aper2In,
-							     G4double      beamPipeThicknessIn,
-							     G4ThreeVector inputfaceIn,
-							     G4ThreeVector outputfaceIn)
-{
-  // this function will make a longer normal rectangular beampipe and chop it off
-  // to make angled faces as required
-  // achieve this using the intersection of the normal beampipe (but a little longer)
-  // with a large G4CutTubs to get the angled faces.
-  // note even if one face is flat, we don't save a boolean operation as the intersection
-  // can be on both sides using a G4CutTubs.  Also, keeping one side flat would require
-  // shifting the volume from 0 which causes headaches later with SDs.
-
-  // build the solids - vacuum, beampipe and container solids
-  // extra solids required for booleans
-  G4VSolid* vacuumSolidLong;
-  G4VSolid* beamPipeSolidLong;
-  G4VSolid* angledFaceSolid;
-  G4VSolid* containerSolidLong;
-  G4VSolid* angledFaceSolidContainer;
-
-  // build the solid with angled faces for intersection
-  G4double angledFaceRadius = (std::max(aper1In,aper2In) + beamPipeThicknessIn)*2.0; //huge for unambiguous intersection
-  angledFaceSolid = new G4CutTubs(nameIn + "_angled_face",       // name
-				  0,                             // inner radius
-				  angledFaceRadius,              // outer radius
-				  (lengthIn*0.5)-lengthSafety, // half length - must fit within container
-				  0,                             // rotation start angle
-				  CLHEP::twopi,                  // rotation finish angle
-				  inputfaceIn,                   // input face normal
-				  outputfaceIn);                 // output face normal
-  
-  vacuumSolidLong = new G4EllipticalTube(nameIn + "_vacuum_solid_long", // name
-					 aper1In,                       // x half width
-					 aper2In,                       // y half width
-					 2*lengthIn);                   // 2x full length for unambiguous boolean
-  vacuumSolid     = new G4IntersectionSolid(nameIn + "_vacuum_solid",
-					    vacuumSolidLong,
-					    angledFaceSolid);
-
-  allSolids.push_back(angledFaceSolid);
-  allSolids.push_back(vacuumSolidLong);
-  
-  G4VSolid* beamPipeSolidInner; // construct rectangular beam pipe by subtracting an inner
-  G4VSolid* beamPipeSolidOuter; // box from an outer one - only way
-  // beamPipeSolidInner will be the inner edge of the metal beampipe
-  // therefore it has to be the width of the aperture + lengthSafety
-  beamPipeSolidInner = new G4EllipticalTube(nameIn + "_pipe_solid_inner",   // name
-					    aper1In + lengthSafety,         // x half width - length safety to avoid overlaps
-					    aper2In + lengthSafety,         // y half width
-					    2*lengthIn);                    // 4x full length for unambiguous subtraction
-  // beamPipeSolidOuter will be the outer edge of the metal beampipe
-  // therefore it has to be the width of the aperture + beampipeThickness
-  beamPipeSolidOuter = new G4EllipticalTube(nameIn + "_pipe_solid_outer",   // name
-					    aper1In + beamPipeThicknessIn,  // x half width
-					    aper2In + beamPipeThicknessIn,  // y half width
-					    lengthIn);                      // 2x full length for unambiguous intersection
-  beamPipeSolidLong = new G4SubtractionSolid(nameIn + "_pipe_solid_long",
-					 beamPipeSolidOuter,
-					 beamPipeSolidInner); // outer minus inner
-  allSolids.push_back(beamPipeSolidInner);
-  allSolids.push_back(beamPipeSolidOuter);
-  allSolids.push_back(beamPipeSolidLong);
-  
-  beamPipeSolid = new G4IntersectionSolid(nameIn + "_pipe_solid",
-					  beamPipeSolidLong,
-					  angledFaceSolid);
-  
-  G4double containerXHalfWidth = aper1In + beamPipeThicknessIn + lengthSafety;
-  G4double containerYHalfWidth = aper2In + beamPipeThicknessIn + lengthSafety;
-  containerSolidLong = new G4EllipticalTube(nameIn  + "_container_solid_long",// name
-					    containerXHalfWidth,              // x half width
-					    containerYHalfWidth,              // y half width
-					    lengthIn);                        // full length for unambiguous intersection
-  angledFaceSolidContainer = new G4CutTubs(nameIn + "_angled_face_container",// name
-					   0,                                // inner radius
-					   angledFaceRadius,                 // outer radius
-					   (lengthIn*0.5),                   // half length
-					   0,                                // rotation start angle
-					   CLHEP::twopi,                     // rotation finish angle
-					   inputfaceIn,                      // input face normal
-					   outputfaceIn);                    // output face normal
-  allSolids.push_back(containerSolidLong);
-  allSolids.push_back(angledFaceSolidContainer);
-  
-  containerSolid = new G4IntersectionSolid(nameIn + "_container_solid",
-					   containerSolidLong,
-					   angledFaceSolidContainer);
 }
