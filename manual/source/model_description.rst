@@ -1500,7 +1500,8 @@ and also on a per element basis that overrides the defaults for that specific el
 
 In the case of `clicpcl` (CLIC Post Collision Line), the beam pipe is asymmetric. The centre is
 the same as the geometric centre of the bottom ellipse. Therefore, *aper4*, the y separation
-between ellipses is added on to the 0 position.
+between ellipses is added on to the 0 position. The parameterisation is taken from
+Phys. Rev. ST Accel. Beams **12**, 021001 (2009).
 
 .. _magnet-geometry-parameters:
 

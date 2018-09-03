@@ -107,3 +107,28 @@ How to run::
 
 .. figure:: 8_octagonal.png
 	    :width: 40%
+
+
+9_circularvacuum.gmad
+---------------------
+
+Circular vacuum doesn't make any beam pipe and the vacuum is by default
+invisible so there is nothing to visualise. However, this is useful for
+visualising the trajectories of the beam.
+
+How to run::
+
+  bdsim --file=9_circularvacuum.gmad
+
+10_clicpcl.gmad
+---------------
+
+A small section of CLIC post collision line beam pipe.
+
+How to run::
+
+  bdsim --file=10_clicpcl.gmad
+
+
+.. figure:: 10_clicpcl.png
+	    :width: 40%
