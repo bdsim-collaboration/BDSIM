@@ -4,6 +4,8 @@ V1.3 - 2018 / ?? / ??
 New Features
 ------------
 
+* New beam pipe aperture for the CLIC post collision line.
+
 General
 -------
 

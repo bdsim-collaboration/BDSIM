@@ -1461,38 +1461,46 @@ convention and have four parameters. The user must specify them as required for 
 BDSIM will check to see if the combination of parameters is valid. `beampipeRadius` and `aper1`
 are degenerate.
 
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`       | `aper4`       |
-|                   | parameters   |                   |                 |               |               |
-+===================+==============+===================+=================+===============+===============+
-| `circular`        | 1            | radius            | NA              | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `rectangular`     | 2            | x half-width      | y half-width    | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhc`             | 3            | x half-width of   | y half-width of | radius of     | NA            |
-|                   |              | rectangle         | rectangle       | circle        |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of     | NA            |
-|                   |              | rectangle         | rectangle       | circle        |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis   | y semi-axis   |
-|                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-|                   |              | of circle         | of circle       | circular part |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `octagonal`       | 4            | x half-width      | y half-width    | x point of    | y point of    |
-|                   |              |                   |                 | start of edge | start of edge |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-
-These parameters can be set with the *option* command, as the default parameters
-and also on a per element basis that overrides the defaults for that specific element.
 Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
+
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
+|                   | parameters   |                   |                 |                |                  |
++===================+==============+===================+=================+================+==================+
+| `circular`        | 1            | radius            | NA              | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectangular`     | 2            | x half-width      | y half-width    | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhc`             | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                   |              | rectangle         | rectangle       | circle         |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                   |              | rectangle         | rectangle       | circle         |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
+|                   |              | rectangle         | rectangle       | of ellipse     | of ellipse       |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `racetrack`       | 3            | horizontal offset | vertical offset | radius of      | NA               |
+|                   |              | of circle         | of circle       | circular part  |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `octagonal`       | 4            | x half-width      | y half-width    | x point of     | y point of       |
+|                   |              |                   |                 | start of edge  | start of edge    |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
+|                   |              |                   | y half-height   | y half-height  | between ellipses |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+
+These parameters can be set with the *option* command, as the default parameters
+and also on a per element basis that overrides the defaults for that specific element.
+
+In the case of `clicpcl` (CLIC Post Collision Line), the beam pipe is asymmetric. The centre is
+the same as the geometric centre of the bottom ellipse. Therefore, *aper4*, the y separation
+between ellipses is added on to the 0 position.
 
 .. _magnet-geometry-parameters:
 
