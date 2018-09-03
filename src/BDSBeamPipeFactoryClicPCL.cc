@@ -116,6 +116,7 @@ void BDSBeamPipeFactoryClicPCL::CleanUp()
 {
   extentYLow  = 0;
   extentYHigh = 0;
+  BDSBeamPipeFactoryPoints::CleanUp();
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryClicPCL::CommonFinalConstruction(G4String    nameIn,
