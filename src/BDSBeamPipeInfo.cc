@@ -205,6 +205,8 @@ BDSExtent BDSBeamPipeInfo::Extent() const
       }
     default:break;
     }
+  extX += beamPipeThickness;
+  extY += beamPipeThickness;
   BDSExtent ext = BDSExtent(extX, extY, 0);
   return ext;
 }
