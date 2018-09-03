@@ -64,9 +64,15 @@ void BDSBeamPipeFactoryClicPCL::GenerateClicPCL(std::vector<G4TwoVector>& vec,
   G4double a3 = aper3 + margin;
   G4double a4 = aper4 + margin;
 
-  AppendAngleEllipse(vec, -CLHEP::halfpi, CLHEP::halfpi, a1, a2, (int)0.5*pointsPerTwoPi, 0, a4);
-  AppendPoint(vec, a1, 0);
-  AppendAngleEllipse(vec, CLHEP::halfpi, -CLHEP::halfpi, a1, a3, (int)0.5*pointsPerTwoPi);
+  G4int nPoints = 0.5*pointsPerTwoPi;
+  AppendAngleEllipse(vec, -CLHEP::halfpi, CLHEP::halfpi, a1, a2, nPoints, 0, a4);
+  AppendPoint(vec, a1, a4);
+  AppendAngleEllipse(vec, CLHEP::halfpi, CLHEP::halfpi + CLHEP::pi, a1, a3, nPoints);
+  AppendPoint(vec, -a1, 0);
+
+  for (auto& v : vec)
+    {G4cout << v[0] << " " << v[1] << G4endl;}
+  G4cout << G4endl;
 }
 
 void BDSBeamPipeFactoryClicPCL::GeneratePoints(G4double aper1,
