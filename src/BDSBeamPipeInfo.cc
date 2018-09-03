@@ -150,6 +150,8 @@ void BDSBeamPipeInfo::CheckApertureInfo()
       {InfoOKForRaceTrack();   break;}
     case BDSBeamPipeType::octagonal:
       {InfoOKForOctagonal();   break;}
+    case BDSBeamPipeType::clicpcl:
+      {InfoOKForClicPCL();     break;}
     default:
       InfoOKForCircular();
     }
@@ -190,7 +192,18 @@ BDSExtent BDSBeamPipeInfo::Extent() const
           extY = aper2 + aper3;
           break;
         }
-      default:break;
+    case BDSBeamPipeType::clicpcl:
+      {// this one is asymmetric so done separately
+	G4double extentX     = aper1 + beamPipeThickness;
+	G4double extentYLow  = -(std::abs(aper3) + beamPipeThickness);
+	G4double extentYHigh = aper2 + aper4 + beamPipeThickness;
+	BDSExtent ext = BDSExtent(-extentX,     extentX,
+				  extentYLow,   extentYHigh,
+				  0,0);
+	return ext;
+	break;
+      }
+    default:break;
     }
   BDSExtent ext = BDSExtent(extX, extY, 0);
   return ext;
@@ -318,3 +331,7 @@ void BDSBeamPipeInfo::InfoOKForOctagonal()
     {G4cerr << "aper4 is >= aper2 - invalid for an octagonal aperture"; exit(1);}
 }
 
+void BDSBeamPipeInfo::InfoOKForClicPCL()
+{
+  CheckRequiredParametersSet(true, true, true, false);
+}

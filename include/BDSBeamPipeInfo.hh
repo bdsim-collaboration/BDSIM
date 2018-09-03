@@ -139,6 +139,9 @@ private:
 
   /// Aperture info check for octagonal aperture.
   void InfoOKForOctagonal();
+
+  /// Aperture info check for CLIC PCL aperture.
+  void InfoOKForClicPCL();
 };
 
 #endif
