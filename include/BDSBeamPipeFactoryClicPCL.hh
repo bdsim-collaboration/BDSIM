@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSBEAMPIPEFACTORYELLIPTICAL_H
-#define BDSBEAMPIPEFACTORYELLIPTICAL_H
+#ifndef BDSBEAMPIPEFACTORYCLICPCL_H
+#define BDSBEAMPIPEFACTORYCLICPCL_H
 
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipe.hh"
