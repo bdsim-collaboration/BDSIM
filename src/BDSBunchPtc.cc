@@ -134,6 +134,7 @@ void BDSBunchPtc::SetOptions(const BDSParticleDefinition* beamParticle,
 #endif
 
   BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  beta = beamParticle->Beta();
   SetDistrFile((G4String)beam.distrFile); 
   LoadPtcFile();
 }
@@ -158,8 +159,11 @@ BDSParticleCoordsFull BDSBunchPtc::GetNextParticleLocal()
   G4double xp = ptcData[iRay][1] * CLHEP::rad + Xp0;
   G4double yp = ptcData[iRay][3] * CLHEP::rad + Yp0;
   G4double t  = (z-Z0)*CLHEP::m / CLHEP::c_light + T0 * CLHEP::s;
-  G4double E  = E0 * CLHEP::GeV * (ptcData[iRay][5]+1.0);
   G4double zp = CalculateZp(xp,yp,Zp0);
+
+  G4double betaSquared = std::pow(beta,2.0);
+  G4double ptcVal = ptcData[iRay][5] * betaSquared;
+  G4double E  = E0 * (ptcVal + 1.0);
 
   BDSParticleCoordsFull result(x,y,z,xp,yp,zp,t,S0+z,E,/*weight=*/1.0);
 
