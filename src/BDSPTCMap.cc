@@ -18,6 +18,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "BDSPTCMap.hh"
+#include "BDSDebug.hh"
+
+#include "globals.hh"
 
 #include <cmath>
 #include <fstream>
@@ -74,7 +77,10 @@ BDSPTCMap::BDSPTCMap(std::string maptable_file) {
       break;
     }
     default:
-      exit(-1);
+      std::string message = "Unrecognised PTC term index.  Your maptable file "
+                            "is perhaps malformed.";
+      G4cerr << __METHOD_NAME__ << message << G4endl;
+      exit(1);
       break;
     }
   }
