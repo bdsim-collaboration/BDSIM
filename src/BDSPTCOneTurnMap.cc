@@ -27,20 +27,20 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptable_file) {
-  std::ifstream infile(maptable_file);
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptableFile) {
+  std::ifstream infile(maptableFile);
 
   // The columns of the maptable TFS (read into below with the stringsteam).
   std::string name = "";
   double coefficient = 0;
-  int n_vector = 0;
+  int nVector = 0;
   int dimensionality = 0;
-  int total_order = 0;
+  int totalOrder = 0;
   int nx = 0;
   int npx = 0;
   int ny = 0;
   int npy = 0;
-  int ndelta_p = 0;
+  int ndeltaP = 0;
   int nt = 0;
 
   std::string line = "";
@@ -50,30 +50,30 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptable_file) {
     }
     std::istringstream stream(line);
 
-    stream >> name >> coefficient >> n_vector >> dimensionality >>
-        total_order >> nx >> npx >> ny >> npy >> ndelta_p >> nt;
+    stream >> name >> coefficient >> nVector >> dimensionality >>
+        totalOrder >> nx >> npx >> ny >> npy >> ndeltaP >> nt;
 
-    PTCMapTerm term{coefficient, nx, npx, ny, npy, ndelta_p};
+    PTCMapTerm term{coefficient, nx, npx, ny, npy, ndeltaP};
 
-    switch (n_vector) {
+    switch (nVector) {
     case 1: {
-      x_terms.push_back(term);
+      xTerms.push_back(term);
       break;
     }
     case 2: {
-      px_terms.push_back(term);
+      pxTerms.push_back(term);
       break;
     }
     case 3: {
-      y_terms.push_back(term);
+      yTerms.push_back(term);
       break;
     }
     case 4: {
-      py_terms.push_back(term);
+      pyTerms.push_back(term);
       break;
     }
     case 5: {
-      delta_p_terms.push_back(term);
+      deltaPTerms.push_back(term);
       break;
     }
     default:
@@ -86,38 +86,38 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptable_file) {
   }
 }
 
-double BDSPTCOneTurnMap::evaluate_x(double x, double px, double y, double py,
-                             double delta_p) {
-  return evaluate(x_terms, x, px, y, py, delta_p);
+double BDSPTCOneTurnMap::evaluateX(double x, double px, double y, double py,
+                             double deltaP) {
+  return evaluate(xTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluate_px(double x, double px, double y, double py,
-                              double delta_p) {
-  return evaluate(px_terms, x, px, y, py, delta_p);
+double BDSPTCOneTurnMap::evaluatePX(double x, double px, double y, double py,
+                              double deltaP) {
+  return evaluate(pxTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluate_y(double x, double px, double y, double py,
-                             double delta_p) {
-  return evaluate(y_terms, x, px, y, py, delta_p);
+double BDSPTCOneTurnMap::evaluateY(double x, double px, double y, double py,
+                             double deltaP) {
+  return evaluate(yTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluate_py(double x, double px, double y, double py,
-                              double delta_p) {
-  return evaluate(py_terms, x, px, y, py, delta_p);
+double BDSPTCOneTurnMap::evaluatePY(double x, double px, double y, double py,
+                              double deltaP) {
+  return evaluate(pyTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluate_delta_p(double x, double px, double y, double py,
-                                   double delta_p) {
-  return evaluate(delta_p_terms, x, px, y, py, delta_p);
+double BDSPTCOneTurnMap::evaluateDeltaP(double x, double px, double y, double py,
+                                   double deltaP) {
+  return evaluate(deltaPTerms, x, px, y, py, deltaP);
 }
 
 double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, double x, double px,
-                           double y, double py, double delta_p) {
+                           double y, double py, double deltaP) {
   double result = 0;
   for (auto term : terms) {
     result += (term.coefficient * std::pow(x, term.nx) *
                std::pow(px, term.npx) * std::pow(y, term.ny) *
-               std::pow(py, term.npy) * std::pow(delta_p, term.ndelta_p));
+               std::pow(py, term.npy) * std::pow(deltaP, term.ndeltaP));
   }
   return result;
 }
