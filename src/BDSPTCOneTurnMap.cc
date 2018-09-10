@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "BDSPTCMap.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh"
@@ -27,7 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCMap::BDSPTCMap(std::string maptable_file) {
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptable_file) {
   std::ifstream infile(maptable_file);
 
   // The columns of the maptable TFS (read into below with the stringsteam).
@@ -86,32 +86,32 @@ BDSPTCMap::BDSPTCMap(std::string maptable_file) {
   }
 }
 
-double BDSPTCMap::evaluate_x(double x, double px, double y, double py,
+double BDSPTCOneTurnMap::evaluate_x(double x, double px, double y, double py,
                              double delta_p) {
   return evaluate(x_terms, x, px, y, py, delta_p);
 }
 
-double BDSPTCMap::evaluate_px(double x, double px, double y, double py,
+double BDSPTCOneTurnMap::evaluate_px(double x, double px, double y, double py,
                               double delta_p) {
   return evaluate(px_terms, x, px, y, py, delta_p);
 }
 
-double BDSPTCMap::evaluate_y(double x, double px, double y, double py,
+double BDSPTCOneTurnMap::evaluate_y(double x, double px, double y, double py,
                              double delta_p) {
   return evaluate(y_terms, x, px, y, py, delta_p);
 }
 
-double BDSPTCMap::evaluate_py(double x, double px, double y, double py,
+double BDSPTCOneTurnMap::evaluate_py(double x, double px, double y, double py,
                               double delta_p) {
   return evaluate(py_terms, x, px, y, py, delta_p);
 }
 
-double BDSPTCMap::evaluate_delta_p(double x, double px, double y, double py,
+double BDSPTCOneTurnMap::evaluate_delta_p(double x, double px, double y, double py,
                                    double delta_p) {
   return evaluate(delta_p_terms, x, px, y, py, delta_p);
 }
 
-double BDSPTCMap::evaluate(std::vector<PTCMapTerm> terms, double x, double px,
+double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, double x, double px,
                            double y, double py, double delta_p) {
   double result = 0;
   for (auto term : terms) {

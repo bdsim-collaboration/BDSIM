@@ -29,37 +29,54 @@ struct PTCMapTerm {
 
 } // namespace
 
-class BDSPTCMap {
+class BDSPTCOneTurnMap {
 public:
   //! Default constructor
-  BDSPTCMap() = delete;
+  BDSPTCOneTurnMap() = delete;
 
   //! Copy constructor
-  BDSPTCMap(const BDSPTCMap &other) = default;
+  BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;
 
   //! Move constructor
-  BDSPTCMap(BDSPTCMap &&other) noexcept = default;
+  BDSPTCOneTurnMap(BDSPTCOneTurnMap &&other) noexcept = default;
 
   //! Destructor
-  virtual ~BDSPTCMap() noexcept = default;
+  virtual ~BDSPTCOneTurnMap() noexcept = default;
 
   //! Copy assignment operator
-  BDSPTCMap &operator=(const BDSPTCMap &other) = default;
+  BDSPTCOneTurnMap &operator=(const BDSPTCOneTurnMap &other) = default;
 
   //! Move assignment operator
-  BDSPTCMap &operator=(BDSPTCMap &&other) noexcept = default;
+  BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
 
-  BDSPTCMap(std::string path); // path to maptable file
+  BDSPTCOneTurnMap(std::string path); // path to maptable file
+
+  // public-facing should_apply?
+  // This should be used by the terminator to decide if the teleporter
+  // should use this instance (one turn map)
+  bool is_applicable();
+
+  void set_turn_result(double x, double px, double y, double py,
+		       double delta_p);
+  // This should be used by the teleporter.
+  void get_turn_result(double &x, double &px, double &y, double &py,
+		       double &delta_p);
+
+private:
+  double evaluate(std::vector<PTCMapTerm> terms, double x, double px, double y,
+                  double py, double delta_p);
+
+  bool should_apply; // Should we apply this map ?  This is intended
+                     // to be set by the terminator (primary?  S0 != 0
+                     // and first turn?) and read by the teleporter.
+
+  // Evaluate this one turn map for the given coordinates.
   double evaluate_x(double x, double px, double y, double py, double delta_p);
   double evaluate_px(double x, double px, double y, double py, double delta_p);
   double evaluate_y(double x, double px, double y, double py, double delta_p);
   double evaluate_py(double x, double px, double y, double py, double delta_p);
   double evaluate_delta_p(double x, double px, double y, double py,
                           double delta_p);
-
-private:
-  double evaluate(std::vector<PTCMapTerm> terms, double x, double px, double y,
-                  double py, double delta_p);
 
   std::vector<PTCMapTerm> x_terms;
   std::vector<PTCMapTerm> y_terms;
