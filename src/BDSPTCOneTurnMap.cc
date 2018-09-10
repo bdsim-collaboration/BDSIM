@@ -20,38 +20,38 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSDebug.hh"
 
-#include "globals.hh"
+#include "globals.hh" // Geant4 typedefs
 
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptableFile) {
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
   std::ifstream infile(maptableFile);
 
   // The columns of the maptable TFS (read into below with the stringsteam).
-  std::string name = "";
-  double coefficient = 0;
-  int nVector = 0;
-  int dimensionality = 0;
-  int totalOrder = 0;
-  int nx = 0;
-  int npx = 0;
-  int ny = 0;
-  int npy = 0;
-  int ndeltaP = 0;
-  int nt = 0;
+  G4String name = "";
+  G4double coefficient = 0;
+  G4int nVector = 0;
+  G4int dimensionality = 0;
+  G4int totalOrder = 0;
+  G4int nx = 0;
+  G4int npx = 0;
+  G4int ny = 0;
+  G4int npy = 0;
+  G4int ndeltaP = 0;
+  G4int nt = 0;
 
-  std::string line = "";
+  G4String line = "";
   while (std::getline(infile, line)) {
     if (line.at(0) == '@' || line.at(0) == '*' || line.at(0) == '$') {
       continue;
     }
     std::istringstream stream(line);
 
-    stream >> name >> coefficient >> nVector >> dimensionality >>
-        totalOrder >> nx >> npx >> ny >> npy >> ndeltaP >> nt;
+    stream >> name >> coefficient >> nVector >> dimensionality >> totalOrder >>
+        nx >> npx >> ny >> npy >> ndeltaP >> nt;
 
     PTCMapTerm term{coefficient, nx, npx, ny, npy, ndeltaP};
 
@@ -77,8 +77,8 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptableFile) {
       break;
     }
     default:
-      std::string message = "Unrecognised PTC term index.  Your maptable file "
-                            "is perhaps malformed.";
+      G4String message = "Unrecognised PTC term index.  Your maptable file "
+                         "is perhaps malformed.";
       G4cerr << __METHOD_NAME__ << message << G4endl;
       exit(1);
       break;
@@ -86,34 +86,35 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(std::string maptableFile) {
   }
 }
 
-double BDSPTCOneTurnMap::evaluateX(double x, double px, double y, double py,
-                             double deltaP) {
+G4double BDSPTCOneTurnMap::evaluateX(G4double x, G4double px, G4double y,
+                                     G4double py, G4double deltaP) {
   return evaluate(xTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluatePX(double x, double px, double y, double py,
-                              double deltaP) {
+G4double BDSPTCOneTurnMap::evaluatePX(G4double x, G4double px, G4double y,
+                                      G4double py, G4double deltaP) {
   return evaluate(pxTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluateY(double x, double px, double y, double py,
-                             double deltaP) {
+G4double BDSPTCOneTurnMap::evaluateY(G4double x, G4double px, G4double y,
+                                     G4double py, G4double deltaP) {
   return evaluate(yTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluatePY(double x, double px, double y, double py,
-                              double deltaP) {
+G4double BDSPTCOneTurnMap::evaluatePY(G4double x, G4double px, G4double y,
+                                      G4double py, G4double deltaP) {
   return evaluate(pyTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluateDeltaP(double x, double px, double y, double py,
-                                   double deltaP) {
+G4double BDSPTCOneTurnMap::evaluateDeltaP(G4double x, G4double px, G4double y,
+                                          G4double py, G4double deltaP) {
   return evaluate(deltaPTerms, x, px, y, py, deltaP);
 }
 
-double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, double x, double px,
-                           double y, double py, double deltaP) {
-  double result = 0;
+G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
+                                    G4double px, G4double y, G4double py,
+                                    G4double deltaP) {
+  G4double result = 0;
   for (auto term : terms) {
     result += (term.coefficient * std::pow(x, term.nx) *
                std::pow(px, term.npx) * std::pow(y, term.ny) *

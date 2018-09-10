@@ -19,12 +19,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPTCMAP_H
 #define BDSPTCMAP_H
 
+#include "globals.hh" // Geant4 typedefs
+
 #include <vector>
 
 namespace {
 struct PTCMapTerm {
-  double coefficient;
-  int nx, npx, ny, npy, ndeltaP;
+  G4double coefficient;
+  G4int nx, npx, ny, npy, ndeltaP;
 };
 
 } // namespace
@@ -49,27 +51,32 @@ public:
   //! Move assignment operator
   BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
 
-  BDSPTCOneTurnMap(std::string path); // path to maptable file
+  BDSPTCOneTurnMap(G4String path); // path to maptable file
 
   // public-facing should_apply?
   // This should be used by the terminator to decide if the teleporter
   // should use this instance (one turn map)
-  bool isApplicable();
+  G4bool isApplicable();
 
 private:
-  double evaluate(std::vector<PTCMapTerm> terms, double x, double px, double y,
-                  double py, double deltaP);
+  G4double evaluate(std::vector<PTCMapTerm> terms, G4double x, G4double px,
+                    G4double y, G4double py, G4double deltaP);
 
-  bool shouldApply; // Should we apply this map ?  This is intended
+  G4bool shouldApply; // Should we apply this map ?  This is intended
                      // to be set by the terminator (primary?  S0 != 0
                      // and first turn?) and read by the teleporter.
 
   // Evaluate this one turn map for the given coordinates.
-  double evaluateX(double x, double px, double y, double py, double deltaP);
-  double evaluatePX(double x, double px, double y, double py, double deltaP);
-  double evaluateY(double x, double px, double y, double py, double deltaP);
-  double evaluatePY(double x, double px, double y, double py, double deltaP);
-  double evaluateDeltaP(double x, double px, double y, double py, double deltaP);
+  G4double evaluateX(G4double x, G4double px, G4double y, G4double py,
+                     G4double deltaP);
+  G4double evaluatePX(G4double x, G4double px, G4double y, G4double py,
+                      G4double deltaP);
+  G4double evaluateY(G4double x, G4double px, G4double y, G4double py,
+                     G4double deltaP);
+  G4double evaluatePY(G4double x, G4double px, G4double y, G4double py,
+                      G4double deltaP);
+  G4double evaluateDeltaP(G4double x, G4double px, G4double y, G4double py,
+                          G4double deltaP);
 
   std::vector<PTCMapTerm> xTerms;
   std::vector<PTCMapTerm> yTerms;
