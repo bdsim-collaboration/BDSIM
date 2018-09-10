@@ -52,12 +52,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
-#include "BDSModularPhysicsList.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -105,7 +105,8 @@ int main(int argc,char** argv)
 
   /// Force construction of global constants after parser has been initialised (requires
   /// materials first). This uses the options and beam from BDSParser.
-  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
+  /// Non-const as we'll update the particle definition.
+  BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
@@ -143,28 +144,33 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = parser->GetOptions().physicsList;
+
+  // sampler physics process for parallel world tracking must be instantiated BEFORE
+  // regular physics.
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
-  BDSModularPhysicsList* physList  = new BDSModularPhysicsList(physicsListName);
-
+  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
+  
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
   // runManager->Initialize()).
   BDSParticleDefinition* beamParticle;
-  beamParticle = physList->ConstructBeamParticle(globalConstants->ParticleName(),
-						 globalConstants->BeamTotalEnergy(),
-						 globalConstants->FFact());
+  beamParticle = BDS::ConstructBeamParticle(globalConstants->ParticleName(),
+					    globalConstants->BeamTotalEnergy(),
+					    globalConstants->FFact());
+  globalConstants->SetBeamParticleDefinition(beamParticle);
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
+  // update rigidity where needed
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
   realWorld->SetBeta0ForConstruction(beamParticle->Beta());
   BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
-  physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
+  BDS::BuildAndAttachBiasWrapper(physList, parser->GetBiasing());
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
@@ -219,7 +225,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, physList->UsingIons()));
+  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
