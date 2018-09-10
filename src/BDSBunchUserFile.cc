@@ -247,9 +247,9 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 				     const GMAD::Beam& beam,
 				     const BDSBunchType& distrType,
 				     G4Transform3D beamlineTransformIn,
-				     const G4double beamlineS)
+				     const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
   SetDistrFile((G4String)beam.distrFile); 
   SetBunchFormat((G4String)beam.distrFileFormat);

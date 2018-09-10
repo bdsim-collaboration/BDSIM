@@ -35,10 +35,10 @@ void BDSBunchSigmaMatrix::SetOptions(const BDSParticleDefinition* beamParticle,
 				     const GMAD::Beam& beam,
 				     const BDSBunchType& distrType,
 				     G4Transform3D beamlineTransformIn,
-				     const G4double beamlineS)
+				     const G4double beamlineSIn)
 {
   // Fill means and class BDSBunch::SetOptions
-  BDSBunchGaussian::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  BDSBunchGaussian::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
 
   switch (distrType.underlying())
     {

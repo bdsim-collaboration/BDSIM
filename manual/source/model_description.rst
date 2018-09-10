@@ -4447,7 +4447,7 @@ Crystals
 
 To use various crystal components in BDSIM such as `crystalcol`_, a crystal definition
 must first be made. This contains all of the required information to construct the
-crystal. The following parameters are requried:
+crystal. The following parameters are required:
 
 +-------------------+------------------------------------------------------------+
 | **Parameter**     | **Description**                                            |

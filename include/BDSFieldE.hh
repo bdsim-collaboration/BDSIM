@@ -38,7 +38,7 @@ class BDSFieldE: public G4ElectricField
 public:
   /// Constructor takes transform in, which is inverted and applied to positions
   /// before querying the 'pure' derived field object. This allows local offset,
-  /// translations, reflections and scalings to be applied if requried - ie for
+  /// translations, reflections and scalings to be applied if required - ie for
   /// misalignment from the local coordinates.
   BDSFieldE();
   explicit BDSFieldE(G4Transform3D transformIn);
