@@ -29,6 +29,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
   std::ifstream infile(maptableFile);
+  if (!infile) {
+    G4String message = "Failed to read maptable: " + maptableFile;
+    G4cerr << __METHOD_NAME__ << message << " Exiting. " << G4endl;
+    exit(1);
+  }
 
   // The columns of the maptable TFS (read into below with the stringsteam).
   G4String name = "";
