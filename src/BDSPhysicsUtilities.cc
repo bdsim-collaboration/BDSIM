@@ -61,6 +61,12 @@ G4VModularPhysicsList* BDS::BuildPhysics(const G4String& physicsList)
       if (!factory.IsReferencePhysList(geant4PhysicsList))
 	{
 	  G4cerr << "Unknown Geant4 physics list \"" << geant4PhysicsList << "\"" << G4endl;
+	  G4cout << "Available Geant4 hadronic physics lists:" << G4endl;
+	  for (const auto& name : factory.AvailablePhysLists())
+	    {G4cout << "\"" << name << "\"" << G4endl;}
+	  G4cout << "Available Geant4 EM physics lists:" << G4endl;
+	  for (const auto& name : factory.AvailablePhysListsEM())
+	    {G4cout << "\"" << name << "\"" << G4endl;}
 	  exit(1);
 	}
       else
