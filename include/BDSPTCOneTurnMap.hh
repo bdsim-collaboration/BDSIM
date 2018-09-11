@@ -16,8 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSPTCMAP_H
-#define BDSPTCMAP_H
+#ifndef BDSPTCONETURNMAP_H
+#define BDSPTCONETURNMAP_H
 
 #include "globals.hh" // Geant4 typedefs
 
@@ -85,4 +85,4 @@ private:
   std::vector<PTCMapTerm> deltaPTerms;
 };
 
-#endif /* BDSPTCMAP_H */
+#endif /* BDSPTCONETURNMAP_H */
