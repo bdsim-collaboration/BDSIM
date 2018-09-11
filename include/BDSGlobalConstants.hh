@@ -251,7 +251,8 @@ public:
   inline G4bool   SampleElementsWithPoleface() const {return G4bool  (options.sampleElementsWithPoleface);}
   inline G4double NominalMatrixRelativeMomCut() const {return G4double (options.nominalMatrixRelativeMomCut);}
   inline G4bool   TeleporterFullTransform()  const {return G4bool  (options.teleporterFullTransform);}
-  
+  inline G4String PTCOneTurnMapFileName()    const {return G4String (options.ptcOneTurnMapFileName);}
+
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int                 TurnsTaken()              const {return turnsTaken;}
   inline G4String              ParticleName()            const {return beam.particleName;}

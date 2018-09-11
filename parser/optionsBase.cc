@@ -237,6 +237,8 @@ OptionsBase::OptionsBase()
   printFractionEvents = 0.1;
   printFractionTurns  = 0.2;
 
+  ptcOneTurnMapFileName = "";
+
   // visualisation
   nSegmentsPerCircle       = 50;
 
