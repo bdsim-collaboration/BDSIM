@@ -30,6 +30,8 @@ class G4VModularPhysicsList;
 
 namespace BDS
 {
+  /// Detect whether we're using a Geant4 provided physics list or whether we'll use the
+  /// BDSIM modular physics and construct it.
   G4VModularPhysicsList* BuildPhysics(const G4String& physicsList);
 
   /// Construct beam particle definition. Ensure that particle is instantiated
