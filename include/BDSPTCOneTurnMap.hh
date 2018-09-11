@@ -34,7 +34,7 @@ struct PTCMapTerm {
 class BDSPTCOneTurnMap {
 public:
   //! Default constructor
-  BDSPTCOneTurnMap() = delete;
+  BDSPTCOneTurnMap() = default;
 
   //! Copy constructor
   BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;
