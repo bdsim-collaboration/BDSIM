@@ -33,13 +33,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
+#include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
+#include "G4GeometryTolerance.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
-#include "G4GeometryTolerance.hh"
-#include "G4GenericBiasingPhysics.hh"
+#include "G4TrackingManager.hh"
+#include "G4VModularPhysicsList.hh"
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
@@ -170,7 +171,9 @@ int main(int argc,char** argv)
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
-  BDS::BuildAndAttachBiasWrapper(physList, parser->GetBiasing());
+  auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
+  if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
+    {physList->RegisterPhysics(biasPhysics);}
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
@@ -225,7 +228,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon));
+  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
@@ -270,8 +273,8 @@ int main(int argc,char** argv)
 
   if (BDSGlobalConstants::Instance()->PhysicsVerbose())
     {
-      physList->PrintPrimaryParticleProcesses();
-      physList->PrintDefinedParticles();
+      BDS::PrintPrimaryParticleProcesses(beamParticle->Name());
+      BDS::PrintDefinedParticles();
     }
 
   /// Set verbosity levels
