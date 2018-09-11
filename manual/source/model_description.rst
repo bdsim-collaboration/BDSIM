@@ -2529,20 +2529,27 @@ for coordinate transforms (cylinders).
 Physics Processes
 -----------------
 
-BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
-and simulation, it is very useful to define the physical processes that should be simulated so
+BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
+define **only** the processes that should be simulated so
 that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
 is provided and other processes must be specified to be used. Rather than specify each individual
 particle physics process on a per-particle basis, a series of "physics lists" are provided that
 are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
 the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
-Geant4 ones.
+Geant4 ones. These are fairly modular and can be added independently. More complete "reference
+physics lists" from Geant4 (i.e. including several electromagnetic and hadronic physics lists)
+are also accessible.
 
-The physics list can be selected with the following syntax (delimited by a space)::
+The modular physics list can be selected with the following syntax (delimited by a space)::
 
   option, physicsList = "physicslistname anotherphysicslistname";
 
   option, physicsList = "em optical";
+
+The Geant4 reference physics can be used by prefixing their name with "g4". See :ref:`physics-geant4-lists`.
+
+.. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
+	  with any modular physics list.
 
 For general high energy hadron physics we recommend::
 
@@ -2552,7 +2559,7 @@ For general high energy hadron physics we recommend::
 	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
 	  only use the minimal set of physics processes required.
 
-.. note:: The strings for the physics list are case-insensitive.
+.. note:: The strings for the modular physics list are case-insensitive.
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
 time for BDSIM and it will not recognise a physics list that requires a later version of Geant4
@@ -2567,14 +2574,8 @@ BDSIM uses the Geant4 physics lists directly and more details can be found in th
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
    * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
 
-Physics Lists In BDSIM
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. warning:: Geant4 recently provides its own physics 'lists' - for example, in
-	     "geant4.10.04.p01/source/physics_lists/lists/include". BDSIM does not currently
-	     support these, but it will in the future. For example, note that `ftfp_bert` in BDISM
-	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
-	     physics list in Geant4.
+Modular Physics Lists
+^^^^^^^^^^^^^^^^^^^^^
 
 .. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
 	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
@@ -2808,6 +2809,61 @@ these will have no effect.
 is not used in BDSIM, as it does not propagate the associated weights correctly. Biasing should be done through
 the generic biasing interface with the name of the process (described in the following section), as this will
 propagate the weights correctly.
+
+.. _physics-geant4-lists:
+
+Geant4 Reference Physics Lists
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
+prefix with "g4" to work in BDSIM.
+
+* FTFP_BERT
+* FTFP_BERT_TRV
+* FTFP_BERT_ATL
+* FTFP_BERT_HP
+* FTFQGSP_BERT
+* FTFP_INCLXX
+* FTFP_INCLXX_HP
+* FTF_BIC
+* LBE
+* QBBC
+* QGSP_BERT
+* QGSP_BERT_HP
+* QGSP_BIC
+* QGSP_BIC_HP
+* QGSP_BIC_AllHP
+* QGSP_FTFP_BERT
+* QGSP_INCLXX
+* QGSP_INCLXX_HP
+* QGS_BIC
+* Shielding
+* ShieldingLEND
+* ShieldingM
+* NuBeam
+
+The **optional** following suffixes may be added to specify the electromagnetif physics variant:
+
+* _EMV
+* _EMX
+* _EMY
+* _EMZ
+* _LIV
+* _PEN
+* __GS
+* __SS
+
+Examples::
+
+  option, physicsList="g4QBBC";
+
+  option, physicsList="g4QBBC_EMV";
+
+  option, physicsList="g4FTFP_BERT_PEN";
+
+.. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
+	  to the Geant4 physics list that constructs the appropriate physics list and this is
+	  case sensitive.
 
 .. _physics-biasing:
 

@@ -1,9 +1,10 @@
-V1.3 - 2018 / ?? / ??
+V1.3 - 2018 / 09 / ??
 =====================
 
 New Features
 ------------
 
+* All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 
 General
