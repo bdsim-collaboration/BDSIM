@@ -314,10 +314,12 @@ void Options::PublishMembers()
 
   // circular options
   publish("nturns",                   &Options::nturns);
-  
+
   publish("printModuloFraction",      &Options::printFractionEvents); // alternative name
   publish("printFractionEvents",      &Options::printFractionEvents);
   publish("printFractionTurns",       &Options::printFractionTurns);
+
+  publish("ptcOneTurnMapFileName",    &Options::ptcOneTurnMapFileName);
 
   // visualisation
   publish("nSegmentsPerCircle",       &Options::nSegmentsPerCircle);
