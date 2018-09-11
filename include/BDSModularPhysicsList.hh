@@ -64,42 +64,18 @@ public:
   /// Call base class method to construct all processes from constructors,
   /// but also set cuts and print physics table.
   virtual void ConstructProcess();
-
-  /// Construct beam particle definition. Ensure that particle is instantiated
-  /// from a Geant4 point of view.  'ffact' is typically 1 or -1 used to flip
-  /// the sign of the rigidity for difference between convention and what's required.
-  BDSParticleDefinition* ConstructBeamParticle(G4String particleName,
-					       G4double totalEnergy,
-					       G4double ffact = 1) const;
   
   /// Print out which physics lists are activated.
   void Print();
 
-  /// Print all the processes by name as registered to the primary particle type.
-  /// Note, this should only be done after the physics lists are fully constructed.
-  void PrintPrimaryParticleProcesses() const;
-
-  /// Print all constructed particle names. Note, this should only be done after the
-  /// physics lists are fully constructed.
-  void PrintDefinedParticles() const;
-
   /// Set Production cuts for photons, elecrons, positrons, protons and the default.
   virtual void SetCuts();
-
-  void BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
   inline G4bool UsingIons() const {return usingIons;}
 
 private:
   /// Private default constructor to force use of supplied one.
   BDSModularPhysicsList();
-
-  /// Ensure required beam particle has been constructed for Geant4 purposes.
-  void ConstructBeamParticleG4(G4String name) const;
-  
-  /// Construct the minimum particle set required (gamma, electron, positron,
-  /// proton and anti-proton.
-  void ConstructMinimumParticleSet();
 
   /// Neutrinos are not constructed by default in many (most) physics lists
   /// yet this results in crashes when they're produced but not defined by
