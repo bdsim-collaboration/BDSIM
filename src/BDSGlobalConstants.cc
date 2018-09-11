@@ -25,10 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldInfo.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSOutputType.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSParser.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSTunnelInfo.hh"
 #include "BDSSamplerRegistry.hh"
+#include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
 #include "G4RotationMatrix.hh"
@@ -116,6 +117,11 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   InitialiseBeamlineTransform();
   
   BDSSamplerPlane::chordLength = LengthSafety();
+
+  // Initialise the one turn map if it is present.
+  if (PTCOneTurnMapFileName() != "") {
+    ptcOneTurnMap = BDSPTCOneTurnMap(PTCOneTurnMapFileName());
+  }
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()

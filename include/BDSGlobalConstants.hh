@@ -17,12 +17,13 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSGLOBALCONSTANTS_H
-#define BDSGLOBALCONSTANTS_H 
+#define BDSGLOBALCONSTANTS_H
 
 #include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputType.hh"
 #include "BDSParticleDefinition.hh"
+#include "BDSPTCOneTurnMap.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -286,6 +287,9 @@ public:
   void SetLaserwireWavelength(G4String aName, G4double aWavelength);
   void SetLaserwireDir(G4String aName, G4ThreeVector aDirection);
 
+  // PTC One Turn Map stuff which ideally would not be in global constants.
+  inline BDSPTCOneTurnMap GetPTCOneTurnMap() {return ptcOneTurnMap;}
+
 private:
   BDSParticleDefinition* beamParticleDefinition; ///< Initial bunch parameters
 
@@ -332,6 +336,10 @@ private:
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
   G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
+
+  /// Global PTC One Turn Map
+  BDSPTCOneTurnMap ptcOneTurnMap;
+
 };
 
 inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
