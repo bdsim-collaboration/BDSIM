@@ -78,7 +78,9 @@ int main(int argc,char** argv)
   /// Print header & program information
   G4cout<<"bdsim : version @BDSIM_VERSION@"<<G4endl;
   G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"<<G4endl;
-  G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
+  G4cout<<G4endl;
+  G4cout<<"        Reference: https://arxiv.org/abs/1808.10745"<<G4endl;
+  G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
   /// Initialize executable command line options reader object
