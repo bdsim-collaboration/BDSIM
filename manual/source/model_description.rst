@@ -4107,6 +4107,10 @@ The file may also be compressed using tar and gz. Any file with the extension `.
 will be automatically decompressed during the run without any temporary files. This is
 recommended, as compressed ASCII is significantly smaller in size.
 
+If the number of particles to be generated with ngenerate is greater than the number of
+particles defined in the file, the bunch generation will reload the file and read the
+particle coordinates from the beginning.
+
 .. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
 	  on by default.
 

@@ -13,6 +13,8 @@ General
 Bug Fixes
 ---------
 
+* Fixed reloading user file when reading more particles than defined in the file.
+
 Output Changes
 --------------
 
