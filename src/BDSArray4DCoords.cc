@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSArray4DCoords.hh"
 #include "BDSFieldValue.hh"
+#include "BDSUtilities.hh"
 
 #include <cmath>
 #include <ostream>
@@ -37,21 +38,44 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
 {
   // There are 1 fewer differences than the points.
   if (nX > 1)
-    {xStep = (xMax - xMin) / ((G4double)nX - 1);}
+    {
+      xStep = (xMax - xMin) / ((G4double)nX - 1);
+      CheckStep(xStep, "x");
+    }
   else
     {xStep = 1;}
   if (nY > 1)
-    {yStep = (yMax - yMin) / ((G4double)nY - 1);}
+    {
+      yStep = (yMax - yMin) / ((G4double)nY - 1);
+      CheckStep(yStep, "y");
+    }
   else
     {yStep = 1;}
   if (nZ > 1)
-    {zStep = (zMax - zMin) / ((G4double)nZ - 1);}
+    {
+      zStep = (zMax - zMin) / ((G4double)nZ - 1);
+      CheckStep(zStep, "z");
+    }
   else
     {zStep = 1;}
   if (nT > 1)
-    {tStep = (tMax - tMin) / ((G4double)nT - 1);}
+    {
+      tStep = (tMax - tMin) / ((G4double)nT - 1);
+      CheckStep(tStep, "t");
+    }
   else
     {tStep = 1;}
+}
+
+void BDSArray4DCoords::CheckStep(G4double step, const G4String name) const
+{
+  if (!BDS::IsFinite(step))
+    {
+      G4cerr << "Invalid " << name << "min and " << name
+             << "max in array leading to 0 step size between points."
+             << G4endl;
+      exit(1);
+    }
 }
 
 G4bool BDSArray4DCoords::OutsideCoords(const G4double x,

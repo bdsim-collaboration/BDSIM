@@ -171,6 +171,8 @@ private:
   /// No default constructor as the array is not adjustable after construction and
   /// therefore the size must be known at construction time.
   BDSArray4DCoords() = delete;
+
+  void CheckStep(G4double step, const G4String name) const;
 };
 
 #endif
