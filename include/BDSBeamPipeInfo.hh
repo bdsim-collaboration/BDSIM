@@ -116,29 +116,32 @@ private:
   void CheckRequiredParametersSet(G4bool setAper1, G4bool setAper2,
 				  G4bool setAper3, G4bool setAper4);
   
-  /// aperture info check for circular aperture
+  /// Aperture info check for circular aperture.
   void InfoOKForCircular();
 
-  /// aperture info check for elliptical aperture
+  /// Aperture info check for elliptical aperture.
   void InfoOKForElliptical();
 
-  /// aperture info check for rectangular aperture
+  /// Aperture info check for rectangular aperture.
   void InfoOKForRectangular();
 
-  /// aperture info check for lhc aperture
+  /// Aperture info check for lhc aperture.
   void InfoOKForLHC();
 
-  /// aperture info check for lhc detailed aperture
+  /// Aperture info check for lhc detailed aperture.
   void InfoOKForLHCDetailed();
 
-  /// aperture info check for rectellipse aperture
+  /// Aperture info check for rectellipse aperture.
   void InfoOKForRectEllipse();
 
-  /// aperture info check for racetrack aperture
+  /// Aperture info check for racetrack aperture.
   void InfoOKForRaceTrack();
 
-  /// aperture info check for octagon aperture
-  void InfoOKForOctagonal(); 
+  /// Aperture info check for octagonal aperture.
+  void InfoOKForOctagonal();
+
+  /// Aperture info check for CLIC PCL aperture.
+  void InfoOKForClicPCL();
 };
 
 #endif

@@ -9,7 +9,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
 	message(STATUS "GCC Version is ${GCC_VERSION}")
   endif()
   if (GCC_VERSION VERSION_LESS 4.9)
-     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11 fully - GCC4.9 or greater requried.")
+     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11 fully - GCC4.9 or greater required.")
   endif ()
   # if it passes the above if guard, then it's > GCC4.9 so C++14 ok
   message(STATUS "Compiler supports C++11 (fully) and C++14")

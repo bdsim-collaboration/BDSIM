@@ -54,7 +54,8 @@ public:
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  const G4double beamlineS = 0);
 
   /// Called at the beginning of a run. Override here to call PreGenerateEvents that
   /// will generate all coordinates and subtract the sample mean.

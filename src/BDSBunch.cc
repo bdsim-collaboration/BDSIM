@@ -58,12 +58,14 @@ G4double BDSBunch::EFromP(const G4double &pIn) const
 void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& /*distrType*/,
-			  G4Transform3D beamlineTransformIn)
+			  G4Transform3D beamlineTransformIn,
+			  G4double beamlineSIn)
 {
   particleDefinition = beamParticle;
   beamlineTransform  = beamlineTransformIn;
   nonZeroTransform   = beamlineTransform != G4Transform3D::Identity;
-  
+  beamlineS          = beamlineSIn;
+
   X0     = beam.X0 * CLHEP::m;
   Y0     = beam.Y0 * CLHEP::m;
   Z0     = beam.Z0 * CLHEP::m;
@@ -94,7 +96,7 @@ void BDSBunch::SetOptions(const BDSParticleDefinition* beamParticle,
 
   Zp0 = CalculateZp(Xp0,Yp0,beam.Zp0);
 
-  if (S0 > 0)
+  if (S0 >= beamlineS && BDS::IsFinite(beamlineS))
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using curvilinear transform" << G4endl;

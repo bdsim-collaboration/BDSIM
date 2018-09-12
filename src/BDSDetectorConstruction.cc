@@ -204,10 +204,12 @@ void BDSDetectorConstruction::BuildBeamlines()
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
   G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
-
+  G4double      initialS         = BDSGlobalConstants::Instance()->BeamlineS();
+  
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
 					      "main beam line",
 					      initialTransform,
+					      initialS,
 					      circular);
 
   if (mainBeamline.massWorld->empty())
@@ -233,11 +235,13 @@ void BDSDetectorConstruction::BuildBeamlines()
       // TBC - so by default if placement.s is finite, it'll be made w.r.t. the main beam line
       // but this could be any beam line in future if we find the right beam line to pass in.
       G4Transform3D startTransform = CreatePlacementTransform(placement, mbl);
-      
+      G4double      startS         = mbl->back()->GetSPositionEnd(); 
+
       // aux beam line must be non-circular by definition to branch off of beam line (for now)
       BDSBeamlineSet extraBeamline = BuildBeamline(parserLine,
 						   placement.sequence,
-						   startTransform);
+						   startTransform,
+						   startS);
       
       acceleratorModel->RegisterBeamlineSetExtra(placement.sequence, extraBeamline);
     }
@@ -246,10 +250,11 @@ void BDSDetectorConstruction::BuildBeamlines()
 BDSBeamlineSet BDSDetectorConstruction::BuildBeamline(const GMAD::FastList<GMAD::Element>& beamLine,
 						      G4String             name,
 						      const G4Transform3D& initialTransform,
+						      G4double             initialS,
 						      G4bool               beamlineIsCircular)
 {
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory(brho, beta0);
-  BDSBeamline* massWorld = new BDSBeamline(initialTransform);
+  BDSBeamline* massWorld = new BDSBeamline(initialTransform, initialS);
     
   if (beamlineIsCircular)
     {

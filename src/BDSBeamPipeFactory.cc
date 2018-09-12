@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipeFactoryCircularVacuum.hh"
+#include "BDSBeamPipeFactoryClicPCL.hh"
 #include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipeFactoryLHC.hh"
@@ -56,6 +57,7 @@ BDSBeamPipeFactory::~BDSBeamPipeFactory()
   delete BDSBeamPipeFactoryRaceTrack::Instance();
   delete BDSBeamPipeFactoryOctagonal::Instance();
   delete BDSBeamPipeFactoryCircularVacuum::Instance();
+  delete BDSBeamPipeFactoryClicPCL::Instance();
   instance = nullptr;
 }
 
@@ -81,6 +83,8 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
       {return BDSBeamPipeFactoryOctagonal::Instance(); break;}
     case BDSBeamPipeType::circularvacuum:
       {return BDSBeamPipeFactoryCircularVacuum::Instance(); break;}
+    case BDSBeamPipeType::clicpcl:
+      {return BDSBeamPipeFactoryClicPCL::Instance(); break;}
     default:
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;
@@ -138,9 +142,6 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						G4double        beamPipeThickness,
 						G4Material*     beamPipeMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipe(name,length,aper1,aper2,aper3,aper4,
 				 vacuumMaterial,beamPipeThickness,beamPipeMaterial);
@@ -159,9 +160,6 @@ BDSBeamPipe*  BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						 G4double        beamPipeThickness,
 						 G4Material*     beamPipeMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipe(name,length,inputFaceNormal,outputFaceNormal,aper1,
 				 aper2,aper3,aper4,vacuumMaterial,beamPipeThickness,

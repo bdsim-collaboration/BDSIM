@@ -24,6 +24,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUndulator.hh"
 #include "BDSUtilities.hh"
@@ -34,7 +35,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4VisAttributes.hh"
 
 #include <cmath>
-#include <include/BDSGlobalConstants.hh>
 
 BDSUndulator::BDSUndulator(G4String   nameIn,
 			   G4double   lengthIn,
@@ -45,7 +45,7 @@ BDSUndulator::BDSUndulator(G4String   nameIn,
 			   BDSBeamPipeInfo* beamPipeInfoIn,
 			   BDSFieldInfo*    vacuumFieldInfoIn,
 			   BDSFieldInfo*    outerFieldInfoIn,
-			   G4String          materialIn):
+			   G4String         materialIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "undulator", beamPipeInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),

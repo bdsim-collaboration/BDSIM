@@ -46,7 +46,7 @@ void BDSOutputROOTEventHeader::Flush()
   clhepVersion  = CLHEP::Version::String();
   timeStamp     = "";
   fileType      = "BDSIM";
-  dataVersion   = 2;
+  dataVersion   = 3;
   
 #ifndef __ROOTDOUBLE__
   doublePrecisionOutput = false;

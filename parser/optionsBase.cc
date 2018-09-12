@@ -83,6 +83,7 @@ OptionsBase::OptionsBase()
   beamlineAxisZ     = 0;
   beamlineAngle     = 0;
   beamlineAxisAngle = false;
+  beamlineS         = 0;
 
   eventNumberOffset       = 0;
 

@@ -167,6 +167,7 @@ void Options::PublishMembers()
   publish("beamlineAxisZ",     &Options::beamlineAxisZ);
   publish("beamlineAngle",     &Options::beamlineAngle);
   publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
+  publish("beamlineS",         &Options::beamlineS);
 
   publish("checkOverlaps",     &Options::checkOverlaps);
   publish("eventNumberOffset", &Options::eventNumberOffset);

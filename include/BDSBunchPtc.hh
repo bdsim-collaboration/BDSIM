@@ -39,7 +39,8 @@ public:
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  const G4double beamlineS = 0);
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   
 private:
@@ -55,6 +56,9 @@ private:
   std::vector<double*> ptcData; ///< Data.
 
   G4bool loopedOver;  ///< Whether we've reset to loop over the file again.
+
+  G4double beta = 1.0; ///< Velocity w.r.t. speed of light. Needed to convert mom. to energy.
+
 };
 
 #endif

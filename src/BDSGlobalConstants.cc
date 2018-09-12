@@ -141,7 +141,7 @@ void BDSGlobalConstants::InitialiseBeamlineTransform()
       CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(phi, theta, psi);
       rm = G4RotationMatrix(ang);
     }
-
+  
   beamlineTransform = G4Transform3D(rm, offset);
 }
 

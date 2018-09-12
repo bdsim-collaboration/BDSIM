@@ -36,7 +36,8 @@ std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
    {BDSBeamPipeType::rectellipse,    "rectellipse"},
    {BDSBeamPipeType::racetrack,      "racetrack"},
    {BDSBeamPipeType::octagonal,      "octagonal"},
-   {BDSBeamPipeType::circularvacuum, "circularvacuum"}
+   {BDSBeamPipeType::circularvacuum, "circularvacuum"},
+   {BDSBeamPipeType::clicpcl,        "clicpcl"}
 });	
 
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
@@ -52,6 +53,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["racetrack"]      = BDSBeamPipeType::racetrack;
   types["octagonal"]      = BDSBeamPipeType::octagonal;
   types["circularvacuum"] = BDSBeamPipeType::circularvacuum;
+  types["clicpcl"]        = BDSBeamPipeType::clicpcl;
 
   apertureType.toLower();
 
