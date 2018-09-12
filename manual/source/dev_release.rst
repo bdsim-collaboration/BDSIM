@@ -21,10 +21,13 @@ For each submodule:
 
 3. Tag submodule repository versions.
 4. Update submodules in bdsim repository.
-5. Update version history (including submodule versions) in manual source.
-6. Regenerate BDSIM manual and commit new version. Upload to website.
-7. Merge release candidate branch back into develop.
-8. In develop, put back README, CMakeLists.txt to new version.develop.
-9. Merge release candidate branch into master then delete.
-10. Check all tests complete locally given merge before pushing.
-11. Tag master branch for version number.
+5. If the data format has changed increment the data version in output
+   header structure.
+6. Update version history (including submodule and data versions) in
+   manual source.
+7. Regenerate BDSIM manual and commit new version. Upload to website.
+8. Merge release candidate branch back into develop.
+9. In develop, put back README, CMakeLists.txt to new version.develop.
+10. Merge release candidate branch into master then delete.
+11. Check all tests complete locally given merge before pushing.
+12. Tag master branch for version number.

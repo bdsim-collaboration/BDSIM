@@ -111,6 +111,7 @@ namespace GMAD
     double beamlineAxisZ;
     double beamlineAngle;
     bool   beamlineAxisAngle;
+    double beamlineS;
     ///@}   
 
     int    eventNumberOffset;

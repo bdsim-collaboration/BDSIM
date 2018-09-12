@@ -173,6 +173,7 @@ public:
   inline G4double MaxTrackLength()           const {return G4double(options.maximumTrackLength)*CLHEP::m;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
+  inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
@@ -329,7 +330,7 @@ private:
 
   BDSOutputType        outputType;         ///< Output type enum for output format to be used.
   BDSIntegratorSetType integratorSet;      ///< Integrator type enum for integrator set to be used.
-  G4Transform3D         beamlineTransform; ///< Transform for start of beam line.
+  G4Transform3D        beamlineTransform;  ///< Transform for start of beam line.
 };
 
 inline void BDSGlobalConstants::SetBeamParticleDefinition(BDSParticleDefinition* particleDefinitionIn)
@@ -340,5 +341,6 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
+
 
 #endif

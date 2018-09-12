@@ -73,7 +73,7 @@ void BDSOutputROOTEventSampler<U>::Fill(const BDSSamplerHit* hit)
   
   modelID = hit->beamlineIndex;
   
-  weight.push_back((U &&) hit->coords.weight);
+  weight.push_back((U) (hit->coords.weight));
   partID.push_back(hit->pdgID);
   parentID.push_back(hit->parentID);
   trackID.push_back(hit->trackID);

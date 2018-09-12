@@ -55,7 +55,7 @@ public:
   /// Return beam.
   const GMAD::Beam& GetBeam() const {return beam;}
 
-  /// Return beam non-const. Requried when loading a file and need to change beam parameters to match.
+  /// Return beam non-const. Required when loading a file and need to change beam parameters to match.
   GMAD::Beam& GetBeam() {return beam;}
 
   /// Return bare beam base class.

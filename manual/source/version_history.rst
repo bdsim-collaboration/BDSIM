@@ -1,14 +1,19 @@
-V1.3 - 2018 / ?? / ??
+V1.3 - 2018 / 09 / ??
 =====================
 
 New Features
 ------------
+
+* All Geant4 reference physics lists are now available.
+* New beam pipe aperture for the CLIC post collision line.
 
 General
 -------
 
 Bug Fixes
 ---------
+
+* Fixed reloading user file when reading more particles than defined in the file.
 
 Output Changes
 --------------
@@ -103,6 +108,7 @@ General
 Output Changes
 --------------
 
+* Data v3 incremented from v2.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.

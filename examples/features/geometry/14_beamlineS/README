@@ -1,0 +1,14 @@
+examples derived from other examples 
+
+
+multiple beam lines
+-------------------
+
+
+simpleCollimator (sc)
+---------------------
+
+sc.gmad			normal example (adapted to have twiss beam parameters)
+sc_loss.gmad		normal example (with larger emittance to give loss)
+sc_beamlineS.gmad 	is shifted by option, beamlineS=XX*m;
+sc_beamlineS_loss.gmad  is shifted by option, beamlineS=XX*m with losses to check loss histograms

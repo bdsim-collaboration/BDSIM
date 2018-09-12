@@ -135,21 +135,23 @@ void BDSBeamPipeInfo::CheckApertureInfo()
   switch (beamPipeType.underlying())
     {
     case BDSBeamPipeType::circular:
-      InfoOKForCircular();    break;
+      {InfoOKForCircular();    break;}
     case BDSBeamPipeType::elliptical:
-      InfoOKForElliptical();  break;
+      {InfoOKForElliptical();  break;}
     case BDSBeamPipeType::rectangular:
-      InfoOKForRectangular(); break;
+      {InfoOKForRectangular(); break;}
     case BDSBeamPipeType::lhc:
-      InfoOKForLHC();         break;
+      {InfoOKForLHC();         break;}
     case BDSBeamPipeType::lhcdetailed:
-      InfoOKForLHCDetailed(); break;
+      {InfoOKForLHCDetailed(); break;}
     case BDSBeamPipeType::rectellipse:
-      InfoOKForRectEllipse(); break;
+      {InfoOKForRectEllipse(); break;}
     case BDSBeamPipeType::racetrack:
-      InfoOKForRaceTrack();   break;
+      {InfoOKForRaceTrack();   break;}
     case BDSBeamPipeType::octagonal:
-      InfoOKForOctagonal();   break;
+      {InfoOKForOctagonal();   break;}
+    case BDSBeamPipeType::clicpcl:
+      {InfoOKForClicPCL();     break;}
     default:
       InfoOKForCircular();
     }
@@ -190,8 +192,21 @@ BDSExtent BDSBeamPipeInfo::Extent() const
           extY = aper2 + aper3;
           break;
         }
-      default:break;
+    case BDSBeamPipeType::clicpcl:
+      {// this one is asymmetric so done separately
+	G4double extentX     = aper1 + beamPipeThickness;
+	G4double extentYLow  = -(std::abs(aper3) + beamPipeThickness);
+	G4double extentYHigh = aper2 + aper4 + beamPipeThickness;
+	BDSExtent ext = BDSExtent(-extentX,     extentX,
+				  extentYLow,   extentYHigh,
+				  0,0);
+	return ext;
+	break;
+      }
+    default:break;
     }
+  extX += beamPipeThickness;
+  extY += beamPipeThickness;
   BDSExtent ext = BDSExtent(extX, extY, 0);
   return ext;
 }
@@ -245,33 +260,21 @@ void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,
 
 void BDSBeamPipeInfo::InfoOKForCircular()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, false, false, false);
 }
 
 void BDSBeamPipeInfo::InfoOKForElliptical()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, false, false);
 }
 
 void BDSBeamPipeInfo::InfoOKForRectangular()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, false, false);
 }
 
 void BDSBeamPipeInfo::InfoOKForLHC()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, true, false);
 
   if ((aper3 > aper1) and (aper2 < aper3))
@@ -289,17 +292,11 @@ void BDSBeamPipeInfo::InfoOKForLHC()
 
 void BDSBeamPipeInfo::InfoOKForLHCDetailed()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   InfoOKForLHC();
 }
 
 void BDSBeamPipeInfo::InfoOKForRectEllipse()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, true, true);
 
   // TBC
@@ -323,17 +320,11 @@ void BDSBeamPipeInfo::InfoOKForRectEllipse()
 
 void BDSBeamPipeInfo::InfoOKForRaceTrack()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, true, false);
 }
 
 void BDSBeamPipeInfo::InfoOKForOctagonal()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CheckRequiredParametersSet(true, true, true, true);
 
   if (aper3 >= aper1)
@@ -342,3 +333,7 @@ void BDSBeamPipeInfo::InfoOKForOctagonal()
     {G4cerr << "aper4 is >= aper2 - invalid for an octagonal aperture"; exit(1);}
 }
 
+void BDSBeamPipeInfo::InfoOKForClicPCL()
+{
+  CheckRequiredParametersSet(true, true, true, false);
+}

@@ -1,0 +1,55 @@
+d1: drift, l=1*m;
+d2: drift, l=3*m;
+d3: drift, l=5*m;
+sb1: sbend, l=1*m, angle=0.5;
+sb2: sbend, l=1*m, angle=-0.5;
+q1: quadrupole, l=0.2*m, k1=4.166666;
+q2: quadrupole, l=0.2*m, k1=-4.16666666667;
+
+fodo: line=(d1,q1,d1,q2);
+mainLine: line=(d2,sb1,d2,sb2,d2,fodo,fodo);
+
+auxLine1: line=(d3,sb1,d1,sb2,d1,fodo,d1);
+auxLine2: line=(d1,sb1,d1,sb2,d1,fodo,d1);
+auxLine3: line=(fodo);
+
+use, mainLine;
+
+beam, particle="e-",
+      energy=3.0*GeV,
+      distrType="gausstwiss",
+      emitx=1e-11*m,
+      emity=1e-11*m,
+      betx=1e-6*m,
+      bety=1e-6*m,
+      alfx=0.0,
+      alfy=0.0,
+      X0=0.000,
+      Y0=0.000;
+
+option, beamlineS=10*m;
+sample, all;
+
+auxLine1Place: placement, sequence = "auxLine1",
+	       		  referenceElement = "d2",
+			  referenceElementNumber = 2,
+			  x = -5*cm,
+			  z = -1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = -0.2;
+
+auxLine2Place: placement, sequence = "auxLine2",
+	       		  referenceElement = "d2",
+			  referenceElementNumber = 2,
+			  x = -10*cm,
+			  z = -1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = -0.5;
+
+auxLine3Place: placement, sequence="auxLine3",
+	       		  x = 1*m,
+			  axisAngle = 1,
+			  axisY = 1,
+			  angle = 0.2;
