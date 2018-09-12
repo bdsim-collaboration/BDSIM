@@ -44,7 +44,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 G4double BDSBeamline::paddingLength = -1;
 
 BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
-			 G4RotationMatrix* initialGlobalRotation)
+			 G4RotationMatrix* initialGlobalRotation,
+			 G4double          initialS)
 {
   // initialise extents
   totalChordLength      = 0;
@@ -68,7 +69,7 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousReferencePositionEnd = initialGlobalPosition;
 
   // initial s coordinate
-  previousSPositionEnd = 0;
+  previousSPositionEnd = initialS;
 
   // gap between each element added to the beam line
   if (paddingLength <= 0)
@@ -76,9 +77,11 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   //paddingLength = 3*CLHEP::mm;
 }
 
-BDSBeamline::BDSBeamline(G4Transform3D initialTransform):
+BDSBeamline::BDSBeamline(G4Transform3D initialTransform,
+			 G4double      initialS):
   BDSBeamline(initialTransform.getTranslation(),
-	      new G4RotationMatrix(initialTransform.getRotation()))
+	      new G4RotationMatrix(initialTransform.getRotation()),
+	      initialS)
 {;}
 
 BDSBeamline::~BDSBeamline()
@@ -579,7 +582,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
 						       G4int* indexOfFoundElement) const
 {
   // check if s is in the range of the beamline
-  if (s > totalArcLength)
+  if (s-previousSPositionEnd > totalArcLength) // need to offset start S position 
     {
       G4cout << __METHOD_NAME__
 	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;

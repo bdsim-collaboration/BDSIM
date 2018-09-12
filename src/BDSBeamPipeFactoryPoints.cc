@@ -75,6 +75,18 @@ void BDSBeamPipeFactoryPoints::AppendAngle(std::vector<G4TwoVector>& vec,
 					   G4double xOffset,
 					   G4double yOffset)
 {
+  AppendAngleEllipse(vec, startAngle, finishAngle, radius, radius,nPoints, xOffset, yOffset);
+}
+
+void BDSBeamPipeFactoryPoints::AppendAngleEllipse(std::vector<G4TwoVector>& vec,
+						  G4double startAngle,
+						  G4double finishAngle,
+						  G4double radiusA,
+						  G4double radiusB,
+						  G4int    nPoints,
+						  G4double xOffset,
+						  G4double yOffset)
+  {
   G4double diff = finishAngle - startAngle;
   G4double delta = diff / (G4double)nPoints;
 #ifdef BDSDEBUG
@@ -86,8 +98,8 @@ void BDSBeamPipeFactoryPoints::AppendAngle(std::vector<G4TwoVector>& vec,
 #endif
   for (G4double ang = startAngle; ang < finishAngle; ang += delta)
     { // l for local
-      G4double xl = xOffset + radius*sin(ang);
-      G4double yl = yOffset + radius*cos(ang);
+      G4double xl = xOffset + radiusA*std::sin(ang);
+      G4double yl = yOffset + radiusB*std::cos(ang);
       AppendPoint(vec, xl, yl);
     }
 }
@@ -108,7 +120,7 @@ void BDSBeamPipeFactoryPoints::CreateSolids(G4String name,
   G4double zScale = 1; // the scale at each end of the points = 1
   vacuumSolid = new G4ExtrudedSolid(name + "_vacuum_solid", // name
 				    vacuumEdge,             // vector of TwoVector points
-				    zHalfLength - 2*lengthSafety, // half length for +- planes
+				    zHalfLength - lengthSafety, // half length for +- planes
 				    zOffsets, zScale,       // dx,dy offset for each face, scaling
 				    zOffsets, zScale);      // dx,dy offset for each face, scaling
 
@@ -157,7 +169,7 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
   CreateSolids(name + "_straight", length, true);
 
   // now intersect them with one G4CutTubs to get the angled faces
-  G4double zHalfLength          = length*0.5 - 2*lengthSafety;
+  G4double zHalfLength          = length*0.5 - lengthSafety;
   G4double zHalfLengthContainer = length*0.5;
   
   G4VSolid* faceSolid = new G4CutTubs(name + "_face_solid", // name

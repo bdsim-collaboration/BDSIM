@@ -167,6 +167,7 @@ void Options::PublishMembers()
   publish("beamlineAxisZ",     &Options::beamlineAxisZ);
   publish("beamlineAngle",     &Options::beamlineAngle);
   publish("beamlineAxisAngle", &Options::beamlineAxisAngle);
+  publish("beamlineS",         &Options::beamlineS);
 
   publish("checkOverlaps",     &Options::checkOverlaps);
   publish("eventNumberOffset", &Options::eventNumberOffset);
@@ -282,6 +283,7 @@ void Options::PublishMembers()
   publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("sampleElementsWithPoleface",  &Options::sampleElementsWithPoleface);
   publish("nominalMatrixRelativeMomCut", &Options::nominalMatrixRelativeMomCut);
+  publish("teleporterFullTransform",  &Options::teleporterFullTransform);
 
   // output
   publish("nperfile",                       &Options::numberOfEventsPerNtuple);

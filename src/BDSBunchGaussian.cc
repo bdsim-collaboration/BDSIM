@@ -67,9 +67,10 @@ BDSBunchGaussian::~BDSBunchGaussian()
 void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 				  const GMAD::Beam& beam,
 				  const BDSBunchType& distrType,
-				  G4Transform3D beamlineTransformIn)
+				  G4Transform3D beamlineTransformIn,
+				  const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
 
   // require sigmaE to be finite for sigma matrix to be positive definite
   // set to very small value if 0

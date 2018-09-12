@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSPhysicsMuon.hh"
 #include "BDSPhysicsSynchRad.hh"
 #include "BDSPhysicsTransitionRadiation.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/fastlist.h"
@@ -105,6 +106,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #if G4VERSION_NUMBER > 1039
 #include "BDSPhysicsChannelling.hh"
+#include "G4EmDNAPhysics.hh"
+#include "G4EmDNAPhysics_option1.hh"
+#include "G4EmDNAPhysics_option2.hh"
+#include "G4EmDNAPhysics_option3.hh"
+#include "G4EmDNAPhysics_option4.hh"
+#include "G4EmDNAPhysics_option5.hh"
+#include "G4EmDNAPhysics_option6.hh"
+#include "G4EmDNAPhysics_option7.hh"
 #include "G4HadronPhysicsShieldingLEND.hh"
 #endif
 
@@ -135,6 +144,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
+  temporaryName(""),
   opticalPhysics(nullptr),
   emWillBeUsed(false),
   usingIons(false)
@@ -203,6 +213,14 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #endif
 #if G4VERSION_NUMBER > 1039
   physicsConstructors.insert(std::make_pair("channelling",            &BDSModularPhysicsList::Channelling));
+  physicsConstructors.insert(std::make_pair("dna",                    &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_1",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_2",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_3",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_4",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_5",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_6",                  &BDSModularPhysicsList::DNA));
+  physicsConstructors.insert(std::make_pair("dna_7",                  &BDSModularPhysicsList::DNA));
   physicsConstructors.insert(std::make_pair("shielding_lend",         &BDSModularPhysicsList::ShieldingLEND));
 #endif
 
@@ -257,7 +275,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 #if G4VERSION_NUMBER > 1019
   for (const auto& name : {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"})
     {incompatible[name].push_back("em_gs");}
-  incompatible["em_gs"] = {"em",    "em_ss",  "em_wvi", "em_1", "em_2", "em_3", "em_4"};
+  incompatible["em_gs"] = {"em", "em_ss", "em_wvi", "em_1", "em_2", "em_3", "em_4"};
 #endif
 #if G4VERSION_NUMBER > 1020
   incompatible["decay"].push_back("decay_spin"); // append for safety in future
@@ -285,7 +303,7 @@ BDSModularPhysicsList::~BDSModularPhysicsList()
 
 void BDSModularPhysicsList::ConstructParticle()
 {
-  ConstructMinimumParticleSet();
+  BDS::ConstructMinimumParticleSet();
   G4VModularPhysicsList::ConstructParticle();
 }
 
@@ -302,34 +320,6 @@ void BDSModularPhysicsList::Print()
       G4String result = (physics.second ? "active" : "inactive");
       G4cout << std::setw(27) << ("\"" + physics.first + "\": ") << result << G4endl;
     }
-}
-
-void BDSModularPhysicsList::PrintDefinedParticles() const
-{
-  G4cout << __METHOD_NAME__ << "Defined particles: " << G4endl;
-  auto it = G4ParticleTable::GetParticleTable()->GetIterator();
-  it->reset();
-  while ((*it)())
-    {G4cout <<  it->value()->GetParticleName() << " ";}
-  G4cout << G4endl;
-}
-
-void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
-{
-  auto particleName = globals->ParticleName();
-  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-
-  auto particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
-  if (!particle)
-    {// could be ion that isn't defined
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "primary particle not defined yet - could be ion" << G4endl;
-#endif
-      return;
-    }
-  auto pl = particle->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    { G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl; }
 }
 
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
@@ -351,6 +341,8 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       G4String name = G4String(physicsListName); // convert string to G4String.
       name.toLower(); // change to lower case - physics lists are case insensitive
 
+      temporaryName = name; // copy to temporary variable
+      
       // search aliases
       auto result = aliasToOriginal.find(name);
       if (result != aliasToOriginal.end())
@@ -387,27 +379,6 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 
   //Always load cuts and limits.
   CutsAndLimits();
-}
-
-void BDSModularPhysicsList::ConstructMinimumParticleSet()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // e-, e+, v_e, v_e(bar)
-  G4Electron::ElectronDefinition();
-  G4Positron::PositronDefinition();
-  G4NeutrinoE::NeutrinoEDefinition();
-  G4AntiNeutrinoE::AntiNeutrinoEDefinition();
-
-  // p, pbar, neutron, anti-neutron
-  G4Proton::ProtonDefinition();
-  G4AntiProton::AntiProtonDefinition();
-  G4Neutron::NeutronDefinition();
-  G4AntiNeutron::AntiNeutronDefinition();
-
-  // photon
-  G4Gamma::Gamma();
 }
 
 void BDSModularPhysicsList::ConstructAllLeptons()
@@ -512,71 +483,6 @@ void BDSModularPhysicsList::SetCuts()
 #endif
   
   DumpCutValuesTable(); 
-}
-
-BDSParticleDefinition* BDSModularPhysicsList::ConstructBeamParticle(G4String particleName,
-								    G4double totalEnergy,
-								    G4double ffact) const
-{
-  particleName.toLower();
-
-  BDSParticleDefinition* particleDefB = nullptr; // result can be constructed in two ways
-  
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  
-  if (particleName.contains("ion"))
-    {
-      usingIons = true;
-      G4GenericIon::GenericIonDefinition(); // construct general ion particle
-      auto ionDef = new BDSIonDefinition(particleName); // parse the ion definition
-
-      G4IonTable* ionTable = particleTable->GetIonTable();
-      G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
-      G4double charge = ionDef->Charge(); // correct even if overridden
-      particleDefB = new BDSParticleDefinition(particleName, mass, charge,
-					       totalEnergy, ffact, ionDef);
-      // this takes ownership of the ion definition
-    }
-  else
-    {
-      ConstructBeamParticleG4(particleName);
-      auto particleDef = particleTable->FindParticle(particleName);
-      if (!particleDef)
-	{
-	  G4cerr << "Particle \"" << particleName << "\" not found: quitting!" << G4endl;
-	  exit(1);
-	}
-      particleDefB = new BDSParticleDefinition(particleDef, totalEnergy, ffact);
-    }
-
-  globals->SetBeamParticleDefinition(particleDefB); // export for bunch distribution
-  return particleDefB;
-}
-
-void BDSModularPhysicsList::ConstructBeamParticleG4(G4String name) const
-{
-  if (name == "proton")
-    {G4Proton::ProtonDefinition();}
-  else if (name == "antiproton")
-    {G4AntiProton::AntiProtonDefinition();}
-  else if (name == "e-")
-    {G4Electron::ElectronDefinition();}
-  else if (name == "e+")
-    {G4Positron::PositronDefinition();}
-  else if (name == "pi-")
-    {G4PionMinus::PionMinusDefinition();}
-  else if (name == "pi+")
-    {G4PionPlus::PionPlusDefinition();}
-  else if (name == "neutron")
-    {G4Neutron::NeutronDefinition();}
-  else if (name == "photon" || name == "gamma")
-    {G4Gamma::Gamma();}
-  else if (name == "mu-")
-    {G4MuonMinus::MuonMinusDefinition();}
-  else if (name == "mu+")
-    {G4MuonPlus::MuonPlusDefinition();}
-  else
-    {G4cerr << "Unknown particle type \"" << name << "\"" << G4endl;}
 }
 
 void BDSModularPhysicsList::ChargeExchange()
@@ -1137,6 +1043,36 @@ void BDSModularPhysicsList::DecayMuonicAtom()
 #endif
 
 #if G4VERSION_NUMBER > 1039
+void BDSModularPhysicsList::DNA()
+{
+  if (!physicsActivated["dna"])
+    {
+      // only one DNA physics list possible
+      if (temporaryName.contains("option"))
+	{
+	  if (temporaryName.contains("1"))
+	    {constructors.push_back(new G4EmDNAPhysics_option1());}
+	  if (temporaryName.contains("2"))
+	    {constructors.push_back(new G4EmDNAPhysics_option2());}
+	  if (temporaryName.contains("3"))
+	    {constructors.push_back(new G4EmDNAPhysics_option3());}
+	  if (temporaryName.contains("4"))
+	    {constructors.push_back(new G4EmDNAPhysics_option4());}
+	  if (temporaryName.contains("5"))
+	    {constructors.push_back(new G4EmDNAPhysics_option5());}
+	  if (temporaryName.contains("6"))
+	    {constructors.push_back(new G4EmDNAPhysics_option6());}
+	  if (temporaryName.contains("7"))
+	    {constructors.push_back(new G4EmDNAPhysics_option7());}
+	}
+      else
+	{constructors.push_back(new G4EmDNAPhysics());}
+      
+      physicsActivated["dna"] = true;
+    }
+}
+
+
 void BDSModularPhysicsList::Channelling()
 {
   if (!physicsActivated["channelling"])
@@ -1156,54 +1092,3 @@ void BDSModularPhysicsList::ShieldingLEND()
     }
 }
 #endif
-
-void BDSModularPhysicsList::BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases)
-{
-  // particles we know we can bias
-  std::map<G4String, G4bool> particlesToBias =
-    {
-      {"e-"     , false},
-      {"e+"     , false},
-      {"gamma"  , false},
-      {"proton" , false},
-      {"mu-"    , false},
-      {"mu+"    , false},
-      {"pi-"    , false},
-      {"pi+"    , false}
-    };
-
-  // iterate through bias structures and turn on biasing for that particle if it's in the
-  // map of acceptable particle definitions.
-  for (auto b : biases)
-    {
-      G4String name = G4String(b.particle);
-      if (particlesToBias.find(name) != particlesToBias.end())
-	{particlesToBias[name] = true;}
-      else
-	{
-	  G4cerr << __METHOD_NAME__ << "Not possible to bias \"" << name << "\"" << G4endl;
-	  exit(1);
-	}
-    }
-
-  // check whether we need to construct or attach biasing at all
-  typedef std::pair<const G4String, G4bool> mapvalue;
-  G4bool anyBiases = std::any_of(particlesToBias.begin(),
-				 particlesToBias.end(),
-				 [](mapvalue i){return i.second;});
-
-  if (!anyBiases)
-    {return;}
-
-  // there are biases
-  G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
-  for (auto part : particlesToBias)
-    {
-      if (part.second)
-        {
-          G4cout << __METHOD_NAME__ << "wrapping \"" << part.first << "\" for biasing" << G4endl;
-          physBias->Bias(part.first);
-        }
-    }
-  RegisterPhysics(physBias);
-}

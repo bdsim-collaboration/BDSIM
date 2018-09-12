@@ -7,3 +7,4 @@ simple_testing(aperture-rectellipse    "--file=6_rectellipse.gmad"     ${OVERLAP
 simple_testing(aperture-racetrack      "--file=7_racetrack.gmad"       ${OVERLAP_CHECK})
 simple_testing(aperture-octagonal      "--file=8_octagonal.gmad"       ${OVERLAP_CHECK})
 simple_testing(aperture-circularvacuum "--file=9_circular_vacuum.gmad" ${OVERLAP_CHECK})
+simple_testing(aperture-clicpcl        "--file=10_clicpcl.gmad"        ${OVERLAP_CHECK})

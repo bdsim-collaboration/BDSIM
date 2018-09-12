@@ -576,7 +576,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::euler:
       integrator = new BDSIntegratorEuler(eqOfM); break;
     case BDSIntegratorType::kickerthin:
-      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorKickerThin(strength, brho, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::rmatrixthin:
       integrator = new BDSIntegratorRMatrixThin(strength,eqOfM, info.BeamPipeRadius()); break;
     case BDSIntegratorType::g4constrk4:
@@ -729,10 +729,10 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
   G4MagneticField* bGlobalField       = new BDSFieldMagZero();
   G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
+								    (*info.MagnetStrength())["length"]);
   BDSFieldObjects* completeField      = new BDSFieldObjects(&info, bGlobalField,
 							    bEqOfMotion, integrator);
   return completeField;

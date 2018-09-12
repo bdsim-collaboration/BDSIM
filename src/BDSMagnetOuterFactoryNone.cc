@@ -28,56 +28,37 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>                         // for std::pair
 #include <algorithm>                       // for std::max
 
-BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::_instance = nullptr;
+BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::instance = nullptr;
 
 BDSMagnetOuterFactoryNone* BDSMagnetOuterFactoryNone::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactoryNone();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactoryNone();}
+  return instance;
 }
 
 BDSMagnetOuterFactoryNone::BDSMagnetOuterFactoryNone()
-{
-}
+{;}
 
 BDSMagnetOuterFactoryNone::~BDSMagnetOuterFactoryNone()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name*/,
-							    G4double      /*length*/,
-							    BDSBeamPipe*  /*beamPipe*/,
-							    G4double      /*horizontalWidth*/,
-							    G4double      /*containerLength*/,
-							    G4double      /*angleIn*/,
-							    G4double      /*angelOut*/,
-							    G4bool        /*yokeOnLeft*/,
-							    G4bool        /*hStyle*/,
-							    G4Material*   /*outerMaterial*/,
-							    G4bool        /*buildEndPiece*/,
-							    G4double      /*vhRatio*/,
-							    G4double      /*coilWidthFraction*/,
-							    G4double      /*coilHeightFraction*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String           /*name*/,
+							    G4double           /*length*/,
+							    const BDSBeamPipe* /*beamPipe*/,
+							    G4double           /*containerLength*/,
+							    const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /*name*/,
-								 G4double      /*length*/,
-								 BDSBeamPipe*  /*beamPipe*/,
-								 G4double      /*horizontalWidth*/,
-								 G4double      /*containerLength*/,
-								 G4double      /*angleIn*/,
-								 G4double      /*angleOut*/,
-								 G4bool        /*yokeOnLeft*/,
-								 G4bool        /*hStyle*/,
-								 G4Material*   /*outerMaterial*/,
-								 G4bool        /*buildEndPiece*/,
-								 G4double      /*vhRatio*/,
-								 G4double      /*coilWidthFraction*/,
-								 G4double      /*coilHeightFraction*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String           /*name*/,
+								 G4double           /*length*/,
+								 const BDSBeamPipe* /*beamPipe*/,
+								 G4double           /*containerLength*/,
+								 const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -85,10 +66,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name*/,
 							    G4double      /*length*/,
 							    BDSBeamPipe*  /*beamPipe*/,
-							    G4double      /*horizontalWidth*/,
 							    G4double      /*containerLength*/,
-							    G4Material*   /*outerMaterial*/,
-							    G4bool        /*buildEndPiece*/)
+							    const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -96,10 +75,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+							   const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -107,10 +84,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -118,10 +93,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -129,10 +102,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -140,10 +111,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*/,
 							   G4double      /*length*/,
 							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+							   const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
@@ -151,38 +120,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*
 BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/,
 							  G4double      /*length*/,
 							  BDSBeamPipe*  /*beamPipe*/,
-							  G4double      /*horizontalWidth*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/,
-							  G4bool        /*buildEndPiece*/)
+							  const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*/,
-							   G4double      /*length*/,
-							   BDSBeamPipe*  /*beamPipe*/,
-							   G4double      /*horizontalWidth*/,
-							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/,
-							   G4bool        /*buildEndPiece*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuonSpoiler(G4String      /*name*/,
+							     G4double      /*length*/,
+							     BDSBeamPipe*  /*beamPipe*/,
+							     G4double      /*containerLength*/,
+							     const BDSMagnetOuterInfo* /*recipe*/)
 {
   return nullptr;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
-							G4double      /*length*/,
-							BDSBeamPipe*  /*beamPipe*/,
-							G4double      /*horizontalWidth*/,
-							G4double      /*containerLength*/,
-							G4bool        /*yokeOnLeft*/,
-							G4bool        /*vertical*/,
-							G4Material*   /*outerMaterial*/,
-							G4bool        /*buildEndPiece*/,
-							G4bool        /*hStyle*/,
-							G4double      /*vhRatio*/,
-							G4double      /*coilWidthFraction*/,
-							G4double      /*coiHeightFraction*/)
+BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String                  /*name*/,
+							G4double                  /*length*/,
+							const BDSBeamPipe*        /*beamPipe*/,
+							G4double                  /*containerLength*/,
+							const BDSMagnetOuterInfo* /*recipe*/,
+							G4bool                    /*vertical*/)
 {
   return nullptr;
 }

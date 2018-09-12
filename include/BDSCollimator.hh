@@ -16,13 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BDSCOLLIMATORBASE_H
-#define BDSCOLLIMATORBASE_H
+#ifndef BDSCOLLIMATOR_H
+#define BDSCOLLIMATOR_H
 
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 types / globals
 
+class G4Colour;
 class G4VSolid;
 
 /**
@@ -31,21 +32,21 @@ class G4VSolid;
  * @author Laurie Nevay
  */
 
-class BDSCollimatorBase: public BDSAcceleratorComponent
+class BDSCollimator: public BDSAcceleratorComponent
 {
 public:
-  BDSCollimatorBase(G4String name,
-		    G4double length,
-		    G4double horizontalWidth,
-		    G4String type,
-		    G4double xApertureIn        = 0,
-		    G4double yApertureIn        = 0,
-		    G4double xOutApertureIn     = 0,
-		    G4double yOutApertureIn     = 0,
-		    G4String collimatorMaterial = "copper",
-		    G4String vacuumMaterial     = "vacuum",
-		    G4String colourIn           = "collimator");
-  virtual ~BDSCollimatorBase();
+  BDSCollimator(G4String  name,
+		G4double  length,
+		G4double  horizontalWidth,
+		G4String  type,
+		G4double  xApertureIn        = 0,
+		G4double  yApertureIn        = 0,
+		G4double  xOutApertureIn     = 0,
+		G4double  yOutApertureIn     = 0,
+		G4String  collimatorMaterial = "copper",
+		G4String  vacuumMaterial     = "vacuum",
+		G4Colour* colourIn           = nullptr);
+  virtual ~BDSCollimator();
 
   /// Accessor for collimator material.
   virtual G4String Material() const {return collimatorMaterial;}
@@ -65,23 +66,23 @@ protected:
   G4VSolid* innerSolid;
   G4VSolid* vacuumSolid;
   ///@}
-  G4double horizontalWidth;    ///< Horizontal width.
-  G4double xAperture;          ///< Aperture at entrance in x dimension
-  G4double yAperture;          ///< Aperture at entrance in y dimension
-  G4double xOutAperture;       ///< Aperture at exit in x dimension
-  G4double yOutAperture;       ///< Aperture at exit in y dimension
-  G4bool tapered;              ///< Flag for tapered collimator
-  G4String collimatorMaterial; ///< Material
-  G4String vacuumMaterial;     ///< Vacuum material
-  G4String colour;             ///< Colour of collimator
+  G4double  horizontalWidth;    ///< Horizontal width.
+  G4double  xAperture;          ///< Aperture at entrance in x dimension
+  G4double  yAperture;          ///< Aperture at entrance in y dimension
+  G4double  xOutAperture;       ///< Aperture at exit in x dimension
+  G4double  yOutAperture;       ///< Aperture at exit in y dimension
+  G4bool    tapered;            ///< Flag for tapered collimator
+  G4String  collimatorMaterial; ///< Material
+  G4String  vacuumMaterial;     ///< Vacuum material
+  G4Colour* colour;             ///< Colour of collimator
 
 private:
   /// Private default constructor to force the use of the supplied one.
-  BDSCollimatorBase() = delete;
+  BDSCollimator() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSCollimatorBase& operator=(const BDSCollimatorBase&) = delete;
-  BDSCollimatorBase(BDSCollimatorBase&) = delete;
+  BDSCollimator& operator=(const BDSCollimator&) = delete;
+  BDSCollimator(BDSCollimator&) = delete;
   /// @}
 };
 

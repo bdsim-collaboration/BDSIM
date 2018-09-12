@@ -33,13 +33,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <signal.h>
 
 #include "G4EventManager.hh" // Geant4 includes
+#include "G4GenericBiasingPhysics.hh"
 #include "G4GeometryManager.hh"
+#include "G4GeometryTolerance.hh"
 #include "G4ParallelWorldPhysics.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
-#include "G4GeometryTolerance.hh"
-#include "G4GenericBiasingPhysics.hh"
+#include "G4TrackingManager.hh"
+#include "G4VModularPhysicsList.hh"
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
@@ -52,12 +53,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
-#include "BDSModularPhysicsList.hh"
 #include "BDSOutput.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSParallelWorldUtilities.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSParticleDefinition.hh"
+#include "BDSPhysicsUtilities.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -77,7 +78,9 @@ int main(int argc,char** argv)
   /// Print header & program information
   G4cout<<"bdsim : version @BDSIM_VERSION@"<<G4endl;
   G4cout<<"        (C) 2001-@CURRENT_YEAR@ Royal Holloway University London"<<G4endl;
-  G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
+  G4cout<<G4endl;
+  G4cout<<"        Reference: https://arxiv.org/abs/1808.10745"<<G4endl;
+  G4cout<<"        Website:   http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
   /// Initialize executable command line options reader object
@@ -105,7 +108,8 @@ int main(int argc,char** argv)
 
   /// Force construction of global constants after parser has been initialised (requires
   /// materials first). This uses the options and beam from BDSParser.
-  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
+  /// Non-const as we'll update the particle definition.
+  BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
@@ -143,34 +147,42 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = parser->GetOptions().physicsList;
+
+  // sampler physics process for parallel world tracking must be instantiated BEFORE
+  // regular physics.
   // Note, we purposively don't create a parallel world process for the curvilinear
   // world as we don't need the track information from it - unreliable that way. We
   // query the geometry directly using our BDSAuxiliaryNavigator class.
   auto samplerPhysics = BDS::ConstructSamplerParallelPhysics(samplerWorlds);
-  BDSModularPhysicsList* physList  = new BDSModularPhysicsList(physicsListName);
-
+  G4VModularPhysicsList* physList = BDS::BuildPhysics(physicsListName);
+  
   // Construction of the physics lists defines the necessary particles and therefore
   // we can calculate the beam rigidity for the particle the beam is designed w.r.t. This
   // must happen before the geometry is constructed (which is called by
   // runManager->Initialize()).
   BDSParticleDefinition* beamParticle;
-  beamParticle = physList->ConstructBeamParticle(globalConstants->ParticleName(),
-						 globalConstants->BeamTotalEnergy(),
-						 globalConstants->FFact());
+  beamParticle = BDS::ConstructBeamParticle(globalConstants->ParticleName(),
+					    globalConstants->BeamTotalEnergy(),
+					    globalConstants->FFact());
+  globalConstants->SetBeamParticleDefinition(beamParticle);
   G4cout << "main> Beam particle properties: " << G4endl << *beamParticle;
+  // update rigidity where needed
   realWorld->SetRigidityForConstruction(beamParticle->BRho());
   realWorld->SetBeta0ForConstruction(beamParticle->Beta());
   BDSFieldFactory::SetDefaultRigidity(beamParticle->BRho());       // used for field loading
   BDSGeometryFactorySQL::SetDefaultRigidity(beamParticle->BRho()); // used for sql field loading
   
   BDS::RegisterSamplerPhysics(samplerPhysics, physList);
-  physList->BuildAndAttachBiasWrapper(parser->GetBiasing());
+  auto biasPhysics = BDS::BuildAndAttachBiasWrapper(parser->GetBiasing());
+  if (biasPhysics)//could be nullptr and can't be passed to geant4 like this
+    {physList->RegisterPhysics(biasPhysics);}
   runManager->SetUserInitialization(physList);
 
   /// Instantiate the specific type of bunch distribution.
   BDSBunch* bdsBunch = BDSBunchFactory::CreateBunch(beamParticle,
 						    parser->GetBeam(),
 						    globalConstants->BeamlineTransform(),
+						    globalConstants->BeamlineS(),
                                                     globalConstants->GeneratePrimariesOnly());
 
   /// Optionally generate primaries only and exit
@@ -192,6 +204,14 @@ int main(int argc,char** argv)
 	  auto coords = bdsBunch->GetNextParticle();
 	  bdsOutput->FillEventPrimaryOnly(coords, pdgID);
 	}
+      // Write options now file open.
+      const GMAD::OptionsBase* ob = BDSParser::Instance()->GetOptionsBase();
+      bdsOutput->FillOptions(ob);
+
+      // Write beam
+      const GMAD::BeamBase* bb = BDSParser::Instance()->GetBeamBase();
+      bdsOutput->FillBeam(bb);
+
       bdsOutput->CloseFile();
       delete bdsBunch;
       delete bdsOutput;
@@ -210,7 +230,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, physList->UsingIons()));
+  runManager->SetUserAction(new BDSRunAction(bdsOutput, bdsBunch, beamParticle->IsAnIon()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
@@ -255,8 +275,8 @@ int main(int argc,char** argv)
 
   if (BDSGlobalConstants::Instance()->PhysicsVerbose())
     {
-      physList->PrintPrimaryParticleProcesses();
-      physList->PrintDefinedParticles();
+      BDS::PrintPrimaryParticleProcesses(beamParticle->Name());
+      BDS::PrintDefinedParticles();
     }
 
   /// Set verbosity levels

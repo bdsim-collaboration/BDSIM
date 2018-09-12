@@ -17,6 +17,8 @@ simple_testing(physics-em-3                   "--file=em_3.gmad"                
 simple_testing(physics-em-4                   "--file=em_3.gmad"                   ${OVERLAP_CHECK})
 simple_testing(physics-ftfp-bert              "--file=ftfp_bert.gmad"              ${OVERLAP_CHECK})
 simple_testing_long(physics-ftfpberthp        "--file=ftfp_bert_hp.gmad"           ${OVERLAP_CHECK})
+simple_testing(physics-g4-ftfp-bert           "--file=g4FTFP_BERT.gmad"            ${OVERLAP_CHECK})
+simple_testing(physics-g4-qbbc                "--file=g4QBBC.gmad"                 ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic       "--file=hadronic_elastic.gmad"       ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic-d     "--file=hadronic_elastic_d.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics-hadronic-elastic-h     "--file=hadronic_elastic_h.gmad"     ${OVERLAP_CHECK})
@@ -49,6 +51,14 @@ endif()
 
 if (G4_MINOR_VERSION GREATER 3)
   simple_testing(physics-decay-muonic-atom "--file=decay_muonic_atom.gmad"  ${OVERLAP_CHECK})
+  simple_testing(physics-dna               "--file=dna.gmad"                ${OVERLAP_CHECK})
+  simple_testing(physics-dna-1             "--file=dna_1.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-2             "--file=dna_2.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-3             "--file=dna_3.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-4             "--file=dna_4.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-5             "--file=dna_5.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-6             "--file=dna_6.gmad"              ${OVERLAP_CHECK})
+  simple_testing(physics-dna-7             "--file=dna_7.gmad"              ${OVERLAP_CHECK})
 endif()
 
 # test invalid physics list
@@ -100,6 +110,7 @@ simple_testing(physics-alias-synchrad    "--file=alias_synchrad.gmad"     ${OVER
 
 
 #incompatible physics lists
+simple_fail(physics-g4-incorrect      "--file=g4_incorrect.gmad"       ${OVERLAP_CHECK})
 simple_fail(physics-incompatible-1    "--file=incomaptible1.gmad"      ${OVERLAP_CHECK})
 simple_fail(physics-incompatible-2    "--file=incomaptible2.gmad"      ${OVERLAP_CHECK})
 simple_fail(physics-incompatible-3    "--file=incomaptible3.gmad"      ${OVERLAP_CHECK})

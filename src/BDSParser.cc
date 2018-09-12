@@ -102,4 +102,7 @@ void BDSParser::CheckOptions()
 
   if(options.nturns < 1)
     {options.nturns = 1;}
+
+  if(BDS::IsFinite(options.beamlineS) && beam.S0 == 0) 
+    {beam.S0 = beam.S0 + options.beamlineS;}
 }

@@ -91,7 +91,6 @@ Parameters::Parameters()
   setMap["beampipeMaterial"]   = false;
   setMap["vacuumMaterial"]     = false;
   setMap["magnetGeometryType"] = false;
-  setMap["outerMaterial"]      = false;
   setMap["horizontalWidth"]    = false;
   setMap["yokeOnInside"]       = false;
   setMap["hStyle"]             = false;
@@ -169,10 +168,9 @@ Parameters::Parameters()
   setMap["screenPosy"]        = false;
   setMap["screenPosz"]        = false;
 
-  setMap["undulatorPeriod"]   = false;
-  setMap["undulatorGap"]      = false;
-  setMap["magnetHeight"]      = false;
-  setMap["magnetWidth"]       = false;
+  setMap["undulatorPeriod"]       = false;
+  setMap["undulatorGap"]          = false;
+  setMap["undulatorMagnetHeight"] = false;
 
   setMap["colour"] = false;
 

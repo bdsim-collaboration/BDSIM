@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
 
@@ -57,33 +58,27 @@ BDSMagnetOuterFactoryLHC::BDSMagnetOuterFactoryLHC(G4bool isLeftOffsetIn):
   CleanUp();
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
-							   G4double      length,
-							   BDSBeamPipe*  beamPipe,
-							   G4double      horizontalWidth,
-							   G4double      containerLength,
-							   G4double      angleIn,
-							   G4double      angleOut,
-							   G4bool        /*yokeOnLeft*/,
-							   G4bool        /*hStyle*/,
-							   G4Material*   outerMaterial,
-							   G4bool        /*buildEndPiece*/,
-							   G4double      /*vhRatio*/,
-							   G4double      /*coilWidthFraction*/,
-							   G4double      /*coilHeightFraction*/)
-
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
+							   G4double     length,
+							   const BDSBeamPipe* beamPipe,
+							   G4double     containerLength,
+							   const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   CleanUp();
+
+  G4double horizontalWidth  = recipe->horizontalWidth;
+  G4double angleIn          = recipe->angleIn;
+  G4double angleOut         = recipe->angleOut;
+  G4Material* outerMaterial = recipe->outerMaterial;
+  if (!outerMaterial)
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");}
   
   // note this geometry does not respond to horizontalWidth - it's hard coded to the
   // design of a sector bend for the lhc.  TestInputParameters requires it though
   // to be the same check for the other methods
 
   // test input parameters - set global options as default if not specified
-  TestInputParameters(beamPipe,horizontalWidth,outerMaterial);
+  TestInputParameters(beamPipe,horizontalWidth);
 
   // nominal lhc beampipe parameters for reference
   // aper1 = 4.404cm / 2
@@ -813,7 +808,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4VSolid* yokeCylinder = new G4CutTubs(name+"_yoke_cylinder_solid",     // name
 					 0.,                              // inner radius
 					 yokeOuterRadius - lengthSafety,  // outer radius
-					 centralHalfLength-2*lengthSafety,// length
+					 centralHalfLength-lengthSafety,// length
 					 0,                               // starting angle
 					 CLHEP::twopi,                    // sweep angle
 					 inputFaceNormal,                 // input face normal
@@ -937,55 +932,30 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   return outer;
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      name,
-								G4double      length,
-								BDSBeamPipe*  beamPipe,
-								G4double      horizontalWidth,
-								G4double      containerLength,
-								G4double      angleIn,
-								G4double      angleOut,
-								G4bool        yokeOnLeft,
-								G4bool        hStyle,
-								G4Material*   outerMaterial,
-								G4bool        buildEndPiece,
-								G4double      vhRatio,
-								G4double      coilWidthFraction,
-								G4double      coilHeightFraction)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String     name,
+								G4double     length,
+								const BDSBeamPipe* beamPipe,
+								G4double     containerLength,
+								const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name,
 									     length,
 									     beamPipe,
-									     horizontalWidth,
 									     containerLength,
-									     angleIn,
-									     angleOut,
-									     yokeOnLeft,
-									     hStyle,
-									     outerMaterial,
-									     buildEndPiece,
-									     vhRatio,
-									     coilWidthFraction,
-									     coilHeightFraction);
+									     recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 							   G4double      length,
 							   BDSBeamPipe*  beamPipe,
-							   G4double      horizontalWidth,
 							   G4double      containerLength,
-							   G4Material*   outerMaterial,
-							   G4bool        /*buildEndPiece*/)
+							   const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
+  G4double horizontalWidth = recipe->horizontalWidth;
   CleanUp();
 
   // test input parameters - set global options as default if not specified
-  TestInputParameters(beamPipe,horizontalWidth,outerMaterial);
+  TestInputParameters(beamPipe,horizontalWidth);
 
   // geometrical constants
   // [1] LHC design report - Chapter 7, fig 7.3
@@ -1171,7 +1141,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       coil1 = new G4Tubs(name+"_coil1_solid",          // name
 			 coilInnerRadius,              // inner radius
 			 coilOuterRadius,              // outer radius
-			 length*0.5-2*lengthSafety,    // z half length
+			 length*0.5-lengthSafety,    // z half length
 			 coilStartAngle,               // start angle
 			 coilFullAngle);               // sweep angle
       // coil logical volumes
@@ -1277,7 +1247,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   coil2   = new G4Tubs(name+"_coil2_solid",          // name
 		       coilInnerRadiusF,             // inner radius
 		       coilOuterRadius,              // outer radius
-		       length*0.5-2*lengthSafety,    // length
+		       length*0.5-lengthSafety,    // length
 		       coilStartAngle,               // start angle
 		       coilFullAngle);               // sweep angle
   coil2LV = new G4LogicalVolume(coil2,               // solid
@@ -1383,7 +1353,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   collar = new G4Tubs(name+"_collar_solid",        // name
 		      collarInnerRadiusF,          // inner radius
 		      collarOuterRadius,           // outer radius
-		      length*0.5 - 2*lengthSafety, // length
+		      length*0.5 - lengthSafety, // length
 		      0,                           // start angle
 		      CLHEP::twopi);               // sweep angle
   allSolids.push_back(collar);
@@ -1404,7 +1374,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 	  G4VSolid* collar2 = new G4Tubs(name+"_collar2_solid",      // name
 					 collarInnerRadius,          // inner radius
 					 collarOuterRadius,          // outer radius
-					 length*0.5-2*lengthSafety,  // length
+					 length*0.5-lengthSafety,  // length
 					 0,                          // starting angle
 					 CLHEP::twopi);              // angle of sweep
 	  allSolids.push_back(collar2);
@@ -1452,7 +1422,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   G4VSolid* yokeCylinder = new G4Tubs(name+"_yoke_cylinder_solid",     // name
 				      0.,                              // inner radius
 				      yokeOuterRadius,                 // outer radius
-				      0.5*length-2*lengthSafety,       // length
+				      0.5*length-lengthSafety,       // length
 				      0,                               // starting angle
 				      CLHEP::twopi * CLHEP::rad);      // sweep angle
 
@@ -1559,141 +1529,89 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
 							  G4double      length,
 							  BDSBeamPipe*  beamPipe,
-							  G4double      horizontalWidth,
 							  G4double      containerLength,
-							  G4Material*   outerMaterial,
-							  G4bool        buildEndPiece)
+							  const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSextupole(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSextupole(name,length,beamPipe,
+								       containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateOctupole(G4String      name,
 							 G4double      length,
 							 BDSBeamPipe*  beamPipe,
-							 G4double      horizontalWidth,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial,
-							 G4bool        buildEndPiece)
+							 const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateOctupole(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateOctupole(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateDecapole(G4String      name,
 							 G4double      length,
 							 BDSBeamPipe*  beamPipe,
-							 G4double      horizontalWidth,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial,
-							 G4bool        buildEndPiece)
+							 const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateDecapole(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateDecapole(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSolenoid(G4String      name,
 							 G4double      length,
 							 BDSBeamPipe*  beamPipe,
-							 G4double      horizontalWidth,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial,
-							 G4bool        buildEndPiece)
+							 const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMultipole(G4String      name,
 							  G4double      length,
 							  BDSBeamPipe*  beamPipe,
-							  G4double      horizontalWidth,
 							  G4double      containerLength,
-							  G4Material*   outerMaterial,
-							  G4bool        buildEndPiece)
+							  const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,
+								       containerLength,recipe);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      name,
 							 G4double      length,
 							 BDSBeamPipe*  beamPipe,
-							 G4double      horizontalWidth,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial,
-							 G4bool        buildEndPiece)
+							 const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,horizontalWidth,
-								      containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,
+								      containerLength,recipe);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      name,
-							  G4double      length,
-							  BDSBeamPipe*  beamPipe,
-							  G4double      horizontalWidth,
-							  G4double      containerLength,
-							  G4Material*   outerMaterial,
-							  G4bool        buildEndPiece)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuonSpoiler(G4String      name,
+							    G4double      length,
+							    BDSBeamPipe*  beamPipe,
+							    G4double      containerLength,
+							    const BDSMagnetOuterInfo* recipe)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,horizontalWidth,
-								       containerLength,outerMaterial,buildEndPiece);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuonSpoiler(name,length,beamPipe,
+									 containerLength,recipe);
 }
 
-BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
-						       G4double      length,
-						       BDSBeamPipe*  beamPipe,
-						       G4double      horizontalWidth,
-						       G4double      containerLength,
-						       G4bool        yokeOnLeft,
-						       G4bool        vertical,
-						       G4Material*   outerMaterial,
-						       G4bool        buildEndPiece,
-						       G4bool        hStyle,
-						       G4double      vhRatio,
-						       G4double      coilWidthFraction,
-						       G4double      coilHeightFraction)
+BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String                  name,
+						       G4double                  length,
+						       const BDSBeamPipe*        beamPipe,
+						       G4double                  containerLength,
+						       const BDSMagnetOuterInfo* recipe,
+						       G4bool                    vertical)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,horizontalWidth,
-								    containerLength,yokeOnLeft,vertical,outerMaterial,
-								    buildEndPiece, hStyle, vhRatio,
-								    coilWidthFraction, coilHeightFraction);
+  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,
+								    containerLength,recipe,
+								    vertical);
 }
 
 /// functions below here are private to this particular factory
-void BDSMagnetOuterFactoryLHC::TestInputParameters(BDSBeamPipe* /*beamPipe*/,
-						   G4double&    horizontalWidth,
-						   G4Material*& outerMaterial)// reference to a pointer
+void BDSMagnetOuterFactoryLHC::TestInputParameters(const BDSBeamPipe* /*beamPipe*/,
+						   G4double&    horizontalWidth)// reference to a pointer
 {
-  //function arguments by reference to they can be modified in place
-  //check outer material is something
-  if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial("stainlesssteel");}
-
   // ensure horizontalWidth is > outerCollarDiameter - hard coded as specific to the lhc design
   if (horizontalWidth < 202*CLHEP::mm )
     {horizontalWidth = 202*CLHEP::mm;}

@@ -55,7 +55,8 @@ public:
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  const G4double beamlineS = 0);
   
   /// Check the parameters for the given bunch distribution and exit if they're
   /// problematic or unphysical.
@@ -153,12 +154,15 @@ private:
   /// Transform that beam line starts with that will also be applied to coordinates.
   G4Transform3D beamlineTransform;
 
+  /// Beamline initial S position
+  G4double beamlineS;
+
   /// Whether the transform is finite and should be used.
   G4bool        nonZeroTransform;
   
-  G4double mass2; ///< Cache of mass squared as requried to convert from p to E.
+  G4double mass2; ///< Cache of mass squared as required to convert from p to E.
   
-  /// A reference to the fully constructed beamline that's lazyily instantiated.
+  /// A reference to the fully constructed beamline that's lazily instantiated.
   mutable const BDSBeamline* beamline;
 };
 

@@ -17,27 +17,26 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSCollimatorRectangular.hh"
-#include "BDSCollimatorBase.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4VSolid.hh"
 
-BDSCollimatorRectangular::BDSCollimatorRectangular(G4String nameIn,
-						   G4double lengthIn,
-						   G4double horizontalWidthIn,
-						   G4double xApertureIn,
-						   G4double yApertureIn,
-						   G4double xOutApertureIn,
-						   G4double yOutApertureIn,
-						   G4String collimatorMaterialIn,
-						   G4String vacuumMaterialIn,
-						   G4String colourIn):
-  BDSCollimatorBase(nameIn, lengthIn, horizontalWidthIn, "rcol",
-		    xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
-		    collimatorMaterialIn,
-		    vacuumMaterialIn, colourIn)
+BDSCollimatorRectangular::BDSCollimatorRectangular(G4String  nameIn,
+						   G4double  lengthIn,
+						   G4double  horizontalWidthIn,
+						   G4double  xApertureIn,
+						   G4double  yApertureIn,
+						   G4double  xOutApertureIn,
+						   G4double  yOutApertureIn,
+						   G4String  collimatorMaterialIn,
+						   G4String  vacuumMaterialIn,
+						   G4Colour* colourIn):
+  BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "rcol",
+		xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
+		collimatorMaterialIn,
+		vacuumMaterialIn, colourIn)
 {;}
 
 void BDSCollimatorRectangular::BuildInnerCollimator()

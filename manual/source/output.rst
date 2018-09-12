@@ -420,6 +420,11 @@ different value per-event run in BDSIM.
 | Primary         | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
 |                 |                                  | simulation (before tracking)                     |
 +-----------------+----------------------------------+--------------------------------------------------+
+| PrimaryGlobal   | BDSOutputROOTEventCoords         | Global Cartesian coordinates of the primary      |
+|                 |                                  | particle. These are the same as those in         |
+|                 |                                  | "Primary" unless `S0` is specified in the beam   |
+|                 |                                  | distribution.                                    |
++-----------------+----------------------------------+--------------------------------------------------+
 | Eloss           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
 |                 |                                  | accelerator material                             |
 +-----------------+----------------------------------+--------------------------------------------------+
@@ -451,17 +456,11 @@ different value per-event run in BDSIM.
 The types and names of the contents of each class can be found in the header files in
 :code:`bdsim/include/BDSOutputROOTEvent*.hh`. The contents of the classes are described below.
 
-.. note:: The primary coordinates are the exact coordinates supplied to Geant4 at the beginning of the event.
-	  Conceptually, these are 'local' coordinates with respect to the start of the beam
-	  line. However, if a finite `S0` is specified, the bunch distribution is transformed
-	  to that location in the World, therefore the coordinates are the **global** ones used.
-
 .. warning:: For large `S0` in a large model, a large distance as compared to the size of the beam
-	     may displace the primary coordinates, e.g. 1km offset for 1um beam. In this case, the
-	     limited precision of the `float` used to store the coordinates in the output may not show
-	     the beam distribution as expected. Internally, double precision numbers are used so the beam
-	     distribution is accurate. A float typically has seven significant figures and a double 15.
-
+	     may displace the primary coordinates, e.g. 1km offset for 1um beam. For this reason
+	     the PrimaryGlobal structure always uses double precision numbers, unlike the Primary structure
+	     and the other samplers that use floating point precision numbers (unless the ROOTDOUBLE
+	     cmake option is used for double precision in the samplers).
 
 
 BDSOutputROOTEventInfo
@@ -734,11 +733,36 @@ doubles the output file size.
 	     confusion. The primary output records all primary coordinates before they enter the tracking
 	     in the geometry, so it always contains all primary particles.
 
+BDSOutputROOTEventCorods
+************************
 
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
+
++-----------------+-------------+-------------------------------------------------------+
+|  **Variable**   | **Type**    |  **Description**                                      |
++=================+=============+=======================================================+
+| x               | double      | Global Cartesian x coordinate (m)                     |
++-----------------+-------------+-------------------------------------------------------+
+| y               | double      | Global Cartesian y coordinate (m)                     |
++-----------------+-------------+-------------------------------------------------------+
+| z               | double      | Global Cartesian z coordinate (m)                     |
++-----------------+-------------+-------------------------------------------------------+
+| xp              | double      | Global Cartesian unit momentum in x                   |
++-----------------+-------------+-------------------------------------------------------+
+| yp              | double      | Global Cartesian unit momentum in y                   |
++-----------------+-------------+-------------------------------------------------------+
+| zp              | double      | Global Cartesian unit momentum in z                   |
++-----------------+-------------+-------------------------------------------------------+
+| T               | double      | Time (ns)                                             |
++-----------------+-------------+-------------------------------------------------------+
+	     
+	     
 BDSOutputROOTEventHistograms
 ****************************
 
 This class contains the following data:
+
+.. tabularcolumns:: |p{0.20\textwidth}|p{0.30\textwidth}|p{0.4\textwidth}|
 
 +-----------------+---------------------+-------------------------------------------------------+
 |  **Variable**   | **Type**            |  **Description**                                      |

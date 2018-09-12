@@ -40,7 +40,8 @@ public:
   virtual void SetOptions(const BDSParticleDefinition* beamParticle,
 			  const GMAD::Beam& beam,
 			  const BDSBunchType& distrType,
-			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity);
+			  G4Transform3D beamlineTransformIn = G4Transform3D::Identity,
+			  G4double beamlineS = 0);
   virtual void CheckParameters();
   virtual BDSParticleCoordsFull GetNextParticleLocal();
   

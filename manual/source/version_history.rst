@@ -1,4 +1,33 @@
-V1.2 - 2018 / 07 / ??
+V1.3 - 2018 / 09 / ??
+=====================
+
+New Features
+------------
+
+* All Geant4 reference physics lists are now available.
+* New beam pipe aperture for the CLIC post collision line.
+
+General
+-------
+
+Bug Fixes
+---------
+
+* Fixed reloading user file when reading more particles than defined in the file.
+
+Output Changes
+--------------
+
+Utilities
+---------
+
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
+
+
+V1.2 - 2018 / 08 / 26
 =====================
 
 Highlights
@@ -6,6 +35,7 @@ Highlights
 
 * :code:`outerDiameter` is now :code:`horizontalWidth` to better describe its function (backwards-compatible).
 * Fixed dipole scaling with (the default) bdsimmatrix integrator set.
+* Solenoid tracking fixed.
 
 New Features
 ------------
@@ -26,7 +56,12 @@ New Features
 * `hkicker` and `vkicker` strength can be specified via the magnetic field :code:`B` instead of
   `hkick` or `vkick`.
 * Support for dipole poleface curvature in tracking.
-
+* Pole face rotations and fringe fields are now available for hkickers and vkickers, both thick and thin.
+* New ability to specify the colour of any magnet and most elements through custom colour definition.
+* Geant4's DNA physics lists have been added.
+* Solenoid fringe fields have been implemented and are on by default. They are controlled with
+  the `includeFringeFields` option.
+  
 General
 -------
 
@@ -39,8 +74,8 @@ General
 * The horizontal width of kickers is now taken from :code:`outerDiameter`. Previously, :code:`outerDiameter`
   corresponded to the height and :code:`vhratio` was really the horizontal-to-vertical ratio in
   the lab frame.
-* Synchrotron radiation is disabled now with em_extra physics list (use dedicated
-  synchrad physics list). Avoids double registration of physics process.
+* Synchrotron radiation is now disabled with em_extra physics list (use dedicated
+  synchrad physics list). Avoids the double registration of the physics process.
 * New CMake variable ROOTSYS to allow easy specification of a specific ROOT installation.
 * Visualisation of trajectories significantly faster (~10x) due to different strategy with Geant4
   visualisation system.
@@ -64,11 +99,16 @@ General
 * `square` distribution now calls random number generator for each coordinate every time for
   consistency. Distribution will be different for the same seed as compared
   to a previous version of BDSIM.
+* Memory usage for sampler hits has been significantly reduced with no affect to the output
+  information stored.
+* The "water" material in BDSIM is now the NIST G4_WATER material and no longer the one
+  that was defined by BDSIM.
+* New options for physics processes in em_extra.
 
 Output Changes
 --------------
 
-* New options for physics processes in em_extra.
+* Data v3 incremented from v2.
 * Options class (GMAD::optionsBase) number is incremented in output.
 * New optional stepLength variable in Eloss part of Event Tree with option
   :code:`storeElossStepLength` to use this data.
@@ -87,10 +127,15 @@ Output Changes
 * New output class :code:`BDSOutputROOTEventCoords` to store coordinates for primary global coordinates.
 * New branch called "PrimaryGlobal" in Event tree that stores the coordinates used with Geant4 in
   the global Cartesian frame.
+* Sampler name now stored in Orbit output from rebdsimOrbit to make sampler matching possible.
 
 Bug Fixes
 ---------
 
+* Fixed solenoid tracking. The anti-spiralling code in the dipole integrator that is desgined
+  to stop infinite spiralling of low energy particles in strong fields was causing incorrect
+  tracking in solenoids. This has been fixed with the reimplementation of the solenoid matrix
+  and now includes the fringe effects. Issue #255.
 * Fixed tracking bug where particle in very niche coordinates may reflect from a sampler
   at the end of a dipole with a very strongly angled pole face. #Issue 241.
 * Fixed automatic tunnel building algorithm, which accumulated wrong variables, leading to
@@ -129,14 +174,16 @@ Bug Fixes
 * Fixed inconsistency of `t` and `z` coordinate in `square` beam distribution.
 * `square` beam distiribution now varies with :code:`envelopeT`.
 * Fixed S coordinate in output. Issues #247 and #248.
+* Fixed the setting of the sampler diameter where the user specifies a smaller one than that calcualted
+  from the minimum bending radius.
 
 Utilities
 ---------
 
-* pybdsim v1.9
-* pymadx v1.5
-* pymad8 v1.4
-* pytransport v1.2
+* pybdsim v1.9.0
+* pymadx v1.5.0
+* pymad8 v1.4.1
+* pytransport v1.2.1
   
 
 V1.1 - 2018 / 05 / 23

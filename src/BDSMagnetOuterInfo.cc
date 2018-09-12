@@ -16,10 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuterInfo.hh"
 
-#include "BDSMagnetGeometryType.hh"
 #include "globals.hh"             // geant4 globals / types
+#include "G4Colour.hh"
 #include "G4Material.hh"
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo():
@@ -36,7 +37,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo():
   buildEndPieces(true),
   coilWidthFraction(0.65),
   coilHeightFraction(0.8),
-  geometryTypeAndPath("")
+  geometryTypeAndPath(""),
+  colour(nullptr)
 {;}
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
@@ -52,7 +54,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       G4bool                buildEndPiecesIn,
 				       G4double              coilWidthFractionIn,
 				       G4double              coilHeightFractionIn,
-				       G4String              geometryTypeAndPathIn):
+				       G4String              geometryTypeAndPathIn,
+				       G4Colour*             colourIn):
   name(nameIn),
   geometryType(geometryTypeIn),
   horizontalWidth(horizontalWidthIn),
@@ -66,7 +69,8 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
   buildEndPieces(buildEndPiecesIn),
   coilWidthFraction(coilWidthFractionIn),
   coilHeightFraction(coilHeightFractionIn),
-  geometryTypeAndPath(geometryTypeAndPathIn)
+  geometryTypeAndPath(geometryTypeAndPathIn),
+  colour(colourIn)
 {;}
   
 std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
@@ -85,5 +89,10 @@ std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
   out << "Coil Width Fraction  "  << info.coilWidthFraction        << G4endl;
   out << "Coil Height Fraction "  << info.coilHeightFraction       << G4endl;
   out << "Geometry:            "  << info.geometryTypeAndPath      << G4endl;
+  if (info.colour)
+    {out << "Colour:              " << *(info.colour)             << G4endl;}
+  else
+    {out << "No colour specified" << G4endl;}
+      
   return out;
 }

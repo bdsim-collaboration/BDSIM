@@ -66,7 +66,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 
   samplerDiameter = G4double(options.samplerDiameter)*CLHEP::m;
 
-  //beampipe
+  // beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,
 					     options.aper2 * CLHEP::m,
@@ -141,7 +141,7 @@ void BDSGlobalConstants::InitialiseBeamlineTransform()
       CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(phi, theta, psi);
       rm = G4RotationMatrix(ang);
     }
-
+  
   beamlineTransform = G4Transform3D(rm, offset);
 }
 

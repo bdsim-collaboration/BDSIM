@@ -300,6 +300,7 @@ The following elements may be defined
 * `laser`_
 * `gap`_
 * `crystalcol`_
+* `undulator`_
 * `transform3d`_
 * `element`_
 * `marker`_
@@ -852,6 +853,22 @@ The dipole field strength is then calculated with respect to the chord length:
 * The `aperture parameters`_ may also be specified.
 * For a vkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to vkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the vkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the vkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length vkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the vkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -887,6 +904,21 @@ to an decrease in :math:`p_x` (note right-handed coordinate frame) for a positiv
 * The `aperture parameters`_ may also be specified.
 * For a hkicker with a finite length, the `magnet geometry parameters`_ may also be specified.
 
+.. note:: Pole face rotations and fringe fields can be applied to hkickers by supplying the same
+      parameters that would be applied to an `rbend`_ or `sbend`_ . If the hkicker is zero length,
+      the B field value must be supplied in order to calculate the bending radius which required
+      to apply the effects correctly.
+
+      * Fringe field kicks are applied in a thin fringe field magnet (1 micron thick by default) at the
+        beginning or at the end of the hkicker. The length of the fringe field element can be set by the
+        option `thinElementLength` (see `options`_).
+      * For zero length hkickers, the pole face and fringe field kicks are applied in the same thin element
+        as the hkick.
+      * In the case of finite fint or fintx and hgap, a fringe field is used even if e1 and e2 have no angle.
+      * The effect of pole face rotations and fringe field kicks can be turned off for all magnets by setting
+        the option `includeFringeFields=0` (see `options`_).
+      * No pole face geometry is constructed.
+
 A pure dipole field is provided in the beam pipe and a more general multipole (as
 described by :ref:`yoke-multipole-field`) is provided for the yoke.
 
@@ -905,6 +937,8 @@ parameters `hkick` and `vkick` may be specified. Like the `hkicker` and `vkicker
 may also be thin or thick. In the case of the thick kicker, the field is the linear
 sum of two independently calculated fields.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for plain kickers
+
 Example::
 
   kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0.3e-4;
@@ -920,6 +954,7 @@ not make this distinction. See `kicker`_ for more details.
 In the case of a `tkicker`, the field :code:`B` cannot be used and only `hkick` and `vkick`
 can be used.
 
+.. note:: Pole face rotation and fringe fields kicks are unavailable for tkickers
 
 rf
 ^^^^
@@ -1116,14 +1151,14 @@ the outer width and inner horizontal and vertical apertures of the block. A beam
 is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
 are greater than the aperture, the beam pipe will not be created.
 
-================  ==============================  ==========  ===========
-Parameter         Description                     Default     Required
-`l`               Length [m]                      0           Yes
-`material`        Outer material                  Iron        No
-`outerDiameter`   Outer full width [m]            global      No
-`xsize`           Horizontal inner aperture [m]   0           No
-`ysize`           Vertical inner aperture [m]     0           No
-================  ==============================  ==========  ===========
+================  ==================================  ==========  ===========
+Parameter         Description                         Default     Required
+`l`               Length [m]                          0           Yes
+`material`        Outer material                      Iron        No
+`outerDiameter`   Outer full width [m]                global      No
+`xsize`           Horizontal inner half aperture [m]  0           Yes
+`ysize`           Vertical inner half aperture [m]    0           No
+================  ==================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 
@@ -1135,17 +1170,19 @@ solenoid
 	    :align: right
 
 `solenoid` defines a solenoid magnet. This utilises a thick lens transfer map with a
-hard edge field profile, so it is not equivalent to split a single solenoid into multiple
-smaller ones. **This is currently under development**.
+hard edge field profile. Fringes for the edge effects are provided by default and
+are controllable with the option `includeFringeFields`.
 
 ================  ============================  ==========  ===========
 Parameter         Description                   Default     Required
 `l`               Length [m]                    0           Yes
-`ks`              Solenoid strength [ ]         0           Yes
+`ks`              Solenoid strength             0           No
+`B`               Magnetic field                0           No
 `material`        Outer material                Iron        No
 `outerDiameter`   Outer full width [m]          global      No
 ================  ============================  ==========  ===========
 
+* A positive field corresponds to a field in along the direction of positive S.
 * See `Magnet Strength Polarity`_ for polarity notes.
 * No yoke field is provided.
 
@@ -1284,7 +1321,50 @@ Examples::
 
 
 More examples can be found in :code:`bdsim/examples/components` and are described in :ref:`crystal-examples`.
-		      
+
+undulator
+^^^^^^^^^
+
+.. figure:: figures/undulator.png
+    :width: 60%
+
+`undulator` defines an undulator magnet which has a sinusoidally varying field along the element with
+field components:
+
+.. math::
+
+   B_{x} ~ &= ~ 0 \\
+   B_{y} ~ &= ~ B \cdot \cos\big(z \frac{2\pi}{\lambda}\big) \cosh\big(y \frac{2\pi}{\lambda}\big)\\
+   B_{z} ~ &= ~ -B \cdot \sin\big(z \frac{2\pi}{\lambda}\big) \sinh\big(y \frac{2\pi}{\lambda}\big)
+
+where :math:`\lambda` is the undulator period.
+
+=======================  =============================  ==========  ===========
+Parameter                Description                    Default     Required
+`l`                      Length [m]                     0           Yes
+`B`                      Magnetic field [T]             0           Yes
+`undulatorPeriod`        Undulator magnetic period [m]  1           Yes
+`undulatorGap`           Undulator gap [m]              0           No
+`undulatorMagnetHeight`  Undulator magnet height [m]    0           No
+`material`               Magnet outer material          Iron        No
+=======================  =============================  ==========  ===========
+
+* The undulator period must be an integer factor of the undulator length. If not, BDSIM will exit.
+* The undulator gap is the total distance between the upper and lower sets of magnets. If not supplied,
+  it is set to twice the beam pipe diameter.
+* The undulator magnet height is the vertical height of the sets of magnets. If not supplied, it is set
+  to the 0.5*horizontalWidth - undulator gap.
+* The `aperture parameters`_ may also be specified.
+* See `Magnet Strength Polarity`_ for polarity notes.
+* To generate radiation from particles propagating through the undulator field, synchrotron radiation
+  physics must be included in the model's physicsList. See :ref:`physics-processes` for further details.
+
+Examples::
+
+ u1: undulator, l=2.0*m, B=0.1*T, undulatorPeriod=0.2*m;
+ u2: undulator, l=3.2*m, B=0.02*T, undulatorPeriod=0.16*m, undulatorGap=15*cm, undulatorMagnetHeight=10*cm;
+
+
 transform3d
 ^^^^^^^^^^^
 
@@ -1409,38 +1489,47 @@ convention and have four parameters. The user must specify them as required for 
 BDSIM will check to see if the combination of parameters is valid. `beampipeRadius` and `aper1`
 are degenerate.
 
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`       | `aper4`       |
-|                   | parameters   |                   |                 |               |               |
-+===================+==============+===================+=================+===============+===============+
-| `circular`        | 1            | radius            | NA              | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `rectangular`     | 2            | x half-width      | y half-width    | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA            | NA            |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhc`             | 3            | x half-width of   | y half-width of | radius of     | NA            |
-|                   |              | rectangle         | rectangle       | circle        |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of     | NA            |
-|                   |              | rectangle         | rectangle       | circle        |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis   | y semi-axis   |
-|                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-|                   |              | of circle         | of circle       | circular part |               |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-| `octagonal`       | 4            | x half-width      | y half-width    | x point of    | y point of    |
-|                   |              |                   |                 | start of edge | start of edge |
-+-------------------+--------------+-------------------+-----------------+---------------+---------------+
-
-These parameters can be set with the *option* command, as the default parameters
-and also on a per element basis that overrides the defaults for that specific element.
 Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
+
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| Aperture Model    | # of         | `aper1`           | `aper2`         | `aper3`        | `aper4`          |
+|                   | parameters   |                   |                 |                |                  |
++===================+==============+===================+=================+================+==================+
+| `circular`        | 1            | radius            | NA              | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectangular`     | 2            | x half-width      | y half-width    | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `elliptical`      | 2            | x semi-axis       | y semi-axis     | NA             | NA               |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhc`             | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                   |              | rectangle         | rectangle       | circle         |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `lhcdetailed`     | 3            | x half-width of   | y half-width of | radius of      | NA               |
+|                   |              | rectangle         | rectangle       | circle         |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `rectellipse`     | 4            | x half-width of   | y half-width of | x semi-axis    | y semi-axis      |
+|                   |              | rectangle         | rectangle       | of ellipse     | of ellipse       |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `racetrack`       | 3            | horizontal offset | vertical offset | radius of      | NA               |
+|                   |              | of circle         | of circle       | circular part  |                  |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `octagonal`       | 4            | x half-width      | y half-width    | x point of     | y point of       |
+|                   |              |                   |                 | start of edge  | start of edge    |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+| `clicpcl`         | 4            | x half-width      | top ellipse     | bottom ellipse | y separation     |
+|                   |              |                   | y half-height   | y half-height  | between ellipses |
++-------------------+--------------+-------------------+-----------------+----------------+------------------+
+
+These parameters can be set with the *option* command, as the default parameters
+and also on a per element basis that overrides the defaults for that specific element.
+
+In the case of `clicpcl` (CLIC Post Collision Line), the beam pipe is asymmetric. The centre is
+the same as the geometric centre of the bottom ellipse. Therefore, *aper4*, the y separation
+between ellipses is added on to the 0 position. The parameterisation is taken from
+Phys. Rev. ST Accel. Beams **12**, 021001 (2009).
 
 .. _magnet-geometry-parameters:
 
@@ -2468,20 +2557,27 @@ for coordinate transforms (cylinders).
 Physics Processes
 -----------------
 
-BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
-and simulation, it is very useful to define the physical processes that should be simulated so
+BDSIM can exploit all the physics processes that come with Geant4. It is advantageous to
+define **only** the processes that should be simulated so
 that the simulation is both relevant and efficient. By default, only tracking in magnetic fields
 is provided and other processes must be specified to be used. Rather than specify each individual
 particle physics process on a per-particle basis, a series of "physics lists" are provided that
 are a predetermined set of physics processes suitable for a certain applications. BDSIM follows
 the Geant4 ethos in this regard and the majority of those in BDSIM are simple shortcuts to the
-Geant4 ones.
+Geant4 ones. These are fairly modular and can be added independently. More complete "reference
+physics lists" from Geant4 (i.e. including several electromagnetic and hadronic physics lists)
+are also accessible.
 
-The physics list can be selected with the following syntax (delimited by a space)::
+The modular physics list can be selected with the following syntax (delimited by a space)::
 
   option, physicsList = "physicslistname anotherphysicslistname";
 
   option, physicsList = "em optical";
+
+The Geant4 reference physics can be used by prefixing their name with "g4". See :ref:`physics-geant4-lists`.
+
+.. note:: Only one Geant4 reference physics list can be used and it cannot be used in combination
+	  with any modular physics list.
 
 For general high energy hadron physics we recommend::
 
@@ -2491,7 +2587,7 @@ For general high energy hadron physics we recommend::
 	  many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
 	  only use the minimal set of physics processes required.
 
-.. note:: The strings for the physics list are case-insensitive.
+.. note:: The strings for the modular physics list are case-insensitive.
 
 Some physics lists are only available in later versions of Geant4. These are filtered at compile
 time for BDSIM and it will not recognise a physics list that requires a later version of Geant4
@@ -2506,14 +2602,8 @@ BDSIM uses the Geant4 physics lists directly and more details can be found in th
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
    * `Use Cases <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml>`_
 
-Physics Lists In BDSIM
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. warning:: Geant4 recently provides its own physics 'lists' - for example, in
-	     "geant4.10.04.p01/source/physics_lists/lists/include". BDSIM does not currently
-	     support these, but it will in the future. For example, note that `ftfp_bert` in BDISM
-	     is really a simple interface to `G4HadronPhysicsFTFP_BERT` and not the reference
-	     physics list in Geant4.
+Modular Physics Lists
+^^^^^^^^^^^^^^^^^^^^^
 
 .. warning:: Not all physics lists can be used with all other physics lists. BDSIM will print
 	     a warning and exit if this is the case. Generally, lists suffixed with "hp" should
@@ -2545,6 +2635,12 @@ Physics Lists In BDSIM
 | decay_spin                   | Decay physics, but with spin correctly implemented. Note: only the     |
 |                              | Geant4 tracking integrators track spin correctly. Uses                 |
 |                              | `G4SpinDecayPhysics`. Available from Geant4.10.2.p01 onwards.          |
++------------------------------+------------------------------------------------------------------------+
+| dna                          | G4EmDNAPhysics list.  Only applies to G4_WATER material.               |
++------------------------------+------------------------------------------------------------------------+
+| dna_1                        | Variant 1 of G4EmDNAPhysics list. Uses G4EmDNAPhysics_option1.         |
++------------------------------+------------------------------------------------------------------------+
+| dna_X                        | Variant X of G4EmDNAPhysics list, where X is one of 1,2,3,4,5,6,7.     |
 +------------------------------+------------------------------------------------------------------------+
 | em                           | Transportation of primary particles, ionisation, Bremsstrahlung,       |
 |                              | Cherenkov, multiple scattering. Uses `G4EmStandardPhysics`.            |
@@ -2741,6 +2837,61 @@ these will have no effect.
 is not used in BDSIM, as it does not propagate the associated weights correctly. Biasing should be done through
 the generic biasing interface with the name of the process (described in the following section), as this will
 propagate the weights correctly.
+
+.. _physics-geant4-lists:
+
+Geant4 Reference Physics Lists
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following reference physics lists are included as of Geant4.10.4.p02. These **must** be
+prefix with "g4" to work in BDSIM.
+
+* FTFP_BERT
+* FTFP_BERT_TRV
+* FTFP_BERT_ATL
+* FTFP_BERT_HP
+* FTFQGSP_BERT
+* FTFP_INCLXX
+* FTFP_INCLXX_HP
+* FTF_BIC
+* LBE
+* QBBC
+* QGSP_BERT
+* QGSP_BERT_HP
+* QGSP_BIC
+* QGSP_BIC_HP
+* QGSP_BIC_AllHP
+* QGSP_FTFP_BERT
+* QGSP_INCLXX
+* QGSP_INCLXX_HP
+* QGS_BIC
+* Shielding
+* ShieldingLEND
+* ShieldingM
+* NuBeam
+
+The **optional** following suffixes may be added to specify the electromagnetif physics variant:
+
+* _EMV
+* _EMX
+* _EMY
+* _EMZ
+* _LIV
+* _PEN
+* __GS
+* __SS
+
+Examples::
+
+  option, physicsList="g4QBBC";
+
+  option, physicsList="g4QBBC_EMV";
+
+  option, physicsList="g4FTFP_BERT_PEN";
+
+.. note:: "g4" is not case senstive but the remainder of the string is. The remainder is passed
+	  to the Geant4 physics list that constructs the appropriate physics list and this is
+	  case sensitive.
 
 .. _physics-biasing:
 
@@ -3312,6 +3463,8 @@ volume, which is the outermost coordinate system.
 +----------------------+--------------------------------------------------------------------+
 | beamlineAxisAngle    | Boolean whether to use axis angle rotation scheme (default false)  |
 +----------------------+--------------------------------------------------------------------+
+| beamlineS            | S offset of start of beamline (default 0)                          |
++----------------------+--------------------------------------------------------------------+
 
 Two styles of rotation can be used: either a set of three Euler angles, or the axis angle
 rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
@@ -3400,6 +3553,12 @@ should only be used with understanding.
 |                                   | :code:`bdsimtwo`, :code:`geant4`, and :code:`geant4dp`. This option|
 |                                   | overides this, allowing samplers to be attached. This option will  |
 |                                   | not affect the default integrator set, :code:`bdsimmatrix`.        |
++-----------------------------------+--------------------------------------------------------------------+
+| teleporterFullTransform           | Default true. Whether to use the newer teleporter offset method    |
+|                                   | that uses a G4Transform3D to apply both an offset and a rotation.  |
+|                                   | The newer method works in any 3D orientation whereas the old one   |
+|                                   | only works with the beam line starting along unit Z (i.e. no       |
+|                                   | beam line offset or rotation.                                      |
 +-----------------------------------+--------------------------------------------------------------------+
 | beam, offsetSampleMean=1          | Default false. If true, this will remove the sample mean from the  |
 |                                   | bunch distribution to match the central values. This is useful for |
@@ -3976,6 +4135,10 @@ The file may also be compressed using tar and gz. Any file with the extension `.
 will be automatically decompressed during the run without any temporary files. This is
 recommended, as compressed ASCII is significantly smaller in size.
 
+If the number of particles to be generated with ngenerate is greater than the number of
+particles defined in the file, the bunch generation will reload the file and read the
+particle coordinates from the beginning.
+
 .. note:: BDSIM must be compiled with GZIP. This is normally sourced from Geant4 and is
 	  on by default.
 
@@ -4154,9 +4317,39 @@ the larger of the horizontal and vertical tunnel dimensions.
 Materials and Atoms
 -------------------
 
-Materials and atoms can be added via the parser, just like lattice elements.
+All chemical elements are available in BDSIM as well as the Geant4 NIST database
+of materials for use. Custom materials and can also be added via the parser. All materials
+available in BDSIM can be found by executing BDSIM with the `-\\-materials` option.::
 
-If the material is composed by a single element, it can be defined using the **matdef** command with the following syntax::
+  bdsim --materials
+
+Aside from these, several materials useful for accelerator applications are already defined
+that are listed in :ref:`predefined-materials`.
+
+Generally, each beam line element accepts an argument "material" that is the
+material used for that element. It is used differently depending on the element. For example,
+in the case of a magnet, it is used for the yoke and for a collimator for the collimator
+block.
+
+Single Element
+^^^^^^^^^^^^^^
+
+In the case of an element, the chemical symbol can be specified::
+
+  rc1: rcol, l=0.6*m, xsize=1.2*cm, ysize=0.6*cm, material="W";
+
+These are automatically prefixed with :code:`G4_` and retrieved from the NIST database of
+materials.
+
+The user can also define their own material and then refer to it by name when defining
+a beam line element.
+
+Custom Single Element Material
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the material required is composed of a single element, but say of a different density or
+state than the default NIST one provided, it can be defined using the **matdef**
+command with the following syntax::
 
   materialname : matdef, Z=<int>, A=<double>, density=<double>, T=<double>, P=<double>, state=<char*>;
 
@@ -4172,11 +4365,14 @@ state      "solid", "liquid" or "gas" "solid"
 
 Example::
 
-  iron : matdef, Z=26, A=55.845, density=7.87;
+  iron2 : matdef, Z=26, A=55.845, density=7.87;
 
 A compound material can be specified in two manners:
 
-**1.** If the number of atoms of each component in a material unit is known, the following syntax can be used::
+Compound Material by Atoms
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+If the number of atoms of each component in a material unit is known,
+the following syntax can be used::
 
    <material> : matdef, density=<double>, T=<double>, P=<double>,
                 state=<char*>, components=<[list<char*>]>,
@@ -4193,7 +4389,11 @@ Example::
 
   NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
 
-**2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
+Compound Material by Mass Fraction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+On the other hand, if the mass fraction of each component is known, the
+following syntax can be used::
 
    <material> : matdef, density=<double>, T=<double>, P=<double>,
                 state=<char*>, components=<[list<char*>]>,
@@ -4209,8 +4409,11 @@ Example::
 
   SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
 
-The second syntax can also be used to define materials which are composed by other materials (and not by atoms).
-Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+The second syntax can also be used to define materials which are composed by
+other materials (and not by atoms).
+
+.. note:: Square brackets are required for the list of element symbols, curly
+	  brackets for the list of weights or fractions.
 
 New elements can be defined with the **atom** keyword::
 
@@ -4229,6 +4432,101 @@ Example::
   myTitanium : atom, symbol="myTi", Z=22, A=47.867;
   myNbTi     : matdef, density=5.6, T=4.0, components=["myNb","myTi"], componentsWeights={1,1};
 
+.. _predefined-materials:
+
+Predefined Materials
+^^^^^^^^^^^^^^^^^^^^
+
+The following elements are available by full name that refer to the Geant4 NIST
+elements:
+
+* aluminium
+* beryllium
+* carbon
+* chromium
+* copper
+* iron
+* lead
+* magnesium
+* nickel
+* nitrogen
+* silicon
+* titanium
+* tungstem
+* uranium
+* vanadium
+* zinc
+
+The following materials are also defined in BDSIM. The user should consult
+:code:`bdsim/src/BDSMaterials.cc` for the full definition of each including
+elements, mass fractions, temperature and state.
+
+* air
+* aralditef
+* awakeplasma
+* beamgasplugmat
+* berylliumcopper
+* bn5000
+* bp_carbonmonoxide
+* calciumCarbonate
+* carbonfiber
+* carbonmonoxide
+* carbonsteel
+* cellulose
+* clay
+* clayousMarl
+* concrete
+* cu_4k
+* dy061
+* epoxyresin3
+* fusedsilica
+* gos_lanex
+* gos_ri1
+* graphite
+* graphitefoam
+* hy906
+* lanex
+* lanex2
+* laservac
+* leadtungstate
+* lhcconcrete
+* lhc_rock
+* lhe_1.9k
+* limousMarl
+* liquidhelium
+* invar
+* kapton
+* marl
+* medex
+* mild_steel
+* niobium
+* nbti
+* nbti.1
+* nbti_87k
+* nb_87k
+* n-bk7
+* perspex
+* pet
+* pet_lanex
+* pet_opaque
+* polyurethane
+* quartz
+* smco
+* soil
+* solidhydrogen
+* solidnitrogen
+* solidoxygen
+* stainlesssteel
+* stainless_steel_304L
+* stainless_steel_304L_87K
+* stainless_steel_304LN
+* stainless_steel_304LN_87K
+* ti_87k
+* tungsten_heavy_alloy
+* ups923a
+* vacuum
+* weightiron
+* yag
 
 .. _crystals:
 
@@ -4237,7 +4535,7 @@ Crystals
 
 To use various crystal components in BDSIM such as `crystalcol`_, a crystal definition
 must first be made. This contains all of the required information to construct the
-crystal. The following parameters are requried:
+crystal. The following parameters are required:
 
 +-------------------+------------------------------------------------------------+
 | **Parameter**     | **Description**                                            |
@@ -4420,114 +4718,187 @@ to the typical full width of a magnet.
 Colours
 -------
 
-A few items allow you to define a custom colour for them to aid in visualisation. Currently,
-only `rcol`_ and `ecol`_ respond to this. The colour can be defined with an RGB colour code,
-where the RGB values are space delimited and given from 0 to 255. Once the colour name has
-been defined, it may be used again without having to redefine the components. Once defined, a
-colour may not be redefined. The syntax is::
+Most items allow you to define a custom colour for them to aid in visualisation. This includes
+all magnets and collimators, the shield and degrader. The colour can be defined with red, green
+and blue components, as well as a level of transparency, alpha. RGB values can range from 0
+to 255. Once defined, a colour may not be redefined. The syntax to define a colour is
 
-  color="NAME: R G B";
+.. code-block:: none
 
-where colour is an attribute of the beam line element, `NAME` is a user-specified name for the
-colour, and `R`, `G` and `B` are integers from 0 to 255 for the red, green and blue colour components.
+		NAME: newcolour, red=#, green=#, blue=#, alpha=#
 
 Examples::
+  
+  purple: newcolour, red=128, green=0, blue=128;
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="purple", material="copper";
 
-  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
-  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
 
+and::
+
+  purple: newcolour, red=128, green=0, blue=128;
+  orange: newcolour, red=255, green=140, blue=0;
+  nicegreen: newcolour, red=0, green=128, blue=0;
+
+  d1: drift, l=1*m;
+  basebend: sbend, l=2*m, angle=0.9;
+  sb1: basebend, colour="purple";
+  sb3: basebend, colour="nicegreen";
+  sb4: basebend, colour="yellow";
+  sb5: basebend, colour="orange";
+  sb6: basebend, colour="red";
+
+  beamline: line=(d1,sb1,d1,basebend,d1,sb3,d1,sb4,d1,sb5,d1,sb6,d1);
+  use, beamline;
+  sample, all;
+
+  beam,  particle="proton",
+         energy= 50*GeV;
+
+This examples if from `bdsim/examples/features/visualisation/coloured_sbend.gmad` and
+produces the model shown below.
+
+.. figure:: figures/visualisation/coloured_sbends.png
+	    :width: 80%
+	    :align: center
+
+
+* Colours can only be specified on an element-by-element basis.
 * Colour names are case-sensitive.
-* Note the colon `:` in the syntax is crucial.
+* New colour names must not clash with predefined BDSIM colour names.
 
-If a colour is already defined, that will be used. In the case a colour is already defined in
-BDSIM, that colour will be used. The user should therefore choose a different name if they
-wish to use their colour. The predefined colours in BDSIM are:
+All available colours in BDSIM can be found by running BDSIM with the `--colours` command::
 
-+-----------------+-----+-----+-----+
-| Name            |  R  |  G  |  B  |
-+=================+=====+=====+=====+
-| LHCcoil         | 229 | 191 | 0   |
-+-----------------+-----+-----+-----+
-| LHCcollar       | 229 | 229 | 229 |
-+-----------------+-----+-----+-----+
-| LHCcopperskin   | 184 | 133 | 10  |
-+-----------------+-----+-----+-----+
-| LHCyoke         | 0   | 127 | 255 |
-+-----------------+-----+-----+-----+
-| LHCyokered      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| beampipe        | 102 | 102 | 102 |
-+-----------------+-----+-----+-----+
-| black           | 0   | 0   | 0   |
-+-----------------+-----+-----+-----+
-| blue            | 0   | 0   | 255 |
-+-----------------+-----+-----+-----+
-| brown           | 114 | 63  | 0   |
-+-----------------+-----+-----+-----+
-| coil            | 184 | 115 | 51  |
-+-----------------+-----+-----+-----+
-| collimator      | 76  | 102 | 51  |
-+-----------------+-----+-----+-----+
-| cyan            | 0   | 255 | 255 |
-+-----------------+-----+-----+-----+
-| decapole        | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| default         | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| degrader        | 159 | 159 | 159 |
-+-----------------+-----+-----+-----+
-| gdml            | 102 | 51  | 0   |
-+-----------------+-----+-----+-----+
-| gray            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| green           | 0   | 255 | 0   |
-+-----------------+-----+-----+-----+
-| grey            | 127 | 127 | 127 |
-+-----------------+-----+-----+-----+
-| hkicker         | 76  | 51  | 178 |
-+-----------------+-----+-----+-----+
-| magenta         | 255 | 0   | 255 |
-+-----------------+-----+-----+-----+
-| multipole       | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| muspoiler       | 0   | 205 | 208 |
-+-----------------+-----+-----+-----+
-| octupole        | 0   | 153 | 76  |
-+-----------------+-----+-----+-----+
-| quadrupole      | 209 | 25  | 25  |
-+-----------------+-----+-----+-----+
-| rectangularbend | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| red             | 255 | 0   | 0   |
-+-----------------+-----+-----+-----+
-| rfcavity        | 118 | 135 | 153 |
-+-----------------+-----+-----+-----+
-| screenframe     | 178 | 178 | 178 |
-+-----------------+-----+-----+-----+
-| sectorbend      | 0   | 102 | 204 |
-+-----------------+-----+-----+-----+
-| sextupole       | 255 | 204 | 0   |
-+-----------------+-----+-----+-----+
-| shield          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| soil            | 138 | 90  | 0   |
-+-----------------+-----+-----+-----+
-| solenoid        | 255 | 139 | 0   |
-+-----------------+-----+-----+-----+
-| srfcavity       | 175 | 196 | 222 |
-+-----------------+-----+-----+-----+
-| tunnel          | 138 | 135 | 119 |
-+-----------------+-----+-----+-----+
-| tunnelfloor     | 127 | 127 | 114 |
-+-----------------+-----+-----+-----+
-| vkicker         | 186 | 84  | 211 |
-+-----------------+-----+-----+-----+
-| warning         | 255 | 19  | 146 |
-+-----------------+-----+-----+-----+
-| white           | 255 | 255 | 255 |
-+-----------------+-----+-----+-----+
-| yellow          | 255 | 255 | 0   |
-+-----------------+-----+-----+-----+
+  bdsim --colours
+
+For convenience the predefined colours in BDSIM are:
+
++--------------------+-----+-----+-----+-----+
+| Name               |  R  |  G  |  B  |  A  |
++====================+=====+=====+=====+=====+
+|             LHCcoil| 229 | 191 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|           LHCcollar| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|       LHCcopperskin| 184 | 133 |  10 |   1 |
++--------------------+-----+-----+-----+-----+
+|             LHCyoke|   0 | 127 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|          LHCyokered| 209 |  25 |  25 |   1 |
++--------------------+-----+-----+-----+-----+
+|         awakescreen| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|   awakespectrometer|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|            beampipe| 102 | 102 | 102 |   1 |
++--------------------+-----+-----+-----+-----+
+|               black|   0 |   0 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                blue|   0 |   0 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|               brown| 114 |  63 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                coil| 184 | 115 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|          collimator|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|             crystal| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|                cyan|   0 | 255 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|            decapole|  76 |  51 | 178 |   1 |
++--------------------+-----+-----+-----+-----+
+|             default| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|            degrader| 159 | 159 | 159 |   1 |
++--------------------+-----+-----+-----+-----+
+|        dipolefringe| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|               drift| 102 | 102 | 102 |   1 |
++--------------------+-----+-----+-----+-----+
+|                ecol|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|             element| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|                 gap| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|                gdml| 102 |  51 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                gray| 127 | 127 | 127 |   1 |
++--------------------+-----+-----+-----+-----+
+|               green|   0 | 255 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                grey| 127 | 127 | 127 |   1 |
++--------------------+-----+-----+-----+-----+
+|             hkicker|  76 |  51 | 178 |   1 |
++--------------------+-----+-----+-----+-----+
+|              kicker|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|             magenta| 255 |   0 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|              marker| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|           multipole| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|         muonspoiler|   0 | 205 | 208 |   1 |
++--------------------+-----+-----+-----+-----+
+|            octupole|   0 | 153 |  76 |   1 |
++--------------------+-----+-----+-----+-----+
+| paralleltransporter| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|          quadrupole| 209 |  25 |  25 |   1 |
++--------------------+-----+-----+-----+-----+
+|               rbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|                rcol|  76 | 102 |  51 |   1 |
++--------------------+-----+-----+-----+-----+
+|     rectangularbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|                 red| 255 |   0 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|                  rf| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|            rfcavity| 118 | 135 | 153 |   1 |
++--------------------+-----+-----+-----+-----+
+|             rmatrix| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|               sbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|              screen| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|         screenframe| 178 | 178 | 178 | 0.4 |
++--------------------+-----+-----+-----+-----+
+|          sectorbend|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|           sextupole| 255 | 204 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|              shield| 138 | 135 | 119 |   1 |
++--------------------+-----+-----+-----+-----+
+|                soil| 138 |  90 |   0 | 0.4 |
++--------------------+-----+-----+-----+-----+
+|            solenoid| 255 | 139 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
+|           srfcavity| 175 | 196 | 222 |   1 |
++--------------------+-----+-----+-----+-----+
+|       thinmultipole| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|         thinrmatrix| 229 | 229 | 229 |   1 |
++--------------------+-----+-----+-----+-----+
+|             tkicker|   0 | 102 | 204 |   1 |
++--------------------+-----+-----+-----+-----+
+|              tunnel| 138 | 135 | 119 |   1 |
++--------------------+-----+-----+-----+-----+
+|         tunnelfloor| 127 | 127 | 114 |   1 |
++--------------------+-----+-----+-----+-----+
+|           undulator| 159 | 159 | 159 |   1 |
++--------------------+-----+-----+-----+-----+
+|             vkicker| 186 |  84 | 211 |   1 |
++--------------------+-----+-----+-----+-----+
+|             warning| 255 |  19 | 146 |   1 |
++--------------------+-----+-----+-----+-----+
+|               white| 255 | 255 | 255 |   1 |
++--------------------+-----+-----+-----+-----+
+|              yellow| 255 | 255 |   0 |   1 |
++--------------------+-----+-----+-----+-----+
 
 .. _controlling-simulation-speed:
 

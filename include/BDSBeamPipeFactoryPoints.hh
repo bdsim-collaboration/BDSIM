@@ -103,6 +103,8 @@ protected:
 		   G4double x,
 		   G4double y);
 
+  /// Generate 2-vector points (and append them) about a circle. Uses ellipse
+  /// code with equal radii.
   void AppendAngle(std::vector<G4TwoVector>& vec,
 		   G4double startAngle,
 		   G4double finishAngle,
@@ -110,6 +112,16 @@ protected:
 		   G4int    nPoints = 10,
 		   G4double xOffset = 0,
 		   G4double yOffset = 0);
+
+  /// Generate 2-vector points (and append them) about an ellipse.
+  void AppendAngleEllipse(std::vector<G4TwoVector>& vec,
+			  G4double startAngle,
+			  G4double finishAngle,
+			  G4double radiusA,   // radius in horizontal
+			  G4double radiusB,   // radius in vertical
+			  G4int    nPoints = 10,
+			  G4double xOffset = 0,
+			  G4double yOffset = 0);
 
   /// Vector of x,y coordinates for vacuum extruded solid edge.
   std::vector<G4TwoVector> vacuumEdge;
@@ -158,8 +170,8 @@ private:
 			  G4ThreeVector inputFace,
 			  G4ThreeVector outputFace);
 
-  /// Overloads BDSBeamPipeFactorBase method to do common construction tasks and construct
-  /// BDSBeamPipe instance to return.
+  /// Overloads BDSBeamPipeFactoryBase method to do common construction tasks and
+  /// constructs BDSBeamPipe instance to return.
   virtual BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
 					       G4Material* vacuumMaterialIn,
 					       G4Material* beamPipeMaterialIn,

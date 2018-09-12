@@ -177,6 +177,9 @@ add_test(gmad-extend-field ${gmadBinary} extendfield.gmad)
 # test material extension
 add_test(gmad-extend-material ${gmadBinary} extendmaterial.gmad)
 
+# test colour extension
+add_test(gmad-extend-colour ${gmadBinary} extendcolour.gmad)
+
 # test crystal extension
 add_test(gmad-extend-crystal ${gmadBinary} extendcrystal.gmad)
 
@@ -202,6 +205,9 @@ add_test(gmad-cavity-model ${gmadBinary} cavitymodel.gmad)
 
 # test field
 add_test(gmad-field ${gmadBinary} field.gmad)
+
+# test colour
+add_test(gmad-colour ${gmadBinary} colour.gmad)
 
 # test crystal
 add_test(gmad-crystal ${gmadBinary} crystal.gmad)

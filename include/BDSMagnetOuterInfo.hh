@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
 
+class G4Colour;
 class G4Material;
 
 /**
@@ -57,7 +58,8 @@ public:
 		     G4bool                buildEndPiecesIn      = true,
 		     G4double              coilWidthFractionIn   = 0.65,
 		     G4double              coilHeightFractionIn  = 0.8,
-		     G4String              geometryTypeAndPathIn = "");
+		     G4String              geometryTypeAndPathIn = "",
+		     G4Colour*             colourIn              = nullptr);
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
@@ -73,6 +75,7 @@ public:
   G4double              coilWidthFraction;
   G4double              coilHeightFraction;
   G4String              geometryTypeAndPath;
+  G4Colour*             colour;
 
   /// Output stream operator implementation.
   friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
