@@ -170,6 +170,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   stopTime = time(nullptr);
   eventInfo->SetStopTime(stopTime);
   
+  // Get the curent memory usage
+  struct rusage r_usage;
+  getrusage(RUSAGE_SELF,&r_usage);
+  eventInfo->SetMemoryUsage(r_usage.ru_maxrss/(1048*1048));
+
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
   eventInfo->SetDuration(G4float(stops - starts));

@@ -28,7 +28,8 @@ BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
   duration(0),
   seedStateAtStart(""),
   aborted(false),
-  primaryHitMachine(false)
+  primaryHitMachine(false),
+  memoryUsageMb(0)
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()
@@ -42,4 +43,5 @@ void BDSOutputROOTEventInfo::Flush()
   seedStateAtStart  = "";
   aborted           = false;
   primaryHitMachine = false;
+  memoryUsageMb     = 0;  
 }
