@@ -20,6 +20,11 @@ Bug Fixes
 Output Changes
 --------------
 
+* Memory usage (for Mac & Linux) added at the end of each event in event info. This
+  is the memory usage of the whole program at that point including event independent
+  quantities such as the model.
+* BDSOutputROOTEventInfo class version incremented to 4.
+
 Utilities
 ---------
 
