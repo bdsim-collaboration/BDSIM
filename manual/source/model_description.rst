@@ -4901,13 +4901,13 @@ default 0.7 mm.
 ::
 
    rangecut=3*cm;
-   prodCutPhotons   = rangecut,
-   prodCutElectrons = rangecut,
-   prodCutPositrons = rangecut,
-   defaultRangeCut  = rangecut;
+   option, prodCutPhotons   = rangecut,
+           prodCutElectrons = rangecut,
+           prodCutPositrons = rangecut,
+           defaultRangeCut  = rangecut;
 
 .. warning:: The range cut should **not** be longer than the typical dimension of the objects
-	     (i.e. a range cut of 1 km is likely to produce rough energy deposition
+	     (i.e. a range cut of 1 km is likely to produce very rough energy deposition
 	     around boundaries).
 
 Minimum Kinetic Energy
