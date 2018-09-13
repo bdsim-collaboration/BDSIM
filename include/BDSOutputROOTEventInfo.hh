@@ -42,12 +42,12 @@ public:
   time_t stopTime;  ///< Time stamp at end of event.
   float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
   std::string seedStateAtStart; ///< Seed state at the start of the event.
-  int    index;     ///< Number of this event or run.
-  bool   aborted;   ///< Whether the event was aborted or not.
+  int    index;             ///< Number of this event or run.
+  bool   aborted;           ///< Whether the event was aborted or not.
   bool   primaryHitMachine; ///< Wether the primary particle hit the accelerator or not.
-  double memoryUsageMb; ///< memoryUsage (rusage.ru_maxrss)
+  double memoryUsageMb;     ///< memoryUsage (rusage.ru_maxrss)
  
-  ClassDef(BDSOutputROOTEventInfo,3);
+  ClassDef(BDSOutputROOTEventInfo,4);
 };
 
 #endif
