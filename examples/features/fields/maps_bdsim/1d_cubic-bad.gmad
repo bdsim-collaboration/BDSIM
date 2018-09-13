@@ -1,0 +1,9 @@
+f1: field, type="bmap1d",
+                 magneticFile = "bdsim1d:1dexample-bad.dat",
+		 magneticInterpolator = "cubic1D";
+
+d1: drift, l=1*m, fieldAll="f1";
+l1: line=(d1);
+use, l1;
+beam, particle="e-",
+      energy=1*GeV;

@@ -66,10 +66,7 @@ void BDSParser::AmalgamateBeam(const GMAD::Beam& execBeamIn,
   // We only amalgamate when we're running normally. If we're recreating
   // all beam parameters will be in the output file.
   if (!recreate)
-    {
-      beam.Amalgamate(execBeamIn, true);
-      //      beam.S0 = beam.S0+options.beamlineS;
-    }
+    {beam.Amalgamate(execBeamIn, true);}
 }
 
 void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
@@ -106,8 +103,6 @@ void BDSParser::CheckOptions()
   if(options.nturns < 1)
     {options.nturns = 1;}
 
-  if(options.beamlineS != 0 && beam.S0 == 0) 
-    {
-      beam.S0 = beam.S0 + options.beamlineS;
-    }
+  if(BDS::IsFinite(options.beamlineS) && beam.S0 == 0) 
+    {beam.S0 = beam.S0 + options.beamlineS;}
 }

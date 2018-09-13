@@ -160,9 +160,9 @@ private:
   /// Whether the transform is finite and should be used.
   G4bool        nonZeroTransform;
   
-  G4double mass2; ///< Cache of mass squared as requried to convert from p to E.
+  G4double mass2; ///< Cache of mass squared as required to convert from p to E.
   
-  /// A reference to the fully constructed beamline that's lazyily instantiated.
+  /// A reference to the fully constructed beamline that's lazily instantiated.
   mutable const BDSBeamline* beamline;
 };
 

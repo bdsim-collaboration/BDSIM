@@ -205,8 +205,7 @@ void BDSDetectorConstruction::BuildBeamlines()
     {G4cout << "parsing the beamline element list..."<< G4endl;}
   G4Transform3D initialTransform = BDSGlobalConstants::Instance()->BeamlineTransform();
   G4double      initialS         = BDSGlobalConstants::Instance()->BeamlineS();
-
-  G4cout << "BDSDetectorConstruction " << initialS << G4endl;
+  
   BDSBeamlineSet mainBeamline = BuildBeamline(BDSParser::Instance()->GetBeamline(),
 					      "main beam line",
 					      initialTransform,

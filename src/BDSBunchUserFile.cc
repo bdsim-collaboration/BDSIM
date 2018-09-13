@@ -237,9 +237,12 @@ void BDSBunchUserFile<T>::SetDistrFile(G4String filename)
 template<class T>
 void BDSBunchUserFile<T>::SkipLines()
 {
-  //Skip the a number of lines defined by the user option.
-  G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
-  skip((G4int)(nlinesIgnore * fields.size()));
+  if (BDS::IsFinite(nlinesIgnore))
+    {
+      //Skip the a number of lines defined by the user option.
+      G4cout << "BDSBunchUserFile> skipping " << nlinesIgnore << " lines" << G4endl;
+      skip((G4int) (nlinesIgnore * fields.size()));
+    }
 }
 
 template<class T>
@@ -247,9 +250,9 @@ void BDSBunchUserFile<T>::SetOptions(const BDSParticleDefinition* beamParticle,
 				     const GMAD::Beam& beam,
 				     const BDSBunchType& distrType,
 				     G4Transform3D beamlineTransformIn,
-				     const G4double beamlineS)
+				     const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   particleMass = beamParticle->Mass();
   SetDistrFile((G4String)beam.distrFile); 
   SetBunchFormat((G4String)beam.distrFileFormat);
@@ -327,6 +330,16 @@ G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 template<class T>
 BDSParticleCoordsFull BDSBunchUserFile<T>::GetNextParticleLocal()
 {
+  if (InputBunchFile.eof())
+    {
+      //If the end of the file is reached go back to the beginning of the file.
+      //this re reads the same file again to avoid crash - must always print warning
+      G4cout << "BDSBunchUserFile::ReadValue> End of file reached. Returning to beginning of file for next event." << G4endl;
+      CloseBunchFile();
+      OpenBunchFile();
+      SkipLines();
+    }
+
   G4double E = 0, x = 0, y = 0, z = 0, xp = 0, yp = 0, zp = 0, t = 0;
   G4double weight = 1;
   
@@ -413,13 +426,7 @@ template <class T>
 template <typename Type>
 G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
 {
-  InputBunchFile>>value; 
-  if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
-    //this re reads the same file again to avoid crash - must always print warning
-    G4cout << "BDSBunchUserFile::ReadValue> End of file reached. Returning to beginning of file for next event." << G4endl;
-    CloseBunchFile();
-    OpenBunchFile();
-  } 
+  InputBunchFile>>value;
   return !InputBunchFile.eof();
 }
 

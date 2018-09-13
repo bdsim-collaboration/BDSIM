@@ -59,7 +59,6 @@ BDSBunchGaussian::BDSBunchGaussian():
   coordinates = {&x0_v, &xp_v, &y0_v, &yp_v, &z0_v, &zp_v, &E_v, &t_v, &weight_v};
 }
 
-
 BDSBunchGaussian::~BDSBunchGaussian()
 {
   delete gaussMultiGen;
@@ -69,9 +68,9 @@ void BDSBunchGaussian::SetOptions(const BDSParticleDefinition* beamParticle,
 				  const GMAD::Beam& beam,
 				  const BDSBunchType& distrType,
 				  G4Transform3D beamlineTransformIn,
-				  const G4double beamlineS)
+				  const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
 
   // require sigmaE to be finite for sigma matrix to be positive definite
   // set to very small value if 0

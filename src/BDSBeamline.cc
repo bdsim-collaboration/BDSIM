@@ -69,7 +69,6 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousReferencePositionEnd = initialGlobalPosition;
 
   // initial s coordinate
-  G4cout << "BDSBeamline " << initialS << G4endl;
   previousSPositionEnd = initialS;
 
   // gap between each element added to the beam line

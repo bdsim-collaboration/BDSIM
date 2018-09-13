@@ -1,14 +1,21 @@
-V1.3 - 2018 / ?? / ??
+V1.3 - 2018 / 09 / ??
 =====================
 
 New Features
 ------------
+
+* All Geant4 reference physics lists are now available.
+* New beam pipe aperture for the CLIC post collision line.
 
 General
 -------
 
 Bug Fixes
 ---------
+
+* Fixed reloading user file when reading more particles than defined in the file.
+* Fixed infinite tracking from nans return from field map when BDSIM format
+  field map file was lacking lower and upper limits.
 
 Output Changes
 --------------
