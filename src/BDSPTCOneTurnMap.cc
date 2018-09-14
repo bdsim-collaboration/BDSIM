@@ -121,9 +121,10 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
   // std::cout << "LOCAL PY = " << coords.local.yp << std::endl;
   // std::cout << "LOCAL PZ = " << coords.local.zp << std::endl;
   // std::cout << "ENERGY = " << coords.local.totalEnergy << std::endl;
+
   initialPrimaryMomentum =
       std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
-  // momentumMag =
+  // Converting to PTC Coordinates:
   xLastTurn = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
   yLastTurn = coords.local.y / CLHEP::m;
