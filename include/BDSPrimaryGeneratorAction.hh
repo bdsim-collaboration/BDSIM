@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #ifndef BDSPRIMARYGENERATORACTION_H
-#define BDSPRIMARYGENERATORACTION_H 
+#define BDSPRIMARYGENERATORACTION_H
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "BDSExtent.hh"
 #include "globals.hh"
 
 class BDSBunch;
-class BDSExtent;
 class BDSIonDefinition;
 class BDSOutputLoader;
 class BDSParticleDefinition;

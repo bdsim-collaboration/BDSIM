@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSPrimaryGeneratorAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
@@ -126,6 +127,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 G4double BDSFieldFactory::defaultRigidity = std::numeric_limits<double>::max();
+BDSPrimaryGeneratorAction* BDSFieldFactory::primaryGeneratorAction = nullptr;
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
