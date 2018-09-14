@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSParticleCoordsFullGlobal.hh"
 
 #include "globals.hh" // Geant4 typedefs
 
@@ -26,6 +28,30 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <fstream>
 #include <sstream>
 #include <string>
+
+BDSPTCOneTurnMap* BDSPTCOneTurnMap::instance = nullptr;
+
+BDSPTCOneTurnMap* BDSPTCOneTurnMap::Instance() {
+
+  auto filename = BDSGlobalConstants::Instance()->PTCOneTurnMapFileName();
+
+  if (instance == nullptr) {
+    if (filename == "") {
+      instance = new BDSPTCOneTurnMap();
+    }
+    else {
+      instance = new BDSPTCOneTurnMap(filename);
+    }
+  }
+  return instance;
+}
+
+BDSPTCOneTurnMap::BDSPTCOneTurnMap() {
+  initialised = false;
+  shouldApply = false;
+  useCurvilinear = true;
+  referenceMomentum = -1; // dummy value.
+}
 
 BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
   std::ifstream infile(maptableFile);
@@ -89,31 +115,75 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
       break;
     }
   }
+  initialised = true;
+  shouldApply = false;
+  useCurvilinear = true;
+  SetReferenceMomentum();
+  SetMass();
+#ifdef BDSDEBUG
+  G4cout << __FUNCTION__ << "> Loaded Map:" << maptableFile << G4endl;
+#endif
 }
 
-G4double BDSPTCOneTurnMap::evaluateX(G4double x, G4double px, G4double y,
-                                     G4double py, G4double deltaP) {
-  return evaluate(xTerms, x, px, y, py, deltaP);
+void BDSPTCOneTurnMap::SetReferenceMomentum() {
+  referenceMomentum =
+      BDSGlobalConstants::Instance()->BeamParticleDefinition()->Momentum();
 }
 
-G4double BDSPTCOneTurnMap::evaluatePX(G4double x, G4double px, G4double y,
-                                      G4double py, G4double deltaP) {
-  return evaluate(pxTerms, x, px, y, py, deltaP);
+void BDSPTCOneTurnMap::SetMass() {
+  mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
-G4double BDSPTCOneTurnMap::evaluateY(G4double x, G4double px, G4double y,
-                                     G4double py, G4double deltaP) {
-  return evaluate(yTerms, x, px, y, py, deltaP);
+void BDSPTCOneTurnMap::SetPrimaryCoordinates(BDSParticleCoordsFullGlobal coords,
+                                             G4bool useCurvilinearIn) {
+  UpdateCoordinates(coords);
+  // If we're using curvilinear then S0 != 0 and we shouldn't apply
+  // map on first turn.  record this setting here for the teleporter's
+  // consideration.
+  useCurvilinear = useCurvilinearIn;
 }
 
-G4double BDSPTCOneTurnMap::evaluatePY(G4double x, G4double px, G4double y,
-                                      G4double py, G4double deltaP) {
-  return evaluate(pyTerms, x, px, y, py, deltaP);
+void BDSPTCOneTurnMap::SetThisTurnResult() {
+  std::cout << "Before SetThisTurnResult: " << std::endl;
+  std::cout << "xLastTurn = " << xLastTurn << std::endl;
+  std::cout << "pxLastTurn = " << pxLastTurn << std::endl;
+  std::cout << "yLastTurn = " << yLastTurn << std::endl;
+  std::cout << "pyLastTurn = " << pyLastTurn << std::endl;
+  std::cout << "deltaPLastTurn = " << deltaPLastTurn << std::endl;
+  std::cout << "\n";
+  G4double x = evaluate(xTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+			deltaPLastTurn);
+  G4double px = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+			 deltaPLastTurn);
+  G4double y = evaluate(yTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+			deltaPLastTurn);
+  G4double py = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+			 deltaPLastTurn);
+  G4double deltaP = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+			     deltaPLastTurn);
+  xLastTurn = x;
+  pxLastTurn = px;
+  yLastTurn = y;
+  pyLastTurn = py;
+  deltaPLastTurn = deltaP;
+
+  std::cout << "After SetThisTurnResult: " << std::endl;
+  std::cout << "xLastTurn = " << xLastTurn << std::endl;
+  std::cout << "pxLastTurn = " << pxLastTurn << std::endl;
+  std::cout << "yLastTurn = " << yLastTurn << std::endl;
+  std::cout << "pyLastTurn = " << pyLastTurn << std::endl;
+  std::cout << "deltaPLastTurn = " << deltaPLastTurn << std::endl;
+  std::cout << "\n";
+
 }
 
-G4double BDSPTCOneTurnMap::evaluateDeltaP(G4double x, G4double px, G4double y,
-                                          G4double py, G4double deltaP) {
-  return evaluate(deltaPTerms, x, px, y, py, deltaP);
+void BDSPTCOneTurnMap::GetThisTurn(G4double &x, G4double &px, G4double &y,
+				   G4double &py, G4double &deltaP) {
+  x = xLastTurn;
+  px = pxLastTurn;
+  y = yLastTurn;
+  py = pyLastTurn;
+  deltaP = deltaPLastTurn;
 }
 
 G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
@@ -126,4 +196,49 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
                std::pow(py, term.npy) * std::pow(deltaP, term.ndeltaP));
   }
   return result;
+}
+
+void BDSPTCOneTurnMap::UpdateCoordinates(BDSParticleCoordsFullGlobal coords) {
+  // convert to PTC (PX = px / p0) coordinates.
+  std::cout << "GLOBAL PX = " << coords.global.xp << std::endl;
+  std::cout << "GLOBAL PY = " << coords.global.yp << std::endl;
+  std::cout << "GLOBAL PZ = " << coords.global.zp << std::endl;
+  std::cout << "LOCAL PX = " << coords.local.xp << std::endl;
+  std::cout << "LOCAL PY = " << coords.local.yp << std::endl;
+  std::cout << "LOCAL PZ = " << coords.local.zp << std::endl;
+  std::cout << "ENERGY = " << coords.local.totalEnergy << std::endl;
+  G4double totalMomentum = std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
+  // momentumMag =
+  xLastTurn = coords.local.x / CLHEP::m;
+  pxLastTurn = coords.global.xp * totalMomentum / referenceMomentum;
+  yLastTurn = coords.local.y / CLHEP::m;
+  pyLastTurn = coords.global.yp * totalMomentum / referenceMomentum;
+  deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
+  std::cout << "Updating coordinates... " << std::endl;
+  std::cout << "xLastTurn = " << xLastTurn << std::endl;
+  std::cout << "pxLastTurn = " << pxLastTurn << std::endl;
+  std::cout << "yLastTurn = " << yLastTurn << std::endl;
+  std::cout << "pyLastTurn = " << pyLastTurn << std::endl;
+  std::cout << "deltaP = " << deltaPLastTurn << std::endl;
+  std::cout << "\n" << std::endl;
+
+}
+
+void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {
+  G4bool isPrimary = track->GetParentID() == 0;
+  G4bool firstTurnWithSOffset =
+      BDSGlobalConstants::Instance()->TurnsTaken() == 1 && useCurvilinear;
+  shouldApply = isPrimary && !firstTurnWithSOffset;
+  // If on first turn with S offset then we must initialise the
+  // coordinates for use from here onwards.
+  if (isPrimary && firstTurnWithSOffset) {
+    std::cout << "now we are also doing something" << std::endl;
+    auto momentum = track->GetMomentum();
+    auto position = track->GetPosition();
+    xLastTurn = position.x() / CLHEP::m;
+    yLastTurn = position.y() / CLHEP::m;
+    pxLastTurn = momentum.x() / referenceMomentum;
+    pyLastTurn = momentum.y() / referenceMomentum;
+    deltaPLastTurn = (momentum.mag() - referenceMomentum) / referenceMomentum;
+  }
 }

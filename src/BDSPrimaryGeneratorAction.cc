@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSBunch.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
 #include "BDSExtent.hh"
@@ -117,6 +118,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       if ((coords.local.totalEnergy - mass) > 0)
         {break;}
     }
+
+  if (BDSPTCOneTurnMap::Instance()->IsInitialised()) {
+    auto map = BDSPTCOneTurnMap::Instance();
+    map->SetPrimaryCoordinates(coords, bunch->GetUseCurvilinear());
+  }
 
   // set particle definition
   // either from input bunch file, an ion, or regular beam particle

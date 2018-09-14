@@ -54,6 +54,7 @@ private:
   const G4ThreeVector dPos;
   const G4double      teleporterLength;
   G4bool              newMethod;  ///< Whether to use full 3D transform.
+  G4bool              useOneTurnMap;
 };
 
 #endif

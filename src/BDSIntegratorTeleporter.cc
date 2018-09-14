@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh" 
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorTeleporter.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -34,6 +35,7 @@ BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
   teleporterLength(teleporterLengthIn)
 {
   newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
+  useOneTurnMap = BDSPTCOneTurnMap::Instance()->IsInitialised();
 }
 
 void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
@@ -64,10 +66,43 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
-      if (newMethod)
-	{// new method - full tranfsorm3D - works in 3d with beam line offset / rotation
-	  globalPosAfter = globalPos + dPos;
-	  globalMomAfter = globalMom.transform(transform.getRotation());
+
+      if (useOneTurnMap && BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
+	std::cout << "I am applying the thing :) " << std::endl;
+        const auto otm = BDSPTCOneTurnMap::Instance();
+	const auto referenceMomentum = otm->GetReferenceMomentum();
+        G4double x, px, y, py, deltaP;
+	// pass by reference, returning the PTC coordinates:
+        otm->GetThisTurn(x, px, y, py, deltaP);
+	// Calculate the output momenta
+	// ptc momenta are scaled by 1/p0, so we invert this to get
+	// true momenta here.
+	px *= referenceMomentum;
+	py *= referenceMomentum;
+	auto momentum = referenceMomentum * (deltaP + 1);
+	// Calculate the momenta in pz.
+	auto pz = std::sqrt(std::pow(momentum, 2) - std::pow(px, 2) - std::pow(py, 2));
+
+	G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
+	// Calculate the output global positions
+	BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
+	auto localPosition = localPosMom.PreStepPoint();
+	auto outLocalPosition = G4ThreeVector(x, y, localPosition.z() + h);
+
+        BDSStep globalPosDir =
+	  ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
+
+	// Set the output positions and momenta
+	globalPosAfter = globalPosDir.PreStepPoint();
+	globalMomAfter = globalPosDir.PostStepPoint();
+	std::cout << "applied the map." << std::endl;
+      }
+
+      else if (newMethod) { // new method - full tranfsorm3D - works in 3d
+	                    // with beam line offset / rotation
+	std::cout << "newMethod...!" << std::endl;
+        globalPosAfter = globalPos + dPos;
+        globalMomAfter = globalMom.transform(transform.getRotation());
 	}
       else
 	{// old method - only works with beam line pointing in global (0,0,1)

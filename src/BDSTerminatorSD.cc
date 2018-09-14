@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "BDSDebug.hh"
+#include "BDSPTCOneTurnMap.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "BDSTerminatorSD.hh"
@@ -58,6 +59,15 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << "parentID:         " << parentID    << G4endl;
   G4cout << __METHOD_NAME__ << "track lenth (mm): " << trackLength << G4endl;
 #endif
+
+  auto otm = BDSPTCOneTurnMap::Instance();
+  if (otm->IsInitialised()) {
+    BDSPTCOneTurnMap::Instance()->SetTeleporterMapApplicability(theTrack);
+    if (BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
+      otm->SetThisTurnResult();
+    }
+  }
+  std::cout << "processing hits.." << std::endl;
   if ((parentID == 0) && (trackLength > 1000) && aStep->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
       // parentID == 0 -> primary particle - should only increment turn number for primaries

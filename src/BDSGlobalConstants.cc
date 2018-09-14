@@ -115,13 +115,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
   integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 
   InitialiseBeamlineTransform();
-  
-  BDSSamplerPlane::chordLength = LengthSafety();
 
-  // Initialise the one turn map if it is present.
-  if (PTCOneTurnMapFileName() != "") {
-    ptcOneTurnMap = BDSPTCOneTurnMap(PTCOneTurnMapFileName());
-  }
+  BDSSamplerPlane::chordLength = LengthSafety();
 }
 
 void BDSGlobalConstants::InitialiseBeamlineTransform()
