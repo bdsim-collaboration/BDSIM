@@ -27,23 +27,14 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 namespace {
-struct PTCMapTerm {
-  G4double coefficient;
-  G4int nx, npx, ny, npy, ndeltaP;
-};
+  struct PTCMapTerm {
+    G4double coefficient;
+    G4int nx, npx, ny, npy, ndeltaP;
+  };
+}; // namespace
 
-} // namespace
-
-
-// How this class intends to fit into BDSIM:
-// This is instantiated in BDSGlobalConstants if ptcOneTurnMapFile != "".
-// Reference momentum and particle mass is set in bdsim.cc
-// Primary distribution is set in BDSPrimaryGeneratorAction, as well
-// as informing if S0 != 0 (usecurvilinear).
-// The decision for whether the map should be applied, or not, occurs
-// in BDSPTCOneTurnMap::SetTeleporterApplicability, which is called in
-// BDSTerminatorSD.cc.
-// Finally, GetTeleporterApplicability is called in the teleporter.
+// Note: This class uses PTC units internally for calculating the
+// result of the map.
 
 class BDSPTCOneTurnMap {
 public:
