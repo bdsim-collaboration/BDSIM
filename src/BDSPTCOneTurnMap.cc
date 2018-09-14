@@ -179,12 +179,26 @@ void BDSPTCOneTurnMap::SetThisTurnResult() {
 }
 
 void BDSPTCOneTurnMap::GetThisTurn(G4double &x, G4double &px, G4double &y,
-				   G4double &py, G4double &deltaP) {
-  x = xLastTurn;
-  px = pxLastTurn;
-  y = yLastTurn;
-  py = pyLastTurn;
-  deltaP = deltaPLastTurn;
+                                   G4double &py, G4double &deltaP) {
+  G4double xOut = evaluate(xTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+                           deltaPLastTurn);
+  G4double pxOut = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn,
+                            pyLastTurn, deltaPLastTurn);
+  G4double yOut = evaluate(yTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
+                           deltaPLastTurn);
+  G4double pyOut = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn,
+                            pyLastTurn, deltaPLastTurn);
+  G4double deltaPOut = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn,
+                                pyLastTurn, deltaPLastTurn);
+  // Set the output and update the cached coordinates for maybe next
+  // turn around the ring.  NOTE:  RETURNING PTC (NOT BDSIM)
+  // COORDINATES!!!  IT is left to the user to convert back to
+  // whatever they want.
+  x = xLastTurn = xOut;
+  px = pxLastTurn = pxOut;
+  y = yLastTurn = yOut;
+  py = pyLastTurn = pyOut;
+  deltaP = deltaPLastTurn = deltaPOut;
 }
 
 G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,

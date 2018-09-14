@@ -69,24 +69,21 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalMomAfter;
 
       if (oneTurnMap && oneTurnMap->ShouldApply(globalMom.mag())) {
-      // if (useOneTurnMap && BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
 	std::cout << "I am applying the thing :) " << std::endl;
-	// auto otm = BDSPTCOneTurnMap::Instance();
-	auto otm = oneTurnMap;
-	const auto referenceMomentum = otm->GetReferenceMomentum();
+
+	const auto referenceMomentum = oneTurnMap->GetReferenceMomentum();
+	// by defn the particle has the initial primary momentum here.
+	const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
         G4double x, px, y, py, deltaP;
-	// pass by reference, returning the PTC coordinates:
-        otm->GetThisTurn(x, px, y, py, deltaP);
-	// Calculate the output momenta
-	// ptc momenta are scaled by 1/p0, so we invert this to get
-	// true momenta here.
+	// pass by reference, returning the *PTC* coordinates:
+        oneTurnMap->GetThisTurn(x, px, y, py, deltaP);
+	// ptc momenta are scaled by 1/p0, invert this to get the true momenta.
 	px *= referenceMomentum;
 	py *= referenceMomentum;
-	auto momentum = referenceMomentum * (deltaP + 1);
-	// Calculate the momenta in pz.
-	auto pz = std::sqrt(std::pow(momentum, 2) - std::pow(px, 2) - std::pow(py, 2));
+        auto pz = std::sqrt(std::pow(momentum, 2) - std::pow(px, 2) -
+                            std::pow(py, 2));
 
-	G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
+        G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
 	// Calculate the output global positions
 	BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
 	auto localPosition = localPosMom.PreStepPoint();
