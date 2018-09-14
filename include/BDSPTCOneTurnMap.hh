@@ -75,6 +75,8 @@ public:
   void SetReferenceMomentum();
   void SetMass();
   void SetInitialPrimaryMomentum(G4double in) {initialPrimaryMomentum = in;}
+  G4double GetInitialPrimaryMomentum() {return initialPrimaryMomentum;}
+
   G4double GetReferenceMomentum() const {return referenceMomentum;}
 
 private:
