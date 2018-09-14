@@ -46,20 +46,21 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch*              bunc
   eventOffset(0),
   ionPrimary(beamParticleIn->IsAnIon()),
   ionCached(false),
-  particleCharge(beamParticleIn->Charge()) // always right even if ion
+  particleCharge(beamParticleIn->Charge()), // always right even if ion
+  oneTurnMap(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
   writeASCIISeedState = BDSGlobalConstants::Instance()->WriteSeedState();
   recreate            = BDSGlobalConstants::Instance()->Recreate();
   useASCIISeedState   = BDSGlobalConstants::Instance()->UseASCIISeedState();
-  
+
   if (recreate)
     {
       recreateFile = new BDSOutputLoader(BDSGlobalConstants::Instance()->RecreateFileName());
       eventOffset  = BDSGlobalConstants::Instance()->StartFromEvent();
     }
-  
+
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleTime(0);
@@ -76,7 +77,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // load seed state if recreating.
   if (recreate)
     {BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));}
-  
+
   // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
@@ -106,7 +107,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       beamParticle->UpdateG4ParticleDefinition(ionParticleDef);
       ionCached = true;
     }
-  
+
   // continue generating particles until positive finite kinetic energy.
   G4int n = 0;
   BDSParticleCoordsFullGlobal coords;
@@ -119,9 +120,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         {break;}
     }
 
-  if (BDSPTCOneTurnMap::Instance()->IsInitialised()) {
-    auto map = BDSPTCOneTurnMap::Instance();
-    map->SetPrimaryCoordinates(coords, bunch->GetUseCurvilinear());
+  if (oneTurnMap) {
+    oneTurnMap->SetPrimaryCoordinates(coords, bunch->GetUseCurvilinear());
   }
 
   // set particle definition
@@ -141,10 +141,10 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 
   particleGun->SetParticleDefinition(particleDef);
-  
+
   // always update the charge - ok for normal particles; fixes purposively specified ions.
   particleGun->SetParticleCharge(particleCharge);
-  
+
   // check that kinetic energy is positive and finite anyway and abort if not.
   G4double EK = coords.local.totalEnergy - particleDef->GetPDGMass();
   if(EK <= 0)
@@ -176,15 +176,15 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << coords << G4endl;
 #endif
-  
+
   G4ThreeVector PartMomDir(coords.global.xp,coords.global.yp,coords.global.zp);
   G4ThreeVector PartPosition(coords.global.x,coords.global.y,coords.global.z);
-  
+
   particleGun->SetParticlePosition(PartPosition);
   particleGun->SetParticleEnergy(EK);
   particleGun->SetParticleMomentumDirection(PartMomDir);
   particleGun->SetParticleTime(coords.global.T);
-  
+
   particleGun->GeneratePrimaryVertex(anEvent);
 
   // set the weight
@@ -193,7 +193,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   // associate full set of coordinates with vertex for writing to output after event
   vertex->SetUserInformation(new BDSPrimaryVertexInformation(coords));
-  
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   vertex->Print();

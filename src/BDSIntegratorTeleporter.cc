@@ -28,11 +28,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
 						 G4Transform3D transformIn,
-						 G4double      teleporterLengthIn):
+						 G4double      teleporterLengthIn,
+						 BDSPTCOneTurnMap* oneTurnMapIn):
   BDSIntegratorMag(eqOfMIn,6),
   transform(transformIn),
   dPos(transform.getTranslation()),
-  teleporterLength(teleporterLengthIn)
+  teleporterLength(teleporterLengthIn),
+  oneTurnMap(oneTurnMapIn)
 {
   newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
   useOneTurnMap = BDSPTCOneTurnMap::Instance()->IsInitialised();

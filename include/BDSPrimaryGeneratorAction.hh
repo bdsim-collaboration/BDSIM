@@ -27,6 +27,7 @@ class BDSBunch;
 class BDSIonDefinition;
 class BDSOutputLoader;
 class BDSParticleDefinition;
+class BDSPTCOneTurnMap;
 class G4Event;
 class G4ParticleGun;
 
@@ -46,7 +47,10 @@ public:
 
   /// Set the world extent that particle coordinates will be checked against.
   inline void SetWorldExtent(const BDSExtent worldExtentIn) {worldExtent = worldExtentIn;}
-  
+  /// Register a PTC map instance used in the teleporter which this
+  /// class will set initial (first turn) primary coordinates for.
+  void RegisterPTCOneTurnMap(BDSPTCOneTurnMap* otmIn) {oneTurnMap = otmIn;}
+
 private:
   /// Beam particle.
   BDSParticleDefinition* beamParticle;
@@ -82,8 +86,9 @@ private:
   G4bool ionCached; 
   
   G4double particleCharge; ///< Charge that will replace default ion charge.
+
+  /// Cached OTM for setting first turn primary coords.
+  BDSPTCOneTurnMap* oneTurnMap;
 };
 
 #endif
-
-
