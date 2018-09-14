@@ -37,7 +37,6 @@ BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*      eqOfMIn,
   oneTurnMap(oneTurnMapIn)
 {
   newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
-  useOneTurnMap = BDSPTCOneTurnMap::Instance()->IsInitialised();
 }
 
 void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
@@ -56,7 +55,15 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 #endif
 
   G4double lengthFraction = h / teleporterLength;
-  
+
+  // auto otm = BDSPTCOneTurnMap::Instance();
+  // if (otm->IsInitialised()) {
+  //   BDSPTCOneTurnMap::Instance()->SetTeleporterMapApplicability(theTrack);
+  //   if (BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
+  //     otm->SetThisTurnResult();
+  //   }
+  // }
+
   // has to have completed at least 1 turn and be going forwards
   // must test for this to avoid backwards going particles getting stuck
   // also don't apply if for whatever reason the step length is less than half
@@ -69,9 +76,11 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
 
-      if (useOneTurnMap && BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
+      if (oneTurnMap && oneTurnMap->ShouldApply(globalMom.mag())) {
+      // if (useOneTurnMap && BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
 	std::cout << "I am applying the thing :) " << std::endl;
-        const auto otm = BDSPTCOneTurnMap::Instance();
+	// auto otm = BDSPTCOneTurnMap::Instance();
+	auto otm = oneTurnMap;
 	const auto referenceMomentum = otm->GetReferenceMomentum();
         G4double x, px, y, py, deltaP;
 	// pass by reference, returning the PTC coordinates:

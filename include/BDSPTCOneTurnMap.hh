@@ -47,9 +47,8 @@ struct PTCMapTerm {
 
 class BDSPTCOneTurnMap {
 public:
-  static BDSPTCOneTurnMap* Instance();
   //! Default constructor
-  BDSPTCOneTurnMap();
+  BDSPTCOneTurnMap() = delete;
 
   //! Copy constructor
   BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;
@@ -68,19 +67,13 @@ public:
 
   BDSPTCOneTurnMap(G4String path); // path to maptable file
 
-  // Is this map loaded.
-  G4bool IsInitialised() {return initialised;}
-
-  // public-facing should_apply?
-  // This should be used by the terminator to decide if the teleporter
-  // should use this instance (one turn map)
-  G4bool ShouldTeleporterApplyMap() {return shouldApply;}
+  G4bool ShouldApply(G4double momentum) const;
+  void UpdateCoordsForNextTurn();
   // Decides whether or not this should be applied.  Can add more
-  void SetTeleporterMapApplicability(G4Track* particleTrack);
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);
-  void SetPrimaryCoordinates(BDSParticleCoordsFullGlobal coords,
-                             G4bool useCurvilinear);
+  void SetInitialPrimaryCoordinates(BDSParticleCoordsFullGlobal coords,
+				    G4bool offsetS0);
   void UpdateCoordinates(BDSParticleCoordsFullGlobal coords);
 
 
@@ -90,23 +83,21 @@ public:
 
   void SetReferenceMomentum();
   void SetMass();
-  G4double GetReferenceMomentum() {return referenceMomentum;}
+  void SetInitialPrimaryMomentum(G4double in) {initialPrimaryMomentum = in;}
+  G4double GetReferenceMomentum() const {return referenceMomentum;}
 
 private:
-  static BDSPTCOneTurnMap* instance;
 
   G4double evaluate(std::vector<PTCMapTerm> terms, G4double x, G4double px,
                     G4double y, G4double py, G4double deltaP);
 
-  G4bool shouldApply; // Should we apply this map ?  This is intended
-                      // to be set by the terminator (primary?  S0 != 0
-                      // and first turn?) and read by the teleporter.
 
-  G4bool initialised;
-  G4bool useCurvilinear;
+  G4double initialPrimaryMomentum;
+  G4bool offsetS0AndOnFirstTurn;
 
   G4double referenceMomentum;
   G4double mass;
+
 
   G4double xLastTurn;
   G4double pxLastTurn;

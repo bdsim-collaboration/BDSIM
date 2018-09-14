@@ -29,31 +29,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <sstream>
 #include <string>
 
-BDSPTCOneTurnMap* BDSPTCOneTurnMap::instance = nullptr;
 
-BDSPTCOneTurnMap* BDSPTCOneTurnMap::Instance() {
-
-  auto filename = BDSGlobalConstants::Instance()->PTCOneTurnMapFileName();
-
-  if (instance == nullptr) {
-    if (filename == "") {
-      instance = new BDSPTCOneTurnMap();
-    }
-    else {
-      instance = new BDSPTCOneTurnMap(filename);
-    }
-  }
-  return instance;
-}
-
-BDSPTCOneTurnMap::BDSPTCOneTurnMap() {
-  initialised = false;
-  shouldApply = false;
-  useCurvilinear = true;
-  referenceMomentum = -1; // dummy value.
-}
-
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) :
+  offsetS0AndOnFirstTurn(true) // by default do not say apply on first
+			       // turn as strictly this is safer.
+{
   std::ifstream infile(maptableFile);
   if (!infile) {
     G4String message = "Failed to read maptable: " + maptableFile;
@@ -115,9 +95,6 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) {
       break;
     }
   }
-  initialised = true;
-  shouldApply = false;
-  useCurvilinear = true;
   SetReferenceMomentum();
   SetMass();
 #ifdef BDSDEBUG
@@ -134,13 +111,37 @@ void BDSPTCOneTurnMap::SetMass() {
   mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
-void BDSPTCOneTurnMap::SetPrimaryCoordinates(BDSParticleCoordsFullGlobal coords,
-                                             G4bool useCurvilinearIn) {
-  UpdateCoordinates(coords);
+void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
+    BDSParticleCoordsFullGlobal coords, G4bool offsetS0AndOnFirstTurnIn) {
+  //   // convert to PTC (PX = px / p0) coordinates.
+  // std::cout << "GLOBAL PX = " << coords.global.xp << std::endl;
+  // std::cout << "GLOBAL PY = " << coords.global.yp << std::endl;
+  // std::cout << "GLOBAL PZ = " << coords.global.zp << std::endl;
+  // std::cout << "LOCAL PX = " << coords.local.xp << std::endl;
+  // std::cout << "LOCAL PY = " << coords.local.yp << std::endl;
+  // std::cout << "LOCAL PZ = " << coords.local.zp << std::endl;
+  // std::cout << "ENERGY = " << coords.local.totalEnergy << std::endl;
+  initialPrimaryMomentum =
+      std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
+  // momentumMag =
+  xLastTurn = coords.local.x / CLHEP::m;
+  pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
+  yLastTurn = coords.local.y / CLHEP::m;
+  pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
+  deltaPLastTurn =
+      (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
+  // std::cout << "Updating coordinates... " << std::endl; //
+  // std::cout << "xLastTurn = " << xLastTurn << std::endl;
+  // std::cout << "pxLastTurn = " << pxLastTurn << std::endl;
+  // std::cout << "yLastTurn = " << yLastTurn << std::endl;
+  // std::cout << "pyLastTurn = " << pyLastTurn << std::endl;
+  // std::cout << "deltaP = " << deltaPLastTurn << std::endl;
+  // std::cout << "\n" << std::endl;
+
   // If we're using curvilinear then S0 != 0 and we shouldn't apply
   // map on first turn.  record this setting here for the teleporter's
   // consideration.
-  useCurvilinear = useCurvilinearIn;
+  offsetS0AndOnFirstTurn = offsetS0AndOnFirstTurnIn;
 }
 
 void BDSPTCOneTurnMap::SetThisTurnResult() {
@@ -198,47 +199,26 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
   return result;
 }
 
-void BDSPTCOneTurnMap::UpdateCoordinates(BDSParticleCoordsFullGlobal coords) {
-  // convert to PTC (PX = px / p0) coordinates.
-  std::cout << "GLOBAL PX = " << coords.global.xp << std::endl;
-  std::cout << "GLOBAL PY = " << coords.global.yp << std::endl;
-  std::cout << "GLOBAL PZ = " << coords.global.zp << std::endl;
-  std::cout << "LOCAL PX = " << coords.local.xp << std::endl;
-  std::cout << "LOCAL PY = " << coords.local.yp << std::endl;
-  std::cout << "LOCAL PZ = " << coords.local.zp << std::endl;
-  std::cout << "ENERGY = " << coords.local.totalEnergy << std::endl;
-  G4double totalMomentum = std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
-  // momentumMag =
-  xLastTurn = coords.local.x / CLHEP::m;
-  pxLastTurn = coords.global.xp * totalMomentum / referenceMomentum;
-  yLastTurn = coords.local.y / CLHEP::m;
-  pyLastTurn = coords.global.yp * totalMomentum / referenceMomentum;
-  deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
-  std::cout << "Updating coordinates... " << std::endl;
-  std::cout << "xLastTurn = " << xLastTurn << std::endl;
-  std::cout << "pxLastTurn = " << pxLastTurn << std::endl;
-  std::cout << "yLastTurn = " << yLastTurn << std::endl;
-  std::cout << "pyLastTurn = " << pyLastTurn << std::endl;
-  std::cout << "deltaP = " << deltaPLastTurn << std::endl;
-  std::cout << "\n" << std::endl;
-
+G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn) const {
+  G4bool should = momentumIn == initialPrimaryMomentum && !offsetS0AndOnFirstTurn;
+  return should;
 }
 
-void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {
-  G4bool isPrimary = track->GetParentID() == 0;
-  G4bool firstTurnWithSOffset =
-      BDSGlobalConstants::Instance()->TurnsTaken() == 1 && useCurvilinear;
-  shouldApply = isPrimary && !firstTurnWithSOffset;
-  // If on first turn with S offset then we must initialise the
-  // coordinates for use from here onwards.
-  if (isPrimary && firstTurnWithSOffset) {
-    std::cout << "now we are also doing something" << std::endl;
-    auto momentum = track->GetMomentum();
-    auto position = track->GetPosition();
-    xLastTurn = position.x() / CLHEP::m;
-    yLastTurn = position.y() / CLHEP::m;
-    pxLastTurn = momentum.x() / referenceMomentum;
-    pyLastTurn = momentum.y() / referenceMomentum;
-    deltaPLastTurn = (momentum.mag() - referenceMomentum) / referenceMomentum;
-  }
-}
+// void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {
+//   G4bool isPrimary = track->GetParentID() == 0;
+//   G4bool firstTurnWithSOffset =
+//       BDSGlobalConstants::Instance()->TurnsTaken() == 1 && offsetS0;
+//   shouldApply = isPrimary && !firstTurnWithSOffset;
+//   // If on first turn with S offset then we must initialise the
+//   // coordinates for use from here onwards.
+//   if (isPrimary && firstTurnWithSOffset) {
+//     std::cout << "now we are also doing something" << std::endl;
+//     auto momentum = track->GetMomentum();
+//     auto position = track->GetPosition();
+//     xLastTurn = position.x() / CLHEP::m;
+//     yLastTurn = position.y() / CLHEP::m;
+//     pxLastTurn = momentum.x() / referenceMomentum;
+//     pyLastTurn = momentum.y() / referenceMomentum;
+//     deltaPLastTurn = (momentum.mag() - referenceMomentum) / referenceMomentum;
+//   }
+// }

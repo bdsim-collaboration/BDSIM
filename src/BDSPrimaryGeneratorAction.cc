@@ -121,7 +121,8 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     }
 
   if (oneTurnMap) {
-    oneTurnMap->SetPrimaryCoordinates(coords, bunch->GetUseCurvilinear());
+    G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
+    oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
   }
 
   // set particle definition
