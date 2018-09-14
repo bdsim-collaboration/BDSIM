@@ -39,6 +39,10 @@ BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*      eqOfMIn,
   newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
 }
 
+BDSIntegratorTeleporter::~BDSIntegratorTeleporter() {
+  delete oneTurnMap;
+}
+
 void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 				      const G4double /*dxdy*/[],
 				      const G4double h,

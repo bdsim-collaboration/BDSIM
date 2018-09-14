@@ -42,8 +42,8 @@ public:
 			  G4double          teleporterLengthIn,
 			  BDSPTCOneTurnMap* oneTurnMapIn=nullptr);
 
-  virtual ~BDSIntegratorTeleporter(){;}
-  
+  virtual ~BDSIntegratorTeleporter();
+
   virtual void Stepper(const G4double yIn[],
 		       const G4double dydx[],
 		       const G4double h,
