@@ -26,9 +26,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
-BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqOfMIn,
-						 G4Transform3D transformIn,
-						 G4double      teleporterLengthIn,
+BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*      eqOfMIn,
+						 G4Transform3D     transformIn,
+						 G4double          teleporterLengthIn,
 						 BDSPTCOneTurnMap* oneTurnMapIn):
   BDSIntegratorMag(eqOfMIn,6),
   transform(transformIn),
