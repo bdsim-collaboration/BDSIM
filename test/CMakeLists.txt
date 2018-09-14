@@ -8,7 +8,7 @@ configure_file(purefieldplotter.py purefieldplotter.py COPYONLY)
 
 add_executable(BDSInterpolatorTester BDSInterpolatorTester.cc)
 set_target_properties(BDSInterpolatorTester PROPERTIES OUTPUT_NAME "BDSInterpolatorTester" VERSION ${BDSIM_VERSION})
-target_link_libraries(BDSInterpolatorTester bdsim)
+target_link_libraries(BDSInterpolatorTester gmad bdsim)
 
 
 add_subdirectory(TrackingTestFiles)

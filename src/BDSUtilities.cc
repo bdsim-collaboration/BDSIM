@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <utility>
 
+#include <sys/resource.h>
 #include <sys/stat.h>
 
 #ifdef __APPLE__
@@ -526,5 +527,12 @@ G4UserLimits* BDS::CreateUserLimits(G4UserLimits*  defaultUL,
     }
   else
     {result = defaultUL;} // stick with length in defaultUL
+  return result;
+}
+
+G4double BDS::GetMemoryUsage()
+{
+  struct rusage r_usage;
+  G4double result = getrusage(RUSAGE_SELF,&r_usage);
   return result;
 }

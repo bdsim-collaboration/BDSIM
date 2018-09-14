@@ -46,9 +46,9 @@ void BDSBunchCircle::SetOptions(const BDSParticleDefinition* beamParticle,
 				const GMAD::Beam& beam,
 				const BDSBunchType& distrType,
 				G4Transform3D beamlineTransformIn,
-				const G4double beamlineS)
+				const G4double beamlineSIn)
 {
-  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineS);
+  BDSBunch::SetOptions(beamParticle, beam, distrType, beamlineTransformIn, beamlineSIn);
   envelopeR  = beam.envelopeR  * CLHEP::m; 
   envelopeRp = beam.envelopeRp * CLHEP::rad;
   envelopeT  = beam.envelopeT  * CLHEP::s;

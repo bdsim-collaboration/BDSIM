@@ -52,6 +52,7 @@ public:
   inline void SetIndex(const G4int& indexIn)            {info->index     = (int)indexIn;}
   inline void SetAborted(const G4bool& abortedIn)       {info->aborted   = (bool)abortedIn;}
   inline void SetPrimaryHitMachine(const G4bool& hitIn) {info->primaryHitMachine = (bool)hitIn;}
+  inline void SetMemoryUsage(const G4double& memoryUsageMbIn) {info->memoryUsageMb = (double)memoryUsageMbIn;}
   /// @}
 
   /// Accessor.
