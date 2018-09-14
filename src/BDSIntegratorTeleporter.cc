@@ -56,14 +56,6 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 
   G4double lengthFraction = h / teleporterLength;
 
-  // auto otm = BDSPTCOneTurnMap::Instance();
-  // if (otm->IsInitialised()) {
-  //   BDSPTCOneTurnMap::Instance()->SetTeleporterMapApplicability(theTrack);
-  //   if (BDSPTCOneTurnMap::Instance()->ShouldTeleporterApplyMap()) {
-  //     otm->SetThisTurnResult();
-  //   }
-  // }
-
   // has to have completed at least 1 turn and be going forwards
   // must test for this to avoid backwards going particles getting stuck
   // also don't apply if for whatever reason the step length is less than half
