@@ -207,9 +207,12 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
                                     G4double deltaP) {
   G4double result = 0;
   for (auto term : terms) {
-    result += (term.coefficient * std::pow(x, term.nx) *
-               std::pow(px, term.npx) * std::pow(y, term.ny) *
-               std::pow(py, term.npy) * std::pow(deltaP, term.ndeltaP));
+    result += (term.coefficient
+	       * std::pow(x, term.nx)
+	       * std::pow(px, term.npx)
+	       * std::pow(y, term.ny)
+	       * std::pow(py, term.npy)
+	       * std::pow(deltaP, term.ndeltaP));
   }
   return result;
 }
