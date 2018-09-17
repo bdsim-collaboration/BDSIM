@@ -104,8 +104,10 @@ public:
   /// @}
   
   void FillCMR();  ///< Calculate and fill charge, mass and rigidity.
+  void FillCMRK(); ///< Calculate and fill charge, mass, rigidity, and kinetic energy.
   void FillCMRI(); ///< Calculate and fill charge, mass, rigidity and ion properties.
-  
+  void FillCMRIK(); ///< Calculate and fill charge, mass, rigidity, kinetic energy, and ion properties.
+
   void SetBranchAddress(TTree *);
   void Flush();  ///< Clean Sampler
 

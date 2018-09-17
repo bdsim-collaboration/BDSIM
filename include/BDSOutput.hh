@@ -223,6 +223,8 @@ private:
   G4bool storeModel;
   G4bool storeOption1;
   G4bool storeOption2;
+  G4bool storeOption3;
+  G4bool storeOption4;
   /// @}
 };
 
