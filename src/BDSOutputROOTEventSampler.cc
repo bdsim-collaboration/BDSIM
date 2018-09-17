@@ -138,7 +138,6 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   isIon.clear();
   ionA.clear();
   ionZ.clear();
-  kineticEnergy.clear();
 }
 
 template <class U>
