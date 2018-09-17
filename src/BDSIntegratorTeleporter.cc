@@ -129,7 +129,8 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  globalPosAfter = globalPosDir.PreStepPoint();
 	  globalMomAfter = globalPosDir.PostStepPoint();
 	}
-      
+      // Update the particle coordinates for whichever of the methods
+      // above was used.
       for (G4int i = 0; i < 3; i++)
 	{
 	  yOut[i]   = globalPosAfter[i];
