@@ -132,6 +132,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   modelID = -1;
 
   charge.clear();
+  kineticEnergy.clear();
   mass.clear();
   rigidity.clear();
   isIon.clear();
