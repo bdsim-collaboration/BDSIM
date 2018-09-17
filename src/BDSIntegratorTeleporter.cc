@@ -81,6 +81,10 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
         G4double x, px, y, py, deltaP;
 	// pass by reference, returning the *PTC* coordinates:
         oneTurnMap->GetThisTurn(x, px, y, py, deltaP);
+	// Convert local positions to millimetres
+	x *= CLHEP::m;
+	y *= CLHEP::m;
+
 	// ptc momenta are scaled by 1/p0, invert this to get the true momenta.
 	px *= referenceMomentum;
 	py *= referenceMomentum;
