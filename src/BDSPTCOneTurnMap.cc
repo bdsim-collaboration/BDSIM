@@ -215,7 +215,8 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm> terms, G4double x,
 }
 
 G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn) const {
-  G4bool should = momentumIn == initialPrimaryMomentum && !offsetS0AndOnFirstTurn;
+  G4double tol = 1e-5;
+  G4bool should = (std::abs(momentumIn - initialPrimaryMomentum) < tol) && !offsetS0AndOnFirstTurn;
   return should;
 }
 
