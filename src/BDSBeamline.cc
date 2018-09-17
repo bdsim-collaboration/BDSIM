@@ -75,6 +75,9 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   if (paddingLength <= 0)
     {paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();}
   //paddingLength = 3*CLHEP::mm;
+
+  // total angle of all beamline elements
+  totalAngle = 0;
 }
 
 BDSBeamline::BDSBeamline(G4Transform3D initialTransform,
@@ -407,6 +410,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4double sPositionStart  = previousSPositionEnd;
   G4double sPositionMiddle = previousSPositionEnd + 0.5 * arcLength;
   G4double sPositionEnd    = previousSPositionEnd + arcLength;
+
+  // integrate angle
+  totalAngle += component->GetAngle();
 
 #ifdef BDSDEBUG
   // feedback about calculated coordinates
@@ -853,4 +859,9 @@ std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
   for (auto element : beamline)
     {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
   return sPos;
+}
+
+G4bool BDSBeamline::ElementAnglesSumToCircle()
+{
+  return (std::abs(totalAngle) > 0.99 * 2.0 * CLHEP::pi) and (std::abs(totalAngle) < 1.01 * 2.0 * CLHEP::pi);
 }
