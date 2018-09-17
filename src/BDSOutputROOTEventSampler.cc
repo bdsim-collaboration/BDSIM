@@ -163,6 +163,17 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
 }
 
 template <class U>
+std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
+{
+  std::vector<U> result(n);
+  if (!particleTable)
+    {return result;}
+  for (int i = 0; i < n; ++i)
+    {result.push_back((U)particleTable->KineticEnergy(partID[i], energy[i]));}
+  return result;
+}
+
+template <class U>
 std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
 {
   std::vector<U> result(n);

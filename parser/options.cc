@@ -306,6 +306,7 @@ void Options::PublishMembers()
   publish("storeTrajectorySamplerID"      , &Options::storeTrajectorySamplerID);
   publish("storeTrajectoryELossSRange"    , &Options::storeTrajectoryELossSRange);
   publish("storeSamplerCharge",             &Options::storeSamplerCharge);
+  publish("storeSamplerKineticEnergy",      &Options::storeSamplerKineticEnergy);
   publish("storeSamplerMass",               &Options::storeSamplerMass);
   publish("storeSamplerRigidity",           &Options::storeSamplerRigidity);
   publish("storeSamplerIon",                &Options::storeSamplerIon);

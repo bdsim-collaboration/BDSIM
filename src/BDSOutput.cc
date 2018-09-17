@@ -77,6 +77,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeSamplerCharge   = g->StoreSamplerCharge();
+  storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
@@ -368,6 +369,8 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
         {
           if (storeSamplerCharge)
 	    {sampler->FillCharge();}
+          if (storeSamplerKineticEnergy)
+        {sampler->FillKineticEnergy();}
           if (storeSamplerMass)
 	    {sampler->FillMass();}
           if (storeSamplerRigidity)

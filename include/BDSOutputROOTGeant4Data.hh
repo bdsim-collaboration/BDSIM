@@ -95,7 +95,11 @@ public:
   /// Calculate rigidity of particle given PDG ID and total energy in GeV.
   double      Rigidity(const int&    pdgID,
 		       const double& totalEnergy) const;
-  
+
+  /// Calculate kinetic energy of particle given PDG ID and total energy in GeV.
+  double      KineticEnergy(const int&    pdgID,
+               const double& totalEnergy) const;
+
   std::string Name(const int& pdgID) const;
   int         IonA(const int& pdgID) const;
   int         IonZ(const int& pdgID) const;

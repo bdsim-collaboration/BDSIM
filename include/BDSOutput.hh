@@ -216,6 +216,7 @@ private:
 
   /// @{ Sampler storage option.
   G4bool storeSamplerCharge;
+  G4bool storeSamplerKineticEnergy;
   G4bool storeSamplerMass;
   G4bool storeSamplerRigidity;
   G4bool storeSamplerIon;

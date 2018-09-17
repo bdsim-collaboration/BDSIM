@@ -24,6 +24,7 @@ Output Changes
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
 * BDSOutputROOTEventInfo class version incremented to 4.
+* New option :code:`storeSamplerKineticEnergy` option to store kinetic energy in the sampler output
 
 Utilities
 ---------

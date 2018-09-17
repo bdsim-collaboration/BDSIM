@@ -65,6 +65,7 @@ public:
 
   /// @{ These are not filled by default.
   std::vector<int>     charge;
+  std::vector<U>       kineticEnergy;
   std::vector<U>       mass;
   std::vector<U>       rigidity;
   std::vector<bool>    isIon;
@@ -74,6 +75,7 @@ public:
 
   /// @{ Function to calculate on the fly the parameters.
   std::vector<int>     getCharge();
+  std::vector<U>       getKineticEnergy();
   std::vector<U>       getMass();
   std::vector<U>       getRigidity();
   std::vector<bool>    getIsIon();
@@ -98,6 +100,7 @@ public:
   inline void FillMass()     {mass     = getMass();}
   inline void FillRigidity() {rigidity = getRigidity();}
   inline void FillIon()      {isIon = getIsIon(); ionA = getIonA(); ionZ = getIonZ();}
+  inline void FillKineticEnergy() {kineticEnergy = getKineticEnergy();}
   /// @}
   
   void FillCMR();  ///< Calculate and fill charge, mass and rigidity.
