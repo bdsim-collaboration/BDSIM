@@ -25,6 +25,7 @@ Output Changes
   quantities such as the model.
 * BDSOutputROOTEventInfo class version incremented to 4.
 * New option :code:`storeSamplerKineticEnergy` option to store kinetic energy in the sampler output
+* BDSOutputROOTEventSampler class version incremented to 3.
 
 Utilities
 ---------
