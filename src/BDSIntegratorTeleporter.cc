@@ -162,7 +162,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       yOut[5] = yIn[5];
     }
 
-#ifdef BDSDEBUG
+  //#ifdef BDSDEBUG
   G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
@@ -176,5 +176,5 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
   G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
   G4cout.flags(ff); // reset cout flags
-#endif
+  //#endif
 }
