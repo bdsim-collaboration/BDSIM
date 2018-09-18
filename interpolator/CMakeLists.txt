@@ -18,7 +18,7 @@ add_library(interpolator STATIC ${interpolatorLibSources})
 add_executable(interpolatorexec ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc)
 set_target_properties(interpolatorexec PROPERTIES OUTPUT_NAME "bdsinterpolator" VERSION ${BDSIM_VERSION})
 target_link_libraries(interpolatorexec interpolator)
-target_link_libraries(interpolatorexec gmad bdsim)
+target_link_libraries(interpolatorexec bdsim gmad)
 target_link_libraries(interpolatorexec ${CLHEP_LIBRARIES})
 target_link_libraries(interpolatorexec ${Geant4_LIBRARIES})
 
