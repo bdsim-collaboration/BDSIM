@@ -26,50 +26,60 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-namespace {
-  struct PTCMapTerm {
+namespace
+{
+  struct PTCMapTerm
+  {
     G4double coefficient;
-    G4int nx, npx, ny, npy, ndeltaP;
+    G4int nx;
+    G4int npx;
+    G4int ny;
+    G4int npy;
+    G4int ndeltaP;
   };
 }; // namespace
 
 // Note: This class uses PTC units internally for calculating the
 // result of the map.
 
-class BDSPTCOneTurnMap {
+class BDSPTCOneTurnMap
+{
 public:
-  //! Default constructor
+  /// Default constructor
   BDSPTCOneTurnMap() = delete;
 
-  //! Copy constructor
+  /// Copy constructor
   BDSPTCOneTurnMap(const BDSPTCOneTurnMap &other) = default;
 
-  //! Move constructor
+  /// Move constructor
   BDSPTCOneTurnMap(BDSPTCOneTurnMap &&other) noexcept = default;
 
-  //! Destructor
+  /// Destructor
   virtual ~BDSPTCOneTurnMap() noexcept = default;
 
-  //! Copy assignment operator
+  /// Copy assignment operator
   BDSPTCOneTurnMap &operator=(const BDSPTCOneTurnMap &other) = default;
 
-  //! Move assignment operator
+  /// Move assignment operator
   BDSPTCOneTurnMap &operator=(BDSPTCOneTurnMap &&other) noexcept = default;
 
-  BDSPTCOneTurnMap(G4String path); // path to maptable file
+  BDSPTCOneTurnMap(G4String path); ///< Path to maptable file.
 
   G4bool ShouldApply(G4double momentum) const;
   void UpdateCoordsForNextTurn();
   // Decides whether or not this should be applied.  Can add more
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);
-  void SetInitialPrimaryCoordinates(BDSParticleCoordsFullGlobal coords,
+  void SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
 				    G4bool offsetS0);
   void UpdateCoordinates(BDSParticleCoordsFullGlobal coords);
 
 
   void SetThisTurnResult();
-  void GetThisTurn(G4double &x, G4double &px, G4double &y, G4double &py,
+  void GetThisTurn(G4double &x,
+		   G4double &px,
+		   G4double &y,
+		   G4double &py,
 		   G4double &deltaP);
 
   void SetReferenceMomentum();
@@ -81,9 +91,12 @@ public:
 
 private:
 
-  G4double evaluate(std::vector<PTCMapTerm> terms, G4double x, G4double px,
-                    G4double y, G4double py, G4double deltaP);
-
+  G4double evaluate(std::vector<PTCMapTerm>& terms,
+		    G4double x,
+		    G4double px,
+                    G4double y,
+		    G4double py,
+		    G4double deltaP);
 
   G4double initialPrimaryMomentum;
   G4bool offsetS0AndOnFirstTurn;
@@ -105,4 +118,4 @@ private:
   std::vector<PTCMapTerm> deltaPTerms;
 };
 
-#endif /* BDSPTCONETURNMAP_H */
+#endif
