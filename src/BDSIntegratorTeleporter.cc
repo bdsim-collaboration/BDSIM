@@ -89,12 +89,10 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  y *= CLHEP::m;
 	  
 	  // ptc momenta are scaled by 1/p0, invert this to get the true momenta.
-	  px *= referenceMomentum;
-	  py *= referenceMomentum;
-	  auto pz = std::sqrt(std::pow(momentum, 2) - std::pow(px, 2) -
-			      std::pow(py, 2));
+	  G4double pz = std::sqrt(1 - std::pow(px,2) - std::pow(py,2)); // make unit momentum vector
+	  G4ThreeVector outLocalMomentum(px,py,pz);
+	  outLocalMomentum *= referenceMomentum;
 	  
-	  G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
 	  // Calculate the output global positions
 	  BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
 	  auto localPosition = localPosMom.PreStepPoint();
