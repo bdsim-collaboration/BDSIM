@@ -80,7 +80,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  //#endif
 	  const auto referenceMomentum = oneTurnMap->GetReferenceMomentum();
 	  // by defn the particle has the initial primary momentum here.
-	  const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
+	  //const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
 	  G4double x, px, y, py, deltaP;
 	  // pass by reference, returning the *PTC* coordinates:
 	  oneTurnMap->GetThisTurn(x, px, y, py, deltaP);
