@@ -75,7 +75,6 @@ public:
   void UpdateCoordinates(BDSParticleCoordsFullGlobal coords);
 
 
-  void SetThisTurnResult();
   void GetThisTurn(G4double &x,
 		   G4double &px,
 		   G4double &y,

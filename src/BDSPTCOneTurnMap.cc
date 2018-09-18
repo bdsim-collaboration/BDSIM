@@ -64,12 +64,12 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
       if (line.at(0) == '@' || line.at(0) == '*' || line.at(0) == '$')
 	{continue;}
       std::istringstream stream(line);
-      
+
       stream >> name >> coefficient >> nVector >> dimensionality >> totalOrder >>
         nx >> npx >> ny >> npy >> ndeltaP >> nt;
-      
+
       PTCMapTerm term{coefficient, nx, npx, ny, npy, ndeltaP};
-      
+
       switch (nVector)
 	{
 	case 1:
@@ -143,40 +143,6 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
   offsetS0AndOnFirstTurn = offsetS0AndOnFirstTurnIn;
 }
 
-void BDSPTCOneTurnMap::SetThisTurnResult()
-{
-  G4cout << "Before SetThisTurnResult: " << G4endl;
-  G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  G4cout << "deltaPLastTurn = " << deltaPLastTurn << G4endl;
-  G4cout << "\n";
-  G4double x = evaluate(xTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			deltaPLastTurn);
-  G4double px = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			 deltaPLastTurn);
-  G4double y = evaluate(yTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			deltaPLastTurn);
-  G4double py = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			 deltaPLastTurn);
-  G4double deltaP = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			     deltaPLastTurn);
-  xLastTurn = x;
-  pxLastTurn = px;
-  yLastTurn = y;
-  pyLastTurn = py;
-  deltaPLastTurn = deltaP;
-
-  G4cout << "After SetThisTurnResult: " << G4endl;
-  G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  G4cout << "deltaPLastTurn = " << deltaPLastTurn << G4endl;
-  G4cout << "\n";
-
-}
 
 void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 				   G4double &px,
