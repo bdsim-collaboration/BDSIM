@@ -80,27 +80,34 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  //#endif
 	  const auto referenceMomentum = oneTurnMap->GetReferenceMomentum();
 	  // by defn the particle has the initial primary momentum here.
-	  //const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
+	  const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
 	  G4double x, px, y, py, deltaP;
-	  // pass by reference, returning the *PTC* coordinates:
+	  // pass by reference, returning the _PTC_ coordinates:
 	  oneTurnMap->GetThisTurn(x, px, y, py, deltaP);
-	  // Convert local positions to millimetres
+
+	  // Convert local positions from metres to millimetres.
 	  x *= CLHEP::m;
 	  y *= CLHEP::m;
-	  
-	  // ptc momenta are scaled by 1/p0, invert this to get the true momenta.
-	  G4double pz = std::sqrt(1 - std::pow(px,2) - std::pow(py,2)); // make unit momentum vector
-	  G4ThreeVector outLocalMomentum(px,py,pz);
-	  outLocalMomentum *= referenceMomentum;
-	  
-	  // Calculate the output global positions
-	  BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
-	  auto localPosition = localPosMom.PreStepPoint();
-	  auto outLocalPosition = G4ThreeVector(x, y, localPosition.z() + h);
-	  
-	  BDSStep globalPosDir = ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
-	  
-	  // Set the output positions and momenta
+
+	  // PTC momenta are scaled w.r.t the _REFERENCE_MOMENTUM_.
+	  // HERE we change to scaled w.r.t the _ACTUAL_MOMENTUM_.
+	  px *= (referenceMomentum / momentum);
+	  py *= (referenceMomentum / momentum);
+	  // Calculate the pz scaled w.r.t the actual momentum.
+	  G4double pz = std::sqrt(1 - std::pow(px,2) - std::pow(py,2));
+	  G4ThreeVector outLocalMomentum(px, py, pz);
+	  outLocalMomentum *= momentum; // Convert to unscaled momenta.
+
+          // Calculate the output global positions
+          BDSStep localPosMom =
+              ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
+          auto localPosition = localPosMom.PreStepPoint();
+          auto outLocalPosition = G4ThreeVector(x, y, localPosition.z() + h);
+
+          BDSStep globalPosDir =
+              ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
+
+          // Set the output positions and momenta
 	  globalPosAfter = globalPosDir.PreStepPoint();
 	  globalMomAfter = globalPosDir.PostStepPoint();
 	  //#ifdef BDSDEBUG
@@ -154,7 +161,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       yOut[4] = yIn[4];
       yOut[5] = yIn[5];
     }
-  
+
 #ifdef BDSDEBUG
   G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
