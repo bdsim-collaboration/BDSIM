@@ -16,6 +16,7 @@ Bug Fixes
 * Fixed reloading user file when reading more particles than defined in the file.
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
+* Fixed incorrect writing of optional sampler information.
 
 Output Changes
 --------------
@@ -24,6 +25,8 @@ Output Changes
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
 * BDSOutputROOTEventInfo class version incremented to 4.
+* New option :code:`storeSamplerKineticEnergy` option to store kinetic energy in the sampler output
+* BDSOutputROOTEventSampler class version incremented to 3.
 
 Utilities
 ---------

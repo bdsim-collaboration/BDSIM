@@ -3353,6 +3353,9 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerKineticEnergy         | Stores corresponding kinetic energy of particle for every entry in |
+|                                   | sampler.                                                           |
++-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerMass                  | Stores corresponding mass (in GeV) of particle for every entry in  |
 |                                   | the sampler.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+

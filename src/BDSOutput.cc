@@ -77,6 +77,7 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   useScoringMap      = g->UseScoringMap();
 
   storeSamplerCharge   = g->StoreSamplerCharge();
+  storeSamplerKineticEnergy = g->StoreSamplerKineticEnergy();
   storeSamplerMass     = g->StoreSamplerMass();
   storeSamplerRigidity = g->StoreSamplerRigidity();
   storeSamplerIon      = g->StoreSamplerIon();
@@ -84,8 +85,12 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
 
   // charge + mass + rigidity - particle stuff
   storeOption1 = storeSamplerCharge && storeSamplerMass & storeSamplerRigidity;
+  // charge + mass + rigidity + kinetic energy - particle stuff
+  storeOption2 = storeOption1 && storeSamplerKineticEnergy;
+  // everything except ion properties
+  storeOption3 = storeOption1 && storeSamplerIon;
   // everything
-  storeOption2 = storeOption1 && storeSamplerIon;
+  storeOption4 = storeOption2 && storeSamplerIon;
 }
 
 void BDSOutput::InitialiseGeometryDependent()
@@ -351,13 +356,23 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
   
   // extra information
   // choose by a few strategies for optimisation (reduced PDGid searching)
-  // op2 partially degenerate with op1 - check first
-  if (storeOption2) // everything
+  // some options partially degenerate with lower numbered options - check first
+  if (storeOption4) // everything
+    {
+      for (auto &sampler : samplerTrees)
+        {sampler->FillCMRIK();}
+    }
+  else if (storeOption3) // option1 + ion
     {
       for (auto &sampler : samplerTrees)
       {sampler->FillCMRI();}
     }
-  else if (storeOption1) // also applies for 2
+  else if (storeOption2) // option1 + kinetic energy
+    {
+      for (auto &sampler : samplerTrees)
+      {sampler->FillCMRK();}
+    }
+  else if (storeOption1) // also applies for 2 and 3
     {
       for (auto &sampler : samplerTrees)
         {sampler->FillCMR();}
@@ -368,6 +383,8 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
         {
           if (storeSamplerCharge)
 	    {sampler->FillCharge();}
+          if (storeSamplerKineticEnergy)
+        {sampler->FillKineticEnergy();}
           if (storeSamplerMass)
 	    {sampler->FillMass();}
           if (storeSamplerRigidity)

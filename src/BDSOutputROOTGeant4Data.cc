@@ -121,6 +121,27 @@ double BDSOutputROOTGeant4Data::Rigidity(const int&    pdgID,
     }
 }
 
+double BDSOutputROOTGeant4Data::KineticEnergy(const int&    pdgID,
+                      const double& totalEnergy) const
+{
+  if (IsIon(pdgID))
+    {
+      auto result = ions.find(pdgID);
+      if (result != ions.end())
+        {return totalEnergy - result->second.mass;}
+      else
+        {return 0;}
+    }
+  else
+    {
+      auto result = particles.find(pdgID);
+      if (result != particles.end())
+        {return totalEnergy - result->second.mass;}
+      else
+        {return 0;}
+    }
+}
+
 std::string BDSOutputROOTGeant4Data::Name(const int& pdgID) const
 {
   if (IsIon(pdgID))

@@ -201,6 +201,7 @@ public:
   std::vector<int>                           StoreTrajectorySamplerIDs();
   std::vector<std::pair<double,double>>      StoreTrajectoryELossSRange();
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
+  inline G4bool   StoreSamplerKineticEnergy() const {return G4bool  (options.storeSamplerKineticEnergy);}
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}

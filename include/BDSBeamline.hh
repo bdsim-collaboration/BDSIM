@@ -132,6 +132,12 @@ public:
   /// Get the total ARC length for the beamline - ie the maximum s position
   inline G4double     GetTotalArcLength() const {return totalArcLength;}
 
+  /// Get the total angle of the beamline
+  inline G4double GetTotalAngle() const {return totalAngle;}
+
+  /// Check if the sum of the angle of all elements is two pi
+  G4bool ElementAnglesSumToCircle();
+
   /// Get the number of elements
   BeamlineVector::size_type size() const {return beamline.size();}
 
@@ -221,6 +227,8 @@ private:
   G4double totalChordLength;
   /// Sum of all arc lengths
   G4double totalArcLength;
+  /// Sum of all angles
+  G4double totalAngle;
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension
   G4ThreeVector maximumExtentNegative; ///< maximum extent in the negative coordinates in each dimension
