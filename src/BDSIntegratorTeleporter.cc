@@ -113,7 +113,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	{ // new method - full tranfsorm3D - works in 3d
 	  // with beam line offset / rotation
 	  //#ifdef BDSDEBUG
-	  G4out << __METHOD_NAME__ << "teleporter 3d method" << G4endl;
+	  G4cout << __METHOD_NAME__ << "teleporter 3d method" << G4endl;
 	  //#endif
 	  globalPosAfter = globalPos + dPos;
 	  globalMomAfter = globalMom.transform(transform.getRotation());
