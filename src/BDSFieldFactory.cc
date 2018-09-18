@@ -739,10 +739,11 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   auto mapfile = BDSGlobalConstants::Instance()->PTCOneTurnMapFileName();
   BDSPTCOneTurnMap* otm = nullptr;
 
-  if (!mapfile.empty()) {
-    otm = new BDSPTCOneTurnMap(mapfile);
-    primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
-  }
+  if (!mapfile.empty())
+    {
+      otm = new BDSPTCOneTurnMap(mapfile);
+      primaryGeneratorAction->RegisterPTCOneTurnMap(otm);
+    }
 
   integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
 					   (*info.MagnetStrength())["length"],

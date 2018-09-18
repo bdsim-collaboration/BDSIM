@@ -120,10 +120,11 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         {break;}
     }
 
-  if (oneTurnMap) {
-    G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
-    oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
-  }
+  if (oneTurnMap)
+    {
+      G4bool offsetSAndOnFirstTurn = bunch->GetUseCurvilinear();
+      oneTurnMap->SetInitialPrimaryCoordinates(coords, offsetSAndOnFirstTurn);
+    }
 
   // set particle definition
   // either from input bunch file, an ion, or regular beam particle
