@@ -36,7 +36,7 @@ BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*      eqOfMIn,
   teleporterLength(teleporterLengthIn),
   oneTurnMap(oneTurnMapIn)
 {
-  newMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
+  threeDMethod = BDSGlobalConstants::Instance()->TeleporterFullTransform();
 }
 
 BDSIntegratorTeleporter::~BDSIntegratorTeleporter()
@@ -106,8 +106,8 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  //#ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "applied the map." << G4endl;
 	  //#endif
-	}     
-      else if (newMethod)
+	}
+      else if (threeDMethod)
 	{ // new method - full tranfsorm3D - works in 3d
 	  // with beam line offset / rotation
 	  //#ifdef BDSDEBUG

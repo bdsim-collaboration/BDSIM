@@ -56,7 +56,7 @@ private:
   const G4ThreeVector     dPos;
   const G4double          teleporterLength;
   BDSPTCOneTurnMap*       oneTurnMap;
-  G4bool                  newMethod;  ///< Whether to use full 3D transform.
+  G4bool                  threeDMethod;  ///< Whether to use full 3D transform.
 };
 
 #endif
