@@ -75,8 +75,9 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 
       if (oneTurnMap && oneTurnMap->ShouldApply(globalMom.mag()))
 	{
-	  std::cout << "I am applying the thing :) " << std::endl;
-	  
+	  //#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
+	  //#endif
 	  const auto referenceMomentum = oneTurnMap->GetReferenceMomentum();
 	  // by defn the particle has the initial primary momentum here.
 	  const auto momentum = oneTurnMap->GetInitialPrimaryMomentum();
@@ -104,12 +105,16 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  // Set the output positions and momenta
 	  globalPosAfter = globalPosDir.PreStepPoint();
 	  globalMomAfter = globalPosDir.PostStepPoint();
-	  std::cout << "applied the map." << std::endl;
+	  //#ifdef BDSDEBUG
+	  G4cout << __METHOD_NAME__ << "applied the map." << G4endl;
+	  //#endif
 	}     
       else if (newMethod)
 	{ // new method - full tranfsorm3D - works in 3d
 	  // with beam line offset / rotation
-	  std::cout << "newMethod...!" << std::endl;
+	  //#ifdef BDSDEBUG
+	  G4out << __METHOD_NAME__ << "teleporter 3d method" << G4endl;
+	  //#endif
 	  globalPosAfter = globalPos + dPos;
 	  globalMomAfter = globalMom.transform(transform.getRotation());
 	}
