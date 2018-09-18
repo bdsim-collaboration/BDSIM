@@ -21,6 +21,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // Geant4 typedefs
 
@@ -30,11 +31,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 
 
-BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile) :
+BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
   offsetS0AndOnFirstTurn(true) // by default do not say apply on first
 			       // turn as strictly this is safer.
 {
-  std::ifstream infile(maptableFile);
+  G4String filePath = BDS::GetFullPath(maptableFile);
+  G4cout << __METHOD_NAME__ << "Using map table " << filePath << G4endl;
+  std::ifstream infile(filePath);
   if (!infile) {
     G4String message = "Failed to read maptable: " + maptableFile;
     G4cerr << __METHOD_NAME__ << message << " Exiting. " << G4endl;
