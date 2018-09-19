@@ -79,12 +79,12 @@ public:
 		   G4double &px,
 		   G4double &y,
 		   G4double &py,
-		   G4double &deltaP);
+		   G4double &pz,
+		   G4int turnstaken);
 
   void SetReferenceMomentum();
   void SetMass();
   void SetInitialPrimaryMomentum(G4double in) {initialPrimaryMomentum = in;}
-  G4double GetInitialPrimaryMomentum() {return initialPrimaryMomentum;}
 
   G4double GetReferenceMomentum() const {return referenceMomentum;}
 
