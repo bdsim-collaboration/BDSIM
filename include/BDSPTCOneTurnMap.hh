@@ -103,7 +103,7 @@ private:
   G4double referenceMomentum;
   G4double mass;
 
-
+  G4int lastTurnNumber;
   G4double xLastTurn;
   G4double pxLastTurn;
   G4double yLastTurn;
