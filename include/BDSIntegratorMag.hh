@@ -58,6 +58,8 @@ public:
   /// for coordinate lookup.
   static G4double thinElementLength;
 
+  static G4bool currentTrackIsPrimary;
+
 protected:
   /// Convert final local position and direction to global frame. Allow
     /// scaling of momentum in case localMom is a unit vector
