@@ -165,11 +165,26 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   if (lastTurnNumber == BDSGlobalConstants::Instance()->TurnsTaken() - 1)
     {
       lastTurnNumber++; // Increment the turn number
-      G4double xOut  = evaluate(xTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-      G4double pxOut = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-      G4double yOut  = evaluate(yTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-      G4double pyOut = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-      G4double deltaPOut = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      G4double xOut = evaluate(xTerms,
+			       xLastTurn, pxLastTurn,
+			       yLastTurn, pyLastTurn,
+			       deltaPLastTurn);
+      G4double pxOut = evaluate(pxTerms,
+				xLastTurn, pxLastTurn,
+				yLastTurn, pyLastTurn,
+				deltaPLastTurn);
+      G4double yOut = evaluate(yTerms,
+			       xLastTurn, pxLastTurn,
+			       yLastTurn, pyLastTurn,
+			       deltaPLastTurn);
+      G4double pyOut = evaluate(pyTerms,
+				xLastTurn, pxLastTurn,
+				yLastTurn, pyLastTurn,
+				deltaPLastTurn);
+      G4double deltaPOut = evaluate(deltaPTerms,
+				    xLastTurn, pxLastTurn,
+				    yLastTurn, pyLastTurn,
+				    deltaPLastTurn);
       // Set the output and update the cached coordinates for maybe next
       // turn around the ring.  NOTE:  RETURNING PTC (NOT BDSIM)
       // COORDINATES!!!  IT is left to the user to convert back to
