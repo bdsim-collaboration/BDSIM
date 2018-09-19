@@ -64,12 +64,12 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
       if (line.at(0) == '@' || line.at(0) == '*' || line.at(0) == '$')
 	{continue;}
       std::istringstream stream(line);
-      
+
       stream >> name >> coefficient >> nVector >> dimensionality >> totalOrder >>
         nx >> npx >> ny >> npy >> ndeltaP >> nt;
-      
+
       PTCMapTerm term{coefficient, nx, npx, ny, npy, ndeltaP};
-      
+
       switch (nVector)
 	{
 	case 1:
@@ -120,8 +120,9 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
   // G4cout << "LOCAL PY = " << coords.local.yp << G4endl;
   // G4cout << "LOCAL PZ = " << coords.local.zp << G4endl;
   // G4cout << "ENERGY = " << coords.local.totalEnergy << G4endl;
-
-  initialPrimaryMomentum = std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
+  lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
+  initialPrimaryMomentum =
+      std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
   // Converting to PTC Coordinates:
   xLastTurn = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
@@ -143,40 +144,6 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
   offsetS0AndOnFirstTurn = offsetS0AndOnFirstTurnIn;
 }
 
-void BDSPTCOneTurnMap::SetThisTurnResult()
-{
-  G4cout << "Before SetThisTurnResult: " << G4endl;
-  G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  G4cout << "deltaPLastTurn = " << deltaPLastTurn << G4endl;
-  G4cout << "\n";
-  G4double x = evaluate(xTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			deltaPLastTurn);
-  G4double px = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			 deltaPLastTurn);
-  G4double y = evaluate(yTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			deltaPLastTurn);
-  G4double py = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			 deltaPLastTurn);
-  G4double deltaP = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn,
-			     deltaPLastTurn);
-  xLastTurn = x;
-  pxLastTurn = px;
-  yLastTurn = y;
-  pyLastTurn = py;
-  deltaPLastTurn = deltaP;
-
-  G4cout << "After SetThisTurnResult: " << G4endl;
-  G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  G4cout << "deltaPLastTurn = " << deltaPLastTurn << G4endl;
-  G4cout << "\n";
-
-}
 
 void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 				   G4double &px,
@@ -184,20 +151,45 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
                                    G4double &py,
 				   G4double &deltaP)
 {
-  G4double xOut  = evaluate(xTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-  G4double pxOut = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-  G4double yOut  = evaluate(yTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-  G4double pyOut = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-  G4double deltaPOut = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
-  // Set the output and update the cached coordinates for maybe next
-  // turn around the ring.  NOTE:  RETURNING PTC (NOT BDSIM)
-  // COORDINATES!!!  IT is left to the user to convert back to
-  // whatever they want.
-  x      = xLastTurn      = xOut;
-  px     = pxLastTurn     = pxOut;
-  y      = yLastTurn      = yOut;
-  py     = pyLastTurn     = pyOut;
-  deltaP = deltaPLastTurn = deltaPOut;
+
+  // In short: lastTurnNumber exists to prevent the map being
+  // applied multiple times in one turn.
+  // The terminator is placed before the teleporter, so on the "first
+  // turn" in the teleporter (where this method is called),
+  // TurnsTaken() will actually return 2.  So lastTurnNumber, will be
+  // one less than returned by TurnsTaken(), until it is incremented
+  // below.  If (lastTurnNumber ==
+  // BDSGlobalConstants::Instance()->TurnsTaken()), then the map has
+  // already been applied on this turn.  In which case, return the
+  // cached values below.
+  if (lastTurnNumber == BDSGlobalConstants::Instance()->TurnsTaken() - 1)
+    {
+      lastTurnNumber++; // Increment the turn number
+      G4double xOut  = evaluate(xTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      G4double pxOut = evaluate(pxTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      G4double yOut  = evaluate(yTerms,  xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      G4double pyOut = evaluate(pyTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      G4double deltaPOut = evaluate(deltaPTerms, xLastTurn, pxLastTurn, yLastTurn, pyLastTurn, deltaPLastTurn);
+      // Set the output and update the cached coordinates for maybe next
+      // turn around the ring.  NOTE:  RETURNING PTC (NOT BDSIM)
+      // COORDINATES!!!  IT is left to the user to convert back to
+      // whatever they want.
+      x      = xLastTurn      = xOut;
+      px     = pxLastTurn     = pxOut;
+      y      = yLastTurn      = yOut;
+      py     = pyLastTurn     = pyOut;
+      deltaP = deltaPLastTurn = deltaPOut;
+    }
+  else
+    {
+      G4cout << "Returning the cached values..." << G4endl;
+      x = xLastTurn;
+      px = pxLastTurn;
+      y = yLastTurn;
+      py = pyLastTurn;
+      deltaP = deltaPLastTurn;
+    }
+  // std::cout << "The current turn number is..." << BDSGlobalConstants::Instance()->TurnsTaken()<< std::endl;
 }
 
 G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,

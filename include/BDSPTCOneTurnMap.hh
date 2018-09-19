@@ -75,7 +75,6 @@ public:
   void UpdateCoordinates(BDSParticleCoordsFullGlobal coords);
 
 
-  void SetThisTurnResult();
   void GetThisTurn(G4double &x,
 		   G4double &px,
 		   G4double &y,
@@ -104,7 +103,7 @@ private:
   G4double referenceMomentum;
   G4double mass;
 
-
+  G4int lastTurnNumber;
   G4double xLastTurn;
   G4double pxLastTurn;
   G4double yLastTurn;
