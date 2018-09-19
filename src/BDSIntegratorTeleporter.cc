@@ -95,8 +95,9 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  auto outLocalMomentum = G4ThreeVector(px, py, pz);
           auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
 
-          BDSStep globalPosDir =
-              ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
+          auto globalPosDir = ConvertToGlobalStep(outLocalPosition,
+						  outLocalMomentum,
+						  false);
 
           // Set the output positions and momenta, including the
           // threeDMethod from below...
