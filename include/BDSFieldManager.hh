@@ -26,6 +26,15 @@ class G4ChordFinder;
 class G4Field;
 class G4Track;
 
+/**
+ * @brief Wrapper for Geant4's G4FieldManager to distinguish primaries.
+ * 
+ * This implements the ConfigureForTrack virtual method that by default
+ * does nothing and flags the track as primary or not in BDSIntegratorMag.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSFieldManager: public G4FieldManager
 {
 public:
@@ -37,11 +46,12 @@ public:
 
   virtual ~BDSFieldManager(){;}
 
+  /// Check whether the track has parent ID == 0 and then flag
+  /// as a primary.
   virtual void ConfigureForTrack(const G4Track* track);
 
 private:
-
-  G4bool currentTrackIsPrimary; 
+  G4bool currentTrackIsPrimary; ///< Whether current track is a primary.
 };
 
 #endif

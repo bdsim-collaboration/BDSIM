@@ -19,7 +19,9 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSDebug.hh"
 #include "BDSFieldManager.hh"
 #include "BDSIntegratorMag.hh"
+#ifdef BDSDEBUG
 #include "BDSUtilities.hh"
+#endif
 
 #include "G4Track.hh"
 
@@ -39,7 +41,7 @@ void BDSFieldManager::ConfigureForTrack(const G4Track* track)
 {
   currentTrackIsPrimary = track->GetParentID() == 0;
   BDSIntegratorMag::currentTrackIsPrimary = currentTrackIsPrimary;
-  //#ifdef BDSDEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Primary? " << BDS::BoolToString(currentTrackIsPrimary) << G4endl;
-  //#endif
+#endif
 }
