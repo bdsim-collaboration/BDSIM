@@ -16,11 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "BDSMagIntegratorDriver.hh"
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
-
-
 #include "BDSDebug.hh"
 #include "BDSPTCOneTurnMap.hh"
 #include "BDSPrimaryGeneratorAction.hh"
@@ -753,21 +748,9 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
 					   (*info.MagnetStrength())["length"],
 					   otm);
-
-
-  G4double chordStepMinimum = 0.9* (*info.MagnetStrength())["length"];
-  auto magIntDriver = new BDSMagInt_Driver(chordStepMinimum,
-					   integrator,
-					   integrator->GetNumberOfVariables());
-  auto chordFinder  = new G4ChordFinder(magIntDriver);
-  auto fieldManager = new G4FieldManager(bGlobalField, chordFinder);
-  BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
-						       bEqOfMotion, integrator,
-						       chordFinder,
-						       fieldManager);
 						       
-  /*BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
-    bEqOfMotion, integrator);*/
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
+						       bEqOfMotion, integrator);
   return completeField;
 }
 
