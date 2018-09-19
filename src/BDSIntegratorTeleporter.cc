@@ -73,7 +73,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
 
-      if (oneTurnMap && oneTurnMap->ShouldApply(globalMom.mag()))
+      if (oneTurnMap && currentTrackIsPrimary)
 	{
 	  //#ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
