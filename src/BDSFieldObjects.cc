@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSFieldManager.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldObjects.hh"
@@ -28,8 +29,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MagIntegratorDriver.hh" // for G4MagInt_Driver
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
-
-#include "BDSFieldManager.hh"
 
 #include <vector>
 
@@ -66,7 +65,9 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				     magIntegratorStepper->GetNumberOfVariables());
 
   chordFinder  = new G4ChordFinder(magIntDriver);
-  //fieldManager = new G4FieldManager(field, chordFinder);
+
+  // We use our custom field manager that is a thin wrapper for the Geant4 one
+  // that only identifies whether we have a primary track or not for BDSIntegratorMag
   fieldManager = new BDSFieldManager(field, chordFinder);
 
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
@@ -99,10 +100,10 @@ void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
       volume->SetUserLimits(ul);
       int nDaughters = volume->GetNoDaughters();
       for (int i = 0; i < nDaughters; ++i)
-      {
-        auto daughter = volume->GetDaughter(i);
-        daughter->GetLogicalVolume()->SetUserLimits(ul);
-      }
+	{
+	  auto daughter = volume->GetDaughter(i);
+	  daughter->GetLogicalVolume()->SetUserLimits(ul);
+	}
     }
 }
 

@@ -55,7 +55,6 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yIn[],
 				      G4double       yOut[],
 				      G4double       yErr[])
 {
-  G4cout << __METHOD_NAME__ << "Primary? " << BDS::BoolToString(currentTrackIsPrimary) << G4endl;
   // in case of zero field or neutral particles do a linear step
   const G4double fcof = eqOfM->FCof();
   if (zeroStrength || !BDS::IsFinite(fcof))
