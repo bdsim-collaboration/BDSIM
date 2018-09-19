@@ -25,7 +25,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
 
-G4double BDSIntegratorMag::thinElementLength = -1; // mm
+G4double BDSIntegratorMag::thinElementLength   = -1; // mm
+G4bool BDSIntegratorMag::currentTrackIsPrimary = false;
 
 BDSIntegratorMag::BDSIntegratorMag(G4Mag_EqRhs* eqOfMIn,
 				   G4int        nVariablesIn):

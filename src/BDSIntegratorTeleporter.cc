@@ -1,14 +1,14 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
+/*
+Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway,
 University of London 2001 - 2018.
 
 This file is part of BDSIM.
 
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
+BDSIM is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
 by the Free Software Foundation version 3 of the License.
 
-BDSIM is distributed in the hope that it will be useful, but 
+BDSIM is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -157,7 +157,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       yOut[5] = yIn[5];
     }
 
-#ifdef BDSDEBUG
+  //#ifdef BDSDEBUG
   G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
@@ -171,5 +171,5 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
   G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
   G4cout.flags(ff); // reset cout flags
-#endif
+  //#endif
 }

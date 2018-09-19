@@ -748,8 +748,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
   integrator = new BDSIntegratorTeleporter(bEqOfMotion, info.Transform(),
 					   (*info.MagnetStrength())["length"],
 					   otm);
-
-
+						       
   BDSFieldObjects* completeField = new BDSFieldObjects(&info, bGlobalField,
 						       bEqOfMotion, integrator);
   return completeField;
