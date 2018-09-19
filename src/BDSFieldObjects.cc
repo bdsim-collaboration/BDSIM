@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
 
+#include "BDSFieldManager.hh"
+
 #include <vector>
 
 BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
@@ -64,7 +66,8 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				     magIntegratorStepper->GetNumberOfVariables());
 
   chordFinder  = new G4ChordFinder(magIntDriver);
-  fieldManager = new G4FieldManager(field, chordFinder);
+  //fieldManager = new G4FieldManager(field, chordFinder);
+  fieldManager = new BDSFieldManager(field, chordFinder);
 
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
