@@ -32,8 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
-  offsetS0AndOnFirstTurn(true) // by default do not say apply on first
-			       // turn as strictly this is safer.
+  beamOffsetS0(false)
 {
   G4String filePath = BDS::GetFullPath(maptableFile);
   G4cout << __METHOD_NAME__ << "Using map table " << filePath << G4endl;
@@ -109,17 +108,8 @@ void BDSPTCOneTurnMap::SetMass()
   mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
-void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
-						    G4bool offsetS0AndOnFirstTurnIn)
-{
-  //   // convert to PTC (PX = px / p0) coordinates.
-  // G4cout << "GLOBAL PX = " << coords.global.xp << G4endl;
-  // G4cout << "GLOBAL PY = " << coords.global.yp << G4endl;
-  // G4cout << "GLOBAL PZ = " << coords.global.zp << G4endl;
-  // G4cout << "LOCAL PX = " << coords.local.xp << G4endl;
-  // G4cout << "LOCAL PY = " << coords.local.yp << G4endl;
-  // G4cout << "LOCAL PZ = " << coords.local.zp << G4endl;
-  // G4cout << "ENERGY = " << coords.local.totalEnergy << G4endl;
+void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
+    const BDSParticleCoordsFullGlobal &coords, G4bool beamOffsetS0In) {
   lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
   initialPrimaryMomentum =
       std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
@@ -130,20 +120,14 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullG
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
   deltaPLastTurn =
       (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
-  // G4cout << "Updating coordinates... " << G4endl; //
-  // G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  // G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  // G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  // G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  // G4cout << "deltaP = " << deltaPLastTurn << G4endl;
-  // G4cout << "\n" << G4endl;
 
   // If we're using curvilinear then S0 != 0 and we shouldn't apply
   // map on first turn.  record this setting here for the teleporter's
   // consideration.
-  offsetS0AndOnFirstTurn = offsetS0AndOnFirstTurnIn;
-}
+  G4cout << "beamOffsetS0 = " << beamOffsetS0 << G4endl;
 
+  beamOffsetS0 = beamOffsetS0In;
+}
 
 void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 				   G4double &px,
@@ -169,10 +153,16 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   // turnstaken (turn number seen in the TeleporterIntegrator), then
   // the map has already been applied on this turn.  In which case,
   // return the cached values below.
-  if (lastTurnNumber == turnstaken - 1)
+  if (lastTurnNumber < turnstaken)
     {
-      lastTurnNumber++; // Increment the turn number, we are
-			// calculating the coordinates for the first time.
+      G4cout << __METHOD_NAME__ << "Applying Map: " << G4endl;
+      G4cout << "Before map application: " << G4endl;
+      G4cout << "xLastTurn = " << xLastTurn << G4endl;
+      G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
+      G4cout << "yLastTurn = " << yLastTurn << G4endl;
+      G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
+      lastTurnNumber = turnstaken;
+
       xOut = evaluate(xTerms,
 		      xLastTurn, pxLastTurn,
 		      yLastTurn, pyLastTurn,
@@ -193,6 +183,13 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 			   xLastTurn, pxLastTurn,
 			   yLastTurn, pyLastTurn,
 			   deltaPLastTurn);
+      // Cache results for next turn.  Do it here, before we convert
+      // to BDSIM coordinates.
+      xLastTurn      = xOut;
+      pxLastTurn     = pxOut;
+      yLastTurn      = yOut;
+      pyLastTurn     = pyOut;
+      deltaPLastTurn = deltaPOut;
     }
   else
     {
@@ -215,15 +212,13 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   // used to calculate pz.
   pzOut = std::sqrt(initialPrimaryMomentum - std::pow(px,2) - std::pow(py,2));
 
-  // Now set output for arguments passed by reference, and cache
-  // results for next turn.
-  x      = xLastTurn      = xOut;
-  px     = pxLastTurn     = pxOut;
-  y      = yLastTurn      = yOut;
-  py     = pyLastTurn     = pyOut;
-
-  deltaPLastTurn = deltaPOut;
+  // Now set output for arguments passed by reference.
+  x  = xOut;
+  px = pxOut;
+  y  = yOut;
+  py = pyOut;
   pz = pzOut;
+
 }
 
 G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
@@ -246,17 +241,50 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
   return result;
 }
 
-G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn) const
+G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
+				     G4int turnstaken) const
 {
+  // We have to use the externally provided turnstaken rather than
+  // internal lastTurnNumber so that the OTM is definitely not applied
+  // in this case.  2 and not 1 because teleporter comes after
+  // terminator, where the turn number is incremented.
+  G4bool offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
+
   G4double tol = 1e-5;
-  G4bool should = (std::abs(momentumIn - initialPrimaryMomentum) < tol) && !offsetS0AndOnFirstTurn;
+  G4bool unchangedMomentum =
+      (std::abs(momentumIn - initialPrimaryMomentum) < tol);
+  auto should = unchangedMomentum && !offsetBeamS0AndOnFirstTurn;
+  G4cout << "should apply beamOffsetS0In? "
+            << beamOffsetS0 << G4endl;
+
+  G4cout << "should? " << should << G4endl;
   return should;
+}
+
+void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
+                                         G4ThreeVector localMomentum) {
+  // This method is called in the integrator if the OTM is active but
+  // NOT applicable.  So given that the TeleporterIntegrator will be called
+  // multiple times, whatever happens here, it should not suddenly
+  // make the OTM applicable for subsequent calls to the Teleporter
+  // stepper on the same turn.
+
+  xLastTurn = localPosition.x();
+  yLastTurn = localPosition.y();
+  pxLastTurn = localMomentum.x() / referenceMomentum;
+  pyLastTurn = localMomentum.y() / referenceMomentum;
+  // deltaPLastTurn assumed to not change between turns for 5D map.
+  G4cout << __METHOD_NAME__ << "Updating map coords without use of map:" << G4endl;
+  G4cout << "xLastTurn = " << xLastTurn << G4endl;
+  G4cout << "yLastTurn = " << yLastTurn << G4endl;
+  G4cout << "pxLastTurn = " << pxLastTurn  << G4endl;
+  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
 }
 
 // void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {
 //   G4bool isPrimary = track->GetParentID() == 0;
 //   G4bool firstTurnWithSOffset =
-//       BDSGlobalConstants::Instance()->TurnsTaken() == 1 && offsetS0;
+//       BDSGlobalConstants::Instance()->TurnsTaken() == 1 && beamOffsetS0;
 //   shouldApply = isPrimary && !firstTurnWithSOffset;
 //   // If on first turn with S offset then we must initialise the
 //   // coordinates for use from here onwards.

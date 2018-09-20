@@ -65,15 +65,15 @@ public:
 
   BDSPTCOneTurnMap(G4String path); ///< Path to maptable file.
 
-  G4bool ShouldApply(G4double momentum) const;
-  void UpdateCoordsForNextTurn();
+  G4bool ShouldApply(G4double momentum, G4int turnstaken) const;
   // Decides whether or not this should be applied.  Can add more
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);
   void SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
 				    G4bool offsetS0);
-  void UpdateCoordinates(BDSParticleCoordsFullGlobal coords);
-
+  void UpdateCoordinates(G4ThreeVector localPosition,
+			 G4ThreeVector localMomentum);
+  G4bool IsBeamOffsetS0() { return beamOffsetS0; }
 
   void GetThisTurn(G4double &x,
 		   G4double &px,
@@ -98,7 +98,7 @@ private:
 		    G4double deltaP);
 
   G4double initialPrimaryMomentum;
-  G4bool offsetS0AndOnFirstTurn;
+  G4bool beamOffsetS0;
 
   G4double referenceMomentum;
   G4double mass;

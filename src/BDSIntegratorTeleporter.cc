@@ -73,42 +73,39 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
 
-      const auto shouldApplyOneTurnMap =
-          oneTurnMap->ShouldApply(globalMom.mag());
+      if (oneTurnMap && currentTrackIsPrimary &&
+	  oneTurnMap->ShouldApply(globalMom.mag(), turnstaken))
+	{
+        //#ifdef BDSDEBUG
+        G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
+        //#endif
 
-      if (oneTurnMap && shouldApplyOneTurnMap)
-      	{
-      	  //#ifdef BDSDEBUG
-      	  G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
-      	  //#endif
+        // pass by reference, returning BDSIM coordinates:
+        G4double x, px, y, py, pz;
+        oneTurnMap->GetThisTurn(x, px, y, py, pz, turnstaken);
 
-      	  // pass by reference, returning BDSIM coordinates:
-      	  G4double x, px, y, py, pz;
-      	  oneTurnMap->GetThisTurn(x, px, y, py, pz, turnstaken);
+        // Get this for the sake of local.z, and also setting some
+        // internal state necessary for using ConvertToGlobalStep.
+        auto localPosMom =
+            ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
+        auto localPosition = localPosMom.PreStepPoint();
 
-	  // Get this for the sake of local.z, and also setting some
-	  // internal state necessary for using ConvertToGlobalStep.
-          auto localPosMom = ConvertToLocal(globalPos, globalMom,
-					    h, false, thinElementLength);
-          auto localPosition = localPosMom.PreStepPoint();
+        auto outLocalMomentum = G4ThreeVector(px, py, pz);
+        auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
 
-	  auto outLocalMomentum = G4ThreeVector(px, py, pz);
-          auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
+        auto globalPosDir =
+            ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
 
-          auto globalPosDir = ConvertToGlobalStep(outLocalPosition,
-						  outLocalMomentum,
-						  false);
+        // Set the output positions and momenta, including the
+        // threeDMethod from below...
+        globalPosAfter = globalPosDir.PreStepPoint() + dPos;
+        globalMomAfter =
+            globalPosDir.PostStepPoint().transform(transform.getRotation());
+        //#ifdef BDSDEBUG
+        G4cout << __METHOD_NAME__ << "applied the map." << G4endl;
 
-          // Set the output positions and momenta, including the
-          // threeDMethod from below...
-	  globalPosAfter = globalPosDir.PreStepPoint() + dPos;
-          globalMomAfter =
-              globalPosDir.PostStepPoint().transform(transform.getRotation());
-          //#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "applied the map." << G4endl;
-
-	  G4cout << "Applying teleporter offset: " << G4endl;
-	  //#endif
+        G4cout << "Applying teleporter offset: " << G4endl;
+        //#endif
 	}
       else if (threeDMethod)
 	{ // new method - full tranfsorm3D - works in 3d
@@ -136,6 +133,21 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  globalPosAfter = globalPosDir.PreStepPoint();
 	  globalMomAfter = globalPosDir.PostStepPoint();
 	}
+
+      // Whichever method gets used above, if the OTM is valid but not
+      // applicable for whatever reason, we should update the cached
+      // coordinates within the OTM regardless.
+      if (oneTurnMap && currentTrackIsPrimary &&
+	  !oneTurnMap->ShouldApply(globalMom.mag(), turnstaken))
+	{
+          std::cout << "Updating coordinates..." << std::endl;
+	  auto localPosMom = ConvertToLocal(globalPosAfter, globalMomAfter, h,
+					    false, thinElementLength);
+	  auto localPosition = localPosMom.PreStepPoint();
+	  auto localMomentum = localPosMom.PostStepPoint();
+          oneTurnMap->UpdateCoordinates(localPosition, localMomentum);
+      }
+
       // Update the particle coordinates for whichever of the methods
       // above was used.
       for (G4int i = 0; i < 3; i++)
