@@ -91,6 +91,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
         auto localPosition = localPosMom.PreStepPoint();
 
         auto outLocalMomentum = G4ThreeVector(px, py, pz);
+	std::cout << "In teleporter: outLocalMomentum = " << outLocalMomentum << std::endl;
         auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
 
         auto globalPosDir =
