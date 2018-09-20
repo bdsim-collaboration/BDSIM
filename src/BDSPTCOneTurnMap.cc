@@ -190,14 +190,27 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
       yLastTurn      = yOut;
       pyLastTurn     = pyOut;
       deltaPLastTurn = deltaPOut;
+
+      G4cout << "After map application: " << G4endl;
+      G4cout << "xOut = " << xOut << G4endl;
+      G4cout << "pxOut = " << pxOut << G4endl;
+      G4cout << "yOut = " << yOut << G4endl;
+      G4cout << "pyOut = " << pyOut << G4endl;
+
+
     }
   else
     {
+      G4cout << __METHOD_NAME__ << "Returning Cached Values:" << G4endl;
       xOut      = xLastTurn;
       pxOut     = pxLastTurn;
       yOut      = yLastTurn;
       pyOut     = pyLastTurn;
       deltaPOut = deltaPLastTurn;
+      G4cout << "xOut = " << xOut << G4endl;
+      G4cout << "pxOut = " << pxOut << G4endl;
+      G4cout << "yOut = " << yOut << G4endl;
+      G4cout << "pyOut = " << pyOut << G4endl;
     }
 
   // Now convert to BDSIM units:
