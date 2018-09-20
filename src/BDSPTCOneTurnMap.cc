@@ -228,7 +228,8 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   pyOut *= referenceMomentum;
   // by defn the particle has the initial primary momentum, which we
   // used to calculate pz.
-  pzOut = std::sqrt(initialPrimaryMomentum - std::pow(px,2) - std::pow(py,2));
+  pzOut = std::sqrt(std::pow(initialPrimaryMomentum, 2) - std::pow(px, 2) -
+                    std::pow(py, 2));
 
   // Now set output for arguments passed by reference.
   x  = xOut;
