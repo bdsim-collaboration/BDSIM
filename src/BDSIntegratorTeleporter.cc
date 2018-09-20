@@ -171,18 +171,36 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
     }
 
   //#ifdef BDSDEBUG
+
   G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
   G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
+
+  auto localPosMomIn =
+    ConvertToLocal(inA, inB, h, false, thinElementLength);
+  auto localPosMomOut =
+    ConvertToLocal(outA, outB, h, false, thinElementLength);
+  auto localPosIn = localPosMomIn.PreStepPoint();
+  auto localMomIn = localPosMomIn.PostStepPoint();
+  auto localPosOut = localPosMomOut.PreStepPoint();
+  auto localMomOut = localPosMomOut.PostStepPoint();
+
   std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
   G4cout.precision(10);
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
-  G4cout << "Input x,y,z     " << inA /CLHEP::m << G4endl;
-  G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
-  G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
-  G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
+  G4cout << "h (step length) (metres) " << h   / CLHEP::m << G4endl;
+
+  G4cout << "Global Input (x, y, z)     " << inA / CLHEP::m << G4endl;
+  G4cout << "Global Input (px, py, pz)  " << inB / CLHEP::m << G4endl;
+  G4cout << "Global Output (x, y, z)    " << outA / CLHEP::m << G4endl;
+  G4cout << "Global Output (px, py, pz) " << outB / CLHEP::m << G4endl;
+
+  G4cout << "Local Input (x, y, z)      " << localPosIn / CLHEP::m << G4endl;
+  G4cout << "Local Input (px, py, pz)   " << localMomIn / CLHEP::m << G4endl;
+  G4cout << "Local Output (x, y, z)     " << localPosOut / CLHEP::m << G4endl;
+  G4cout << "Local Output (px, py, pz)  " << localMomOut / CLHEP::m << G4endl;
+
   G4cout.flags(ff); // reset cout flags
   //#endif
 }
