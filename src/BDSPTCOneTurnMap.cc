@@ -155,14 +155,14 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   // return the cached values below.
   if (lastTurnNumber < turnstaken)
     {
-      //#ifdef BDSDEBUG
+      #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Applying Map: " << G4endl;
       G4cout << "Before map application: " << G4endl;
       G4cout << "xLastTurn = " << xLastTurn << G4endl;
       G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
       G4cout << "yLastTurn = " << yLastTurn << G4endl;
       G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-      //#endif
+      #endif
 
       lastTurnNumber = turnstaken;
       xOut = evaluate(xTerms,
@@ -192,13 +192,13 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
       yLastTurn      = yOut;
       pyLastTurn     = pyOut;
       deltaPLastTurn = deltaPOut;
-      //#ifdef BDSDEBUG
+      #ifdef BDSDEBUG
       G4cout << "After map application: " << G4endl;
       G4cout << "xOut = " << xOut << G4endl;
       G4cout << "pxOut = " << pxOut << G4endl;
       G4cout << "yOut = " << yOut << G4endl;
       G4cout << "pyOut = " << pyOut << G4endl;
-      //#endif
+      #endif
     }
   else
     {
@@ -208,13 +208,13 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
       yOut      = yLastTurn;
       pyOut     = pyLastTurn;
       deltaPOut = deltaPLastTurn;
-      //#ifdef BDSDEBUG
+      #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Returning Cached Values:" << G4endl;
       G4cout << "xOut = " << xOut << G4endl;
       G4cout << "pxOut = " << pxOut << G4endl;
       G4cout << "yOut = " << yOut << G4endl;
       G4cout << "pyOut = " << pyOut << G4endl;
-      //#endif
+      #endif
     }
 
 
@@ -238,7 +238,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   py = pyOut;
   pz = pzOut;
 
-  //#ifdef BDSDEBUG
+  #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Converting PTC to BDSIM " << G4endl;
   G4cout << "xOut = " << xOut << G4endl;
   G4cout << "pxOut = " << pxOut << G4endl;
@@ -247,7 +247,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   G4cout << "initialPrimaryMomentum = " << initialPrimaryMomentum << G4endl;
   G4cout << "referenceMomentum = " << referenceMomentum << G4endl;
   G4cout << "pzOut = " << pz << G4endl;
-  //#endif
+  #endif
 }
 
 G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
@@ -283,10 +283,10 @@ G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
   G4bool unchangedMomentum =
       (std::abs(momentumIn - initialPrimaryMomentum) < tol);
   auto should = unchangedMomentum && !offsetBeamS0AndOnFirstTurn;
-  G4cout << "should apply beamOffsetS0In? "
-            << beamOffsetS0 << G4endl;
+  // G4cout << "should apply beamOffsetS0In? "
+            // << beamOffsetS0 << G4endl;
 
-  G4cout << "should? " << should << G4endl;
+  // G4cout << "should? " << should << G4endl;
   return should;
 }
 
@@ -304,13 +304,13 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
   pyLastTurn = localMomentum.y() / referenceMomentum;
   // deltaPLastTurn assumed to not change between turns for 5D map.
 
-  //#ifdef BDSDEBUG
+  #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Updating map coords without use of map:" << G4endl;
   G4cout << "xLastTurn = " << xLastTurn << G4endl;
   G4cout << "yLastTurn = " << yLastTurn << G4endl;
   G4cout << "pxLastTurn = " << pxLastTurn  << G4endl;
   G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-  //#endif
+  #endif
 }
 
 // void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {

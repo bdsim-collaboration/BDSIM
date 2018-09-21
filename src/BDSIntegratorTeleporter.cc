@@ -76,9 +76,9 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       if (oneTurnMap && currentTrackIsPrimary &&
 	  oneTurnMap->ShouldApply(globalMom.mag(), turnstaken))
 	{
-        //#ifdef BDSDEBUG
+        #ifdef BDSDEBUG
         G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
-        //#endif
+        #endif
 
         // pass by reference, returning BDSIM coordinates:
         G4double x, px, y, py, pz;
@@ -91,7 +91,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
         auto localPosition = localPosMom.PreStepPoint();
 
         auto outLocalMomentum = G4ThreeVector(px, py, pz);
-	std::cout << "In teleporter: outLocalMomentum = " << outLocalMomentum << std::endl;
+
         auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
 
         auto globalPosDir =
@@ -102,18 +102,17 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
         globalPosAfter = globalPosDir.PreStepPoint() + dPos;
         globalMomAfter =
             globalPosDir.PostStepPoint().transform(transform.getRotation());
-        //#ifdef BDSDEBUG
+        #ifdef BDSDEBUG
         G4cout << __METHOD_NAME__ << "applied the map." << G4endl;
-
         G4cout << "Applying teleporter offset: " << G4endl;
-        //#endif
+        #endif
 	}
       else if (threeDMethod)
 	{ // new method - full tranfsorm3D - works in 3d
 	  // with beam line offset / rotation
-	  //#ifdef BDSDEBUG
+	  #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "teleporter 3d method" << G4endl;
-	  //#endif
+	  #endif
 	  globalPosAfter = globalPos + dPos;
 	  globalMomAfter = globalMom.transform(transform.getRotation());
 	}
@@ -171,13 +170,11 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       yOut[5] = yIn[5];
     }
 
-  //#ifdef BDSDEBUG
-
+  #ifdef BDSDEBUG
   G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
   G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
-
   auto localPosMomIn =
     ConvertToLocal(inA, inB, h, false, thinElementLength);
   auto localPosMomOut =
@@ -186,22 +183,18 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   auto localMomIn = localPosMomIn.PostStepPoint();
   auto localPosOut = localPosMomOut.PreStepPoint();
   auto localMomOut = localPosMomOut.PostStepPoint();
-
   std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
   G4cout.precision(10);
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "h (step length) (metres) " << h   / CLHEP::m << G4endl;
-
   G4cout << "Global Input (x, y, z)     " << inA / CLHEP::m << G4endl;
   G4cout << "Global Input (px, py, pz)  " << inB / CLHEP::m << G4endl;
   G4cout << "Global Output (x, y, z)    " << outA / CLHEP::m << G4endl;
   G4cout << "Global Output (px, py, pz) " << outB / CLHEP::m << G4endl;
-
   G4cout << "Local Input (x, y, z)      " << localPosIn / CLHEP::m << G4endl;
   G4cout << "Local Input (px, py, pz)   " << localMomIn / CLHEP::m << G4endl;
   G4cout << "Local Output (x, y, z)     " << localPosOut / CLHEP::m << G4endl;
   G4cout << "Local Output (px, py, pz)  " << localMomOut / CLHEP::m << G4endl;
-
   G4cout.flags(ff); // reset cout flags
-  //#endif
+  #endif
 }
