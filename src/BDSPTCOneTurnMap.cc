@@ -346,22 +346,3 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
   G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
 #endif
 }
-
-// void BDSPTCOneTurnMap::SetTeleporterMapApplicability(G4Track* track) {
-//   G4bool isPrimary = track->GetParentID() == 0;
-//   G4bool firstTurnWithSOffset =
-//       BDSGlobalConstants::Instance()->TurnsTaken() == 1 && beamOffsetS0;
-//   shouldApply = isPrimary && !firstTurnWithSOffset;
-//   // If on first turn with S offset then we must initialise the
-//   // coordinates for use from here onwards.
-//   if (isPrimary && firstTurnWithSOffset) {
-//     G4cout << "now we are also doing something" << G4endl;
-//     auto momentum = track->GetMomentum();
-//     auto position = track->GetPosition();
-//     xLastTurn = position.x() / CLHEP::m;
-//     yLastTurn = position.y() / CLHEP::m;
-//     pxLastTurn = momentum.x() / referenceMomentum;
-//     pyLastTurn = momentum.y() / referenceMomentum;
-//     deltaPLastTurn = (momentum.mag() - referenceMomentum) / referenceMomentum;
-//   }
-// }
