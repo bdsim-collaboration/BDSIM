@@ -335,6 +335,8 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
   yLastTurn = localPosition.y();
   pxLastTurn = localMomentum.x() / referenceMomentum;
   pyLastTurn = localMomentum.y() / referenceMomentum;
+  auto totalMomentum = localMomentum.mag();
+  deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
   // deltaPLastTurn assumed to not change between turns for 5D map.
 
 #ifdef BDSDEBUG
