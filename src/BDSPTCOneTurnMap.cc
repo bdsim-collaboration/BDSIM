@@ -18,6 +18,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "BDSPTCOneTurnMap.hh"
+#include "BDSTrajectoryPrimary.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParticleCoordsFullGlobal.hh"
@@ -27,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cmath>
 #include <fstream>
+#include <set>
 #include <sstream>
 #include <string>
 
@@ -120,6 +122,8 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
   deltaPLastTurn =
       (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
+
+  turnsScattered.clear();
 
   // If we're using curvilinear then S0 != 0 and we shouldn't apply
   // map on first turn.  record this setting here for the teleporter's
@@ -271,21 +275,37 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
 }
 
 G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
-				     G4int turnstaken) const
+				     G4int turnstaken)
 {
   // We have to use the externally provided turnstaken rather than
   // internal lastTurnNumber so that the OTM is definitely not applied
-  // in this case.  2 and not 1 because teleporter comes after
+  // in this case (because lastTurnNumber member of this class will
+  // not have the same value for multiple applications on the same
+  // turn) 2 and not 1 because teleporter comes after
   // terminator, where the turn number is incremented.
   G4bool offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
+
+  // We reset the public static bool hasScatteredThisTurn at the end
+  // of this method.  But what if the stepper is applied again on this
+  // turn?  then we would be lead to believe it did not scatter when
+  // it in fact did, so we cache the turns in which it scattered so
+  // that this method returns the same result for calls on the same
+  // turn for the same primary.
+  G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
+                              turnsScattered.count(turnstaken);
+  if (didScatterThisTurn)
+    {
+      turnsScattered.insert(turnstaken);
+    }
 
   G4double tol = 1e-5;
   G4bool unchangedMomentum =
       (std::abs(momentumIn - initialPrimaryMomentum) < tol);
-  auto should = unchangedMomentum && !offsetBeamS0AndOnFirstTurn;
-  // G4cout << "should apply beamOffsetS0In? "
-            // << beamOffsetS0 << G4endl;
+  auto should =
+      unchangedMomentum && !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn;
 
+  // Reset the static public bool as we (maybe) start the next turn.
+  BDSTrajectoryPrimary::hasScatteredThisTurn = false;
   // G4cout << "should? " << should << G4endl;
   return should;
 }

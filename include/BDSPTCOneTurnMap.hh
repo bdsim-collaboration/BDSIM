@@ -25,6 +25,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4Track.hh"
 
 #include <vector>
+#include <set>
 
 namespace
 {
@@ -65,7 +66,7 @@ public:
 
   BDSPTCOneTurnMap(G4String path); ///< Path to maptable file.
 
-  G4bool ShouldApply(G4double momentum, G4int turnstaken) const;
+  G4bool ShouldApply(G4double momentum, G4int turnstaken);
   // Decides whether or not this should be applied.  Can add more
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);
@@ -102,6 +103,8 @@ private:
 
   G4double referenceMomentum;
   G4double mass;
+
+  std::set<G4int> turnsScattered;
 
   G4int lastTurnNumber;
   G4double xLastTurn;
