@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <ostream>
 
 G4Allocator<BDSTrajectoryPrimary> bdsTrajectoryPrimaryAllocator;
+G4bool BDSTrajectoryPrimary::hasScatteredThisTurn = false;
 
 BDSTrajectoryPrimary* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
 {
@@ -66,7 +67,10 @@ void BDSTrajectoryPrimary::AppendStep(const G4Step* aStep)
     {
       auto point = new BDSTrajectoryPoint(aStep);
       if (point->IsScatteringPoint())
-	{firstHit = point;}
+	{
+	  firstHit = point;
+	  hasScatteredThisTurn = true;
+	}
       else
 	{delete point;} // don't store it
     }
