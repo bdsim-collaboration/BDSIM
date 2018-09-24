@@ -128,8 +128,6 @@ void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
   // If we're using curvilinear then S0 != 0 and we shouldn't apply
   // map on first turn.  record this setting here for the teleporter's
   // consideration.
-  G4cout << "beamOffsetS0 = " << beamOffsetS0 << G4endl;
-
   beamOffsetS0 = beamOffsetS0In;
 }
 
