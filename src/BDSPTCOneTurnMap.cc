@@ -308,17 +308,16 @@ G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
   BDSTrajectoryPrimary::hasScatteredThisTurn = false;
 
 #ifdef BDSDEBUG
-  std::cout << __METHOD_NAME__
-            << "scatteredThisTurn = " << BDS::BoolToString(didScatterThisTurn)
-            << std::endl;
-  std::cout << __METHOD_NAME__
-            << "beamOffsetS0 = " << BDS::BoolToString(beamOffsetS0)
-            << std::endl;
-  std::cout << __METHOD_NAME__ << "turnstaken = " << turnstaken << std::endl;
-  std::cout << __METHOD_NAME__ << "Is on first turn with S0 == 0?"
-            << BDS::BoolToString(offsetBeamS0AndOnFirstTurn) << std::endl;
-  std::cout << __METHOD_NAME__ << "ShouldApply = " << BDS::BoolToString(should)
-            << std::endl;
+  G4cout << __METHOD_NAME__
+         << "scatteredThisTurn = " << BDS::BoolToString(didScatterThisTurn)
+         << G4endl;
+  G4cout << __METHOD_NAME__
+         << "beamOffsetS0 = " << BDS::BoolToString(beamOffsetS0) << G4endl;
+  G4cout << __METHOD_NAME__ << "turnstaken = " << turnstaken << G4endl;
+  G4cout << __METHOD_NAME__ << "Is on first turn with S0 == 0?"
+         << BDS::BoolToString(offsetBeamS0AndOnFirstTurn) << G4endl;
+  G4cout << __METHOD_NAME__ << "ShouldApply = " << BDS::BoolToString(should)
+         << G4endl;
 #endif
 
   return should;

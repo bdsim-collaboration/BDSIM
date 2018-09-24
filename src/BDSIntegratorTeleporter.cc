@@ -137,8 +137,10 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       if (oneTurnMap && currentTrackIsPrimary &&
 	  !oneTurnMap->ShouldApply(globalMom.mag(), turnstaken))
 	{
-        std::cout << "Updating coordinates in place of map applicaiton..."
-                  << std::endl;
+#ifdef BDSDEBUG
+        G4cout << "Updating coordinates in place of map application..."
+               << G4endl;
+#endif
         auto localPosMom = ConvertToLocal(globalPosAfter, globalMomAfter, h,
                                           false, thinElementLength);
         auto localPosition = localPosMom.PreStepPoint();
