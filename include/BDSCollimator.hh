@@ -54,9 +54,13 @@ public:
 protected:
   virtual void Build();
 
+  virtual void BuildCollimator();
+
   virtual void BuildJawCollimator();
 
   virtual void BuildContainerLogicalVolume();
+
+  virtual void BuildVacuumVolume(G4RotationMatrix* vacuumRotation);
 
   /// Pure virtual function to be provided by derived classes.
   /// Must produce vacuumSolid and innerSolid - the inner is used

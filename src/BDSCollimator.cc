@@ -138,111 +138,119 @@ void BDSCollimator::BuildContainerLogicalVolume()
 					       name + "_container_lv");
 }
 
+void BDSCollimator::BuildVacuumVolume(G4RotationMatrix* vacuumRotation)
+{
+  G4Material *vMaterial = nullptr;
+
+  if (vacuumMaterial == "")
+    { vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial; }
+  else
+    { vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial); }
+
+  G4LogicalVolume *vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
+                                                  vMaterial,            // material
+                                                  name + "_vacuum_lv"); // name
+
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  SetAcceleratorVacuumLogicalVolume(vacuumLV);
+  RegisterLogicalVolume(vacuumLV);
+
+  G4PVPlacement *vacPV = new G4PVPlacement(vacuumRotation,          // rotation
+                                           (G4ThreeVector) 0,       // position
+                                           vacuumLV,                // its logical volume
+                                           name + "_vacuum_pv",     // its name
+                                           containerLogicalVolume,  // its mother  volume
+                                           false,                   // no boolean operation
+                                           0,                       // copy number
+                                           checkOverlaps);
+
+  RegisterPhysicalVolume(vacPV);
+}
+
 void BDSCollimator::Build()
 {
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
-  // seperate build method for now as the jaw collimator has multiple jaw solids and placements
+    // seperate build method for jaw collimator as it has multiple jaw solids and placements when open
   if (type == "jcol")
     {BuildJawCollimator();}
   else
+    {BuildCollimator();}
+}
+
+void BDSCollimator::BuildCollimator()
+{
+  // Swap variables around if exit size is larger than entrance size
+  // Rotation for tapered collimator (needed for tapered elliptical collimator)
+  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
+  G4RotationMatrix* colRotate;
+  if (tapered && isOutLarger)
     {
-      // now build the collimator
-      G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
-                       horizontalWidth * 0.5 - lengthSafety,
-                       horizontalWidth * 0.5 - lengthSafety,
-                       chordLength * 0.5   - lengthSafety);
-      RegisterSolid(outerSolid);
-
-      // Swap variables around if exit size is larger than entrance size
-      // Rotation for tapered collimator (needed for tapered elliptical collimator)
-      G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
-      G4RotationMatrix* colRotate;
-      if (tapered && isOutLarger)
-        {
-          std::swap(xAperture,xOutAperture);
-          std::swap(yAperture,yOutAperture);
-          colRotate = new G4RotationMatrix;
-          colRotate->rotateX(CLHEP::pi);
-          RegisterRotationMatrix(colRotate);
-        }
-      else
-        {colRotate = nullptr;}
-
-      G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
-
-      // only do subtraction if aperture actually set
-      if(buildVacuumAndAperture)
-        {
-          BuildInnerCollimator();
-
-          collimatorSolid = new G4SubtractionSolid(name + "_collimator_solid", // name
-                               outerSolid,                 // solid 1
-                               innerSolid);                // minus solid 2
-          RegisterSolid(collimatorSolid);
-        }
-      else
-        {collimatorSolid = outerSolid;}
-
-      G4Material* material = BDSMaterials::Instance()->GetMaterial(collimatorMaterial);
-      G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,          // solid
-                                  material,                 // material
-                                  name + "_collimator_lv"); // name
-
-      G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*colour);
-      collimatorLV->SetVisAttributes(collimatorVisAttr);
-      RegisterVisAttributes(collimatorVisAttr);
-
-      // user limits
-      collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
-
-      // register with base class (BDSGeometryComponent)
-      RegisterLogicalVolume(collimatorLV);
-      RegisterSensitiveVolume(collimatorLV);
-
-      G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
-                            (G4ThreeVector)0,        // position
-                            collimatorLV,            // its logical volume
-                            name + "_collimator_pv", // its name
-                            containerLogicalVolume,  // its mother  volume
-                            false,		     // no boolean operation
-                            0,		             // copy number
-                            checkOverlaps);
-
-      RegisterPhysicalVolume(collPV);
-
-      if (buildVacuumAndAperture)
-        {
-          G4Material* vMaterial = nullptr;
-          if (vacuumMaterial == "")
-        {vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial;}
-          else
-        {vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);}
-          G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
-                                  vMaterial,            // material
-                                  name + "_vacuum_lv"); // name
-
-          vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-          vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
-          SetAcceleratorVacuumLogicalVolume(vacuumLV);
-          RegisterLogicalVolume(vacuumLV);
-
-          G4PVPlacement* vacPV = new G4PVPlacement(colRotate,               // rotation
-                               (G4ThreeVector)0,        // position
-                               vacuumLV,                // its logical volume
-                               name + "_vacuum_pv",     // its name
-                               containerLogicalVolume,  // its mother  volume
-                               false,		        // no boolean operation
-                               0,		        // copy number
-                               checkOverlaps);
-
-          RegisterPhysicalVolume(vacPV);
-        }
+      std::swap(xAperture,xOutAperture);
+      std::swap(yAperture,yOutAperture);
+      colRotate = new G4RotationMatrix;
+      colRotate->rotateX(CLHEP::pi);
+      RegisterRotationMatrix(colRotate);
     }
+  else
+    {colRotate = nullptr;}
+
+  G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
+                                   horizontalWidth * 0.5 - lengthSafety,
+                                   horizontalWidth * 0.5 - lengthSafety,
+                                   chordLength * 0.5   - lengthSafety);
+  RegisterSolid(outerSolid);
+
+  G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
+
+  // only do subtraction if aperture actually set
+  if(buildVacuumAndAperture)
+    {
+      BuildInnerCollimator();
+
+      collimatorSolid = new G4SubtractionSolid(name + "_collimator_solid", // name
+                                               outerSolid,                 // solid 1
+                                               innerSolid);                // minus solid 2
+      RegisterSolid(collimatorSolid);
+    }
+  else
+    {collimatorSolid = outerSolid;}
+
+  G4Material* material = BDSMaterials::Instance()->GetMaterial(collimatorMaterial);
+  G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,          // solid
+                                                      material,                 // material
+                                                      name + "_collimator_lv"); // name
+
+  G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*colour);
+  collimatorLV->SetVisAttributes(collimatorVisAttr);
+  RegisterVisAttributes(collimatorVisAttr);
+
+  // user limits
+  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+
+  // register with base class (BDSGeometryComponent)
+  RegisterLogicalVolume(collimatorLV);
+  RegisterSensitiveVolume(collimatorLV);
+
+  G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
+                                            (G4ThreeVector)0,        // position
+                                            collimatorLV,            // its logical volume
+                                            name + "_collimator_pv", // its name
+                                            containerLogicalVolume,  // its mother  volume
+                                            false,		     // no boolean operation
+                                            0,		             // copy number
+                                            checkOverlaps);
+
+  RegisterPhysicalVolume(collPV);
+
+  if (buildVacuumAndAperture)
+    {BuildVacuumVolume(colRotate);}
 }
 
 void BDSCollimator::BuildJawCollimator()
 {
+
   G4double jcolAperture = 0;
   G4double apertureIsVertical = true;
   if (BDS::IsFinite(xAperture))
@@ -255,7 +263,7 @@ void BDSCollimator::BuildJawCollimator()
   else
     {jcolAperture = 0;}
 
-  // now build the collimator
+  // now build the collimator - vacuum volume only
   BuildInnerCollimator();
 
   G4double jawWidth = 0.5 * (horizontalWidth - 2*jcolAperture);
@@ -351,41 +359,9 @@ void BDSCollimator::BuildJawCollimator()
                                             checkOverlaps);
   RegisterPhysicalVolume(jaw2PV);
 
+  // place vacuum volume. No rotation as the volume is constructed with the correct dimensions.
   if (BDS::IsFinite(xAperture))
-    {
-      G4Material *vMaterial = nullptr;
-      if (vacuumMaterial == "")
-        {vMaterial = BDSGlobalConstants::Instance()->DefaultBeamPipeModel()->vacuumMaterial; }
-      else
-        {vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial); }
-      G4LogicalVolume *vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
-                                                      vMaterial,            // material
-                                                      name + "_vacuum_lv"); // name
-
-      vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
-      SetAcceleratorVacuumLogicalVolume(vacuumLV);
-      RegisterLogicalVolume(vacuumLV);
-
-      // rotate the vacuum volume if the aperture is horizontal
-      G4RotationMatrix* vacuumRotation = nullptr;
-      if (!apertureIsVertical)
-        {
-          vacuumRotation = new G4RotationMatrix;
-          vacuumRotation->rotateZ(0.5*CLHEP::pi);
-        }
-
-      G4PVPlacement *vacPV = new G4PVPlacement(nullptr,          // rotation
-                                               (G4ThreeVector) 0,       // position
-                                               vacuumLV,                // its logical volume
-                                               name + "_vacuum_pv",     // its name
-                                               containerLogicalVolume,  // its mother  volume
-                                               false,                   // no boolean operation
-                                               0,                       // copy number
-                                               checkOverlaps);
-
-      RegisterPhysicalVolume(vacPV);
-    }
+    {BuildVacuumVolume(nullptr);}
 
 }
 
