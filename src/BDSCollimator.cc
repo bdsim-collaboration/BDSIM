@@ -329,13 +329,13 @@ void BDSCollimator::BuildJawCollimator()
 
   if (apertureIsVertical)
     {
-      offset1 = G4ThreeVector(-0.5 * (jcolAperture + jawWidth), 0, 0);
-      offset2 = G4ThreeVector(0.5 * (jcolAperture + jawWidth), 0, 0);
+      offset1 = G4ThreeVector(-(jcolAperture + 0.5*jawWidth), 0, 0);
+      offset2 = G4ThreeVector(jcolAperture + 0.5*jawWidth, 0, 0);
     }
   else
     {
-      offset1 = G4ThreeVector(0, -0.5 * (jcolAperture + jawWidth), 0);
-      offset2 = G4ThreeVector(0, 0.5 * (jcolAperture + jawWidth), 0);
+      offset1 = G4ThreeVector(0, -(jcolAperture + 0.5*jawWidth), 0);
+      offset2 = G4ThreeVector(0, jcolAperture + 0.5*jawWidth, 0);
     }
 
   // place the two jaws
