@@ -74,7 +74,7 @@ public:
 				    G4bool offsetS0);
   void UpdateCoordinates(G4ThreeVector localPosition,
 			 G4ThreeVector localMomentum);
-  G4bool IsBeamOffsetS0() { return beamOffsetS0; }
+  G4bool IsBeamOffsetS0() const { return beamOffsetS0; }
 
   void GetThisTurn(G4double &x,
 		   G4double &px,
@@ -96,7 +96,7 @@ private:
 		    G4double px,
                     G4double y,
 		    G4double py,
-		    G4double deltaP);
+		    G4double deltaP) const;
 
   G4double initialPrimaryMomentum;
   G4bool beamOffsetS0;

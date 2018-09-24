@@ -258,7 +258,7 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
                                     G4double px,
 				    G4double y,
 				    G4double py,
-                                    G4double deltaP)
+                                    G4double deltaP) const
 {
   G4double result = 0;
   for (const auto& term : terms)
