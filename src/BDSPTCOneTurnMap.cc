@@ -273,8 +273,7 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
   return result;
 }
 
-G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
-				     G4int turnstaken)
+G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4int turnstaken)
 {
   // We have to use the externally provided turnstaken rather than
   // internal lastTurnNumber so that the OTM is definitely not applied
@@ -298,14 +297,7 @@ G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
       turnsScattered.insert(turnstaken);
     }
 
-  G4double tol = 1e-5;
-  G4bool unchangedMomentum =
-      (std::abs(momentumIn - initialPrimaryMomentum) < tol);
-  auto should =
-      unchangedMomentum && !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn;
-
-  // Reset the static public bool as we (maybe) start the next turn.
-  BDSTrajectoryPrimary::hasScatteredThisTurn = false;
+  auto should = !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__
@@ -319,7 +311,8 @@ G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
   G4cout << __METHOD_NAME__ << "ShouldApply = " << BDS::BoolToString(should)
          << G4endl;
 #endif
-
+  // Reset the static public bool as we (maybe) start the next turn.
+  BDSTrajectoryPrimary::hasScatteredThisTurn = false;
   return should;
 }
 
