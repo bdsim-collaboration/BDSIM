@@ -66,7 +66,7 @@ public:
 
   BDSPTCOneTurnMap(G4String path); ///< Path to maptable file.
 
-  G4bool ShouldApplyToPrimary(G4int turnstaken);
+  G4bool ShouldApplyToPrimary(G4double momentum, G4int turnstaken);
   // Decides whether or not this should be applied.  Can add more
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);

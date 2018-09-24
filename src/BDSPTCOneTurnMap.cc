@@ -273,7 +273,8 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
   return result;
 }
 
-G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4int turnstaken)
+G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
+                                              G4int turnstaken)
 {
   // We have to use the externally provided turnstaken rather than
   // internal lastTurnNumber so that the OTM is definitely not applied
@@ -297,7 +298,14 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4int turnstaken)
       turnsScattered.insert(turnstaken);
     }
 
-  auto should = !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn;
+  // Have some tolerance for dealing with primaries far off momentum.
+  auto ratioOffReference =
+    std::abs(1 - ((momentum - referenceMomentum) / referenceMomentum));
+  auto tolerance = 0.05; // arbitrarily chosen.  is this OK?
+  auto tooFarOffMomentum = ratioOffReference > tolerance;
+
+  auto should =
+    !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__
