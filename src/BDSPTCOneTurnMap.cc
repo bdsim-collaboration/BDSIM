@@ -140,12 +140,12 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
 				   G4double &pz,
 				   G4int turnstaken)
 {
-  G4double xOut = 0.0;
-  G4double yOut = 0.0;
-  G4double pxOut = 0.0;
-  G4double pyOut = 0.0;
-  G4double pzOut = 0.0;
-  G4double deltaPOut = 0.0;
+  auto xOut = 0.0;
+  auto yOut = 0.0;
+  auto pxOut = 0.0;
+  auto pyOut = 0.0;
+  auto pzOut = 0.0;
+  auto deltaPOut = 0.0;
 
   // In short: lastTurnNumber exists to prevent the map being
   // applied multiple times in one turn.
@@ -260,7 +260,7 @@ G4double BDSPTCOneTurnMap::evaluate(std::vector<PTCMapTerm>& terms,
 				    G4double py,
                                     G4double deltaP) const
 {
-  G4double result = 0;
+  auto result = 0.;
   for (const auto& term : terms)
     {
       result += (term.coefficient
@@ -282,7 +282,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // not have the same value for multiple applications on the same
   // turn) 2 and not 1 because teleporter comes after
   // terminator, where the turn number is incremented.
-  G4bool offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
+  auto offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
 
   // We reset the public static bool hasScatteredThisTurn at the end
   // of this method.  But what if the stepper is applied again on this
@@ -291,11 +291,11 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // that this method returns the same result for calls on the same
   // turn for the same primary.  This is necessary because we can't
   // force the Teleporter stepper to be called just once.
-  G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
-                              turnsScattered.count(turnstaken);
-  if (didScatterThisTurn)
-    {
-      turnsScattered.insert(turnstaken);
+  auto didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
+                            turnsScattered.count(turnstaken);
+
+  if (didScatterThisTurn) {
+    turnsScattered.insert(turnstaken);
     }
 
   // Have some tolerance for dealing with primaries far off momentum.
