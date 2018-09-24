@@ -55,6 +55,8 @@ std::string GMAD::typestr(ElementType type) {
     return "ecol";
   case ElementType::_RCOL : 
     return "rcol";
+  case ElementType::_JCOL :
+    return "jcol";
   case ElementType::_SHIELD:
     return "shield";
   case ElementType::_VKICKER :

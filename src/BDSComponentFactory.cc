@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCavityElement.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
+#include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
 #include "BDSDegrader.hh"
@@ -294,7 +295,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_SOLENOID:
     component = CreateSolenoid(); break; 
   case ElementType::_ECOL:
-    component = CreateEllipticalCollimator(); break; 
+    component = CreateEllipticalCollimator(); break;
+  case ElementType::_JCOL:
+    component = CreateJawCollimator(); break;
   case ElementType::_RCOL:
     component = CreateRectangularCollimator(); break; 
   case ElementType::_MUONSPOILER:    
@@ -1074,6 +1077,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     G4String(element->material),
 				     G4String(element->vacuumMaterial),
 				     PrepareColour(element));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  return new BDSCollimatorJaw(elementName,
+                       element->l*CLHEP::m,
+                       PrepareHorizontalWidth(element),
+                       element->xsize*CLHEP::m,
+                       element->ysize*CLHEP::m,
+                       element->xsizeOut*CLHEP::m,
+                       element->ysizeOut*CLHEP::m,
+                       G4String(element->material),
+                       G4String(element->vacuumMaterial),
+                       PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()

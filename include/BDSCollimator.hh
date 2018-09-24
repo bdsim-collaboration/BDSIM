@@ -53,7 +53,9 @@ public:
 
 protected:
   virtual void Build();
-  
+
+  virtual void BuildJawCollimator();
+
   virtual void BuildContainerLogicalVolume();
 
   /// Pure virtual function to be provided by derived classes.
