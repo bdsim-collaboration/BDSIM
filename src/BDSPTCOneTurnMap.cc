@@ -289,7 +289,8 @@ G4bool BDSPTCOneTurnMap::ShouldApply(G4double momentumIn,
   // turn?  then we would be lead to believe it did not scatter when
   // it in fact did, so we cache the turns in which it scattered so
   // that this method returns the same result for calls on the same
-  // turn for the same primary.
+  // turn for the same primary.  This is necessary because we can't
+  // force the Teleporter stepper to be called just once.
   G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
                               turnsScattered.count(turnstaken);
   if (didScatterThisTurn)
