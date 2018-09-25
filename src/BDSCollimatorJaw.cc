@@ -103,7 +103,8 @@ void BDSCollimatorJaw::Build()
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(jawLV);
-  RegisterSensitiveVolume(jawLV);
+  if (sensitiveOuter)
+    {RegisterSensitiveVolume(jawLV);}
 
   if (buildLeftJaw)
     {

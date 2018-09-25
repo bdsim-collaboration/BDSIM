@@ -435,7 +435,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   // register all objects that go with the final geometry component (from internal vectors)
   outer->RegisterSolid(allSolids);
   outer->RegisterLogicalVolume(yokeLV);
-  outer->RegisterSensitiveVolume(yokeLV);
+  if (sensitiveOuter)
+    {outer->RegisterSensitiveVolume(yokeLV);}
   outer->RegisterPhysicalVolume(yokePV);
   outer->RegisterVisAttributes(outerVisAttributes);
   // no rotation matrices used in this factory

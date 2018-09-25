@@ -174,7 +174,8 @@ void BDSCollimator::Build()
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
-  RegisterSensitiveVolume(collimatorLV);
+  if (sensitiveOuter)
+    {RegisterSensitiveVolume(collimatorLV);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
 					    (G4ThreeVector)0,        // position
