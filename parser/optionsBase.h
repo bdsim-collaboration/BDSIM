@@ -141,6 +141,7 @@ namespace GMAD
     bool      sensitiveOuter;
     bool      sensitiveBeamPipe;
     bool      sensitiveTunnel;
+    bool      sensitiveVacuum;
 
     bool        includeFringeFields;
 

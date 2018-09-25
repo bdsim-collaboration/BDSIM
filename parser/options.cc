@@ -248,6 +248,7 @@ void Options::PublishMembers()
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
   publish("sensitiveTunnel",             &Options::sensitiveTunnel);
   publish("tunnelSensitive",             &Options::sensitiveTunnel);// backwards compatibility
+  publish("sensitiveVacuum",             &Options::sensitiveVacuum);
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);

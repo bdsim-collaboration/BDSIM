@@ -113,6 +113,7 @@ OptionsBase::OptionsBase()
   sensitiveOuter       = true;
   sensitiveBeamPipe    = true;
   sensitiveTunnel      = true;
+  sensitiveVacuum      = false;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
