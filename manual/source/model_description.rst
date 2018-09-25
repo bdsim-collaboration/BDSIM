@@ -231,6 +231,9 @@ Both the terminator and teleporter are invisible and very thin elements that are
 shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
 executable option.
 
+The turn number is automatically stored in the energy loss output in the data when the
+circular option is used.
+
 
 Terminator
 ^^^^^^^^^^
@@ -3359,24 +3362,31 @@ following options.
 | nperfile                          | Number of events to record per output file                         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
-|                                   | and for each trajectory point.                                     |
+|                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLinks                   | For each energy deposition hit, the particle ID, track ID, parent  |
 |                                   | ID and beam line index will be stored - this is intended to help   |
-|                                   | 'link' the energy deposition back to other information.            |
+|                                   | 'link' the energy deposition back to other information. Default    |
+|                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
-|                                   | and for each trajectory point.                                     |
+|                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each point|
-|                                   | of energy deposition and trajectory.                               |
+|                                   | of energy deposition and trajectory. Default off.                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossTurn                    | Store the turn number of each energy deposition hit. Default off,  |
+|                                   | but automatically on when using a circular machine with the        |
+|                                   | (also executable) option :code:`circular`.                         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossStepLength              | Stores the step length for each energy deposition hit or not.      |
+|                                   | Default off.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossPreStepKineticEnergy    | Stores the kinetic energy of the particle causing energy deposition|
-|                                   | as taken from the beginning of the step before it made it.         |
+|                                   | as taken from the beginning of the step before it made it. Default |
+|                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeModel                        | Whether to store the model information in the output (Default On)  |
+| storeModel                        | Whether to store the model information in the output. Default on.  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |
 +-----------------------------------+--------------------------------------------------------------------+

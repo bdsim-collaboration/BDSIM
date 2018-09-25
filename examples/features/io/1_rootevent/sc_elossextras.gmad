@@ -37,7 +37,8 @@ beam, particle="e-",
       Y0=0.000;
 
 
-option, storeElossLinks=1,
+option, storeElossTurn=1,
+	storeElossLinks=1,
 	storeElossLocal=1,
 	storeElossGlobal=1,
 	storeElossTime=1,

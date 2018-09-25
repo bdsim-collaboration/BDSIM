@@ -7,9 +7,13 @@ New Features
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
+* New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
 
 General
 -------
+
+* The turn number for energy deposition hits is now automatically stored if
+  a circular model is used.
 
 Bug Fixes
 ---------
@@ -26,8 +30,12 @@ Output Changes
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
 * BDSOutputROOTEventInfo class version incremented to 4.
-* New option :code:`storeSamplerKineticEnergy` option to store kinetic energy in the sampler output
+* New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
 * BDSOutputROOTEventSampler class version incremented to 3.
+* New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
+* BDSOutputROOTEventLoss class version incremented to 4.
+* Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
+  detail of their output.
 
 Utilities
 ---------
