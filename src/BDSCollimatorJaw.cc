@@ -30,12 +30,14 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String  nameIn,
                    G4double  yApertureIn,
                    G4double  xOutApertureIn,
                    G4double  yOutApertureIn,
+                   G4double  jaw1OffsetIn,
+                   G4double  jaw2OffsetIn,
                    G4String  collimatorMaterialIn,
                    G4String  vacuumMaterialIn,
                    G4Colour* colourIn):
   BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "jcol",
         xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
-        collimatorMaterialIn,
+        jaw1OffsetIn, jaw2OffsetIn, collimatorMaterialIn,
         vacuumMaterialIn, colourIn)
 {;}
 
@@ -43,19 +45,20 @@ void BDSCollimatorJaw::BuildInnerCollimator()
 {
   // no inner solid being subtracted so nothing to do
 
-  // vacuum solid still needed - should be total height of the element but with width of aperture
-  if (BDS::IsFinite(xAperture))
+  // vacuum solid still needed - should be either total height of the element but with width of aperture
+  if (apertureIsVertical)
     {
       vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
-                              xAperture - lengthSafety,             // x half width
+                              0.5 * jcolAperture - lengthSafety,    // x half width
                               0.5 * horizontalWidth - lengthSafety, // y half width
                               chordLength * 0.5);                   // z half length
     }
+  // or total width of the element but with height of aperture
   else
     {
       vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
                               0.5 * horizontalWidth - lengthSafety, // x half width
-                              yAperture - lengthSafety,             // y half width
+                              0.5 * jcolAperture - lengthSafety,    // y half width
                               chordLength * 0.5);                   // z half length
     }
 

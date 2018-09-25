@@ -102,6 +102,8 @@ Parameters::Parameters()
   setMap["ysize"]              = false;
   setMap["xsizeOut"]           = false;
   setMap["ysizeOut"]           = false;
+  setMap["jaw1Offset"]         = false;
+  setMap["jaw2Offset"]         = false;
   setMap["offsetX"]            = false;
   setMap["offsetY"]            = false;
   setMap["tscint"]             = false;

@@ -35,7 +35,7 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String  nameIn,
 						 G4Colour* colourIn):
   BDSCollimator(nameIn, lengthIn, horizontalWidthIn, "ecol",
 		xApertureIn, yApertureIn,xOutApertureIn, yOutApertureIn,
-		collimatorMaterialIn,
+		0, 0, collimatorMaterialIn,
 		vacuumMaterialIn, colourIn)
 {;}
 

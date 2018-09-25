@@ -1091,6 +1091,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
                        element->ysize*CLHEP::m,
                        element->xsizeOut*CLHEP::m,
                        element->ysizeOut*CLHEP::m,
+                       element->jaw1Offset*CLHEP::m,
+                       element->jaw2Offset*CLHEP::m,
                        G4String(element->material),
                        G4String(element->vacuumMaterial),
                        PrepareColour(element));

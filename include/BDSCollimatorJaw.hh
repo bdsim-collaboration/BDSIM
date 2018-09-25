@@ -37,6 +37,8 @@ public:
 		 G4double  yApertureIn        = 0,
 		 G4double  xOutApertureIn     = 0,
 		 G4double  yOutApertureIn     = 0,
+		 G4double  jaw1Offset         = 0,
+		 G4double  jaw2Offset         = 0,
 		 G4String  collimatorMaterial = "copper",
 		 G4String  vacuumMaterial     = "vacuum",
 		 G4Colour* colour             = nullptr);

@@ -43,6 +43,8 @@ public:
 		G4double  yApertureIn        = 0,
 		G4double  xOutApertureIn     = 0,
 		G4double  yOutApertureIn     = 0,
+		G4double  jaw1OffsetIn		 = 0,
+		G4double  jaw2OffsetIn		 = 0,
 		G4String  collimatorMaterial = "copper",
 		G4String  vacuumMaterial     = "vacuum",
 		G4Colour* colourIn           = nullptr);
@@ -60,7 +62,8 @@ protected:
 
   virtual void BuildContainerLogicalVolume();
 
-  virtual void BuildVacuumVolume(G4RotationMatrix* vacuumRotation);
+  virtual void BuildVacuumVolume(G4RotationMatrix* vacuumRotation,
+                                 G4ThreeVector vacuumPosition);
 
   /// Pure virtual function to be provided by derived classes.
   /// Must produce vacuumSolid and innerSolid - the inner is used
@@ -77,6 +80,12 @@ protected:
   G4double  yAperture;          ///< Aperture at entrance in y dimension
   G4double  xOutAperture;       ///< Aperture at exit in x dimension
   G4double  yOutAperture;       ///< Aperture at exit in y dimension
+  G4double  jaw1Offset;         ///< Offset of jaw 1
+  G4double  jaw2Offset;         ///< Offset of jaw 2
+  G4double  jcolAperture;       ///< Jaw collimator aperture width
+  G4double  apertureIsVertical; ///< Jaw collimator orientation
+  G4bool    buildJaw1;          ///< Bool for building jaw 1
+  G4bool    buildJaw2;          ///< Bool for building jaw 2
   G4bool    tapered;            ///< Flag for tapered collimator
   G4String  collimatorMaterial; ///< Material
   G4String  vacuumMaterial;     ///< Vacuum material

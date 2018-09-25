@@ -128,6 +128,8 @@ void Element::PublishMembers()
   publish("ysize",            &Element::ysize);
   publish("xsizeOut",         &Element::xsizeOut);
   publish("ysizeOut",         &Element::ysizeOut);
+  publish("jaw1Offset",       &Element::jaw1Offset);
+  publish("jaw2Offset",       &Element::jaw2Offset);
   publish("tilt",             &Element::tilt);
 
   publish("offsetX",     &Element::offsetX);
@@ -446,6 +448,8 @@ void Element::flush()
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
+  jaw1Offset = 0;
+  jaw2Offset = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
