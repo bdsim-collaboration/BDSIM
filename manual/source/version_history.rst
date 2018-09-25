@@ -8,6 +8,8 @@ New Features
 * New beam pipe aperture for the CLIC post collision line.
 * New jaw collimator element "jcol" with two blocks in the horizontal plane.
 * New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
+* New option :code:`sensitiveVacuum` to control whether energy deposition in the residual
+  gas in the beam pipe 'vacuum' is recorded.
 
 General
 -------

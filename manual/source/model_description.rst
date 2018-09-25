@@ -3147,11 +3147,14 @@ described in `Tunnel Geometry`_.
 |                                  | this should be reduced to prevent overlaps between    |
 |                                  | curvilinear volumes along the beam line.              |
 +----------------------------------+-------------------------------------------------------+
+| sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
+|                                  | includes cavities.                                    |
++----------------------------------+-------------------------------------------------------+
 | sensitiveOuter                   | Whether the outer part of each component (other than  |
 |                                  | the beam pipe records energy loss                     |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
-|                                  | includes cavities.                                    |
+| sensitiveVacuum                  | Whether energy deposition in the residual vacuum gas  |
+|                                  | is recorded.                                          |
 +----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
 +----------------------------------+-------------------------------------------------------+
@@ -3367,6 +3370,8 @@ following options.
 |                                   | pipe) records energy loss                                          |
 +-----------------------------------+--------------------------------------------------------------------+
 | sensitiveBeamPipe                 | Whether the beam pipe records energy loss. This includes cavities. |
++-----------------------------------+--------------------------------------------------------------------+
+| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
 |                                   | and for each trajectory point. Default off.                        |
