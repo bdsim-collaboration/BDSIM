@@ -33,6 +33,7 @@ Bug Fixes
 * The `sensitiveOuter` (formerly `sensitiveBeamlineComponents`) option has
   been fixed and now controls whether the parts outside the beam pipe in an
   element record energy loss or not.
+* Degrader and undulator did not record energy deposition.
 
 Output Changes
 --------------
