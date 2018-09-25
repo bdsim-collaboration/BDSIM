@@ -39,6 +39,7 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
   checkOverlaps       = BDSGlobalConstants::Instance()->CheckOverlaps();
   maxStepFactor       = 1.0; // fraction of length for maximum step size
   nSegmentsPerCircle  = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
+  sensitiveBeamPipe   = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
   CleanUp();
 }
 
@@ -174,7 +175,7 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   aPipe->RegisterSolid(allSolids);
   aPipe->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
   aPipe->RegisterPhysicalVolume(allPhysicalVolumes);
-  if (beamPipeLV)// in the case of the circular vacuum, there isn't a beampipeLV
+  if (beamPipeLV && sensitiveBeamPipe)// in the case of the circular vacuum, there isn't a beampipeLV
     {aPipe->RegisterSensitiveVolume(beamPipeLV);}
   aPipe->RegisterUserLimits(allUserLimits);
   aPipe->RegisterVisAttributes(allVisAttributes);

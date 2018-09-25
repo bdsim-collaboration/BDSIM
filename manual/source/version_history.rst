@@ -22,6 +22,9 @@ Bug Fixes
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
 * Fixed incorrect writing of optional sampler information.
+* The `sensitiveBeamPipe` option now works and controls whether the beam pipe produces
+  energy deposition hits or not. This does not affect the physics, merely whether output
+  information is generated or not.
 
 Output Changes
 --------------

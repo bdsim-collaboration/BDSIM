@@ -72,6 +72,7 @@ OptionsBase::OptionsBase()
   
   ffact                 = 1.0;
 
+  // beam line offset and rotation
   beamlineX         = 0;
   beamlineY         = 0;
   beamlineZ         = 0;
@@ -110,7 +111,8 @@ OptionsBase::OptionsBase()
 
   yokeFields           = true;
   sensitiveBeamlineComponents = true;
-
+  sensitiveBeamPipe    = true;
+  
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
@@ -128,7 +130,6 @@ OptionsBase::OptionsBase()
   worldVolumeMargin = 5; //m
 
   vacuumPressure       = 1e-12;
-  sensitiveBeamPipe    = true;
 
   // tunnel options
   buildTunnel         = false;

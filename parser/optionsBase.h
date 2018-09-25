@@ -139,6 +139,7 @@ namespace GMAD
 
     bool      yokeFields;
     bool      sensitiveBeamlineComponents;
+    bool      sensitiveBeamPipe;
 
     bool        includeFringeFields;
 
@@ -160,7 +161,6 @@ namespace GMAD
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
     double    vacuumPressure;
-    bool      sensitiveBeamPipe;
     
     ///@{ tunnel geometry parameters
     bool        buildTunnel;

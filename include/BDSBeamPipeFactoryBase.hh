@@ -129,6 +129,7 @@ protected:
   G4bool           checkOverlaps;
   G4double         maxStepFactor;
   G4double         nSegmentsPerCircle; ///< For visualisation improvement
+  G4bool           sensitiveBeamPipe;  ///< Whether the beam pipe will record energy deposition.
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
   G4VSolid*        containerSolid;
