@@ -21,83 +21,88 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-std::ostream& GMAD::operator << (std::ostream& out, ElementType type) {
+std::ostream& GMAD::operator << (std::ostream& out, ElementType type)
+{
   return out << typestr(type);
 }
 
-std::string GMAD::typestr(ElementType type) {
-  switch(type){
-  case ElementType::_MARKER : 
-    return "marker";
-  case ElementType::_DRIFT :
-    return "drift";
-  case ElementType::_RF :
-   return "rf";
-  case ElementType::_SBEND : 
-    return "sbend";
-  case ElementType::_RBEND :
-    return "rbend";
-  case ElementType::_QUAD :
-    return "quadrupole";
-  case ElementType::_SEXTUPOLE :
-    return "sextupole";
-  case ElementType::_OCTUPOLE :
-    return "octupole";
-  case ElementType::_DECAPOLE :
-    return "decapole";
-  case ElementType::_MULT :
-    return "multipole";
-  case ElementType::_THINMULT :
-    return "thinmultipole";
-  case ElementType::_SOLENOID :
-    return "solenoid";
-  case ElementType::_ECOL : 
-    return "ecol";
-  case ElementType::_RCOL : 
-    return "rcol";
-  case ElementType::_SHIELD:
-    return "shield";
-  case ElementType::_VKICKER :
-    return "vkicker";
-  case ElementType::_HKICKER :
-    return "hkicker";
-  case ElementType::_KICKER :
-    return "kicker";
-  case ElementType::_TKICKER :
-    return "tkicker";
-  case ElementType::_LINE :
-    return "line";
-  case ElementType::_REV_LINE :
-    return "rev_line";
-  case ElementType::_MATERIAL:
-    return "material";
-  case ElementType::_LASER:
-    return "laser";
-  case ElementType::_ELEMENT :
-    return "element";
-  case ElementType::_TRANSFORM3D :
-    return "transform3d";
-  case ElementType::_MUONSPOILER : 
-    return "muonspoiler";
-  case ElementType::_SCREEN :
-    return "screen";
-  case ElementType::_AWAKESCREEN :
-    return "awakescreen";
-  case ElementType::_AWAKESPECTROMETER :
-    return "awakespectrometer";
-  case ElementType::_DEGRADER :
-    return "degrader";
-  case ElementType::_GAP :
-    return "gap";
-  case ElementType::_THINRMATRIX :
-    return "thinrmatrix";
-  case ElementType::_PARALLELTRANSPORTER :
-    return "paralleltransporter";
-  case ElementType::_RMATRIX :
-    return "rmatrix";
-  case ElementType::_UNDULATOR :
-    return "undulator";
-  default:
-    return "none";
-  }
+std::string GMAD::typestr(ElementType type)
+{
+  switch(type)
+    {
+    case ElementType::_MARKER: 
+      {return "marker";     break;}
+    case ElementType::_DRIFT:
+      {return "drift";      break;}
+    case ElementType::_RF:
+      {return "rf";         break;}
+    case ElementType::_SBEND: 
+      {return "sbend";      break;}
+    case ElementType::_RBEND:
+      {return "rbend";      break;}
+    case ElementType::_QUAD:
+      {return "quadrupole"; break;}
+    case ElementType::_SEXTUPOLE:
+      {return "sextupole";  break;}
+    case ElementType::_OCTUPOLE:
+      {return "octupole";   break;}
+    case ElementType::_DECAPOLE:
+      {return "decapole";   break;}
+    case ElementType::_MULT:
+      {return "multipole";  break;}
+    case ElementType::_THINMULT:
+      {return "thinmultipole"; break;}
+    case ElementType::_SOLENOID:
+      {return "solenoid";   break;}
+    case ElementType::_ECOL: 
+      {return "ecol";       break;}
+    case ElementType::_RCOL: 
+      {return "rcol";       break;}
+    case ElementType::_JCOL:
+      {return "jcol";       break;}
+    case ElementType::_SHIELD:
+      {return "shield";     break;}
+    case ElementType::_VKICKER:
+      {return "vkicker";    break;}
+    case ElementType::_HKICKER:
+      {return "hkicker";    break;}
+    case ElementType::_KICKER:
+      {return "kicker";     break;}
+    case ElementType::_TKICKER:
+      {return "tkicker";    break;}
+    case ElementType::_LINE:
+      {return "line";       break;}
+    case ElementType::_REV_LINE:
+      {return "rev_line";   break;}
+    case ElementType::_MATERIAL:
+      {return "material";   break;}
+    case ElementType::_LASER:
+      {return "laser";      break;}
+    case ElementType::_ELEMENT:
+      {return "element";    break;}
+    case ElementType::_TRANSFORM3D:
+      {return "transform3d";         break;}
+    case ElementType::_MUONSPOILER: 
+      {return "muonspoiler";         break;}
+    case ElementType::_SCREEN:
+      {return "screen";              break;}
+    case ElementType::_AWAKESCREEN:
+      {return "awakescreen";         break;}
+    case ElementType::_AWAKESPECTROMETER:
+      {return "awakespectrometer";   break;}
+    case ElementType::_DEGRADER:
+      {return "degrader";            break;}
+    case ElementType::_GAP:
+      {return "gap";                 break;}
+    case ElementType::_THINRMATRIX:
+      {return "thinrmatrix";         break;}
+    case ElementType::_PARALLELTRANSPORTER:
+      {return "paralleltransporter"; break;}
+    case ElementType::_RMATRIX:
+      {return "rmatrix";             break;}
+    case ElementType::_UNDULATOR:
+      {return "undulator";           break;}
+    default:
+      {return "none"; break;}
+    }
 }
