@@ -213,6 +213,7 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   trajNoTransportation     = false;
+  storeElossTurn           = false;
   storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;

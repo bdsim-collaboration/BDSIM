@@ -187,6 +187,7 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
