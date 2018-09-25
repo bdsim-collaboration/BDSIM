@@ -175,7 +175,7 @@ public:
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
-  inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
+  inline G4bool   SensitiveOuter()           const {return G4bool  (options.sensitiveOuter);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
 #if G4VERSION_NUMBER != 1030

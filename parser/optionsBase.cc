@@ -110,8 +110,9 @@ OptionsBase::OptionsBase()
   includeFringeFields  = true;
 
   yokeFields           = true;
-  sensitiveBeamlineComponents = true;
+  sensitiveOuter       = true;
   sensitiveBeamPipe    = true;
+  sensitiveTunnel      = true;
   
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
@@ -125,7 +126,7 @@ OptionsBase::OptionsBase()
   
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
-  worldMaterial        = "air";
+  worldMaterial        = "G4_AIR";
 
   worldVolumeMargin = 5; //m
 
@@ -143,7 +144,6 @@ OptionsBase::OptionsBase()
   tunnelFloorOffset   = 1.0; // m
   tunnelAper1         = 2.0; // m
   tunnelAper2         = 2.0; // m
-  tunnelSensitive     = true;
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;

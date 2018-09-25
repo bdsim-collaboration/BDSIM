@@ -219,7 +219,6 @@ void Options::PublishMembers()
   publish("tunnelAper1",         &Options::tunnelAper1);
   publish("tunnelAper2",         &Options::tunnelAper2);
   publish("tunnelRadius",        &Options::tunnelAper1); // for backwards compatability
-  publish("tunnelSensitive",     &Options::tunnelSensitive);
   publish("tunnelVisible",       &Options::tunnelVisible);
   publish("showTunnel",          &Options::tunnelVisible); // for backwards compatability
   publish("tunnelOffsetX",       &Options::tunnelOffsetX);
@@ -233,7 +232,7 @@ void Options::PublishMembers()
   publish("blmRad",    &Options::blmRad);
   publish("blmLength", &Options::blmLength);
 
-    // physics processes
+  // physics processes
   publish("turnOnOpticalAbsorption",     &Options::turnOnOpticalAbsorption);
   publish("turnOnMieScattering",         &Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",    &Options::turnOnRayleighScattering);
@@ -244,8 +243,11 @@ void Options::PublishMembers()
   publish("maximumTracksPerEvent",       &Options::maximumTracksPerEvent);
   publish("minimumKineticEnergy",        &Options::minimumKineticEnergy);
   publish("minimumRange",                &Options::minimumRange);
-  publish("sensitiveBeamlineComponents", &Options::sensitiveBeamlineComponents);
+  publish("sensitiveOuter",              &Options::sensitiveOuter);
+  publish("sensitiveBeamlineComponents", &Options::sensitiveOuter); // backwards compatibility
   publish("sensitiveBeamPipe",           &Options::sensitiveBeamPipe);
+  publish("sensitiveTunnel",             &Options::sensitiveTunnel);
+  publish("tunnelSensitive",             &Options::sensitiveTunnel);// backwards compatibility
   publish("sensitiveBLMs",               &Options::sensitiveBLMs);
   publish("prodCutPhotons",              &Options::prodCutPhotons);
   publish("prodCutElectrons",            &Options::prodCutElectrons);

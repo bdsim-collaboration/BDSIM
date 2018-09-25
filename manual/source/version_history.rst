@@ -14,7 +14,12 @@ General
 
 * The turn number for energy deposition hits is now automatically stored if
   a circular model is used.
-
+* The `sensitiveBeamlineComponents` option has now been renamed to `sensitiveOuter`
+  to better reflect its functionality. The old option is still accepted.
+* The `tunnelSensitive` option has now been renamed to `sensitiveTunnel` to be
+  more consistent with the other sensitivity options. The old option is still
+  accepted.
+  
 Bug Fixes
 ---------
 
@@ -23,8 +28,11 @@ Bug Fixes
   field map file was lacking lower and upper limits.
 * Fixed incorrect writing of optional sampler information.
 * The `sensitiveBeamPipe` option now works and controls whether the beam pipe produces
-  energy deposition hits or not. This does not affect the physics, merely whether output
+  energy loss or not. This does not affect the physics, merely whether output
   information is generated or not.
+* The `sensitiveOuter` (formerly `sensitiveBeamlineComponents`) option has
+  been fixed and now controls whether the parts outside the beam pipe in an
+  element record energy loss or not.
 
 Output Changes
 --------------
@@ -39,6 +47,7 @@ Output Changes
 * BDSOutputROOTEventLoss class version incremented to 4.
 * Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
   detail of their output.
+* BDSOutputROOTEventOptions class version incremented to 4.
 
 Utilities
 ---------

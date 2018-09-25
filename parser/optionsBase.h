@@ -138,8 +138,9 @@ namespace GMAD
     bool      dontSplitSBends;
 
     bool      yokeFields;
-    bool      sensitiveBeamlineComponents;
+    bool      sensitiveOuter;
     bool      sensitiveBeamPipe;
+    bool      sensitiveTunnel;
 
     bool        includeFringeFields;
 
@@ -174,7 +175,6 @@ namespace GMAD
     double      tunnelFloorOffset;
     double      tunnelAper1;
     double      tunnelAper2;
-    bool        tunnelSensitive;
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
