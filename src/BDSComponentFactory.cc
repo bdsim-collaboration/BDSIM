@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCavityElement.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
+#include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
 #include "BDSDegrader.hh"
@@ -1084,7 +1085,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
-  return nullptr;
+
+  if (element->material.empty())
+    {
+      G4cout << __METHOD_NAME__ << "warning no material for collimator \"" << elementName
+	     << "\". Using G4_Cu by default" << G4endl;
+    }
+  
+  return new BDSCollimatorJaw(elementName,
+			      element->l*CLHEP::m,
+			      PrepareHorizontalWidth(element),
+			      element->xsize*CLHEP::m,
+			      element->ysize*CLHEP::m,
+			      true,
+			      true,
+			      PrepareMaterial(element, "G4_Cu"),
+			      PrepareVacuumMaterial(element),
+			      PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()
