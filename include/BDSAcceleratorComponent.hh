@@ -234,6 +234,7 @@ protected:
   static G4Material* worldMaterial;
   static G4bool      checkOverlaps;
   static G4bool      sensitiveOuter;
+  static G4bool      sensitiveVacuum;
   /// @}
 
   /// The logical volume in this component that is the volume the beam passes through that

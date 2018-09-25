@@ -47,6 +47,7 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
   sensitiveBeamPipe  = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
+  sensitiveVacuum    = BDSGlobalConstants::Instance()->SensitiveVacuum();
 
   CleanUp(); // initialise variables
 }
@@ -101,6 +102,8 @@ void BDSCavityFactoryBase::CreateLogicalVolumes(G4String             name,
   vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
 				 vacuumMaterial,        // material
 				 name + "_vacuum_lv");  // name
+  if (sensitiveVacuum)
+    {allSensitiveVolumes.push_back(vacuumLV);}
   allLogicalVolumes.push_back(vacuumLV);
 
   containerLV = new G4LogicalVolume(containerSolid,
