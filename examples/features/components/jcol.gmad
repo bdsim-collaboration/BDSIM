@@ -1,4 +1,4 @@
-col1 : jcol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="G4_W";
+col1 : jcol,l=0.4*m, xsize=2*mm, ysize=10*cm, horizontalWidth=20*cm, material="G4_W";
 
 lat : line = (col1);
 com : line = (col1);
