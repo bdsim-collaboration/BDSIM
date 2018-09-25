@@ -36,10 +36,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <cmath>
 
-G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
-G4Material* BDSAcceleratorComponent::worldMaterial = nullptr;
-G4double    BDSAcceleratorComponent::lengthSafety  = -1;
-G4bool      BDSAcceleratorComponent::checkOverlaps = false;
+G4Material* BDSAcceleratorComponent::emptyMaterial  = nullptr;
+G4Material* BDSAcceleratorComponent::worldMaterial  = nullptr;
+G4double    BDSAcceleratorComponent::lengthSafety   = -1;
+G4bool      BDSAcceleratorComponent::checkOverlaps  = false;
+G4bool      BDSAcceleratorComponent::sensitiveOuter = true;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -76,6 +77,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
       worldMaterial      = BDSMaterials::Instance()->GetMaterial(globals->WorldMaterial());
       lengthSafety       = globals->LengthSafety();
       checkOverlaps      = globals->CheckOverlaps();
+      sensitiveOuter     = globals->SensitiveOuter();
     }
 
   // Prevent negative length components.

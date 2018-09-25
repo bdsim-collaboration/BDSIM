@@ -228,11 +228,13 @@ protected:
   /// Optional beam pipe recipe that is written out to the survey if it exists.
   BDSBeamPipeInfo* beamPipeInfo;
 
-  /// Useful variables often used in construction
+  /// @{ Useful variable often used in construction.
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
   static G4Material* worldMaterial;
   static G4bool      checkOverlaps;
+  static G4bool      sensitiveOuter;
+  /// @}
 
   /// The logical volume in this component that is the volume the beam passes through that
   /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
