@@ -292,6 +292,7 @@ The following elements may be defined
 * `tkicker`_
 * `rf`_
 * `rcol`_
+* `jcol`_
 * `ecol`_
 * `degrader`_
 * `muspoiler`_
@@ -1046,16 +1047,16 @@ rcol
 `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-================  =================================  ==========  ===========
-Parameter         Description                        Default     Required
-`l`               Length [m]                         0           Yes
-`xsize`           Horizontal half aperture [m]       0           Yes
-`ysize`           Vertical half aperture [m]         0           Yes
-`xsizeOut`        Horizontal exit half aperture [m]  0           No
-`ysizeOut`        Vertical exit half aperture [m]    0           No
-`material`        Outer material                     Iron        No
-`outerDiameter`   Outer full width [m]               global      No
-================  =================================  ==========  ===========
+=================  =================================  ==========  ===========
+Parameter          Description                        Default     Required
+`l`                Length [m]                         0           Yes
+`xsize`            Horizontal half aperture [m]       0           Yes
+`ysize`            Vertical half aperture [m]         0           Yes
+`xsizeOut`         Horizontal exit half aperture [m]  0           No
+`ysizeOut`         Vertical exit half aperture [m]    0           No
+`material`         Outer material                     G4_Cu       No
+`horizontalWidth`  Outer full width [m]               0.5 m       No
+=================  =================================  ==========  ===========
 
 .. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
@@ -1081,6 +1082,32 @@ ecol
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
 half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
 axes of the entrance aperture must be the same ratio for the exit aperture.
+
+jcol
+^^^^
+
+.. figure:: figures/jcol.png
+	    :width: 30%
+	    :align: right
+
+`jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
+If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by `pi/2`.
+
+=================  =================================  ==========  ===========
+Parameter          Description                        Default     Required
+`l`                Length [m]                         0           Yes
+`xsize`            Horizontal half aperture [m]       0           Yes
+`ysize`            Half height of jaws [m]            0           Yes
+`material`         Outer material                     G4_Cu       No
+`horizontalWidth`  Outer full width [m]               0.5 m       No
+=================  =================================  ==========  ===========
+
+* The `horizontalWidth` must be greater than 2x `xsize`.
+
+Examples::
+
+   ! Standard
+   TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
 
 degrader

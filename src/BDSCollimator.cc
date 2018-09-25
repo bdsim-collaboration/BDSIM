@@ -161,7 +161,7 @@ BDSCollimator::BDSCollimator(G4String  nameIn,
   if (collimatorMaterialIn == "")
     {
       G4cout << __METHOD_NAME__ << "Warning - no material set for collimator - using copper" << G4endl;
-      collimatorMaterial = "Copper";
+      collimatorMaterial = "G4_Cu";
     }
 
   collimatorSolid = nullptr;
@@ -264,7 +264,23 @@ void BDSCollimator::BuildCollimator()
   // only do subtraction if aperture actually set
   if(buildVacuumAndAperture)
     {
-      BuildInnerCollimator();
+      // vacuum solid still needed - should be either total height of the element but with width of aperture
+      if (apertureIsVertical)
+        {
+          vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
+                                  0.5 * jcolAperture - lengthSafety,    // x half width
+                                  0.5 * horizontalWidth - lengthSafety, // y half width
+                                  chordLength * 0.5);                   // z half length
+        }
+      // or total width of the element but with height of aperture
+      else
+        {
+          vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
+                                  0.5 * horizontalWidth - lengthSafety, // x half width
+                                  0.5 * jcolAperture - lengthSafety,    // y half width
+                                  chordLength * 0.5);                   // z half length
+        }
+      RegisterSolid(vacuumSolid);
 
       collimatorSolid = new G4SubtractionSolid(name + "_collimator_solid", // name
                                                outerSolid,                 // solid 1

@@ -6,6 +6,7 @@ New Features
 
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
+* New jaw collimator element "jcol" with two blocks in the horizontal plane.
 
 General
 -------
