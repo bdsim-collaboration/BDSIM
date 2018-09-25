@@ -79,7 +79,7 @@ BDSCollimator::BDSCollimator(G4String  nameIn,
   if (collimatorMaterialIn == "")
     {
       G4cout << __METHOD_NAME__ << "Warning - no material set for collimator - using copper" << G4endl;
-      collimatorMaterial = "Copper";
+      collimatorMaterial = "G4_Cu";
     }
     
   if(BDS::IsFinite(xOutAperture) && (xAperture <= 0))
