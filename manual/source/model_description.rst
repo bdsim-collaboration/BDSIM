@@ -3140,6 +3140,9 @@ described in `Tunnel Geometry`_.
 |                                  | loader that cannot load multiple files correctly. On  |
 |                                  | by default.                                           |
 +----------------------------------+-------------------------------------------------------+
+| removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
+|                                  | when BDSIM exits. Default true.                       |
++----------------------------------+-------------------------------------------------------+
 | samplerDiameter                  | Diameter of samplers (default 5 m) [m]. This is also  |
 |                                  | the diameter of the curvilinear world volumes used in |
 |                                  | curvilinear transforms. In the case of lower energy   |
