@@ -60,8 +60,11 @@ protected:
   
   virtual void BuildContainerLogicalVolume();
 
+  virtual void BuildJawCollimator();
+
   ///@{ Geometrical objects:
   G4VSolid* jawSolid;
+  G4VSolid* vacuumSolid;
   ///@}
 
   G4double    horizontalWidth;    ///< Horizontal width.
