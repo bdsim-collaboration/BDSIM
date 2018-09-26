@@ -513,11 +513,14 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 			   worldPV, checkOverlaps,
 			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
+  // No energy counter SD added here as individual placements have that attached
+  // during construction time
   PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
     {// extras is map so iterator has first and second for key and value
+      // note these are currently not sensitive as there's no CL frame for them
       PlaceBeamlineInWorld(bl.second.massWorld, worldPV, checkOverlaps);
       PlaceBeamlineInWorld(bl.second.endPieces, worldPV, checkOverlaps);
     }
