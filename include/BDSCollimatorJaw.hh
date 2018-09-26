@@ -39,8 +39,6 @@ public:
   BDSCollimatorJaw(G4String  nameIn,
 		   G4double  lengthIn,
 		   G4double  horizontalWidthIn,
-		   G4double  xApertureIn,
-		   G4double  yApertureIn,
 		   G4double  jaw1OffsetIn,
 		   G4double  jaw2OffsetIn,
 		   G4double  xHalfGapIn,
@@ -68,17 +66,15 @@ protected:
   ///@}
 
   G4double    horizontalWidth;    ///< Horizontal width.
-  G4double    xAperture;          ///< Aperture at entrance in x dimension
-  G4double    yAperture;          ///< Aperture at entrance in y dimension
-  G4double    jaw1Offset;         ///< Offset of jaw 1
-  G4double    jaw2Offset;         ///< Offset of jaw 2
-  G4double    jcolAperture;       ///< Jaw collimator aperture width
+  G4double    xsizeLeft;          ///< Offset of jaw 1
+  G4double    xsizeRight;         ///< Offset of jaw 2
   G4double    apertureIsVertical; ///< Jaw collimator orientation
   G4double    xHalfGap;           ///< Half gap separation between jaws.
   G4double    jawHalfWidth;       ///< Half width of each jaw.
   G4double    yHalfHeight;        ///< Half height of each jaw.
   G4bool      buildLeftJaw;       ///< Build left jaw or not.
   G4bool      buildRightJaw;      ///< Build right jaw or not.
+  G4bool      buildAperture;	  ///< Build aperture or not.
   G4Material* collimatorMaterial; ///< Material
   G4Material* vacuumMaterial;     ///< Vacuum material
   G4Colour*   colour;             ///< Colour of collimator

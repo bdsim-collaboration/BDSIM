@@ -36,12 +36,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4double    lengthIn,
 				   G4double    horizontalWidthIn,
-                   G4double    xApertureIn,
-                   G4double    yApertureIn,
-                   G4double    jaw1OffsetIn,
-                   G4double    jaw2OffsetIn,
-				   G4double    xHalfGapIn,
-				   G4double    yHalfHeightIn,
+                   G4double    xHalfGapIn,
+                   G4double    yHalfHeightIn,
+                   G4double    xsizeLeftIn,
+                   G4double    xsizeRightIn,
 				   G4bool      buildLeftJawIn,
 				   G4bool      buildRightJawIn,
 				   G4Material* collimatorMaterialIn,
@@ -50,10 +48,8 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "jcol"),
   jawSolid(nullptr),
   horizontalWidth(horizontalWidthIn),
-  xAperture(xApertureIn),
-  yAperture(yApertureIn),
-  jaw1Offset(jaw1OffsetIn),
-  jaw2Offset(jaw2OffsetIn),
+  xsizeLeft(xsizeLeftIn),
+  xsizeRight(xsizeRightIn),
   xHalfGap(xHalfGapIn),
   yHalfHeight(yHalfHeightIn),
   buildLeftJaw(buildLeftJawIn),
@@ -69,52 +65,52 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
       exit(1);
     }
 
-  if (BDS::IsFinite(xAperture))
+  // set half height to half horizontal width if zero - finite height required.
+  if (!BDS::IsFinite(yHalfHeight))
+    {yHalfHeight = 0.5*horizontalWidth;}
+
+  if (BDS::IsFinite(yHalfHeight) && (yHalfHeight < 1e-3)) // 1um minimum
+    {
+      G4cerr << __METHOD_NAME__ << "insufficient ysize for jcol" << G4endl;
+      exit(1);
+    }
+
+  if ((yHalfHeight < 0) || ((yHalfHeight > 0) && (yHalfHeight < 1e-3))) // 1um minimum and not negative
+    {
+      G4cerr << __METHOD_NAME__ << "insufficient ysize for jcol" << G4endl;
+      exit(1);
+    }
+
+  if (xsizeLeft < 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Left jcol jaw cannot have negative half aperture size." << G4endl;
+      exit(1);
+    }
+  if (xsizeRight < 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Left jcol jaw cannot have negative half aperture size." << G4endl;
+      exit(1);
+    }
+
+  if (std::abs(xsizeLeft) > 0.5*horizontalWidth)
 	{
-      if (jaw1Offset > xAperture)
-		{
-		  G4cerr << __METHOD_NAME__ << "jcol jaw offset cannot be greater than the aperture half-size." << G4endl;
-		  exit(1);
-		}
-	}
-  if (BDS::IsFinite(yAperture))
-	{
-	  if (jaw1Offset > yAperture)
-		{
-		  G4cerr << __METHOD_NAME__ << "jcol jaw offset cannot be greater than the aperture half-size." << G4endl;
-		  exit(1);
-		}
-	}
-  if (std::abs(jaw1Offset) > (0.5*horizontalWidth - std::abs(jcolAperture)))
-	{
-	  G4cerr << __METHOD_NAME__ << "jcol \"" << name << "\" jaw1 offset is greater the element half width, jaw1 "
+	  G4cerr << __METHOD_NAME__ << "jcol \"" << name << "\" left jaw offset is greater the element half width, jaw "
 	         << "will not be constructed" << G4endl;
 	  buildLeftJaw = false;
 	}
-  if (std::abs(jaw2Offset) > (0.5*horizontalWidth - std::abs(jcolAperture)))
+  if (std::abs(xsizeRight) > 0.5*horizontalWidth)
 	{
-	  G4cerr << __METHOD_NAME__ << "jcol \"" << name << "\" jaw2 offset is greater the element half width, jaw2 "
+	  G4cerr << __METHOD_NAME__ << "jcol \"" << name << "\" right jaw offset is greater the element half width, jaw "
 			 << "will not be constructed" << G4endl;
 	  buildRightJaw = false;
 	}
 
-  if (!buildLeftJaw || !buildRightJaw)
+  if (!buildLeftJaw && !buildRightJaw)
 	{G4cerr << __METHOD_NAME__ << "warning no jaws being built" << G4endl; exit(1);}
 
-  // gap orientation bool and generic aperture width instead of constantly checking for horizontal/vertical width
-  jcolAperture = 0;
-  apertureIsVertical = true;
-  if (BDS::IsFinite(xAperture))
-	{jcolAperture = xAperture;}
-  else if (BDS::IsFinite(yAperture))
-	{
- 	  jcolAperture = yAperture;
-	  apertureIsVertical = false;
-	}
-
-  // if the offset is the same as the aperture, the aperture is closed
-  if ((jaw1Offset == jcolAperture) && (jaw2Offset == jcolAperture))
-	{jcolAperture = 0;}
+  buildAperture = true;
+  if (!BDS::IsFinite(xHalfGap) && !BDS::IsFinite(xsizeLeft) && !BDS::IsFinite(xsizeRight))
+    {buildAperture = false;}
 }
 
 BDSCollimatorJaw::~BDSCollimatorJaw()
@@ -132,7 +128,7 @@ void BDSCollimatorJaw::BuildContainerLogicalVolume()
 					       name + "_container_lv");
 }
 
-void BDSCollimatorJaw::Build()
+void BDSCollimatorJaw::BuildJawCollimator()
 {
   BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
@@ -187,152 +183,157 @@ void BDSCollimatorJaw::Build()
     }
 }
 
-void BDSCollimatorJaw::BuildJawCollimator()
+void BDSCollimatorJaw::Build()
 {
-  // build the vacuum volume only if the aperture is finite
-	if (BDS::IsFinite(jcolAperture))
-	  {
-		// no inner solid being subtracted so nothing to do
+  BDSAcceleratorComponent::Build(); // calls BuildContainer and sets limits and vis for container
 
-		// vacuum solid still needed - should be either total height of the element but with width of aperture
-		if (apertureIsVertical)
-		  {
-		    vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
-			 	   				    0.5 * jcolAperture - lengthSafety,    // x half width
-									0.5 * horizontalWidth - lengthSafety, // y half width
-									chordLength * 0.5);                   // z half length
-		  }
-		// or total width of the element but with height of aperture
-		else
-		  {
-			vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
-			  					    0.5 * horizontalWidth - lengthSafety, // x half width
-									0.5 * jcolAperture - lengthSafety,    // y half width
-									chordLength * 0.5);                   // z half length
-		  }
-		RegisterSolid(vacuumSolid);
-	  }
+  // set each jaws half gap default to aperture half size
+  G4double leftJawHalfGap = xHalfGap;
+  G4double rightJawHalfGap = xHalfGap;
 
-  // calculate position of vacuum boundaries
-  G4double vacuumBoundary1 = jcolAperture;
-  G4double vacuumBoundary2 = jcolAperture;
+  // update jaw half gap with offsets
+  if (BDS::IsFinite(xsizeLeft))
+	{leftJawHalfGap = xsizeLeft;}
+  if (BDS::IsFinite(xsizeRight))
+	{rightJawHalfGap = xsizeRight;}
 
-  if (BDS::IsFinite(jaw1Offset))
-	{vacuumBoundary1 -= jaw1Offset;}
-  if (BDS::IsFinite(jaw2Offset))
-	{vacuumBoundary2 -= jaw2Offset;}
-
-  // jaws have to fit inside containerLV so calculate jaw widths given offsets
-  G4double jaw1Width = 0.5*horizontalWidth - std::abs(vacuumBoundary1);
-  G4double jaw2Width = 0.5*horizontalWidth - std::abs(vacuumBoundary2);
+  // jaws have to fit inside containerLV so calculate full jaw widths given offsets
+  G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
+  G4double rightJawWidth = 0.5 * horizontalWidth - rightJawHalfGap;
+  G4double vacuumWidth = 0.5 * (leftJawHalfGap + rightJawHalfGap);
 
   // centre of jaw and vacuum volumes for placements
-  G4double jaw1Centre = 0.5*jaw1Width + vacuumBoundary1;
-  G4double jaw2Centre = 0.5*jaw2Width + vacuumBoundary2;
-  G4double vacuumCentre = 0.5*(vacuumBoundary1 - vacuumBoundary2);
+  G4double leftJawCentre = 0.5*leftJawWidth + leftJawHalfGap;
+  G4double rightJawCentre = 0.5*rightJawWidth + rightJawHalfGap;
+  G4double vacuumCentre = 0.5*(leftJawHalfGap - rightJawHalfGap);
 
-  G4double jaw1Height = horizontalWidth;
-  G4double jaw2Height = horizontalWidth;
-
-  G4ThreeVector posOffset1;
-  G4ThreeVector posOffset2;
-  G4ThreeVector vacuumOffset;
-
-  if (apertureIsVertical)
-	{
-	  posOffset1 = G4ThreeVector(jaw1Centre, 0, 0);
-	  posOffset2 = G4ThreeVector(-jaw2Centre, 0, 0);
-	  vacuumOffset = G4ThreeVector(vacuumCentre, 0, 0);
-	}
-  else
-	{
- 	  posOffset1 = G4ThreeVector(0, jaw1Centre, 0);
-	  posOffset2 = G4ThreeVector(0, -jaw2Centre, 0);
-	  vacuumOffset = G4ThreeVector(0, vacuumCentre, 0);
-	  std::swap(jaw1Height,jaw1Width);
-	  std::swap(jaw2Height,jaw2Width);
-	}
+  G4ThreeVector leftJawPos = G4ThreeVector(leftJawCentre, 0, 0);
+  G4ThreeVector rightJawPos = G4ThreeVector(-rightJawCentre, 0, 0);
+  G4ThreeVector vacuumOffset = G4ThreeVector(vacuumCentre, 0, 0);
 
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*colour);
   RegisterVisAttributes(collimatorVisAttr);
 
   // build jaws as appropriate
-  if (buildLeftJaw)
+  if (buildLeftJaw && buildAperture)
 	{
-	  G4VSolid *jaw1Solid = new G4Box(name + "_jaw1_solid",
-	  					  			  jaw1Width * 0.5 - lengthSafety,
-						  			  jaw1Height * 0.5 - lengthSafety,
+	  G4VSolid *leftJawSolid = new G4Box(name + "_leftjaw_solid",
+									  leftJawWidth * 0.5 - lengthSafety,
+                                      yHalfHeight - lengthSafety,
 						  			  chordLength * 0.5 - lengthSafety);
-	  RegisterSolid(jaw1Solid);
+	  RegisterSolid(leftJawSolid);
 
-	  G4LogicalVolume* jaw1LV = new G4LogicalVolume(jaw1Solid,    		// solid
-													collimatorMaterial, // material
-												    name + "_jaw1_lv"); // name
-	  jaw1LV->SetVisAttributes(collimatorVisAttr);
+	  G4LogicalVolume* leftJawLV = new G4LogicalVolume(leftJawSolid,       // solid
+													collimatorMaterial,    // material
+												    name + "_leftjaw_lv"); // name
+	  leftJawLV->SetVisAttributes(collimatorVisAttr);
 
 	  // user limits
-	  jaw1LV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+	  leftJawLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
 	  // register with base class (BDSGeometryComponent)
-	  RegisterLogicalVolume(jaw1LV);
-	  RegisterSensitiveVolume(jaw1LV);
+	  RegisterLogicalVolume(leftJawLV);
+	  if (sensitiveOuter)
+		{RegisterSensitiveVolume(leftJawLV);}
 
-	  // place the jaw
-	  G4PVPlacement* jaw1PV = new G4PVPlacement(nullptr,                 // rotation
-	  										    posOffset1,              // position
-											    jaw1LV,                  // its logical volume
-											    name + "_jaw1_pv",       // its name
+		// place the jaw
+	  G4PVPlacement* leftJawPV = new G4PVPlacement(nullptr,              // rotation
+												leftJawPos,              // position
+												leftJawLV,               // its logical volume
+											    name + "_leftjaw_pv",    // its name
 											    containerLogicalVolume,  // its mother volume
 											    false,		             // no boolean operation
 											    0,		                 // copy number
 											    checkOverlaps);
-	  RegisterPhysicalVolume(jaw1PV);
+	  RegisterPhysicalVolume(leftJawPV);
 	}
-  if (buildRightJaw)
+  if (buildRightJaw && buildAperture)
 	{
-	  G4VSolid *jaw2Solid = new G4Box(name + "_jaw2_solid",
-	    				   			  jaw2Width * 0.5 - lengthSafety,
-									  jaw2Height * 0.5 - lengthSafety,
+	  G4VSolid *rightJawSolid = new G4Box(name + "_rightjaw_solid",
+									  rightJawWidth * 0.5 - lengthSafety,
+                                      yHalfHeight - lengthSafety,
 									  chordLength * 0.5 - lengthSafety);
-	  RegisterSolid(jaw2Solid);
+	  RegisterSolid(rightJawSolid);
 
-	  G4LogicalVolume* jaw2LV = new G4LogicalVolume(jaw2Solid,    		// solid
-													collimatorMaterial, // material
-													name + "_jaw2_lv"); // name
-
-	  jaw2LV->SetVisAttributes(collimatorVisAttr);
+	  G4LogicalVolume* rightJawLV = new G4LogicalVolume(rightJawSolid,      // solid
+													collimatorMaterial,     // material
+													name + "_rightjaw_lv"); // name
+	  rightJawLV->SetVisAttributes(collimatorVisAttr);
 
 	  // user limits
-	  jaw2LV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+	  rightJawLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 
 	  // register with base class (BDSGeometryComponent)
-	  RegisterLogicalVolume(jaw2LV);
-	  RegisterSensitiveVolume(jaw2LV);
+	  RegisterLogicalVolume(rightJawLV);
+	  if (sensitiveOuter)
+		{RegisterSensitiveVolume(rightJawLV);}
 
 	  // place the jaw
-	  G4PVPlacement* jaw2PV = new G4PVPlacement(nullptr,                 // rotation
-												posOffset2,              // position
-												jaw2LV,                  // its logical volume
-												name + "_jaw2_pv",       // its name
+	  G4PVPlacement* rightJawPV = new G4PVPlacement(nullptr,             // rotation
+												rightJawPos,             // position
+												rightJawLV,              // its logical volume
+												name + "_rightjaw_pv",   // its name
 												containerLogicalVolume,  // its mother volume
 												false,		             // no boolean operation
 												0,		                 // copy number
 												checkOverlaps);
-	  RegisterPhysicalVolume(jaw2PV);
+	  RegisterPhysicalVolume(rightJawPV);
+	}
+   // if no aperture but the code has got to this stage, build the collimator as a simple box.
+   if (!buildAperture)
+	{
+	  G4VSolid *collimatorSolid = new G4Box(name + "_solid",
+										    horizontalWidth * 0.5 - lengthSafety,
+										    yHalfHeight - lengthSafety,
+										    chordLength * 0.5 - lengthSafety);
+	  RegisterSolid(collimatorSolid);
+
+	  G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,       // solid
+													      collimatorMaterial,    // material
+													      name + "_lv");         // name
+	  collimatorLV->SetVisAttributes(collimatorVisAttr);
+
+  	  // user limits
+	  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+
+      // register with base class (BDSGeometryComponent)
+	  RegisterLogicalVolume(collimatorLV);
+	  if (sensitiveOuter)
+		{RegisterSensitiveVolume(collimatorLV);}
+
+	  // place the jaw
+	  G4PVPlacement* collimatorPV = new G4PVPlacement(nullptr,                 // rotation
+													  (G4ThreeVector) 0,       // position
+												      collimatorLV,            // its logical volume
+												      name + "_pv",    		   // its name
+												      containerLogicalVolume,  // its mother volume
+												      false,		           // no boolean operation
+												      0,		               // copy number
+												      checkOverlaps);
+	  RegisterPhysicalVolume(collimatorPV);
 	}
 
-  // place vacuum volume. No rotation as the volume is constructed with the correct dimensions.
-  if (BDS::IsFinite(jcolAperture))
+  // build and place the vacuum volume only if the aperture is finite.
+  if (buildAperture)
 	{
+      vacuumSolid = new G4Box(name + "_vacuum_solid",               // name
+                              vacuumWidth - lengthSafety,           // x half width
+                              yHalfHeight - lengthSafety,           // y half width
+                              chordLength * 0.5);                   // z half length
+
+      RegisterSolid(vacuumSolid);
+
 	  G4LogicalVolume *vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
-														vacuumMaterial,       // material
-														name + "_vacuum_lv"); // name
+													  vacuumMaterial,       // material
+													  name + "_vacuum_lv"); // name
 
 	  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 	  vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
 	  SetAcceleratorVacuumLogicalVolume(vacuumLV);
 	  RegisterLogicalVolume(vacuumLV);
-
+      if (sensitiveVacuum)
+        {RegisterSensitiveVolume(vacuumLV);}
+        
 	  G4PVPlacement *vacPV = new G4PVPlacement(nullptr,                 // rotation
 	  										   vacuumOffset,            // position
 											   vacuumLV,                // its logical volume
