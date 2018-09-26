@@ -1093,6 +1093,7 @@ jcol
 	    :width: 30%
 	    :align: right
 
+
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by `pi/2`.
 
