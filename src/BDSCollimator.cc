@@ -178,7 +178,8 @@ void BDSCollimator::Build()
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
-  RegisterSensitiveVolume(collimatorLV);
+  if (sensitiveOuter)
+    {RegisterSensitiveVolume(collimatorLV);}
 
   G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
                                             (G4ThreeVector)0,        // position
@@ -208,6 +209,8 @@ void BDSCollimator::Build()
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
+      if (sensitiveVacuum)
+	{RegisterSensitiveVolume(vacuumLV);}
 
       G4PVPlacement *vacPV = new G4PVPlacement(colRotate,               // rotation
                                                (G4ThreeVector) 0,       // position

@@ -27,6 +27,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 ClassImp(BDSOutputROOTEventLoss)
 
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
+  storeTurn(false),
   storeLinks(false),
   storeLocal(false),
   storeGlobal(false),
@@ -36,12 +37,14 @@ BDSOutputROOTEventLoss::BDSOutputROOTEventLoss():
   Flush();
 }
 
-BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(const bool& storeLinksIn,
-					       const bool& storeLocalIn,
-					       const bool& storeGlobalIn,
-					       const bool& storeTimeIn,
-					       const bool& storeStepLengthIn,
-					       const bool& storePreStepKineticEnergyIn):
+BDSOutputROOTEventLoss::BDSOutputROOTEventLoss(bool storeTurnIn,
+					       bool storeLinksIn,
+					       bool storeLocalIn,
+					       bool storeGlobalIn,
+					       bool storeTimeIn,
+					       bool storeStepLengthIn,
+					       bool storePreStepKineticEnergyIn):
+  storeTurn(storeTurnIn),
   storeLinks(storeLinksIn),
   storeLocal(storeLocalIn),
   storeGlobal(storeGlobalIn),
@@ -64,7 +67,9 @@ void BDSOutputROOTEventLoss::Fill(const BDSTrajectoryPoint* hit)
   S.push_back     ( (float &&) hit->GetPostS()  / CLHEP::m);
   weight.push_back( (float &&) hit->GetPostWeight());
   modelID.push_back((int &&)   hit->GetBeamLineIndex());
-  turn.push_back(   (int &&)   hit->GetTurnsTaken());
+
+  if (storeTurn)
+    {turn.push_back((int &&)   hit->GetTurnsTaken());}
 
   if (storeLocal)
     {
@@ -95,7 +100,8 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit* hit)
   S.push_back     ( (float &&) (hit->GetSHit()   / CLHEP::m));
   weight.push_back( (float &&)  hit->GetWeight());
 
-  turn.push_back( hit->GetTurnsTaken());       // TODO need to flag on circular machines
+  if (storeTurn)
+    {turn.push_back( hit->GetTurnsTaken());}
 
   if(storeLinks)
     {

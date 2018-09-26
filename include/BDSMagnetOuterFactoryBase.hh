@@ -199,9 +199,10 @@ protected:
 
   /// For visualisation improvement. Also used for coil end piece geometry
   G4double           nSegmentsPerCircle;
-  G4double           maxStepFactor;      ///< for user limits
-  G4VSolid*          poleSolid; ///< solid for an individual pole that will be placed multiple times
-  G4VSolid*          yokeSolid; ///< solid for outer part that connects all poles
+  G4bool             sensitiveOuter; ///< Cache of global constants variable.
+  G4double           maxStepFactor;      ///< For user limits.
+  G4VSolid*          poleSolid; ///< Solid for an individual pole that will be placed multiple times.
+  G4VSolid*          yokeSolid; ///< Solid for outer part that connects all poles.
   G4VSolid*          containerSolid;
   G4VSolid*          magnetContainerSolid;
   G4LogicalVolume*   poleLV;

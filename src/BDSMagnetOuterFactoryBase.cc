@@ -44,6 +44,7 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
   visDebug           = BDSGlobalConstants::Instance()->VisDebug();
   nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
+  sensitiveOuter     = BDSGlobalConstants::Instance()->SensitiveOuter();
   maxStepFactor      = 0.5;
 
   // initialise variables and pointers that'll be used by the factory
@@ -79,9 +80,6 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 						     G4Colour*   colour,
 						     G4Material* outerMaterial)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   if (poleSolid)
     {
       poleLV = new G4LogicalVolume(poleSolid,
@@ -133,9 +131,6 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 								G4double      magnetContainerLength,
 								G4double      magnetContainerRadius)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   magnetContainerRadius += lengthSafetyLarge; // extra margin
   magnetContainerSolid = new G4CutTubs(name + "_container_solid",   // name
 				       0,                           // inner radius
@@ -149,14 +144,10 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
   magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
 
-
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
 								  G4double magnetContainerLength,
 								  G4double magnetContainerRadius)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   magnetContainerRadius += lengthSafetyLarge; // extra margin
   magnetContainerSolid = new G4Tubs(name + "_container_solid",   // name
 				    0,                           // inner radius
@@ -170,9 +161,6 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
   
 void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
 					     magnetContainerLV,
 					     magContExtent);
