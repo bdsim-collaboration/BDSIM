@@ -2073,7 +2073,8 @@ Formats
 
 Field maps in the following formats are accepted:
 
-  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed :code:`.tar.gz`)
+  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed files. :code:`gz` must be
+    in the file name for this to load correctly.)
   * Superfish Poisson 2D SF7
 
 These are described in detail below. More field formats can be added
