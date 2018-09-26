@@ -1902,6 +1902,8 @@ in the supplied field map.
 
 To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
+* Fields are in a local Cartesian coordinate system with respect to the origin of the
+  element they are attached to.
 * The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to four dimensions.
@@ -1920,7 +1922,7 @@ ascending or descending order.
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
 	  recommended the user re-sample any existing field map into a regular grid. A regular
-	  grid is also faster for tracking purposes.
+	  grid is also much faster for tracking purposes.
 
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
@@ -1981,6 +1983,8 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | psi                  | Euler psi rotation from the element the field is attached to    |
 +----------------------+-----------------------------------------------------------------+
+| axisAngle            | (Boolean) Use axis angle rotation variables. Default 0 (Euler). |
++----------------------+-----------------------------------------------------------------+
 | axisX                | x-component of axis defining axis / angle rotation              |
 +----------------------+-----------------------------------------------------------------+
 | axisY                | y-component of axis defining axis / angle rotation              |
@@ -2000,7 +2004,7 @@ When defining a field, the following parameters can be specified.
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps are attached to and the coordinates
-	  of the field map.
+	  of the field map. Use `axisAngle=1` to use the axis angle rotation scheme.
 
 .. Note:: A right-handed coordinate system is used in Geant4, so positive x is out of a ring.
 
