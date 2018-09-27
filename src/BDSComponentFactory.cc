@@ -975,7 +975,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->l * CLHEP::m,
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
-			 element->fieldAll));
+			 element->fieldAll,
+			 element->angle * CLHEP::rad));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()

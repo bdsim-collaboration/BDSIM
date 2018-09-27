@@ -21,6 +21,8 @@ General
 * The `tunnelSensitive` option has now been renamed to `sensitiveTunnel` to be
   more consistent with the other sensitivity options. The old option is still
   accepted.
+* The generic beam line element `element` now supports angle and the beam line
+  will be curved by this amount.
   
 Bug Fixes
 ---------

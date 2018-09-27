@@ -1405,16 +1405,25 @@ contained in a box that has horizontal and vertical sizes of diameter.
 
 The geometry is simply placed in the beam line. There is no placement offset other than the
 offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
-with the placement as required. An alternative strategy is to use the `gap`_ beam line element
+with the placement as required.
+
+An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
-================  ===============================  ==========  ===========
-Parameter         Description                      Default     Required
-`geometryFile`    Filename of geometry             NA          Yes
-`l`               Length                           NA          Yes
-`outerDiameter`   Diameter of component [m]        NA          Yes
-`fieldAll`        Name of field object to use      NA          No
-================  ===============================  ==========  ===========
++-----------------+----------------------------------+--------------+---------------+
+| **Parameter**   | **Description**                  | **Default**  | **Required**  |
++=================+==================================+==============+===============+
+| `geometryFile`  | Filename of geometry             | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `l`             | Length                           | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `outerDiameter` | Diameter of component [m]        | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `fieldAll`      | Name of field object to use      | NA           | No            |
++-----------------+----------------------------------+--------------+---------------+
+| `angle`         | Angle the component bends the    | 0            | No            |
+|                 | beam line.                       |              |               |
++-----------------+----------------------------------+--------------+---------------+
 
 `geometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
