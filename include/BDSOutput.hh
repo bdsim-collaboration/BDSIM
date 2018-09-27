@@ -104,6 +104,7 @@ public:
 		 const BDSSamplerHitsCollection*       samplerHitsCylinder,
 		 const BDSEnergyCounterHitsCollection* energyLoss,
 		 const BDSEnergyCounterHitsCollection* tunnelLoss,
+		 const BDSEnergyCounterHitsCollection* worldLoss,
 		 const BDSTrajectoryPoint*             primaryHit,
 		 const BDSTrajectoryPoint*             primaryLoss,
 		 const std::map<BDSTrajectory*, bool>& trajectories,
@@ -133,7 +134,7 @@ private:
   enum class HitsType {plane, cylinder};
 
   /// Enum for different types of energy loss that can be written out.
-  enum class LossType {energy, tunnel};
+  enum class LossType {energy, tunnel, world};
 
   /// Write the header.
   virtual void WriteHeader() = 0;

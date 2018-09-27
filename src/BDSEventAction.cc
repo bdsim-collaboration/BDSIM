@@ -380,6 +380,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    hitsCylinder,
 		    energyCounterHits,
 		    tunnelEnergyCounterHits,
+		    worldEnergyCounterHits,
 		    primaryHit,
 		    primaryLoss,
 		    interestingTraj,

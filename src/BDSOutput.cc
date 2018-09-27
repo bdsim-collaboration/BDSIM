@@ -57,7 +57,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 const std::set<G4String> BDSOutput::protectedNames = {
   "Event", "Histos", "Info", "Primary", "PrimaryGlobal", "Eloss",
-  "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit",
+  "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit", "ElossWorld",
   "Trajectory"
 };
 
@@ -172,6 +172,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSSamplerHitsCollection*       samplerHitsCylinder,
 			  const BDSEnergyCounterHitsCollection* energyLoss,
 			  const BDSEnergyCounterHitsCollection* tunnelLoss,
+			  const BDSEnergyCounterHitsCollection* worldLoss,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
@@ -189,6 +190,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillEnergyLoss(energyLoss, BDSOutput::LossType::energy);}
   if (tunnelLoss)
     {FillEnergyLoss(tunnelLoss, BDSOutput::LossType::tunnel);}
+  if (worldLoss)
+    {FillEnergyLoss(worldLoss,  BDSOutput::LossType::world);}
   if (primaryHit)
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
@@ -425,6 +428,11 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	    evtHistos->Fill1DHistogram(6, sHit, eW);
 	    runHistos->Fill1DHistogram(7, sHit, eW);
 	    evtHistos->Fill1DHistogram(7, sHit, eW);
+	    break;
+	  }
+	case BDSOutput::LossType::world:
+	  {
+	    eLossWorld->Fill(hit);
 	    break;
 	  }
 	default:

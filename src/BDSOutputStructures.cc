@@ -61,17 +61,19 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
 
-  eLoss = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-                                     storeTime, storeStepLength, storePreStepKineticEnergy);
-  pFirstHit = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  pLastHit  = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  tunnelHit = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-					 storeTime, storeStepLength, storePreStepKineticEnergy);
-  traj      = new BDSOutputROOTEventTrajectory();
-  evtHistos = new BDSOutputROOTEventHistograms();
-  evtInfo   = new BDSOutputROOTEventInfo();
-  runHistos = new BDSOutputROOTEventHistograms();
-  runInfo   = new BDSOutputROOTEventRunInfo();
+  eLoss      = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
+					  storeTime, storeStepLength, storePreStepKineticEnergy);
+  eLossWorld = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
+					  storeTime, storeStepLength, storePreStepKineticEnergy);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
+  tunnelHit  = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
+					  storeTime, storeStepLength, storePreStepKineticEnergy);
+  traj       = new BDSOutputROOTEventTrajectory();
+  evtHistos  = new BDSOutputROOTEventHistograms();
+  evtInfo    = new BDSOutputROOTEventInfo();
+  runHistos  = new BDSOutputROOTEventHistograms();
+  runInfo    = new BDSOutputROOTEventRunInfo();
 
 #ifndef __ROOTDOUBLE__
   primary = new BDSOutputROOTEventSampler<float>("Primary");
@@ -93,6 +95,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete primary;
   delete primaryGlobal;
   delete eLoss;
+  delete eLossWorld;
   delete pFirstHit;
   delete pLastHit;
   delete tunnelHit;
@@ -167,6 +170,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
     {(*i)->Flush();}
   primaryGlobal->Flush();
   eLoss->Flush();
+  eLossWorld->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
   tunnelHit->Flush();
