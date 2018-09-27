@@ -38,7 +38,7 @@ namespace
     G4int npy;
     G4int ndeltaP;
   };
-}; // namespace
+} // namespace
 
 // Note: This class uses PTC units internally for calculating the
 // result of the map.
