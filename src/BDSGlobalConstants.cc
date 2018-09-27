@@ -98,7 +98,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt,
 				 options.tunnelFloorOffset   * CLHEP::m,
 				 options.tunnelAper1         * CLHEP::m,
 				 options.tunnelAper2         * CLHEP::m,
-				 options.tunnelSensitive,
+				 options.sensitiveTunnel,
 				 options.tunnelVisible);
   
   // defaults - parameters of the laserwire process

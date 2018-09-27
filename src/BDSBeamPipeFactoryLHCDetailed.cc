@@ -393,10 +393,13 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,contRadius);
   
   // register sensitive volumes
-  aPipe->RegisterSensitiveVolume(screenLV);
-  aPipe->RegisterSensitiveVolume(copperSkinLV);
-  if (buildCoolingPipe)
-    {aPipe->RegisterSensitiveVolume(coolingPipeLV);}
+  if (sensitiveBeamPipe)
+    {
+      aPipe->RegisterSensitiveVolume(screenLV);
+      aPipe->RegisterSensitiveVolume(copperSkinLV);
+      if (buildCoolingPipe)
+	{aPipe->RegisterSensitiveVolume(coolingPipeLV);}
+    }
   
   return aPipe;
 }

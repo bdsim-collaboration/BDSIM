@@ -267,7 +267,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
 									    orderIn, magnetContainerRadiusIn, recipe);
   
   outer->RegisterLogicalVolume(poleLVs);
-  outer->RegisterSensitiveVolume(poleLVs);
+  if (sensitiveOuter)
+    {outer->RegisterSensitiveVolume(poleLVs);}
   
   return outer;
 }

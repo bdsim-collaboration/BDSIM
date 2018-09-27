@@ -27,7 +27,7 @@ class G4Colour;
 class G4VSolid;
 
 /**
- * @brief Base class for collimators with common construction
+ * @brief Base class for collimators with common construction.
  * 
  * @author Laurie Nevay
  */

@@ -46,6 +46,8 @@ BDSCavityFactoryBase::BDSCavityFactoryBase()
   nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   emptyMaterial      = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
+  sensitiveBeamPipe  = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
+  sensitiveVacuum    = BDSGlobalConstants::Instance()->SensitiveVacuum();
 
   CleanUp(); // initialise variables
 }
@@ -100,6 +102,8 @@ void BDSCavityFactoryBase::CreateLogicalVolumes(G4String             name,
   vacuumLV = new G4LogicalVolume(vacuumSolid,           // solid
 				 vacuumMaterial,        // material
 				 name + "_vacuum_lv");  // name
+  if (sensitiveVacuum)
+    {allSensitiveVolumes.push_back(vacuumLV);}
   allLogicalVolumes.push_back(vacuumLV);
 
   containerLV = new G4LogicalVolume(containerSolid,
@@ -167,7 +171,8 @@ BDSCavity* BDSCavityFactoryBase::BuildCavityAndRegisterObjects(const BDSExtent& 
   // register objects
   cavity->RegisterSolid(allSolids);
   cavity->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
-  cavity->RegisterSensitiveVolume(allSensitiveVolumes);
+  if (sensitiveBeamPipe)
+    {cavity->RegisterSensitiveVolume(allSensitiveVolumes);}
   cavity->RegisterPhysicalVolume(allPhysicalVolumes);
   cavity->RegisterRotationMatrix(allRotationMatrices);
   cavity->RegisterUserLimits(allUserLimits);

@@ -46,6 +46,8 @@ void BDSLaserWire::BuildContainerLogicalVolume()
   containerLogicalVolume=new G4LogicalVolume(containerSolid,
 					     BDSMaterials::Instance()->GetMaterial("LaserVac"),
 					     name + "_container_lv");
+  if (sensitiveVacuum)
+    {RegisterSensitiveVolume(containerLogicalVolume);}
   BDSGlobalConstants::Instance()->SetLaserwireWavelength(containerLogicalVolume->GetName(),itsLaserWavelength);
   BDSGlobalConstants::Instance()->SetLaserwireDir(containerLogicalVolume->GetName(),itsLaserDirection);
 

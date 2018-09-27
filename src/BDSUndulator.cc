@@ -154,13 +154,17 @@ void BDSUndulator::Build()
   G4LogicalVolume* lowerBoxLV = new G4LogicalVolume(magnet,
 						    materialBox,
 						    name + "_lower_box_lv");
-  RegisterLogicalVolume(lowerBoxLV);
-
   
   G4LogicalVolume* upperBoxLV = new G4LogicalVolume(magnet,
 						    materialBox,
 						    name + "_upper_box_lv");
+  RegisterLogicalVolume(lowerBoxLV);
   RegisterLogicalVolume(upperBoxLV);
+  if (sensitiveOuter)
+    {
+      RegisterSensitiveVolume(lowerBoxLV);
+      RegisterSensitiveVolume(upperBoxLV);
+    }
 
   // colour
   G4VisAttributes* lowerBoxcolour = new G4VisAttributes(*BDSColours::Instance()->GetColour("red"));

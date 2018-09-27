@@ -1,0 +1,10 @@
+col1 : jcol,l=0.4*m, xsize=2*cm, ysize=10*cm, horizontalWidth=20*cm, material="G4_W";
+
+l1: line=(col1);
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV,
+      distrType="gauss",
+      sigmaX = 2*cm,
+      sigmaY = 2*cm;

@@ -210,7 +210,6 @@ void BDSDegrader::Build()
   G4LogicalVolume* leftWedgeLV = new G4LogicalVolume(leftWedge,                // solid
 						     material,                 // material
 						     name + "_leftwedge_lv");  // name
-  RegisterLogicalVolume(leftWedgeLV); 
     
   // Right wedge Solid and logical Volume
   G4ExtrudedSolid* rightWedge = new G4ExtrudedSolid(name + "_rightwedge_solid",
@@ -224,6 +223,12 @@ void BDSDegrader::Build()
 						      material,                 // material
 						      name + "_rightwedge_lv"); // name
   RegisterLogicalVolume(rightWedgeLV);
+  RegisterLogicalVolume(leftWedgeLV);
+  if (sensitiveOuter)
+    {
+      RegisterSensitiveVolume(rightWedgeLV);
+      RegisterSensitiveVolume(leftWedgeLV);
+    }
   
   // Offsets for wedge overlap
   G4double xoffsetLeft = degraderOffset * -1.0;
