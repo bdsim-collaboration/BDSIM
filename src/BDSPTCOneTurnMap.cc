@@ -298,7 +298,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
 
   // Have some tolerance for dealing with primaries far off momentum.
   auto ratioOffReference =
-    std::abs(1 - ((momentum - referenceMomentum) / referenceMomentum));
+    std::abs((momentum - referenceMomentum) / referenceMomentum);
   auto tolerance = 0.05; // arbitrarily chosen.  is this OK?
   auto tooFarOffMomentum = ratioOffReference > tolerance;
 
