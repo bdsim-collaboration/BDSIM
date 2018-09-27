@@ -314,6 +314,9 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   G4cout << __METHOD_NAME__ << "turnstaken = " << turnstaken << G4endl;
   G4cout << __METHOD_NAME__ << "Is on first turn with S0 != 0?"
          << BDS::BoolToString(offsetBeamS0AndOnFirstTurn) << G4endl;
+  G4cout << __METHOD_NAME__
+         << "tooFarOffMomentum = " << BDS::BoolToString(tooFarOffMomentum)
+         << G4endl;
   G4cout << __METHOD_NAME__ << "ShouldApply = " << BDS::BoolToString(should)
          << G4endl;
 #endif
