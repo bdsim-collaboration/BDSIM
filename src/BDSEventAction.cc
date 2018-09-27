@@ -75,6 +75,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   tunnelEnergyCounterCollID(-1),
+  worldEnergyCounterCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -144,6 +145,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
+      worldEnergyCounterCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
     }
   FireLaserCompton=true;
 
@@ -194,6 +196,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
+  BDSEnergyCounterHitsCollection* worldEnergyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(worldEnergyCounterCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
@@ -209,6 +212,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (tunnelEnergyCounterHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
+  // we don't check the world energy hits here because the hits could be from
+  // intended transport through air in part of the machine (a gap).
   
   // primary hits and losses from
   const BDSTrajectoryPoint* primaryHit  = nullptr;

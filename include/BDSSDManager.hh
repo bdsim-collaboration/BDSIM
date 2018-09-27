@@ -61,6 +61,8 @@ public:
   /// SD for tunnel energy counter
   inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const
   {return tunnelECounter;}
+  /// SD for energy deposition in the world volume.
+  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return worldECounter;}
 
 private:
   /// Private default constructor for singleton.
@@ -77,6 +79,7 @@ private:
   BDSTerminatorSD*    terminator;
   BDSEnergyCounterSD* eCounter;
   BDSEnergyCounterSD* tunnelECounter;
+  BDSEnergyCounterSD* worldECounter;
   /// @}
 };
 

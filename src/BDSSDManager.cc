@@ -67,4 +67,7 @@ BDSSDManager::BDSSDManager()
 
   tunnelECounter = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
   SDMan->AddNewDetector(tunnelECounter);
+
+  worldECounter = new BDSEnergyCounterSD("world", stopSecondaries, verbose);
+  SDMan->AddNewDetector(worldECounter);
 }
