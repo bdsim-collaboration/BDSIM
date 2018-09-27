@@ -459,6 +459,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      worldMaterial,           // material
 						      worldName + "_lv");      // name
+
+  // make the world sensitive to energy deposition with its own unique hits collection
+  worldLV->SetSensitiveDetector(BDSSDManager::Instance()->GetEnergyCounterWorldSD());
   
   // visual attributes
   // copy the debug vis attributes but change to force wireframe
