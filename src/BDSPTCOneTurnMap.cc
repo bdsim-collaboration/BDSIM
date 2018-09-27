@@ -294,7 +294,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
 
   if (didScatterThisTurn) {
     turnsScattered.insert(turnstaken);
-    }
+  }
 
   // Have some tolerance for dealing with primaries far off momentum.
   auto ratioOffReference =
@@ -312,7 +312,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   G4cout << __METHOD_NAME__
          << "beamOffsetS0 = " << BDS::BoolToString(beamOffsetS0) << G4endl;
   G4cout << __METHOD_NAME__ << "turnstaken = " << turnstaken << G4endl;
-  G4cout << __METHOD_NAME__ << "Is on first turn with S0 == 0?"
+  G4cout << __METHOD_NAME__ << "Is on first turn with S0 != 0?"
          << BDS::BoolToString(offsetBeamS0AndOnFirstTurn) << G4endl;
   G4cout << __METHOD_NAME__ << "ShouldApply = " << BDS::BoolToString(should)
          << G4endl;
