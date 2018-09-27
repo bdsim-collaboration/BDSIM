@@ -339,7 +339,6 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 				const BDSOutput::HitsType)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hits->entries() << std::endl;
 #endif
   // Here, we don't switch on the type of the hits as the samplers are all
@@ -401,9 +400,6 @@ void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
 void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 			       const LossType lossType)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   G4int n_hit = hits->entries();
   for(G4int i=0;i<n_hit;i++)
     {
@@ -450,9 +446,6 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 
 void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   pFirstHit->Fill(phit);
   const G4double preStepSPosition = phit->GetPreS() / CLHEP::m;
   runHistos->Fill1DHistogram(0, preStepSPosition);
@@ -463,9 +456,6 @@ void BDSOutput::FillPrimaryHit(const BDSTrajectoryPoint* phit)
 
 void BDSOutput::FillPrimaryLoss(const BDSTrajectoryPoint* ploss)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
   pLastHit->Fill(ploss);
   const G4double postStepSPosition = ploss->GetPostS() / CLHEP::m;
   runHistos->Fill1DHistogram(1, postStepSPosition);

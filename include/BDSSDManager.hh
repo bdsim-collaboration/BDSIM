@@ -41,26 +41,22 @@ public:
 
   ~BDSSDManager();
 
-  /// SD for samplers (plane type)
-  inline BDSSamplerSD*       GetSamplerPlaneSD() const
-  {return samplerPlane;}
+  /// SD for samplers (plane type).
+  inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
 
-  /// SD for samplers (cylinder type)
-  inline BDSSamplerSD*       GetSamplerCylinderSD() const
-  {return samplerCylinder;}
+  /// SD for samplers (cylinder type).
+  inline BDSSamplerSD* GetSamplerCylinderSD() const {return samplerCylinder;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
-  inline BDSTerminatorSD*    GetTerminatorSD() const
-  {return terminator;}
+  inline BDSTerminatorSD* GetTerminatorSD() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterSD() const
-  {return eCounter;}
+  inline BDSEnergyCounterSD* GetEnergyCounterSD() const {return eCounter;}
 
-  /// SD for tunnel energy counter
-  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const
-  {return tunnelECounter;}
+  /// SD for tunnel energy counter.
+  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return tunnelECounter;}
+
   /// SD for energy deposition in the world volume.
   inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return worldECounter;}
 

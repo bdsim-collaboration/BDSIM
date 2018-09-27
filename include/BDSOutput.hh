@@ -42,7 +42,8 @@ class BDSTrajectoryPoint;
 
 class G4PrimaryVertex;
 
-namespace GMAD {
+namespace GMAD
+{
   class BeamBase;
   class OptionsBase;
 }
