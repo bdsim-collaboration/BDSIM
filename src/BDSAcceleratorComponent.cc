@@ -42,6 +42,7 @@ G4double    BDSAcceleratorComponent::lengthSafety    = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps   = false;
 G4bool      BDSAcceleratorComponent::sensitiveOuter  = true;
 G4bool      BDSAcceleratorComponent::sensitiveVacuum = false;
+G4VisAttributes* BDSAcceleratorComponent::containerVisAttr = nullptr;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -80,6 +81,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
       checkOverlaps      = globals->CheckOverlaps();
       sensitiveOuter     = globals->SensitiveOuter();
       sensitiveVacuum    = globals->SensitiveVacuum();
+      containerVisAttr   = BDSGlobalConstants::Instance()->ContainerVisAttr();
     }
 
   // Prevent negative length components.

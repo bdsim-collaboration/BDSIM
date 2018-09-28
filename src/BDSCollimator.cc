@@ -205,7 +205,7 @@ void BDSCollimator::Build()
                                                       vMaterial,            // material
                                                       name + "_vacuum_lv"); // name
 
-      vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+      vacuumLV->SetVisAttributes(containerVisAttr);
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);

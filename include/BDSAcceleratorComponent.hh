@@ -31,6 +31,7 @@ class BDSBeamPipeInfo;
 class BDSFieldInfo;
 class BDSSimpleComponent;
 class G4LogicalVolume;
+class G4VisAttributes;
 
 /**
  * @brief Abstract class that represents a component of an accelerator.
@@ -235,6 +236,7 @@ protected:
   static G4bool      checkOverlaps;
   static G4bool      sensitiveOuter;
   static G4bool      sensitiveVacuum;
+  static G4VisAttributes* containerVisAttr;
   /// @}
 
   /// The logical volume in this component that is the volume the beam passes through that
