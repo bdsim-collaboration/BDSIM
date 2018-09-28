@@ -70,7 +70,6 @@ public:
 
   inline G4int    GetCopyNumber()      const {return copyNumber;}
   inline G4double GetEnergy()          const {return energy;}
-  inline void     SetEnergy(G4double energyIn) {energy = energyIn;}
   inline G4double GetPreStepKineticEnergy() const {return preStepKineticEnergy;}
   inline G4double GetX()               const {return X;} 
   inline G4double GetY()               const {return Y;}
