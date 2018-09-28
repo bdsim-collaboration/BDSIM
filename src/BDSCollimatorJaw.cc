@@ -46,6 +46,7 @@ BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
 				   G4Colour*   colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, "jcol"),
   jawSolid(nullptr),
+  vacuumSolid(nullptr),
   horizontalWidth(horizontalWidthIn),
   xsizeLeft(xsizeLeftIn),
   xsizeRight(xsizeRightIn),

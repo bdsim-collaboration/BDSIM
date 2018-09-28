@@ -68,7 +68,6 @@ protected:
   G4double    horizontalWidth;    ///< Horizontal width.
   G4double    xsizeLeft;          ///< Offset of jaw 1
   G4double    xsizeRight;         ///< Offset of jaw 2
-  G4double    apertureIsVertical; ///< Jaw collimator orientation
   G4double    xHalfGap;           ///< Half gap separation between jaws.
   G4double    jawHalfWidth;       ///< Half width of each jaw.
   G4double    yHalfHeight;        ///< Half height of each jaw.
