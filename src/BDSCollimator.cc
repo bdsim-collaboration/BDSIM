@@ -42,7 +42,7 @@ BDSCollimator::BDSCollimator(G4String  nameIn,
 			     G4double  yApertureIn,
 			     G4double  xOutApertureIn,
 			     G4double  yOutApertureIn,
-                 G4String  collimatorMaterialIn,
+			     G4String  collimatorMaterialIn,
 			     G4String  vacuumMaterialIn,
 			     G4Colour* colourIn):
   BDSAcceleratorComponent(nameIn, lengthIn, 0, typeIn),

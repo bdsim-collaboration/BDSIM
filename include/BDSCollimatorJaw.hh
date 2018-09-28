@@ -47,7 +47,7 @@ public:
 		   G4bool    buildRightJawIn,
 		   G4Material* collimatorMaterialIn,
 		   G4Material* vacuumMaterialIn,
-		   G4Colour* colourIn             = nullptr);
+		   G4Colour*   colourIn = nullptr);
   virtual ~BDSCollimatorJaw();
 
   /// Accessor for collimator material.
