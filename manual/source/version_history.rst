@@ -6,16 +6,38 @@ New Features
 
 * All Geant4 reference physics lists are now available.
 * New beam pipe aperture for the CLIC post collision line.
+* New jaw collimator element "jcol" with two blocks in the horizontal plane.
+* New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
+* New option :code:`sensitiveVacuum` to control whether energy deposition in the residual
+  gas in the beam pipe 'vacuum' is recorded.
 
 General
 -------
 
+* The turn number for energy deposition hits is now automatically stored if
+  a circular model is used.
+* The `sensitiveBeamlineComponents` option has now been renamed to `sensitiveOuter`
+  to better reflect its functionality. The old option is still accepted.
+* The `tunnelSensitive` option has now been renamed to `sensitiveTunnel` to be
+  more consistent with the other sensitivity options. The old option is still
+  accepted.
+* The generic beam line element `element` now supports angle and the beam line
+  will be curved by this amount.
+  
 Bug Fixes
 ---------
 
 * Fixed reloading user file when reading more particles than defined in the file.
 * Fixed infinite tracking from nans return from field map when BDSIM format
   field map file was lacking lower and upper limits.
+* Fixed incorrect writing of optional sampler information.
+* The `sensitiveBeamPipe` option now works and controls whether the beam pipe produces
+  energy loss or not. This does not affect the physics, merely whether output
+  information is generated or not.
+* The `sensitiveOuter` (formerly `sensitiveBeamlineComponents`) option has
+  been fixed and now controls whether the parts outside the beam pipe in an
+  element record energy loss or not.
+* Degrader and undulator did not record energy deposition.
 
 Output Changes
 --------------
@@ -24,6 +46,13 @@ Output Changes
   is the memory usage of the whole program at that point including event independent
   quantities such as the model.
 * BDSOutputROOTEventInfo class version incremented to 4.
+* New option :code:`storeSamplerKineticEnergy` for whether to store kinetic energy in the sampler output.
+* BDSOutputROOTEventSampler class version incremented to 3.
+* New option :code:`storeElossTurn` for whether to store the turn number of each energy loss hit.
+* BDSOutputROOTEventLoss class version incremented to 4.
+* Tunnel energy deposition hits now respond to the :code:`storeElossXXXX` options to control the
+  detail of their output.
+* BDSOutputROOTEventOptions class version incremented to 4.
 
 Utilities
 ---------

@@ -27,7 +27,7 @@ class G4Colour;
 class G4VSolid;
 
 /**
- * @brief Base class for collimators with common construction
+ * @brief Base class for collimators with common construction.
  * 
  * @author Laurie Nevay
  */
@@ -53,7 +53,7 @@ public:
 
 protected:
   virtual void Build();
-  
+
   virtual void BuildContainerLogicalVolume();
 
   /// Pure virtual function to be provided by derived classes.

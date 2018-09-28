@@ -107,7 +107,8 @@ void BDSShield::BuildShield()
     }
   
   RegisterLogicalVolume(shieldLV);
-  RegisterSensitiveVolume(shieldLV);
+  if (sensitiveOuter)
+    {RegisterSensitiveVolume(shieldLV);}
 
   G4VisAttributes* shieldVisAttr = new G4VisAttributes(colour);
   shieldVisAttr->SetVisibility(true);

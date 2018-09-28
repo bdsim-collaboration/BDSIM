@@ -36,10 +36,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include <cmath>
 
-G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
-G4Material* BDSAcceleratorComponent::worldMaterial = nullptr;
-G4double    BDSAcceleratorComponent::lengthSafety  = -1;
-G4bool      BDSAcceleratorComponent::checkOverlaps = false;
+G4Material* BDSAcceleratorComponent::emptyMaterial   = nullptr;
+G4Material* BDSAcceleratorComponent::worldMaterial   = nullptr;
+G4double    BDSAcceleratorComponent::lengthSafety    = -1;
+G4bool      BDSAcceleratorComponent::checkOverlaps   = false;
+G4bool      BDSAcceleratorComponent::sensitiveOuter  = true;
+G4bool      BDSAcceleratorComponent::sensitiveVacuum = false;
+G4VisAttributes* BDSAcceleratorComponent::containerVisAttr = nullptr;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -60,6 +63,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
+  userLimits(nullptr),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn),
@@ -76,6 +80,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
       worldMaterial      = BDSMaterials::Instance()->GetMaterial(globals->WorldMaterial());
       lengthSafety       = globals->LengthSafety();
       checkOverlaps      = globals->CheckOverlaps();
+      sensitiveOuter     = globals->SensitiveOuter();
+      sensitiveVacuum    = globals->SensitiveVacuum();
+      containerVisAttr   = BDSGlobalConstants::Instance()->ContainerVisAttr();
     }
 
   // Prevent negative length components.
@@ -103,6 +110,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 BDSAcceleratorComponent::~BDSAcceleratorComponent()
 {
   delete beamPipeInfo;
+  // Don't delete usersLimits as could be globals one. If not it'll be registered
+  // with BDSGeometryComponent
 }
 
 void BDSAcceleratorComponent::Initialise()
@@ -127,22 +136,14 @@ void BDSAcceleratorComponent::Initialise()
 
 void BDSAcceleratorComponent::Build()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
 
   // set user limits for container & visual attributes
   if(containerLogicalVolume)
     {
-      // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      //copy the default and update with the length of the object rather than the default 1m
-      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
-      if (ul != defaultUL) // if it's not the default register it
-        {RegisterUserLimits(ul);}
-      containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+      BuildUserLimits();
+      containerLogicalVolume->SetUserLimits(userLimits);
+      containerLogicalVolume->SetVisAttributes(containerVisAttr);
     }
 }
 
@@ -167,3 +168,13 @@ G4bool BDSAcceleratorComponent::AngledOutputFace() const
   return BDS::IsFinite(det);
 }
 
+void BDSAcceleratorComponent::BuildUserLimits()
+{
+  // user limits
+  auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
+  //copy the default and update with the length of the object rather than the default 1m
+  G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
+  if (ul != defaultUL) // if it's not the default register it
+    {RegisterUserLimits(ul);}
+  userLimits = ul; // assign to member
+}

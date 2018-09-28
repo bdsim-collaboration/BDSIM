@@ -1,0 +1,18 @@
+d1: drift, l=0.5*m, apertureType="lhcdetailed", aper1=2.202*cm, aper2=1.714*cm, aper3=2.202*cm, beampipeThickness=1*mm;
+q1: quadrupole, l=1*m, k1=0.0001, magnetGeometryType="polesfacet";
+s1: sbend, l=1*m, angle=0.2; 
+
+l1: line = (d1, q1, d1, s1, d1);
+use,period=l1;
+
+sample, all;
+
+option, ngenerate=1,
+	physicsList="em";
+	
+beam, particle="e-",
+      energy=1.0*GeV,
+      Yp0=0.01;
+
+
+option, sensitiveBeamPipe=0;

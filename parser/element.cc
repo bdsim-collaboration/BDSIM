@@ -29,16 +29,16 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace GMAD;
 
-namespace {
-  // helper method
+namespace
+{
+  /// Helper method
   void print(std::list<Element> l, int ident=0)
   {
-    if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
+    if(ident == 0)
+      {std::cout << "using line " << Parser::Instance()->current_line << std::endl;}
   
     for(std::list<Element>::iterator it=l.begin();it!=l.end();++it)
-      {
-	(*it).print(ident);
-      }
+      {(*it).print(ident);}
   }
 }
 
@@ -128,6 +128,8 @@ void Element::PublishMembers()
   publish("ysize",            &Element::ysize);
   publish("xsizeOut",         &Element::xsizeOut);
   publish("ysizeOut",         &Element::ysizeOut);
+  publish("xsizeLeft",        &Element::xsizeLeft);
+  publish("xsizeRight",       &Element::xsizeRight);
   publish("tilt",             &Element::tilt);
 
   publish("offsetX",     &Element::offsetX);
@@ -254,102 +256,109 @@ void Element::print(int ident)const{
     {std::cout << "samplerType = " << samplerType << std::endl;}
   std::cout << "Scaling = " << scaling << std::endl;
 
-  switch(type) {
-  case ElementType::_DRIFT:
-    break;
-  case ElementType::_SBEND:
-  case ElementType::_RBEND:
-    std::cout << "B     = " << B     << std::endl
-	      << "angle = " << angle << std::endl
-	      << "k1    = " << k1    << std::endl;
-    break;
-  case ElementType::_QUAD:
-    std::cout << "k1    = " << k1    << std::endl;
-    break;
-  case ElementType::_SEXTUPOLE:
-    std::cout << "k2    = " << k2    << std::endl;
-    break;
-  case ElementType::_OCTUPOLE:
-    std::cout << "k3    = " << k3    << std::endl;
-    break;
-  case ElementType::_DECAPOLE:
-    std::cout << "k4    = " << k4 << std::endl;
-    break;
-  case ElementType::_SOLENOID:
-    std::cout << "ks    = " << ks << std::endl;
-    break;
-
-  case ElementType::_MULT:
-  case ElementType::_THINMULT:
-    std::cout << " , knl={";
-    for(auto it=knl.begin();it!=knl.end();++it)
-      {std::cout << (*it);}
-    std::cout << "},  ksl={";
-    for(auto it=ksl.begin();it!=ksl.end();++it)
-      {std::cout << (*it);}
-    std::cout << "}" << std::endl;
-    break;
-    
-  case ElementType::_ECOL:
-  case ElementType::_RCOL:
-    std::cout << "x half aperture = " << xsize <<" m" << std::endl
-	      << "y half aperture = " << ysize <<" m" << std::endl
-	      << "material = \""      << material << "\"" << std::endl;
-    break;
-
-  case ElementType::_ELEMENT:
-    std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
-	      << "precision region " << region << std::endl
-	      << "Geometry file : "  << geometryFile << std::endl
-	      << "Field object  : "  << fieldAll << std::endl;
-    break;
-    
-  case ElementType::_AWAKESCREEN:
-    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
-	      << "tscint          = " << tscint*1e6          << " um" << std::endl
-	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
-	      << "windowmaterial  = " << windowmaterial      << std::endl
-	      << "scintmaterial   = " << scintmaterial       << std::endl;
-      break;
-
-  case ElementType::_AWAKESPECTROMETER:
-    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
-	      << "tscint          = " << tscint*1e6          << " um" << std::endl
-	      << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
-	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
-	      << "windowmaterial  = " << windowmaterial      << std::endl
-	      << "tmount          = " << tmount*1e6          << " um" << std::endl
-	      << "mountmaterial   = " << mountmaterial       << std::endl
-	      << "scintmaterial   = " << scintmaterial       << std::endl;
-    break;
-
-  case ElementType::_LASER:
-    std::cout << "lambda = " << waveLength << "m" << std::endl
-	      << "xSigma = " << xsize << "m" << std::endl
-	      << "ySigma = " << ysize << "m" << std::endl
-	      << "xdir = "   << xdir << std::endl
-	      << "ydir = "   << ydir << std::endl
-	      << "zdir = "   << zdir << std::endl;
-    break;
-
-  case ElementType::_SCREEN:
-    std::cout << "angle=" << angle <<"rad" << std::endl
-	      << "precision region " << region << std::endl;
-    break;
-    
-  case ElementType::_TRANSFORM3D:
-    std::cout << "xdir= "  << xdir    << "m" << std::endl
-	      << "ydir= "  << ydir    << "m" << std::endl
-	      << "zdir= "  << zdir    << "m" << std::endl
-	      << "phi= "   << phi   << "rad" << std::endl
-	      << "theta= " << theta << "rad" << std::endl
-	      << "psi= "   << psi   << "rad" << std::endl;
-    break;
-  default:
-    break;
-  }
+  switch(type)
+    {
+    case ElementType::_DRIFT:
+      {break;}
+    case ElementType::_SBEND:
+    case ElementType::_RBEND:
+      {
+	std::cout << "B     = " << B     << std::endl
+		  << "angle = " << angle << std::endl
+		  << "k1    = " << k1    << std::endl;
+	break;
+      }
+    case ElementType::_QUAD:
+      {std::cout << "k1    = " << k1 << std::endl; break;}
+    case ElementType::_SEXTUPOLE:
+      {std::cout << "k2    = " << k2 << std::endl; break;}
+    case ElementType::_OCTUPOLE:
+      {std::cout << "k3    = " << k3 << std::endl; break;}
+    case ElementType::_DECAPOLE:
+      {std::cout << "k4    = " << k4 << std::endl; break;}
+    case ElementType::_SOLENOID:
+      {std::cout << "ks    = " << ks << std::endl; break;}
+    case ElementType::_MULT:
+    case ElementType::_THINMULT:
+      {
+	std::cout << " , knl={";
+	for(auto it=knl.begin();it!=knl.end();++it)
+	  {std::cout << (*it);}
+	std::cout << "},  ksl={";
+	for(auto it=ksl.begin();it!=ksl.end();++it)
+	  {std::cout << (*it);}
+	std::cout << "}" << std::endl;
+	break;
+      }
+    case ElementType::_ECOL:
+    case ElementType::_RCOL:
+    case ElementType::_JCOL:
+      {
+	std::cout << "x half aperture = " << xsize <<" m" << std::endl
+		  << "y half aperture = " << ysize <<" m" << std::endl
+		  << "material = \""      << material << "\"" << std::endl;
+	break;
+      }
+    case ElementType::_ELEMENT:
+      {
+	std::cout << "horizontalWidth = "  << horizontalWidth << "m" << std::endl
+		  << "precision region " << region       << std::endl
+		  << "Geometry file : "  << geometryFile << std::endl
+		  << "Field object  : "  << fieldAll     << std::endl;
+	break;
+      }	
+    case ElementType::_AWAKESCREEN:
+      {
+	std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+		  << "tscint          = " << tscint*1e6          << " um" << std::endl
+		  << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+		  << "windowmaterial  = " << windowmaterial      << std::endl
+		  << "scintmaterial   = " << scintmaterial       << std::endl;
+	break;
+      }
+    case ElementType::_AWAKESPECTROMETER:
+      {
+	std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+		  << "tscint          = " << tscint*1e6          << " um" << std::endl
+		  << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
+		  << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+		  << "windowmaterial  = " << windowmaterial      << std::endl
+		  << "tmount          = " << tmount*1e6          << " um" << std::endl
+		  << "mountmaterial   = " << mountmaterial       << std::endl
+		  << "scintmaterial   = " << scintmaterial       << std::endl;
+	break;
+      }
+    case ElementType::_LASER:
+      {
+	std::cout << "lambda = " << waveLength << "m" << std::endl
+		  << "xSigma = " << xsize << "m" << std::endl
+		  << "ySigma = " << ysize << "m" << std::endl
+		  << "xdir = "   << xdir << std::endl
+		  << "ydir = "   << ydir << std::endl
+		  << "zdir = "   << zdir << std::endl;
+	break;
+      }
+    case ElementType::_SCREEN:
+      {
+	std::cout << "angle=" << angle <<"rad" << std::endl
+		  << "precision region " << region << std::endl;
+	break;
+      }
+    case ElementType::_TRANSFORM3D:
+      {
+	std::cout << "xdir= "  << xdir    << "m" << std::endl
+		  << "ydir= "  << ydir    << "m" << std::endl
+		  << "zdir= "  << zdir    << "m" << std::endl
+		  << "phi= "   << phi   << "rad" << std::endl
+		  << "theta= " << theta << "rad" << std::endl
+		  << "psi= "   << psi   << "rad" << std::endl;
+	break;
+      }
+    default:
+      {break;}
+    }
   
-  if(lst != nullptr)
+  if (lst != nullptr)
     {
       ::print(*lst,++ident);
     }
@@ -446,6 +455,8 @@ void Element::flush()
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
+  xsizeLeft = 0;
+  xsizeRight = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
@@ -507,15 +518,17 @@ void Element::flush()
   angleSet = false;
 }
 
-double Element::property_lookup(std::string property_name)const{
+double Element::property_lookup(std::string property_name) const
+{
   double value;
-  try {
-    value = get<double>(this,property_name);
-  }
-  catch (std::runtime_error) {
-    std::cerr << "element.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl; 
-    exit(1);
-  }
+  try
+    {value = get<double>(this,property_name);}
+  catch (std::runtime_error)
+    {
+      std::cerr << "element.cc> Error: unknown property \"" << property_name
+		<< "\" (only works on numerical properties)" << std::endl; 
+      exit(1);
+    }
   return value;
 }
 
@@ -540,13 +553,14 @@ void Element::set(const Parameters& params)
 	  std::string property = i.first;
 
 	  // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
-	  try {
-	    Published<Element>::set(this,(Element*)&params,property);
-	  }
-	  catch(std::runtime_error) {
-	    std::cerr << "Error: parser> unknown property \"" << property << "\" for element " << name  << std::endl;
-	    exit(1);
-	  }
+	  try
+	    {Published<Element>::set(this,(Element*)&params,property);}
+	  catch(std::runtime_error)
+	    {
+	      std::cerr << "Error: parser> unknown property \"" << property
+			<< "\" for element " << name  << std::endl;
+	      exit(1);
+	    }
 
 	  // split bias into tokens and add to both material and vacuum
 	  if (property == "bias")
@@ -577,9 +591,8 @@ void Element::set(const Parameters& params)
 
 void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
 {
-  if (samplerType != "none") {
-    std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;
-  }
+  if (samplerType != "none")
+    {std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;}
 
   samplerType   = samplerTypeIn;
   samplerName   = samplerNameIn;

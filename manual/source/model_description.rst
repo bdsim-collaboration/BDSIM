@@ -231,6 +231,9 @@ Both the terminator and teleporter are invisible and very thin elements that are
 shown in the visualiser. These can be visualised by executing BDSIM with the `-\\-vis_debug`
 executable option.
 
+The turn number is automatically stored in the energy loss output in the data when the
+circular option is used.
+
 
 Terminator
 ^^^^^^^^^^
@@ -292,6 +295,7 @@ The following elements may be defined
 * `tkicker`_
 * `rf`_
 * `rcol`_
+* `jcol`_
 * `ecol`_
 * `degrader`_
 * `muspoiler`_
@@ -1046,16 +1050,16 @@ rcol
 `rcol` defines a rectangular collimator. The aperture is rectangular and the external
 volume is square.
 
-================  =================================  ==========  ===========
-Parameter         Description                        Default     Required
-`l`               Length [m]                         0           Yes
-`xsize`           Horizontal half aperture [m]       0           Yes
-`ysize`           Vertical half aperture [m]         0           Yes
-`xsizeOut`        Horizontal exit half aperture [m]  0           No
-`ysizeOut`        Vertical exit half aperture [m]    0           No
-`material`        Outer material                     Iron        No
-`outerDiameter`   Outer full width [m]               global      No
-================  =================================  ==========  ===========
+=================  =================================  ==========  ===========
+Parameter          Description                        Default     Required
+`l`                Length [m]                         0           Yes
+`xsize`            Horizontal half aperture [m]       0           Yes
+`ysize`            Vertical half aperture [m]         0           Yes
+`xsizeOut`         Horizontal exit half aperture [m]  0           No
+`ysizeOut`         Vertical exit half aperture [m]    0           No
+`material`         Outer material                     G4_Cu       No
+`horizontalWidth`  Outer full width [m]               0.5 m       No
+=================  =================================  ==========  ===========
 
 .. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters defining the entrance aperture.
@@ -1081,6 +1085,44 @@ ecol
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
 half-axes respectively. When tapered, the ratio between the horizontal and vertical half-
 axes of the entrance aperture must be the same ratio for the exit aperture.
+
+jcol
+^^^^
+
+.. figure:: figures/jcol.png
+	    :width: 30%
+	    :align: right
+
+
+`jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
+If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by `pi/2`.
+The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
+apertures which are the distances from the center of element to the left and right jaws respectively.
+
+=================  =================================  ==========  ===========
+Parameter          Description                        Default     Required
+`l`                Length [m]                         0           Yes
+`xsize`            Horizontal half aperture [m]       0           Yes
+`ysize`            Half height of jaws [m]            0           Yes
+`xsizeLeft`        Left jaw aperture [m]              0           No
+`xsizeRight`       Right jaw aperture [m]             0           No
+`material`         Outer material                     G4_Cu       No
+`horizontalWidth`  Outer full width [m]               0.5 m       No
+=================  =================================  ==========  ===========
+
+* The `horizontalWidth` must be greater than 2x `xsize`.
+* To construct a collimator jaws with one jaw closed (i.e. an offset of 0), the horizontal half aperture
+  must be set to 0, with the other jaws half aperture set as appropriate.
+* If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
+  as a box with no aperture.
+* Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
+  that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
+  no jaws will be built and BDSIM will exit.
+
+Examples::
+
+   ! Standard
+   TCP15: jcol, l=1.22*m, material="graphite", xsize=0.1*cm, ysize=5*cm;
 
 
 degrader
@@ -1374,16 +1416,25 @@ contained in a box that has horizontal and vertical sizes of diameter.
 
 The geometry is simply placed in the beam line. There is no placement offset other than the
 offset and tilt of the element in the beam line. Therefore, the user must prepare geometry
-with the placement as required. An alternative strategy is to use the `gap`_ beam line element
+with the placement as required.
+
+An alternative strategy is to use the `gap`_ beam line element
 and make a placement at the appropriate point in global coordinates.
 
-================  ===============================  ==========  ===========
-Parameter         Description                      Default     Required
-`geometryFile`    Filename of geometry             NA          Yes
-`l`               Length                           NA          Yes
-`outerDiameter`   Diameter of component [m]        NA          Yes
-`fieldAll`        Name of field object to use      NA          No
-================  ===============================  ==========  ===========
++-----------------+----------------------------------+--------------+---------------+
+| **Parameter**   | **Description**                  | **Default**  | **Required**  |
++=================+==================================+==============+===============+
+| `geometryFile`  | Filename of geometry             | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `l`             | Length                           | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `outerDiameter` | Diameter of component [m]        | NA           | Yes           |
++-----------------+----------------------------------+--------------+---------------+
+| `fieldAll`      | Name of field object to use      | NA           | No            |
++-----------------+----------------------------------+--------------+---------------+
+| `angle`         | Angle the component bends the    | 0            | No            |
+|                 | beam line.                       |              |               |
++-----------------+----------------------------------+--------------+---------------+
 
 `geometryFile` should be of the format `format:filename`, where `format` is the geometry
 format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
@@ -1871,6 +1922,8 @@ in the supplied field map.
 
 To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
+* Fields are in a local Cartesian coordinate system with respect to the origin of the
+  element they are attached to.
 * The field may be attached to everything "fieldAll"; the vacuum volume "fieldVacuum", or the yoke "fieldOuter".
 * Magnetic and electric field maps are specified in separate files and may have different interpolators.
 * Fields may have up to four dimensions.
@@ -1889,7 +1942,7 @@ ascending or descending order.
 .. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
 	  require significant development to extend this to irregular grids. It's strongly
 	  recommended the user re-sample any existing field map into a regular grid. A regular
-	  grid is also faster for tracking purposes.
+	  grid is also much faster for tracking purposes.
 
 Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
 a drift pipe where it covers the full volume of the drift (not outside it though)::
@@ -1950,6 +2003,8 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | psi                  | Euler psi rotation from the element the field is attached to    |
 +----------------------+-----------------------------------------------------------------+
+| axisAngle            | (Boolean) Use axis angle rotation variables. Default 0 (Euler). |
++----------------------+-----------------------------------------------------------------+
 | axisX                | x-component of axis defining axis / angle rotation              |
 +----------------------+-----------------------------------------------------------------+
 | axisY                | y-component of axis defining axis / angle rotation              |
@@ -1969,7 +2024,7 @@ When defining a field, the following parameters can be specified.
 
 .. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
 	  the rotation between the element the field maps are attached to and the coordinates
-	  of the field map.
+	  of the field map. Use `axisAngle=1` to use the axis angle rotation scheme.
 
 .. Note:: A right-handed coordinate system is used in Geant4, so positive x is out of a ring.
 
@@ -2038,7 +2093,8 @@ Formats
 
 Field maps in the following formats are accepted:
 
-  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed :code:`.tar.gz`)
+  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed files. :code:`gz` must be
+    in the file name for this to load correctly.)
   * Superfish Poisson 2D SF7
 
 These are described in detail below. More field formats can be added
@@ -3110,6 +3166,9 @@ described in `Tunnel Geometry`_.
 |                                  | loader that cannot load multiple files correctly. On  |
 |                                  | by default.                                           |
 +----------------------------------+-------------------------------------------------------+
+| removeTemporaryFiles             | Whether to delete temporary files (typically gdml)    |
+|                                  | when BDSIM exits. Default true.                       |
++----------------------------------+-------------------------------------------------------+
 | samplerDiameter                  | Diameter of samplers (default 5 m) [m]. This is also  |
 |                                  | the diameter of the curvilinear world volumes used in |
 |                                  | curvilinear transforms. In the case of lower energy   |
@@ -3117,9 +3176,14 @@ described in `Tunnel Geometry`_.
 |                                  | this should be reduced to prevent overlaps between    |
 |                                  | curvilinear volumes along the beam line.              |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveBeamlineComponents      | Whether all beam line components record energy loss   |
+| sensitiveBeamPipe                | Whether the beam pipe records energy loss. This       |
+|                                  | includes cavities.                                    |
 +----------------------------------+-------------------------------------------------------+
-| sensitiveBeamPipe                | Whether the beam pipe records energy loss             |
+| sensitiveOuter                   | Whether the outer part of each component (other than  |
+|                                  | the beam pipe records energy loss                     |
++----------------------------------+-------------------------------------------------------+
+| sensitiveVacuum                  | Whether energy deposition in the residual vacuum gas  |
+|                                  | is recorded.                                          |
 +----------------------------------+-------------------------------------------------------+
 | soilMaterial                     | Material for soil outside tunnel wall                 |
 +----------------------------------+-------------------------------------------------------+
@@ -3331,27 +3395,44 @@ following options.
 +-----------------------------------+--------------------------------------------------------------------+
 | nperfile                          | Number of events to record per output file                         |
 +-----------------------------------+--------------------------------------------------------------------+
+| sensitiveOuter                    | Whether the outer part of each component (other than the beam      |
+|                                   | pipe) records energy loss                                          |
++-----------------------------------+--------------------------------------------------------------------+
+| sensitiveBeamPipe                 | Whether the beam pipe records energy loss. This includes cavities. |
++-----------------------------------+--------------------------------------------------------------------+
+| sensitiveVacuum                   | Whether energy deposition in the residual vacuum gas is recorded.  |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossGlobal                  | Global coordinates will be stored for each energy deposition hit   |
-|                                   | and for each trajectory point.                                     |
+|                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLinks                   | For each energy deposition hit, the particle ID, track ID, parent  |
 |                                   | ID and beam line index will be stored - this is intended to help   |
-|                                   | 'link' the energy deposition back to other information.            |
+|                                   | 'link' the energy deposition back to other information. Default    |
+|                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
-|                                   | and for each trajectory point.                                     |
+|                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each point|
-|                                   | of energy deposition and trajectory.                               |
+|                                   | of energy deposition and trajectory. Default off.                  |
++-----------------------------------+--------------------------------------------------------------------+
+| storeElossTurn                    | Store the turn number of each energy deposition hit. Default off,  |
+|                                   | but automatically on when using a circular machine with the        |
+|                                   | (also executable) option :code:`circular`.                         |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossStepLength              | Stores the step length for each energy deposition hit or not.      |
+|                                   | Default off.                                                       |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeElossPreStepKineticEnergy    | Stores the kinetic energy of the particle causing energy deposition|
-|                                   | as taken from the beginning of the step before it made it.         |
+|                                   | as taken from the beginning of the step before it made it. Default |
+|                                   | off.                                                               |
 +-----------------------------------+--------------------------------------------------------------------+
-| storeModel                        | Whether to store the model information in the output (Default On)  |
+| storeModel                        | Whether to store the model information in the output. Default on.  |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerCharge                | Stores corresponding charge of particle for every entry in sampler |
++-----------------------------------+--------------------------------------------------------------------+
+| storeSamplerKineticEnergy         | Stores corresponding kinetic energy of particle for every entry in |
+|                                   | sampler.                                                           |
 +-----------------------------------+--------------------------------------------------------------------+
 | storeSamplerMass                  | Stores corresponding mass (in GeV) of particle for every entry in  |
 |                                   | the sampler.                                                       |
@@ -4901,13 +4982,13 @@ default 0.7 mm.
 ::
 
    rangecut=3*cm;
-   prodCutPhotons   = rangecut,
-   prodCutElectrons = rangecut,
-   prodCutPositrons = rangecut,
-   defaultRangeCut  = rangecut;
+   option, prodCutPhotons   = rangecut,
+           prodCutElectrons = rangecut,
+           prodCutPositrons = rangecut,
+           defaultRangeCut  = rangecut;
 
 .. warning:: The range cut should **not** be longer than the typical dimension of the objects
-	     (i.e. a range cut of 1 km is likely to produce rough energy deposition
+	     (i.e. a range cut of 1 km is likely to produce very rough energy deposition
 	     around boundaries).
 
 Minimum Kinetic Energy

@@ -108,6 +108,8 @@ protected:
   G4Material* emptyMaterial;
   G4bool      checkOverlaps;
   /// @}
+  G4bool      sensitiveBeamPipe;  ///< Whether the beam pipe will record energy deposition.
+  G4bool      sensitiveVacuum;    ///< Whether the vacuum will record energy deposition.
 };
 
 #endif
