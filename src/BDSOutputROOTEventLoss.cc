@@ -129,18 +129,15 @@ void BDSOutputROOTEventLoss::Fill(const BDSEnergyCounterHit* hit)
       Y.push_back( (float &&) (hit->GetY() / CLHEP::m));
       Z.push_back( (float &&) (hit->GetZ() / CLHEP::m));
     }
+
   if (storeTime)
-    {
-      T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);
-    }
+    {T.push_back( (float &&) hit->GetGlobalTime() / CLHEP::ns);}
+
   if (storeStepLength)
-    {
-      stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);
-    }
+    {stepLength.push_back( (float &&) hit->GetStepLength() / CLHEP::m);}
+  
   if (storePreStepKineticEnergy)
-    {
-      preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);
-    }
+    {preStepKineticEnergy.push_back( (float &&) hit->GetPreStepKineticEnergy() / CLHEP::GeV);}
 }
 
 #endif
