@@ -253,6 +253,7 @@ namespace GMAD
     bool        storeElossTime;
     bool        storeElossStepLength;
     bool        storeElossPreStepKineticEnergy;
+    bool        storeElossModelID;
     
     bool        storeTrajectory;
     int         storeTrajectoryDepth;

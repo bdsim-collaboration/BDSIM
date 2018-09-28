@@ -54,6 +54,9 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   G4bool storeTime       = globals->StoreElossTime();
   G4bool storeStepLength = globals->StoreElossStepLength();
   G4bool storePreStepKineticEnergy = globals->StoreElossPreStepKineticEnergy();
+  G4bool storeModelID    = globals->StoreElossModelID();
+  // store the model id if either modelID requested or store links
+  storeModelID = storeModelID || storeLinks;
 
   geant4DataOutput = new BDSOutputROOTGeant4Data();
   headerOutput  = new BDSOutputROOTEventHeader();
@@ -61,14 +64,17 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
 
-  eLoss      = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-					  storeTime, storeStepLength, storePreStepKineticEnergy);
-  eLossWorld = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-					  storeTime, storeStepLength, storePreStepKineticEnergy);
-  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
-  tunnelHit  = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
-					  storeTime, storeStepLength, storePreStepKineticEnergy);
+  eLoss      = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
+  eLossWorld = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
+  pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
+  tunnelHit  = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
+					  storeGlobal, storeTime, storeStepLength,
+					  storePreStepKineticEnergy);
   traj       = new BDSOutputROOTEventTrajectory();
   evtHistos  = new BDSOutputROOTEventHistograms();
   evtInfo    = new BDSOutputROOTEventInfo();

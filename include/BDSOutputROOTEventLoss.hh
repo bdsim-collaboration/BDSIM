@@ -69,6 +69,7 @@ public:
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(bool storeTurnIn,
 			 bool storeLinksIn,
+			 bool storeModleIDIn,
 			 bool storeLocalIn,
 			 bool storeGobalIn,
                          bool storeTimeIn,
@@ -82,10 +83,11 @@ public:
   virtual void Flush();
 
   bool storeTurn       = false; ///< Store turn number.
-  bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors
-  bool storeLocal      = false; ///< Whether to store local coordinates
-  bool storeGlobal     = false; ///< Whether to store global coordinates
-  bool storeTime       = false; ///< Whether to store global time
+  bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors.
+  bool storeModelID    = false; ///< Whether to store the beam line index.
+  bool storeLocal      = false; ///< Whether to store local coordinates.
+  bool storeGlobal     = false; ///< Whether to store global coordinates.
+  bool storeTime       = false; ///< Whether to store global time.
   bool storeStepLength = false; ///< Whether to store step length.
   bool storePreStepKineticEnergy = false; ///< Whether to store pre step kinetic energy.
 

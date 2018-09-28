@@ -301,6 +301,7 @@ void Options::PublishMembers()
   publish("storeElossTime",                 &Options::storeElossTime);
   publish("storeElossStepLength",           &Options::storeElossStepLength);
   publish("storeElossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
+  publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);

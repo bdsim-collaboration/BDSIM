@@ -222,6 +222,7 @@ OptionsBase::OptionsBase()
   storeElossTime           = false;
   storeElossStepLength     = false;
   storeElossPreStepKineticEnergy = false;
+  storeElossModelID        = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1000000;
   storeTrajectoryParticle   = "";
