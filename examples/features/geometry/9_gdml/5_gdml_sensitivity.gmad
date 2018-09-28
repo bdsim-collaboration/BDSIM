@@ -1,0 +1,19 @@
+e1: element, geometry="gdml:sensitive1.gdml", l=0.4*m;
+e2: element, geometry="gdml:sensitive2.gdml", l=0.4*m;
+d1: drift, l=1*m;
+
+l1: line = (d1,e1,d1,e2,d1,e1);
+use,period=l1;
+sample,all;
+
+beam, particle="e-",
+      energy=100*GeV;
+
+option, physicsList="em";
+
+option, prodCutPhotons=5*cm,
+	prodCutElectrons=5*cm,
+	prodCutPositrons=5*cm,
+	minimumKineticEnergy=100*MeV;
+
+option, elossHistoBinWidth=1*cm;
