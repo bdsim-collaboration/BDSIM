@@ -199,7 +199,6 @@ protected:
   G4VisAttributes*   containerVisAttr;
   G4UserLimits*      defaultUserLimits;
   /// @}
-  G4double           maxStepFactor;      ///< For user limits.
 
   // Geometric pointers that will be used to pass around components
   // within the factory (as different parts factorised so they can

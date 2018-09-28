@@ -47,7 +47,6 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   sensitiveOuter     = BDSGlobalConstants::Instance()->SensitiveOuter();
   containerVisAttr   = BDSGlobalConstants::Instance()->ContainerVisAttr();
   defaultUserLimits  = BDSGlobalConstants::Instance()->DefaultUserLimits();
-  maxStepFactor      = 0.5;
 
   // initialise variables and pointers that'll be used by the factory
   CleanUp();
