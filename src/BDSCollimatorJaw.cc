@@ -25,12 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
-
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4SubtractionSolid.hh"
+#include "G4VisAttributes.hh"
 
+#include <cmath>
 #include <map>
 
 BDSCollimatorJaw::BDSCollimatorJaw(G4String    nameIn,
