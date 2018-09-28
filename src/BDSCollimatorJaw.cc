@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
@@ -146,8 +145,8 @@ void BDSCollimatorJaw::BuildJawCollimator()
   jawLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
   
-  // user limits
-  jawLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  // user limits - provided by BDSAcceleratorComponent
+  jawLV->SetUserLimits(userLimits);
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(jawLV);
@@ -197,7 +196,7 @@ void BDSCollimatorJaw::Build()
   if (BDS::IsFinite(xsizeRight))
 	{rightJawHalfGap = xsizeRight;}
 
-  // jaws have to fit inside containerLV so calculate full jaw widths given offsets
+  // jaws have to fit inside containerLogicalVolume so calculate full jaw widths given offsets
   G4double leftJawWidth = 0.5 * horizontalWidth - leftJawHalfGap;
   G4double rightJawWidth = 0.5 * horizontalWidth - rightJawHalfGap;
   G4double vacuumWidth = 0.5 * (leftJawHalfGap + rightJawHalfGap);
@@ -228,8 +227,8 @@ void BDSCollimatorJaw::Build()
 						       name + "_leftjaw_lv"); // name
       leftJawLV->SetVisAttributes(collimatorVisAttr);
       
-      // user limits
-      leftJawLV->SetUserLimits(containerLogicalVolume->GetUserLimits());
+      // user limits - provided by BDSAcceleratorComponent
+      leftJawLV->SetUserLimits(userLimits);
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(leftJawLV);
@@ -260,8 +259,8 @@ void BDSCollimatorJaw::Build()
 							name + "_rightjaw_lv"); // name
       rightJawLV->SetVisAttributes(collimatorVisAttr);
       
-      // user limits
-      rightJawLV->SetUserLimits(containerLogicalVolume->GetUserLimits());
+      // user limits - provided by BDSAcceleratorComponent
+      rightJawLV->SetUserLimits(userLimits);
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(rightJawLV);
@@ -293,8 +292,8 @@ void BDSCollimatorJaw::Build()
 							  name + "_lv");         // name
       collimatorLV->SetVisAttributes(collimatorVisAttr);
       
-      // user limits
-      collimatorLV->SetUserLimits(containerLogicalVolume->GetUserLimits());
+      // user limits - provided by BDSAcceleratorComponent
+      collimatorLV->SetUserLimits(userLimits);
       
       // register with base class (BDSGeometryComponent)
       RegisterLogicalVolume(collimatorLV);
@@ -328,7 +327,8 @@ void BDSCollimatorJaw::Build()
 						      name + "_vacuum_lv"); // name
       
       vacuumLV->SetVisAttributes(containerVisAttr);
-      vacuumLV->SetUserLimits(containerLogicalVolume->GetUserLimits());
+      // user limits - provided by BDSAcceleratorComponent
+      vacuumLV->SetUserLimits(userLimits);
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
       if (sensitiveVacuum)

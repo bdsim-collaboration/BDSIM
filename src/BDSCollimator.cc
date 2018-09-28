@@ -173,8 +173,8 @@ void BDSCollimator::Build()
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
 
-  // user limits
-  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  // user limits - provided by BDSAcceleratorComponent
+  collimatorLV->SetUserLimits(userLimits);
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
@@ -206,7 +206,8 @@ void BDSCollimator::Build()
                                                       name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(containerVisAttr);
-      vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+      // user limits - provided by BDSAcceleratorComponent
+      vacuumLV->SetUserLimits(userLimits);
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
       if (sensitiveVacuum)
