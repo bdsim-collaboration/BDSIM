@@ -67,12 +67,13 @@ public:
   std::vector<float>        preStepKineticEnergy; ///< Kinetic energy in GeV at pre step point.
 
   BDSOutputROOTEventLoss();
-  BDSOutputROOTEventLoss(const bool& storeLinksIn,
-			 const bool& storeLocalIn,
-			 const bool& storeGobalIn,
-                         const bool& storeTimeIn,
-			 const bool& storeStepLengthIn,
-			 const bool& storePreStepKineticEnergyIn);
+  BDSOutputROOTEventLoss(bool storeTurnIn,
+			 bool storeLinksIn,
+			 bool storeLocalIn,
+			 bool storeGobalIn,
+                         bool storeTimeIn,
+			 bool storeStepLengthIn,
+			 bool storePreStepKineticEnergyIn);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(const BDSTrajectoryPoint* hit);
@@ -80,6 +81,7 @@ public:
 #endif
   virtual void Flush();
 
+  bool storeTurn       = false; ///< Store turn number.
   bool storeLinks      = false; ///< Whether to store links between Eloss and model and trajectors
   bool storeLocal      = false; ///< Whether to store local coordinates
   bool storeGlobal     = false; ///< Whether to store global coordinates
@@ -87,7 +89,7 @@ public:
   bool storeStepLength = false; ///< Whether to store step length.
   bool storePreStepKineticEnergy = false; ///< Whether to store pre step kinetic energy.
 
-  ClassDef(BDSOutputROOTEventLoss,3);
+  ClassDef(BDSOutputROOTEventLoss,4);
 };
 
 

@@ -66,6 +66,7 @@ namespace GMAD
     _RMATRIX     = 68,
     _CRYSTALCOL  = 69,
     _UNDULATOR   = 70,
+    _JCOL        = 71,
   };
 
   /// conversion from enum to string

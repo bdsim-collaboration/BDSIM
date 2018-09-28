@@ -274,10 +274,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (poleLV)
     {
       outer->RegisterLogicalVolume(poleLV);
-      outer->RegisterSensitiveVolume(poleLV);
+      if (sensitiveOuter)
+	{outer->RegisterSensitiveVolume(poleLV);}
     }
   outer->RegisterLogicalVolume(yokeLV);
-  outer->RegisterSensitiveVolume(yokeLV);
+  if (sensitiveOuter)
+    {outer->RegisterSensitiveVolume(yokeLV);}
 
   outer->SetEndPieceBefore(endPiece);
   outer->SetEndPieceAfter(endPiece);
@@ -565,10 +567,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
       coilLeftLV->SetVisAttributes(coilVisAttr);
       coilRightLV->SetVisAttributes(coilVisAttr);
       allVisAttributes.push_back(coilVisAttr);
-
-      auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      coilLeftLV->SetUserLimits(ul);
-      coilRightLV->SetUserLimits(ul);
+      
+      coilLeftLV->SetUserLimits(defaultUserLimits);
+      coilRightLV->SetUserLimits(defaultUserLimits);
     }
 }
 
@@ -737,9 +738,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
   // user limits - don't register as using global one
-  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
-  endPieceCoilLV->SetUserLimits(ul);
-  endPieceContainerLV->SetUserLimits(ul);
+  endPieceCoilLV->SetUserLimits(defaultUserLimits);
+  endPieceContainerLV->SetUserLimits(defaultUserLimits);
 
   // package it all up
   endPiece = new BDSSimpleComponent(name + "_end_piece",
@@ -751,7 +751,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(const G4String& name)
   endPiece->RegisterSolid(endPieceCoilSolid);
   endPiece->RegisterLogicalVolume(endPieceCoilLV);
   endPiece->RegisterVisAttributes(endPieceCoilVis);
-  endPiece->RegisterSensitiveVolume(endPieceCoilLV);
+  if (sensitiveOuter)
+    {endPiece->RegisterSensitiveVolume(endPieceCoilLV);}
   endPiece->SetExtent(BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
   endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
@@ -1582,11 +1583,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
     }
   // user limits
   SetUserLimits();
-  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto& lv : coilLVs)
-    {lv->SetUserLimits(ul);}
+    {lv->SetUserLimits(defaultUserLimits);}
   if (coilLV)
-    {coilLV->SetUserLimits(ul);}
+    {coilLV->SetUserLimits(defaultUserLimits);}
   
   // placement
   // place yoke+pole (one solid) together
@@ -1649,18 +1649,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   outer->RegisterSolid(yokeSolid);
   outer->RegisterLogicalVolume(yokeLV);
 
-  outer->RegisterSensitiveVolume(yokeLV);
+  if (sensitiveOuter)
+    {outer->RegisterSensitiveVolume(yokeLV);}
 
   // no need to proceed with end pieces if we didn't build poles - just return
   if (!buildPole)
     {return outer;}
 
   // continue with registration of objects and end piece construction  
-  if (individualCoilsSolids)
-    {outer->RegisterSensitiveVolume(coilLVs);}
-  else
-    {outer->RegisterSensitiveVolume(coilLV);}
-
+  if (sensitiveOuter)
+    {
+      if (individualCoilsSolids)
+	{outer->RegisterSensitiveVolume(coilLVs);}
+      else
+	{outer->RegisterSensitiveVolume(coilLV);}
+    }
   // skip rest of this construction if no end pieces required
   if (!buildEndPiece)
     {
@@ -1858,10 +1861,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
 
   ePInLV->SetVisAttributes(coilVisIn);
   ePOutLV->SetVisAttributes(coilVisOut);
-  ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  ePContInLV->SetVisAttributes(containerVisAttr);
+  ePContOutLV->SetVisAttributes(containerVisAttr);
 
-  auto defaultUserLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   ePInLV->SetUserLimits(defaultUserLimits);
   ePOutLV->SetUserLimits(defaultUserLimits);
   ePContInLV->SetUserLimits(defaultUserLimits);
@@ -1944,7 +1946,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   endPieceInSC->RegisterVisAttributes(coilVisIn);
   endPieceInSC->RegisterLogicalVolume(ePInLV);
   endPieceInSC->RegisterSolid(endPieceSolidIn);
-  endPieceInSC->RegisterSensitiveVolume(ePInLV);
+  if (sensitiveOuter)
+    {endPieceInSC->RegisterSensitiveVolume(ePInLV);}
   endPieceInSC->SetExtent(ePExtOuter);
   endPieceInSC->SetInnerExtent(ePExtInner);
   
@@ -1963,7 +1966,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::DipoleCommonConstruction(G4Strin
   endPieceOutSC->RegisterVisAttributes(coilVisOut);
   endPieceOutSC->RegisterLogicalVolume(ePOutLV);
   endPieceOutSC->RegisterSolid(endPieceSolidOut);
-  endPieceOutSC->RegisterSensitiveVolume(ePOutLV);
+  if (sensitiveOuter)
+    {endPieceOutSC->RegisterSensitiveVolume(ePOutLV);}
   endPieceOutSC->SetExtent(ePExtOuter);
   endPieceOutSC->SetInnerExtent(ePExtInner);
 

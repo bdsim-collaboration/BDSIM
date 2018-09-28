@@ -175,8 +175,9 @@ public:
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double BeamlineS()                const {return G4double(options.beamlineS*CLHEP::m);}
   inline G4double ParticleTotalEnergy()      const {return G4double(beam.E0)*CLHEP::GeV;}
-  inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
   inline G4bool   SensitiveBeamPipe()        const {return G4bool  (options.sensitiveBeamPipe);}
+  inline G4bool   SensitiveOuter()           const {return G4bool  (options.sensitiveOuter);}
+  inline G4bool   SensitiveVacuum()          const {return G4bool  (options.sensitiveVacuum);}
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
 #if G4VERSION_NUMBER != 1030
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
@@ -187,6 +188,7 @@ public:
 #endif
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4bool   WritePrimaries()           const {return G4bool  (options.writePrimaries);}
+  inline G4bool   StoreELossTurn()           const {return G4bool  (options.storeElossTurn || options.circular);}
   inline G4bool   StoreELossLinks()          const {return G4bool  (options.storeElossLinks);}
   inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
   inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
@@ -201,6 +203,7 @@ public:
   std::vector<int>                           StoreTrajectorySamplerIDs();
   std::vector<std::pair<double,double>>      StoreTrajectoryELossSRange();
   inline G4bool   StoreSamplerCharge()       const {return G4bool  (options.storeSamplerCharge);}
+  inline G4bool   StoreSamplerKineticEnergy() const {return G4bool  (options.storeSamplerKineticEnergy);}
   inline G4bool   StoreSamplerMass()         const {return G4bool  (options.storeSamplerMass);}
   inline G4bool   StoreSamplerRigidity()     const {return G4bool  (options.storeSamplerRigidity);}
   inline G4bool   StoreSamplerIon()          const {return G4bool  (options.storeSamplerIon);}

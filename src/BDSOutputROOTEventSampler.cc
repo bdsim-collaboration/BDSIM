@@ -132,6 +132,7 @@ template <class U> void BDSOutputROOTEventSampler<U>::Flush()
   modelID = -1;
 
   charge.clear();
+  kineticEnergy.clear();
   mass.clear();
   rigidity.clear();
   isIon.clear();
@@ -157,8 +158,19 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getMass()
   std::vector<U> result(n);
   if (!particleTable)
     {return result;}
-  for (const auto& pid : partID)
-    {result.push_back((U)particleTable->Mass(pid));}
+  for (int i = 0; i < n; ++i)
+    {result[i] = (U)particleTable->Mass(partID[i]);}
+  return result;
+}
+
+template <class U>
+std::vector<U> BDSOutputROOTEventSampler<U>::getKineticEnergy()
+{
+  std::vector<U> result(n);
+  if (!particleTable)
+    {return result;}
+  for (int i = 0; i < n; ++i)
+    {result[i] = (U)particleTable->KineticEnergy(partID[i], energy[i]);}
   return result;
 }
 
@@ -169,7 +181,7 @@ std::vector<U> BDSOutputROOTEventSampler<U>::getRigidity()
   if (!particleTable)
     {return result;}
   for (int i = 0; i < n; ++i)
-    {result.push_back((U)particleTable->Rigidity(partID[i], energy[i]));}
+    {result[i] = (U)particleTable->Rigidity(partID[i], energy[i]);}
   return result;
 }
 
@@ -179,8 +191,8 @@ std::vector<bool> BDSOutputROOTEventSampler<U>::getIsIon()
   std::vector<bool> result(n);
   if (!particleTable)
     {return result;}
-  for (const auto& pid : partID)
-    {result.push_back(particleTable->IsIon(pid));}
+  for (int i = 0; i < n; ++i)
+    {result[i] = particleTable->IsIon(partID[i]);}
   return result;
 }
 
@@ -190,8 +202,8 @@ std::vector<int> BDSOutputROOTEventSampler<U>::getIonA()
   std::vector<int> result(n);
   if (!particleTable)
     {return result;}
-  for (const auto& pid : partID)
-    {result.push_back(particleTable->IonA(pid));}
+  for (int i = 0; i < n; ++i)
+    {result[i] = particleTable->IonA(partID[i]);}
   return result;
 }
 
@@ -201,8 +213,8 @@ std::vector<int> BDSOutputROOTEventSampler<U>::getIonZ()
   std::vector<int> result(n);
   if (!particleTable)
     {return result;}
-  for (const auto& pid : partID)
-    {result.push_back(particleTable->IonZ(pid));}
+  for (int i = 0; i < n; ++i)
+    {result[i] = particleTable->IonZ(partID[i]);}
   return result;
 }
 
@@ -218,6 +230,55 @@ void BDSOutputROOTEventSampler<U>::FillCMR()
       charge.push_back(pInfo.charge);
       mass.push_back(pInfo.mass);
       rigidity.push_back(pInfo.rigidity(energy[i]));
+    }
+}
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::FillCMRK()
+{
+  if (!particleTable)
+    {return;}
+  for (int i = 0; i < n; ++i)
+    {// loop over all existing entires in the branch vectors
+      auto& pid = partID[i];
+      auto& pInfo = particleTable->GetParticleInfo(pid);
+      charge.push_back(pInfo.charge);
+      mass.push_back(pInfo.mass);
+      rigidity.push_back(pInfo.rigidity(energy[i]));
+      kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
+    }
+}
+
+template <class U>
+void BDSOutputROOTEventSampler<U>::FillCMRIK()
+{
+  if (!particleTable)
+    {return;}
+  for (int i = 0; i < n; ++i)
+    {// loop over all existing entires in the branch vectors
+      auto& pid = partID[i];
+      if (particleTable->IsIon(pid))
+        {
+          auto& ionInfo = particleTable->GetIonInfo(pid);
+          charge.push_back(ionInfo.charge);
+          mass.push_back(ionInfo.mass);
+          rigidity.push_back(ionInfo.rigidity(energy[i]));
+          isIon.push_back(true);
+          ionA.push_back(ionInfo.a);
+          ionZ.push_back(ionInfo.z);
+          kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
+        }
+      else
+        {// particle
+          auto& pInfo = particleTable->GetParticleInfo(pid);
+          charge.push_back(pInfo.charge);
+          mass.push_back(pInfo.mass);
+          rigidity.push_back(pInfo.rigidity(energy[i]));
+          isIon.push_back(false);
+          ionA.push_back(0);
+          ionZ.push_back(0);
+          kineticEnergy.push_back(particleTable->KineticEnergy(pid, energy[i]));
+        }
     }
 }
 

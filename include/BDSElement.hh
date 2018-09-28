@@ -38,7 +38,8 @@ public:
 	     G4double length,
 	     G4double horizontalWidthIn,
 	     G4String geometry,
-	     G4String fieldNameIn = "");
+	     G4String fieldNameIn = "",
+	     G4double angle       = 0);
   virtual ~BDSElement(){;}
    
 private:

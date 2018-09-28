@@ -889,15 +889,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String     name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  containerLV->SetVisAttributes(containerVisAttr);
+  magnetContainerLV->SetVisAttributes(containerVisAttr);
 
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
-    {lv->SetUserLimits(userLimits);}
-  containerLV->SetUserLimits(userLimits);
-  magnetContainerLV->SetUserLimits(userLimits);
+    {lv->SetUserLimits(defaultUserLimits);}
+  containerLV->SetUserLimits(defaultUserLimits);
+  magnetContainerLV->SetUserLimits(defaultUserLimits);
   
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -1485,15 +1484,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  containerLV->SetVisAttributes(containerVisAttr);
+  magnetContainerLV->SetVisAttributes(containerVisAttr);
   
   // user limits
-  auto userLimits = BDSGlobalConstants::Instance()->DefaultUserLimits();
   for (auto lv : allLogicalVolumes)
-    {lv->SetUserLimits(userLimits);}
-  containerLV->SetUserLimits(userLimits);
-  magnetContainerLV->SetUserLimits(userLimits);
+    {lv->SetUserLimits(defaultUserLimits);}
+  containerLV->SetUserLimits(defaultUserLimits);
+  magnetContainerLV->SetUserLimits(defaultUserLimits);
     
   // record extents
   // container radius is the same for all methods as all cylindrical

@@ -1,0 +1,14 @@
+d1: drift, l=100*m;
+
+l1: line = (d1);
+use,period=l1;
+
+option, ngenerate=1,
+	physicsList="em";
+	
+beam, particle="proton",
+      energy=10.0*GeV;
+
+option, vacuumPressure=1e-6;
+
+option, sensitiveVacuum=1;

@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSCavityElement.hh"
 #include "BDSCollimatorCrystal.hh"
 #include "BDSCollimatorElliptical.hh"
+#include "BDSCollimatorJaw.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSColours.hh"
 #include "BDSDegrader.hh"
@@ -257,96 +258,100 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   G4cout << __METHOD_NAME__ << " - creating \"" << elementName << "\"" << G4endl;
   element->print();
 #endif
-  switch(element->type){
-  case ElementType::_DRIFT:
-    component = CreateDrift(angleIn, angleOut); break;
-  case ElementType::_RF:
+  switch(element->type)
     {
-      component = CreateRF(currentArcLength);
-      differentFromDefinition = true; // unique phase for every placement in beam line
-      break;
+    case ElementType::_DRIFT:
+      {component = CreateDrift(angleIn, angleOut); break;}
+    case ElementType::_RF:
+      {
+	component = CreateRF(currentArcLength);
+	differentFromDefinition = true; // unique phase for every placement in beam line
+	break;
+      }
+    case ElementType::_SBEND:
+      {component = CreateSBend(); break;}
+    case ElementType::_RBEND:
+      {component = CreateRBend(); break;}
+    case ElementType::_HKICKER:
+      {component = CreateKicker(KickerType::horizontal); break;}
+    case ElementType::_VKICKER:
+      {component = CreateKicker(KickerType::vertical); break;}
+    case ElementType::_KICKER:
+    case ElementType::_TKICKER:
+      {component = CreateKicker(KickerType::general); break;}
+    case ElementType::_QUAD:
+      {component = CreateQuad(); break;}
+    case ElementType::_SEXTUPOLE:
+      {component = CreateSextupole(); break;}
+    case ElementType::_OCTUPOLE:
+      {component = CreateOctupole(); break;}
+    case ElementType::_DECAPOLE:
+      {component = CreateDecapole(); break;}
+    case ElementType::_MULT:
+      {component = CreateMultipole(); break;}
+    case ElementType::_THINMULT:
+      {component = CreateThinMultipole(angleIn); break;}
+    case ElementType::_ELEMENT:
+      {component = CreateElement(); break;}
+    case ElementType::_SOLENOID:
+      {component = CreateSolenoid(); break;} 
+    case ElementType::_ECOL:
+      {component = CreateEllipticalCollimator(); break;} 
+    case ElementType::_RCOL:
+      {component = CreateRectangularCollimator(); break;}
+    case ElementType::_JCOL:
+      {component = CreateJawCollimator(); break;}
+    case ElementType::_MUONSPOILER:    
+      {component = CreateMuonSpoiler(); break;}
+    case ElementType::_SHIELD:
+      {component = CreateShield(); break;}
+    case ElementType::_DEGRADER:
+      {component = CreateDegrader(); break;}
+    case ElementType::_GAP:
+      {component = CreateGap(); break;}
+    case ElementType::_CRYSTALCOL:
+      {component = CreateCrystalCollimator(); break;}
+    case ElementType::_LASER:
+      {component = CreateLaser(); break;} 
+    case ElementType::_SCREEN:
+      {component = CreateScreen(); break;} 
+    case ElementType::_TRANSFORM3D:
+      {component = CreateTransform3D(); break;}
+    case ElementType::_THINRMATRIX:
+      {component = CreateThinRMatrix(angleIn, elementName); break;}
+    case ElementType::_PARALLELTRANSPORTER:
+      {component = CreateParallelTransporter(); break;}
+    case ElementType::_RMATRIX:
+      {component = CreateRMatrix(); break;}
+    case ElementType::_UNDULATOR:
+      {component = CreateUndulator(); break;}
+    case ElementType::_AWAKESCREEN:
+#ifdef USE_AWAKE
+      {component = CreateAwakeScreen(); break;} 
+#else
+      G4cerr << __METHOD_NAME__ << "Awake Screen can't be used - not compiled with AWAKE module!" << G4endl;
+      exit(1);
+#endif
+    case ElementType::_AWAKESPECTROMETER:
+#ifdef USE_AWAKE
+      {component = CreateAwakeSpectrometer(); break;}
+#else
+      G4cerr << __METHOD_NAME__ << "Awake Spectrometer can't be used - not compiled with AWAKE module!" << G4endl;
+      exit(1);
+#endif
+      
+      // common types, but nothing to do here
+    case ElementType::_MARKER:
+    case ElementType::_LINE:
+    case ElementType::_REV_LINE:
+      {component = nullptr; break;}
+    default:
+      {
+	G4cerr << __METHOD_NAME__ << "unknown type " << element->type << G4endl;
+	exit(1);
+	break;
+      }
     }
-  case ElementType::_SBEND:
-    component = CreateSBend(); break;
-  case ElementType::_RBEND:
-    component = CreateRBend(); break;
-  case ElementType::_HKICKER:
-    component = CreateKicker(KickerType::horizontal); break;
-  case ElementType::_VKICKER:
-    component = CreateKicker(KickerType::vertical); break;
-  case ElementType::_KICKER:
-  case ElementType::_TKICKER:
-    component = CreateKicker(KickerType::general); break;
-  case ElementType::_QUAD:
-    component = CreateQuad(); break;
-  case ElementType::_SEXTUPOLE:
-    component = CreateSextupole(); break;
-  case ElementType::_OCTUPOLE:
-    component = CreateOctupole(); break;
-  case ElementType::_DECAPOLE:
-    component = CreateDecapole(); break;
-  case ElementType::_MULT:
-    component = CreateMultipole(); break;
-  case ElementType::_THINMULT:
-    component = CreateThinMultipole(angleIn); break;
-  case ElementType::_ELEMENT:
-    component = CreateElement(); break;
-  case ElementType::_SOLENOID:
-    component = CreateSolenoid(); break; 
-  case ElementType::_ECOL:
-    component = CreateEllipticalCollimator(); break; 
-  case ElementType::_RCOL:
-    component = CreateRectangularCollimator(); break; 
-  case ElementType::_MUONSPOILER:    
-    component = CreateMuonSpoiler(); break;
-  case ElementType::_SHIELD:
-    component = CreateShield(); break;
-  case ElementType::_DEGRADER:
-    component = CreateDegrader(); break;
-  case ElementType::_GAP:
-    component = CreateGap(); break;
-  case ElementType::_CRYSTALCOL:
-    {component = CreateCrystalCollimator(); break;}
-  case ElementType::_LASER:
-    component = CreateLaser(); break; 
-  case ElementType::_SCREEN:
-    component = CreateScreen(); break; 
-  case ElementType::_TRANSFORM3D:
-    component = CreateTransform3D(); break;
-  case ElementType::_THINRMATRIX:
-    component = CreateThinRMatrix(angleIn, elementName); break;
-  case ElementType::_PARALLELTRANSPORTER:
-    component = CreateParallelTransporter(); break;
-  case ElementType::_RMATRIX:
-    component = CreateRMatrix(); break;
-  case ElementType::_UNDULATOR:
-    component = CreateUndulator(); break;
-  case ElementType::_AWAKESCREEN:
-#ifdef USE_AWAKE
-    component = CreateAwakeScreen(); break; 
-#else
-    G4cerr << __METHOD_NAME__ << "Awake Screen can't be used - not compiled with AWAKE module!" << G4endl;
-    exit(1);
-#endif
-  case ElementType::_AWAKESPECTROMETER:
-#ifdef USE_AWAKE
-    component = CreateAwakeSpectrometer(); break;
-#else
-    G4cerr << __METHOD_NAME__ << "Awake Spectrometer can't be used - not compiled with AWAKE module!" << G4endl;
-    exit(1);
-#endif
-    
-    // common types, but nothing to do here
-  case ElementType::_MARKER:
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    component = nullptr;
-    break;
-  default:
-    G4cerr << __METHOD_NAME__ << "unknown type " << element->type << G4endl;
-    exit(1);
-    break;
-  }
 
   // note this test will only be reached (and therefore the component registered)
   // if both the component didn't exist and it has been constructed
@@ -970,7 +975,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->l * CLHEP::m,
 			 PrepareHorizontalWidth(element),
 			 element->geometryFile,
-			 element->fieldAll));
+			 element->fieldAll,
+			 element->angle * CLHEP::rad));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -1074,6 +1080,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     G4String(element->material),
 				     G4String(element->vacuumMaterial),
 				     PrepareColour(element));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateJawCollimator()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  if (element->material.empty())
+    {
+      G4cout << __METHOD_NAME__ << "warning no material for collimator \"" << elementName
+	     << "\". Using G4_Cu by default" << G4endl;
+    }
+  
+  return new BDSCollimatorJaw(elementName,
+			      element->l*CLHEP::m,
+			      PrepareHorizontalWidth(element),
+                  element->xsize*CLHEP::m,
+                  element->ysize*CLHEP::m,
+                  element->xsizeLeft*CLHEP::m,
+                  element->xsizeRight*CLHEP::m,
+			      true,
+			      true,
+			      PrepareMaterial(element, "G4_Cu"),
+			      PrepareVacuumMaterial(element),
+			      PrepareColour(element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuonSpoiler()

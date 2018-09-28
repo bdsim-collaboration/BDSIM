@@ -20,7 +20,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
@@ -132,9 +131,7 @@ G4String BDSMagnet::Material() const
 
 void BDSMagnet::Build()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif  
+  BuildUserLimits();
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
@@ -148,9 +145,6 @@ void BDSMagnet::Build()
 
 void BDSMagnet::BuildBeampipe()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - 2*lengthSafety,
 							    beamPipeInfo);
@@ -181,9 +175,6 @@ void BDSMagnet::BuildVacuumField()
 
 void BDSMagnet::BuildOuter()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<  *magnetOuterInfo << G4endl;
-#endif
   G4double outerLength = chordLength - 2*lengthSafety;
   outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(magnetType,
 							       magnetOuterInfo,
@@ -220,9 +211,6 @@ void BDSMagnet::BuildOuter()
 
 void BDSMagnet::BuildOuterField()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif  
   if (outer && outerFieldInfo)
     {
       // determine key for this specific magnet instance
@@ -246,9 +234,6 @@ void BDSMagnet::BuildOuterField()
 
 void BDSMagnet::BuildContainerLogicalVolume()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // note beam pipe is not optional!
   if (outer)
     {//build around that
@@ -256,15 +241,10 @@ void BDSMagnet::BuildContainerLogicalVolume()
       containerLogicalVolume = new G4LogicalVolume(containerSolid,
 						   emptyMaterial,
 						   name + "_container_lv");
-
-      // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      //copy the default and update with the length of the object rather than the default 1m
-      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
-      if (ul != defaultUL) // if it's not the default register it
-        {RegisterUserLimits(ul);}
-      containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+      
+      // user limits - provided by BDSAcceleratorComponent
+      containerLogicalVolume->SetUserLimits(userLimits);
+      containerLogicalVolume->SetVisAttributes(containerVisAttr);
       
       placeBeamPipe = true;
     }
@@ -280,9 +260,6 @@ void BDSMagnet::BuildContainerLogicalVolume()
 
 void BDSMagnet::PlaceComponents()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   if (placeBeamPipe)
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();

@@ -138,7 +138,10 @@ namespace GMAD
     bool      dontSplitSBends;
 
     bool      yokeFields;
-    bool      sensitiveBeamlineComponents;
+    bool      sensitiveOuter;
+    bool      sensitiveBeamPipe;
+    bool      sensitiveTunnel;
+    bool      sensitiveVacuum;
 
     bool        includeFringeFields;
 
@@ -160,7 +163,6 @@ namespace GMAD
     double    worldVolumeMargin; ///< Padding margin for world volume size.
 
     double    vacuumPressure;
-    bool      sensitiveBeamPipe;
     
     ///@{ tunnel geometry parameters
     bool        buildTunnel;
@@ -174,7 +176,6 @@ namespace GMAD
     double      tunnelFloorOffset;
     double      tunnelAper1;
     double      tunnelAper2;
-    bool        tunnelSensitive;
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
@@ -245,6 +246,7 @@ namespace GMAD
     /// Output related options
     int         numberOfEventsPerNtuple;
 
+    bool        storeElossTurn;
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
@@ -259,6 +261,7 @@ namespace GMAD
     double      storeTrajectoryEnergyThreshold;
 
     bool        storeSamplerCharge;
+    bool        storeSamplerKineticEnergy;
     bool        storeSamplerMass;
     bool        storeSamplerRigidity;
     bool        storeSamplerIon;
