@@ -1096,17 +1096,28 @@ jcol
 
 `jcol` defines a jaw collimator with two square blocks on either side in the horizontal plane.
 If a vertical `jcol` is required, the `tilt` parameter should be used to rotate it by `pi/2`.
+The horizontal position of each jaw can be set separately with the `xsizeLeft` and `xsizeRight`
+apertures which are the distances from the center of element to the left and right jaws respectively.
 
 =================  =================================  ==========  ===========
 Parameter          Description                        Default     Required
 `l`                Length [m]                         0           Yes
 `xsize`            Horizontal half aperture [m]       0           Yes
 `ysize`            Half height of jaws [m]            0           Yes
+`xsizeLeft`        Left jaw aperture [m]              0           No
+`xsizeRight`       Right jaw aperture [m]             0           No
 `material`         Outer material                     G4_Cu       No
 `horizontalWidth`  Outer full width [m]               0.5 m       No
 =================  =================================  ==========  ===========
 
 * The `horizontalWidth` must be greater than 2x `xsize`.
+* To construct a collimator jaws with one jaw closed (i.e. an offset of 0), the horizontal half aperture
+  must be set to 0, with the other jaws half aperture set as appropriate.
+* If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
+  as a box with no aperture.
+* Specifying a jaw aperture which is larger than half the `horizontalWidth` value will result in
+  that jaw not being constructed. If both jaw apertures are greater than half the `horizontalWidth`,
+  no jaws will be built and BDSIM will exit.
 
 Examples::
 

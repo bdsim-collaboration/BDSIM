@@ -135,7 +135,7 @@ void BDSCavityFactoryBase::SetVisAttributes(G4String colourName)
   allVisAttributes.push_back(cavityVis);
   
   // vacuum
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
   // container
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
 }

@@ -189,18 +189,20 @@ protected:
 
   /// Copy face normals from members to an instance of outer.
   void SetFaceNormals(BDSMagnetOuter* outer);
-  
-  // geometric pointers that will be used to pass around components
+
+  /// @{ Cache of global constants variable.
+  G4double           lengthSafety;
+  G4bool             checkOverlaps;
+  G4bool             visDebug;
+  G4double           nSegmentsPerCircle;
+  G4bool             sensitiveOuter;
+  G4VisAttributes*   containerVisAttr;
+  G4UserLimits*      defaultUserLimits;
+  /// @}
+
+  // Geometric pointers that will be used to pass around components
   // within the factory (as different parts factorised so they can
   // be overridden by the derived classes.
-  G4double           lengthSafety;
-  G4bool             checkOverlaps; ///< to avoid using globalconstants a lot
-  G4bool             visDebug;
-
-  /// For visualisation improvement. Also used for coil end piece geometry
-  G4double           nSegmentsPerCircle;
-  G4bool             sensitiveOuter; ///< Cache of global constants variable.
-  G4double           maxStepFactor;      ///< For user limits.
   G4VSolid*          poleSolid; ///< Solid for an individual pole that will be placed multiple times.
   G4VSolid*          yokeSolid; ///< Solid for outer part that connects all poles.
   G4VSolid*          containerSolid;
