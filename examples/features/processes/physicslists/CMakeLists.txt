@@ -68,8 +68,8 @@ simple_fail(physics-invalid          "--file=gibberish.gmad"        ${OVERLAP_CH
 if(DEFINED ENV{G4PARTICLEHPDATA})
   message(STATUS "Tests will use G4PARTICLEHPDATA")
   if (G4_MINOR_VERSION GREATER 2 OR (G4_MINOR_VERSION EQUAL 2 AND G4_PATCH_LEVEL GREATER 2))
-    simple_testing(physics-ion-php              "--file=ion_php.gmad"               ${OVERLAP_CHECK})
-    simple_testing(physics-alias-ionphp         "--file=alias_ionphp.gmad"          ${OVERLAP_CHECK})
+    simple_testing_long(physics-ion-php         "--file=ion_php.gmad"               ${OVERLAP_CHECK})
+    simple_testing_long(physics-alias-ionphp         "--file=alias_ionphp.gmad"          ${OVERLAP_CHECK})
   endif()
   simple_testing(physics-ion-inclxx             "--file=ion_inclxx.gmad"            ${OVERLAP_CHECK})
   simple_testing(physics-alias-ion-inclxx       "--file=alias_ioninclxx.gmad"       ${OVERLAP_CHECK})
@@ -105,7 +105,7 @@ endif()
 #aliases
 simple_testing(physics-alias-cerenkov    "--file=alias_cerenkov.gmad"     ${OVERLAP_CHECK})
 simple_testing(physics-alias-emlow       "--file=alias_emlow.gmad"        ${OVERLAP_CHECK})
-simple_testing(physics-alias-hadronic-hp "--file=alias_hadronic_hp.gmad"  ${OVERLAP_CHECK})
+simple_testing_long(physics-alias-hadronic-hp "--file=alias_hadronic_hp.gmad"  ${OVERLAP_CHECK})
 simple_testing(physics-alias-synchrad    "--file=alias_synchrad.gmad"     ${OVERLAP_CHECK})
 
 
