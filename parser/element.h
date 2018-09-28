@@ -119,6 +119,7 @@ namespace GMAD
     double tilt;    ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
+    double xsizeLeft, xsizeRight; ///< individual collimator jaw half widths
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
 

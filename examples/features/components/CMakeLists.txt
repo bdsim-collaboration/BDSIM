@@ -12,6 +12,7 @@ simple_testing(component-ecol-tapered        "--file=ecol_tapered.gmad"    ${OVE
 simple_testing(component-gap                 "--file=gap.gmad"             ${OVERLAP_CHECK})	
 simple_testing(component-hkicker             "--file=hkicker.gmad"         ${OVERLAP_CHECK})
 simple_testing(component-hkicker-fringe      "--file=hkicker_fringe.gmad"  ${OVERLAP_CHECK})
+simple_testing(component-jcol                "--file=jcol.gmad"            ${OVERLAP_CHECK})
 simple_testing(component-kicker              "--file=kicker.gmad"          ${OVERLAP_CHECK})
 simple_testing(component-laserire            "--file=laser.gmad"           ${OVERLAP_CHECK})
 simple_testing(component-multipole-thick     "--file=multipole_thick.gmad" ${OVERLAP_CHECK})

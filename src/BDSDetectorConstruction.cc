@@ -219,6 +219,13 @@ void BDSDetectorConstruction::BuildBeamlines()
       exit(1);
     }
 
+  // print warning if beamline is approximately circular but flag isnt specfied
+  if (not circular and mainBeamline.massWorld->ElementAnglesSumToCircle())
+    {
+      G4cerr << __METHOD_NAME__ << "WARNING: Total sum of all element angles is approximately 2*pi"
+             << " but the circular option was not specified, this simulation may run indefinitely" << G4endl;
+    }
+
   // register the beamline in the holder class for the full model
   acceleratorModel->RegisterBeamlineSetMain(mainBeamline);
 
@@ -506,11 +513,14 @@ void BDSDetectorConstruction::ComponentPlacement(G4VPhysicalVolume* worldPV)
 			   worldPV, checkOverlaps,
 			   BDSSDManager::Instance()->GetEnergyCounterTunnelSD());
     }
+  // No energy counter SD added here as individual placements have that attached
+  // during construction time
   PlaceBeamlineInWorld(placementBL, worldPV, checkOverlaps);
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (auto const& bl : extras)
     {// extras is map so iterator has first and second for key and value
+      // note these are currently not sensitive as there's no CL frame for them
       PlaceBeamlineInWorld(bl.second.massWorld, worldPV, checkOverlaps);
       PlaceBeamlineInWorld(bl.second.endPieces, worldPV, checkOverlaps);
     }

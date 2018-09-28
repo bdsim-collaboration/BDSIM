@@ -191,22 +191,21 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   containerLV = new G4LogicalVolume(containerSolid,
 				    worldMaterial,
 				    name + "_container_lv");
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  containerLV->SetVisAttributes(containerVisAttr);
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
 					  worldMaterial,
 					  name + "_container_lv");
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(containerVisAttr);
 
   // user limits
-  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
-  yokeLV->SetUserLimits(ul);
-  containerLV->SetUserLimits(ul);
-  magnetContainerLV->SetUserLimits(ul);
+  yokeLV->SetUserLimits(defaultUserLimits);
+  containerLV->SetUserLimits(defaultUserLimits);
+  magnetContainerLV->SetUserLimits(defaultUserLimits);
   for (auto& lv : poleLVs)
-    {lv->SetUserLimits(ul);}
+    {lv->SetUserLimits(defaultUserLimits);}
   for (auto& lv : allLogicalVolumes)
-    {lv->SetUserLimits(ul);}
+    {lv->SetUserLimits(defaultUserLimits);}
 
   // create logical volumes for the coils using base class method
   CreateLogicalVolumesCoil(name);
@@ -215,9 +214,6 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(const G4String& name,
 						       G4int    orderIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
@@ -267,7 +263,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String    
 									    orderIn, magnetContainerRadiusIn, recipe);
   
   outer->RegisterLogicalVolume(poleLVs);
-  outer->RegisterSensitiveVolume(poleLVs);
+  if (sensitiveOuter)
+    {outer->RegisterSensitiveVolume(poleLVs);}
   
   return outer;
 }

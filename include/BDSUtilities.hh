@@ -186,6 +186,9 @@ namespace BDS
   G4UserLimits* CreateUserLimits(G4UserLimits*  defaultUL,
 				 const G4double length,
 				 const G4double fraction = 1.6);
+
+  /// Get the curent memory usage.
+  G4double GetMemoryUsage();
 }
 
 #endif

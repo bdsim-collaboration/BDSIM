@@ -31,6 +31,8 @@ class BDSBeamPipeInfo;
 class BDSFieldInfo;
 class BDSSimpleComponent;
 class G4LogicalVolume;
+class G4UserLimits;
+class G4VisAttributes;
 
 /**
  * @brief Abstract class that represents a component of an accelerator.
@@ -212,6 +214,14 @@ protected:
   /// (from BDSGeometryComponent) RegisterLogicalVolume() or by manually deleting itself.
   inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn)
   {acceleratorVacuumLV = accVacLVIn;}
+
+  /// This tests to see if the length of the BDSAcceleratorComponent is shorter than the
+  /// global step length in the global users limits and if so build a unique one for this
+  /// component and register it (memory management). It's provided by the member userLimits.
+  /// This will be nullptr until this function is called, which is called in this class's
+  /// Build(). Putting it here makes the same G4UserLimits object available to all derived
+  /// classes potentially saving creation of a duplicate object.
+  void BuildUserLimits();
   
   ///@{ Const protected member variable that may not be changed by derived classes
   const G4String   name;
@@ -228,11 +238,15 @@ protected:
   /// Optional beam pipe recipe that is written out to the survey if it exists.
   BDSBeamPipeInfo* beamPipeInfo;
 
-  /// Useful variables often used in construction
+  /// @{ Useful variable often used in construction.
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
   static G4Material* worldMaterial;
   static G4bool      checkOverlaps;
+  static G4bool      sensitiveOuter;
+  static G4bool      sensitiveVacuum;
+  static G4VisAttributes* containerVisAttr;
+  /// @}
 
   /// The logical volume in this component that is the volume the beam passes through that
   /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
@@ -241,6 +255,8 @@ protected:
 
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;
+
+  G4UserLimits* userLimits; ///< Cache of user limits.
   
 private:
   /// Private default constructor to force use of provided constructors, which
@@ -259,6 +275,7 @@ private:
   /// This check protects against duplicate initialisation and therefore the potential
   /// memory leaks that would ensue.
   G4bool initialised;
+  
   /// Record of how many times this component has been copied.
   G4int copyNumber;
 

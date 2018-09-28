@@ -47,6 +47,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   localSamplersInitialised(false)
 {
+  G4bool storeTurn       = globals->StoreELossTurn();
   G4bool storeLinks      = globals->StoreELossLinks();
   G4bool storeLocal      = globals->StoreELossLocal();
   G4bool storeGlobal     = globals->StoreELossGlobal();
@@ -60,11 +61,12 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   optionsOutput = new BDSOutputROOTEventOptions();
   modelOutput   = new BDSOutputROOTEventModel();
 
-  eLoss = new BDSOutputROOTEventLoss(storeLinks, storeLocal, storeGlobal,
+  eLoss = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
                                      storeTime, storeStepLength, storePreStepKineticEnergy);
-  pFirstHit = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
-  pLastHit  = new BDSOutputROOTEventLoss(true,  true,  true, true,  false, false);
-  tunnelHit = new BDSOutputROOTEventLoss(false, false, true, false, false, false);
+  pFirstHit = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
+  pLastHit  = new BDSOutputROOTEventLoss(true, true,  true,  true, true,  false, false);
+  tunnelHit = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeLocal, storeGlobal,
+					 storeTime, storeStepLength, storePreStepKineticEnergy);
   traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();

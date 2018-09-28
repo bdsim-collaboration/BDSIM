@@ -156,7 +156,7 @@ G4String BDSGDMLPreprocessor::PreprocessFile(const G4String& file,
   pSerializer->write(doc, pDomLsOutput);
   pSerializer->release();
 
-  G4cout << __METHOD_NAME__ << "Preprcessing complete" << G4endl;
+  G4cout << __METHOD_NAME__ << "Preprocessing complete" << G4endl;
 
   delete pTarget;
   delete parser;

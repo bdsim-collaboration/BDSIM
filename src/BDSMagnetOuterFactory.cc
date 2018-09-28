@@ -110,6 +110,9 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 							 G4double            containerLength,
 							 BDSBeamPipe*        beamPipe)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<  *magnetOuterInfo << G4endl;
+#endif
   BDSMagnetOuter* outer = nullptr;
 
   G4String name                      = outerInfo->name;

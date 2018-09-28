@@ -58,6 +58,6 @@ namespace BDS
   
   G4GenericBiasingPhysics* BuildAndAttachBiasWrapper(const GMAD::FastList<GMAD::PhysicsBiasing>& biases);
 
-};
+}
 
 #endif

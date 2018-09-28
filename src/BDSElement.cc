@@ -28,12 +28,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 
 class BDSFieldInfo;
 
-BDSElement::BDSElement(G4String      nameIn,
-		       G4double      lengthIn,
-		       G4double      horizontalWidthIn,
-		       G4String      geometryIn,
-		       G4String      fieldNameIn):
-  BDSAcceleratorComponent(nameIn, lengthIn, 0, "element"),
+BDSElement::BDSElement(G4String nameIn,
+		       G4double lengthIn,
+		       G4double horizontalWidthIn,
+		       G4String geometryIn,
+		       G4String fieldNameIn,
+		       G4double angle):
+  BDSAcceleratorComponent(nameIn, lengthIn, angle, "element"),
   horizontalWidth(horizontalWidthIn),
   geometryFileName(geometryIn),
   fieldName(fieldNameIn)
@@ -41,10 +42,6 @@ BDSElement::BDSElement(G4String      nameIn,
 
 void BDSElement::BuildContainerLogicalVolume()
 {
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-
   // The horizontalWidth here is a suggested horizontalWidth for the factory. Each subfactory may treat this
   // differently.
   BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(name, geometryFileName, nullptr,
@@ -82,7 +79,7 @@ void BDSElement::BuildContainerLogicalVolume()
 	     << " of the element, which will cause overlaps!" << G4endl
 	     << "Calculated extent along z: " << extLength << " mm, vs specified "
 	     << chordLength << G4endl;
-      exit(1);
+      //exit(1);
     }
 
   // Get the field definition from the parser

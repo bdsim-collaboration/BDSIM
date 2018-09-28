@@ -82,7 +82,9 @@ BDSColours::BDSColours()
   colours["srfcavity"]        = new G4Colour(0.69,  0.769, 0.871); // light steel blue
   colours["collimator"]       = new G4Colour(0.3,   0.4,   0.2);   // dark green
   colours["ecol"]             = colours["collimator"];
+  colours["jcol"]             = colours["collimator"];
   colours["rcol"]             = colours["collimator"];
+  colours["jcol"]             = colours["collimator"];
   colours["muonspoiler"]      = new G4Colour(0,     0.807, 0.819); // "light blue" / tab blue
   colours["vkicker"]          = new G4Colour(0.73,  0.33,  0.83);  // blue
   colours["hkicker"]          = new G4Colour(0.3,   0.2,   0.7);   // blue

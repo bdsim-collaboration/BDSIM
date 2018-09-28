@@ -65,9 +65,10 @@ namespace GMAD
     _PARALLELTRANSPORTER = 67,
     _RMATRIX     = 68,
     _CRYSTALCOL  = 69,
-    _WIRESCANNER = 70,
-    _AWSCREEN    = 71,
-    _UNDULATOR   = 72,
+    _UNDULATOR   = 70,
+    _JCOL        = 71,
+    _AWSCREEN    = 72,
+    _WIRESCANNER = 73
   };
 
   /// conversion from enum to string

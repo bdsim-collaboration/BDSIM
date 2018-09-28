@@ -72,6 +72,7 @@ OptionsBase::OptionsBase()
   
   ffact                 = 1.0;
 
+  // beam line offset and rotation
   beamlineX         = 0;
   beamlineY         = 0;
   beamlineZ         = 0;
@@ -109,8 +110,11 @@ OptionsBase::OptionsBase()
   includeFringeFields  = true;
 
   yokeFields           = true;
-  sensitiveBeamlineComponents = true;
-
+  sensitiveOuter       = true;
+  sensitiveBeamPipe    = true;
+  sensitiveTunnel      = true;
+  sensitiveVacuum      = false;
+  
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
   apertureType         = "circular";
@@ -123,12 +127,11 @@ OptionsBase::OptionsBase()
   
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
-  worldMaterial        = "air";
+  worldMaterial        = "G4_AIR";
 
   worldVolumeMargin = 5; //m
 
   vacuumPressure       = 1e-12;
-  sensitiveBeamPipe    = true;
 
   // tunnel options
   buildTunnel         = false;
@@ -142,7 +145,6 @@ OptionsBase::OptionsBase()
   tunnelFloorOffset   = 1.0; // m
   tunnelAper1         = 2.0; // m
   tunnelAper2         = 2.0; // m
-  tunnelSensitive     = true;
   tunnelVisible       = true;
   tunnelOffsetX       = 0;
   tunnelOffsetY       = 0;
@@ -213,6 +215,7 @@ OptionsBase::OptionsBase()
   trajCutLTR               = 0.0;   // maximum radius in mm, so small default value
   trajConnect              = false; // connect disconnected trajectory trees
   trajNoTransportation     = false;
+  storeElossTurn           = false;
   storeElossLinks          = false;
   storeElossLocal          = false;
   storeElossGlobal         = false;
@@ -225,6 +228,7 @@ OptionsBase::OptionsBase()
   storeTrajectoryParticleID = "";
   storeTrajectoryEnergyThreshold = -1.0;
   storeSamplerCharge       = false;
+  storeSamplerKineticEnergy = false;
   storeSamplerMass         = false;
   storeSamplerRigidity     = false;
   storeSamplerIon          = false;
