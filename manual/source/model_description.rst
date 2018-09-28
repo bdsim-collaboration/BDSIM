@@ -3402,6 +3402,10 @@ following options.
 | storeElossLocal                   | Local coordinates will be stored for each energy deposition hit    |
 |                                   | and for each trajectory point. Default off.                        |
 +-----------------------------------+--------------------------------------------------------------------+
+| storeElossModelID                 | Store the beam line index of the object the energy deposition hit  |
+|                                   | was in. If `storeElossLinks` is on, this will be on irrespective   |
+|                                   | of this option.                                                    |
++-----------------------------------+--------------------------------------------------------------------+
 | storeElossTime                    | The time since the start of the event will be stored for each point|
 |                                   | of energy deposition and trajectory. Default off.                  |
 +-----------------------------------+--------------------------------------------------------------------+

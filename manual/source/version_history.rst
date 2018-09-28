@@ -10,6 +10,8 @@ New Features
 * New option :code:`storeElossTurn` to control whether energy deposition turn number is saved.
 * New option :code:`sensitiveVacuum` to control whether energy deposition in the residual
   gas in the beam pipe 'vacuum' is recorded.
+* New option :code:`storeElossModelID` to control whether the beam line index is stored in
+  the energy loss output. More granular than :code:`storeElossLinks`.
 
 General
 -------
