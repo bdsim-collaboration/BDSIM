@@ -69,7 +69,10 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   fileExtension(fileExtensionIn),
   outputFileNumber(fileNumberOffset),
   sMaxHistograms(0),
-  nbins(0)
+  nbins(0),
+  energyDeposited(0),
+  energyDepositedWorld(0),
+  energyDepositedTunnel(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
@@ -178,8 +181,12 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
 			  const G4int                           turnsTaken)
 {
-  if (info)
-    {FillEventInfo(info);}
+  // Clear integrals in this class -> here instead of BDSOutputStructures as
+  // looped over here -> do only once as expensive as lots of hits
+  energyDeposited       = 0;
+  energyDepositedWorld  = 0;
+  energyDepositedTunnel = 0;
+  
   if (vertex)
     {FillPrimary(vertex, turnsTaken);}
   if (samplerHitsPlane)
@@ -192,6 +199,12 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillEnergyLoss(tunnelLoss, BDSOutput::LossType::tunnel);}
   if (worldLoss)
     {FillEnergyLoss(worldLoss,  BDSOutput::LossType::world);}
+
+  // we do this after energy loss as the energy loss is integrated for
+  // putting in event info
+  if (info)
+    {FillEventInfo(info);}
+  
   if (primaryHit)
     {FillPrimaryHit(primaryHit);}
   if (primaryLoss)
@@ -333,6 +346,9 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 {
   if (info)
     {*evtInfo = *(info->GetInfo());}
+  evtInfo->energyDeposited = energyDeposited;
+  evtInfo->energyDepositedWorld = energyDepositedWorld;
+  evtInfo->energyDepositedTunnel = energyDepositedTunnel;
 }
 
 void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
@@ -411,6 +427,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	case BDSOutput::LossType::energy:
 	  {// number - 1 for the index
 	    eLoss->Fill(hit);
+	    energyDeposited += eW;
 	    runHistos->Fill1DHistogram(2, sHit, eW);
 	    evtHistos->Fill1DHistogram(2, sHit, eW);
 	    runHistos->Fill1DHistogram(5, sHit, eW);
@@ -419,6 +436,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  }
 	case BDSOutput::LossType::tunnel:
 	  {
+	    energyDepositedTunnel += eW;
 	    tunnelHit->Fill(hit);
 	    runHistos->Fill1DHistogram(6, sHit, eW);
 	    evtHistos->Fill1DHistogram(6, sHit, eW);
@@ -429,6 +447,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	case BDSOutput::LossType::world:
 	  {
 	    eLossWorld->Fill(hit);
+	    energyDepositedWorld += eW;
 	    break;
 	  }
 	default:

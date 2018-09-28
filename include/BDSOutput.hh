@@ -228,6 +228,12 @@ private:
   G4bool storeOption3;
   G4bool storeOption4;
   /// @}
+
+  /// @{ Integral when filling hit.
+  G4double energyDeposited;
+  G4double energyDepositedWorld;
+  G4double energyDepositedTunnel;
+  /// @}
 };
 
 #endif
