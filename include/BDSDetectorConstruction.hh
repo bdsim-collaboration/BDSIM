@@ -175,6 +175,7 @@ private:
   G4double     brho;        ///< Beam rigidity that accelerator will be constructed w.r.t.
   G4double     beta0;       ///< Beam relativistic beta that accelerator components use.
   G4bool canSampleAngledFaces; ///< Whether the integrator set permits sampling elements with angled faces.
+  G4bool useExternalGeometryWorld;
 };
 
 #endif

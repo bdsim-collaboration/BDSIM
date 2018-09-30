@@ -36,6 +36,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSFieldObjects.hh"
 #include "BDSGap.hh"
 #include "BDSGeometryComponent.hh"
+#include "BDSGeometryExternal.hh"
+#include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSMaterials.hh"
@@ -101,6 +103,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
     }
 
   UpdateSamplerDiameter();
+  useExternalGeometryWorld = false;
 }
 
 void BDSDetectorConstruction::UpdateSamplerDiameter()
@@ -449,25 +452,54 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
 #endif
-  
-  G4String worldName   = "World";
-  worldExtent          = BDSExtent(worldR);
-  G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
-  G4Material* worldMaterial     = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
-  G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
-						      worldMaterial,           // material
-						      worldName + "_lv");      // name
-  
-  // visual attributes
-  // copy the debug vis attributes but change to force wireframe
-  G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
-  debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
-  worldLV->SetVisAttributes(debugWorldVis);
-	
-  // set limits
-  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+  G4String worldName = "World";
+  G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
+  G4Material *worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
+
+  std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
+  if (geometryFile != "")
+    {useGDMLWorld = true;}
+
+  G4LogicalVolume *worldLV;
+  G4VSolid *worldSolid;
+
+  if (useExternalGeometryWorld)
+    {
+      BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry("world", geometryFile, nullptr, 0, 0);
+
+      worldExtent = geom->GetExtent();
+      worldLV = geom->GetContainerLogicalVolume();
+      worldSolid = geom->GetContainerSolid();
+
+      // visual attributes
+      // copy the debug vis attributes but change to force wireframe
+      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+      worldLV->SetVisAttributes(debugWorldVis);
+
+      // set limits
+      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+    }
+  else
+    {
+      worldExtent = BDSExtent(worldR);
+      worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
+
+
+      worldLV = new G4LogicalVolume(worldSolid,              // solid
+                                    worldMaterial,           // material
+                                    worldName + "_lv");      // name
+
+      // visual attributes
+      // copy the debug vis attributes but change to force wireframe
+      G4VisAttributes *debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->ContainerVisAttr()));
+      debugWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+      worldLV->SetVisAttributes(debugWorldVis);
+
+      // set limits
+      worldLV->SetUserLimits(BDSGlobalConstants::Instance()->DefaultUserLimits());
+    }
 
   // place the world
   G4VPhysicalVolume* worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
