@@ -408,11 +408,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   // These beamlines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
-  extents.push_back(blMain.massWorld->GetMaximumExtentAbsolute());
-  const auto blMainCL = blMain.curvilinearWorld;
-  if (blMainCL)
-    {extents.push_back(blMainCL->GetMaximumExtentAbsolute());}
-  
+  std::vector<G4ThreeVector> blMainExtents = blMain.GetMaximumExtentAbsolute();
+  extents.insert(extents.end(), blMainExtents.begin(), blMainExtents.end());
+
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
     {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
@@ -421,54 +419,52 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   if (tunnelBeamline)
     {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
-  // Expand to maximum extents of each beam line.
-  G4ThreeVector worldR;
-
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   for (const auto& bl : extras)
     {// extras is a map, so iterator has first and second for key and value
-      extents.push_back(bl.second.massWorld->GetMaximumExtentAbsolute());
-      if (bl.second.curvilinearWorld)
-	{extents.push_back(bl.second.curvilinearWorld->GetMaximumExtentAbsolute());}
-      if (bl.second.curvilinearBridgeWorld)
-	{extents.push_back(bl.second.curvilinearBridgeWorld->GetMaximumExtentAbsolute());}
-      if (bl.second.endPieces)
-	{extents.push_back(bl.second.endPieces->GetMaximumExtentAbsolute());}
+      std::vector<G4ThreeVector> eblExtents = bl.second.GetMaximumExtentAbsolute();
+      extents.insert(extents.end(), eblExtents.begin(), eblExtents.end());
     }
+
+  // Expand to maximum extents of each beam line.
+  G4ThreeVector worldR;
 
   // loop over all extents from all beam lines
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	{worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
+	    {worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
     }
-  
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
-#endif
-  G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
-  margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
-  worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
-#endif
 
   G4String worldName = "World";
   G4String worldMaterialName = BDSGlobalConstants::Instance()->WorldMaterial();
   G4Material *worldMaterial = BDSMaterials::Instance()->GetMaterial(worldMaterialName);
 
   std::string geometryFile = BDSGlobalConstants::Instance()->WorldGeometryFile();
+
+  BDSGeometryExternal* geom = nullptr;
   if (geometryFile != "")
-    {useGDMLWorld = true;}
+    {
+      geom = BDSGeometryFactory::Instance()->BuildGeometry("world", geometryFile, nullptr, 0, 0);
+      useExternalGeometryWorld = true;
+    }
 
   G4LogicalVolume *worldLV;
   G4VSolid *worldSolid;
 
   if (useExternalGeometryWorld)
     {
-      BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry("world", geometryFile, nullptr, 0, 0);
-
       worldExtent = geom->GetExtent();
+      // cannot construct world if any beamline extent is greater than the world extents
+      if ((worldR[0] > worldExtent.MaximumX()) ||
+          (worldR[1] > worldExtent.MaximumY()) ||
+          (worldR[2] > worldExtent.MaximumZ()))
+        {
+          G4cerr << __METHOD_NAME__ << "Beamlines cannot be constructed, beamline extents are larger than "
+                 << "the extents of the external world" << G4endl;
+          exit(1);
+        }
+
       worldLV = geom->GetContainerLogicalVolume();
       worldSolid = geom->GetContainerSolid();
 
@@ -483,6 +479,17 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
     }
   else
     {
+      // add on margin for constructed world volume
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
+#endif
+      G4double margin = BDSGlobalConstants::Instance()->WorldVolumeMargin();
+      margin = std::max(margin, 2*CLHEP::m); // minimum margin of 2m.
+      worldR += G4ThreeVector(margin,margin,margin); //add 5m extra in every dimension
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "with " << margin << "m margin, it becomes in all dimensions: " << worldR << G4endl;
+#endif
+
       worldExtent = BDSExtent(worldR);
       worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
