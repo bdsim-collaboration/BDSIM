@@ -49,6 +49,7 @@ public:
   double energyDeposited;       ///< Total energy depostied in machine (not world or tunnel).
   double energyDepositedWorld;  ///< Total energy deposited in the world for this event.
   double energyDepositedTunnel; ///< Total energy deposited in the tunnel for this event.
+  double energyWorldExit;       ///< Total energy leaving the world.
   
   ClassDef(BDSOutputROOTEventInfo,4);
 };

@@ -23,6 +23,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputStructures.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCoords.hh"
+#include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -70,6 +71,7 @@ BDSOutputStructures::BDSOutputStructures(const BDSGlobalConstants* globals):
   eLossWorld = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
 					  storeGlobal, storeTime, storeStepLength,
 					  storePreStepKineticEnergy);
+  eLossWorldExit = new BDSOutputROOTEventExit();
   pFirstHit  = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
   pLastHit   = new BDSOutputROOTEventLoss(true, true,  true, true,  true, true,  false, false);
   tunnelHit  = new BDSOutputROOTEventLoss(storeTurn, storeLinks, storeModelID, storeLocal,
@@ -102,6 +104,7 @@ BDSOutputStructures::~BDSOutputStructures()
   delete primaryGlobal;
   delete eLoss;
   delete eLossWorld;
+  delete eLossWorldExit;
   delete pFirstHit;
   delete pLastHit;
   delete tunnelHit;
@@ -177,6 +180,7 @@ void BDSOutputStructures::ClearStructuresEventLevel()
   primaryGlobal->Flush();
   eLoss->Flush();
   eLossWorld->Flush();
+  eLossWorldExit->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
   tunnelHit->Flush();

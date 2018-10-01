@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSGlobalConstants;
 class BDSOutputROOTEventBeam;
 class BDSOutputROOTEventCoords;
+class BDSOutputROOTEventExit;
 class BDSOutputROOTEventHeader;
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
@@ -118,6 +119,7 @@ protected:
   BDSOutputROOTEventLoss*       pLastHit;   ///< Primary loss point.
   BDSOutputROOTEventLoss*       tunnelHit;  ///< Tunnel energy deposition.
   BDSOutputROOTEventLoss*       eLossWorld; ///< World energy deposition.
+  BDSOutputROOTEventExit*       eLossWorldExit;///< World exit hits.
   BDSOutputROOTEventTrajectory* traj;       ///< Trajectories.
   BDSOutputROOTEventHistograms* evtHistos;  ///< Event level histograms.
   BDSOutputROOTEventInfo*       evtInfo;    ///< Event information.

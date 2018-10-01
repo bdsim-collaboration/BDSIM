@@ -387,6 +387,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    energyCounterHits,
 		    tunnelEnergyCounterHits,
 		    worldEnergyCounterHits,
+		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,
 		    interestingTraj,

@@ -26,6 +26,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutput.hh"
 #include "BDSOutputROOTEventBeam.hh"
 #include "BDSOutputROOTEventCoords.hh"
+#include "BDSOutputROOTEventExit.hh"
 #include "BDSOutputROOTEventHeader.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
@@ -40,6 +41,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
+#include "BDSVolumeExitHit.hh"
 
 #include "globals.hh"
 #include "G4PrimaryParticle.hh"
@@ -58,7 +60,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 const std::set<G4String> BDSOutput::protectedNames = {
   "Event", "Histos", "Info", "Primary", "PrimaryGlobal", "Eloss",
   "PrimaryFirstHit", "PrimaryLastHit", "TunnelHit", "ElossWorld",
-  "Trajectory"
+  "ElossWorldExit", "Trajectory"
 };
 
 BDSOutput::BDSOutput(G4String baseFileNameIn,
@@ -72,7 +74,8 @@ BDSOutput::BDSOutput(G4String baseFileNameIn,
   nbins(0),
   energyDeposited(0),
   energyDepositedWorld(0),
-  energyDepositedTunnel(0)
+  energyDepositedTunnel(0),
+  energyWorldExit(0)
 {
   const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
   numberEventPerFile = g->NumberOfEventsPerNtuple();
@@ -176,6 +179,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
 			  const BDSEnergyCounterHitsCollection* energyLoss,
 			  const BDSEnergyCounterHitsCollection* tunnelLoss,
 			  const BDSEnergyCounterHitsCollection* worldLoss,
+			  const BDSVolumeExitHitsCollection*    worldExitHits,
 			  const BDSTrajectoryPoint*             primaryHit,
 			  const BDSTrajectoryPoint*             primaryLoss,
 			  const std::map<BDSTrajectory*,bool>&  trajectories,
@@ -199,6 +203,8 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
     {FillEnergyLoss(tunnelLoss, BDSOutput::LossType::tunnel);}
   if (worldLoss)
     {FillEnergyLoss(worldLoss,  BDSOutput::LossType::world);}
+  if (worldExitHits)
+    {FillElossWorldExitHits(worldExitHits);}
 
   // we do this after energy loss as the energy loss is integrated for
   // putting in event info
@@ -346,9 +352,10 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
 {
   if (info)
     {*evtInfo = *(info->GetInfo());}
-  evtInfo->energyDeposited = energyDeposited;
-  evtInfo->energyDepositedWorld = energyDepositedWorld;
+  evtInfo->energyDeposited       = energyDeposited;
+  evtInfo->energyDepositedWorld  = energyDepositedWorld;
   evtInfo->energyDepositedTunnel = energyDepositedTunnel;
+  evtInfo->energyWorldExit       = energyWorldExit;
 }
 
 void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
@@ -417,7 +424,7 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 			       const LossType lossType)
 {
   G4int n_hit = hits->entries();
-  for(G4int i=0;i<n_hit;i++)
+  for (G4int i=0;i<n_hit;i++)
     {
       BDSEnergyCounterHit* hit = (*hits)[i];
       G4double sHit = hit->GetSHit()/CLHEP::m;
@@ -460,6 +467,17 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  G4double y = hit->Gety()/CLHEP::m;
 	  evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
 	}
+    }
+}
+
+void BDSOutput::FillElossWorldExitHits(const BDSVolumeExitHitsCollection* hits)
+{
+  G4int nHits = hits->entries();
+  for (G4int i = 0; i < nHits; i++)
+    {
+      BDSVolumeExitHit* hit = (*hits)[i];
+      energyWorldExit += hit->TotalEnergyWeighted()/CLHEP::GeV;
+      eLossWorldExit->Fill(hit);
     }
 }
 
