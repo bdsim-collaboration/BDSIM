@@ -20,6 +20,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #define BDSFIELDOBJECTS_H
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Version.hh"
 
 #include <vector>
 
@@ -31,6 +32,7 @@ class G4EquationOfMotion;
 class G4Field;
 class G4FieldManager;
 class G4LogicalVolume;
+class G4MagneticField;
 class G4MagInt_Driver;
 class G4MagIntegratorStepper;
 
@@ -65,6 +67,15 @@ public:
 		  G4ElectroMagneticField* fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn);
+
+#if G4VERSION_NUMBER > 1049
+  /// In Geant4.10.5.b01, the field class inheritance has changed and G4MagneticField
+  /// no longer inherits G4ElectroMagneticField.
+  BDSFieldObjects(const BDSFieldInfo*     infoIn,
+		  G4MagneticField*        fieldIn,
+		  G4EquationOfMotion*     equationOfMotionIn,
+		  G4MagIntegratorStepper* magIntegratorStepperIn);
+#endif
 
   /// Destructor deletes all objects apart from the magnetic field
   ~BDSFieldObjects();

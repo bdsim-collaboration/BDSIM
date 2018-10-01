@@ -28,6 +28,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4MagIntegratorDriver.hh" // for G4MagInt_Driver
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
+#include "G4Version.hh"
 
 #include <vector>
 
@@ -72,6 +73,35 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
   fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());
   fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
+
+#if G4VERSION_NUMBER > 1049
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
+				 G4MagneticField*        fieldIn,
+				 G4EquationOfMotion*     equationOfMotionIn,
+				 G4MagIntegratorStepper* magIntegratorStepperIn):
+  info(infoIn),
+  field(fieldIn),
+  equationOfMotion(equationOfMotionIn),
+  magIntegratorStepper(magIntegratorStepperIn)
+{
+  G4double chordStepMinimum = info->ChordStepMinimum();
+  if (chordStepMinimum <= 0)
+    {chordStepMinimum = BDSGlobalConstants::Instance()->ChordStepMinimum();}
+  
+  magIntDriver = new G4MagInt_Driver(chordStepMinimum,
+				     magIntegratorStepper,
+				     magIntegratorStepper->GetNumberOfVariables());
+
+  chordFinder  = new G4ChordFinder(magIntDriver);
+  fieldManager = new G4FieldManager(field, chordFinder);
+
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
+  fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
+  fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());
+  fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
+}
+#endif
 
 BDSFieldObjects::~BDSFieldObjects()
 {
