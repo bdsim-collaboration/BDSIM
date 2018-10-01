@@ -46,8 +46,8 @@ public:
 		     G4bool   verboseIn = false);
   virtual ~BDSEnergyCounterSD();
 
-  virtual void Initialize(G4HCofThisEvent*HCE);
-  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  virtual void Initialize(G4HCofThisEvent* HCE);
+  virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
   
 private:
   /// assignment and copy constructor not implemented nor used

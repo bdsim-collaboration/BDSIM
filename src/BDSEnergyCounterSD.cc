@@ -84,7 +84,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Energy Counter SD Hits Collection ID: " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "Hits Collection ID: " << HCIDe << G4endl;
 #endif
 }
 
