@@ -56,7 +56,7 @@ public:
   inline void* operator new(size_t);
   inline void operator delete(void *aHit);
 
-  inline G4double TotalEnergyWeighted()  const {return weight * totalEnergy;}
+  inline G4double TotalEnergyWeighted() const {return weight * totalEnergy;}
   
   G4double totalEnergy;
 

@@ -74,10 +74,10 @@ BDSSDManager::BDSSDManager()
   tunnelECounter = new BDSEnergyCounterSD("tunnel", stopSecondaries, verbose);
   SDMan->AddNewDetector(tunnelECounter);
 
-  worldECounter = new BDSEnergyCounterSD("world", stopSecondaries, verbose);
+  worldECounter = new BDSEnergyCounterSD("worldLoss", stopSecondaries, verbose);
   SDMan->AddNewDetector(worldECounter);
 
-  worldExit= new BDSVolumeExitSD("world", true);
+  worldExit= new BDSVolumeExitSD("worldExit", true);
   SDMan->AddNewDetector(worldExit);
 
 #if G4VERSION_NUMBER > 1029
