@@ -357,6 +357,7 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorld  = energyDepositedWorld;
   evtInfo->energyDepositedTunnel = energyDepositedTunnel;
   evtInfo->energyWorldExit       = energyWorldExit;
+  evtInfo->energyTotal =  energyDeposited + energyDepositedWorld + energyDepositedTunnel + energyWorldExit;
 }
 
 void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,
@@ -454,8 +455,10 @@ void BDSOutput::FillEnergyLoss(const BDSEnergyCounterHitsCollection* hits,
 	  }
 	case BDSOutput::LossType::world:
 	  {
-	    eLossWorld->Fill(hit);
+	    //G4cout << __METHOD_NAME__ << "energyDepositedWorld " << energyDepositedWorld << G4endl;
 	    energyDepositedWorld += eW;
+	    eLossWorld->Fill(hit);
+
 	    break;
 	  }
 	default:

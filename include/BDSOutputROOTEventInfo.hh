@@ -50,6 +50,7 @@ public:
   double energyDepositedWorld;  ///< Total energy deposited in the world for this event.
   double energyDepositedTunnel; ///< Total energy deposited in the tunnel for this event.
   double energyWorldExit;       ///< Total energy leaving the world.
+  double energyTotal;
   
   ClassDef(BDSOutputROOTEventInfo,4);
 };
