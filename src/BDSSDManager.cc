@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
+#include "BDSVolumeExitSD.hh"
 
 #include "G4SDManager.hh"
 
@@ -70,4 +71,7 @@ BDSSDManager::BDSSDManager()
 
   worldECounter = new BDSEnergyCounterSD("world", stopSecondaries, verbose);
   SDMan->AddNewDetector(worldECounter);
+
+  worldExit= new BDSVolumeExitSD("world", true);
+  SDMan->AddNewDetector(worldExit);
 }

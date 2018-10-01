@@ -22,6 +22,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 class BDSEnergyCounterSD;
 class BDSSamplerSD;
 class BDSTerminatorSD;
+class BDSVolumeExitSD;
 
 /**
  * @brief A singleton class that holds all required sensitive
@@ -60,6 +61,9 @@ public:
   /// SD for energy deposition in the world volume.
   inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return worldECounter;}
 
+  /// SD for world exit hits.
+  inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
+
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -76,6 +80,7 @@ private:
   BDSEnergyCounterSD* eCounter;
   BDSEnergyCounterSD* tunnelECounter;
   BDSEnergyCounterSD* worldECounter;
+  BDSVolumeExitSD*    worldExit;
   /// @}
 };
 
