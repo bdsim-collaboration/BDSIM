@@ -107,8 +107,8 @@ multipole { return MULTIPOLE; }
 thinmultipole { return THINMULT; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}
-jcol { return JCOL;}
 ecol { return ECOL; } 
+jcol { return JCOL; }
 muonspoiler { return MUONSPOILER; }
 muspoiler { return MUONSPOILER; }
 shield {return SHIELD; }

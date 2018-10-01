@@ -37,7 +37,6 @@ BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
   lengthSafety        = BDSGlobalConstants::Instance()->LengthSafety();
   lengthSafetyLarge   = 1*CLHEP::um;
   checkOverlaps       = BDSGlobalConstants::Instance()->CheckOverlaps();
-  maxStepFactor       = 1.0; // fraction of length for maximum step size
   nSegmentsPerCircle  = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   sensitiveBeamPipe   = BDSGlobalConstants::Instance()->SensitiveBeamPipe();
   sensitiveVacuum     = BDSGlobalConstants::Instance()->SensitiveVacuum();

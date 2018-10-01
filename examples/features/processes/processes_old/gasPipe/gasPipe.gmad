@@ -24,6 +24,6 @@ use ,period=myLine; !Chooses the beam line to use
 sample, range = sampler1;
 sample, range = sampler2; !Chooses which samplers to score
 
-option, ngenerate=101, nperfile=100; !Chooses the number of particles to generate
+option, ngenerate=10;
 
 

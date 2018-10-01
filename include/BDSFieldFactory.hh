@@ -151,8 +151,8 @@ private:
   static BDSFieldFactory* instance;
   
   /// Splits the G4String member variable formatAndName on the ":" character.
-  /// Whatever is before is taken as the fromat string and whatever is after is
-  /// taken as the filepath.
+  /// Whatever is before is taken as the format string and whatever is after is
+  /// taken as the file path.
   void ParseFormatAndFilename();
 
   /// Reset all pointers to nullptr that are temporarily used during construction

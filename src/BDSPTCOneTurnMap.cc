@@ -41,8 +41,8 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
   std::ifstream infile(filePath);
   if (!infile)
     {
-      G4String message = "Failed to read maptable: " + maptableFile;
-      G4cerr << __METHOD_NAME__ << message << " Exiting. " << G4endl;
+      G4String message = "Failed to read maptable: \"" + maptableFile + "\"";
+      G4cerr << __METHOD_NAME__ << message << G4endl;
       exit(1);
     }
 
@@ -110,15 +110,16 @@ void BDSPTCOneTurnMap::SetMass()
   mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
-void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
-    const BDSParticleCoordsFullGlobal &coords, G4bool beamOffsetS0In) {
+void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
+						    G4bool beamOffsetS0In)
+{
   lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
   initialPrimaryMomentum =
       std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
   // Converting to PTC Coordinates:
-  xLastTurn = coords.local.x / CLHEP::m;
+  xLastTurn  = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
-  yLastTurn = coords.local.y / CLHEP::m;
+  yLastTurn  = coords.local.y / CLHEP::m;
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
   deltaPLastTurn =
       (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
@@ -157,14 +158,14 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   // return the cached values below.
   if (lastTurnNumber < turnstaken)
     {
-      #ifdef BDSDEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Applying Map: " << G4endl;
       G4cout << "Before map application: " << G4endl;
       G4cout << "xLastTurn = " << xLastTurn << G4endl;
       G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
       G4cout << "yLastTurn = " << yLastTurn << G4endl;
       G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-      #endif
+#endif
 
       lastTurnNumber = turnstaken;
       xOut = evaluate(xTerms,
@@ -216,7 +217,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
       G4cout << "yOut = " << yOut << G4endl;
       G4cout << "pyOut = " << pyOut << G4endl;
 #endif
-  }
+    }
 
 
   // Now convert to BDSIM units:
@@ -280,7 +281,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // not have the same value for multiple applications on the same
   // turn) 2 and not 1 because teleporter comes after
   // terminator, where the turn number is incremented.
-  auto offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
+  G4bool offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
 
   // We reset the public static bool hasScatteredThisTurn at the end
   // of this method.  But what if the stepper is applied again on this
@@ -289,21 +290,20 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // that this method returns the same result for calls on the same
   // turn for the same primary.  This is necessary because we can't
   // force the Teleporter stepper to be called just once.
-  auto didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
+  G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
                             turnsScattered.count(turnstaken);
 
-  if (didScatterThisTurn) {
-    turnsScattered.insert(turnstaken);
-  }
+  // We always insert it into the set as nothing happens if it already exists, so
+  // we're safe inserting it every time for simplicity.
+  if (didScatterThisTurn)
+    {turnsScattered.insert(turnstaken);}
 
   // Have some tolerance for dealing with primaries far off momentum.
-  auto ratioOffReference =
-    std::abs((momentum - referenceMomentum) / referenceMomentum);
-  auto tolerance = 0.05; // arbitrarily chosen.  is this OK?
-  auto tooFarOffMomentum = ratioOffReference > tolerance;
+  G4double ratioOffReference = std::abs((momentum - referenceMomentum) / referenceMomentum);
+  G4double tolerance = 0.05; // arbitrarily chosen 5%
+  G4bool tooFarOffMomentum = ratioOffReference > tolerance;
 
-  auto should =
-    !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
+  G4bool should = !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__
@@ -326,7 +326,8 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
 }
 
 void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
-                                         G4ThreeVector localMomentum) {
+                                         G4ThreeVector localMomentum)
+{
   // This method is called in the integrator if the OTM is active but
   // NOT applicable.  So given that the TeleporterIntegrator will be called
   // multiple times, whatever happens here, it should not suddenly
@@ -336,7 +337,7 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
   yLastTurn = localPosition.y() / CLHEP::m;
   pxLastTurn = localMomentum.x() / referenceMomentum;
   pyLastTurn = localMomentum.y() / referenceMomentum;
-  auto totalMomentum = localMomentum.mag();
+  G4double totalMomentum = localMomentum.mag();
   deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
   // deltaPLastTurn assumed to not change between turns for 5D map.
 

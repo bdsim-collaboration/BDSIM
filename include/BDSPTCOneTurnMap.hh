@@ -70,11 +70,14 @@ public:
   // Decides whether or not this should be applied.  Can add more
 
   void SetBeamParameters(G4double referenceMomentum, G4double mass);
+
   void SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
 				    G4bool offsetS0);
+
   void UpdateCoordinates(G4ThreeVector localPosition,
 			 G4ThreeVector localMomentum);
-  G4bool IsBeamOffsetS0() const { return beamOffsetS0; }
+
+  inline G4bool IsBeamOffsetS0() const { return beamOffsetS0; }
 
   void GetThisTurn(G4double &x,
 		   G4double &px,
