@@ -352,4 +352,8 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
     G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
 #endif
   }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__
+         << "Skipping further coordinate updates without use of map" << G4endl;
+#endif
 }
