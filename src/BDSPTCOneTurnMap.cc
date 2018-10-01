@@ -41,8 +41,8 @@ BDSPTCOneTurnMap::BDSPTCOneTurnMap(G4String maptableFile):
   std::ifstream infile(filePath);
   if (!infile)
     {
-      G4String message = "Failed to read maptable: " + maptableFile;
-      G4cerr << __METHOD_NAME__ << message << " Exiting. " << G4endl;
+      G4String message = "Failed to read maptable: \"" + maptableFile + "\"";
+      G4cerr << __METHOD_NAME__ << message << G4endl;
       exit(1);
     }
 
@@ -110,15 +110,16 @@ void BDSPTCOneTurnMap::SetMass()
   mass = BDSGlobalConstants::Instance()->BeamParticleDefinition()->Mass();
 }
 
-void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(
-    const BDSParticleCoordsFullGlobal &coords, G4bool beamOffsetS0In) {
+void BDSPTCOneTurnMap::SetInitialPrimaryCoordinates(const BDSParticleCoordsFullGlobal& coords,
+						    G4bool beamOffsetS0In)
+{
   lastTurnNumber = BDSGlobalConstants::Instance()->TurnsTaken();
   initialPrimaryMomentum =
       std::sqrt(std::pow(coords.local.totalEnergy, 2) - std::pow(mass, 2));
   // Converting to PTC Coordinates:
-  xLastTurn = coords.local.x / CLHEP::m;
+  xLastTurn  = coords.local.x / CLHEP::m;
   pxLastTurn = coords.global.xp * initialPrimaryMomentum / referenceMomentum;
-  yLastTurn = coords.local.y / CLHEP::m;
+  yLastTurn  = coords.local.y / CLHEP::m;
   pyLastTurn = coords.global.yp * initialPrimaryMomentum / referenceMomentum;
   deltaPLastTurn =
       (initialPrimaryMomentum - referenceMomentum) / referenceMomentum;
@@ -157,14 +158,14 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
   // return the cached values below.
   if (lastTurnNumber < turnstaken)
     {
-      #ifdef BDSDEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Applying Map: " << G4endl;
       G4cout << "Before map application: " << G4endl;
       G4cout << "xLastTurn = " << xLastTurn << G4endl;
       G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
       G4cout << "yLastTurn = " << yLastTurn << G4endl;
       G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
-      #endif
+#endif
 
       lastTurnNumber = turnstaken;
       xOut = evaluate(xTerms,
@@ -216,7 +217,7 @@ void BDSPTCOneTurnMap::GetThisTurn(G4double &x,
       G4cout << "yOut = " << yOut << G4endl;
       G4cout << "pyOut = " << pyOut << G4endl;
 #endif
-  }
+    }
 
 
   // Now convert to BDSIM units:
@@ -292,9 +293,8 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   auto didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
                             turnsScattered.count(turnstaken);
 
-  if (didScatterThisTurn) {
-    turnsScattered.insert(turnstaken);
-  }
+  if (didScatterThisTurn)
+    {turnsScattered.insert(turnstaken);}
 
   // Have some tolerance for dealing with primaries far off momentum.
   auto ratioOffReference =

@@ -19,9 +19,10 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSPRIMARYGENERATORACTION_H
 #define BDSPRIMARYGENERATORACTION_H
 
-#include "G4VUserPrimaryGeneratorAction.hh"
 #include "BDSExtent.hh"
+
 #include "globals.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
 
 class BDSBunch;
 class BDSIonDefinition;
