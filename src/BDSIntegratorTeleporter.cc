@@ -73,8 +73,8 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
 
-      if (oneTurnMap && currentTrackIsPrimary &&
-	  oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken))
+      G4bool shouldApplyOTM = oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken);
+      if (oneTurnMap && currentTrackIsPrimary && shouldApplyOTM)
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
@@ -131,8 +131,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       // particle is a primary but applicable according to
       // ShouldApply, we should update the cached coordinates within
       // the OTM regardless.
-      if (oneTurnMap && currentTrackIsPrimary &&
-	  !oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken))
+      if (oneTurnMap && currentTrackIsPrimary && !shouldApplyOTM)
 	{
 #ifdef BDSDEBUG
 	  G4cout << "Updating coordinates in place of map application..."
