@@ -81,16 +81,16 @@ public:
   inline G4double Gety()               const {return y;}
   inline G4double Getz()               const {return z;} 
   inline G4double GetGlobalTime()      const {return globalTime;}
-  inline G4String GetName()            const {return name;}
+  //inline G4String GetName()            const {return name;}
   inline G4int    GetPartID()          const {return partID;}
   inline G4int    GetTrackID()         const {return trackID;}
   inline G4int    GetParentID()        const {return parentID;}
   inline G4double GetWeight()          const {return weight;} 
   inline G4int    GetTurnsTaken()      const {return turnsTaken;}
-  inline G4int    GetEventNo()         const {return eventNo;}
+  //inline G4int    GetEventNo()         const {return eventNo;}
   inline G4double GetStepLength()      const {return stepLength;}
   inline G4int    GetBeamlineIndex()   const {return beamlineIndex;}
-  inline G4int    GetGeomFlag()        const {return geomFlag;}
+  //inline G4int    GetGeomFlag()        const {return geomFlag;}
   inline G4double GetEnergyWeighted()  const {return weight * energy;}
   
 private:
