@@ -33,6 +33,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
+#include "BDSVolumeExitSD.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -76,6 +77,7 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   energyCounterCollID(-1),
   tunnelEnergyCounterCollID(-1),
   worldEnergyCounterCollID(-1),
+  worldExitCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -146,6 +148,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
       worldEnergyCounterCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
+      worldExitCollID           = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
     }
   FireLaserCompton=true;
 
@@ -197,6 +200,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
   BDSEnergyCounterHitsCollection* worldEnergyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(worldEnergyCounterCollID));
+
+  // world exit hits
+  BDSVolumeExitHitsCollection* worldExitHits = (BDSVolumeExitHitsCollection*)(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
