@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "BDSGlobalConstants.hh"
 #include "BDSVolumeExitHit.hh"
 #include "BDSVolumeExitSD.hh"
 
@@ -23,14 +24,13 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4SDManager.hh"
 #include "G4StepPoint.hh"
 #include "G4StepStatus.hh"
+#include "G4Track.hh"
 
 BDSVolumeExitSD::BDSVolumeExitSD(G4String name,
-				 G4bool   worldExitIn,
-				 G4bool   verboseIn):
+				 G4bool   worldExitIn):
   G4VSensitiveDetector("volume_exit/" + name),
   colName(name),
   HCIDve(-1),
-  verbose(verboseIn),
   collection(nullptr)
 {
   collectionName.insert(name);
@@ -56,7 +56,29 @@ G4bool BDSVolumeExitSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*th*/)
 
   if (postStepPoint->GetStepStatus() == statusToMatch)
     {
-      //BDSEnergyCounterSD::ProcessHits(step, th);
+      G4double totalEnergy   = postStepPoint->GetTotalEnergy();
+      G4double kineticEnergy = postStepPoint->GetKineticEnergy();
+      G4ThreeVector position = postStepPoint->GetPosition();
+      G4double T          = postStepPoint->GetGlobalTime();
+      G4Track* track      = aStep->GetTrack();
+      G4int    pdgID      = track->GetDefinition()->GetPDGEncoding();
+      G4int    trackID    = track->GetTrackID();
+      G4int    parentID   = track->GetParentID();
+      G4double weight     = track->GetWeight();
+      G4int    turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
+      
+      BDSVolumeExitHit* hit = new BDSVolumeExitHit(totalEnergy,
+						   kineticEnergy,
+						   position.x(),
+						   position.y(),
+						   position.z(),
+						   T,
+						   pdgID,
+						   trackID,
+						   parentID,
+						   weight,
+						   turnsTaken);
+      collection->insert(hit);
       return true;
     }
   else

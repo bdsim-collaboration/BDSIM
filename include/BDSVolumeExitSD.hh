@@ -43,8 +43,7 @@ class BDSVolumeExitSD: public G4VSensitiveDetector
 {
 public:
   BDSVolumeExitSD(G4String name,
-		  G4bool   worldExit = true,
-		  G4bool   verboseIn = false);
+		  G4bool   worldExit = true);
 
   virtual ~BDSVolumeExitSD(){;}
 
@@ -59,7 +58,6 @@ private:
 
   G4String     colName;        ///< Name prepared for collection.
   G4int        HCIDve;         ///< Hits collection ID for volume exit.
-  G4bool       verbose;        ///< Cache of verbosity.
   G4StepStatus statusToMatch;  ///< World or volume exit status cache.
   BDSVolumeExitHitsCollection* collection; ///< Hits collection.
 };
