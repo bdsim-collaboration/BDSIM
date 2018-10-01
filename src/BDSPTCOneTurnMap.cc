@@ -332,9 +332,8 @@ void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
   // multiple times, whatever happens here, it should not suddenly
   // make the OTM applicable for subsequent calls to the Teleporter
   // stepper on the same turn.
-
-  xLastTurn = localPosition.x();
-  yLastTurn = localPosition.y();
+  xLastTurn = localPosition.x() / CLHEP::m;
+  yLastTurn = localPosition.y() / CLHEP::m;
   pxLastTurn = localMomentum.x() / referenceMomentum;
   pyLastTurn = localMomentum.y() / referenceMomentum;
   auto totalMomentum = localMomentum.mag();
