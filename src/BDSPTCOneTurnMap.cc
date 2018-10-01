@@ -281,7 +281,7 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // not have the same value for multiple applications on the same
   // turn) 2 and not 1 because teleporter comes after
   // terminator, where the turn number is incremented.
-  auto offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
+  G4bool offsetBeamS0AndOnFirstTurn = beamOffsetS0 && turnstaken == 2;
 
   // We reset the public static bool hasScatteredThisTurn at the end
   // of this method.  But what if the stepper is applied again on this
@@ -290,20 +290,18 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   // that this method returns the same result for calls on the same
   // turn for the same primary.  This is necessary because we can't
   // force the Teleporter stepper to be called just once.
-  auto didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
+  G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
                             turnsScattered.count(turnstaken);
 
   if (didScatterThisTurn)
     {turnsScattered.insert(turnstaken);}
 
   // Have some tolerance for dealing with primaries far off momentum.
-  auto ratioOffReference =
-    std::abs((momentum - referenceMomentum) / referenceMomentum);
-  auto tolerance = 0.05; // arbitrarily chosen.  is this OK?
-  auto tooFarOffMomentum = ratioOffReference > tolerance;
+  G4double ratioOffReference = std::abs((momentum - referenceMomentum) / referenceMomentum);
+  G4double tolerance = 0.05; // arbitrarily chosen.  is this OK?
+  G4bool tooFarOffMomentum = ratioOffReference > tolerance;
 
-  auto should =
-    !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
+  G4bool should = !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__
