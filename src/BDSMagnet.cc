@@ -130,7 +130,8 @@ G4String BDSMagnet::Material() const
 }
 
 void BDSMagnet::Build()
-{ 
+{
+  BuildUserLimits();
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
@@ -240,15 +241,10 @@ void BDSMagnet::BuildContainerLogicalVolume()
       containerLogicalVolume = new G4LogicalVolume(containerSolid,
 						   emptyMaterial,
 						   name + "_container_lv");
-
-      // user limits
-      auto defaultUL = BDSGlobalConstants::Instance()->DefaultUserLimits();
-      //copy the default and update with the length of the object rather than the default 1m
-      G4UserLimits* ul = BDS::CreateUserLimits(defaultUL, std::max(chordLength, arcLength));
-      if (ul != defaultUL) // if it's not the default register it
-        {RegisterUserLimits(ul);}
-      containerLogicalVolume->SetUserLimits(ul);
-      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+      
+      // user limits - provided by BDSAcceleratorComponent
+      containerLogicalVolume->SetUserLimits(userLimits);
+      containerLogicalVolume->SetVisAttributes(containerVisAttr);
       
       placeBeamPipe = true;
     }

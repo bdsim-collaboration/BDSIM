@@ -45,7 +45,8 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   visDebug           = BDSGlobalConstants::Instance()->VisDebug();
   nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   sensitiveOuter     = BDSGlobalConstants::Instance()->SensitiveOuter();
-  maxStepFactor      = 0.5;
+  containerVisAttr   = BDSGlobalConstants::Instance()->ContainerVisAttr();
+  defaultUserLimits  = BDSGlobalConstants::Instance()->DefaultUserLimits();
 
   // initialise variables and pointers that'll be used by the factory
   CleanUp();
@@ -109,22 +110,20 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
-  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->ContainerVisAttr());
+  containerLV->SetVisAttributes(containerVisAttr);
+  magnetContainerLV->SetVisAttributes(containerVisAttr);
 }
 
 void BDSMagnetOuterFactoryBase::SetUserLimits()
 {
-  auto ul = BDSGlobalConstants::Instance()->DefaultUserLimits();
-
   if (poleLV)
-    {poleLV->SetUserLimits(ul);}
-  yokeLV->SetUserLimits(ul);
-  containerLV->SetUserLimits(ul);
-  magnetContainerLV->SetUserLimits(ul);
+    {poleLV->SetUserLimits(defaultUserLimits);}
+  yokeLV->SetUserLimits(defaultUserLimits);
+  containerLV->SetUserLimits(defaultUserLimits);
+  magnetContainerLV->SetUserLimits(defaultUserLimits);
 
   for (auto& lv : allLogicalVolumes)
-    {lv->SetUserLimits(ul);}
+    {lv->SetUserLimits(defaultUserLimits);}
 }
 
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      name,
