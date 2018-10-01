@@ -326,27 +326,30 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
 }
 
 void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
-                                         G4ThreeVector localMomentum)
+                                         G4ThreeVector localMomentum,
+					 G4int turnstaken)
 {
-  // This method is called in the integrator if the OTM is active but
-  // NOT applicable.  So given that the TeleporterIntegrator will be called
-  // multiple times, whatever happens here, it should not suddenly
-  // make the OTM applicable for subsequent calls to the Teleporter
-  // stepper on the same turn.
-  xLastTurn = localPosition.x() / CLHEP::m;
-  yLastTurn = localPosition.y() / CLHEP::m;
-  pxLastTurn = localMomentum.x() / referenceMomentum;
-  pyLastTurn = localMomentum.y() / referenceMomentum;
-  G4double totalMomentum = localMomentum.mag();
-  deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
-  // deltaPLastTurn assumed to not change between turns for 5D map.
-
+  if (lastTurnNumber < turnstaken) {
+    // This method is called in the integrator if the OTM is active but
+    // NOT applicable.  So given that the TeleporterIntegrator will be called
+    // multiple times, whatever happens here, it should not suddenly
+    // make the OTM applicable for subsequent calls to the Teleporter
+    // stepper on the same turn.
+    xLastTurn = localPosition.x() / CLHEP::m;
+    yLastTurn = localPosition.y() / CLHEP::m;
+    pxLastTurn = localMomentum.x() / referenceMomentum;
+    pyLastTurn = localMomentum.y() / referenceMomentum;
+    G4double totalMomentum = localMomentum.mag();
+    deltaPLastTurn = (totalMomentum - referenceMomentum) / referenceMomentum;
+    // deltaPLastTurn assumed to not change between turns for 5D map.
+    lastTurnNumber = turnstaken;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__
-         << "Updating map coords without use of map:" << G4endl;
-  G4cout << "xLastTurn = " << xLastTurn << G4endl;
-  G4cout << "yLastTurn = " << yLastTurn << G4endl;
-  G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
-  G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
+    G4cout << __METHOD_NAME__
+	   << "Updating map coords without use of map:" << G4endl;
+    G4cout << "xLastTurn = " << xLastTurn << G4endl;
+    G4cout << "yLastTurn = " << yLastTurn << G4endl;
+    G4cout << "pxLastTurn = " << pxLastTurn << G4endl;
+    G4cout << "pyLastTurn = " << pyLastTurn << G4endl;
 #endif
+  }
 }

@@ -141,9 +141,10 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 					       false, thinElementLength);
 	  G4ThreeVector localPosition = localPosMom.PreStepPoint();
 	  G4ThreeVector localMomentum = localPosMom.PostStepPoint();
-	  oneTurnMap->UpdateCoordinates(localPosition, localMomentum);
-	}
-      
+          oneTurnMap->UpdateCoordinates(localPosition, localMomentum,
+                                        turnstaken);
+        }
+
       // Update the particle coordinates for whichever of the methods
       // above was used.
       for (G4int i = 0; i < 3; i++)
