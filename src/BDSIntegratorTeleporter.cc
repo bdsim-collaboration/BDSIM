@@ -67,8 +67,8 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   // the teleporter length -> this ensures only applied once
   if (turnstaken > 0 && yIn[5] > 0 && lengthFraction > 0.51 && lengthFraction <= 1)
     {
-      auto globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-      auto globalMom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+      G4ThreeVector globalPos = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+      G4ThreeVector globalMom = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
 
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
@@ -139,7 +139,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 		 << G4endl;
 #endif
 	  BDSStep localPosMom = ConvertToLocal(globalPosAfter, globalMomAfter, h,
-					    false, thinElementLength);
+					       false, thinElementLength);
 	  G4ThreeVector localPosition = localPosMom.PreStepPoint();
 	  G4ThreeVector localMomentum = localPosMom.PostStepPoint();
 	  oneTurnMap->UpdateCoordinates(localPosition, localMomentum);
