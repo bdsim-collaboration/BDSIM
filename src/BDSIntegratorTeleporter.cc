@@ -73,17 +73,17 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
       G4ThreeVector globalPosAfter;
       G4ThreeVector globalMomAfter;
 
-      G4bool shouldApplyOTM = oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken);
-      if (oneTurnMap && currentTrackIsPrimary && shouldApplyOTM)
+      if (oneTurnMap && currentTrackIsPrimary &&
+          oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken))
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "applying 1 turn map" << G4endl;
 #endif
-	  
+
 	  // pass by reference, returning BDSIM coordinates:
 	  G4double x, px, y, py, pz;
 	  oneTurnMap->GetThisTurn(x, px, y, py, pz, turnstaken);
-	  
+
 	  // Get this for the sake of local.z, and also setting some
 	  // internal state necessary for using ConvertToGlobalStep.
 	  BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
@@ -128,11 +128,11 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	}
 
       // Whichever method gets used above, if the OTM is valid and the
-      // particle is a primary but applicable according to
-      // ShouldApply, we should update the cached coordinates within
+      // particle is a primary but not applicable according to
+      // ShouldApplyToPrimary, we should update the cached coordinates within
       // the OTM regardless.
-      if (oneTurnMap && currentTrackIsPrimary && !shouldApplyOTM)
-	{
+        if (oneTurnMap && currentTrackIsPrimary &&
+            !oneTurnMap->ShouldApplyToPrimary(globalMom.mag(), turnstaken)) {
 #ifdef BDSDEBUG
 	  G4cout << "Updating coordinates in place of map application..."
 		 << G4endl;
