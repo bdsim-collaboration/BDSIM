@@ -324,7 +324,8 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
 }
 
 void BDSPTCOneTurnMap::UpdateCoordinates(G4ThreeVector localPosition,
-                                         G4ThreeVector localMomentum) {
+                                         G4ThreeVector localMomentum)
+{
   // This method is called in the integrator if the OTM is active but
   // NOT applicable.  So given that the TeleporterIntegrator will be called
   // multiple times, whatever happens here, it should not suddenly
