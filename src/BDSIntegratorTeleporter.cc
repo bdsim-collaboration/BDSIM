@@ -86,14 +86,13 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  
 	  // Get this for the sake of local.z, and also setting some
 	  // internal state necessary for using ConvertToGlobalStep.
-	  auto localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
-	  auto localPosition = localPosMom.PreStepPoint();
-	  auto outLocalMomentum = G4ThreeVector(px, py, pz);
-	  auto outLocalPosition = G4ThreeVector(x, y, localPosition.z());
-	  auto globalPosDir = ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
+	  BDSStep localPosMom = ConvertToLocal(globalPos, globalMom, h, false, thinElementLength);
+	  G4ThreeVector localPosition = localPosMom.PreStepPoint();
+	  G4ThreeVector outLocalMomentum = G4ThreeVector(px, py, pz);
+	  G4ThreeVector outLocalPosition = G4ThreeVector(x, y, localPosition.z());
+	  BDSStep globalPosDir = ConvertToGlobalStep(outLocalPosition, outLocalMomentum, false);
 	  
-	  // Set the output positions and momenta, including the
-	  // threeDMethod from below...
+	  // Set the output positions and momenta, including the threeDMethod from below...
 	  globalPosAfter = globalPosDir.PreStepPoint() + dPos;
 	  globalMomAfter = globalPosDir.PostStepPoint().transform(transform.getRotation());
 #ifdef BDSDEBUG
@@ -139,10 +138,10 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 	  G4cout << "Updating coordinates in place of map application..."
 		 << G4endl;
 #endif
-	  auto localPosMom = ConvertToLocal(globalPosAfter, globalMomAfter, h,
+	  BDSStep localPosMom = ConvertToLocal(globalPosAfter, globalMomAfter, h,
 					    false, thinElementLength);
-	  auto localPosition = localPosMom.PreStepPoint();
-	  auto localMomentum = localPosMom.PostStepPoint();
+	  G4ThreeVector localPosition = localPosMom.PreStepPoint();
+	  G4ThreeVector localMomentum = localPosMom.PostStepPoint();
 	  oneTurnMap->UpdateCoordinates(localPosition, localMomentum);
 	}
       
@@ -173,12 +172,12 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   G4ThreeVector inB = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
   G4ThreeVector outB = G4ThreeVector(yOut[3], yOut[4], yOut[5]);
-  auto localPosMomIn = ConvertToLocal(inA, inB, h, false, thinElementLength);
-  auto localPosMomOut = ConvertToLocal(outA, outB, h, false, thinElementLength);
-  auto localPosIn = localPosMomIn.PreStepPoint();
-  auto localMomIn = localPosMomIn.PostStepPoint();
-  auto localPosOut = localPosMomOut.PreStepPoint();
-  auto localMomOut = localPosMomOut.PostStepPoint();
+  BDSStep localPosMomIn = ConvertToLocal(inA, inB, h, false, thinElementLength);
+  BDSStep localPosMomOut = ConvertToLocal(outA, outB, h, false, thinElementLength);
+  G4ThreeVector localPosIn = localPosMomIn.PreStepPoint();
+  G4ThreeVector localMomIn = localPosMomIn.PostStepPoint();
+  G4ThreeVector localPosOut = localPosMomOut.PreStepPoint();
+  G4ThreeVector localMomOut = localPosMomOut.PostStepPoint();
   std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
   G4cout.precision(10);
   G4cout << __METHOD_NAME__ << G4endl;
