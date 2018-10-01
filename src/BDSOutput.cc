@@ -190,6 +190,7 @@ void BDSOutput::FillEvent(const BDSEventInfo*                   info,
   energyDeposited       = 0;
   energyDepositedWorld  = 0;
   energyDepositedTunnel = 0;
+  energyWorldExit       = 0;
   
   if (vertex)
     {FillPrimary(vertex, turnsTaken);}
