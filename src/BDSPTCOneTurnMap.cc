@@ -293,12 +293,14 @@ G4bool BDSPTCOneTurnMap::ShouldApplyToPrimary(G4double momentum,
   G4bool didScatterThisTurn = BDSTrajectoryPrimary::hasScatteredThisTurn ||
                             turnsScattered.count(turnstaken);
 
+  // We always insert it into the set as nothing happens if it already exists, so
+  // we're safe inserting it every time for simplicity.
   if (didScatterThisTurn)
     {turnsScattered.insert(turnstaken);}
 
   // Have some tolerance for dealing with primaries far off momentum.
   G4double ratioOffReference = std::abs((momentum - referenceMomentum) / referenceMomentum);
-  G4double tolerance = 0.05; // arbitrarily chosen.  is this OK?
+  G4double tolerance = 0.05; // arbitrarily chosen 5%
   G4bool tooFarOffMomentum = ratioOffReference > tolerance;
 
   G4bool should = !offsetBeamS0AndOnFirstTurn && !didScatterThisTurn && !tooFarOffMomentum;
