@@ -25,6 +25,11 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSVolumeExitSD.hh"
 
 #include "G4SDManager.hh"
+#include "G4Version.hh"
+
+#if G4VERSION_NUMBER > 1029
+#include "G4MultiSensitiveDetector.hh"
+#endif
 
 BDSSDManager* BDSSDManager::_instance = nullptr;
 
@@ -74,4 +79,13 @@ BDSSDManager::BDSSDManager()
 
   worldExit= new BDSVolumeExitSD("world", true);
   SDMan->AddNewDetector(worldExit);
+
+#if G4VERSION_NUMBER > 1029
+  // only multiple SDs since
+  G4MultiSensitiveDetector* wcsd = new G4MultiSensitiveDetector("world_complete");
+  SDMan->AddNewDetector(wcsd);
+  wcsd->AddSD(worldECounter);
+  wcsd->AddSD(worldExit);
+  worldCompleteSD = wcsd;
+#endif
 }

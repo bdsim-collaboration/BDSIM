@@ -19,6 +19,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
+#include "G4Version.hh"
+
 class BDSEnergyCounterSD;
 class BDSSamplerSD;
 class BDSTerminatorSD;
@@ -64,6 +66,15 @@ public:
   /// SD for world exit hits.
   inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
 
+#if G4VERSION_NUMBER > 1029
+  /// SD for multiple SDs for world - energy loss and exit.
+  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldCompleteSD;}
+#else
+  /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
+  /// one SD for each logical volume.
+  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldECounter;}
+#endif
+
 private:
   /// Private default constructor for singleton.
   BDSSDManager();
@@ -81,6 +92,7 @@ private:
   BDSEnergyCounterSD* tunnelECounter;
   BDSEnergyCounterSD* worldECounter;
   BDSVolumeExitSD*    worldExit;
+  G4VSensitiveDetector* worldCompleteSD;
   /// @}
 };
 
