@@ -44,7 +44,12 @@ public:
   BDSBeamline* curvilinearBridgeWorld = nullptr;
   BDSBeamline* endPieces              = nullptr;
 
+  /// Get maximum extents
   const std::vector<G4ThreeVector> GetMaximumExtentAbsolute() const;
+
+  /// Append maximum extents to a supplied vector of extents
+  void GetMaximumExtentAbsolute(std::vector<G4ThreeVector>& extents) const;
+
 };
 
 #endif

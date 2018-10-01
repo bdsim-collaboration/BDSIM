@@ -408,8 +408,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 
   // These beamlines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
-  std::vector<G4ThreeVector> blMainExtents = blMain.GetMaximumExtentAbsolute();
-  extents.insert(extents.end(), blMainExtents.begin(), blMainExtents.end());
+  blMain.GetMaximumExtentAbsolute(extents);
 
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
@@ -420,11 +419,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
     {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
+  // extras is a map, so iterator has first and second for key and value
   for (const auto& bl : extras)
-    {// extras is a map, so iterator has first and second for key and value
-      std::vector<G4ThreeVector> eblExtents = bl.second.GetMaximumExtentAbsolute();
-      extents.insert(extents.end(), eblExtents.begin(), eblExtents.end());
-    }
+    {bl.second.GetMaximumExtentAbsolute(extents);}
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;

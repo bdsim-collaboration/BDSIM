@@ -31,6 +31,12 @@ void BDSBeamlineSet::DeleteContents()
 const std::vector<G4ThreeVector> BDSBeamlineSet::GetMaximumExtentAbsolute() const
 {
   std::vector<G4ThreeVector> extents;
+  GetMaximumExtentAbsolute(extents);
+  return extents;
+}
+
+void BDSBeamlineSet::GetMaximumExtentAbsolute(std::vector<G4ThreeVector>& extents) const
+{
   if (massWorld)
     {extents.push_back(massWorld->GetMaximumExtentAbsolute());}
   if (curvilinearWorld)
@@ -39,5 +45,4 @@ const std::vector<G4ThreeVector> BDSBeamlineSet::GetMaximumExtentAbsolute() cons
     {extents.push_back(curvilinearBridgeWorld->GetMaximumExtentAbsolute());}
   if (endPieces)
     {extents.push_back(endPieces->GetMaximumExtentAbsolute());}
-  return extents;
 }
