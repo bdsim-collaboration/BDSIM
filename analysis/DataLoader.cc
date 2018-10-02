@@ -32,6 +32,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "TChain.h"
 #include "TFile.h"
 
+#include <cmath>
 #include <glob.h>
 #include <iostream>
 
@@ -47,7 +48,8 @@ DataLoader::DataLoader(std::string fileName,
   processSamplers(processSamplersIn),
   allBranchesOn(allBranchesOnIn),
   branchesToTurnOn(branchesToTurnOnIn),
-  backwardsCompatible(backwardsCompatibleIn)
+  backwardsCompatible(backwardsCompatibleIn),
+  dataVersion(4)
 {
   CommonCtor(fileName);
 }
@@ -138,18 +140,22 @@ void DataLoader::BuildInputFileList(std::string inputPath)
     }
 
   // loop over files and check they're the right type
+  int* fileDataVersion = new int();
+  (*fileDataVersion) = 0;
   for(const auto& fn : fileNamesTemp)
     {
       if (backwardsCompatible)
 	{fileNames.push_back(fn);} // don't check if header -> old files don't have this
-      else if (RBDS::IsBDSIMOutputFile(fn))
+      else if (RBDS::IsBDSIMOutputFile(fn, fileDataVersion))
 	{
-	  std::cout << "Loading> " << fn << std::endl;
+	  std::cout << "Loading> " << fn << "data version " << *fileDataVersion << std::endl;
 	  fileNames.push_back(fn);
+	  dataVersion = std::min(dataVersion, *fileDataVersion);
 	}
       else
 	{std::cout << fn << " is not a BDSIM output file - skipping!" << std::endl;}
     }
+  delete fileDataVersion;
   
   if (fileNames.empty()) // exit if no valid files.
     {
