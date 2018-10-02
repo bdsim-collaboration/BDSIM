@@ -29,10 +29,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
+#include "BDSStackingAction.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
 #include "BDSUtilities.hh"
+#include "BDSVolumeExitSD.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
@@ -75,6 +77,8 @@ BDSEventAction::BDSEventAction(BDSOutput* outputIn):
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   tunnelEnergyCounterCollID(-1),
+  worldEnergyCounterCollID(-1),
+  worldExitCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -115,7 +119,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
-
+  BDSStackingAction::energyKilled = 0;
+  
   // set samplers for trajectory (cannot be done in contructor)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
@@ -144,6 +149,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
+      worldEnergyCounterCollID  = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterWorldSD()->GetName());
+      worldExitCollID           = g4SDMan->GetCollectionID(bdsSDMan->GetWorldExitSD()->GetName());
     }
   FireLaserCompton=true;
 
@@ -194,6 +201,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
+  BDSEnergyCounterHitsCollection* worldEnergyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(worldEnergyCounterCollID));
+
+  // world exit hits
+  BDSVolumeExitHitsCollection* worldExitHits = (BDSVolumeExitHitsCollection*)(HCE->GetHC(worldExitCollID));
 
   // primary hit something?
   // we infer this by seeing if there are any energy deposition hits at all - if there
@@ -209,6 +220,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       if (tunnelEnergyCounterHits->entries() > 0)
 	{eventInfo->SetPrimaryHitMachine(true);}
     }
+  // we don't check the world energy hits here because the hits could be from
+  // intended transport through air in part of the machine (a gap).
   
   // primary hits and losses from
   const BDSTrajectoryPoint* primaryHit  = nullptr;
@@ -375,6 +388,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		    hitsCylinder,
 		    energyCounterHits,
 		    tunnelEnergyCounterHits,
+		    worldEnergyCounterHits,
+		    worldExitHits,
 		    primaryHit,
 		    primaryLoss,
 		    interestingTraj,

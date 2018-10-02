@@ -36,7 +36,6 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
 					 const G4double& yIn,
 					 const G4double& zIn,
 					 const G4double& globalTimeIn,
-					 const G4String& nameIn,
 					 const G4int&    partIDIn,
 					 const G4int&    trackIDIn,
 					 const G4int&    parentIDIn,
@@ -44,8 +43,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
 					 const G4int&    turnsTakenIn,
 					 const G4int&    eventNoIn,
 					 const G4double& stepLengthIn,
-					 const G4int&    beamlineIndexIn,
-                                         const G4int&    geomFlagIn):
+					 const G4int&    beamlineIndexIn):
   copyNumber(nCopyIn),
   energy(energyIn),
   preStepKineticEnergy(preStepKineticEnergyIn),
@@ -59,7 +57,6 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
   y(yIn),
   z(zIn),
   globalTime(globalTimeIn),
-  name(nameIn),
   partID(partIDIn),
   trackID(trackIDIn),
   parentID(parentIDIn),
@@ -67,8 +64,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(const G4int&    nCopyIn,
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn),
   stepLength(stepLengthIn),
-  beamlineIndex(beamlineIndexIn),
-  geomFlag(geomFlagIn)
+  beamlineIndex(beamlineIndexIn)
 {;}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()

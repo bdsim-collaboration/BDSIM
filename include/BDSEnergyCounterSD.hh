@@ -28,6 +28,7 @@ class BDSAuxiliaryNavigator;
 class G4HCofThisEvent;
 class G4Step;
 class G4TouchableHistory;
+class G4Track;
 
 /**
  * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.
@@ -46,8 +47,20 @@ public:
 		     G4bool   verboseIn = false);
   virtual ~BDSEnergyCounterSD();
 
-  virtual void Initialize(G4HCofThisEvent*HCE);
-  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+  virtual void Initialize(G4HCofThisEvent* HCE);
+
+  /// The standard interface here to process a step from Geant4. Record
+  /// all the relevant coordinates here. Records the energy deposited along
+  /// the step.
+  virtual G4bool ProcessHits(G4Step* aStep,
+			     G4TouchableHistory* th);
+
+  /// An extra interface that can be used when artificially killing a track
+  /// to add that kill action as energy deposition of the particle there.
+  /// Note, this method always uses the total energy of the particle. There
+  /// is no step here, so it's just the total energy of the particle.
+  virtual G4bool ProcessHitsTrack(const G4Track* track,
+				  G4TouchableHistory* th);
   
 private:
   /// assignment and copy constructor not implemented nor used

@@ -19,9 +19,12 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
+#include "G4Version.hh"
+
 class BDSEnergyCounterSD;
 class BDSSamplerSD;
 class BDSTerminatorSD;
+class BDSVolumeExitSD;
 
 /**
  * @brief A singleton class that holds all required sensitive
@@ -41,26 +44,36 @@ public:
 
   ~BDSSDManager();
 
-  /// SD for samplers (plane type)
-  inline BDSSamplerSD*       GetSamplerPlaneSD() const
-  {return samplerPlane;}
+  /// SD for samplers (plane type).
+  inline BDSSamplerSD* GetSamplerPlaneSD() const {return samplerPlane;}
 
-  /// SD for samplers (cylinder type)
-  inline BDSSamplerSD*       GetSamplerCylinderSD() const
-  {return samplerCylinder;}
+  /// SD for samplers (cylinder type).
+  inline BDSSamplerSD* GetSamplerCylinderSD() const {return samplerCylinder;}
 
   /// SD for measuring turns around circular machine and terminating
   /// particles appropriately.
-  inline BDSTerminatorSD*    GetTerminatorSD() const
-  {return terminator;}
+  inline BDSTerminatorSD* GetTerminatorSD() const {return terminator;}
   
   /// SD for general energy counter.
-  inline BDSEnergyCounterSD* GetEnergyCounterSD() const
-  {return eCounter;}
+  inline BDSEnergyCounterSD* GetEnergyCounterSD() const {return eCounter;}
 
-  /// SD for tunnel energy counter
-  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const
-  {return tunnelECounter;}
+  /// SD for tunnel energy counter.
+  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const {return tunnelECounter;}
+
+  /// SD for energy deposition in the world volume.
+  inline BDSEnergyCounterSD* GetEnergyCounterWorldSD() const {return worldECounter;}
+
+  /// SD for world exit hits.
+  inline BDSVolumeExitSD* GetWorldExitSD() const {return worldExit;}
+
+#if G4VERSION_NUMBER > 1029
+  /// SD for multiple SDs for world - energy loss and exit.
+  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldCompleteSD;}
+#else
+  /// SD for world energy loss as in Geant earlier than 4.10.3 we can only have
+  /// one SD for each logical volume.
+  inline G4VSensitiveDetector* GetWorldCompleteSD() const {return worldECounter;}
+#endif
 
 private:
   /// Private default constructor for singleton.
@@ -77,6 +90,9 @@ private:
   BDSTerminatorSD*    terminator;
   BDSEnergyCounterSD* eCounter;
   BDSEnergyCounterSD* tunnelECounter;
+  BDSEnergyCounterSD* worldECounter;
+  BDSVolumeExitSD*    worldExit;
+  G4VSensitiveDetector* worldCompleteSD;
   /// @}
 };
 

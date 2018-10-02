@@ -294,6 +294,8 @@ void Options::PublishMembers()
   publish("trajCutGTZ",                     &Options::trajCutGTZ);
   publish("trajCutLTR",                     &Options::trajCutLTR);
   publish("trajNoTransportation",           &Options::trajNoTransportation);
+  publish("storeEloss",                     &Options::storeEloss);
+  publish("storeElossWorld",                &Options::storeElossWorld);
   publish("storeElossTurn",                 &Options::storeElossTurn);
   publish("storeElossLinks",                &Options::storeElossLinks);
   publish("storeElossLocal",                &Options::storeElossLocal);
@@ -301,6 +303,7 @@ void Options::PublishMembers()
   publish("storeElossTime",                 &Options::storeElossTime);
   publish("storeElossStepLength",           &Options::storeElossStepLength);
   publish("storeElossPreStepKineticEnergy", &Options::storeElossPreStepKineticEnergy);
+  publish("storeElossModelID",              &Options::storeElossModelID);
   publish("storeTrajectory",                &Options::storeTrajectory);
   publish("storeTrajectories",              &Options::storeTrajectory);
   publish("storeTrajectoryDepth",           &Options::storeTrajectoryDepth);
