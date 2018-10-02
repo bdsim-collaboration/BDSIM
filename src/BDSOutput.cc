@@ -39,6 +39,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSOutputROOTGeant4Data.hh"
 #include "BDSPrimaryVertexInformation.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSStackingAction.hh"
 #include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 #include "BDSVolumeExitHit.hh"
@@ -357,7 +358,9 @@ void BDSOutput::FillEventInfo(const BDSEventInfo* info)
   evtInfo->energyDepositedWorld  = energyDepositedWorld;
   evtInfo->energyDepositedTunnel = energyDepositedTunnel;
   evtInfo->energyWorldExit       = energyWorldExit;
-  evtInfo->energyTotal =  energyDeposited + energyDepositedWorld + energyDepositedTunnel + energyWorldExit;
+  G4double ek = BDSStackingAction::energyKilled / CLHEP::GeV;
+  evtInfo->energyKilled = ek;
+  evtInfo->energyTotal =  energyDeposited + energyDepositedWorld + energyDepositedTunnel + energyWorldExit + ek;
 }
 
 void BDSOutput::FillSamplerHits(const BDSSamplerHitsCollection* hits,

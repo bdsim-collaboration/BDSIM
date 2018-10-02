@@ -29,6 +29,8 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
+G4double BDSStackingAction::energyKilled = 0;
+
 BDSStackingAction::BDSStackingAction(const BDSGlobalConstants* globals)
 {
   killNeutrinos     = globals->KillNeutrinos();

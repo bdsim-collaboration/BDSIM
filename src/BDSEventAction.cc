@@ -29,6 +29,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include "BDSSamplerRegistry.hh"
 #include "BDSSamplerInfo.hh"
 #include "BDSSDManager.hh"
+#include "BDSStackingAction.hh"
 #include "BDSTerminatorSD.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPrimary.hh"
@@ -118,7 +119,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
-
+  BDSStackingAction::energyKilled = 0;
+  
   // set samplers for trajectory (cannot be done in contructor)
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   samplerIDsToStore           = globals->StoreTrajectorySamplerIDs();
