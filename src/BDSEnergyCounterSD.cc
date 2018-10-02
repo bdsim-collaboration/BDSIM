@@ -223,7 +223,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
                                                        sHit,
                                                        x, y, z,
 						       globalTime,
-                                                       volName,
                                                        ptype,
                                                        trackID,
                                                        parentID,
@@ -262,7 +261,6 @@ G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
   
   // avoid double getting pv
   auto hitMassWorldPV = track->GetVolume();
-  volName             = hitMassWorldPV->GetName();
   G4int nCopy         = hitMassWorldPV->GetCopyNo();
 
   // calculate local coordinates
@@ -329,7 +327,6 @@ G4bool BDSEnergyCounterSD::ProcessHitsTrack(const G4Track* track,
                                                        sHit,
                                                        x, y, z,
 						       globalTime,
-                                                       volName,
                                                        ptype,
                                                        trackID,
                                                        parentID,
