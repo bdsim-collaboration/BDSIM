@@ -1111,6 +1111,9 @@ Parameter          Description                        Default     Required
 =================  =================================  ==========  ===========
 
 * The `horizontalWidth` must be greater than 2x `xsize`.
+* To prevent the jaws overlapping with one another, a jaw cannot be constructed that crosses the
+  X axis of the element (i.e supplying a negative `xsizeLeft` or `xsizeRight` will not work). Should
+  you require this, please offset the element using the element parameters `offsetX` and `offsetY` instead.
 * To construct a collimator jaws with one jaw closed (i.e. an offset of 0), the horizontal half aperture
   must be set to 0, with the other jaws half aperture set as appropriate.
 * If `xsize`, `xsizeLeft` and `xsizeRight` are not specified, the collimator will be constructed
