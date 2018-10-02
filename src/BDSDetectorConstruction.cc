@@ -404,24 +404,24 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  std::vector<G4ThreeVector> extents;
+  std::vector<BDSExtentGlobal> extents;
 
   // These beamlines should always exist so are safe to access.
   const auto& blMain = acceleratorModel->BeamlineSetMain();
-  blMain.GetMaximumExtentAbsolute(extents);
+  blMain.GetExtentGlobals(extents);
 
   BDSBeamline* plBeamline = acceleratorModel->PlacementBeamline();
   if (plBeamline) // optional placements beam line
-    {extents.push_back(plBeamline->GetMaximumExtentAbsolute());}
+    {extents.push_back(plBeamline->GetExtentGlobal());}
   
   BDSBeamline* tunnelBeamline = acceleratorModel->TunnelBeamline();
   if (tunnelBeamline)
-    {extents.push_back(tunnelBeamline->GetMaximumExtentAbsolute());}
+    {extents.push_back(tunnelBeamline->GetExtentGlobal());}
 
   const auto& extras = BDSAcceleratorModel::Instance()->ExtraBeamlines();
   // extras is a map, so iterator has first and second for key and value
   for (const auto& bl : extras)
-    {bl.second.GetMaximumExtentAbsolute(extents);}
+    {bl.second.GetExtentGlobals(extents);}
 
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
@@ -430,7 +430,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   for (const auto& ext : extents)
     {
       for (G4int i = 0; i < 3; i++)
-	    {worldR[i] = std::max(worldR[i], ext[i]);} // expand with the maximum
+	    {worldR[i] = std::max(worldR[i], ext.GetMaximumExtentAbsolute()[i]);} // expand with the maximum
     }
 
   G4String worldName = "World";
@@ -452,10 +452,12 @@ G4VPhysicalVolume* BDSDetectorConstruction::BuildWorld()
   if (useExternalGeometryWorld)
     {
       worldExtent = geom->GetExtent();
+
+      BDSExtentGlobal worldExtent = BDSExtentGlobal(worldExtent, G4Transform3D());
+      G4bool worldContainsAllBeamlines = worldExtent.Encompasses(extents);
+
       // cannot construct world if any beamline extent is greater than the world extents
-      if ((worldR[0] > worldExtent.MaximumX()) ||
-          (worldR[1] > worldExtent.MaximumY()) ||
-          (worldR[2] > worldExtent.MaximumZ()))
+      if (!worldContainsAllBeamlines)
         {
           G4cerr << __METHOD_NAME__ << "Beamlines cannot be constructed, beamline extents are larger than "
                  << "the extents of the external world" << G4endl;

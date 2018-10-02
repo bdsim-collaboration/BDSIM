@@ -46,3 +46,15 @@ void BDSBeamlineSet::GetMaximumExtentAbsolute(std::vector<G4ThreeVector>& extent
   if (endPieces)
     {extents.push_back(endPieces->GetMaximumExtentAbsolute());}
 }
+
+void BDSBeamlineSet::GetExtentGlobals(std::vector<BDSExtentGlobal>& extents) const
+{
+  if (massWorld)
+    {extents.push_back(massWorld->GetExtentGlobal());}
+  if (curvilinearWorld)
+    {extents.push_back(curvilinearWorld->GetExtentGlobal());}
+  if (curvilinearBridgeWorld)
+    {extents.push_back(curvilinearBridgeWorld->GetExtentGlobal());}
+  if (endPieces)
+    {extents.push_back(endPieces->GetExtentGlobal());}
+}

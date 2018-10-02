@@ -19,6 +19,7 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BDSBEAMLINESET_H
 #define BDSBEAMLINESET_H
 
+#include "BDSExtentGlobal.hh"
 #include "G4ThreeVector.hh"
 #include <vector>
 
@@ -50,6 +51,8 @@ public:
   /// Append maximum extents to a supplied vector of extents
   void GetMaximumExtentAbsolute(std::vector<G4ThreeVector>& extents) const;
 
+  /// Append global extents of all beamlines to supplied vector
+  void GetExtentGlobals(std::vector<BDSExtentGlobal>& extents) const;
 };
 
 #endif

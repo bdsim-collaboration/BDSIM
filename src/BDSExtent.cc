@@ -74,6 +74,16 @@ BDSExtent::BDSExtent(G4ThreeVector extIn):
   BDSExtent(extIn.x(), extIn.y(), extIn.z())
 {;}
 
+BDSExtent::BDSExtent(G4ThreeVector extInNeg,
+                     G4ThreeVector extInPos):
+  extXNeg(extInNeg.x()),
+  extXPos(extInPos.x()),
+  extYNeg(extInNeg.y()),
+  extYPos(extInPos.y()),
+  extZNeg(extInNeg.z()),
+  extZPos(extInPos.z())
+{;}
+
 BDSExtent::~BDSExtent()
 {;}
 
