@@ -88,20 +88,19 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep,
+				       G4TouchableHistory* /*th*/)
 {
-  parentID = aStep->GetTrack()->GetParentID(); // needed later on too
-
   // Get the energy deposited along the step
   enrg = aStep->GetTotalEnergyDeposit();
-  // Account for secondaries being artificially killed - add the total energy of the particle
-  // as it's artificially absorbed here.
-  if(stopSecondaries && parentID > 0)
-    {enrg += aStep->GetTrack()->GetTotalEnergy();}
 
   //if the energy is 0, don't do anything
   if (!BDS::IsFinite(enrg))
     {return false;}
+
+  G4Track* track = aStep->GetTrack();
+  parentID = track->GetParentID(); // needed later on too
+  ptype    = track->GetDefinition()->GetPDGEncoding();
 
   // step points - used many times
   G4StepPoint* preStepPoint  = aStep->GetPreStepPoint();
@@ -210,9 +209,36 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	     << "GeV\tPosition: " << sAfter/CLHEP::m <<" m"<< G4endl;
     }
   
-  weight     = aStep->GetTrack()->GetWeight();
-  ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
-  trackID    = aStep->GetTrack()->GetTrackID();
+  weight     = track->GetWeight();
+  trackID    = track->GetTrackID();
+  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
+  
+  //create hits and put in hits collection of the event
+  BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
+                                                       enrg,
+						       preStepKineticEnergy,
+                                                       X, Y, Z,
+                                                       sBefore,
+                                                       sAfter,
+                                                       sHit,
+                                                       x, y, z,
+						       globalTime,
+                                                       volName,
+                                                       ptype,
+                                                       trackID,
+                                                       parentID,
+                                                       weight,
+                                                       turnstaken,
+                                                       eventnumber,
+                                                       stepLength,
+                                                       beamlineIndex);
+  
+  // don't worry, won't add 0 energy tracks as filtered at top by if statement
+  energyCounterCollection->insert(ECHit);
+   
+  return true;
+}
+
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
